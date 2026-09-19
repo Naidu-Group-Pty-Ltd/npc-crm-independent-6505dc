@@ -91,7 +91,13 @@ describe('F-02 — the operator backfills require a JWT', () => {
   it('every function still declares verify_jwt explicitly', () => {
     const declared = [...CONFIG.matchAll(
       /\[functions\.([A-Za-z0-9_-]+)\][^[]*?verify_jwt\s*=\s*(true|false)/gs)];
-    // 413 since mission-control-announcements (the platform-notice broker);
+    // 416 since the CRM provider switch added crm-calendar,
+    // crm-send-message and crm-inbound-message — the three functions a
+    // deployment with no GoHighLevel answers from its own Postgres. All
+    // three are verify_jwt = false and say why: the first two check auth
+    // themselves, and the third is a Twilio webhook whose whole auth
+    // boundary is X-Twilio-Signature. 413 since
+    // mission-control-announcements (the platform-notice broker);
     // 412 since amenity-register-ingest (the OSM amenity register loader);
     // 411 since estimate-capital-growth (Estimate CGR) was declared; 410 with
     // market-sales-ingest (the open-data sales-register loader); 409 after
@@ -99,7 +105,7 @@ describe('F-02 — the operator backfills require a JWT', () => {
     // functions with their config blocks (436 before). The count is a ratchet
     // against a function slipping in undeclared; check-verify-jwt-declared.mjs
     // enforces the rule itself.
-    expect(declared.length).toBe(413);
+    expect(declared.length).toBe(416);
   });
 });
 
