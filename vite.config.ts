@@ -9,6 +9,12 @@ import {
   parseDeploymentAllowances,
   resolveClientFacingFlag,
 } from "./src/lib/clientFacing";
+// The pure half of the Supabase target rule — no `import.meta` in it, which is
+// what makes it loadable from a Vite config at all.
+import {
+  projectRefFromUrl,
+  resolveSupabaseTarget,
+} from "./src/integrations/supabase/supabaseTarget.pure";
 
 // Identifies the deployed build. `version.json` carries the same value, so a
 // tab can tell whether it is running the current bundle or a cached older one
@@ -40,16 +46,46 @@ const CLIENT_FACING_ALLOWANCES = parseDeploymentAllowances(
   process.env.VITE_CLIENT_FACING_ALLOW,
 );
 
-/** Writes the build id next to the bundle so the running app can compare. */
+/**
+ * Writes the build id next to the bundle so the running app can compare — and
+ * which Supabase project this build resolved, so anything outside the browser
+ * can ask without guessing.
+ *
+ * The backend block is not diagnostics. Reading a deployed bundle for a project
+ * name cannot settle the question: the prime's ref is compiled into every build
+ * as `FALLBACK_URL`, so a correctly-configured clone names BOTH its own project
+ * and the prime's, and no amount of text matching says which one the client
+ * uses. Measured 19 Sep 2026, three of four clones were serving a bundle
+ * pointed at the prime and every signal the provisioner held was green. This is
+ * the build stating, in one line, what it resolved.
+ *
+ * Resolved through `resolveSupabaseTarget` — the same pure function the running
+ * client calls — rather than by reading `process.env` and deciding here. Two
+ * implementations of "which project is this" is how a manifest and a client
+ * come to disagree, and a manifest that disagrees is worse than none.
+ */
 function buildVersionManifest(): Plugin {
   return {
     name: "npc-build-version-manifest",
     apply: "build",
     generateBundle() {
+      const target = resolveSupabaseTarget({
+        url: process.env.VITE_SUPABASE_URL?.trim() || undefined,
+        anonKey:
+          process.env.VITE_SUPABASE_PUBLISHABLE_KEY?.trim() ||
+          process.env.VITE_SUPABASE_ANON_KEY?.trim() ||
+          undefined,
+      });
       this.emitFile({
         type: "asset",
         fileName: "version.json",
-        source: JSON.stringify({ buildId: BUILD_ID }),
+        source: JSON.stringify({
+          buildId: BUILD_ID,
+          supabase: {
+            projectRef: projectRefFromUrl(target.url),
+            source: target.source,
+          },
+        }),
       });
     },
   };

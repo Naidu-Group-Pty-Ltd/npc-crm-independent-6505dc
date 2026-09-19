@@ -417,7 +417,13 @@ And **a clone cannot tell itself apart from the prime** — the fallback IS the
 prime's pair and a fully-absent environment is the prime's ordinary state, so
 the guarantee that a clone's build carries its own project belongs to the
 provisioner and must be asserted against the DEPLOYED BUNDLE rather than
-against the variables it set. One consequence: while this was broken
+against the variables it set — which is why `vite.config.ts` now writes the
+resolved project ref and its `source` into `version.json` through that same
+pure resolver (`supabaseTarget.pure.ts`, split out so a Vite config can import
+it at all), and Mission Control reads that rather than guessing: the prime's
+ref is compiled into every bundle as the fallback constant, so a correctly
+configured clone names BOTH projects and a 5 MB text scan can only ever answer
+"unproven". One consequence: while this was broken
 `SUPABASE_PROJECT_REF` was the prime's on every clone, so `turnstileSiteKey`'s
 pairing rule was fed a lie and handed each clone the PRIME's widget — the
 cross-tenant share the next section exists to prevent.

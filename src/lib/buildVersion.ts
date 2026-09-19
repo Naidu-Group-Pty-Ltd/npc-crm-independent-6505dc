@@ -20,13 +20,51 @@ export const VERSION_MANIFEST_PATH = '/version.json';
 
 export interface VersionManifest {
   buildId: string;
+  /**
+   * Which Supabase project THIS BUILD resolved, and whether it came from the
+   * environment or from the built-in fallback.
+   *
+   * Written by `vite.config.ts` from the same pure resolver the running client
+   * uses, so the manifest and the client cannot disagree. It exists because
+   * nothing outside the browser could otherwise tell them apart: the prime's
+   * ref is compiled into every bundle as the fallback constant, so reading the
+   * JavaScript for a project name finds it on a correctly-configured clone too.
+   * Mission Control reads this to assert, by effect rather than by
+   * configuration, that a clone's deployment talks to the clone's own backend —
+   * the check that was missing when three of four clones served a bundle
+   * pointed at the prime.
+   *
+   * Optional because a build made before this shipped has no such field, and
+   * absent must read as "not declared" rather than as a pass.
+   */
+  supabase?: {
+    projectRef: string | null;
+    source: 'env' | 'fallback';
+  };
 }
 
 export function parseVersionManifest(value: unknown): VersionManifest | null {
   if (!value || typeof value !== 'object') return null;
   const buildId = (value as { buildId?: unknown }).buildId;
   if (typeof buildId !== 'string' || buildId.length === 0) return null;
-  return { buildId };
+
+  // The backend block is read leniently and dropped whole if it is not exactly
+  // what it claims to be. A half-read manifest asserting a project ref it does
+  // not have is worse than one that says nothing.
+  const raw = (value as { supabase?: unknown }).supabase;
+  let supabase: VersionManifest['supabase'];
+  if (raw && typeof raw === 'object') {
+    const ref = (raw as { projectRef?: unknown }).projectRef;
+    const source = (raw as { source?: unknown }).source;
+    if (
+      (typeof ref === 'string' || ref === null) &&
+      (source === 'env' || source === 'fallback')
+    ) {
+      supabase = { projectRef: typeof ref === 'string' ? ref : null, source };
+    }
+  }
+
+  return supabase ? { buildId, supabase } : { buildId };
 }
 
 /**

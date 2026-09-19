@@ -65,10 +65,19 @@
  * widget. The rule was intact; its input was not.
  */
 
-/** The project this repository has always shipped against. */
-const FALLBACK_URL = 'https://dduzbchuswwbefdunfct.supabase.co';
-const FALLBACK_ANON_KEY =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkdXpiY2h1c3d3YmVmZHVuZmN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0NDM4NzksImV4cCI6MjA3MTAxOTg3OX0.eSYU6fxIc3tBQuGLsdBRff0alBMkNfvv7OpW0efNjxk';
+import {
+  FALLBACK_ANON_KEY,
+  FALLBACK_URL,
+  projectRefFromAnonKey,
+  projectRefFromUrl,
+  resolveSupabaseTarget,
+} from './supabaseTarget.pure';
+
+// Re-exported rather than re-implemented: every existing caller imports these
+// from here, and two copies of "which project is this" is how a manifest and a
+// running client come to disagree.
+export { projectRefFromAnonKey, projectRefFromUrl, resolveSupabaseTarget };
+export type { SupabaseTarget } from './supabaseTarget.pure';
 
 /**
  * Trim to a usable value, or `undefined`. Takes the value, never the name:
@@ -102,63 +111,6 @@ function readConfiguredAnonKey(): string | undefined {
   } catch {
     return undefined;
   }
-}
-
-/** The `ref` sub-domain of a Supabase project URL, or null if it is not one. */
-export function projectRefFromUrl(url: string): string | null {
-  const match = /^https?:\/\/([a-z0-9]+)\.supabase\.(co|in|net)/i.exec(url.trim());
-  return match ? match[1] : null;
-}
-
-/** The `ref` claim of a Supabase anon JWT, or null if it cannot be read. */
-export function projectRefFromAnonKey(key: string): string | null {
-  try {
-    const payload = key.split('.')[1];
-    if (!payload) return null;
-    const json = atob(payload.replace(/-/g, '+').replace(/_/g, '/'));
-    const ref = (JSON.parse(json) as { ref?: unknown }).ref;
-    return typeof ref === 'string' ? ref : null;
-  } catch {
-    return null;
-  }
-}
-
-/**
- * Resolve the pair. Exported and pure so the precedence is unit-testable
- * without stubbing `import.meta`.
- */
-export function resolveSupabaseTarget(input: {
-  url?: string;
-  anonKey?: string;
-  fallbackUrl?: string;
-  fallbackAnonKey?: string;
-}): { url: string; anonKey: string; source: 'env' | 'fallback'; warning: string | null } {
-  const fallbackUrl = input.fallbackUrl ?? FALLBACK_URL;
-  const fallbackAnonKey = input.fallbackAnonKey ?? FALLBACK_ANON_KEY;
-  const { url, anonKey } = input;
-
-  if (url && anonKey) {
-    const urlRef = projectRefFromUrl(url);
-    const keyRef = projectRefFromAnonKey(anonKey);
-    // A mismatch is always a configuration error, never a runtime one — say so
-    // here rather than letting every request fail with an opaque 401.
-    const warning =
-      urlRef && keyRef && urlRef !== keyRef
-        ? `Supabase misconfiguration: VITE_SUPABASE_URL names project "${urlRef}" but the publishable key belongs to "${keyRef}". Requests will be rejected until they match.`
-        : null;
-    return { url, anonKey, source: 'env', warning };
-  }
-
-  if (url || anonKey) {
-    return {
-      url: fallbackUrl,
-      anonKey: fallbackAnonKey,
-      source: 'fallback',
-      warning: `Supabase is half-configured: ${url ? 'VITE_SUPABASE_URL is set but no publishable key is' : 'a publishable key is set but VITE_SUPABASE_URL is not'}. The URL and key are a matched pair, so BOTH built-in defaults are being used instead of mixing them.`,
-    };
-  }
-
-  return { url: fallbackUrl, anonKey: fallbackAnonKey, source: 'fallback', warning: null };
 }
 
 const resolved = resolveSupabaseTarget({

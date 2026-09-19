@@ -147,3 +147,43 @@ precisely the cross-tenant share that module exists to prevent. The rule was
 intact; its input was not. `turnstileSiteKey.ts` had already fixed this exact
 class for its own variable, and cites `env.ts` as the precedent for the pairing
 rule. It was right about the rule and wrong about the read.
+
+
+## The build says what it resolved
+
+Fixing the read is not enough on its own, because **nothing outside the browser
+can check that it worked**. The prime's project ref is compiled into every
+bundle as `FALLBACK_URL`, so a correctly configured clone's JavaScript names
+*both* its own project and the prime's. Measured on a real build of this
+repository, a scan of the 5,036,633-byte entry chunk can only answer
+"unproven"; the running client is the only thing that knows which one it used.
+
+So the build states it. `vite.config.ts` writes `version.json` — which already
+existed for stale-bundle detection — with the resolved backend beside the build
+id:
+
+```json
+{"buildId":"d62fb9c0aacb","supabase":{"projectRef":"qvuwrvwzjyigptmnijyb","source":"env"}}
+```
+
+Three rules hold it.
+
+**It is resolved through the same function the client runs.**
+`resolveSupabaseTarget` moved into `supabaseTarget.pure.ts` — the judgement,
+with no environment in it — and `env.ts` keeps the static reads and re-exports
+the rest. The config imports the pure half, which is the only reason it can be
+imported at all: a Vite config cannot load a module that names `import.meta`.
+Two implementations of "which project is this" is how a manifest and a client
+come to disagree, and a manifest that disagrees is worse than none.
+
+**`source` travels with the ref**, because `fallback` and `env` send an
+operator to opposite remedies: the first means this build's variables never
+reached it, the second means they named the wrong project.
+
+**Absent is "not declared", never a pass.** Every deployment in the fleet today
+predates the field, and `parseVersionManifest` drops a half-read block whole
+rather than asserting a ref it does not have.
+
+Mission Control reads it in `deployedBundleIdentity.server.ts` and falls back
+to reading the bundle where a build does not declare — see
+`docs/DEPLOYED_BUNDLE_IDENTITY.md` in that repository.
