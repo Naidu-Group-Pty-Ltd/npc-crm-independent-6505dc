@@ -34,8 +34,11 @@ import { cn } from '@/lib/utils';
  * default is empty, and an operator can still add numbers by hand in the
  * popover exactly as before.
  */
+// Static read — see the header of `integrations/supabase/env.ts`. The
+// optional chain this replaces is not a sequence the bundler substitutes, so
+// the list was empty on every build however the variable was set.
 const DEFAULT_TEST_NUMBERS: string[] = (
-  (import.meta as { env?: Record<string, string | undefined> })?.env?.VITE_TEST_CALL_NUMBERS ?? ''
+  import.meta.env.VITE_TEST_CALL_NUMBERS ?? ''
 )
   .split(',')
   .map((n) => n.trim())

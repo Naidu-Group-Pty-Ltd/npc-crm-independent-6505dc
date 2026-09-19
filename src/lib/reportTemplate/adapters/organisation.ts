@@ -115,7 +115,11 @@ export async function loadBrandMarks(): Promise<BrandMarks> {
       const stored = ((data as any).logo_config ?? {}) as Record<string, string | null>;
       if (!stored || !Object.keys(stored).length) return {};
 
-      const supabaseUrl = (import.meta as any)?.env?.VITE_SUPABASE_URL
+      // Static read: `import.meta?.env?.X` is not a token sequence the bundler
+      // replaces, so this resolved to undefined in every production build and
+      // silently fell through to the client's own URL. See the header of
+      // `integrations/supabase/env.ts`.
+      const supabaseUrl = import.meta.env.VITE_SUPABASE_URL
         ?? (supabase as any)?.supabaseUrl ?? '';
       const { assets } = await inlineBrandAssets(stored, { supabaseUrl });
 

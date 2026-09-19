@@ -21,6 +21,48 @@
  * set behaves exactly as it did when the values were inlined; only a build
  * that sets them moves. That is what makes it safe to land in the internal
  * console and the client-facing deployment at the same time.
+ *
+ * ── The read is STATIC, and that is the whole of it ──────────────────────────
+ *
+ * Every name below is read as the literal expression `import.meta.env.VITE_X`.
+ * Vite replaces that exact token sequence with the value at BUILD time. Put
+ * anything between `import.meta` and `.env` — an optional chain, a bracket
+ * index — and the sequence no longer matches, nothing is replaced, and the
+ * read is a property access on a browser's real `import.meta`, which has no
+ * `env`. It returns `undefined` forever, however the environment is set.
+ *
+ * This module used to read through `readEnv(key)` — `import.meta?.env?.[key]`
+ * — and it cost every clone its own backend. Measured 19 Sep 2026 on
+ * `npc-crm-independent`: Mission Control provisioned Supabase project
+ * `qvuwrvwzjyigptmnijyb`, wrote the admin's password into it, published all
+ * five `VITE_*` variables to the hosting project and rebuilt — and the
+ * deployed bundle carried neither the URL nor the key. The browser resolved
+ * to the fallback and authenticated against the PRIME, where that password
+ * does not exist, so the reported symptom was "I cannot log in to the new
+ * clone with the credentials Mission Control issued". Loading the live page
+ * in a real Chromium showed it opening a realtime socket to
+ * `dduzbchuswwbefdunfct` with the prime's anon key. `preflight-property-group`
+ * does the same thing, so this was true of every clone ever provisioned.
+ *
+ * Two things made it invisible. The fallback is the PRIME's own pair, so the
+ * one deployment anybody tests on — the prime — is correct by accident. And
+ * `resolveSupabaseTarget` warns on a HALF-configured environment and says
+ * nothing when neither value arrives, because that is the prime's ordinary
+ * state; a clone whose variables were dropped looks exactly like the prime.
+ * Nothing in the browser can tell those apart, which is why the guarantee that
+ * a clone's build carries its OWN project belongs to the provisioner, asserted
+ * against the deployed bundle rather than against the variables it set.
+ *
+ * `turnstileSiteKey.ts` fixed this same defect for its own variable and cites
+ * THIS module as the precedent for the pairing rule. It was right about the
+ * rule and wrong about the read; the read is fixed here now, and
+ * `buildTimeEnvReads.spec.ts` fails on any form a bundler cannot see through.
+ *
+ * One consequence worth naming: while this was broken `SUPABASE_PROJECT_REF`
+ * resolved to the prime on every clone, so `turnstileSiteKey`'s pairing rule
+ * — "the built-in widget is used only while the build talks to the project its
+ * secret lives in" — was being fed a lie and handed each clone the PRIME's
+ * widget. The rule was intact; its input was not.
  */
 
 /** The project this repository has always shipped against. */
@@ -28,10 +70,35 @@ const FALLBACK_URL = 'https://dduzbchuswwbefdunfct.supabase.co';
 const FALLBACK_ANON_KEY =
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkdXpiY2h1c3d3YmVmZHVuZmN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0NDM4NzksImV4cCI6MjA3MTAxOTg3OX0.eSYU6fxIc3tBQuGLsdBRff0alBMkNfvv7OpW0efNjxk';
 
-function readEnv(key: string): string | undefined {
+/**
+ * Trim to a usable value, or `undefined`. Takes the value, never the name:
+ * a helper that took the name is what made the read dynamic in the first
+ * place. Each `import.meta.env.VITE_X` below is written out in full, at the
+ * call site, because that is the only form the bundler replaces.
+ */
+function usable(value: unknown): string | undefined {
+  return typeof value === 'string' && value.trim().length > 0 ? value.trim() : undefined;
+}
+
+/** This build's Supabase URL, inlined at build time or absent. */
+function readConfiguredUrl(): string | undefined {
   try {
-    const value = (import.meta as { env?: Record<string, string | undefined> })?.env?.[key];
-    return typeof value === 'string' && value.trim().length > 0 ? value.trim() : undefined;
+    return usable(import.meta.env.VITE_SUPABASE_URL);
+  } catch {
+    return undefined;
+  }
+}
+
+/**
+ * This build's publishable key. Two names, because the variable was renamed
+ * upstream and both are still published; the newer one wins.
+ */
+function readConfiguredAnonKey(): string | undefined {
+  try {
+    return (
+      usable(import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY) ??
+      usable(import.meta.env.VITE_SUPABASE_ANON_KEY)
+    );
   } catch {
     return undefined;
   }
@@ -95,8 +162,8 @@ export function resolveSupabaseTarget(input: {
 }
 
 const resolved = resolveSupabaseTarget({
-  url: readEnv('VITE_SUPABASE_URL'),
-  anonKey: readEnv('VITE_SUPABASE_PUBLISHABLE_KEY') ?? readEnv('VITE_SUPABASE_ANON_KEY'),
+  url: readConfiguredUrl(),
+  anonKey: readConfiguredAnonKey(),
 });
 
 if (resolved.warning) {

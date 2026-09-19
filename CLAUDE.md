@@ -380,6 +380,48 @@ nowhere in this repo, so every deployment that never set it has a silently
 bricked Integrations page; the clone sets it and its saves work — 6 of 6 rows
 filled against the prime's 0 of 20.
 
+## A build-time variable is read in the one form the bundler replaces
+Read [`docs/operations/BUILD_TIME_ENVIRONMENT.md`](./docs/operations/BUILD_TIME_ENVIRONMENT.md)
+before touching `src/integrations/supabase/env.ts`, any `import.meta.env` read,
+or anything that decides which Supabase project a build talks to. **No clone
+has ever talked to its own backend.** `env.ts` read through a helper that took
+the variable's NAME — `import.meta?.env?.[key]` — and Vite substitutes the
+literal token sequence `import.meta.env`, so an optional chain or a bracket
+between `import.meta` and the name means nothing is substituted and the read is
+`undefined` forever, however the environment is set. Measured 19 Sep 2026 on
+`npc-crm-independent`: five `VITE_*` variables on the hosting project, a build
+85 minutes later, and a deployed bundle carrying none of them — the page opened
+a realtime socket to the PRIME with the prime's anon key, which is why the
+password Mission Control had written into the clone's project could log nobody
+in. Measured across the live fleet, **three of the four clones authenticate
+against the prime**; the fourth escapes only because somebody rewrote its
+`FALLBACK_URL` to its own project, so its read is equally broken and its
+`VITE_*` variables are ignored exactly as everywhere else.
+
+Four more reads were dead the same way and each absence looked like the feature
+merely being off (`VITE_TEMPLATE_LIBRARY`, `VITE_TEMPLATE_EDITOR_V2`,
+`VITE_TEST_CALL_NUMBERS`, and the letterhead base URL in the organisation
+adapter). A TypeScript cast is NOT the problem — esbuild removes it before the
+substitution runs, so `(import.meta as any).env?.VITE_X` compiles to a literal,
+verified by execution.
+
+Three rules bite. **A variable is read as `import.meta.env.VITE_NAME`, written
+out in full at the point of use** — a helper may take the VALUE (`usable(value)`)
+and never the name. **The form is asserted on the source**, because there is
+nothing to unit-test: both forms are valid TypeScript returning `undefined`
+under a test runner, and the defect exists only in a production bundle;
+`buildTimeEnvReads.spec.ts` strips comments, strings and casts and refuses any
+`import.meta` not immediately followed by `.env`/`.url`/`.glob`, with each
+broken form planted back into a real module to prove the gate is not vacuous.
+And **a clone cannot tell itself apart from the prime** — the fallback IS the
+prime's pair and a fully-absent environment is the prime's ordinary state, so
+the guarantee that a clone's build carries its own project belongs to the
+provisioner and must be asserted against the DEPLOYED BUNDLE rather than
+against the variables it set. One consequence: while this was broken
+`SUPABASE_PROJECT_REF` was the prime's on every clone, so `turnstileSiteKey`'s
+pairing rule was fed a lie and handed each clone the PRIME's widget — the
+cross-tenant share the next section exists to prevent.
+
 ## The login CAPTCHA is a per-deployment credential
 `src/lib/turnstileSiteKey.ts` is the one place that decides which Turnstile
 widget a build renders. A widget IS a **(site key, secret) pair** — the site key

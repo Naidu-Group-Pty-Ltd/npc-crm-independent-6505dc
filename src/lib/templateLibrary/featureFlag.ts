@@ -53,7 +53,10 @@ export function isTemplateLibraryEnabled(): boolean {
     return resolveTemplateLibraryFlag({
       searchParams: typeof window !== 'undefined' ? window.location.search : '',
       storageValue: typeof localStorage !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null,
-      envValue: (import.meta as any)?.env?.VITE_TEMPLATE_LIBRARY,
+      // Static read — see the header of `integrations/supabase/env.ts`. The
+      // optional chain this replaces meant the variable could never be read,
+      // so the env lever on this flag had never once fired.
+      envValue: import.meta.env.VITE_TEMPLATE_LIBRARY,
     });
   } catch {
     // A browser environment we cannot read is one we do not enable in: the tab
