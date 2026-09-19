@@ -37,7 +37,14 @@ describe('item 37 — the client waits as long as the server is allowed', () => 
    * while it carried on and finished.
    */
   it('passes a timeout at all', () => {
-    expect(page).toMatch(/invokeSecureFunction\("sync-ghl-conversations",[\s\S]{0,120}?\{ timeoutMs: GHL_SYNC_TIMEOUT_MS \}/);
+    // The function NAME left this file when the CRM provider switch landed:
+    // the page asks `vendorReconciliationFunction("conversationSync")` for it,
+    // because a CRM-independent deployment has no upstream to pull from and
+    // gets null. What this test is about is unchanged — that the sync call
+    // carries a timeout at all — so it is re-anchored on the call rather than
+    // widened, and `crmIndependence.spec.ts` still pins where the name lives.
+    expect(page).toMatch(/const syncFunction = vendorReconciliationFunction\("conversationSync"\);/);
+    expect(page).toMatch(/invokeSecureFunction\(syncFunction,[\s\S]{0,160}?\{ timeoutMs: GHL_SYNC_TIMEOUT_MS \}/);
   });
 
   it('is at least the request_timeout the function declares', () => {
@@ -179,7 +186,9 @@ describe('Audit 3 item 15 — the sync outgrows any single request', () => {
 
   it('the client drives it to the end, with a bound so it cannot spin', () => {
     expect(page).toMatch(/const MAX_LEGS = \d+;/);
-    expect(page).toMatch(/if \(data\?\.done !== false\) return/);
+    // `\s+` rather than a literal space: the guarantee is the guard, not
+    // whether a formatter ever puts `return` on the next line.
+    expect(page).toMatch(/if \(data\?\.done !== false\)\s+return/);
   });
 
   it('treats a server with no cursor as one complete run, not an endless loop', () => {
