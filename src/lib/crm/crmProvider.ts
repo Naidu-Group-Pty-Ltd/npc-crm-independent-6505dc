@@ -139,6 +139,22 @@ const VENDOR_RECONCILIATION = {
 export type VendorReconciliation = keyof typeof VENDOR_RECONCILIATION;
 
 /**
+ * The same answer, for a provider named explicitly.
+ *
+ * Split out so BOTH branches can be tested. `crmProvider()` resolves once per
+ * module load from a build-time constant, so a test can only ever observe the
+ * branch this build happens to be — which on this repository is `native`, and
+ * would have left the `ghl` names asserted by nothing. A typo there is
+ * invisible here and reaches the prime on the next cascade.
+ */
+export function vendorReconciliationFunctionFor(
+  provider: CrmProvider,
+  step: VendorReconciliation,
+): string | null {
+  return provider === "ghl" ? VENDOR_RECONCILIATION[step] : null;
+}
+
+/**
  * The function that reconciles `step` with GoHighLevel, or null where this
  * deployment has no GoHighLevel to reconcile with.
  *
@@ -148,7 +164,7 @@ export type VendorReconciliation = keyof typeof VENDOR_RECONCILIATION;
 export function vendorReconciliationFunction(
   step: VendorReconciliation,
 ): string | null {
-  return ghlAffordancesAvailable() ? VENDOR_RECONCILIATION[step] : null;
+  return vendorReconciliationFunctionFor(crmProvider().provider, step);
 }
 
 /**

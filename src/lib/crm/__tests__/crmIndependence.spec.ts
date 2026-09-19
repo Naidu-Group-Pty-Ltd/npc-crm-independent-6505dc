@@ -37,6 +37,7 @@ import {
   ghlAffordancesAvailable,
   resolveCrmProvider,
   vendorReconciliationFunction,
+  vendorReconciliationFunctionFor,
 } from "../crmProvider";
 import {
   DEFAULT_CRM_PROVIDER,
@@ -266,6 +267,43 @@ describe("a vendor-reconciliation step has no native counterpart", () => {
     expect(vendorReconciliationFunction("conversationSync")).toBeNull();
     expect(vendorReconciliationFunction("opportunityStage")).toBeNull();
     expect(ghlAffordancesAvailable()).toBe(false);
+  });
+
+  it("and hands the right name back where there IS one", () => {
+    /**
+     * Asserted through `…For`, which takes the provider explicitly, because
+     * `crmProvider()` resolves once per module load from a build-time
+     * constant — so a test can only ever observe the branch THIS build is.
+     * On this repository that is `native`, which would have left the `ghl`
+     * names asserted by nothing at all: a typo in either would be invisible
+     * here and would reach the prime on the next cascade, where it IS the
+     * live branch.
+     */
+    expect(
+      vendorReconciliationFunctionFor("ghl", "conversationSync"),
+    ).toBe("sync-ghl-conversations");
+    expect(vendorReconciliationFunctionFor("ghl", "opportunityStage")).toBe(
+      "update-ghl-opportunity-stage",
+    );
+    expect(
+      vendorReconciliationFunctionFor("native", "conversationSync"),
+    ).toBeNull();
+    expect(
+      vendorReconciliationFunctionFor("native", "opportunityStage"),
+    ).toBeNull();
+  });
+
+  it("names a function that exists in the tree", () => {
+    // The other half of the same rule: `crm-conversations` may not be named
+    // because it does not exist, and these two may be named because they do.
+    for (const step of ["conversationSync", "opportunityStage"] as const) {
+      const name = vendorReconciliationFunctionFor("ghl", step);
+      expect(name).toBeTruthy();
+      expect(
+        existsSync(join(REPO_ROOT, "supabase", "functions", name!)),
+        `${name} is routed to but not present in supabase/functions/`,
+      ).toBe(true);
+    }
   });
 
   it("EVERY call site binds the answer rather than using it inline", () => {
