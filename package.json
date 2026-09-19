@@ -217,7 +217,7 @@
     "@tanstack/react-virtual": "^3.14.10",
     "@types/canvas-confetti": "^1.9.0",
     "@types/leaflet.heat": "^0.2.5",
-    "@vitejs/plugin-react": "^5.1.2",
+    "@vitejs/plugin-react": "^6.1.1",
     "canvas-confetti": "^1.9.4",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
