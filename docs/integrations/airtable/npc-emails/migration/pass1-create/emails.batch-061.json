@@ -1,0 +1,474 @@
+{
+  "table": "Emails",
+  "batch": 61,
+  "of": 107,
+  "recordCount": 50,
+  "records": [
+    {
+      "sourceRecordId": "recYZbTM2IfuDJxWT",
+      "sourceCreatedTime": "2026-01-29T04:35:54.000Z",
+      "fields": {
+        "Name": "Pat O'Driscoll Real Estate",
+        "Subject": "PAT O'DRISCOLL REAL ESTATE NEWSLETTER",
+        "Email": "salesadmin2@podre.com.au",
+        "Body": "0749272122\r\nwww.podre.com.au\r\n\r\n\r\n\r\n\r\n\r\n\r\nPROPERTY OF THE WEEK\r\n\r\n\r\n\r\n\r\n\r\n9 Gardner Street, The Range\r\n\r\n\r\n        Offers Over $625,000\r\n\r\nCharming Home in a Location You’ll Love\r\nThis charming 3-bedroom, 1-bathroom home offers an inviting blend of comf",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recYbxm2fHWRKh0Us",
+      "sourceCreatedTime": "2025-12-22T06:13:31.000Z",
+      "fields": {
+        "Name": "Bill Dontsios",
+        "Subject": "Off Market Gem in Coburg Hill!",
+        "Email": "bdontsios@barryplant.com.au",
+        "Body": "Coburg North, 4/10 Snapshot Drive\r\n\r\n        2\r\n        2\r\n        1\r\nJUST LISTED\r\nCity-Edge Living Without the Chaos – 2 Bed Gem in Coburg Hill!\r\nFor Sale - $460,000 - $485,000\r\nNestled in the heart of Coburg Hill, this stylish 2-bedroom apartment perfec",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recYc5O64YRx1tTA7",
+      "sourceCreatedTime": "2026-06-04T07:51:19.000Z",
+      "fields": {
+        "Name": "LJ Hooker Greater Springfield",
+        "Subject": "Open For Inspection",
+        "Email": "reception@ljhspringfield.com.au",
+        "Body": "Check out our upcoming open homes! Could one of these be your new home?  ‌ ‌ ‌ ‌ ‌ ‌ ‌  ‌ ‌ ‌ ‌ ‌ ‌\r\n        Greater Springfield\r\nOpen For Inspection\r\nHi Rugesh\r\n\r\nWhile browsing online gives you a good sense of a property, there's truly no substitute for"
+      }
+    },
+    {
+      "sourceRecordId": "recYcdCCr4sdTD0pL",
+      "sourceCreatedTime": "2025-10-10T10:52:17.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recYcr2uHEwa1QlRu",
+      "sourceCreatedTime": "2025-12-10T00:09:32.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recYd9n7teLuh0om4",
+      "sourceCreatedTime": "2025-09-04T02:26:06.000Z",
+      "fields": {
+        "Name": "Rugesh Naidu",
+        "Subject": "NPC Services | Naidu Property Consulting Services | Introduction & Mailing List Allocation",
+        "Email": "rugesh@npcservices.com.au",
+        "Body": "Good afternoon,I hope this message finds you well.\nI’d like to take a moment to introduce NPC Services also known as Naidu Property Consulting Services, a dedicated buyer’s agency and property consulting business specialising in guiding clients through every stage of their property purchase journey.We currently have qualified clients actively ready to purchase across a range of budgets, and we’re looking to build strong relationships with agencies like yours. To streamline the process, it would be greatly appreciated if you could please add our acquisitions team to your weekly property mailing list below:Property@npcservices.com.au [Property@npcservices.com.au]This ensures our research division receives your latest on and off-market listings, promptly for reviewal and assessment, allowing us to respond quickly and match opportunities with ready buyers.I’m confident this collaboration will lead to excellent results for both your agency and our clients.Please feel free to contact me if you have any questionsKind Regards[cid:c06d4a1e-171e-47e2-872f-d23d78d0fbd2]Mobile: 0433 005 110 | Email: rugesh@npcservices.com.au | Website: www.npcservices.com.au [http://www.npcservices.com.au/]\n[cid:b93b8a6a-7d0b-4ac1-8f2f-51c27f5f0d43] [http://www.linkedin.com/in/rugesh-naidu-1b0003123][cid:d490f90d-9329-4635-8035-2f3f29acefa7] [https://www.instagram.com/npc.services]A blue circle with a white letter f in it AI-generated content may be incorrect. [cid:6ac1a893-b68b-4444-8d95-85e3b64db4b2] [https://www.facebook.com/profile.php?id=61577033127001]\nAddress: Level 5 Nexus Norwest, 4 Columbia Ct, Norwest NSW 2153\nNaidu Group Pty Ltd trading as Naidu Property Consulting ServicesACN: 684 555 771 | ABN: 50 684 555 771\nDisclaimer:\nAs a Professional Property Consultant & Buyers Agent, we provide information and advice based on our expertise and experience in the real estate market. Please be aware that the advice and insights offered are for general informational purposes only and should not be considered financial advice. While we strive to ensure the accuracy and relevance of the information provided, real estate markets are dynamic and subject to change and cannot guarantee the future performance or outcomes of any property investment. It is important to understand that real estate investments carry risks, including market fluctuations, changes in property values, and potential financial losses. Our services include assisting you in identifying and evaluating potential opportunities, negotiating purchase terms, and navigating the transaction process. Any decisions to purchase, sell, or invest in real estate should be made after careful consideration and consultation with appropriate financial, legal, and tax advisors. By engaging our services, you acknowledge that you have read and understood this disclaimer and agree to take full responsibility for your property-related decisions. Always conduct your own research and due diligence to ensure that any property transaction aligns with your financial objectives and risk profile.",
+        "Status": "Error 500",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/1PqvIv6VqaaWbxEopZGy5g/2GyOlcxTMnvDeYA4j0k59utx2L0lxlQagL0tyoykysyHBNuRlGuj6ELMCybWejUlrxReZbD_7NykzvcEFN7oU__0_X-cDXCC53iaulQJdyI6vKc7DAJNVSkLfcCxKKOATlH6NUFv2SYCIdeeGUu4SOi7FSF20F44YgLk7Omy1mjTJrhaeWWdHm2gEJsPm3hO/JYIvK-zEfcxV1ib4nXQvwBSWoZI8ko4nTWsOk5RnbB4",
+            "filename": "outlook_email_attachment.png",
+            "type": "image/png",
+            "size": 3465
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "recYdi4qwh02SKkOK",
+      "sourceCreatedTime": "2026-03-01T23:52:01.000Z",
+      "fields": {
+        "Name": "Sam Shaw",
+        "Subject": "Off Market Opportunity - 335-337 Princes Drive, Morwell",
+        "Email": "samshaw@wprci.com.au",
+        "Body": "Good afternoon,\r\n\r\nJust a quick email to advise that we have a new off market listing at 335–337 Princes Drive, Morwell that may be of interest to you. Please find attached a copy of the section 32 for this property for your perusal.\r\n\r\nPlease see the bel",
+        "Status": "Error 500",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/gOmq_0okE915Ot3OINLvqw/vy2CnHYJqR2IecbmR7isjeB4Wi2-13Hzmv0TAuonoyLCryLeeCbr7lYhKOd07T4RqhF0mJDpfbQJuYwjmcQFyn-dULLVgTs7Tcrr8wDC2a1XbFaODvFcUFQf7-5fE7MYNeuhRwPsAUFER2T1rlfm3XRyZD9Xybf5cluFS4Fp8xhBfBgLHbhJslmc22pDWFF9/y5XLh03Kzu9EYLpA0GO1fq9UFkGv_dprT215nnHWSBI",
+            "filename": "outlook_email_attachment.pdf",
+            "type": "application/pdf",
+            "size": 3373585
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "recYeFkwkpxWD1I7B",
+      "sourceCreatedTime": "2025-10-17T04:58:11.000Z",
+      "fields": {
+        "Name": "LJ Hooker Greater Springfield",
+        "Subject": "Your Market Update",
+        "Email": "reception@ljhspringfield.com.au",
+        "Body": "Here's a quick update on what’s happening in our local real estate market.  ‌ ‌ ‌ ‌ ‌ ‌ ‌  ‌ ‌ ‌ ‌ ‌ ‌\r\n        Greater Springfield\r\nLocal Market Update | Sales\r\nHi\r\n\r\n\r\nI wanted to share a quick update on what's happening in our local real estate market.",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recYeaXrwyPaH3NGN",
+      "sourceCreatedTime": "2026-06-04T02:03:00.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recYf0RXJuBL5aa0N",
+      "sourceCreatedTime": "2026-01-14T06:36:22.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recYfbIBrWtMi1xue",
+      "sourceCreatedTime": "2026-03-12T05:09:24.000Z",
+      "fields": {
+        "Name": "Abby Holmes-Brown",
+        "Subject": "This Weeks Open Home",
+        "Email": "sales@fnlifestyle.com.au",
+        "Body": "Saturday Open Home\r\n\r\n\r\n\r\n\r\nHi Rugesh,\r\n\r\nWe hope you're having an amazing week! If you're on the lookout for your next home, we've got some exciting open homes happening this week that you won't want to miss!\r\n\r\nWhether you're ready to move or ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recYg54D6yzF9WGSL",
+      "sourceCreatedTime": "2025-11-07T02:39:03.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recYhLCochdeARNeu",
+      "sourceCreatedTime": "2025-08-19T06:19:28.000Z",
+      "fields": {
+        "Name": "Rugesh Naidu",
+        "Subject": "NPC Services | Naidu Property Consulting Services | Introduction & Mailing List Allocation",
+        "Email": "rugesh@npcservices.com.au",
+        "Body": "Good afternoon,I hope this message finds you well. I’d like to take a moment to introduce NPC Services, a dedicated buyer’s agency and property consulting business specialising in guiding clients through every stage of their property purchase journey.At NPC Services, we go beyond sourcing properties, we deliver a complete end-to-end solution, including strategic property planning and full support through due diligence, negotiations, and settlement.We currently have qualified clients actively ready to purchase across a range of budgets, and we’re looking to build strong relationships with agencies like yours. To streamline the process, it would be greatly appreciated if you could please add our acquisitions team to your weekly property mailing list below:Property@npcservices.com.auThis ensures our research division receives your latest on and off-market listings, promptly for reviewal and assessment, allowing us to respond quickly and match opportunities with ready buyers.I’m confident this collaboration will lead to excellent results for both your agency and our clients.Please feel free to contact me if you have any questions.\n\nKind Regards[cid:b4547638-1a19-4560-8c3f-3124fb28e13e]Mobile: 0433 005 110 | Email: rugesh@npcservices.com.au | Website: www.npcservices.com.au [http://www.npcservices.com.au/]\n[cid:66ed2eda-2259-44f8-8a84-53dee43bfcc0] [http://www.linkedin.com/in/rugesh-naidu-1b0003123][cid:d41feebe-0b9e-4046-abb3-bb2a0f35b5e4] [https://www.instagram.com/npc.services]A blue circle with a white letter f in it AI-generated content may be incorrect. [cid:fc680f73-7ea1-4308-8c27-156c92364f4e] [https://www.facebook.com/profile.php?id=61577033127001]\nAddress: Level 5 Nexus Norwest, 4 Columbia Ct, Norwest NSW 2153\nNaidu Group Pty Ltd trading as Naidu Property Consulting ServicesACN: 684 555 771 | ABN: 50 684 555 771\nDisclaimer:\nAs a Professional Property Consultant & Buyers Agent, we provide information and advice based on our expertise and experience in the real estate market. Please be aware that the advice and insights offered are for general informational purposes only and should not be considered financial advice. While we strive to ensure the accuracy and relevance of the information provided, real estate markets are dynamic and subject to change and cannot guarantee the future performance or outcomes of any property investment. It is important to understand that real estate investments carry risks, including market fluctuations, changes in property values, and potential financial losses. Our services include assisting you in identifying and evaluating potential opportunities, negotiating purchase terms, and navigating the transaction process. Any decisions to purchase, sell, or invest in real estate should be made after careful consideration and consultation with appropriate financial, legal, and tax advisors. By engaging our services, you acknowledge that you have read and understood this disclaimer and agree to take full responsibility for your property-related decisions. Always conduct your own research and due diligence to ensure that any property transaction aligns with your financial objectives and risk profile.",
+        "Status": "Error 500",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/2Tg-lGs39IpUP9x_G2t--A/wxumxm1GPZix1I3xLxHDg_0t5gpH9h15XbG2q6zvwnPGORR8esmOmmDqGa7KMsXSfKFhdcpCVmSkAXSl7CzUlgwftAUlsOPzbMd9aE6vB7x-GMS_kWU8poLLk6KGhZgxBDjZLGnIu4ouiC_htmmbuwzCLYiv3Y5kwc10LvdoL80LyF_HZdkLwjMKpXcCtzTd/5hxRPj4pAZSkifTohRm7aNtu49DFfMxd8OvgqGIOUXI",
+            "filename": "outlook_email_attachment.png",
+            "type": "image/png",
+            "size": 3465
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "recYiWnd0ER42o8pX",
+      "sourceCreatedTime": "2025-12-29T17:07:14.000Z",
+      "fields": {
+        "Name": "Tom Offermann Real Estate",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "sales@offermann.com.au",
+        "Body": "Edit my requirements\r\nVisit our Website\r\nProperty Alert\r\nTuesday, 30th December 2025\r\nHello Rugesh,\r\n\r\nThe following listings matched your Property Alert search requirements.\r\n\r\nNoosa Heads\r\nUnit 17/41 Hastings Street\r\nBeachfront Paradise, Delivering Prem",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recYkWeaMW9mfgyOR",
+      "sourceCreatedTime": "2026-06-09T06:45:03.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recYkZlFDv99anW1n",
+      "sourceCreatedTime": "2025-12-11T00:25:38.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recYlo7ogKDh7os2g",
+      "sourceCreatedTime": "2026-02-25T02:37:33.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recYmbRhJAcJtUqE1",
+      "sourceCreatedTime": "2025-12-26T04:18:47.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recYnBXTU5tMmkDCi",
+      "sourceCreatedTime": "2025-12-12T04:29:53.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recYnQbTqeNwCTMuF",
+      "sourceCreatedTime": "2026-03-26T04:13:52.000Z",
+      "fields": {
+        "Name": "McGrath Geelong | Newtown",
+        "Subject": "Properties available for your inspection",
+        "Email": "fomgeelong@mcgrath.sendproperty.com.au",
+        "Body": "Dear ,\r\n\r\nWe are pleased to present you with this week’s open for inspection times.\r\n\r\nThe team at McGrath Geelong | Newtown look forward to seeing you at our open for inspections this week.\r\n\r\nKind Regards,\r\nMcGrath Geelong | Newtown\r\n+61 3 5223 2040\r\nOp",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recYoMAwEZlbUOjjK",
+      "sourceCreatedTime": "2025-09-06T22:37:50.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recYojooYEe5PLVjV",
+      "sourceCreatedTime": "2025-11-20T03:32:06.000Z",
+      "fields": {
+        "Name": "Brodie Richmond",
+        "Subject": "Update Alert: Matched Properties",
+        "Email": "brodie@schmith.com.au",
+        "Body": "Hi Rugesh ,\r\n\r\nSee below, some properties that may be of interest to you.\r\nPlease reach out if you would like any further information, or simply just have a chat.\r\n\r\nBest wishes,\r\nBrodie Richmond\r\n+61493572251\r\nbrodie@schmith.com.au\r\n\r\n\r\n\r\nOpen for "
+      }
+    },
+    {
+      "sourceRecordId": "recYokakHBK9IUBx6",
+      "sourceCreatedTime": "2025-10-07T04:44:59.000Z",
+      "fields": {
+        "Name": "Joe Torrisi",
+        "Subject": "Re: NPC Services | Naidu Property Consulting Services | Introduction & Mailing List Allocation",
+        "Email": "joe@joetorrisi.com.au",
+        "Body": "Hello Rugesh & Team,\r\n\r\nThank you for contacting me, I have a stand out property at the moment that I can offer you if you have any buyers that are looking for a large home priced at $1,550,000.\r\n\r\nhttps://joetorrisi.com.au/property/288-tinaroo-creek-road",
+        "Status": "Error 500",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/oFabQPR4xphna0dvA416Fw/OicPeNT_j9iHIidfD9c4p2Va95ZWaGr0S21hA_7P_tdFGNmaBBCEWn_gpb22itu4u6ntqoTdjhRC28Ow6jV2QiFNhj_wagdDKf8bxUkxXSxQOFZGs4dtp7MV1CIAQpkSeGeEONs66zAxJRwf3ze5qR2EQXvnXOuPwWcFFopsR9u7_4hgBfwRPlQgMv79j_gZ/M3UDeTjErFyPOJG-RG-gAVvwFOQoea7wj84yv1XvCRA",
+            "filename": "outlook_email_attachment.png",
+            "type": "image/png",
+            "size": 3465
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "recYorZGxABgx5KMb",
+      "sourceCreatedTime": "2026-01-01T03:01:53.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recYrDjnC1caqhf4Q",
+      "sourceCreatedTime": "2026-06-05T23:42:26.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recYvFbI7Ththoe0G",
+      "sourceCreatedTime": "2025-09-10T16:31:47.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recYwHVhyhxM8Cyfm",
+      "sourceCreatedTime": "2025-10-29T08:28:19.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recYy1v59V7u00EHp",
+      "sourceCreatedTime": "2026-03-24T23:43:44.000Z",
+      "fields": {
+        "Name": "Brad Hinton",
+        "Subject": "OFF MARKET OPPORTUNITY - 33 Prouses Road, North Bendigo",
+        "Email": "brad@phproperty.com.au",
+        "Body": "OFF MARKET OPPORTUNITY - 33 Prouses Road, North Bendigo\r\nHello Rugesh,\r\n\r\n\r\nWe have the below opportunity which might be of interest:\r\n\r\nhttps://www.phproperty.com.au/2P9544?preview=7249c45b4e4208ce1a8628dbcb2c2c071a23ade57a1bd92e6d23c07ae939d557\r\n\r\nVideo",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recYzod0ZsDCeJnHB",
+      "sourceCreatedTime": "2026-04-17T06:51:57.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZ0ARsVnCLTint7",
+      "sourceCreatedTime": "2025-12-02T06:25:51.000Z",
+      "fields": {
+        "Name": "Leanne Pearman",
+        "Subject": "Explore recently sold properties by Jellis Craig",
+        "Email": "leannepearman@property.jelliscraig.com.au",
+        "Body": "View in browser\r\n\r\n\r\nDear Rugesh,\r\n\r\nAcross the month of November we have seen a record number of listings go to market for our Central Victoria Jellis Craig group. In Daylesford there was good interest and attendance at inspections with approximately 85%",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZ3UKPgKZ4ocwZN",
+      "sourceCreatedTime": "2026-07-13T17:41:14.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZ6S7P5tyFg4UUP",
+      "sourceCreatedTime": "2026-06-04T01:02:32.000Z",
+      "fields": {
+        "Name": "Shane Talbot",
+        "Subject": "323 Coonoongibber Creek Road",
+        "Email": "shane@rjrproperty.com.au",
+        "Body": "View this email in your browser\r\n\r\n\r\n\r\nHi There,\r\n\r\nThis Saturday, we invite you to our open home at 323 Coonoongibber Creek Road, Brooloo, from 12:00pm – 1:00pm.\r\n\r\nThis exceptional new listing is nothing short of magnificent—a beautifully restored Queen"
+      }
+    },
+    {
+      "sourceRecordId": "recZ6hp7mHHebKSug",
+      "sourceCreatedTime": "2026-02-07T03:43:33.000Z",
+      "fields": {
+        "Name": "McGrath NSW & QLD CO",
+        "Subject": "McGrath Property Alert",
+        "Email": "concierge@mcgrath.com.au",
+        "Body": "PROPERTY ALERT\r\n\r\n6/169 Homer Street, Earlwood\r\n\r\n\r\n\r\n\r\n\r\n2\r\n\r\n\r\n\r\n1\r\n\r\n\r\n\r\n1\r\n\r\n\r\n\r\nFOR SALE\r\n\r\n$845,000\r\n\r\n\r\n\r\nVIEW\r\n\r\nSaturday 7 Feb 8:30am - 9:00am\r\n\r\n\r\n\r\nAGENTS\r\n\r\nAlexandra Stamatiou-Buda: 0415 901 279\r\n\r\nSpiro Economy: 0438 901 279\r\n\r\nVIEW MORE\r\nVI",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZ77lkMKhG3kYo3",
+      "sourceCreatedTime": "2026-07-13T17:39:13.000Z",
+      "fields": {
+        "Name": "Alexandra | Arrive Sales",
+        "Subject": "New to Market🍃Elevated Townhome in Prestigious Estate | Albany Creek",
+        "Email": "alexandra@arrivehome.com.au",
+        "Body": "Designed with Sophistication. Defined by Serenity.\r\n\r\nTownhouse 34\r\n\r\n15 Stewart Road, Albany Creek\r\n\r\n4 bed | 2.5 bath | 2 car | Pool + BBQ + Solar\r\n\r\nTraversing down the private streets of the prestigious Riverfront Estate, framed by mature trees and ma"
+      }
+    },
+    {
+      "sourceRecordId": "recZ7DqYzktjgzjFG",
+      "sourceCreatedTime": "2026-06-23T15:49:33.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZ7unXI0LVuHZcJ",
+      "sourceCreatedTime": "2025-09-22T18:01:29.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZ869jcYCNK8zkf",
+      "sourceCreatedTime": "2026-01-22T02:51:56.000Z",
+      "fields": {
+        "Name": "Rugesh Naidu",
+        "Subject": "NPC Services | Naidu Property Consulting Services | Introduction & Mailing List Allocation",
+        "Email": "rugesh@npcservices.com.au",
+        "Body": "Good afternoon,\r\n\r\nI hope this message finds you well.\r\n\r\nWishing you a Happy New Year as we step into 2026. We look forward to a positive year ahead and continuing to deliver strong outcomes for our clients.\r\n\r\nI would like to formally introduce NPC Serv",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZ9DdAWqAH8TS5p",
+      "sourceCreatedTime": "2025-09-23T00:56:33.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZ9k1emKDMN4Fqx",
+      "sourceCreatedTime": "2026-04-16T05:06:09.000Z",
+      "fields": {
+        "Name": "Pat O'Driscoll Real Estate",
+        "Subject": "PAT O'DRISCOLL REAL ESTATE NEWSLETTER",
+        "Email": "salesadmin2@podre.com.au",
+        "Body": "0749272122\r\nwww.podre.com.au\r\n\r\n\r\n\r\n\r\n\r\n\r\nPROPERTY OF THE WEEK\r\n\r\n\r\n\r\n\r\n\r\n30 Nathan Street, The Range\r\n\r\n\r\n        OFFERS TO PURCHASE\r\n\r\n\"WISEMANS COTTAGE\" Where it all began...\r\nPerched in a commanding position on The Range, this truly remarkable prope",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZABicHrfNLhcmd",
+      "sourceCreatedTime": "2026-03-13T04:10:58.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZAFMHbBNiwgc6h",
+      "sourceCreatedTime": "2025-11-21T02:56:42.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZANowd9XoKChH5",
+      "sourceCreatedTime": "2025-11-05T23:51:12.000Z",
+      "fields": {
+        "Name": "Mick Lay",
+        "Subject": "Deal of the Week – Bayswater | Want a Brand New Bayswater Home?",
+        "Email": "michael@lay2.com.au",
+        "Body": "Bayswater – Deal of the Week | Want a Brand New Bayswater Home?\r\n\r\nThis week’s Deal of the Week features a brand new Bayswater residence built by Summit Homes — combining modern design, effortless style, and low-maintenance living.\r\n\r\nKey Highlights\r\n• Co"
+      }
+    },
+    {
+      "sourceRecordId": "recZAz0zoNo1a0gt9",
+      "sourceCreatedTime": "2025-10-16T03:39:31.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZC9KqsZK6L8MXF",
+      "sourceCreatedTime": "2026-06-05T06:12:45.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZD1q62ufpt1Imf",
+      "sourceCreatedTime": "2026-02-20T04:27:03.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZDCHTWum4hhP5o",
+      "sourceCreatedTime": "2026-06-04T05:44:52.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZDmadFzUNgYO98",
+      "sourceCreatedTime": "2025-11-07T04:25:41.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZDtPUeNPxCivpf",
+      "sourceCreatedTime": "2025-12-19T19:34:37.000Z",
+      "fields": {
+        "Name": "McGrath NSW & QLD CO",
+        "Subject": "McGrath Property Alert",
+        "Email": "concierge@mcgrath.com.au",
+        "Body": "PROPERTY ALERT\r\n\r\n302/577 Gardeners Road, Mascot\r\n\r\n\r\n\r\n\r\n\r\n2\r\n\r\n\r\n\r\n1\r\n\r\n\r\n\r\nFOR SALE\r\n\r\nGuide $700,000\r\n\r\n\r\n\r\nAGENTS\r\n\r\nGeorge Mihaelidis: 0401 822 226\r\n\r\nSarah Kerr: 0414 929 036\r\n\r\nVIEW MORE\r\nVIEW MORE\r\nMCGRATH.COM.AU\r\nMCGRATH.COM.AU\r\n\r\nMcGrath NSW & "
+      }
+    },
+    {
+      "sourceRecordId": "recZE9fpIim85rOFn",
+      "sourceCreatedTime": "2025-12-04T01:08:35.000Z",
+      "fields": {
+        "Name": "Thomas Bettison",
+        "Subject": "COMING SOON TO MARKET | 74 Ferguson St, Midland",
+        "Email": "thomas.bettison@housesmart.com.au",
+        "Body": "MARKET PREVIEW - 74 Ferguson St\r\n\r\nHi Rugesh,\r\n\r\nPlease see the following property, launching to market in the near future.\r\n\r\nIf you are interested in securing this before the property goes live to all buyers, let me know.\r\n\r\nUpdate my criteria\r\nSay hell"
+      }
+    },
+    {
+      "sourceRecordId": "recZHdmUTdb5tr3eh",
+      "sourceCreatedTime": "2026-03-12T02:39:27.000Z",
+      "fields": {
+        "Name": "Teena Lee",
+        "Subject": "Open Home - 62 Greenoak Road, Kandanga",
+        "Email": "Teena@RJRproperty.com.au",
+        "Body": "View this email in your browser\r\nDear Rugesh\r\nOPEN HOME SATURDAY 14th MARCH 2026\r\n62 Greenoak Road, Kandanga\r\nFrom 9:30am to 10:30am\r\nWe are writing to you today to let you know that we have 62 Greenoak Road, Kandanga open for inspection on Saturday morni"
+      }
+    }
+  ]
+}

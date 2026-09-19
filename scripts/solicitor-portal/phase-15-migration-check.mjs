@@ -1,0 +1,5 @@
+import assert from 'node:assert/strict';import fs from 'node:fs';
+const sql=fs.readFileSync(new URL('../../supabase/migrations/20260730300000_controlled_cutover_legacy_retirement_phase15.sql',import.meta.url),'utf8');
+for(const fragment of ['cross_portal_feature_definitions','cross_portal_firm_rollouts','cross_portal_dual_read_comparisons','cross_portal_cutover_approvals','resolve_cross_portal_feature_mode','get_cross_portal_cutover_readiness','set_cross_portal_firm_rollout','minimum_stable_days','CUTOVER_READINESS_FAILED']) assert.ok(sql.includes(fragment),`missing ${fragment}`);
+for(const flag of ['solicitor_matter_access_v2','solicitor_cookie_sessions_v2','transaction_case_backbone','case_milestones_v2','canonical_conversations_v2','immutable_documents_v2','client_legal_workspace','ai_governance_v2']) assert.ok(sql.includes(flag),`missing flag ${flag}`);
+assert.doesNotMatch(sql,/drop\s+(table|column|function)/i,'Phase 15 expansion must not destructively contract legacy data');console.log('Phase 15 migration contract passed');

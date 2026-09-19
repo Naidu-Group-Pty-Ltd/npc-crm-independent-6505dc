@@ -1,0 +1,20 @@
+{
+  "name": "render-source",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Headless render microservice for raw-codebase ingestion (HTML/CSS/URL → screenshot + DOM box tree).",
+  "type": "commonjs",
+  "main": "server.js",
+  "scripts": {
+    "start": "node server.js",
+    "test": "node --test"
+  },
+  "engines": {
+    "node": ">=20"
+  },
+  "dependencies": {
+    "adm-zip": "^0.5.16",
+    "express": "^4.19.2",
+    "playwright": "^1.49.0"
+  }
+}

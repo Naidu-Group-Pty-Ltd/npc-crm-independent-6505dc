@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Request Access — Naidu Property</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;1,400&family=Montserrat:wght@400;500;600&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0; padding: 0;
+      font-family: 'Montserrat', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: transparent;
+      color: #e8e2d4;
+      -webkit-font-smoothing: antialiased;
+    }
+    .lm-card {
+      max-width: 520px;
+      margin: 0 auto;
+      padding: clamp(24px, 6vw, 40px) clamp(20px, 5vw, 36px);
+      background: linear-gradient(180deg, #0e1722 0%, #0a1018 100%);
+      border: 1px solid rgba(201, 169, 97, 0.22);
+      border-radius: 4px;
+      box-shadow: 0 20px 60px -20px rgba(0,0,0,0.6);
+    }
+    .lm-eyebrow {
+      display: flex; align-items: center; justify-content: center;
+      gap: 14px;
+      font-size: 11px;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      color: #c9a961;
+      margin-bottom: 14px;
+      font-weight: 500;
+    }
+    .lm-eyebrow::before, .lm-eyebrow::after {
+      content: ''; flex: 0 1 40px; height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(201,169,97,0.5), transparent);
+    }
+    .lm-title {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-size: clamp(26px, 5.5vw, 34px);
+      line-height: 1.1;
+      color: #f5efe1;
+      margin: 0 0 6px;
+      font-weight: 500;
+      text-align: center;
+      letter-spacing: 0.01em;
+    }
+    .lm-subtitle {
+      font-family: 'Cormorant Garamond', Georgia, serif;
+      font-style: italic;
+      font-size: clamp(15px, 3.5vw, 17px);
+      color: rgba(232, 226, 212, 0.75);
+      text-align: center;
+      margin: 0 0 28px;
+    }
+    .lm-field { margin-bottom: 14px; }
+    .lm-input {
+      width: 100%;
+      background: rgba(255,255,255,0.02);
+      border: 1px solid rgba(201, 169, 97, 0.18);
+      padding: 14px 16px;
+      color: #f5efe1;
+      font-size: 14px;
+      font-family: inherit;
+      outline: none;
+      border-radius: 2px;
+      transition: border-color 0.2s, background 0.2s;
+    }
+    .lm-input:focus { border-color: #c9a961; background: rgba(201,169,97,0.04); }
+    .lm-input::placeholder { color: rgba(232, 226, 212, 0.4); font-weight: 400; }
+    .lm-btn {
+      width: 100%;
+      background: transparent;
+      color: #c9a961;
+      border: 1px solid #c9a961;
+      padding: 16px;
+      font-size: 11px;
+      font-weight: 600;
+      font-family: inherit;
+      letter-spacing: 0.32em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-radius: 999px;
+      margin-top: 10px;
+      transition: background 0.25s, color 0.25s;
+    }
+    .lm-btn:hover:not(:disabled) { background: #c9a961; color: #0a1018; }
+    .lm-btn:disabled { opacity: 0.55; cursor: not-allowed; }
+    .lm-status { margin-top: 14px; font-size: 12px; min-height: 18px; text-align: center; letter-spacing: 0.04em; }
+    .lm-status.error { color: #e89494; }
+    .lm-status.success { color: #a8d4a0; }
+    .lm-foot { margin-top: 16px; font-size: 10px; letter-spacing: 0.18em; text-transform: uppercase; text-align: center; color: rgba(232,226,212,0.4); }
+    .lm-spinner { display: inline-block; width: 12px; height: 12px; border: 1.5px solid rgba(201,169,97,0.3); border-top-color: #c9a961; border-radius: 50%; animation: spin 0.8s linear infinite; vertical-align: middle; margin-right: 8px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+  </style>
+</head>
+<body>
+  <div class="lm-card">
+    <div class="lm-eyebrow">Private Access</div>
+    <h2 class="lm-title">Request Your Guide</h2>
+    <p class="lm-subtitle">Complete the form below for instant access.</p>
+    <form id="lm-form">
+      <div class="lm-field"><input class="lm-input" type="text" name="full_name" placeholder="Full Name" required maxlength="200" /></div>
+      <div class="lm-field"><input class="lm-input" type="email" name="email" placeholder="Email Address" required maxlength="255" /></div>
+      <div class="lm-field"><input class="lm-input" type="tel" name="phone" placeholder="Phone Number" maxlength="40" /></div>
+      <button class="lm-btn" type="submit" id="lm-submit">Unlock Guide</button>
+      <div class="lm-status" id="lm-status"></div>
+      <div class="lm-foot">Naidu Property · Private Advisory</div>
+    </form>
+  </div>
+
+  <script>
+    (function () {
+      var SUPABASE_URL = 'https://dduzbchuswwbefdunfct.supabase.co';
+      var ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkdXpiY2h1c3d3YmVmZHVuZmN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0NDM4NzksImV4cCI6MjA3MTAxOTg3OX0.eSYU6fxIc3tBQuGLsdBRff0alBMkNfvv7OpW0efNjxk';
+
+      var params = new URLSearchParams(window.location.search);
+      var slug = params.get('slug');
+
+      var form = document.getElementById('lm-form');
+      var btn = document.getElementById('lm-submit');
+      var status = document.getElementById('lm-status');
+
+      // Auto-resize: tell parent iframe what height we need
+      function postHeight() {
+        try {
+          var h = document.querySelector('.lm-card').getBoundingClientRect().height + 8;
+          parent.postMessage({ type: 'lm-height', slug: slug, height: Math.ceil(h) }, '*');
+        } catch (e) {}
+      }
+      window.addEventListener('load', postHeight);
+      window.addEventListener('resize', postHeight);
+      try { new MutationObserver(postHeight).observe(document.body, { subtree: true, childList: true, characterData: true }); } catch (e) {}
+
+      if (!slug) {
+        status.textContent = 'Missing magnet slug.';
+        status.className = 'lm-status error';
+        btn.disabled = true;
+        return;
+      }
+
+      form.addEventListener('submit', async function (e) {
+        e.preventDefault();
+        status.textContent = '';
+        status.className = 'lm-status';
+        btn.disabled = true;
+        btn.innerHTML = '<span class="lm-spinner"></span>Sending...';
+
+        var fd = new FormData(form);
+        var payload = {
+          slug: slug,
+          full_name: fd.get('full_name'),
+          email: fd.get('email'),
+          phone: fd.get('phone') || null,
+        };
+
+        try {
+          var res = await fetch(SUPABASE_URL + '/functions/v1/request-lead-magnet', {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'apikey': ANON_KEY,
+              'Authorization': 'Bearer ' + ANON_KEY,
+            },
+            body: JSON.stringify(payload),
+          });
+          var data = await res.json();
+          if (!res.ok || !data.success) throw new Error(data.error || 'Request failed');
+
+          status.textContent = 'Success — your download is starting...';
+          status.className = 'lm-status success';
+          btn.innerHTML = 'Downloaded';
+
+          // Trigger download
+          var a = document.createElement('a');
+          a.href = data.download_url;
+          a.download = data.file_name || 'guide.pdf';
+          a.target = '_blank';
+          a.rel = 'noopener';
+          document.body.appendChild(a);
+          a.click();
+          document.body.removeChild(a);
+        } catch (err) {
+          status.textContent = err.message || 'Something went wrong. Please try again.';
+          status.className = 'lm-status error';
+          btn.disabled = false;
+          btn.innerHTML = 'Unlock Guide';
+        }
+      });
+    })();
+  </script>
+</body>
+</html>

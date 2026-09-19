@@ -1,0 +1,30 @@
+[
+  {
+    "id": "recAw3wE7mMlSqDNU",
+    "createdTime": "2026-08-01T00:36:02.000Z",
+    "cellValuesByFieldId": {
+      "fld4H5qQh5PKYhXx5": "No reference · "
+    }
+  },
+  {
+    "id": "recgyILdZbCmsNR8W",
+    "createdTime": "2026-07-31T21:01:12.000Z",
+    "cellValuesByFieldId": {
+      "fld4H5qQh5PKYhXx5": "No reference · ",
+      "fld6WtbXVJcJYgxka": {
+        "id": "selAbL6AswhtC8lNs",
+        "name": "Direct visit",
+        "color": "cyanLight2"
+      },
+      "fld9VFWVmhyduriWN": "HOLD",
+      "fldO46QsLecJQbFkT": "Confirmation already sent",
+      "fldW2PZFYTkoyVmJS": "Unlinked - no Application ID",
+      "fldZl5HgMMqcxpDCu": 0,
+      "fldxCJAc92PSNuklb": {
+        "id": "selDBPfY8M0huujim",
+        "name": "Requested",
+        "color": "yellowLight2"
+      }
+    }
+  }
+]

@@ -1,0 +1,21 @@
+{
+  "_comment": "Example partner override. Any subset of BrandProfile fields is accepted; see docs/finance-portal-templates.md. Remove this key before use — unknown fields are rejected.",
+
+  "company_name": "Northbridge Finance Group",
+  "trading_name": "Northbridge Finance",
+  "phone": "(02) 8000 1234",
+  "email": "partners@northbridgefinance.com.au",
+  "website": "www.northbridgefinance.com.au",
+  "address": "Level 8, 100 Example Street, Sydney NSW 2000",
+
+  "primary": "10243F",
+  "accent": "C9A227",
+  "accent_deep": "9C7C1D",
+  "accent_tint": "F5EBCF",
+  "accent_pale": "FBF5E6",
+
+  "version": "3.0",
+  "confidentiality": "COMMERCIAL IN CONFIDENCE",
+  "footer_disclaimer": "Australian Credit Licence 000000",
+  "platform_note": ""
+}

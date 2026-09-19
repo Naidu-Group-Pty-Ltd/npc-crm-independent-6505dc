@@ -1,0 +1,7 @@
+{
+  "assistant": "Unstructured Assistant New",
+  "assistantId": "bedc3a68-5e01-49b6-b09a-0928d149361f",
+  "note": "System prompts are replaced by promptRef; the text is in ../prompts/<ref>.md. Everything else is the API response verbatim.",
+  "versionCount": 0,
+  "versions": []
+}

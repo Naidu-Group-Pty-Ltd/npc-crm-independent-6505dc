@@ -1,0 +1,12 @@
+{
+  "assistantId": "aa1a4037-720f-4bf4-b9c1-9826647a59b2",
+  "createdAt": "2024-06-24T11:08:18.527Z",
+  "id": "4b168ab4-b351-4568-92d3-343fa7f2470d",
+  "name": "lavanethaan ravachandran",
+  "number": "+60182548567",
+  "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+  "provider": "twilio",
+  "smsEnabled": true,
+  "twilioAccountSid": "{{REDACTED:TWILIO_ACCOUNT_SID}}",
+  "updatedAt": "2024-06-24T11:08:36.228Z"
+}

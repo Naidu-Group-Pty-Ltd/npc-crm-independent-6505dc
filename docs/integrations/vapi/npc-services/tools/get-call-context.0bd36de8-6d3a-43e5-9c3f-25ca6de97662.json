@@ -1,0 +1,98 @@
+{
+  "async": false,
+  "createdAt": "2026-05-14T10:17:52.591Z",
+  "function": {
+    "description": "Retrieves the stored live call context for the current Vapi call from the external session store. Use this tool after contact resolution and at the start of downstream assistant flows to recover contactId, firstName, fullName, phone, contactState, confirmedIntent, and callerReason. This tool does not search GHL, create contacts, book calls, or update calendars.",
+    "name": "get_call_context",
+    "parameters": {
+      "properties": {},
+      "required": [],
+      "type": "object"
+    }
+  },
+  "id": "0bd36de8-6d3a-43e5-9c3f-25ca6de97662",
+  "messages": [
+    {
+      "blocking": false,
+      "content": "",
+      "type": "request-start"
+    }
+  ],
+  "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+  "parameters": [
+    {
+      "key": "vapiCallId",
+      "value": "{{ call.id }}"
+    },
+    {
+      "key": "callerPhone",
+      "value": "{{ customer.number }}"
+    },
+    {
+      "key": "phone",
+      "value": "{{ customer.number }}"
+    }
+  ],
+  "server": {
+    "timeoutSeconds": 20,
+    "url": "https://hook.eu2.make.com/o51u3jb5g1nn1lxiluziezpr7gh5vvt8"
+  },
+  "type": "function",
+  "updatedAt": "2026-05-14T10:17:52.591Z",
+  "variableExtractionPlan": {
+    "aliases": [
+      {
+        "key": "contextFound",
+        "value": "{{ $.contextFound }}"
+      },
+      {
+        "key": "contactId",
+        "value": "{{ $.contactId }}"
+      },
+      {
+        "key": "firstName",
+        "value": "{{ $.firstName }}"
+      },
+      {
+        "key": "fullName",
+        "value": "{{ $.fullName }}"
+      },
+      {
+        "key": "phone",
+        "value": "{{ $.phone }}"
+      },
+      {
+        "key": "callerPhone",
+        "value": "{{ $.callerPhone }}"
+      },
+      {
+        "key": "contactState",
+        "value": "{{ $.contactState }}"
+      },
+      {
+        "key": "contactFound",
+        "value": "{{ $.contactFound }}"
+      },
+      {
+        "key": "contactCreated",
+        "value": "{{ $.contactCreated }}"
+      },
+      {
+        "key": "confirmedIntent",
+        "value": "{{ $.confirmedIntent }}"
+      },
+      {
+        "key": "callerReason",
+        "value": "{{ $.callerReason }}"
+      },
+      {
+        "key": "handoffReady",
+        "value": "{{ $.handoffReady }}"
+      },
+      {
+        "key": "vapiCallId",
+        "value": "{{ $.vapiCallId }}"
+      }
+    ]
+  }
+}

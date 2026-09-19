@@ -1,0 +1,146 @@
+{
+  "source": {
+    "platform": "airtable",
+    "baseId": "apptyShYE0yzL4IGB",
+    "baseName": "NPC Emails",
+    "exportedAt": "2026-08-18"
+  },
+  "totals": {
+    "tables": 10,
+    "fields": 436,
+    "records": 5537,
+    "linkEdges": 6,
+    "createBatches": 116
+  },
+  "batchSize": 50,
+  "tables": [
+    {
+      "sourceTableId": "tbltAY2t8eiaMzOXs",
+      "name": "Emails",
+      "slug": "emails",
+      "recordCount": 5325,
+      "fieldCount": 9,
+      "writableFields": 8,
+      "computedFields": 1,
+      "linkFields": 0,
+      "createBatches": 107,
+      "attachmentCells": 211
+    },
+    {
+      "sourceTableId": "tblH9cW4EhVs6D5H1",
+      "name": "Properties",
+      "slug": "properties",
+      "recordCount": 0,
+      "fieldCount": 28,
+      "writableFields": 27,
+      "computedFields": 1,
+      "linkFields": 0,
+      "createBatches": 0,
+      "attachmentCells": 0
+    },
+    {
+      "sourceTableId": "tblisKjaSRnkY1KBC",
+      "name": "Lead Data Test",
+      "slug": "lead-data-test",
+      "recordCount": 7,
+      "fieldCount": 9,
+      "writableFields": 7,
+      "computedFields": 2,
+      "linkFields": 0,
+      "createBatches": 1,
+      "attachmentCells": 0
+    },
+    {
+      "sourceTableId": "tblwFLyi86JSgXwt3",
+      "name": "Opt-In Calls",
+      "slug": "opt-in-calls",
+      "recordCount": 32,
+      "fieldCount": 5,
+      "writableFields": 5,
+      "computedFields": 0,
+      "linkFields": 0,
+      "createBatches": 1,
+      "attachmentCells": 0
+    },
+    {
+      "sourceTableId": "tblcUXKwhZbscJRY7",
+      "name": "Quiz Sub Calls",
+      "slug": "quiz-sub-calls",
+      "recordCount": 0,
+      "fieldCount": 5,
+      "writableFields": 5,
+      "computedFields": 0,
+      "linkFields": 0,
+      "createBatches": 0,
+      "attachmentCells": 0
+    },
+    {
+      "sourceTableId": "tblWIg5cs85O30pcY",
+      "name": "Property Intake Master",
+      "slug": "property-intake-master",
+      "recordCount": 148,
+      "fieldCount": 211,
+      "writableFields": 204,
+      "computedFields": 7,
+      "linkFields": 0,
+      "createBatches": 3,
+      "attachmentCells": 0
+    },
+    {
+      "sourceTableId": "tblHzGiB591W3GpoZ",
+      "name": "Aurixa Waitlist",
+      "slug": "aurixa-waitlist",
+      "recordCount": 10,
+      "fieldCount": 61,
+      "writableFields": 34,
+      "computedFields": 24,
+      "linkFields": 3,
+      "createBatches": 1,
+      "attachmentCells": 0
+    },
+    {
+      "sourceTableId": "tblXQx00T3CKEVnvV",
+      "name": "Business Readiness Responses",
+      "slug": "business-readiness-responses",
+      "recordCount": 1,
+      "fieldCount": 36,
+      "writableFields": 33,
+      "computedFields": 2,
+      "linkFields": 1,
+      "createBatches": 1,
+      "attachmentCells": 0
+    },
+    {
+      "sourceTableId": "tblB1t18q6aUTNI0g",
+      "name": "BRQ Detailed Responses",
+      "slug": "brq-detailed-responses",
+      "recordCount": 12,
+      "fieldCount": 47,
+      "writableFields": 44,
+      "computedFields": 2,
+      "linkFields": 1,
+      "createBatches": 1,
+      "attachmentCells": 0
+    },
+    {
+      "sourceTableId": "tbljj5XQbC2a4ON1U",
+      "name": "Strategic Review Bookings",
+      "slug": "strategic-review-bookings",
+      "recordCount": 2,
+      "fieldCount": 25,
+      "writableFields": 20,
+      "computedFields": 4,
+      "linkFields": 1,
+      "createBatches": 1,
+      "attachmentCells": 0
+    }
+  ],
+  "hazardIds": [
+    "empty-select-options",
+    "duplicate-choice-name",
+    "attachment-url-expiry",
+    "autonumber-primary",
+    "broken-formulas",
+    "collaborator-fields"
+  ]
+}

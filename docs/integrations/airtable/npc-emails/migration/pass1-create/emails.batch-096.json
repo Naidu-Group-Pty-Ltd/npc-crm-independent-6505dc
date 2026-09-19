@@ -1,0 +1,465 @@
+{
+  "table": "Emails",
+  "batch": 96,
+  "of": 107,
+  "recordCount": 50,
+  "records": [
+    {
+      "sourceRecordId": "rectAVOXBZzkDoUTv",
+      "sourceCreatedTime": "2025-12-25T05:30:26.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rectBVEGLydttQv6C",
+      "sourceCreatedTime": "2026-01-14T04:34:16.000Z",
+      "fields": {
+        "Name": "Shelter Real Estate",
+        "Subject": "Off Market Opportunities & Upcoming Listings",
+        "Email": "hello@shelterrealestate.com.au",
+        "Body": "Dear Rugesh,\r\n\r\nPlease see below a list of off market opportunities and upcoming listings going live in the next few weeks.\r\n\r\nOFF MARKET & PRE MARKET OPPORTUNITIES\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\nAddress\r\n\r\nType    B/B/C   Land (approx.)  Price guide     Contact Agen"
+      }
+    },
+    {
+      "sourceRecordId": "rectClGAbZYu6rukA",
+      "sourceCreatedTime": "2026-06-11T05:46:34.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rectDLBWL4v1dslVI",
+      "sourceCreatedTime": "2026-01-23T03:21:58.000Z",
+      "fields": {
+        "Name": "Hinternoosa .",
+        "Subject": "New Listings and Open Homes",
+        "Email": "sold@hinternoosa.com.au",
+        "Body": "Hinternoosa .\r\n\r\n\r\n07 5447 7000\r\n\r\nEmail me\r\n\r\n\r\nHi NPC Services\r\n\r\nExplore what's new at Hinternoosa this week!\r\n\r\nDiscover our latest property to hit the market and see which homes are open for inspection this weekend.\r\n\r\nWe are also delight",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rectDMVrWvhUJDtVy",
+      "sourceCreatedTime": "2025-10-07T02:28:20.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rectEGaK8MI2pB5lo",
+      "sourceCreatedTime": "2025-11-06T02:55:42.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rectEJMr4ZnPgfLGP",
+      "sourceCreatedTime": "2026-06-04T05:24:21.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rectEqqjk2O6voDO7",
+      "sourceCreatedTime": "2026-02-20T04:36:55.000Z",
+      "fields": {
+        "Name": "Tomoro",
+        "Subject": "Where Summer Momentum Meets February Focus",
+        "Email": "hello@tomoro.mypropertyemail.com.au",
+        "Body": "Buying  Selling Auction Renting\r\n\r\n\r\nHi Rugesh,\r\n\r\nFebruary settles confidently into summer, carrying the warmth and energy of the season as the year gathers pace. With routines now familiar and plans underway, attention naturally shifts toward consistenc",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rectEttHOyAjhOB1W",
+      "sourceCreatedTime": "2026-05-07T02:48:15.000Z",
+      "fields": {
+        "Name": "Lavan Kenobi",
+        "Subject": "Fwd: What's new on the market this week",
+        "Email": "lavankenobi@gmail.com",
+        "Body": "---------- Forwarded message ---------\r\nFrom: Rugesh Naidu <naidu.rugesh@gmail.com>\r\nDate: Sat, Aug 16, 2025 at 7:21 AM\r\nSubject: Fwd: What's new on the market this week\r\nTo: lavankenobi@gmail.com <lavankenobi@gmail.com>\r\n\r\n\r\n\r\n\r\n---------- Forwarded "
+      }
+    },
+    {
+      "sourceRecordId": "rectFDanX0JJk1Ufn",
+      "sourceCreatedTime": "2025-12-17T22:50:20.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rectFpHrAVYtapqcj",
+      "sourceCreatedTime": "2025-11-07T04:37:29.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rectGJa3wSMaS6BOh",
+      "sourceCreatedTime": "2026-03-20T03:54:46.000Z",
+      "fields": {
+        "Name": "Hinternoosa .",
+        "Subject": "New Listings and Open Homes",
+        "Email": "sold@hinternoosa.com.au",
+        "Body": "Hinternoosa .\r\n\r\n\r\n07 5447 7000\r\n\r\nEmail me\r\n\r\n\r\nHi NPC Services\r\n\r\nExplore what's new at Hinternoosa this week!\r\n\r\nDiscover our latest New Listings, Rental of the Week, and all the homes open for inspection across the beautiful Noosa Hinterla",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rectGv6BbgX13tXab",
+      "sourceCreatedTime": "2026-02-20T03:08:28.000Z",
+      "fields": {
+        "Name": "Joe Morrow",
+        "Subject": "JUST LISTED - QUINNS ROCKS",
+        "Email": "joe@c21goldkey.com.au",
+        "Body": "Just listed! 16 Mintaro Parade, Quinns Rocks — Relaxed family living just moments from the coast. Come view this home Sunday 10:30am–11:00am.\r\n ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌"
+      }
+    },
+    {
+      "sourceRecordId": "rectGxJoU92wtKLhp",
+      "sourceCreatedTime": "2025-11-21T02:53:37.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rectHEq5stETypitf",
+      "sourceCreatedTime": "2025-08-14T11:03:41.000Z",
+      "fields": {
+        "Name": "Lavanethan Ravichandran",
+        "Subject": "PDF Test",
+        "Email": "lavan@ehsanjv.com",
+        "Body": "Testing"
+      }
+    },
+    {
+      "sourceRecordId": "rectHLTzEsuloCUlS",
+      "sourceCreatedTime": "2025-11-07T03:30:02.000Z",
+      "fields": {
+        "Name": "Jon Mordue",
+        "Subject": "BUILT Apartments Available for Sale from $515,000",
+        "Email": "jon@projectpropertysales.com.au",
+        "Body": "BUILT STOCKLIST\r\n\r\n__________________________________________________________________________________________________________\r\n\r\n\r\n\r\n\r\n\r\nHighgate Hill, The Hills Apartments – Completion end of December 2025\r\n\r\n  *   2 x 2 bedroom priced at $1,350,000\r\n  *"
+      }
+    },
+    {
+      "sourceRecordId": "rectHejZ92P7IDaJx",
+      "sourceCreatedTime": "2025-10-17T02:35:06.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rectI1Jpc27Gt47u6",
+      "sourceCreatedTime": "2026-04-08T02:40:19.000Z",
+      "fields": {
+        "Name": "Adam Bettison",
+        "Subject": "COMING SOON TO MARKET | 51A Sturtridge Road, Lockridge",
+        "Email": "adam.bettison@housesmart.com.au",
+        "Body": "MARKET PREVIEW - 51A Sturtridge Road\r\n\r\nHi Rugesh,\r\n\r\nPlease see the following property, launching to market in the near future.\r\n\r\nIf you are interested in securing this before the property goes live to all buyers, let me know.\r\n\r\nUpdate my criteria\r\nSay"
+      }
+    },
+    {
+      "sourceRecordId": "rectJP8mdhEXqINIX",
+      "sourceCreatedTime": "2026-01-21T05:14:59.000Z",
+      "fields": {
+        "Name": "Arrive",
+        "Subject": "Your Local Market Insights",
+        "Email": "alexandra@arrivehome.com.au",
+        "Body": "🔑 ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌\r\n\r\n\r\nYour Market I",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rectKUlu4LAM6qY9Z",
+      "sourceCreatedTime": "2026-01-20T21:45:04.000Z",
+      "fields": {
+        "Name": "Rick Holloway",
+        "Subject": "FW:  HIGH YIELD TWO PART STOCK  ",
+        "Email": "rick@thebobtraskgroup.com.au",
+        "Body": "Registered Stock\r\nHIGH  YIELD $1,110 PER WEEK\r\nLimited stock All Offers Considered\r\nSecondary Dwelling Stock\r\nMORAYFIELD\r\nTWO PART INVESTMENT’S\r\nGOING QUICK\r\nMoreton Bay (50km north of Brisbane)\r\n\r\n\r\n\r\n\r\n\r\nRegards\r\n\r\n“Whatever you need, if we don’t have i",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rectLvNwPLVIhP1Sh",
+      "sourceCreatedTime": "2026-06-03T22:32:34.000Z",
+      "fields": {
+        "Name": "Rick Holloway",
+        "Subject": "FW: DETACHED DUPLEX",
+        "Email": "rick@thebobtraskgroup.com.au",
+        "Body": "CABOOLTURE SMSF\r\nRentals Needed Urgent\r\nDETACHED DUPLEX SALE\r\nTWO ONLY  $849,990\r\nHIGH  YIELD $830 PER WEEK RETURN\r\nREGISTERED READY TO BUILD\r\nSelling Quick\r\nBig Blocks\r\n\r\n\r\nRegards\r\n\r\n“Whatever you need, if we don’t have it, we can find it and we can bui"
+      }
+    },
+    {
+      "sourceRecordId": "rectMK06PiKjCKm3F",
+      "sourceCreatedTime": "2025-11-24T14:24:47.000Z",
+      "fields": {
+        "Name": "Jalin Realty Australia Pty Ltd",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "adrian.chen@jalinrealty.com",
+        "Body": "Edit my requirements\r\nVisit our Website\r\nProperty Alert\r\nTuesday, 25th November 2025\r\nHello Naidu Group Pty Ltd,\r\n\r\nThe following listings matched your Property Alert search requirements.\r\n\r\nMernda\r\n        13 Wellington Street\r\nGENUINE SELLER & MUST SELL",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rectO5zKNHp5sYA5F",
+      "sourceCreatedTime": "2025-11-15T08:59:50.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rectO7dbVmlhjw2Hn",
+      "sourceCreatedTime": "2026-03-12T07:09:25.000Z",
+      "fields": {
+        "Name": "Michelle Peck",
+        "Subject": "Proud Moment: Peak Central ranked Top 5 Rental Agencies in Perth",
+        "Email": "michelle@peakcentral.com.au",
+        "Body": "The latest issue of Peak Central's Market Update\r\n\r\n\r\n\r\n\r\nHello Rugesh,\r\n\r\nWelcome to our latest update! Keeping you informed with valuable insights and information with regard to your real estate journey.\r\n\r\nKind Regards,\r\nMichelle Peck\r\n\r\n\r\n\r\n\r\nMich",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rectPD4dmOweD3SEi",
+      "sourceCreatedTime": "2026-02-20T04:36:10.000Z",
+      "fields": {
+        "Name": "Joe Morrow",
+        "Subject": "JUST LISTED - KINROSS",
+        "Email": "joe@c21goldkey.com.au",
+        "Body": "Just Listed! 11 Roxburgh Circle, Kinross – This is the one you’ll be talking about! Modern kitchen, multiple living zones, and a pool! Home open Sat & Sun 11:00–11:30am.\r\n ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌"
+      }
+    },
+    {
+      "sourceRecordId": "rectQbqvyIEv8d0nh",
+      "sourceCreatedTime": "2025-12-17T18:19:01.000Z",
+      "fields": {
+        "Name": "Tom Offermann Real Estate",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "sales@offermann.com.au",
+        "Body": "Edit my requirements\r\nVisit our Website\r\nProperty Alert\r\nThursday, 18th December 2025\r\nHello Rugesh,\r\n\r\nThe following listings matched your Property Alert search requirements.\r\n\r\nNoosa Heads\r\n13/2 Hastings Street\r\nHastings Street Gem With Noosa River View",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rectRG2kqwklO9cmo",
+      "sourceCreatedTime": "2025-11-21T03:17:58.000Z",
+      "fields": {
+        "Name": "McGrath",
+        "Subject": "McGrath Property Alert",
+        "Email": "concierge@mcgrath.com.au",
+        "Body": "PROPERTY ALERT\r\n\r\n20/2 Barton Road, Artarmon\r\n\r\n\r\n\r\n\r\n\r\n3\r\n\r\n\r\n\r\n1\r\n\r\n\r\n\r\n1\r\n\r\n\r\n\r\nAUCTION\r\n\r\nOn Site - Saturday 29 Nov 12:30pm\r\n\r\n\r\n\r\nVIEW\r\n\r\nSaturday 22 Nov 12:30pm - 1:00pm\r\n\r\n\r\n\r\nAGENTS\r\n\r\nHamish Gibbs: 0448 593 201\r\n\r\nMun-Nee Morgan: 0408 208 120"
+      }
+    },
+    {
+      "sourceRecordId": "rectU8ZzNFOSIW1X9",
+      "sourceCreatedTime": "2025-10-07T10:26:13.000Z",
+      "fields": {
+        "Name": "Sam Shaw",
+        "Subject": "Off Market Opportunity - 14 Holden Crescent, Traralgon",
+        "Email": "samshaw@wprci.com.au",
+        "Body": "Good afternoon,\r\n\r\nJust a quick email to advise that we have a new off market listing at 14 Holden Crescent, Traralgon that may be of interest to you. Please see the attached section 32 for your review.\r\n\r\nPlease see the below link for the video walkthrou",
+        "Status": "Error 500",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/Qsg43G0p9fuGMxbZVncx2A/0fkdd1P9_STZMYAotMhXEKFCrFCyNdo_RbAdu9SBLTiULMZLiiZlpkq_YdhRsCGOkxfyhDIGs7ZgrNRsz-ZBS_EZrm6Iliix-xJzgPQ5tg4zKN2zz1UbDJnIk5Q-E2DJ2r-lJofArejlOchF94OKBnp_sY0LrXieeLdUqqKeZ1FUWwd6hs_3AmWWHHjnJgWH/iX4Qw5Z16hkL426FL-NJmDemjsn8gGHB9RXhJ5XbWuI",
+            "filename": "outlook_email_attachment.pdf",
+            "type": "application/pdf",
+            "size": 200019
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "rectUfXV7nmqT4iWq",
+      "sourceCreatedTime": "2026-01-22T07:09:34.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rectUqtElqeVyk528",
+      "sourceCreatedTime": "2026-06-03T21:47:30.000Z",
+      "fields": {
+        "Name": "McGrath NSW & QLD CO",
+        "Subject": "McGrath Property Alert",
+        "Email": "concierge@mcgrath.com.au",
+        "Body": "PROPERTY ALERT\r\n\r\n1/42 Bream Street, Coogee\r\n\r\n\r\n\r\n\r\n\r\n3\r\n\r\n\r\n\r\n1\r\n\r\n\r\n\r\n2\r\n\r\n\r\n\r\nAUCTION\r\n\r\nIn Rooms - McGrath Coogee - Tuesday 30 Jun 5:00pm\r\n\r\n\r\n\r\nVIEW\r\n\r\nThursday 4 Jun 12:30pm - 1:00pm\r\n\r\n\r\n\r\nAGENTS\r\n\r\nChris Volpatti: 0414 867 454\r\n\r\nJoey Shatari: 04"
+      }
+    },
+    {
+      "sourceRecordId": "rectUx1yl9hZo05h9",
+      "sourceCreatedTime": "2025-11-25T04:42:49.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rectVZnZiiNF2wV9j",
+      "sourceCreatedTime": "2025-10-29T09:51:31.000Z",
+      "fields": {
+        "Name": "Nicole Frew",
+        "Subject": "New Listing - REFRESHED FAMILY GEM WITH SOLAR POWER, DUCTED AIR & LOW-MAINTENANCE STYLE",
+        "Email": "nicole@gattonrealestate.com.au",
+        "Body": "Good afternoon Rugesh\r\n\r\nStep through the front gate and experience the charm this home has to offer. Refreshed and full of character, this inviting property sits on an elevated 653m² block in one of Gatton’s established streets, offering a comfortable an"
+      }
+    },
+    {
+      "sourceRecordId": "rectVxFNFGMvU4GSS",
+      "sourceCreatedTime": "2025-11-13T00:22:50.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rectW5BGqFZ3vJZyf",
+      "sourceCreatedTime": "2026-06-05T02:42:54.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rectWly5Q8nbaWqFE",
+      "sourceCreatedTime": "2026-02-20T03:24:46.000Z",
+      "fields": {
+        "Name": "Team Pennisi",
+        "Subject": "A podcast worth your time + this week's listings",
+        "Email": "sales@pennisi.com.au",
+        "Body": "Scroll 👇🏽 for this week's 🏠\r\n\r\nHi Rugesh,\r\n\r\nThis week, our Managing Director Andrew Pennisi is sharing a podcast featuring his friend and best-selling author, Peter O’Malley.\r\n\r\nIn this special episode of Talking Property, Peter is joined by SQM Resea",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rectX7S1xmrEME8Ba",
+      "sourceCreatedTime": "2025-12-22T01:18:27.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rectXAhb6RK10XFLH",
+      "sourceCreatedTime": "2026-05-07T02:53:53.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rectXYdMOkg7RFgNg",
+      "sourceCreatedTime": "2026-04-01T00:05:41.000Z",
+      "fields": {
+        "Name": "Michael Enever",
+        "Subject": "NEW Listing - BAIRNSDALE - Harcourts",
+        "Email": "michael.enever@harcourts.com.au",
+        "Body": "Hi Rugesh,\r\n\r\nPlease find below a residential property listing located close to the CBD in BAIRNSDALE that represents tremendous opportunities for permanent occupancy or investment options and that may be of interest to you or someone that you know."
+      }
+    },
+    {
+      "sourceRecordId": "rectebOn626dR0lQe",
+      "sourceCreatedTime": "2025-12-11T03:37:51.000Z",
+      "fields": {
+        "Name": "Geoff Sellars",
+        "Subject": "Weekly Listings Update",
+        "Email": "geoff.sellars@raywhite.com",
+        "Body": "View this email in your browser\r\nDear NPC Services,\r\n\r\nPlease find below a collection of our latest property listings on the market! For further details on any of these properties, simply click on the property image.\r\n\r\nIt’s an exciting time for property ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rectguSgxldbhxlyu",
+      "sourceCreatedTime": "2026-02-06T04:43:26.000Z",
+      "fields": {
+        "Name": "Michael Enever",
+        "Subject": "NEW Property Listing - BENAMBRA - Harcourts",
+        "Email": "michael.enever@harcourts.com.au",
+        "Body": "Hi Rugesh,\r\n\r\nPlease find below a new vacant land property listing located at BENAMBRA in East Gippsland that may be of interest to you or someone that you know.\r\nIf you would like further information about the property shown, or to discuss your pro"
+      }
+    },
+    {
+      "sourceRecordId": "recti1lgPhaMJxzNS",
+      "sourceCreatedTime": "2026-02-20T04:37:46.000Z",
+      "fields": {
+        "Name": "Team Pennisi",
+        "Subject": "🏉 Let's get tipping + this week's listings",
+        "Email": "sales@pennisi.com.au",
+        "Body": "Scroll 👇🏽 for this week's 🏠\r\n\r\nHi Rugesh,\r\n\r\nPennisi's footy tipping competition is back for 2026 and we’d love for you to join!\r\n\r\nIt’s free to register and you don’t have to live in Melbourne to participate, with last year’s comp attracting over 400 ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rectiJlavd49Uxz6b",
+      "sourceCreatedTime": "2026-04-22T02:26:11.000Z",
+      "fields": {
+        "Name": "Robyn Faa",
+        "Subject": "Just Listed | 20 Oasis Drive, North Mackay",
+        "Email": "robyn@robynfaa.com.au",
+        "Body": "Just Listed\r\n\r\nHi Rugesh\r\n\r\nWe are pleased to announce that 20 Oasis Drive, North Mackay has just been listed for sale!\r\n\r\nIf you would like additional information on this property, click the \"View Online\" tab below to find all Mapping, Rental Estimations"
+      }
+    },
+    {
+      "sourceRecordId": "rectj21TC7VS5SmR2",
+      "sourceCreatedTime": "2026-02-02T02:48:16.000Z",
+      "fields": {
+        "Name": "Wellmanprop",
+        "Subject": "🛎️February | WELLMAN PROP STOCK LIST - Weekly Updates❗",
+        "Email": "projects@wellmanpropgroup.com",
+        "Body": "Click Here to Access All Projects & Stocklist\r\n\r\nWELLMAN STOCKLIST\r\n\r\nWeekly Updates\r\n\r\n \r\n\r\nTOWNHOUSE (COMPLETE)\r\n\r\n30-32 Station Street, Ferntree Gully\r\n\r\n2-3B  1.5-2B  1-2CAR\r\n\r\n\r\nAsking Price:\r\n\r\nUnit 1: $748,000\r\n\r\nUnit 2: $878,000\r\n\r\nUnit 4: Sold"
+      }
+    },
+    {
+      "sourceRecordId": "rectj3B0tCq0QzAW4",
+      "sourceCreatedTime": "2026-02-01T02:57:02.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rectjjDZC8qrsk76f",
+      "sourceCreatedTime": "2026-02-20T03:45:30.000Z",
+      "fields": {
+        "Name": "McFall Real Estate",
+        "Subject": "PRICE REDUCTION",
+        "Email": "joe@mcfallrealestate.com.au",
+        "Body": "View this email in your browser\r\n\r\n\r\n\r\nPRICE REDUCTION\r\n\r\n\r\n11 Ash Lane, Ballan\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n585m2\r\n\r\n\r\nTITLED CORNER BLOCK\r\n\r\n\r\n\r\nNOW $286,000\r\n\r\n\r\nCall our office to find out more\r\n\r\n03 5368 1500\r\nOr email\r\njoe@mcfallrealestate.com.au\r\n\r\nThe informati"
+      }
+    },
+    {
+      "sourceRecordId": "rectjuhRgHlRqU1vN",
+      "sourceCreatedTime": "2025-12-04T04:24:37.000Z",
+      "fields": {
+        "Name": "Nicole Frew",
+        "Subject": "EXPRESSIONS OF INTEREST - PRIME 47 ACRE ULTIMATE LIFESTYLE-PLUS-INVESTMENT PROPERTY IN A HIGH-GROWTH LOCATION",
+        "Email": "nicole@gattonrealestate.com.au",
+        "Body": "Good afternoon Rugesh\r\n\r\nPerfectly positioned between Gatton’s sought-after Airpark Estate ✈️ and the prestigious Koala Park Estate 🐨, this rare 47-acre holding delivers lifestyle, income and future development potential (STCA) all in one exceptional pac"
+      }
+    },
+    {
+      "sourceRecordId": "rectk4oDBJmW98iqD",
+      "sourceCreatedTime": "2026-06-05T02:41:53.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rectl75tSIQTUuwlm",
+      "sourceCreatedTime": "2026-06-05T04:31:05.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rectlJ3omDiXY2tCN",
+      "sourceCreatedTime": "2026-02-20T05:02:07.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rectld7fLMnuRd8zj",
+      "sourceCreatedTime": "2026-04-01T07:11:51.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    }
+  ]
+}

@@ -1,0 +1,2636 @@
+{
+  "version": 1,
+  "source": "npc-property-dashbord/src/lib/userGuideContent.ts",
+  "generated_at": "2026-08-12T17:14:09.212Z",
+  "default_base_url": "https://npcservices.com.au",
+  "chunks": [
+    {
+      "id": "getting-started/overview",
+      "section_id": "getting-started",
+      "section_title": "Getting Started",
+      "anchor": "section-getting-started",
+      "title": "Getting Started",
+      "content": "Essential navigation and dashboard overview\nTopics: Dashboard Overview; Navigation & Sidebar",
+      "keywords": [
+        "getting",
+        "started",
+        "dashboard",
+        "overview",
+        "navigation",
+        "sidebar"
+      ]
+    },
+    {
+      "id": "getting-started/dashboard-overview",
+      "section_id": "getting-started",
+      "section_title": "Getting Started",
+      "anchor": "section-getting-started",
+      "title": "Dashboard Overview",
+      "content": "The main dashboard provides a comprehensive view of your property data with key performance indicators (KPIs), charts, and recent activity.\nFeatures: Real-time data updates across all modules; Interactive charts and visualizations; Quick access to all sections via sidebar navigation; Notification center for alerts and updates",
+      "keywords": [
+        "getting",
+        "started",
+        "dashboard",
+        "overview"
+      ]
+    },
+    {
+      "id": "getting-started/navigation-and-sidebar",
+      "section_id": "getting-started",
+      "section_title": "Getting Started",
+      "anchor": "section-getting-started",
+      "title": "Navigation & Sidebar",
+      "content": "Use the collapsible sidebar to navigate between different sections. The active page is highlighted for easy reference.\nFeatures: Collapsible sidebar for more screen space; Quick search functionality (Ctrl/⌘ + K); User profile and settings access; Role-based menu visibility",
+      "keywords": [
+        "getting",
+        "started",
+        "navigation",
+        "sidebar"
+      ]
+    },
+    {
+      "id": "client-management/overview",
+      "section_id": "client-management",
+      "section_title": "Client Management",
+      "anchor": "section-client-management",
+      "title": "Client Management",
+      "content": "Comprehensive CRM for managing investor clients\nTopics: Client Tracker; Client Details & Financials; Client Notes & Reminders; Client Tags & Segmentation; Portfolio Analysis Reports",
+      "keywords": [
+        "client",
+        "management",
+        "tracker",
+        "details",
+        "financials",
+        "notes",
+        "reminders",
+        "tags",
+        "segmentation",
+        "portfolio",
+        "analysis",
+        "reports"
+      ]
+    },
+    {
+      "id": "client-management/client-tracker",
+      "section_id": "client-management",
+      "section_title": "Client Management",
+      "anchor": "section-client-management",
+      "title": "Client Tracker",
+      "content": "The Client Tracker is your central hub for managing all client relationships, tracking their investment journey, and maintaining detailed records.\nFeatures: Client cards with key financial summaries; Pipeline stage tracking for each client; Favorite clients for quick access; Advanced filtering by status, tags, and activity; Bulk actions for efficient management\nSteps: 1. Navigate to \"Client Tracker\" in the sidebar 2. Use the search bar to find specific clients 3. Click on a client card to view full details 4. Use tabs to navigate between Personal, Employment, Financials, Properties, Emails, Notes, and Reports 5. Update client information directly in the modal",
+      "keywords": [
+        "client",
+        "management",
+        "tracker"
+      ]
+    },
+    {
+      "id": "client-management/client-details-and-financials",
+      "section_id": "client-management",
+      "section_title": "Client Management",
+      "anchor": "section-client-management",
+      "title": "Client Details & Financials",
+      "content": "Each client profile contains comprehensive financial information for borrowing capacity and portfolio analysis.\nFeatures: Personal and employment details; Income sources with multiple entry types; Expense tracking by category; Assets and liabilities management; Property portfolio overview; Borrowing capacity calculations",
+      "keywords": [
+        "client",
+        "management",
+        "details",
+        "financials"
+      ]
+    },
+    {
+      "id": "client-management/client-notes-and-reminders",
+      "section_id": "client-management",
+      "section_title": "Client Management",
+      "anchor": "section-client-management",
+      "title": "Client Notes & Reminders",
+      "content": "Keep detailed notes and set reminders for follow-ups and important dates.\nFeatures: Rich text notes with timestamps; Voice note recording capability; Reminder scheduling with priority levels; Activity timeline showing all interactions",
+      "keywords": [
+        "client",
+        "management",
+        "notes",
+        "reminders"
+      ]
+    },
+    {
+      "id": "client-management/client-tags-and-segmentation",
+      "section_id": "client-management",
+      "section_title": "Client Management",
+      "anchor": "section-client-management",
+      "title": "Client Tags & Segmentation",
+      "content": "Organize clients with custom tags for better segmentation and targeting.\nFeatures: Create custom colored tags; Assign multiple tags per client; Filter clients by tag combinations; Bulk tag assignment",
+      "keywords": [
+        "client",
+        "management",
+        "tags",
+        "segmentation"
+      ]
+    },
+    {
+      "id": "client-management/portfolio-analysis-reports",
+      "section_id": "client-management",
+      "section_title": "Client Management",
+      "anchor": "section-client-management",
+      "title": "Portfolio Analysis Reports",
+      "content": "Generate comprehensive portfolio health reports for your clients.\nFeatures: Overall portfolio health scoring; Property-by-property breakdown; Equity and cashflow analysis; LVR and yield calculations; PDF export with professional formatting\nSteps: 1. Open a client's details modal 2. Navigate to the \"Reports\" tab 3. Click \"Generate Portfolio Analysis\" 4. Wait for the AI to analyze all properties 5. Download the PDF report",
+      "keywords": [
+        "client",
+        "management",
+        "portfolio",
+        "analysis",
+        "reports"
+      ]
+    },
+    {
+      "id": "email-copilot/overview",
+      "section_id": "email-copilot",
+      "section_title": "Email Copilot",
+      "anchor": "section-email-copilot",
+      "title": "Email Copilot",
+      "content": "AI-powered email management and automation\nTopics: Email Overview; Managing Emails; Linking Emails to Clients; Email Actions",
+      "keywords": [
+        "email",
+        "copilot",
+        "overview",
+        "managing",
+        "emails",
+        "linking",
+        "clients",
+        "actions"
+      ]
+    },
+    {
+      "id": "email-copilot/email-overview",
+      "section_id": "email-copilot",
+      "section_title": "Email Copilot",
+      "anchor": "section-email-copilot",
+      "title": "Email Overview",
+      "content": "The Email Copilot centralizes all client communications with AI-powered features for drafting, summarizing, and managing emails.\nFeatures: Unified inbox for admin and personal mailboxes; AI-generated email summaries; Smart draft replies with context awareness; Urgency detection and prioritization; Client linking for organized communications",
+      "keywords": [
+        "email",
+        "copilot",
+        "overview"
+      ]
+    },
+    {
+      "id": "email-copilot/managing-emails",
+      "section_id": "email-copilot",
+      "section_title": "Email Copilot",
+      "anchor": "section-email-copilot",
+      "title": "Managing Emails",
+      "content": "Process and organize incoming emails efficiently with AI assistance.\nSteps: 1. Navigate to \"Email Copilot\" in the sidebar 2. View inbox organized by urgency and status 3. Click on an email to see full content and AI summary 4. Use \"Generate AI Reply\" for smart draft responses 5. Link emails to specific clients for tracking 6. Mark emails as processed when complete",
+      "keywords": [
+        "email",
+        "copilot",
+        "managing",
+        "emails"
+      ]
+    },
+    {
+      "id": "email-copilot/linking-emails-to-clients",
+      "section_id": "email-copilot",
+      "section_title": "Email Copilot",
+      "anchor": "section-email-copilot",
+      "title": "Linking Emails to Clients",
+      "content": "Associate email threads with specific clients for organized tracking.\nFeatures: Search and select clients from the dropdown; View all linked emails in client details; Track communication history per client; Quick access from both Email Copilot and Client Tracker",
+      "keywords": [
+        "email",
+        "copilot",
+        "linking",
+        "emails",
+        "clients"
+      ]
+    },
+    {
+      "id": "email-copilot/email-actions",
+      "section_id": "email-copilot",
+      "section_title": "Email Copilot",
+      "anchor": "section-email-copilot",
+      "title": "Email Actions",
+      "content": "Take action on emails directly from the copilot interface.\nFeatures: Generate AI-powered reply drafts; Mark as processed/pending/follow-up; Set urgency levels (low, normal, high, critical); Compose and send replies with signature; Archive completed conversations",
+      "keywords": [
+        "email",
+        "copilot",
+        "actions"
+      ]
+    },
+    {
+      "id": "report-qa/overview",
+      "section_id": "report-qa",
+      "section_title": "Aurixa Intelligence Hub (AI Chat)",
+      "anchor": "section-report-qa",
+      "title": "Aurixa Intelligence Hub (AI Chat)",
+      "content": "AI-powered assistant for property report analysis\nTopics: AI Chat Overview; Using the AI Chat; Conversation Management; Advanced Features",
+      "keywords": [
+        "aurixa",
+        "intelligence",
+        "hub",
+        "chat",
+        "overview",
+        "conversation",
+        "management",
+        "advanced",
+        "features"
+      ]
+    },
+    {
+      "id": "report-qa/ai-chat-overview",
+      "section_id": "report-qa",
+      "section_title": "Aurixa Intelligence Hub (AI Chat)",
+      "anchor": "section-report-qa",
+      "title": "AI Chat Overview",
+      "content": "The Aurixa Intelligence Hub feature allows you to have natural conversations with an AI assistant that has access to your property reports and market data.\nFeatures: Natural language queries about properties; Context-aware responses using your report data; Multi-turn conversations with memory; PDF document attachment and analysis; Voice message input support",
+      "keywords": [
+        "aurixa",
+        "intelligence",
+        "hub",
+        "chat",
+        "overview"
+      ]
+    },
+    {
+      "id": "report-qa/using-the-ai-chat",
+      "section_id": "report-qa",
+      "section_title": "Aurixa Intelligence Hub (AI Chat)",
+      "anchor": "section-report-qa",
+      "title": "Using the AI Chat",
+      "content": "Ask questions about properties, market trends, and investment analysis.\nSteps: 1. Navigate to \"Aurixa Intelligence Hub\" in the sidebar 2. Select reports from the sidebar to provide context 3. Type your question in the message input 4. Use voice recording for hands-free input 5. Review AI responses with source citations 6. Follow up with clarifying questions\nTips: Attach specific reports for more accurate answers; Ask comparative questions across multiple properties; Request summaries of complex report sections; Use follow-up suggestions for deeper analysis",
+      "keywords": [
+        "aurixa",
+        "intelligence",
+        "hub",
+        "chat"
+      ]
+    },
+    {
+      "id": "report-qa/conversation-management",
+      "section_id": "report-qa",
+      "section_title": "Aurixa Intelligence Hub (AI Chat)",
+      "anchor": "section-report-qa",
+      "title": "Conversation Management",
+      "content": "Organize and manage your AI chat history.\nFeatures: Pin important conversations; Tag conversations by topic; Search conversation history (⌘/Ctrl + K); Export conversations as PDF or text; Start new chats (⌘/Ctrl + N)",
+      "keywords": [
+        "aurixa",
+        "intelligence",
+        "hub",
+        "chat",
+        "conversation",
+        "management"
+      ]
+    },
+    {
+      "id": "report-qa/advanced-features",
+      "section_id": "report-qa",
+      "section_title": "Aurixa Intelligence Hub (AI Chat)",
+      "anchor": "section-report-qa",
+      "title": "Advanced Features",
+      "content": "Power user features for enhanced productivity.\nFeatures: Full-screen mode (⌘/Ctrl + Enter); Text-to-speech for responses; Message reactions for feedback; Auto-summarize long responses; Theme customization; Accessibility settings",
+      "keywords": [
+        "aurixa",
+        "intelligence",
+        "hub",
+        "chat",
+        "advanced",
+        "features"
+      ]
+    },
+    {
+      "id": "property-management/overview",
+      "section_id": "property-management",
+      "section_title": "Property Management",
+      "anchor": "section-property-management",
+      "title": "Property Management",
+      "content": "View and manage property listings\nTopics: Property Marketplace; Property Filters; Property Details",
+      "keywords": [
+        "property",
+        "management",
+        "marketplace",
+        "filters",
+        "details"
+      ]
+    },
+    {
+      "id": "property-management/property-marketplace",
+      "section_id": "property-management",
+      "section_title": "Property Management",
+      "anchor": "section-property-management",
+      "title": "Property Marketplace",
+      "content": "View and manage all property listings with advanced filtering and search capabilities.\nFeatures: Search by address, suburb, or postcode; Filter by property type, price range, and status; View detailed property information; Generate investment reports for individual properties; Compare multiple properties side-by-side",
+      "keywords": [
+        "property",
+        "management",
+        "marketplace"
+      ]
+    },
+    {
+      "id": "property-management/property-filters",
+      "section_id": "property-management",
+      "section_title": "Property Management",
+      "anchor": "section-property-management",
+      "title": "Property Filters",
+      "content": "Use filters to narrow down properties based on your criteria.\nFeatures: State and suburb filtering; Property type selection (house, unit, land, etc.); Price range filtering with min/max; Status filtering (active, pending, sold, withdrawn); Save filter presets for quick access",
+      "keywords": [
+        "property",
+        "management",
+        "filters"
+      ]
+    },
+    {
+      "id": "property-management/property-details",
+      "section_id": "property-management",
+      "section_title": "Property Management",
+      "anchor": "section-property-management",
+      "title": "Property Details",
+      "content": "View comprehensive information about each property.\nFeatures: Property specifications and features; Price history and market comparison; Location insights and amenities; Agent and agency information; Quick report generation buttons",
+      "keywords": [
+        "property",
+        "management",
+        "details"
+      ]
+    },
+    {
+      "id": "cash-flow-analysis/overview",
+      "section_id": "cash-flow-analysis",
+      "section_title": "Cash Flow Analysis",
+      "anchor": "section-cash-flow-analysis",
+      "title": "Cash Flow Analysis",
+      "content": "Detailed property cash flow modeling\nTopics: Cash Flow Calculator; Scenario Comparison",
+      "keywords": [
+        "cash",
+        "flow",
+        "analysis",
+        "calculator",
+        "scenario",
+        "comparison"
+      ]
+    },
+    {
+      "id": "cash-flow-analysis/cash-flow-calculator",
+      "section_id": "cash-flow-analysis",
+      "section_title": "Cash Flow Analysis",
+      "anchor": "section-cash-flow-analysis",
+      "title": "Cash Flow Calculator",
+      "content": "Model the cash flow of investment properties with detailed income and expense projections.\nFeatures: Rental income projections; Operating expense calculations; Loan repayment modeling; Tax benefit analysis; Net cash flow visualization",
+      "keywords": [
+        "cash",
+        "flow",
+        "analysis",
+        "calculator"
+      ]
+    },
+    {
+      "id": "cash-flow-analysis/scenario-comparison",
+      "section_id": "cash-flow-analysis",
+      "section_title": "Cash Flow Analysis",
+      "anchor": "section-cash-flow-analysis",
+      "title": "Scenario Comparison",
+      "content": "Compare different investment scenarios side-by-side.\nFeatures: Multiple property comparison; Interest rate sensitivity analysis; Occupancy rate impact modeling; Growth rate projections; Export comparison reports",
+      "keywords": [
+        "cash",
+        "flow",
+        "analysis",
+        "scenario",
+        "comparison"
+      ]
+    },
+    {
+      "id": "borrowing-capacity/overview",
+      "section_id": "borrowing-capacity",
+      "section_title": "Borrowing Capacity",
+      "anchor": "section-borrowing-capacity",
+      "title": "Borrowing Capacity",
+      "content": "Calculate client borrowing power\nTopics: Capacity Calculator; Conservative Mode; Saving Assessments",
+      "keywords": [
+        "borrowing",
+        "capacity",
+        "calculator",
+        "conservative",
+        "mode",
+        "saving",
+        "assessments"
+      ]
+    },
+    {
+      "id": "borrowing-capacity/capacity-calculator",
+      "section_id": "borrowing-capacity",
+      "section_title": "Borrowing Capacity",
+      "anchor": "section-borrowing-capacity",
+      "title": "Capacity Calculator",
+      "content": "Calculate borrowing capacity based on income, expenses, and existing commitments using bank-approved methodologies.\nFeatures: Gross and net income calculation; Living expense modeling (HEM/declared); Existing commitment factoring; Buffer rate application; Serviceability assessment",
+      "keywords": [
+        "borrowing",
+        "capacity",
+        "calculator"
+      ]
+    },
+    {
+      "id": "borrowing-capacity/conservative-mode",
+      "section_id": "borrowing-capacity",
+      "section_title": "Borrowing Capacity",
+      "anchor": "section-borrowing-capacity",
+      "title": "Conservative Mode",
+      "content": "Apply stricter lending criteria for more realistic capacity estimates.\nFeatures: $1,000/mo minimum surplus floor; $1,500 residual income floor; 85% surplus utilization; 6x DTI (debt-to-income) cap; Lender-specific adjustments\nTips: Use Conservative Mode for client-facing quotes; Standard mode shows theoretical maximum; Compare both modes to set expectations",
+      "keywords": [
+        "borrowing",
+        "capacity",
+        "conservative",
+        "mode"
+      ]
+    },
+    {
+      "id": "borrowing-capacity/saving-assessments",
+      "section_id": "borrowing-capacity",
+      "section_title": "Borrowing Capacity",
+      "anchor": "section-borrowing-capacity",
+      "title": "Saving Assessments",
+      "content": "Save borrowing capacity assessments to client profiles.\nSteps: 1. Complete the borrowing capacity calculation 2. Review the results and recommendations 3. Click \"Save to Client\" button 4. Select the client from the dropdown 5. Access saved assessments from client details",
+      "keywords": [
+        "borrowing",
+        "capacity",
+        "saving",
+        "assessments"
+      ]
+    },
+    {
+      "id": "call-logs/overview",
+      "section_id": "call-logs",
+      "section_title": "Call Logs",
+      "anchor": "section-call-logs",
+      "title": "Call Logs",
+      "content": "AI-powered call recording and analysis\nTopics: Call Management; Call Analysis; Alert Rules",
+      "keywords": [
+        "call",
+        "logs",
+        "management",
+        "analysis",
+        "alert",
+        "rules"
+      ]
+    },
+    {
+      "id": "call-logs/call-management",
+      "section_id": "call-logs",
+      "section_title": "Call Logs",
+      "anchor": "section-call-logs",
+      "title": "Call Management",
+      "content": "Track and analyze all client calls with AI-powered transcription and insights.\nFeatures: Automatic call recording; AI transcription of conversations; Sentiment analysis; Key topic extraction; Call duration and status tracking",
+      "keywords": [
+        "call",
+        "logs",
+        "management"
+      ]
+    },
+    {
+      "id": "call-logs/call-analysis",
+      "section_id": "call-logs",
+      "section_title": "Call Logs",
+      "anchor": "section-call-logs",
+      "title": "Call Analysis",
+      "content": "Extract insights from recorded calls.\nFeatures: Full transcript review; Speaker identification; Action item extraction; Follow-up task creation; Client linking for context",
+      "keywords": [
+        "call",
+        "logs",
+        "analysis"
+      ]
+    },
+    {
+      "id": "call-logs/alert-rules",
+      "section_id": "call-logs",
+      "section_title": "Call Logs",
+      "anchor": "section-call-logs",
+      "title": "Alert Rules",
+      "content": "Set up automated alerts based on call content or metrics.\nFeatures: Keyword-based triggers; Duration thresholds; Sentiment-based alerts; Custom notification rules; Team notification routing",
+      "keywords": [
+        "call",
+        "logs",
+        "alert",
+        "rules"
+      ]
+    },
+    {
+      "id": "automation/overview",
+      "section_id": "automation",
+      "section_title": "Auto Report Generation",
+      "anchor": "section-automation",
+      "title": "Auto Report Generation",
+      "content": "Automated report generation and workflows\nTopics: Auto-Report Switches; Generation Logs",
+      "keywords": [
+        "auto",
+        "report",
+        "generation",
+        "switches",
+        "logs"
+      ]
+    },
+    {
+      "id": "automation/auto-report-switches",
+      "section_id": "automation",
+      "section_title": "Auto Report Generation",
+      "anchor": "section-automation",
+      "title": "Auto-Report Switches",
+      "content": "Configure automated report generation based on property criteria.\nFeatures: Criteria-based triggers (price, location, type); Priority ordering for multiple switches; Enable/disable individual switches; Generation logging and history; Master toggle for all automation\nSteps: 1. Navigate to \"Auto Report Generation\" in the sidebar 2. Click \"Add Switch\" to create a new automation 3. Configure trigger criteria (state, price range, property type) 4. Set priority order for switch evaluation 5. Enable the switch and master toggle 6. Monitor generation logs for activity",
+      "keywords": [
+        "auto",
+        "report",
+        "generation",
+        "switches"
+      ]
+    },
+    {
+      "id": "automation/generation-logs",
+      "section_id": "automation",
+      "section_title": "Auto Report Generation",
+      "anchor": "section-automation",
+      "title": "Generation Logs",
+      "content": "View history of all automated report generations.\nFeatures: Success/failure status for each generation; Property details and switch that triggered; Error messages for troubleshooting; Timestamp and duration tracking; Link to generated reports",
+      "keywords": [
+        "auto",
+        "report",
+        "generation",
+        "logs"
+      ]
+    },
+    {
+      "id": "reports-analytics/overview",
+      "section_id": "reports-analytics",
+      "section_title": "Reports & Analytics",
+      "anchor": "section-reports-analytics",
+      "title": "Reports & Analytics",
+      "content": "Investment reports and data visualization\nTopics: Investment Report Generation; Generated Reports; Charts & Visualization; Portfolio Reports",
+      "keywords": [
+        "reports",
+        "analytics",
+        "investment",
+        "report",
+        "generation",
+        "generated",
+        "charts",
+        "visualization",
+        "portfolio"
+      ]
+    },
+    {
+      "id": "reports-analytics/investment-report-generation",
+      "section_id": "reports-analytics",
+      "section_title": "Reports & Analytics",
+      "anchor": "section-reports-analytics",
+      "title": "Investment Report Generation",
+      "content": "Create comprehensive property investment analysis reports with AI-powered insights.\nFeatures: 13-section comprehensive analysis; Market KPIs and pricing trends; Demographics and demand analysis; Risk assessment (flood, bushfire, crime); Financial projections and scenarios; Investment scoring (0-100)\nSteps: 1. Go to \"Property Marketplace\" and find your target property 2. Click \"Generate Report\" on the property card 3. Choose analysis mode (Address/Postcode/State) 4. Configure financial assumptions 5. Wait for AI analysis (2-5 minutes) 6. Review and download the report",
+      "keywords": [
+        "reports",
+        "analytics",
+        "investment",
+        "report",
+        "generation"
+      ]
+    },
+    {
+      "id": "reports-analytics/generated-reports",
+      "section_id": "reports-analytics",
+      "section_title": "Reports & Analytics",
+      "anchor": "section-reports-analytics",
+      "title": "Generated Reports",
+      "content": "Access and manage all your generated investment reports.\nFeatures: Report library with search and filters; PDF download and sharing; Report versioning history; Bookmarking for quick access; Usage analytics",
+      "keywords": [
+        "reports",
+        "analytics",
+        "generated"
+      ]
+    },
+    {
+      "id": "reports-analytics/charts-and-visualization",
+      "section_id": "reports-analytics",
+      "section_title": "Reports & Analytics",
+      "anchor": "section-reports-analytics",
+      "title": "Charts & Visualization",
+      "content": "Create custom charts for market analysis and presentations.\nFeatures: Multiple chart types (bar, line, pie, scatter); Custom data filtering and grouping; Export as images or PDFs; Real-time data updates; Comparative analysis tools",
+      "keywords": [
+        "reports",
+        "analytics",
+        "charts",
+        "visualization"
+      ]
+    },
+    {
+      "id": "reports-analytics/portfolio-reports",
+      "section_id": "reports-analytics",
+      "section_title": "Reports & Analytics",
+      "anchor": "section-reports-analytics",
+      "title": "Portfolio Reports",
+      "content": "Generate portfolio-level analysis across multiple properties.\nFeatures: Multi-property health scoring; Diversification analysis; Combined cash flow projections; Risk distribution overview; Client-ready PDF exports",
+      "keywords": [
+        "reports",
+        "analytics",
+        "portfolio"
+      ]
+    },
+    {
+      "id": "data-import/overview",
+      "section_id": "data-import",
+      "section_title": "Data Import",
+      "anchor": "section-data-import",
+      "title": "Data Import",
+      "content": "Import client and property data\nTopics: Excel Import; Client Detail Forms",
+      "keywords": [
+        "data",
+        "import",
+        "excel",
+        "client",
+        "detail",
+        "forms"
+      ]
+    },
+    {
+      "id": "data-import/excel-import",
+      "section_id": "data-import",
+      "section_title": "Data Import",
+      "anchor": "section-data-import",
+      "title": "Excel Import",
+      "content": "Bulk import clients and properties from Excel spreadsheets.\nFeatures: Template download for correct formatting; Column mapping assistance; Validation and error reporting; Duplicate detection; Import history logging\nSteps: 1. Navigate to \"Data Import\" in the sidebar 2. Download the import template 3. Fill in your data following the template format 4. Upload the completed spreadsheet 5. Review validation results 6. Confirm and complete the import",
+      "keywords": [
+        "data",
+        "import",
+        "excel"
+      ]
+    },
+    {
+      "id": "data-import/client-detail-forms",
+      "section_id": "data-import",
+      "section_title": "Data Import",
+      "anchor": "section-data-import",
+      "title": "Client Detail Forms",
+      "content": "Import client data from client detail form submissions.\nFeatures: Automatic form parsing; Client profile creation; Income and expense extraction; Property detail import; Document attachment linking",
+      "keywords": [
+        "data",
+        "import",
+        "client",
+        "detail",
+        "forms"
+      ]
+    },
+    {
+      "id": "templates/overview",
+      "section_id": "templates",
+      "section_title": "Template Management",
+      "anchor": "section-templates",
+      "title": "Template Management",
+      "content": "Manage report templates and PDF layouts\nTopics: Report Format Templates; AI Structure Templates; PDF Layout Templates; Q&A Export Templates; Cash Flow Export Templates; Client Branding Profiles; Global Report Settings",
+      "keywords": [
+        "template",
+        "management",
+        "report",
+        "format",
+        "templates",
+        "structure",
+        "pdf",
+        "layout",
+        "export",
+        "cash",
+        "flow",
+        "client",
+        "branding",
+        "profiles",
+        "global",
+        "settings"
+      ]
+    },
+    {
+      "id": "templates/report-format-templates",
+      "section_id": "templates",
+      "section_title": "Template Management",
+      "anchor": "section-templates",
+      "title": "Report Format Templates",
+      "content": "Configure templates for different report types including Investment Compass, Executive Brief, and Snapshot reports.\nFeatures: Investment report templates (Compass, Executive, Snapshot); Comparison analysis templates; Individual cash flow templates; Template priority ordering; Category-based organization",
+      "keywords": [
+        "template",
+        "management",
+        "report",
+        "format",
+        "templates"
+      ]
+    },
+    {
+      "id": "templates/ai-structure-templates",
+      "section_id": "templates",
+      "section_title": "Template Management",
+      "anchor": "section-templates",
+      "title": "AI Structure Templates",
+      "content": "Reference documents that define report structure and content patterns for AI generation.\nFeatures: Upload reference PDFs for AI learning; Vector embedding for context injection; Template type categorization; Priority-based template selection\nSteps: 1. Navigate to \"Templates\" in the sidebar 2. Select the \"AI Structure\" tab 3. Click \"Upload Template\" and select your reference PDF 4. Configure category and priority settings 5. Save to enable for report generation",
+      "keywords": [
+        "template",
+        "management",
+        "structure",
+        "templates"
+      ]
+    },
+    {
+      "id": "templates/pdf-layout-templates",
+      "section_id": "templates",
+      "section_title": "Template Management",
+      "anchor": "section-templates",
+      "title": "PDF Layout Templates",
+      "content": "HTML/CSS templates that control the visual layout and styling of generated PDF reports.\nFeatures: Custom header and footer designs; Page layout configurations; Font and color scheme settings; Section ordering and visibility",
+      "keywords": [
+        "template",
+        "management",
+        "pdf",
+        "layout",
+        "templates"
+      ]
+    },
+    {
+      "id": "templates/q-and-a-export-templates",
+      "section_id": "templates",
+      "section_title": "Template Management",
+      "anchor": "section-templates",
+      "title": "Q&A Export Templates",
+      "content": "Customize how Aurixa Intelligence Hub conversations are exported to PDF.\nFeatures: Cover page design customization; Font and color settings; Header and footer styling; Active template selection",
+      "keywords": [
+        "template",
+        "management",
+        "export",
+        "templates"
+      ]
+    },
+    {
+      "id": "templates/cash-flow-export-templates",
+      "section_id": "templates",
+      "section_title": "Template Management",
+      "anchor": "section-templates",
+      "title": "Cash Flow Export Templates",
+      "content": "Customize how 10-Year Cash Flow analyses are exported.\nFeatures: Branding and logo placement; Color scheme customization; Professional PDF formatting; Template activation toggle",
+      "keywords": [
+        "template",
+        "management",
+        "cash",
+        "flow",
+        "export",
+        "templates"
+      ]
+    },
+    {
+      "id": "templates/client-branding-profiles",
+      "section_id": "templates",
+      "section_title": "Template Management",
+      "anchor": "section-templates",
+      "title": "Client Branding Profiles",
+      "content": "Create white-label branding for different clients.\nFeatures: Client-specific logos and colors; Multiple saved profiles; Default profile setting; Per-report branding selection",
+      "keywords": [
+        "template",
+        "management",
+        "client",
+        "branding",
+        "profiles"
+      ]
+    },
+    {
+      "id": "templates/global-report-settings",
+      "section_id": "templates",
+      "section_title": "Template Management",
+      "anchor": "section-templates",
+      "title": "Global Report Settings",
+      "content": "Configure default settings that apply to all reports.\nFeatures: Default assumptions and values; Standard disclaimers; Contact information; Footer content settings",
+      "keywords": [
+        "template",
+        "management",
+        "global",
+        "report",
+        "settings"
+      ]
+    },
+    {
+      "id": "sources/overview",
+      "section_id": "sources",
+      "section_title": "Data Sources",
+      "anchor": "section-sources",
+      "title": "Data Sources",
+      "content": "Track and manage listing data sources\nTopics: Email Sources; Agency Sources; Agent Sources",
+      "keywords": [
+        "data",
+        "sources",
+        "email",
+        "agency",
+        "agent"
+      ]
+    },
+    {
+      "id": "sources/email-sources",
+      "section_id": "sources",
+      "section_title": "Data Sources",
+      "anchor": "section-sources",
+      "title": "Email Sources",
+      "content": "View and manage email sources that send property listings.\nFeatures: Email domain tracking; Listing count per source; Latest received timestamps; Source filtering and search",
+      "keywords": [
+        "data",
+        "sources",
+        "email"
+      ]
+    },
+    {
+      "id": "sources/agency-sources",
+      "section_id": "sources",
+      "section_title": "Data Sources",
+      "anchor": "section-sources",
+      "title": "Agency Sources",
+      "content": "Track real estate agencies and their listing activity.\nFeatures: Agency name and contact info; Associated agents list; Listing volume tracking; Activity timeline",
+      "keywords": [
+        "data",
+        "sources",
+        "agency"
+      ]
+    },
+    {
+      "id": "sources/agent-sources",
+      "section_id": "sources",
+      "section_title": "Data Sources",
+      "anchor": "section-sources",
+      "title": "Agent Sources",
+      "content": "Individual agent tracking and contact management.\nFeatures: Agent contact details; Agency affiliation; Listing history; Phone and email quick actions",
+      "keywords": [
+        "data",
+        "sources",
+        "agent"
+      ]
+    },
+    {
+      "id": "integrations/overview",
+      "section_id": "integrations",
+      "section_title": "Integrations",
+      "anchor": "section-integrations",
+      "title": "Integrations",
+      "content": "Configure external service connections\nTopics: Integration Overview; Configuring Integrations; Supabase Secrets",
+      "keywords": [
+        "integrations",
+        "integration",
+        "overview",
+        "configuring",
+        "supabase",
+        "secrets"
+      ]
+    },
+    {
+      "id": "integrations/integration-overview",
+      "section_id": "integrations",
+      "section_title": "Integrations",
+      "anchor": "section-integrations",
+      "title": "Integration Overview",
+      "content": "Connect and manage external services for enhanced functionality.\nFeatures: Airtable for property listings; Vapi for voice AI and call handling; GoHighLevel for CRM sync; OpenAI for AI analysis; Microsoft/Outlook for email; Twilio for SMS communications; Make.com for workflow automation",
+      "keywords": [
+        "integrations",
+        "integration",
+        "overview"
+      ]
+    },
+    {
+      "id": "integrations/configuring-integrations",
+      "section_id": "integrations",
+      "section_title": "Integrations",
+      "anchor": "section-integrations",
+      "title": "Configuring Integrations",
+      "content": "Set up API keys and credentials for each service.\nSteps: 1. Navigate to \"Integrations\" in the sidebar 2. Select the integration you want to configure 3. Enter the required API keys or credentials 4. Click \"Save\" to store the configuration 5. Use \"Sync to Supabase\" to enable for edge functions 6. Verify connection status shows \"Configured\"\nTips: Keep API keys secure and never share them; Use the visibility toggle to verify key values; Check documentation links for each service; Refresh Supabase status after syncing",
+      "keywords": [
+        "integrations",
+        "configuring"
+      ]
+    },
+    {
+      "id": "integrations/supabase-secrets",
+      "section_id": "integrations",
+      "section_title": "Integrations",
+      "anchor": "section-integrations",
+      "title": "Supabase Secrets",
+      "content": "Manage secrets for edge function access.\nFeatures: Sync API keys to Supabase secrets; Status indicators for each integration; Partial configuration warnings; One-click refresh for status",
+      "keywords": [
+        "integrations",
+        "supabase",
+        "secrets"
+      ]
+    },
+    {
+      "id": "depreciation/overview",
+      "section_id": "depreciation",
+      "section_title": "Depreciation Comps",
+      "anchor": "section-depreciation",
+      "title": "Depreciation Comps",
+      "content": "Manage depreciation comparable data\nTopics: Depreciation Database; Adding Comparables; CSV Import; Depreciation Estimator",
+      "keywords": [
+        "depreciation",
+        "comps",
+        "database",
+        "adding",
+        "comparables",
+        "csv",
+        "import",
+        "estimator"
+      ]
+    },
+    {
+      "id": "depreciation/depreciation-database",
+      "section_id": "depreciation",
+      "section_title": "Depreciation Comps",
+      "anchor": "section-depreciation",
+      "title": "Depreciation Database",
+      "content": "Maintain a database of property depreciation comparables for accurate estimates.\nFeatures: Property type categorization; Build year and purchase date tracking; Finish standard classification; City-based regional data; 10-year depreciation projections",
+      "keywords": [
+        "depreciation",
+        "comps",
+        "database"
+      ]
+    },
+    {
+      "id": "depreciation/adding-comparables",
+      "section_id": "depreciation",
+      "section_title": "Depreciation Comps",
+      "anchor": "section-depreciation",
+      "title": "Adding Comparables",
+      "content": "Add new depreciation comparable data to the system.\nSteps: 1. Navigate to Admin > Depreciation Comps 2. Click \"Add New\" to create a manual entry 3. Fill in property details and depreciation values 4. Or use CSV upload for bulk imports 5. Review and save the data",
+      "keywords": [
+        "depreciation",
+        "comps",
+        "adding",
+        "comparables"
+      ]
+    },
+    {
+      "id": "depreciation/csv-import",
+      "section_id": "depreciation",
+      "section_title": "Depreciation Comps",
+      "anchor": "section-depreciation",
+      "title": "CSV Import",
+      "content": "Bulk import depreciation data from spreadsheets.\nFeatures: Template download for correct formatting; Column mapping validation; Preview before import; Error reporting for invalid rows\nTips: Download the template first to ensure correct format; Include all 10 years of depreciation values; Specify property type and finish standard; Review preview before confirming import",
+      "keywords": [
+        "depreciation",
+        "comps",
+        "csv",
+        "import"
+      ]
+    },
+    {
+      "id": "depreciation/depreciation-estimator",
+      "section_id": "depreciation",
+      "section_title": "Depreciation Comps",
+      "anchor": "section-depreciation",
+      "title": "Depreciation Estimator",
+      "content": "Generate depreciation estimates based on property characteristics.\nFeatures: Match against comparable properties; Confidence scoring; Plant & Equipment (P&E) estimates; Division 40/43 calculations",
+      "keywords": [
+        "depreciation",
+        "comps",
+        "estimator"
+      ]
+    },
+    {
+      "id": "settings/overview",
+      "section_id": "settings",
+      "section_title": "Settings",
+      "anchor": "section-settings",
+      "title": "Settings",
+      "content": "Configure your personal preferences\nTopics: Profile & Credentials; Personal Mailbox; Finance Agent Contacts; Display & Preferences; Report Generation; Security & Access",
+      "keywords": [
+        "settings",
+        "profile",
+        "credentials",
+        "personal",
+        "mailbox",
+        "finance",
+        "agent",
+        "contacts",
+        "display",
+        "preferences",
+        "report",
+        "generation",
+        "security",
+        "access"
+      ]
+    },
+    {
+      "id": "settings/profile-and-credentials",
+      "section_id": "settings",
+      "section_title": "Settings",
+      "anchor": "section-settings",
+      "title": "Profile & Credentials",
+      "content": "Manage your account settings and security.\nFeatures: Password change; Profile information; Session management; Two-factor authentication setup",
+      "keywords": [
+        "settings",
+        "profile",
+        "credentials"
+      ]
+    },
+    {
+      "id": "settings/personal-mailbox",
+      "section_id": "settings",
+      "section_title": "Settings",
+      "anchor": "section-settings",
+      "title": "Personal Mailbox",
+      "content": "Configure your email settings for the Email Copilot.\nFeatures: Personal mailbox address; Email signature customization; HTML signature support; Auto-append to sent emails",
+      "keywords": [
+        "settings",
+        "personal",
+        "mailbox"
+      ]
+    },
+    {
+      "id": "settings/finance-agent-contacts",
+      "section_id": "settings",
+      "section_title": "Settings",
+      "anchor": "section-settings",
+      "title": "Finance Agent Contacts",
+      "content": "Manage contacts for finance-related communications.\nFeatures: Add finance broker contacts; Set default recipients; Contact categorization; Quick access for report sending",
+      "keywords": [
+        "settings",
+        "finance",
+        "agent",
+        "contacts"
+      ]
+    },
+    {
+      "id": "settings/display-and-preferences",
+      "section_id": "settings",
+      "section_title": "Settings",
+      "anchor": "section-settings",
+      "title": "Display & Preferences",
+      "content": "Customize your dashboard experience.\nFeatures: Theme selection (Light/Dark/System); Timezone configuration; Browser notification settings; Auto-refresh intervals",
+      "keywords": [
+        "settings",
+        "display",
+        "preferences"
+      ]
+    },
+    {
+      "id": "settings/report-generation",
+      "section_id": "settings",
+      "section_title": "Settings",
+      "anchor": "section-settings",
+      "title": "Report Generation",
+      "content": "Configure automatic report generation behavior.\nFeatures: Auto-continue for stalled reports; Maximum retry attempts (1-5); Retry delay configuration (10-60s); Notification preferences\nTips: Enable auto-continue for unattended report generation; Set reasonable retry limits to avoid loops; Adjust delay based on network conditions",
+      "keywords": [
+        "settings",
+        "report",
+        "generation"
+      ]
+    },
+    {
+      "id": "settings/security-and-access",
+      "section_id": "settings",
+      "section_title": "Settings",
+      "anchor": "section-settings",
+      "title": "Security & Access",
+      "content": "View your permission levels and API access.\nFeatures: API token status; User permission levels; Read/write access indicators; Export permissions",
+      "keywords": [
+        "settings",
+        "security",
+        "access"
+      ]
+    },
+    {
+      "id": "white-label/overview",
+      "section_id": "white-label",
+      "section_title": "Branding (White Label)",
+      "anchor": "section-white-label",
+      "title": "Branding (White Label)",
+      "content": "Customize dashboard and report branding\nTopics: Dashboard Branding; Color Themes; Dark Mode; Report Branding",
+      "keywords": [
+        "branding",
+        "white",
+        "label",
+        "dashboard",
+        "color",
+        "themes",
+        "dark",
+        "mode",
+        "report"
+      ]
+    },
+    {
+      "id": "white-label/dashboard-branding",
+      "section_id": "white-label",
+      "section_title": "Branding (White Label)",
+      "anchor": "section-white-label",
+      "title": "Dashboard Branding",
+      "content": "Customize the overall look and feel of your dashboard.\nFeatures: Auth page logo upload; Sidebar logo (expanded and collapsed); Favicon customization; Automatic background removal for logos\nSteps: 1. Navigate to \"White Label\" in the sidebar 2. Upload logos for each placement 3. Use drag-and-drop or click to upload 4. Preview changes in real-time 5. Save to apply across the dashboard",
+      "keywords": [
+        "branding",
+        "white",
+        "label",
+        "dashboard"
+      ]
+    },
+    {
+      "id": "white-label/color-themes",
+      "section_id": "white-label",
+      "section_title": "Branding (White Label)",
+      "anchor": "section-white-label",
+      "title": "Color Themes",
+      "content": "Configure your brand colors for the dashboard.\nFeatures: Primary color selection; Accent color customization; HSL format for precise control; Real-time preview; CSS variable injection",
+      "keywords": [
+        "branding",
+        "white",
+        "label",
+        "color",
+        "themes"
+      ]
+    },
+    {
+      "id": "white-label/dark-mode",
+      "section_id": "white-label",
+      "section_title": "Branding (White Label)",
+      "anchor": "section-white-label",
+      "title": "Dark Mode",
+      "content": "Control dark mode appearance.\nFeatures: Light/Dark/System theme toggle; Theme persistence across sessions; Automatic system preference detection",
+      "keywords": [
+        "branding",
+        "white",
+        "label",
+        "dark",
+        "mode"
+      ]
+    },
+    {
+      "id": "white-label/report-branding",
+      "section_id": "white-label",
+      "section_title": "Branding (White Label)",
+      "anchor": "section-white-label",
+      "title": "Report Branding",
+      "content": "White-label generated reports for clients.\nFeatures: Company logo on reports; Custom color schemes; Header and footer styling; Contact information display; Multiple branding profiles",
+      "keywords": [
+        "branding",
+        "white",
+        "label",
+        "report"
+      ]
+    },
+    {
+      "id": "calendar/overview",
+      "section_id": "calendar",
+      "section_title": "Calendar & Scheduling",
+      "anchor": "section-calendar",
+      "title": "Calendar & Scheduling",
+      "content": "Track appointments and important dates\nTopics: Calendar View; Keyboard Navigation",
+      "keywords": [
+        "calendar",
+        "scheduling",
+        "view",
+        "keyboard",
+        "navigation"
+      ]
+    },
+    {
+      "id": "calendar/calendar-view",
+      "section_id": "calendar",
+      "section_title": "Calendar & Scheduling",
+      "anchor": "section-calendar",
+      "title": "Calendar View",
+      "content": "Manage appointments, follow-ups, and property-related events.\nFeatures: Day, week, and month views; Client appointment scheduling; Property inspection tracking; Reminder notifications; Integration with client reminders",
+      "keywords": [
+        "calendar",
+        "scheduling",
+        "view"
+      ]
+    },
+    {
+      "id": "calendar/keyboard-navigation",
+      "section_id": "calendar",
+      "section_title": "Calendar & Scheduling",
+      "anchor": "section-calendar",
+      "title": "Keyboard Navigation",
+      "content": "Navigate the calendar efficiently with keyboard shortcuts.\nShortcut: T — Go to today\nShortcut: ← — Previous period\nShortcut: → — Next period\nShortcut: D — Day view\nShortcut: W — Week view\nShortcut: M — Month view",
+      "keywords": [
+        "calendar",
+        "scheduling",
+        "keyboard",
+        "navigation"
+      ]
+    },
+    {
+      "id": "monitoring/overview",
+      "section_id": "monitoring",
+      "section_title": "Monitoring & Logs",
+      "anchor": "section-monitoring",
+      "title": "Monitoring & Logs",
+      "content": "System health and activity tracking\nTopics: System Monitoring; Error Logs; Activity Logs; Quality Assurance",
+      "keywords": [
+        "monitoring",
+        "logs",
+        "system",
+        "error",
+        "activity",
+        "quality",
+        "assurance"
+      ]
+    },
+    {
+      "id": "monitoring/system-monitoring",
+      "section_id": "monitoring",
+      "section_title": "Monitoring & Logs",
+      "anchor": "section-monitoring",
+      "title": "System Monitoring",
+      "content": "Monitor the health of data sources and integrations.\nFeatures: API health status indicators; Data sync monitoring; Response time tracking; Error rate visualization; Uptime statistics",
+      "keywords": [
+        "monitoring",
+        "logs",
+        "system"
+      ]
+    },
+    {
+      "id": "monitoring/error-logs",
+      "section_id": "monitoring",
+      "section_title": "Monitoring & Logs",
+      "anchor": "section-monitoring",
+      "title": "Error Logs",
+      "content": "View and troubleshoot system errors.\nFeatures: Error categorization; Stack trace details; Timestamp and frequency; Resolution status tracking; Export for support",
+      "keywords": [
+        "monitoring",
+        "logs",
+        "error"
+      ]
+    },
+    {
+      "id": "monitoring/activity-logs",
+      "section_id": "monitoring",
+      "section_title": "Monitoring & Logs",
+      "anchor": "section-monitoring",
+      "title": "Activity Logs",
+      "content": "Track user actions and system events.\nFeatures: User action history; Entity change tracking; Login/logout events; Report generation history; Filtering by user, action, or date",
+      "keywords": [
+        "monitoring",
+        "logs",
+        "activity"
+      ]
+    },
+    {
+      "id": "monitoring/quality-assurance",
+      "section_id": "monitoring",
+      "section_title": "Monitoring & Logs",
+      "anchor": "section-monitoring",
+      "title": "Quality Assurance",
+      "content": "Monitor data quality across the system.\nFeatures: Data completeness scoring; Validation error tracking; Missing field identification; Quality trend analysis; Improvement recommendations",
+      "keywords": [
+        "monitoring",
+        "logs",
+        "quality",
+        "assurance"
+      ]
+    },
+    {
+      "id": "admin/overview",
+      "section_id": "admin",
+      "section_title": "Administration",
+      "anchor": "section-admin",
+      "title": "Administration",
+      "content": "User management and system settings\nTopics: User Management; Integrations; System Settings",
+      "keywords": [
+        "administration",
+        "user",
+        "management",
+        "integrations",
+        "system",
+        "settings"
+      ]
+    },
+    {
+      "id": "admin/user-management",
+      "section_id": "admin",
+      "section_title": "Administration",
+      "anchor": "section-admin",
+      "title": "User Management",
+      "content": "Manage team members and their access levels.\nFeatures: User creation and deactivation; Role assignment (Admin, User, Viewer); Password management; Email configuration; Personal mailbox settings",
+      "keywords": [
+        "administration",
+        "user",
+        "management"
+      ]
+    },
+    {
+      "id": "admin/integrations",
+      "section_id": "admin",
+      "section_title": "Administration",
+      "anchor": "section-admin",
+      "title": "Integrations",
+      "content": "Configure external service connections.\nFeatures: GoHighLevel (GHL) CRM integration; Email provider settings; API key management; Webhook configuration; Sync status monitoring",
+      "keywords": [
+        "administration",
+        "integrations"
+      ]
+    },
+    {
+      "id": "admin/system-settings",
+      "section_id": "admin",
+      "section_title": "Administration",
+      "anchor": "section-admin",
+      "title": "System Settings",
+      "content": "Configure global application settings.\nFeatures: Default values and assumptions; Notification preferences; Data retention policies; Export/backup options; Theme and display settings",
+      "keywords": [
+        "administration",
+        "system",
+        "settings"
+      ]
+    },
+    {
+      "id": "deal-pipeline/overview",
+      "section_id": "deal-pipeline",
+      "section_title": "Deal Pipeline",
+      "anchor": "section-deal-pipeline",
+      "title": "Deal Pipeline",
+      "content": "Track property deals from inquiry to settlement\nTopics: Pipeline Overview; Build Progress Payments",
+      "keywords": [
+        "deal",
+        "pipeline",
+        "overview",
+        "build",
+        "progress",
+        "payments"
+      ]
+    },
+    {
+      "id": "deal-pipeline/pipeline-overview",
+      "section_id": "deal-pipeline",
+      "section_title": "Deal Pipeline",
+      "anchor": "section-deal-pipeline",
+      "title": "Pipeline Overview",
+      "content": "The Deal Pipeline provides a Kanban-style board to track every property deal through its lifecycle stages.\nFeatures: Kanban board with drag-and-drop stage progression; Deal stages: Lead, Qualified, Proposal, Negotiation, Under Contract, Settlement, Completed; Deal value and commission tracking; Client and property linking; Assigned team member per deal; Build progress payment tracking for construction deals\nSteps: 1. Navigate to \"Deal Pipeline\" in the sidebar 2. Click \"Add Deal\" to create a new deal 3. Link the deal to a client and property 4. Drag deals between stages as they progress 5. Track commissions and builder invoices within each deal",
+      "keywords": [
+        "deal",
+        "pipeline",
+        "overview"
+      ]
+    },
+    {
+      "id": "deal-pipeline/build-progress-payments",
+      "section_id": "deal-pipeline",
+      "section_title": "Deal Pipeline",
+      "anchor": "section-deal-pipeline",
+      "title": "Build Progress Payments",
+      "content": "Track construction stage payments and builder invoices for build deals.\nFeatures: Stage-by-stage payment tracking (Slab, Frame, Lock-up, etc.); Builder invoice receipt and submission tracking; Funds released and paid-to-builder status; Commission trigger identification per stage; Lender submission tracking",
+      "keywords": [
+        "deal",
+        "pipeline",
+        "build",
+        "progress",
+        "payments"
+      ]
+    },
+    {
+      "id": "agreements/overview",
+      "section_id": "agreements",
+      "section_title": "Agency Agreements",
+      "anchor": "section-agreements",
+      "title": "Agency Agreements",
+      "content": "Generate, send, and manage buyer agency agreements\nTopics: Agreement Generation; DocuSign Integration",
+      "keywords": [
+        "agency",
+        "agreements",
+        "agreement",
+        "generation",
+        "docusign",
+        "integration"
+      ]
+    },
+    {
+      "id": "agreements/agreement-generation",
+      "section_id": "agreements",
+      "section_title": "Agency Agreements",
+      "anchor": "section-agreements",
+      "title": "Agreement Generation",
+      "content": "Create professional agency agreements from templates linked to your clients and deals.\nFeatures: Template-based agreement generation; Auto-populated buyer details from client records; Custom commitment fee and terms; Secondary buyer support; PDF generation and storage\nSteps: 1. Navigate to \"Agreements\" in the sidebar 2. Click \"New Agreement\" to start 3. Select a client and optionally link a deal 4. Fill in buyer details, fees, and notes 5. Generate and review the PDF 6. Send via DocuSign for electronic signature",
+      "keywords": [
+        "agency",
+        "agreements",
+        "agreement",
+        "generation"
+      ]
+    },
+    {
+      "id": "agreements/docusign-integration",
+      "section_id": "agreements",
+      "section_title": "Agency Agreements",
+      "anchor": "section-agreements",
+      "title": "DocuSign Integration",
+      "content": "Send agreements for electronic signature via DocuSign.\nFeatures: One-click DocuSign envelope creation; Real-time signing status tracking; Automatic status sync (Sent, Delivered, Signed, Voided); Signed PDF retrieval and storage",
+      "keywords": [
+        "agency",
+        "agreements",
+        "docusign",
+        "integration"
+      ]
+    },
+    {
+      "id": "checklists/overview",
+      "section_id": "checklists",
+      "section_title": "Checklists",
+      "anchor": "section-checklists",
+      "title": "Checklists",
+      "content": "Manage process checklists from templates\nTopics: Checklist Templates; Checklist Instances",
+      "keywords": [
+        "checklists",
+        "checklist",
+        "templates",
+        "instances"
+      ]
+    },
+    {
+      "id": "checklists/checklist-templates",
+      "section_id": "checklists",
+      "section_title": "Checklists",
+      "anchor": "section-checklists",
+      "title": "Checklist Templates",
+      "content": "Create reusable checklist templates for standardized processes like onboarding, settlement, or compliance.\nFeatures: Multi-section checklist templates; Custom item ordering and section grouping; Icon assignment per section; Template activation/deactivation; Cron-based auto-generation scheduling",
+      "keywords": [
+        "checklists",
+        "checklist",
+        "templates"
+      ]
+    },
+    {
+      "id": "checklists/checklist-instances",
+      "section_id": "checklists",
+      "section_title": "Checklists",
+      "anchor": "section-checklists",
+      "title": "Checklist Instances",
+      "content": "Generate and work through checklist instances from templates.\nFeatures: Progress percentage tracking; Checked-by user and timestamp logging; Status tracking (In Progress, Completed); AI-powered checklist generation\nSteps: 1. Navigate to \"Checklists\" in the sidebar 2. Select a template or create a new instance 3. Work through items by checking them off 4. Track overall progress in the dashboard",
+      "keywords": [
+        "checklists",
+        "checklist",
+        "instances"
+      ]
+    },
+    {
+      "id": "marketing-analytics/overview",
+      "section_id": "marketing-analytics",
+      "section_title": "Marketing Analytics",
+      "anchor": "section-marketing-analytics",
+      "title": "Marketing Analytics",
+      "content": "Track marketing campaigns, leads, and conversion metrics\nTopics: Campaign Tracking; Lead Management",
+      "keywords": [
+        "marketing",
+        "analytics",
+        "campaign",
+        "tracking",
+        "lead",
+        "management"
+      ]
+    },
+    {
+      "id": "marketing-analytics/campaign-tracking",
+      "section_id": "marketing-analytics",
+      "section_title": "Marketing Analytics",
+      "anchor": "section-marketing-analytics",
+      "title": "Campaign Tracking",
+      "content": "Monitor the performance of your marketing campaigns across channels.\nFeatures: UTM parameter tracking for leads; Meta/Facebook ad attribution; Lead source identification; Campaign-level conversion rates; Cost-per-lead analysis",
+      "keywords": [
+        "marketing",
+        "analytics",
+        "campaign",
+        "tracking"
+      ]
+    },
+    {
+      "id": "marketing-analytics/lead-management",
+      "section_id": "marketing-analytics",
+      "section_title": "Marketing Analytics",
+      "anchor": "section-marketing-analytics",
+      "title": "Lead Management",
+      "content": "View and manage incoming leads from marketing campaigns.\nFeatures: Real-time lead notifications; Lead-to-client conversion tracking; Source attribution (Google, Meta, Organic, Referral); Lead scoring and prioritization",
+      "keywords": [
+        "marketing",
+        "analytics",
+        "lead",
+        "management"
+      ]
+    },
+    {
+      "id": "reminders/overview",
+      "section_id": "reminders",
+      "section_title": "Reminders Hub",
+      "anchor": "section-reminders",
+      "title": "Reminders Hub",
+      "content": "Centralized view of all reminders and follow-ups\nTopics: Reminders Dashboard",
+      "keywords": [
+        "reminders",
+        "hub",
+        "dashboard"
+      ]
+    },
+    {
+      "id": "reminders/reminders-dashboard",
+      "section_id": "reminders",
+      "section_title": "Reminders Hub",
+      "anchor": "section-reminders",
+      "title": "Reminders Dashboard",
+      "content": "A centralized hub showing all upcoming, overdue, and completed reminders across all clients.\nFeatures: Today, upcoming, and overdue reminder filters; Priority-based sorting (Urgent, High, Normal, Low); Client-linked reminders with quick navigation; Snooze and complete actions; Bell notification integration for upcoming reminders\nTips: Check the Reminders Hub daily to stay on top of follow-ups; Set high-priority reminders for time-sensitive items; Upcoming reminders trigger bell notifications the day before",
+      "keywords": [
+        "reminders",
+        "hub",
+        "dashboard"
+      ]
+    },
+    {
+      "id": "report-requests/overview",
+      "section_id": "report-requests",
+      "section_title": "Report Requests",
+      "anchor": "section-report-requests",
+      "title": "Report Requests",
+      "content": "Manage report requests from the client portal\nTopics: Incoming Requests",
+      "keywords": [
+        "report",
+        "requests",
+        "incoming"
+      ]
+    },
+    {
+      "id": "report-requests/incoming-requests",
+      "section_id": "report-requests",
+      "section_title": "Report Requests",
+      "anchor": "section-report-requests",
+      "title": "Incoming Requests",
+      "content": "View and process report requests submitted by clients through the client portal.\nFeatures: Real-time notifications when a client submits a request; Request status tracking (Pending, In Progress, Completed, Declined); Property address and client details; Notes and comments per request; Direct report generation from requests\nSteps: 1. Navigate to \"Report Requests\" in the sidebar 2. Review pending requests from clients 3. Accept a request and generate the report 4. Update the status as you work on it 5. Client receives automatic email notification on completion",
+      "keywords": [
+        "report",
+        "requests",
+        "incoming"
+      ]
+    },
+    {
+      "id": "client-portal/overview",
+      "section_id": "client-portal",
+      "section_title": "Client Portal",
+      "anchor": "section-client-portal",
+      "title": "Client Portal",
+      "content": "Self-service portal for your clients\nTopics: Portal Overview; Client Portal",
+      "keywords": [
+        "client",
+        "portal",
+        "overview"
+      ]
+    },
+    {
+      "id": "client-portal/portal-overview",
+      "section_id": "client-portal",
+      "section_title": "Client Portal",
+      "anchor": "section-client-portal",
+      "title": "Portal Overview",
+      "content": "The Client Portal allows your clients to log in, view their reports, request new reports, and book appointments.\nFeatures: Secure client login with magic links or passwords; Personalized dashboard per client; Report viewing and download; New report request submission; Appointment booking; In-app notification feed",
+      "keywords": [
+        "client",
+        "portal",
+        "overview"
+      ]
+    },
+    {
+      "id": "client-portal/client-portal",
+      "section_id": "client-portal",
+      "section_title": "Client Portal",
+      "anchor": "section-client-portal",
+      "title": "Client Portal",
+      "content": "Configure branding and settings for the client-facing portal.\nFeatures: Custom branding and logos; Enable/disable portal features; Booking calendar configuration; Welcome message customization; Auto-email notifications for portal events\nSteps: 1. Navigate to \"Client Portal\" in the sidebar 2. Configure branding, colors, and logos 3. Enable the features you want clients to access 4. Test the portal by logging in as a client",
+      "keywords": [
+        "client",
+        "portal"
+      ]
+    },
+    {
+      "id": "ai-agent/overview",
+      "section_id": "ai-agent",
+      "section_title": "AI Agent",
+      "anchor": "section-ai-agent",
+      "title": "AI Agent",
+      "content": "Conversational AI assistant with tool-calling capabilities\nTopics: Agent Overview; Playbooks & Scheduling",
+      "keywords": [
+        "agent",
+        "overview",
+        "playbooks",
+        "scheduling"
+      ]
+    },
+    {
+      "id": "ai-agent/agent-overview",
+      "section_id": "ai-agent",
+      "section_title": "AI Agent",
+      "anchor": "section-ai-agent",
+      "title": "Agent Overview",
+      "content": "The AI Agent is an advanced conversational assistant that can perform actions on your behalf such as looking up clients, creating reminders, and running analyses.\nFeatures: Natural language commands for dashboard actions; Tool-calling: search clients, create reminders, query data; Conversation history with pinning and sharing; Playbooks for multi-step automated workflows; Scheduled tasks for recurring agent actions; Action audit log with rollback capability",
+      "keywords": [
+        "agent",
+        "overview"
+      ]
+    },
+    {
+      "id": "ai-agent/playbooks-and-scheduling",
+      "section_id": "ai-agent",
+      "section_title": "AI Agent",
+      "anchor": "section-ai-agent",
+      "title": "Playbooks & Scheduling",
+      "content": "Automate multi-step workflows and schedule recurring AI agent tasks.\nFeatures: Create reusable playbooks with ordered steps; Schedule tasks with cron expressions; Run history and status tracking; Enable/disable individual scheduled tasks",
+      "keywords": [
+        "agent",
+        "playbooks",
+        "scheduling"
+      ]
+    },
+    {
+      "id": "notifications/overview",
+      "section_id": "notifications",
+      "section_title": "Notifications",
+      "anchor": "section-notifications",
+      "title": "Notifications",
+      "content": "Real-time alerts and notification management\nTopics: Notification Center; Notification Sources",
+      "keywords": [
+        "notifications",
+        "notification",
+        "center",
+        "sources"
+      ]
+    },
+    {
+      "id": "notifications/notification-center",
+      "section_id": "notifications",
+      "section_title": "Notifications",
+      "anchor": "section-notifications",
+      "title": "Notification Center",
+      "content": "The bell icon in the top navigation provides real-time alerts for important events across the platform.\nFeatures: Real-time push notifications for reports, emails, calls, and bookings; Click-to-navigate to the relevant page; Mark as read / mark all as read; Notification persistence across sessions",
+      "keywords": [
+        "notifications",
+        "notification",
+        "center"
+      ]
+    },
+    {
+      "id": "notifications/notification-sources",
+      "section_id": "notifications",
+      "section_title": "Notifications",
+      "anchor": "section-notifications",
+      "title": "Notification Sources",
+      "content": "Events that trigger internal dashboard notifications.\nFeatures: Investment report generation completed or failed; Incoming emails (admin and personal mailboxes); VAPI call completions with outcome details; Appointment bookings from GHL, Outlook, or dashboard; New GHL contacts synced; Marketing leads with campaign attribution; Client portal report requests; Agency agreement generation; Client reminders due today or upcoming",
+      "keywords": [
+        "notifications",
+        "notification",
+        "sources"
+      ]
+    },
+    {
+      "id": "api-usage/overview",
+      "section_id": "api-usage",
+      "section_title": "API Usage & Costs",
+      "anchor": "section-api-usage",
+      "title": "API Usage & Costs",
+      "content": "Monitor AI token usage and API costs\nTopics: Usage Dashboard",
+      "keywords": [
+        "api",
+        "usage",
+        "costs",
+        "dashboard"
+      ]
+    },
+    {
+      "id": "api-usage/usage-dashboard",
+      "section_id": "api-usage",
+      "section_title": "API Usage & Costs",
+      "anchor": "section-api-usage",
+      "title": "Usage Dashboard",
+      "content": "Track API consumption across all AI-powered features to manage costs.\nFeatures: Token usage breakdown by service (OpenAI, Gemini, etc.); Cost estimation in USD; Usage trends over time; Per-user consumption tracking; Model-level breakdown\nTips: Monitor usage regularly to stay within budget; Review which features consume the most tokens; Use efficient analysis modes to reduce costs",
+      "keywords": [
+        "api",
+        "usage",
+        "costs",
+        "dashboard"
+      ]
+    },
+    {
+      "id": "aml-ctf/overview",
+      "section_id": "aml-ctf",
+      "section_title": "AML / CTF Compliance",
+      "anchor": "section-aml-ctf",
+      "title": "AML / CTF Compliance",
+      "content": "Customer due diligence, screening, monitoring and AUSTRAC reporting\nTopics: Compliance Home; Cases & the Case Workspace; Verification & Screening; Risk, Transactions & Monitoring; Investigations & EDD; AUSTRAC Hub & Reporting; Governance, Intake & Launch Operations; Roles & Access",
+      "keywords": [
+        "aml",
+        "ctf",
+        "compliance",
+        "home",
+        "cases",
+        "case",
+        "workspace",
+        "verification",
+        "screening",
+        "risk",
+        "transactions",
+        "monitoring",
+        "investigations",
+        "edd",
+        "austrac",
+        "hub",
+        "reporting",
+        "governance",
+        "intake",
+        "launch",
+        "operations",
+        "roles",
+        "access"
+      ]
+    },
+    {
+      "id": "aml-ctf/compliance-home",
+      "section_id": "aml-ctf",
+      "section_title": "AML / CTF Compliance",
+      "anchor": "section-aml-ctf",
+      "title": "Compliance Home",
+      "content": "The AML workspace opens on Compliance Home, which summarises where obligations stand right now: total cases, cases opened recently, cases awaiting a decision, open alerts, unprocessed events and periodic reviews falling due.\nFeatures: Metric tiles link straight through to the filtered list behind them; My Queue shows only the cases assigned to you; Regulatory & Assurance header flags anything overdue; Legacy alias banner appears where an older workspace name is still in use\nTips: Start at Compliance Home rather than Cases — the tiles surface what is blocked, which a raw case list does not.",
+      "keywords": [
+        "aml",
+        "ctf",
+        "compliance",
+        "home"
+      ]
+    },
+    {
+      "id": "aml-ctf/cases-and-the-case-workspace",
+      "section_id": "aml-ctf",
+      "section_title": "AML / CTF Compliance",
+      "anchor": "section-aml-ctf",
+      "title": "Cases & the Case Workspace",
+      "content": "A case tracks one subject through customer due diligence. Cases move through a defined lifecycle and cannot skip states — the allowed transitions are enforced server-side, not just in the UI.\nFeatures: Statuses: draft, KYC in progress, KYC complete, EDD required, under review, escalated to MLRO, cleared, blocked, closed; Risk ratings: low, medium, high, prohibited; Case workspace tabs cover verification, ownership and control, structures, documents and events; Every write appends to a per-case event log with a SHA-256 hash chain, so tampering is detectable\nSteps: 1. Open Cases and create a case against the subject 2. Complete identity verification in the Verification tab 3. Record ownership and control for non-individual subjects 4. Move the case to under review once KYC is complete 5. Escalate to the MLRO where enhanced due diligence is required\nTips: The event log is append-only. Correcting a mistake means adding a correcting event, not editing history.",
+      "keywords": [
+        "aml",
+        "ctf",
+        "compliance",
+        "cases",
+        "case",
+        "workspace"
+      ]
+    },
+    {
+      "id": "aml-ctf/verification-and-screening",
+      "section_id": "aml-ctf",
+      "section_title": "AML / CTF Compliance",
+      "anchor": "section-aml-ctf",
+      "title": "Verification & Screening",
+      "content": "Verification captures identity evidence for a subject. Screening checks subjects against PEP and sanctions sources and records the result against the case.\nFeatures: Identity checks recorded per subject with provider results retained; PEP and sanctions hits raise an event on the case; Screening results are versioned so a later re-screen does not overwrite the earlier decision; Step-up authentication is required before sensitive actions\nTips: A step-up prompt is not an error. Sensitive AML actions deliberately re-verify who you are before proceeding.",
+      "keywords": [
+        "aml",
+        "ctf",
+        "compliance",
+        "verification",
+        "screening"
+      ]
+    },
+    {
+      "id": "aml-ctf/risk-transactions-and-monitoring",
+      "section_id": "aml-ctf",
+      "section_title": "AML / CTF Compliance",
+      "anchor": "section-aml-ctf",
+      "title": "Risk, Transactions & Monitoring",
+      "content": "Risk scores a subject from the factors recorded against them. Transaction Compliance and Monitoring watch activity for patterns that need review.\nFeatures: Risk ratings can be re-scored as new information arrives, with each change logged; Transaction monitoring raises alerts against thresholds and rules; Unprocessed events queue surfaces anything the engine has not yet triaged; Counterparty due diligence covers the other side of a transaction",
+      "keywords": [
+        "aml",
+        "ctf",
+        "compliance",
+        "risk",
+        "transactions",
+        "monitoring"
+      ]
+    },
+    {
+      "id": "aml-ctf/investigations-and-edd",
+      "section_id": "aml-ctf",
+      "section_title": "AML / CTF Compliance",
+      "anchor": "section-aml-ctf",
+      "title": "Investigations & EDD",
+      "content": "Where a case needs enhanced due diligence, Investigations holds the working record: what was asked, what was received and what was concluded.\nFeatures: EDD notes attach to the case event chain; MLRO decisions are recorded as their own event category; Investigations can be escalated or returned to standard review",
+      "keywords": [
+        "aml",
+        "ctf",
+        "compliance",
+        "investigations",
+        "edd"
+      ]
+    },
+    {
+      "id": "aml-ctf/austrac-hub-and-reporting",
+      "section_id": "aml-ctf",
+      "section_title": "AML / CTF Compliance",
+      "anchor": "section-aml-ctf",
+      "title": "AUSTRAC Hub & Reporting",
+      "content": "The AUSTRAC Hub prepares and tracks regulatory reports. Reports are generated from case data rather than re-keyed.\nFeatures: Report drafts built from the underlying case record; Submission status tracked per report; Records & Retention governs how long material is kept\nTips: Check Records & Privacy before deleting anything — retention obligations outlast a closed case.",
+      "keywords": [
+        "aml",
+        "ctf",
+        "compliance",
+        "austrac",
+        "hub",
+        "reporting"
+      ]
+    },
+    {
+      "id": "aml-ctf/governance-intake-and-launch-operations",
+      "section_id": "aml-ctf",
+      "section_title": "AML / CTF Compliance",
+      "anchor": "section-aml-ctf",
+      "title": "Governance, Intake & Launch Operations",
+      "content": "Governance holds the compliance contacts and organisational settings. Intake Queue is where new subjects arrive before a case is opened. Launch Operations covers rollout and cutover activity.\nFeatures: Governance & Contacts records the MLRO and responsible officers; Intake Queue triages inbound subjects into cases; Organisation Settings configure thresholds and provider modes; Platform Administration covers integration health and version cutover",
+      "keywords": [
+        "aml",
+        "ctf",
+        "compliance",
+        "governance",
+        "intake",
+        "launch",
+        "operations"
+      ]
+    },
+    {
+      "id": "aml-ctf/roles-and-access",
+      "section_id": "aml-ctf",
+      "section_title": "AML / CTF Compliance",
+      "anchor": "section-aml-ctf",
+      "title": "Roles & Access",
+      "content": "AML access is separate from general dashboard permission. Reads require an AML role; writes require the specific role for that action, and the service enforces this in code as well as through row-level security.\nFeatures: Analyst, reviewer and MLRO roles carry different write permissions; MLRO-only event categories cannot be written by an analyst; Restricted AML data is hidden entirely from users without a role",
+      "keywords": [
+        "aml",
+        "ctf",
+        "compliance",
+        "roles",
+        "access"
+      ]
+    },
+    {
+      "id": "finance-portal/overview",
+      "section_id": "finance-portal",
+      "section_title": "Finance Portal",
+      "anchor": "section-finance-portal",
+      "title": "Finance Portal",
+      "content": "Broker and finance partner workspace, referrals and commissions\nTopics: Portal Overview; Purchase Files; Earnings & Commissions; Administering the Portal",
+      "keywords": [
+        "finance",
+        "portal",
+        "overview",
+        "purchase",
+        "files",
+        "earnings",
+        "commissions",
+        "administering"
+      ]
+    },
+    {
+      "id": "finance-portal/portal-overview",
+      "section_id": "finance-portal",
+      "section_title": "Finance Portal",
+      "anchor": "section-finance-portal",
+      "title": "Portal Overview",
+      "content": "The Finance Portal is a separate login for finance partners. They see only the clients and files shared with them, never your whole book.\nFeatures: Dashboard summarising active files and outstanding actions; Clients list scoped to assigned relationships; Client inbox and messaging with the referring adviser; Insights and lender intelligence for the partner",
+      "keywords": [
+        "finance",
+        "portal",
+        "overview"
+      ]
+    },
+    {
+      "id": "finance-portal/purchase-files",
+      "section_id": "finance-portal",
+      "section_title": "Finance Portal",
+      "anchor": "section-finance-portal",
+      "title": "Purchase Files",
+      "content": "A purchase file is the unit of work in the portal: one client purchase, tracked from referral through to settlement.\nFeatures: File detail view with documents, milestones and messages; Pipeline view showing where every file sits; AML case snapshot surfaces compliance status against the file",
+      "keywords": [
+        "finance",
+        "portal",
+        "purchase",
+        "files"
+      ]
+    },
+    {
+      "id": "finance-portal/earnings-and-commissions",
+      "section_id": "finance-portal",
+      "section_title": "Finance Portal",
+      "anchor": "section-finance-portal",
+      "title": "Earnings & Commissions",
+      "content": "Earnings track what a partner has been paid and what is pending. Commission structures and clawbacks are administered from the staff side.\nFeatures: Earnings statement per partner; Commission register with clawback tracking; Bulk import for historical commission data",
+      "keywords": [
+        "finance",
+        "portal",
+        "earnings",
+        "commissions"
+      ]
+    },
+    {
+      "id": "finance-portal/administering-the-portal",
+      "section_id": "finance-portal",
+      "section_title": "Finance Portal",
+      "anchor": "section-finance-portal",
+      "title": "Administering the Portal",
+      "content": "Staff manage the portal from Admin → Finance Portal: inviting contacts, assigning clients, and reviewing activity.\nFeatures: Analytics, compliance and health panels for portal operations; Activity log per partner; Staff-side message view mirroring the partner inbox\nSteps: 1. Invite a finance contact from Admin → Finance Portal 2. Assign clients or purchase files to the contact 3. Monitor activity and compliance from the admin panels",
+      "keywords": [
+        "finance",
+        "portal",
+        "administering"
+      ]
+    },
+    {
+      "id": "solicitor-portal/overview",
+      "section_id": "solicitor-portal",
+      "section_title": "Solicitor Portal",
+      "anchor": "section-solicitor-portal",
+      "title": "Solicitor Portal",
+      "content": "Conveyancing partner workspace and legal matters\nTopics: Matters; Client Legal Workspace; Onboarding a Solicitor",
+      "keywords": [
+        "solicitor",
+        "portal",
+        "matters",
+        "client",
+        "legal",
+        "workspace",
+        "onboarding"
+      ]
+    },
+    {
+      "id": "solicitor-portal/matters",
+      "section_id": "solicitor-portal",
+      "section_title": "Solicitor Portal",
+      "anchor": "section-solicitor-portal",
+      "title": "Matters",
+      "content": "A matter is a legal file attached to a client purchase. Solicitors log in separately and see only the matters assigned to them.\nFeatures: Matters list with status and key dates; Matter detail holding documents, correspondence and milestones; Pipeline view across all assigned matters",
+      "keywords": [
+        "solicitor",
+        "portal",
+        "matters"
+      ]
+    },
+    {
+      "id": "solicitor-portal/client-legal-workspace",
+      "section_id": "solicitor-portal",
+      "section_title": "Solicitor Portal",
+      "anchor": "section-solicitor-portal",
+      "title": "Client Legal Workspace",
+      "content": "On the staff side, the legal workspace on a client shows the matter without leaving the client record.\nFeatures: Legal tab on the client with matter status; Document exchange with the solicitor; Security settings governing what the partner can see",
+      "keywords": [
+        "solicitor",
+        "portal",
+        "client",
+        "legal",
+        "workspace"
+      ]
+    },
+    {
+      "id": "solicitor-portal/onboarding-a-solicitor",
+      "section_id": "solicitor-portal",
+      "section_title": "Solicitor Portal",
+      "anchor": "section-solicitor-portal",
+      "title": "Onboarding a Solicitor",
+      "content": "Solicitors are invited from Admin → Solicitor Portal and complete their own onboarding, including accepting terms.\nSteps: 1. Send an invite from Admin → Solicitor Portal 2. The solicitor accepts, sets a password and agrees to terms 3. Assign matters to the onboarded firm",
+      "keywords": [
+        "solicitor",
+        "portal",
+        "onboarding"
+      ]
+    },
+    {
+      "id": "builder-portal/overview",
+      "section_id": "builder-portal",
+      "section_title": "Builder Portal",
+      "anchor": "section-builder-portal",
+      "title": "Builder Portal",
+      "content": "Builder partner workspace and organisation access\nTopics: Builder Access; Administering Builders",
+      "keywords": [
+        "builder",
+        "portal",
+        "access",
+        "administering",
+        "builders"
+      ]
+    },
+    {
+      "id": "builder-portal/builder-access",
+      "section_id": "builder-portal",
+      "section_title": "Builder Portal",
+      "anchor": "section-builder-portal",
+      "title": "Builder Access",
+      "content": "Builders log in through their own portal and can belong to more than one organisation, selecting which they are acting for.\nFeatures: Separate builder login and password reset flow; Organisation selection where a builder works across entities; Builder settings and terms acceptance",
+      "keywords": [
+        "builder",
+        "portal",
+        "access"
+      ]
+    },
+    {
+      "id": "builder-portal/administering-builders",
+      "section_id": "builder-portal",
+      "section_title": "Builder Portal",
+      "anchor": "section-builder-portal",
+      "title": "Administering Builders",
+      "content": "Staff manage builder access from Admin → Builder Portal: invitations, organisation membership and activity review.\nSteps: 1. Invite the builder from Admin → Builder Portal 2. Assign them to one or more organisations 3. Review activity from the admin panel",
+      "keywords": [
+        "builder",
+        "portal",
+        "administering",
+        "builders"
+      ]
+    },
+    {
+      "id": "commercial-industrial/overview",
+      "section_id": "commercial-industrial",
+      "section_title": "Commercial & Industrial",
+      "anchor": "section-commercial-industrial",
+      "title": "Commercial & Industrial",
+      "content": "Non-residential property analysis and calculators\nTopics: Commercial Properties; Industrial Properties; Property Calculators",
+      "keywords": [
+        "commercial",
+        "industrial",
+        "properties",
+        "property",
+        "calculators"
+      ]
+    },
+    {
+      "id": "commercial-industrial/commercial-properties",
+      "section_id": "commercial-industrial",
+      "section_title": "Commercial & Industrial",
+      "anchor": "section-commercial-industrial",
+      "title": "Commercial Properties",
+      "content": "Commercial listings are analysed separately from residential because the drivers differ — yield, lease terms and outgoings rather than rental yield alone.\nFeatures: Commercial property list with filtering; Property detail with commercial-specific metrics; Scenario modelling through the commercial calculators",
+      "keywords": [
+        "commercial",
+        "industrial",
+        "properties"
+      ]
+    },
+    {
+      "id": "commercial-industrial/industrial-properties",
+      "section_id": "commercial-industrial",
+      "section_title": "Commercial & Industrial",
+      "anchor": "section-commercial-industrial",
+      "title": "Industrial Properties",
+      "content": "Industrial stock has its own list and detail view, with calculators tuned to industrial metrics.\nFeatures: Industrial property list and detail; Industrial calculators for site and building metrics",
+      "keywords": [
+        "commercial",
+        "industrial",
+        "properties"
+      ]
+    },
+    {
+      "id": "commercial-industrial/property-calculators",
+      "section_id": "commercial-industrial",
+      "section_title": "Commercial & Industrial",
+      "anchor": "section-commercial-industrial",
+      "title": "Property Calculators",
+      "content": "The calculators page collects the standalone tools for modelling a purchase without creating a full report.\nTips: Use the calculators for a quick sanity check; use a full report when the numbers need to be shared or retained.",
+      "keywords": [
+        "commercial",
+        "industrial",
+        "property",
+        "calculators"
+      ]
+    },
+    {
+      "id": "market-updates/overview",
+      "section_id": "market-updates",
+      "section_title": "Market News Feed",
+      "anchor": "section-market-updates",
+      "title": "Market News Feed",
+      "content": "Curated market intelligence, digests and shareable Q&A\nTopics: Market Feed; Market Q&A; Digests & Subscriptions",
+      "keywords": [
+        "market",
+        "news",
+        "feed",
+        "digests",
+        "subscriptions"
+      ]
+    },
+    {
+      "id": "market-updates/market-feed",
+      "section_id": "market-updates",
+      "section_title": "Market News Feed",
+      "anchor": "section-market-updates",
+      "title": "Market Feed",
+      "content": "Market News Feed ingests configured sources, scores each item for relevance, and surfaces what matters rather than everything published.\nFeatures: Relevance and confidence thresholds filter low-value items; Source list is administered from the Market Sources dialog; Public feed URL for embedding elsewhere",
+      "keywords": [
+        "market",
+        "news",
+        "feed"
+      ]
+    },
+    {
+      "id": "market-updates/market-q-and-a",
+      "section_id": "market-updates",
+      "section_title": "Market News Feed",
+      "anchor": "section-market-updates",
+      "title": "Market Q&A",
+      "content": "Ask questions against the ingested market material and get an answer grounded in the sources, with the material it drew on.\nFeatures: Voice input for asking questions hands-free; Answers can be shared via a tokenised public link; Quality reporting on answers from the admin side",
+      "keywords": [
+        "market",
+        "news",
+        "feed"
+      ]
+    },
+    {
+      "id": "market-updates/digests-and-subscriptions",
+      "section_id": "market-updates",
+      "section_title": "Market News Feed",
+      "anchor": "section-market-updates",
+      "title": "Digests & Subscriptions",
+      "content": "Digests bundle recent market movement on a schedule. Subscriptions control who receives them.\nFeatures: Scheduled digest generation; Per-recipient subscription management; Shared answers accessible without a login via their token",
+      "keywords": [
+        "market",
+        "news",
+        "feed",
+        "digests",
+        "subscriptions"
+      ]
+    },
+    {
+      "id": "model-hub/overview",
+      "section_id": "model-hub",
+      "section_title": "Model Hub",
+      "anchor": "section-model-hub",
+      "title": "Model Hub",
+      "content": "AI model selection, availability and cost\nTopics: Browsing Models; Assigning Models to Agents",
+      "keywords": [
+        "model",
+        "hub",
+        "browsing",
+        "models",
+        "assigning",
+        "agents"
+      ]
+    },
+    {
+      "id": "model-hub/browsing-models",
+      "section_id": "model-hub",
+      "section_title": "Model Hub",
+      "anchor": "section-model-hub",
+      "title": "Browsing Models",
+      "content": "Model Hub lists the AI models available through the routed provider, with their pricing and context limits, so a model can be chosen on cost as well as capability.\nFeatures: Model table with pricing per million tokens and context window; Card view for comparing candidates; Availability checked against the provider rather than assumed",
+      "keywords": [
+        "model",
+        "hub",
+        "browsing",
+        "models"
+      ]
+    },
+    {
+      "id": "model-hub/assigning-models-to-agents",
+      "section_id": "model-hub",
+      "section_title": "Model Hub",
+      "anchor": "section-model-hub",
+      "title": "Assigning Models to Agents",
+      "content": "Different jobs justify different models. Assignments map an agent key to a model, so report generation and quick chat need not share one.\nTips: Check API Usage after changing an assignment — a more capable model changes cost per report, not just quality.",
+      "keywords": [
+        "model",
+        "hub",
+        "assigning",
+        "models",
+        "agents"
+      ]
+    },
+    {
+      "id": "game-plan/overview",
+      "section_id": "game-plan",
+      "section_title": "Game Plan",
+      "anchor": "section-game-plan",
+      "title": "Game Plan",
+      "content": "Client strategy plans, phases and assigned tasks\nTopics: Building a Plan; Assigned Tasks",
+      "keywords": [
+        "game",
+        "plan",
+        "building",
+        "assigned",
+        "tasks"
+      ]
+    },
+    {
+      "id": "game-plan/building-a-plan",
+      "section_id": "game-plan",
+      "section_title": "Game Plan",
+      "anchor": "section-game-plan",
+      "title": "Building a Plan",
+      "content": "A game plan sets out a client strategy as phases over a timeline, each holding the tasks that move it forward.\nFeatures: Phases with their own dates and rich-text detail; Timeline bar showing the plan at a glance; Tasks assigned to team members with due dates\nSteps: 1. Create a plan against the client 2. Add phases covering each stage of the strategy 3. Add tasks to each phase and assign owners",
+      "keywords": [
+        "game",
+        "plan",
+        "building"
+      ]
+    },
+    {
+      "id": "game-plan/assigned-tasks",
+      "section_id": "game-plan",
+      "section_title": "Game Plan",
+      "anchor": "section-game-plan",
+      "title": "Assigned Tasks",
+      "content": "The assigned tasks view collects everything allocated to you across every plan, so nothing depends on remembering which client it belonged to.",
+      "keywords": [
+        "game",
+        "plan",
+        "assigned",
+        "tasks"
+      ]
+    },
+    {
+      "id": "partner-network/overview",
+      "section_id": "partner-network",
+      "section_title": "Partner Network",
+      "anchor": "section-partner-network",
+      "title": "Partner Network",
+      "content": "Partner agreements, compliance and referrals\nTopics: Partner Agreements; Partner Compliance; Partner Referrals",
+      "keywords": [
+        "partner",
+        "network",
+        "agreements",
+        "compliance",
+        "referrals"
+      ]
+    },
+    {
+      "id": "partner-network/partner-agreements",
+      "section_id": "partner-network",
+      "section_title": "Partner Network",
+      "anchor": "section-partner-network",
+      "title": "Partner Agreements",
+      "content": "Agreements record the terms a partner operates under, including when an agreement is terminated and why.\nFeatures: Agreement register per partner; Termination dialog capturing the reason and effective date",
+      "keywords": [
+        "partner",
+        "network",
+        "agreements"
+      ]
+    },
+    {
+      "id": "partner-network/partner-compliance",
+      "section_id": "partner-network",
+      "section_title": "Partner Network",
+      "anchor": "section-partner-network",
+      "title": "Partner Compliance",
+      "content": "Compliance tracks partner obligations, including privacy incidents raised against a partner.\nFeatures: Privacy incident logging with follow-up; Compliance status per partner",
+      "keywords": [
+        "partner",
+        "network",
+        "compliance"
+      ]
+    },
+    {
+      "id": "partner-network/partner-referrals",
+      "section_id": "partner-network",
+      "section_title": "Partner Network",
+      "anchor": "section-partner-network",
+      "title": "Partner Referrals",
+      "content": "Referrals move a client between your business and a partner, with consent captured explicitly before anything is shared.\nFeatures: Referral dialog and detail sheet; Consent panel recording what the client agreed to share; Loan writer assignment and undertakings; Public consent page reachable by token, so a client can consent without an account\nTips: Consent is recorded per referral. Re-referring the same client later asks again rather than reusing the earlier consent.",
+      "keywords": [
+        "partner",
+        "network",
+        "referrals"
+      ]
+    },
+    {
+      "id": "quantitative-reports/overview",
+      "section_id": "quantitative-reports",
+      "section_title": "Quantitative Reports",
+      "anchor": "section-quantitative-reports",
+      "title": "Quantitative Reports",
+      "content": "Listings-level market analytics\nTopics: Reporting Command Centre",
+      "keywords": [
+        "quantitative",
+        "reports",
+        "reporting",
+        "command",
+        "centre"
+      ]
+    },
+    {
+      "id": "quantitative-reports/reporting-command-centre",
+      "section_id": "quantitative-reports",
+      "section_title": "Quantitative Reports",
+      "anchor": "section-quantitative-reports",
+      "title": "Reporting Command Centre",
+      "content": "Quantitative reports aggregate listing data into market-level views — volumes, pricing and distribution by suburb.\nFeatures: Totals for listings, average price and unique suburbs; Listings by suburb breakdown; Recent listings feed; Individual report detail views",
+      "keywords": [
+        "quantitative",
+        "reports",
+        "reporting",
+        "command",
+        "centre"
+      ]
+    },
+    {
+      "id": "pdf-import/overview",
+      "section_id": "pdf-import",
+      "section_title": "PDF Import & Report Ingestion",
+      "anchor": "section-pdf-import",
+      "title": "PDF Import & Report Ingestion",
+      "content": "Importing existing reports and monitoring the ingestion engine\nTopics: Importing Reports; Engine Administration",
+      "keywords": [
+        "pdf",
+        "import",
+        "report",
+        "ingestion",
+        "importing",
+        "reports",
+        "engine",
+        "administration"
+      ]
+    },
+    {
+      "id": "pdf-import/importing-reports",
+      "section_id": "pdf-import",
+      "section_title": "PDF Import & Report Ingestion",
+      "anchor": "section-pdf-import",
+      "title": "Importing Reports",
+      "content": "Existing PDF reports can be ingested so their content becomes searchable and reusable rather than sitting as a flat file.\nFeatures: Client report import with extraction into structured data; Import quality scoring per document",
+      "keywords": [
+        "pdf",
+        "import",
+        "report",
+        "ingestion",
+        "importing",
+        "reports"
+      ]
+    },
+    {
+      "id": "pdf-import/engine-administration",
+      "section_id": "pdf-import",
+      "section_title": "PDF Import & Report Ingestion",
+      "anchor": "section-pdf-import",
+      "title": "Engine Administration",
+      "content": "The ingestion engine is administered from a set of admin pages, because extraction quality drifts as source documents change.\nFeatures: Diagnostics for a single import, showing what was extracted and what failed; Monitoring across all imports for failure rate and throughput; Golden regression suite catching quality regressions before they ship; Retention settings governing how long imported source files are kept\nTips: Check Diagnostics before re-importing a failed document — a repeat import of an unreadable file fails the same way.",
+      "keywords": [
+        "pdf",
+        "import",
+        "report",
+        "ingestion",
+        "engine",
+        "administration"
+      ]
+    },
+    {
+      "id": "billing-usage/overview",
+      "section_id": "billing-usage",
+      "section_title": "Billing & Usage",
+      "anchor": "section-billing-usage",
+      "title": "Billing & Usage",
+      "content": "Plan, token balance, invoices and payment methods\nTopics: Token Balance; Plan & Invoices; Report Cost",
+      "keywords": [
+        "billing",
+        "usage",
+        "token",
+        "balance",
+        "plan",
+        "invoices",
+        "report",
+        "cost"
+      ]
+    },
+    {
+      "id": "billing-usage/token-balance",
+      "section_id": "billing-usage",
+      "section_title": "Billing & Usage",
+      "anchor": "section-billing-usage",
+      "title": "Token Balance",
+      "content": "Report generation and AI features consume tokens drawn from your balance. The balance combines your plan allowance with any top-up packs bought on top.\nFeatures: Balance pill visible while working; Cost estimate shown before an expensive action runs; Out-of-tokens banner when the balance will not cover the next action; Token event history explaining what each deduction paid for\nTips: Allowance and top-ups share one balance and are spent soonest-to-expire first, so an allowance is always consumed before a pack you bought.",
+      "keywords": [
+        "billing",
+        "usage",
+        "token",
+        "balance"
+      ]
+    },
+    {
+      "id": "billing-usage/plan-and-invoices",
+      "section_id": "billing-usage",
+      "section_title": "Billing & Usage",
+      "anchor": "section-billing-usage",
+      "title": "Plan & Invoices",
+      "content": "Your plan determines which modules are available. Changing plan takes effect against your workspace and is reflected in a banner when it happens.\nFeatures: Invoice history with downloadable records; Payment method management; Plan change banner confirming what changed",
+      "keywords": [
+        "billing",
+        "usage",
+        "plan",
+        "invoices"
+      ]
+    },
+    {
+      "id": "billing-usage/report-cost",
+      "section_id": "billing-usage",
+      "section_title": "Billing & Usage",
+      "anchor": "section-billing-usage",
+      "title": "Report Cost",
+      "content": "Each report carries a cost badge so the token price is visible before generating, not discovered afterwards.",
+      "keywords": [
+        "billing",
+        "usage",
+        "report",
+        "cost"
+      ]
+    },
+    {
+      "id": "lender-intelligence/overview",
+      "section_id": "lender-intelligence",
+      "section_title": "Lenders & Lender Intelligence",
+      "anchor": "section-lender-intelligence",
+      "title": "Lenders & Lender Intelligence",
+      "content": "Lender policies, rates and comparison\nTopics: Lender Register; Lender Intelligence",
+      "keywords": [
+        "lenders",
+        "lender",
+        "intelligence",
+        "register"
+      ]
+    },
+    {
+      "id": "lender-intelligence/lender-register",
+      "section_id": "lender-intelligence",
+      "section_title": "Lenders & Lender Intelligence",
+      "anchor": "section-lender-intelligence",
+      "title": "Lender Register",
+      "content": "The lender list holds the institutions you work with and the policy detail that affects borrowing capacity.\nFeatures: Lender records with policy attributes; Comparison across lenders for a given scenario",
+      "keywords": [
+        "lenders",
+        "lender",
+        "intelligence",
+        "register"
+      ]
+    },
+    {
+      "id": "lender-intelligence/lender-intelligence",
+      "section_id": "lender-intelligence",
+      "section_title": "Lenders & Lender Intelligence",
+      "anchor": "section-lender-intelligence",
+      "title": "Lender Intelligence",
+      "content": "Lender intelligence surfaces rate and policy movement, including data drawn from the CDR lending rates service.\nTips: Borrowing capacity results depend on lender policy. A capacity figure is only as current as the lender record behind it.",
+      "keywords": [
+        "lenders",
+        "lender",
+        "intelligence"
+      ]
+    },
+    {
+      "id": "keyboard-shortcuts/overview",
+      "section_id": "keyboard-shortcuts",
+      "section_title": "Keyboard Shortcuts",
+      "anchor": "section-keyboard-shortcuts",
+      "title": "Keyboard Shortcuts",
+      "content": "Quick actions for power users\nTopics: Global Shortcuts; Aurixa Intelligence Hub Shortcuts; Calendar Shortcuts",
+      "keywords": [
+        "keyboard",
+        "shortcuts",
+        "global",
+        "aurixa",
+        "intelligence",
+        "hub",
+        "calendar"
+      ]
+    },
+    {
+      "id": "keyboard-shortcuts/global-shortcuts",
+      "section_id": "keyboard-shortcuts",
+      "section_title": "Keyboard Shortcuts",
+      "anchor": "section-keyboard-shortcuts",
+      "title": "Global Shortcuts",
+      "content": "Shortcuts available throughout the application.\nShortcut: ⌘/Ctrl+K — Open search / history search\nShortcut: ⌘/Ctrl+N — New chat (in Aurixa Intelligence Hub)\nShortcut: ⌘/Ctrl+/ — Focus message input\nShortcut: Esc — Close dialogs / Exit full screen",
+      "keywords": [
+        "keyboard",
+        "shortcuts",
+        "global"
+      ]
+    },
+    {
+      "id": "keyboard-shortcuts/aurixa-intelligence-hub-shortcuts",
+      "section_id": "keyboard-shortcuts",
+      "section_title": "Keyboard Shortcuts",
+      "anchor": "section-keyboard-shortcuts",
+      "title": "Aurixa Intelligence Hub Shortcuts",
+      "content": "Shortcuts specific to the AI chat interface.\nShortcut: ⌘/Ctrl+⇧+C — Copy last response\nShortcut: ⌘/Ctrl+J — Scroll to bottom\nShortcut: ⌘/Ctrl+B — Toggle reports panel\nShortcut: ⌘/Ctrl+Enter — Toggle full screen\nShortcut: Enter — Send message\nShortcut: Shift+Enter — New line in message",
+      "keywords": [
+        "keyboard",
+        "shortcuts",
+        "aurixa",
+        "intelligence",
+        "hub"
+      ]
+    },
+    {
+      "id": "keyboard-shortcuts/calendar-shortcuts",
+      "section_id": "keyboard-shortcuts",
+      "section_title": "Keyboard Shortcuts",
+      "anchor": "section-keyboard-shortcuts",
+      "title": "Calendar Shortcuts",
+      "content": "Shortcuts for calendar navigation.\nShortcut: T — Go to today\nShortcut: ←+→ — Navigate periods\nShortcut: D — Day view\nShortcut: W — Week view\nShortcut: M — Month view\nShortcut: ? — Show shortcuts help",
+      "keywords": [
+        "keyboard",
+        "shortcuts",
+        "calendar"
+      ]
+    },
+    {
+      "id": "troubleshooting/overview",
+      "section_id": "troubleshooting",
+      "section_title": "Troubleshooting",
+      "anchor": "section-troubleshooting",
+      "title": "Troubleshooting",
+      "content": "Common issues and solutions\nTopics: Report Generation Issues; Data Sync Issues; Email Copilot Issues; Best Practices",
+      "keywords": [
+        "troubleshooting",
+        "report",
+        "generation",
+        "issues",
+        "data",
+        "sync",
+        "email",
+        "copilot",
+        "best",
+        "practices"
+      ]
+    },
+    {
+      "id": "troubleshooting/report-generation-issues",
+      "section_id": "troubleshooting",
+      "section_title": "Troubleshooting",
+      "anchor": "section-troubleshooting",
+      "title": "Report Generation Issues",
+      "content": "Solutions for common report generation problems.\nTips: If \"Data Unavailable\" appears, try a broader analysis mode (Address → Postcode → State); Complex analysis can take 3-7 minutes depending on data availability; Avoid generating multiple reports simultaneously; Check your internet connection for timeouts; Verify property addresses are correctly formatted",
+      "keywords": [
+        "troubleshooting",
+        "report",
+        "generation",
+        "issues"
+      ]
+    },
+    {
+      "id": "troubleshooting/data-sync-issues",
+      "section_id": "troubleshooting",
+      "section_title": "Troubleshooting",
+      "anchor": "section-troubleshooting",
+      "title": "Data Sync Issues",
+      "content": "Troubleshooting data synchronization problems.\nTips: Check the Monitoring page for API health status; Manual sync can be triggered from Sources page; Allow up to 24 hours for market data updates; Contact support if sync failures persist",
+      "keywords": [
+        "troubleshooting",
+        "data",
+        "sync",
+        "issues"
+      ]
+    },
+    {
+      "id": "troubleshooting/email-copilot-issues",
+      "section_id": "troubleshooting",
+      "section_title": "Troubleshooting",
+      "anchor": "section-troubleshooting",
+      "title": "Email Copilot Issues",
+      "content": "Solutions for email-related problems.\nTips: Verify email credentials in Settings; Check mailbox permissions for OAuth connections; AI summaries require email body content; Refresh the page if emails aren't loading",
+      "keywords": [
+        "troubleshooting",
+        "email",
+        "copilot",
+        "issues"
+      ]
+    },
+    {
+      "id": "troubleshooting/best-practices",
+      "section_id": "troubleshooting",
+      "section_title": "Troubleshooting",
+      "anchor": "section-troubleshooting",
+      "title": "Best Practices",
+      "content": "Tips for optimal system usage.\nTips: Use complete addresses with suburb, state, and postcode; Generate reports after major market events for current data; Use consistent financial assumptions when comparing properties; Regularly review and update client information; Export important reports for offline access",
+      "keywords": [
+        "troubleshooting",
+        "best",
+        "practices"
+      ]
+    },
+    {
+      "id": "quick-tips",
+      "section_id": "quick-tips",
+      "section_title": "Quick Tips",
+      "anchor": "quick-tips",
+      "title": "Quick Tips",
+      "content": "Tip 1: Use ⌘/Ctrl + K to quickly search across the application\nTip 2: Combine multiple filters for precise property and client searches\nTip 3: Download reports in PDF format for offline viewing and sharing\nTip 4: Click on any property card to view detailed information and generate reports\nTip 5: Use the Overview dashboard for a quick snapshot of portfolio performance\nTip 6: Ask the Aurixa Intelligence Hub AI natural language questions about your properties",
+      "keywords": [
+        "quick",
+        "tips",
+        "tip"
+      ]
+    },
+    {
+      "id": "property-status-guide",
+      "section_id": "property-status-guide",
+      "section_title": "Property Status Guide",
+      "anchor": "property-status-guide",
+      "title": "Property Status Guide",
+      "content": "Active: Property is currently listed and available\nPending: Property has an offer pending or under contract\nSold: Property has been successfully sold\nWithdrawn: Property has been removed from the market\nExpired: Listing has expired and needs renewal",
+      "keywords": [
+        "property",
+        "status",
+        "guide",
+        "active",
+        "pending",
+        "sold",
+        "withdrawn",
+        "expired"
+      ]
+    },
+    {
+      "id": "need-help",
+      "section_id": "need-help",
+      "section_title": "Need Help?",
+      "anchor": "need-help",
+      "title": "Need Help?",
+      "content": "Support option 1: Check the Settings page for configuration options\nSupport option 2: Use the Aurixa Intelligence Hub AI to ask questions about features\nSupport option 3: Review Error Logs for troubleshooting system issues\nSupport option 4: Contact your system administrator for technical support",
+      "keywords": [
+        "need",
+        "help",
+        "support",
+        "option"
+      ]
+    }
+  ]
+}

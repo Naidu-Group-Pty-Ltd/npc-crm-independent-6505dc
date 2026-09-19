@@ -1,0 +1,90 @@
+{
+  "async": false,
+  "createdAt": "2026-05-12T07:49:39.353Z",
+  "function": {
+    "description": "Use this tool to create a confirmed GoHighLevel appointment for NPC Services after the caller has selected and clearly confirmed an available time. The tool sends the caller's booking intent, contact ID, location ID, confirmed start time, end time, title, and notes to Make. Make classifies the appointment type and routes the request to the correct hardcoded GoHighLevel calendar. This tool creates a real booking. Only call this tool after contact resolution has returned a valid contactId and after availability has already been checked.",
+    "name": "ghl_create_booking",
+    "parameters": {
+      "properties": {
+        "booking_intent_text": {
+          "description": "The caller's confirmed appointment type in natural language. Include whether they want a Discovery Call, Strategy Session by Phone, Strategy Session by Zoom, Initial Finance Consult by Phone, or Initial Finance Consult by Zoom.",
+          "type": "string"
+        },
+        "caller_context": {
+          "description": "Relevant booking context, including the confirmed appointment pathway and whether the caller selected phone or Zoom where applicable.",
+          "type": "string"
+        },
+        "contactId": {
+          "description": "The GoHighLevel contact ID returned by the contact resolver tool. This is required before creating any booking.",
+          "type": "string"
+        },
+        "endTime": {
+          "description": "The confirmed appointment end time in ISO 8601 format with timezone offset. Example: '2026-05-20T10:30:00+10:00'.",
+          "type": "string"
+        },
+        "locationId": {
+          "description": "The GoHighLevel location/sub-account ID for NPC Services.",
+          "type": "string"
+        },
+        "notes": {
+          "description": "Internal appointment notes, including caller context, selected slot, and any relevant call details.",
+          "type": "string"
+        },
+        "preferred_date_text": {
+          "description": "The caller's selected appointment time in natural language. Example: '20 May 2026 at 10:00 AM'.",
+          "type": "string"
+        },
+        "search_reason": {
+          "description": "Short internal reason for this booking. Example: 'Caller confirmed discovery call slot after availability check'.",
+          "type": "string"
+        },
+        "startTime": {
+          "description": "The confirmed appointment start time in ISO 8601 format with timezone offset. Example: '2026-05-20T10:00:00+10:00'.",
+          "type": "string"
+        },
+        "timezone": {
+          "description": "The appointment timezone. Always use 'Australia/Sydney'.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "booking_intent_text",
+        "locationId",
+        "contactId",
+        "startTime",
+        "endTime",
+        "timezone"
+      ],
+      "type": "object"
+    }
+  },
+  "id": "f195a817-8346-475d-ad0e-8033f1d2e283",
+  "messages": [
+    {
+      "blocking": false,
+      "content": "Perfect, I’ll go ahead and book that in for you now.",
+      "type": "request-start"
+    },
+    {
+      "content": "All set, your appointment has been booked.",
+      "endCallAfterSpokenEnabled": false,
+      "role": "assistant",
+      "type": "request-complete"
+    }
+  ],
+  "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+  "server": {
+    "staticIpAddressesEnabled": false,
+    "timeoutSeconds": 20,
+    "url": "https://hook.eu2.make.com/eop70ky2635nobauh7lyof13sctvl0ga"
+  },
+  "type": "function",
+  "updatedAt": "2026-05-14T17:53:57.196Z",
+  "variableExtractionPlan": {
+    "schema": {
+      "properties": {},
+      "required": [],
+      "type": "object"
+    }
+  }
+}

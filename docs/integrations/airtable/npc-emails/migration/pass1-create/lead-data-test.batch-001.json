@@ -1,0 +1,45 @@
+{
+  "table": "Lead Data Test",
+  "batch": 1,
+  "of": 1,
+  "recordCount": 7,
+  "records": [
+    {
+      "sourceRecordId": "recG2h6c6Y6sPjh7H",
+      "sourceCreatedTime": "2025-11-12T08:54:53.000Z",
+      "fields": {
+        "Name": "Rugesh Naidu"
+      }
+    },
+    {
+      "sourceRecordId": "recG6MtUqc8No8OdE",
+      "sourceCreatedTime": "2025-11-12T07:50:53.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "recLx00ARc75tx9cd",
+      "sourceCreatedTime": "2025-11-12T08:33:58.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "recPdyF2c2lymem2d",
+      "sourceCreatedTime": "2025-11-12T08:40:42.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "recUzN6rP4ybS83MV",
+      "sourceCreatedTime": "2025-11-12T07:50:53.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "recVmGXLqx6rpSle5",
+      "sourceCreatedTime": "2025-11-12T08:50:53.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "recnWjjnafQMHsT85",
+      "sourceCreatedTime": "2025-11-12T07:50:53.000Z",
+      "fields": {}
+    }
+  ]
+}

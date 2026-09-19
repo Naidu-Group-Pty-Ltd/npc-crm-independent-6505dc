@@ -1,0 +1,504 @@
+{
+  "table": "Emails",
+  "batch": 36,
+  "of": 107,
+  "recordCount": 50,
+  "records": [
+    {
+      "sourceRecordId": "recK8BxhbpGl4eHay",
+      "sourceCreatedTime": "2026-03-03T03:22:03.000Z",
+      "fields": {
+        "Name": "Sam Shaw",
+        "Subject": "Off Market Opportunity - 3 Whittakers Road, Traralgon",
+        "Email": "samshaw@wprci.com.au",
+        "Body": "Good afternoon,\r\n\r\nJust a quick email to advise that we have a new off market listing at 3 Whittakers Road, Traralgon that may be of interest to you. Please find attached a copy of the section 32 for this property for your perusal.\r\n\r\nPlease see the below",
+        "Status": "Error 500",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/-zKAKKBegsLHb0dgUGLVxg/MJHCzVJvdmYw1Tvr8yoky_FiAIHrH3xi6TsUIN3RUzwaVKdvyDv2a72v5LmpFNQdfYHJ5qM-3ZFZMQIJtB0sb-QPaWA5pM72LwNyVZEjcYdgiUtIc4zDzWj0L5ik8vJcwgMO5SF8krmcXQYqtK7RhdwSS0HmmhSS4z_P5ed-m7RsPkuweMrW5sFzo3bBNLgg/pNq1jqjwpVq2wexwBhgoOknrbpZ5fcOcU241av6gSYM",
+            "filename": "outlook_email_attachment.pdf",
+            "type": "application/pdf",
+            "size": 196256
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "recK8Ee8IaCCqevyR",
+      "sourceCreatedTime": "2025-11-05T05:05:57.000Z",
+      "fields": {
+        "Name": "Matt / MaveriX PM",
+        "Subject": "Brand New & Ready By Xmas!",
+        "Email": "matt@maverixpropertymarketing.com",
+        "Body": "Nearing Completion! Inspect & Secure Now! Four Beds + Media on 454m2 block. $1,150,000. | Open Home This Saturday! | Always Love & Appreciate The Feedback Thank You! | View Homes‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌"
+      }
+    },
+    {
+      "sourceRecordId": "recK9l5Tm7rPyWStU",
+      "sourceCreatedTime": "2026-06-15T08:28:59.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recK9vxRJkiohQvi6",
+      "sourceCreatedTime": "2026-03-23T22:39:47.000Z",
+      "fields": {
+        "Name": "Rick Holloway",
+        "Subject": "FW: Registered duplex sale",
+        "Email": "rick@thebobtraskgroup.com.au",
+        "Body": "SMSF\r\nRentals Needed Urgent\r\nDUPLEX SALE\r\nSTARTING FROM $799,990\r\nHIGH  YIELD $820 PER WEEK RETURN\r\nDOUBLE GARAGES\r\nALL BLOCKS OVER 400 SQM PER DWELLING\r\nSelling Quick\r\nBig Blocks\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\nRegards\r\n\r\n“Whatever you need, if we don’t have it"
+      }
+    },
+    {
+      "sourceRecordId": "recKAb8gGWZvXtF2N",
+      "sourceCreatedTime": "2025-12-01T08:08:38.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recKCCNc1asyzPHlP",
+      "sourceCreatedTime": "2025-09-10T16:36:54.000Z",
+      "fields": {
+        "Name": "CRE Brokers",
+        "Subject": "CRE Brokers - Properties of the Week",
+        "Email": "mail@crebrokers.com",
+        "Body": "Properties of the week\r\nEach week, our team at CRE Brokers hand-picks standout properties across the tourism and hospitality sectors—ready for you to explore.\r\n\r\nScroll down to view our Properties of the Week.\r\nCurrent Listings\r\n\r\nCape Clear\r\n1470 Scarsda",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recKD9W1lTm0MM2NB",
+      "sourceCreatedTime": "2026-01-21T22:06:57.000Z",
+      "fields": {
+        "Name": "Rick Holloway",
+        "Subject": "FW: HOUSE AND LAND",
+        "Email": "rick@thebobtraskgroup.com.au",
+        "Body": "Limited stock\r\nHOUSE AND LAND\r\nSTARTING FROM $750,000\r\nMORAYFIELD,BOOVAL\r\nUnique Property\r\nGreat Location\r\nTWO PART INVESTMENT’S\r\nGOING QUICK\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\nRegards\r\n\r\n“Whatever you need, if we don’t have it, we can find it and we can build it!”",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recKDd4IMddnmUtlh",
+      "sourceCreatedTime": "2025-08-19T05:04:33.000Z",
+      "fields": {
+        "Name": "Rugesh Naidu",
+        "Subject": "NPC Services | Naidu Property Consulting Services | Introduction & Mailing List Allocation",
+        "Email": "rugesh@npcservices.com.au",
+        "Body": "Good afternoon,I hope this message finds you well. I’d like to take a moment to introduce NPC Services, a dedicated buyer’s agency and property consulting business specialising in guiding clients through every stage of their investment journey.At NPC Services, we go beyond sourcing properties, we deliver a complete end-to-end solution, including strategic property planning and full support through due diligence, negotiations, and settlement.We currently have qualified clients actively ready to purchase across a range of budgets, and we’re looking to build strong relationships with agencies like yours. To streamline the process, it would be greatly appreciated if you could please add our acquisitions team to your weekly property mailing list below:Property@npcservices.com.auThis ensures our research division receives your latest on and off-market listings, promptly for reviewal and assessment, allowing us to respond quickly and match opportunities with ready buyers.I’m confident this collaboration will lead to excellent results for both your agency and our clients.Please feel free to contact me if you have any questions.\n\n\nKind Regards[cid:aff3fcec-a787-4f57-b281-8f3e115a5cf3]Mobile: 0433 005 110 | Email: rugesh@npcservices.com.au | Website: www.npcservices.com.au [http://www.npcservices.com.au/]\n[cid:cca0e905-cdd7-49ac-a5d6-1923c4ee5d72] [http://www.linkedin.com/in/rugesh-naidu-1b0003123][cid:6b16138d-a01c-42da-8ee6-9169f1bad742] [https://www.instagram.com/npc.services]A blue circle with a white letter f in it AI-generated content may be incorrect. [cid:5152aaaa-dfe8-44a8-bd65-6719258ad501] [https://www.facebook.com/profile.php?id=61577033127001]\nAddress: Level 5 Nexus Norwest, 4 Columbia Ct, Norwest NSW 2153\nNaidu Group Pty Ltd trading as Naidu Property Consulting ServicesACN: 684 555 771 | ABN: 50 684 555 771\nDisclaimer:\nAs a Professional Property Consultant & Buyers Agent, we provide information and advice based on our expertise and experience in the real estate market. Please be aware that the advice and insights offered are for general informational purposes only and should not be considered financial advice. While we strive to ensure the accuracy and relevance of the information provided, real estate markets are dynamic and subject to change and cannot guarantee the future performance or outcomes of any property investment. It is important to understand that real estate investments carry risks, including market fluctuations, changes in property values, and potential financial losses. Our services include assisting you in identifying and evaluating potential opportunities, negotiating purchase terms, and navigating the transaction process. Any decisions to purchase, sell, or invest in real estate should be made after careful consideration and consultation with appropriate financial, legal, and tax advisors. By engaging our services, you acknowledge that you have read and understood this disclaimer and agree to take full responsibility for your property-related decisions. Always conduct your own research and due diligence to ensure that any property transaction aligns with your financial objectives and risk profile.",
+        "Status": "Error 500",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/GQC0JRchGsSRrUDtmE1voQ/doBNUUs-n7VRC9EOaObweoduBg-wdD8EaUNfJigC5wnXiP5w8aJIQ0H4BD3w9rA14Wl6PNdy08le3OZ1Q2l2WIkfJtD_rG7y_Ipk_S3w-A9HkD4ZMBgYrgMmsBKaslnhXAOKcC9Kr0EaQgBRnfqBW9DlUX_c5gx1v7mFr5_J3b5MWPxFT5Fsf6hJWV_l_jLS/i7JYBGQ5oYFR796hsa1USOFAqeiRLdnuzEdA56I5zhs",
+            "filename": "outlook_email_attachment.png",
+            "type": "image/png",
+            "size": 3465
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "recKE1vul9nb1Qtba",
+      "sourceCreatedTime": "2026-03-10T16:24:17.000Z",
+      "fields": {
+        "Name": "Tom Offermann Real Estate",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "sales@offermann.com.au",
+        "Body": "Edit my requirements\r\nVisit our Website\r\nProperty Alert\r\nWednesday, 11th March 2026\r\nHello Rugesh,\r\n\r\nThe following listings matched your Property Alert search requirements.\r\n\r\nSunrise Beach\r\n50 Tingira Crescent\r\nStellar Front Row: 32m Absolute Beachfront",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recKEJWKNJPi3x0fC",
+      "sourceCreatedTime": "2025-10-16T05:33:37.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recKEUZfNJKOUoIUU",
+      "sourceCreatedTime": "2025-11-10T06:10:07.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recKGWutVyRp77hjt",
+      "sourceCreatedTime": "2025-08-27T11:23:10.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recKIggOob1V4Uqia",
+      "sourceCreatedTime": "2026-04-01T03:05:46.000Z",
+      "fields": {
+        "Name": "Michael Enever",
+        "Subject": "Nutrien Harcourts April Propertymark Now Out!",
+        "Email": "michael.enever@harcourts.com.au",
+        "Body": "Check out the latest rural and regional properties across Australia\r\n� �€ �€ � �€ �€ � �€ �€ � �€ �€ � �€ �€ � �€ �€ � �€ �€ � �€ �€ � �€ �€ � �€ �€ � �€ �€ � �€ �€ � �€ �€ � �€ �€ � �€ �€ � �€ �€ � �€ �€ � �€ �€ � �€ �€ � �€ �€ � �€ �€ � �€ �€ � �€ �€ � ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recKJ108H9obDoFvg",
+      "sourceCreatedTime": "2026-03-10T23:40:58.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recKJV2LjopIIqJWy",
+      "sourceCreatedTime": "2025-12-05T07:46:48.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recKJlSWQ1mSk9ZxC",
+      "sourceCreatedTime": "2025-08-17T17:33:04.000Z",
+      "fields": {
+        "Name": "Lavan Kenobi",
+        "Subject": "Fwd: 'nsw' - Alert",
+        "Email": "lavankenobi@gmail.com",
+        "Body": "\n\n---------- Forwarded message ---------\nFrom: Lavan Kenobi <lavankenobi@gmail.com [lavankenobi@gmail.com]>\nDate: Sun, Aug 17, 2025 at 8:22 PM\nSubject: Fwd: 'nsw' - Alert\nTo: <property@npcservices.com.au [property@npcservices.com.au]>\n\n\n\n\n---------- Forwarded message ---------\nFrom: Lavan Kenobi <lavankenobi@gmail.com [lavankenobi@gmail.com]>\nDate: Sun, Aug 17, 2025 at 7:11 PM\nSubject: Fwd: 'nsw' - Alert\nTo: <property@npcservices.com.au [property@npcservices.com.au]>\n\n\n\n\n---------- Forwarded message ---------\nFrom: Rugesh Naidu <naidu.rugesh@gmail.com [naidu.rugesh@gmail.com]>\nDate: Sun, Aug 17, 2025 at 4:21 PM\nSubject: Fwd: 'nsw' - Alert\nTo: <lavankenobi@gmail.com [lavankenobi@gmail.com]>\n\n\n\n\n---------- Forwarded message ---------\nFrom: realcommercial.com.au [http://realcommercial.com.au] <email@campaign.realcommercial.com.au [email@campaign.realcommercial.com.au]>\nDate: Sat, Aug 16, 2025 at 4:18 PM\nSubject: 'nsw' - Alert\nTo: <naidu.rugesh@gmail.com [naidu.rugesh@gmail.com]>\n\n\nThere are new properties for your 'nsw' saved search.͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌Unsubscribe from Saved Search Alert emails [https://ablink.campaign.realcommercial.com.au/ss/c/u001.uYrhCq4L-I1OIkZEwlUHN6-6sJkXvyP9OtWW-iAWmlvDJIK8dnkVGVV8lYIgvsfi0AKaaQ12FqJsWaGB8rY-pVBYIzcCEnqh-1vdD9QMMcJfoIHwEDmVWDD8O0l5tFR8jt0LNbgiAcn-tWzBaSwekwtnyfyGqfPgVNd7-U4TnQqThuqLuGxwOXjGfeeKjnO8JhrJboe9wO8QEJRRg0IuHSpu1wjxxHX3fKrV1SanemItfoHU-TiD_YRAs4jmCpL6OXSFBj5KgimWyB6dKqMq5D1UM9AiSBxWMGay9Em0yKwmTyWpZ42wzQI2tIxwQoMQ7fI20qSWJ0wexpEDCHzSUJOgsdZTpa6HlXaXWyDQU7s/4j3/ht1f_4SNRCONPYuyXXZsWA/h39/h001.H3QlNgHzkTE_hD-sIMpEF3JwTW9GepOZRDCAdO8SptU] \n\nhttps://www.realcommercial.com.au/ [https://braze-images.com/appboy/communication/assets/image_assets/images/61f1f6562088e02342167051/original.png?1643247190] [https://ablink.campaign.realcommercial.com.au/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys65SeWQLvRw4iXwVRALPGsuS7htNoE2f8APVVnd-LeODl3V9EaCs0b-zBrPsdRvJB13C129WaZM-pZfLp7QiURWPp_UnlgdcDYkpY-vM9ppJy9vDo34ejpIn23dh452WVuqoBXVOXJA9QLbN2ZKAylbMOwTXnkBsRgPi1RZ7Km5iNg/4j3/ht1f_4SNRCONPYuyXXZsWA/h40/h001._n0dgMpXe38e9E68FM1vMRCRBUunI0WwCVdoYUnoj_M] New to the market New properties match your saved search for \"nsw\". Upstate - Northern Beaches [https://i1.au.reastatic.net/320x60-resize,format=png/547e26dc1861dcd7d33af99b85933346a347a6d6bd415c14409e63940d720a78/large.jpg] [https://ablink.campaign.realcommercial.com.au/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys66UF8-6ALucPfdQOUcnShLgerX4AAWieuzfDVJw2il1I41_zkIjtYgFOICONggTdXdrG52dWA-LeC69g_dS3YlX20BZr4RndIRS0d2W9UxqNu65kerNYsBi5_QZ_-KLWMrFrJp8pK50fF8FgQvgjob8IPF56rRCllO0mf5UI4WyUOk_54aRMrLnUQmuUvIfQAufEKnu_OlEtdIWFml9NUQ2ViQPof5KtIDUESTYzIvToQ/4j3/ht1f_4SNRCONPYuyXXZsWA/h41/h001.NZJyaVT8uQXubZi4YgneBrs4n8HZoG5mrU1WRu2GR3Q] 3/108 Old Pittwater Road [https://i1.au.reastatic.net/600x400,gravity=north/4580f3ba777d27e0bf048911628bf80ce20e7acadbb9111e26027c395770040c/image0.jpg] 3/108 Old Pittwater Road [https://i1.au.reastatic.net/420x280,gravity=north/4580f3ba777d27e0bf048911628bf80ce20e7acadbb9111e26027c395770040c/image0.jpg] [https://ablink.campaign.realcommercial.com.au/uni/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys64Ca8YbNd7rXD0Z8-MCCJvvL8rg7hluCrvBX4CGNDcQEsbCWakOFMXS1zaRCFV5xfB6bZRywqmlqm9h5JKkpVljSuCUkD_CmbGdpYlYEckYWdxNZnR_JwcNmP7i5hkWIGJAhuJ8vS3ztzeBMSCdNcX5uUjXCNuvLbi3dU97Mh18Fj0eUv8t7xm_gTPPoGd96Z5s0N4xp0Yjs8IlNFV7jF5aTYpodzCotO4uuRpuEIVjTfqfDhwNchFtSrxfzTwtyRSmnoQcN_TENPbi0KjTMNOw/4j3/ht1f_4SNRCONPYuyXXZsWA/h42/h001.x4Vjg6Vm1ua_aW-nh5xfk1ZpOrc9TTjEERiHefbug84]3/108 Old Pittwater Road, Brookvale, NSW 2100 [https://ablink.campaign.realcommercial.com.au/uni/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys64Ca8YbNd7rXD0Z8-MCCJvvL8rg7hluCrvBX4CGNDcQEsbCWakOFMXS1zaRCFV5xfB6bZRywqmlqm9h5JKkpVljSuCUkD_CmbGdpYlYEckYWdxNZnR_JwcNmP7i5hkWIGJAhuJ8vS3ztzeBMSCdNcX5uUjXCNuvLbi3dU97Mh18Fj0eUv8t7xm_gTPPoGd96Z5s0N4xp0Yjs8IlNFV7jF5aTYpodzCotO4uuRpuEIVjTfqfDhwNchFtSrxfzTwtyRSmnoQcN_TENPbi0KjTMNOw/4j3/ht1f_4SNRCONPYuyXXZsWA/h43/h001.ONfU4RVp9Ev2_pD1yhr_P3iwBrX1u9V76FqWkaRAOqw]AUCTIONProperty Size [https://braze-images.com/appboy/communication/assets/image_assets/images/67074fd4fceceb00651dda6f/original.png?1728532436]618 m² Parking Spaces [https://appboy-images.com/appboy/communication/assets/image_assets/images/5dc4d5e2a12f74571497e5f4/original.png?1573180898]12 Warehouse, Factory & Industrial Paul Cunningham [https://i1.au.reastatic.net/80x80,gravity=north/abf4e488a16dd03ada6e11ceead762df137a798d29a4b56de8cd056437fef752/main.jpg] [https://ablink.campaign.realcommercial.com.au/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys673kmgBp81tKx10xV0Plegm7eFAkNsvS5KjpblPPjsvB_BPxTrtzU-0gn1tmQNgsYqDYszUYPRWK86Fg6iZUVsiuovUIqfrCxkxdz8XQimT2hxpsK3wScPkmAkFxr425EmwPuKch4q6RhAQpu75Jzh1kRTsh42jiK8R-XrgktuRbZgrCZQwOJ-RAUqKdKIpYUX-A4biUw0VF5o5V2LOUbLX/4j3/ht1f_4SNRCONPYuyXXZsWA/h44/h001.igTFcjSUFhZbHsuihKsy7QEFBs38dz4uuAMigjaiz_Y] Saxon Stonehouse [https://i1.au.reastatic.net/80x80,gravity=north/baa8f04b58d4959539831834e7cd6978588f5a25110c04163016360365cd1eaf/main.jpg] [https://ablink.campaign.realcommercial.com.au/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys66xKz7aeZiL2V7D4aw66ngCpmNsabRY5yRAOK5lDU7vPgPV3EtqDzguocOiweHPcn-cJXYKHBPdsNg1yAsQpIqrCqJNjmEavJJDz-VT8s40S59RMhtjaAzvqiUFilpEYuNMQEibNv-x9Pjk_eu0bRsFhwVH9Y8VNgmCl6p50aAXCliQJDsHRlfbIahfeFw63kcJQvOC7qaVdy7oV4e0E7hs/4j3/ht1f_4SNRCONPYuyXXZsWA/h45/h001.GlvA7rbAOlvmqhyLRGt9PeNYGj9VAO5qu38TELk-Kao] View Property [https://ablink.campaign.realcommercial.com.au/uni/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys64Ca8YbNd7rXD0Z8-MCCJvvL8rg7hluCrvBX4CGNDcQEsbCWakOFMXS1zaRCFV5xfB6bZRywqmlqm9h5JKkpVljSuCUkD_CmbGdpYlYEckYWdxNZnR_JwcNmP7i5hkWIGJAhuJ8vS3ztzeBMSCdNcX5uUjXCNuvLbi3dU97Mh18Fj0eUv8t7xm_gTPPoGd96Z5s0N4xp0Yjs8IlNFV7jF5aTYpodzCotO4uuRpuEIVjTfqfDhwNchFtSrxfzTwtyRSmnoQcN_TENPbi0KjTMNOw/4j3/ht1f_4SNRCONPYuyXXZsWA/h46/h001.zL4upe9Q3vhAtNa4LiBM1gYnPUmOX7haB7rw69BJw-0] VIBE Property - Richmond [https://i1.au.reastatic.net/320x60-resize,format=png/3322910435478f12a887b9b2e39fe55d908eec6df98efcdd3079a24d75c6fa25/large_commercial.jpg] [https://ablink.campaign.realcommercial.com.au/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys66UF8-6ALucPfdQOUcnShLg8zzqld8jM5thUc6pKl91KqjVeHvkMOyUOaDYo6ON9uJCUiqbdSMOb5S3GgxHgpd-0pBoJaEKAUPjv2ghT2_5MVZ8BKIpDTv5Vi6FZ0oBr4GmjQwy3BUsf_sxctxvmh6qkyD4abW6e8k537qK0D8QRZ2-_LyI5ck-SLQR1UoJGcp1ANuL0IocHXTCtxHZ01NlOn1Zf_yo4FW5jPSJq7uS1A/4j3/ht1f_4SNRCONPYuyXXZsWA/h47/h001.NHfZm8YFj4goY7UGN8FO1BvYHGQpZCC47K_NxRukXAI] 5/2 Anderson Place [https://i1.au.reastatic.net/600x400,gravity=north/c913abd5de4a15bb6741cf9fd4118945664436e8f8628b98265a36d5a3cba789/image0.jpg] 5/2 Anderson Place [https://i1.au.reastatic.net/420x280,gravity=north/c913abd5de4a15bb6741cf9fd4118945664436e8f8628b98265a36d5a3cba789/image0.jpg] [https://ablink.campaign.realcommercial.com.au/uni/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys64Ca8YbNd7rXD0Z8-MCCJvvIsAKuxxp7V6RPcPTuYnFvX4zfP6K9YbiJHA386STdugXVVME54SfJsRtSzbjhEvGIxASJ8eEMN-GpdHvtf-kCubL9HzgfxXjBiyBi-o3qy2glaFTpMJiWLM3TfSwqPiGM6K1fV00oWUuY-XS7PHxFmppsn82nx-pngfAerJm0qAualW-R3Q-5mJEqaK7zOWUePP30bue5M7cvArVoANGuUehZUEPs2sx99NiA6jz-1CYg9u6x81lnNZiasfTiLil/4j3/ht1f_4SNRCONPYuyXXZsWA/h48/h001.Z-wWjR5XhV_OI_0OJ2NZy2jDC-UrbvH0wzTRb3XKbCU]5/2 Anderson Place, South Windsor, NSW 2756 [https://ablink.campaign.realcommercial.com.au/uni/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys64Ca8YbNd7rXD0Z8-MCCJvvIsAKuxxp7V6RPcPTuYnFvX4zfP6K9YbiJHA386STdugXVVME54SfJsRtSzbjhEvGIxASJ8eEMN-GpdHvtf-kCubL9HzgfxXjBiyBi-o3qy2glaFTpMJiWLM3TfSwqPiGM6K1fV00oWUuY-XS7PHxFmppsn82nx-pngfAerJm0qAualW-R3Q-5mJEqaK7zOWUePP30bue5M7cvArVoANGuUehZUEPs2sx99NiA6jz-1CYg9u6x81lnNZiasfTiLil/4j3/ht1f_4SNRCONPYuyXXZsWA/h49/h001.RxJUPGP0BeQbpstwYmQW-lCDvm4Muzg9IkhBIlt3NBQ]OWNER WANTS TO MEET THE MARKET & SELL!Property Size [https://braze-images.com/appboy/communication/assets/image_assets/images/67074fd4fceceb00651dda6f/original.png?1728532436]248 m² Shops & Retail, Warehouse, Factory & Indus... View Property [https://ablink.campaign.realcommercial.com.au/uni/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys64Ca8YbNd7rXD0Z8-MCCJvvIsAKuxxp7V6RPcPTuYnFvX4zfP6K9YbiJHA386STdugXVVME54SfJsRtSzbjhEvGIxASJ8eEMN-GpdHvtf-kCubL9HzgfxXjBiyBi-o3qy2glaFTpMJiWLM3TfSwqPiGM6K1fV00oWUuY-XS7PHxFmppsn82nx-pngfAerJm0qAualW-R3Q-5mJEqaK7zOWUePP30bue5M7cvArVoANGuUehZUEPs2sx99NiA6jz-1CYg9u6x81lnNZiasfTiLil/4j3/ht1f_4SNRCONPYuyXXZsWA/h50/h001.fDNnyEj9VR0o_AlIdFqOrgof1JjKpzqumRAQrZ9bnUU] DiJones Commercial [https://i1.au.reastatic.net/320x60-resize,format=png/bc700e375704b0d4820650924f915de90a3c866238862fbe1b4c1ae684762e5f/large_commercial.jpg] [https://ablink.campaign.realcommercial.com.au/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys66UF8-6ALucPfdQOUcnShLg4M-JaLUETdjdkhLkiFiqLp8rGYnmqGKxrxhDKwf6pwdPL8OWyyHpAqV4LM1cQ86zIHbjAhI5_sekp4qTVRcGG2WJNSOw4pI77mMtkwoIT7-iVu0cO7engx8JadE-4ovZMdv3DhbkRI6IvD45kpZonftd2xX8hiOXvt_YU8okQmz36c5lyfRk4OGbwzeyXnhX/4j3/ht1f_4SNRCONPYuyXXZsWA/h51/h001.Dd_WJX2Oy7SxzGoMB2maXx1j3ORPVgC4Pba3kWtOURk] 11/3 Fairmile Close [https://i1.au.reastatic.net/600x400,gravity=north/988de41059b12cbb4ae5c1b1fad722115f0fe78ac793416fe22d790bd44e52b1/image0.jpg] 11/3 Fairmile Close [https://i1.au.reastatic.net/420x280,gravity=north/988de41059b12cbb4ae5c1b1fad722115f0fe78ac793416fe22d790bd44e52b1/image0.jpg] [https://ablink.campaign.realcommercial.com.au/uni/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys64Ca8YbNd7rXD0Z8-MCCJvvX9EZJI5mz9QR8N3rnlfQabO_ww5eKv9LCX8ac6-bQUhj6zy-0931h3JuZCH8SCTH9bwoRTQXA-Y0z9EY3fV14e3_dEGa0HMm25HIMfBdvo1JY3Fc5UYLbv-6TLXIZFQh_lHjpaq3bl8iGVYPoCpsLsb6V1o0VVOIkDc6T3hL2_X-88z7chsVOzdbd4NCb3-ZZ1GfZyex_R8p-qhhBjFYfSZgkgonpEioWYu7t5ZCPsw/4j3/ht1f_4SNRCONPYuyXXZsWA/h52/h001.rIZyuRQWK146w-sL_1v67SqQR9CgyuxJw-T0ZY72Weo]11/3 Fairmile Close, Charmhaven, NSW 2263 [https://ablink.campaign.realcommercial.com.au/uni/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys64Ca8YbNd7rXD0Z8-MCCJvvX9EZJI5mz9QR8N3rnlfQabO_ww5eKv9LCX8ac6-bQUhj6zy-0931h3JuZCH8SCTH9bwoRTQXA-Y0z9EY3fV14e3_dEGa0HMm25HIMfBdvo1JY3Fc5UYLbv-6TLXIZFQh_lHjpaq3bl8iGVYPoCpsLsb6V1o0VVOIkDc6T3hL2_X-88z7chsVOzdbd4NCb3-ZZ1GfZyex_R8p-qhhBjFYfSZgkgonpEioWYu7t5ZCPsw/4j3/ht1f_4SNRCONPYuyXXZsWA/h53/h001.Qp9T_z-aOK4ukoIGOyxsnQpv6WB4BNOJoCOlkni7wbI]Guide $600,000 to $650,000 + GSTProperty Size [https://braze-images.com/appboy/communication/assets/image_assets/images/67074fd4fceceb00651dda6f/original.png?1728532436]165 m² Parking Spaces [https://appboy-images.com/appboy/communication/assets/image_assets/images/5dc4d5e2a12f74571497e5f4/original.png?1573180898]2 Warehouse, Factory & Industrial, Offices View Property [https://ablink.campaign.realcommercial.com.au/uni/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys64Ca8YbNd7rXD0Z8-MCCJvvX9EZJI5mz9QR8N3rnlfQabO_ww5eKv9LCX8ac6-bQUhj6zy-0931h3JuZCH8SCTH9bwoRTQXA-Y0z9EY3fV14e3_dEGa0HMm25HIMfBdvo1JY3Fc5UYLbv-6TLXIZFQh_lHjpaq3bl8iGVYPoCpsLsb6V1o0VVOIkDc6T3hL2_X-88z7chsVOzdbd4NCb3-ZZ1GfZyex_R8p-qhhBjFYfSZgkgonpEioWYu7t5ZCPsw/4j3/ht1f_4SNRCONPYuyXXZsWA/h54/h001.Wap503U85ofF32mBUjubwHUE9ZwnQSzjE_AMRkXl9OE] ADVERTISEMENT Advertisement [https://sasinator.realestate.com.au/rea/iserver?hint=x&site=rca&area=buy.emailalert&mid=HCjzgFj5xssLKc79HthK2azTxpZ1FFo6&state=NSW&pcode=2100&sub=Brookvale&pid=estrip1&pos=estrip1&size=630x100] [https://ablink.campaign.realcommercial.com.au/ss/c/u001.RJVzS26lo_VvqeHKlgOC3k1e4OkMgS0CkuuSq1yg8u8WrRi_ofCu9WsdWWwr5Blv6bME47VuJn4KcR5HXGjAGxrLFr1iKXvmKQPWlB_G1noM7JuiHH7tNonZNw1l-UalLuBP3ps30dBnXf-xq43DmFpqzZS--kf8S6ZK2zcJ_ie_ENO1RbCuVKJh_5heVkwAF84a0Ebd9wtyrxOIeT38tH_XUajJeaYQ4nU9DHVERJP4Q3FRfvyWf3i8bkTPewOHo1nE9nwyrwxeIPKr6905vw/4j3/ht1f_4SNRCONPYuyXXZsWA/h55/h001.SJOGyRqG6k-g_UC8-KWo_o_M0dXjVqoT1ZY1Lozx_A8] Advertisement [https://sasinator.realestate.com.au/rea/iserver?hint=x&site=rca&area=buy.emailalert&mid=HCjzgFj5xssLKc79HthK2azTxpZ1FFo6&state=NSW&pcode=2100&sub=Brookvale&pid=estrip1&pos=estrip1&size=630x100] [https://ablink.campaign.realcommercial.com.au/ss/c/u001.RJVzS26lo_VvqeHKlgOC3k1e4OkMgS0CkuuSq1yg8u8WrRi_ofCu9WsdWWwr5Blv6bME47VuJn4KcR5HXGjAGxrLFr1iKXvmKQPWlB_G1noM7JuiHH7tNonZNw1l-UalLuBP3ps30dBnXf-xq43DmFpqzZS--kf8S6ZK2zcJ_ie_ENO1RbCuVKJh_5heVkwAF84a0Ebd9wtyrxOIeT38tH_XUajJeaYQ4nU9DHVERJP4Q3FRfvyWf3i8bkTPewOHo1nE9nwyrwxeIPKr6905vw/4j3/ht1f_4SNRCONPYuyXXZsWA/h56/h001.AupZ73WwX_hVMXoJq1J3-R9v4yAk7p5fgDgpqZBpQjo] VIBE Property - Richmond [https://i1.au.reastatic.net/320x60-resize,format=png/3322910435478f12a887b9b2e39fe55d908eec6df98efcdd3079a24d75c6fa25/large_commercial.jpg] [https://ablink.campaign.realcommercial.com.au/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys66UF8-6ALucPfdQOUcnShLg8zzqld8jM5thUc6pKl91KqjVeHvkMOyUOaDYo6ON9uJCUiqbdSMOb5S3GgxHgpd-0pBoJaEKAUPjv2ghT2_5MVZ8BKIpDTv5Vi6FZ0oBr4GmjQwy3BUsf_sxctxvmh6qkyD4abW6e8k537qK0D8QRZ2-_LyI5ck-SLQR1UoJGcp1ANuL0IocHXTCtxHZ01NlOn1Zf_yo4FW5jPSJq7uS1A/4j3/ht1f_4SNRCONPYuyXXZsWA/h57/h001.wAD7xquRtaA1MP8F7bQLvrvFlJkg2J-uxr7JnvAdfl8] 2/2 Anderson Place [https://i1.au.reastatic.net/600x400,gravity=north/b9eca8033b97d69277a06200d00e54b72285317e0b83b85f0d6a4c47d56e847c/image0.jpg] 2/2 Anderson Place [https://i1.au.reastatic.net/420x280,gravity=north/b9eca8033b97d69277a06200d00e54b72285317e0b83b85f0d6a4c47d56e847c/image0.jpg] [https://ablink.campaign.realcommercial.com.au/uni/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys64Ca8YbNd7rXD0Z8-MCCJvvuB8mcbXP2PNO7CeNCAah66xOy9DsehhQ-90c6u07cnBAh5GW6iEaiZnxc5_nuDyeNp_-669onYYdT9fCtKY47R3sEiUPBXtJSQMKeTXmkkUbvXgMuvA2jU7LKJNXzhbm_2yfmYZLKgArwvw1r7AzYYUF0B80rBx5R3ZyBh7LDPTgA2NcGTMRFaUs7zbcGQpCIYHbAp2fYXB0jdjvoXxupv9lPuib-g7hGjTrs4Sz9vDSBe2tNnBqJbPC39cwIa-V/4j3/ht1f_4SNRCONPYuyXXZsWA/h58/h001.26_5_Dm1VeuBPMzlmwaE3rscpvqQu3WrP6p5_J81jSs]2/2 Anderson Place, South Windsor, NSW 2756 [https://ablink.campaign.realcommercial.com.au/uni/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys64Ca8YbNd7rXD0Z8-MCCJvvuB8mcbXP2PNO7CeNCAah66xOy9DsehhQ-90c6u07cnBAh5GW6iEaiZnxc5_nuDyeNp_-669onYYdT9fCtKY47R3sEiUPBXtJSQMKeTXmkkUbvXgMuvA2jU7LKJNXzhbm_2yfmYZLKgArwvw1r7AzYYUF0B80rBx5R3ZyBh7LDPTgA2NcGTMRFaUs7zbcGQpCIYHbAp2fYXB0jdjvoXxupv9lPuib-g7hGjTrs4Sz9vDSBe2tNnBqJbPC39cwIa-V/4j3/ht1f_4SNRCONPYuyXXZsWA/h59/h001.78CqTGdn9iTt7HHeUOj01giMY4dfggYRchwvipy6pKY]OWNER WANTS TO MEET THE MARKET & SELL!Property Size [https://braze-images.com/appboy/communication/assets/image_assets/images/67074fd4fceceb00651dda6f/original.png?1728532436]249 m² Shops & Retail, Warehouse, Factory & Indus... View Property [https://ablink.campaign.realcommercial.com.au/uni/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys64Ca8YbNd7rXD0Z8-MCCJvvuB8mcbXP2PNO7CeNCAah66xOy9DsehhQ-90c6u07cnBAh5GW6iEaiZnxc5_nuDyeNp_-669onYYdT9fCtKY47R3sEiUPBXtJSQMKeTXmkkUbvXgMuvA2jU7LKJNXzhbm_2yfmYZLKgArwvw1r7AzYYUF0B80rBx5R3ZyBh7LDPTgA2NcGTMRFaUs7zbcGQpCIYHbAp2fYXB0jdjvoXxupv9lPuib-g7hGjTrs4Sz9vDSBe2tNnBqJbPC39cwIa-V/4j3/ht1f_4SNRCONPYuyXXZsWA/h60/h001.QWvefq_xsUSrne7hBdABNY5RZZbdX8klznIlGmKzBpY] Want to see more? This email is showing you the latest properties that match your saved search criteria. Check out the rest. See all matching properties [https://ablink.campaign.realcommercial.com.au/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys64Ca8YbNd7rXD0Z8-MCCJvvYtSTGL1XEjtdJZ_sLS7CRKph0UXY0WfNykML5u2IM5OsMw2-SF2inFWOcRotkZpDyIq2Bg3Hy47Qh0AfeA4n3lqr9Lej7Do1KNbmPGwx_rBVbl_feRMBXs_1pf9t6ZVwtLirPaWXK-G6111d06QCeijEma4Q_Rl7yVT3SeGElWMoQnRwfqwYUPcTQ6u5G_mpbc438OlogiooQLa74c5ZI5oXwN7X3f7mpG6UIhVConUPK4exOGCpR5M3GGtpfciMgkgy0PK3xiRdjb3UMz5vTA/4j3/ht1f_4SNRCONPYuyXXZsWA/h61/h001.Zhy1aJ58Xz8g2IH-EOw6JUfBpjJrZsEnrnIPyKjsgIg] Thinking of selling or leasing? Find a commercial real estate agency to sell or lease your property. Find an agency [https://ablink.campaign.realcommercial.com.au/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys66e850VUdg3bLDdTmAFxYzhQdbQjyjBWKlucRm-EHeH-mQtvCGLrJbsXxU24z31kEsChyjJXRMPEXUVLipUgBU2B4MLC-abz2g7HirubZQR4a5e77odWXhUvdplqce7YcUpcZG9aRwt1FDgG8FT9xw4kejENzVMoHOJRa0G7y72AuKO_prEDoA4ZxvAJzJTc2M/4j3/ht1f_4SNRCONPYuyXXZsWA/h62/h001.qKIlVQxbraREhhr-DnBrU2SqUR2vk_HehYcSysrShBk] Update your details [https://ablink.campaign.realcommercial.com.au/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys658m7byeGXITd7BboJLUQoG2a-igy6MfQpEI1y1Yx8O0sBdzCkoO1QuyaartmkOnF-I-gWl0Oq6iuI2sEl0MH120YFwK3f6gc5z_zsAzR-PKaWORZPgEax7bvPuYkeD5ARe1VrXVTqKg8pSlSlYcav-8l9eiNK7e9vZoJoDdAaFruuO1oW8Tu-FnB8YJ1iDES0g0p267pPMGjG3gvzricVh/4j3/ht1f_4SNRCONPYuyXXZsWA/h63/h001.k11i8A9e1gIhbse0gHsjMxIw1o6Z68cwR2WXCTLLRSg] | Support FAQs [https://ablink.campaign.realcommercial.com.au/ss/c/u001.nc__1TqmxqwlWC9CjFKnXO-wcsT1ed4YG3G3_I9dE5PeBP_cxUg7eyKx8Jk8kBkhbk3XdjGGjU0xxlfgiJUV4zFqCN8yjith10FheJm0kKFbleIO-nwipY46RezXGSVYdCw8B5HnsFLq07lR_hf5sqok1r5fKfvd773CsZGVcpFIu0GBtpCJicFWX_Z5UZYik8z1mx_xvPWdzUfdtu8mcE8pvBlFFy8_VimaLR5Dia8/4j3/ht1f_4SNRCONPYuyXXZsWA/h64/h001.REjkw53-ytt5Q-sWEgsELTIZlKH4P1vY4W89vv8Bg0k] | Terms of use [https://ablink.campaign.realcommercial.com.au/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys66-H8eSJCXMG_ezDObpzrSVEjy6w5oaILf43PBPobi8kD2Dx2rrZuMjqXMykzqRITBVhdx0Xf1-bnqnTYC0kzR_7nPODlccOltz7EERoCkO0t-rAwLiSIufDGFb7wq6Tx8L8L_z369Qd1AeKzV-CQ5qvJ2hvirhr2uAidv1C5ghFKltQ-Pq38CUVvWwlhs7EXIm0Np7DmORZCORhvTzJ1Db/4j3/ht1f_4SNRCONPYuyXXZsWA/h65/h001.nxII2E5OD0W5gnmzirMikc-HuMgafF7MIZG1tUNFmRQ] | Privacy Policy [https://ablink.campaign.realcommercial.com.au/ss/c/u001.8WPKKnXjpSs3WaHq0dV89f0QTJr51k_sgrIoq1BivKS9Cc4gPrfirWxtKXOca8QDCMYKs6eaumKCyuIfJcA8H8H5PInzTQlfThdK7hf3QUTZq_V3gctHiZsHvKgp2ZXmNlPn4lYnDgWKLtEqLkH8DljOdsp_efQT4w8gRJGkujvMF1Jtcm30w0ua78fCEvW3B04q04YOactaLcl4aTq7bOmRF2vCbOY6IRYJxBml6EQ/4j3/ht1f_4SNRCONPYuyXXZsWA/h66/h001.ErStozh0GsVf30wmL7CXSksVrbaH9ZOJaoJbqtXSdDE] | Contact us [https://ablink.campaign.realcommercial.com.au/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys66-H8eSJCXMG_ezDObpzrSVvzgpBnklemiVktUwfAxTANDcpEw_dWTzxf8pznECY2sDSaaZI-KOhzvHm4CAlgUAmHn0cw_RWd56jHW72hdYf3gKNUNxyMD7YR-5G_78mMbmET-OgNkkBd0QRYtSc0y2V1ja1N9_6QDLiizn2UHaVawXw84ftYSBOWKp8PmmmirxQ3hWIIlgVbp0FtMzL-y8/4j3/ht1f_4SNRCONPYuyXXZsWA/h67/h001.4ZvKSZkq2OG5zoap-IEeiCuLw8dXgGlOAVCcEwwZW-s] You're receiving this because you created a realcommercial.com.au [https://ablink.campaign.realcommercial.com.au/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys65SeWQLvRw4iXwVRALPGsuS7htNoE2f8APVVnd-LeODl3V9EaCs0b-zBrPsdRvJB13C129WaZM-pZfLp7QiURWPp_UnlgdcDYkpY-vM9ppJy9vDo34ejpIn23dh452WVuqoBXVOXJA9QLbN2ZKAylbMNR9IHvJ7hxEbI1RuqDwVOA/4j3/ht1f_4SNRCONPYuyXXZsWA/h68/h001.dasMLdO3_bQR_b6RHWIFG-0Dl-loDGk2TovNM3E2xbg] account and saved a search. Manage your email preferences [https://ablink.campaign.realcommercial.com.au/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys658m7byeGXITd7BboJLUQoG8Xm9ZePHfuzeV6cZivWd0te3EOb4KzQ103_WIdmFHes1Lw5_ttgRmiTeF2FTy_rxkEvv2W39OGwiU3VdJDWpDF8FBjT2XkEwXKz3V9gRMmriBfkVDr-6JrC6ztSAc43bMI7Zg4x4hCjaeXwwoQs3Ownty0Kt9oYIJFSWU5UEaAChAEFyKeHCASQxDOO0DTfq/4j3/ht1f_4SNRCONPYuyXXZsWA/h69/h001.cgPMGhcUWq3Bt1VJ-0YvtCzqIjKubpHZpJbyvwBkpKA] \nUnsubscribe from Saved Search Alert emails [https://ablink.campaign.realcommercial.com.au/ss/c/u001.uYrhCq4L-I1OIkZEwlUHN6-6sJkXvyP9OtWW-iAWmlvDJIK8dnkVGVV8lYIgvsfi0AKaaQ12FqJsWaGB8rY-pVBYIzcCEnqh-1vdD9QMMcJfoIHwEDmVWDD8O0l5tFR8jt0LNbgiAcn-tWzBaSwekwtnyfyGqfPgVNd7-U4TnQqThuqLuGxwOXjGfeeKjnO8JhrJboe9wO8QEJRRg0IuHSpu1wjxxHX3fKrV1SanemItfoHU-TiD_YRAs4jmCpL6OXSFBj5KgimWyB6dKqMq5D1UM9AiSBxWMGay9Em0yKwmTyWpZ42wzQI2tIxwQoMQ7fI20qSWJ0wexpEDCHzSUJOgsdZTpa6HlXaXWyDQU7s/4j3/ht1f_4SNRCONPYuyXXZsWA/h70/h001.jP6xics-CPAdwyN_aI64szY_y6T-p0d5HjoFoHGcqUo] Facebook [https://appboy-images.com/appboy/communication/assets/image_assets/images/5db663307bdadd506b81e7fe/original.png?1572234032] [https://ablink.campaign.realcommercial.com.au/ss/c/u001.NE3lvwpckgDoHAGf9DjdB6ITz7jHhraemh7kpqWHDkc-miss_mIex8UEGrTDnoxj/4j3/ht1f_4SNRCONPYuyXXZsWA/h71/h001.8-rN7CUuvuGgkOpaE9G2XhoXs17srJ1AnrgALh8GINA]Twitter [https://appboy-images.com/appboy/communication/assets/image_assets/images/5db66330125ebf7461a3ad0b/original.png?1572234032] [https://ablink.campaign.realcommercial.com.au/ss/c/u001.XtcjiZcabKPl5zD8m8z5Eo7XWxaP56QfyXd-inpkVl0grVMWlui0EmvXgmeEAEFG/4j3/ht1f_4SNRCONPYuyXXZsWA/h72/h001.TU99jbWwM5N5fKag8NAMFgZaEveVdDqs9y5CZAZCtOI]LinkedIn [https://appboy-images.com/appboy/communication/assets/image_assets/images/5db6632f9196ee753f576987/original.png?1572234031] [https://ablink.campaign.realcommercial.com.au/ss/c/u001.8WPKKnXjpSs3WaHq0dV89ZwQURErAayf_LYp9TE1ZazY9czwTUYPtWZ1WkoPSb7NrSi1KGN71pw_6XNYMBTTZA/4j3/ht1f_4SNRCONPYuyXXZsWA/h73/h001.ty3iVIgPTimOvL9bu0qeXZsh8L3Tsc57twWWAf2EnhI]App Store [https://appboy-images.com/appboy/communication/assets/image_assets/images/5db663303f88487061108f8c/original.png?1572234031] [https://ablink.campaign.realcommercial.com.au/ss/c/u001.8WPKKnXjpSs3WaHq0dV89TpUjIbLf5RqrYY6RS7ZeRRm-a-5XSr9fZdXvyXKaLEdVGWXZzVNU7Oyy0u_gSeZfDai1_pDuuOxWG3lFLBTFFQ/4j3/ht1f_4SNRCONPYuyXXZsWA/h74/h001.pboHccSjPmC2Si6UUp1K6q261LXoAMmlVuipZo2sqWE]Google Play [https://appboy-images.com/appboy/communication/assets/image_assets/images/5db6632fc556aa3574b4984c/original.png?1572234031] [https://ablink.campaign.realcommercial.com.au/ss/c/u001.z4u4qNtPpaEnJssry_6UxlLks9_85DyMQGINCbLmrUOwwINUivJBlcxkWOefnW6CsiaIKVVA_nRpUCKrLakWl7vzqivdFfFTDL0XFUVavJs/4j3/ht1f_4SNRCONPYuyXXZsWA/h75/h001.lTZISTI1i2g0333j-RDeDBdlKRzm4NhYMz1LijpzZ1M] © REA Group Ltd. All rights reserved. realestate.com.au [https://ablink.campaign.realcommercial.com.au/ss/c/u001.NE3lvwpckgDoHAGf9DjdBznLUkRQDXWoBLSDzBlISdX0nrQ9VZqHUgn1YW5vaSELOF_OxVKDUCuS6coaAmTOmEVdlXb9HhmY-D2wSG7YDIOQeuTPs9AxdaRP1-aS714RmSXoseLvMrtjoWp2RqU9_VKeG10KzZ7WjtWE2IV07VlzbIPpBOw-rjEGnWJKA2y_bA3sTkMlgMHFt86z9gjAJg/4j3/ht1f_4SNRCONPYuyXXZsWA/h76/h001.A9IqRmiebPnSX8dPyLo0D9pOwjXyPz4wgMq7fvVNOeA] Pty Ltd ABN 21 080 195 535. \n\n511 Church Street, Richmond, VIC 3121. support@realestate.com.au [support@realestate.com.au] [https://ablink.campaign.realcommercial.com.au/ss/o/u001.st9BsB6Vz6iRl4QKgjtPMQ/4j3/ht1f_4SNRCONPYuyXXZsWA/ho.gif]"
+      }
+    },
+    {
+      "sourceRecordId": "recKJvy4GTX1I5yys",
+      "sourceCreatedTime": "2026-04-19T21:36:02.000Z",
+      "fields": {
+        "Name": "Rick Holloway",
+        "Subject": "FW: Registered duplex sale",
+        "Email": "rick@thebobtraskgroup.com.au",
+        "Body": "SMSF\r\nDUPLEX SALE\r\nSTARTING FROM $799,990\r\nHIGH  YIELD $860 PER WEEK RETURN\r\nDOUBLE GARAGES\r\nALL BLOCKS OVER 400 SQM PER DWELLING\r\nSelling Quick\r\nBig Blocks\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\nRegards\r\n\r\n“Whatever you need, if we don’t have it, we can find it and we"
+      }
+    },
+    {
+      "sourceRecordId": "recKKlGRDwfplL8Or",
+      "sourceCreatedTime": "2026-02-24T06:52:06.000Z",
+      "fields": {
+        "Name": "Customer Property Services",
+        "Subject": "Public Trustee Property Alert - March 2026",
+        "Email": "realestate@pt.qld.gov.au",
+        "Body": "Auctions and Sales\r\n\r\n\r\n\r\n1300 360 044\r\n\r\nrealestate@pt.qld.gov.au\r\n\r\n\r\n\r\nView all properties\r\n\r\n\r\n\r\nNew Auctions\r\n\r\n\r\n\r\n\r\n\r\nHolland Park\r\n68 Arnold Street\r\n\r\n 4     2     2     1,208sqm\r\n\r\nStunning Federation-Home on 1,208m2\r\n\r\nAuction\r\nSaturday 28"
+      }
+    },
+    {
+      "sourceRecordId": "recKM8lUIrKCwnHzA",
+      "sourceCreatedTime": "2026-03-03T05:52:03.000Z",
+      "fields": {
+        "Name": "Courtney Lee",
+        "Subject": "Just Listed - ACREAGE LIVING WITH FOUR ENSUITED BEDROOMS AND IMMEDIATE INCOME POTENTIAL!",
+        "Email": "courtney@gattonrealestate.com.au",
+        "Body": "Good afternoon Rugesh\r\n\r\nSet on a generous 4,155m² (just over an acre) in a peaceful cul-de-sac, this impressive property delivers space, privacy and versatility in one of Adare’s most desirable pockets 🌿🌅\r\n🏡✨ NEW TO MARKET – 5 Boysen Court, Adare ✨🏡"
+      }
+    },
+    {
+      "sourceRecordId": "recKOD5hxg3SssakU",
+      "sourceCreatedTime": "2025-08-19T07:05:00.000Z",
+      "fields": {
+        "Name": "Rugesh Naidu",
+        "Subject": "NPC Services | Naidu Property Consulting Services | Introduction & Mailing List Allocation",
+        "Email": "rugesh@npcservices.com.au",
+        "Body": "Good afternoon,I hope this message finds you well. I’d like to take a moment to introduce NPC Services, a dedicated buyer’s agency and property consulting business specialising in guiding clients through every stage of their property purchase journey.At NPC Services, we go beyond sourcing properties, we deliver a complete end-to-end solution, including strategic property planning and full support through due diligence, negotiations, and settlement.We currently have qualified clients actively ready to purchase across a range of budgets, and we’re looking to build strong relationships with agencies like yours. To streamline the process, it would be greatly appreciated if you could please add our acquisitions team to your weekly property mailing list below:Property@npcservices.com.auThis ensures our research division receives your latest on and off-market listings, promptly for reviewal and assessment, allowing us to respond quickly and match opportunities with ready buyers.I’m confident this collaboration will lead to excellent results for both your agency and our clients.Please feel free to contact me if you have any questions.\n\nKind Regards[cid:fd67ad5d-6727-4d37-8508-b61caefe5013]Mobile: 0433 005 110 | Email: rugesh@npcservices.com.au | Website: www.npcservices.com.au [http://www.npcservices.com.au/]\n[cid:1f07b284-5da8-40e8-9eda-f1c115f95239] [http://www.linkedin.com/in/rugesh-naidu-1b0003123][cid:2828f13d-2844-4c3d-96f6-0c5aedb711d7] [https://www.instagram.com/npc.services]A blue circle with a white letter f in it AI-generated content may be incorrect. [cid:4ab931cb-daa9-46fa-ac43-d03cc5c6d321] [https://www.facebook.com/profile.php?id=61577033127001]\nAddress: Level 5 Nexus Norwest, 4 Columbia Ct, Norwest NSW 2153\nNaidu Group Pty Ltd trading as Naidu Property Consulting ServicesACN: 684 555 771 | ABN: 50 684 555 771\nDisclaimer:\nAs a Professional Property Consultant & Buyers Agent, we provide information and advice based on our expertise and experience in the real estate market. Please be aware that the advice and insights offered are for general informational purposes only and should not be considered financial advice. While we strive to ensure the accuracy and relevance of the information provided, real estate markets are dynamic and subject to change and cannot guarantee the future performance or outcomes of any property investment. It is important to understand that real estate investments carry risks, including market fluctuations, changes in property values, and potential financial losses. Our services include assisting you in identifying and evaluating potential opportunities, negotiating purchase terms, and navigating the transaction process. Any decisions to purchase, sell, or invest in real estate should be made after careful consideration and consultation with appropriate financial, legal, and tax advisors. By engaging our services, you acknowledge that you have read and understood this disclaimer and agree to take full responsibility for your property-related decisions. Always conduct your own research and due diligence to ensure that any property transaction aligns with your financial objectives and risk profile.",
+        "Status": "Error 500",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/btC_QOnelLGXjFa3LwXbSg/x2sme9WzoZQFkQfAsiAUPL3Drp_X1C76klJ49aQV9Dj3y2BVsd87_cS2pPL_oFeVJHEHXNHTtbRE5rHZYldEF9Yn-7h9MLrMxlzwmwL94YCv3iU9ZB3a5S5UBpwbFZ72hmaXCZ2esr7VsQOpsBjSZzs96jMbPedN0CnWSouf407Cx_zRa8fVptTMhKhyvwd6/gL2J3yNmhWHmm4uZoIZAm-qLmbRQI7CVzq3c4PejwCA",
+            "filename": "outlook_email_attachment.png",
+            "type": "image/png",
+            "size": 3465
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "recKOnwjXCi9E5NoM",
+      "sourceCreatedTime": "2026-01-18T23:52:08.000Z",
+      "fields": {
+        "Name": "Sharon Golding",
+        "Subject": "Your Property Update [New Listing Alert]",
+        "Email": "sharon@justusrealty.com.au",
+        "Body": "(07) 4196 0933\r\nhttps://justusrealty.au\r\nNew Listings\r\n\r\nHi NPC Services,\r\n\r\nWe've listed some new properties that I think you might be interested in. Give me a call if you have any questions or would like to take a look through any of these.\r\n\r\n\r\n196 Bou",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recKP5pWF1jibPKue",
+      "sourceCreatedTime": "2026-03-11T09:24:27.000Z",
+      "fields": {
+        "Name": "Adam Bettison",
+        "Subject": "Price Change! | 11 Enfield Terrace, Northam",
+        "Email": "adam.bettison@housesmart.com.au",
+        "Body": "Rugesh,\r\n\r\nThe asking price of 11 Enfield Terrace, Northam has been adjusted to:  From $519,000.\r\n\r\nPlease let us know if you'd like to view the home, if you have any questions, or would like to offer!\r\n\r\n\r\n11 Enfield Terrace, Northam\r\nFrom $519,000\r\n4\r\nB"
+      }
+    },
+    {
+      "sourceRecordId": "recKPWDVDstGJFj6n",
+      "sourceCreatedTime": "2025-12-04T05:23:29.000Z",
+      "fields": {
+        "Name": "Professionals Caboolture/Morayfield Chippendale",
+        "Subject": "Weekly Listings Update",
+        "Email": "j.chippendale@professionalscaboolture.propertyemail.com.au",
+        "Body": "Dear ,\r\n\r\nOn behalf of Professionals Caboolture/Morayfield, I am pleased to present some of our latest listings. I hope there's something that takes your fancy and I'm happy to take your call if that's the case!\r\n\r\nTo ensure that you receive the most accu",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recKPdzn00PhIt5L3",
+      "sourceCreatedTime": "2025-12-10T07:08:37.000Z",
+      "fields": {
+        "Name": "Catherine Tidy",
+        "Subject": "Fletcher Riley's Newsletter - This Week in Luxury: Just Listed, Just Sold and Exclusive Open Homes",
+        "Email": "admin@fletcherriley.com.au",
+        "Body": "Welcome to our weekly update and hello, December.\r\n\r\nSomehow we’ve reached the final month of the year, and the Sunshine Coast market continues to move with strength and confidence.\r\n\r\n\r\n\r\nEach week, we aim to provide clear, concise insights into upcoming"
+      }
+    },
+    {
+      "sourceRecordId": "recKQWAetJ0SGInHh",
+      "sourceCreatedTime": "2026-01-21T05:18:13.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recKQhYyTTmTjYf8J",
+      "sourceCreatedTime": "2026-02-06T04:13:26.000Z",
+      "fields": {
+        "Name": "Clare Dawson",
+        "Subject": "The latest property listings from Clare Estate Agents",
+        "Email": "clare@clare.com.au",
+        "Body": "View in browser\r\n\r\nHi NPC\r\n\r\nPlease find below the latest listings from our office that are on the market.\r\n\r\nYou can quickly receive more information about any of the properties by clicking on them to reveal their full details.\r\n\r\nIf your property needs ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recKRIfnoWKwPHC5u",
+      "sourceCreatedTime": "2025-10-13T01:59:40.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recKTgF5ZL0xIqDPJ",
+      "sourceCreatedTime": "2026-01-06T05:38:24.000Z",
+      "fields": {
+        "Name": "Jools Munro",
+        "Subject": "Explore Property Munro & Co - Townsville Property",
+        "Email": "jmunro@exploreproperty.com.au",
+        "Body": "Hi Rugesh Naidu,\r\n\r\nReady to dive into the world of property investment? Explore Property Munro & Co is here to make it happen!\r\n\r\nAs your dedicated Townsville property experts, we're committed to making your investment journey seamless and exciting"
+      }
+    },
+    {
+      "sourceRecordId": "recKTmOu5tvPnPxTU",
+      "sourceCreatedTime": "2026-03-23T03:24:47.000Z",
+      "fields": {
+        "Name": "Karen Bagenal",
+        "Subject": "Your Property Update [New Listing Alert]",
+        "Email": "karenbagenal@realwayipswich.com.au",
+        "Body": "0732940099\r\nwww.ipswich.realway.com.au\r\nNew Listings\r\n\r\nHi Rugesh,\r\n\r\nWe've listed some new properties that I think you might be interested in. Give me a call if you have any questions or would like to take a look through any of these.\r\n\r\n\r\n170 Condamine "
+      }
+    },
+    {
+      "sourceRecordId": "recKU7blxnJTEn7Ah",
+      "sourceCreatedTime": "2025-09-22T19:55:35.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recKYBXmT5KDc1WXf",
+      "sourceCreatedTime": "2025-11-27T06:53:30.000Z",
+      "fields": {
+        "Name": "Leanne Pearman",
+        "Subject": "Discover Jellis Craig's Recently Listed Properties",
+        "Email": "leannepearman@property.jelliscraig.com.au",
+        "Body": "View in browser\r\n\r\nDear Rugesh,\r\n\r\nThis week we feature 1 Fountain Street, Maldon. Formerly the Wesleyan Church Manse, this iconic property is an outstanding example of Victorian architecture and a statement in refined living. The double brick grand resid",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recKYGeMd03luCqhS",
+      "sourceCreatedTime": "2025-12-02T23:42:50.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recKYWNW9sxPbYN9d",
+      "sourceCreatedTime": "2025-10-21T05:31:57.000Z",
+      "fields": {
+        "Name": "Jon Mordue",
+        "Subject": "BUILT Apartments Available for Sale from $515,000",
+        "Email": "jon@projectpropertysales.com.au",
+        "Body": "BUILT STOCKLIST\r\n\r\n__________________________________________________________________________________________________________\r\n\r\n\r\n\r\n\r\n\r\nHighgate Hill, The Hills Apartments – Completion end of December 2025\r\n\r\n  *   2 x 2 bedroom priced at $1,350,000\r\n  *"
+      }
+    },
+    {
+      "sourceRecordId": "recKYgd7h6TDFEcJ6",
+      "sourceCreatedTime": "2026-06-04T08:10:36.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recKYneiYbK8FxmCd",
+      "sourceCreatedTime": "2026-01-28T07:38:36.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recKYydeeLY3hJils",
+      "sourceCreatedTime": "2025-10-22T20:37:04.000Z",
+      "fields": {
+        "Name": "Chrissy Jones",
+        "Subject": "NEW OFF-MARKET OPPORTUNITY! 100 EUMERALLA GROVE, MOUNT ELIZA",
+        "Email": "chrissy.jones@belleproperty.com",
+        "Body": "We have just listed 100 Eumeralla Grove, Mount Eliza.\r\n\r\nEvoking charm and character, this 5-bedroom, 2-bathroom residence has recently undergone a stunning makeover, showcasing breathtaking views and a heated pool on a picturesque 1575m2 (approx.) block "
+      }
+    },
+    {
+      "sourceRecordId": "recKZ4zoQUBtVtl2X",
+      "sourceCreatedTime": "2025-12-18T06:51:03.000Z",
+      "fields": {
+        "Name": "First National Real Estate Atherton",
+        "Subject": "1 new property that match your criteria",
+        "Email": "mail@athertonfn.com.au",
+        "Body": "Dear Rugesh, Here are the results for your email alerts from First National Real Estate Atherton as at 18/12/2025\r\n\r\n\r\n        4               2               2               700 sqm\r\n$600,000 - $660,000\r\n65 Tumbare Street, Atherton\r\n\r\nLow-Mainten"
+      }
+    },
+    {
+      "sourceRecordId": "recKZQgNlCGVHKnDW",
+      "sourceCreatedTime": "2026-03-05T23:07:18.000Z",
+      "fields": {
+        "Name": "Justin Schmith",
+        "Subject": "New Listing - 11/28 Coolangatta Road, Coolangatta",
+        "Email": "justin@schmith.com.au",
+        "Body": "Hi Rugesh ,\r\nAs a valued client of Schmith Estate Agents, we are delighted to share with you our newest listing which we thought may be of interest to you. We invite you to our first Open Home tomorrow (Saturday 7 March) 12:30pm - 1:00pm Qld time."
+      }
+    },
+    {
+      "sourceRecordId": "recKZdV7qqXf9qpCk",
+      "sourceCreatedTime": "2026-01-09T04:40:52.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recKbuExmNsWdQxDm",
+      "sourceCreatedTime": "2026-06-11T00:45:28.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recKc7eKdkjL3RG41",
+      "sourceCreatedTime": "2026-03-10T12:24:22.000Z",
+      "fields": {
+        "Name": "Peter Forbes",
+        "Subject": "Newly Listed Property in Dalby",
+        "Email": "peter@1propertycentre.com.au",
+        "Body": "Hi there,\r\n\r\nI have a new property just listed today at 9 Carlow Drive in Dalby which is listed for sale at offers Over $529,000. Its big with 5 Bedrooms and 2 bathrooms plus a shed. It is well suited as an investment property or for someone who wants siz"
+      }
+    },
+    {
+      "sourceRecordId": "recKcZfhWLjOR1EnY",
+      "sourceCreatedTime": "2026-07-13T18:36:36.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recKcfsRmGw4AgCyD",
+      "sourceCreatedTime": "2025-08-19T05:34:56.000Z",
+      "fields": {
+        "Name": "Rugesh Naidu",
+        "Subject": "NPC Services | Naidu Property Consulting Services | Introduction & Mailing List Allocation",
+        "Email": "rugesh@npcservices.com.au",
+        "Body": "Good afternoon,I hope this message finds you well. I’d like to take a moment to introduce NPC Services, a dedicated buyer’s agency and property consulting business specialising in guiding clients through every stage of their investment journey.At NPC Services, we go beyond sourcing properties, we deliver a complete end-to-end solution, including strategic property planning and full support through due diligence, negotiations, and settlement.We currently have qualified clients actively ready to purchase across a range of budgets, and we’re looking to build strong relationships with agencies like yours. To streamline the process, it would be greatly appreciated if you could please add our acquisitions team to your weekly property mailing list below:Property@npcservices.com.auThis ensures our research division receives your latest on and off-market listings, promptly for reviewal and assessment, allowing us to respond quickly and match opportunities with ready buyers.I’m confident this collaboration will lead to excellent results for both your agency and our clients.Please feel free to contact me if you have any questions.\n\n\nKind Regards[cid:d7907f28-d88b-4e15-973e-1ff42e108d58]Mobile: 0433 005 110 | Email: rugesh@npcservices.com.au | Website: www.npcservices.com.au [http://www.npcservices.com.au/]\n[cid:bc5d659b-5d19-4da7-998a-9d4f0881ad2f] [http://www.linkedin.com/in/rugesh-naidu-1b0003123][cid:fa7554b3-1cea-45fd-86a8-6b98dd663926] [https://www.instagram.com/npc.services]A blue circle with a white letter f in it AI-generated content may be incorrect. [cid:e43f17bc-81a8-4149-b070-422585c42243] [https://www.facebook.com/profile.php?id=61577033127001]\nAddress: Level 5 Nexus Norwest, 4 Columbia Ct, Norwest NSW 2153\nNaidu Group Pty Ltd trading as Naidu Property Consulting ServicesACN: 684 555 771 | ABN: 50 684 555 771\nDisclaimer:\nAs a Professional Property Consultant & Buyers Agent, we provide information and advice based on our expertise and experience in the real estate market. Please be aware that the advice and insights offered are for general informational purposes only and should not be considered financial advice. While we strive to ensure the accuracy and relevance of the information provided, real estate markets are dynamic and subject to change and cannot guarantee the future performance or outcomes of any property investment. It is important to understand that real estate investments carry risks, including market fluctuations, changes in property values, and potential financial losses. Our services include assisting you in identifying and evaluating potential opportunities, negotiating purchase terms, and navigating the transaction process. Any decisions to purchase, sell, or invest in real estate should be made after careful consideration and consultation with appropriate financial, legal, and tax advisors. By engaging our services, you acknowledge that you have read and understood this disclaimer and agree to take full responsibility for your property-related decisions. Always conduct your own research and due diligence to ensure that any property transaction aligns with your financial objectives and risk profile.",
+        "Status": "Error 500",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/g-_Tn1HkNK7hlS9koy4hyg/YgtZDPZwayY6RUZ65g0-Y_Xst8_0JEeNogh-9pV3hID38k7AEZDIdQcnKJ0fBFNHVwFVEAhJi1YB0bt5oBOfxaRKoog3WJ9j0JDpTkx1UDr8_VE_bg_xMSU-zp6nML6-fKIjjAVVnB40gsLqwKs6Y02BeYzw7lXp67j_F9aZyry4B4VebQKZiUVN4v4ZvqGa/_aoy0xy9XyeH5UA9Dp5rTM8fBYGD-wr69d4QGoOVQ9s",
+            "filename": "outlook_email_attachment.png",
+            "type": "image/png",
+            "size": 3465
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "recKcoeTvrBGrbNjN",
+      "sourceCreatedTime": "2025-11-14T08:02:35.000Z",
+      "fields": {
+        "Name": "Scott Swingler",
+        "Subject": "Mediterranean Oasis Oceanfront In The Parks District",
+        "Email": "scott@shore-property.com.au",
+        "Body": "Want to change how you receive these emails?\r\nYou can click to unsubscribe from this list.\r\n \r\nDiscover\r\n \r\n\r\nIn City Beach Last Year...\r\n\r\n\r\n \r\n \r\n\r\nWant to find out about new properties before they hit the market?\r\n\r\n\r\n\r\nFollow us on Socials.\r\n\r\n \r\n\r\nTh"
+      }
+    },
+    {
+      "sourceRecordId": "recKcpLzsDvPy3fEj",
+      "sourceCreatedTime": "2026-04-15T09:51:00.000Z",
+      "fields": {
+        "Name": "Patti Stanley",
+        "Subject": "Just Listed | 2 Coolabah Drive, Mount Nasura",
+        "Email": "pattistanley@centurionrealestate.net.au",
+        "Body": "Hi Rugesh,\r\n\r\nAs part of our VIP buyer club we are pleased to present to you the latest listing that matches your criteria before it is launched to the public.\r\n\r\nIf this property does not match what you are after, please take a moment to make sure your c"
+      }
+    },
+    {
+      "sourceRecordId": "recKe4h44aa5TLiZk",
+      "sourceCreatedTime": "2025-12-18T00:53:17.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recKhCkhHbk6KmCJ3",
+      "sourceCreatedTime": "2026-01-15T03:58:10.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recKhsCTQ1PsnJmMr",
+      "sourceCreatedTime": "2025-09-22T11:30:43.000Z",
+      "fields": {
+        "Name": "Mick Lay",
+        "Subject": "Newsletter - What Does $1,300,000 Buy You in Bayswater?",
+        "Email": "michael@lay2.com.au",
+        "Body": "What Does $1,300,000 Buy You in Bayswater?\r\n\r\n\r\nHi Rugesh\r\n\r\n127A Whatley Crescent is now sold for $1.3M—and it’s easy to see why.\r\nStylish design, clever spaces, and a private retreat make this home unforgettable.\r\n\r\n\r\nWhat Does $1,300,000 Buy You in Bay"
+      }
+    },
+    {
+      "sourceRecordId": "recKhtSCQta2XA61m",
+      "sourceCreatedTime": "2026-01-16T04:25:48.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recKja4yFYc37YVNV",
+      "sourceCreatedTime": "2026-03-16T00:39:22.000Z",
+      "fields": {
+        "Name": "Sam Shaw",
+        "Subject": "Off Market Opportunity - 335-337 Princes Drive, Morwell",
+        "Email": "samshaw@wprci.com.au",
+        "Body": "Good afternoon,\r\n\r\nJust a quick email to advise that we have a new off market listing at 335–337 Princes Drive, Morwell that may be of interest to you. Please find attached a copy of the section 32 for this property for your perusal.\r\n\r\nPlease see the bel",
+        "Status": "Error 500",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/oI9iQsAFJe-iezSfQpJUZw/57-Fh4s0oJQ8MFXhhFLIRZ-gO4Dzz_4Tq_JeZlMyTmSHJ50wWHVUANMi8BtyX1l--JOdJp5A8_MyT9sjNAHzNR-z6rw-1lb8GyN6YoNZ244L_WeezDj_LcAWFY-Hdnz8M-iCdIJ9w07_sFxDphCvoyICCFeBSMTOIb6rOdMc5EskVq6dBLRH1suY9KBEIVf0/k-KO74sdMdbu4IcQ2rhqEHCAyhodYo9411bqm8eB97k",
+            "filename": "outlook_email_attachment.pdf",
+            "type": "application/pdf",
+            "size": 3373585
+          }
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,10 @@
+{
+  "description": "Tracks successful appointment bookings from customer calls",
+  "name": "Appointment Booked",
+  "schema": {
+    "description": "Mark true when customer confirms booking and appointment is scheduled",
+    "type": "boolean"
+  },
+  "type": "ai",
+  "workflowIds": []
+}

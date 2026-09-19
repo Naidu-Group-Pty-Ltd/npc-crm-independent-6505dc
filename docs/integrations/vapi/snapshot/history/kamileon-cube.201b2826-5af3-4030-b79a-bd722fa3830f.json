@@ -1,0 +1,7 @@
+{
+  "assistant": "Kamileon Cube",
+  "assistantId": "201b2826-5af3-4030-b79a-bd722fa3830f",
+  "note": "System prompts are replaced by promptRef; the text is in ../prompts/<ref>.md. Everything else is the API response verbatim.",
+  "versionCount": 0,
+  "versions": []
+}

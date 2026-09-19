@@ -1,0 +1,446 @@
+{
+  "table": "Emails",
+  "batch": 59,
+  "of": 107,
+  "recordCount": 50,
+  "records": [
+    {
+      "sourceRecordId": "recXHGFalkV4FiZoH",
+      "sourceCreatedTime": "2026-03-27T02:28:53.000Z",
+      "fields": {
+        "Name": "Professionals Caboolture/Morayfield Chippendale",
+        "Subject": "How does your property compare to these?",
+        "Email": "j.chippendale@professionalscaboolture.propertyemail.com.au",
+        "Body": "Dear ,\r\n\r\nWhat is happening to real estate in your area?\r\n\r\nWhether you have a current interest in selling or not, everybody likes to keep track of how their local market is performing. Here are the results of our latest property sales in the area. If you",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXHai8ySjEkHmCX",
+      "sourceCreatedTime": "2025-11-14T04:38:27.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXIGNSwzv55QLb2",
+      "sourceCreatedTime": "2026-03-20T04:24:42.000Z",
+      "fields": {
+        "Name": "Clare Dawson",
+        "Subject": "The latest property listings from Clare Estate Agents",
+        "Email": "clare@clare.com.au",
+        "Body": "View in browser\r\n\r\nHi NPC\r\n\r\nPlease find below the latest listings from our office that are on the market.\r\n\r\nYou can quickly receive more information about any of the properties by clicking on them to reveal their full details.\r\n\r\nIf your property needs ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXIScGQrUEpoGwM",
+      "sourceCreatedTime": "2026-06-12T01:36:53.000Z",
+      "fields": {
+        "Name": "Thomas Bettison",
+        "Subject": "Second Chance to Buy! For Sale | 20 Alnwick Turn, Landsdale",
+        "Email": "thomas.bettison@housesmart.com.au",
+        "Body": "For Sale - 20 Alnwick Turn\r\n\r\nHi Rugesh,\r\n\r\nPlease enjoy the below property in preparation for the next home open!\r\n\r\nFollow us on Instagram to get a sneak-peek at upcoming listings!\r\n\r\nUpdate my criteria\r\nSay hello on Instagram\r\nMake an Offer\r\n\r\n20 Alnwi"
+      }
+    },
+    {
+      "sourceRecordId": "recXIXuVNw3OHE2vr",
+      "sourceCreatedTime": "2025-12-11T05:37:54.000Z",
+      "fields": {
+        "Name": "Robyn Faa",
+        "Subject": "Robyn Faa Real Estate Property Update",
+        "Email": "robyn@robynfaa.com.au",
+        "Body": "Property Update\r\n\r\nHi Rugesh\r\n\r\nAnother great week at Robyn Faa Real Estate with tons of buyer enquiry and some great new listings coming up.\r\n\r\nIf you have any questions around buying or selling please feel free to get in contact with us.\r\n\r\nOpen Homes T"
+      }
+    },
+    {
+      "sourceRecordId": "recXJC3fXU4IPwkUw",
+      "sourceCreatedTime": "2026-03-13T22:54:21.000Z",
+      "fields": {
+        "Name": "Brodie Richmond",
+        "Subject": "Update Alert: Matched Properties",
+        "Email": "brodie@schmith.com.au",
+        "Body": "Hi Rugesh ,\r\n\r\nSee below, some properties that may be of interest to you.\r\nPlease reach out if you would like any further information, or simply just have a chat.\r\n\r\nBest wishes,\r\nBrodie Richmond\r\n+61493572251\r\nbrodie@schmith.com.au\r\n\r\n\r\n\r\nNew Listi"
+      }
+    },
+    {
+      "sourceRecordId": "recXJDFxJDImBl2Hx",
+      "sourceCreatedTime": "2025-10-17T09:02:15.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXJMH9QrDlapCsa",
+      "sourceCreatedTime": "2026-06-05T02:39:02.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXJiFWVtm967rns",
+      "sourceCreatedTime": "2026-01-21T07:40:21.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXKhrEIV2ROqF6d",
+      "sourceCreatedTime": "2026-06-11T05:37:42.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXKzQ9nNmXd1xKF",
+      "sourceCreatedTime": "2026-03-10T06:24:20.000Z",
+      "fields": {
+        "Name": "Gemma Coady Team - Freedom Property",
+        "Subject": "Cleveland Apartments Now on the Market 🏡",
+        "Email": "gemmacoadyteam@freedomproperty.com.au",
+        "Body": "Hello,\r\n\r\nPlease review the properties listed below and contact us if you are interested in any of them.\r\n\r\n101/6 Fitzroy Street, Cleveland\r\n\r\n🕘 Saturday the 14th March - 10:00AM–10:30AM\r\n\r\nLuxury, Space & Flexibility\r\n\r\nPrice Guide: Contact Agent\r\nRecen"
+      }
+    },
+    {
+      "sourceRecordId": "recXLw2NZdjS1RtgW",
+      "sourceCreatedTime": "2025-11-13T07:28:26.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXM1bzSf1xDta0T",
+      "sourceCreatedTime": "2025-11-26T04:27:07.000Z",
+      "fields": {
+        "Name": "Kelsi",
+        "Subject": "👀 NEW PROPERTY SNEAK PEEK",
+        "Email": "Kelsi@peterlawton.com.au",
+        "Body": "Could this be home? 🏡\r\n͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌    "
+      }
+    },
+    {
+      "sourceRecordId": "recXMPTTxFgpO3Z8O",
+      "sourceCreatedTime": "2025-12-05T04:23:20.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXNSipRY4Oytkzo",
+      "sourceCreatedTime": "2025-11-06T02:55:39.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXOW9oLzJP8Luck",
+      "sourceCreatedTime": "2026-01-22T04:00:50.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXOjk7BIOaqImUO",
+      "sourceCreatedTime": "2026-06-15T08:41:13.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXQSjsvzYeo4GVe",
+      "sourceCreatedTime": "2025-08-23T16:18:06.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXQbaLMEwBbGrSN",
+      "sourceCreatedTime": "2025-11-06T09:54:16.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXQnsjFXYVJVFMk",
+      "sourceCreatedTime": "2025-12-11T05:28:45.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXUfY18SPamcWuc",
+      "sourceCreatedTime": "2025-11-07T06:21:32.000Z",
+      "fields": {
+        "Name": "Nick Gittoes",
+        "Subject": "JUST LISTED | 1/61 Kirribilli Avenue, Kirribilli",
+        "Email": "nickgittoes@mcgrath.com.au",
+        "Body": "Harbourfront Elegance with Uninterrupted Iconic Views\r\n\r\n\r\n\r\nView Tomorrow | Sat 8th Nov 2-2:30pm\r\n\r\n1/61 Kirribilli Avenue, Kirribilli\r\n\r\n\r\n\r\n\r\n\r\n2\r\n\r\n\r\n\r\n2\r\n\r\n\r\n\r\n1\r\n\r\n\r\n\r\nContact Agent\r\n\r\n\r\n\r\nCommanding panoramic views across Sydney Harbour to the Oper"
+      }
+    },
+    {
+      "sourceRecordId": "recXUkbA7X4Zel4h0",
+      "sourceCreatedTime": "2026-07-23T15:10:35.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXXePwoBvKBUxwp",
+      "sourceCreatedTime": "2026-03-02T04:42:54.000Z",
+      "fields": {
+        "Name": "Shaun Carroll",
+        "Subject": "22 Marjorie Ave, Belmont",
+        "Email": "ShaunCarroll@mcgrath.com.au",
+        "Body": "Good afternoon,\r\n\r\nI have a property in Belmont that has just been listed for a strictly off‑market sale due to a long‑term tenancy in place.\r\n\r\nYou can view the listing here: https://preview.mcgrath.com.au/43P18008\r\n\r\n\r\n  *\r\nCharacter weatherboard home o"
+      }
+    },
+    {
+      "sourceRecordId": "recXY5dYLLTfqfpJd",
+      "sourceCreatedTime": "2025-10-13T01:59:41.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXYpxUOBkeFR9mL",
+      "sourceCreatedTime": "2026-03-27T08:43:53.000Z",
+      "fields": {
+        "Name": "Scott Swingler",
+        "Subject": "Ningaloo Dreaming Highest Location on the Coral Bay Oceanfront",
+        "Email": "scott@shore-property.com.au",
+        "Body": "Want to change how you receive these emails?\r\nYou can click to unsubscribe from this list.\r\n \r\nDiscover\r\n \r\n\r\nIn City Beach Last Year...\r\n\r\n\r\n \r\n \r\n\r\nWant to find out about new properties before they hit the market?\r\n\r\n\r\n\r\nFollow us on Socials.\r\n\r\n \r\n\r\nTh",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXaYCfhPOFkfqPQ",
+      "sourceCreatedTime": "2025-11-27T23:59:50.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXakuLMQQQtSmCq",
+      "sourceCreatedTime": "2025-10-21T08:51:47.000Z",
+      "fields": {
+        "Name": "Matt / MaveriX PM",
+        "Subject": "New Listings & Open Home!",
+        "Email": "matt@maverixpropertymarketing.com",
+        "Body": "New Listing In Banya! Four Bedrooms, Media & A Pool! | Brand New & Complete! Open 10am - 5pm This Saturday Unless Sold Prior! | Vacant Land Now Under Contract! | Another MaveriX Property SOLD! Congrats To Our Private Builder & To Our New Buyers! | View Ho"
+      }
+    },
+    {
+      "sourceRecordId": "recXb1CnIPZXhETJA",
+      "sourceCreatedTime": "2026-06-05T04:32:25.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXcnTRGGTvCagQa",
+      "sourceCreatedTime": "2025-12-02T23:48:28.000Z",
+      "fields": {
+        "Name": "McGrath",
+        "Subject": "McGrath Property Alert",
+        "Email": "concierge@mcgrath.com.au",
+        "Body": "PROPERTY ALERT\r\n\r\n579 Homer Street, Earlwood\r\n\r\n\r\n\r\n\r\n\r\n3\r\n\r\n\r\n\r\n2\r\n\r\n\r\n\r\n2\r\n\r\n\r\n\r\nFOR SALE\r\n\r\nFor Sale\r\n\r\n\r\n\r\nVIEW\r\n\r\nSaturday 6 Dec 9:00am - 9:30am\r\n\r\n\r\n\r\nAGENTS\r\n\r\nAlexandra Stamatiou-Buda: 0415 901 279\r\n\r\nVIEW MORE\r\nVIEW MORE\r\n15 Universal Street, Eas",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXen7I26B2yzO0U",
+      "sourceCreatedTime": "2025-10-07T03:41:23.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXf2KcG4giVJ0AC",
+      "sourceCreatedTime": "2026-03-17T15:30:55.000Z",
+      "fields": {
+        "Name": "ACTIVE AGENTS (QLD) PTY LTD",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "info@activeagents.com.au",
+        "Body": "Edit my requirements\r\nVisit our Website\r\nProperty Alert\r\nWednesday, 18th March 2026\r\nHello Rugesh,\r\n\r\nThe following listings matched your Property Alert search requirements.\r\n\r\nWondunna\r\n33 Tranquil Drive\r\n\r\nOffers over $799,000\r\n\r\n        4              ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXfimjBTWsieAtO",
+      "sourceCreatedTime": "2026-01-16T04:39:10.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXg70ngHDnhfpfW",
+      "sourceCreatedTime": "2026-03-25T22:58:40.000Z",
+      "fields": {
+        "Name": "Richard Shalhoub",
+        "Subject": "Just Listed - 20 Kent St, Millers Point",
+        "Email": "richardshalhoub@mcgrath.com.au",
+        "Body": "JUST LISTED\r\n\r\n\r\n20 Kent Street, Millers Point\r\n\r\n\r\n\r\n\r\n\r\n3\r\n\r\n\r\n\r\n1\r\n\r\n\r\n\r\nBuyers Guide $3,200,000\r\n\r\n\r\n\r\nCombining character charm with modern additions in a vibrant village setting, this gorgeous Victorian terrace forms part of a historic streetscape a"
+      }
+    },
+    {
+      "sourceRecordId": "recXgx2jazLnz6KG9",
+      "sourceCreatedTime": "2025-09-27T07:08:51.000Z",
+      "fields": {
+        "Name": "Mick Lay",
+        "Subject": "Deal of the Week - Bayswater | A Cul-de-Sac Treasure",
+        "Email": "michael@lay2.com.au",
+        "Body": "Bayswater – Deal of the Week – A Cul-de-Sac Treasure\r\n\r\nThis week’s deal of the week is a charming four-bedroom home in Bayswater tucked away in a quiet cul-de-sac with a welcoming community feel.\r\n\r\nKey Highlights\r\n\r\n  *   4 bedrooms, 1 bathroom\r\n  *   6"
+      }
+    },
+    {
+      "sourceRecordId": "recXh3qks0pUbJsvE",
+      "sourceCreatedTime": "2026-02-02T00:09:37.000Z",
+      "fields": {
+        "Name": "Wellmanprop",
+        "Subject": "Price Reduced for Quick Sale❗8 Paul St, Doncaster",
+        "Email": "projects@wellmanpropgroup.com",
+        "Body": "Standalone Living · Spacious Interiors · Prestigious Doncaster Location\r\n ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌  ‌ ‌  ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌  ‌ ‌   ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌  ‌ ‌   ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌  ‌ ‌  ‌ ‌ ‌  ‌ ‌  ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌  ‌ ‌   ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌  ‌ ‌   ‌ ‌ ‌ ‌ ‌"
+      }
+    },
+    {
+      "sourceRecordId": "recXh8ZGIkjA9ZrK2",
+      "sourceCreatedTime": "2026-03-13T05:39:23.000Z",
+      "fields": {
+        "Name": "Bill Dontsios",
+        "Subject": "Sold!",
+        "Email": "bdontsios@barryplant.com.au",
+        "Body": "Coburg North, 4/10 Snapshot Drive\r\n\r\n        2\r\n        2\r\n        1\r\nSOLD\r\nOwner Says Sell! City-Edge Living Without the Chaos – 2 Bed Gem in Coburg Hill!\r\n$475,000\r\nNestled in the heart of Coburg Hill, this stylish 2-bedroom apartment perfectly balances",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXjr4CQdIwugyfc",
+      "sourceCreatedTime": "2026-02-25T23:22:37.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXlCVTkLEyJ63J7",
+      "sourceCreatedTime": "2026-03-19T06:39:41.000Z",
+      "fields": {
+        "Name": "Teena Lee",
+        "Subject": "OPEN HOME - 44 Bella Creek Rd, Bella Creek",
+        "Email": "Teena@RJRproperty.com.au",
+        "Body": "View this email in your browser\r\n\r\n\r\nRugesh\r\nOPEN HOME SATURDAY 21ST MARCH 2026\r\n44 Bella Creek Rd, Bella Creek\r\nFrom 12:15pm to 1:15pm\r\nWe are writing to you today to let you know that we have 44 Bella Creek Rd, Bella Creek open for inspection on Saturda"
+      }
+    },
+    {
+      "sourceRecordId": "recXlJirUS8QdLRg7",
+      "sourceCreatedTime": "2026-06-15T08:35:19.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXlKPrvQ1uwKEr0",
+      "sourceCreatedTime": "2026-03-06T02:07:34.000Z",
+      "fields": {
+        "Name": "Teena Lee",
+        "Subject": "13-15 Williams Street, Imbil",
+        "Email": "joleen@rjrproperty.com.au",
+        "Body": "View this email in your browser\r\n\r\n\r\n\r\nDear Rugesh\r\n\r\nOPEN HOME SATURDAY 7th MARCH 2026\r\n13 – 15 William Street Imbil – Imbil Scout Hall\r\nFrom 10:40am to 11:45am\r\n\r\nWe are writing to you today to let you know that we have 13 – 15 William street Imbil open"
+      }
+    },
+    {
+      "sourceRecordId": "recXlawygFMPZrzj9",
+      "sourceCreatedTime": "2026-04-07T05:51:06.000Z",
+      "fields": {
+        "Name": "Sharon Collins",
+        "Subject": "Final Opportunity at Orchard Square – $20k Bonus + Strong Rental Appeal",
+        "Email": "sharon.c@propertyselectadvisory.com",
+        "Body": "Exclusive Partner Opportunity – Orchard Square\r\nDear Partner,\r\nWe are pleased to offer Property Select Partners a final, high‑value opportunity at Orchard Square, with only two (2) packages remaining.\r\nTo support a fast close, we are offering a $20,000 ",
+        "Status": "Error 500",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/laU69FlMH3tNIJG2nnaSmg/kkXKISGi8BPEG7MHkbrSRPQJyH7cIBK23_pqyL1_HDhjVGCGfGLw4-0X3f6xJ54VxwOyfWcnB-4h3FN27VyaHBSuxLcgsKGgf_HDVP2O5y3E9xYddKeBUUru5PSnsW38xpSmvEukrD8hbEHSULIMIQCAaQ8CzwPYqcNmSgcNdpVyPWUe948M_tWUrxhSXkDq/nak4gAlwqrQFvkN_LTQwIocuLa5-2ZsxKHBfR_vYnO0",
+            "filename": "outlook_email_attachment.pdf",
+            "type": "application/pdf",
+            "size": 442557
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "recXm0MEEcXoXpJ2K",
+      "sourceCreatedTime": "2025-10-22T05:44:22.000Z",
+      "fields": {
+        "Name": "Robyn Faa",
+        "Subject": "Just Listed | 2/2 Wentford Street, Mackay",
+        "Email": "robyn@robynfaa.com.au",
+        "Body": "Just Listed\r\n\r\nHi Rugesh\r\n\r\nWe are pleased to announce that 2/2 Wentford Street, Mackay has just been listed for sale!\r\n\r\nIf you would like additional information on this property, click the \"View Online\" tab below to find all Mapping, Rental Estimations "
+      }
+    },
+    {
+      "sourceRecordId": "recXn6lFH0ApWmODk",
+      "sourceCreatedTime": "2025-12-18T04:19:00.000Z",
+      "fields": {
+        "Name": "Kaikura Land Sales",
+        "Subject": "Verve Builders Update",
+        "Email": "sales@kaikura.com.au",
+        "Body": "Hi Guys.\r\nWishing everyone a safe and happy holiday season! Please find below this week's update for Verve.\r\n\r\nThank you for your continued support throughout 2025. We look forward to working with everyone in the new year.\r\n\r\nPRICE LIST\r\nBROCHURE\r\nDESIGN ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXnlGuYAVyHHRwg",
+      "sourceCreatedTime": "2026-01-02T06:04:24.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXoM7Xq7jf60sbW",
+      "sourceCreatedTime": "2025-11-10T06:10:06.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXoUFWsWW6rNRSe",
+      "sourceCreatedTime": "2026-02-06T05:43:28.000Z",
+      "fields": {
+        "Name": "Gerry Smith",
+        "Subject": "Open for Inspection — 2 / 10 Dellar Crescent.",
+        "Email": "noreply@phoenixsoftware.io",
+        "Body": "Dear Rugesh,\r\n\r\n\r\n\r\nI’m pleased to invite you to a new open for inspection at 2 / 10 Dellar Crescent.\r\n\r\n\r\n\r\nDate: Saturday 07 February 2026\r\n\r\nTime: 11:00 AM – 11:30 AM\r\n\r\n\r\n\r\nCheck it out here: Buyer Portal\r\n\r\nBest Regards,\r\n\r\nGerry Smith\r\nSales Consult"
+      }
+    },
+    {
+      "sourceRecordId": "recXoxJz8L13RSlFx",
+      "sourceCreatedTime": "2025-09-06T22:36:19.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXpKVfXdCF50FEb",
+      "sourceCreatedTime": "2026-04-16T07:06:28.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXrmsHRH6elZS6t",
+      "sourceCreatedTime": "2026-07-23T15:06:56.000Z",
+      "fields": {
+        "Name": "Michelle Peck",
+        "Subject": "New Australian Government AML/CTF Changes: What It Means for Property Buyers & Sellers",
+        "Email": "michelle@peakcentral.com.au",
+        "Body": "The latest issue of Peak Central's Market Update\r\n\r\n\r\n\r\n\r\nHello Rugesh,\r\n\r\nWelcome to our latest update! Keeping you informed with valuable insights and information with regard to your real estate journey.\r\n\r\nKind Regards,\r\nMichelle Peck\r\n\r\n\r\n\r\n\r\nMich"
+      }
+    },
+    {
+      "sourceRecordId": "recXsq0CU55qMgGJ4",
+      "sourceCreatedTime": "2025-10-31T15:29:47.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    }
+  ]
+}

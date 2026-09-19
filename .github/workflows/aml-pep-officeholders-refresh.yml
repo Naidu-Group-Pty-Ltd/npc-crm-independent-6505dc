@@ -1,0 +1,108 @@
+name: AML PEP officeholder index refresh
+
+# Keeps aml.pep_officeholders current from public office-holder sources.
+#
+# This index is NOT a sanctions list and the difference decides how this
+# workflow behaves. A stale sanctions list is a live compliance failure, so
+# that refresh runs nightly and the screening provider fails closed on it. A
+# stale office-holder index degrades an ASSISTANCE — searches still open, the
+# operator still checks the official register, and the determination is still
+# made on what they record. So this runs weekly rather than nightly, and a
+# failure is an alert about a degraded aid rather than a compliance stop.
+#
+# What it shares with the sanctions refresh, deliberately:
+#   - missing credentials FAIL the job. A refresh that silently downgrades
+#     itself to a dry run is how a register goes stale behind a green tick.
+#   - Node 22, because `createClient` builds a RealtimeClient that demands a
+#     native WebSocket. On 20 the loader dies before reading a byte.
+#   - `--experimental-strip-types`, because the loader imports the SAME
+#     TypeScript module the endpoint renders Rule coverage from rather than
+#     keeping a second copy of the classifier in .mjs. Node 22.18+ strips
+#     types without the flag and accepts it as a no-op; older 22.x needs it.
+#     Passing it always is the version-independent answer.
+#   - the parser tests run BEFORE anything is written.
+#
+# Required repository secret:
+#   SUPABASE_SERVICE_ROLE_KEY   (writes aml.pep_officeholders)
+#
+# The project URL is not a secret and is read from supabase/config.toml.
+
+on:
+  schedule:
+    # 19:20 UTC on Sundays ≈ Monday morning Australia/Sydney. Offset from the
+    # sanctions refresh so the two never contend for the same connection.
+    - cron: '20 19 * * 0'
+  workflow_dispatch:
+    inputs:
+      sources:
+        description: 'Comma-separated sources to load'
+        required: false
+        default: 'aph_commonwealth_parliament,wikidata_au_public_office'
+      dry_run:
+        description: 'Parse and report without writing'
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: aml-pep-officeholders-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    # The public SPARQL endpoint is slow and throttled; the loader allows the
+    # query twenty minutes because a truncated response would produce a
+    # partial index, which is worse than none.
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Test the officeholder parsers
+        run: npm run test:aml-pep-index
+
+      - name: Resolve the project URL from the checked-in config
+        id: project
+        run: |
+          set -euo pipefail
+          REF="$(sed -n 's/^[[:space:]]*project_id[[:space:]]*=[[:space:]]*"\([^"]*\)".*/\1/p' supabase/config.toml | head -1)"
+          if [ -z "$REF" ]; then
+            echo '::error title=No project ref::supabase/config.toml has no project_id.'
+            exit 1
+          fi
+          echo "url=https://${REF}.supabase.co" >> "$GITHUB_OUTPUT"
+
+      - name: Check credentials
+        if: github.event.inputs.dry_run != 'true'
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          if [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+            echo "::error::SUPABASE_SERVICE_ROLE_KEY is not configured — the PEP officeholder index cannot be written, so it will go stale and the determination dialog will report it as unavailable. Add the repository secret, or run workflow_dispatch with dry_run=true."
+            exit 1
+          fi
+
+      - name: Load the officeholder index
+        if: github.event.inputs.dry_run != 'true'
+        env:
+          SUPABASE_URL: ${{ steps.project.outputs.url }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node --experimental-strip-types scripts/aml/load-pep-officeholders.mjs --source "${{ github.event.inputs.sources || 'aph_commonwealth_parliament,wikidata_au_public_office' }}"
+
+      - name: Dry run (explicitly requested)
+        if: github.event.inputs.dry_run == 'true'
+        run: node --experimental-strip-types scripts/aml/load-pep-officeholders.mjs --dry-run --source "${{ github.event.inputs.sources || 'aph_commonwealth_parliament,wikidata_au_public_office' }}"

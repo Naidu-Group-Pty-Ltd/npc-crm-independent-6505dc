@@ -1,0 +1,138 @@
+{
+  "async": false,
+  "createdAt": "2026-05-14T06:38:31.146Z",
+  "function": {
+    "description": "Context bridge tool fired once before Angela hands off to a downstream assistant. This tool preserves resolved caller context such as contactId, firstName, fullName, phone, contactState, confirmedIntent, and callerReason. It must not search GHL, create contacts, book calls, or choose the downstream assistant by itself.",
+    "name": "phoneNumber_inject",
+    "parameters": {
+      "properties": {
+        "callerReason": {
+          "description": "A short plain-English summary of why the caller is being handed off.",
+          "type": "string"
+        },
+        "confirmedIntent": {
+          "description": "The confirmed downstream pathway. Must be one of: discovery, strategy, or finance.",
+          "enum": [
+            "discovery",
+            "strategy",
+            "finance"
+          ],
+          "type": "string"
+        }
+      },
+      "required": [
+        "confirmedIntent"
+      ],
+      "type": "object"
+    }
+  },
+  "id": "c40722f1-a359-42e1-ba80-e99ef706a916",
+  "latestVersion": "v1",
+  "messages": [
+    {
+      "blocking": false,
+      "type": "request-start"
+    }
+  ],
+  "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+  "parameters": [
+    {
+      "key": "contactId",
+      "value": "{{ contactId }}"
+    },
+    {
+      "key": "firstName",
+      "value": "{{ firstName }}"
+    },
+    {
+      "key": "fullName",
+      "value": "{{ fullName }}"
+    },
+    {
+      "key": "phone",
+      "value": "{{ phone }}"
+    },
+    {
+      "key": "contactState",
+      "value": "{{ contactState }}"
+    },
+    {
+      "key": "callerPhone",
+      "value": "{{ customer.number }}"
+    },
+    {
+      "key": "vapiCallId",
+      "value": "{{ call.id }}"
+    },
+    {
+      "key": "callType",
+      "value": "{{ call.type }}"
+    },
+    {
+      "key": "ghlContactId",
+      "value": "{{ ghlContactId }}"
+    },
+    {
+      "key": "ghlFirstName",
+      "value": "{{ ghlFirstName }}"
+    },
+    {
+      "key": "ghlFullName",
+      "value": "{{ ghlFullName }}"
+    },
+    {
+      "key": "ghlContactPhone",
+      "value": "{{ ghlContactPhone }}"
+    },
+    {
+      "key": "ghlContactState",
+      "value": "{{ ghlContactState }}"
+    }
+  ],
+  "server": {
+    "timeoutSeconds": 20,
+    "url": "https://hook.eu2.make.com/ryb05h6kzpzv8fnwi6lki6r8lldokomy"
+  },
+  "type": "function",
+  "updatedAt": "2026-05-14T06:38:31.146Z",
+  "variableExtractionPlan": {
+    "aliases": [
+      {
+        "key": "contactId",
+        "value": "{{ $.contactId }}"
+      },
+      {
+        "key": "firstName",
+        "value": "{{ $.firstName }}"
+      },
+      {
+        "key": "fullName",
+        "value": "{{ $.fullName }}"
+      },
+      {
+        "key": "phone",
+        "value": "{{ $.phone }}"
+      },
+      {
+        "key": "contactState",
+        "value": "{{ $.contactState }}"
+      },
+      {
+        "key": "confirmedIntent",
+        "value": "{{ $.confirmedIntent }}"
+      },
+      {
+        "key": "callerReason",
+        "value": "{{ $.callerReason }}"
+      },
+      {
+        "key": "handoffReady",
+        "value": "{{ $.handoffReady }}"
+      },
+      {
+        "key": "vapiCallId",
+        "value": "{{ $.vapiCallId }}"
+      }
+    ]
+  }
+}

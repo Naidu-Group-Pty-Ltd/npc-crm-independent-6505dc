@@ -1,0 +1,60 @@
+/* ─────────────────────────────────────────────────────────────────
+   NPC Services — typography.
+
+   Body/UI type is a SYSTEM SANS STACK. That is a deliberate product
+   decision: the White-Label admin can swap --font-sans / --font-heading
+   per tenant (src/branding/brand-fonts.ts), so no component may declare
+   its own font-family.
+
+   Display type (report covers, certificates, pull quotes) uses the two
+   webfonts the product ships: Cinzel Bold and Playfair Display Medium.
+   See tokens/fonts.css.
+
+   NOTE ON PRECEDENCE: --font-sans / --font-heading / --font-mono also
+   exist in src/styles/tokens.css, which is authoritative at runtime.
+   The --text-* / --leading-* / --tracking-* / --weight-* scale below does
+   NOT yet exist in the repo — it is the published specification.
+   ───────────────────────────────────────────────────────────────── */
+
+:root {
+  --font-sans: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, "Noto Sans", sans-serif;
+  --font-heading: var(--font-sans);
+  --font-mono: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+
+  /* Display faces — report covers + printed collateral only. */
+  --font-display: "Cinzel", Georgia, "Times New Roman", serif;
+  --font-serif: "Playfair Display", Georgia, "Times New Roman", serif;
+
+  --base-font-size: 1rem;
+
+  /* Size ramp, as used by the product's page shells. */
+  --text-2xs: 0.625rem;   /* 10px — stat labels, footnotes */
+  --text-xs: 0.6875rem;   /* 11px — eyebrows, map pins, chips */
+  --text-sm: 0.75rem;     /* 12px — table meta, captions */
+  --text-base: 0.875rem;  /* 14px — body / UI default */
+  --text-md: 1rem;        /* 16px — lead paragraphs, mobile inputs */
+  --text-lg: 1.125rem;    /* 18px — panel titles */
+  --text-xl: 1.25rem;     /* 20px — section titles */
+  --text-2xl: 1.5rem;     /* 24px — page titles */
+  --text-3xl: 1.75rem;    /* 28px — KPI values */
+  --text-4xl: 2.25rem;    /* 36px — hero titles */
+
+  /* Weights actually in use. Nothing lighter than 400, nothing above 700. */
+  --weight-normal: 400;
+  --weight-medium: 500;
+  --weight-semibold: 600;
+  --weight-bold: 700;
+
+  --leading-tight: 1.15;
+  --leading-snug: 1.35;
+  --leading-normal: 1.5;
+  --leading-relaxed: 1.6;
+
+  /* Tracking. THE BRAND SIGNATURE IS THE WIDE UPPERCASE EYEBROW. */
+  --tracking-tight: -0.045em;   /* KPI values, hero titles */
+  --tracking-snug: -0.02em;
+  --tracking-normal: 0;
+  --tracking-eyebrow: 0.18em;   /* section labels, KPI titles */
+  --tracking-wide: 0.14em;
+  --tracking-widest: 0.34em;    /* hero eyebrow, wordmark */
+}

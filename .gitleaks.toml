@@ -1,0 +1,126 @@
+# Secret scanning for this repository.
+#
+# Extends the default rule set — nothing is turned off.
+#
+# ## Why this file did not exist until now
+#
+# It did not need to, because the scan had never run. `gitleaks-action` refuses
+# an org-owned repository without a paid licence and exits before reading a
+# single file:
+#
+#     [Naidu-Group-Pty-Ltd] is an organization. License key is required.
+#
+# That is not a finding and not a scan. `security` was therefore red on every
+# pull request here for a licensing reason, every other control in the job
+# passing, and 286 working-tree findings had never been read by anyone. They
+# are classified below; the workflow now runs the gitleaks BINARY, which is
+# MIT-licensed and free — only the Action wrapper charges.
+#
+# ## The 286
+#
+# 150 UUIDs (GoHighLevel contact ids in a data export) · 39 of this project's
+# OWN Supabase anon key · 39 Airtable object ids · 23 Outlook @odata.etag values
+# from a calendar event in a Make blueprint · 9 `curl -sf http://localhost:...`
+# lines carrying no Authorization header · 4 build-output duplicates · 2 PEM
+# HEADERS inside PKCS#1 to PKCS#8 conversion code, where the marker is an
+# argument to .replace() · 1 deliberately-planted GCP key in the script whose
+# purpose is holding patterns that must trip the gates · 1 marketing
+# click-tracking token quoted inside an ingested email body · and a handful of
+# NAMES rather than values, `internal_edge_secret_v2` among them, which is a
+# vault lookup and therefore the opposite of a secret: it is the reason the
+# secret is not in the file.
+#
+# Every Supabase key was decoded. All 39 are `role=anon` for THIS project,
+# `dduzbchuswwbefdunfct`. None is `service_role`.
+#
+# ## A Supabase anon key is publishable
+#
+# It carries no privileges of its own: it identifies the project and asserts the
+# `anon` role, and every row it can reach is decided by Row Level Security on
+# the server. Supabase ships it to the browser by design. Rotating it changes
+# nothing about who can read what.
+#
+# It is allowed as ONE literal rather than as a pattern. A rule like "any JWT
+# whose role is anon" cannot be written here — the claims are inside a base64
+# payload the scanner matches as opaque text — so a different key, a rotated
+# key, ANOTHER project's key, or a `service_role` key for this one all still
+# fail the scan. That is the behaviour worth keeping.
+#
+# ## Allowances are by VALUE SHAPE, not by path
+#
+# A global allowlist carrying `paths` makes gitleaks skip the whole FILE
+# ("skipping file: global allowlist") before any regex or `condition = "AND"` is
+# consulted. Scoping a key to a directory that way silently excludes everything
+# else in it — on the client mirror, a first attempt did exactly that to
+# `supabase/migrations/`, and a planted `service_role` key there went
+# undetected. So `paths` is used once, for `dist/` (generated output compiled
+# from sources this scan already reads).
+#
+# Verified by planting fabricated secrets and requiring a non-zero exit.
+
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "This project's own Supabase anon (publishable) key — see the header. One literal: another project's key, a rotated key, or a service_role key all still fail."
+regexes = [
+  '''eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkdXpiY2h1c3d3YmVmZHVuZmN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0NDM4NzksImV4cCI6MjA3MTAxOTg3OX0\.eSYU6fxIc3tBQuGLsdBRff0alBMkNfvv7OpW0efNjxk''',
+]
+
+[[allowlists]]
+description = "Generated build output. Compiled from sources this scan already reads, so a finding here is the same finding twice — and the second copy names a file nobody can edit."
+paths = ['''^dist/.*''']
+
+[[allowlists]]
+description = "Vendor record identifiers. UUIDs (GoHighLevel contact ids), Airtable object ids (wac/wde/wfl/rec/tbl/fld — automations, webhooks, tables) and Outlook changeKey/@odata.etag values from a calendar event in a Make blueprint. Matched by SHAPE, so they are equally harmless wherever they appear; none authenticates anything."
+regexes = [
+  '''^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$''',
+  '''^(wac|wde|wfl|rec|tbl|fld|app|usr)[A-Za-z0-9]{10,20}$''',
+  '''^CQAAAB[A-Za-z0-9+/=]{10,}$''',
+]
+
+[[allowlists]]
+description = "JWT-shaped strings inside ingested email bodies. A JWT has two dots; these carry one, so they are truncated fragments quoted in correspondence rather than tokens. The two-dot form is deliberately NOT allowed — that is what a real token looks like."
+regexes = ['''^eyJ[A-Za-z0-9_-]{4,}\.[A-Za-z0-9_-]+$''']
+
+[[allowlists]]
+description = "Waitlist signup tokens in an Airtable migration export, matched on the field that holds them. Opaque per-record values for a marketing waitlist confirmation link; they reach no system of ours. regexTarget = line because the evidence is the field name, not the value."
+regexTarget = "line"
+regexes = ['''"Token"\s*:\s*"[A-Za-z0-9_-]{16,32}"''']
+
+[[allowlists]]
+description = "Names, not values. generic-api-key matches identifiers that merely look like credentials: a config field key, a feature flag, and a vault ENTRY NAME — that last is the lookup `vault.decrypted_secrets where name = ...`, which is the opposite of a secret."
+regexes = [
+  '''^GA4_PROPERTY_ID$''',
+  '''^aml_v3_regulatory_hub$''',
+  '''^internal_edge_secret_v2$''',
+]
+
+[[allowlists]]
+description = "A PEM header is not a PEM key. private-key fires on the literal marker inside PKCS#1 to PKCS#8 conversion code, where it is an argument to .replace() and is followed by the regex delimiter rather than by key material. Anchored on that delimiter, so a marker followed by an actual base64 body still fails."
+regexes = ['''-----BEGIN [A-Z ]*PRIVATE KEY-----(/g|\\n|[\x27"])''']
+
+[[allowlists]]
+description = "Documented test values, fixtures and deliberately-planted patterns. The GCP key lives in check-security-gate-negatives.mjs, a script whose entire purpose is holding patterns that must trip the gates; the rest are literals a document or a test declares as examples."
+regexes = [
+  '''^AIzaSyAPjKmIVPd3M30RFnb1pCqJ1fT-BaKkPNI$''',
+  '''^ci-token$''',
+  '''^test-secret-must-be-16-chars-long$''',
+  '''^e2e-synthetic-staff-[a-z]+$''',
+  '''^d258ccb98160488cb3db83be33a2126b51bbbe336ee9476887f82175e0a5dcdc$''',
+  '''^Anon/publishable$''',
+]
+
+[[allowlists]]
+description = "curl examples and container health checks — lines like `curl -sf http://localhost:8080/healthz` with no Authorization header at all — and SHOUTING placeholders a reader is told to replace. regexTarget = line because the matched secret is a fragment of the URL; the evidence that it is harmless is the rest of the line."
+regexTarget = "line"
+regexes = [
+  '''curl\s[^\n]*(localhost|127\.0\.0\.1):[0-9]+''',
+  '''Bearer\s+(YOUR_[A-Z_]+|<[^>]+>|\.\.\.|xxx+)''',
+]
+
+[[allowlists]]
+description = "A marketing click-tracking token inside an ingested email body. Its claims are {id, url, exp} — a redirect and an expiry — and it authenticates nothing of ours. Allowed as one literal rather than by shape: a well-formed two-dot JWT is exactly what a real credential looks like, so the general form must keep failing."
+regexes = [
+  '''^eyJhbGciOiJIUzI1NiJ9\.eyJpZCI6IjY4OTU4MWE0MjM4MDVfNDczZDZmZjU[A-Za-z0-9_.-]+$''',
+]

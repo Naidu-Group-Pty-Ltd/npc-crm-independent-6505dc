@@ -1,0 +1,194 @@
+{
+  "id": "wflM9vUhBoHb0ZE8r",
+  "name": "Aurixa Lead Capture",
+  "description": null,
+  "deploymentStatus": "deployed",
+  "deploymentError": null,
+  "trigger": {
+    "type": "recordCreated",
+    "inputs": {
+      "tableId": "tblHzGiB591W3GpoZ"
+    }
+  },
+  "nodes": [
+    {
+      "key": "wacfxv48iUshxlP8V",
+      "type": "sendEmail",
+      "inputs": {
+        "to": [
+          {
+            "template": [
+              "admin@aurixasystems.com.au"
+            ]
+          },
+          {
+            "template": [
+              " rugesh@aurixasystems.com.au"
+            ]
+          },
+          {
+            "template": [
+              " lavan@aurixasystems.com.au"
+            ]
+          },
+          {
+            "template": [
+              " arvinraj@aurixasystems.com.au"
+            ]
+          },
+          {
+            "template": [
+              " mithrubanbupathy@aurixasystems.com.au"
+            ]
+          }
+        ],
+        "subject": {
+          "template": [
+            "New Lead Received"
+          ]
+        },
+        "message": {
+          "template": [
+            "# Lead Details\n- **First Name:** ",
+            {
+              "$ref": "trigger",
+              "path": [
+                "cellValuesByFieldId",
+                "fldyvxPM3x4LVi33h"
+              ]
+            },
+            "\n- **Last Name:** ",
+            {
+              "$ref": "trigger",
+              "path": [
+                "cellValuesByFieldId",
+                "fldJSOnXU9dbndMyN"
+              ]
+            },
+            "\n- **Role:** ",
+            {
+              "$ref": "trigger",
+              "path": [
+                "cellValuesByFieldId",
+                "fldNmKtbJUXJCLtLM",
+                "name"
+              ]
+            },
+            "\n- **Email:** ",
+            {
+              "$ref": "trigger",
+              "path": [
+                "cellValuesByFieldId",
+                "fldvcq6GjkuBTREON"
+              ]
+            },
+            "\n- **Mobile Number:** ",
+            {
+              "$ref": "trigger",
+              "path": [
+                "cellValuesByFieldId",
+                "fldhyP7rjITi94tFH"
+              ]
+            },
+            "\n- **Company Name:** ",
+            {
+              "$ref": "trigger",
+              "path": [
+                "cellValuesByFieldId",
+                "fldKXSWWLc8DWCBhH"
+              ]
+            },
+            "\n- **Company Type:** ",
+            {
+              "$ref": "trigger",
+              "path": [
+                "cellValuesByFieldId",
+                "fldOLKfVW7fWKJaVE",
+                "name"
+              ]
+            },
+            "\n- **Annual Income:** ",
+            {
+              "$ref": "trigger",
+              "path": [
+                "cellValuesByFieldId",
+                "fldA5j0e9NPipgCuU",
+                "name"
+              ]
+            },
+            "\n- **Technology Bottlenecks:** ",
+            {
+              "$ref": "trigger",
+              "path": [
+                "cellValuesByFieldId",
+                "fld1ytmg0havMGDhc"
+              ]
+            },
+            "\n- **Operational Issues:** ",
+            {
+              "fn": "map",
+              "args": [
+                {
+                  "$ref": "trigger",
+                  "path": [
+                    "cellValuesByFieldId",
+                    "fldPxNxDBNncb2d9h"
+                  ]
+                },
+                {
+                  "fn": "propertyGetter",
+                  "args": [
+                    "name"
+                  ]
+                }
+              ]
+            },
+            "\n- **Additional Notes:** ",
+            {
+              "$ref": "trigger",
+              "path": [
+                "cellValuesByFieldId",
+                "fldAH7gzIq2bicqvQ"
+              ]
+            },
+            "\n- **Application ID:** ",
+            {
+              "$ref": "trigger",
+              "path": [
+                "cellValuesByFieldId",
+                "fldU6Ny4Ck482jpGg"
+              ]
+            }
+          ]
+        }
+      }
+    },
+    {
+      "key": "wac6IfuZM2bkLGqk2",
+      "type": "customScript",
+      "inputs": {
+        "inputObj": {
+          "obj": {
+            "recordId": {
+              "$ref": "trigger",
+              "path": [
+                "id"
+              ]
+            }
+          }
+        },
+        "script": "// 1. Fetch table context\nlet table = base.getTable(\"Aurixa Waitlist\");\n\n// 2. Get the record ID from the automation environment\nlet config = input.config();\nlet recordId = config.recordId;\n\n// 3. Generate a secure, pseudo-random 16-byte character sequence\nconst chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';\nlet rawString = '';\nfor (let i = 0; i < 16; i++) {\n    rawString += chars.charAt(Math.floor(Math.random() * chars.length));\n}\n\n// 4. Convert the sequence to a URL-Safe Base64 string manually (bypassing btoa)\nconst b64Chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789-_';\nlet base64Token = '';\nlet i = 0;\n\nwhile (i < rawString.length) {\n    let c1 = rawString.charCodeAt(i++);\n    let c2 = i < rawString.length ? rawString.charCodeAt(i++) : NaN;\n    let c3 = i < rawString.length ? rawString.charCodeAt(i++) : NaN;\n\n    let byte1 = c1 >> 2;\n    let byte2 = ((c1 & 3) << 4) | (isNaN(c2) ? 0 : c2 >> 4);\n    let byte3 = isNaN(c2) ? 64 : ((c2 & 15) << 2) | (isNaN(c3) ? 0 : c3 >> 6);\n    let byte4 = isNaN(c3) ? 64 : c3 & 63;\n\n    base64Token += b64Chars.charAt(byte1) + b64Chars.charAt(byte2);\n    if (byte3 !== 64) base64Token += b64Chars.charAt(byte3);\n    if (byte4 !== 64) base64Token += b64Chars.charAt(byte4);\n}\n\n// 5. Set expiration time (e.g., 24 hours from now)\nlet hoursToLive = 24;\nlet expiryDate = new Date();\nexpiryDate.setHours(expiryDate.getHours() + hoursToLive);\nlet expiryTimestamp = expiryDate.toISOString(); // Format: YYYY-MM-DDTHH:mm:ss.sssZ\n\n// 6. Construct the final URL\nlet baseUrl = \"https://aurixasystems.com.au/questionnaire\";\nlet mintedUrl = `${baseUrl}?token=${base64Token}&expires=${encodeURIComponent(expiryTimestamp)}`;\n\n// 7. Update the Airtable record fields\nawait table.updateRecordAsync(recordId, {\n    \"Token\": base64Token,\n    \"Bypass URL\": mintedUrl\n});\n"
+      },
+      "outputSchema": []
+    },
+    {
+      "key": "wac0NVTbcAAOXQsdM",
+      "type": "customScript",
+      "inputs": {
+        "script": "console.log(\"Starting 60-second delay...\");\n\n// 1. Capture the start time in milliseconds\nconst startTime = Date.now();\nconst delayDuration = 10000; // 60 seconds\n\n// 2. Loop continuously until the time difference reaches 60,000ms\nwhile (Date.now() - startTime < delayDuration) {\n    // This loop blocks execution until the target duration passes\n}\n\nconsole.log(\"60 seconds completed. Proceeding with script...\");\n"
+      },
+      "outputSchema": []
+    }
+  ],
+  "configurationStatus": "valid"
+}

@@ -1,0 +1,313 @@
+{
+  "version": "pdf-import-golden-corpus-registry-v1",
+  "registryName": "PDF Import Golden Corpus Registry",
+  "description": "Canonical PDF import regression corpus metadata. Do not commit private/client PDFs.",
+  "updatedAt": "",
+  "corpus": [
+    {
+      "corpusId": "golden-simple-001",
+      "category": "simple_one_page",
+      "title": "Simple one-page PDF",
+      "purpose": "Validate the most basic import path end to end.",
+      "pageCountExpectation": { "mode": "exact", "exact": 1, "minimum": null, "maximum": null },
+      "expectedOutcomes": {
+        "importShouldSucceed": true,
+        "templateShouldBeCreated": true,
+        "visualQaShouldRun": true,
+        "repairShouldRunOrSkipSafely": true,
+        "applyRepairShouldOpenEditor": true,
+        "exportParityShouldBeRecordable": true,
+        "templatePageCountShouldMatch": true,
+        "manualReviewAllowed": false,
+        "fallbackAllowed": false
+      },
+      "scoreThresholds": { "visualQaMinimum": 0.9, "repairFinalMinimum": 0.9, "exportParityMinimum": 0.9 },
+      "acceptableWarnings": [
+        "repair_skipped_no_eligible_pages",
+        "ai_reconciliation_optional",
+        "export_parity_manual_required"
+      ],
+      "unacceptableFailures": [
+        "import_failed",
+        "finalization_failed",
+        "template_not_created",
+        "template_page_count_mismatch",
+        "source_rasters_missing",
+        "visual_quality_artifact_missing",
+        "repair_audit_missing",
+        "repair_audit_storage_object_missing",
+        "apply_repair_failed",
+        "export_parity_persistence_failed",
+        "generated_template_empty",
+        "backend_unknown_operation",
+        "sidecar_unavailable"
+      ],
+      "requiredMetadata": [
+        "runId", "corpusId", "category", "sourceFilename", "importId", "templateId",
+        "engineVersion", "importPageCount", "templatePageCount", "visualQaScore",
+        "visualQaManualReviewRequired", "repairStatus", "repairFinalScore", "repairScoreDelta",
+        "aiReconciliationStatus", "aiReconciliationRecommendation", "exportParityStatus",
+        "exportParityMode", "exportVsSourceScore", "editorVsSourceScore", "exportVsEditorScore",
+        "warnings", "failures", "operatorDecision", "createdAt"
+      ],
+      "notes": [
+        "Baseline sanity check; a regression here indicates a core pipeline break.",
+        "No manual review or fallback is expected for a clean one-page PDF."
+      ]
+    },
+    {
+      "corpusId": "golden-design-001",
+      "category": "design_heavy_one_page",
+      "title": "Design-heavy one-page PDF",
+      "purpose": "Validate a visually dense, branded/design-heavy single page.",
+      "pageCountExpectation": { "mode": "exact", "exact": 1, "minimum": null, "maximum": null },
+      "expectedOutcomes": {
+        "importShouldSucceed": true,
+        "templateShouldBeCreated": true,
+        "visualQaShouldRun": true,
+        "repairShouldRunOrSkipSafely": true,
+        "applyRepairShouldOpenEditor": true,
+        "exportParityShouldBeRecordable": true,
+        "templatePageCountShouldMatch": true,
+        "manualReviewAllowed": true,
+        "fallbackAllowed": true
+      },
+      "scoreThresholds": { "visualQaMinimum": 0.8, "repairFinalMinimum": 0.82, "exportParityMinimum": 0.8 },
+      "acceptableWarnings": [
+        "manual_review_required",
+        "ai_reconciliation_optional",
+        "export_parity_manual_required",
+        "fallback_used_with_source_raster_preserved",
+        "design_complexity_warning"
+      ],
+      "unacceptableFailures": [
+        "import_failed",
+        "finalization_failed",
+        "template_not_created",
+        "template_page_count_mismatch",
+        "source_rasters_missing",
+        "visual_quality_artifact_missing",
+        "apply_repair_failed",
+        "export_parity_persistence_failed",
+        "generated_template_empty",
+        "missing_major_image",
+        "backend_unknown_operation",
+        "sidecar_unavailable"
+      ],
+      "requiredMetadata": [
+        "runId", "corpusId", "category", "sourceFilename", "importId", "templateId",
+        "engineVersion", "importPageCount", "templatePageCount", "visualQaScore",
+        "visualQaManualReviewRequired", "repairStatus", "repairFinalScore", "repairScoreDelta",
+        "aiReconciliationStatus", "aiReconciliationRecommendation", "exportParityStatus",
+        "exportParityMode", "exportVsSourceScore", "editorVsSourceScore", "exportVsEditorScore",
+        "warnings", "failures", "operatorDecision", "createdAt"
+      ],
+      "notes": [
+        "Visual QA may score lower than a simple PDF but must stay above the minimum.",
+        "Fallback is acceptable only when the source raster is preserved and documented."
+      ]
+    },
+    {
+      "corpusId": "golden-report-001",
+      "category": "multi_page_report",
+      "title": "Multi-page report PDF",
+      "purpose": "Validate multi-page import consistency and per-page fidelity.",
+      "pageCountExpectation": { "mode": "minimum", "exact": null, "minimum": 2, "maximum": null },
+      "expectedOutcomes": {
+        "importShouldSucceed": true,
+        "templateShouldBeCreated": true,
+        "visualQaShouldRun": true,
+        "repairShouldRunOrSkipSafely": true,
+        "applyRepairShouldOpenEditor": true,
+        "exportParityShouldBeRecordable": true,
+        "templatePageCountShouldMatch": true,
+        "manualReviewAllowed": true,
+        "fallbackAllowed": false
+      },
+      "scoreThresholds": { "visualQaMinimum": 0.82, "repairFinalMinimum": 0.84, "exportParityMinimum": 0.82 },
+      "acceptableWarnings": [
+        "manual_review_required",
+        "repair_skipped_no_eligible_pages",
+        "ai_reconciliation_optional",
+        "export_parity_manual_required"
+      ],
+      "unacceptableFailures": [
+        "import_failed",
+        "finalization_failed",
+        "template_not_created",
+        "template_page_count_mismatch",
+        "source_rasters_missing",
+        "visual_quality_artifact_missing",
+        "repair_audit_missing",
+        "repair_audit_storage_object_missing",
+        "apply_repair_failed",
+        "export_parity_persistence_failed",
+        "generated_template_empty",
+        "backend_unknown_operation",
+        "sidecar_unavailable"
+      ],
+      "requiredMetadata": [
+        "runId", "corpusId", "category", "sourceFilename", "importId", "templateId",
+        "engineVersion", "importPageCount", "templatePageCount", "visualQaScore",
+        "visualQaManualReviewRequired", "repairStatus", "repairFinalScore", "repairScoreDelta",
+        "aiReconciliationStatus", "aiReconciliationRecommendation", "exportParityStatus",
+        "exportParityMode", "exportVsSourceScore", "editorVsSourceScore", "exportVsEditorScore",
+        "warnings", "failures", "operatorDecision", "createdAt"
+      ],
+      "notes": [
+        "Final template page count must match the import page count.",
+        "Per-page context gaps are unacceptable unless explicitly documented.",
+        "Manual review may be acceptable for individual pages."
+      ]
+    },
+    {
+      "corpusId": "golden-table-001",
+      "category": "table_heavy",
+      "title": "Table-heavy PDF",
+      "purpose": "Validate structured table layout fidelity.",
+      "pageCountExpectation": { "mode": "minimum", "exact": null, "minimum": 1, "maximum": null },
+      "expectedOutcomes": {
+        "importShouldSucceed": true,
+        "templateShouldBeCreated": true,
+        "visualQaShouldRun": true,
+        "repairShouldRunOrSkipSafely": true,
+        "applyRepairShouldOpenEditor": true,
+        "exportParityShouldBeRecordable": true,
+        "templatePageCountShouldMatch": true,
+        "manualReviewAllowed": true,
+        "fallbackAllowed": true
+      },
+      "scoreThresholds": { "visualQaMinimum": 0.78, "repairFinalMinimum": 0.8, "exportParityMinimum": 0.78 },
+      "acceptableWarnings": [
+        "manual_review_required",
+        "design_complexity_warning",
+        "export_parity_manual_required",
+        "fallback_used_with_source_raster_preserved"
+      ],
+      "unacceptableFailures": [
+        "import_failed",
+        "finalization_failed",
+        "template_not_created",
+        "template_page_count_mismatch",
+        "source_rasters_missing",
+        "visual_quality_artifact_missing",
+        "apply_repair_failed",
+        "export_parity_persistence_failed",
+        "generated_template_empty",
+        "missing_major_table_content",
+        "backend_unknown_operation",
+        "sidecar_unavailable"
+      ],
+      "requiredMetadata": [
+        "runId", "corpusId", "category", "sourceFilename", "importId", "templateId",
+        "engineVersion", "importPageCount", "templatePageCount", "visualQaScore",
+        "visualQaManualReviewRequired", "repairStatus", "repairFinalScore", "repairScoreDelta",
+        "aiReconciliationStatus", "aiReconciliationRecommendation", "exportParityStatus",
+        "exportParityMode", "exportVsSourceScore", "editorVsSourceScore", "exportVsEditorScore",
+        "warnings", "failures", "operatorDecision", "createdAt"
+      ],
+      "notes": [
+        "Table area should remain visually aligned (rows/columns/borders).",
+        "Missing table content or severe table drift is unacceptable."
+      ]
+    },
+    {
+      "corpusId": "golden-image-001",
+      "category": "image_heavy",
+      "title": "Image-heavy PDF",
+      "purpose": "Validate image placement, scale, and crop/fit behavior.",
+      "pageCountExpectation": { "mode": "minimum", "exact": null, "minimum": 1, "maximum": null },
+      "expectedOutcomes": {
+        "importShouldSucceed": true,
+        "templateShouldBeCreated": true,
+        "visualQaShouldRun": true,
+        "repairShouldRunOrSkipSafely": true,
+        "applyRepairShouldOpenEditor": true,
+        "exportParityShouldBeRecordable": true,
+        "templatePageCountShouldMatch": true,
+        "manualReviewAllowed": true,
+        "fallbackAllowed": true
+      },
+      "scoreThresholds": { "visualQaMinimum": 0.8, "repairFinalMinimum": 0.82, "exportParityMinimum": 0.8 },
+      "acceptableWarnings": [
+        "manual_review_required",
+        "design_complexity_warning",
+        "export_parity_manual_required",
+        "fallback_used_with_source_raster_preserved"
+      ],
+      "unacceptableFailures": [
+        "import_failed",
+        "finalization_failed",
+        "template_not_created",
+        "template_page_count_mismatch",
+        "source_rasters_missing",
+        "visual_quality_artifact_missing",
+        "apply_repair_failed",
+        "export_parity_persistence_failed",
+        "generated_template_empty",
+        "missing_major_image",
+        "backend_unknown_operation",
+        "sidecar_unavailable"
+      ],
+      "requiredMetadata": [
+        "runId", "corpusId", "category", "sourceFilename", "importId", "templateId",
+        "engineVersion", "importPageCount", "templatePageCount", "visualQaScore",
+        "visualQaManualReviewRequired", "repairStatus", "repairFinalScore", "repairScoreDelta",
+        "aiReconciliationStatus", "aiReconciliationRecommendation", "exportParityStatus",
+        "exportParityMode", "exportVsSourceScore", "editorVsSourceScore", "exportVsEditorScore",
+        "warnings", "failures", "operatorDecision", "createdAt"
+      ],
+      "notes": [
+        "No missing major images; crop/fit drift should be documented.",
+        "Export parity against source/editor is important for image placement."
+      ]
+    },
+    {
+      "corpusId": "golden-ocr-001",
+      "category": "scanned_ocr",
+      "title": "Scanned / OCR PDF",
+      "purpose": "Validate safe behavior for scanned/low-confidence OCR documents.",
+      "pageCountExpectation": { "mode": "unknown", "exact": null, "minimum": null, "maximum": null },
+      "expectedOutcomes": {
+        "importShouldSucceed": true,
+        "templateShouldBeCreated": true,
+        "visualQaShouldRun": true,
+        "repairShouldRunOrSkipSafely": true,
+        "applyRepairShouldOpenEditor": true,
+        "exportParityShouldBeRecordable": true,
+        "templatePageCountShouldMatch": false,
+        "manualReviewAllowed": true,
+        "fallbackAllowed": true
+      },
+      "scoreThresholds": { "visualQaMinimum": 0.65, "repairFinalMinimum": 0.65, "exportParityMinimum": 0.75 },
+      "acceptableWarnings": [
+        "manual_review_required",
+        "ocr_low_confidence",
+        "fallback_used_with_source_raster_preserved",
+        "export_parity_manual_required"
+      ],
+      "unacceptableFailures": [
+        "import_failed",
+        "finalization_failed",
+        "template_not_created",
+        "source_rasters_missing",
+        "visual_quality_artifact_missing",
+        "generated_template_empty",
+        "backend_unknown_operation",
+        "sidecar_unavailable"
+      ],
+      "requiredMetadata": [
+        "runId", "corpusId", "category", "sourceFilename", "importId", "templateId",
+        "engineVersion", "importPageCount", "templatePageCount", "visualQaScore",
+        "visualQaManualReviewRequired", "repairStatus", "repairFinalScore", "repairScoreDelta",
+        "aiReconciliationStatus", "aiReconciliationRecommendation", "exportParityStatus",
+        "exportParityMode", "exportVsSourceScore", "editorVsSourceScore", "exportVsEditorScore",
+        "warnings", "failures", "operatorDecision", "createdAt"
+      ],
+      "notes": [
+        "Manual review is expected or acceptable; a lower Visual QA score is acceptable.",
+        "The pipeline must fail safely (preserve the source raster) rather than hallucinate clean editable structure."
+      ]
+    }
+  ]
+}

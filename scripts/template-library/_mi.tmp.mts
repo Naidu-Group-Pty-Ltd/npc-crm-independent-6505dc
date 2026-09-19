@@ -1,0 +1,13 @@
+import { readFileSync } from 'node:fs';
+import { buildMarketIntelligenceReport } from '../../supabase/functions/_shared/reports/marketIntelligence/normalise.pure';
+import { applyMarketIntelligenceProjection } from '../../supabase/functions/_shared/marketIntelligenceProjection.pure';
+const row=JSON.parse(readFileSync('/tmp/claude-0/-home-user/2d1fcc99-8bfb-51aa-8aa3-79bd8050091a/scratchpad/format-rows2.json','utf8')).market_intelligence;
+const built:any=buildMarketIntelligenceReport({row,preparedOn:'2026-08-13T00:00:00.000Z',brandName:'NPC Services',audienceOverride:null} as any);
+console.log('ok:',built.ok);
+const d:any={}; if(built.ok) applyMarketIntelligenceProjection(d,built.report);
+const mi=d.marketIntel??{};
+console.log('narrative:', String(mi.narrative??'').length, 'chars   (budget 700)');
+const p=mi.prose??{};
+for (const k of ['executiveSummary','keyInsights','strategy']) console.log(`${k}:`, String(p[k]??'').length, 'chars');
+console.log('layers:', (mi.layers??[]).length, ' events:', (mi.events??[]).length, ' upcoming:', (mi.upcoming??[]).length);
+for (const [i,e] of (mi.events??[]).entries()) console.log(`  event[${i}] event=${String(e.event??'').length} impact=${String(e.impact??'').length}`);

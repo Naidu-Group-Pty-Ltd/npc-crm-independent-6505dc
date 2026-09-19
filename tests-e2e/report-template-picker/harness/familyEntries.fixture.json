@@ -1,0 +1,5030 @@
+[
+ {
+  "id": "888d6dc1-b327-4595-ace1-4c8ac3013dac",
+  "family_id": "d3433dcc-06db-4d01-9b0d-8ac5f5cfddec",
+  "slug": "investment-compass-ap-01-drawing-set",
+  "version": 1,
+  "name": "Drawing Set",
+  "description": "Hairline frame, dimensioned allotment plan, numbered schedules and a caption rail for figure notes.",
+  "category": "investment",
+  "report_type": "investment_compass",
+  "tier": "compass",
+  "variant": null,
+  "status": "published",
+  "engine": "weasyprint",
+  "production_ready": true,
+  "page_count": 51,
+  "design_meta": {
+   "faces": "Lato",
+   "ground": "light",
+   "source": "claude-design/investment-compass-template-catalogue",
+   "density": "balanced",
+   "manifest": {
+    "radius": "0",
+    "density": "balanced",
+    "toc_style": "figure_list",
+    "kpi_layout": "schedule_rows",
+    "chart_style": "measured_line",
+    "table_style": "schedule_rules",
+    "footer_style": "figure_number",
+    "risk_display": "rated_schedule",
+    "callout_style": "caption_rail",
+    "cover_overlay": "hairline_frame_plan",
+    "design_family": "architectural_property",
+    "print_density": "standard",
+    "spacing_scale": "generous",
+    "border_treatment": "hairline",
+    "navigation_style": "caption_rail",
+    "typography_preset": "lato_light",
+    "numeric_typography": "lato_tabular",
+    "page_margin_preset": "22mm",
+    "recommendation_style": "ruled_note",
+    "section_header_style": "schedule_number"
+   },
+   "familyKey": "architectural_property",
+   "overrides": {},
+   "useBucket": "Handover and audit",
+   "colourways": [
+    "ap-concrete",
+    "ap-blueprint",
+    "ap-terracotta",
+    "ap-limewash",
+    "ap-zinc",
+    "ap-ochre-board",
+    "ap-charcoal-set",
+    "ap-blueprint-night",
+    "ap-terracotta-night",
+    "ap-bronze-set"
+   ],
+   "familyCode": "ap",
+   "familyName": "Architectural Property",
+   "familyNote": "Lato light, monochrome, measured drawings and schedules",
+   "variantAxis": "A \u00b7 reference",
+   "architecture": "frame",
+   "printDensity": "standard",
+   "reportFormat": "investment-compass",
+   "templateCode": "ap-01",
+   "familyOrdinal": "05",
+   "recommendedUse": "Property-led reports for design-literate readers",
+   "defaultColourway": "ap-concrete",
+   "archetypeCoverage": "built",
+   "isFamilyReference": true
+  },
+  "preview_schema": {
+   "pages": [
+    {
+     "id": "ic-page-f",
+     "name": "Cover",
+     "size": {
+      "width": 595,
+      "height": 842
+     },
+     "blocks": [
+      {
+       "id": "ic-divider-1",
+       "name": "Frame",
+       "type": "divider",
+       "props": {
+        "x": 62,
+        "y": 62,
+        "color": "token:line",
+        "width": 471,
+        "thickness": 0.75
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-divider-2",
+       "type": "divider",
+       "props": {
+        "x": 62,
+        "y": 780,
+        "color": "token:line",
+        "width": 471,
+        "thickness": 0.75
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-divider-3",
+       "type": "divider",
+       "props": {
+        "x": 62,
+        "y": 62,
+        "color": "token:line",
+        "height": 718,
+        "thickness": 0.75,
+        "orientation": "vertical"
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-divider-4",
+       "type": "divider",
+       "props": {
+        "x": 533,
+        "y": 62,
+        "color": "token:line",
+        "height": 718,
+        "thickness": 0.75,
+        "orientation": "vertical"
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-image-5",
+       "name": "Brand mark",
+       "type": "image",
+       "props": {
+        "x": 78,
+        "y": 78,
+        "fit": "contain",
+        "src": "{{org.mark}}",
+        "width": 50,
+        "height": 40,
+        "placeholder": false
+       },
+       "overlays": [],
+       "conditional": "org && org.mark"
+      },
+      {
+       "id": "ic-text-block-6",
+       "name": "Wordmark",
+       "type": "text-block",
+       "props": {
+        "x": 78,
+        "y": 134,
+        "body": "{{org.name}}\nInvestment Compass",
+        "color": "token:ink",
+        "width": 299,
+        "bodyFont": "token:display",
+        "bodySize": 10,
+        "bodyTracking": 0.26,
+        "bodyLineHeight": 1.35
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-divider-7",
+       "type": "divider",
+       "props": {
+        "x": 78,
+        "y": 172,
+        "color": "token:primary",
+        "width": 74,
+        "thickness": 1
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-8",
+       "name": "Tagline",
+       "type": "text-block",
+       "props": {
+        "x": 78,
+        "y": 180,
+        "body": "Your dedicated property partner",
+        "color": "token:mutedInk",
+        "width": 299,
+        "bodyFont": "token:mono",
+        "bodySize": 5.98,
+        "bodyTracking": 0.24
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-9",
+       "name": "Cover marker",
+       "type": "text-block",
+       "props": {
+        "x": 377,
+        "y": 134,
+        "body": "Investment Compass",
+        "color": "token:mutedInk",
+        "width": 140,
+        "bodyFont": "token:mono",
+        "bodySize": 5.98,
+        "bodyAlign": "right"
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-a",
+       "name": "Cover title",
+       "type": "text-block",
+       "props": {
+        "x": 78,
+        "y": 443,
+        "width": 378,
+        "eyebrow": "Investment Compass",
+        "heading": "{{property.address}}",
+        "eyebrowFont": "token:mono",
+        "eyebrowSize": 6.5,
+        "headingFont": "token:display",
+        "headingSize": 36,
+        "anchorBottom": 551,
+        "eyebrowColor": "token:accentInk",
+        "headingColor": "token:ink",
+        "headingWeight": 400,
+        "eyebrowTracking": 0.34,
+        "headingLineHeight": 1.12
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-divider-b",
+       "type": "divider",
+       "props": {
+        "x": 78,
+        "y": 565,
+        "color": "token:primary",
+        "width": 439,
+        "thickness": 0.75
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-c",
+       "name": "Standfirst",
+       "type": "text-block",
+       "props": {
+        "x": 78,
+        "y": 581,
+        "body": "What the property is, what it costs to hold, and what the assessment concluded.",
+        "color": "token:mutedInk",
+        "width": 378,
+        "bodyFont": "token:heading",
+        "bodySize": 13,
+        "bodyStyle": "italic",
+        "bodyLineHeight": 1.4
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-d",
+       "name": "Locations",
+       "type": "text-block",
+       "props": {
+        "x": 78,
+        "y": 650,
+        "body": "Prepared {{report.generatedDate | date}}",
+        "color": "token:mutedInk",
+        "width": 439,
+        "bodyFont": "token:mono",
+        "bodySize": 6.720000000000001,
+        "bodyTracking": 0.16
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-kpi-grid-e",
+       "name": "Cover facts",
+       "type": "kpi-grid",
+       "props": {
+        "x": 78,
+        "y": 686,
+        "items": [
+         {
+          "label": "Verdict",
+          "value": "{{recommendation.action}}"
+         },
+         {
+          "label": "Grade",
+          "value": "{{recommendation.grade}}"
+         },
+         {
+          "label": "Score",
+          "value": "{{recommendation.score | fixed:0}}"
+         },
+         {
+          "label": "Weekly position",
+          "value": "{{financials.weeklyNet | currency}}"
+         }
+        ],
+        "width": 439,
+        "height": 78,
+        "columns": 4,
+        "variant": "ruled",
+        "labelFont": "token:mono",
+        "labelSize": 5.75,
+        "ruleColor": "token:line",
+        "valueFont": "token:heading",
+        "valueSize": 11,
+        "labelColor": "token:mutedInk",
+        "valueColor": "token:ink",
+        "emphasisColor": "token:ink",
+        "labelTracking": 0.18
+       },
+       "overlays": []
+      }
+     ],
+     "background": {
+      "color": "token:surface"
+     }
+    }
+   ],
+   "tokens": {
+    "fonts": {
+     "body": "Lato, sans-serif",
+     "mono": "IBM Plex Mono, monospace",
+     "display": "Lato, sans-serif",
+     "heading": "Lato, sans-serif"
+    },
+    "radii": {
+     "lg": 0,
+     "md": 0,
+     "sm": 0
+    },
+    "colors": {
+     "bg": "#2B2B2B",
+     "ink": "#353535",
+     "info": "#0270A7",
+     "line": "#DCDAD4",
+     "text": "#F7F6F3",
+     "muted": "#6D6C67",
+     "panel": "#EDEBE4",
+     "caution": "#856514",
+     "primary": "#2B2B2B",
+     "surface": "#F7F6F3",
+     "mutedInk": "#53524E",
+     "negative": "#D31212",
+     "positive": "#157A3A",
+     "accentInk": "#2B2B2B",
+     "onPrimary": "#F7F6F3",
+     "mutedOnField": "#B9B8B4",
+     "accentOnField": "#B7B7B7"
+    },
+    "spacing": {
+     "gutter": 16,
+     "padding": 62,
+     "sectionGap": 24
+    },
+    "fontFaces": [
+     {
+      "cssUrl": "https://fonts.googleapis.com/css2?family=Lato:wght@300;400;700&display=swap",
+      "family": "Lato"
+     },
+     {
+      "cssUrl": "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&display=swap",
+      "family": "IBM Plex Mono"
+     }
+    ],
+    "typeScale": {
+     "body": 9,
+     "cover": 36,
+     "eyebrow": 5.75,
+     "heading": 22
+    }
+   },
+   "version": 1
+  }
+ },
+ {
+  "id": "ebbcbdf4-a42a-4700-811b-de814f627cce",
+  "family_id": "f5c432e7-6159-4ac4-8286-620531b0e6e0",
+  "slug": "investment-compass-ca-01-board-pack",
+  "version": 1,
+  "name": "Board Pack",
+  "description": "Decimal section numbering, cross-references, a summary table instead of KPI cards, and a signed recommendation.",
+  "category": "investment",
+  "report_type": "investment_compass",
+  "tier": "compass",
+  "variant": null,
+  "status": "published",
+  "engine": "weasyprint",
+  "production_ready": true,
+  "page_count": 51,
+  "design_meta": {
+   "faces": "Lato",
+   "ground": "light",
+   "source": "claude-design/investment-compass-template-catalogue",
+   "density": "balanced",
+   "manifest": {
+    "radius": "0",
+    "density": "balanced",
+    "toc_style": "decimal_toc",
+    "kpi_layout": "summary_table",
+    "chart_style": "line_plain",
+    "table_style": "board_ruled",
+    "footer_style": "reference_page",
+    "risk_display": "numbered_register",
+    "callout_style": "indented_note",
+    "cover_overlay": "letterhead_band",
+    "design_family": "corporate_advisory",
+    "print_density": "standard",
+    "spacing_scale": "regular",
+    "border_treatment": "rule",
+    "navigation_style": "decimal_toc",
+    "typography_preset": "lato_sans",
+    "numeric_typography": "lato_tabular",
+    "page_margin_preset": "20mm",
+    "recommendation_style": "signed_note",
+    "section_header_style": "decimal_numbered"
+   },
+   "familyKey": "corporate_advisory",
+   "overrides": {},
+   "useBucket": "Committee and board",
+   "colourways": [
+    "ca-slate-teal",
+    "ca-navy-letterhead",
+    "ca-forest",
+    "ca-claret",
+    "ca-warm-stone",
+    "ca-steel",
+    "ca-board-dark",
+    "ca-navy-board",
+    "ca-forest-board",
+    "ca-claret-board"
+   ],
+   "familyCode": "ca",
+   "familyName": "Corporate Advisory",
+   "familyNote": "Decimal numbering, letterhead band, signed notes",
+   "variantAxis": "A \u00b7 reference",
+   "architecture": "band",
+   "printDensity": "standard",
+   "reportFormat": "investment-compass",
+   "templateCode": "ca-01",
+   "familyOrdinal": "07",
+   "recommendedUse": "Papers going to a board or trustee meeting",
+   "defaultColourway": "ca-slate-teal",
+   "archetypeCoverage": "built",
+   "isFamilyReference": true
+  },
+  "preview_schema": {
+   "pages": [
+    {
+     "id": "ic-page-c",
+     "name": "Cover",
+     "size": {
+      "width": 595,
+      "height": 842
+     },
+     "blocks": [
+      {
+       "id": "ic-hero-1",
+       "name": "Cover band",
+       "type": "hero",
+       "props": {
+        "x": 0,
+        "y": 0,
+        "bg": "token:bg",
+        "color": "token:text",
+        "title": "",
+        "width": 595,
+        "height": 176
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-image-2",
+       "name": "Brand mark",
+       "type": "image",
+       "props": {
+        "x": 57,
+        "y": 57,
+        "fit": "contain",
+        "src": "{{org.markMono}}",
+        "width": 50,
+        "height": 40,
+        "placeholder": false
+       },
+       "overlays": [],
+       "conditional": "org && org.markMono"
+      },
+      {
+       "id": "ic-text-block-3",
+       "name": "Wordmark",
+       "type": "text-block",
+       "props": {
+        "x": 57,
+        "y": 113,
+        "body": "{{org.name}}\nInvestment Compass",
+        "color": "token:text",
+        "width": 341,
+        "bodyFont": "token:display",
+        "bodySize": 10,
+        "bodyTracking": 0.26,
+        "bodyLineHeight": 1.35
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-divider-4",
+       "type": "divider",
+       "props": {
+        "x": 57,
+        "y": 151,
+        "color": "token:primary",
+        "width": 74,
+        "thickness": 1
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-5",
+       "name": "Tagline",
+       "type": "text-block",
+       "props": {
+        "x": 57,
+        "y": 159,
+        "body": "Your dedicated property partner",
+        "color": "token:mutedOnField",
+        "width": 341,
+        "bodyFont": "token:mono",
+        "bodySize": 5.98,
+        "bodyTracking": 0.24
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-6",
+       "name": "Cover marker",
+       "type": "text-block",
+       "props": {
+        "x": 398,
+        "y": 113,
+        "body": "Investment Compass",
+        "color": "token:mutedOnField",
+        "width": 140,
+        "bodyFont": "token:mono",
+        "bodySize": 5.98,
+        "bodyAlign": "right"
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-7",
+       "name": "Cover title",
+       "type": "text-block",
+       "props": {
+        "x": 57,
+        "y": 494,
+        "width": 414,
+        "eyebrow": "Investment Compass",
+        "heading": "{{property.address}}",
+        "eyebrowFont": "token:mono",
+        "eyebrowSize": 6.5,
+        "headingFont": "token:display",
+        "headingSize": 27,
+        "anchorBottom": 581,
+        "eyebrowColor": "token:accentInk",
+        "headingColor": "token:ink",
+        "headingWeight": 400,
+        "eyebrowTracking": 0.34,
+        "headingLineHeight": 1.12
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-divider-8",
+       "type": "divider",
+       "props": {
+        "x": 57,
+        "y": 595,
+        "color": "token:primary",
+        "width": 481,
+        "thickness": 0.75
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-9",
+       "name": "Standfirst",
+       "type": "text-block",
+       "props": {
+        "x": 57,
+        "y": 611,
+        "body": "What the property is, what it costs to hold, and what the assessment concluded.",
+        "color": "token:mutedInk",
+        "width": 414,
+        "bodyFont": "token:heading",
+        "bodySize": 12,
+        "bodyStyle": "italic",
+        "bodyLineHeight": 1.4
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-a",
+       "name": "Locations",
+       "type": "text-block",
+       "props": {
+        "x": 57,
+        "y": 675,
+        "body": "Prepared {{report.generatedDate | date}}",
+        "color": "token:mutedInk",
+        "width": 481,
+        "bodyFont": "token:mono",
+        "bodySize": 7.000000000000001,
+        "bodyTracking": 0.16
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-kpi-grid-b",
+       "name": "Cover facts",
+       "type": "kpi-grid",
+       "props": {
+        "x": 57,
+        "y": 707,
+        "items": [
+         {
+          "label": "Verdict",
+          "value": "{{recommendation.action}}"
+         },
+         {
+          "label": "Grade",
+          "value": "{{recommendation.grade}}"
+         },
+         {
+          "label": "Score",
+          "value": "{{recommendation.score | fixed:0}}"
+         },
+         {
+          "label": "Weekly position",
+          "value": "{{financials.weeklyNet | currency}}"
+         }
+        ],
+        "width": 481,
+        "height": 78,
+        "columns": 4,
+        "variant": "ruled",
+        "labelFont": "token:mono",
+        "labelSize": 6.25,
+        "ruleColor": "token:line",
+        "valueFont": "token:heading",
+        "valueSize": 11,
+        "labelColor": "token:mutedInk",
+        "valueColor": "token:ink",
+        "emphasisColor": "token:ink",
+        "labelTracking": 0.18
+       },
+       "overlays": []
+      }
+     ],
+     "background": {
+      "color": "token:surface"
+     }
+    }
+   ],
+   "tokens": {
+    "fonts": {
+     "body": "Noto Serif, serif",
+     "mono": "Lato, sans-serif",
+     "display": "Lato, sans-serif",
+     "heading": "Lato, sans-serif"
+    },
+    "radii": {
+     "lg": 0,
+     "md": 0,
+     "sm": 0
+    },
+    "colors": {
+     "bg": "#2A2A28",
+     "ink": "#343432",
+     "info": "#0270A7",
+     "line": "#DEDCD5",
+     "text": "#FBFAF7",
+     "muted": "#6C6A64",
+     "panel": "#F2EFE6",
+     "caution": "#856514",
+     "primary": "#2F4858",
+     "surface": "#FBFAF7",
+     "mutedInk": "#575550",
+     "negative": "#D31212",
+     "positive": "#157A3A",
+     "accentInk": "#2F4858",
+     "onPrimary": "#FBFAF7",
+     "mutedOnField": "#B7B6B2",
+     "accentOnField": "#9DB9CB"
+    },
+    "spacing": {
+     "gutter": 14,
+     "padding": 57,
+     "sectionGap": 20
+    },
+    "fontFaces": [
+     {
+      "cssUrl": "https://fonts.googleapis.com/css2?family=Lato:wght@400;700;900&display=swap",
+      "family": "Lato"
+     },
+     {
+      "cssUrl": "https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;600;700&display=swap",
+      "family": "Noto Serif"
+     }
+    ],
+    "typeScale": {
+     "body": 9,
+     "cover": 27,
+     "eyebrow": 6.5,
+     "heading": 16
+    }
+   },
+   "version": 1
+  }
+ },
+ {
+  "id": "f2e04509-4135-425b-b736-06a14618b819",
+  "family_id": "d50f1ad2-79f3-41f9-8d95-83f1c4bdde83",
+  "slug": "investment-compass-de-01-obsidian",
+  "version": 1,
+  "name": "Obsidian",
+  "description": "Obsidian on all seven sheets, verdict box on the cover, four scored tests on the dashboard.",
+  "category": "investment",
+  "report_type": "investment_compass",
+  "tier": "compass",
+  "variant": null,
+  "status": "published",
+  "engine": "weasyprint",
+  "production_ready": true,
+  "page_count": 50,
+  "design_meta": {
+   "faces": "IBM Plex Mono \u00b7 Inter",
+   "ground": "dark",
+   "source": "claude-design/investment-compass-template-catalogue",
+   "density": "balanced",
+   "manifest": {
+    "radius": "0",
+    "density": "balanced",
+    "toc_style": "rail_index",
+    "kpi_layout": "position_strip_five",
+    "chart_style": "line_amber",
+    "table_style": "dark_rules",
+    "footer_style": "rail_number",
+    "risk_display": "rating_map",
+    "callout_style": "amber_bar",
+    "cover_overlay": "obsidian_verdict_box",
+    "design_family": "dark_executive",
+    "print_density": "standard",
+    "spacing_scale": "regular",
+    "border_treatment": "dark_hairline",
+    "navigation_style": "vertical_rail",
+    "typography_preset": "plex_mono_only",
+    "numeric_typography": "plex_mono_tabular",
+    "page_margin_preset": "18mm",
+    "recommendation_style": "verdict_box",
+    "section_header_style": "vertical_rail"
+   },
+   "familyKey": "dark_executive",
+   "overrides": {},
+   "useBucket": "Screen reading",
+   "colourways": [
+    "de-amber-obsidian",
+    "de-ice-obsidian",
+    "de-ember",
+    "de-jade-obsidian",
+    "de-violet-obsidian",
+    "de-steel-obsidian",
+    "de-executive-light",
+    "de-ice-light",
+    "de-ember-light",
+    "de-jade-light"
+   ],
+   "familyCode": "de",
+   "familyName": "Dark Executive",
+   "familyNote": "Mono on obsidian, vertical rail, amber for the base case",
+   "variantAxis": "A \u00b7 reference",
+   "architecture": "rail",
+   "printDensity": "standard",
+   "reportFormat": "investment-compass",
+   "templateCode": "de-01",
+   "familyOrdinal": "10",
+   "recommendedUse": "Executive readers who want one sheet per decision",
+   "defaultColourway": "de-amber-obsidian",
+   "archetypeCoverage": "built",
+   "isFamilyReference": true
+  },
+  "preview_schema": {
+   "pages": [
+    {
+     "id": "ic-page-b",
+     "name": "Cover",
+     "size": {
+      "width": 595,
+      "height": 842
+     },
+     "blocks": [
+      {
+       "id": "ic-image-1",
+       "name": "Brand mark",
+       "type": "image",
+       "props": {
+        "x": 51,
+        "y": 51,
+        "fit": "contain",
+        "src": "{{org.markMono}}",
+        "width": 50,
+        "height": 40,
+        "placeholder": false
+       },
+       "overlays": [],
+       "conditional": "org && org.markMono"
+      },
+      {
+       "id": "ic-text-block-2",
+       "name": "Wordmark",
+       "type": "text-block",
+       "props": {
+        "x": 51,
+        "y": 107,
+        "body": "{{org.name}}\nInvestment Compass",
+        "color": "token:text",
+        "width": 353,
+        "bodyFont": "token:display",
+        "bodySize": 10,
+        "bodyTracking": 0.26,
+        "bodyLineHeight": 1.35
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-divider-3",
+       "type": "divider",
+       "props": {
+        "x": 51,
+        "y": 145,
+        "color": "token:primary",
+        "width": 74,
+        "thickness": 1
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-4",
+       "name": "Tagline",
+       "type": "text-block",
+       "props": {
+        "x": 51,
+        "y": 153,
+        "body": "Your dedicated property partner",
+        "color": "token:mutedOnField",
+        "width": 353,
+        "bodyFont": "token:mono",
+        "bodySize": 5.98,
+        "bodyTracking": 0.24
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-5",
+       "name": "Cover marker",
+       "type": "text-block",
+       "props": {
+        "x": 404,
+        "y": 107,
+        "body": "Investment Compass",
+        "color": "token:mutedOnField",
+        "width": 140,
+        "bodyFont": "token:mono",
+        "bodySize": 5.98,
+        "bodyAlign": "right"
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-6",
+       "name": "Cover title",
+       "type": "text-block",
+       "props": {
+        "x": 51,
+        "y": 481,
+        "width": 424,
+        "eyebrow": "Investment Compass",
+        "heading": "{{property.address}}",
+        "eyebrowFont": "token:mono",
+        "eyebrowSize": 6.5,
+        "headingFont": "token:display",
+        "headingSize": 33,
+        "anchorBottom": 582,
+        "eyebrowColor": "token:accentOnField",
+        "headingColor": "token:text",
+        "headingWeight": 400,
+        "eyebrowTracking": 0.34,
+        "headingLineHeight": 1.12
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-divider-7",
+       "type": "divider",
+       "props": {
+        "x": 51,
+        "y": 596,
+        "color": "token:primary",
+        "width": 493,
+        "thickness": 0.75
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-8",
+       "name": "Standfirst",
+       "type": "text-block",
+       "props": {
+        "x": 51,
+        "y": 612,
+        "body": "What the property is, what it costs to hold, and what the assessment concluded.",
+        "color": "token:mutedOnField",
+        "width": 424,
+        "bodyFont": "token:heading",
+        "bodySize": 13,
+        "bodyStyle": "italic",
+        "bodyLineHeight": 1.4
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-9",
+       "name": "Locations",
+       "type": "text-block",
+       "props": {
+        "x": 51,
+        "y": 681,
+        "body": "Prepared {{report.generatedDate | date}}",
+        "color": "token:mutedOnField",
+        "width": 493,
+        "bodyFont": "token:mono",
+        "bodySize": 6.720000000000001,
+        "bodyTracking": 0.16
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-kpi-grid-a",
+       "name": "Cover facts",
+       "type": "kpi-grid",
+       "props": {
+        "x": 51,
+        "y": 713,
+        "items": [
+         {
+          "label": "Verdict",
+          "value": "{{recommendation.action}}"
+         },
+         {
+          "label": "Grade",
+          "value": "{{recommendation.grade}}"
+         },
+         {
+          "label": "Score",
+          "value": "{{recommendation.score | fixed:0}}"
+         },
+         {
+          "label": "Weekly position",
+          "value": "{{financials.weeklyNet | currency}}"
+         }
+        ],
+        "width": 493,
+        "height": 78,
+        "columns": 4,
+        "variant": "ruled",
+        "labelFont": "token:mono",
+        "labelSize": 6,
+        "ruleColor": "token:line",
+        "valueFont": "token:heading",
+        "valueSize": 11,
+        "labelColor": "token:mutedOnField",
+        "valueColor": "token:text",
+        "emphasisColor": "token:line",
+        "labelTracking": 0.18
+       },
+       "overlays": []
+      }
+     ],
+     "background": {
+      "color": "token:bg"
+     }
+    }
+   ],
+   "tokens": {
+    "fonts": {
+     "body": "Inter, sans-serif",
+     "mono": "IBM Plex Mono, monospace",
+     "display": "IBM Plex Mono, monospace",
+     "heading": "IBM Plex Mono, monospace"
+    },
+    "radii": {
+     "lg": 0,
+     "md": 0,
+     "sm": 0
+    },
+    "colors": {
+     "bg": "#1A1611",
+     "ink": "#F2EBDE",
+     "info": "#4FA8DA",
+     "line": "#3A332A",
+     "text": "#F2EBDE",
+     "muted": "#A2957F",
+     "panel": "#29231B",
+     "caution": "#D9A520",
+     "primary": "#D9A520",
+     "surface": "#1A1611",
+     "mutedInk": "#ADA18E",
+     "negative": "#F0655F",
+     "positive": "#4FB077",
+     "accentInk": "#D9A520",
+     "onPrimary": "#1A1611",
+     "mutedOnField": "#ADA18E",
+     "accentOnField": "#D9A520"
+    },
+    "spacing": {
+     "gutter": 14,
+     "padding": 51,
+     "sectionGap": 20
+    },
+    "fontFaces": [
+     {
+      "cssUrl": "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap",
+      "family": "IBM Plex Mono"
+     },
+     {
+      "cssUrl": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap",
+      "family": "Inter"
+     }
+    ],
+    "typeScale": {
+     "body": 8.5,
+     "cover": 33,
+     "eyebrow": 6,
+     "heading": 17
+    }
+   },
+   "version": 1
+  }
+ },
+ {
+  "id": "ef7f454c-cac3-4361-a06a-3dda96790034",
+  "family_id": "43556d88-35b2-425b-9e72-57fa98c9d88d",
+  "slug": "investment-compass-da-01-model",
+  "version": 1,
+  "name": "Model",
+  "description": "Field keys print beside every value, cell gridlines throughout, and risk is a 13-check validation suite.",
+  "category": "investment",
+  "report_type": "investment_compass",
+  "tier": "compass",
+  "variant": null,
+  "status": "published",
+  "engine": "weasyprint",
+  "production_ready": true,
+  "page_count": 50,
+  "design_meta": {
+   "faces": "IBM Plex Mono \u00b7 Inter",
+   "ground": "light",
+   "source": "claude-design/investment-compass-template-catalogue",
+   "density": "compact",
+   "manifest": {
+    "radius": "0",
+    "density": "compact",
+    "toc_style": "field_index",
+    "field_keys": "printed",
+    "kpi_layout": "field_cells_four",
+    "chart_style": "small_multiples",
+    "table_style": "full_gridlines",
+    "footer_style": "sheet_number",
+    "risk_display": "validation_suite",
+    "callout_style": "mono_caption",
+    "cover_overlay": "model_header_bar",
+    "design_family": "data_analyst",
+    "print_density": "dense",
+    "spacing_scale": "tight",
+    "border_treatment": "cell_grid",
+    "navigation_style": "sheet_tabs",
+    "typography_preset": "plex_mono_inter",
+    "numeric_typography": "plex_mono_tabular",
+    "page_margin_preset": "15mm",
+    "recommendation_style": "model_read",
+    "section_header_style": "sheet_number"
+   },
+   "familyKey": "data_analyst",
+   "overrides": {},
+   "useBucket": "Handover and audit",
+   "colourways": [
+    "da-paper-grid",
+    "da-cyan-model",
+    "da-magenta-model",
+    "da-lime-model",
+    "da-violet-model",
+    "da-slate-model",
+    "da-terminal",
+    "da-cyan-terminal",
+    "da-magenta-terminal",
+    "da-lime-terminal"
+   ],
+   "familyCode": "da",
+   "familyName": "Data / Analyst",
+   "familyNote": "Mono figures on cell gridlines, field keys printed beside values",
+   "variantAxis": "A \u00b7 reference",
+   "architecture": "grid",
+   "printDensity": "dense",
+   "reportFormat": "investment-compass",
+   "templateCode": "da-01",
+   "familyOrdinal": "09",
+   "recommendedUse": "Analysts and accountants who audit the numbers",
+   "defaultColourway": "da-paper-grid",
+   "archetypeCoverage": "built",
+   "isFamilyReference": true
+  },
+  "preview_schema": {
+   "pages": [
+    {
+     "id": "ic-page-c",
+     "name": "Cover",
+     "size": {
+      "width": 595,
+      "height": 842
+     },
+     "blocks": [
+      {
+       "id": "ic-hero-1",
+       "name": "Cover band",
+       "type": "hero",
+       "props": {
+        "x": 0,
+        "y": 0,
+        "bg": "token:bg",
+        "color": "token:text",
+        "title": "",
+        "width": 595,
+        "height": 176
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-image-2",
+       "name": "Brand mark",
+       "type": "image",
+       "props": {
+        "x": 43,
+        "y": 43,
+        "fit": "contain",
+        "src": "{{org.markMono}}",
+        "width": 50,
+        "height": 40,
+        "placeholder": false
+       },
+       "overlays": [],
+       "conditional": "org && org.markMono"
+      },
+      {
+       "id": "ic-text-block-3",
+       "name": "Wordmark",
+       "type": "text-block",
+       "props": {
+        "x": 43,
+        "y": 99,
+        "body": "{{org.name}}\nInvestment Compass",
+        "color": "token:text",
+        "width": 369,
+        "bodyFont": "token:display",
+        "bodySize": 10,
+        "bodyTracking": 0.26,
+        "bodyLineHeight": 1.35
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-divider-4",
+       "type": "divider",
+       "props": {
+        "x": 43,
+        "y": 137,
+        "color": "token:primary",
+        "width": 74,
+        "thickness": 1
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-5",
+       "name": "Tagline",
+       "type": "text-block",
+       "props": {
+        "x": 43,
+        "y": 145,
+        "body": "Your dedicated property partner",
+        "color": "token:mutedOnField",
+        "width": 369,
+        "bodyFont": "token:mono",
+        "bodySize": 5.5200000000000005,
+        "bodyTracking": 0.24
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-6",
+       "name": "Cover marker",
+       "type": "text-block",
+       "props": {
+        "x": 412,
+        "y": 99,
+        "body": "Investment Compass",
+        "color": "token:mutedOnField",
+        "width": 140,
+        "bodyFont": "token:mono",
+        "bodySize": 5.5200000000000005,
+        "bodyAlign": "right"
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-7",
+       "name": "Cover title",
+       "type": "text-block",
+       "props": {
+        "x": 43,
+        "y": 549,
+        "width": 438,
+        "eyebrow": "Investment Compass",
+        "heading": "{{property.address}}",
+        "eyebrowFont": "token:mono",
+        "eyebrowSize": 6,
+        "headingFont": "token:display",
+        "headingSize": 20.5,
+        "anchorBottom": 621,
+        "eyebrowColor": "token:accentInk",
+        "headingColor": "token:ink",
+        "headingWeight": 400,
+        "eyebrowTracking": 0.34,
+        "headingLineHeight": 1.12
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-divider-8",
+       "type": "divider",
+       "props": {
+        "x": 43,
+        "y": 635,
+        "color": "token:primary",
+        "width": 509,
+        "thickness": 0.75
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-9",
+       "name": "Standfirst",
+       "type": "text-block",
+       "props": {
+        "x": 43,
+        "y": 651,
+        "body": "What the property is, what it costs to hold, and what the assessment concluded.",
+        "color": "token:mutedInk",
+        "width": 438,
+        "bodyFont": "token:heading",
+        "bodySize": 9,
+        "bodyStyle": "italic",
+        "bodyLineHeight": 1.4
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-a",
+       "name": "Locations",
+       "type": "text-block",
+       "props": {
+        "x": 43,
+        "y": 703,
+        "body": "Prepared {{report.generatedDate | date}}",
+        "color": "token:mutedInk",
+        "width": 509,
+        "bodyFont": "token:mono",
+        "bodySize": 6.16,
+        "bodyTracking": 0.16
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-kpi-grid-b",
+       "name": "Cover facts",
+       "type": "kpi-grid",
+       "props": {
+        "x": 43,
+        "y": 731,
+        "items": [
+         {
+          "label": "Verdict",
+          "value": "{{recommendation.action}}"
+         },
+         {
+          "label": "Grade",
+          "value": "{{recommendation.grade}}"
+         },
+         {
+          "label": "Score",
+          "value": "{{recommendation.score | fixed:0}}"
+         },
+         {
+          "label": "Weekly position",
+          "value": "{{financials.weeklyNet | currency}}"
+         }
+        ],
+        "width": 509,
+        "height": 68,
+        "columns": 4,
+        "variant": "ruled",
+        "labelFont": "token:mono",
+        "labelSize": 5.5,
+        "ruleColor": "token:line",
+        "valueFont": "token:heading",
+        "valueSize": 11,
+        "labelColor": "token:mutedInk",
+        "valueColor": "token:ink",
+        "emphasisColor": "token:ink",
+        "labelTracking": 0.18
+       },
+       "overlays": []
+      }
+     ],
+     "background": {
+      "color": "token:surface"
+     }
+    }
+   ],
+   "tokens": {
+    "fonts": {
+     "body": "Inter, sans-serif",
+     "mono": "IBM Plex Mono, monospace",
+     "display": "IBM Plex Mono, monospace",
+     "heading": "IBM Plex Mono, monospace"
+    },
+    "radii": {
+     "lg": 0,
+     "md": 0,
+     "sm": 0
+    },
+    "colors": {
+     "bg": "#312A21",
+     "ink": "#3D3429",
+     "info": "#0270A7",
+     "line": "#D8CDBC",
+     "text": "#FFFDFA",
+     "muted": "#6E6253",
+     "panel": "#FFF3E1",
+     "caution": "#856514",
+     "primary": "#312A21",
+     "surface": "#FFFDFA",
+     "mutedInk": "#5F5548",
+     "negative": "#D31212",
+     "positive": "#157A3A",
+     "accentInk": "#312A21",
+     "onPrimary": "#FFFDFA",
+     "mutedOnField": "#BFB6AA",
+     "accentOnField": "#C2B5A4"
+    },
+    "spacing": {
+     "gutter": 11,
+     "padding": 43,
+     "sectionGap": 16
+    },
+    "fontFaces": [
+     {
+      "cssUrl": "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap",
+      "family": "IBM Plex Mono"
+     },
+     {
+      "cssUrl": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap",
+      "family": "Inter"
+     }
+    ],
+    "typeScale": {
+     "body": 8,
+     "cover": 20.5,
+     "eyebrow": 5.75,
+     "heading": 12.25
+    }
+   },
+   "version": 1
+  }
+ },
+ {
+  "id": "4bd1ad5e-1030-4af5-8d3f-995e02fd2fb4",
+  "family_id": "d1befc4d-ecc3-46b3-8777-9fe868e7b5e2",
+  "slug": "investment-compass-ir-01-exhibit",
+  "version": 1,
+  "name": "Exhibit",
+  "description": "Every figure is a numbered exhibit with its own note. Masthead on each page, blue used only for exhibit numbers.",
+  "category": "investment",
+  "report_type": "investment_compass",
+  "tier": "compass",
+  "variant": null,
+  "status": "published",
+  "engine": "weasyprint",
+  "production_ready": true,
+  "page_count": 50,
+  "design_meta": {
+   "faces": "Noto Serif \u00b7 IBM Plex Mono",
+   "ground": "light",
+   "source": "claude-design/investment-compass-template-catalogue",
+   "density": "balanced",
+   "manifest": {
+    "radius": "0",
+    "density": "balanced",
+    "toc_style": "numbered_list",
+    "kpi_layout": "exhibit_strip",
+    "chart_style": "panel_multiples",
+    "table_style": "exhibit_ruled",
+    "footer_style": "rule_page_number",
+    "risk_display": "rating_table",
+    "callout_style": "boxed_note",
+    "cover_overlay": "masthead_rule",
+    "design_family": "institutional_research",
+    "print_density": "standard",
+    "spacing_scale": "regular",
+    "border_treatment": "rule_2px",
+    "navigation_style": "masthead",
+    "typography_preset": "noto_serif_plex",
+    "numeric_typography": "plex_tabular",
+    "page_margin_preset": "18mm",
+    "recommendation_style": "boxed_verdict",
+    "section_header_style": "numbered_exhibit"
+   },
+   "familyKey": "institutional_research",
+   "overrides": {},
+   "useBucket": "Handover and audit",
+   "colourways": [
+    "ir-research-blue",
+    "ir-graphite",
+    "ir-ink-and-rust",
+    "ir-bureau-green",
+    "ir-oxford",
+    "ir-neutral-press",
+    "ir-terminal-blue",
+    "ir-slate-console",
+    "ir-rust-console",
+    "ir-oxford-night"
+   ],
+   "familyCode": "ir",
+   "familyName": "Institutional Research",
+   "familyNote": "Numbered exhibits, masthead, coverage-note discipline",
+   "variantAxis": "A \u00b7 reference",
+   "architecture": "band",
+   "printDensity": "standard",
+   "reportFormat": "investment-compass",
+   "templateCode": "ir-01",
+   "familyOrdinal": "02",
+   "recommendedUse": "Research-grade reports for professional readers",
+   "defaultColourway": "ir-research-blue",
+   "archetypeCoverage": "built",
+   "isFamilyReference": true
+  },
+  "preview_schema": {
+   "pages": [
+    {
+     "id": "ic-page-c",
+     "name": "Cover",
+     "size": {
+      "width": 595,
+      "height": 842
+     },
+     "blocks": [
+      {
+       "id": "ic-hero-1",
+       "name": "Cover band",
+       "type": "hero",
+       "props": {
+        "x": 0,
+        "y": 0,
+        "bg": "token:bg",
+        "color": "token:text",
+        "title": "",
+        "width": 595,
+        "height": 176
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-image-2",
+       "name": "Brand mark",
+       "type": "image",
+       "props": {
+        "x": 51,
+        "y": 51,
+        "fit": "contain",
+        "src": "{{org.markMono}}",
+        "width": 50,
+        "height": 40,
+        "placeholder": false
+       },
+       "overlays": [],
+       "conditional": "org && org.markMono"
+      },
+      {
+       "id": "ic-text-block-3",
+       "name": "Wordmark",
+       "type": "text-block",
+       "props": {
+        "x": 51,
+        "y": 107,
+        "body": "{{org.name}}\nInvestment Compass",
+        "color": "token:text",
+        "width": 353,
+        "bodyFont": "token:display",
+        "bodySize": 10,
+        "bodyTracking": 0.26,
+        "bodyLineHeight": 1.35
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-divider-4",
+       "type": "divider",
+       "props": {
+        "x": 51,
+        "y": 145,
+        "color": "token:primary",
+        "width": 74,
+        "thickness": 1
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-5",
+       "name": "Tagline",
+       "type": "text-block",
+       "props": {
+        "x": 51,
+        "y": 153,
+        "body": "Your dedicated property partner",
+        "color": "token:mutedOnField",
+        "width": 353,
+        "bodyFont": "token:mono",
+        "bodySize": 5.98,
+        "bodyTracking": 0.24
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-6",
+       "name": "Cover marker",
+       "type": "text-block",
+       "props": {
+        "x": 404,
+        "y": 107,
+        "body": "Investment Compass",
+        "color": "token:mutedOnField",
+        "width": 140,
+        "bodyFont": "token:mono",
+        "bodySize": 5.98,
+        "bodyAlign": "right"
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-7",
+       "name": "Cover title",
+       "type": "text-block",
+       "props": {
+        "x": 51,
+        "y": 531,
+        "width": 424,
+        "eyebrow": "Investment Compass",
+        "heading": "{{property.address}}",
+        "eyebrowFont": "token:mono",
+        "eyebrowSize": 6.5,
+        "headingFont": "token:display",
+        "headingSize": 14,
+        "anchorBottom": 589,
+        "eyebrowColor": "token:accentInk",
+        "headingColor": "token:ink",
+        "headingWeight": 400,
+        "eyebrowTracking": 0.34,
+        "headingLineHeight": 1.12
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-divider-8",
+       "type": "divider",
+       "props": {
+        "x": 51,
+        "y": 603,
+        "color": "token:primary",
+        "width": 493,
+        "thickness": 0.75
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-9",
+       "name": "Standfirst",
+       "type": "text-block",
+       "props": {
+        "x": 51,
+        "y": 619,
+        "body": "What the property is, what it costs to hold, and what the assessment concluded.",
+        "color": "token:mutedInk",
+        "width": 424,
+        "bodyFont": "token:heading",
+        "bodySize": 11.5,
+        "bodyStyle": "italic",
+        "bodyLineHeight": 1.4
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-a",
+       "name": "Locations",
+       "type": "text-block",
+       "props": {
+        "x": 51,
+        "y": 681,
+        "body": "Prepared {{report.generatedDate | date}}",
+        "color": "token:mutedInk",
+        "width": 493,
+        "bodyFont": "token:mono",
+        "bodySize": 6.720000000000001,
+        "bodyTracking": 0.16
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-kpi-grid-b",
+       "name": "Cover facts",
+       "type": "kpi-grid",
+       "props": {
+        "x": 51,
+        "y": 713,
+        "items": [
+         {
+          "label": "Verdict",
+          "value": "{{recommendation.action}}"
+         },
+         {
+          "label": "Grade",
+          "value": "{{recommendation.grade}}"
+         },
+         {
+          "label": "Score",
+          "value": "{{recommendation.score | fixed:0}}"
+         },
+         {
+          "label": "Weekly position",
+          "value": "{{financials.weeklyNet | currency}}"
+         }
+        ],
+        "width": 493,
+        "height": 78,
+        "columns": 4,
+        "variant": "ruled",
+        "labelFont": "token:mono",
+        "labelSize": 6,
+        "ruleColor": "token:line",
+        "valueFont": "token:heading",
+        "valueSize": 11,
+        "labelColor": "token:mutedInk",
+        "valueColor": "token:ink",
+        "emphasisColor": "token:ink",
+        "labelTracking": 0.18
+       },
+       "overlays": []
+      }
+     ],
+     "background": {
+      "color": "token:surface"
+     }
+    }
+   ],
+   "tokens": {
+    "fonts": {
+     "body": "Inter, sans-serif",
+     "mono": "IBM Plex Mono, monospace",
+     "display": "Noto Serif, serif",
+     "heading": "Noto Serif, serif"
+    },
+    "radii": {
+     "lg": 0,
+     "md": 0,
+     "sm": 0
+    },
+    "colors": {
+     "bg": "#24211C",
+     "ink": "#2F2C25",
+     "info": "#0270A7",
+     "line": "#DDD1C0",
+     "text": "#FFFDFA",
+     "muted": "#6E6253",
+     "panel": "#FFF3E1",
+     "caution": "#856514",
+     "primary": "#0270A7",
+     "surface": "#FFFDFA",
+     "mutedInk": "#5F5548",
+     "negative": "#D31212",
+     "positive": "#157A3A",
+     "accentInk": "#025C89",
+     "onPrimary": "#FFFDFA",
+     "mutedOnField": "#B6AC9F",
+     "accentOnField": "#2CB7FC"
+    },
+    "spacing": {
+     "gutter": 14,
+     "padding": 51,
+     "sectionGap": 20
+    },
+    "fontFaces": [
+     {
+      "cssUrl": "https://fonts.googleapis.com/css2?family=Noto+Serif:wght@400;600;700&display=swap",
+      "family": "Noto Serif"
+     },
+     {
+      "cssUrl": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap",
+      "family": "Inter"
+     },
+     {
+      "cssUrl": "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap",
+      "family": "IBM Plex Mono"
+     }
+    ],
+    "typeScale": {
+     "body": 8.5,
+     "cover": 14,
+     "eyebrow": 6.25,
+     "heading": 12.5
+    }
+   },
+   "version": 1
+  }
+ },
+ {
+  "id": "505c1e56-4fad-4368-a8c2-cdfee378ccd3",
+  "family_id": "24f7be33-d4fa-43ed-ba4d-f12b89a6e074",
+  "slug": "investment-compass-le-01-atelier",
+  "version": 1,
+  "name": "Atelier",
+  "description": "Four briefed image slots, justified columns with a drop cap, italic standfirsts and captions.",
+  "category": "investment",
+  "report_type": "investment_compass",
+  "tier": "compass",
+  "variant": null,
+  "status": "published",
+  "engine": "weasyprint",
+  "production_ready": true,
+  "page_count": 52,
+  "design_meta": {
+   "faces": "Noto Serif",
+   "ground": "light",
+   "source": "claude-design/investment-compass-template-catalogue",
+   "density": "balanced",
+   "manifest": {
+    "radius": "0",
+    "density": "balanced",
+    "toc_style": "none",
+    "kpi_layout": "ruled_four",
+    "chart_style": "line_minimal",
+    "image_slots": "four_briefed",
+    "table_style": "ruled_rows",
+    "footer_style": "rule_page_number",
+    "risk_display": "rated_table",
+    "callout_style": "italic_aside",
+    "cover_overlay": "photographic_scrim",
+    "design_family": "luxury_editorial",
+    "print_density": "standard",
+    "spacing_scale": "generous",
+    "border_treatment": "hairline",
+    "navigation_style": "print_only",
+    "typography_preset": "noto_serif_only",
+    "numeric_typography": "serif_lining_tabular",
+    "page_margin_preset": "24mm",
+    "recommendation_style": "obsidian_card",
+    "section_header_style": "standfirst_italic"
+   },
+   "familyKey": "luxury_editorial",
+   "overrides": {},
+   "useBucket": "Client-facing",
+   "colourways": [
+    "le-ivory-and-gold",
+    "le-bone-and-ink",
+    "le-blush-stone",
+    "le-sage-vellum",
+    "le-cerulean-rag",
+    "le-plum-ash",
+    "le-midnight-editorial",
+    "le-ink-plate",
+    "le-rose-noir",
+    "le-sage-noir"
+   ],
+   "familyCode": "le",
+   "familyName": "Luxury Editorial",
+   "familyNote": "Serif throughout, photographic plates, justified columns",
+   "variantAxis": "A \u00b7 reference",
+   "architecture": "plate",
+   "printDensity": "standard",
+   "reportFormat": "investment-compass",
+   "templateCode": "le-01",
+   "familyOrdinal": "03",
+   "recommendedUse": "Premium reports where photography is available",
+   "defaultColourway": "le-ivory-and-gold",
+   "archetypeCoverage": "built",
+   "isFamilyReference": true
+  },
+  "preview_schema": {
+   "pages": [
+    {
+     "id": "ic-page-b",
+     "name": "Cover",
+     "size": {
+      "width": 595,
+      "height": 842
+     },
+     "blocks": [
+      {
+       "id": "ic-image-c",
+       "name": "Drop the hero photograph \u2014 the dwelling, the streetscape, or the estate at dusk",
+       "type": "image",
+       "props": {
+        "x": 0,
+        "y": 0,
+        "fit": "cover",
+        "src": "{{property.images.0}}",
+        "width": 595,
+        "height": 842,
+        "placeholder": false
+       },
+       "overlays": [],
+       "conditional": "property && property.images && property.images[0]"
+      },
+      {
+       "id": "ic-hero-d",
+       "name": "Cover scrim",
+       "type": "hero",
+       "props": {
+        "x": 0,
+        "y": 0,
+        "tint": "token:bg",
+        "title": "",
+        "width": 595,
+        "height": 842
+       },
+       "overlays": [],
+       "conditional": "property && property.images && property.images[0]"
+      },
+      {
+       "id": "ic-image-1",
+       "name": "Brand mark",
+       "type": "image",
+       "props": {
+        "x": 68,
+        "y": 68,
+        "fit": "contain",
+        "src": "{{org.markMono}}",
+        "width": 50,
+        "height": 40,
+        "placeholder": false
+       },
+       "overlays": [],
+       "conditional": "org && org.markMono"
+      },
+      {
+       "id": "ic-text-block-2",
+       "name": "Wordmark",
+       "type": "text-block",
+       "props": {
+        "x": 68,
+        "y": 124,
+        "body": "{{org.name}}\nInvestment Compass",
+        "color": "token:text",
+        "width": 319,
+        "bodyFont": "token:display",
+        "bodySize": 10,
+        "bodyTracking": 0.26,
+        "bodyLineHeight": 1.35
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-divider-3",
+       "type": "divider",
+       "props": {
+        "x": 68,
+        "y": 162,
+        "color": "token:primary",
+        "width": 74,
+        "thickness": 1
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-4",
+       "name": "Tagline",
+       "type": "text-block",
+       "props": {
+        "x": 68,
+        "y": 170,
+        "body": "Your dedicated property partner",
+        "color": "token:mutedOnField",
+        "width": 319,
+        "bodyFont": "token:mono",
+        "bodySize": 5.98,
+        "bodyTracking": 0.24
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-5",
+       "name": "Cover marker",
+       "type": "text-block",
+       "props": {
+        "x": 387,
+        "y": 124,
+        "body": "Investment Compass",
+        "color": "token:mutedOnField",
+        "width": 140,
+        "bodyFont": "token:mono",
+        "bodySize": 5.98,
+        "bodyAlign": "right"
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-6",
+       "name": "Cover title",
+       "type": "text-block",
+       "props": {
+        "x": 68,
+        "y": 432,
+        "width": 395,
+        "eyebrow": "Investment Compass",
+        "heading": "{{property.address}}",
+        "eyebrowFont": "token:mono",
+        "eyebrowSize": 6.5,
+        "headingFont": "token:display",
+        "headingSize": 40,
+        "anchorBottom": 549,
+        "eyebrowColor": "token:accentOnField",
+        "headingColor": "token:text",
+        "headingWeight": 400,
+        "eyebrowTracking": 0.34,
+        "headingLineHeight": 1.12
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-divider-7",
+       "type": "divider",
+       "props": {
+        "x": 68,
+        "y": 563,
+        "color": "token:primary",
+        "width": 459,
+        "thickness": 0.75
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-8",
+       "name": "Standfirst",
+       "type": "text-block",
+       "props": {
+        "x": 68,
+        "y": 579,
+        "body": "What the property is, what it costs to hold, and what the assessment concluded.",
+        "color": "token:mutedOnField",
+        "width": 395,
+        "bodyFont": "token:heading",
+        "bodySize": 16,
+        "bodyStyle": "italic",
+        "bodyLineHeight": 1.4
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-9",
+       "name": "Locations",
+       "type": "text-block",
+       "props": {
+        "x": 68,
+        "y": 660,
+        "body": "Prepared {{report.generatedDate | date}}",
+        "color": "token:mutedOnField",
+        "width": 459,
+        "bodyFont": "token:mono",
+        "bodySize": 7.000000000000001,
+        "bodyTracking": 0.16
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-kpi-grid-a",
+       "name": "Cover facts",
+       "type": "kpi-grid",
+       "props": {
+        "x": 68,
+        "y": 696,
+        "items": [
+         {
+          "label": "Verdict",
+          "value": "{{recommendation.action}}"
+         },
+         {
+          "label": "Grade",
+          "value": "{{recommendation.grade}}"
+         },
+         {
+          "label": "Score",
+          "value": "{{recommendation.score | fixed:0}}"
+         },
+         {
+          "label": "Weekly position",
+          "value": "{{financials.weeklyNet | currency}}"
+         }
+        ],
+        "width": 459,
+        "height": 78,
+        "columns": 4,
+        "variant": "ruled",
+        "labelFont": "token:mono",
+        "labelSize": 6.25,
+        "ruleColor": "token:line",
+        "valueFont": "token:heading",
+        "valueSize": 11,
+        "labelColor": "token:mutedOnField",
+        "valueColor": "token:text",
+        "emphasisColor": "token:line",
+        "labelTracking": 0.18
+       },
+       "overlays": []
+      }
+     ],
+     "background": {
+      "color": "token:bg"
+     }
+    }
+   ],
+   "tokens": {
+    "fonts": {
+     "body": "Noto Serif, serif",
+     "mono": "Noto Serif, serif",
+     "display": "Noto Serif, serif",
+     "heading": "Noto Serif, serif"
+    },
+    "radii": {
+     "lg": 0,
+     "md": 0,
+     "sm": 0
+    },
+    "colors": {
+     "bg": "#312A21",
+     "ink": "#3D3429",
+     "info": "#0270A7",
+     "line": "#DDD1C0",
+     "text": "#FAF7EF",
+     "muted": "#6E6253",
+     "panel": "#F4EDDC",
+     "caution": "#856514",
+     "primary": "#8E6C15",
+     "surface": "#FAF7EF",
+     "mutedInk": "#5D5246",
+     "negative": "#D31212",
+     "positive": "#157A3A",
+     "accentInk": "#6A5110",
+     "onPrimary": "#FAF7EF",
+     "mutedOnField": "#BFB6AA",
+     "accentOnField": "#E1B032"
+    },
+    "spacing": {
+     "gutter": 16,
+     "padding": 68,
+     "sectionGap": 24
+    },
+    "fontFaces": [
+     {
+      "cssUrl": "https://fonts.googleapis.com/css2?family=Noto+Serif:ital,wght@0,300;0,400;0,600;0,700;1,400&display=swap",
+      "family": "Noto Serif"
+     }
+    ],
+    "typeScale": {
+     "body": 9.5,
+     "cover": 40,
+     "eyebrow": 6.5,
+     "heading": 23
+    }
+   },
+   "version": 1
+  }
+ },
+ {
+  "id": "eda6a99d-346f-403f-82a8-0bb3ab009309",
+  "family_id": "36d81319-3ec0-4105-a80e-a8fbff2a8820",
+  "slug": "investment-compass-mf-01-signal",
+  "version": 1,
+  "name": "Signal",
+  "description": "Dark data ribbon across the cover, four KPI cards, chip labels for sections and tabs for scenarios.",
+  "category": "investment",
+  "report_type": "investment_compass",
+  "tier": "compass",
+  "variant": null,
+  "status": "published",
+  "engine": "weasyprint",
+  "production_ready": true,
+  "page_count": 50,
+  "design_meta": {
+   "faces": "Inter",
+   "ground": "light",
+   "source": "claude-design/investment-compass-template-catalogue",
+   "density": "balanced",
+   "manifest": {
+    "radius": "4px",
+    "density": "balanced",
+    "toc_style": "chip_index",
+    "kpi_layout": "card_row_four",
+    "chart_style": "bar_solid",
+    "table_style": "zebra_soft",
+    "footer_style": "thin_rule",
+    "risk_display": "chip_matrix",
+    "callout_style": "tinted_violet",
+    "cover_overlay": "dark_data_ribbon",
+    "design_family": "modern_fintech",
+    "print_density": "standard",
+    "spacing_scale": "regular",
+    "border_treatment": "soft_rule",
+    "navigation_style": "tab_strip",
+    "typography_preset": "inter_only",
+    "numeric_typography": "inter_tabular",
+    "page_margin_preset": "18mm",
+    "recommendation_style": "panel_dark",
+    "section_header_style": "chip_label"
+   },
+   "familyKey": "modern_fintech",
+   "overrides": {},
+   "useBucket": "Screen reading",
+   "colourways": [
+    "mf-violet-signal",
+    "mf-teal-signal",
+    "mf-amber-signal",
+    "mf-indigo-signal",
+    "mf-coral-signal",
+    "mf-mint-signal",
+    "mf-night-console",
+    "mf-teal-console",
+    "mf-amber-console",
+    "mf-coral-console"
+   ],
+   "familyCode": "mf",
+   "familyName": "Modern Fintech",
+   "familyNote": "Inter, dark data ribbon, chips and tabs, violet accent",
+   "variantAxis": "A \u00b7 reference",
+   "architecture": "band",
+   "printDensity": "standard",
+   "reportFormat": "investment-compass",
+   "templateCode": "mf-01",
+   "familyOrdinal": "04",
+   "recommendedUse": "Digital-first reports read on screen",
+   "defaultColourway": "mf-violet-signal",
+   "archetypeCoverage": "built",
+   "isFamilyReference": true
+  },
+  "preview_schema": {
+   "pages": [
+    {
+     "id": "ic-page-b",
+     "name": "Cover",
+     "size": {
+      "width": 595,
+      "height": 842
+     },
+     "blocks": [
+      {
+       "id": "ic-image-1",
+       "name": "Brand mark",
+       "type": "image",
+       "props": {
+        "x": 51,
+        "y": 51,
+        "fit": "contain",
+        "src": "{{org.markMono}}",
+        "width": 50,
+        "height": 40,
+        "placeholder": false
+       },
+       "overlays": [],
+       "conditional": "org && org.markMono"
+      },
+      {
+       "id": "ic-text-block-2",
+       "name": "Wordmark",
+       "type": "text-block",
+       "props": {
+        "x": 51,
+        "y": 107,
+        "body": "{{org.name}}\nInvestment Compass",
+        "color": "token:text",
+        "width": 353,
+        "bodyFont": "token:display",
+        "bodySize": 10,
+        "bodyTracking": 0.26,
+        "bodyLineHeight": 1.35
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-divider-3",
+       "type": "divider",
+       "props": {
+        "x": 51,
+        "y": 145,
+        "color": "token:primary",
+        "width": 74,
+        "thickness": 1
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-4",
+       "name": "Tagline",
+       "type": "text-block",
+       "props": {
+        "x": 51,
+        "y": 153,
+        "body": "Your dedicated property partner",
+        "color": "token:mutedOnField",
+        "width": 353,
+        "bodyFont": "token:mono",
+        "bodySize": 5.98,
+        "bodyTracking": 0.24
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-5",
+       "name": "Cover marker",
+       "type": "text-block",
+       "props": {
+        "x": 404,
+        "y": 107,
+        "body": "Investment Compass",
+        "color": "token:mutedOnField",
+        "width": 140,
+        "bodyFont": "token:mono",
+        "bodySize": 5.98,
+        "bodyAlign": "right"
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-6",
+       "name": "Cover title",
+       "type": "text-block",
+       "props": {
+        "x": 51,
+        "y": 468,
+        "width": 424,
+        "eyebrow": "Investment Compass",
+        "heading": "{{property.address}}",
+        "eyebrowFont": "token:mono",
+        "eyebrowSize": 6.5,
+        "headingFont": "token:display",
+        "headingSize": 37,
+        "anchorBottom": 578,
+        "eyebrowColor": "token:accentOnField",
+        "headingColor": "token:text",
+        "headingWeight": 400,
+        "eyebrowTracking": 0.34,
+        "headingLineHeight": 1.12
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-divider-7",
+       "type": "divider",
+       "props": {
+        "x": 51,
+        "y": 592,
+        "color": "token:primary",
+        "width": 493,
+        "thickness": 0.75
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-8",
+       "name": "Standfirst",
+       "type": "text-block",
+       "props": {
+        "x": 51,
+        "y": 608,
+        "body": "What the property is, what it costs to hold, and what the assessment concluded.",
+        "color": "token:mutedOnField",
+        "width": 424,
+        "bodyFont": "token:heading",
+        "bodySize": 14,
+        "bodyStyle": "italic",
+        "bodyLineHeight": 1.4
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-9",
+       "name": "Locations",
+       "type": "text-block",
+       "props": {
+        "x": 51,
+        "y": 681,
+        "body": "Prepared {{report.generatedDate | date}}",
+        "color": "token:mutedOnField",
+        "width": 493,
+        "bodyFont": "token:mono",
+        "bodySize": 6.720000000000001,
+        "bodyTracking": 0.16
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-kpi-grid-a",
+       "name": "Cover facts",
+       "type": "kpi-grid",
+       "props": {
+        "x": 51,
+        "y": 713,
+        "items": [
+         {
+          "label": "Verdict",
+          "value": "{{recommendation.action}}"
+         },
+         {
+          "label": "Grade",
+          "value": "{{recommendation.grade}}"
+         },
+         {
+          "label": "Score",
+          "value": "{{recommendation.score | fixed:0}}"
+         },
+         {
+          "label": "Weekly position",
+          "value": "{{financials.weeklyNet | currency}}"
+         }
+        ],
+        "width": 493,
+        "height": 78,
+        "columns": 4,
+        "variant": "ruled",
+        "labelFont": "token:mono",
+        "labelSize": 6,
+        "ruleColor": "token:line",
+        "valueFont": "token:heading",
+        "valueSize": 11,
+        "labelColor": "token:mutedOnField",
+        "valueColor": "token:text",
+        "emphasisColor": "token:line",
+        "labelTracking": 0.18
+       },
+       "overlays": []
+      }
+     ],
+     "background": {
+      "color": "token:bg"
+     }
+    }
+   ],
+   "tokens": {
+    "fonts": {
+     "body": "Inter, sans-serif",
+     "mono": "IBM Plex Mono, monospace",
+     "display": "Inter, sans-serif",
+     "heading": "Inter, sans-serif"
+    },
+    "radii": {
+     "lg": 4,
+     "md": 4,
+     "sm": 4
+    },
+    "colors": {
+     "bg": "#17151F",
+     "ink": "#201D2B",
+     "info": "#0270A7",
+     "line": "#E4E2EC",
+     "text": "#FFFFFF",
+     "muted": "#6C6980",
+     "panel": "#F2F2F2",
+     "caution": "#856514",
+     "primary": "#5B4BD6",
+     "surface": "#FFFFFF",
+     "mutedInk": "#59576A",
+     "negative": "#D31212",
+     "positive": "#157A3A",
+     "accentInk": "#503FD3",
+     "onPrimary": "#FFFFFF",
+     "mutedOnField": "#A4A2B2",
+     "accentOnField": "#A39AE8"
+    },
+    "spacing": {
+     "gutter": 14,
+     "padding": 51,
+     "sectionGap": 20
+    },
+    "fontFaces": [
+     {
+      "cssUrl": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap",
+      "family": "Inter"
+     },
+     {
+      "cssUrl": "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600;700&display=swap",
+      "family": "IBM Plex Mono"
+     }
+    ],
+    "typeScale": {
+     "body": 8.75,
+     "cover": 37,
+     "eyebrow": 6,
+     "heading": 20
+    }
+   },
+   "version": 1
+  }
+ },
+ {
+  "id": "549bd2e4-f76f-489a-b218-50847f206f86",
+  "family_id": "45c277a3-dcb2-4d19-980f-bc0e5ef64e19",
+  "slug": "investment-compass-pb-01-chancery",
+  "version": 1,
+  "name": "Chancery",
+  "description": "The reference expression: obsidian cover, four ruled KPI columns, gold used once per page.",
+  "category": "investment",
+  "report_type": "investment_compass",
+  "tier": "compass",
+  "variant": null,
+  "status": "published",
+  "engine": "weasyprint",
+  "production_ready": true,
+  "page_count": 49,
+  "design_meta": {
+   "faces": "Cinzel \u00b7 Playfair \u00b7 Inter \u00b7 Plex Mono",
+   "ground": "light",
+   "source": "claude-design/investment-compass-template-catalogue",
+   "density": "balanced",
+   "manifest": {
+    "radius": "0",
+    "density": "balanced",
+    "toc_style": "none",
+    "kpi_layout": "four_column_ruled",
+    "chart_style": "line_editorial",
+    "table_style": "ledger_hairline",
+    "footer_style": "rule_page_number",
+    "risk_display": "rated_table",
+    "callout_style": "tinted_gold_bar",
+    "cover_overlay": "obsidian_full",
+    "design_family": "private_banking",
+    "print_density": "standard",
+    "spacing_scale": "generous",
+    "border_treatment": "hairline",
+    "navigation_style": "print_only",
+    "typography_preset": "cinzel_playfair_inter",
+    "numeric_typography": "playfair_lining_tabular",
+    "page_margin_preset": "20mm",
+    "recommendation_style": "obsidian_card",
+    "section_header_style": "eyebrow_rule_display"
+   },
+   "familyKey": "private_banking",
+   "overrides": {},
+   "useBucket": "Client-facing",
+   "colourways": [
+    "pb-gold-on-obsidian",
+    "pb-oxblood",
+    "pb-verde",
+    "pb-navy-signet",
+    "pb-slate-bronze",
+    "pb-platinum",
+    "pb-obsidian-reverse",
+    "pb-oxblood-night",
+    "pb-deep-verde",
+    "pb-midnight-navy"
+   ],
+   "familyCode": "pb",
+   "familyName": "Private Banking",
+   "familyNote": "Gold on obsidian, editorial ledger, restrained accent",
+   "variantAxis": "A \u00b7 reference",
+   "architecture": "band",
+   "printDensity": "standard",
+   "reportFormat": "investment-compass",
+   "templateCode": "pb-01",
+   "familyOrdinal": "01",
+   "recommendedUse": "Client-facing flagship for private clients",
+   "defaultColourway": "pb-gold-on-obsidian",
+   "archetypeCoverage": "built",
+   "isFamilyReference": true
+  },
+  "preview_schema": {
+   "pages": [
+    {
+     "id": "ic-page-b",
+     "name": "Cover",
+     "size": {
+      "width": 595,
+      "height": 842
+     },
+     "blocks": [
+      {
+       "id": "ic-image-1",
+       "name": "Brand mark",
+       "type": "image",
+       "props": {
+        "x": 57,
+        "y": 57,
+        "fit": "contain",
+        "src": "{{org.markMono}}",
+        "width": 50,
+        "height": 40,
+        "placeholder": false
+       },
+       "overlays": [],
+       "conditional": "org && org.markMono"
+      },
+      {
+       "id": "ic-text-block-2",
+       "name": "Wordmark",
+       "type": "text-block",
+       "props": {
+        "x": 57,
+        "y": 113,
+        "body": "{{org.name}}\nInvestment Compass",
+        "color": "token:text",
+        "width": 341,
+        "bodyFont": "token:display",
+        "bodySize": 11,
+        "bodyTracking": 0.26,
+        "bodyLineHeight": 1.35
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-divider-3",
+       "type": "divider",
+       "props": {
+        "x": 57,
+        "y": 151,
+        "color": "token:primary",
+        "width": 74,
+        "thickness": 1
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-4",
+       "name": "Tagline",
+       "type": "text-block",
+       "props": {
+        "x": 57,
+        "y": 159,
+        "body": "Your dedicated property partner",
+        "color": "token:mutedOnField",
+        "width": 341,
+        "bodyFont": "token:mono",
+        "bodySize": 6.44,
+        "bodyTracking": 0.24
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-5",
+       "name": "Cover marker",
+       "type": "text-block",
+       "props": {
+        "x": 398,
+        "y": 113,
+        "body": "Investment Compass",
+        "color": "token:mutedOnField",
+        "width": 140,
+        "bodyFont": "token:mono",
+        "bodySize": 6.44,
+        "bodyAlign": "right"
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-6",
+       "name": "Cover title",
+       "type": "text-block",
+       "props": {
+        "x": 57,
+        "y": 445,
+        "width": 414,
+        "eyebrow": "Investment Compass",
+        "heading": "{{property.address}}",
+        "eyebrowFont": "token:mono",
+        "eyebrowSize": 7,
+        "headingFont": "token:display",
+        "headingSize": 41,
+        "anchorBottom": 564,
+        "eyebrowColor": "token:accentOnField",
+        "headingColor": "token:text",
+        "headingWeight": 400,
+        "eyebrowTracking": 0.34,
+        "headingLineHeight": 1.12
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-divider-7",
+       "type": "divider",
+       "props": {
+        "x": 57,
+        "y": 578,
+        "color": "token:primary",
+        "width": 481,
+        "thickness": 0.75
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-8",
+       "name": "Standfirst",
+       "type": "text-block",
+       "props": {
+        "x": 57,
+        "y": 594,
+        "body": "What the property is, what it costs to hold, and what the assessment concluded.",
+        "color": "token:mutedOnField",
+        "width": 414,
+        "bodyFont": "token:heading",
+        "bodySize": 15,
+        "bodyStyle": "italic",
+        "bodyLineHeight": 1.4
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-9",
+       "name": "Locations",
+       "type": "text-block",
+       "props": {
+        "x": 57,
+        "y": 671,
+        "body": "Prepared {{report.generatedDate | date}}",
+        "color": "token:mutedOnField",
+        "width": 481,
+        "bodyFont": "token:mono",
+        "bodySize": 7.000000000000001,
+        "bodyTracking": 0.16
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-kpi-grid-a",
+       "name": "Cover facts",
+       "type": "kpi-grid",
+       "props": {
+        "x": 57,
+        "y": 707,
+        "items": [
+         {
+          "label": "Verdict",
+          "value": "{{recommendation.action}}"
+         },
+         {
+          "label": "Grade",
+          "value": "{{recommendation.grade}}"
+         },
+         {
+          "label": "Score",
+          "value": "{{recommendation.score | fixed:0}}"
+         },
+         {
+          "label": "Weekly position",
+          "value": "{{financials.weeklyNet | currency}}"
+         }
+        ],
+        "width": 481,
+        "height": 78,
+        "columns": 4,
+        "variant": "ruled",
+        "labelFont": "token:mono",
+        "labelSize": 6,
+        "ruleColor": "token:line",
+        "valueFont": "token:heading",
+        "valueSize": 11,
+        "labelColor": "token:mutedOnField",
+        "valueColor": "token:text",
+        "emphasisColor": "token:line",
+        "labelTracking": 0.18
+       },
+       "overlays": []
+      }
+     ],
+     "background": {
+      "color": "token:bg"
+     }
+    }
+   ],
+   "tokens": {
+    "fonts": {
+     "body": "Inter, sans-serif",
+     "mono": "IBM Plex Mono, monospace",
+     "display": "Cinzel, serif",
+     "heading": "Playfair Display, serif"
+    },
+    "radii": {
+     "lg": 0,
+     "md": 0,
+     "sm": 0
+    },
+    "colors": {
+     "bg": "#251F18",
+     "ink": "#312920",
+     "info": "#0270A7",
+     "line": "#DDD1C0",
+     "text": "#FAF7EF",
+     "muted": "#6E6253",
+     "panel": "#F4EDDC",
+     "caution": "#856514",
+     "primary": "#8E6C15",
+     "surface": "#FAF7EF",
+     "mutedInk": "#5D5246",
+     "negative": "#D31212",
+     "positive": "#157A3A",
+     "accentInk": "#6A5110",
+     "onPrimary": "#FAF7EF",
+     "mutedOnField": "#B4A99C",
+     "accentOnField": "#D5A220"
+    },
+    "spacing": {
+     "gutter": 16,
+     "padding": 57,
+     "sectionGap": 24
+    },
+    "fontFaces": [
+     {
+      "cssUrl": "https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&display=swap",
+      "family": "Cinzel"
+     },
+     {
+      "cssUrl": "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap",
+      "family": "Playfair Display"
+     },
+     {
+      "cssUrl": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap",
+      "family": "Inter"
+     },
+     {
+      "cssUrl": "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&display=swap",
+      "family": "IBM Plex Mono"
+     }
+    ],
+    "typeScale": {
+     "body": 9.5,
+     "cover": 41,
+     "eyebrow": 6.5,
+     "heading": 22
+    }
+   },
+   "version": 1
+  }
+ },
+ {
+  "id": "8cf40566-c697-465f-8e97-8e4b3153d160",
+  "family_id": "029fa087-0aca-4b86-88f2-c860e77e8752",
+  "slug": "investment-compass-pb-02-chancery-compact",
+  "version": 1,
+  "name": "Chancery Compact",
+  "description": "Six KPI columns and tight ledger rules fit two properties per spread without losing the hierarchy.",
+  "category": "investment",
+  "report_type": "investment_compass",
+  "tier": "compass",
+  "variant": null,
+  "status": "published",
+  "engine": "weasyprint",
+  "production_ready": true,
+  "page_count": 49,
+  "design_meta": {
+   "faces": "Cinzel \u00b7 Playfair \u00b7 Inter \u00b7 Plex Mono",
+   "ground": "light",
+   "source": "claude-design/investment-compass-template-catalogue",
+   "density": "compact",
+   "manifest": {
+    "radius": "0",
+    "density": "compact",
+    "toc_style": "none",
+    "kpi_layout": "six_column_ruled",
+    "chart_style": "line_editorial",
+    "table_style": "ledger_tight",
+    "footer_style": "rule_page_number",
+    "risk_display": "rated_table",
+    "callout_style": "tinted_gold_bar",
+    "cover_overlay": "obsidian_full",
+    "design_family": "private_banking",
+    "print_density": "dense",
+    "spacing_scale": "tight",
+    "border_treatment": "hairline",
+    "navigation_style": "print_only",
+    "typography_preset": "cinzel_playfair_inter",
+    "numeric_typography": "playfair_lining_tabular",
+    "page_margin_preset": "16mm",
+    "recommendation_style": "obsidian_card",
+    "section_header_style": "eyebrow_rule_display"
+   },
+   "familyKey": "private_banking",
+   "overrides": {
+    "density": "compact",
+    "kpi_layout": "six_column_ruled",
+    "table_style": "ledger_tight",
+    "print_density": "dense",
+    "spacing_scale": "tight",
+    "page_margin_preset": "16mm"
+   },
+   "useBucket": "Portfolio review",
+   "colourways": [
+    "pb-gold-on-obsidian",
+    "pb-oxblood",
+    "pb-verde",
+    "pb-navy-signet",
+    "pb-slate-bronze",
+    "pb-platinum",
+    "pb-obsidian-reverse",
+    "pb-oxblood-night",
+    "pb-deep-verde",
+    "pb-midnight-navy"
+   ],
+   "familyCode": "pb",
+   "familyName": "Private Banking",
+   "familyNote": "Gold on obsidian, editorial ledger, restrained accent",
+   "variantAxis": "B \u00b7 condensed",
+   "architecture": "grid",
+   "printDensity": "dense",
+   "reportFormat": "investment-compass",
+   "templateCode": "pb-02",
+   "familyOrdinal": "01",
+   "recommendedUse": "Portfolio reviews covering several properties",
+   "defaultColourway": "pb-gold-on-obsidian",
+   "archetypeCoverage": "manifest",
+   "isFamilyReference": false
+  },
+  "preview_schema": {
+   "pages": [
+    {
+     "id": "ic-page-b",
+     "name": "Cover",
+     "size": {
+      "width": 595,
+      "height": 842
+     },
+     "blocks": [
+      {
+       "id": "ic-image-1",
+       "name": "Brand mark",
+       "type": "image",
+       "props": {
+        "x": 45,
+        "y": 45,
+        "fit": "contain",
+        "src": "{{org.markMono}}",
+        "width": 50,
+        "height": 40,
+        "placeholder": false
+       },
+       "overlays": [],
+       "conditional": "org && org.markMono"
+      },
+      {
+       "id": "ic-text-block-2",
+       "name": "Wordmark",
+       "type": "text-block",
+       "props": {
+        "x": 45,
+        "y": 101,
+        "body": "{{org.name}}\nInvestment Compass",
+        "color": "token:text",
+        "width": 365,
+        "bodyFont": "token:display",
+        "bodySize": 10,
+        "bodyTracking": 0.26,
+        "bodyLineHeight": 1.35
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-divider-3",
+       "type": "divider",
+       "props": {
+        "x": 45,
+        "y": 139,
+        "color": "token:primary",
+        "width": 74,
+        "thickness": 1
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-4",
+       "name": "Tagline",
+       "type": "text-block",
+       "props": {
+        "x": 45,
+        "y": 147,
+        "body": "Your dedicated property partner",
+        "color": "token:mutedOnField",
+        "width": 365,
+        "bodyFont": "token:mono",
+        "bodySize": 5.98,
+        "bodyTracking": 0.24
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-5",
+       "name": "Cover marker",
+       "type": "text-block",
+       "props": {
+        "x": 410,
+        "y": 101,
+        "body": "Investment Compass",
+        "color": "token:mutedOnField",
+        "width": 140,
+        "bodyFont": "token:mono",
+        "bodySize": 5.98,
+        "bodyAlign": "right"
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-6",
+       "name": "Cover title",
+       "type": "text-block",
+       "props": {
+        "x": 45,
+        "y": 504,
+        "width": 434,
+        "eyebrow": "Investment Compass",
+        "heading": "{{property.address}}",
+        "eyebrowFont": "token:mono",
+        "eyebrowSize": 6.5,
+        "headingFont": "token:display",
+        "headingSize": 33.5,
+        "anchorBottom": 606,
+        "eyebrowColor": "token:accentOnField",
+        "headingColor": "token:text",
+        "headingWeight": 400,
+        "eyebrowTracking": 0.34,
+        "headingLineHeight": 1.12
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-divider-7",
+       "type": "divider",
+       "props": {
+        "x": 45,
+        "y": 620,
+        "color": "token:primary",
+        "width": 505,
+        "thickness": 0.75
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-8",
+       "name": "Standfirst",
+       "type": "text-block",
+       "props": {
+        "x": 45,
+        "y": 636,
+        "body": "What the property is, what it costs to hold, and what the assessment concluded.",
+        "color": "token:mutedOnField",
+        "width": 434,
+        "bodyFont": "token:heading",
+        "bodySize": 12.25,
+        "bodyStyle": "italic",
+        "bodyLineHeight": 1.4
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-9",
+       "name": "Locations",
+       "type": "text-block",
+       "props": {
+        "x": 45,
+        "y": 701,
+        "body": "Prepared {{report.generatedDate | date}}",
+        "color": "token:mutedOnField",
+        "width": 505,
+        "bodyFont": "token:mono",
+        "bodySize": 6.44,
+        "bodyTracking": 0.16
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-kpi-grid-a",
+       "name": "Cover facts",
+       "type": "kpi-grid",
+       "props": {
+        "x": 45,
+        "y": 729,
+        "items": [
+         {
+          "label": "Verdict",
+          "value": "{{recommendation.action}}"
+         },
+         {
+          "label": "Grade",
+          "value": "{{recommendation.grade}}"
+         },
+         {
+          "label": "Score",
+          "value": "{{recommendation.score | fixed:0}}"
+         },
+         {
+          "label": "Weekly position",
+          "value": "{{financials.weeklyNet | currency}}"
+         }
+        ],
+        "width": 505,
+        "height": 68,
+        "columns": 4,
+        "variant": "ruled",
+        "labelFont": "token:mono",
+        "labelSize": 5.5,
+        "ruleColor": "token:line",
+        "valueFont": "token:heading",
+        "valueSize": 11,
+        "labelColor": "token:mutedOnField",
+        "valueColor": "token:text",
+        "emphasisColor": "token:line",
+        "labelTracking": 0.18
+       },
+       "overlays": []
+      }
+     ],
+     "background": {
+      "color": "token:bg"
+     }
+    }
+   ],
+   "tokens": {
+    "fonts": {
+     "body": "Inter, sans-serif",
+     "mono": "IBM Plex Mono, monospace",
+     "display": "Cinzel, serif",
+     "heading": "Playfair Display, serif"
+    },
+    "radii": {
+     "lg": 0,
+     "md": 0,
+     "sm": 0
+    },
+    "colors": {
+     "bg": "#251F18",
+     "ink": "#312920",
+     "info": "#0270A7",
+     "line": "#DDD1C0",
+     "text": "#FAF7EF",
+     "muted": "#6E6253",
+     "panel": "#F4EDDC",
+     "caution": "#856514",
+     "primary": "#8E6C15",
+     "surface": "#FAF7EF",
+     "mutedInk": "#5D5246",
+     "negative": "#D31212",
+     "positive": "#157A3A",
+     "accentInk": "#6A5110",
+     "onPrimary": "#FAF7EF",
+     "mutedOnField": "#B4A99C",
+     "accentOnField": "#D5A220"
+    },
+    "spacing": {
+     "gutter": 11,
+     "padding": 45,
+     "sectionGap": 16
+    },
+    "fontFaces": [
+     {
+      "cssUrl": "https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&display=swap",
+      "family": "Cinzel"
+     },
+     {
+      "cssUrl": "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap",
+      "family": "Playfair Display"
+     },
+     {
+      "cssUrl": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap",
+      "family": "Inter"
+     },
+     {
+      "cssUrl": "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&display=swap",
+      "family": "IBM Plex Mono"
+     }
+    ],
+    "typeScale": {
+     "body": 8.75,
+     "cover": 33.5,
+     "eyebrow": 6,
+     "heading": 18
+    }
+   },
+   "version": 1
+  }
+ },
+ {
+  "id": "672c997f-0113-46be-b30a-331eb2c4ec73",
+  "family_id": "8b69685c-4245-4080-9dea-bde873a3c577",
+  "slug": "investment-compass-pb-03-sovereign-folio",
+  "version": 1,
+  "name": "Sovereign Folio",
+  "description": "Full-bleed portrait cover, oversized section numerals, KPIs paired two by two at display size.",
+  "category": "investment",
+  "report_type": "investment_compass",
+  "tier": "compass",
+  "variant": null,
+  "status": "published",
+  "engine": "weasyprint",
+  "production_ready": true,
+  "page_count": 51,
+  "design_meta": {
+   "faces": "Cinzel \u00b7 Playfair \u00b7 Inter \u00b7 Plex Mono",
+   "ground": "light",
+   "source": "claude-design/investment-compass-template-catalogue",
+   "density": "spacious",
+   "manifest": {
+    "radius": "0",
+    "density": "spacious",
+    "toc_style": "none",
+    "kpi_layout": "two_by_two_display",
+    "chart_style": "line_editorial",
+    "table_style": "ledger_hairline",
+    "footer_style": "rule_page_number",
+    "risk_display": "rated_table",
+    "callout_style": "tinted_gold_bar",
+    "cover_overlay": "obsidian_bleed_portrait",
+    "design_family": "private_banking",
+    "print_density": "standard",
+    "spacing_scale": "luxurious",
+    "border_treatment": "hairline",
+    "navigation_style": "print_only",
+    "typography_preset": "cinzel_playfair_inter",
+    "numeric_typography": "playfair_lining_tabular",
+    "page_margin_preset": "26mm",
+    "recommendation_style": "obsidian_card",
+    "section_header_style": "full_bleed_numeral"
+   },
+   "familyKey": "private_banking",
+   "overrides": {
+    "density": "spacious",
+    "kpi_layout": "two_by_two_display",
+    "cover_overlay": "obsidian_bleed_portrait",
+    "spacing_scale": "luxurious",
+    "page_margin_preset": "26mm",
+    "section_header_style": "full_bleed_numeral"
+   },
+   "useBucket": "Client-facing",
+   "colourways": [
+    "pb-gold-on-obsidian",
+    "pb-oxblood",
+    "pb-verde",
+    "pb-navy-signet",
+    "pb-slate-bronze",
+    "pb-platinum",
+    "pb-obsidian-reverse",
+    "pb-oxblood-night",
+    "pb-deep-verde",
+    "pb-midnight-navy"
+   ],
+   "familyCode": "pb",
+   "familyName": "Private Banking",
+   "familyNote": "Gold on obsidian, editorial ledger, restrained accent",
+   "variantAxis": "C \u00b7 expansive",
+   "architecture": "bleed",
+   "printDensity": "standard",
+   "reportFormat": "investment-compass",
+   "templateCode": "pb-03",
+   "familyOrdinal": "01",
+   "recommendedUse": "Single-asset pitch and presentation",
+   "defaultColourway": "pb-gold-on-obsidian",
+   "archetypeCoverage": "manifest",
+   "isFamilyReference": false
+  },
+  "preview_schema": {
+   "pages": [
+    {
+     "id": "ic-page-b",
+     "name": "Cover",
+     "size": {
+      "width": 595,
+      "height": 842
+     },
+     "blocks": [
+      {
+       "id": "ic-image-1",
+       "name": "Brand mark",
+       "type": "image",
+       "props": {
+        "x": 74,
+        "y": 74,
+        "fit": "contain",
+        "src": "{{org.markMono}}",
+        "width": 50,
+        "height": 40,
+        "placeholder": false
+       },
+       "overlays": [],
+       "conditional": "org && org.markMono"
+      },
+      {
+       "id": "ic-text-block-2",
+       "name": "Wordmark",
+       "type": "text-block",
+       "props": {
+        "x": 74,
+        "y": 130,
+        "body": "{{org.name}}\nInvestment Compass",
+        "color": "token:text",
+        "width": 307,
+        "bodyFont": "token:display",
+        "bodySize": 12,
+        "bodyTracking": 0.26,
+        "bodyLineHeight": 1.35
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-divider-3",
+       "type": "divider",
+       "props": {
+        "x": 74,
+        "y": 168,
+        "color": "token:primary",
+        "width": 74,
+        "thickness": 1
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-4",
+       "name": "Tagline",
+       "type": "text-block",
+       "props": {
+        "x": 74,
+        "y": 176,
+        "body": "Your dedicated property partner",
+        "color": "token:mutedOnField",
+        "width": 307,
+        "bodyFont": "token:mono",
+        "bodySize": 6.9,
+        "bodyTracking": 0.24
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-5",
+       "name": "Cover marker",
+       "type": "text-block",
+       "props": {
+        "x": 381,
+        "y": 130,
+        "body": "Investment Compass",
+        "color": "token:mutedOnField",
+        "width": 140,
+        "bodyFont": "token:mono",
+        "bodySize": 6.9,
+        "bodyAlign": "right"
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-6",
+       "name": "Cover title",
+       "type": "text-block",
+       "props": {
+        "x": 74,
+        "y": 374,
+        "width": 447,
+        "eyebrow": "Investment Compass",
+        "heading": "{{property.address}}",
+        "eyebrowFont": "token:mono",
+        "eyebrowSize": 7.5,
+        "headingFont": "token:display",
+        "headingSize": 48.5,
+        "anchorBottom": 511,
+        "eyebrowColor": "token:accentOnField",
+        "headingColor": "token:text",
+        "headingWeight": 400,
+        "eyebrowTracking": 0.34,
+        "headingLineHeight": 1.12
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-divider-7",
+       "type": "divider",
+       "props": {
+        "x": 74,
+        "y": 525,
+        "color": "token:primary",
+        "width": 447,
+        "thickness": 0.75
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-8",
+       "name": "Standfirst",
+       "type": "text-block",
+       "props": {
+        "x": 74,
+        "y": 541,
+        "body": "What the property is, what it costs to hold, and what the assessment concluded.",
+        "color": "token:mutedOnField",
+        "width": 384,
+        "bodyFont": "token:heading",
+        "bodySize": 17.75,
+        "bodyStyle": "italic",
+        "bodyLineHeight": 1.4
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-9",
+       "name": "Locations",
+       "type": "text-block",
+       "props": {
+        "x": 74,
+        "y": 630,
+        "body": "Prepared {{report.generatedDate | date}}",
+        "color": "token:mutedOnField",
+        "width": 447,
+        "bodyFont": "token:mono",
+        "bodySize": 7.280000000000001,
+        "bodyTracking": 0.16
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-kpi-grid-a",
+       "name": "Cover facts",
+       "type": "kpi-grid",
+       "props": {
+        "x": 74,
+        "y": 676,
+        "items": [
+         {
+          "label": "Verdict",
+          "value": "{{recommendation.action}}"
+         },
+         {
+          "label": "Grade",
+          "value": "{{recommendation.grade}}"
+         },
+         {
+          "label": "Score",
+          "value": "{{recommendation.score | fixed:0}}"
+         },
+         {
+          "label": "Weekly position",
+          "value": "{{financials.weeklyNet | currency}}"
+         }
+        ],
+        "width": 447,
+        "height": 92,
+        "columns": 4,
+        "variant": "ruled",
+        "labelFont": "token:mono",
+        "labelSize": 6.25,
+        "ruleColor": "token:line",
+        "valueFont": "token:heading",
+        "valueSize": 14,
+        "labelColor": "token:mutedOnField",
+        "valueColor": "token:text",
+        "emphasisColor": "token:line",
+        "labelTracking": 0.18
+       },
+       "overlays": []
+      }
+     ],
+     "background": {
+      "color": "token:bg"
+     }
+    }
+   ],
+   "tokens": {
+    "fonts": {
+     "body": "Inter, sans-serif",
+     "mono": "IBM Plex Mono, monospace",
+     "display": "Cinzel, serif",
+     "heading": "Playfair Display, serif"
+    },
+    "radii": {
+     "lg": 0,
+     "md": 0,
+     "sm": 0
+    },
+    "colors": {
+     "bg": "#251F18",
+     "ink": "#312920",
+     "info": "#0270A7",
+     "line": "#DDD1C0",
+     "text": "#FAF7EF",
+     "muted": "#6E6253",
+     "panel": "#F4EDDC",
+     "caution": "#856514",
+     "primary": "#8E6C15",
+     "surface": "#FAF7EF",
+     "mutedInk": "#5D5246",
+     "negative": "#D31212",
+     "positive": "#157A3A",
+     "accentInk": "#6A5110",
+     "onPrimary": "#FAF7EF",
+     "mutedOnField": "#B4A99C",
+     "accentOnField": "#D5A220"
+    },
+    "spacing": {
+     "gutter": 22,
+     "padding": 74,
+     "sectionGap": 34
+    },
+    "fontFaces": [
+     {
+      "cssUrl": "https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&display=swap",
+      "family": "Cinzel"
+     },
+     {
+      "cssUrl": "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap",
+      "family": "Playfair Display"
+     },
+     {
+      "cssUrl": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap",
+      "family": "Inter"
+     },
+     {
+      "cssUrl": "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&display=swap",
+      "family": "IBM Plex Mono"
+     }
+    ],
+    "typeScale": {
+     "body": 10.25,
+     "cover": 48.5,
+     "eyebrow": 7,
+     "heading": 26
+    }
+   },
+   "version": 1
+  }
+ },
+ {
+  "id": "c18d03d3-ce9c-4dd6-ad2f-77e2185d6183",
+  "family_id": "48c322f8-80cc-4700-babf-ae842e302e25",
+  "slug": "investment-compass-pb-04-bullion-rail",
+  "version": 1,
+  "name": "Bullion Rail",
+  "description": "A gold rail carries part number and section name down every page; KPIs stack against it.",
+  "category": "investment",
+  "report_type": "investment_compass",
+  "tier": "compass",
+  "variant": null,
+  "status": "published",
+  "engine": "weasyprint",
+  "production_ready": true,
+  "page_count": 50,
+  "design_meta": {
+   "faces": "Cinzel \u00b7 Playfair \u00b7 Inter \u00b7 Plex Mono",
+   "ground": "light",
+   "source": "claude-design/investment-compass-template-catalogue",
+   "density": "balanced",
+   "manifest": {
+    "radius": "0",
+    "density": "balanced",
+    "toc_style": "none",
+    "kpi_layout": "stacked_rail",
+    "chart_style": "line_editorial",
+    "table_style": "ledger_hairline",
+    "footer_style": "rail_number",
+    "risk_display": "rated_table",
+    "callout_style": "tinted_gold_bar",
+    "cover_overlay": "obsidian_rail",
+    "design_family": "private_banking",
+    "print_density": "standard",
+    "spacing_scale": "generous",
+    "border_treatment": "hairline",
+    "navigation_style": "vertical_rail",
+    "typography_preset": "cinzel_playfair_inter",
+    "numeric_typography": "playfair_lining_tabular",
+    "page_margin_preset": "20mm",
+    "recommendation_style": "obsidian_card",
+    "section_header_style": "rail_marker"
+   },
+   "familyKey": "private_banking",
+   "overrides": {
+    "kpi_layout": "stacked_rail",
+    "footer_style": "rail_number",
+    "cover_overlay": "obsidian_rail",
+    "navigation_style": "vertical_rail",
+    "section_header_style": "rail_marker"
+   },
+   "useBucket": "Handover and audit",
+   "colourways": [
+    "pb-gold-on-obsidian",
+    "pb-oxblood",
+    "pb-verde",
+    "pb-navy-signet",
+    "pb-slate-bronze",
+    "pb-platinum",
+    "pb-obsidian-reverse",
+    "pb-oxblood-night",
+    "pb-deep-verde",
+    "pb-midnight-navy"
+   ],
+   "familyCode": "pb",
+   "familyName": "Private Banking",
+   "familyNote": "Gold on obsidian, editorial ledger, restrained accent",
+   "variantAxis": "D \u00b7 architecture",
+   "architecture": "rail",
+   "printDensity": "standard",
+   "reportFormat": "investment-compass",
+   "templateCode": "pb-04",
+   "familyOrdinal": "01",
+   "recommendedUse": "Long reports where orientation matters",
+   "defaultColourway": "pb-gold-on-obsidian",
+   "archetypeCoverage": "manifest",
+   "isFamilyReference": false
+  },
+  "preview_schema": {
+   "pages": [
+    {
+     "id": "ic-page-c",
+     "name": "Cover",
+     "size": {
+      "width": 595,
+      "height": 842
+     },
+     "blocks": [
+      {
+       "id": "ic-divider-1",
+       "name": "Cover rail",
+       "type": "divider",
+       "props": {
+        "x": 57,
+        "y": 57,
+        "color": "token:primary",
+        "height": 728,
+        "thickness": 2,
+        "orientation": "vertical"
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-image-2",
+       "name": "Brand mark",
+       "type": "image",
+       "props": {
+        "x": 87,
+        "y": 57,
+        "fit": "contain",
+        "src": "{{org.markMono}}",
+        "width": 50,
+        "height": 40,
+        "placeholder": false
+       },
+       "overlays": [],
+       "conditional": "org && org.markMono"
+      },
+      {
+       "id": "ic-text-block-3",
+       "name": "Wordmark",
+       "type": "text-block",
+       "props": {
+        "x": 87,
+        "y": 113,
+        "body": "{{org.name}}\nInvestment Compass",
+        "color": "token:text",
+        "width": 311,
+        "bodyFont": "token:display",
+        "bodySize": 11,
+        "bodyTracking": 0.26,
+        "bodyLineHeight": 1.35
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-divider-4",
+       "type": "divider",
+       "props": {
+        "x": 87,
+        "y": 151,
+        "color": "token:primary",
+        "width": 74,
+        "thickness": 1
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-5",
+       "name": "Tagline",
+       "type": "text-block",
+       "props": {
+        "x": 87,
+        "y": 159,
+        "body": "Your dedicated property partner",
+        "color": "token:mutedOnField",
+        "width": 311,
+        "bodyFont": "token:mono",
+        "bodySize": 6.44,
+        "bodyTracking": 0.24
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-6",
+       "name": "Cover marker",
+       "type": "text-block",
+       "props": {
+        "x": 398,
+        "y": 113,
+        "body": "Investment Compass",
+        "color": "token:mutedOnField",
+        "width": 140,
+        "bodyFont": "token:mono",
+        "bodySize": 6.44,
+        "bodyAlign": "right"
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-7",
+       "name": "Cover title",
+       "type": "text-block",
+       "props": {
+        "x": 87,
+        "y": 445,
+        "width": 388,
+        "eyebrow": "Investment Compass",
+        "heading": "{{property.address}}",
+        "eyebrowFont": "token:mono",
+        "eyebrowSize": 7,
+        "headingFont": "token:display",
+        "headingSize": 41,
+        "anchorBottom": 564,
+        "eyebrowColor": "token:accentOnField",
+        "headingColor": "token:text",
+        "headingWeight": 400,
+        "eyebrowTracking": 0.34,
+        "headingLineHeight": 1.12
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-divider-8",
+       "type": "divider",
+       "props": {
+        "x": 87,
+        "y": 578,
+        "color": "token:primary",
+        "width": 451,
+        "thickness": 0.75
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-9",
+       "name": "Standfirst",
+       "type": "text-block",
+       "props": {
+        "x": 87,
+        "y": 594,
+        "body": "What the property is, what it costs to hold, and what the assessment concluded.",
+        "color": "token:mutedOnField",
+        "width": 388,
+        "bodyFont": "token:heading",
+        "bodySize": 15,
+        "bodyStyle": "italic",
+        "bodyLineHeight": 1.4
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-a",
+       "name": "Locations",
+       "type": "text-block",
+       "props": {
+        "x": 87,
+        "y": 671,
+        "body": "Prepared {{report.generatedDate | date}}",
+        "color": "token:mutedOnField",
+        "width": 451,
+        "bodyFont": "token:mono",
+        "bodySize": 7.000000000000001,
+        "bodyTracking": 0.16
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-kpi-grid-b",
+       "name": "Cover facts",
+       "type": "kpi-grid",
+       "props": {
+        "x": 87,
+        "y": 707,
+        "items": [
+         {
+          "label": "Verdict",
+          "value": "{{recommendation.action}}"
+         },
+         {
+          "label": "Grade",
+          "value": "{{recommendation.grade}}"
+         },
+         {
+          "label": "Score",
+          "value": "{{recommendation.score | fixed:0}}"
+         },
+         {
+          "label": "Weekly position",
+          "value": "{{financials.weeklyNet | currency}}"
+         }
+        ],
+        "width": 451,
+        "height": 78,
+        "columns": 4,
+        "variant": "ruled",
+        "labelFont": "token:mono",
+        "labelSize": 6,
+        "ruleColor": "token:line",
+        "valueFont": "token:heading",
+        "valueSize": 11,
+        "labelColor": "token:mutedOnField",
+        "valueColor": "token:text",
+        "emphasisColor": "token:line",
+        "labelTracking": 0.18
+       },
+       "overlays": []
+      }
+     ],
+     "background": {
+      "color": "token:bg"
+     }
+    }
+   ],
+   "tokens": {
+    "fonts": {
+     "body": "Inter, sans-serif",
+     "mono": "IBM Plex Mono, monospace",
+     "display": "Cinzel, serif",
+     "heading": "Playfair Display, serif"
+    },
+    "radii": {
+     "lg": 0,
+     "md": 0,
+     "sm": 0
+    },
+    "colors": {
+     "bg": "#251F18",
+     "ink": "#312920",
+     "info": "#0270A7",
+     "line": "#DDD1C0",
+     "text": "#FAF7EF",
+     "muted": "#6E6253",
+     "panel": "#F4EDDC",
+     "caution": "#856514",
+     "primary": "#8E6C15",
+     "surface": "#FAF7EF",
+     "mutedInk": "#5D5246",
+     "negative": "#D31212",
+     "positive": "#157A3A",
+     "accentInk": "#6A5110",
+     "onPrimary": "#FAF7EF",
+     "mutedOnField": "#B4A99C",
+     "accentOnField": "#D5A220"
+    },
+    "spacing": {
+     "gutter": 16,
+     "padding": 57,
+     "sectionGap": 24
+    },
+    "fontFaces": [
+     {
+      "cssUrl": "https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&display=swap",
+      "family": "Cinzel"
+     },
+     {
+      "cssUrl": "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap",
+      "family": "Playfair Display"
+     },
+     {
+      "cssUrl": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap",
+      "family": "Inter"
+     },
+     {
+      "cssUrl": "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&display=swap",
+      "family": "IBM Plex Mono"
+     }
+    ],
+    "typeScale": {
+     "body": 9.5,
+     "cover": 41,
+     "eyebrow": 6.5,
+     "heading": 22
+    }
+   },
+   "version": 1
+  }
+ },
+ {
+  "id": "24eb0d08-89fb-4077-ac18-dad40da986d6",
+  "family_id": "ba66a1a1-2d69-43b0-be13-1a48e8012229",
+  "slug": "investment-compass-pb-05-discretion-ledger",
+  "version": 1,
+  "name": "Discretion Ledger",
+  "description": "Statement rules with double-rule totals, severity bars for risk, and recommendations set as a ruled statement.",
+  "category": "investment",
+  "report_type": "investment_compass",
+  "tier": "compass",
+  "variant": null,
+  "status": "published",
+  "engine": "weasyprint",
+  "production_ready": true,
+  "page_count": 50,
+  "design_meta": {
+   "faces": "Cinzel \u00b7 Playfair \u00b7 Inter \u00b7 Plex Mono",
+   "ground": "light",
+   "source": "claude-design/investment-compass-template-catalogue",
+   "density": "balanced",
+   "manifest": {
+    "radius": "0",
+    "density": "balanced",
+    "toc_style": "none",
+    "kpi_layout": "ledger_rows",
+    "chart_style": "stepped_area",
+    "table_style": "double_rule_statement",
+    "footer_style": "rule_page_number",
+    "risk_display": "severity_bars",
+    "callout_style": "margin_note",
+    "cover_overlay": "obsidian_full",
+    "design_family": "private_banking",
+    "print_density": "standard",
+    "spacing_scale": "generous",
+    "border_treatment": "hairline",
+    "navigation_style": "print_only",
+    "typography_preset": "cinzel_playfair_inter",
+    "numeric_typography": "playfair_lining_tabular",
+    "page_margin_preset": "20mm",
+    "recommendation_style": "ruled_statement",
+    "section_header_style": "eyebrow_rule_display"
+   },
+   "familyKey": "private_banking",
+   "overrides": {
+    "kpi_layout": "ledger_rows",
+    "chart_style": "stepped_area",
+    "table_style": "double_rule_statement",
+    "risk_display": "severity_bars",
+    "callout_style": "margin_note",
+    "recommendation_style": "ruled_statement"
+   },
+   "useBucket": "Handover and audit",
+   "colourways": [
+    "pb-gold-on-obsidian",
+    "pb-oxblood",
+    "pb-verde",
+    "pb-navy-signet",
+    "pb-slate-bronze",
+    "pb-platinum",
+    "pb-obsidian-reverse",
+    "pb-oxblood-night",
+    "pb-deep-verde",
+    "pb-midnight-navy"
+   ],
+   "familyCode": "pb",
+   "familyName": "Private Banking",
+   "familyNote": "Gold on obsidian, editorial ledger, restrained accent",
+   "variantAxis": "E \u00b7 presentation",
+   "architecture": "stack",
+   "printDensity": "standard",
+   "reportFormat": "investment-compass",
+   "templateCode": "pb-05",
+   "familyOrdinal": "01",
+   "recommendedUse": "Clients who read the numbers first",
+   "defaultColourway": "pb-gold-on-obsidian",
+   "archetypeCoverage": "manifest",
+   "isFamilyReference": false
+  },
+  "preview_schema": {
+   "pages": [
+    {
+     "id": "ic-page-b",
+     "name": "Cover",
+     "size": {
+      "width": 595,
+      "height": 842
+     },
+     "blocks": [
+      {
+       "id": "ic-image-1",
+       "name": "Brand mark",
+       "type": "image",
+       "props": {
+        "x": 57,
+        "y": 57,
+        "fit": "contain",
+        "src": "{{org.markMono}}",
+        "width": 50,
+        "height": 40,
+        "placeholder": false
+       },
+       "overlays": [],
+       "conditional": "org && org.markMono"
+      },
+      {
+       "id": "ic-text-block-2",
+       "name": "Wordmark",
+       "type": "text-block",
+       "props": {
+        "x": 57,
+        "y": 113,
+        "body": "{{org.name}}\nInvestment Compass",
+        "color": "token:text",
+        "width": 341,
+        "bodyFont": "token:display",
+        "bodySize": 11,
+        "bodyTracking": 0.26,
+        "bodyLineHeight": 1.35
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-divider-3",
+       "type": "divider",
+       "props": {
+        "x": 57,
+        "y": 151,
+        "color": "token:primary",
+        "width": 74,
+        "thickness": 1
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-4",
+       "name": "Tagline",
+       "type": "text-block",
+       "props": {
+        "x": 57,
+        "y": 159,
+        "body": "Your dedicated property partner",
+        "color": "token:mutedOnField",
+        "width": 341,
+        "bodyFont": "token:mono",
+        "bodySize": 6.44,
+        "bodyTracking": 0.24
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-5",
+       "name": "Cover marker",
+       "type": "text-block",
+       "props": {
+        "x": 398,
+        "y": 113,
+        "body": "Investment Compass",
+        "color": "token:mutedOnField",
+        "width": 140,
+        "bodyFont": "token:mono",
+        "bodySize": 6.44,
+        "bodyAlign": "right"
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-6",
+       "name": "Cover title",
+       "type": "text-block",
+       "props": {
+        "x": 57,
+        "y": 445,
+        "width": 414,
+        "eyebrow": "Investment Compass",
+        "heading": "{{property.address}}",
+        "eyebrowFont": "token:mono",
+        "eyebrowSize": 7,
+        "headingFont": "token:display",
+        "headingSize": 41,
+        "anchorBottom": 564,
+        "eyebrowColor": "token:accentOnField",
+        "headingColor": "token:text",
+        "headingWeight": 400,
+        "eyebrowTracking": 0.34,
+        "headingLineHeight": 1.12
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-divider-7",
+       "type": "divider",
+       "props": {
+        "x": 57,
+        "y": 578,
+        "color": "token:primary",
+        "width": 481,
+        "thickness": 0.75
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-8",
+       "name": "Standfirst",
+       "type": "text-block",
+       "props": {
+        "x": 57,
+        "y": 594,
+        "body": "What the property is, what it costs to hold, and what the assessment concluded.",
+        "color": "token:mutedOnField",
+        "width": 414,
+        "bodyFont": "token:heading",
+        "bodySize": 15,
+        "bodyStyle": "italic",
+        "bodyLineHeight": 1.4
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-9",
+       "name": "Locations",
+       "type": "text-block",
+       "props": {
+        "x": 57,
+        "y": 671,
+        "body": "Prepared {{report.generatedDate | date}}",
+        "color": "token:mutedOnField",
+        "width": 481,
+        "bodyFont": "token:mono",
+        "bodySize": 7.000000000000001,
+        "bodyTracking": 0.16
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-kpi-grid-a",
+       "name": "Cover facts",
+       "type": "kpi-grid",
+       "props": {
+        "x": 57,
+        "y": 707,
+        "items": [
+         {
+          "label": "Verdict",
+          "value": "{{recommendation.action}}"
+         },
+         {
+          "label": "Grade",
+          "value": "{{recommendation.grade}}"
+         },
+         {
+          "label": "Score",
+          "value": "{{recommendation.score | fixed:0}}"
+         },
+         {
+          "label": "Weekly position",
+          "value": "{{financials.weeklyNet | currency}}"
+         }
+        ],
+        "width": 481,
+        "height": 78,
+        "columns": 4,
+        "variant": "ruled",
+        "labelFont": "token:mono",
+        "labelSize": 6,
+        "ruleColor": "token:line",
+        "valueFont": "token:heading",
+        "valueSize": 11,
+        "labelColor": "token:mutedOnField",
+        "valueColor": "token:text",
+        "emphasisColor": "token:line",
+        "labelTracking": 0.18
+       },
+       "overlays": []
+      }
+     ],
+     "background": {
+      "color": "token:bg"
+     }
+    }
+   ],
+   "tokens": {
+    "fonts": {
+     "body": "Inter, sans-serif",
+     "mono": "IBM Plex Mono, monospace",
+     "display": "Cinzel, serif",
+     "heading": "Playfair Display, serif"
+    },
+    "radii": {
+     "lg": 0,
+     "md": 0,
+     "sm": 0
+    },
+    "colors": {
+     "bg": "#251F18",
+     "ink": "#312920",
+     "info": "#0270A7",
+     "line": "#DDD1C0",
+     "text": "#FAF7EF",
+     "muted": "#6E6253",
+     "panel": "#F4EDDC",
+     "caution": "#856514",
+     "primary": "#8E6C15",
+     "surface": "#FAF7EF",
+     "mutedInk": "#5D5246",
+     "negative": "#D31212",
+     "positive": "#157A3A",
+     "accentInk": "#6A5110",
+     "onPrimary": "#FAF7EF",
+     "mutedOnField": "#B4A99C",
+     "accentOnField": "#D5A220"
+    },
+    "spacing": {
+     "gutter": 16,
+     "padding": 57,
+     "sectionGap": 24
+    },
+    "fontFaces": [
+     {
+      "cssUrl": "https://fonts.googleapis.com/css2?family=Cinzel:wght@400;600&display=swap",
+      "family": "Cinzel"
+     },
+     {
+      "cssUrl": "https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;1,400&display=swap",
+      "family": "Playfair Display"
+     },
+     {
+      "cssUrl": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap",
+      "family": "Inter"
+     },
+     {
+      "cssUrl": "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&display=swap",
+      "family": "IBM Plex Mono"
+     }
+    ],
+    "typeScale": {
+     "body": 9.5,
+     "cover": 41,
+     "eyebrow": 6.5,
+     "heading": 22
+    }
+   },
+   "version": 1
+  }
+ },
+ {
+  "id": "ea10b3db-cc68-459d-a43e-3fc3700463fa",
+  "family_id": "ae2ff737-c469-497f-a215-20cf22496c35",
+  "slug": "investment-compass-sm-01-grid",
+  "version": 1,
+  "name": "Grid",
+  "description": "Twelve-column grid, flat blocks, red reserved for negative figures and nothing decorative.",
+  "category": "investment",
+  "report_type": "investment_compass",
+  "tier": "compass",
+  "variant": null,
+  "status": "published",
+  "engine": "weasyprint",
+  "production_ready": true,
+  "page_count": 50,
+  "design_meta": {
+   "faces": "Inter",
+   "ground": "light",
+   "source": "claude-design/investment-compass-template-catalogue",
+   "density": "balanced",
+   "manifest": {
+    "radius": "0",
+    "density": "balanced",
+    "toc_style": "grid_index",
+    "kpi_layout": "grid_cells_four",
+    "chart_style": "bar_flat",
+    "table_style": "grid_lines_light",
+    "footer_style": "grid_number",
+    "risk_display": "flat_matrix",
+    "callout_style": "flat_block",
+    "cover_overlay": "flat_grid",
+    "design_family": "swiss_minimal",
+    "print_density": "standard",
+    "spacing_scale": "strict",
+    "border_treatment": "thin_grid",
+    "navigation_style": "grid_index",
+    "typography_preset": "inter_grotesk",
+    "numeric_typography": "inter_tabular",
+    "page_margin_preset": "18mm",
+    "recommendation_style": "flat_block",
+    "section_header_style": "grid_number"
+   },
+   "familyKey": "swiss_minimal",
+   "overrides": {},
+   "useBucket": "Handover and audit",
+   "colourways": [
+    "sm-red-accent",
+    "sm-ultramarine",
+    "sm-black-only",
+    "sm-signal-orange",
+    "sm-swiss-green",
+    "sm-cobalt-grey",
+    "sm-inverse",
+    "sm-ultramarine-inverse",
+    "sm-green-inverse",
+    "sm-mono-inverse"
+   ],
+   "familyCode": "sm",
+   "familyName": "Swiss Minimal",
+   "familyNote": "Strict grid, flat blocks, single red accent, no ornament",
+   "variantAxis": "A \u00b7 reference",
+   "architecture": "grid",
+   "printDensity": "standard",
+   "reportFormat": "investment-compass",
+   "templateCode": "sm-01",
+   "familyOrdinal": "06",
+   "recommendedUse": "Readers who want structure and nothing else",
+   "defaultColourway": "sm-red-accent",
+   "archetypeCoverage": "built",
+   "isFamilyReference": true
+  },
+  "preview_schema": {
+   "pages": [
+    {
+     "id": "ic-page-b",
+     "name": "Cover",
+     "size": {
+      "width": 595,
+      "height": 842
+     },
+     "blocks": [
+      {
+       "id": "ic-image-1",
+       "name": "Brand mark",
+       "type": "image",
+       "props": {
+        "x": 51,
+        "y": 51,
+        "fit": "contain",
+        "src": "{{org.mark}}",
+        "width": 50,
+        "height": 40,
+        "placeholder": false
+       },
+       "overlays": [],
+       "conditional": "org && org.mark"
+      },
+      {
+       "id": "ic-text-block-2",
+       "name": "Wordmark",
+       "type": "text-block",
+       "props": {
+        "x": 51,
+        "y": 107,
+        "body": "{{org.name}}\nInvestment Compass",
+        "color": "token:ink",
+        "width": 353,
+        "bodyFont": "token:display",
+        "bodySize": 10,
+        "bodyTracking": 0.26,
+        "bodyLineHeight": 1.35
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-divider-3",
+       "type": "divider",
+       "props": {
+        "x": 51,
+        "y": 145,
+        "color": "token:primary",
+        "width": 74,
+        "thickness": 1
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-4",
+       "name": "Tagline",
+       "type": "text-block",
+       "props": {
+        "x": 51,
+        "y": 153,
+        "body": "Your dedicated property partner",
+        "color": "token:mutedInk",
+        "width": 353,
+        "bodyFont": "token:mono",
+        "bodySize": 5.98,
+        "bodyTracking": 0.24
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-5",
+       "name": "Cover marker",
+       "type": "text-block",
+       "props": {
+        "x": 404,
+        "y": 107,
+        "body": "Investment Compass",
+        "color": "token:mutedInk",
+        "width": 140,
+        "bodyFont": "token:mono",
+        "bodySize": 5.98,
+        "bodyAlign": "right"
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-6",
+       "name": "Cover title",
+       "type": "text-block",
+       "props": {
+        "x": 51,
+        "y": 439,
+        "width": 424,
+        "eyebrow": "Investment Compass",
+        "heading": "{{property.address}}",
+        "eyebrowFont": "token:mono",
+        "eyebrowSize": 6.5,
+        "headingFont": "token:display",
+        "headingSize": 52,
+        "anchorBottom": 582,
+        "eyebrowColor": "token:accentInk",
+        "headingColor": "token:ink",
+        "headingWeight": 400,
+        "eyebrowTracking": 0.34,
+        "headingLineHeight": 1.12
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-divider-7",
+       "type": "divider",
+       "props": {
+        "x": 51,
+        "y": 596,
+        "color": "token:primary",
+        "width": 493,
+        "thickness": 0.75
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-8",
+       "name": "Standfirst",
+       "type": "text-block",
+       "props": {
+        "x": 51,
+        "y": 612,
+        "body": "What the property is, what it costs to hold, and what the assessment concluded.",
+        "color": "token:mutedInk",
+        "width": 424,
+        "bodyFont": "token:heading",
+        "bodySize": 13,
+        "bodyStyle": "italic",
+        "bodyLineHeight": 1.4
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-9",
+       "name": "Locations",
+       "type": "text-block",
+       "props": {
+        "x": 51,
+        "y": 681,
+        "body": "Prepared {{report.generatedDate | date}}",
+        "color": "token:mutedInk",
+        "width": 493,
+        "bodyFont": "token:mono",
+        "bodySize": 7.000000000000001,
+        "bodyTracking": 0.16
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-kpi-grid-a",
+       "name": "Cover facts",
+       "type": "kpi-grid",
+       "props": {
+        "x": 51,
+        "y": 713,
+        "items": [
+         {
+          "label": "Verdict",
+          "value": "{{recommendation.action}}"
+         },
+         {
+          "label": "Grade",
+          "value": "{{recommendation.grade}}"
+         },
+         {
+          "label": "Score",
+          "value": "{{recommendation.score | fixed:0}}"
+         },
+         {
+          "label": "Weekly position",
+          "value": "{{financials.weeklyNet | currency}}"
+         }
+        ],
+        "width": 493,
+        "height": 78,
+        "columns": 4,
+        "variant": "ruled",
+        "labelFont": "token:mono",
+        "labelSize": 6.25,
+        "ruleColor": "token:line",
+        "valueFont": "token:heading",
+        "valueSize": 11,
+        "labelColor": "token:mutedInk",
+        "valueColor": "token:ink",
+        "emphasisColor": "token:ink",
+        "labelTracking": 0.18
+       },
+       "overlays": []
+      }
+     ],
+     "background": {
+      "color": "token:surface"
+     }
+    }
+   ],
+   "tokens": {
+    "fonts": {
+     "body": "Inter, sans-serif",
+     "mono": "Inter, sans-serif",
+     "display": "Inter, sans-serif",
+     "heading": "Inter, sans-serif"
+    },
+    "radii": {
+     "lg": 0,
+     "md": 0,
+     "sm": 0
+    },
+    "colors": {
+     "bg": "#111111",
+     "ink": "#1B1B1B",
+     "info": "#0270A7",
+     "line": "#DCDCDC",
+     "text": "#F4F4F4",
+     "muted": "#6B6B6B",
+     "panel": "#E7E7E7",
+     "caution": "#856514",
+     "primary": "#D31212",
+     "surface": "#F4F4F4",
+     "mutedInk": "#525252",
+     "negative": "#D31212",
+     "positive": "#157A3A",
+     "accentInk": "#A40E0E",
+     "onPrimary": "#F4F4F4",
+     "mutedOnField": "#9E9E9E",
+     "accentOnField": "#F47B7B"
+    },
+    "spacing": {
+     "gutter": 13,
+     "padding": 51,
+     "sectionGap": 20
+    },
+    "fontFaces": [
+     {
+      "cssUrl": "https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap",
+      "family": "Inter"
+     }
+    ],
+    "typeScale": {
+     "body": 8.25,
+     "cover": 52,
+     "eyebrow": 6.5,
+     "heading": 22
+    }
+   },
+   "version": 1
+  }
+ },
+ {
+  "id": "0cf20078-6fcc-4453-b993-1416844b327e",
+  "family_id": "bd4edb4b-685b-469d-bc38-da2f682826e4",
+  "slug": "investment-compass-wm-01-statement",
+  "version": 1,
+  "name": "Statement",
+  "description": "Every page opens on an obsidian band. Statement rules with single subtotals and double totals.",
+  "category": "investment",
+  "report_type": "investment_compass",
+  "tier": "compass",
+  "variant": null,
+  "status": "published",
+  "engine": "weasyprint",
+  "production_ready": true,
+  "page_count": 51,
+  "design_meta": {
+   "faces": "Roboto",
+   "ground": "light",
+   "source": "claude-design/investment-compass-template-catalogue",
+   "density": "balanced",
+   "manifest": {
+    "radius": "0",
+    "density": "balanced",
+    "toc_style": "band_index",
+    "kpi_layout": "statement_rows",
+    "chart_style": "bar_stacked",
+    "table_style": "statement_rules",
+    "footer_style": "rule_page_number",
+    "risk_display": "rated_rows",
+    "callout_style": "band_note",
+    "cover_overlay": "obsidian_band",
+    "design_family": "wealth_management",
+    "print_density": "standard",
+    "spacing_scale": "regular",
+    "capital_framing": "total_committed",
+    "border_treatment": "rule",
+    "navigation_style": "band_index",
+    "typography_preset": "roboto_only",
+    "numeric_typography": "roboto_tabular",
+    "page_margin_preset": "20mm",
+    "recommendation_style": "band_card",
+    "section_header_style": "band_header"
+   },
+   "familyKey": "wealth_management",
+   "overrides": {},
+   "useBucket": "Client-facing",
+   "colourways": [
+    "wm-obsidian-band",
+    "wm-bronze",
+    "wm-sea-slate",
+    "wm-heritage-green",
+    "wm-aubergine",
+    "wm-sandstone",
+    "wm-private-night",
+    "wm-sea-night",
+    "wm-heritage-night",
+    "wm-aubergine-night"
+   ],
+   "familyCode": "wm",
+   "familyName": "Wealth Management",
+   "familyNote": "Roboto, obsidian bands, statement rules, capital framing",
+   "variantAxis": "A \u00b7 reference",
+   "architecture": "band",
+   "printDensity": "standard",
+   "reportFormat": "investment-compass",
+   "templateCode": "wm-01",
+   "familyOrdinal": "08",
+   "recommendedUse": "Client packs where total capital is the point",
+   "defaultColourway": "wm-obsidian-band",
+   "archetypeCoverage": "built",
+   "isFamilyReference": true
+  },
+  "preview_schema": {
+   "pages": [
+    {
+     "id": "ic-page-c",
+     "name": "Cover",
+     "size": {
+      "width": 595,
+      "height": 842
+     },
+     "blocks": [
+      {
+       "id": "ic-hero-1",
+       "name": "Cover band",
+       "type": "hero",
+       "props": {
+        "x": 0,
+        "y": 0,
+        "bg": "token:bg",
+        "color": "token:text",
+        "title": "",
+        "width": 595,
+        "height": 176
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-image-2",
+       "name": "Brand mark",
+       "type": "image",
+       "props": {
+        "x": 57,
+        "y": 57,
+        "fit": "contain",
+        "src": "{{org.markMono}}",
+        "width": 50,
+        "height": 40,
+        "placeholder": false
+       },
+       "overlays": [],
+       "conditional": "org && org.markMono"
+      },
+      {
+       "id": "ic-text-block-3",
+       "name": "Wordmark",
+       "type": "text-block",
+       "props": {
+        "x": 57,
+        "y": 113,
+        "body": "{{org.name}}\nInvestment Compass",
+        "color": "token:text",
+        "width": 341,
+        "bodyFont": "token:display",
+        "bodySize": 11,
+        "bodyTracking": 0.26,
+        "bodyLineHeight": 1.35
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-divider-4",
+       "type": "divider",
+       "props": {
+        "x": 57,
+        "y": 151,
+        "color": "token:primary",
+        "width": 74,
+        "thickness": 1
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-5",
+       "name": "Tagline",
+       "type": "text-block",
+       "props": {
+        "x": 57,
+        "y": 159,
+        "body": "Your dedicated property partner",
+        "color": "token:mutedOnField",
+        "width": 341,
+        "bodyFont": "token:mono",
+        "bodySize": 6.21,
+        "bodyTracking": 0.24
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-6",
+       "name": "Cover marker",
+       "type": "text-block",
+       "props": {
+        "x": 398,
+        "y": 113,
+        "body": "Investment Compass",
+        "color": "token:mutedOnField",
+        "width": 140,
+        "bodyFont": "token:mono",
+        "bodySize": 6.21,
+        "bodyAlign": "right"
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-7",
+       "name": "Cover title",
+       "type": "text-block",
+       "props": {
+        "x": 57,
+        "y": 469,
+        "width": 414,
+        "eyebrow": "Investment Compass",
+        "heading": "{{property.address}}",
+        "eyebrowFont": "token:mono",
+        "eyebrowSize": 6.75,
+        "headingFont": "token:display",
+        "headingSize": 34,
+        "anchorBottom": 572,
+        "eyebrowColor": "token:accentInk",
+        "headingColor": "token:ink",
+        "headingWeight": 400,
+        "eyebrowTracking": 0.34,
+        "headingLineHeight": 1.12
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-divider-8",
+       "type": "divider",
+       "props": {
+        "x": 57,
+        "y": 586,
+        "color": "token:primary",
+        "width": 481,
+        "thickness": 0.75
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-9",
+       "name": "Standfirst",
+       "type": "text-block",
+       "props": {
+        "x": 57,
+        "y": 602,
+        "body": "What the property is, what it costs to hold, and what the assessment concluded.",
+        "color": "token:mutedInk",
+        "width": 414,
+        "bodyFont": "token:heading",
+        "bodySize": 14,
+        "bodyStyle": "italic",
+        "bodyLineHeight": 1.4
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-text-block-a",
+       "name": "Locations",
+       "type": "text-block",
+       "props": {
+        "x": 57,
+        "y": 675,
+        "body": "Prepared {{report.generatedDate | date}}",
+        "color": "token:mutedInk",
+        "width": 481,
+        "bodyFont": "token:mono",
+        "bodySize": 7.000000000000001,
+        "bodyTracking": 0.16
+       },
+       "overlays": []
+      },
+      {
+       "id": "ic-kpi-grid-b",
+       "name": "Cover facts",
+       "type": "kpi-grid",
+       "props": {
+        "x": 57,
+        "y": 707,
+        "items": [
+         {
+          "label": "Verdict",
+          "value": "{{recommendation.action}}"
+         },
+         {
+          "label": "Grade",
+          "value": "{{recommendation.grade}}"
+         },
+         {
+          "label": "Score",
+          "value": "{{recommendation.score | fixed:0}}"
+         },
+         {
+          "label": "Weekly position",
+          "value": "{{financials.weeklyNet | currency}}"
+         }
+        ],
+        "width": 481,
+        "height": 78,
+        "columns": 4,
+        "variant": "ruled",
+        "labelFont": "token:mono",
+        "labelSize": 6.25,
+        "ruleColor": "token:line",
+        "valueFont": "token:heading",
+        "valueSize": 11,
+        "labelColor": "token:mutedInk",
+        "valueColor": "token:ink",
+        "emphasisColor": "token:ink",
+        "labelTracking": 0.18
+       },
+       "overlays": []
+      }
+     ],
+     "background": {
+      "color": "token:surface"
+     }
+    }
+   ],
+   "tokens": {
+    "fonts": {
+     "body": "Roboto, sans-serif",
+     "mono": "Roboto, sans-serif",
+     "display": "Roboto, sans-serif",
+     "heading": "Roboto, sans-serif"
+    },
+    "radii": {
+     "lg": 0,
+     "md": 0,
+     "sm": 0
+    },
+    "colors": {
+     "bg": "#1E1B16",
+     "ink": "#2A261F",
+     "info": "#0270A7",
+     "line": "#DFDCD4",
+     "text": "#FAF9F6",
+     "muted": "#6B675F",
+     "panel": "#F1EEE6",
+     "caution": "#856514",
+     "primary": "#1E1B16",
+     "surface": "#FAF9F6",
+     "mutedInk": "#58554E",
+     "negative": "#D31212",
+     "positive": "#157A3A",
+     "accentInk": "#1E1B16",
+     "onPrimary": "#FAF9F6",
+     "mutedOnField": "#AAA79F",
+     "accentOnField": "#B0A593"
+    },
+    "spacing": {
+     "gutter": 14,
+     "padding": 57,
+     "sectionGap": 20
+    },
+    "fontFaces": [
+     {
+      "cssUrl": "https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap",
+      "family": "Roboto"
+     }
+    ],
+    "typeScale": {
+     "body": 8.75,
+     "cover": 34,
+     "eyebrow": 6.25,
+     "heading": 22
+    }
+   },
+   "version": 1
+  }
+ },
+ {
+  "id": "6851c904-3671-44c3-9960-34c93d1fb112",
+  "family_id": "183c75fb-eab9-4233-b647-f06efdfaee8a",
+  "slug": "commercial-property-assessment",
+  "version": 1,
+  "name": "Commercial Property Assessment",
+  "description": "Tenancy schedule, WALE, outgoings recovery and capitalised value.",
+  "category": "investment",
+  "report_type": "investment",
+  "tier": null,
+  "variant": null,
+  "status": "published",
+  "engine": "weasyprint",
+  "production_ready": true,
+  "page_count": 6,
+  "design_meta": {},
+  "preview_schema": {
+   "pages": [
+    {
+     "id": "seed-page-2",
+     "name": "Cover",
+     "size": {
+      "width": 595,
+      "height": 842
+     },
+     "blocks": [
+      {
+       "id": "seed-cover-1",
+       "type": "cover",
+       "props": {
+        "bg": "token:bg",
+        "mark": "{{org.markMono}}",
+        "color": "token:text",
+        "title": "{{property.address}}",
+        "accent": "token:primary",
+        "eyebrow": "Commercial",
+        "footnote": "",
+        "subtitle": "Acquisition assessment for {{client.name}}",
+        "titleSize": 36
+       },
+       "overlays": []
+      }
+     ],
+     "background": {
+      "color": "token:bg"
+     }
+    }
+   ],
+   "tokens": {
+    "fonts": {
+     "body": "Public Sans, sans-serif",
+     "mono": "IBM Plex Mono, monospace",
+     "heading": "Public Sans, sans-serif"
+    },
+    "radii": {
+     "lg": 4,
+     "md": 2,
+     "sm": 2
+    },
+    "colors": {
+     "bg": "#251F18",
+     "ink": "#312A21",
+     "line": "#D5DCE3",
+     "text": "#FAF7EF",
+     "muted": "#6E6253",
+     "panel": "#EEF1F4",
+     "caution": "#A98019",
+     "primary": "#D9A521",
+     "surface": "#FFFDFA",
+     "mutedInk": "#5F5548",
+     "negative": "#C51111",
+     "positive": "#188C42",
+     "accentInk": "#6F5411",
+     "onPrimary": "#251F18",
+     "mutedOnField": "#B4A99C",
+     "accentOnField": "#D9A521"
+    },
+    "spacing": {
+     "gutter": 14,
+     "padding": 24,
+     "sectionGap": 22
+    },
+    "fontFaces": [
+     {
+      "cssUrl": "https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800&display=swap",
+      "family": "Public Sans"
+     },
+     {
+      "cssUrl": "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700;800&display=swap",
+      "family": "IBM Plex Mono"
+     }
+    ],
+    "typeScale": {
+     "body": 9,
+     "cover": 36,
+     "eyebrow": 7.5,
+     "heading": 16
+    }
+   },
+   "version": 1
+  }
+ },
+ {
+  "id": "e2548e5a-6eda-413b-a4bc-22e09c0697a0",
+  "family_id": "ef32ee25-1a1a-459c-81cf-7ddab92dbea6",
+  "slug": "development-feasibility-study",
+  "version": 1,
+  "name": "Development Feasibility Study",
+  "description": "Yield, costs, revenue, programme and the residual land value.",
+  "category": "investment",
+  "report_type": "investment",
+  "tier": null,
+  "variant": null,
+  "status": "published",
+  "engine": "weasyprint",
+  "production_ready": true,
+  "page_count": 6,
+  "design_meta": {},
+  "preview_schema": {
+   "pages": [
+    {
+     "id": "seed-page-2",
+     "name": "Cover",
+     "size": {
+      "width": 595,
+      "height": 842
+     },
+     "blocks": [
+      {
+       "id": "seed-cover-1",
+       "type": "cover",
+       "props": {
+        "bg": "token:bg",
+        "mark": "{{org.markMono}}",
+        "color": "token:text",
+        "title": "{{property.address}}",
+        "accent": "token:primary",
+        "eyebrow": "Feasibility",
+        "footnote": "",
+        "subtitle": "Development study for {{client.name}}",
+        "titleSize": 36
+       },
+       "overlays": []
+      }
+     ],
+     "background": {
+      "color": "token:bg"
+     }
+    }
+   ],
+   "tokens": {
+    "fonts": {
+     "body": "Public Sans, sans-serif",
+     "mono": "IBM Plex Mono, monospace",
+     "heading": "Public Sans, sans-serif"
+    },
+    "radii": {
+     "lg": 4,
+     "md": 2,
+     "sm": 2
+    },
+    "colors": {
+     "bg": "#251F18",
+     "ink": "#312A21",
+     "line": "#D5DCE3",
+     "text": "#FAF7EF",
+     "muted": "#6E6253",
+     "panel": "#EEF1F4",
+     "caution": "#A98019",
+     "primary": "#D9A521",
+     "surface": "#FFFDFA",
+     "mutedInk": "#5F5548",
+     "negative": "#C51111",
+     "positive": "#188C42",
+     "accentInk": "#6F5411",
+     "onPrimary": "#251F18",
+     "mutedOnField": "#B4A99C",
+     "accentOnField": "#D9A521"
+    },
+    "spacing": {
+     "gutter": 14,
+     "padding": 24,
+     "sectionGap": 22
+    },
+    "fontFaces": [
+     {
+      "cssUrl": "https://fonts.googleapis.com/css2?family=Public+Sans:wght@300;400;500;600;700;800&display=swap",
+      "family": "Public Sans"
+     },
+     {
+      "cssUrl": "https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@300;400;500;600;700;800&display=swap",
+      "family": "IBM Plex Mono"
+     }
+    ],
+    "typeScale": {
+     "body": 9,
+     "cover": 36,
+     "eyebrow": 7.5,
+     "heading": 16
+    }
+   },
+   "version": 1
+  }
+ }
+]

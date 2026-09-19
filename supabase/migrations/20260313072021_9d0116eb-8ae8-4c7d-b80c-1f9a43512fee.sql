@@ -1,0 +1,1 @@
+ALTER TABLE public.client_portal_users ADD COLUMN IF NOT EXISTS has_completed_onboarding boolean NOT NULL DEFAULT false;

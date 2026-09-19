@@ -1,0 +1,26 @@
+/* Webfonts shipped by the NPC product. Both TTF binaries live in the
+   dashboard repo at public/fonts/ and are used by the report / PDF render
+   pipeline for cover pages and pull quotes.
+
+   The APPLICATION body font is NOT a webfont — the product ships a system
+   sans stack (tokens/typography.css --font-sans) and lets the White-Label
+   admin swap a stack per tenant. Do not invent a body webfont.
+
+   For PDF rendering these faces must be installed in the WeasyPrint
+   container; the browser never loads them. */
+
+@font-face {
+  font-family: "Cinzel";
+  src: url("../../../../public/fonts/Cinzel-Bold.ttf") format("truetype");
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Playfair Display";
+  src: url("../../../../public/fonts/PlayfairDisplay-Medium.ttf") format("truetype");
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}

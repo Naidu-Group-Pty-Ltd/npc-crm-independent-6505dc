@@ -1,0 +1,7 @@
+{
+  "assistant": "Sham Dental Main",
+  "assistantId": "90d839b4-22c9-4b96-8293-9c3d9f356adb",
+  "note": "System prompts are replaced by promptRef; the text is in ../prompts/<ref>.md. Everything else is the API response verbatim.",
+  "versionCount": 0,
+  "versions": []
+}

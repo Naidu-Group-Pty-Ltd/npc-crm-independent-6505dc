@@ -1,0 +1,75 @@
+# J1 container runtime gate — manual (workflow_dispatch).
+#
+# Builds the Docling vNext candidate image (Dockerfile.vnext, target
+# vnext-cpu-standard) on a clean CI runner and runs the offline conversion smoke.
+# The local sandbox could execute every OTHER J1 runtime gate (uv sync, real
+# conversions, runtime-wiring spy, E1 V3, profile application, HTTP routes) but
+# NOT the containerised build — its Docker-build network cannot reach PyPI. This
+# workflow closes that gap. It never pushes an image and never deploys anything.
+name: pdf-vnext-j1-container-gate
+
+on:
+  workflow_dispatch: {}
+
+permissions:
+  contents: read
+
+jobs:
+  build-and-smoke:
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Free disk (torch + models are large)
+        run: |
+          sudo rm -rf /usr/share/dotnet /opt/ghc /usr/local/lib/android || true
+          df -h /
+
+      - name: Build vnext-cpu-standard image
+        run: |
+          cd pdf-parse-service
+          DOCKER_BUILDKIT=1 docker build --progress=plain \
+            -f Dockerfile.vnext --target vnext-cpu-standard \
+            -t pdf-parse-vnext:j1 .
+          docker images pdf-parse-vnext:j1
+
+      - name: Container starts + root/capabilities identify vNext
+        run: |
+          docker run -d --name vnext -e PDF_PARSE_SERVICE_TOKEN=ci-token -p 8080:8080 pdf-parse-vnext:j1
+          for i in $(seq 1 30); do
+            code=$(curl -s -o /dev/null -w '%{http_code}' -H 'Authorization: Bearer ci-token' http://127.0.0.1:8080/ || true)
+            [ "$code" = "200" ] && break; sleep 3
+          done
+          curl -s -H 'Authorization: Bearer ci-token' http://127.0.0.1:8080/ | tee /tmp/root.json
+          grep -q '"runtime_profile": *"vnext"' /tmp/root.json || grep -q '"runtime_profile":"vnext"' /tmp/root.json
+          curl -s -H 'Authorization: Bearer ci-token' http://127.0.0.1:8080/capabilities | tee /tmp/caps.json >/dev/null
+          grep -q 'docling_vnext' /tmp/caps.json
+          grep -q '2.113.0' /tmp/caps.json
+
+      - name: Offline conversion smoke (--network none)
+        run: |
+          # Generate a fixture on the host, then convert it INSIDE the image with
+          # NO network — proving required models were baked in (no request-time DL).
+          python3 pdf-parse-service/vnext/tests/generate_fixtures.py /tmp/e2fx
+          docker run --rm --network none \
+            -v /tmp/e2fx:/fx:ro -v "$PWD/pdf-parse-service":/src:ro \
+            pdf-parse-vnext:j1 \
+            vnext/.venv/bin/python - <<'PY'
+          import io, sys
+          sys.path.insert(0, "/app")
+          from docling_runtime_vnext import DoclingVNextRuntime
+          from docling_vnext_profiles import resolve_vnext_converter_profile, VNextBuildOptions
+          from docling.datamodel.base_models import DocumentStream
+          rt = DoclingVNextRuntime(VNextBuildOptions())
+          prof = resolve_vnext_converter_profile({"lane": "fast_native"}, rt.capabilities(), VNextBuildOptions())
+          data = open("/fx/01_native_prose.pdf", "rb").read()
+          res = rt.convert(DocumentStream(name="s.pdf", stream=io.BytesIO(data)), prof)
+          print("offline status:", res.status, "pages:", res.pages_processed, "engine:", res.engine_identity.get("docling_version"))
+          assert res.status == "success" and res.pages_processed >= 1, "offline conversion failed"
+          print("OFFLINE CONVERSION OK (no request-time model download)")
+          PY
+
+      - name: Teardown
+        if: always()
+        run: docker rm -f vnext || true

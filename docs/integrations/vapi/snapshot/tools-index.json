@@ -1,0 +1,1177 @@
+[
+  {
+    "name": "checkAvailability",
+    "id": "326c7c81-e4c2-4bcb-bcf3-134a1af73f49",
+    "type": "function",
+    "async": false,
+    "latestVersion": "v1",
+    "createdAt": "2024-07-18T14:06:24.643Z",
+    "updatedAt": "2024-07-18T14:46:42.071Z",
+    "server": {
+      "url": "https://hook.eu2.make.com/9hr5vgh78dqq4sl19lpgsfji716rtu1o",
+      "timeoutSeconds": null,
+      "staticIpAddressesEnabled": null,
+      "headerNames": [],
+      "headers": {}
+    },
+    "function": {
+      "name": "checkAvailability",
+      "description": "Check the availability on the business calendar for a requested time by the customer. If all the slots are available, respond by saying we're available all day. If there are busy slots, make sure the requested time slot is available. If not, suggest alternative slots.",
+      "strict": null,
+      "parameterNames": [
+        "times"
+      ],
+      "required": null
+    },
+    "staticBodyFields": [],
+    "variableExtractionPlan": null,
+    "metadata": null,
+    "destinations": null,
+    "messages": [],
+    "usedBy": [
+      "Xenochrome Assistant"
+    ],
+    "usedByCount": 1
+  },
+  {
+    "name": "end_call_tool",
+    "id": "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+    "type": "endCall",
+    "async": false,
+    "latestVersion": "v1",
+    "createdAt": "2026-01-05T09:57:06.341Z",
+    "updatedAt": "2026-01-12T06:28:36.694Z",
+    "server": {
+      "url": null,
+      "timeoutSeconds": null,
+      "staticIpAddressesEnabled": null,
+      "headerNames": [],
+      "headers": {}
+    },
+    "function": {
+      "name": "end_call_tool",
+      "description": "This tool should be called only after the agent has completed the closing sequence \nand said goodbye to the caller.",
+      "strict": null,
+      "parameterNames": [],
+      "required": []
+    },
+    "staticBodyFields": [],
+    "variableExtractionPlan": null,
+    "metadata": null,
+    "destinations": null,
+    "messages": [
+      {
+        "type": "request-start",
+        "content": ""
+      }
+    ],
+    "usedBy": [
+      "NPC Active Nurturing",
+      "NPC Discovery Call Follow Up Test",
+      "NPC Discovery Call Follow Up Test 2",
+      "NPC Discovery Call No Show Follow Up",
+      "NPC IFC Inbound",
+      "NPC IFC No Show Follow Up",
+      "NPC Inbound Agent",
+      "NPC Opt In Follow Up",
+      "NPC Opt In Follow Up Inbound",
+      "NPC Quiz Follow Up",
+      "NPC Strategy Session (Phone) Follow Up",
+      "NPC Strategy Session (Phone) No Show",
+      "NPC Strategy Session Inbound"
+    ],
+    "usedByCount": 13
+  },
+  {
+    "name": "get_call_context",
+    "id": "0bd36de8-6d3a-43e5-9c3f-25ca6de97662",
+    "type": "function",
+    "async": false,
+    "latestVersion": "v1",
+    "createdAt": "2026-05-14T10:17:52.591Z",
+    "updatedAt": "2026-05-14T10:17:52.591Z",
+    "server": {
+      "url": "https://hook.eu2.make.com/o51u3jb5g1nn1lxiluziezpr7gh5vvt8",
+      "timeoutSeconds": 20,
+      "staticIpAddressesEnabled": null,
+      "headerNames": [],
+      "headers": {}
+    },
+    "function": {
+      "name": "get_call_context",
+      "description": "Retrieves the stored live call context for the current Vapi call from the external session store. Use this tool after contact resolution and at the start of downstream assistant flows to recover contactId, firstName, fullName, phone, contactState, confirmedIntent, and callerReason. This tool does not search GHL, create contacts, book calls, or update calendars.",
+      "strict": null,
+      "parameterNames": [],
+      "required": []
+    },
+    "staticBodyFields": [
+      {
+        "key": "vapiCallId",
+        "value": "{{ call.id }}"
+      },
+      {
+        "key": "callerPhone",
+        "value": "{{ customer.number }}"
+      },
+      {
+        "key": "phone",
+        "value": "{{ customer.number }}"
+      }
+    ],
+    "variableExtractionPlan": {
+      "aliases": [
+        {
+          "key": "contextFound",
+          "value": "{{ $.contextFound }}"
+        },
+        {
+          "key": "contactId",
+          "value": "{{ $.contactId }}"
+        },
+        {
+          "key": "firstName",
+          "value": "{{ $.firstName }}"
+        },
+        {
+          "key": "fullName",
+          "value": "{{ $.fullName }}"
+        },
+        {
+          "key": "phone",
+          "value": "{{ $.phone }}"
+        },
+        {
+          "key": "callerPhone",
+          "value": "{{ $.callerPhone }}"
+        },
+        {
+          "key": "contactState",
+          "value": "{{ $.contactState }}"
+        },
+        {
+          "key": "contactFound",
+          "value": "{{ $.contactFound }}"
+        },
+        {
+          "key": "contactCreated",
+          "value": "{{ $.contactCreated }}"
+        },
+        {
+          "key": "confirmedIntent",
+          "value": "{{ $.confirmedIntent }}"
+        },
+        {
+          "key": "callerReason",
+          "value": "{{ $.callerReason }}"
+        },
+        {
+          "key": "handoffReady",
+          "value": "{{ $.handoffReady }}"
+        },
+        {
+          "key": "vapiCallId",
+          "value": "{{ $.vapiCallId }}"
+        }
+      ]
+    },
+    "metadata": null,
+    "destinations": null,
+    "messages": [
+      {
+        "type": "request-start",
+        "content": ""
+      }
+    ],
+    "usedBy": [
+      "NPC Inbound Agent"
+    ],
+    "usedByCount": 1
+  },
+  {
+    "name": "get_contact_airtable_test",
+    "id": "11317eb2-1b44-4e9e-ae7f-e6baaee0d77b",
+    "type": "function",
+    "async": true,
+    "latestVersion": "v1",
+    "createdAt": "2025-11-12T07:44:07.443Z",
+    "updatedAt": "2025-11-14T06:04:01.328Z",
+    "server": {
+      "url": "https://airtable.com/apptyShYE0yzL4IGB/tblH9cW4EhVs6D5H1/Lead_Data_Test",
+      "timeoutSeconds": null,
+      "staticIpAddressesEnabled": null,
+      "headerNames": [
+        "Authorization",
+        "Content-Type"
+      ],
+      "headers": {
+        "Content-Type": "application/json",
+        "Authorization": "{{REDACTED:CREDENTIAL}}"
+      }
+    },
+    "function": {
+      "name": "get_contact_airtable_test",
+      "description": "Extract lead data such as full name, phone number, discovery call time",
+      "strict": null,
+      "parameterNames": [
+        "discovery_call_time",
+        "full_name",
+        "phone_number"
+      ],
+      "required": []
+    },
+    "staticBodyFields": [],
+    "variableExtractionPlan": null,
+    "metadata": null,
+    "destinations": null,
+    "messages": [
+      {
+        "type": "request-start",
+        "content": null
+      }
+    ],
+    "usedBy": [],
+    "usedByCount": 0
+  },
+  {
+    "name": "ghl_check_availability",
+    "id": "6587bc7d-7382-4e33-a38d-95f5740df52a",
+    "type": "function",
+    "async": null,
+    "latestVersion": "v1",
+    "createdAt": "2026-05-11T22:57:43.778Z",
+    "updatedAt": "2026-05-14T16:50:42.125Z",
+    "server": {
+      "url": "https://hook.eu2.make.com/3xslmou0jpbwxbutg8we362f9jsh96q0",
+      "timeoutSeconds": 20,
+      "staticIpAddressesEnabled": false,
+      "headerNames": [],
+      "headers": {}
+    },
+    "function": {
+      "name": "ghl_check_availability",
+      "description": "Use this tool to check GoHighLevel calendar availability for NPC Services appointment bookings. This tool sends the caller's booking intent to Make, where the appointment type is classified and routed to the correct hardcoded GoHighLevel calendar. Use this tool only to check available appointment slots. Do not use this tool to create a booking. The tool requires the booking intent, a start and end search window in Unix milliseconds, the timezone, and the intended appointment duration.",
+      "strict": null,
+      "parameterNames": [
+        "booking_intent_text",
+        "caller_context",
+        "duration_minutes",
+        "endDateMs",
+        "preferred_date_text",
+        "search_reason",
+        "startDateMs",
+        "timezone"
+      ],
+      "required": [
+        "booking_intent_text",
+        "startDateMs",
+        "endDateMs",
+        "timezone",
+        "duration_minutes"
+      ]
+    },
+    "staticBodyFields": [],
+    "variableExtractionPlan": {
+      "schema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    },
+    "metadata": null,
+    "destinations": null,
+    "messages": [
+      {
+        "type": "request-start",
+        "content": "Let me check the available times for you."
+      }
+    ],
+    "usedBy": [
+      "NPC Active Nurturing",
+      "NPC Discovery Call Follow Up Test",
+      "NPC Discovery Call No Show Follow Up",
+      "NPC IFC Follow Up",
+      "NPC IFC Inbound",
+      "NPC IFC No Show Follow Up",
+      "NPC Opt In Follow Up",
+      "NPC Opt In Follow Up Inbound",
+      "NPC Quiz Follow Up",
+      "NPC Strategy Session (Phone) Follow Up",
+      "NPC Strategy Session (Phone) No Show",
+      "NPC Strategy Session Inbound"
+    ],
+    "usedByCount": 12
+  },
+  {
+    "name": "ghl_create_booking",
+    "id": "f195a817-8346-475d-ad0e-8033f1d2e283",
+    "type": "function",
+    "async": false,
+    "latestVersion": "v1",
+    "createdAt": "2026-05-12T07:49:39.353Z",
+    "updatedAt": "2026-05-14T17:53:57.196Z",
+    "server": {
+      "url": "https://hook.eu2.make.com/eop70ky2635nobauh7lyof13sctvl0ga",
+      "timeoutSeconds": 20,
+      "staticIpAddressesEnabled": false,
+      "headerNames": [],
+      "headers": {}
+    },
+    "function": {
+      "name": "ghl_create_booking",
+      "description": "Use this tool to create a confirmed GoHighLevel appointment for NPC Services after the caller has selected and clearly confirmed an available time. The tool sends the caller's booking intent, contact ID, location ID, confirmed start time, end time, title, and notes to Make. Make classifies the appointment type and routes the request to the correct hardcoded GoHighLevel calendar. This tool creates a real booking. Only call this tool after contact resolution has returned a valid contactId and after availability has already been checked.",
+      "strict": null,
+      "parameterNames": [
+        "booking_intent_text",
+        "caller_context",
+        "contactId",
+        "endTime",
+        "locationId",
+        "notes",
+        "preferred_date_text",
+        "search_reason",
+        "startTime",
+        "timezone"
+      ],
+      "required": [
+        "booking_intent_text",
+        "locationId",
+        "contactId",
+        "startTime",
+        "endTime",
+        "timezone"
+      ]
+    },
+    "staticBodyFields": [],
+    "variableExtractionPlan": {
+      "schema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      }
+    },
+    "metadata": null,
+    "destinations": null,
+    "messages": [
+      {
+        "type": "request-start",
+        "content": "Perfect, I’ll go ahead and book that in for you now."
+      },
+      {
+        "type": "request-complete",
+        "content": "All set, your appointment has been booked."
+      }
+    ],
+    "usedBy": [
+      "NPC Active Nurturing",
+      "NPC Discovery Call Follow Up Test",
+      "NPC Discovery Call No Show Follow Up",
+      "NPC IFC Follow Up",
+      "NPC IFC Inbound",
+      "NPC IFC No Show Follow Up",
+      "NPC Opt In Follow Up",
+      "NPC Opt In Follow Up Inbound",
+      "NPC Quiz Follow Up",
+      "NPC Strategy Session (Phone) Follow Up",
+      "NPC Strategy Session (Phone) No Show",
+      "NPC Strategy Session Inbound"
+    ],
+    "usedByCount": 12
+  },
+  {
+    "name": "ghl_delete_event_npc",
+    "id": "5934c762-0223-4112-bfb7-88931da17652",
+    "type": "function",
+    "async": true,
+    "latestVersion": "v1",
+    "createdAt": "2025-11-26T03:21:28.748Z",
+    "updatedAt": "2025-11-26T04:59:54.305Z",
+    "server": {
+      "url": "https://hook.eu2.make.com/9inh27jwcxodgecrbwvjosx7i5xedm67",
+      "timeoutSeconds": 60,
+      "staticIpAddressesEnabled": null,
+      "headerNames": [],
+      "headers": {}
+    },
+    "function": {
+      "name": "ghl_delete_event_npc",
+      "description": "This tool should be used to delete events through a separate automation by retrieving the contact name and existing booking time they made previously.",
+      "strict": true,
+      "parameterNames": [
+        "discoveryCallTime",
+        "fullName"
+      ],
+      "required": [
+        "fullName",
+        "discoveryCallTime"
+      ]
+    },
+    "staticBodyFields": [],
+    "variableExtractionPlan": null,
+    "metadata": null,
+    "destinations": null,
+    "messages": [
+      {
+        "type": "request-start",
+        "content": null
+      }
+    ],
+    "usedBy": [
+      "NPC Discovery Call Follow Up",
+      "NPC Discovery Call Follow Up Test",
+      "NPC Discovery Call Follow Up Test 2"
+    ],
+    "usedByCount": 3
+  },
+  {
+    "name": "ghl_delete_event_npc_2",
+    "id": "87fb4ce8-b696-4925-bfbf-8bd9678d4e36",
+    "type": "function",
+    "async": true,
+    "latestVersion": "v1",
+    "createdAt": "2025-11-28T14:09:33.704Z",
+    "updatedAt": "2025-12-02T07:28:21.105Z",
+    "server": {
+      "url": "https://hook.eu2.make.com/ujov89m0me5kmc012fzc6l5bhn4t8oep",
+      "timeoutSeconds": 20,
+      "staticIpAddressesEnabled": null,
+      "headerNames": [],
+      "headers": {}
+    },
+    "function": {
+      "name": "ghl_delete_event_npc_2",
+      "description": "This tool should be used to delete events through a separate automation by retrieving the contact name and existing booking time they made previously.",
+      "strict": true,
+      "parameterNames": [
+        "discoveryCallTime",
+        "fullName"
+      ],
+      "required": [
+        "fullName",
+        "discoveryCallTime"
+      ]
+    },
+    "staticBodyFields": [],
+    "variableExtractionPlan": null,
+    "metadata": null,
+    "destinations": null,
+    "messages": [
+      {
+        "type": "request-start",
+        "content": null
+      }
+    ],
+    "usedBy": [
+      "NPC Strategy Session (Phone) Follow Up",
+      "NPC Strategy Session Inbound"
+    ],
+    "usedByCount": 2
+  },
+  {
+    "name": "ghl_delete_event_npc_2_1",
+    "id": "a34b05ef-5218-4771-bf2b-4b171ad8f9c9",
+    "type": "function",
+    "async": true,
+    "latestVersion": "v1",
+    "createdAt": "2025-12-01T05:03:15.413Z",
+    "updatedAt": "2025-12-04T09:32:59.823Z",
+    "server": {
+      "url": "https://hook.eu2.make.com/w5e69pe59ahue41em25rvh97j91wtxbj",
+      "timeoutSeconds": 20,
+      "staticIpAddressesEnabled": null,
+      "headerNames": [],
+      "headers": {}
+    },
+    "function": {
+      "name": "ghl_delete_event_npc_2_1",
+      "description": "This tool should be used to delete events through a separate automation by retrieving the contact name and existing booking time they made previously.",
+      "strict": true,
+      "parameterNames": [
+        "discoveryCallTime",
+        "fullName"
+      ],
+      "required": [
+        "fullName",
+        "discoveryCallTime"
+      ]
+    },
+    "staticBodyFields": [],
+    "variableExtractionPlan": null,
+    "metadata": null,
+    "destinations": null,
+    "messages": [
+      {
+        "type": "request-start",
+        "content": null
+      }
+    ],
+    "usedBy": [
+      "NPC Strategy Session (Phone) Follow Up",
+      "NPC Strategy Session Inbound"
+    ],
+    "usedByCount": 2
+  },
+  {
+    "name": "ghl_delete_event_npc_3",
+    "id": "006be564-14c2-4db9-9c90-6821d363b123",
+    "type": "function",
+    "async": true,
+    "latestVersion": "v1",
+    "createdAt": "2025-12-07T15:06:31.324Z",
+    "updatedAt": "2025-12-07T15:10:20.712Z",
+    "server": {
+      "url": "https://hook.eu2.make.com/ks0eu13idcgwr9wf8tp4ak7a1gqj8e6i",
+      "timeoutSeconds": 20,
+      "staticIpAddressesEnabled": null,
+      "headerNames": [],
+      "headers": {}
+    },
+    "function": {
+      "name": "ghl_delete_event_npc_3",
+      "description": "This tool should be used to delete events through a separate automation by retrieving the contact name and existing booking time they made previously.",
+      "strict": true,
+      "parameterNames": [
+        "discoveryCallTime",
+        "fullName"
+      ],
+      "required": [
+        "fullName",
+        "discoveryCallTime"
+      ]
+    },
+    "staticBodyFields": [],
+    "variableExtractionPlan": null,
+    "metadata": null,
+    "destinations": null,
+    "messages": [
+      {
+        "type": "request-start",
+        "content": null
+      }
+    ],
+    "usedBy": [
+      "NPC IFC Follow Up",
+      "NPC IFC Inbound"
+    ],
+    "usedByCount": 2
+  },
+  {
+    "name": "ghl_delete_event_npc_3_1",
+    "id": "ba13974d-8005-487d-81b9-4dc569a9f6d4",
+    "type": "function",
+    "async": true,
+    "latestVersion": "v1",
+    "createdAt": "2025-12-07T14:58:10.891Z",
+    "updatedAt": "2025-12-07T15:04:38.981Z",
+    "server": {
+      "url": "https://hook.eu2.make.com/u60ggcqrdo9tq4gbiwabe67w9nwg255m",
+      "timeoutSeconds": 20,
+      "staticIpAddressesEnabled": null,
+      "headerNames": [],
+      "headers": {}
+    },
+    "function": {
+      "name": "ghl_delete_event_npc_3_1",
+      "description": "This tool should be used to delete events through a separate automation by retrieving the contact name and existing booking time they made previously.",
+      "strict": true,
+      "parameterNames": [
+        "discoveryCallTime",
+        "fullName"
+      ],
+      "required": [
+        "fullName",
+        "discoveryCallTime"
+      ]
+    },
+    "staticBodyFields": [],
+    "variableExtractionPlan": null,
+    "metadata": null,
+    "destinations": null,
+    "messages": [
+      {
+        "type": "request-start",
+        "content": null
+      }
+    ],
+    "usedBy": [
+      "NPC IFC Follow Up"
+    ],
+    "usedByCount": 1
+  },
+  {
+    "name": "ghl_mcp",
+    "id": "32c907eb-ff8c-4a9e-868d-67eb1144ee42",
+    "type": "mcp",
+    "async": null,
+    "latestVersion": "v1",
+    "createdAt": "2026-05-14T09:17:51.843Z",
+    "updatedAt": "2026-05-14T09:17:51.843Z",
+    "server": {
+      "url": "https://services.leadconnectorhq.com/mcp/",
+      "timeoutSeconds": null,
+      "staticIpAddressesEnabled": null,
+      "headerNames": [
+        "Authorization",
+        "locationId"
+      ],
+      "headers": {
+        "locationId": "H7NNnJKSofGaRJHTkAd3",
+        "Authorization": "{{REDACTED:CREDENTIAL}}"
+      }
+    },
+    "function": {
+      "name": "ghl_mcp",
+      "description": "GHL MCP toolset for accessing GoHighLevel contacts, calendars, opportunities, conversations, custom fields, and related sub-account data. Use this only when direct GHL data access is required. Do not use this as the call memory layer; use get_call_context for live call context.",
+      "strict": null,
+      "parameterNames": [],
+      "required": null
+    },
+    "staticBodyFields": [],
+    "variableExtractionPlan": null,
+    "metadata": {
+      "protocol": "shttp"
+    },
+    "destinations": null,
+    "messages": [],
+    "usedBy": [],
+    "usedByCount": 0
+  },
+  {
+    "name": "ghl_resolve_contact",
+    "id": "3e116e74-0dda-4277-ae38-468bdd3464e6",
+    "type": "function",
+    "async": false,
+    "latestVersion": "v1",
+    "createdAt": "2026-05-11T20:31:17.833Z",
+    "updatedAt": "2026-05-14T06:15:49.375Z",
+    "server": {
+      "url": "https://hook.eu2.make.com/db3ws2lmqi4qh9ozsyt1tvn3j8tbeahm",
+      "timeoutSeconds": 20,
+      "staticIpAddressesEnabled": false,
+      "headerNames": [],
+      "headers": {}
+    },
+    "function": {
+      "name": "ghl_resolve_contact",
+      "description": "Resolve an inbound caller contact in GoHighLevel. The caller phone number is injected automatically by Vapi as a trusted static parameter and must not be generated, guessed, formatted, or manually supplied by the assistant. The tool must search by the injected phone number first. If no contact is found and the caller's name is known, the tool may create the contact.",
+      "strict": null,
+      "parameterNames": [
+        "first_name",
+        "full_name",
+        "last_name"
+      ],
+      "required": []
+    },
+    "staticBodyFields": [
+      {
+        "key": "phone",
+        "value": "{{ customer.number }}"
+      },
+      {
+        "key": "customer_number",
+        "value": "{{ customer.number }}"
+      },
+      {
+        "key": "called_number",
+        "value": "{{ phoneNumber.number }}"
+      },
+      {
+        "key": "vapi_call_id",
+        "value": "{{ call.id }}"
+      },
+      {
+        "key": "call_type",
+        "value": "{{ call.type }}"
+      }
+    ],
+    "variableExtractionPlan": {
+      "schema": {
+        "type": "object",
+        "required": [],
+        "properties": {}
+      },
+      "aliases": [
+        {
+          "key": "contactId",
+          "value": "{{ $.contactId }}"
+        },
+        {
+          "key": "firstName",
+          "value": "{{ $.firstName }}"
+        },
+        {
+          "key": "fullName",
+          "value": "{{ $.fullName }}"
+        },
+        {
+          "key": "phone",
+          "value": "{{ $.phone }}"
+        },
+        {
+          "key": "contactState",
+          "value": "{{ $.contactState }}"
+        },
+        {
+          "key": "contactFound",
+          "value": "{{ $.contactFound }}"
+        },
+        {
+          "key": "contactCreated",
+          "value": "{{ $.contactCreated }}"
+        },
+        {
+          "key": "requiresName",
+          "value": "{{ $.requiresName }}"
+        },
+        {
+          "key": "requiresPhone",
+          "value": "{{ $.requiresPhone }}"
+        },
+        {
+          "key": "ghlContactId",
+          "value": "{{ $.contactId }}"
+        },
+        {
+          "key": "ghlFirstName",
+          "value": "{{ $.firstName }}"
+        },
+        {
+          "key": "ghlFullName",
+          "value": "{{ $.fullName }}"
+        },
+        {
+          "key": "ghlContactPhone",
+          "value": "{{ $.phone }}"
+        },
+        {
+          "key": "ghlContactState",
+          "value": "{{ $.contactState }}"
+        }
+      ]
+    },
+    "metadata": null,
+    "destinations": null,
+    "messages": [
+      {
+        "type": "request-start",
+        "content": ""
+      }
+    ],
+    "usedBy": [
+      "NPC Active Nurturing",
+      "NPC Discovery Call Follow Up Test",
+      "NPC Discovery Call No Show Follow Up",
+      "NPC IFC Follow Up",
+      "NPC IFC Inbound",
+      "NPC IFC No Show Follow Up",
+      "NPC Inbound Agent",
+      "NPC Opt In Follow Up",
+      "NPC Opt In Follow Up Inbound",
+      "NPC Quiz Follow Up",
+      "NPC Strategy Session (Phone) Follow Up",
+      "NPC Strategy Session (Phone) No Show",
+      "NPC Strategy Session Inbound"
+    ],
+    "usedByCount": 13
+  },
+  {
+    "name": "go_high_level_mcp_contact_get_tool",
+    "id": "300e5550-fa2f-4fa6-99e2-0636b59f4973",
+    "type": "gohighlevel.contact.get",
+    "async": null,
+    "latestVersion": "v1",
+    "createdAt": "2026-05-11T03:06:18.897Z",
+    "updatedAt": "2026-05-11T03:06:18.897Z",
+    "server": {
+      "url": null,
+      "timeoutSeconds": null,
+      "staticIpAddressesEnabled": null,
+      "headerNames": [],
+      "headers": {}
+    },
+    "function": {
+      "name": "go_high_level_mcp_contact_get_tool",
+      "description": null,
+      "strict": null,
+      "parameterNames": [],
+      "required": null
+    },
+    "staticBodyFields": [],
+    "variableExtractionPlan": null,
+    "metadata": null,
+    "destinations": null,
+    "messages": [],
+    "usedBy": [],
+    "usedByCount": 0
+  },
+  {
+    "name": "go_high_level_mcp_contact_get_tool",
+    "id": "e525406e-acaa-4e9d-b806-7ae9d21c358e",
+    "type": "gohighlevel.contact.get",
+    "async": null,
+    "latestVersion": "v1",
+    "createdAt": "2025-11-12T07:43:12.766Z",
+    "updatedAt": "2025-11-12T07:43:43.216Z",
+    "server": {
+      "url": null,
+      "timeoutSeconds": null,
+      "staticIpAddressesEnabled": null,
+      "headerNames": [],
+      "headers": {}
+    },
+    "function": {
+      "name": "go_high_level_mcp_contact_get_tool",
+      "description": "Extract lead metadata such as full name, phone number, discovery call time.",
+      "strict": null,
+      "parameterNames": [],
+      "required": []
+    },
+    "staticBodyFields": [],
+    "variableExtractionPlan": null,
+    "metadata": {
+      "customerPhoneEnabled": true
+    },
+    "destinations": null,
+    "messages": [
+      {
+        "type": "request-start",
+        "content": null
+      }
+    ],
+    "usedBy": [],
+    "usedByCount": 0
+  },
+  {
+    "name": "google_sheets_tool",
+    "id": "a1124ce2-f0f0-476d-969d-bdff57937775",
+    "type": "google.sheets.row.append",
+    "async": null,
+    "latestVersion": "v1",
+    "createdAt": "2025-11-12T07:36:34.595Z",
+    "updatedAt": "2025-11-12T07:36:34.595Z",
+    "server": {
+      "url": null,
+      "timeoutSeconds": null,
+      "staticIpAddressesEnabled": null,
+      "headerNames": [],
+      "headers": {}
+    },
+    "function": {
+      "name": "google_sheets_tool",
+      "description": null,
+      "strict": null,
+      "parameterNames": [],
+      "required": null
+    },
+    "staticBodyFields": [],
+    "variableExtractionPlan": null,
+    "metadata": null,
+    "destinations": null,
+    "messages": [],
+    "usedBy": [],
+    "usedByCount": 0
+  },
+  {
+    "name": "phoneNumber_inject",
+    "id": "c40722f1-a359-42e1-ba80-e99ef706a916",
+    "type": "function",
+    "async": false,
+    "latestVersion": "v1",
+    "createdAt": "2026-05-14T06:38:31.146Z",
+    "updatedAt": "2026-05-14T06:38:31.146Z",
+    "server": {
+      "url": "https://hook.eu2.make.com/ryb05h6kzpzv8fnwi6lki6r8lldokomy",
+      "timeoutSeconds": 20,
+      "staticIpAddressesEnabled": null,
+      "headerNames": [],
+      "headers": {}
+    },
+    "function": {
+      "name": "phoneNumber_inject",
+      "description": "Context bridge tool fired once before Angela hands off to a downstream assistant. This tool preserves resolved caller context such as contactId, firstName, fullName, phone, contactState, confirmedIntent, and callerReason. It must not search GHL, create contacts, book calls, or choose the downstream assistant by itself.",
+      "strict": null,
+      "parameterNames": [
+        "callerReason",
+        "confirmedIntent"
+      ],
+      "required": [
+        "confirmedIntent"
+      ]
+    },
+    "staticBodyFields": [
+      {
+        "key": "contactId",
+        "value": "{{ contactId }}"
+      },
+      {
+        "key": "firstName",
+        "value": "{{ firstName }}"
+      },
+      {
+        "key": "fullName",
+        "value": "{{ fullName }}"
+      },
+      {
+        "key": "phone",
+        "value": "{{ phone }}"
+      },
+      {
+        "key": "contactState",
+        "value": "{{ contactState }}"
+      },
+      {
+        "key": "callerPhone",
+        "value": "{{ customer.number }}"
+      },
+      {
+        "key": "vapiCallId",
+        "value": "{{ call.id }}"
+      },
+      {
+        "key": "callType",
+        "value": "{{ call.type }}"
+      },
+      {
+        "key": "ghlContactId",
+        "value": "{{ ghlContactId }}"
+      },
+      {
+        "key": "ghlFirstName",
+        "value": "{{ ghlFirstName }}"
+      },
+      {
+        "key": "ghlFullName",
+        "value": "{{ ghlFullName }}"
+      },
+      {
+        "key": "ghlContactPhone",
+        "value": "{{ ghlContactPhone }}"
+      },
+      {
+        "key": "ghlContactState",
+        "value": "{{ ghlContactState }}"
+      }
+    ],
+    "variableExtractionPlan": {
+      "aliases": [
+        {
+          "key": "contactId",
+          "value": "{{ $.contactId }}"
+        },
+        {
+          "key": "firstName",
+          "value": "{{ $.firstName }}"
+        },
+        {
+          "key": "fullName",
+          "value": "{{ $.fullName }}"
+        },
+        {
+          "key": "phone",
+          "value": "{{ $.phone }}"
+        },
+        {
+          "key": "contactState",
+          "value": "{{ $.contactState }}"
+        },
+        {
+          "key": "confirmedIntent",
+          "value": "{{ $.confirmedIntent }}"
+        },
+        {
+          "key": "callerReason",
+          "value": "{{ $.callerReason }}"
+        },
+        {
+          "key": "handoffReady",
+          "value": "{{ $.handoffReady }}"
+        },
+        {
+          "key": "vapiCallId",
+          "value": "{{ $.vapiCallId }}"
+        }
+      ]
+    },
+    "metadata": null,
+    "destinations": null,
+    "messages": [
+      {
+        "type": "request-start",
+        "content": null
+      }
+    ],
+    "usedBy": [],
+    "usedByCount": 0
+  },
+  {
+    "name": "phoneNumber_inject",
+    "id": "9789b720-ee13-4389-ba33-678883eaa891",
+    "type": "function",
+    "async": false,
+    "latestVersion": "v1",
+    "createdAt": "2025-12-15T09:03:06.956Z",
+    "updatedAt": "2026-01-29T01:52:26.064Z",
+    "server": {
+      "url": "https://hook.eu2.make.com/2ubukyatwc0ig8zinphjjc4dciwhigqg",
+      "timeoutSeconds": 20,
+      "staticIpAddressesEnabled": null,
+      "headerNames": [],
+      "headers": {}
+    },
+    "function": {
+      "name": "phoneNumber_inject",
+      "description": "This tool should be fired only once when a caller asks to one of three calls (discovery call, strategy session, initial finance consult)",
+      "strict": null,
+      "parameterNames": [
+        "{{contactId}}",
+        "{{firstName}}",
+        "{{fullName}}"
+      ],
+      "required": [
+        "{{firstName}}",
+        "{{contactId}}",
+        "{{fullName}}"
+      ]
+    },
+    "staticBodyFields": [],
+    "variableExtractionPlan": null,
+    "metadata": null,
+    "destinations": null,
+    "messages": [
+      {
+        "type": "request-start",
+        "content": null
+      }
+    ],
+    "usedBy": [
+      "NPC Inbound Agent"
+    ],
+    "usedByCount": 1
+  },
+  {
+    "name": "transfer_to_human",
+    "id": "5c0c334c-6bbf-4399-b748-a3c50207e754",
+    "type": "function",
+    "async": false,
+    "latestVersion": "v1",
+    "createdAt": "2026-05-20T11:15:24.350Z",
+    "updatedAt": "2026-05-20T11:15:24.350Z",
+    "server": {
+      "url": "https://hook.eu2.make.com/jb85m14jchgktf09sfxt4jmf8yggaw32",
+      "timeoutSeconds": 20,
+      "staticIpAddressesEnabled": false,
+      "headerNames": [],
+      "headers": {}
+    },
+    "function": {
+      "name": "transfer_to_human",
+      "description": "Trigger this tool only when the caller clearly asks to speak to a human, real person, team member, manager, or live representative. This tool does not perform a native Vapi transfer. It calls Make.com, which redirects the active Twilio parent call to the human team member.",
+      "strict": null,
+      "parameterNames": [
+        "callerContext",
+        "transferReason"
+      ],
+      "required": [
+        "transferReason"
+      ]
+    },
+    "staticBodyFields": [
+      {
+        "key": "callerPhone",
+        "value": "{{ customer.number }}"
+      },
+      {
+        "key": "customer_number",
+        "value": "{{ customer.number }}"
+      },
+      {
+        "key": "vapiCallId",
+        "value": "{{ call.id }}"
+      },
+      {
+        "key": "calledNumber",
+        "value": "{{ phoneNumber.number }}"
+      },
+      {
+        "key": "callType",
+        "value": "{{ call.type }}"
+      }
+    ],
+    "variableExtractionPlan": null,
+    "metadata": null,
+    "destinations": null,
+    "messages": [
+      {
+        "type": "request-start",
+        "content": ""
+      },
+      {
+        "type": "request-failed",
+        "content": "Sorry, I couldn’t connect you through right now. The team will still be able to help if you call back on this number."
+      }
+    ],
+    "usedBy": [
+      "NPC Active Nurturing",
+      "NPC Discovery Call Follow Up Test",
+      "NPC Discovery Call No Show Follow Up",
+      "NPC IFC Follow Up",
+      "NPC IFC Inbound",
+      "NPC IFC No Show Follow Up",
+      "NPC Inbound Agent",
+      "NPC Opt In Follow Up",
+      "NPC Opt In Follow Up Inbound",
+      "NPC Quiz Follow Up",
+      "NPC Strategy Session (Phone) Follow Up",
+      "NPC Strategy Session (Phone) No Show",
+      "NPC Strategy Session Inbound"
+    ],
+    "usedByCount": 13
+  },
+  {
+    "name": "transfer_to_human",
+    "id": "3a6a892d-2907-4da0-b2f8-a55d5b404a84",
+    "type": "transferCall",
+    "async": false,
+    "latestVersion": "v1",
+    "createdAt": "2026-05-07T09:10:01.056Z",
+    "updatedAt": "2026-05-19T09:49:58.158Z",
+    "server": {
+      "url": null,
+      "timeoutSeconds": null,
+      "staticIpAddressesEnabled": null,
+      "headerNames": [],
+      "headers": {}
+    },
+    "function": {
+      "name": "transfer_to_human",
+      "description": "Trigger this tool when a caller asks to speak to a human/real person",
+      "strict": null,
+      "parameterNames": [],
+      "required": null
+    },
+    "staticBodyFields": [],
+    "variableExtractionPlan": null,
+    "metadata": null,
+    "destinations": [
+      {
+        "type": "number",
+        "number": "+61433005110",
+        "message": "Got it — I’ll connect you with a team member now.",
+        "callerId": "+61286093299",
+        "transferPlan": {
+          "mode": "warm-transfer-twiml",
+          "twiml": "<Say>Hi, this is NPC Services. A caller has asked to speak with a team member. You will be connected now.</Say>",
+          "sipVerb": "refer"
+        },
+        "numberE164CheckEnabled": true
+      }
+    ],
+    "messages": [
+      {
+        "type": "request-start",
+        "content": ""
+      }
+    ],
+    "usedBy": [],
+    "usedByCount": 0
+  }
+]

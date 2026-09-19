@@ -1,0 +1,1590 @@
+project_id = "dduzbchuswwbefdunfct"
+
+[functions.aml-cases]
+verify_jwt = false
+
+[functions.aml-access]
+verify_jwt = false
+
+[functions.aml-client-portal]
+verify_jwt = false
+
+[functions.aml-verification]
+verify_jwt = false
+
+[functions.aml-provider-webhook]
+verify_jwt = false
+
+# Didit calls this from their own servers and cannot carry a Supabase JWT.
+# The HMAC signature over the raw body (X-Signature + X-Timestamp, verified in
+# _shared/aml/providers/diditClient.ts) IS the authentication boundary: it is
+# checked before any service-role database access, and no unsigned or stale
+# request can change AML state.
+[functions.didit-webhook]
+verify_jwt = false
+
+[functions.aml-risk]
+verify_jwt = false
+
+[functions.aml-entities]
+verify_jwt = false
+
+[functions.aml-finance]
+verify_jwt = false
+
+[functions.aml-transactions]
+verify_jwt = false
+
+[functions.aml-monitoring]
+verify_jwt = false
+
+[functions.aml-reporting]
+verify_jwt = false
+
+[functions.aml-records]
+verify_jwt = false
+
+[functions.aml-tenant]
+verify_jwt = false
+
+[functions.aml-step-up]
+verify_jwt = false
+
+[functions.aml-ai-guardrail]
+verify_jwt = false
+
+[functions.aml-release-gate]
+verify_jwt = false
+
+[functions.aml-resilience]
+verify_jwt = false
+
+[functions.aml-launch-ops]
+verify_jwt = false
+
+# Compliance passport: staff ops verify their own session in-function;
+# partner ops authenticate with a hashed grant token minted by grant_access
+# (finance handoff-token pattern) and cannot carry a Supabase JWT.
+[functions.aml-reliance]
+verify_jwt = false
+
+[functions.finance-email-track-pixel]
+verify_jwt = false
+
+[functions.share-report-with-finance]
+verify_jwt = false
+
+[functions.template-share]
+verify_jwt = false
+request_timeout = 60
+
+[functions.template-analytics]
+verify_jwt = true
+request_timeout = 60
+
+[functions.template-ai-author]
+verify_jwt = true
+request_timeout = 60
+
+[functions.finance-portal-client-comms]
+verify_jwt = false
+
+[functions.outlook-calendar]
+verify_jwt = false
+
+[functions.portal-book-appointment]
+verify_jwt = false
+
+[functions.manage-agency-agreements]
+verify_jwt = false
+
+[functions.manage-loan-writer-undertakings]
+verify_jwt = false
+
+[functions.partner-consent-portal]
+verify_jwt = false
+
+[functions.import-clients-from-ghl]
+verify_jwt = true
+# Declared rather than inherited, because the function's own wall-clock budget
+# is set against it: 95s of work under a 120s ceiling leaves room to write a
+# response that says how far the walk got. A run the platform cuts off reports
+# nothing, and a caller cannot tell that from one that finished.
+request_timeout = 120
+
+[functions.compare-investment-reports]
+verify_jwt = true
+request_timeout = 180
+
+[functions.compare-cash-flow-reports]
+verify_jwt = true
+request_timeout = 180
+
+[functions.generate-portfolio-analysis]
+verify_jwt = true
+# A fourteen-section analysis took 78s of model time at a 8,000-token budget,
+# and that budget was the reason every answer arrived truncated. A larger one
+# is a longer call, so the wall clock moves with it. `report-qa` sits at 300.
+request_timeout = 240
+
+[functions.calculate-borrowing-capacity]
+verify_jwt = true
+
+[functions.regenerate-report-qualitative]
+verify_jwt = true
+request_timeout = 900
+
+[functions.outlook-email-sync]
+verify_jwt = false
+
+[functions.outlook-manage-subscription]
+verify_jwt = true
+
+[functions.ghl-calendar-proxy]
+verify_jwt = false
+
+[functions.sync-notes-to-ghl]
+verify_jwt = false
+
+[functions.manage-call-settings]
+verify_jwt = true
+
+# Branding writes authenticate from the HttpOnly staff session cookie inside the
+# handler; the gateway cannot see that cookie, so JWT verification must be off.
+[functions.manage-branding]
+verify_jwt = false
+
+[functions.manage-report-preferences]
+verify_jwt = true
+
+[functions.check-integration-secrets]
+verify_jwt = true
+
+[functions.update-integration-secret]
+verify_jwt = true
+
+[functions.get-api-usage-stats]
+verify_jwt = true
+
+[functions.request-lead-magnet]
+verify_jwt = false
+
+[api]
+enabled = true
+port = 54321
+schemas = ["public", "graphql_public", "aml"]
+extra_search_path = ["public", "extensions"]
+max_rows = 1000
+
+[db]
+port = 54322
+shadow_port = 54320
+major_version = 15
+
+[db.pooler]
+enabled = false
+port = 54329
+pool_mode = "transaction"
+default_pool_size = 20
+max_client_conn = 100
+
+[realtime]
+enabled = true
+port = 54323
+tenant_id = "realtime-dev"
+
+[studio]
+enabled = true
+port = 54324
+api_url = "http://127.0.0.1:54321"
+openai_api_key = "env(OPENAI_API_KEY)"
+
+[inbucket]
+enabled = true
+port = 54325
+smtp_port = 54326
+pop3_port = 54327
+
+[storage]
+enabled = true
+port = 54328
+file_size_limit = "50MiB"
+image_transformation = { enabled = false }
+
+[auth]
+enabled = true
+port = 54329
+site_url = "http://127.0.0.1:3000"
+additional_redirect_urls = ["https://127.0.0.1:3000"]
+jwt_expiry = 3600
+enable_signup = false
+enable_confirmations = false
+
+[auth.email]
+enable_signup = false
+double_confirm_changes = false
+enable_confirmations = false
+
+[edge_functions]
+enabled = true
+
+[functions.custom-auth-login]
+verify_jwt = false
+
+[functions.custom-auth-logout]
+verify_jwt = false
+
+[functions.custom-auth-verify]
+verify_jwt = false
+
+[functions.custom-auth-login-v2]
+verify_jwt = false
+
+[functions.custom-auth-logout-v2]
+verify_jwt = false
+
+[functions.custom-auth-verify-v2]
+verify_jwt = false
+
+[functions.airtable-proxy]
+verify_jwt = false
+
+[functions.generate-chart-images]
+verify_jwt = true
+
+[functions.generate-charts-python]
+verify_jwt = true
+
+[functions.generate-chart-analysis]
+verify_jwt = true
+
+[functions.generate-investment-report]
+verify_jwt = false
+request_timeout = 1500
+
+[functions.resume-bulk-generation]
+verify_jwt = false
+request_timeout = 1500
+
+[functions.resume-investment-reports]
+verify_jwt = false
+request_timeout = 1500
+
+[functions.abs-data-service]
+verify_jwt = false
+
+# The crime reference-data ingest: same internal-secret / per-state
+# sealed-bootstrap auth as abs-poa-ingest (see the function header).
+[functions.crime-data-ingest]
+verify_jwt = true
+
+# The GTFS transport ingest: internal-secret / sealed-bootstrap auth in the
+# function, gateway JWT in front of it, exactly as the other ingests.
+[functions.transport-gtfs-ingest]
+verify_jwt = true
+
+# The ABS reference-data ingest: internal-secret / sealed-bootstrap auth
+# inside; the gateway JWT stays on in front of it.
+[functions.abs-poa-ingest]
+verify_jwt = true
+
+# The RBA statistical-tables ingest: CSV text arrives in the POST body
+# (rba.gov.au refuses this project's egress), parsed server-side; internal
+# secret via X-Cron-Secret / per-table sealed-bootstrap auth inside, the
+# gateway JWT on in front.
+[functions.rba-tables-ingest]
+verify_jwt = true
+
+# The ABS regional-population ingest: fetches the release datacube itself
+# (abs.gov.au answers this project's egress); internal secret /
+# sealed-bootstrap auth inside, the gateway JWT on in front.
+[functions.abs-regional-ingest]
+verify_jwt = true
+
+# The open-data sales register loader (docs/reports/OPEN_DATA_GROWTH_EVIDENCE.md):
+# fetches the QGSO and NSW DCJ workbooks itself (both hosts answer this
+# project's egress); verifyAuth inside (internal secret or service role), the
+# gateway JWT on in front.
+# Estimate CGR: the growth rate the ten-year cash flow assumes, read from the
+# open sales register for the typed address. Browser-called with the user's JWT;
+# verifyAuth inside, as estimate-property-expenses.
+[functions.estimate-capital-growth]
+verify_jwt = true
+
+[functions.amenity-register-ingest]
+verify_jwt = true
+
+[functions.market-sales-ingest]
+verify_jwt = true
+
+# The per-section index over stored reports: derives an addressable projection
+# of investment_reports.report_content and writes only the two derived tables.
+# Internal secret (bearer or X-Cron-Secret) or the per-report self-sealing
+# bootstrap arm inside; the gateway JWT stays on in front of it.
+[functions.report-sections-index]
+verify_jwt = true
+
+# Public-class locality service (parseJsonBody-bounded), like its siblings.
+[functions.abs-regional-service]
+verify_jwt = false
+
+[functions.rba-data-service]
+verify_jwt = false
+
+[functions.financial-calculator-service]
+verify_jwt = false
+
+[functions.location-intelligence-service]
+verify_jwt = false
+
+[functions.investment-scoring-service]
+verify_jwt = false
+
+[functions.domain-data-service]
+verify_jwt = false
+
+[functions.risk-assessment-service]
+verify_jwt = false
+
+[functions.abs-seifa-service]
+verify_jwt = false
+
+[functions.crime-statistics-service]
+verify_jwt = false
+
+[functions.abs-employment-service]
+verify_jwt = false
+
+[functions.climate-data-service]
+verify_jwt = false
+
+[functions.school-data-service]
+verify_jwt = false
+
+[functions.public-transport-service]
+verify_jwt = false
+
+# Browser-called, so the gateway JWT check must stay OFF.
+#
+# A CORS preflight carries no `Authorization` header — browsers never send one —
+# so with `verify_jwt = true` the gateway rejects the OPTIONS with a 503 and its
+# own wildcard CORS headers, and the function never runs at all. The browser
+# then fails the preflight and `fetch` rejects, which the app surfaces as
+# "Network/CORS error calling <fn>". The deploy gate reported it as a CORS
+# policy fault for months; it was this.
+#
+# Safe because the function authenticates itself before doing anything:
+# `enforceCsrf` -> `verifyAuth` -> an explicit admin-role check.
+[functions.import-schools-data]
+verify_jwt = false
+
+[functions.generate-bulk-reports]
+verify_jwt = true
+request_timeout = 150
+
+[functions.migrate-comparison-scores]
+verify_jwt = true
+
+[functions.format-comparison-report]
+verify_jwt = true
+request_timeout = 60
+
+[functions.financial-validation-service]
+verify_jwt = true
+
+[functions.report-schema-validator]
+verify_jwt = true
+
+[functions.data-conflict-resolver]
+verify_jwt = true
+
+[functions.update-stamp-duty-rates]
+verify_jwt = true
+request_timeout = 120
+
+[functions.auto-report-webhook]
+verify_jwt = false
+request_timeout = 180
+
+[functions.auto-report-sync]
+verify_jwt = true
+request_timeout = 300
+
+[functions.email-copilot]
+verify_jwt = false
+
+[functions.email-sync-cron]
+verify_jwt = false
+
+[functions.outlook-email-webhook]
+verify_jwt = false
+
+[functions.vapi-call-webhook]
+verify_jwt = false
+
+[functions.voice-to-text]
+verify_jwt = false
+
+[functions.send-email-reply]
+verify_jwt = false
+
+[functions.sqm-rent-service]
+verify_jwt = true
+
+[functions.import-suburb-directory]
+verify_jwt = true
+request_timeout = 120
+
+[functions.send-call-alert-email]
+verify_jwt = true
+
+[functions.send-weekly-call-report]
+verify_jwt = true
+
+[functions.cleanup-stale-calls]
+verify_jwt = true
+
+[functions.report-qa]
+verify_jwt = false
+request_timeout = 300
+
+[functions.condense-investment-report]
+verify_jwt = false
+request_timeout = 300
+
+[functions.scrape-property-listing]
+verify_jwt = false
+request_timeout = 120
+
+[functions.estimate-property-expenses]
+verify_jwt = true
+
+[functions.dispatch-workflow-triggers]
+# pg_cron presents the anon key at the gateway; authority is the HMAC envelope
+# the function verifies itself (verifySignedInternal, caller "pg_cron").
+verify_jwt = false
+
+[functions.execute-workflow-step]
+verify_jwt = true
+
+[functions.parse-property-pdf]
+verify_jwt = false
+request_timeout = 300
+
+[functions.parse-template-document]
+verify_jwt = true
+request_timeout = 120
+
+[functions.retrieve-template-context]
+verify_jwt = true
+request_timeout = 120
+
+[functions.ghl-calendar-test]
+verify_jwt = true
+
+[functions.ghl-calendar]
+verify_jwt = false
+
+[functions.admin-password-reset]
+verify_jwt = true
+
+[functions.admin-user-management]
+verify_jwt = false
+
+[functions.secure-storage]
+verify_jwt = true
+
+[functions.get-investment-reports]
+verify_jwt = true
+
+[functions.manage-investment-reports]
+verify_jwt = true
+
+[functions.render-investment-report-pdf]
+verify_jwt = false
+request_timeout = 1500
+
+[functions.fork-investment-report]
+verify_jwt = false
+request_timeout = 300
+
+[functions.get-call-logs]
+verify_jwt = true
+
+[functions.get-call-recording]
+verify_jwt = true
+
+[functions.manage-call-logs]
+verify_jwt = true
+
+[functions.get-activity-logs]
+verify_jwt = true
+
+[functions.archive-old-reports]
+verify_jwt = true
+
+[functions.fix-report-status]
+verify_jwt = true
+
+[functions.log-activity]
+verify_jwt = true
+
+[functions.sync-client-to-ghl]
+verify_jwt = false
+
+[functions.clean-note-transcript]
+verify_jwt = true
+
+[functions.sync-ghl-pipelines]
+verify_jwt = true
+request_timeout = 120
+
+[functions.update-ghl-opportunity-stage]
+verify_jwt = true
+
+[functions.manage-bc-scenarios]
+verify_jwt = true
+
+[functions.commercial-bc-scenario-agent]
+verify_jwt = true
+
+[functions.cdr-lending-rates-service]
+verify_jwt = false
+request_timeout = 120
+
+[functions.get-client-data]
+verify_jwt = true
+
+[functions.manage-client-data]
+verify_jwt = true
+
+[functions.user-guide-assistant]
+verify_jwt = true
+
+[functions.manage-automation-settings]
+verify_jwt = true
+
+[functions.manage-data-import]
+verify_jwt = true
+
+[functions.manage-template-library]
+verify_jwt = true
+request_timeout = 1500
+
+[functions.manage-templates]
+# Authentication and authorisation are enforced inside the function by
+# verifyAuth + requireModulePermission. Gateway JWT verification must remain
+# disabled so HttpOnly Command Centre cookie sessions can reach that verifier
+# when the short-lived browser JWT is absent or stale.
+verify_jwt = false
+request_timeout = 1500
+
+[functions.import-from-url]
+# Auth verified in-function (verifyAuthOrNativeUser). Gateway JWT must stay OFF:
+# expired custom HS256 access tokens 401 at the gateway before the function's
+# session-token auth can run — URL imports failed with opaque auth errors.
+verify_jwt = false
+
+[functions.get-system-logs]
+verify_jwt = true
+
+[functions.cleanup-call-log-names]
+verify_jwt = true
+request_timeout = 300
+
+[functions.get-email-data]
+verify_jwt = false
+
+# Operator-only backfill. Was verify_jwt = false with no caller check of any
+# kind, a service-role client and CORS '*' — anyone who knew the URL could
+# invoke it, spend the vendor credential it holds and write to production.
+# It has no programmatic caller anywhere in the repository, so requiring a
+# JWT breaks nothing. Security audit, 12 September 2026.
+[functions.backfill-investment-scores]
+verify_jwt = true
+request_timeout = 300
+
+[functions.parse-formara-pdf]
+verify_jwt = false
+request_timeout = 120
+
+[functions.cloudflare-proxy]
+verify_jwt = true
+
+[functions.send-appointment-notification]
+verify_jwt = true
+
+[functions.ai-dashboard-agent]
+verify_jwt = false
+request_timeout = 60
+
+[functions.client-portal-login]
+verify_jwt = false
+
+[functions.client-portal-verify]
+verify_jwt = false
+
+[functions.client-portal-logout]
+verify_jwt = false
+
+[functions.client-portal-forgot-password]
+verify_jwt = false
+
+[functions.client-portal-reset-password]
+verify_jwt = false
+
+[functions.client-portal-invite]
+verify_jwt = false
+
+[functions.client-portal-accept-invite]
+verify_jwt = false
+
+[functions.get-portal-client-data]
+verify_jwt = false
+
+[functions.manage-portal-client-data]
+verify_jwt = false
+
+[functions.fetch-meta-ads]
+verify_jwt = true
+
+[functions.analyze-meta-ads]
+verify_jwt = true
+
+[functions.analyze-meta-ads-phase2]
+verify_jwt = true
+
+[functions.analyze-meta-ads-phase3]
+verify_jwt = true
+
+[functions.analyze-meta-ads-phase4]
+verify_jwt = false
+
+[functions.ghl-webhook-receiver]
+verify_jwt = false
+
+[functions.backfill-lead-attributions]
+verify_jwt = true
+
+[functions.enrich-lead-attributions]
+verify_jwt = true
+
+[functions.diagnose-ghl-attribution]
+verify_jwt = true
+
+[functions.analyze-meta-ads-phase5]
+verify_jwt = true
+
+[functions.agent-task-runner]
+verify_jwt = false
+request_timeout = 120
+
+[functions.backfill-notes-to-ghl]
+verify_jwt = false
+request_timeout = 300
+
+[functions.google-fonts-catalog]
+verify_jwt = false
+
+[functions.google-places-autocomplete]
+verify_jwt = false
+
+[functions.resolve-listing-coordinates]
+verify_jwt = false
+
+# ME-5 item 15. Maintains `report_geography` for reports the backfill did not
+# cover. It holds the service-role key and performs NO auth check of its own,
+# so the gateway is the only thing between an anonymous caller and a sweep that
+# spends the ABS geoserver's rate limit on somebody else's behalf. `true` is
+# therefore the declaration, not the default nobody chose — a service-role key
+# is itself a valid JWT, so a scheduled invocation still reaches it.
+[functions.resolve-report-geography]
+verify_jwt = true
+
+[functions.street-view]
+verify_jwt = false
+
+[functions.manychat-proxy]
+verify_jwt = false
+
+[functions.sync-ghl-conversations]
+verify_jwt = false
+request_timeout = 120
+
+[functions.send-ghl-message]
+verify_jwt = false
+
+[functions.ghl-conversations-cron]
+verify_jwt = false
+request_timeout = 300
+
+[functions.generate-market-intelligence-report]
+verify_jwt = false
+request_timeout = 300
+
+[functions.dispatch-marketing-reports]
+verify_jwt = false
+request_timeout = 300
+
+[functions.finance-portal-login]
+verify_jwt = false
+
+[functions.finance-portal-verify]
+verify_jwt = false
+
+[functions.finance-portal-logout]
+verify_jwt = false
+
+[functions.finance-portal-forgot-password]
+verify_jwt = false
+
+[functions.finance-portal-reset-password]
+verify_jwt = false
+
+[functions.finance-portal-invite]
+verify_jwt = true
+
+[functions.finance-portal-accept-invite]
+verify_jwt = false
+
+[functions.finance-portal-admin]
+verify_jwt = true
+
+[functions.finance-portal-client-data]
+verify_jwt = false
+
+[functions.finance-portal-documents]
+verify_jwt = false
+request_timeout = 60
+
+[functions.finance-portal-notifications]
+verify_jwt = false
+request_timeout = 30
+
+[functions.finance-portal-messages]
+verify_jwt = false
+request_timeout = 60
+
+[functions.finance-portal-commissions]
+verify_jwt = false
+request_timeout = 60
+
+[functions.finance-portal-pipeline]
+verify_jwt = false
+request_timeout = 60
+
+[functions.finance-portal-aml-requests]
+verify_jwt = false
+request_timeout = 60
+
+[functions.finance-portal-purchase-files]
+verify_jwt = false
+request_timeout = 60
+
+[functions.finance-portal-lender-intelligence]
+verify_jwt = false
+request_timeout = 60
+
+[functions.finance-portal-ai-copilot]
+verify_jwt = false
+request_timeout = 120
+
+[functions.staff-client-portal-messages]
+# Uses custom Command Centre session tokens verified inside the function.
+# Keep Supabase gateway JWT verification disabled so browser preflight/auth errors
+# do not surface as opaque Failed to fetch CORS failures.
+verify_jwt = false
+request_timeout = 60
+
+[functions.client-portal-comms]
+verify_jwt = false
+request_timeout = 60
+
+[functions.finance-portal-handoff-create]
+verify_jwt = false
+request_timeout = 30
+
+[functions.finance-portal-handoff-redeem]
+verify_jwt = false
+request_timeout = 30
+
+[functions.push-subscribe]
+verify_jwt = false
+
+[functions.push-unsubscribe]
+verify_jwt = false
+
+[functions.send-web-push]
+verify_jwt = false
+request_timeout = 60
+
+[functions.get-vapid-public-key]
+verify_jwt = false
+
+[functions.manage-commission-ledger]
+verify_jwt = false
+
+[functions.generate-commission-payout]
+verify_jwt = false
+
+[functions.manage-compliance-records]
+verify_jwt = false
+
+[functions.manage-generated-documents]
+verify_jwt = false
+
+[functions.analytics-query]
+verify_jwt = false
+
+[functions.ghl-account-preview]
+verify_jwt = false
+request_timeout = 120
+
+[functions.migration-orchestrator]
+verify_jwt = false
+request_timeout = 60
+
+[functions.migration-job-status]
+verify_jwt = false
+request_timeout = 30
+
+[functions.ghl-migrate-contacts-worker]
+verify_jwt = false
+request_timeout = 400
+
+[functions.ghl-migrate-opportunities-worker]
+verify_jwt = false
+request_timeout = 400
+
+[functions.ghl-migrate-conversations-worker]
+verify_jwt = false
+request_timeout = 400
+
+[functions.ghl-migrate-notes-worker]
+verify_jwt = false
+request_timeout = 400
+
+[functions.ghl-migrate-conversations-replay-worker]
+verify_jwt = false
+request_timeout = 400
+
+[functions.ghl-migrate-calendar-groups-worker]
+verify_jwt = false
+request_timeout = 400
+
+[functions.ghl-migrate-calendars-worker]
+verify_jwt = false
+request_timeout = 400
+
+[functions.ghl-migrate-bookings-worker]
+verify_jwt = false
+request_timeout = 400
+
+[functions.ghl-test-credentials]
+verify_jwt = false
+request_timeout = 30
+
+[functions.migration-dispatcher]
+verify_jwt = false
+request_timeout = 30
+
+[functions.ghl-legacy-backfill-gaps]
+verify_jwt = false
+request_timeout = 400
+
+[functions.ghl-marketing-dump-enqueue]
+verify_jwt = false
+request_timeout = 120
+
+[functions.ghl-marketing-dump-worker]
+verify_jwt = false
+request_timeout = 400
+
+[functions.ghl-marketing-dump-export]
+verify_jwt = false
+request_timeout = 300
+
+[functions.mission-control-webhook]
+verify_jwt = false
+
+[functions.mission-control-packs]
+verify_jwt = false
+
+[functions.mission-control-balance]
+verify_jwt = false
+
+# The activation gate. `verify_jwt = false` for the same reason as its
+# siblings: the function verifies the session itself with `verifyAuth`, which
+# accepts this app's own HttpOnly cookie as well as a Supabase JWT, and the
+# platform gate would reject the cookie-only case before the handler runs.
+# Declared explicitly because an OMITTED block is read as `true` — see
+# docs/security/VERIFY_JWT.md, where that default was wrong for 91 of 425
+# functions.
+[functions.mission-control-gate]
+verify_jwt = false
+
+# Both verify the session themselves via `verifyAuth`, exactly as
+# mission-control-balance does, so the platform JWT gate stays off. Absent from
+# this file they defaulted to `verify_jwt = true` — and were never deployed at
+# all, which is why the Feedback tab could not mint an attributed link and the
+# form opened with no workspace attached.
+[functions.mission-control-feedback-prompt]
+verify_jwt = false
+
+[functions.mission-control-plan-change]
+verify_jwt = false
+
+# Same family, same auth shape: verifies the session itself via `verifyAuth`,
+# so the platform JWT gate stays off.
+[functions.mission-control-announcements]
+verify_jwt = false
+
+[functions.mission-control-key-info]
+verify_jwt = false
+
+[functions.mission-control-rotate-key]
+verify_jwt = false
+
+[functions.mission-control-seats]
+verify_jwt = false
+
+[functions.mission-control-devices]
+verify_jwt = false
+
+[functions.mission-control-catalog]
+verify_jwt = false
+
+[functions.mission-control-handoff]
+verify_jwt = false
+
+[functions.mission-control-purchases]
+verify_jwt = false
+
+[functions.mission-control-invoices]
+verify_jwt = false
+
+[functions.mission-control-payment-methods]
+verify_jwt = false
+
+[functions.finance-portal-bulk-actions]
+verify_jwt = false
+request_timeout = 120
+
+[functions.finance-portal-nudges]
+verify_jwt = false
+request_timeout = 120
+
+[functions.message-governance]
+verify_jwt = false
+request_timeout = 60
+
+[functions.render-source]
+# Auth is verified inside the function (verifyAuth: custom session tokens +
+# custom HS256 JWTs). Gateway JWT verification must stay OFF — the app's custom
+# auth tokens are not always valid Supabase JWTs (e.g. after the 24h access-token
+# expiry) and the gateway would 401 before in-function session auth can run.
+verify_jwt = false
+request_timeout = 1500
+
+[functions.template-import-pdf]
+# Uses custom session tokens verified inside the function (verifyAuth).
+verify_jwt = false
+request_timeout = 1500
+
+[functions.template-design-agent]
+# Uses custom session tokens verified inside the function (verifyAuth).
+verify_jwt = false
+request_timeout = 1500
+
+[functions.render-template-pdf]
+verify_jwt = false
+request_timeout = 1500
+
+# The Borrowing Capacity Snapshot, generated server-side. The gateway JWT check
+# is off across this project for the custom session flow; the function verifies
+# a human identity and that human's access to the named client before it reads
+# anything. The timeout matches render-template-pdf: a report with inlined
+# assets is minutes, not seconds.
+[functions.render-borrowing-capacity-pdf]
+verify_jwt = false
+request_timeout = 1500
+
+[functions.render-commercial-capacity-pdf]
+verify_jwt = false
+request_timeout = 1500
+
+[functions.figma-template-sync]
+verify_jwt = false
+request_timeout = 1500
+
+[functions.finance-portal-templates]
+verify_jwt = false
+request_timeout = 1500
+
+[functions.feature-flags-admin]
+# Superadmin role re-checked inside the function against user_roles.
+verify_jwt = false
+request_timeout = 1500
+
+[functions.partner-agreement-records]
+verify_jwt = true
+
+[functions.pdf-import-diagnostics]
+# Superadmin role re-checked inside the function against user_roles.
+verify_jwt = false
+request_timeout = 1500
+
+[functions.pdf-import-monitoring]
+# Admin/superadmin role re-checked inside the function against user_roles.
+verify_jwt = false
+request_timeout = 1500
+
+[functions.pdf-import-retention]
+# Admin/superadmin role re-checked inside the function against user_roles.
+verify_jwt = false
+request_timeout = 1500
+
+[functions.pdf-import-client-report]
+# Admin/superadmin role re-checked inside the function against user_roles.
+verify_jwt = false
+request_timeout = 1500
+
+[functions.pdf-import-ssim-score]
+verify_jwt = false
+request_timeout = 1500
+
+[functions.pdf-parse-callback]
+verify_jwt = false
+request_timeout = 1500
+
+[functions.pdf-parse-dispatch]
+# Custom session tokens validated via verifyAuthOrNativeUser; fire-and-forget
+# dispatcher returns within seconds and runs the heavy parse in EdgeRuntime.waitUntil.
+verify_jwt = false
+request_timeout = 1500
+
+[functions.pdf-parse-chunk-callback]
+# Called by the Docling sidecar with a service token (validated in-function via
+# _shared/auth.ts), not a user JWT — must keep verify_jwt=false or the gateway
+# 401s the chunk-completion callbacks. Was missing from config; a CLI deploy
+# without this block would default to verify_jwt=true and break chunked imports.
+verify_jwt = false
+request_timeout = 1500
+
+[functions.estimate-commercial-noi]
+verify_jwt = true
+
+[functions.estimate-commercial-caprate]
+verify_jwt = true
+
+[functions.market-updates-ingest]
+# Called by pg_cron with a service-role Bearer token AND/OR by the app UI via authorised
+# users. verify_jwt must be false so the Authorization header is preserved for in-function
+# auth checks (cron secret or service-role match). Auth is enforced in-function.
+verify_jwt = false
+
+[functions.market-updates-digest]
+# Called by pg_cron (multi-period digests) and by authenticated portal users to regenerate
+# a period digest. Auth is enforced in-function (Authorization required OR cron secret).
+verify_jwt = false
+
+[functions.market-updates-qa]
+# Auth enforced in-function: verified human session/JWT plus market_updates permission.
+verify_jwt = false
+
+[functions.market-updates-voice-transcribe]
+# Auth enforced in-function: verified human session/JWT plus market_updates permission.
+verify_jwt = false
+
+[functions.market-updates-source-admin]
+verify_jwt = false
+
+[functions.market-updates-embed-backfill]
+verify_jwt = false
+
+[functions.market-qa-share]
+verify_jwt = false
+
+[functions.market-qa-subscriptions]
+verify_jwt = false
+
+[functions.market-qa-digest-runner]
+verify_jwt = false
+
+[functions.market-qa-quality-report]
+verify_jwt = false
+
+[functions.market-qa-quality-snapshot]
+verify_jwt = false
+
+[functions.agent-models-read]
+# Custom Command Centre sessions are verified in-function; the gateway must
+# preserve their session headers. Anonymous requests are rejected by verifyAuth.
+verify_jwt = false
+
+[functions.quantitative-report-pipeline]
+verify_jwt = false
+
+[functions.bootstrap-cron-vault]
+verify_jwt = false
+
+[functions.security-step-up]
+verify_jwt = false
+
+
+
+[functions.market-updates-status]
+# Authoritative sanitised read contract; authentication and module access are enforced in-function.
+verify_jwt = false
+
+[functions.market-updates-archive]
+# Archive writes use the Command Centre HttpOnly session and are verified in-function.
+verify_jwt = false
+
+[functions.market-news-archive-v2]
+# Versioned canonical archive mutation transport; auth and permissions are enforced in-function.
+verify_jwt = false
+
+[functions.market-updates-curate]
+# Operator curation (hide/restore a published update). Matches the read contract above:
+# authentication and the market_updates can_edit check are enforced in-function.
+verify_jwt = false
+
+[functions.market-updates-feed]
+verify_jwt = false
+# Auth is verified in-function to support authenticated RSS clients and ETag responses.
+
+[functions.solicitor-portal-login]
+verify_jwt = false
+
+[functions.solicitor-portal-logout]
+verify_jwt = false
+
+[functions.solicitor-portal-verify]
+verify_jwt = false
+
+[functions.solicitor-portal-accept-invite]
+verify_jwt = false
+
+[functions.solicitor-portal-forgot-password]
+verify_jwt = false
+
+[functions.solicitor-portal-reset-password]
+verify_jwt = false
+
+[functions.solicitor-portal-change-password]
+verify_jwt = false
+
+[functions.solicitor-portal-invite]
+verify_jwt = true
+
+[functions.solicitor-portal-admin]
+verify_jwt = true
+
+[functions.solicitor-portal-matters]
+verify_jwt = false
+
+[functions.solicitor-portal-documents]
+verify_jwt = false
+
+[functions.solicitor-portal-comms]
+verify_jwt = false
+
+[functions.solicitor-portal-intelligence]
+verify_jwt = false
+
+[functions.solicitor-portal-compliance]
+verify_jwt = false
+
+# Browser-called, so the gateway JWT check must stay OFF.
+#
+# A CORS preflight carries no `Authorization` header — browsers never send one —
+# so with `verify_jwt = true` the gateway rejects the OPTIONS with a 503 and its
+# own wildcard CORS headers, and the function never runs at all. The browser
+# then fails the preflight and `fetch` rejects, which the app surfaces as
+# "Network/CORS error calling <fn>". The deploy gate reported it as a CORS
+# policy fault for months; it was this.
+#
+# Safe because the function authenticates itself before doing anything:
+# `enforceCsrf` -> `verifyAuth` -> `requireModulePermission`.
+[functions.legal-matters-admin]
+verify_jwt = false
+
+[functions.cross-portal-outbox-worker]
+verify_jwt = false
+
+[functions.legal-document-processor]
+verify_jwt = false
+
+[functions.client-legal-workspace]
+verify_jwt = false
+
+[functions.finance-legal-coordination]
+verify_jwt = false
+
+[functions.builder-stock-marketplace]
+verify_jwt = false
+
+[functions.create-advanced-client]
+verify_jwt = true
+
+[functions.internal-message-attachments]
+verify_jwt = false
+
+# Both are module-gated rather than JWT-gated: they authenticate the caller
+# themselves (cookie or bearer) and then require the `listings` module
+# permission, and both also expose a service-role-only cron op that carries no
+# user JWT at all. `verify_jwt = true` would reject the cron call outright.
+[functions.listing-images]
+verify_jwt = false
+
+[functions.listings-cache]
+verify_jwt = false
+
+# Same posture as listing-images and listings-cache: authenticates the caller
+# itself and then requires the `listings` module permission, and also exposes
+# service-role-only cron ops that carry no user JWT.
+[functions.listing-enrichment]
+verify_jwt = false
+
+[functions.authenticated-data]
+verify_jwt = false
+
+# Cron-driven drain of `api_usage_log` into Mission Control's per-tenant API-key
+# metering. Auth is enforced in-function (INTERNAL_EDGE_SECRET or the cron
+# secret, constant-time compared) because pg_cron carries no user JWT.
+[functions.report-api-usage]
+verify_jwt = false
+
+[functions.mcp]
+verify_jwt = false
+
+# ─────────────────────────────────────────────────────────────────────────────
+# Functions that were never declared here at all (added 15 Aug 2026).
+#
+# An omitted `[functions.X]` block is NOT "no opinion" — the CLI defaults
+# `verify_jwt` to true, so silence in this file asserts that the gateway is
+# checking a Supabase JWT in front of the function. For these 91 it was not:
+# every one is deployed with the check OFF, which is what they need and what
+# their own code assumes.
+#
+# Silence therefore described 91 functions incorrectly, and the `mcp` block
+# below records what that costs — that function had no entry either, and the
+# first deploy to apply the default "would otherwise have silently flipped a
+# working endpoint to true and broken every MCP client".
+#
+# It already cost something. `finance-portal-snoozes` has a `run_due` cron
+# branch whose comment read "callable without partner session (cron + service)"
+# — the gateway JWT was assumed to be standing in front of it. It was not, so
+# the branch was reachable unauthenticated from anywhere on the internet. It now
+# verifies the HMAC that `cron_invoke_signed_function` signs the schedule with.
+#
+# Every function below authenticates its own callers (session cookie, portal
+# session token, or signed-internal HMAC); the gateway JWT is not the credential
+# for any of them, and could not be — a browser holding this app's HttpOnly
+# session cookie has no Supabase JWT to present, and a CORS preflight carries no
+# Authorization header at all.
+#
+# `check-verify-jwt-declared.mjs` now fails CI on a function with no declaration,
+# so this list cannot grow silently again.
+# ─────────────────────────────────────────────────────────────────────────────
+
+[functions.agent-insights-runner]
+verify_jwt = false
+
+[functions.agent-planner]
+verify_jwt = false
+
+[functions.agent-skill-marketplace]
+verify_jwt = false
+
+[functions.aml-idv-retention]
+verify_jwt = false
+
+[functions.aml-verification-processor]
+verify_jwt = false
+
+# Operator-only backfill. Was verify_jwt = false with no caller check of any
+# kind, a service-role client and CORS '*' — anyone who knew the URL could
+# invoke it, spend the vendor credential it holds and write to production.
+# It has no programmatic caller anywhere in the repository, so requiring a
+# JWT breaks nothing. Security audit, 12 September 2026.
+[functions.backfill-message-directions]
+verify_jwt = true
+
+[functions.backfill-opportunity-mappings]
+verify_jwt = false
+
+[functions.bc-scenario-agent]
+verify_jwt = false
+
+[functions.build-conversations-export-worker]
+verify_jwt = false
+
+[functions.check-model-availability]
+verify_jwt = false
+
+[functions.client-portal-batch6]
+verify_jwt = false
+
+[functions.client-portal-finance-hub]
+verify_jwt = false
+
+[functions.conversation-sync-cron]
+verify_jwt = false
+
+[functions.convert-template-document]
+verify_jwt = false
+
+[functions.cotality-service]
+verify_jwt = false
+
+# Operator-only backfill. Was verify_jwt = false with no caller check of any
+# kind, a service-role client and CORS '*' — anyone who knew the URL could
+# invoke it, spend the vendor credential it holds and write to production.
+# It has no programmatic caller anywhere in the repository, so requiring a
+# JWT breaks nothing. Security audit, 12 September 2026.
+[functions.email-body-backfill]
+verify_jwt = true
+
+[functions.email-copilot-extras]
+verify_jwt = false
+
+[functions.finance-portal-audit-timeline]
+verify_jwt = false
+
+[functions.finance-portal-automations]
+verify_jwt = false
+
+[functions.finance-portal-batch6]
+verify_jwt = false
+
+[functions.finance-portal-batch7]
+verify_jwt = false
+
+[functions.finance-portal-batch8]
+verify_jwt = false
+
+[functions.finance-portal-batch9-10]
+verify_jwt = false
+
+[functions.finance-portal-briefing-runner]
+verify_jwt = false
+
+[functions.finance-portal-broker-kpis]
+verify_jwt = false
+
+[functions.finance-portal-change-password]
+verify_jwt = false
+
+[functions.finance-portal-client-mirror]
+verify_jwt = false
+
+[functions.finance-portal-client-tasks]
+verify_jwt = false
+
+[functions.finance-portal-dashboard-metrics]
+verify_jwt = false
+
+[functions.finance-portal-deal-trackers]
+verify_jwt = false
+
+[functions.finance-portal-document-requirements]
+verify_jwt = false
+
+[functions.finance-portal-engagement]
+verify_jwt = false
+
+[functions.finance-portal-forecasting]
+verify_jwt = false
+
+[functions.finance-portal-lender-packet]
+verify_jwt = false
+
+[functions.finance-portal-saved-views]
+verify_jwt = false
+
+[functions.finance-portal-settings]
+verify_jwt = false
+
+[functions.finance-portal-settlement-runway]
+verify_jwt = false
+
+[functions.finance-portal-snoozes]
+verify_jwt = false
+
+[functions.finance-portal-tri-portal-health]
+verify_jwt = false
+
+[functions.generate-brand-design-system]
+verify_jwt = false
+
+[functions.get-token-event-trail]
+verify_jwt = false
+
+[functions.get-user-names]
+verify_jwt = false
+
+[functions.ghl-legacy-wipe-orchestrator]
+verify_jwt = false
+
+[functions.ghl-legacy-wipe-worker]
+verify_jwt = false
+
+[functions.ghl-marketing-raw-dump]
+verify_jwt = false
+
+[functions.ghl-migrate-conversations-reset-phantoms]
+verify_jwt = false
+
+[functions.ghl-migrate-workflow-enrollments-worker]
+verify_jwt = false
+
+[functions.ghl-migrate-workflow-reenroll-worker]
+verify_jwt = false
+
+[functions.ghl-migrate-workflows-snapshot-worker]
+verify_jwt = false
+
+[functions.ghl-workflow-visualizer]
+verify_jwt = false
+
+[functions.healthcheck-ping]
+verify_jwt = false
+
+[functions.hero-image-studio]
+verify_jwt = false
+
+[functions.internal-messaging]
+verify_jwt = false
+
+[functions.list-token-audit]
+verify_jwt = false
+
+[functions.list-token-usage]
+verify_jwt = false
+
+[functions.manage-agent-models]
+verify_jwt = false
+
+[functions.manage-ci-assessments]
+verify_jwt = false
+
+[functions.manage-commercial-data]
+verify_jwt = false
+
+[functions.manage-industrial-data]
+verify_jwt = false
+
+[functions.manage-lead-magnets]
+verify_jwt = false
+
+[functions.manage-lender-favourites]
+verify_jwt = false
+
+[functions.manage-lender-rate-alerts]
+verify_jwt = false
+
+[functions.manage-lender-submissions]
+verify_jwt = false
+
+[functions.manage-partner-referrals]
+verify_jwt = false
+
+[functions.market-source-relay]
+verify_jwt = false
+
+[functions.migration-job-control]
+verify_jwt = false
+
+[functions.migration-upload-source]
+verify_jwt = false
+
+[functions.notifications-feed]
+verify_jwt = false
+
+[functions.notifications-feed-v2]
+verify_jwt = false
+
+[functions.one-time-bulk-conversation-sync]
+verify_jwt = false
+
+[functions.partner-compliance]
+verify_jwt = false
+
+[functions.pdf-parse-recover-stuck-jobs]
+verify_jwt = false
+
+[functions.phase6-quality-ops]
+verify_jwt = false
+
+# Zoning/parcel/development readings from state planning services; called
+# internally by the generator with the internal edge secret (verifyAuth
+# inside), like the other location data services.
+[functions.planning-data-service]
+verify_jwt = false
+
+[functions.portal-upload-file]
+verify_jwt = false
+
+[functions.prepare-report-hero-images]
+verify_jwt = false
+
+[functions.process-scheduled-emails]
+verify_jwt = false
+
+[functions.reclassify-property]
+verify_jwt = false
+
+[functions.render-cash-flow-comparison-pdf]
+verify_jwt = false
+
+[functions.render-cash-flow-pdf]
+verify_jwt = false
+
+[functions.render-client-details-pdf]
+verify_jwt = false
+
+[functions.render-market-intelligence-pdf]
+verify_jwt = false
+
+[functions.render-portfolio-review-pdf]
+verify_jwt = false
+
+[functions.render-property-comparison-pdf]
+verify_jwt = false
+
+[functions.render-report-qa-pdf]
+verify_jwt = false
+
+[functions.report-engine-agent]
+verify_jwt = false
+
+[functions.report-engine-inspector]
+verify_jwt = false
+
+[functions.staff-client-portal-handoff-create]
+verify_jwt = false
+
+[functions.start-conversations-export]
+verify_jwt = false
+
+[functions.sync-ghl-marketing-assets]
+verify_jwt = false
+
+[functions.template-import-finalize-worker]
+verify_jwt = false
+
+[functions.market-source-probe]
+# Read-only diagnostic. Guarded by the gateway AND by its own verifyAuth: it
+# reports which market-data credential NAMES are set (never a value) and probes
+# a fixed allow-list of source URLs. It writes nothing.
+verify_jwt = true
+
+[functions.builder-network-inbound]
+# Builders Network -> this workspace delivery door (Phase 3 mirror). Its
+# authentication is the per-connection symmetric HMAC over the raw body,
+# never a JWT — the caller is the network's outbox worker holding the
+# connection secret. Flag-gated: while builder_network_enabled is false it
+# answers 503 network_disabled, which the sender treats as retryable.
+verify_jwt = false

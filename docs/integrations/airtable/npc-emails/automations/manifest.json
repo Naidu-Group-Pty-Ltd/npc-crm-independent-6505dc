@@ -1,0 +1,355 @@
+{
+  "source": {
+    "platform": "airtable",
+    "baseId": "apptyShYE0yzL4IGB",
+    "baseName": "NPC Emails",
+    "exportedAt": "2026-08-18"
+  },
+  "totals": {
+    "automations": 10,
+    "deployed": 9,
+    "apiCreatable": 6,
+    "needingManualScriptPaste": 4,
+    "scriptNodes": 5,
+    "distinctIdsReferenced": 54
+  },
+  "automations": [
+    {
+      "id": "wflM9vUhBoHb0ZE8r",
+      "name": "Aurixa Lead Capture",
+      "slug": "aurixa-lead-capture",
+      "deploymentStatus": "deployed",
+      "configurationStatus": "valid",
+      "triggerType": "recordCreated",
+      "triggerTable": "Aurixa Waitlist",
+      "nodeCount": 3,
+      "nodeTypes": [
+        "customScript",
+        "sendEmail"
+      ],
+      "scripts": [
+        {
+          "node": "wac6IfuZM2bkLGqk2",
+          "file": "scripts/aurixa-lead-capture.wac6IfuZM2bkLGqk2.js",
+          "inputVariables": [
+            "recordId"
+          ]
+        },
+        {
+          "node": "wac0NVTbcAAOXQsdM",
+          "file": "scripts/aurixa-lead-capture.wac0NVTbcAAOXQsdM.js",
+          "inputVariables": []
+        }
+      ],
+      "apiCreatable": false,
+      "manualSteps": [
+        "customScript"
+      ],
+      "referencedIds": [
+        "fld1ytmg0havMGDhc",
+        "fldA5j0e9NPipgCuU",
+        "fldAH7gzIq2bicqvQ",
+        "fldJSOnXU9dbndMyN",
+        "fldKXSWWLc8DWCBhH",
+        "fldNmKtbJUXJCLtLM",
+        "fldOLKfVW7fWKJaVE",
+        "fldPxNxDBNncb2d9h",
+        "fldU6Ny4Ck482jpGg",
+        "fldhyP7rjITi94tFH",
+        "fldvcq6GjkuBTREON",
+        "fldyvxPM3x4LVi33h",
+        "tblHzGiB591W3GpoZ",
+        "wflM9vUhBoHb0ZE8r"
+      ],
+      "sourceFile": "source/aurixa-lead-capture.wflM9vUhBoHb0ZE8r.json",
+      "description": null
+    },
+    {
+      "id": "wflV2MkgLeNmGwq0B",
+      "name": "Auto-generate report",
+      "slug": "auto-generate-report",
+      "deploymentStatus": "deployed",
+      "configurationStatus": "valid",
+      "triggerType": "recordCreated",
+      "triggerTable": "Properties",
+      "nodeCount": 2,
+      "nodeTypes": [
+        "conditionalGroup",
+        "customScript"
+      ],
+      "scripts": [
+        {
+          "node": "wacOjjBiIFQqnH96X",
+          "file": "scripts/auto-generate-report.wacOjjBiIFQqnH96X.js",
+          "inputVariables": [
+            "recordId",
+            "address",
+            "suburb",
+            "propertyType",
+            "price",
+            "beds",
+            "baths",
+            "state",
+            "propertyName"
+          ]
+        }
+      ],
+      "apiCreatable": false,
+      "manualSteps": [
+        "customScript",
+        "empty-group"
+      ],
+      "referencedIds": [
+        "fld1OdfUYrs5HjI9A",
+        "fld3KnZoGuhtkO10g",
+        "fld3M4swxHe27aBJY",
+        "fldDrgTTRE2Kbrnd6",
+        "fldFQ6BGtLiiJfVQh",
+        "fldNNBdlp9WU63Vv8",
+        "fldOYn2KqkkG4Mtcg",
+        "fldVCnqoOizBS557y",
+        "tblH9cW4EhVs6D5H1",
+        "wflV2MkgLeNmGwq0B"
+      ],
+      "sourceFile": "source/auto-generate-report.wflV2MkgLeNmGwq0B.json",
+      "description": null
+    },
+    {
+      "id": "wfljwe75Zqv5u8uCx",
+      "name": "Delete Property Intake Records After 30 Days",
+      "slug": "delete-property-intake-records-after-30-days",
+      "deploymentStatus": "deployed",
+      "configurationStatus": "valid",
+      "triggerType": "cron",
+      "triggerTable": null,
+      "nodeCount": 3,
+      "nodeTypes": [
+        "customScript",
+        "findRecords",
+        "repeatingGroup"
+      ],
+      "scripts": [
+        {
+          "node": "wacPNnMrRaCKL5iEJ",
+          "file": "scripts/delete-property-intake-records-after-30-days.wacPNnMrRaCKL5iEJ.js",
+          "inputVariables": [
+            "recordId",
+            "tableId"
+          ]
+        }
+      ],
+      "apiCreatable": false,
+      "manualSteps": [
+        "customScript"
+      ],
+      "referencedIds": [
+        "fldoZWwTidEhcrmeg",
+        "tblWIg5cs85O30pcY",
+        "wfljwe75Zqv5u8uCx"
+      ],
+      "sourceFile": "source/delete-property-intake-records-after-30-days.wfljwe75Zqv5u8uCx.json",
+      "description": "Retention purge for Property Intake Master, cloned from \"Delete Records After 30 Days\" (which does the same job for Properties). Runs daily at midnight Asia/Kuala_Lumpur and finds every record whose Created Time is more than 30 days ago. Created Time is a createdTime column, so the window is measured from when the record entered the table and cannot be back-dated by a later edit — the same field family the Properties purge keys off."
+    },
+    {
+      "id": "wflOUO4qcLHFpMUA8",
+      "name": "Delete Records After 30 Days",
+      "slug": "delete-records-after-30-days",
+      "deploymentStatus": "deployed",
+      "configurationStatus": "valid",
+      "triggerType": "cron",
+      "triggerTable": null,
+      "nodeCount": 3,
+      "nodeTypes": [
+        "customScript",
+        "findRecords",
+        "repeatingGroup"
+      ],
+      "scripts": [
+        {
+          "node": "wacVt0l4TPWwuWYNx",
+          "file": "scripts/delete-records-after-30-days.wacVt0l4TPWwuWYNx.js",
+          "inputVariables": [
+            "recordId",
+            "tableId"
+          ]
+        }
+      ],
+      "apiCreatable": false,
+      "manualSteps": [
+        "customScript"
+      ],
+      "referencedIds": [
+        "fldtKYX4KlL42xkVf",
+        "tblH9cW4EhVs6D5H1",
+        "wflOUO4qcLHFpMUA8"
+      ],
+      "sourceFile": "source/delete-records-after-30-days.wflOUO4qcLHFpMUA8.json",
+      "description": null
+    },
+    {
+      "id": "wflC3shfecZCs4CUx",
+      "name": "Automation 1",
+      "slug": "automation-1",
+      "deploymentStatus": "undeployed",
+      "configurationStatus": "valid",
+      "triggerType": "genericWebhookReceived",
+      "triggerTable": null,
+      "nodeCount": 0,
+      "nodeTypes": [],
+      "scripts": [],
+      "apiCreatable": true,
+      "manualSteps": [],
+      "referencedIds": [
+        "apptyShYE0yzL4IGB",
+        "wflC3shfecZCs4CUx"
+      ],
+      "sourceFile": "source/automation-1.wflC3shfecZCs4CUx.json",
+      "description": null
+    },
+    {
+      "id": "wflY5xS7RjU4W047M",
+      "name": "Link Stage 2 detailed response to applicant",
+      "slug": "link-stage-2-detailed-response-to-applicant",
+      "deploymentStatus": "deployed",
+      "configurationStatus": "valid",
+      "triggerType": "recordMatchesConditions",
+      "triggerTable": "BRQ Detailed Responses",
+      "nodeCount": 3,
+      "nodeTypes": [
+        "conditionalGroup",
+        "findRecords",
+        "updateRecord"
+      ],
+      "scripts": [],
+      "apiCreatable": true,
+      "manualSteps": [],
+      "referencedIds": [
+        "fld0VFB3UfSf4gCkp",
+        "fldQxBIDhmdbCj9Tn",
+        "fldpThwtKAXHfQNut",
+        "tblB1t18q6aUTNI0g",
+        "tblHzGiB591W3GpoZ",
+        "wflY5xS7RjU4W047M"
+      ],
+      "sourceFile": "source/link-stage-2-detailed-response-to-applicant.wflY5xS7RjU4W047M.json",
+      "description": "Turns the Application ID carried on a BRQ Detailed Response into a real link to the Aurixa Waitlist applicant. This is what makes Stage 1 aware that the applicant progressed: once the link exists, Stage 2 Reached flips to 1 on the waitlist record and Send Stage 2 Invite reads HOLD, so the scheduled Stage 1 reminder skips them. Fires when a response has an Application ID but no Applicant link, which covers both new submissions and records back-filled later. Matching is on Application ID Key (upper-cased and trimmed), so a reference typed by hand — the fallback path when the emailed link has expired — still resolves. When nothing matches, the response is left alone and Applicant Link Status reads \"Unlinked - no matching applicant\"."
+    },
+    {
+      "id": "wfl2oNZFRFNLijUCS",
+      "name": "Link Stage 2 response to applicant",
+      "slug": "link-stage-2-response-to-applicant",
+      "deploymentStatus": "deployed",
+      "configurationStatus": "valid",
+      "triggerType": "recordMatchesConditions",
+      "triggerTable": "Business Readiness Responses",
+      "nodeCount": 3,
+      "nodeTypes": [
+        "conditionalGroup",
+        "findRecords",
+        "updateRecord"
+      ],
+      "scripts": [],
+      "apiCreatable": true,
+      "manualSteps": [],
+      "referencedIds": [
+        "fldIplSF8qLS3ncql",
+        "fldV4WV5a0fexdItk",
+        "fldpThwtKAXHfQNut",
+        "tblHzGiB591W3GpoZ",
+        "tblXQx00T3CKEVnvV",
+        "wfl2oNZFRFNLijUCS"
+      ],
+      "sourceFile": "source/link-stage-2-response-to-applicant.wfl2oNZFRFNLijUCS.json",
+      "description": "Same job as \"Link Stage 2 detailed response to applicant\", for the Business Readiness Responses summary table: resolves the Application ID into Applicant Reference so Stage 1 can see the applicant progressed. Fires when a response has an Application ID but no Applicant Reference. Matching is on Application ID Key (upper-cased and trimmed) so a hand-typed reference still resolves. When nothing matches, the response is left alone and Applicant Link Status reads \"Unlinked - no matching applicant\"."
+    },
+    {
+      "id": "wfllWJM4uuYu6L83r",
+      "name": "Link Stage 3 booking to applicant",
+      "slug": "link-stage-3-booking-to-applicant",
+      "deploymentStatus": "deployed",
+      "configurationStatus": "valid",
+      "triggerType": "recordMatchesConditions",
+      "triggerTable": "Strategic Review Bookings",
+      "nodeCount": 3,
+      "nodeTypes": [
+        "conditionalGroup",
+        "findRecords",
+        "updateRecord"
+      ],
+      "scripts": [],
+      "apiCreatable": true,
+      "manualSteps": [],
+      "referencedIds": [
+        "fldIc6c8nE8DMdUPW",
+        "fldnpJNgmzOP2NOkt",
+        "fldpThwtKAXHfQNut",
+        "tblHzGiB591W3GpoZ",
+        "tbljj5XQbC2a4ON1U",
+        "wfllWJM4uuYu6L83r"
+      ],
+      "sourceFile": "source/link-stage-3-booking-to-applicant.wfllWJM4uuYu6L83r.json",
+      "description": "Turns the Application ID carried on a Strategic Review Booking into a real link to the Aurixa Waitlist applicant. This is what makes Stage 2 aware that the applicant progressed: once the link exists, Stage 3 Reached flips to 1 on the waitlist record and Send Stage 3 Invite reads HOLD, so the scheduled \"book your review\" reminder skips them. Fires when a booking has an Application ID but no Applicant link, which covers both new bookings and records back-filled later. Matching is on Application ID Key (upper-cased and trimmed), so a reference typed by hand — the fallback path when the emailed link has expired — still resolves. When nothing matches, the booking is left alone and Applicant Link Status reads \"Unlinked - no matching applicant\"."
+    },
+    {
+      "id": "wflh1IWRe0okzxeTK",
+      "name": "Notify Aurixa Team on New Business Readiness Submission",
+      "slug": "notify-aurixa-team-on-new-business-readiness-submission",
+      "deploymentStatus": "deployed",
+      "configurationStatus": "valid",
+      "triggerType": "recordCreated",
+      "triggerTable": "Business Readiness Responses",
+      "nodeCount": 2,
+      "nodeTypes": [
+        "findRecords",
+        "sendEmail"
+      ],
+      "scripts": [],
+      "apiCreatable": true,
+      "manualSteps": [],
+      "referencedIds": [
+        "fld3z79Sm1uc7vCHY",
+        "fld6o2raVanGj6rp5",
+        "fldDdM4JA87pPyXJm",
+        "fldIqQHM6g4gPUrrx",
+        "fldJSOnXU9dbndMyN",
+        "fldKXSWWLc8DWCBhH",
+        "fldPsXQ0BpioCvSvr",
+        "fldQp2I1sxkrLXsvl",
+        "fldSPnEkz8LTPep5j",
+        "fldti4XWR1B1NMzNW",
+        "fldyvxPM3x4LVi33h",
+        "tblHzGiB591W3GpoZ",
+        "tblXQx00T3CKEVnvV",
+        "wflh1IWRe0okzxeTK"
+      ],
+      "sourceFile": "source/notify-aurixa-team-on-new-business-readiness-submission.wflh1IWRe0okzxeTK.json",
+      "description": null
+    },
+    {
+      "id": "wflYVh8DI3YVnsCjT",
+      "name": "Send Confirmation Email on New Business Readiness Response",
+      "slug": "send-confirmation-email-on-new-business-readiness-response",
+      "deploymentStatus": "deployed",
+      "configurationStatus": "valid",
+      "triggerType": "recordCreated",
+      "triggerTable": "Business Readiness Responses",
+      "nodeCount": 2,
+      "nodeTypes": [
+        "findRecords",
+        "sendEmail"
+      ],
+      "scripts": [],
+      "apiCreatable": true,
+      "manualSteps": [],
+      "referencedIds": [
+        "fld6o2raVanGj6rp5",
+        "fldvcq6GjkuBTREON",
+        "tblHzGiB591W3GpoZ",
+        "tblXQx00T3CKEVnvV",
+        "wflYVh8DI3YVnsCjT"
+      ],
+      "sourceFile": "source/send-confirmation-email-on-new-business-readiness-response.wflYVh8DI3YVnsCjT.json",
+      "description": null
+    }
+  ]
+}

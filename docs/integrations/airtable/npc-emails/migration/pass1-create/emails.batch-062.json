@@ -1,0 +1,512 @@
+{
+  "table": "Emails",
+  "batch": 62,
+  "of": 107,
+  "recordCount": 50,
+  "records": [
+    {
+      "sourceRecordId": "recZJ6P7gFuWDRtec",
+      "sourceCreatedTime": "2026-04-15T05:13:13.000Z",
+      "fields": {
+        "Name": "Balmoral Estate",
+        "Subject": "Updated Price Lists for Balmoral Estate, Strathtulloh + New Office Opening",
+        "Email": "info@balmoralestate.com.au",
+        "Body": "Hi All,\r\n\r\n\r\n\r\nPlease find attached the updated price lists for Balmoral Estate, Strathtulloh.\r\n\r\n\r\n\r\nI also wanted to share some exciting news from our end . We are on track to open our new sales office on 29th April which will be our Head Sales Office f",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/GzSrzEcEb4T-pSerfHMxrw/hlsBc7bZiiz-67b7AC5gnnFFJZv2v0ewdIKzchBYQMby-IAzcY3pFh__AWHF-NjECrreXWs_oc7SHj-48mRJ4UoVrbAzM9TdaBUiVwg2sLhzw3XqwgNaIVbDIYniOyRFeBawUTmH33V43ZqzjEFlDdNHzN6gOOEsYMjqMBMkqauagIVWAb6Zs4G737tipNXU/08xMW6JlIXaU6wuG2YBOC_xTIVNcc1h0fNPMvKFicsY",
+            "filename": "outlook_email_attachment.pdf",
+            "type": "application/pdf",
+            "size": 384581
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "recZJ6hbF2v1Tol3u",
+      "sourceCreatedTime": "2026-01-28T07:58:55.000Z",
+      "fields": {
+        "Name": "Professionals Caboolture/Morayfield Chippendale",
+        "Subject": "Hi, Your Suburb Report is ready!",
+        "Email": "j.chippendale@professionalscaboolture.propertyemail.com.au",
+        "Body": "View in browser\r\n\r\nDear, ,\r\n\r\nDo you enjoy keeping up with how the property market is performing in your area? Our team is excited to offer you an exceptional tool to help you investigate and uncover insights into the real estate market.\r\n\r\nOur interactiv",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZJUUiDRm7gQRHq",
+      "sourceCreatedTime": "2025-11-12T17:52:19.000Z",
+      "fields": {
+        "Name": "Tom Offermann Real Estate",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "sales@offermann.com.au",
+        "Body": "Edit my requirements\r\nVisit our Website\r\nProperty Alert\r\nThursday, 13th November 2025\r\nHello Rugesh,\r\n\r\nThe following listings matched your Property Alert search requirements.\r\n\r\nEumundi\r\n7 Finley Road\r\nSomewhat Like A Fairytale, But More Like A Dream Com",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZKGtYj9cTTDPrM",
+      "sourceCreatedTime": "2026-04-02T00:05:59.000Z",
+      "fields": {
+        "Name": "Hinternoosa .",
+        "Subject": "New Listings and Open Homes",
+        "Email": "sold@hinternoosa.com.au",
+        "Body": "Hinternoosa .\r\n\r\n\r\n07 5447 7000\r\n\r\nEmail me\r\n\r\n\r\nHi NPC Services\r\n\r\nExplore what's new at Hinternoosa this week!\r\n\r\nDiscover our latest New Listings, Rental of the Week, and all the homes open for inspection across the beautiful Noosa Hinterla",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZKpzPjBPyzRtLa",
+      "sourceCreatedTime": "2026-01-20T02:30:07.000Z",
+      "fields": {
+        "Name": "Abby Holmes-Brown",
+        "Subject": "2 NEW LISTINGS YOU DON'T WANT TO MISS!!!",
+        "Email": "sales@fnlifestyle.com.au",
+        "Body": "Just Listed\r\n\r\n\r\n\r\n\r\nHi Rugesh,\r\n\r\nTwo amazing new opportunities! Check out this charming home in Sippy Downs and a modern gem in Palmview - your dream home could be just a viewing away!\r\n\r\nKind Regards,\r\nAbby Holmes-Brown\r\n\r\nsales@fnlifestyle.c",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZMwSySnFVrAAHm",
+      "sourceCreatedTime": "2025-11-26T02:09:44.000Z",
+      "fields": {
+        "Name": "Shelter Real Estate",
+        "Subject": "Off Market Opportunities & Upcoming Listings",
+        "Email": "hello@shelterrealestate.com.au",
+        "Body": "Dear Rugesh,\r\n\r\nPlease see below a list of off market opportunities and upcoming listings going live in the next few weeks.\r\n\r\nOFF MARKET & PRE MARKET OPPORTUNITIES\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\nAddress\r\n\r\nType    B/B/C   Land (approx.)  Price guide     Contact Agen"
+      }
+    },
+    {
+      "sourceRecordId": "recZOdAL8Oxe00qpI",
+      "sourceCreatedTime": "2025-11-21T23:06:46.000Z",
+      "fields": {
+        "Name": "CRE Brokers",
+        "Subject": "CRE Brokers - Properties of the Week",
+        "Email": "mail@crebrokers.com",
+        "Body": "Each week, our team at CRE Brokers hand-picks standout properties across the tourism and hospitality sectors—ready for you to explore.\r\n\r\nScroll down to view our Properties.\r\n\r\nProperties to Explore\r\n\r\nWarragul\r\n128 North Road\r\nWarragul 4,640sqm parcel of",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZPV4JTpFIMI8xr",
+      "sourceCreatedTime": "2026-02-23T21:12:24.000Z",
+      "fields": {
+        "Name": "Rick Holloway",
+        "Subject": "FW: SMSF SPECIAL",
+        "Email": "rick@thebobtraskgroup.com.au",
+        "Body": "BE QUICK STOCK IS RUNNING OUT\r\nHIGH  YIELD $1,380 PER WEEK\r\nSMSF INVESTMENT’S\r\nBIG BLOCK BIG RETURNS\r\nRegistered\r\nSECONDARY DWELLING STOCK\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\nRegards\r\n\r\n“Whatever you need, if we don’t have it, we can find it and we can build it!”",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZPx45SmK7LbOTs",
+      "sourceCreatedTime": "2026-06-05T04:14:28.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZQRjSGuCVk4OUh",
+      "sourceCreatedTime": "2026-04-16T04:44:04.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZQzNHxlLQUe9er",
+      "sourceCreatedTime": "2025-10-29T09:08:01.000Z",
+      "fields": {
+        "Name": "Hinternoosa .",
+        "Subject": "New Listings and Open Homes",
+        "Email": "sold@hinternoosa.com.au",
+        "Body": "Hinternoosa .\r\n\r\n\r\n07 5447 7000\r\n\r\nEmail me\r\n\r\n\r\nHi NPC Services\r\n\r\nExplore what is new at Hinternoosa this week!\r\nDiscover our latest listings, upcoming auction, featured Rental of the Week, and this weekend's open homes.\r\nPlus, don't miss ou"
+      }
+    },
+    {
+      "sourceRecordId": "recZR0Rfdq1zNws6Z",
+      "sourceCreatedTime": "2025-12-19T09:04:30.000Z",
+      "fields": {
+        "Name": "Belle Property Australasia",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "noreply@belleproperty.com",
+        "Body": "Dear Rugesh,\r\n\r\nWe have found the following properties that match your property search requirements. Click here to update your preferences or click here to find a property on belleproperty.com.\r\nCurrent listings.\r\n\r\nBohle Plains\r\n9 Hanley Street\r\nFor Sale",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZR2Sqd42cle51N",
+      "sourceCreatedTime": "2026-06-10T05:35:18.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZS62wXN8WTDTv6",
+      "sourceCreatedTime": "2026-04-17T04:11:38.000Z",
+      "fields": {
+        "Name": "Brian McKiernan",
+        "Subject": "New Listings!",
+        "Email": "brian@visionrealtywa.com.au",
+        "Body": "Good morning\r\n\r\nPlease see the new listings below and reach out if you have any interest. First home opens this weekend.\r\n\r\n\r\n35 Weitj Vista, Chittering: Early $1Mils\r\n\r\nhttps://www.realestate.com.au/property-house-wa-chittering-150906700\r\n\r\n\r\n2/78 Parkin"
+      }
+    },
+    {
+      "sourceRecordId": "recZT8OxO80B0SG5J",
+      "sourceCreatedTime": "2025-11-17T03:54:21.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZTMLPd4ejMBLB5",
+      "sourceCreatedTime": "2026-01-28T08:35:46.000Z",
+      "fields": {
+        "Name": "Michael Enever",
+        "Subject": "Recently SOLD - WISELEIGH - Harcourts",
+        "Email": "michael.enever@harcourts.com.au",
+        "Body": "Hi Rugesh,\r\n\r\nTo keep up to date with the market please see the property below that has recently SOLD in WISELEIGH.\r\nIf you would like further information about the property shown, or to discuss your property requirements, please don't hesitate to c"
+      }
+    },
+    {
+      "sourceRecordId": "recZTS43r4kHWso0q",
+      "sourceCreatedTime": "2025-10-10T10:32:21.000Z",
+      "fields": {
+        "Name": "Rick Holloway",
+        "Subject": "FW: Pimpama Sale",
+        "Email": "rick@thebobtraskgroup.com.au",
+        "Body": "Regards\r\n\r\n“Whatever you need, if we don’t have it, we can find it and we can build it!”\r\nPRICED TO SELL\r\n\r\nLimited stock 1 ONLY\r\nSecondary Dwelling Stock\r\nPIMPAMA\r\nRegistered Ready To Build\r\nUnique Property\r\nGreat Location\r\nBIG BLOCKS",
+        "Status": "Error 500",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/X0N9JkOIkLDBDEugQCrHYA/vtq7FqMXdA0Bc1IPmH4IQi_P11GbLtN5TZYKCkHHoN3Y0rbD8cWMj6RPdO36-3mbuVRzEZAcHPQaoPfPrEueQpv6QlwGrfqbbheFXrR2SIby-xbPDuzEuBWji7_nGRXyT9yHcDhmUFr5L7Q5WmhD_iFcetn6SadMR3T8RwgRRE_MpxZniBfvt-x9Zg9mofGE/Kkh3wI-5KF3rUO3OgJ2p4OzriMkxtspTrjcBSOJ6dpM",
+            "filename": "outlook_email_attachment.png",
+            "type": "image/png",
+            "size": 163414
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "recZUH3pndgdmTH8M",
+      "sourceCreatedTime": "2026-03-26T08:01:26.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZVBKslRYUogi8L",
+      "sourceCreatedTime": "2025-12-19T04:44:25.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZVLLxIheCFKU4R",
+      "sourceCreatedTime": "2025-11-27T06:57:31.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZW0IQKoeENmBHZ",
+      "sourceCreatedTime": "2025-11-06T02:55:48.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZWJMIFRnqIvw8K",
+      "sourceCreatedTime": "2026-06-09T05:12:15.000Z",
+      "fields": {
+        "Name": "First National Real Estate Atherton",
+        "Subject": "1 new property that match your criteria",
+        "Email": "mail@athertonfn.com.au",
+        "Body": "Dear Rugesh, Here are the results for your email alerts from First National Real Estate Atherton as at 09/06/2026\r\n\r\n\r\n        4               2               2               780 sqm\r\n$700,000 - $740,000\r\n8 Carnation Street, Atherton\r\n\r\nComfortabl"
+      }
+    },
+    {
+      "sourceRecordId": "recZWWQgXJrV47mAv",
+      "sourceCreatedTime": "2026-06-10T05:35:22.000Z",
+      "fields": {
+        "Name": "Professionals Caboolture/Morayfield Chippendale",
+        "Subject": "Hi,, How can we help you?",
+        "Email": "j.chippendale@professionalscaboolture.propertyemail.com.au",
+        "Body": "Dear ,\r\n\r\nHow can we help you?\r\n\r\nWe know that in today’s fast-paced world, things can change quickly, including your needs when it comes to property.\r\n\r\nThat’s why we like to check in with you from time to time. We understand that your price range might "
+      }
+    },
+    {
+      "sourceRecordId": "recZZBO15x8iRz55Z",
+      "sourceCreatedTime": "2025-11-17T03:58:12.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZZpkYETn764FCT",
+      "sourceCreatedTime": "2026-06-05T04:29:54.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZaeFFZm0F1q5Bz",
+      "sourceCreatedTime": "2025-12-12T23:09:40.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZasCgl57jsE9xh",
+      "sourceCreatedTime": "2026-03-13T02:24:23.000Z",
+      "fields": {
+        "Name": "Marty Maher",
+        "Subject": "Great Ocean Properties Weekly Update",
+        "Email": "marty@greatoceanproperties.com.au",
+        "Body": "Welcome\r\n\r\n\r\nGreat Ocean Properties Weekly Update\r\n\r\n\r\n\r\nDear Rugesh\r\n\r\nHello and welcome to your weekly update direct from the coast.\r\n\r\nA beautiful weekend coming up and great weather for the annual Aireys Inlet Music Festival. This much loved",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZbPqd3MYG7iaP4",
+      "sourceCreatedTime": "2026-02-24T03:07:00.000Z",
+      "fields": {
+        "Name": "Ooranya Estate - Land Sale",
+        "Subject": "Ooranya Estate - H&L One Part Contracts",
+        "Email": "sales@bevanprojects.com.au",
+        "Body": "View this email in your browser\r\n\r\n\r\n\r\nDear ,\r\n\r\nAt Ooranya Estate, we have\r\ncollaborated with a variety of builders\r\nto offer you, our valued partners\r\n\r\n\r\n\r\nph: 0427 664 855\r\nemail: sales@bevanprojects.com.au\r\npostal address: PO Box 482\r\nPort Melb",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZd2So64IG0OXrH",
+      "sourceCreatedTime": "2026-06-05T04:10:36.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZe74B27NdoyqUa",
+      "sourceCreatedTime": "2026-06-12T02:05:26.000Z",
+      "fields": {
+        "Name": "Courtney Lee",
+        "Subject": "OPPORTUNITY KNOCKS - NEW PRICE - SOUGHT-AFTER LOCATION WITH OUTDOOR ENTERTAINING SPACE",
+        "Email": "courtney@gattonrealestate.com.au",
+        "Body": "Dear Rugesh\r\n\r\nIf you've been searching for a spacious family home with room to move, this could be the one! Set on a generous 948m² block, this well-appointed property offers the perfect combination of comfort, functionality, and lifestyle. ✨\r\n\r\n🏡 NEW P"
+      }
+    },
+    {
+      "sourceRecordId": "recZg3LDPN0ZiduHT",
+      "sourceCreatedTime": "2026-01-13T00:04:09.000Z",
+      "fields": {
+        "Name": "Morgan Business Sales",
+        "Subject": "Morgan Business Sales - Latest Business Opportunities",
+        "Email": "jade@morganbusinesssales.com",
+        "Body": "Hi Rugesh,\r\n\r\nWe have some fantastic new listings to share with you.  Please click the links below to view more details and initiate your enquiry on any of these opportunities.\r\n\r\n\r\n\r\nFor more opportunities\r\n\r\nYou can view all of our current business oppo",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZgEjlKqt8VJiPE",
+      "sourceCreatedTime": "2026-03-05T04:22:12.000Z",
+      "fields": {
+        "Name": "Pat O'Driscoll Real Estate",
+        "Subject": "PAT O'DRISCOLL REAL ESTATE NEWSLETTER",
+        "Email": "salesadmin2@podre.com.au",
+        "Body": "0749272122\r\nwww.podre.com.au\r\n\r\n\r\n\r\n\r\n\r\n\r\nPROPERTY OF THE WEEK\r\n\r\n\r\n\r\n\r\n\r\n346 Stenhouse Street, Koongal\r\n\r\n\r\n        Offers Over $595,000\r\n\r\nDual-Income Duplex with Upside!\r\nAn excellent opportunity to secure a well-maintained dual-income property in a "
+      }
+    },
+    {
+      "sourceRecordId": "recZgJUjrZdjztK4z",
+      "sourceCreatedTime": "2025-08-17T08:29:18.000Z",
+      "fields": {
+        "Name": "Rugesh Naidu",
+        "Subject": "Fwd: 'nsw' - Alert",
+        "Email": "naidu.rugesh@gmail.com",
+        "Body": "\n\n---------- Forwarded message ---------\nFrom: Rugesh Naidu <naidu.rugesh@gmail.com [naidu.rugesh@gmail.com]>\nDate: Sun, Aug 17, 2025 at 6:21 PM\nSubject: Fwd: 'nsw' - Alert\nTo: <lavankenobi@gmail.com [lavankenobi@gmail.com]>\n\n\n\n\n---------- Forwarded message ---------\nFrom: realcommercial.com.au [http://realcommercial.com.au] <email@campaign.realcommercial.com.au [email@campaign.realcommercial.com.au]>\nDate: Sat, Aug 16, 2025 at 4:18 PM\nSubject: 'nsw' - Alert\nTo: <naidu.rugesh@gmail.com [naidu.rugesh@gmail.com]>\n\n\nThere are new properties for your 'nsw' saved search.͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌ ͏‌Unsubscribe from Saved Search Alert emails [https://ablink.campaign.realcommercial.com.au/ss/c/u001.uYrhCq4L-I1OIkZEwlUHN6-6sJkXvyP9OtWW-iAWmlvDJIK8dnkVGVV8lYIgvsfi0AKaaQ12FqJsWaGB8rY-pVBYIzcCEnqh-1vdD9QMMcJfoIHwEDmVWDD8O0l5tFR8jt0LNbgiAcn-tWzBaSwekwtnyfyGqfPgVNd7-U4TnQqThuqLuGxwOXjGfeeKjnO8JhrJboe9wO8QEJRRg0IuHSpu1wjxxHX3fKrV1SanemItfoHU-TiD_YRAs4jmCpL6OXSFBj5KgimWyB6dKqMq5D1UM9AiSBxWMGay9Em0yKwmTyWpZ42wzQI2tIxwQoMQ7fI20qSWJ0wexpEDCHzSUJOgsdZTpa6HlXaXWyDQU7s/4j3/ht1f_4SNRCONPYuyXXZsWA/h39/h001.H3QlNgHzkTE_hD-sIMpEF3JwTW9GepOZRDCAdO8SptU] \n\nhttps://www.realcommercial.com.au/ [https://braze-images.com/appboy/communication/assets/image_assets/images/61f1f6562088e02342167051/original.png?1643247190] [https://ablink.campaign.realcommercial.com.au/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys65SeWQLvRw4iXwVRALPGsuS7htNoE2f8APVVnd-LeODl3V9EaCs0b-zBrPsdRvJB13C129WaZM-pZfLp7QiURWPp_UnlgdcDYkpY-vM9ppJy9vDo34ejpIn23dh452WVuqoBXVOXJA9QLbN2ZKAylbMOwTXnkBsRgPi1RZ7Km5iNg/4j3/ht1f_4SNRCONPYuyXXZsWA/h40/h001._n0dgMpXe38e9E68FM1vMRCRBUunI0WwCVdoYUnoj_M] New to the market New properties match your saved search for \"nsw\". Upstate - Northern Beaches [https://i1.au.reastatic.net/320x60-resize,format=png/547e26dc1861dcd7d33af99b85933346a347a6d6bd415c14409e63940d720a78/large.jpg] [https://ablink.campaign.realcommercial.com.au/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys66UF8-6ALucPfdQOUcnShLgerX4AAWieuzfDVJw2il1I41_zkIjtYgFOICONggTdXdrG52dWA-LeC69g_dS3YlX20BZr4RndIRS0d2W9UxqNu65kerNYsBi5_QZ_-KLWMrFrJp8pK50fF8FgQvgjob8IPF56rRCllO0mf5UI4WyUOk_54aRMrLnUQmuUvIfQAufEKnu_OlEtdIWFml9NUQ2ViQPof5KtIDUESTYzIvToQ/4j3/ht1f_4SNRCONPYuyXXZsWA/h41/h001.NZJyaVT8uQXubZi4YgneBrs4n8HZoG5mrU1WRu2GR3Q] 3/108 Old Pittwater Road [https://i1.au.reastatic.net/600x400,gravity=north/4580f3ba777d27e0bf048911628bf80ce20e7acadbb9111e26027c395770040c/image0.jpg] 3/108 Old Pittwater Road [https://i1.au.reastatic.net/420x280,gravity=north/4580f3ba777d27e0bf048911628bf80ce20e7acadbb9111e26027c395770040c/image0.jpg] [https://ablink.campaign.realcommercial.com.au/uni/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys64Ca8YbNd7rXD0Z8-MCCJvvL8rg7hluCrvBX4CGNDcQEsbCWakOFMXS1zaRCFV5xfB6bZRywqmlqm9h5JKkpVljSuCUkD_CmbGdpYlYEckYWdxNZnR_JwcNmP7i5hkWIGJAhuJ8vS3ztzeBMSCdNcX5uUjXCNuvLbi3dU97Mh18Fj0eUv8t7xm_gTPPoGd96Z5s0N4xp0Yjs8IlNFV7jF5aTYpodzCotO4uuRpuEIVjTfqfDhwNchFtSrxfzTwtyRSmnoQcN_TENPbi0KjTMNOw/4j3/ht1f_4SNRCONPYuyXXZsWA/h42/h001.x4Vjg6Vm1ua_aW-nh5xfk1ZpOrc9TTjEERiHefbug84]3/108 Old Pittwater Road, Brookvale, NSW 2100 [https://ablink.campaign.realcommercial.com.au/uni/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys64Ca8YbNd7rXD0Z8-MCCJvvL8rg7hluCrvBX4CGNDcQEsbCWakOFMXS1zaRCFV5xfB6bZRywqmlqm9h5JKkpVljSuCUkD_CmbGdpYlYEckYWdxNZnR_JwcNmP7i5hkWIGJAhuJ8vS3ztzeBMSCdNcX5uUjXCNuvLbi3dU97Mh18Fj0eUv8t7xm_gTPPoGd96Z5s0N4xp0Yjs8IlNFV7jF5aTYpodzCotO4uuRpuEIVjTfqfDhwNchFtSrxfzTwtyRSmnoQcN_TENPbi0KjTMNOw/4j3/ht1f_4SNRCONPYuyXXZsWA/h43/h001.ONfU4RVp9Ev2_pD1yhr_P3iwBrX1u9V76FqWkaRAOqw]AUCTIONProperty Size [https://braze-images.com/appboy/communication/assets/image_assets/images/67074fd4fceceb00651dda6f/original.png?1728532436]618 m² Parking Spaces [https://appboy-images.com/appboy/communication/assets/image_assets/images/5dc4d5e2a12f74571497e5f4/original.png?1573180898]12 Warehouse, Factory & Industrial Paul Cunningham [https://i1.au.reastatic.net/80x80,gravity=north/abf4e488a16dd03ada6e11ceead762df137a798d29a4b56de8cd056437fef752/main.jpg] [https://ablink.campaign.realcommercial.com.au/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys673kmgBp81tKx10xV0Plegm7eFAkNsvS5KjpblPPjsvB_BPxTrtzU-0gn1tmQNgsYqDYszUYPRWK86Fg6iZUVsiuovUIqfrCxkxdz8XQimT2hxpsK3wScPkmAkFxr425EmwPuKch4q6RhAQpu75Jzh1kRTsh42jiK8R-XrgktuRbZgrCZQwOJ-RAUqKdKIpYUX-A4biUw0VF5o5V2LOUbLX/4j3/ht1f_4SNRCONPYuyXXZsWA/h44/h001.igTFcjSUFhZbHsuihKsy7QEFBs38dz4uuAMigjaiz_Y] Saxon Stonehouse [https://i1.au.reastatic.net/80x80,gravity=north/baa8f04b58d4959539831834e7cd6978588f5a25110c04163016360365cd1eaf/main.jpg] [https://ablink.campaign.realcommercial.com.au/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys66xKz7aeZiL2V7D4aw66ngCpmNsabRY5yRAOK5lDU7vPgPV3EtqDzguocOiweHPcn-cJXYKHBPdsNg1yAsQpIqrCqJNjmEavJJDz-VT8s40S59RMhtjaAzvqiUFilpEYuNMQEibNv-x9Pjk_eu0bRsFhwVH9Y8VNgmCl6p50aAXCliQJDsHRlfbIahfeFw63kcJQvOC7qaVdy7oV4e0E7hs/4j3/ht1f_4SNRCONPYuyXXZsWA/h45/h001.GlvA7rbAOlvmqhyLRGt9PeNYGj9VAO5qu38TELk-Kao] View Property [https://ablink.campaign.realcommercial.com.au/uni/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys64Ca8YbNd7rXD0Z8-MCCJvvL8rg7hluCrvBX4CGNDcQEsbCWakOFMXS1zaRCFV5xfB6bZRywqmlqm9h5JKkpVljSuCUkD_CmbGdpYlYEckYWdxNZnR_JwcNmP7i5hkWIGJAhuJ8vS3ztzeBMSCdNcX5uUjXCNuvLbi3dU97Mh18Fj0eUv8t7xm_gTPPoGd96Z5s0N4xp0Yjs8IlNFV7jF5aTYpodzCotO4uuRpuEIVjTfqfDhwNchFtSrxfzTwtyRSmnoQcN_TENPbi0KjTMNOw/4j3/ht1f_4SNRCONPYuyXXZsWA/h46/h001.zL4upe9Q3vhAtNa4LiBM1gYnPUmOX7haB7rw69BJw-0] VIBE Property - Richmond [https://i1.au.reastatic.net/320x60-resize,format=png/3322910435478f12a887b9b2e39fe55d908eec6df98efcdd3079a24d75c6fa25/large_commercial.jpg] [https://ablink.campaign.realcommercial.com.au/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys66UF8-6ALucPfdQOUcnShLg8zzqld8jM5thUc6pKl91KqjVeHvkMOyUOaDYo6ON9uJCUiqbdSMOb5S3GgxHgpd-0pBoJaEKAUPjv2ghT2_5MVZ8BKIpDTv5Vi6FZ0oBr4GmjQwy3BUsf_sxctxvmh6qkyD4abW6e8k537qK0D8QRZ2-_LyI5ck-SLQR1UoJGcp1ANuL0IocHXTCtxHZ01NlOn1Zf_yo4FW5jPSJq7uS1A/4j3/ht1f_4SNRCONPYuyXXZsWA/h47/h001.NHfZm8YFj4goY7UGN8FO1BvYHGQpZCC47K_NxRukXAI] 5/2 Anderson Place [https://i1.au.reastatic.net/600x400,gravity=north/c913abd5de4a15bb6741cf9fd4118945664436e8f8628b98265a36d5a3cba789/image0.jpg] 5/2 Anderson Place [https://i1.au.reastatic.net/420x280,gravity=north/c913abd5de4a15bb6741cf9fd4118945664436e8f8628b98265a36d5a3cba789/image0.jpg] [https://ablink.campaign.realcommercial.com.au/uni/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys64Ca8YbNd7rXD0Z8-MCCJvvIsAKuxxp7V6RPcPTuYnFvX4zfP6K9YbiJHA386STdugXVVME54SfJsRtSzbjhEvGIxASJ8eEMN-GpdHvtf-kCubL9HzgfxXjBiyBi-o3qy2glaFTpMJiWLM3TfSwqPiGM6K1fV00oWUuY-XS7PHxFmppsn82nx-pngfAerJm0qAualW-R3Q-5mJEqaK7zOWUePP30bue5M7cvArVoANGuUehZUEPs2sx99NiA6jz-1CYg9u6x81lnNZiasfTiLil/4j3/ht1f_4SNRCONPYuyXXZsWA/h48/h001.Z-wWjR5XhV_OI_0OJ2NZy2jDC-UrbvH0wzTRb3XKbCU]5/2 Anderson Place, South Windsor, NSW 2756 [https://ablink.campaign.realcommercial.com.au/uni/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys64Ca8YbNd7rXD0Z8-MCCJvvIsAKuxxp7V6RPcPTuYnFvX4zfP6K9YbiJHA386STdugXVVME54SfJsRtSzbjhEvGIxASJ8eEMN-GpdHvtf-kCubL9HzgfxXjBiyBi-o3qy2glaFTpMJiWLM3TfSwqPiGM6K1fV00oWUuY-XS7PHxFmppsn82nx-pngfAerJm0qAualW-R3Q-5mJEqaK7zOWUePP30bue5M7cvArVoANGuUehZUEPs2sx99NiA6jz-1CYg9u6x81lnNZiasfTiLil/4j3/ht1f_4SNRCONPYuyXXZsWA/h49/h001.RxJUPGP0BeQbpstwYmQW-lCDvm4Muzg9IkhBIlt3NBQ]OWNER WANTS TO MEET THE MARKET & SELL!Property Size [https://braze-images.com/appboy/communication/assets/image_assets/images/67074fd4fceceb00651dda6f/original.png?1728532436]248 m² Shops & Retail, Warehouse, Factory & Indus... View Property [https://ablink.campaign.realcommercial.com.au/uni/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys64Ca8YbNd7rXD0Z8-MCCJvvIsAKuxxp7V6RPcPTuYnFvX4zfP6K9YbiJHA386STdugXVVME54SfJsRtSzbjhEvGIxASJ8eEMN-GpdHvtf-kCubL9HzgfxXjBiyBi-o3qy2glaFTpMJiWLM3TfSwqPiGM6K1fV00oWUuY-XS7PHxFmppsn82nx-pngfAerJm0qAualW-R3Q-5mJEqaK7zOWUePP30bue5M7cvArVoANGuUehZUEPs2sx99NiA6jz-1CYg9u6x81lnNZiasfTiLil/4j3/ht1f_4SNRCONPYuyXXZsWA/h50/h001.fDNnyEj9VR0o_AlIdFqOrgof1JjKpzqumRAQrZ9bnUU] DiJones Commercial [https://i1.au.reastatic.net/320x60-resize,format=png/bc700e375704b0d4820650924f915de90a3c866238862fbe1b4c1ae684762e5f/large_commercial.jpg] [https://ablink.campaign.realcommercial.com.au/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys66UF8-6ALucPfdQOUcnShLg4M-JaLUETdjdkhLkiFiqLp8rGYnmqGKxrxhDKwf6pwdPL8OWyyHpAqV4LM1cQ86zIHbjAhI5_sekp4qTVRcGG2WJNSOw4pI77mMtkwoIT7-iVu0cO7engx8JadE-4ovZMdv3DhbkRI6IvD45kpZonftd2xX8hiOXvt_YU8okQmz36c5lyfRk4OGbwzeyXnhX/4j3/ht1f_4SNRCONPYuyXXZsWA/h51/h001.Dd_WJX2Oy7SxzGoMB2maXx1j3ORPVgC4Pba3kWtOURk] 11/3 Fairmile Close [https://i1.au.reastatic.net/600x400,gravity=north/988de41059b12cbb4ae5c1b1fad722115f0fe78ac793416fe22d790bd44e52b1/image0.jpg] 11/3 Fairmile Close [https://i1.au.reastatic.net/420x280,gravity=north/988de41059b12cbb4ae5c1b1fad722115f0fe78ac793416fe22d790bd44e52b1/image0.jpg] [https://ablink.campaign.realcommercial.com.au/uni/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys64Ca8YbNd7rXD0Z8-MCCJvvX9EZJI5mz9QR8N3rnlfQabO_ww5eKv9LCX8ac6-bQUhj6zy-0931h3JuZCH8SCTH9bwoRTQXA-Y0z9EY3fV14e3_dEGa0HMm25HIMfBdvo1JY3Fc5UYLbv-6TLXIZFQh_lHjpaq3bl8iGVYPoCpsLsb6V1o0VVOIkDc6T3hL2_X-88z7chsVOzdbd4NCb3-ZZ1GfZyex_R8p-qhhBjFYfSZgkgonpEioWYu7t5ZCPsw/4j3/ht1f_4SNRCONPYuyXXZsWA/h52/h001.rIZyuRQWK146w-sL_1v67SqQR9CgyuxJw-T0ZY72Weo]11/3 Fairmile Close, Charmhaven, NSW 2263 [https://ablink.campaign.realcommercial.com.au/uni/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys64Ca8YbNd7rXD0Z8-MCCJvvX9EZJI5mz9QR8N3rnlfQabO_ww5eKv9LCX8ac6-bQUhj6zy-0931h3JuZCH8SCTH9bwoRTQXA-Y0z9EY3fV14e3_dEGa0HMm25HIMfBdvo1JY3Fc5UYLbv-6TLXIZFQh_lHjpaq3bl8iGVYPoCpsLsb6V1o0VVOIkDc6T3hL2_X-88z7chsVOzdbd4NCb3-ZZ1GfZyex_R8p-qhhBjFYfSZgkgonpEioWYu7t5ZCPsw/4j3/ht1f_4SNRCONPYuyXXZsWA/h53/h001.Qp9T_z-aOK4ukoIGOyxsnQpv6WB4BNOJoCOlkni7wbI]Guide $600,000 to $650,000 + GSTProperty Size [https://braze-images.com/appboy/communication/assets/image_assets/images/67074fd4fceceb00651dda6f/original.png?1728532436]165 m² Parking Spaces [https://appboy-images.com/appboy/communication/assets/image_assets/images/5dc4d5e2a12f74571497e5f4/original.png?1573180898]2 Warehouse, Factory & Industrial, Offices View Property [https://ablink.campaign.realcommercial.com.au/uni/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys64Ca8YbNd7rXD0Z8-MCCJvvX9EZJI5mz9QR8N3rnlfQabO_ww5eKv9LCX8ac6-bQUhj6zy-0931h3JuZCH8SCTH9bwoRTQXA-Y0z9EY3fV14e3_dEGa0HMm25HIMfBdvo1JY3Fc5UYLbv-6TLXIZFQh_lHjpaq3bl8iGVYPoCpsLsb6V1o0VVOIkDc6T3hL2_X-88z7chsVOzdbd4NCb3-ZZ1GfZyex_R8p-qhhBjFYfSZgkgonpEioWYu7t5ZCPsw/4j3/ht1f_4SNRCONPYuyXXZsWA/h54/h001.Wap503U85ofF32mBUjubwHUE9ZwnQSzjE_AMRkXl9OE] ADVERTISEMENT Advertisement [https://sasinator.realestate.com.au/rea/iserver?hint=x&site=rca&area=buy.emailalert&mid=HCjzgFj5xssLKc79HthK2azTxpZ1FFo6&state=NSW&pcode=2100&sub=Brookvale&pid=estrip1&pos=estrip1&size=630x100] [https://ablink.campaign.realcommercial.com.au/ss/c/u001.RJVzS26lo_VvqeHKlgOC3k1e4OkMgS0CkuuSq1yg8u8WrRi_ofCu9WsdWWwr5Blv6bME47VuJn4KcR5HXGjAGxrLFr1iKXvmKQPWlB_G1noM7JuiHH7tNonZNw1l-UalLuBP3ps30dBnXf-xq43DmFpqzZS--kf8S6ZK2zcJ_ie_ENO1RbCuVKJh_5heVkwAF84a0Ebd9wtyrxOIeT38tH_XUajJeaYQ4nU9DHVERJP4Q3FRfvyWf3i8bkTPewOHo1nE9nwyrwxeIPKr6905vw/4j3/ht1f_4SNRCONPYuyXXZsWA/h55/h001.SJOGyRqG6k-g_UC8-KWo_o_M0dXjVqoT1ZY1Lozx_A8] Advertisement [https://sasinator.realestate.com.au/rea/iserver?hint=x&site=rca&area=buy.emailalert&mid=HCjzgFj5xssLKc79HthK2azTxpZ1FFo6&state=NSW&pcode=2100&sub=Brookvale&pid=estrip1&pos=estrip1&size=630x100] [https://ablink.campaign.realcommercial.com.au/ss/c/u001.RJVzS26lo_VvqeHKlgOC3k1e4OkMgS0CkuuSq1yg8u8WrRi_ofCu9WsdWWwr5Blv6bME47VuJn4KcR5HXGjAGxrLFr1iKXvmKQPWlB_G1noM7JuiHH7tNonZNw1l-UalLuBP3ps30dBnXf-xq43DmFpqzZS--kf8S6ZK2zcJ_ie_ENO1RbCuVKJh_5heVkwAF84a0Ebd9wtyrxOIeT38tH_XUajJeaYQ4nU9DHVERJP4Q3FRfvyWf3i8bkTPewOHo1nE9nwyrwxeIPKr6905vw/4j3/ht1f_4SNRCONPYuyXXZsWA/h56/h001.AupZ73WwX_hVMXoJq1J3-R9v4yAk7p5fgDgpqZBpQjo] VIBE Property - Richmond [https://i1.au.reastatic.net/320x60-resize,format=png/3322910435478f12a887b9b2e39fe55d908eec6df98efcdd3079a24d75c6fa25/large_commercial.jpg] [https://ablink.campaign.realcommercial.com.au/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys66UF8-6ALucPfdQOUcnShLg8zzqld8jM5thUc6pKl91KqjVeHvkMOyUOaDYo6ON9uJCUiqbdSMOb5S3GgxHgpd-0pBoJaEKAUPjv2ghT2_5MVZ8BKIpDTv5Vi6FZ0oBr4GmjQwy3BUsf_sxctxvmh6qkyD4abW6e8k537qK0D8QRZ2-_LyI5ck-SLQR1UoJGcp1ANuL0IocHXTCtxHZ01NlOn1Zf_yo4FW5jPSJq7uS1A/4j3/ht1f_4SNRCONPYuyXXZsWA/h57/h001.wAD7xquRtaA1MP8F7bQLvrvFlJkg2J-uxr7JnvAdfl8] 2/2 Anderson Place [https://i1.au.reastatic.net/600x400,gravity=north/b9eca8033b97d69277a06200d00e54b72285317e0b83b85f0d6a4c47d56e847c/image0.jpg] 2/2 Anderson Place [https://i1.au.reastatic.net/420x280,gravity=north/b9eca8033b97d69277a06200d00e54b72285317e0b83b85f0d6a4c47d56e847c/image0.jpg] [https://ablink.campaign.realcommercial.com.au/uni/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys64Ca8YbNd7rXD0Z8-MCCJvvuB8mcbXP2PNO7CeNCAah66xOy9DsehhQ-90c6u07cnBAh5GW6iEaiZnxc5_nuDyeNp_-669onYYdT9fCtKY47R3sEiUPBXtJSQMKeTXmkkUbvXgMuvA2jU7LKJNXzhbm_2yfmYZLKgArwvw1r7AzYYUF0B80rBx5R3ZyBh7LDPTgA2NcGTMRFaUs7zbcGQpCIYHbAp2fYXB0jdjvoXxupv9lPuib-g7hGjTrs4Sz9vDSBe2tNnBqJbPC39cwIa-V/4j3/ht1f_4SNRCONPYuyXXZsWA/h58/h001.26_5_Dm1VeuBPMzlmwaE3rscpvqQu3WrP6p5_J81jSs]2/2 Anderson Place, South Windsor, NSW 2756 [https://ablink.campaign.realcommercial.com.au/uni/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys64Ca8YbNd7rXD0Z8-MCCJvvuB8mcbXP2PNO7CeNCAah66xOy9DsehhQ-90c6u07cnBAh5GW6iEaiZnxc5_nuDyeNp_-669onYYdT9fCtKY47R3sEiUPBXtJSQMKeTXmkkUbvXgMuvA2jU7LKJNXzhbm_2yfmYZLKgArwvw1r7AzYYUF0B80rBx5R3ZyBh7LDPTgA2NcGTMRFaUs7zbcGQpCIYHbAp2fYXB0jdjvoXxupv9lPuib-g7hGjTrs4Sz9vDSBe2tNnBqJbPC39cwIa-V/4j3/ht1f_4SNRCONPYuyXXZsWA/h59/h001.78CqTGdn9iTt7HHeUOj01giMY4dfggYRchwvipy6pKY]OWNER WANTS TO MEET THE MARKET & SELL!Property Size [https://braze-images.com/appboy/communication/assets/image_assets/images/67074fd4fceceb00651dda6f/original.png?1728532436]249 m² Shops & Retail, Warehouse, Factory & Indus... View Property [https://ablink.campaign.realcommercial.com.au/uni/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys64Ca8YbNd7rXD0Z8-MCCJvvuB8mcbXP2PNO7CeNCAah66xOy9DsehhQ-90c6u07cnBAh5GW6iEaiZnxc5_nuDyeNp_-669onYYdT9fCtKY47R3sEiUPBXtJSQMKeTXmkkUbvXgMuvA2jU7LKJNXzhbm_2yfmYZLKgArwvw1r7AzYYUF0B80rBx5R3ZyBh7LDPTgA2NcGTMRFaUs7zbcGQpCIYHbAp2fYXB0jdjvoXxupv9lPuib-g7hGjTrs4Sz9vDSBe2tNnBqJbPC39cwIa-V/4j3/ht1f_4SNRCONPYuyXXZsWA/h60/h001.QWvefq_xsUSrne7hBdABNY5RZZbdX8klznIlGmKzBpY] Want to see more? This email is showing you the latest properties that match your saved search criteria. Check out the rest. See all matching properties [https://ablink.campaign.realcommercial.com.au/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys64Ca8YbNd7rXD0Z8-MCCJvvYtSTGL1XEjtdJZ_sLS7CRKph0UXY0WfNykML5u2IM5OsMw2-SF2inFWOcRotkZpDyIq2Bg3Hy47Qh0AfeA4n3lqr9Lej7Do1KNbmPGwx_rBVbl_feRMBXs_1pf9t6ZVwtLirPaWXK-G6111d06QCeijEma4Q_Rl7yVT3SeGElWMoQnRwfqwYUPcTQ6u5G_mpbc438OlogiooQLa74c5ZI5oXwN7X3f7mpG6UIhVConUPK4exOGCpR5M3GGtpfciMgkgy0PK3xiRdjb3UMz5vTA/4j3/ht1f_4SNRCONPYuyXXZsWA/h61/h001.Zhy1aJ58Xz8g2IH-EOw6JUfBpjJrZsEnrnIPyKjsgIg] Thinking of selling or leasing? Find a commercial real estate agency to sell or lease your property. Find an agency [https://ablink.campaign.realcommercial.com.au/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys66e850VUdg3bLDdTmAFxYzhQdbQjyjBWKlucRm-EHeH-mQtvCGLrJbsXxU24z31kEsChyjJXRMPEXUVLipUgBU2B4MLC-abz2g7HirubZQR4a5e77odWXhUvdplqce7YcUpcZG9aRwt1FDgG8FT9xw4kejENzVMoHOJRa0G7y72AuKO_prEDoA4ZxvAJzJTc2M/4j3/ht1f_4SNRCONPYuyXXZsWA/h62/h001.qKIlVQxbraREhhr-DnBrU2SqUR2vk_HehYcSysrShBk] Update your details [https://ablink.campaign.realcommercial.com.au/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys658m7byeGXITd7BboJLUQoG2a-igy6MfQpEI1y1Yx8O0sBdzCkoO1QuyaartmkOnF-I-gWl0Oq6iuI2sEl0MH120YFwK3f6gc5z_zsAzR-PKaWORZPgEax7bvPuYkeD5ARe1VrXVTqKg8pSlSlYcav-8l9eiNK7e9vZoJoDdAaFruuO1oW8Tu-FnB8YJ1iDES0g0p267pPMGjG3gvzricVh/4j3/ht1f_4SNRCONPYuyXXZsWA/h63/h001.k11i8A9e1gIhbse0gHsjMxIw1o6Z68cwR2WXCTLLRSg] | Support FAQs [https://ablink.campaign.realcommercial.com.au/ss/c/u001.nc__1TqmxqwlWC9CjFKnXO-wcsT1ed4YG3G3_I9dE5PeBP_cxUg7eyKx8Jk8kBkhbk3XdjGGjU0xxlfgiJUV4zFqCN8yjith10FheJm0kKFbleIO-nwipY46RezXGSVYdCw8B5HnsFLq07lR_hf5sqok1r5fKfvd773CsZGVcpFIu0GBtpCJicFWX_Z5UZYik8z1mx_xvPWdzUfdtu8mcE8pvBlFFy8_VimaLR5Dia8/4j3/ht1f_4SNRCONPYuyXXZsWA/h64/h001.REjkw53-ytt5Q-sWEgsELTIZlKH4P1vY4W89vv8Bg0k] | Terms of use [https://ablink.campaign.realcommercial.com.au/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys66-H8eSJCXMG_ezDObpzrSVEjy6w5oaILf43PBPobi8kD2Dx2rrZuMjqXMykzqRITBVhdx0Xf1-bnqnTYC0kzR_7nPODlccOltz7EERoCkO0t-rAwLiSIufDGFb7wq6Tx8L8L_z369Qd1AeKzV-CQ5qvJ2hvirhr2uAidv1C5ghFKltQ-Pq38CUVvWwlhs7EXIm0Np7DmORZCORhvTzJ1Db/4j3/ht1f_4SNRCONPYuyXXZsWA/h65/h001.nxII2E5OD0W5gnmzirMikc-HuMgafF7MIZG1tUNFmRQ] | Privacy Policy [https://ablink.campaign.realcommercial.com.au/ss/c/u001.8WPKKnXjpSs3WaHq0dV89f0QTJr51k_sgrIoq1BivKS9Cc4gPrfirWxtKXOca8QDCMYKs6eaumKCyuIfJcA8H8H5PInzTQlfThdK7hf3QUTZq_V3gctHiZsHvKgp2ZXmNlPn4lYnDgWKLtEqLkH8DljOdsp_efQT4w8gRJGkujvMF1Jtcm30w0ua78fCEvW3B04q04YOactaLcl4aTq7bOmRF2vCbOY6IRYJxBml6EQ/4j3/ht1f_4SNRCONPYuyXXZsWA/h66/h001.ErStozh0GsVf30wmL7CXSksVrbaH9ZOJaoJbqtXSdDE] | Contact us [https://ablink.campaign.realcommercial.com.au/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys66-H8eSJCXMG_ezDObpzrSVvzgpBnklemiVktUwfAxTANDcpEw_dWTzxf8pznECY2sDSaaZI-KOhzvHm4CAlgUAmHn0cw_RWd56jHW72hdYf3gKNUNxyMD7YR-5G_78mMbmET-OgNkkBd0QRYtSc0y2V1ja1N9_6QDLiizn2UHaVawXw84ftYSBOWKp8PmmmirxQ3hWIIlgVbp0FtMzL-y8/4j3/ht1f_4SNRCONPYuyXXZsWA/h67/h001.4ZvKSZkq2OG5zoap-IEeiCuLw8dXgGlOAVCcEwwZW-s] You're receiving this because you created a realcommercial.com.au [https://ablink.campaign.realcommercial.com.au/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys65SeWQLvRw4iXwVRALPGsuS7htNoE2f8APVVnd-LeODl3V9EaCs0b-zBrPsdRvJB13C129WaZM-pZfLp7QiURWPp_UnlgdcDYkpY-vM9ppJy9vDo34ejpIn23dh452WVuqoBXVOXJA9QLbN2ZKAylbMNR9IHvJ7hxEbI1RuqDwVOA/4j3/ht1f_4SNRCONPYuyXXZsWA/h68/h001.dasMLdO3_bQR_b6RHWIFG-0Dl-loDGk2TovNM3E2xbg] account and saved a search. Manage your email preferences [https://ablink.campaign.realcommercial.com.au/ss/c/u001.NE3lvwpckgDoHAGf9DjdB62GbCDYZQamEXJGl3hys658m7byeGXITd7BboJLUQoG8Xm9ZePHfuzeV6cZivWd0te3EOb4KzQ103_WIdmFHes1Lw5_ttgRmiTeF2FTy_rxkEvv2W39OGwiU3VdJDWpDF8FBjT2XkEwXKz3V9gRMmriBfkVDr-6JrC6ztSAc43bMI7Zg4x4hCjaeXwwoQs3Ownty0Kt9oYIJFSWU5UEaAChAEFyKeHCASQxDOO0DTfq/4j3/ht1f_4SNRCONPYuyXXZsWA/h69/h001.cgPMGhcUWq3Bt1VJ-0YvtCzqIjKubpHZpJbyvwBkpKA] \nUnsubscribe from Saved Search Alert emails [https://ablink.campaign.realcommercial.com.au/ss/c/u001.uYrhCq4L-I1OIkZEwlUHN6-6sJkXvyP9OtWW-iAWmlvDJIK8dnkVGVV8lYIgvsfi0AKaaQ12FqJsWaGB8rY-pVBYIzcCEnqh-1vdD9QMMcJfoIHwEDmVWDD8O0l5tFR8jt0LNbgiAcn-tWzBaSwekwtnyfyGqfPgVNd7-U4TnQqThuqLuGxwOXjGfeeKjnO8JhrJboe9wO8QEJRRg0IuHSpu1wjxxHX3fKrV1SanemItfoHU-TiD_YRAs4jmCpL6OXSFBj5KgimWyB6dKqMq5D1UM9AiSBxWMGay9Em0yKwmTyWpZ42wzQI2tIxwQoMQ7fI20qSWJ0wexpEDCHzSUJOgsdZTpa6HlXaXWyDQU7s/4j3/ht1f_4SNRCONPYuyXXZsWA/h70/h001.jP6xics-CPAdwyN_aI64szY_y6T-p0d5HjoFoHGcqUo] Facebook [https://appboy-images.com/appboy/communication/assets/image_assets/images/5db663307bdadd506b81e7fe/original.png?1572234032] [https://ablink.campaign.realcommercial.com.au/ss/c/u001.NE3lvwpckgDoHAGf9DjdB6ITz7jHhraemh7kpqWHDkc-miss_mIex8UEGrTDnoxj/4j3/ht1f_4SNRCONPYuyXXZsWA/h71/h001.8-rN7CUuvuGgkOpaE9G2XhoXs17srJ1AnrgALh8GINA]Twitter [https://appboy-images.com/appboy/communication/assets/image_assets/images/5db66330125ebf7461a3ad0b/original.png?1572234032] [https://ablink.campaign.realcommercial.com.au/ss/c/u001.XtcjiZcabKPl5zD8m8z5Eo7XWxaP56QfyXd-inpkVl0grVMWlui0EmvXgmeEAEFG/4j3/ht1f_4SNRCONPYuyXXZsWA/h72/h001.TU99jbWwM5N5fKag8NAMFgZaEveVdDqs9y5CZAZCtOI]LinkedIn [https://appboy-images.com/appboy/communication/assets/image_assets/images/5db6632f9196ee753f576987/original.png?1572234031] [https://ablink.campaign.realcommercial.com.au/ss/c/u001.8WPKKnXjpSs3WaHq0dV89ZwQURErAayf_LYp9TE1ZazY9czwTUYPtWZ1WkoPSb7NrSi1KGN71pw_6XNYMBTTZA/4j3/ht1f_4SNRCONPYuyXXZsWA/h73/h001.ty3iVIgPTimOvL9bu0qeXZsh8L3Tsc57twWWAf2EnhI]App Store [https://appboy-images.com/appboy/communication/assets/image_assets/images/5db663303f88487061108f8c/original.png?1572234031] [https://ablink.campaign.realcommercial.com.au/ss/c/u001.8WPKKnXjpSs3WaHq0dV89TpUjIbLf5RqrYY6RS7ZeRRm-a-5XSr9fZdXvyXKaLEdVGWXZzVNU7Oyy0u_gSeZfDai1_pDuuOxWG3lFLBTFFQ/4j3/ht1f_4SNRCONPYuyXXZsWA/h74/h001.pboHccSjPmC2Si6UUp1K6q261LXoAMmlVuipZo2sqWE]Google Play [https://appboy-images.com/appboy/communication/assets/image_assets/images/5db6632fc556aa3574b4984c/original.png?1572234031] [https://ablink.campaign.realcommercial.com.au/ss/c/u001.z4u4qNtPpaEnJssry_6UxlLks9_85DyMQGINCbLmrUOwwINUivJBlcxkWOefnW6CsiaIKVVA_nRpUCKrLakWl7vzqivdFfFTDL0XFUVavJs/4j3/ht1f_4SNRCONPYuyXXZsWA/h75/h001.lTZISTI1i2g0333j-RDeDBdlKRzm4NhYMz1LijpzZ1M] © REA Group Ltd. All rights reserved. realestate.com.au [https://ablink.campaign.realcommercial.com.au/ss/c/u001.NE3lvwpckgDoHAGf9DjdBznLUkRQDXWoBLSDzBlISdX0nrQ9VZqHUgn1YW5vaSELOF_OxVKDUCuS6coaAmTOmEVdlXb9HhmY-D2wSG7YDIOQeuTPs9AxdaRP1-aS714RmSXoseLvMrtjoWp2RqU9_VKeG10KzZ7WjtWE2IV07VlzbIPpBOw-rjEGnWJKA2y_bA3sTkMlgMHFt86z9gjAJg/4j3/ht1f_4SNRCONPYuyXXZsWA/h76/h001.A9IqRmiebPnSX8dPyLo0D9pOwjXyPz4wgMq7fvVNOeA] Pty Ltd ABN 21 080 195 535. \n\n511 Church Street, Richmond, VIC 3121. support@realestate.com.au [support@realestate.com.au] [https://ablink.campaign.realcommercial.com.au/ss/o/u001.st9BsB6Vz6iRl4QKgjtPMQ/4j3/ht1f_4SNRCONPYuyXXZsWA/ho.gif]"
+      }
+    },
+    {
+      "sourceRecordId": "recZhgiS9sTboFRMJ",
+      "sourceCreatedTime": "2026-06-04T07:10:16.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZi1tmT2qelAtL5",
+      "sourceCreatedTime": "2025-10-10T10:14:25.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZiuOWz3Z9N6AS9",
+      "sourceCreatedTime": "2026-02-20T04:34:18.000Z",
+      "fields": {
+        "Name": "Natalie Tekin",
+        "Subject": "Kinbrook by Moremac - Builder Update",
+        "Email": "Natalie@alc.land",
+        "Body": "Dear Builder Partners,\r\n\r\nHope this email finds you well.\r\n\r\nPlease find the attached current Pricelist for Kinbrook.\r\n\r\nShould you require any further information or have any questions, please feel free to contact me.\r\n\r\nKind Regards,\r\nNat\r\n\r\n\r\nNatalie T",
+        "Status": "Error 500",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/ldT1HrN78msGS_yzjeT4pA/UwaOls_Yb8aQz58kO3Sa8Q1vadRPqvz5EXRnmZU8zOxETWEKk905e0-QpNKOeEo4ntw_syvqRuXiz4amZr-gurcq-WiXtPmNiZ7OsYn4eWMj4F62bZtO3Io8nrEO9NIAP9EwyS6cQAWFO1g-twPSPJoIL7LU5yryj0rRvAaEOkbyL-DbmRK8EBgOvA51C4Tk/6RJJNvxEzR1MDZ4ILpob1aAPDoEzqkGf9PEoCAq56us",
+            "filename": "outlook_email_attachment.pdf",
+            "type": "application/pdf",
+            "size": 178641
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "recZjoct1hFj67Zq2",
+      "sourceCreatedTime": "2026-06-04T02:03:06.000Z",
+      "fields": {
+        "Name": "Robyn Faa",
+        "Subject": "Just Listed | 275 Pleystowe School Road, Pleystowe",
+        "Email": "robyn@robynfaa.com.au",
+        "Body": "Just Listed\r\n\r\nHi Rugesh\r\n\r\nWe are pleased to announce that 275 Pleystowe School Road, Pleystowe has just been listed for sale!\r\n\r\nIf you would like additional information on this property, click the \"View Online\" tab below to find all Mapping, Rental Est"
+      }
+    },
+    {
+      "sourceRecordId": "recZlHpyORXyA3lqY",
+      "sourceCreatedTime": "2025-10-29T09:58:08.000Z",
+      "fields": {
+        "Name": "Rick Holloway",
+        "Subject": "FW: Duplex Sale.",
+        "Email": "rick@thebobtraskgroup.com.au",
+        "Body": "STOCK UNDER 800K\r\nDuplex Sale\r\nBe Quick at this Price\r\nGreat Location\r\n\"The most convenient place to live in Queensland.\"\r\nUnique Property\r\nBIG LAND\r\n\r\n\r\n\r\nRegards\r\n\r\n“Whatever you need, if we don’t have it, we can find it and we can build it!”"
+      }
+    },
+    {
+      "sourceRecordId": "recZmFnG0IL73LhdT",
+      "sourceCreatedTime": "2025-11-12T06:21:24.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZmqVbAhWNF2Dcl",
+      "sourceCreatedTime": "2025-11-21T04:40:43.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZnOYdxnijv2NEy",
+      "sourceCreatedTime": "2026-02-20T03:14:40.000Z",
+      "fields": {
+        "Name": "Tom Offermann Real Estate",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "sales@offermann.com.au",
+        "Body": "Edit my requirements\r\nVisit our Website\r\nProperty Alert\r\nWednesday, 11th February 2026\r\nHello Rugesh,\r\n\r\nThe following listings matched your Property Alert search requirements.\r\n\r\nNoosa Heads\r\n15/19 Katharina Street\r\nBijou Beauty with Garden Terrace & Cos",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZoDEB5Ymksu0er",
+      "sourceCreatedTime": "2026-03-05T07:37:26.000Z",
+      "fields": {
+        "Name": "Keyline Realty",
+        "Subject": "Keyline Realty Property Update",
+        "Email": "keylinerealty@keylinerealty.com",
+        "Body": "Keyline Property Update\r\nHello Rugesh,\r\n\r\n\r\n\r\n\r\n\"So many of our dreams at first seem impossible. Then they seem improbable. And then, when we summon the will, they soon become inevitable.”\r\n\r\n- Christopher Reeve\r\n\r\nCheck out our 5-Star Google Reviews!",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZoDIrxXLJAswLD",
+      "sourceCreatedTime": "2025-11-29T00:23:30.000Z",
+      "fields": {
+        "Name": "Jasmine Dawson",
+        "Subject": "Kingsfield Builder Update - 29/11/2025 | STAGE 22A NEW RELEASE",
+        "Email": "Jasmine@alc.land",
+        "Body": "Dear Builder Partners,\r\n\r\n\r\nHope you’re all having a great weekend!\r\n\r\n\r\nPlease see attached our price list with available lots. We would love to display and advertise your House and Land packages.\r\n\r\nNEW LAND RELEASE FOR STAGE 22A with Premium blocks",
+        "Status": "Error 500",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/gnM0E0rXQD9p-BLBFwRSSw/tsGMMzETUp79rSgHW7CPyrGsGCgW8dCyldaVrvbqD98zFmoq-pbRxl7YtZz7sm3KyuRQ5DTVzESSAXKoDLD8aGRxPIdMHg2ubbY4gMfI3imT1e1OjJkK_FeGI1vIqooYUtdTr6ncltNrnRND_WxKQwuthJblya6sMH88YOry4U1_eoE0mk-RkKR8UXGJSHz4/9SjlykluY0FAkajaTCdZWPDEhzavsnkcGTK0mtzcduw",
+            "filename": "outlook_email_attachment.docx",
+            "type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "size": 1194244
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "recZocQfVsJYkIlSv",
+      "sourceCreatedTime": "2025-12-18T02:49:01.000Z",
+      "fields": {
+        "Name": "Vanessa Pottle",
+        "Subject": "Exclusive Pre-Market Opportunity – Classic Queenslander in Norville",
+        "Email": "vanessa@justusrealty.com.au",
+        "Body": "Hi NPC Services,\r\n\r\nWe’re excited to share an exclusive opportunity before it hits the public market – a beautifully preserved Queenslander with timeless charm in a prime Norville location.\r\n\r\nProperty Highlights:\r\n\r\n  *   3 bedrooms, including main with "
+      }
+    },
+    {
+      "sourceRecordId": "recZp0VKQeYNtfqaT",
+      "sourceCreatedTime": "2026-03-11T04:39:21.000Z",
+      "fields": {
+        "Name": "Catherine Tidy",
+        "Subject": "Fletcher Riley's Newsletter - This Week in Luxury: Just Listed, Just Sold and Exclusive Open Homes",
+        "Email": "admin@fletcherriley.com.au",
+        "Body": "Welcome to our weekly newsletter!\r\n\r\nWelcome to this week’s Fletcher Riley property update, bringing you the latest insights, listings and local highlights from across the Sunshine Coast.\r\n\r\nMomentum in the local property market remains strong, with quali",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZpb8gPVzGj2Ydr",
+      "sourceCreatedTime": "2026-06-15T08:42:44.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZqpRK2PbwVaCB9",
+      "sourceCreatedTime": "2025-08-17T08:37:26.000Z",
+      "fields": {
+        "Name": "Rugesh Naidu",
+        "Subject": "Fwd: 2025 August Rental Provider Update Newsletter",
+        "Email": "naidu.rugesh@gmail.com",
+        "Body": "\n\n---------- Forwarded message ---------\nFrom: First National Real Estate Waters & Carpenter <reception@waterscarpenter.com.au [reception@waterscarpenter.com.au]>\nDate: Mon, Aug 11, 2025 at 5:30 PM\nSubject: 2025 August Rental Provider Update Newsletter\nTo: <naidu.rugesh@gmail.com [naidu.rugesh@gmail.com]>\n\n\nView this email Online [https://www.fnre.co/_r/v.cfm?b=12498319&c=5177077&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]\n\n\nDear Rugesh,\n\n\n\nAustralia's rental market remains tight, but the latest Cotality Housing Value Index suggests change may be on the horizon.\n\n\n\nRead on for our wrap up of the latest property news.\n\n\n\nRental markets tight, but trends now shifting\n\n\n\nAustralia's rental market remains tight, but the latest Cotality Housing Value Index suggests change may be on the horizon. While demand still outweighs supply in many regions, a subtle rebalancing is underway, and landlords are being encouraged to stay informed and flexible.\n\n\n\nAccording to the August 2025 Index, national dwelling values rose 0.6% in July, continuing a steady upward trend. For landlords, this modest growth supports asset values and underpins long-term capital gains. However, it's the rental sector's trajectory that now requires closer attention.\n\n\n\nAlthough rental vacancy rates remain low, particularly in Perth, Brisbane and Adelaide, conditions are gradually diverging between regions and dwelling types. Cotality reports a continued slowdown in rental growth rates in Sydney and Melbourne, with the pace easing as more supply flows into the market. Some inner-city areas are beginning to see the return of rental incentives or rent negotiations, particularly for high-density apartments.\n\n\n\nThis softening doesn't signal weakness, but rather stabilisation-a welcome shift after years of disruption. In good news for tenants, the days of rapidly rising rents may be over in some areas, and tenant retention strategies will become more important for landlords through 2026.\n\n\n\nDespite this, pressure remains in outer suburban and regional rental markets. Population growth, restricted housing supply, and low levels of new development have kept vacancy rates well below historical norms. These areas may continue to see stronger rental performance, although affordability concerns are becoming more pronounced.\n\n\n\nResponsible landlords are already thinking beyond the short term. Many are investing in property improvements to enhance energy efficiency and liveability, helping retain quality tenants while reducing future maintenance costs. In a market where tenants have more information and higher expectations, well-maintained properties tend to attract lower vacancy periods and more stable tenancies.\n\n\n\nFrom a capital growth perspective, Cotality's data highlights continued strength in the smaller capital cities. Perth values rose 0.9% in July, Adelaide 0.7%, and Brisbane 0.7%-each outperforming the national average. This is of particular interest to investors weighing up regional diversification or expansion of their portfolios.\n\n\n\nHowever, landlords should also be conscious of evolving regulations and community expectations. With rental affordability a pressing issue across much of the country, state governments are actively reviewing tenancy laws. Many changes focus on security of tenure, notice periods, and minimum standards-all of which affect how investment properties must be managed. \n\n\n\nLandlords who remain adaptable, proactive, and well-informed are best placed to navigate this phase of the market. Rental yields remain attractive in many locations, particularly where property values have stabilised and rents have continued to rise, but a long-term view is essential.\n\n \n\nOverall, the Cotality report reinforces that while conditions remain favourable for landlords in many respects, the balance between sustainable returns and tenant affordability is becoming more important. Those who act with foresight and fairness are more likely to enjoy reliable income streams, positive tenant relationships, and stronger portfolio performance.\n\n\n\nGross rental yields nationally\n\nSydney\n\n3.0%\n\nMelbourne\n\n3.7%\n\nBrisbane\n\n3.6%\n\nAdelaide\n\n3.7%\n\nPerth\n\n4.2%\n\nHobart\n\n4.4%\n\nDarwin\n\n6.4%\n\nCanberra\n\n4.1%\n\nNational\n\n3.7%\n\nCHECK OUT OUR\n\nRECENT LISTINGS\n\n18/39-41 Jacobs Street [https://www.fnre.co/_r/c.cfm?l=2250558&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2250558&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]Experience Urban Comfort: Rent this Spacious Unit on Jacobs Street, Bankstown18/39-41 Jacobs Street, Bankstown$620 Per WeekBed: 2 Bath: 1 Car: 2This spacious 2-bedroom apartment is located on the top floor of a secure complex at 18/39 Jacobs Street, Bankstown NSW. The unit features built-in mirrored wardrobes in both bedrooms, carpet througho...14/19-27 Boronia Street [https://www.fnre.co/_r/c.cfm?l=2250559&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2250559&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]Studio Apartment14/19-27 Boronia Street, South Granville$380 Per WeekBed: 1 Bath: 1Thu 14 Aug 01:30PM to 01:45PMThis well maintained studio apartment features : - separate kitchen - bathroom - carpet throughout - internal laundry Walking distance to bus stop, public schools, Mona Park and public transport. On...4/91 Northumberland Road [https://www.fnre.co/_r/c.cfm?l=2250469&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2250469&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]2 Bedroom Unit - Top Floor4/91 Northumberland Road, Auburn$550 Per WeekBed: 2 Bath: 1 Car: 1Two bedroom unit with timber floorboards, internal laundry, flyscreen on windows, balcony, tidy kitchen and bathroom. Only 10 mins walk to schools, shops and station.7A Edgar Street [https://www.fnre.co/_r/c.cfm?l=2247829&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2247829&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]Modern & Spacious 4-Bedroom Home in Prime Auburn Location7A Edgar Street, Auburn$820 Per WeekBed: 4 Bath: 2 Car: 1 196sqmMon 11 Aug 02:30PM to 02:45PMCharming and budget-friendly, this 4-bedroom cottage offers practical living with rear lane access leading to a convenient carport. This well-maintained home perfectly blends comfort, space, and effic...3/19-27 Boronia Street [https://www.fnre.co/_r/c.cfm?l=2250356&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2250356&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]STUDIO UNIT3/19-27 Boronia Street, South Granville$390 Per WeekBed: 1 Bath: 1Thu 14 Aug 01:30PM to 01:45PMThis well maintained modern tidy studio apartment features: * separate kitchen * bathroom * carpet throughout * internal laundry Walking distance to bus stop, public schools, Mona Park and public...6/2 Childs Street [https://www.fnre.co/_r/c.cfm?l=2249927&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2249927&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]TWO BEDROOM UNIT6/2 Childs Street, Lidcombe$590 Per WeekBed: 2 Bath: 1 Car: 1This 2 bedroom unit features: - Combined lounge & dining room, - Modern kitchen with electric cooking appliances, - Shared laundry, - Car space, - Close to schools, - Shops & station.5/43 Rawson Street [https://www.fnre.co/_r/c.cfm?l=2249842&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2249842&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]2 Bedroom Unit5/43 Rawson Street, Auburn$580 Per WeekBed: 2 Bath: 1 Car: 1Two bedroom unit located on top floor, tiled floor throughout, separate laundry, security building and one carport. Only 5 minutes to station and the shops.2/5 Hevington Road [https://www.fnre.co/_r/c.cfm?l=2249567&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2249567&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]2 Bedroom Unit- Ground Floor2/5 Hevington Road, Auburn$520 Per WeekBed: 2 Bath: 1 Car: 12 Bedroom unit Timber floors Kitchen with Caesar stone bench tops Open plan dining & lounge City style laundry Car space Front facing Security building Small complex Close to shops, station, school & ...4/16 Dartbrook Road [https://www.fnre.co/_r/c.cfm?l=2249825&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2249825&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]Neat & Tidy 2 Bedroom unit located in first floor4/16 Dartbrook Road, Auburn$600 Per weekBed: 2 Bath: 1 Car: 1Neat & Tidy 2 Bedroom unit located in first floor, Separate Lounge area with Balcony, Modern Eat in Kitchen, Spacious bedrooms with Built in robe, Neat & tidy Bathroom, Internal Laundry, Car Spa...164A Chisholm Road [https://www.fnre.co/_r/c.cfm?l=2249830&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2249830&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]Spacious 3 Bedroom House164A Chisholm Road , Auburn$820 Per WeekBed: 3 Bath: 1Neat & Tidy 3 Bedroom house located opposite to gardens. Spacious separate Lounge area, Spacious bedrooms with Built-in Robe, Floating timber floors throughout, Modern eat in kitchen with GAS appl...101 Sheffield Street [https://www.fnre.co/_r/c.cfm?l=2249832&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2249832&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]Experience Comfort and Style: Rent this Spacious House on 101 Sheffield Street, Auburn101 Sheffield Street, Auburn$700 Per WeekBed: 3 Bath: 1 Car: 2101 Sheffield Street, Auburn NSW, Australia - For Rent This beautifully presented family home is now available for rent in the peaceful suburb of Auburn. With a picture-perfect facade and dual street...20 Percy Street [https://www.fnre.co/_r/c.cfm?l=2249831&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2249831&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]3 BEDROOM HOUSE20 Percy Street, Auburn$850 Per WeekBed: 3 Bath: 1 Car: 1Welcome to this charming 3 bedroom, 1 bathroom house located in a prime location in AUBURN. Two bedrooms with built-in wardrobes, with gas cooking, 1 lock up garage and a neat and tidy kitchen and bat...2/26-30 Boronia Street [https://www.fnre.co/_r/c.cfm?l=2249663&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2249663&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]STUDIO UNIT2/26-30 Boronia Street, South Granville$380 Per WeekBed: 1 Bath: 1Thu 14 Aug 01:30PM to 01:45PM- Tidy kitchen & bathroom - Carpet throughout - Walking distance to bus stop, public schools, Mona Park and public transport - On street parking56 Park Road [https://www.fnre.co/_r/c.cfm?l=2249494&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2249494&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]Ground-Level Semi-Detached 3-Bedroom House56 Park Road, Auburn$800 Per WeekBed: 3 Bath: 1 Car: 1Featuring built-in wardrobes in all rooms, formal and informal living areas, a split system air conditioner, a modern bathroom, and a large eat-in kitchen with gas cooking and a dishwasher. Includes a...8/146 Woodburn Road [https://www.fnre.co/_r/c.cfm?l=2250016&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2250016&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]Spacious 2 Bedroom Unit8/146 Woodburn Road, Berala$550 Per WeekBed: 2 Bath: 1 Car: 1This 2 Bedroom unit located on second floor featuring modern kitchen, car space, internal laundry, balcony, fly screens on windows, carpet throughout the property, opposite local shops and 2 mins walk...6/79 MacDonald Street [https://www.fnre.co/_r/c.cfm?l=2250560&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2250560&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]Modern, Light-Filled 2-Bedroom Apartment in Prime Lakemba Location6/79 MacDonald Street, Lakemba$580 Per WeekBed: 2 Bath: 1 Car: 1This neat and well-kept 2-bedroom apartment at 6/79 MacDonald Street, Lakemba is in a quiet and secure complex. It's practical, easy to look after, and full of natural light. With a modern open-plan l...7/75 Station Road [https://www.fnre.co/_r/c.cfm?l=2248760&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2248760&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]2 Bedroom Unit - Top Floor7/75 Station Road, Auburn$520 Per WeekBed: 2 Bath: 1 Car: 1Features: 2 bedroom, 1 bathroom Internal laundry Balcony Fly screens on windows Carpet throughout Electric cooking Car space Only a 10 minutes walk to the local station and shops29A Leura Road [https://www.fnre.co/_r/c.cfm?l=2248679&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2248679&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]Affordable 3-Bed, 3-Bath Granny Flat - Private, Low Maintenance Living29A Leura Road, Auburn$700 Per WeekBed: 3 Bath: 3 Car: 1Located at 29A Leura Road, Auburn, this modern and self-contained granny flat offers unbeatable value with three bedrooms and three bathrooms, making it ideal for small families, couples, or housemate...41 Provincial Street [https://www.fnre.co/_r/c.cfm?l=2247382&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2247382&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]3 BEDROOM HOUSE41 Provincial Street, Auburn$850 Per WeekBed: 3 Bath: 1 Car: 1PERFECT FOR A FAMILY! -3 spacious bedrooms with built-in wardrobes - Renovated kitchen - Modern bathroom - Renovated laundry with a second toilet -Separate dining and lounge -1 lock-up garageCHECK OUT OUR\n\nRECENT LEASED\n\n375A Blaxcell Street [https://www.fnre.co/_r/c.cfm?l=2246793&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2246793&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]1 Bedroom Granny Flat375A Blaxcell Street, South Granville$430 Per WeekBed: 1 Bath: 1One bedroom granny flat Tiled flooring throughout Privacy windows Nice open kitchen Tiled bathroom Air conditioning15/14 Crawford Street [https://www.fnre.co/_r/c.cfm?l=2248185&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2248185&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]Bright and Sunny15/14 Crawford Street, BeralaDEPOSIT TAKEN - INSPECTION CANCELLEDBed: 2 Bath: 1 Car: 1~ Two bedroom ~ Located on second floor ~ Neat kitchen and bathroom ~ Gas cooking ~ Tiled throughout ~ Single car space ~ 250m walk to shops and station3/146A Park Road [https://www.fnre.co/_r/c.cfm?l=2248864&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2248864&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]2 Bedroom Unit3/146A Park Road, Auburn$530 Per WeekBed: 2 Bath: 1 Car: 12 bedroom sunny unit located on 2nd floor Timber floors throughout Separate lounge area Balcony Good size bedrooms Tidy bathroom Car space Close to Auburn Hospital4/12 Dartbrook Road [https://www.fnre.co/_r/c.cfm?l=2248048&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2248048&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]Fully Renovated 2-Bedroom Unit in Prime Location at 4/12 Dartbrook Road, Auburn4/12 Dartbrook Road, AuburnDEPOSIT TAKEN - INSPECTION CANCELLEDBed: 2 Bath: 1 Car: 1Step into style and comfort with this fully renovated 2-bedroom unit, ideally located in the heart of Auburn. Offering light-filled interiors, modern finishes, and unbeatable convenience, this home is...10/1 Wulumay Close [https://www.fnre.co/_r/c.cfm?l=2246377&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2246377&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]Luxury Waterfront Living - 3 Bedroom Apartment with Resort Facilities10/1 Wulumay Close, RozelleDEPOSIT TAKEN - INSPECTION CANCELLEDBed: 3 Bath: 2 Car: 1Positioned on the 2nd floor of an exclusive and sought-after complex, this sun-drenched 3-bedroom apartment offers the perfect blend of luxury, lifestyle, and convenience - all just moments from Rozel...24 Northcote Street [https://www.fnre.co/_r/c.cfm?l=2243209&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2243209&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]Charming House for Rent in Auburn, NSW - Your Dream Home Awaits at 24 Northcote Street!24 Northcote Street, AuburnDEPOSIT TAKEN - INSPECTION CANCELLEDBed: 4 Bath: 1 Car: 2Located in the heart of Auburn, this charming 4-bedroom house on Northcote Street is now available for rent. This well-maintained property features a tidy kitchen, a tidy bathroom, and an ideal locati...4/146A Park Road [https://www.fnre.co/_r/c.cfm?l=2246095&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2246095&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]SUNNY 2 BEDROOM UNIT WITH BALCONY VIEWS4/146A Park Road, AuburnDEPOSIT TAKEN INSPECTION CANCELLEDBed: 2 Bath: 1 Car: 1Located in a friendly well maintained building, This bright and spacious 2 bedroom unit offers :- * A separate lounge to a sunny balcony with district views * Floating timber floors throughout for eas...6/146 Woodburn Road [https://www.fnre.co/_r/c.cfm?l=2248049&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2248049&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]2 Bedroom Unit6/146 Woodburn Road, BeralaDEPOSIT TAKEN - INSPECTION CANCELLEDBed: 2 Bath: 1 Car: 1- Tidy bathroom - Neat kitchen - Internal laundry - Timber flooring throughout - 2 mins walk from Berala Station & Shops12A Belgium Street [https://www.fnre.co/_r/c.cfm?l=2248183&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2248183&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]LUXURIOUS LIVING REDEFINED12A Belgium Street, AuburnDEPOSIT TAKEN INSPECTION CANCELLEDBed: 5 Bath: 2 Car: 1Brand New , spacious 5 bedroom remarkable attention to design, this absolute gorgeous , luxury 2 storey home offering comfortable family living. Ground Floor *Sun drenched formal living area, *Stunn...1/9 Gibbons Street [https://www.fnre.co/_r/c.cfm?l=2245438&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2245438&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]2 Bedroom Unit Ground Floor1/9 Gibbons Street, Auburn$600 Per WeekBed: 2 Bath: 1 Car: 1Located on the ground floor, > Tidy kitchen and bathroom, > Timber flooring, > Internal laundry, > Balcony and > Car space. Only 5 mins walk to station and shops.21/180-188 South Parade [https://www.fnre.co/_r/c.cfm?l=2247787&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2247787&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]Modern and Spacious 2-Bedroom Unit in Prime Location21/180-188 South Parade, AuburnDEPOSIT TAKEN INSPECTION CANCELLEDBed: 2 Bath: 2 Car: 1Perfectly positioned just a short stroll from Auburn Station, this spacious and well-maintained unit offers a fantastic lifestyle opportunity in the heart of Auburn. Set within a secure complex, the h...2/5 Queen Street [https://www.fnre.co/_r/c.cfm?l=2248177&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2248177&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]MODERN TWO BEDROOM UNIT2/5 Queen Street, AuburnDEPOSIT RECEIVED INSPECTION CANCELLEDBed: 2 Bath: 1 Car: 1This two bedroom unit is close to shop & transport... be quick before too late! Features; * Kitchen with electric cook-top/oven * Tiles though-out * Balcony in living area * Ground level * Large Moder...8/83 Macquarie Road [https://www.fnre.co/_r/c.cfm?l=2245277&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2245277&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]1 Bedroom Unit First Floor8/83 Macquarie Road, AuburnDEPOSIT TAKEN INSPECTION CANCELLEDBed: 1 Bath: 1 Car: 1One sunny bedroom with tidy kitchen and bathroom Internal laundry Security intercom Timber floor throughout 12 minutes walk to the station 1 car space3/45 Claremont Street [https://www.fnre.co/_r/c.cfm?l=2246653&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2246653&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]SPACIOUS YET COZY3/45 Claremont Street, Campsie$550 Per WeekBed: 2 Bath: 1 Car: 1- 2 bedroom ground floor unit - Security grilles on windows - Timber flooring through out - Neat kitchen and bathroom - Built-in wardrobe - Internal laundry - Balcony - Car space - 8 mins walk to shop...7/22 Military Road [https://www.fnre.co/_r/c.cfm?l=2246475&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2246475&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]LOCATION!! LOCATION!!7/22 Military Road, MerrylandsDEPOSIT RECEIVED INSPECTION CANCELLEDBed: 2 Bath: 1 Car: 1This well-presented unit is situated in ONE OF THE most sought-after complexes and positioned in one of Merrylands most convenient locations. Property feature: * Two generous bedrooms * Timber floori...Should you allow pets?\n\nAllowing pets in your rental property is a decision that carries both risks and rewards. As property managers, we recommend landlords weigh the pros and cons carefully.\n\n\nOn the upside, pet-friendly rentals are in high demand. With more tenants seeking accommodation for their animals, allowing pets can reduce vacancy periods, widen your applicant pool, and encourage longer tenancies. Pet-owning tenants often remain in a property longer, avoiding the disruption of rehoming their animals.\n\n\n\nThere are, of course, potential downsides. Greater wear to flooring, gardens or fixtures can occur, particularly in properties not suited to pets. Pet odours, noise complaints and additional wear and tear must also be considered. That's why it's essential to include clear, enforceable pet clauses in tenancy agreements, outlining expectations and conditions.\n\n\n\nUnder most state legislation, tenants may request to keep a pet, and landlords must not unreasonably refuse. In practice, this means having a robust pet application process in place, including references and pet profiles.\n\n\n\nOverall, when managed professionally, allowing pets can add value to your investment. With clear boundaries and the right safeguards, landlords can minimise risks while meeting today's evolving rental expectations.\n\nCHECK OUT OUR\n\nCLIENT FEEDBACK\n\n\n\n\"Fusce vitae dui eget arcu fringilla fermentum. Cras congue purus suscipit sapien pulvinar semper. Donec non felis vitae ex auctor lobortis. Sed tincidunt lorem eget velit posuere, vitae scelerisque tellus congue. Donec non aliquam leo. Etiam varius elit at vulputate varius. Maecenas interdum pretium diam at sodales.\"\n\n\n\n- Jennifer P, Broadmeadows\n\n\n\n\"Fusce vitae dui eget arcu fringilla fermentum. Cras congue purus suscipit sapien pulvinar semper. Donec non felis vitae ex auctor lobortis. Sed tincidunt lorem eget velit posuere, vitae scelerisque tellus congue. Donec non aliquam leo. Etiam varius elit at vulputate varius. Maecenas interdum pretium diam at sodales.\"\n\n\n\n- John D, Werribee\n\n\n\n\"Fusce vitae dui eget arcu fringilla fermentum. Cras congue purus suscipit sapien pulvinar semper. Donec non felis vitae ex auctor lobortis. Sed tincidunt lorem eget velit posuere, vitae scelerisque tellus congue. Donec non aliquam leo. Etiam varius elit at vulputate varius. Maecenas interdum pretium diam at sodales.\"\n\n\n\n- Andrew H, Southbank\n\nGetting rental tax deductions right\n\nMaximising tax benefits is a key part of effective property investment. However, Australian landlords must ensure their claims comply with current Australian Taxation Office (ATO) guidelines to avoid costly errors. Here's what you need to know to make informed, compliant claims on your rental property.\n\n\n\n1. Understand what you can claim\n\nYou can deduct a wide range of expenses incurred in managing, maintaining, and earning income from your rental. These include:\n\n * Council rates\n * Water charges\n * Land tax\n * Property management fees\n * Advertising for tenants\n * Repairs and maintenance\n * Insurance (building, contents, landlord cover)\n * Interest on your investment loan\n * Depreciation (in eligible circumstances)\n\n2. Repairs vs. improvements \n\nThis is a key distinction. Immediate deductions can be claimed for repairs to restore items to their original condition-such as fixing a broken fence or leaking tap. Improvements, however-like renovating a kitchen or adding anew deck-must be claimed over time as capital works deductions. Misclassifying these can result in ATO scrutiny.\n\n\n\n3. Depreciation deductions \n\nIf your property contains qualifying assets (e.g. blinds, appliances, carpet) and was built after 16 September 1987, you may be eligible to claim depreciation over several years. However, under rules introduced in 2017,second-hand residential properties acquired after 9 May 2017 are not eligible for deductions on previously used plant and equipment. To claim depreciation accurately, consider obtaining a depreciation schedule prepared by a registered quantity surveyor. \n\n\n\n4. Travel expenses\n\nSince 1 July 2017, travel expenses for inspecting, maintaining or collecting rent from residential rental properties are no longer deductible for most individuals. This applies regardless of the distance or frequency of travel. Companies and some trusts are exempt, but most individual landlords must now exclude travel-related costs.\n\n\n\n5. Ensure income is reported correctly \n\nAll rental income-including bond money retained, insurance payouts and short-term letting income-must be declared. The ATO increasingly matches data from banks, platforms like Airbnb, and property managers, so underreporting is likely to be detected.\n\n\n\n6. Apportionment \n\nIf only part of your property is rented out, or if it's rented for only part of the year, you must apportion expenses accordingly. This applies to holiday homes and shared arrangements. Claims must reflect the actual proportion used to generate income.\n\n\n\n7. Maintain proper records\n\nGood record-keeping is essential. Keep invoices, receipts, loan statements and depreciation schedules for at least five years. Digital records are acceptable if legible and securely stored.\n\n\n\n8. Work with a tax adviser\n\nTax laws change frequently. Engaging a registered tax agent who understands residential property investment is strongly recommended. They can ensure compliance, identify opportunities and help you structure your claims effectively.\n\n\n\nThe ATO continues to monitor property deductions closely. By understanding your obligations and claiming only what you're entitled to, you'll stay on the right side of tax law while maximising the return on your investment.\n\n\n\nCHECK OUT OTHER\n\nFEATURED ARTICLES\n\nHow to buy your first home or investment property sooner\n\nLearn More [https://www.fnre.co/_r/c.cfm?l=2250549&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]Your step-by-step home organisation guide\n\nLearn More [https://www.fnre.co/_r/c.cfm?l=2250550&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]Powered by science: how tech innovations are shaping our lives!\n\nLearn More [https://www.fnre.co/_r/c.cfm?l=2250551&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]First National Real Estate Waters & Carpenter\n\nwww.waterscarpenter.com.au [https://www.fnre.co/_r/c.cfm?l=127090&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]\n\nsales@waterscarpenter.com.au [sales@waterscarpenter.com.au]\n\nPh: 02 9649 0238\n\n\n112 South Parade, Auburn, NSW 2144\n\n\n [https://www.fnre.co/_r/c.cfm?l=1681215&c=5177077&m=1138427&b=12498319&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056] \n\nUpdate Details & Preferences [https://www.fnre.co/_m/WATAUZ/u.cfm?s=5177077&e=naidu%2Erugesh%40gmail%2Ecom&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]\n\nUnsubscribe [https://www.fnre.co/_m/WATAUZ/u.cfm?s=5177077&e=naidu%2Erugesh%40gmail%2Ecom&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056&stp=un]"
+      }
+    },
+    {
+      "sourceRecordId": "recZrGCTusR7iGR1B",
+      "sourceCreatedTime": "2025-10-10T14:54:54.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZs3sVvmdieslIc",
+      "sourceCreatedTime": "2026-01-15T03:10:11.000Z",
+      "fields": {
+        "Name": "Sam Shaw",
+        "Subject": "Off Market Opportunity - 25 White Parade, Churchill",
+        "Email": "samshaw@wprci.com.au",
+        "Body": "Good afternoon,\r\n\r\nJust a quick email to advise that we have a new off market listing at 25 White Parade, Churchill that may be of interest to you. Please find attached a copy of the section 32 for this property for your perusal.\r\n\r\nPlease see the below l",
+        "Status": "Error 500",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/K-R3LPmGyoSFJBPMJim6qQ/6ke1Zup95V7F-uZg4w9iL7GHoIcAzsxqa_K0IozsY4o5iehNxA2y7LQ9yZnFXUKwUYWdTck7u_SLmG47pnJTBIrHhHG0KtTSlEIULAgsTPURGOQ3OtQ1nWPl2KuYFliWGqLFTActxUmmuvqgnt3HhvD837ssoLrt98m40ct21wYYfb3_h50E3jWpY39h9txF/t3KfYxKA1Kv7ar_uSaVjS59htplYVGmXFBry6Cnr68o",
+            "filename": "outlook_email_attachment.pdf",
+            "type": "application/pdf",
+            "size": 8575697
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "recZsDURqykMRFnbo",
+      "sourceCreatedTime": "2026-03-19T06:24:58.000Z",
+      "fields": {
+        "Name": "Robyn Faa",
+        "Subject": "Just Listed | 322 Tannalo Galea Road, Finch Hatton",
+        "Email": "robyn@robynfaa.com.au",
+        "Body": "Just Listed\r\n\r\nHi Rugesh\r\n\r\nWe are pleased to announce that 322 Tannalo Galea Road, Finch Hatton has just been listed for sale!\r\n\r\nIf you would like additional information on this property, click the \"View Online\" tab below to find all Mapping, Rental Est",
+        "Status": "Error 500"
+      }
+    }
+  ]
+}

@@ -1,0 +1,1 @@
+UPDATE public.investment_reports SET is_archived = false WHERE is_archived = true;

@@ -1,0 +1,42 @@
+{
+  "async": true,
+  "createdAt": "2025-12-01T05:03:15.413Z",
+  "function": {
+    "description": "This tool should be used to delete events through a separate automation by retrieving the contact name and existing booking time they made previously.",
+    "name": "ghl_delete_event_npc_2_1",
+    "parameters": {
+      "properties": {
+        "discoveryCallTime": {
+          "default": "",
+          "description": "",
+          "type": "string"
+        },
+        "fullName": {
+          "default": "",
+          "description": "",
+          "type": "string"
+        }
+      },
+      "required": [
+        "fullName",
+        "discoveryCallTime"
+      ],
+      "type": "object"
+    },
+    "strict": true
+  },
+  "id": "a34b05ef-5218-4771-bf2b-4b171ad8f9c9",
+  "messages": [
+    {
+      "blocking": false,
+      "type": "request-start"
+    }
+  ],
+  "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+  "server": {
+    "timeoutSeconds": 20,
+    "url": "https://hook.eu2.make.com/w5e69pe59ahue41em25rvh97j91wtxbj"
+  },
+  "type": "function",
+  "updatedAt": "2025-12-04T09:32:59.823Z"
+}

@@ -1,0 +1,14 @@
+# E2 — never commit resolved environments, model caches, generated fixtures or
+# Docker archives. Only source (pyproject.toml, uv.lock, *.json, README, tests) is
+# tracked.
+.venv/
+*-venv/
+.docling-models/
+.hf-cache/
+.EasyOCR/
+fixtures-out/
+*.pdf
+*.png
+*.tar
+__pycache__/
+.pytest_cache/

@@ -1,0 +1,394 @@
+{
+  "assistant": "Xenochrome Assistant",
+  "assistantId": "1f907ea6-adc6-41c4-accc-9ae3cd0739ab",
+  "note": "System prompts are replaced by promptRef; the text is in ../prompts/<ref>.md. Everything else is the API response verbatim.",
+  "versionCount": 6,
+  "versions": [
+    {
+      "createdAt": "2025-05-20T13:53:21.703Z",
+      "data": {
+        "backchannelingEnabled": false,
+        "backgroundDenoisingEnabled": false,
+        "clientMessages": [
+          "transcript",
+          "hang",
+          "function-call",
+          "speech-update",
+          "metadata",
+          "conversation-update"
+        ],
+        "createdAt": "2024-07-16T12:36:04.835Z",
+        "endCallFunctionEnabled": true,
+        "firstMessage": "Hi there! My name is Khan. I'm a virtual assistant at Xenochrome Technologies. How can I help you today?",
+        "hipaaEnabled": false,
+        "id": "1f907ea6-adc6-41c4-accc-9ae3cd0739ab",
+        "model": {
+          "emotionRecognitionEnabled": true,
+          "maxTokens": 1000,
+          "messages": [
+            {
+              "chars": 4816,
+              "promptRef": "feb9196375b98c44",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4.1",
+          "provider": "openai",
+          "temperature": 0.7,
+          "toolIds": [
+            "326c7c81-e4c2-4bcb-bcf3-134a1af73f49"
+          ]
+        },
+        "name": "Xenochrome Assistant",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "url": "https://na-gcp-api.vg-stuff.com/v2/agents/NE4wWwtA5BGy5Cm/vapi-event"
+        },
+        "serverMessages": [
+          "end-of-call-report",
+          "status-update",
+          "hang",
+          "function-call",
+          "conversation-update"
+        ],
+        "transcriber": {
+          "language": "en",
+          "model": "nova-2",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-05-20T13:53:21.691Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "nWxiGsP4eBrWk3QtVY6K"
+        }
+      },
+      "versionId": "cabea374-3581-11f0-85e3-cb732745528f"
+    },
+    {
+      "createdAt": "2025-05-14T22:36:15.092Z",
+      "data": {
+        "backchannelingEnabled": false,
+        "backgroundDenoisingEnabled": false,
+        "clientMessages": [
+          "transcript",
+          "hang",
+          "function-call",
+          "speech-update",
+          "metadata",
+          "conversation-update"
+        ],
+        "createdAt": "2024-07-16T12:36:04.835Z",
+        "endCallFunctionEnabled": true,
+        "firstMessage": "Hi there! My name is Khan. I'm a virtual assistant at Xenochrome Technologies. How can I help you today?",
+        "hipaaEnabled": false,
+        "id": "1f907ea6-adc6-41c4-accc-9ae3cd0739ab",
+        "model": {
+          "emotionRecognitionEnabled": true,
+          "maxTokens": 1000,
+          "messages": [
+            {
+              "chars": 4816,
+              "promptRef": "feb9196375b98c44",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4.1",
+          "provider": "openai",
+          "temperature": 0.7,
+          "toolIds": [
+            "326c7c81-e4c2-4bcb-bcf3-134a1af73f49"
+          ]
+        },
+        "name": "Xenochrome Assistant",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "url": "https://na-gcp-api.vg-stuff.com/v2/agents/NE4wWwtA5BGy5Cm/vapi-event"
+        },
+        "serverMessages": [
+          "end-of-call-report",
+          "status-update",
+          "hang",
+          "function-call",
+          "conversation-update"
+        ],
+        "transcriber": {
+          "language": "en",
+          "model": "nova-2",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-05-14T22:36:15.080Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "nWxiGsP4eBrWk3QtVY6K"
+        }
+      },
+      "versionId": "d8436342-3113-11f0-9717-ad510eb723ea"
+    },
+    {
+      "createdAt": "2025-05-01T06:32:30.767Z",
+      "data": {
+        "backchannelingEnabled": false,
+        "backgroundDenoisingEnabled": false,
+        "clientMessages": [
+          "transcript",
+          "hang",
+          "function-call",
+          "speech-update",
+          "metadata",
+          "conversation-update"
+        ],
+        "createdAt": "2024-07-16T12:36:04.835Z",
+        "endCallFunctionEnabled": true,
+        "firstMessage": "Hi there! My name is Khan. I'm a virtual assistant at Xenochrome Technologies. How can I help you today?",
+        "hipaaEnabled": false,
+        "id": "1f907ea6-adc6-41c4-accc-9ae3cd0739ab",
+        "model": {
+          "emotionRecognitionEnabled": true,
+          "maxTokens": 1000,
+          "messages": [
+            {
+              "chars": 4816,
+              "promptRef": "feb9196375b98c44",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4.1",
+          "provider": "openai",
+          "temperature": 0.7,
+          "toolIds": [
+            "326c7c81-e4c2-4bcb-bcf3-134a1af73f49"
+          ]
+        },
+        "name": "Xenochrome Assistant",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "url": "https://na-gcp-api.vg-stuff.com/v2/agents/NE4wWwtA5BGy5Cm/vapi-event"
+        },
+        "serverMessages": [
+          "end-of-call-report",
+          "status-update",
+          "hang",
+          "function-call",
+          "conversation-update"
+        ],
+        "serverUrl": "https://na-gcp-api.vg-stuff.com/v2/agents/NE4wWwtA5BGy5Cm/vapi-event",
+        "serverUrlSecret": "{{REDACTED:VAPI_SERVER_URL_SECRET}}",
+        "transcriber": {
+          "language": "en",
+          "model": "nova-2",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-05-01T06:32:30.738Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "nWxiGsP4eBrWk3QtVY6K"
+        }
+      },
+      "versionId": "0ee8dbf2-2656-11f0-bae9-7deca80e9ecb"
+    },
+    {
+      "createdAt": "2025-05-01T06:31:33.285Z",
+      "data": {
+        "backchannelingEnabled": false,
+        "backgroundDenoisingEnabled": false,
+        "clientMessages": [
+          "transcript",
+          "hang",
+          "function-call",
+          "speech-update",
+          "metadata",
+          "conversation-update"
+        ],
+        "createdAt": "2024-07-16T12:36:04.835Z",
+        "endCallFunctionEnabled": true,
+        "firstMessage": "Hi there! My name is Khan. I'm a virtual assistant at Xenochrome Technologies. How can I help you today?",
+        "hipaaEnabled": false,
+        "id": "1f907ea6-adc6-41c4-accc-9ae3cd0739ab",
+        "model": {
+          "emotionRecognitionEnabled": true,
+          "maxTokens": 1000,
+          "messages": [
+            {
+              "chars": 4816,
+              "promptRef": "feb9196375b98c44",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4.1",
+          "provider": "openai",
+          "temperature": 0.7,
+          "toolIds": [
+            "326c7c81-e4c2-4bcb-bcf3-134a1af73f49"
+          ]
+        },
+        "name": "Xenochrome Assistant",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "url": "https://na-gcp-api.vg-stuff.com/v2/agents/NE4wWwtA5BGy5Cm/vapi-event"
+        },
+        "serverMessages": [
+          "end-of-call-report",
+          "status-update",
+          "hang",
+          "function-call",
+          "conversation-update"
+        ],
+        "serverUrl": "https://na-gcp-api.vg-stuff.com/v2/agents/NE4wWwtA5BGy5Cm/vapi-event",
+        "serverUrlSecret": "{{REDACTED:VAPI_SERVER_URL_SECRET}}",
+        "transcriber": {
+          "language": "en",
+          "model": "nova-2",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-05-01T06:31:33.262Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "nWxiGsP4eBrWk3QtVY6K"
+        }
+      },
+      "versionId": "eca5cd52-2655-11f0-a6e3-f7538758e7fe"
+    },
+    {
+      "createdAt": "2025-05-01T06:28:28.140Z",
+      "data": {
+        "backchannelingEnabled": false,
+        "backgroundDenoisingEnabled": false,
+        "clientMessages": [
+          "transcript",
+          "hang",
+          "function-call",
+          "speech-update",
+          "metadata",
+          "conversation-update"
+        ],
+        "createdAt": "2024-07-16T12:36:04.835Z",
+        "endCallFunctionEnabled": true,
+        "firstMessage": "Hi there! My name is Khan. I'm a virtual assistant at Xenochrome Technologies. How can I help you today?",
+        "hipaaEnabled": false,
+        "id": "1f907ea6-adc6-41c4-accc-9ae3cd0739ab",
+        "model": {
+          "emotionRecognitionEnabled": true,
+          "maxTokens": 1000,
+          "messages": [
+            {
+              "chars": 4816,
+              "promptRef": "feb9196375b98c44",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4.1",
+          "provider": "openai",
+          "temperature": 0.7,
+          "toolIds": [
+            "326c7c81-e4c2-4bcb-bcf3-134a1af73f49"
+          ]
+        },
+        "name": "Xenochrome Assistant",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "url": "https://na-gcp-api.vg-stuff.com/v2/agents/NE4wWwtA5BGy5Cm/vapi-event"
+        },
+        "serverMessages": [
+          "end-of-call-report",
+          "status-update",
+          "hang",
+          "function-call",
+          "conversation-update"
+        ],
+        "serverUrl": "https://na-gcp-api.vg-stuff.com/v2/agents/NE4wWwtA5BGy5Cm/vapi-event",
+        "serverUrlSecret": "{{REDACTED:VAPI_SERVER_URL_SECRET}}",
+        "transcriber": {
+          "language": "en",
+          "model": "nova-2",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-05-01T06:28:28.129Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "nWxiGsP4eBrWk3QtVY6K"
+        }
+      },
+      "versionId": "7e4aeac2-2655-11f0-8466-771a56f21cf7"
+    },
+    {
+      "createdAt": "2025-05-01T06:27:40.404Z",
+      "data": {
+        "backchannelingEnabled": false,
+        "backgroundDenoisingEnabled": false,
+        "clientMessages": [
+          "transcript",
+          "hang",
+          "function-call",
+          "speech-update",
+          "metadata",
+          "conversation-update"
+        ],
+        "createdAt": "2024-07-16T12:36:04.835Z",
+        "endCallFunctionEnabled": true,
+        "firstMessage": "Hi there! My name is Khan. I'm a virtual assistant at Xenochrome Technologies. How can I help you today?",
+        "hipaaEnabled": false,
+        "id": "1f907ea6-adc6-41c4-accc-9ae3cd0739ab",
+        "model": {
+          "emotionRecognitionEnabled": true,
+          "maxTokens": 1000,
+          "messages": [
+            {
+              "chars": 4816,
+              "promptRef": "feb9196375b98c44",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4.1",
+          "provider": "openai",
+          "temperature": 0.7,
+          "toolIds": [
+            "326c7c81-e4c2-4bcb-bcf3-134a1af73f49"
+          ]
+        },
+        "name": "Xenochrome Assistant",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "url": "https://na-gcp-api.vg-stuff.com/v2/agents/NE4wWwtA5BGy5Cm/vapi-event"
+        },
+        "serverMessages": [
+          "end-of-call-report",
+          "status-update",
+          "hang",
+          "function-call",
+          "conversation-update"
+        ],
+        "serverUrl": "https://na-gcp-api.vg-stuff.com/v2/agents/NE4wWwtA5BGy5Cm/vapi-event",
+        "serverUrlSecret": "{{REDACTED:VAPI_SERVER_URL_SECRET}}",
+        "transcriber": {
+          "language": "en",
+          "model": "nova-2",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-05-01T06:27:40.394Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "nWxiGsP4eBrWk3QtVY6K"
+        }
+      },
+      "versionId": "61d6d432-2655-11f0-bfe5-c313636cc266"
+    }
+  ]
+}

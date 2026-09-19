@@ -1,0 +1,168 @@
+{
+  "id": "wfllWJM4uuYu6L83r",
+  "name": "Link Stage 3 booking to applicant",
+  "description": "Turns the Application ID carried on a Strategic Review Booking into a real link to the Aurixa Waitlist applicant. This is what makes Stage 2 aware that the applicant progressed: once the link exists, Stage 3 Reached flips to 1 on the waitlist record and Send Stage 3 Invite reads HOLD, so the scheduled \"book your review\" reminder skips them. Fires when a booking has an Application ID but no Applicant link, which covers both new bookings and records back-filled later. Matching is on Application ID Key (upper-cased and trimmed), so a reference typed by hand — the fallback path when the emailed link has expired — still resolves. When nothing matches, the booking is left alone and Applicant Link Status reads \"Unlinked - no matching applicant\".",
+  "deploymentStatus": "deployed",
+  "deploymentError": null,
+  "trigger": {
+    "type": "recordMatchesConditions",
+    "inputs": {
+      "filtersObj": {
+        "obj": {
+          "operands": {
+            "tuple": [
+              {
+                "obj": {
+                  "operands": {
+                    "tuple": [
+                      "fldIc6c8nE8DMdUPW"
+                    ]
+                  },
+                  "operator": "isNotEmpty"
+                }
+              },
+              {
+                "obj": {
+                  "operands": {
+                    "tuple": [
+                      "fldnpJNgmzOP2NOkt"
+                    ]
+                  },
+                  "operator": "isEmpty"
+                }
+              }
+            ]
+          },
+          "operator": "and"
+        }
+      },
+      "tableId": "tbljj5XQbC2a4ON1U"
+    }
+  },
+  "nodes": [
+    {
+      "key": "wacsDr6Y52HFJRx1y",
+      "type": "findRecords",
+      "description": "Find the Aurixa Waitlist record whose normalised Application ID matches the one on this booking.",
+      "inputs": {
+        "limit": 1,
+        "filtersObj": {
+          "obj": {
+            "operands": {
+              "tuple": [
+                {
+                  "obj": {
+                    "operands": {
+                      "tuple": [
+                        "fldpThwtKAXHfQNut",
+                        {
+                          "fn": "uppercase",
+                          "args": [
+                            {
+                              "fn": "trim",
+                              "args": [
+                                {
+                                  "$ref": "trigger",
+                                  "path": [
+                                    "cellValuesByFieldId",
+                                    "fldIc6c8nE8DMdUPW"
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "operator": "="
+                  }
+                }
+              ]
+            },
+            "operator": "and"
+          }
+        },
+        "queryType": "filtersObj",
+        "tableId": "tblHzGiB591W3GpoZ"
+      }
+    },
+    {
+      "key": "wdedprgauawejFQiw",
+      "type": "conditionalGroup",
+      "branches": [
+        {
+          "name": "Applicant found",
+          "description": "Link the booking to the applicant. If no applicant matched, nothing runs and the booking stays unlinked for review.",
+          "condition": {
+            "conjunction": "and",
+            "conditions": [
+              {
+                "left": {
+                  "fn": "length",
+                  "args": [
+                    {
+                      "$ref": "wacsDr6Y52HFJRx1y",
+                      "path": [
+                        "records"
+                      ]
+                    }
+                  ]
+                },
+                "operator": ">",
+                "right": 0,
+                "valueType": "number",
+                "dataType": "literal"
+              }
+            ]
+          },
+          "nodes": [
+            {
+              "key": "wacnQcYaOHetWIllq",
+              "type": "updateRecord",
+              "inputs": {
+                "updateRecordMethod": "customFields",
+                "fields": {
+                  "obj": {
+                    "fldnpJNgmzOP2NOkt": {
+                      "template": [
+                        {
+                          "fn": "map",
+                          "args": [
+                            {
+                              "$ref": "wacsDr6Y52HFJRx1y",
+                              "path": [
+                                "records"
+                              ]
+                            },
+                            {
+                              "fn": "propertyGetter",
+                              "args": [
+                                "id"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                },
+                "rowId": {
+                  "template": [
+                    {
+                      "$ref": "trigger",
+                      "path": [
+                        "id"
+                      ]
+                    }
+                  ]
+                },
+                "tableId": "tbljj5XQbC2a4ON1U"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "configurationStatus": "valid"
+}

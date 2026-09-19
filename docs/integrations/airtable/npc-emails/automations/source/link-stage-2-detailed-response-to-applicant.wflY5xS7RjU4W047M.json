@@ -1,0 +1,168 @@
+{
+  "id": "wflY5xS7RjU4W047M",
+  "name": "Link Stage 2 detailed response to applicant",
+  "description": "Turns the Application ID carried on a BRQ Detailed Response into a real link to the Aurixa Waitlist applicant. This is what makes Stage 1 aware that the applicant progressed: once the link exists, Stage 2 Reached flips to 1 on the waitlist record and Send Stage 2 Invite reads HOLD, so the scheduled Stage 1 reminder skips them. Fires when a response has an Application ID but no Applicant link, which covers both new submissions and records back-filled later. Matching is on Application ID Key (upper-cased and trimmed), so a reference typed by hand — the fallback path when the emailed link has expired — still resolves. When nothing matches, the response is left alone and Applicant Link Status reads \"Unlinked - no matching applicant\".",
+  "deploymentStatus": "deployed",
+  "deploymentError": null,
+  "trigger": {
+    "type": "recordMatchesConditions",
+    "inputs": {
+      "filtersObj": {
+        "obj": {
+          "operands": {
+            "tuple": [
+              {
+                "obj": {
+                  "operands": {
+                    "tuple": [
+                      "fldQxBIDhmdbCj9Tn"
+                    ]
+                  },
+                  "operator": "isNotEmpty"
+                }
+              },
+              {
+                "obj": {
+                  "operands": {
+                    "tuple": [
+                      "fld0VFB3UfSf4gCkp"
+                    ]
+                  },
+                  "operator": "isEmpty"
+                }
+              }
+            ]
+          },
+          "operator": "and"
+        }
+      },
+      "tableId": "tblB1t18q6aUTNI0g"
+    }
+  },
+  "nodes": [
+    {
+      "key": "wacDUVC1ra3w27Vwp",
+      "type": "findRecords",
+      "description": "Find the Aurixa Waitlist record whose normalised Application ID matches the one on this response.",
+      "inputs": {
+        "limit": 1,
+        "filtersObj": {
+          "obj": {
+            "operands": {
+              "tuple": [
+                {
+                  "obj": {
+                    "operands": {
+                      "tuple": [
+                        "fldpThwtKAXHfQNut",
+                        {
+                          "fn": "uppercase",
+                          "args": [
+                            {
+                              "fn": "trim",
+                              "args": [
+                                {
+                                  "$ref": "trigger",
+                                  "path": [
+                                    "cellValuesByFieldId",
+                                    "fldQxBIDhmdbCj9Tn"
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    "operator": "="
+                  }
+                }
+              ]
+            },
+            "operator": "and"
+          }
+        },
+        "queryType": "filtersObj",
+        "tableId": "tblHzGiB591W3GpoZ"
+      }
+    },
+    {
+      "key": "wde3n7wa5MZbs5Tsl",
+      "type": "conditionalGroup",
+      "branches": [
+        {
+          "name": "Applicant found",
+          "description": "Link the response to the applicant. If no applicant matched, nothing runs and the response stays unlinked for review.",
+          "condition": {
+            "conjunction": "and",
+            "conditions": [
+              {
+                "left": {
+                  "fn": "length",
+                  "args": [
+                    {
+                      "$ref": "wacDUVC1ra3w27Vwp",
+                      "path": [
+                        "records"
+                      ]
+                    }
+                  ]
+                },
+                "operator": ">",
+                "right": 0,
+                "valueType": "number",
+                "dataType": "literal"
+              }
+            ]
+          },
+          "nodes": [
+            {
+              "key": "wacKgl4S1atRb5Gqj",
+              "type": "updateRecord",
+              "inputs": {
+                "updateRecordMethod": "customFields",
+                "fields": {
+                  "obj": {
+                    "fld0VFB3UfSf4gCkp": {
+                      "template": [
+                        {
+                          "fn": "map",
+                          "args": [
+                            {
+                              "$ref": "wacDUVC1ra3w27Vwp",
+                              "path": [
+                                "records"
+                              ]
+                            },
+                            {
+                              "fn": "propertyGetter",
+                              "args": [
+                                "id"
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  }
+                },
+                "rowId": {
+                  "template": [
+                    {
+                      "$ref": "trigger",
+                      "path": [
+                        "id"
+                      ]
+                    }
+                  ]
+                },
+                "tableId": "tblB1t18q6aUTNI0g"
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "configurationStatus": "valid"
+}

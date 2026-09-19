@@ -1,0 +1,333 @@
+{
+  "flow": [
+    {
+      "id": 1,
+      "mapper": {},
+      "module": "gateway:CustomWebHook",
+      "version": 1,
+      "metadata": {
+        "restore": {
+          "parameters": {
+            "hook": {
+              "data": {
+                "editable": "true"
+              },
+              "label": "Vapi Calls Human Transfer"
+            }
+          }
+        },
+        "designer": {
+          "x": 0,
+          "y": 300,
+          "name": "Twilio Call Context Webhook"
+        },
+        "parameters": [
+          {
+            "name": "hook",
+            "type": "hook:gateway-webhook",
+            "label": "Webhook",
+            "required": true
+          },
+          {
+            "name": "maxResults",
+            "type": "number",
+            "label": "Maximum number of results"
+          }
+        ]
+      },
+      "parameters": {
+        "hook": 4141282,
+        "maxResults": 1
+      }
+    },
+    {
+      "id": 2,
+      "mapper": {
+        "key": "{{1.Caller}}",
+        "data": {
+          "notes": "Active Twilio call context stored before routing caller to Angela/Vapi.",
+          "status": "active",
+          "twilioTo": "{{1.To}}",
+          "createdAt": "{{now}}",
+          "expiresAt": "{{addHours(now; 1)}}",
+          "lastError": "",
+          "updatedAt": "{{now}}",
+          "twilioFrom": "{{1.From}}",
+          "vapiCallId": "",
+          "callerPhone": "{{1.Caller}}",
+          "vapiSipTarget": "sip:naidupropertyconsultingservices@sip.vapi.ai",
+          "transferDestination": "+61433005110",
+          "transferRequestedAt": "",
+          "twilioParentCallSid": "{{1.CallSid}}",
+          "twilioSipChildCallSid": ""
+        },
+        "overwrite": true
+      },
+      "module": "datastore:AddRecord",
+      "version": 1,
+      "metadata": {
+        "expect": [
+          {
+            "name": "key",
+            "type": "text",
+            "label": "Key"
+          },
+          {
+            "name": "overwrite",
+            "type": "boolean",
+            "label": "Overwrite an existing record",
+            "required": true
+          },
+          {
+            "name": "data",
+            "spec": [
+              {
+                "name": "callerPhone",
+                "type": "text",
+                "label": "Caller phone"
+              },
+              {
+                "name": "twilioParentCallSid",
+                "type": "text",
+                "label": "Twilio parent call sid"
+              },
+              {
+                "name": "twilioSipChildCallSid",
+                "type": "text",
+                "label": "Twilio sip child call sid"
+              },
+              {
+                "name": "twilioFrom",
+                "type": "text",
+                "label": "Twilio from"
+              },
+              {
+                "name": "twilioTo",
+                "type": "text",
+                "label": "Twilio to"
+              },
+              {
+                "name": "vapiSipTarget",
+                "type": "text",
+                "label": "Vapi sip target"
+              },
+              {
+                "name": "vapiCallId",
+                "type": "text",
+                "label": "Vapi call ID"
+              },
+              {
+                "name": "status",
+                "type": "text",
+                "label": "Status"
+              },
+              {
+                "name": "transferDestination",
+                "type": "text",
+                "label": "Transfer destination"
+              },
+              {
+                "name": "transferRequestedAt",
+                "type": "text",
+                "label": "Transfer requested at"
+              },
+              {
+                "name": "createdAt",
+                "type": "text",
+                "label": "Created at"
+              },
+              {
+                "name": "updatedAt",
+                "type": "text",
+                "label": "Updated at"
+              },
+              {
+                "name": "expiresAt",
+                "type": "text",
+                "label": "Expires at"
+              },
+              {
+                "name": "lastError",
+                "type": "text",
+                "label": "Last error"
+              },
+              {
+                "name": "notes",
+                "type": "text",
+                "label": "Notes"
+              }
+            ],
+            "type": "collection",
+            "label": "Record"
+          }
+        ],
+        "restore": {
+          "expect": {
+            "overwrite": {
+              "mode": "chose"
+            }
+          },
+          "parameters": {
+            "datastore": {
+              "label": "Vapi Calls Human Transfer"
+            }
+          }
+        },
+        "designer": {
+          "x": 300,
+          "y": 300,
+          "name": "Data Store - Add/Replace Active Call"
+        },
+        "parameters": [
+          {
+            "name": "datastore",
+            "type": "datastore",
+            "label": "Data store",
+            "required": true
+          }
+        ]
+      },
+      "parameters": {
+        "datastore": 163613
+      }
+    },
+    {
+      "id": 3,
+      "mapper": {
+        "body": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<Response>\r\n  <Pause length=\"5\"/>\r\n  <Dial>\r\n    <Sip>sip:naidupropertyconsultingservices@sip.vapi.ai</Sip>\r\n  </Dial>\r\n</Response>",
+        "status": "200",
+        "headers": [
+          {
+            "key": "Content-Type",
+            "value": "application/xml"
+          }
+        ]
+      },
+      "module": "gateway:WebhookRespond",
+      "version": 1,
+      "metadata": {
+        "expect": [
+          {
+            "name": "status",
+            "type": "uinteger",
+            "label": "Status",
+            "required": true,
+            "validate": {
+              "min": 100
+            }
+          },
+          {
+            "name": "body",
+            "type": "any",
+            "label": "Body"
+          },
+          {
+            "name": "headers",
+            "spec": [
+              {
+                "name": "key",
+                "type": "text",
+                "label": "Key",
+                "required": true,
+                "validate": {
+                  "max": 256
+                }
+              },
+              {
+                "name": "value",
+                "type": "text",
+                "label": "Value",
+                "required": true,
+                "validate": {
+                  "max": 4096
+                }
+              }
+            ],
+            "type": "array",
+            "label": "Custom headers",
+            "validate": {
+              "maxItems": 16
+            }
+          }
+        ],
+        "restore": {
+          "expect": {
+            "headers": {
+              "mode": "chose",
+              "items": [
+                null
+              ]
+            }
+          }
+        },
+        "advanced": true,
+        "designer": {
+          "x": 600,
+          "y": 300,
+          "name": "Return OK"
+        }
+      },
+      "parameters": {}
+    }
+  ],
+  "name": "NPC Twilio - Store Active Call Context",
+  "metadata": {
+    "instant": true,
+    "version": 1,
+    "designer": {
+      "orphans": [],
+      "samples": {
+        "1": {
+          "To": "+61286093299",
+          "From": "+61480845459",
+          "ToZip": "",
+          "Called": "+61286093299",
+          "Caller": "+61480845459",
+          "ToCity": "",
+          "CallSid": "CA4df5a38b22ca4a494941be6db051dbba",
+          "FromZip": "",
+          "ToState": "Central East Australia",
+          "FromCity": "",
+          "CalledZip": "",
+          "CallerZip": "",
+          "Direction": "inbound",
+          "FromState": "",
+          "ToCountry": "AU",
+          "AccountSid": "{{SECRET:TWILIO_ACCOUNT_SID}}",
+          "ApiVersion": "2010-04-01",
+          "CallStatus": "ringing",
+          "CalledCity": "",
+          "CallerCity": "",
+          "CalledState": "Central East Australia",
+          "CallerState": "",
+          "FromCountry": "AU",
+          "CalledCountry": "AU",
+          "CallerCountry": "AU"
+        },
+        "2": {
+          "key": "{\n  \"callerPhone\": \"+61480845459\",\n  \"twilioParentCallSid\": \"CA4df5a38b22ca4a494941be6db051dbba\",\n  ..."
+        }
+      }
+    },
+    "scenario": {
+      "dlq": false,
+      "slots": null,
+      "dataloss": false,
+      "maxErrors": 3,
+      "autoCommit": true,
+      "roundtrips": 1,
+      "sequential": false,
+      "confidential": false,
+      "freshVariables": false,
+      "autoCommitTriggerLast": true
+    }
+  },
+  "scheduling": {
+    "type": "immediately",
+    "maximum_runs_per_minute": null
+  },
+  "interface": {
+    "input": [],
+    "output": []
+  }
+}

@@ -1,0 +1,130 @@
+[
+  {
+    "id": "empty-select-options",
+    "severity": "blocker-if-unhandled",
+    "summary": "5 single-select options in BRQ Detailed Responses have an empty name; 15 cells across 12 records use them. An option with no name cannot be written by name, and choice ids are reminted in the target base.",
+    "resolution": "These cells are omitted from pass 1. They represent an unanswered question, so omitting is faithful. Set them by hand afterwards, or give the options real names in the source base first and re-export.",
+    "cells": [
+      {
+        "table": "BRQ Detailed Responses",
+        "field": "Preferred Migration Timing",
+        "sourceRecordId": "rec2wVVyKwkHxZbWf",
+        "choiceId": "selAP2EILOpIdON8D"
+      },
+      {
+        "table": "BRQ Detailed Responses",
+        "field": "Custom System API Available",
+        "sourceRecordId": "rec2wVVyKwkHxZbWf",
+        "choiceId": "selRYVv96IhhJQnmg"
+      },
+      {
+        "table": "BRQ Detailed Responses",
+        "field": "Preferred Migration Timing",
+        "sourceRecordId": "recFqe6cUv6zhvquR",
+        "choiceId": "selAP2EILOpIdON8D"
+      },
+      {
+        "table": "BRQ Detailed Responses",
+        "field": "Custom System API Available",
+        "sourceRecordId": "recFqe6cUv6zhvquR",
+        "choiceId": "selRYVv96IhhJQnmg"
+      },
+      {
+        "table": "BRQ Detailed Responses",
+        "field": "Entity-level Boundaries Required",
+        "sourceRecordId": "recW0FM1q9Lyqi2VF",
+        "choiceId": "selgLI10DUQa6Jut1"
+      },
+      {
+        "table": "BRQ Detailed Responses",
+        "field": "Enterprise SSO Required",
+        "sourceRecordId": "recW0FM1q9Lyqi2VF",
+        "choiceId": "selAjotqRwB8ARfZL"
+      },
+      {
+        "table": "BRQ Detailed Responses",
+        "field": "Procurement Process Expected",
+        "sourceRecordId": "recW0FM1q9Lyqi2VF",
+        "choiceId": "sel3YqqBTpbLStBDM"
+      },
+      {
+        "table": "BRQ Detailed Responses",
+        "field": "Custom System API Available",
+        "sourceRecordId": "recW0FM1q9Lyqi2VF",
+        "choiceId": "selRYVv96IhhJQnmg"
+      },
+      {
+        "table": "BRQ Detailed Responses",
+        "field": "Entity-level Boundaries Required",
+        "sourceRecordId": "recaLOzCdW6u1kTX3",
+        "choiceId": "selgLI10DUQa6Jut1"
+      },
+      {
+        "table": "BRQ Detailed Responses",
+        "field": "Enterprise SSO Required",
+        "sourceRecordId": "recaLOzCdW6u1kTX3",
+        "choiceId": "selAjotqRwB8ARfZL"
+      },
+      {
+        "table": "BRQ Detailed Responses",
+        "field": "Procurement Process Expected",
+        "sourceRecordId": "recaLOzCdW6u1kTX3",
+        "choiceId": "sel3YqqBTpbLStBDM"
+      },
+      {
+        "table": "BRQ Detailed Responses",
+        "field": "Entity-level Boundaries Required",
+        "sourceRecordId": "rectszlHImnpCHOEL",
+        "choiceId": "selgLI10DUQa6Jut1"
+      },
+      {
+        "table": "BRQ Detailed Responses",
+        "field": "Enterprise SSO Required",
+        "sourceRecordId": "rectszlHImnpCHOEL",
+        "choiceId": "selAjotqRwB8ARfZL"
+      },
+      {
+        "table": "BRQ Detailed Responses",
+        "field": "Procurement Process Expected",
+        "sourceRecordId": "rectszlHImnpCHOEL",
+        "choiceId": "sel3YqqBTpbLStBDM"
+      },
+      {
+        "table": "BRQ Detailed Responses",
+        "field": "Custom System API Available",
+        "sourceRecordId": "rectszlHImnpCHOEL",
+        "choiceId": "selRYVv96IhhJQnmg"
+      }
+    ]
+  },
+  {
+    "id": "duplicate-choice-name",
+    "severity": "warning",
+    "summary": "Properties.Property Type has two distinct options both named 'Land'. Writing by name is ambiguous.",
+    "resolution": "Properties has 0 records, so nothing is written through it. De-duplicate the option in the target base."
+  },
+  {
+    "id": "attachment-url-expiry",
+    "severity": "blocker-if-stale",
+    "summary": "211 attachment files in Emails.Attachments. Airtable's returned attachment URLs are short-lived signed links.",
+    "resolution": "The URLs captured here are for inventory only. Re-read Emails from the source base at migration time and pass the fresh URLs straight into the create call, so Airtable fetches them while they are valid."
+  },
+  {
+    "id": "autonumber-primary",
+    "severity": "warning",
+    "summary": "Business Readiness Responses.'Record ID' and BRQ Detailed Responses.'Id' are autoNumber primary fields. Airtable assigns these on insert, so the numbers will differ in the target base.",
+    "resolution": "Nothing references them as a key; the link plan uses record ids. Accept the renumbering."
+  },
+  {
+    "id": "broken-formulas",
+    "severity": "warning",
+    "summary": "Property Intake Master.'Address Match Key' and .'Project Match Key' are both the literal formula \"Unable to generate formula\", so every record returns the same constant. They are the duplicate-detection keys.",
+    "resolution": "Do not port as-is. 'Property Unique Key' in the same table is a working equivalent and is the model to rebuild them from."
+  },
+  {
+    "id": "collaborator-fields",
+    "severity": "info",
+    "summary": "4 collaborator fields exist; no record populates one.",
+    "resolution": "Recreate the fields; there is no data to carry."
+  }
+]

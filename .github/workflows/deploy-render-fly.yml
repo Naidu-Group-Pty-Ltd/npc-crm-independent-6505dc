@@ -1,0 +1,286 @@
+name: Deploy the render container to Fly.io
+
+# Ships `weasyprint-service/` to Fly.io and points the edge functions at it.
+#
+# ── Why a second host ────────────────────────────────────────────────────────
+# On 15 Sep 2026 the Cloud Run service stopped serving (its host's 500 page to
+# every request, including an unauthenticated GET /), nobody had gcloud, and
+# the owner declined to deploy on Cloud Run again on cost grounds. The
+# container has never depended on Cloud Run — `weasyprint-service/README.md`
+# has always said any host that runs the Dockerfile works, and the edge
+# functions locate the engine by two secrets, WEASYPRINT_SERVICE_URL and
+# WEASYPRINT_SERVICE_TOKEN. This workflow is that sentence made runnable:
+# build on Fly's remote builder, one machine in Sydney that stops when idle,
+# prove it renders, then write the two secrets into the Supabase project so
+# every render route uses it from its next cold start.
+#
+# ── What it needs ────────────────────────────────────────────────────────────
+# Two repository secrets, both created with clicks:
+#   FLY_API_TOKEN          — Fly.io dashboard → Account → Access Tokens
+#   SUPABASE_ACCESS_TOKEN  — already present (the functions deploy uses it)
+# With either missing it reports what it would have done and stops.
+#
+# ── What it never does ───────────────────────────────────────────────────────
+# It never prints the bearer token: it is generated on the runner, masked,
+# written to Fly and to Supabase, and forgotten. Every run rotates it — both
+# sides are written in the same run, so they cannot drift.
+
+on:
+  workflow_dispatch:
+    inputs:
+      app:
+        description: 'Fly app name (globally unique). Created if it does not exist.'
+        required: false
+        default: aurixa-weasyprint-service
+        type: string
+      region:
+        description: 'Fly region for the machine.'
+        required: false
+        default: syd
+        type: string
+      repoint:
+        description: 'Write WEASYPRINT_SERVICE_URL / WEASYPRINT_SERVICE_TOKEN into the Supabase project once the container has proved itself.'
+        required: false
+        default: true
+        type: boolean
+      machines:
+        description: 'How many machines the app keeps: 1 (leanest) or 2 (a second one absorbs concurrent renders and stops when idle). The bill is bounded by this number.'
+        required: false
+        default: '1'
+        type: choice
+        options: ['1', '2']
+
+permissions:
+  contents: read
+
+concurrency:
+  group: deploy-render-fly
+  cancel-in-progress: false
+
+env:
+  APP: ${{ inputs.app || 'aurixa-weasyprint-service' }}
+  REGION: ${{ inputs.region || 'syd' }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - id: gate
+        name: Check for the two credentials
+        env:
+          FLY: ${{ secrets.FLY_API_TOKEN }}
+          SUPA: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          set -euo pipefail
+          missing=''
+          [ -n "${FLY:-}" ]  || missing="$missing FLY_API_TOKEN"
+          [ -n "${SUPA:-}" ] || missing="$missing SUPABASE_ACCESS_TOKEN"
+          if [ -n "$missing" ]; then
+            {
+              echo '### The render container was NOT deployed to Fly.io'
+              echo
+              echo 'Missing repository secrets (Settings → Secrets and variables → Actions → Secrets):'
+              echo
+              for v in $missing; do echo "- \`$v\`"; done
+              echo
+              echo 'FLY_API_TOKEN comes from the Fly.io dashboard (Account → Access Tokens).'
+              echo 'Nothing was changed.'
+            } >> "$GITHUB_STEP_SUMMARY"
+            echo "::error::missing:$missing"
+            exit 1
+          fi
+
+      - id: project
+        name: Resolve this deployment's Supabase project
+        env:
+          PROJECT_REF_VAR: ${{ vars.SUPABASE_PROJECT_REF }}
+        run: |
+          set -uo pipefail
+          ref="${PROJECT_REF_VAR:-}"
+          if [ -z "$ref" ] && [ -f supabase/config.toml ]; then
+            ref=$(sed -n '/^\[/q; s/^[[:space:]]*project_id[[:space:]]*=[[:space:]]*"\([a-z]\{20\}\)".*/\1/p' \
+              supabase/config.toml | head -1)
+          fi
+          [ -n "$ref" ] || { echo '::error::no Supabase project ref: set SUPABASE_PROJECT_REF or supabase/config.toml'; exit 1; }
+          echo "ref=$ref" >> "$GITHUB_OUTPUT"
+          echo "the edge functions of $ref will be pointed at the new container"
+
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+
+      # The bearer token the edge functions will present. Generated here,
+      # masked before anything can log it, handed to Fly as a secret and to
+      # Supabase as a secret. It is never written to the summary.
+      - id: token
+        name: Mint the bearer token
+        run: |
+          set -euo pipefail
+          value=$(openssl rand -hex 32)
+          echo "::add-mask::$value"
+          echo "value=$value" >> "$GITHUB_OUTPUT"
+
+      - name: Create the app if it does not exist
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          FLY_ORG: ${{ vars.FLY_ORG }}
+        run: |
+          set -euo pipefail
+          if flyctl apps list --json | jq -e --arg a "$APP" '.[] | select(.Name == $a)' >/dev/null; then
+            echo "app $APP exists"
+          else
+            flyctl apps create "$APP" --org "${FLY_ORG:-personal}"
+          fi
+
+      # `--stage` writes the secret without restarting anything; the deploy
+      # below is what brings it into effect.
+      - name: Give the container its token
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+          TOKEN: ${{ steps.token.outputs.value }}
+        run: |
+          set -euo pipefail
+          flyctl secrets set --app "$APP" --stage "WEASYPRINT_SERVICE_TOKEN=$TOKEN"
+
+      # Fly's remote builder builds the Dockerfile — the same image the Cloud
+      # Run path built on Cloud Build, self-check and veraPDF layer included.
+      # The build context is the service directory, as `ci.yml`'s
+      # `docker build ./weasyprint-service` and the Cloud Build submit have it:
+      # flyctl uploads the directory it runs in, so run from the repository
+      # root it shipped the whole repository (541 MB, 8,342 files, `.git/`
+      # included) and the Dockerfile's relative `COPY fonts/`, `COPY
+      # requirements.txt` and `COPY app.py selfcheck.py` found nothing — the
+      # first dispatch failed there, before a machine existed.
+      # `--ha=false`: one machine, not the two flyctl otherwise creates; the
+      # machine's hourly price is the ceiling on what this costs.
+      - name: Build and deploy
+        working-directory: weasyprint-service
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          flyctl deploy --app "$APP" --config fly.toml --dockerfile Dockerfile \
+            --remote-only --ha=false --regions "$REGION" --yes
+          echo "url=https://$APP.fly.dev" >> "$GITHUB_ENV"
+
+      # A second machine only when asked: it starts when the first has two
+      # renders in flight (fly.toml's soft_limit) and stops when idle. The
+      # count is the ceiling on what this app can cost.
+      - name: Keep two machines, when asked
+        if: ${{ inputs.machines == '2' }}
+        env:
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
+        run: |
+          set -euo pipefail
+          flyctl scale count 2 --app "$APP" --region "$REGION" --yes
+
+      - name: The front door answers
+        run: |
+          set -euo pipefail
+          code=000
+          for i in $(seq 1 12); do
+            code=$(curl -sS -o /tmp/root.txt -w '%{http_code}' "$url/" || echo 000)
+            [ "$code" = "200" ] && break
+            echo "GET / answered $code; waiting 10s ($i/12)"; sleep 10
+          done
+          echo "GET $url/ -> HTTP $code"; head -c 300 /tmp/root.txt; echo
+          [ "$code" = "200" ] || { echo '::error::the container does not answer'; exit 1; }
+
+      # The pin is read from requirements.txt rather than written here.
+      - name: The engine behind it is the pinned one
+        env:
+          TOKEN: ${{ steps.token.outputs.value }}
+        run: |
+          set -euo pipefail
+          pinned=$(grep -oP '(?<=^weasyprint==)[\d.]+' weasyprint-service/requirements.txt)
+          got=$(curl -sf -H "Authorization: Bearer $TOKEN" "$url/version" | jq -r '.weasyprint // ""')
+          echo "pinned=$pinned live=$got"
+          [ "$pinned" = "$got" ] || { echo "::error::engine drift: expected $pinned, live runs $got"; exit 1; }
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 20
+          cache: npm
+
+      - run: npm ci --no-audit --no-fund
+
+      # Writes reports/html/borrowing-capacity.html as a side effect.
+      - name: Build a real report
+        run: npx vitest run src/lib/reports/borrowingCapacity/__tests__/render.spec.ts
+
+      # `--capabilities` reconciles what the engine reports against
+      # REQUIRED_OPTIONS, so an image without `output_intent` or
+      # `custom_metadata` fails here rather than in a client's document.
+      - name: The container agrees with engineSupport.pure.ts
+        env:
+          WEASYPRINT_SERVICE_TOKEN: ${{ steps.token.outputs.value }}
+        run: |
+          npx tsx scripts/reports/engineCheck.mts \
+            --service "$url" --capabilities \
+            reports/html/borrowing-capacity.html
+
+      - name: The container renders that report whole
+        env:
+          TOKEN: ${{ steps.token.outputs.value }}
+        run: |
+          set -euo pipefail
+          node -e '
+            const fs = require("node:fs");
+            fs.writeFileSync("/tmp/bc.json", JSON.stringify({
+              html: fs.readFileSync("reports/html/borrowing-capacity.html", "utf8"),
+              pdf_variant: "pdf/ua-1", output_intent: "srgb",
+              tagged: true, strict: true,
+            }));
+          '
+          curl -sf -X POST "$url/render" \
+            -H "Authorization: Bearer $TOKEN" \
+            -H "Content-Type: application/json" \
+            -D /tmp/bc.headers --data @/tmp/bc.json -o /tmp/bc.pdf
+          head -c 5 /tmp/bc.pdf | grep -q '%PDF-' || { echo '::error::not a PDF'; exit 1; }
+          grep -qi '^x-pdf-tagged: *1' /tmp/bc.headers \
+            || { echo '::error::the report came back untagged'; exit 1; }
+          grep -qi '^x-weasyprint-warning-count: *0' /tmp/bc.headers || {
+            echo '::error::the engine did not render the report whole'
+            grep -i '^x-weasyprint-warnings:' /tmp/bc.headers
+            exit 1
+          }
+          echo "rendered $(wc -c < /tmp/bc.pdf) bytes, tagged, no warnings"
+
+      # Only now, after the container has proved itself, do the edge functions
+      # learn about it. Both names in one call: the URL and the token are one
+      # credential pair, and writing them separately is how they drift.
+      - uses: supabase/setup-cli@v3
+        if: ${{ inputs.repoint != false }}
+        with:
+          version: latest
+
+      - name: Point the edge functions at the container
+        if: ${{ inputs.repoint != false }}
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          PROJECT_REF: ${{ steps.project.outputs.ref }}
+          TOKEN: ${{ steps.token.outputs.value }}
+        run: |
+          set -euo pipefail
+          supabase secrets set --project-ref "$PROJECT_REF" \
+            "WEASYPRINT_SERVICE_URL=$url" "WEASYPRINT_SERVICE_TOKEN=$TOKEN"
+          echo "WEASYPRINT_SERVICE_URL and WEASYPRINT_SERVICE_TOKEN written to $PROJECT_REF"
+
+      - name: Say what is live
+        if: always()
+        run: |
+          {
+            echo '### Render container on Fly.io'
+            echo
+            echo "- url: ${url:-<not deployed>}"
+            echo "- app: \`$APP\` in \`$REGION\`, ${{ inputs.machines || '1' }} machine(s), stopped when idle"
+            echo "- edge functions repointed: ${{ inputs.repoint != false && 'yes' || 'no' }}"
+            echo
+            echo 'Prove it by effect: generate one report with a chosen template. The toast'
+            echo '"Your chosen template was drawn in the browser" must NOT appear, and'
+            echo '`api_usage_log` must show a `weasyprint/render` row whose host is the Fly URL.'
+            echo
+            echo 'The Cloud Run service is no longer used and can be deleted in its console.'
+          } >> "$GITHUB_STEP_SUMMARY"

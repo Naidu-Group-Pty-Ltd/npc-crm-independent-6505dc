@@ -1,0 +1,477 @@
+{
+  "table": "Emails",
+  "batch": 63,
+  "of": 107,
+  "recordCount": 50,
+  "records": [
+    {
+      "sourceRecordId": "recZspalFiwkRROTT",
+      "sourceCreatedTime": "2025-10-10T10:03:30.000Z",
+      "fields": {
+        "Name": "McGrath",
+        "Subject": "McGrath Property Alert",
+        "Email": "concierge@mcgrath.com.au",
+        "Body": "PROPERTY ALERT\r\n\r\n1 Booth Street, Balmain\r\n\r\n\r\n\r\n\r\n\r\n4\r\n\r\n\r\n\r\n2\r\n\r\n\r\n\r\n1\r\n\r\n\r\n\r\nAUCTION\r\n\r\nOn Site - Saturday 8 Nov 9:45am\r\n\r\n\r\n\r\nVIEW\r\n\r\nThursday 9 Oct 5:00pm - 5:30pm\r\n\r\n\r\n\r\nAGENTS\r\n\r\nCindy Kennedy: 0404 000 570\r\n\r\nLuke Hogan: 0408 490 490\r\n\r\nVIEW MORE",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZthYt2RIApVPou",
+      "sourceCreatedTime": "2025-11-13T04:50:43.000Z",
+      "fields": {
+        "Name": "Brian McKiernan",
+        "Subject": "New lIstings",
+        "Email": "brian@visionrealtywa.com.au",
+        "Body": "Dear Buyers Agent\r\n\r\nPlease see the two new listings below and contact me should you have any interested parties.\r\n\r\n\r\nFrom $1.25Mil 9 Kiso Link Madeley:\r\n\r\nhttps://www.realestate.com.au/property-house-wa-madeley-149620868\r\n\r\n\r\nFrom $750k  18D Monterey St"
+      }
+    },
+    {
+      "sourceRecordId": "recZuNvHaQHEIfPg6",
+      "sourceCreatedTime": "2025-11-13T05:42:39.000Z",
+      "fields": {
+        "Name": "Nick Gittoes",
+        "Subject": "Pre-Market Opportunity | Renovated, private north-facing haven",
+        "Email": "nickgittoes@mcgrath.com.au",
+        "Body": "Preview Inspection | This Sat 15 Nov 10am - 10:30am\r\n\r\n\r\n403/29 Yeo Street, Neutral Bay\r\n\r\n\r\n\r\n\r\n\r\n2\r\n\r\n\r\n\r\n1\r\n\r\n\r\n\r\n1\r\n\r\n\r\n\r\nContact Agent\r\n\r\n\r\n\r\nPrivately elevated and flooded with natural light, this north-facing apartment presents a stylish lifestyle "
+      }
+    },
+    {
+      "sourceRecordId": "recZulK4VUnuebgj0",
+      "sourceCreatedTime": "2026-06-10T07:22:10.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZus1uPpin66j2N",
+      "sourceCreatedTime": "2025-11-06T05:26:27.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZvlXukSbAFBT8d",
+      "sourceCreatedTime": "2026-06-05T04:32:26.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZwtEfTCXPEOZJQ",
+      "sourceCreatedTime": "2026-06-05T23:42:25.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZxJF2tTLz4geGP",
+      "sourceCreatedTime": "2026-07-13T17:53:18.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZxjyhhtwM5HPiW",
+      "sourceCreatedTime": "2026-06-03T08:18:19.000Z",
+      "fields": {
+        "Name": "Ray White Williamstown",
+        "Subject": "Off Market Opportunity | 4/72 Dover Road, Williamstown",
+        "Email": "williamstown.vic@raywhite.com",
+        "Body": "OFF MARKET OPPORTUNITY\r\n4/72 Dover Road, Williamstown\r\nHi\r\nHi,\r\n\r\nWe have another exclusive off-market opportunity for you—and this one ticks every single box!\r\n\r\nCompletely transformed and perfectly positioned, this turnkey home requires absolutely"
+      }
+    },
+    {
+      "sourceRecordId": "recZyKcJL9Qp1p7SP",
+      "sourceCreatedTime": "2025-12-03T00:41:21.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recZykV5b1dQBih9n",
+      "sourceCreatedTime": "2025-12-06T02:19:39.000Z",
+      "fields": {
+        "Name": "Jasmine Dawson",
+        "Subject": "Kingsfield Builder Update - 6/12/2025",
+        "Email": "Jasmine@alc.land",
+        "Body": "Dear Builder Partners,\r\n\r\n\r\nHope you’re all having a great weekend!\r\n\r\n\r\nPlease see attached our price list with available lots. We would love to display and advertise your House and Land packages.\r\n\r\nKingsfield Town Centre, East Sunbury Village, has ",
+        "Status": "Error 500",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/Vv0EqqbhWMpbinizwmbJbA/wSFxV5YRp3oTakwzUsTY8gAyQNxN51YetBUa7rw92MCrb-CD7YVZRTvgiy-4Et8JCa6MWuaGWE8kuqLM3ryZZTAVKTwRAXuFUdf__APAekikKgE1AfyCLNDy_hF4GQqodHeuLkfrhodRFADXAJZeEJXtD8aZkVe4Y3KmwFYjWBYNRamzMFzCrs3h6rA8xSDq/culNYGlfTVJwAmEtjR_bMsF9vwfd7dy_MoKx7zK8mGQ",
+            "filename": "outlook_email_attachment.docx",
+            "type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "size": 1194244
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "recZzlF1yGZxu4t85",
+      "sourceCreatedTime": "2025-11-27T06:25:36.000Z",
+      "fields": {
+        "Name": "Abby Holmes-Brown",
+        "Subject": "HOT LISTINGS - Dream Homes, Acreage & More!",
+        "Email": "sales@fnlifestyle.com.au",
+        "Body": "Current Listings\r\n\r\n\r\n\r\n\r\nHi Rugesh,\r\n\r\nExplore our stunning homes, unbeatable investment opportunities and even breathtaking acreage - we've got it all!\r\n\r\nWhether you're buying your first home, expanding your portfolio, or dreaming of wide-ope"
+      }
+    },
+    {
+      "sourceRecordId": "reca1fT1Bp8Mdwarq",
+      "sourceCreatedTime": "2025-10-13T01:59:42.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "reca3aNKbotJjv83R",
+      "sourceCreatedTime": "2025-12-15T12:39:25.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "reca3bRvnubdqIsCl",
+      "sourceCreatedTime": "2025-12-08T15:19:40.000Z",
+      "fields": {
+        "Name": "ACTIVE AGENTS (QLD) PTY LTD",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "info@activeagents.com.au",
+        "Body": "Edit my requirements\r\nVisit our Website\r\nProperty Alert\r\nTuesday, 9th December 2025\r\nHello Rugesh,\r\n\r\nThe following listings matched your Property Alert search requirements.\r\n\r\nBli Bli\r\n52 Waterhole Place\r\n\r\nUNDER OFFER\r\n\r\n        4               2       ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "reca46zieHhYc6ZTK",
+      "sourceCreatedTime": "2026-02-20T04:27:11.000Z",
+      "fields": {
+        "Name": "Belle Property Australasia",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "noreply@belleproperty.com",
+        "Body": "Dear Rugesh,\r\n\r\nWe have found the following properties that match your property search requirements. Click here to update your preferences or click here to find a property on belleproperty.com.\r\nCurrent listings.\r\n\r\nMount Martha\r\n6 Bayliss Rise\r\nFor Sale ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "reca4yyIAmZIykN1D",
+      "sourceCreatedTime": "2025-11-20T04:24:45.000Z",
+      "fields": {
+        "Name": "Rick Holloway",
+        "Subject": "FW: DINMORE 4X2X2 SECONDARY SMSF",
+        "Email": "rick@thebobtraskgroup.com.au",
+        "Body": "HIGH  YIELD $1,270 PER WEEK\r\nSMSF INVESTMENT’S\r\nBIG BLOCK BIG RETURNS\r\nRegistered in January\r\nSecondary Dwelling Four by Two-by-Two\r\nDINMORE\r\nGreat Location\r\n\r\n\r\n\r\n\r\n\r\n\r\nRegards\r\n\r\n“Whatever you need, if we don’t have it, we can find it and we can build i"
+      }
+    },
+    {
+      "sourceRecordId": "reca5u27Bu2Wq9AH6",
+      "sourceCreatedTime": "2026-01-07T02:37:28.000Z",
+      "fields": {
+        "Name": "Matt / MaveriX PM",
+        "Subject": "New Listings, Land and Open House!",
+        "Email": "matt@maverixpropertymarketing.com",
+        "Body": "1 Fauna Street, Banya Complete, Brand New, & Open Fri & Sat! | First Sold Sign Of The Year! Congrats To Our Buyers & Sellers! | Rare Registered Vacant Land Opportunity In Sold Out Section! | View Homes‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ "
+      }
+    },
+    {
+      "sourceRecordId": "reca5yZyBHbrUnX5x",
+      "sourceCreatedTime": "2026-06-15T08:52:50.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "reca6CXv4auXvzeIj",
+      "sourceCreatedTime": "2025-10-29T08:49:55.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "reca6ZfuRHuRsh1FK",
+      "sourceCreatedTime": "2026-03-18T08:31:02.000Z",
+      "fields": {
+        "Name": "Adam Bettison",
+        "Subject": "Just Listed | 415/2 Rutland Ave, Lathlain",
+        "Email": "adam.bettison@housesmart.com.au",
+        "Body": "Just Listed - 415/2 Rutland Ave\r\n\r\nHi Rugesh,\r\n\r\nAs a valued client of HouseSmart - we are pleased to present you with the latest listing that matches your criteria.\r\n\r\nLet us know if you'd like to come to the next home open, if you have any questions, or",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "reca6pkHfXwCFCozj",
+      "sourceCreatedTime": "2025-10-31T15:25:53.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "reca78DNWDfwohB43",
+      "sourceCreatedTime": "2026-03-23T22:24:59.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "reca7ISk5DG0vSQ63",
+      "sourceCreatedTime": "2026-06-11T05:41:40.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "reca7wVWPLG96teyI",
+      "sourceCreatedTime": "2026-06-09T06:59:04.000Z",
+      "fields": {
+        "Name": "McGrath Geelong | Newtown",
+        "Subject": "McGrath Update - Where Winter Comes to Life",
+        "Email": "fomgeelong@mcgrath.sendproperty.com.au",
+        "Body": "View in browser\r\n\r\n\r\nDear ,\r\n\r\nWinter in Geelong just got a whole lot brighter.\r\n\r\nThe Adventure Park Winter Glow is back for 2026, transforming the region’s favourite water park into a magical after-dark experience filled with dazzling light displays, fi"
+      }
+    },
+    {
+      "sourceRecordId": "reca8UDH6HYXX4xAo",
+      "sourceCreatedTime": "2025-11-25T21:56:53.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "reca91VFcURPO1Nm7",
+      "sourceCreatedTime": "2026-06-09T06:45:07.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "reca9ArZnvZubgVrH",
+      "sourceCreatedTime": "2025-11-13T04:27:28.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "reca9jGdR72cen7dz",
+      "sourceCreatedTime": "2026-01-09T04:30:56.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recaAtKQ2YKQOpmgz",
+      "sourceCreatedTime": "2026-06-03T08:17:31.000Z",
+      "fields": {
+        "Name": "Richard Stacey",
+        "Subject": "Property Investment Opportunity - 15 Charlton Way, Bertram",
+        "Email": "richard@peakcentral.com.au",
+        "Body": "Good Afternoon Rugesh,\r\n\r\n\r\n\r\nPlease find below links highlighting an exciting investment opportunity that may be of interest to you.\r\n\r\nCurrent asking price: From $849,000\r\n\r\nCurrently tenanted until 26/03/2027 at $700.00 per week.\r\n\r\nClick Here - For De"
+      }
+    },
+    {
+      "sourceRecordId": "recaBSnIBXHWXaSrn",
+      "sourceCreatedTime": "2026-06-23T15:47:39.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recaCmo1xiqtstPXY",
+      "sourceCreatedTime": "2026-01-30T02:09:25.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recaDEOpsy4PmgzDJ",
+      "sourceCreatedTime": "2026-01-29T07:31:19.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recaDrHMnaptuocJH",
+      "sourceCreatedTime": "2025-08-17T08:13:54.000Z",
+      "fields": {
+        "Name": "Lavan Kenobi",
+        "Subject": "Fwd: Blights Newsletter",
+        "Email": "lavankenobi@gmail.com",
+        "Body": "\n\n---------- Forwarded message ---------\nFrom: Lavan Kenobi <lavankenobi@gmail.com [lavankenobi@gmail.com]>\nDate: Sun, Aug 17, 2025 at 2:28 AM\nSubject: Fwd: Blights Newsletter\nTo: <property@npcservices.com.au [property@npcservices.com.au]>\n\n\n\n\n---------- Forwarded message ---------\nFrom: Lavan Kenobi <lavankenobi@gmail.com [lavankenobi@gmail.com]>\nDate: Sun, Aug 17, 2025 at 12:52 AM\nSubject: Fwd: Blights Newsletter\nTo: <property@npcservices.com.au [property@npcservices.com.au]>\n\n\n\n\n---------- Forwarded message ---------\nFrom: Rugesh Naidu <naidu.rugesh@gmail.com [naidu.rugesh@gmail.com]>\nDate: Sat, Aug 16, 2025 at 7:22 AM\nSubject: Fwd: Blights Newsletter\nTo: lavankenobi@gmail.com [lavankenobi@gmail.com] <lavankenobi@gmail.com [lavankenobi@gmail.com]>\n\n\n\n---------- Forwarded message ---------\nFrom: Blights Real Estate Yorke Peninsula <yp@blights.com.au [yp@blights.com.au]>\nDate: Thu, 7 Aug 2025, 10:54 am\nSubject: Blights Newsletter\nTo: <naidu.rugesh@gmail.com [naidu.rugesh@gmail.com]>\n\n\nHeader Banner [https://agentboxcdn.com.au/clients-data/1626/public_html/media/resrc/1/1/1.gif] [https://link.agentboxmail.com.au/ls/click?upn=u001.WALCH3K4RobYPaktm60o9KImZQOUpBw9usB9vT-2FueXOErTtnaAEW0o4LO-2FAsGtns4So4_G3SsNZid4v1CQQcHK2qufdQT13el-2FXd2PM9ieSMvuIbn39q-2BFigCAO5afLPUak-2FCPV8GERcAI5TtQbXAGS5mCoHPHS4hkBN2DQNgOSBLMJEFa7TaiF5zk2G82Ijpz-2BmP-2F0-2Fhwq6Om-2Bqozc5Z7bNEQcd5H5X3nI7flWweRJtDHBagAXe78-2BVnIbncfF4f-2BNNZ4jUyw6RoaemAxQCCvybYr5nWpAj7D2G83UCA7NIIDQbmFQARp5Q9B8CO9zt1e4hOrQal6Z-2BewNbPnPu8v1evSkh-2BcCQ-2BNZ0iBzrc21HjRaNa7cF23SERMjlztHQP0QfVEzTBg4sVtBL26fYAXF8jZaBtlJ-2F8iQMCeXH2iTR6Bb4ikSWDHqBctd2ofcBQ2BcQTX76uAut-2B9KDM0bW3XLPG52-2Bzen1QVp-2FjJXjgoC-2FrAd0PI6WdKtS7JH-2F91H-2BFduV8E5xhQ0mkyOLTjcrDzO24w-3D-3D]Hello Rugesh,\n\nBlights have offices in Port Pirie, Whyalla and the Yorke Peninsula. They have the local expertise, the right market advice and can take the stress out of your next move, and with their help, find your perfect next home. Call our Yorke Peninsula team today!\n\n\nKind Regards,\nBlights Real Estate Yorke Peninsula Awards, Anniversaries & Amazing Race play [https://agentboxcdn.com.au/clients-data/1626/enews_resrc/media/0/59/1754454026.JPEG] [https://link.agentboxmail.com.au/ls/click?upn=u001.wJ89eca1GqdXQLvUCO99b5PKbvoTm6PpwPk8Tmg869BIn8iRDEH0zUAV-2BZ4pqjKL2vBraJbWXzcVRe4vh-2FlZ-2FhGDJDuwKPHgfrCfVfeSjtjKZLTfDyxcqMU5Bi00kffQCy-u_G3SsNZid4v1CQQcHK2qufdQT13el-2FXd2PM9ieSMvuIbn39q-2BFigCAO5afLPUak-2FCPV8GERcAI5TtQbXAGS5mCoHPHS4hkBN2DQNgOSBLMJEFa7TaiF5zk2G82Ijpz-2BmP-2F0-2Fhwq6Om-2Bqozc5Z7bNEQcd5H5X3nI7flWweRJtDHBagAXe78-2BVnIbncfF4f-2BNNZ4jUyw6RoaemAxQCCvybYr5nWpAj7D2G83UCA7NIIDQbmFQARp5Q9B8CO9zt1e4hOrQal6Z-2BewNbPnPu8v1evSkh-2BcCQ-2BNZ0iBzrc21HjRaNHQKp-2Fkc2hejbyADMdxfkdWxNshZggZj15R8YtOtuRuS4-2B46wFp64Nn-2Frp4H-2FFQ1h6lDIuRZM-2B9TDIBdc6ZGp0qPZhOyKSdzRJujiUU9xRUItTfSeQURC2U2UXnKw-2BNBvBpC0iyHMo17uO1E1zg3rZgc1u5KF7s-2BrX25KgTPsnZQ-3D-3D]On Friday, 25 July, our team braved the cold and wet weather to enjoy a fantastic day in the beautiful town of Laura. To read more and watch the video, click on the link below: https://www.blights.com.au/blights-team/awards-anniversaries-amazing-race/ [https://www.blights.com.au/blights-team/awards-anniversaries-amazing-race/] Feature Property [https://agentboxcdn.com.au/clients-data/1626/public_html/media/lt/2/2P9915/175322745382307812-rsb.jpg] [https://link.agentboxmail.com.au/ls/click?upn=u001.wJ89eca1GqdXQLvUCO99b5PKbvoTm6PpwPk8Tmg869BFE0MwREd01BRSkd-2B4v2ZecWMV_G3SsNZid4v1CQQcHK2qufdQT13el-2FXd2PM9ieSMvuIbn39q-2BFigCAO5afLPUak-2FCPV8GERcAI5TtQbXAGS5mCoHPHS4hkBN2DQNgOSBLMJEFa7TaiF5zk2G82Ijpz-2BmP-2F0-2Fhwq6Om-2Bqozc5Z7bNEQcd5H5X3nI7flWweRJtDHBagAXe78-2BVnIbncfF4f-2BNNZ4jUyw6RoaemAxQCCvybYr5nWpAj7D2G83UCA7NIIDQbmFQARp5Q9B8CO9zt1e4hOrQal6Z-2BewNbPnPu8v1evSkh-2BcCQ-2BNZ0iBzrc21HjRaNfHsHMkSUYFZoHj74j61k0cApx3beulh-2BvYmPOvyV0uCVbh3Cxl7DBkVbE4YBN9VoOAsK2kqgIpwHZZam5V1UutI8tTNZ4cW0M7hB73mAVeCEPkERwvhxG4VsBaVzHeTF4VrpokLdxJbOXFbA-2FKKaNrAb4UBOmUXMHlS2efdGY4w-3D-3D]Wallaroo [https://agentboxcdn.com.au/assets/icons/agentbox/map_grey.png] 2 Lydia Terrace [https://agentboxcdn.com.au/assets/icons/agentbox/bed_grey.png] 4 [https://agentboxcdn.com.au/assets/icons/agentbox/bath_grey.png] 1 [https://agentboxcdn.com.au/assets/icons/agentbox/car_grey.png] 3 HISTORIC EDGCUMBE HOUSE For Sale - CONTACT AGENT This property is an iconic home in Wallaroo with a rich history.\nOriginally built as a Gentleman's Residence in 1880 when Wallaroo became an international port.\nIt was built in the Victorian style, the home still has the character & charm of yesteryear including a magnificent staircase.\nUpstairs offers 3 bedrooms, bathroom with bath, separate W.C & balcony with magnificent sea ... [https://link.agentboxmail.com.au/ls/click?upn=u001.wJ89eca1GqdXQLvUCO99b5PKbvoTm6PpwPk8Tmg869BFE0MwREd01BRSkd-2B4v2ZeWMKi_G3SsNZid4v1CQQcHK2qufdQT13el-2FXd2PM9ieSMvuIbn39q-2BFigCAO5afLPUak-2FCPV8GERcAI5TtQbXAGS5mCoHPHS4hkBN2DQNgOSBLMJEFa7TaiF5zk2G82Ijpz-2BmP-2F0-2Fhwq6Om-2Bqozc5Z7bNEQcd5H5X3nI7flWweRJtDHBagAXe78-2BVnIbncfF4f-2BNNZ4jUyw6RoaemAxQCCvybYr5nWpAj7D2G83UCA7NIIDQbmFQARp5Q9B8CO9zt1e4hOrQal6Z-2BewNbPnPu8v1evSkh-2BcCQ-2BNZ0iBzrc21HjRaPkm50UsNRI0BIOFTD7RSBltFH-2FBUENS9B-2B8cE0ZdHGtzZ4F88l4oGpUmh0Lwu0zDX4qM-2F5YxhatjwnXgg8r2Kxju3LL-2BC1qGeGQ0QEm2sg3J3BGb3OryX6ipbKIEnALC0-2B3qw-2FYEHxh8wM8xrFueb4DpDZVwB-2BUJG-2FX1oT4u3Ebw-3D-3D] [https://agentboxcdn.com.au/clients-data/1626/public_html/media/lt/2/2P9915/175322753959510966-rsb.jpg] [https://link.agentboxmail.com.au/ls/click?upn=u001.wJ89eca1GqdXQLvUCO99b5PKbvoTm6PpwPk8Tmg869BFE0MwREd01BRSkd-2B4v2Zew0ZK_G3SsNZid4v1CQQcHK2qufdQT13el-2FXd2PM9ieSMvuIbn39q-2BFigCAO5afLPUak-2FCPV8GERcAI5TtQbXAGS5mCoHPHS4hkBN2DQNgOSBLMJEFa7TaiF5zk2G82Ijpz-2BmP-2F0-2Fhwq6Om-2Bqozc5Z7bNEQcd5H5X3nI7flWweRJtDHBagAXe78-2BVnIbncfF4f-2BNNZ4jUyw6RoaemAxQCCvybYr5nWpAj7D2G83UCA7NIIDQbmFQARp5Q9B8CO9zt1e4hOrQal6Z-2BewNbPnPu8v1evSkh-2BcCQ-2BNZ0iBzrc21HjRaPMeeeI1ye0QcYGzeJwLPjS-2FKhSIrSytwKPdRa45rUl-2Bie2g3B-2FQj7oSUGn42ozRYFnqHEfyi87L6XNtqfY0z90u9oXjpZYEA4HmnQUYOPKe5B7xL5d-2BVDNuzO-2F6RXtkDJTmO2pIu3UFloe5s7doSshWkhwk314LZ873yWu4EMLfA-3D-3D][https://agentboxcdn.com.au/clients-data/1626/public_html/media/lt/2/2P9915/175322761598769267-rsb.jpg] [https://link.agentboxmail.com.au/ls/click?upn=u001.wJ89eca1GqdXQLvUCO99b5PKbvoTm6PpwPk8Tmg869BFE0MwREd01BRSkd-2B4v2ZeELqz_G3SsNZid4v1CQQcHK2qufdQT13el-2FXd2PM9ieSMvuIbn39q-2BFigCAO5afLPUak-2FCPV8GERcAI5TtQbXAGS5mCoHPHS4hkBN2DQNgOSBLMJEFa7TaiF5zk2G82Ijpz-2BmP-2F0-2Fhwq6Om-2Bqozc5Z7bNEQcd5H5X3nI7flWweRJtDHBagAXe78-2BVnIbncfF4f-2BNNZ4jUyw6RoaemAxQCCvybYr5nWpAj7D2G83UCA7NIIDQbmFQARp5Q9B8CO9zt1e4hOrQal6Z-2BewNbPnPu8v1evSkh-2BcCQ-2BNZ0iBzrc21HjRaPg-2FqyeSBAlsk81YlE8yBDsE-2FalVpfV5MLnSXntNj4NAAovuqv-2FsRkQ-2BXy9iCfkc1Fxl9Gg2jVJ9D-2BqulGq2RlsEvtIVAMZHap4Um6z4IBRTcM3tQLXxVg6-2FQx-2Fkm25xqLVMtF19Vn2sr6zwzuQHmLU-2FGsOIDT9t-2FDOAoZPMTtyfQ-3D-3D]VIEW MORE [https://link.agentboxmail.com.au/ls/click?upn=u001.wJ89eca1GqdXQLvUCO99b5PKbvoTm6PpwPk8Tmg869BFE0MwREd01BRSkd-2B4v2Ze7V0H_G3SsNZid4v1CQQcHK2qufdQT13el-2FXd2PM9ieSMvuIbn39q-2BFigCAO5afLPUak-2FCPV8GERcAI5TtQbXAGS5mCoHPHS4hkBN2DQNgOSBLMJEFa7TaiF5zk2G82Ijpz-2BmP-2F0-2Fhwq6Om-2Bqozc5Z7bNEQcd5H5X3nI7flWweRJtDHBagAXe78-2BVnIbncfF4f-2BNNZ4jUyw6RoaemAxQCCvybYr5nWpAj7D2G83UCA7NIIDQbmFQARp5Q9B8CO9zt1e4hOrQal6Z-2BewNbPnPu8v1evSkh-2BcCQ-2BNZ0iBzrc21HjRaM52JroFjpS8Nlb7TMWMvkCRsV3xQ6iFwF6l6cRT-2FYRVibHZo6REomohNUvm-2BXzhwtK86Hw9LTIRXikKq374NVLh9-2FvO6RRti-2FmsFYpLwTFp8ffzH2WCzuaIDJ8t0Wx9pNBq6AmjaSe2DaNdMIy17zkVjk-2BZG0jb8P-2FQNYPJYPwFg-3D-3D] Coming Soon - 28 North West Terrace, Bute [https://www.google.com/maps/search/28+North+West+Terrace,+Bute?entry=gmail&source=g] play [https://agentboxcdn.com.au/clients-data/1626/enews_resrc/media/0/59/17544553978.jpg] Solid House With A Party Room. Value for money 4-bedroom home in the heart of Bute. This also has a huge garage with kitchen & toilet as an entertaining area. More details to come. Neville Hibbard 0427 187 450 RLA 110 Current Listings play [https://agentboxcdn.com.au/clients-data/1626/enews_resrc/media/0/59/17478016438.png] [https://link.agentboxmail.com.au/ls/click?upn=u001.wJ89eca1GqdXQLvUCO99b5PKbvoTm6PpwPk8Tmg869CHbMXPWOqbKctrae-2BGNc80Mdn4iqYrRrjCxAS-2FclKF-2Bg-3D-3DTi6M_G3SsNZid4v1CQQcHK2qufdQT13el-2FXd2PM9ieSMvuIbn39q-2BFigCAO5afLPUak-2FCPV8GERcAI5TtQbXAGS5mCoHPHS4hkBN2DQNgOSBLMJEFa7TaiF5zk2G82Ijpz-2BmP-2F0-2Fhwq6Om-2Bqozc5Z7bNEQcd5H5X3nI7flWweRJtDHBagAXe78-2BVnIbncfF4f-2BNNZ4jUyw6RoaemAxQCCvybYr5nWpAj7D2G83UCA7NIIDQbmFQARp5Q9B8CO9zt1e4hOrQal6Z-2BewNbPnPu8v1evSkh-2BcCQ-2BNZ0iBzrc21HjRaMyxoUP6uUaP2zXQ3H4eL-2BNjZZD3zUsyA3XgpZToAX-2FYu8yRDfmPQzkO0kqzt051F3pojJyg8zCaojKrJ303QnoAQUOcCyPC9hWebqPd21SvaTYGQ3waUrykwi16QxMypqYvCYr5z6hulY6l41tBEkHhEQSTyVKwME3nj7nxNZqjg-3D-3D]Open for Inspection play [https://agentboxcdn.com.au/clients-data/1626/enews_resrc/media/0/59/17513341989.png] [https://link.agentboxmail.com.au/ls/click?upn=u001.wJ89eca1GqdXQLvUCO99b5PKbvoTm6PpwPk8Tmg869AK1cu52sCyzMlUrxav2kX4-2FGvzLcV21833uCFMEH-2BrOQ-3D-3DpCII_G3SsNZid4v1CQQcHK2qufdQT13el-2FXd2PM9ieSMvuIbn39q-2BFigCAO5afLPUak-2FCPV8GERcAI5TtQbXAGS5mCoHPHS4hkBN2DQNgOSBLMJEFa7TaiF5zk2G82Ijpz-2BmP-2F0-2Fhwq6Om-2Bqozc5Z7bNEQcd5H5X3nI7flWweRJtDHBagAXe78-2BVnIbncfF4f-2BNNZ4jUyw6RoaemAxQCCvybYr5nWpAj7D2G83UCA7NIIDQbmFQARp5Q9B8CO9zt1e4hOrQal6Z-2BewNbPnPu8v1evSkh-2BcCQ-2BNZ0iBzrc21HjRaPPcR7b58SEyqPYRfaZjW6utK5zqTeaKZ8bJ6xQlkE4-2F9r2bNlubdiJawhH7WkerX9Kj1oM0Zk97DT1rqOJfR-2BNb2y5De5Nnw9MeC3cjmyHI10JUoVtEx4QhOZiwqcKRcgeZHUF5USmSjxp9dEHhaCyB0eVeMx75QHfK6B3zJ26HA-3D-3D]For Rent - 76 John Lewis Drive Port Broughton [https://www.google.com/maps/search/76+John+Lewis+Drive+Port+Broughton?entry=gmail&source=g] play [https://agentboxcdn.com.au/clients-data/1626/enews_resrc/media/0/59/17544571704.JPG] $480 per week Available 5 September 3 bedrooms. Close to town centre. Sea views. Contact Brett Bennett - 8821 3933 Rental Listings play [https://agentboxcdn.com.au/clients-data/1626/enews_resrc/media/0/59/17502102634.png] [https://link.agentboxmail.com.au/ls/click?upn=u001.wJ89eca1GqdXQLvUCO99b5PKbvoTm6PpwPk8Tmg869CHbMXPWOqbKctrae-2BGNc80pMqlFWHtHJ-2F414yiM-2BhrCQ-3D-3DH-pY_G3SsNZid4v1CQQcHK2qufdQT13el-2FXd2PM9ieSMvuIbn39q-2BFigCAO5afLPUak-2FCPV8GERcAI5TtQbXAGS5mCoHPHS4hkBN2DQNgOSBLMJEFa7TaiF5zk2G82Ijpz-2BmP-2F0-2Fhwq6Om-2Bqozc5Z7bNEQcd5H5X3nI7flWweRJtDHBagAXe78-2BVnIbncfF4f-2BNNZ4jUyw6RoaemAxQCCvybYr5nWpAj7D2G83UCA7NIIDQbmFQARp5Q9B8CO9zt1e4hOrQal6Z-2BewNbPnPu8v1evSkh-2BcCQ-2BNZ0iBzrc21HjRaMdJEDboKBQOEWpJjziGnP1PPPm5r-2F4ZsAAdIG0p61MPK8h4dIZzjFNb2xA5b2rqwoZ-2BrmzcerSKcPw3J-2BEo8-2BiuH9eC6Y8sU2cx4y1VJZN-2BhGBHkvQYiCUnGxHrsSPdrppcI5o574oYmjz7V-2BO3eDtlYD0AFd6udGIHLpckf-2BbGQ-3D-3D]Commercial Properties For Sale Commercial Properties For Sale [https://link.agentboxmail.com.au/ls/click?upn=u001.wJ89eca1GqdXQLvUCO99b5PKbvoTm6PpwPk8Tmg869DVAP1NOc-2F75XHTvcLe-2F0AOGpHKPFpvdSwojMFDi9ZknQ-3D-3DuakG_G3SsNZid4v1CQQcHK2qufdQT13el-2FXd2PM9ieSMvuIbn39q-2BFigCAO5afLPUak-2FCPV8GERcAI5TtQbXAGS5mCoHPHS4hkBN2DQNgOSBLMJEFa7TaiF5zk2G82Ijpz-2BmP-2F0-2Fhwq6Om-2Bqozc5Z7bNEQcd5H5X3nI7flWweRJtDHBagAXe78-2BVnIbncfF4f-2BNNZ4jUyw6RoaemAxQCCvybYr5nWpAj7D2G83UCA7NIIDQbmFQARp5Q9B8CO9zt1e4hOrQal6Z-2BewNbPnPu8v1evSkh-2BcCQ-2BNZ0iBzrc21HjRaPneknuymPm8D62T9jj4XJ9qayftfNsR4cTP2r7wQ8EL26lGjx-2FZG9ZloEUhikBVX01JL5rUE5Ox1EAC-2BkoU0TmzBVCfNFGBv90-2FZ7zni825LLvUC3S-2BAe-2BuxWi6n340jeV3WHDNaGbC2Z8G3gSVzkZOBWBg24Ip00ejtDkORirCg-3D-3D] Commercial Properties For Lease Commercial Properties For Lease [https://link.agentboxmail.com.au/ls/click?upn=u001.wJ89eca1GqdXQLvUCO99b5PKbvoTm6PpwPk8Tmg869DVAP1NOc-2F75XHTvcLe-2F0AO4gwCMxybWrPri1FcBeBTqA-3D-3Ds_8G_G3SsNZid4v1CQQcHK2qufdQT13el-2FXd2PM9ieSMvuIbn39q-2BFigCAO5afLPUak-2FCPV8GERcAI5TtQbXAGS5mCoHPHS4hkBN2DQNgOSBLMJEFa7TaiF5zk2G82Ijpz-2BmP-2F0-2Fhwq6Om-2Bqozc5Z7bNEQcd5H5X3nI7flWweRJtDHBagAXe78-2BVnIbncfF4f-2BNNZ4jUyw6RoaemAxQCCvybYr5nWpAj7D2G83UCA7NIIDQbmFQARp5Q9B8CO9zt1e4hOrQal6Z-2BewNbPnPu8v1evSkh-2BcCQ-2BNZ0iBzrc21HjRaNmclafCwQwXF51G802HjhxJNDEkd1GTQ-2Fxc-2Fqg7zmngsNdmcJxkHo0ME-2F4xu-2BceIzLJeQtyMwuPUwdzc3N-2BZj79ESdv5LTXjVssy4oMf-2BFBx2Zpmj37TrBIqkIQEH2PP23W1HwfcRWjeS1-2FEIUB1FFvr1B1P5KnB-2B9jtEwnkMsmg-3D-3D] 18 Port Road, Kadina, SA 5554 [https://www.google.com/maps/search/18+Port+Road,+Kadina,+SA+5554?entry=gmail&source=g] P: 08 8821 3933 [tel:08%208821%203933] | F: 08 8821 2799 | E: yp@blights.com.au [yp@blights.com.au] www.blights.com.au [https://link.agentboxmail.com.au/ls/click?upn=u001.WALCH3K4RobYPaktm60o9KImZQOUpBw9usB9vT-2FueXOErTtnaAEW0o4LO-2FAsGtnspxH1_G3SsNZid4v1CQQcHK2qufdQT13el-2FXd2PM9ieSMvuIbn39q-2BFigCAO5afLPUak-2FCPV8GERcAI5TtQbXAGS5mCoHPHS4hkBN2DQNgOSBLMJEFa7TaiF5zk2G82Ijpz-2BmP-2F0-2Fhwq6Om-2Bqozc5Z7bNEQcd5H5X3nI7flWweRJtDHBagAXe78-2BVnIbncfF4f-2BNNZ4jUyw6RoaemAxQCCvybYr5nWpAj7D2G83UCA7NIIDQbmFQARp5Q9B8CO9zt1e4hOrQal6Z-2BewNbPnPu8v1evSkh-2BcCQ-2BNZ0iBzrc21HjRaNYVx6-2FZ23QFKvQ9h1BVqj-2FNgZ4b8LIzfbU4o0ExadUHgyjZbD0B6AuZPOq2UU7FGPIQMbYlLgvNQqpVx4IgiQlsN92liqga1DAHhTWC-2BQxpeSZZp-2BtipKwL2-2Blg2KA1ISapusi1AMSRmY8r-2BuugsO5ywYzEXndXRAh7A9adxa8mg-3D-3D]The sender believes that this E-mail and any attachments were free of any virus, worm, Trojan horse, and/or malicious code when sent. This message and its attachments could have been infected during transmission. By reading the message and opening any attachments, the recipient accepts full responsibility for taking protective and remedial action about viruses and other defects. The sender's employer is not liable for any loss or damage arising in any way from this message or its attachments. Manage Preferences [https://link.agentboxmail.com.au/ls/click?upn=u001.wJ89eca1GqdXQLvUCO99b8oMsecV7Gs7vHAZju5ZSHBZlbVwqme-2BxE-2FMfHUarbyV0RmKZqswg8cdGU7fHc1sqGWeg7XmMJYEdXoi0-2BFfcGtXO-2FZZxGrx6rKuwmhpmKxyDB6pYtGeT8HJrDf0v8KxX1TC3Q1ssxpLeuRGaJT3r7Y3n4RBlmRdE8G5V7T0pRUaTbZ7JJBEfjYwZZIdMccGF3V6Gx34LY3QvSeT1lPYTIeJOHGpG70W4mQG1cF4IJFWiqVH_G3SsNZid4v1CQQcHK2qufdQT13el-2FXd2PM9ieSMvuIbn39q-2BFigCAO5afLPUak-2FCPV8GERcAI5TtQbXAGS5mCoHPHS4hkBN2DQNgOSBLMJEFa7TaiF5zk2G82Ijpz-2BmP-2F0-2Fhwq6Om-2Bqozc5Z7bNEQcd5H5X3nI7flWweRJtDHBagAXe78-2BVnIbncfF4f-2BNNZ4jUyw6RoaemAxQCCvybYr5nWpAj7D2G83UCA7NIIDQbmFQARp5Q9B8CO9zt1e4hOrQal6Z-2BewNbPnPu8v1evSkh-2BcCQ-2BNZ0iBzrc21HjRaMcwkdzUv4RR2n9ZZ5CaVlwcQgnGhNnZfKu4HF26O9t0-2BKzqK3f05acPK3HY195FTU75XbnnP6VKNW5m3s4ePYL83eV45hndcFsiMP-2BF6HYvP-2FCNR5slI3Er8-2BT0IVElIpwVPnmVkt84uj8Qqr7f7LfIRBowHGh9LOBmaKfIXeDRg-3D-3D] | Unsubscribe [https://link.agentboxmail.com.au/ls/click?upn=u001.wJ89eca1GqdXQLvUCO99b8oMsecV7Gs7vHAZju5ZSHBKVmNSs1e4-2Bc-2FrCZR3pP6b9X-2FwY-2Bow7axrxi9o2VMNdvcuodaVgYJIUtn6bKfRIX-2BybtBsqS1TSIA9I64f-2BQM-2Fhun3Nnoa1sQgsfa4xTKLvXEbhP4S5oDU2kZ97PZkuMg-3DmBkU_G3SsNZid4v1CQQcHK2qufdQT13el-2FXd2PM9ieSMvuIbn39q-2BFigCAO5afLPUak-2FCPV8GERcAI5TtQbXAGS5mCoHPHS4hkBN2DQNgOSBLMJEFa7TaiF5zk2G82Ijpz-2BmP-2F0-2Fhwq6Om-2Bqozc5Z7bNEQcd5H5X3nI7flWweRJtDHBagAXe78-2BVnIbncfF4f-2BNNZ4jUyw6RoaemAxQCCvybYr5nWpAj7D2G83UCA7NIIDQbmFQARp5Q9B8CO9zt1e4hOrQal6Z-2BewNbPnPu8v1evSkh-2BcCQ-2BNZ0iBzrc21HjRaMpwFXuLarGf8oDlVSr-2BGzBNeu3ga7ihaMxmlnI-2BQU-2FpWTbQeRsZWeq2SceiMCSQsI8eJO7JmZCOdkt-2FlngYUqoFHM8UIHciBwvDb8qRIdHknbdLRwO6hPVhnExGluBSCy0f-2F26fvf6aIdOym1XPVLeMtIPurYr9LpV21c7qc-2FY9w-3D-3D] © Powered by Agentbox [https://link.agentboxmail.com.au/ls/click?upn=u001.Vzbnk-2FxjLtvOnNjYWMgBvI13C-2BNADm7q1FXdzs5gDTs-3Dep3r_G3SsNZid4v1CQQcHK2qufdQT13el-2FXd2PM9ieSMvuIbn39q-2BFigCAO5afLPUak-2FCPV8GERcAI5TtQbXAGS5mCoHPHS4hkBN2DQNgOSBLMJEFa7TaiF5zk2G82Ijpz-2BmP-2F0-2Fhwq6Om-2Bqozc5Z7bNEQcd5H5X3nI7flWweRJtDHBagAXe78-2BVnIbncfF4f-2BNNZ4jUyw6RoaemAxQCCvybYr5nWpAj7D2G83UCA7NIIDQbmFQARp5Q9B8CO9zt1e4hOrQal6Z-2BewNbPnPu8v1evSkh-2BcCQ-2BNZ0iBzrc21HjRaNLvqvCdsFIxFclqwVK8Lw-2F1iLm3VZ36v90MDq5R4HLIR19mOR1-2Blzth6S5-2BYEj9Dv3jLZzBI17TY-2FgKMqYAStHFKFvKPrrjb41XHgIlUBJyd-2Ft0RwmM7aSELG1zUIjR4dV-2B1RYIR-2B41Mr0C0lnC-2F9joubU0E5rXghDfP4CPk2Qtg-3D-3D] 2025 [https://link.agentboxmail.com.au/wf/open?upn=u001.2Oqn2REnt-2BB7Bq3ltOJvR579ybjiA9z1ksXHABcAPpAaLPWaxyBJtnd7TFcGroSPsKhjh263iLnsdIP3d5yMOugEoLCZyKpdocwV-2BATS9b281t-2BE-2B7BePmeKCfs36XkDaiuNPJ-2BrRShbqrueebN3AYv3NhQQNnA5tr3pw-2BINvJtZoH5p-2FBlUiET7R4nnwVKYl6ZeaEuFY-2F6HON8lEdqe-2BFTPp7-2BdTNRU03XwzLYUvXYzeZbvvvqbTL2ZQtlGl1BySFHxRnjHQXEtL3qfQWT770NrdezSSICTPlreN54s-2FR45aieQk4qaX8H3RqqfnJ5108zuohROIaZjcaAUJQa81Ivc8nibmRdgAmXz4Uuu15-2FrNjDBit6LE3b3aiw5MnScVbcvXK-2FZaW3nIVsXHE1l2y8W4mk4GrDOXPqrIzXh36B8c6-2F9PKkXNAeO3VHwvLPupfp34aj-2FSdv01K89PIa4XBYtxDxJQ-2FqaMmodQEsSez8-3D]"
+      }
+    },
+    {
+      "sourceRecordId": "recaF3G6Zmsn2mO43",
+      "sourceCreatedTime": "2025-11-13T03:35:42.000Z",
+      "fields": {
+        "Name": "Geoff Sellars",
+        "Subject": "Weekly Listings Update",
+        "Email": "geoff.sellars@raywhite.com",
+        "Body": "View this email in your browser\r\nDear NPC Services,\r\n\r\nPlease find below a collection of our latest property listings on the market! For further details on any of these properties, simply click on the property image.\r\n\r\nIt’s an exciting time for property ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recaFO3Tcb3pQWrQe",
+      "sourceCreatedTime": "2025-12-06T08:04:38.000Z",
+      "fields": {
+        "Name": "Belle Property Australasia",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "noreply@belleproperty.com",
+        "Body": "Dear Rugesh,\r\n\r\nWe have found the following properties that match your property search requirements. Click here to update your preferences or click here to find a property on belleproperty.com.\r\nCurrent listings.\r\n\r\nDromana\r\n2/42 Francis Street\r\nFor Sale ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recaFOgUatIqXnXmL",
+      "sourceCreatedTime": "2026-04-02T05:41:23.000Z",
+      "fields": {
+        "Name": "Balmoral Estate",
+        "Subject": "Weekly Updated Price List For Balmoral North ( Arncliffe Release)",
+        "Email": "info@balmoralestate.com.au",
+        "Body": "Hi Guys,\r\nBefore we hit for the Long weekend. Please check the Updated Price List for Balmoral North ( Arncliffe release). Titles for these lots are expected next year first quarter. As you can see, these lots selling really fast. Please contact me if you",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/EmqWTLWrszeX88uKVMbG2Q/7hhH3s0LCXYQ-mATuOPawzrNCgLtRDxcZLl9OasQNNOGHa_4UMrmZ4ke80G8BC4vbWfPV9D5BKMOijW60LsxwQqE-XZelj9e9bdQPhqBMqsVwcGzmbUkABZlAzAZ07tIvRBGbhZOn95Sx7wNxjviKilyzNYb0BOAhrB30YPmUHD68Z7_8anuynMtJsPsO4zP/1GMxLL0TFdyqG6JvEjs7-u5_KF3KHKODt199SiY3fBs",
+            "filename": "outlook_email_attachment.pdf",
+            "type": "application/pdf",
+            "size": 344555
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "recaGemU8nIFH9wC6",
+      "sourceCreatedTime": "2026-06-05T04:28:57.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recaH2DdHZeqti5OC",
+      "sourceCreatedTime": "2025-11-05T23:36:13.000Z",
+      "fields": {
+        "Name": "Lyn Deasy",
+        "Subject": "Your Property Update [Price Reduction Alert]",
+        "Email": "lyn.deasy@podre.com.au",
+        "Body": "0749272122\r\nwww.podre.com.au\r\nPrice Update\r\n\r\nHi Rugesh,\r\n\r\nWe've had some price reductions recently on some properties you might be interested in. Give me a call if you have any questions or would like to take a look through any of these.\r\n\r\n\r\n2 Bellevue",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recaHbsWc3XuC42yF",
+      "sourceCreatedTime": "2025-11-05T07:30:24.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recaHnxng3Qmw8nNw",
+      "sourceCreatedTime": "2026-03-26T04:13:44.000Z",
+      "fields": {
+        "Name": "Moremac",
+        "Subject": "Alira has won the 2026 UDIA National Residential Subdivision Award!",
+        "Email": "support@e.moremac.com.au",
+        "Body": "View online\r\n\r\nCelebrating two years of award-winning communities\r\n\r\n\r\nWe’re delighted to share some fantastic news: our flagship community in south-east Melbourne, Alira, has officially been awarded the 2026 UDIA National Best Residential Subdivision Awa",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recaI9sr5HXaw3Ey5",
+      "sourceCreatedTime": "2025-11-21T04:47:07.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recaJReVOw3CHPaKn",
+      "sourceCreatedTime": "2025-09-22T11:25:18.000Z",
+      "fields": {
+        "Name": "Jasmine Dawson",
+        "Subject": "Kingsfield Builder Update - 9/09/2025",
+        "Email": "Jasmine@alc.land",
+        "Body": "Dear Builder Partners,\r\n\r\n\r\nHope you’re all having an awesome week!\r\n\r\nNEAR TITLED BLOCK RETURNED – Lot 1943 - 534m2\r\n\r\n\r\n\r\nPlease see attached our price list with available lots. We would love to display and advertise your House and Land packages.",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/d9464rsWJXwi-8EfWZvD8Q/Or2leHS7qDK4LGPFU4Rd8FkdVY8UhyYpyQ1rKdM8DlS9dooSxLLPMTpk-BXamzDvxT3sc5gjQlPz_ADyspsF9wq21LDUhHZ_3GNhe_39MF-6MeW3gi4ECs317wnOHypVK1852plPbzpfngMQaBHUs8cxZaWtvbGBg5WrHyHie5aM18MMemrAZlxP1nP7fksI/Sd2nKGq1T7euapGgEcEhTbTP4NM-ZcUbo0mYx_Kixb0",
+            "filename": "outlook_email_attachment.png",
+            "type": "image/png",
+            "size": 86572
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "recaJuLfM6PiCCXeg",
+      "sourceCreatedTime": "2025-10-20T21:55:38.000Z",
+      "fields": {
+        "Name": "Rick Holloway",
+        "Subject": "FW: SMSF SALE DINMORE",
+        "Email": "rick@thebobtraskgroup.com.au",
+        "Body": "All Offers Considered\r\nSMSF  WEEK\r\nBIG BLOCK\r\nRegistered in January\r\nSecondary Dwelling Stock\r\nDINMORE\r\nGreat Location\r\nInvesting in Dinmore, the median property price for a house is currently $530,000 with annual capital growth of 20.45%. There were 24 h",
+        "Status": "Error 500",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/ZVC01e2tek-XAEZGM6lzZQ/B2hMBzUW8yCIRLRq0yClNFoJH4pvw02_KQwfGdpYNPRlBhK5_SXft83TzSLFiieA-vhD8x_pFqTXs13rp_4SQXRvUsffTgVnFDbhCx4qZ-5MjFtV2k9vmNHziGkkrEqYBMDkmF9sWBIb7PdCSEgF0mSNAAPwIZ7QHpyZa193GEZa_30b7gHis4BgnxZKa8GU/RpZb-HD9pAJh26W7XMz8FiwkHHmmh-lRCHhn20Q0G00",
+            "filename": "outlook_email_attachment.png",
+            "type": "image/png",
+            "size": 147127
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "recaK7nAA3dn49dKU",
+      "sourceCreatedTime": "2025-11-06T02:55:47.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recaKIWAE70xfvuJC",
+      "sourceCreatedTime": "2026-01-27T21:37:16.000Z",
+      "fields": {
+        "Name": "Rick Holloway",
+        "Subject": "FW: HOUSE AND LAND",
+        "Email": "rick@thebobtraskgroup.com.au",
+        "Body": "Limited stock\r\nHOUSE AND LAND\r\nSTARTING FROM $750,000\r\nMORAYFIELD,BOOVAL\r\nUnique Property\r\nGreat Location\r\nTWO PART INVESTMENT’S\r\nGOING QUICK\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\nRegards\r\n\r\n“Whatever you need, if we don’t have it, we can find it and we can build it!”",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recaLB8gjhqu9ykaN",
+      "sourceCreatedTime": "2025-08-17T18:05:11.000Z",
+      "fields": {
+        "Name": "Lavan Kenobi",
+        "Subject": "Fwd: Blights Newsletter",
+        "Email": "lavankenobi@gmail.com",
+        "Body": "\n\n---------- Forwarded message ---------\nFrom: Rugesh Naidu <naidu.rugesh@gmail.com [naidu.rugesh@gmail.com]>\nDate: Sat, Aug 16, 2025 at 7:22 AM\nSubject: Fwd: Blights Newsletter\nTo: lavankenobi@gmail.com [lavankenobi@gmail.com] <lavankenobi@gmail.com [lavankenobi@gmail.com]>\n\n\n\n---------- Forwarded message ---------\nFrom: Blights Real Estate Yorke Peninsula <yp@blights.com.au [yp@blights.com.au]>\nDate: Thu, 7 Aug 2025, 10:54 am\nSubject: Blights Newsletter\nTo: <naidu.rugesh@gmail.com [naidu.rugesh@gmail.com]>\n\n\nHeader Banner [https://agentboxcdn.com.au/clients-data/1626/public_html/media/resrc/1/1/1.gif] [https://link.agentboxmail.com.au/ls/click?upn=u001.WALCH3K4RobYPaktm60o9KImZQOUpBw9usB9vT-2FueXOErTtnaAEW0o4LO-2FAsGtns4So4_G3SsNZid4v1CQQcHK2qufdQT13el-2FXd2PM9ieSMvuIbn39q-2BFigCAO5afLPUak-2FCPV8GERcAI5TtQbXAGS5mCoHPHS4hkBN2DQNgOSBLMJEFa7TaiF5zk2G82Ijpz-2BmP-2F0-2Fhwq6Om-2Bqozc5Z7bNEQcd5H5X3nI7flWweRJtDHBagAXe78-2BVnIbncfF4f-2BNNZ4jUyw6RoaemAxQCCvybYr5nWpAj7D2G83UCA7NIIDQbmFQARp5Q9B8CO9zt1e4hOrQal6Z-2BewNbPnPu8v1evSkh-2BcCQ-2BNZ0iBzrc21HjRaNa7cF23SERMjlztHQP0QfVEzTBg4sVtBL26fYAXF8jZaBtlJ-2F8iQMCeXH2iTR6Bb4ikSWDHqBctd2ofcBQ2BcQTX76uAut-2B9KDM0bW3XLPG52-2Bzen1QVp-2FjJXjgoC-2FrAd0PI6WdKtS7JH-2F91H-2BFduV8E5xhQ0mkyOLTjcrDzO24w-3D-3D]Hello Rugesh,\n\nBlights have offices in Port Pirie, Whyalla and the Yorke Peninsula. They have the local expertise, the right market advice and can take the stress out of your next move, and with their help, find your perfect next home. Call our Yorke Peninsula team today!\n\n\nKind Regards,\nBlights Real Estate Yorke Peninsula Awards, Anniversaries & Amazing Race play [https://agentboxcdn.com.au/clients-data/1626/enews_resrc/media/0/59/1754454026.JPEG] [https://link.agentboxmail.com.au/ls/click?upn=u001.wJ89eca1GqdXQLvUCO99b5PKbvoTm6PpwPk8Tmg869BIn8iRDEH0zUAV-2BZ4pqjKL2vBraJbWXzcVRe4vh-2FlZ-2FhGDJDuwKPHgfrCfVfeSjtjKZLTfDyxcqMU5Bi00kffQCy-u_G3SsNZid4v1CQQcHK2qufdQT13el-2FXd2PM9ieSMvuIbn39q-2BFigCAO5afLPUak-2FCPV8GERcAI5TtQbXAGS5mCoHPHS4hkBN2DQNgOSBLMJEFa7TaiF5zk2G82Ijpz-2BmP-2F0-2Fhwq6Om-2Bqozc5Z7bNEQcd5H5X3nI7flWweRJtDHBagAXe78-2BVnIbncfF4f-2BNNZ4jUyw6RoaemAxQCCvybYr5nWpAj7D2G83UCA7NIIDQbmFQARp5Q9B8CO9zt1e4hOrQal6Z-2BewNbPnPu8v1evSkh-2BcCQ-2BNZ0iBzrc21HjRaNHQKp-2Fkc2hejbyADMdxfkdWxNshZggZj15R8YtOtuRuS4-2B46wFp64Nn-2Frp4H-2FFQ1h6lDIuRZM-2B9TDIBdc6ZGp0qPZhOyKSdzRJujiUU9xRUItTfSeQURC2U2UXnKw-2BNBvBpC0iyHMo17uO1E1zg3rZgc1u5KF7s-2BrX25KgTPsnZQ-3D-3D]On Friday, 25 July, our team braved the cold and wet weather to enjoy a fantastic day in the beautiful town of Laura. To read more and watch the video, click on the link below: https://www.blights.com.au/blights-team/awards-anniversaries-amazing-race/ [https://www.blights.com.au/blights-team/awards-anniversaries-amazing-race/] Feature Property [https://agentboxcdn.com.au/clients-data/1626/public_html/media/lt/2/2P9915/175322745382307812-rsb.jpg] [https://link.agentboxmail.com.au/ls/click?upn=u001.wJ89eca1GqdXQLvUCO99b5PKbvoTm6PpwPk8Tmg869BFE0MwREd01BRSkd-2B4v2ZecWMV_G3SsNZid4v1CQQcHK2qufdQT13el-2FXd2PM9ieSMvuIbn39q-2BFigCAO5afLPUak-2FCPV8GERcAI5TtQbXAGS5mCoHPHS4hkBN2DQNgOSBLMJEFa7TaiF5zk2G82Ijpz-2BmP-2F0-2Fhwq6Om-2Bqozc5Z7bNEQcd5H5X3nI7flWweRJtDHBagAXe78-2BVnIbncfF4f-2BNNZ4jUyw6RoaemAxQCCvybYr5nWpAj7D2G83UCA7NIIDQbmFQARp5Q9B8CO9zt1e4hOrQal6Z-2BewNbPnPu8v1evSkh-2BcCQ-2BNZ0iBzrc21HjRaNfHsHMkSUYFZoHj74j61k0cApx3beulh-2BvYmPOvyV0uCVbh3Cxl7DBkVbE4YBN9VoOAsK2kqgIpwHZZam5V1UutI8tTNZ4cW0M7hB73mAVeCEPkERwvhxG4VsBaVzHeTF4VrpokLdxJbOXFbA-2FKKaNrAb4UBOmUXMHlS2efdGY4w-3D-3D]Wallaroo [https://agentboxcdn.com.au/assets/icons/agentbox/map_grey.png] 2 Lydia Terrace [https://agentboxcdn.com.au/assets/icons/agentbox/bed_grey.png] 4 [https://agentboxcdn.com.au/assets/icons/agentbox/bath_grey.png] 1 [https://agentboxcdn.com.au/assets/icons/agentbox/car_grey.png] 3 HISTORIC EDGCUMBE HOUSE For Sale - CONTACT AGENT This property is an iconic home in Wallaroo with a rich history.\nOriginally built as a Gentleman's Residence in 1880 when Wallaroo became an international port.\nIt was built in the Victorian style, the home still has the character & charm of yesteryear including a magnificent staircase.\nUpstairs offers 3 bedrooms, bathroom with bath, separate W.C & balcony with magnificent sea ... [https://link.agentboxmail.com.au/ls/click?upn=u001.wJ89eca1GqdXQLvUCO99b5PKbvoTm6PpwPk8Tmg869BFE0MwREd01BRSkd-2B4v2ZeWMKi_G3SsNZid4v1CQQcHK2qufdQT13el-2FXd2PM9ieSMvuIbn39q-2BFigCAO5afLPUak-2FCPV8GERcAI5TtQbXAGS5mCoHPHS4hkBN2DQNgOSBLMJEFa7TaiF5zk2G82Ijpz-2BmP-2F0-2Fhwq6Om-2Bqozc5Z7bNEQcd5H5X3nI7flWweRJtDHBagAXe78-2BVnIbncfF4f-2BNNZ4jUyw6RoaemAxQCCvybYr5nWpAj7D2G83UCA7NIIDQbmFQARp5Q9B8CO9zt1e4hOrQal6Z-2BewNbPnPu8v1evSkh-2BcCQ-2BNZ0iBzrc21HjRaPkm50UsNRI0BIOFTD7RSBltFH-2FBUENS9B-2B8cE0ZdHGtzZ4F88l4oGpUmh0Lwu0zDX4qM-2F5YxhatjwnXgg8r2Kxju3LL-2BC1qGeGQ0QEm2sg3J3BGb3OryX6ipbKIEnALC0-2B3qw-2FYEHxh8wM8xrFueb4DpDZVwB-2BUJG-2FX1oT4u3Ebw-3D-3D] [https://agentboxcdn.com.au/clients-data/1626/public_html/media/lt/2/2P9915/175322753959510966-rsb.jpg] [https://link.agentboxmail.com.au/ls/click?upn=u001.wJ89eca1GqdXQLvUCO99b5PKbvoTm6PpwPk8Tmg869BFE0MwREd01BRSkd-2B4v2Zew0ZK_G3SsNZid4v1CQQcHK2qufdQT13el-2FXd2PM9ieSMvuIbn39q-2BFigCAO5afLPUak-2FCPV8GERcAI5TtQbXAGS5mCoHPHS4hkBN2DQNgOSBLMJEFa7TaiF5zk2G82Ijpz-2BmP-2F0-2Fhwq6Om-2Bqozc5Z7bNEQcd5H5X3nI7flWweRJtDHBagAXe78-2BVnIbncfF4f-2BNNZ4jUyw6RoaemAxQCCvybYr5nWpAj7D2G83UCA7NIIDQbmFQARp5Q9B8CO9zt1e4hOrQal6Z-2BewNbPnPu8v1evSkh-2BcCQ-2BNZ0iBzrc21HjRaPMeeeI1ye0QcYGzeJwLPjS-2FKhSIrSytwKPdRa45rUl-2Bie2g3B-2FQj7oSUGn42ozRYFnqHEfyi87L6XNtqfY0z90u9oXjpZYEA4HmnQUYOPKe5B7xL5d-2BVDNuzO-2F6RXtkDJTmO2pIu3UFloe5s7doSshWkhwk314LZ873yWu4EMLfA-3D-3D][https://agentboxcdn.com.au/clients-data/1626/public_html/media/lt/2/2P9915/175322761598769267-rsb.jpg] [https://link.agentboxmail.com.au/ls/click?upn=u001.wJ89eca1GqdXQLvUCO99b5PKbvoTm6PpwPk8Tmg869BFE0MwREd01BRSkd-2B4v2ZeELqz_G3SsNZid4v1CQQcHK2qufdQT13el-2FXd2PM9ieSMvuIbn39q-2BFigCAO5afLPUak-2FCPV8GERcAI5TtQbXAGS5mCoHPHS4hkBN2DQNgOSBLMJEFa7TaiF5zk2G82Ijpz-2BmP-2F0-2Fhwq6Om-2Bqozc5Z7bNEQcd5H5X3nI7flWweRJtDHBagAXe78-2BVnIbncfF4f-2BNNZ4jUyw6RoaemAxQCCvybYr5nWpAj7D2G83UCA7NIIDQbmFQARp5Q9B8CO9zt1e4hOrQal6Z-2BewNbPnPu8v1evSkh-2BcCQ-2BNZ0iBzrc21HjRaPg-2FqyeSBAlsk81YlE8yBDsE-2FalVpfV5MLnSXntNj4NAAovuqv-2FsRkQ-2BXy9iCfkc1Fxl9Gg2jVJ9D-2BqulGq2RlsEvtIVAMZHap4Um6z4IBRTcM3tQLXxVg6-2FQx-2Fkm25xqLVMtF19Vn2sr6zwzuQHmLU-2FGsOIDT9t-2FDOAoZPMTtyfQ-3D-3D]VIEW MORE [https://link.agentboxmail.com.au/ls/click?upn=u001.wJ89eca1GqdXQLvUCO99b5PKbvoTm6PpwPk8Tmg869BFE0MwREd01BRSkd-2B4v2Ze7V0H_G3SsNZid4v1CQQcHK2qufdQT13el-2FXd2PM9ieSMvuIbn39q-2BFigCAO5afLPUak-2FCPV8GERcAI5TtQbXAGS5mCoHPHS4hkBN2DQNgOSBLMJEFa7TaiF5zk2G82Ijpz-2BmP-2F0-2Fhwq6Om-2Bqozc5Z7bNEQcd5H5X3nI7flWweRJtDHBagAXe78-2BVnIbncfF4f-2BNNZ4jUyw6RoaemAxQCCvybYr5nWpAj7D2G83UCA7NIIDQbmFQARp5Q9B8CO9zt1e4hOrQal6Z-2BewNbPnPu8v1evSkh-2BcCQ-2BNZ0iBzrc21HjRaM52JroFjpS8Nlb7TMWMvkCRsV3xQ6iFwF6l6cRT-2FYRVibHZo6REomohNUvm-2BXzhwtK86Hw9LTIRXikKq374NVLh9-2FvO6RRti-2FmsFYpLwTFp8ffzH2WCzuaIDJ8t0Wx9pNBq6AmjaSe2DaNdMIy17zkVjk-2BZG0jb8P-2FQNYPJYPwFg-3D-3D] Coming Soon - 28 North West Terrace, Bute [https://www.google.com/maps/search/28+North+West+Terrace,+Bute?entry=gmail&source=g] play [https://agentboxcdn.com.au/clients-data/1626/enews_resrc/media/0/59/17544553978.jpg] Solid House With A Party Room. Value for money 4-bedroom home in the heart of Bute. This also has a huge garage with kitchen & toilet as an entertaining area. More details to come. Neville Hibbard 0427 187 450 RLA 110 Current Listings play [https://agentboxcdn.com.au/clients-data/1626/enews_resrc/media/0/59/17478016438.png] [https://link.agentboxmail.com.au/ls/click?upn=u001.wJ89eca1GqdXQLvUCO99b5PKbvoTm6PpwPk8Tmg869CHbMXPWOqbKctrae-2BGNc80Mdn4iqYrRrjCxAS-2FclKF-2Bg-3D-3DTi6M_G3SsNZid4v1CQQcHK2qufdQT13el-2FXd2PM9ieSMvuIbn39q-2BFigCAO5afLPUak-2FCPV8GERcAI5TtQbXAGS5mCoHPHS4hkBN2DQNgOSBLMJEFa7TaiF5zk2G82Ijpz-2BmP-2F0-2Fhwq6Om-2Bqozc5Z7bNEQcd5H5X3nI7flWweRJtDHBagAXe78-2BVnIbncfF4f-2BNNZ4jUyw6RoaemAxQCCvybYr5nWpAj7D2G83UCA7NIIDQbmFQARp5Q9B8CO9zt1e4hOrQal6Z-2BewNbPnPu8v1evSkh-2BcCQ-2BNZ0iBzrc21HjRaMyxoUP6uUaP2zXQ3H4eL-2BNjZZD3zUsyA3XgpZToAX-2FYu8yRDfmPQzkO0kqzt051F3pojJyg8zCaojKrJ303QnoAQUOcCyPC9hWebqPd21SvaTYGQ3waUrykwi16QxMypqYvCYr5z6hulY6l41tBEkHhEQSTyVKwME3nj7nxNZqjg-3D-3D]Open for Inspection play [https://agentboxcdn.com.au/clients-data/1626/enews_resrc/media/0/59/17513341989.png] [https://link.agentboxmail.com.au/ls/click?upn=u001.wJ89eca1GqdXQLvUCO99b5PKbvoTm6PpwPk8Tmg869AK1cu52sCyzMlUrxav2kX4-2FGvzLcV21833uCFMEH-2BrOQ-3D-3DpCII_G3SsNZid4v1CQQcHK2qufdQT13el-2FXd2PM9ieSMvuIbn39q-2BFigCAO5afLPUak-2FCPV8GERcAI5TtQbXAGS5mCoHPHS4hkBN2DQNgOSBLMJEFa7TaiF5zk2G82Ijpz-2BmP-2F0-2Fhwq6Om-2Bqozc5Z7bNEQcd5H5X3nI7flWweRJtDHBagAXe78-2BVnIbncfF4f-2BNNZ4jUyw6RoaemAxQCCvybYr5nWpAj7D2G83UCA7NIIDQbmFQARp5Q9B8CO9zt1e4hOrQal6Z-2BewNbPnPu8v1evSkh-2BcCQ-2BNZ0iBzrc21HjRaPPcR7b58SEyqPYRfaZjW6utK5zqTeaKZ8bJ6xQlkE4-2F9r2bNlubdiJawhH7WkerX9Kj1oM0Zk97DT1rqOJfR-2BNb2y5De5Nnw9MeC3cjmyHI10JUoVtEx4QhOZiwqcKRcgeZHUF5USmSjxp9dEHhaCyB0eVeMx75QHfK6B3zJ26HA-3D-3D]For Rent - 76 John Lewis Drive Port Broughton [https://www.google.com/maps/search/76+John+Lewis+Drive+Port+Broughton?entry=gmail&source=g] play [https://agentboxcdn.com.au/clients-data/1626/enews_resrc/media/0/59/17544571704.JPG] $480 per week Available 5 September 3 bedrooms. Close to town centre. Sea views. Contact Brett Bennett - 8821 3933 Rental Listings play [https://agentboxcdn.com.au/clients-data/1626/enews_resrc/media/0/59/17502102634.png] [https://link.agentboxmail.com.au/ls/click?upn=u001.wJ89eca1GqdXQLvUCO99b5PKbvoTm6PpwPk8Tmg869CHbMXPWOqbKctrae-2BGNc80pMqlFWHtHJ-2F414yiM-2BhrCQ-3D-3DH-pY_G3SsNZid4v1CQQcHK2qufdQT13el-2FXd2PM9ieSMvuIbn39q-2BFigCAO5afLPUak-2FCPV8GERcAI5TtQbXAGS5mCoHPHS4hkBN2DQNgOSBLMJEFa7TaiF5zk2G82Ijpz-2BmP-2F0-2Fhwq6Om-2Bqozc5Z7bNEQcd5H5X3nI7flWweRJtDHBagAXe78-2BVnIbncfF4f-2BNNZ4jUyw6RoaemAxQCCvybYr5nWpAj7D2G83UCA7NIIDQbmFQARp5Q9B8CO9zt1e4hOrQal6Z-2BewNbPnPu8v1evSkh-2BcCQ-2BNZ0iBzrc21HjRaMdJEDboKBQOEWpJjziGnP1PPPm5r-2F4ZsAAdIG0p61MPK8h4dIZzjFNb2xA5b2rqwoZ-2BrmzcerSKcPw3J-2BEo8-2BiuH9eC6Y8sU2cx4y1VJZN-2BhGBHkvQYiCUnGxHrsSPdrppcI5o574oYmjz7V-2BO3eDtlYD0AFd6udGIHLpckf-2BbGQ-3D-3D]Commercial Properties For Sale Commercial Properties For Sale [https://link.agentboxmail.com.au/ls/click?upn=u001.wJ89eca1GqdXQLvUCO99b5PKbvoTm6PpwPk8Tmg869DVAP1NOc-2F75XHTvcLe-2F0AOGpHKPFpvdSwojMFDi9ZknQ-3D-3DuakG_G3SsNZid4v1CQQcHK2qufdQT13el-2FXd2PM9ieSMvuIbn39q-2BFigCAO5afLPUak-2FCPV8GERcAI5TtQbXAGS5mCoHPHS4hkBN2DQNgOSBLMJEFa7TaiF5zk2G82Ijpz-2BmP-2F0-2Fhwq6Om-2Bqozc5Z7bNEQcd5H5X3nI7flWweRJtDHBagAXe78-2BVnIbncfF4f-2BNNZ4jUyw6RoaemAxQCCvybYr5nWpAj7D2G83UCA7NIIDQbmFQARp5Q9B8CO9zt1e4hOrQal6Z-2BewNbPnPu8v1evSkh-2BcCQ-2BNZ0iBzrc21HjRaPneknuymPm8D62T9jj4XJ9qayftfNsR4cTP2r7wQ8EL26lGjx-2FZG9ZloEUhikBVX01JL5rUE5Ox1EAC-2BkoU0TmzBVCfNFGBv90-2FZ7zni825LLvUC3S-2BAe-2BuxWi6n340jeV3WHDNaGbC2Z8G3gSVzkZOBWBg24Ip00ejtDkORirCg-3D-3D] Commercial Properties For Lease Commercial Properties For Lease [https://link.agentboxmail.com.au/ls/click?upn=u001.wJ89eca1GqdXQLvUCO99b5PKbvoTm6PpwPk8Tmg869DVAP1NOc-2F75XHTvcLe-2F0AO4gwCMxybWrPri1FcBeBTqA-3D-3Ds_8G_G3SsNZid4v1CQQcHK2qufdQT13el-2FXd2PM9ieSMvuIbn39q-2BFigCAO5afLPUak-2FCPV8GERcAI5TtQbXAGS5mCoHPHS4hkBN2DQNgOSBLMJEFa7TaiF5zk2G82Ijpz-2BmP-2F0-2Fhwq6Om-2Bqozc5Z7bNEQcd5H5X3nI7flWweRJtDHBagAXe78-2BVnIbncfF4f-2BNNZ4jUyw6RoaemAxQCCvybYr5nWpAj7D2G83UCA7NIIDQbmFQARp5Q9B8CO9zt1e4hOrQal6Z-2BewNbPnPu8v1evSkh-2BcCQ-2BNZ0iBzrc21HjRaNmclafCwQwXF51G802HjhxJNDEkd1GTQ-2Fxc-2Fqg7zmngsNdmcJxkHo0ME-2F4xu-2BceIzLJeQtyMwuPUwdzc3N-2BZj79ESdv5LTXjVssy4oMf-2BFBx2Zpmj37TrBIqkIQEH2PP23W1HwfcRWjeS1-2FEIUB1FFvr1B1P5KnB-2B9jtEwnkMsmg-3D-3D] 18 Port Road, Kadina, SA 5554 [https://www.google.com/maps/search/18+Port+Road,+Kadina,+SA+5554?entry=gmail&source=g] P: 08 8821 3933 [tel:08%208821%203933] | F: 08 8821 2799 | E: yp@blights.com.au [yp@blights.com.au] www.blights.com.au [https://link.agentboxmail.com.au/ls/click?upn=u001.WALCH3K4RobYPaktm60o9KImZQOUpBw9usB9vT-2FueXOErTtnaAEW0o4LO-2FAsGtnspxH1_G3SsNZid4v1CQQcHK2qufdQT13el-2FXd2PM9ieSMvuIbn39q-2BFigCAO5afLPUak-2FCPV8GERcAI5TtQbXAGS5mCoHPHS4hkBN2DQNgOSBLMJEFa7TaiF5zk2G82Ijpz-2BmP-2F0-2Fhwq6Om-2Bqozc5Z7bNEQcd5H5X3nI7flWweRJtDHBagAXe78-2BVnIbncfF4f-2BNNZ4jUyw6RoaemAxQCCvybYr5nWpAj7D2G83UCA7NIIDQbmFQARp5Q9B8CO9zt1e4hOrQal6Z-2BewNbPnPu8v1evSkh-2BcCQ-2BNZ0iBzrc21HjRaNYVx6-2FZ23QFKvQ9h1BVqj-2FNgZ4b8LIzfbU4o0ExadUHgyjZbD0B6AuZPOq2UU7FGPIQMbYlLgvNQqpVx4IgiQlsN92liqga1DAHhTWC-2BQxpeSZZp-2BtipKwL2-2Blg2KA1ISapusi1AMSRmY8r-2BuugsO5ywYzEXndXRAh7A9adxa8mg-3D-3D]The sender believes that this E-mail and any attachments were free of any virus, worm, Trojan horse, and/or malicious code when sent. This message and its attachments could have been infected during transmission. By reading the message and opening any attachments, the recipient accepts full responsibility for taking protective and remedial action about viruses and other defects. The sender's employer is not liable for any loss or damage arising in any way from this message or its attachments. Manage Preferences [https://link.agentboxmail.com.au/ls/click?upn=u001.wJ89eca1GqdXQLvUCO99b8oMsecV7Gs7vHAZju5ZSHBZlbVwqme-2BxE-2FMfHUarbyV0RmKZqswg8cdGU7fHc1sqGWeg7XmMJYEdXoi0-2BFfcGtXO-2FZZxGrx6rKuwmhpmKxyDB6pYtGeT8HJrDf0v8KxX1TC3Q1ssxpLeuRGaJT3r7Y3n4RBlmRdE8G5V7T0pRUaTbZ7JJBEfjYwZZIdMccGF3V6Gx34LY3QvSeT1lPYTIeJOHGpG70W4mQG1cF4IJFWiqVH_G3SsNZid4v1CQQcHK2qufdQT13el-2FXd2PM9ieSMvuIbn39q-2BFigCAO5afLPUak-2FCPV8GERcAI5TtQbXAGS5mCoHPHS4hkBN2DQNgOSBLMJEFa7TaiF5zk2G82Ijpz-2BmP-2F0-2Fhwq6Om-2Bqozc5Z7bNEQcd5H5X3nI7flWweRJtDHBagAXe78-2BVnIbncfF4f-2BNNZ4jUyw6RoaemAxQCCvybYr5nWpAj7D2G83UCA7NIIDQbmFQARp5Q9B8CO9zt1e4hOrQal6Z-2BewNbPnPu8v1evSkh-2BcCQ-2BNZ0iBzrc21HjRaMcwkdzUv4RR2n9ZZ5CaVlwcQgnGhNnZfKu4HF26O9t0-2BKzqK3f05acPK3HY195FTU75XbnnP6VKNW5m3s4ePYL83eV45hndcFsiMP-2BF6HYvP-2FCNR5slI3Er8-2BT0IVElIpwVPnmVkt84uj8Qqr7f7LfIRBowHGh9LOBmaKfIXeDRg-3D-3D] | Unsubscribe [https://link.agentboxmail.com.au/ls/click?upn=u001.wJ89eca1GqdXQLvUCO99b8oMsecV7Gs7vHAZju5ZSHBKVmNSs1e4-2Bc-2FrCZR3pP6b9X-2FwY-2Bow7axrxi9o2VMNdvcuodaVgYJIUtn6bKfRIX-2BybtBsqS1TSIA9I64f-2BQM-2Fhun3Nnoa1sQgsfa4xTKLvXEbhP4S5oDU2kZ97PZkuMg-3DmBkU_G3SsNZid4v1CQQcHK2qufdQT13el-2FXd2PM9ieSMvuIbn39q-2BFigCAO5afLPUak-2FCPV8GERcAI5TtQbXAGS5mCoHPHS4hkBN2DQNgOSBLMJEFa7TaiF5zk2G82Ijpz-2BmP-2F0-2Fhwq6Om-2Bqozc5Z7bNEQcd5H5X3nI7flWweRJtDHBagAXe78-2BVnIbncfF4f-2BNNZ4jUyw6RoaemAxQCCvybYr5nWpAj7D2G83UCA7NIIDQbmFQARp5Q9B8CO9zt1e4hOrQal6Z-2BewNbPnPu8v1evSkh-2BcCQ-2BNZ0iBzrc21HjRaMpwFXuLarGf8oDlVSr-2BGzBNeu3ga7ihaMxmlnI-2BQU-2FpWTbQeRsZWeq2SceiMCSQsI8eJO7JmZCOdkt-2FlngYUqoFHM8UIHciBwvDb8qRIdHknbdLRwO6hPVhnExGluBSCy0f-2F26fvf6aIdOym1XPVLeMtIPurYr9LpV21c7qc-2FY9w-3D-3D] © Powered by Agentbox [https://link.agentboxmail.com.au/ls/click?upn=u001.Vzbnk-2FxjLtvOnNjYWMgBvI13C-2BNADm7q1FXdzs5gDTs-3Dep3r_G3SsNZid4v1CQQcHK2qufdQT13el-2FXd2PM9ieSMvuIbn39q-2BFigCAO5afLPUak-2FCPV8GERcAI5TtQbXAGS5mCoHPHS4hkBN2DQNgOSBLMJEFa7TaiF5zk2G82Ijpz-2BmP-2F0-2Fhwq6Om-2Bqozc5Z7bNEQcd5H5X3nI7flWweRJtDHBagAXe78-2BVnIbncfF4f-2BNNZ4jUyw6RoaemAxQCCvybYr5nWpAj7D2G83UCA7NIIDQbmFQARp5Q9B8CO9zt1e4hOrQal6Z-2BewNbPnPu8v1evSkh-2BcCQ-2BNZ0iBzrc21HjRaNLvqvCdsFIxFclqwVK8Lw-2F1iLm3VZ36v90MDq5R4HLIR19mOR1-2Blzth6S5-2BYEj9Dv3jLZzBI17TY-2FgKMqYAStHFKFvKPrrjb41XHgIlUBJyd-2Ft0RwmM7aSELG1zUIjR4dV-2B1RYIR-2B41Mr0C0lnC-2F9joubU0E5rXghDfP4CPk2Qtg-3D-3D] 2025 [https://link.agentboxmail.com.au/wf/open?upn=u001.2Oqn2REnt-2BB7Bq3ltOJvR579ybjiA9z1ksXHABcAPpAaLPWaxyBJtnd7TFcGroSPsKhjh263iLnsdIP3d5yMOugEoLCZyKpdocwV-2BATS9b281t-2BE-2B7BePmeKCfs36XkDaiuNPJ-2BrRShbqrueebN3AYv3NhQQNnA5tr3pw-2BINvJtZoH5p-2FBlUiET7R4nnwVKYl6ZeaEuFY-2F6HON8lEdqe-2BFTPp7-2BdTNRU03XwzLYUvXYzeZbvvvqbTL2ZQtlGl1BySFHxRnjHQXEtL3qfQWT770NrdezSSICTPlreN54s-2FR45aieQk4qaX8H3RqqfnJ5108zuohROIaZjcaAUJQa81Ivc8nibmRdgAmXz4Uuu15-2FrNjDBit6LE3b3aiw5MnScVbcvXK-2FZaW3nIVsXHE1l2y8W4mk4GrDOXPqrIzXh36B8c6-2F9PKkXNAeO3VHwvLPupfp34aj-2FSdv01K89PIa4XBYtxDxJQ-2FqaMmodQEsSez8-3D]"
+      }
+    },
+    {
+      "sourceRecordId": "recaLi5gqGNRGSeXK",
+      "sourceCreatedTime": "2025-11-14T23:13:54.000Z",
+      "fields": {
+        "Name": "CRE Brokers",
+        "Subject": "CRE Brokers - Properties of the Week",
+        "Email": "mail@crebrokers.com",
+        "Body": "Each week, our team at CRE Brokers hand-picks standout properties across the tourism and hospitality sectors—ready for you to explore.\r\n\r\nScroll down to view our Properties.\r\n\r\nProperties to Explore\r\n\r\nBroken Hill\r\n16 Blende Street\r\nNew Price - Retirement",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recaM4MU5RUgCwF2c",
+      "sourceCreatedTime": "2026-06-23T15:09:10.000Z",
+      "fields": {
+        "Name": "CRE Brokers - Business & Property Brokers Australia",
+        "Subject": "CRE Brokers - Properties of the Week",
+        "Email": "mail@crebrokers.com",
+        "Body": "This week’s CRE Brokers update - standout tourism, hospitality, and accommodation opportunities from across Australia.\r\n\r\nScroll down to explore this week’s featured properties, industry news, and market updates.\r\n\r\n\r\n\r\nProperties to Explore\r\n\r\nCharters T"
+      }
+    },
+    {
+      "sourceRecordId": "recaMWOSmq9f3daIr",
+      "sourceCreatedTime": "2026-01-16T04:25:48.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    }
+  ]
+}

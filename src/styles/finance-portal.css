@@ -1,0 +1,65 @@
+/* ──────────────────────────────────────────────
+   Batch 13 #66 — Finance partner theme variants.
+   Apply via <html class="finance-theme-midnight"> etc.
+   ────────────────────────────────────────────── */
+/* Both palettes below re-point the surface tokens to dark values but used to
+   leave the text tokens at their light-theme defaults, so --foreground stayed
+   a dark brown and every heading rendered dark-on-dark. The body copy looked
+   fine only because --muted-foreground happened to be light enough to read.
+   The foreground/input/ring tokens are declared here for that reason — a
+   palette has to define both halves of the contrast pair.
+
+   These classes go on <html> but cannot set `.dark` — BrandProvider owns that
+   class. The applier marks them with `data-palette="dark"` instead (see
+   src/lib/finance-portal/theme.ts); that attribute is what tokens.css and the
+   light-mode rules test. A new dark palette here needs adding to DARK_THEMES
+   there, and nothing else. */
+:root.finance-theme-midnight {
+  --background: 230 30% 6%;
+  --card: 230 28% 9%;
+  --card-foreground: 230 14% 92%;
+  --popover: 230 28% 9%;
+  --popover-foreground: 230 14% 92%;
+  --foreground: 230 14% 92%;
+  --muted: 230 20% 14%;
+  --muted-foreground: 230 12% 66%;
+  --secondary: 230 20% 14%;
+  --secondary-foreground: 230 14% 92%;
+  --border: 230 20% 18%;
+  --input: 230 20% 18%;
+  --ring: 220 80% 62%;
+  --primary: 220 80% 62%;
+  --primary-foreground: 0 0% 100%;
+  --accent: 220 60% 28%;
+  --accent-foreground: 230 14% 92%;
+}
+
+:root.finance-theme-graphite {
+  --background: 220 10% 8%;
+  --card: 220 10% 11%;
+  --card-foreground: 220 8% 92%;
+  --popover: 220 10% 11%;
+  --popover-foreground: 220 8% 92%;
+  --foreground: 220 8% 92%;
+  --muted: 220 8% 16%;
+  --muted-foreground: 220 6% 66%;
+  --secondary: 220 8% 16%;
+  --secondary-foreground: 220 8% 92%;
+  --border: 220 8% 20%;
+  --input: 220 8% 20%;
+  --ring: 35 8% 78%;
+  --primary: 35 8% 78%;
+  --primary-foreground: 220 10% 8%;
+  --accent: 220 6% 24%;
+  --accent-foreground: 220 8% 92%;
+}
+
+/* Density toggle — tighter table/card paddings without rewriting components. */
+:root.finance-density-compact .finance-portal-shell table td,
+:root.finance-density-compact .finance-portal-shell table th {
+  padding-top: 0.4rem;
+  padding-bottom: 0.4rem;
+}
+:root.finance-density-compact .finance-portal-shell [data-card-content] {
+  padding: 0.75rem 1rem;
+}

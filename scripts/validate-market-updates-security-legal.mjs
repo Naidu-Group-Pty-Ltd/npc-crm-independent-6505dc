@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+const read=p=>readFileSync(new URL(`../${p}`,import.meta.url),'utf8');
+const security=read('supabase/functions/market-updates-ingest/adapters/security.ts');
+const rss=read('supabase/functions/market-updates-ingest/adapters/rssAtom.ts');
+const html=read('supabase/functions/market-updates-ingest/adapters/htmlListing.ts');
+const feed=read('supabase/functions/market-updates-feed/index.ts');
+const qa=read('supabase/functions/market-updates-qa/index.ts');
+const migration=read('supabase/migrations/20260726230000_market_updates_legal_storage_guardrails.sql');
+for(const token of ['100 && b >= 64','169 && b === 254','198 && (b === 18 || b === 19)','safeSourceExcerpt','link_and_metadata_only','MAX_REDIRECTS','Deno.resolveDns','redirect: \'manual\'']) assert.ok(security.includes(token),token);
+assert.match(rss,/safeSourceExcerpt\(source/);assert.match(html,/safeSourceExcerpt\(source/);
+assert.match(feed,/requireModulePermission/);assert.match(feed,/'market_updates','can_view'/);
+for(const token of [".eq('created_by', userId)",".eq('status', 'published')",'consumeRateLimit','enforceCsrf']) assert.ok(qa.includes(token),token);
+for(const token of ['char_length(raw_excerpt)<=1200','char_length(public_excerpt)<=1200','legal_storage_policy','link_metadata_only']) assert.ok(migration.includes(token),token);
+assert.doesNotMatch(migration,/service_role_key|OPENROUTER_API_KEY|MARKET_INGESTION_CRON_SECRET/);
+console.log('Market Updates Phase 12 security and legal guardrails validated.');

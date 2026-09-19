@@ -1,0 +1,974 @@
+{
+  "assistant": "NPC IFC No Show Follow Up",
+  "assistantId": "4274ab0d-f8e6-4ab9-9b47-1f12255e73c0",
+  "note": "System prompts are replaced by promptRef; the text is in ../prompts/<ref>.md. Everything else is the API response verbatim.",
+  "versionCount": 18,
+  "versions": [
+    {
+      "createdAt": "2026-07-22T05:54:02.670Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-12-08T06:07:30.609Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Sandra, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "4274ab0d-f8e6-4ab9-9b47-1f12255e73c0",
+        "model": {
+          "messages": [
+            {
+              "chars": 41012,
+              "promptRef": "5fbfbd6aa6e77361",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "toolIds": [
+            "5c0c334c-6bbf-4399-b748-a3c50207e754",
+            "f195a817-8346-475d-ad0e-8033f1d2e283",
+            "6587bc7d-7382-4e33-a38d-95f5740df52a",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC IFC No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "headers": {
+            "x-vapi-webhook-secret": "{{REDACTED:VAPI_WEBHOOK_SECRET}}"
+          },
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-07-22T05:54:02.637Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "02y4x5i9YrzYlFvGo1pp"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Tina from Naidu Property Consulting Services; we weren’t able to reach you for your initial finance consult earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "bdd374e2-8591-11f1-ad3a-2d022e34a0bb"
+    },
+    {
+      "createdAt": "2026-05-21T07:52:05.500Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-12-08T06:07:30.609Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Sandra, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "4274ab0d-f8e6-4ab9-9b47-1f12255e73c0",
+        "model": {
+          "messages": [
+            {
+              "chars": 41012,
+              "promptRef": "5fbfbd6aa6e77361",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "toolIds": [
+            "5c0c334c-6bbf-4399-b748-a3c50207e754",
+            "f195a817-8346-475d-ad0e-8033f1d2e283",
+            "6587bc7d-7382-4e33-a38d-95f5740df52a",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC IFC No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-05-21T07:52:05.479Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "02y4x5i9YrzYlFvGo1pp"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Tina from Naidu Property Consulting Services; we weren’t able to reach you for your initial finance consult earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "f5e90bc2-54e9-11f1-9225-81d41960d870"
+    },
+    {
+      "createdAt": "2026-05-21T07:50:26.806Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-12-08T06:07:30.609Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Sandra, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "4274ab0d-f8e6-4ab9-9b47-1f12255e73c0",
+        "model": {
+          "messages": [
+            {
+              "chars": 41012,
+              "promptRef": "5fbfbd6aa6e77361",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "toolIds": [
+            "5c0c334c-6bbf-4399-b748-a3c50207e754",
+            "f195a817-8346-475d-ad0e-8033f1d2e283",
+            "6587bc7d-7382-4e33-a38d-95f5740df52a",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC IFC No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-05-21T07:50:26.780Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "02y4x5i9YrzYlFvGo1pp"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Tina from Naidu Property Consulting Services; we weren’t able to reach you for your initial finance consult earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "bb158962-54e9-11f1-bcc1-232600a4602c"
+    },
+    {
+      "createdAt": "2026-03-04T08:28:03.702Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-08T06:07:30.609Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Sandra, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "4274ab0d-f8e6-4ab9-9b47-1f12255e73c0",
+        "model": {
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 29638,
+              "promptRef": "22900e0758849283",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "806105a4-7f06-4b66-a5d4-0f6873dac466",
+            "dfb7fd0b-aecc-4716-8969-29bce7477d44",
+            "8be72615-8c54-4d55-843f-b4848177d6d2",
+            "02f8e0e9-8d90-4142-bfc0-d2d75cf8a44e"
+          ]
+        },
+        "name": "NPC IFC No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-03-04T08:28:03.685Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "02y4x5i9YrzYlFvGo1pp"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Tina from Naidu Property Consulting Services; we weren’t able to reach you for your initial finance consult earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "10140962-17a4-11f1-93da-47a2e3845f45"
+    },
+    {
+      "createdAt": "2026-03-04T08:05:09.919Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-08T06:07:30.609Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Sandra, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "4274ab0d-f8e6-4ab9-9b47-1f12255e73c0",
+        "model": {
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 29611,
+              "promptRef": "1c67c7e0944cef3b",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "806105a4-7f06-4b66-a5d4-0f6873dac466",
+            "dfb7fd0b-aecc-4716-8969-29bce7477d44",
+            "8be72615-8c54-4d55-843f-b4848177d6d2",
+            "02f8e0e9-8d90-4142-bfc0-d2d75cf8a44e"
+          ]
+        },
+        "name": "NPC IFC No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-03-04T08:05:09.889Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "02y4x5i9YrzYlFvGo1pp"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Tina from Naidu Property Consulting Services; we weren’t able to reach you for your initial finance consult earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "dd3d3be2-17a0-11f1-96c7-675a99426caf"
+    },
+    {
+      "createdAt": "2026-03-04T07:58:26.198Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-08T06:07:30.609Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Sandra, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "4274ab0d-f8e6-4ab9-9b47-1f12255e73c0",
+        "model": {
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 28490,
+              "promptRef": "8bf32fc273bcdb70",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "806105a4-7f06-4b66-a5d4-0f6873dac466",
+            "dfb7fd0b-aecc-4716-8969-29bce7477d44",
+            "8be72615-8c54-4d55-843f-b4848177d6d2",
+            "02f8e0e9-8d90-4142-bfc0-d2d75cf8a44e"
+          ]
+        },
+        "name": "NPC IFC No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-03-04T07:58:26.182Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "02y4x5i9YrzYlFvGo1pp"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Tina from Naidu Property Consulting Services; we weren’t able to reach you for your initial finance consult earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "ec9a4c52-179f-11f1-8744-e77c39b27e51"
+    },
+    {
+      "createdAt": "2026-01-01T10:28:26.248Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-08T06:07:30.609Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Sandra, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "4274ab0d-f8e6-4ab9-9b47-1f12255e73c0",
+        "model": {
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 27767,
+              "promptRef": "6a6f7ec430e343c9",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "806105a4-7f06-4b66-a5d4-0f6873dac466",
+            "dfb7fd0b-aecc-4716-8969-29bce7477d44",
+            "8be72615-8c54-4d55-843f-b4848177d6d2",
+            "02f8e0e9-8d90-4142-bfc0-d2d75cf8a44e"
+          ]
+        },
+        "name": "NPC IFC No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-01T10:28:26.122Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "02y4x5i9YrzYlFvGo1pp"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Tina from Naidu Property Consulting Services; we weren’t able to reach you for your initial finance consult earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "9b707172-e6fc-11f0-b3c4-e5e49f5f12e5"
+    },
+    {
+      "createdAt": "2025-12-13T10:19:53.300Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-08T06:07:30.609Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Sandra, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "4274ab0d-f8e6-4ab9-9b47-1f12255e73c0",
+        "model": {
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 27706,
+              "promptRef": "819eba760064db2a",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "806105a4-7f06-4b66-a5d4-0f6873dac466",
+            "dfb7fd0b-aecc-4716-8969-29bce7477d44",
+            "8be72615-8c54-4d55-843f-b4848177d6d2",
+            "02f8e0e9-8d90-4142-bfc0-d2d75cf8a44e"
+          ]
+        },
+        "name": "NPC IFC No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-13T10:19:53.184Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "02y4x5i9YrzYlFvGo1pp"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Tina from Naidu Property Consulting Services; we weren’t able to reach you for your initial finance consult earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "43d98a32-d80d-11f0-b6b2-afcaedf29e42"
+    },
+    {
+      "createdAt": "2025-12-08T09:52:57.777Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-08T06:07:30.609Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Sandra, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "4274ab0d-f8e6-4ab9-9b47-1f12255e73c0",
+        "model": {
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 27706,
+              "promptRef": "819eba760064db2a",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "806105a4-7f06-4b66-a5d4-0f6873dac466",
+            "dfb7fd0b-aecc-4716-8969-29bce7477d44",
+            "8be72615-8c54-4d55-843f-b4848177d6d2",
+            "02f8e0e9-8d90-4142-bfc0-d2d75cf8a44e"
+          ]
+        },
+        "name": "NPC IFC No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-08T09:52:57.659Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "02y4x5i9YrzYlFvGo1pp"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Tina from Naidu Property Consulting Services; we weren’t able to reach you for your initial finance consult earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "acdbb212-d41b-11f0-9387-09e8d4c9c2d2"
+    },
+    {
+      "createdAt": "2025-12-08T09:23:50.679Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-08T06:07:30.609Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Sandra, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "4274ab0d-f8e6-4ab9-9b47-1f12255e73c0",
+        "model": {
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 27706,
+              "promptRef": "819eba760064db2a",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "806105a4-7f06-4b66-a5d4-0f6873dac466",
+            "dfb7fd0b-aecc-4716-8969-29bce7477d44",
+            "8be72615-8c54-4d55-843f-b4848177d6d2",
+            "02f8e0e9-8d90-4142-bfc0-d2d75cf8a44e"
+          ]
+        },
+        "name": "NPC IFC No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-08T09:23:50.566Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "02y4x5i9YrzYlFvGo1pp"
+        },
+        "voicemailMessage": "Hi, this is Tina from NPC Services; we weren’t able to reach you for your initial finance consult earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "9b81b272-d417-11f0-8d04-c5711c3dbb34"
+    },
+    {
+      "createdAt": "2025-12-08T09:09:15.720Z",
+      "data": {
+        "compliancePlan": {
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-08T06:07:30.609Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Sandra, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "4274ab0d-f8e6-4ab9-9b47-1f12255e73c0",
+        "model": {
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 27706,
+              "promptRef": "819eba760064db2a",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "806105a4-7f06-4b66-a5d4-0f6873dac466",
+            "dfb7fd0b-aecc-4716-8969-29bce7477d44",
+            "8be72615-8c54-4d55-843f-b4848177d6d2",
+            "02f8e0e9-8d90-4142-bfc0-d2d75cf8a44e"
+          ]
+        },
+        "name": "NPC IFC No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-08T09:09:15.584Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "02y4x5i9YrzYlFvGo1pp"
+        },
+        "voicemailMessage": "Please call back when you're available. "
+      },
+      "versionId": "91fd6572-d415-11f0-8519-7358950b2c34"
+    },
+    {
+      "createdAt": "2025-12-08T08:29:34.537Z",
+      "data": {
+        "createdAt": "2025-12-08T06:07:30.609Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Sandra, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "4274ab0d-f8e6-4ab9-9b47-1f12255e73c0",
+        "model": {
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 27706,
+              "promptRef": "819eba760064db2a",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "806105a4-7f06-4b66-a5d4-0f6873dac466",
+            "dfb7fd0b-aecc-4716-8969-29bce7477d44",
+            "8be72615-8c54-4d55-843f-b4848177d6d2",
+            "02f8e0e9-8d90-4142-bfc0-d2d75cf8a44e"
+          ]
+        },
+        "name": "NPC IFC No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-08T08:29:34.396Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "02y4x5i9YrzYlFvGo1pp"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "06b1db92-d410-11f0-bf50-3186e0c2913c"
+    },
+    {
+      "createdAt": "2025-12-08T07:54:34.944Z",
+      "data": {
+        "createdAt": "2025-12-08T06:07:30.609Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Sandra, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "4274ab0d-f8e6-4ab9-9b47-1f12255e73c0",
+        "model": {
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 27706,
+              "promptRef": "819eba760064db2a",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "806105a4-7f06-4b66-a5d4-0f6873dac466",
+            "dfb7fd0b-aecc-4716-8969-29bce7477d44",
+            "8be72615-8c54-4d55-843f-b4848177d6d2",
+            "02f8e0e9-8d90-4142-bfc0-d2d75cf8a44e"
+          ]
+        },
+        "name": "NPC IFC No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-08T07:54:34.827Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "nDJIICjR9zfJExIFeSCN"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "233d6402-d40b-11f0-b094-47144ab74a91"
+    },
+    {
+      "createdAt": "2025-12-08T06:52:10.138Z",
+      "data": {
+        "createdAt": "2025-12-08T06:07:30.609Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Sandra, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "4274ab0d-f8e6-4ab9-9b47-1f12255e73c0",
+        "model": {
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 27706,
+              "promptRef": "819eba760064db2a",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "806105a4-7f06-4b66-a5d4-0f6873dac466",
+            "dfb7fd0b-aecc-4716-8969-29bce7477d44",
+            "8be72615-8c54-4d55-843f-b4848177d6d2",
+            "02f8e0e9-8d90-4142-bfc0-d2d75cf8a44e"
+          ]
+        },
+        "name": "NPC IFC No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-08T06:52:10.026Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "02y4x5i9YrzYlFvGo1pp"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "6b2957a2-d402-11f0-83ee-7320021c509f"
+    },
+    {
+      "createdAt": "2025-12-08T06:12:52.210Z",
+      "data": {
+        "createdAt": "2025-12-08T06:07:30.609Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hello.",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "4274ab0d-f8e6-4ab9-9b47-1f12255e73c0",
+        "model": {
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 27933,
+              "promptRef": "267ac9d1d315491e",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "806105a4-7f06-4b66-a5d4-0f6873dac466",
+            "dfb7fd0b-aecc-4716-8969-29bce7477d44",
+            "8be72615-8c54-4d55-843f-b4848177d6d2",
+            "02f8e0e9-8d90-4142-bfc0-d2d75cf8a44e"
+          ]
+        },
+        "name": "NPC IFC No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-08T06:12:52.098Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "02y4x5i9YrzYlFvGo1pp"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "edba1522-d3fc-11f0-b094-47144ab74a91"
+    },
+    {
+      "createdAt": "2025-12-08T06:09:50.005Z",
+      "data": {
+        "createdAt": "2025-12-08T06:07:30.609Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hello.",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "4274ab0d-f8e6-4ab9-9b47-1f12255e73c0",
+        "model": {
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 27315,
+              "promptRef": "33d878ce7823d280",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "806105a4-7f06-4b66-a5d4-0f6873dac466",
+            "dfb7fd0b-aecc-4716-8969-29bce7477d44",
+            "8be72615-8c54-4d55-843f-b4848177d6d2",
+            "02f8e0e9-8d90-4142-bfc0-d2d75cf8a44e"
+          ]
+        },
+        "name": "NPC IFC No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-08T06:09:49.890Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "02y4x5i9YrzYlFvGo1pp"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "811fa742-d3fc-11f0-bbdc-8b129003104e"
+    },
+    {
+      "createdAt": "2025-12-08T06:08:51.466Z",
+      "data": {
+        "createdAt": "2025-12-08T06:07:30.609Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hello.",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "4274ab0d-f8e6-4ab9-9b47-1f12255e73c0",
+        "model": {
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 27315,
+              "promptRef": "33d878ce7823d280",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9
+        },
+        "name": "NPC IFC No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-08T06:08:51.336Z",
+        "voice": {
+          "provider": "vapi",
+          "voiceId": "Elliot"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "5e3b76a2-d3fc-11f0-9266-b98b5f79778c"
+    },
+    {
+      "createdAt": "2025-12-08T06:07:30.667Z",
+      "data": {
+        "createdAt": "2025-12-08T06:07:30.609Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hello.",
+        "id": "4274ab0d-f8e6-4ab9-9b47-1f12255e73c0",
+        "model": {
+          "messages": [
+            {
+              "chars": 100,
+              "promptRef": "d60105898b40b8d2",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4o",
+          "provider": "openai"
+        },
+        "name": "NPC IFC No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-08T06:07:30.609Z",
+        "voice": {
+          "provider": "vapi",
+          "voiceId": "Elliot"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "2e1283b2-d3fc-11f0-b222-a19c0fa415d7"
+    }
+  ]
+}

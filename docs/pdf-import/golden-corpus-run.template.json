@@ -1,0 +1,58 @@
+{
+  "version": "pdf-import-golden-run-v1",
+  "runBatchId": "",
+  "description": "Golden corpus run template. Do not include private PDFs or sensitive data.",
+  "createdAt": "",
+  "operator": "",
+  "mode": "manual_operator",
+  "runs": [
+    {
+      "runId": "",
+      "corpusId": "golden-simple-001",
+      "sourceFilename": "",
+      "importId": "",
+      "templateId": "",
+      "notes": ""
+    },
+    {
+      "runId": "",
+      "corpusId": "golden-design-001",
+      "sourceFilename": "",
+      "importId": "",
+      "templateId": "",
+      "notes": ""
+    },
+    {
+      "runId": "",
+      "corpusId": "golden-report-001",
+      "sourceFilename": "",
+      "importId": "",
+      "templateId": "",
+      "notes": ""
+    },
+    {
+      "runId": "",
+      "corpusId": "golden-table-001",
+      "sourceFilename": "",
+      "importId": "",
+      "templateId": "",
+      "notes": ""
+    },
+    {
+      "runId": "",
+      "corpusId": "golden-image-001",
+      "sourceFilename": "",
+      "importId": "",
+      "templateId": "",
+      "notes": ""
+    },
+    {
+      "runId": "",
+      "corpusId": "golden-ocr-001",
+      "sourceFilename": "",
+      "importId": "",
+      "templateId": "",
+      "notes": ""
+    }
+  ]
+}

@@ -1,0 +1,47 @@
+{
+ "chromium": "141.0.7390.37",
+ "trusting": [
+  {
+   "url": "https://example.com/",
+   "error": "net::ERR_CERT_AUTHORITY_INVALID at https://example.com/"
+  },
+  {
+   "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/",
+   "error": "net::ERR_CERT_AUTHORITY_INVALID at https://dduzbchuswwbefdunfct.supaba"
+  },
+  {
+   "url": "https://api.perplexity.ai/",
+   "error": "net::ERR_CERT_AUTHORITY_INVALID at https://api.perplexity.ai/"
+  },
+  {
+   "url": "https://ai.gateway.lovable.dev/",
+   "error": "net::ERR_CERT_AUTHORITY_INVALID at https://ai.gateway.lovable.dev/"
+  }
+ ],
+ "ignoringCert": [
+  {
+   "url": "https://example.com/",
+   "status": 200
+  },
+  {
+   "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/",
+   "status": 404
+  },
+  {
+   "url": "https://api.perplexity.ai/",
+   "error": "net::ERR_HTTP_RESPONSE_CODE_FAILURE at https://api.perplexity.ai/"
+  },
+  {
+   "url": "https://ai.gateway.lovable.dev/",
+   "error": "Navigation to \"https://ai.gateway.lovable.dev/\" is interrupted by anot"
+  }
+ ],
+ "probeRunAt": "2026-09-18",
+ "question": "Is the sandbox egress a CONNECT denial, as S5_EXECUTION_ROUTE.md recorded, or something narrower?",
+ "finding": "Not a CONNECT denial. Every host fails CERT_AUTHORITY_INVALID by default and is reached in a context that trusts the agent proxy CA. No credential was sent to any host.",
+ "launch": {
+  "playwrightVersion": "1.62.1",
+  "imageShips": "chromium-1194",
+  "remedy": "executablePath: /opt/pw-browsers/chromium-1194/chrome-linux/chrome"
+ }
+}

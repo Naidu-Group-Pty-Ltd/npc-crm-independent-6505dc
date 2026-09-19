@@ -1,0 +1,73 @@
+{
+  "_comment": "GENERATED, ARTIFICIAL example (E2). Demonstrates how a Docling vNext (2.113) conversion result maps to E1's source-scene-graph-v2 / source-region-v2 / pdf-page-artifact-contract-v3. Not real client data. The canonical E1 region IDs are produced by E1's deterministic FNV algorithm (page/type/bbox/ordinal) and are INDEPENDENT of vNext provider-local self_refs.",
+  "vnext_provider_output": {
+    "engine_identity": {
+      "runtime_profile": "vnext",
+      "adapter_version": "docling-vnext-adapter-v1",
+      "docling_version": "2.113.0",
+      "pipeline_family": "standard",
+      "ocr_engine": "easyocr",
+      "table_mode": "accurate",
+      "table_cell_matching": true,
+      "device": "cpu"
+    },
+    "page": { "page_no": 7, "width": 595.0, "height": 842.0 },
+    "table": {
+      "self_ref": "#/tables/0",
+      "prov": [{ "page_no": 7, "bbox": { "l": 40, "t": 100, "r": 520, "b": 360, "coord_origin": "TOPLEFT" } }],
+      "data": {
+        "num_rows": 4, "num_cols": 3, "orientation": "horizontal",
+        "table_cells": [
+          { "start_row_offset_idx": 0, "start_col_offset_idx": 0, "row_span": 1, "col_span": 1, "column_header": true, "text": "Year" },
+          { "start_row_offset_idx": 0, "start_col_offset_idx": 1, "row_span": 1, "col_span": 1, "column_header": true, "text": "Median" },
+          { "start_row_offset_idx": 1, "start_col_offset_idx": 1, "row_span": 1, "col_span": 1, "text": "$450,000 - $470,000" }
+        ]
+      }
+    },
+    "picture": {
+      "self_ref": "#/pictures/0",
+      "prov": [{ "page_no": 7, "bbox": { "l": 40, "t": 400, "r": 520, "b": 720, "coord_origin": "TOPLEFT" } }],
+      "image": { "uri": "PROVIDER_IMAGE_EVIDENCE_ONLY" },
+      "annotations": [
+        { "kind": "classification", "predicted_classes": [{ "class_name": "line_chart", "confidence": 0.94 }] },
+        { "kind": "line_chart", "title": "Median price trend", "lines": ["series-present"] }
+      ]
+    }
+  },
+  "e1_v3_mapping": {
+    "note": "E1's source_scene_graph.build_page_regions consumes these fields. The vNext adapter back-fills picture.classification from annotations so E1/E0 read it unchanged. The authoritative source crop is E1's own 300-DPI render, NOT the vNext picture.image.",
+    "page_scene": {
+      "version": "source-scene-graph-v2",
+      "pageId": "docling-page-7",
+      "pageNumber": 7,
+      "geometry": { "widthPt": 595.0, "heightPt": 842.0, "rotation": 0 }
+    },
+    "regions": [
+      {
+        "version": "source-region-v2",
+        "id": "src-p0007-tabl-0001-<fnv8>",
+        "type": "table",
+        "bbox": { "x": 40, "y": 100, "width": 480, "height": 260 },
+        "table": {
+          "version": "source-table-topology-v2",
+          "numRows": 4, "numCols": 3, "headerRowCount": 1,
+          "cells": [{ "row": 1, "col": 1, "text": "$450,000 - $470,000", "numericTokens": [{ "kind": "range", "rangeStart": "450000", "rangeEnd": "470000", "currency": "USD" }] }]
+        },
+        "sourceCrop": { "path": "job/pages/page-007/regions/src-p0007-tabl-0001-<fnv8>.png", "sha256": "<64-hex>", "sourceDpi": 300 },
+        "providerEvidence": [{ "provider": "docling", "evidenceType": "table", "claims": ["source_table", "cell_matching_on"] }]
+      },
+      {
+        "version": "source-region-v2",
+        "id": "src-p0007-chrt-0001-<fnv8>",
+        "type": "chart",
+        "bbox": { "x": 40, "y": 400, "width": 480, "height": 320 },
+        "chart": {
+          "version": "source-chart-metadata-v2",
+          "chartType": "line", "caption": "Median price trend", "extractionState": "crop_only"
+        },
+        "sourceCrop": { "path": "job/pages/page-007/regions/src-p0007-chrt-0001-<fnv8>.png", "sha256": "<64-hex>", "sourceDpi": 300 },
+        "providerEvidence": [{ "provider": "docling", "evidenceType": "classification", "claims": ["class:line_chart", "chart_like", "structured_data_present"] }]
+      }
+    ]
+  }
+}

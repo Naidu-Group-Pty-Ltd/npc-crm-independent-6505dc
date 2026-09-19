@@ -1,0 +1,2469 @@
+{
+  "$comment": "GENERATED — do not edit. npm run mobile:api regenerates from the security registry + config.toml. mobileScope: portal/public = v1 app surface, staff = phase 2 (Command Centre), server-only = never client-called. See mobile/plan.md.",
+  "sources": [
+    "supabase/functions-registry/SECURITY_REGISTRY.json",
+    "supabase/config.toml"
+  ],
+  "counts": {
+    "staff": 237,
+    "public": 37,
+    "server-only": 76,
+    "portal": 59
+  },
+  "functions": [
+    {
+      "name": "abs-data-service",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "abs-employment-service",
+      "exposure_class": "public",
+      "mobileScope": "public",
+      "verify_jwt": false
+    },
+    {
+      "name": "abs-poa-ingest",
+      "exposure_class": "internal-service",
+      "mobileScope": "server-only",
+      "verify_jwt": true
+    },
+    {
+      "name": "abs-regional-ingest",
+      "exposure_class": "internal-service",
+      "mobileScope": "server-only",
+      "verify_jwt": true
+    },
+    {
+      "name": "abs-regional-service",
+      "exposure_class": "public",
+      "mobileScope": "public",
+      "verify_jwt": false
+    },
+    {
+      "name": "abs-seifa-service",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "admin-password-reset",
+      "exposure_class": "public-auth",
+      "mobileScope": "public",
+      "verify_jwt": true
+    },
+    {
+      "name": "admin-user-management",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "agent-insights-runner",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "agent-models-read",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "agent-planner",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "agent-skill-marketplace",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "agent-task-runner",
+      "exposure_class": "internal-service",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "ai-dashboard-agent",
+      "exposure_class": "authenticated-staff",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "airtable-proxy",
+      "exposure_class": "authenticated-staff",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "aml-access",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "aml-ai-guardrail",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "aml-cases",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "aml-client-portal",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "aml-entities",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "aml-finance",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "aml-idv-retention",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "aml-launch-ops",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "aml-monitoring",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "aml-provider-webhook",
+      "exposure_class": "webhook",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "aml-records",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "aml-release-gate",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "aml-reliance",
+      "exposure_class": "public-auth",
+      "mobileScope": "public",
+      "verify_jwt": false
+    },
+    {
+      "name": "aml-reporting",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "aml-resilience",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "aml-risk",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "aml-step-up",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "aml-tenant",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "aml-transactions",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "aml-verification",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "aml-verification-processor",
+      "exposure_class": "internal-service",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "analytics-query",
+      "exposure_class": "module-gated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "analyze-meta-ads",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "analyze-meta-ads-phase2",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "analyze-meta-ads-phase3",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "analyze-meta-ads-phase4",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "analyze-meta-ads-phase5",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "archive-old-reports",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "authenticated-data",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "auto-report-sync",
+      "exposure_class": "internal-service",
+      "mobileScope": "server-only",
+      "verify_jwt": true
+    },
+    {
+      "name": "auto-report-webhook",
+      "exposure_class": "webhook-secret",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "backfill-investment-scores",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "backfill-lead-attributions",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": true
+    },
+    {
+      "name": "backfill-message-directions",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "backfill-notes-to-ghl",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "backfill-opportunity-mappings",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "bc-scenario-agent",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "bootstrap-cron-vault",
+      "exposure_class": "internal-service",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "build-conversations-export-worker",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "builder-network-inbound",
+      "exposure_class": "webhook-secret",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "builder-stock-marketplace",
+      "exposure_class": "module-gated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "calculate-borrowing-capacity",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "cdr-lending-rates-service",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "check-integration-secrets",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "check-model-availability",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "clean-note-transcript",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "cleanup-call-log-names",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": true
+    },
+    {
+      "name": "cleanup-stale-calls",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": true
+    },
+    {
+      "name": "client-legal-workspace",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "client-portal-accept-invite",
+      "exposure_class": "public-auth",
+      "mobileScope": "public",
+      "verify_jwt": false
+    },
+    {
+      "name": "client-portal-batch6",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "client-portal-comms",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "client-portal-finance-hub",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "client-portal-forgot-password",
+      "exposure_class": "public-auth",
+      "mobileScope": "public",
+      "verify_jwt": false
+    },
+    {
+      "name": "client-portal-invite",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "client-portal-login",
+      "exposure_class": "public-auth",
+      "mobileScope": "public",
+      "verify_jwt": false
+    },
+    {
+      "name": "client-portal-logout",
+      "exposure_class": "public-auth",
+      "mobileScope": "public",
+      "verify_jwt": false
+    },
+    {
+      "name": "client-portal-reset-password",
+      "exposure_class": "public-auth",
+      "mobileScope": "public",
+      "verify_jwt": false
+    },
+    {
+      "name": "client-portal-verify",
+      "exposure_class": "public-auth",
+      "mobileScope": "public",
+      "verify_jwt": false
+    },
+    {
+      "name": "climate-data-service",
+      "exposure_class": "public",
+      "mobileScope": "public",
+      "verify_jwt": false
+    },
+    {
+      "name": "cloudflare-proxy",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "commercial-bc-scenario-agent",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "compare-cash-flow-reports",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "compare-investment-reports",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "condense-investment-report",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "conversation-sync-cron",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "convert-template-document",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "cotality-service",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "create-advanced-client",
+      "exposure_class": "module-gated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "crime-data-ingest",
+      "exposure_class": "internal-service",
+      "mobileScope": "server-only",
+      "verify_jwt": true
+    },
+    {
+      "name": "crime-statistics-service",
+      "exposure_class": "public",
+      "mobileScope": "public",
+      "verify_jwt": false
+    },
+    {
+      "name": "cross-portal-outbox-worker",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "custom-auth-login",
+      "exposure_class": "public-auth",
+      "mobileScope": "public",
+      "verify_jwt": false
+    },
+    {
+      "name": "custom-auth-login-v2",
+      "exposure_class": "public-auth",
+      "mobileScope": "public",
+      "verify_jwt": false
+    },
+    {
+      "name": "custom-auth-logout",
+      "exposure_class": "public-auth",
+      "mobileScope": "public",
+      "verify_jwt": false
+    },
+    {
+      "name": "custom-auth-logout-v2",
+      "exposure_class": "public-auth",
+      "mobileScope": "public",
+      "verify_jwt": false
+    },
+    {
+      "name": "custom-auth-verify",
+      "exposure_class": "public-auth",
+      "mobileScope": "public",
+      "verify_jwt": false
+    },
+    {
+      "name": "custom-auth-verify-v2",
+      "exposure_class": "public-auth",
+      "mobileScope": "public",
+      "verify_jwt": false
+    },
+    {
+      "name": "data-conflict-resolver",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "diagnose-ghl-attribution",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "didit-webhook",
+      "exposure_class": "webhook-secret",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "dispatch-marketing-reports",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "dispatch-workflow-triggers",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "domain-data-service",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "email-body-backfill",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "email-copilot",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "email-copilot-extras",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "email-sync-cron",
+      "exposure_class": "internal-service",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "enrich-lead-attributions",
+      "exposure_class": "authenticated-or-service",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "estimate-commercial-caprate",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "estimate-commercial-noi",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "estimate-property-expenses",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "execute-workflow-step",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "feature-flags-admin",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "fetch-meta-ads",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "figma-template-sync",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-email-track-pixel",
+      "exposure_class": "public",
+      "mobileScope": "public",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-legal-coordination",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-accept-invite",
+      "exposure_class": "public-auth",
+      "mobileScope": "public",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-admin",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "finance-portal-ai-copilot",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-aml-requests",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-audit-timeline",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-automations",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-batch6",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-batch7",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-batch8",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-batch9-10",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-briefing-runner",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-broker-kpis",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-bulk-actions",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-change-password",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-client-comms",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-client-data",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-client-mirror",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-client-tasks",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-commissions",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-dashboard-metrics",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-deal-trackers",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-document-requirements",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-documents",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-engagement",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-forecasting",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-forgot-password",
+      "exposure_class": "public-auth",
+      "mobileScope": "public",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-handoff-create",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-handoff-redeem",
+      "exposure_class": "public-auth",
+      "mobileScope": "public",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-invite",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "finance-portal-lender-intelligence",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-lender-packet",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-login",
+      "exposure_class": "public-auth",
+      "mobileScope": "public",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-logout",
+      "exposure_class": "public-auth",
+      "mobileScope": "public",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-messages",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-notifications",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-nudges",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-pipeline",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-purchase-files",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-reset-password",
+      "exposure_class": "public-auth",
+      "mobileScope": "public",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-saved-views",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-settings",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-settlement-runway",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-snoozes",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-templates",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-tri-portal-health",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "finance-portal-verify",
+      "exposure_class": "public-auth",
+      "mobileScope": "public",
+      "verify_jwt": false
+    },
+    {
+      "name": "financial-calculator-service",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "financial-validation-service",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "fix-report-status",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "fork-investment-report",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "format-comparison-report",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "generate-brand-design-system",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "generate-bulk-reports",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "generate-chart-analysis",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "generate-chart-images",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "generate-charts-python",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "generate-commission-payout",
+      "exposure_class": "module-gated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "generate-investment-report",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "generate-market-intelligence-report",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "generate-portfolio-analysis",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "get-activity-logs",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "get-api-usage-stats",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "get-call-logs",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "get-call-recording",
+      "exposure_class": "module-gated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "get-client-data",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "get-email-data",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "get-investment-reports",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "get-portal-client-data",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "get-system-logs",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "get-token-event-trail",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "get-user-names",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "get-vapid-public-key",
+      "exposure_class": "public",
+      "mobileScope": "public",
+      "verify_jwt": false
+    },
+    {
+      "name": "ghl-account-preview",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "ghl-calendar",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "ghl-calendar-proxy",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "ghl-calendar-test",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "ghl-conversations-cron",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "ghl-legacy-backfill-gaps",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "ghl-legacy-wipe-orchestrator",
+      "exposure_class": "internal-service",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "ghl-legacy-wipe-worker",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "ghl-marketing-dump-enqueue",
+      "exposure_class": "internal-service",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "ghl-marketing-dump-export",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "ghl-marketing-dump-worker",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "ghl-marketing-raw-dump",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "ghl-migrate-bookings-worker",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "ghl-migrate-calendar-groups-worker",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "ghl-migrate-calendars-worker",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "ghl-migrate-contacts-worker",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "ghl-migrate-conversations-replay-worker",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "ghl-migrate-conversations-reset-phantoms",
+      "exposure_class": "internal-service",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "ghl-migrate-conversations-worker",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "ghl-migrate-notes-worker",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "ghl-migrate-opportunities-worker",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "ghl-migrate-workflow-enrollments-worker",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "ghl-migrate-workflow-reenroll-worker",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "ghl-migrate-workflows-snapshot-worker",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "ghl-test-credentials",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "ghl-webhook-receiver",
+      "exposure_class": "webhook-secret",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "ghl-workflow-visualizer",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "google-fonts-catalog",
+      "exposure_class": "authenticated-staff",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "google-places-autocomplete",
+      "exposure_class": "public",
+      "mobileScope": "public",
+      "verify_jwt": false
+    },
+    {
+      "name": "healthcheck-ping",
+      "exposure_class": "internal-service",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "hero-image-studio",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "import-clients-from-ghl",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "import-from-url",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "import-schools-data",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "import-suburb-directory",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "internal-message-attachments",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "internal-messaging",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "investment-scoring-service",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "legal-document-processor",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "legal-matters-admin",
+      "exposure_class": "module-gated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "list-token-audit",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "list-token-usage",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "listing-enrichment",
+      "exposure_class": "module-gated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "listing-images",
+      "exposure_class": "module-gated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "listings-cache",
+      "exposure_class": "module-gated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "location-intelligence-service",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "log-activity",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "manage-agency-agreements",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "manage-agent-models",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "manage-automation-settings",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "manage-bc-scenarios",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "manage-branding",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "manage-call-logs",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "manage-call-settings",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "manage-ci-assessments",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "manage-client-data",
+      "exposure_class": "module-gated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "manage-commercial-data",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "manage-commission-ledger",
+      "exposure_class": "module-gated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "manage-compliance-records",
+      "exposure_class": "module-gated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "manage-data-import",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "manage-generated-documents",
+      "exposure_class": "module-gated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "manage-industrial-data",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "manage-investment-reports",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "manage-lead-magnets",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "manage-lender-favourites",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "manage-lender-rate-alerts",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "manage-lender-submissions",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "manage-loan-writer-undertakings",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "manage-partner-referrals",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "manage-portal-client-data",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "manage-report-preferences",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "manage-template-library",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "manage-templates",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "manychat-proxy",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "market-news-archive-v2",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "market-qa-digest-runner",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "market-qa-quality-report",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "market-qa-quality-snapshot",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "market-qa-share",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "market-qa-subscriptions",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "market-source-probe",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "market-source-relay",
+      "exposure_class": "internal-service",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "market-updates-archive",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "market-updates-curate",
+      "exposure_class": "module-gated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "market-updates-digest",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "market-updates-embed-backfill",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "market-updates-feed",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "market-updates-ingest",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "market-updates-qa",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "market-updates-source-admin",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "market-updates-status",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "market-updates-voice-transcribe",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "mcp",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "message-governance",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "migrate-comparison-scores",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "migration-dispatcher",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "migration-job-control",
+      "exposure_class": "internal-service",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "migration-job-status",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "migration-orchestrator",
+      "exposure_class": "internal-service",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "migration-upload-source",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "mission-control-balance",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "mission-control-catalog",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "mission-control-devices",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "mission-control-feedback-prompt",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "mission-control-gate",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "mission-control-handoff",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "mission-control-invoices",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "mission-control-key-info",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "mission-control-packs",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "mission-control-payment-methods",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "mission-control-plan-change",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "mission-control-purchases",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "mission-control-rotate-key",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "mission-control-seats",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "mission-control-webhook",
+      "exposure_class": "webhook",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "notifications-feed",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "notifications-feed-v2",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "one-time-bulk-conversation-sync",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "outlook-calendar",
+      "exposure_class": "authenticated-staff",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "outlook-email-sync",
+      "exposure_class": "authenticated-staff",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "outlook-email-webhook",
+      "exposure_class": "webhook-clientstate",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "outlook-manage-subscription",
+      "exposure_class": "superadmin-only",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "parse-formara-pdf",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "parse-property-pdf",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "parse-template-document",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "partner-agreement-records",
+      "exposure_class": "module-gated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "partner-compliance",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "partner-consent-portal",
+      "exposure_class": "public-auth",
+      "mobileScope": "public",
+      "verify_jwt": false
+    },
+    {
+      "name": "pdf-import-client-report",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "pdf-import-diagnostics",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "pdf-import-monitoring",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "pdf-import-retention",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "pdf-import-ssim-score",
+      "exposure_class": "internal-service",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "pdf-parse-callback",
+      "exposure_class": "webhook-secret",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "pdf-parse-chunk-callback",
+      "exposure_class": "webhook-secret",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "pdf-parse-dispatch",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "pdf-parse-recover-stuck-jobs",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "phase6-quality-ops",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "planning-data-service",
+      "exposure_class": "internal-service",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "portal-book-appointment",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "portal-upload-file",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "prepare-report-hero-images",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "process-scheduled-emails",
+      "exposure_class": "internal-service",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "public-transport-service",
+      "exposure_class": "public",
+      "mobileScope": "public",
+      "verify_jwt": false
+    },
+    {
+      "name": "push-subscribe",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "push-unsubscribe",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "quantitative-report-pipeline",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "rba-data-service",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "rba-tables-ingest",
+      "exposure_class": "internal-service",
+      "mobileScope": "server-only",
+      "verify_jwt": true
+    },
+    {
+      "name": "reclassify-property",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "regenerate-report-qualitative",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "render-borrowing-capacity-pdf",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "render-cash-flow-comparison-pdf",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "render-cash-flow-pdf",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "render-client-details-pdf",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "render-commercial-capacity-pdf",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "render-investment-report-pdf",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "render-market-intelligence-pdf",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "render-portfolio-review-pdf",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "render-property-comparison-pdf",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "render-report-qa-pdf",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "render-source",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "render-template-pdf",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "report-api-usage",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "report-engine-agent",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "report-engine-inspector",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "report-qa",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "report-schema-validator",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "report-sections-index",
+      "exposure_class": "internal-service",
+      "mobileScope": "server-only",
+      "verify_jwt": true
+    },
+    {
+      "name": "request-lead-magnet",
+      "exposure_class": "public",
+      "mobileScope": "public",
+      "verify_jwt": false
+    },
+    {
+      "name": "resolve-listing-coordinates",
+      "exposure_class": "module-gated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "resolve-report-geography",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": true
+    },
+    {
+      "name": "resume-bulk-generation",
+      "exposure_class": "internal-service",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "resume-investment-reports",
+      "exposure_class": "internal-service",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "retrieve-template-context",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "risk-assessment-service",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "school-data-service",
+      "exposure_class": "public",
+      "mobileScope": "public",
+      "verify_jwt": false
+    },
+    {
+      "name": "scrape-property-listing",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "secure-storage",
+      "exposure_class": "module-gated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "security-step-up",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "send-appointment-notification",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "send-call-alert-email",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "send-email-reply",
+      "exposure_class": "module-gated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "send-ghl-message",
+      "exposure_class": "module-gated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "send-web-push",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "send-weekly-call-report",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "share-report-with-finance",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "solicitor-portal-accept-invite",
+      "exposure_class": "public-auth",
+      "mobileScope": "public",
+      "verify_jwt": false
+    },
+    {
+      "name": "solicitor-portal-admin",
+      "exposure_class": "module-gated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "solicitor-portal-change-password",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "solicitor-portal-comms",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "solicitor-portal-compliance",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "solicitor-portal-documents",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "solicitor-portal-forgot-password",
+      "exposure_class": "public-auth",
+      "mobileScope": "public",
+      "verify_jwt": false
+    },
+    {
+      "name": "solicitor-portal-intelligence",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "solicitor-portal-invite",
+      "exposure_class": "module-gated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "solicitor-portal-login",
+      "exposure_class": "public-auth",
+      "mobileScope": "public",
+      "verify_jwt": false
+    },
+    {
+      "name": "solicitor-portal-logout",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "solicitor-portal-matters",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "solicitor-portal-reset-password",
+      "exposure_class": "public-auth",
+      "mobileScope": "public",
+      "verify_jwt": false
+    },
+    {
+      "name": "solicitor-portal-verify",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "sqm-rent-service",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "staff-client-portal-handoff-create",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "staff-client-portal-messages",
+      "exposure_class": "portal-authenticated",
+      "mobileScope": "portal",
+      "verify_jwt": false
+    },
+    {
+      "name": "start-conversations-export",
+      "exposure_class": "internal-service",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "street-view",
+      "exposure_class": "module-gated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "sync-client-to-ghl",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "sync-ghl-conversations",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "sync-ghl-marketing-assets",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "sync-ghl-pipelines",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "sync-notes-to-ghl",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "template-ai-author",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "template-analytics",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "template-design-agent",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "template-import-finalize-worker",
+      "exposure_class": "cron-worker",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "template-import-pdf",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "template-share",
+      "exposure_class": "public-auth",
+      "mobileScope": "public",
+      "verify_jwt": false
+    },
+    {
+      "name": "transport-gtfs-ingest",
+      "exposure_class": "internal-service",
+      "mobileScope": "server-only",
+      "verify_jwt": true
+    },
+    {
+      "name": "update-ghl-opportunity-stage",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "update-integration-secret",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "update-stamp-duty-rates",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "user-guide-assistant",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "vapi-call-webhook",
+      "exposure_class": "webhook-secret",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "voice-to-text",
+      "exposure_class": "authenticated-staff",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    }
+  ]
+}

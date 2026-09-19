@@ -1,0 +1,1940 @@
+{
+  "assistant": "NPC Inbound Agent",
+  "assistantId": "bfff143e-03f7-4bc2-afbb-5734987f672f",
+  "note": "System prompts are replaced by promptRef; the text is in ../prompts/<ref>.md. Everything else is the API response verbatim.",
+  "versionCount": 30,
+  "versions": [
+    {
+      "createdAt": "2026-08-18T17:28:37.460Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-12-09T15:00:39.199Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. Angela from Naidu Property Consulting Services speaking. How can I help you today?",
+        "id": "bfff143e-03f7-4bc2-afbb-5734987f672f",
+        "maxDurationSeconds": 16562,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "messages": [
+            {
+              "chars": 43746,
+              "promptRef": "f28f1c74af59e13e",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.6-luna",
+          "provider": "openai",
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6",
+            "9789b720-ee13-4389-ba33-678883eaa891",
+            "0bd36de8-6d3a-43e5-9c3f-25ca6de97662",
+            "5c0c334c-6bbf-4399-b748-a3c50207e754"
+          ]
+        },
+        "name": "NPC Inbound Agent",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "headers": {
+            "x-vapi-webhook-secret": "{{REDACTED:VAPI_WEBHOOK_SECRET}}"
+          },
+          "staticIpAddressesEnabled": false,
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "startSpeakingPlan": {
+          "waitSeconds": 4
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-08-18T17:28:37.371Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "M7ya1YbaeFaPXljg9BpK"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "3f170142-9b2a-11f1-bed8-3fe29ba858e6"
+    },
+    {
+      "createdAt": "2026-08-18T12:48:43.382Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-12-09T15:00:39.199Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. Angela from Naidu Property Consulting Services speaking. How can I help you today?",
+        "id": "bfff143e-03f7-4bc2-afbb-5734987f672f",
+        "maxDurationSeconds": 16562,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "messages": [
+            {
+              "chars": 43746,
+              "promptRef": "f28f1c74af59e13e",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.6-luna",
+          "provider": "openai",
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6",
+            "9789b720-ee13-4389-ba33-678883eaa891",
+            "0bd36de8-6d3a-43e5-9c3f-25ca6de97662",
+            "5c0c334c-6bbf-4399-b748-a3c50207e754"
+          ]
+        },
+        "name": "NPC Inbound Agent",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "headers": {
+            "x-vapi-webhook-secret": "{{REDACTED:VAPI_WEBHOOK_SECRET}}"
+          },
+          "staticIpAddressesEnabled": false,
+          "timeoutSeconds": 20,
+          "url": "https://hook.us2.make.com/8k9ofpknay6jvcjuz9h8cg4vbpm51rrw"
+        },
+        "startSpeakingPlan": {
+          "waitSeconds": 4
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-08-18T12:48:43.295Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "M7ya1YbaeFaPXljg9BpK"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "250a1162-9b03-11f1-903c-3f7dddf6eccc"
+    },
+    {
+      "createdAt": "2026-07-28T05:33:42.611Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-12-09T15:00:39.199Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. Angela from Naidu Property Consulting Services speaking. How can I help you today?",
+        "id": "bfff143e-03f7-4bc2-afbb-5734987f672f",
+        "maxDurationSeconds": 16562,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "messages": [
+            {
+              "chars": 43746,
+              "promptRef": "f28f1c74af59e13e",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.6-luna",
+          "provider": "openai",
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6",
+            "9789b720-ee13-4389-ba33-678883eaa891",
+            "0bd36de8-6d3a-43e5-9c3f-25ca6de97662",
+            "5c0c334c-6bbf-4399-b748-a3c50207e754"
+          ]
+        },
+        "name": "NPC Inbound Agent",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "headers": {
+            "x-vapi-webhook-secret": "{{REDACTED:VAPI_WEBHOOK_SECRET}}"
+          },
+          "staticIpAddressesEnabled": false,
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "startSpeakingPlan": {
+          "waitSeconds": 4
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-07-28T05:33:42.587Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "M7ya1YbaeFaPXljg9BpK"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "e517ba32-8a45-11f1-8422-6f63a340b3a8"
+    },
+    {
+      "createdAt": "2026-07-22T05:55:04.131Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-12-09T15:00:39.199Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. Angela from Naidu Property Consulting Services speaking. How can I help you today?",
+        "id": "bfff143e-03f7-4bc2-afbb-5734987f672f",
+        "maxDurationSeconds": 16562,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 43746,
+              "promptRef": "f28f1c74af59e13e",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6",
+            "9789b720-ee13-4389-ba33-678883eaa891",
+            "0bd36de8-6d3a-43e5-9c3f-25ca6de97662",
+            "5c0c334c-6bbf-4399-b748-a3c50207e754"
+          ]
+        },
+        "name": "NPC Inbound Agent",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "headers": {
+            "x-vapi-webhook-secret": "{{REDACTED:VAPI_WEBHOOK_SECRET}}"
+          },
+          "staticIpAddressesEnabled": false,
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "startSpeakingPlan": {
+          "waitSeconds": 4
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-07-22T05:55:04.098Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "M7ya1YbaeFaPXljg9BpK"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "e275a931-8591-11f1-8f03-b5e89fd6e831"
+    },
+    {
+      "createdAt": "2026-05-20T11:16:07.021Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-12-09T15:00:39.199Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. Angela from Naidu Property Consulting Services speaking. How can I help you today?",
+        "id": "bfff143e-03f7-4bc2-afbb-5734987f672f",
+        "maxDurationSeconds": 16562,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 43746,
+              "promptRef": "f28f1c74af59e13e",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6",
+            "9789b720-ee13-4389-ba33-678883eaa891",
+            "0bd36de8-6d3a-43e5-9c3f-25ca6de97662",
+            "5c0c334c-6bbf-4399-b748-a3c50207e754"
+          ]
+        },
+        "name": "NPC Inbound Agent",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "staticIpAddressesEnabled": false,
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "startSpeakingPlan": {
+          "waitSeconds": 4
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-05-20T11:16:07.001Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "M7ya1YbaeFaPXljg9BpK"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "4c0302c2-543d-11f1-8ed7-e11caeeadebb"
+    },
+    {
+      "createdAt": "2026-05-15T04:47:08.910Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-12-09T15:00:39.199Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. Angela from Naidu Property Consulting Services speaking. How can I help you today?",
+        "id": "bfff143e-03f7-4bc2-afbb-5734987f672f",
+        "maxDurationSeconds": 16562,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 43746,
+              "promptRef": "f28f1c74af59e13e",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "3a6a892d-2907-4da0-b2f8-a55d5b404a84",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6",
+            "9789b720-ee13-4389-ba33-678883eaa891",
+            "0bd36de8-6d3a-43e5-9c3f-25ca6de97662"
+          ]
+        },
+        "name": "NPC Inbound Agent",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "staticIpAddressesEnabled": false,
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "startSpeakingPlan": {
+          "waitSeconds": 4
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-05-15T04:47:08.893Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "M7ya1YbaeFaPXljg9BpK"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "215948e2-5019-11f1-907f-1fb5e7a4903a"
+    },
+    {
+      "createdAt": "2026-05-14T10:36:25.060Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-12-09T15:00:39.199Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. Angela from Naidu Property Consulting Services speaking. How can I help you today?",
+        "id": "bfff143e-03f7-4bc2-afbb-5734987f672f",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 43746,
+              "promptRef": "f28f1c74af59e13e",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "3a6a892d-2907-4da0-b2f8-a55d5b404a84",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6",
+            "9789b720-ee13-4389-ba33-678883eaa891",
+            "0bd36de8-6d3a-43e5-9c3f-25ca6de97662"
+          ]
+        },
+        "name": "NPC Inbound Agent",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "staticIpAddressesEnabled": false,
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "startSpeakingPlan": {
+          "waitSeconds": 4
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-05-14T10:36:25.042Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "M7ya1YbaeFaPXljg9BpK"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "c1c61b32-4f80-11f1-a723-7f943c8dbcf2"
+    },
+    {
+      "createdAt": "2026-05-14T10:33:24.254Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-12-09T15:00:39.199Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. Angela from Naidu Property Consulting Services speaking. How can I help you today?",
+        "id": "bfff143e-03f7-4bc2-afbb-5734987f672f",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 43746,
+              "promptRef": "f28f1c74af59e13e",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "3a6a892d-2907-4da0-b2f8-a55d5b404a84",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6",
+            "9789b720-ee13-4389-ba33-678883eaa891"
+          ]
+        },
+        "name": "NPC Inbound Agent",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "staticIpAddressesEnabled": false,
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "startSpeakingPlan": {
+          "waitSeconds": 4
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-05-14T10:33:24.238Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "M7ya1YbaeFaPXljg9BpK"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "560173e2-4f80-11f1-8a30-456564323097"
+    },
+    {
+      "createdAt": "2026-05-14T07:33:53.618Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-12-09T15:00:39.199Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. Angela from Naidu Property Consulting Services speaking. How can I help you today?",
+        "id": "bfff143e-03f7-4bc2-afbb-5734987f672f",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 36992,
+              "promptRef": "25a75342cea88513",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "3a6a892d-2907-4da0-b2f8-a55d5b404a84",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6",
+            "9789b720-ee13-4389-ba33-678883eaa891"
+          ]
+        },
+        "name": "NPC Inbound Agent",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "staticIpAddressesEnabled": false,
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "startSpeakingPlan": {
+          "waitSeconds": 4
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-05-14T07:33:53.603Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "M7ya1YbaeFaPXljg9BpK"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "4234d322-4f67-11f1-87cc-eba0c5a8e844"
+    },
+    {
+      "createdAt": "2026-05-14T06:39:31.770Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-12-09T15:00:39.199Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. Angela from Naidu Property Consulting Services speaking. How can I help you today?",
+        "id": "bfff143e-03f7-4bc2-afbb-5734987f672f",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 36992,
+              "promptRef": "25a75342cea88513",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "3a6a892d-2907-4da0-b2f8-a55d5b404a84",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6",
+            "c40722f1-a359-42e1-ba80-e99ef706a916"
+          ]
+        },
+        "name": "NPC Inbound Agent",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "staticIpAddressesEnabled": false,
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "startSpeakingPlan": {
+          "waitSeconds": 4
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-05-14T06:39:31.755Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "M7ya1YbaeFaPXljg9BpK"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "a9fe51a2-4f5f-11f1-bbaf-1fb49328969c"
+    },
+    {
+      "createdAt": "2026-05-14T05:43:56.611Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-12-09T15:00:39.199Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. Angela from Naidu Property Consulting Services speaking. How can I help you today?",
+        "id": "bfff143e-03f7-4bc2-afbb-5734987f672f",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 36992,
+              "promptRef": "25a75342cea88513",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "9789b720-ee13-4389-ba33-678883eaa891",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "3a6a892d-2907-4da0-b2f8-a55d5b404a84",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6"
+          ]
+        },
+        "name": "NPC Inbound Agent",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "staticIpAddressesEnabled": false,
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "startSpeakingPlan": {
+          "waitSeconds": 4
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-05-14T05:43:56.594Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "M7ya1YbaeFaPXljg9BpK"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "e6157132-4f57-11f1-81f7-1d6e695df6d1"
+    },
+    {
+      "createdAt": "2026-05-13T15:07:24.084Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-12-09T15:00:39.199Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. Angela from Naidu Property Consulting Services speaking. How can I help you today?",
+        "id": "bfff143e-03f7-4bc2-afbb-5734987f672f",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 35019,
+              "promptRef": "5e4fa7c4c26ea068",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "9789b720-ee13-4389-ba33-678883eaa891",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "3a6a892d-2907-4da0-b2f8-a55d5b404a84",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6"
+          ]
+        },
+        "name": "NPC Inbound Agent",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "staticIpAddressesEnabled": false,
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "startSpeakingPlan": {
+          "waitSeconds": 4
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-05-13T15:07:24.068Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "M7ya1YbaeFaPXljg9BpK"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "727e8832-4edd-11f1-a0cf-fb75626cb155"
+    },
+    {
+      "createdAt": "2026-05-13T10:16:05.306Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-12-09T15:00:39.199Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. Angela from Naidu Property Consulting Services speaking. How can I help you today?",
+        "id": "bfff143e-03f7-4bc2-afbb-5734987f672f",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 34203,
+              "promptRef": "261fdd908c40b27a",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "9789b720-ee13-4389-ba33-678883eaa891",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "3a6a892d-2907-4da0-b2f8-a55d5b404a84",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6"
+          ]
+        },
+        "name": "NPC Inbound Agent",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "staticIpAddressesEnabled": false,
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "startSpeakingPlan": {
+          "waitSeconds": 4
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-05-13T10:16:05.280Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "M7ya1YbaeFaPXljg9BpK"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "c054aa92-4eb4-11f1-afbe-816788177086"
+    },
+    {
+      "createdAt": "2026-05-13T09:44:42.422Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-12-09T15:00:39.199Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. Angela from Naidu Property Consulting Services speaking. How can I help you today?",
+        "id": "bfff143e-03f7-4bc2-afbb-5734987f672f",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 34201,
+              "promptRef": "da5888e0b97baec2",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "9789b720-ee13-4389-ba33-678883eaa891",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "3a6a892d-2907-4da0-b2f8-a55d5b404a84",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6"
+          ]
+        },
+        "name": "NPC Inbound Agent",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "staticIpAddressesEnabled": false,
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "startSpeakingPlan": {
+          "waitSeconds": 4
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-05-13T09:44:42.407Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "M7ya1YbaeFaPXljg9BpK"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "5e0b5e52-4eb0-11f1-904b-0be50efd1b72"
+    },
+    {
+      "createdAt": "2026-05-13T06:30:14.375Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-12-09T15:00:39.199Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. Angela from Naidu Property Consulting Services speaking. How can I help you today?",
+        "id": "bfff143e-03f7-4bc2-afbb-5734987f672f",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 30332,
+              "promptRef": "8311f43c3760cb52",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "9789b720-ee13-4389-ba33-678883eaa891",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "3a6a892d-2907-4da0-b2f8-a55d5b404a84",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6"
+          ]
+        },
+        "name": "NPC Inbound Agent",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "staticIpAddressesEnabled": false,
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "startSpeakingPlan": {
+          "waitSeconds": 4
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-05-13T06:30:14.358Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "M7ya1YbaeFaPXljg9BpK"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "3358b062-4e95-11f1-9b87-277d767b3386"
+    },
+    {
+      "createdAt": "2026-05-11T23:56:06.076Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-12-09T15:00:39.199Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. Angela from Naidu Property Consulting Services speaking. How can I help you today?",
+        "id": "bfff143e-03f7-4bc2-afbb-5734987f672f",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 25970,
+              "promptRef": "28ff82b537e94b60",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "9789b720-ee13-4389-ba33-678883eaa891",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "3a6a892d-2907-4da0-b2f8-a55d5b404a84",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6"
+          ]
+        },
+        "name": "NPC Inbound Agent",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "staticIpAddressesEnabled": false,
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "startSpeakingPlan": {
+          "waitSeconds": 4
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-05-11T23:56:06.061Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "M7ya1YbaeFaPXljg9BpK"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "f97307c2-4d94-11f1-9b95-43e6a6a97de4"
+    },
+    {
+      "createdAt": "2026-05-11T23:54:35.846Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-12-09T15:00:39.199Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. Angela from Naidu Property Consulting Services speaking. How can I help you today?",
+        "id": "bfff143e-03f7-4bc2-afbb-5734987f672f",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 25970,
+              "promptRef": "28ff82b537e94b60",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "9789b720-ee13-4389-ba33-678883eaa891",
+            "32549379-811e-415b-8f8d-d1c481cd4aed",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "3a6a892d-2907-4da0-b2f8-a55d5b404a84"
+          ]
+        },
+        "name": "NPC Inbound Agent",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "staticIpAddressesEnabled": false,
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "startSpeakingPlan": {
+          "waitSeconds": 4
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-05-11T23:54:35.831Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "M7ya1YbaeFaPXljg9BpK"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "c3ab0662-4d94-11f1-a8d4-1bf2b8f9fc9d"
+    },
+    {
+      "createdAt": "2026-03-05T00:13:08.809Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-09T15:00:39.199Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. Angela from Naidu Property Consulting Services speaking. How can I help you today?",
+        "id": "bfff143e-03f7-4bc2-afbb-5734987f672f",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 22750,
+              "promptRef": "81f460f3c53948ed",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "9789b720-ee13-4389-ba33-678883eaa891",
+            "32549379-811e-415b-8f8d-d1c481cd4aed"
+          ]
+        },
+        "name": "NPC Inbound Agent",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "startSpeakingPlan": {
+          "waitSeconds": 4
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-03-05T00:13:08.790Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "M7ya1YbaeFaPXljg9BpK"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "16f48c82-1828-11f1-9d53-ab3352629cf9"
+    },
+    {
+      "createdAt": "2026-03-04T08:20:51.928Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-09T15:00:39.199Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. Angela from Naidu Property Consulting Services speaking. How can I help you today?",
+        "id": "bfff143e-03f7-4bc2-afbb-5734987f672f",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 22702,
+              "promptRef": "49246892097223b5",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "9789b720-ee13-4389-ba33-678883eaa891",
+            "32549379-811e-415b-8f8d-d1c481cd4aed"
+          ]
+        },
+        "name": "NPC Inbound Agent",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "startSpeakingPlan": {
+          "waitSeconds": 4
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-03-04T08:20:51.896Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "M7ya1YbaeFaPXljg9BpK"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "0eb88d82-17a3-11f1-8894-8563fda96fc6"
+    },
+    {
+      "createdAt": "2026-03-04T08:02:36.907Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-09T15:00:39.199Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. Angela from Naidu Property Consulting Services speaking. How can I help you today?",
+        "id": "bfff143e-03f7-4bc2-afbb-5734987f672f",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 20689,
+              "promptRef": "6b8f488d4a267dd7",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "9789b720-ee13-4389-ba33-678883eaa891",
+            "32549379-811e-415b-8f8d-d1c481cd4aed"
+          ]
+        },
+        "name": "NPC Inbound Agent",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "startSpeakingPlan": {
+          "waitSeconds": 4
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-03-04T08:02:36.893Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "M7ya1YbaeFaPXljg9BpK"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "820974a2-17a0-11f1-95ba-85c9fccbdb0b"
+    },
+    {
+      "createdAt": "2026-03-04T07:59:20.538Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-09T15:00:39.199Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. Angela from Naidu Property Consulting Services speaking. How can I help you today?",
+        "id": "bfff143e-03f7-4bc2-afbb-5734987f672f",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 19568,
+              "promptRef": "ad262fcf01407e3c",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "9789b720-ee13-4389-ba33-678883eaa891",
+            "32549379-811e-415b-8f8d-d1c481cd4aed"
+          ]
+        },
+        "name": "NPC Inbound Agent",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "startSpeakingPlan": {
+          "waitSeconds": 4
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-03-04T07:59:20.520Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "M7ya1YbaeFaPXljg9BpK"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "0cfdec92-17a0-11f1-8fb5-41f5078352c4"
+    },
+    {
+      "createdAt": "2026-02-02T02:27:24.157Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-09T15:00:39.199Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. Angela from Naidu Property Consulting Services speaking. How can I help you today?",
+        "id": "bfff143e-03f7-4bc2-afbb-5734987f672f",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 18845,
+              "promptRef": "5139d0ad80ec16d1",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "9789b720-ee13-4389-ba33-678883eaa891",
+            "32549379-811e-415b-8f8d-d1c481cd4aed"
+          ]
+        },
+        "name": "NPC Inbound Agent",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "startSpeakingPlan": {
+          "waitSeconds": 4
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-02-02T02:27:24.136Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "M7ya1YbaeFaPXljg9BpK"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "b58302d2-ffde-11f0-be7a-79ad1c1cbab5"
+    },
+    {
+      "createdAt": "2026-01-29T05:36:07.536Z",
+      "data": {
+        "backgroundDenoisingEnabled": true,
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-09T15:00:39.199Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. Angela from Naidu Property Consulting Services speaking. How can I help you today?",
+        "id": "bfff143e-03f7-4bc2-afbb-5734987f672f",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 18845,
+              "promptRef": "5139d0ad80ec16d1",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "9789b720-ee13-4389-ba33-678883eaa891",
+            "32549379-811e-415b-8f8d-d1c481cd4aed"
+          ]
+        },
+        "name": "NPC Inbound Agent",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "startSpeakingPlan": {
+          "waitSeconds": 4
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-29T05:36:07.516Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "M7ya1YbaeFaPXljg9BpK"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "691e8702-fcd4-11f0-93d4-3f2f6744368f"
+    },
+    {
+      "createdAt": "2026-01-29T03:21:32.279Z",
+      "data": {
+        "backgroundDenoisingEnabled": true,
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-09T15:00:39.199Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. Angela from Naidu Property Consulting Services speaking. How can I help you today?",
+        "id": "bfff143e-03f7-4bc2-afbb-5734987f672f",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 18584,
+              "promptRef": "6bd8340033ac4329",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "9789b720-ee13-4389-ba33-678883eaa891",
+            "32549379-811e-415b-8f8d-d1c481cd4aed"
+          ]
+        },
+        "name": "NPC Inbound Agent",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "startSpeakingPlan": {
+          "waitSeconds": 4
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-29T03:21:32.258Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "M7ya1YbaeFaPXljg9BpK"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "9be41871-fcc1-11f0-894f-37f0bbe50b0f"
+    },
+    {
+      "createdAt": "2026-01-29T03:14:20.028Z",
+      "data": {
+        "backgroundDenoisingEnabled": true,
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-09T15:00:39.199Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. Angela from Naidu Property Consulting Services speaking. How can I help you today?",
+        "id": "bfff143e-03f7-4bc2-afbb-5734987f672f",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 18664,
+              "promptRef": "f3e1dbea30b1d60c",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "9789b720-ee13-4389-ba33-678883eaa891",
+            "32549379-811e-415b-8f8d-d1c481cd4aed"
+          ]
+        },
+        "name": "NPC Inbound Agent",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "startSpeakingPlan": {
+          "waitSeconds": 4
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-29T03:14:19.997Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "M7ya1YbaeFaPXljg9BpK"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "9a3fd3c1-fcc0-11f0-ae4f-6589e65803b8"
+    },
+    {
+      "createdAt": "2026-01-29T02:44:26.494Z",
+      "data": {
+        "backgroundDenoisingEnabled": true,
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-09T15:00:39.199Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. Angela from Naidu Property Consulting Services speaking. How can I help you today?",
+        "id": "bfff143e-03f7-4bc2-afbb-5734987f672f",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 17711,
+              "promptRef": "d13b194022858cc4",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "9789b720-ee13-4389-ba33-678883eaa891",
+            "32549379-811e-415b-8f8d-d1c481cd4aed"
+          ]
+        },
+        "name": "NPC Inbound Agent",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "startSpeakingPlan": {
+          "waitSeconds": 4
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-29T02:44:26.477Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "M7ya1YbaeFaPXljg9BpK"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "6d3841e2-fcbc-11f0-a7fc-970753b33c09"
+    },
+    {
+      "createdAt": "2026-01-29T02:23:52.713Z",
+      "data": {
+        "backgroundDenoisingEnabled": true,
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-09T15:00:39.199Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. Angela from Naidu Property Consulting Services speaking. How can I help you today?",
+        "id": "bfff143e-03f7-4bc2-afbb-5734987f672f",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 17662,
+              "promptRef": "006daf6ba3a3b710",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "9789b720-ee13-4389-ba33-678883eaa891",
+            "32549379-811e-415b-8f8d-d1c481cd4aed"
+          ]
+        },
+        "name": "NPC Inbound Agent",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "startSpeakingPlan": {
+          "waitSeconds": 4
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-29T02:23:52.694Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "M7ya1YbaeFaPXljg9BpK"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "8dd41082-fcb9-11f0-9e4c-d1711e949904"
+    },
+    {
+      "createdAt": "2026-01-29T02:14:04.251Z",
+      "data": {
+        "backgroundDenoisingEnabled": true,
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-09T15:00:39.199Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. Angela from Naidu Property Consulting Services speaking. How can I help you today?",
+        "id": "bfff143e-03f7-4bc2-afbb-5734987f672f",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 17662,
+              "promptRef": "e7380b06aca7e573",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "9789b720-ee13-4389-ba33-678883eaa891",
+            "32549379-811e-415b-8f8d-d1c481cd4aed"
+          ]
+        },
+        "name": "NPC Inbound Agent",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "startSpeakingPlan": {
+          "waitSeconds": 4
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-29T02:14:04.225Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "M7ya1YbaeFaPXljg9BpK"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "2f140ab2-fcb8-11f0-b563-cf19ccd5cd65"
+    },
+    {
+      "createdAt": "2026-01-29T02:10:31.798Z",
+      "data": {
+        "backgroundDenoisingEnabled": true,
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-09T15:00:39.199Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. Angela from Naidu Property Consulting Services speaking. How can I help you today?",
+        "id": "bfff143e-03f7-4bc2-afbb-5734987f672f",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 15298,
+              "promptRef": "3858cd6708b606d4",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "9789b720-ee13-4389-ba33-678883eaa891",
+            "32549379-811e-415b-8f8d-d1c481cd4aed"
+          ]
+        },
+        "name": "NPC Inbound Agent",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "startSpeakingPlan": {
+          "waitSeconds": 4
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-29T02:10:31.785Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "M7ya1YbaeFaPXljg9BpK"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "b0724962-fcb7-11f0-bb5f-c3d149bb3d55"
+    },
+    {
+      "createdAt": "2026-01-29T01:45:27.403Z",
+      "data": {
+        "backgroundDenoisingEnabled": true,
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-09T15:00:39.199Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. Angela from Naidu Property Consulting Services speaking. How can I help you today?",
+        "id": "bfff143e-03f7-4bc2-afbb-5734987f672f",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 15298,
+              "promptRef": "3858cd6708b606d4",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "9789b720-ee13-4389-ba33-678883eaa891"
+          ]
+        },
+        "name": "NPC Inbound Agent",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "startSpeakingPlan": {
+          "waitSeconds": 4
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-29T01:45:27.378Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "M7ya1YbaeFaPXljg9BpK"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "2fc1d3b2-fcb4-11f0-86e6-43ee7ea0401d"
+    }
+  ]
+}

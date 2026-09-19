@@ -1,0 +1,1310 @@
+{
+  "flow": [
+    {
+      "id": 1,
+      "mapper": {},
+      "module": "gateway:CustomWebHook",
+      "version": 1,
+      "metadata": {
+        "restore": {
+          "parameters": {
+            "hook": {
+              "data": {
+                "editable": "true"
+              },
+              "label": "NPC GHL Delete Event"
+            }
+          }
+        },
+        "designer": {
+          "x": 0,
+          "y": 0
+        },
+        "parameters": [
+          {
+            "name": "hook",
+            "type": "hook:gateway-webhook",
+            "label": "Webhook",
+            "required": true
+          },
+          {
+            "name": "maxResults",
+            "type": "number",
+            "label": "Maximum number of results"
+          }
+        ]
+      },
+      "parameters": {
+        "hook": 3675034,
+        "maxResults": 1
+      }
+    },
+    {
+      "id": 4,
+      "mapper": {
+        "model": "gpt-5.1",
+        "top_p": "1",
+        "select": "chat",
+        "messages": [
+          {
+            "role": "system",
+            "content": "Convert the following UTC time into a regular string: {{1.message.assistant.variableValues.discoveryCallTime}}"
+          }
+        ],
+        "max_tokens": "2048",
+        "temperature": "1",
+        "n_completions": "1",
+        "response_format": "text"
+      },
+      "module": "openai-gpt-3:CreateCompletion",
+      "version": 1,
+      "metadata": {
+        "expect": [
+          {
+            "name": "select",
+            "type": "select",
+            "label": "Select Method",
+            "required": true,
+            "validate": {
+              "enum": [
+                "chat",
+                "prompt"
+              ]
+            }
+          },
+          {
+            "name": "temperature",
+            "type": "number",
+            "label": "Temperature",
+            "validate": {
+              "max": 2,
+              "min": 0
+            }
+          },
+          {
+            "name": "top_p",
+            "type": "number",
+            "label": "Top P",
+            "validate": {
+              "max": 1,
+              "min": 0
+            }
+          },
+          {
+            "name": "n_completions",
+            "type": "number",
+            "label": "Number"
+          },
+          {
+            "name": "frequency_penalty",
+            "type": "number",
+            "label": "Frequency Penalty",
+            "validate": {
+              "max": 2,
+              "min": -2
+            }
+          },
+          {
+            "name": "presence_penalty",
+            "type": "number",
+            "label": "Presence Penalty",
+            "validate": {
+              "max": 2,
+              "min": -2
+            }
+          },
+          {
+            "name": "logit_bias",
+            "spec": {
+              "name": "value",
+              "spec": [
+                {
+                  "name": "token",
+                  "type": "text",
+                  "label": "Token ID",
+                  "required": true
+                },
+                {
+                  "name": "probability",
+                  "type": "number",
+                  "label": "Probability",
+                  "required": true,
+                  "validate": {
+                    "max": 100,
+                    "min": -100
+                  }
+                }
+              ],
+              "type": "collection",
+              "label": "Token Probability"
+            },
+            "type": "array",
+            "label": "Token Probability"
+          },
+          {
+            "name": "seed",
+            "type": "integer",
+            "label": "Seed"
+          },
+          {
+            "name": "tool_choice",
+            "type": "select",
+            "label": "Tool Choice",
+            "validate": {
+              "enum": [
+                "none",
+                "auto",
+                "required"
+              ]
+            }
+          },
+          {
+            "name": "stop",
+            "spec": {
+              "name": "value",
+              "type": "text",
+              "label": "Stop Sequence"
+            },
+            "type": "array",
+            "label": "Stop Sequences",
+            "validate": {
+              "maxItems": 4
+            }
+          },
+          {
+            "name": "additionalParameters",
+            "spec": {
+              "name": "value",
+              "spec": [
+                {
+                  "name": "key",
+                  "type": "text",
+                  "label": "Parameter Name",
+                  "required": true
+                },
+                {
+                  "name": "type",
+                  "type": "select",
+                  "label": "Input Type",
+                  "options": [
+                    {
+                      "label": "Text",
+                      "value": "text",
+                      "nested": [
+                        {
+                          "name": "value",
+                          "type": "text",
+                          "label": "Parameter Value"
+                        }
+                      ],
+                      "default": true
+                    },
+                    {
+                      "label": "Number",
+                      "value": "number",
+                      "nested": [
+                        {
+                          "name": "value",
+                          "type": "number",
+                          "label": "Parameter Value"
+                        }
+                      ]
+                    },
+                    {
+                      "label": "Boolean",
+                      "value": "boolean",
+                      "nested": [
+                        {
+                          "name": "value",
+                          "type": "boolean",
+                          "label": "Parameter Value"
+                        }
+                      ]
+                    },
+                    {
+                      "label": "Date",
+                      "value": "date",
+                      "nested": [
+                        {
+                          "name": "value",
+                          "type": "date",
+                          "label": "Parameter Value"
+                        }
+                      ]
+                    },
+                    {
+                      "label": "Any",
+                      "value": "any",
+                      "nested": [
+                        {
+                          "name": "value",
+                          "type": "any",
+                          "label": "Parameter Value"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "type": "collection",
+              "label": "Input Parameter"
+            },
+            "type": "array",
+            "label": "Other Input Parameters"
+          },
+          {
+            "name": "model",
+            "type": "select",
+            "label": "Model",
+            "required": true
+          },
+          {
+            "name": "max_tokens",
+            "type": "uinteger",
+            "label": "Max Output Tokens"
+          },
+          {
+            "name": "messages",
+            "spec": {
+              "name": "value",
+              "spec": [
+                {
+                  "name": "role",
+                  "type": "select",
+                  "label": "Role",
+                  "options": {
+                    "store": [
+                      {
+                        "label": "User",
+                        "value": "user",
+                        "nested": [
+                          {
+                            "help": "Text content of the message on behalf of the selected __Role__.",
+                            "name": "content",
+                            "type": "text",
+                            "label": "Text Content"
+                          }
+                        ],
+                        "default": true
+                      },
+                      {
+                        "label": "Assistant",
+                        "value": "assistant",
+                        "nested": [
+                          {
+                            "help": "Text content of the message on behalf of the selected __Role__.",
+                            "name": "content",
+                            "type": "text",
+                            "label": "Text Content"
+                          },
+                          {
+                            "mode": "edit",
+                            "name": "tool_calls",
+                            "spec": {
+                              "spec": [
+                                {
+                                  "name": "type",
+                                  "type": "hidden",
+                                  "default": "function"
+                                },
+                                {
+                                  "help": "Map this directly from the output of a previous **Create a Completion** module. Look for `Choices[]: Message.Tool Calls[]: ID`.",
+                                  "name": "id",
+                                  "type": "text",
+                                  "label": "Tool call ID"
+                                },
+                                {
+                                  "name": "function",
+                                  "spec": [
+                                    {
+                                      "help": "The name of the function previously called.",
+                                      "name": "name",
+                                      "type": "text",
+                                      "label": "Name",
+                                      "required": true
+                                    },
+                                    {
+                                      "help": "The arguments previously output by the AI.",
+                                      "name": "arguments",
+                                      "type": "text",
+                                      "label": "Arguments",
+                                      "required": true
+                                    }
+                                  ],
+                                  "type": "collection",
+                                  "label": "Function"
+                                }
+                              ],
+                              "type": "collection",
+                              "label": "Tool Call"
+                            },
+                            "type": "array",
+                            "label": "Tool Calls",
+                            "labels": {
+                              "add": "Add tool call"
+                            },
+                            "mappable": {
+                              "help": "You can map the entire `Choices[]: Message.Tool Calls` array from a previous Create a Completion module here."
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "label": "Developer / System",
+                        "value": "system",
+                        "nested": [
+                          {
+                            "help": "Text content of the message on behalf of the selected __Role__.",
+                            "name": "content",
+                            "type": "text",
+                            "label": "Text Content"
+                          }
+                        ]
+                      },
+                      {
+                        "label": "Tool",
+                        "value": "tool",
+                        "nested": [
+                          {
+                            "help": "The return of the function. This role should only be used when you have processed a previous function call and want to send the output of the function execution back to the AI.",
+                            "name": "content",
+                            "type": "text",
+                            "label": "Text Content",
+                            "required": true
+                          },
+                          {
+                            "help": "Map this directly from the output of a previous **Create a Completion** module. Look for `Choices[]: Message.Tool Calls[]: ID`.",
+                            "name": "tool_call_id",
+                            "type": "text",
+                            "label": "Tool Call ID.",
+                            "required": true
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "required": true
+                }
+              ],
+              "type": "collection",
+              "label": "Message"
+            },
+            "type": "array",
+            "label": "Messages",
+            "required": true
+          },
+          {
+            "name": "response_format",
+            "type": "select",
+            "label": "Response Format",
+            "validate": {
+              "enum": [
+                "text",
+                "json_object"
+              ]
+            }
+          },
+          {
+            "name": "reasoning_effort",
+            "type": "select",
+            "label": "Reasoning Effort",
+            "validate": {
+              "enum": [
+                "minimal",
+                "low",
+                "medium",
+                "high"
+              ]
+            }
+          }
+        ],
+        "restore": {
+          "expect": {
+            "stop": {
+              "mode": "chose"
+            },
+            "model": {
+              "mode": "chose",
+              "label": "gpt-5.1 (system)Upgraded GPT-5 with steadier reasoning and improved context handling"
+            },
+            "select": {
+              "label": "Create a Chat Completion (GPT and o1 models)"
+            },
+            "messages": {
+              "mode": "chose",
+              "items": [
+                {
+                  "role": {
+                    "mode": "chose",
+                    "label": "Developer / System"
+                  }
+                }
+              ]
+            },
+            "logit_bias": {
+              "mode": "chose"
+            },
+            "tool_choice": {
+              "mode": "chose",
+              "label": "Empty"
+            },
+            "response_format": {
+              "mode": "chose",
+              "label": "Text"
+            },
+            "reasoning_effort": {
+              "mode": "chose",
+              "label": "Empty"
+            },
+            "additionalParameters": {
+              "mode": "chose"
+            }
+          },
+          "parameters": {
+            "__IMTCONN__": {
+              "data": {
+                "scoped": "true",
+                "connection": "openai-gpt-3"
+              },
+              "label": "Lavan OpenAI"
+            }
+          }
+        },
+        "designer": {
+          "x": 300,
+          "y": 0
+        },
+        "interface": [
+          {
+            "name": "result",
+            "type": "any",
+            "label": "Result"
+          },
+          {
+            "name": "id",
+            "type": "text",
+            "label": "ID"
+          },
+          {
+            "name": "object",
+            "type": "text",
+            "label": "Object"
+          },
+          {
+            "name": "created",
+            "type": "date",
+            "label": "Created"
+          },
+          {
+            "name": "model",
+            "type": "text",
+            "label": "Model"
+          },
+          {
+            "name": "choices",
+            "spec": [
+              {
+                "name": "text",
+                "type": "text",
+                "label": "Text"
+              },
+              {
+                "name": "index",
+                "type": "number",
+                "label": "Index"
+              },
+              {
+                "name": "logprobs",
+                "type": "text",
+                "label": "Log Probs"
+              },
+              {
+                "name": "finish_reason",
+                "type": "text",
+                "label": "Finish Reason"
+              },
+              {
+                "name": "message",
+                "spec": [
+                  {
+                    "name": "role",
+                    "type": "text",
+                    "label": "Role"
+                  },
+                  {
+                    "name": "content",
+                    "type": "text",
+                    "label": "Content"
+                  },
+                  {
+                    "name": "tool_calls",
+                    "spec": [
+                      {
+                        "name": "id",
+                        "type": "text",
+                        "label": "ID"
+                      },
+                      {
+                        "name": "type",
+                        "type": "text",
+                        "label": "Type"
+                      },
+                      {
+                        "name": "function",
+                        "spec": [
+                          {
+                            "name": "name",
+                            "type": "text",
+                            "label": "Name"
+                          },
+                          {
+                            "name": "arguments",
+                            "type": "text",
+                            "label": "Arguments"
+                          }
+                        ],
+                        "type": "collection",
+                        "label": "Function"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Tool Calls"
+                  },
+                  {
+                    "name": "refusal",
+                    "type": "text",
+                    "label": "Refusal"
+                  },
+                  {
+                    "name": "annotations",
+                    "spec": [
+                      {
+                        "name": "type",
+                        "type": "text",
+                        "label": "Type"
+                      },
+                      {
+                        "name": "url_citation",
+                        "spec": [
+                          {
+                            "name": "end_index",
+                            "type": "number",
+                            "label": "End Index"
+                          },
+                          {
+                            "name": "start_index",
+                            "type": "number",
+                            "label": "Start Index"
+                          },
+                          {
+                            "name": "title",
+                            "type": "text",
+                            "label": "Title"
+                          },
+                          {
+                            "name": "url",
+                            "type": "text",
+                            "label": "URL"
+                          }
+                        ],
+                        "type": "collection",
+                        "label": "URL Citation"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Annotations"
+                  }
+                ],
+                "type": "collection",
+                "label": "Message"
+              }
+            ],
+            "type": "array",
+            "label": "Choices"
+          },
+          {
+            "name": "usage",
+            "spec": [
+              {
+                "name": "prompt_tokens",
+                "type": "number",
+                "label": "Prompt Tokens"
+              },
+              {
+                "name": "completion_tokens",
+                "type": "text",
+                "label": "Completion Tokens"
+              },
+              {
+                "name": "total_tokens",
+                "type": "number",
+                "label": "Total Tokens"
+              },
+              {
+                "name": "prompt_tokens_details",
+                "spec": [
+                  {
+                    "name": "cached_tokens",
+                    "type": "uinteger",
+                    "label": "Cached Tokens"
+                  },
+                  {
+                    "name": "text_tokens",
+                    "type": "uinteger",
+                    "label": "Text Tokens"
+                  },
+                  {
+                    "name": "image_tokens",
+                    "type": "uinteger",
+                    "label": "Image Tokens"
+                  },
+                  {
+                    "name": "audio_tokens",
+                    "type": "uinteger",
+                    "label": "Audio Tokens"
+                  }
+                ],
+                "type": "collection",
+                "label": "Prompt Tokens Details"
+              },
+              {
+                "name": "completion_tokens_details",
+                "spec": [
+                  {
+                    "name": "reasoning_tokens",
+                    "type": "uinteger",
+                    "label": "Reasoning Tokens"
+                  },
+                  {
+                    "name": "text_tokens",
+                    "type": "uinteger",
+                    "label": "Text Tokens"
+                  },
+                  {
+                    "name": "audio_tokens",
+                    "type": "uinteger",
+                    "label": "Audio Tokens"
+                  },
+                  {
+                    "name": "accepted_prediction_tokens",
+                    "type": "uinteger",
+                    "label": "Accepted Prediction Tokens"
+                  },
+                  {
+                    "name": "rejected_prediction_tokens",
+                    "type": "uinteger",
+                    "label": "Rejected Prediction Tokens"
+                  }
+                ],
+                "type": "collection",
+                "label": "Completion Tokens Details"
+              }
+            ],
+            "type": "collection",
+            "label": "Usage"
+          },
+          {
+            "name": "service_tier",
+            "type": "text",
+            "label": "Service Tier"
+          },
+          {
+            "name": "system_fingerprint",
+            "type": "text",
+            "label": "System Fingerprint"
+          }
+        ],
+        "parameters": [
+          {
+            "name": "__IMTCONN__",
+            "type": "account:openai-gpt-3",
+            "label": "Connection",
+            "required": true
+          }
+        ]
+      },
+      "parameters": {
+        "__IMTCONN__": 1965569
+      }
+    },
+    {
+      "id": 3,
+      "mapper": {
+        "content": "Please delete the following strategy session booking in GHL:\n\nName: {{1.message.assistant.variableValues.fullName}}\nTime: {{4.result}}",
+        "subject": "Manual Reschedule of IFC Session in GHL",
+        "contentType": "html",
+        "toRecipients": [
+          {
+            "address": "admin@npcservices.com.au"
+          }
+        ],
+        "singleValueExtendedProperties": {}
+      },
+      "module": "microsoft-email:createAndSendAMessage",
+      "version": 2,
+      "metadata": {
+        "expect": [
+          {
+            "name": "toRecipients",
+            "spec": [
+              {
+                "name": "address",
+                "type": "email",
+                "label": "Email Address",
+                "required": true
+              },
+              {
+                "name": "name",
+                "type": "text",
+                "label": "Name"
+              }
+            ],
+            "type": "array",
+            "label": "To Recipients",
+            "required": true
+          },
+          {
+            "name": "subject",
+            "type": "text",
+            "label": "Subject",
+            "required": true
+          },
+          {
+            "name": "content",
+            "type": "text",
+            "label": "Body Content",
+            "required": true
+          },
+          {
+            "name": "attachments",
+            "spec": [
+              {
+                "name": "filename",
+                "type": "filename",
+                "label": "File Name",
+                "required": true,
+                "semantic": "file:name"
+              },
+              {
+                "name": "data",
+                "type": "buffer",
+                "label": "Data",
+                "required": true,
+                "semantic": "file:data"
+              }
+            ],
+            "type": "array",
+            "label": "Attachments"
+          },
+          {
+            "name": "replyTo",
+            "spec": [
+              {
+                "name": "address",
+                "type": "email",
+                "label": "Email Address",
+                "required": true
+              },
+              {
+                "name": "name",
+                "type": "text",
+                "label": "Name"
+              }
+            ],
+            "type": "array",
+            "label": "Reply To"
+          },
+          {
+            "name": "from",
+            "spec": [
+              {
+                "name": "address",
+                "type": "email",
+                "label": "Email Address",
+                "required": true
+              },
+              {
+                "name": "name",
+                "type": "text",
+                "label": "Name"
+              }
+            ],
+            "type": "array",
+            "label": "From",
+            "validate": {
+              "maxItems": 1
+            }
+          },
+          {
+            "name": "ccRecipients",
+            "spec": [
+              {
+                "name": "address",
+                "type": "email",
+                "label": "Email Address",
+                "required": true
+              },
+              {
+                "name": "name",
+                "type": "text",
+                "label": "Name"
+              }
+            ],
+            "type": "array",
+            "label": "CC Recipients"
+          },
+          {
+            "name": "bccRecipients",
+            "spec": [
+              {
+                "name": "address",
+                "type": "email",
+                "label": "Email Address",
+                "required": true
+              },
+              {
+                "name": "name",
+                "type": "text",
+                "label": "Name"
+              }
+            ],
+            "type": "array",
+            "label": "Bcc Recipients"
+          },
+          {
+            "name": "importance",
+            "type": "select",
+            "label": "Importance",
+            "validate": {
+              "enum": [
+                "Low",
+                "Normal",
+                "High"
+              ]
+            }
+          },
+          {
+            "name": "internetMessageHeaders",
+            "spec": [
+              {
+                "name": "name",
+                "type": "text",
+                "label": "Name",
+                "required": true
+              },
+              {
+                "name": "value",
+                "type": "text",
+                "label": "Value",
+                "required": true
+              }
+            ],
+            "type": "array",
+            "label": "Internet Message Headers"
+          },
+          {
+            "name": "contentType",
+            "type": "select",
+            "label": "Body Content Type",
+            "required": true,
+            "validate": {
+              "enum": [
+                "html",
+                "text"
+              ]
+            }
+          },
+          {
+            "name": "singleValueExtendedProperties",
+            "spec": [
+              {
+                "name": "sensitivityLabel",
+                "type": "text",
+                "label": "Sensitivity Label"
+              }
+            ],
+            "type": "collection",
+            "label": "Extended MAPI Properties"
+          }
+        ],
+        "restore": {
+          "expect": {
+            "from": {
+              "mode": "chose"
+            },
+            "replyTo": {
+              "mode": "chose"
+            },
+            "importance": {
+              "mode": "chose",
+              "label": "Empty"
+            },
+            "attachments": {
+              "mode": "chose"
+            },
+            "contentType": {
+              "mode": "chose",
+              "label": "HTML"
+            },
+            "ccRecipients": {
+              "mode": "chose"
+            },
+            "toRecipients": {
+              "mode": "chose",
+              "items": [
+                null
+              ]
+            },
+            "bccRecipients": {
+              "mode": "chose"
+            },
+            "internetMessageHeaders": {
+              "mode": "chose"
+            }
+          },
+          "parameters": {
+            "__IMTCONN__": {
+              "data": {
+                "scoped": "true",
+                "connection": "azure"
+              },
+              "label": "Admin NPC Email 2 (Naidu Property Consulting Services <admin@npcservices.com.au>)"
+            }
+          }
+        },
+        "designer": {
+          "x": 600,
+          "y": 0
+        },
+        "parameters": [
+          {
+            "name": "__IMTCONN__",
+            "type": "account:azure",
+            "label": "Connection",
+            "required": true
+          }
+        ]
+      },
+      "parameters": {
+        "__IMTCONN__": 13160738
+      }
+    }
+  ],
+  "name": "NPC Delete IFC Session (Zoom)",
+  "metadata": {
+    "instant": true,
+    "version": 1,
+    "designer": {
+      "orphans": [],
+      "samples": {
+        "1": {
+          "message": {
+            "call": {
+              "id": "019abeb6-d135-7000-8055-ef6ac8176242",
+              "cost": 0,
+              "type": "outboundPhoneCall",
+              "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+              "status": "scheduled",
+              "monitor": {},
+              "customer": {
+                "number": "+61433005110"
+              },
+              "createdAt": "2025-11-26T05:50:43.509Z",
+              "transport": {
+                "callSid": "CA2d1da5c215d0d424c91f752675964111",
+                "provider": "twilio",
+                "accountSid": "{{SECRET:TWILIO_ACCOUNT_SID}}",
+                "conversationType": "voice"
+              },
+              "updatedAt": "2025-11-26T05:50:43.509Z",
+              "assistantId": "29d6c50e-36e4-406c-b2ea-93f7fc2997a4",
+              "schedulePlan": {
+                "earliestAt": "2025-11-26T05:52:34.454Z"
+              },
+              "phoneNumberId": "f53c1661-29e9-4d8c-b595-b9da28cb46dc",
+              "phoneCallProvider": "twilio",
+              "assistantOverrides": {
+                "variableValues": {
+                  "phone": "+61433005110",
+                  "fullName": "Rugesh Testing VA 2 Naidu VA Testing",
+                  "callTitle": "Discovery Call with Rugesh || Rugesh Testing VA 2 Naidu VA Testing",
+                  "contactId": "QaCqIe8JFklQV9T4BNW4",
+                  "firstName": "Rugesh Testing VA 2",
+                  "currentDate": "2025-11-26T05:50:43.241Z",
+                  "currentDateUnix": "1764136243",
+                  "discoveryCallTime": "2025-11-27T15:00:00+11:00"
+                }
+              },
+              "phoneCallTransport": "pstn",
+              "phoneCallProviderId": "CA2d1da5c215d0d424c91f752675964111"
+            },
+            "type": "tool-calls",
+            "artifact": {
+              "messages": [
+                {
+                  "name": "get_free_slots",
+                  "role": "tool_calls",
+                  "time": 1764136547419,
+                  "result": "[\n  {\n    \"type\": \"text\",\n    \"text\": \"No available times found for the specified timeframe.\"\n  }\n]",
+                  "source": null,
+                  "endTime": 1764136544319,
+                  "message": "Let's go Monday, the first. Of December at 2 PM, please.",
+                  "duration": 3370.0048828125,
+                  "metadata": {
+                    "wordLevelConfidence": [
+                      {
+                        "end": 84.68,
+                        "word": "first",
+                        "start": 84.18,
+                        "confidence": 0.84350586,
+                        "punctuated_word": "first."
+                      }
+                    ]
+                  },
+                  "toolCalls": [
+                    {
+                      "id": "call_SfGgKKwrn8QC9qqZqnIdAS7b",
+                      "type": "function",
+                      "function": {
+                        "name": "create_appointment",
+                        "arguments": "{\n  \"calendarId\": \"TXJCep5hZqntF4H2Hkfl\",\n  \"title\": \"Discovery Call with Rugesh || Rugesh Testing V..."
+                      }
+                    }
+                  ],
+                  "toolCallId": "call_wwgESGFeP1nlyP8dGRGDyrpp",
+                  "secondsFromStart": 89.922
+                }
+              ],
+              "messagesOpenAIFormatted": [
+                {
+                  "role": "tool",
+                  "content": "Tool Result Still Pending But Proceed Further If Possible.",
+                  "tool_calls": [
+                    {
+                      "id": "call_SfGgKKwrn8QC9qqZqnIdAS7b",
+                      "type": "function",
+                      "function": {
+                        "name": "create_appointment",
+                        "arguments": "{\n  \"calendarId\": \"TXJCep5hZqntF4H2Hkfl\",\n  \"title\": \"Discovery Call with Rugesh || Rugesh Testing V..."
+                      }
+                    }
+                  ],
+                  "tool_call_id": "call_SfGgKKwrn8QC9qqZqnIdAS7b"
+                }
+              ]
+            },
+            "customer": {
+              "number": "+61433005110"
+            },
+            "assistant": {
+              "id": "29d6c50e-36e4-406c-b2ea-93f7fc2997a4",
+              "name": "NPC Discovery Call Follow Up Test",
+              "model": {
+                "model": "gpt-5.1-chat-latest",
+                "tools": [
+                  {
+                    "id": "5934c762-0223-4112-bfb7-88931da17652",
+                    "type": "function",
+                    "async": true,
+                    "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+                    "server": {
+                      "url": "https://hook.eu2.make.com/9inh27jwcxodgecrbwvjosx7i5xedm67",
+                      "timeoutSeconds": 60
+                    },
+                    "function": {
+                      "name": "ghl_delete_event_npc",
+                      "strict": true,
+                      "parameters": {
+                        "type": "object",
+                        "required": [
+                          "fullName"
+                        ],
+                        "properties": {
+                          "fullName": {
+                            "type": "string",
+                            "default": "",
+                            "description": ""
+                          },
+                          "discoveryCallTime": {
+                            "type": "string",
+                            "default": "",
+                            "description": ""
+                          }
+                        }
+                      },
+                      "description": "This tool should be used to delete events through a separate automation by retrieving the contact na..."
+                    },
+                    "messages": [
+                      {
+                        "type": "request-start",
+                        "content": "Let me check that for you. Please give me a moment.",
+                        "blocking": true
+                      }
+                    ],
+                    "metadata": {
+                      "timeZone": "Australia/Sydney",
+                      "calendarId": "TXJCep5hZqntF4H2Hkfl",
+                      "customerPhoneEnabled": true
+                    },
+                    "createdAt": "2025-11-26T03:21:28.748Z",
+                    "updatedAt": "2025-11-26T04:59:54.305Z"
+                  }
+                ],
+                "toolIds": [
+                  "4aa1a306-b057-4b0a-bcc0-f38749637ee0"
+                ],
+                "messages": [
+                  {
+                    "role": "system",
+                    "content": "# NPC Services – “Rita” Voice Agent System Prompt (Phone Discovery Call Reminder + Rescheduling Assi..."
+                  }
+                ],
+                "provider": "openai",
+                "maxTokens": 450,
+                "temperature": 0.9
+              },
+              "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+              "voice": {
+                "model": "eleven_turbo_v2_5",
+                "voiceId": "jBzLvP03992lMFEkj2kJ",
+                "provider": "11labs",
+                "stability": 0.5,
+                "similarityBoost": 0.75
+              },
+              "createdAt": "2025-11-24T04:09:25.199Z",
+              "updatedAt": "2025-11-26T05:25:36.275Z",
+              "transcriber": {
+                "model": "nova-2",
+                "language": "en",
+                "provider": "deepgram"
+              },
+              "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to Rugesh Testing...",
+              "endCallMessage": "Goodbye.",
+              "variableValues": {
+                "phone": "+61433005110",
+                "fullName": "Rugesh Testing VA 2 Naidu VA Testing",
+                "callTitle": "Discovery Call with Rugesh || Rugesh Testing VA 2 Naidu VA Testing",
+                "contactId": "QaCqIe8JFklQV9T4BNW4",
+                "firstName": "Rugesh Testing VA 2",
+                "currentDate": "2025-11-26T05:50:43.241Z",
+                "currentDateUnix": "1764136243",
+                "discoveryCallTime": "2025-11-27T15:00:00+11:00"
+              },
+              "firstMessageMode": "assistant-waits-for-user",
+              "voicemailMessage": "Please call back when you're available."
+            },
+            "timestamp": 1764136547423,
+            "toolCalls": [
+              {
+                "id": "call_Mawm1tGkPBmzRdLYrEbOGMUW",
+                "type": "function",
+                "function": {
+                  "name": "ghl_delete_event_npc",
+                  "arguments": {
+                    "fullName": "Rugesh Testing VA 2 Naidu VA Testing",
+                    "discoveryCallTime": "2025-11-27T15:00:00+11:00"
+                  }
+                }
+              }
+            ],
+            "phoneNumber": {
+              "id": "f53c1661-29e9-4d8c-b595-b9da28cb46dc",
+              "name": "NPC Services",
+              "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+              "number": "+61281056305",
+              "status": "active",
+              "provider": "twilio",
+              "createdAt": "2025-11-12T07:14:18.288Z",
+              "updatedAt": "2025-11-12T07:14:18.288Z",
+              "twilioAccountSid": "{{SECRET:TWILIO_ACCOUNT_SID}}"
+            },
+            "toolCallList": [
+              {
+                "id": "call_Mawm1tGkPBmzRdLYrEbOGMUW",
+                "type": "function",
+                "function": {
+                  "name": "ghl_delete_event_npc",
+                  "arguments": {
+                    "fullName": "Rugesh Testing VA 2 Naidu VA Testing",
+                    "discoveryCallTime": "2025-11-27T15:00:00+11:00"
+                  }
+                }
+              }
+            ],
+            "toolWithToolCallList": [
+              {
+                "type": "function",
+                "async": true,
+                "server": {
+                  "url": "https://hook.eu2.make.com/9inh27jwcxodgecrbwvjosx7i5xedm67",
+                  "timeoutSeconds": 60
+                },
+                "function": {
+                  "name": "ghl_delete_event_npc",
+                  "strict": true,
+                  "parameters": {
+                    "type": "object",
+                    "required": [
+                      "fullName"
+                    ],
+                    "properties": {
+                      "fullName": {
+                        "type": "string",
+                        "default": "",
+                        "description": ""
+                      },
+                      "discoveryCallTime": {
+                        "type": "string",
+                        "default": "",
+                        "description": ""
+                      }
+                    }
+                  },
+                  "description": "This tool should be used to delete events through a separate automation by retrieving the contact na..."
+                },
+                "messages": [
+                  {
+                    "type": "request-start",
+                    "blocking": false,
+                    "contents": [],
+                    "conditions": []
+                  }
+                ],
+                "toolCall": {
+                  "id": "call_Mawm1tGkPBmzRdLYrEbOGMUW",
+                  "type": "function",
+                  "function": {
+                    "name": "ghl_delete_event_npc",
+                    "arguments": {
+                      "fullName": "Rugesh Testing VA 2 Naidu VA Testing",
+                      "discoveryCallTime": "2025-11-27T15:00:00+11:00"
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "scenario": {
+      "dlq": false,
+      "slots": null,
+      "dataloss": false,
+      "maxErrors": 3,
+      "autoCommit": true,
+      "roundtrips": 1,
+      "sequential": false,
+      "confidential": false,
+      "freshVariables": false,
+      "autoCommitTriggerLast": true
+    }
+  },
+  "scheduling": {
+    "type": "immediately"
+  },
+  "interface": {
+    "input": [],
+    "output": []
+  }
+}

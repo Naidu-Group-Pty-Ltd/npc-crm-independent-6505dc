@@ -1,0 +1,485 @@
+{
+  "table": "Emails",
+  "batch": 51,
+  "of": 107,
+  "recordCount": 50,
+  "records": [
+    {
+      "sourceRecordId": "recSkD4SdSjEN9IQZ",
+      "sourceCreatedTime": "2026-04-16T00:52:23.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSkgxwLC1VBpQnv",
+      "sourceCreatedTime": "2026-01-19T05:52:07.000Z",
+      "fields": {
+        "Name": "Leanne Pearman",
+        "Subject": "Support for Castlemaine Community House & Harcourt",
+        "Email": "leannepearman@property.jelliscraig.com.au",
+        "Body": "View in browser\r\n\r\nDear Rugesh,\r\n\r\nThe start of a new year typically brings renewed energy to the property market, as many look ahead to fresh opportunities and a new place to call home. This sadly is not the case for everyone in our tight knit community,",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSkoPucDjee2Mru",
+      "sourceCreatedTime": "2025-10-07T02:49:11.000Z",
+      "fields": {
+        "Name": "Jalin Realty Australia Pty Ltd",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "adrian.chen@jalinrealty.com",
+        "Body": "Edit my requirements\r\nVisit our Website\r\nProperty Alert\r\nTuesday, 30th September 2025\r\nHello Naidu Group Pty Ltd,\r\n\r\nThe following listings matched your Property Alert search requirements.\r\n\r\nPrahran\r\n        304/16 Porter Street\r\nStylish Living in the He",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSlwYD6Dgy7aajd",
+      "sourceCreatedTime": "2026-03-26T00:45:47.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSmcaVexG3wYAXT",
+      "sourceCreatedTime": "2026-01-19T01:07:05.000Z",
+      "fields": {
+        "Name": "First National Real Estate Atherton",
+        "Subject": "2 new properties that match your criteria",
+        "Email": "mail@athertonfn.com.au",
+        "Body": "Dear Rugesh, Here are the results for your email alerts from First National Real Estate Atherton as at 19/01/2026\r\n\r\n\r\n        3               1               1               1105 sqm\r\n$450,000 - $495,000\r\n45 Planet Avenue, Atherton\r\n\r\nThree Bedro"
+      }
+    },
+    {
+      "sourceRecordId": "recSnERdyYruIisEK",
+      "sourceCreatedTime": "2026-02-23T04:42:20.000Z",
+      "fields": {
+        "Name": "Thomas Bettison",
+        "Subject": "COMING SOON TO MARKET | 142 Bushmead Rd, Hazelmere",
+        "Email": "thomas.bettison@housesmart.com.au",
+        "Body": "MARKET PREVIEW - 142 Bushmead Rd\r\n\r\nHi Rugesh,\r\n\r\nPlease see the following property, launching to market in the near future.\r\n\r\nIf you are interested in securing this before the property goes live to all buyers, let me know.\r\n\r\nUpdate my criteria\r\nSay hel"
+      }
+    },
+    {
+      "sourceRecordId": "recSnW2ZWSl9izY83",
+      "sourceCreatedTime": "2026-02-27T03:22:27.000Z",
+      "fields": {
+        "Name": "Marty Maher",
+        "Subject": "Great Ocean Properties Weekly Update",
+        "Email": "marty@greatoceanproperties.com.au",
+        "Body": "Welcome\r\n\r\n\r\nGreat Ocean Properties Weekly Update\r\n\r\n\r\n\r\nDear Rugesh\r\n\r\nHello and welcome to your weekly update direct from the coast.\r\n\r\nA beautiful day on the coast today with a gorgeous mid 20C weekend coming up. This is a great time of year ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSo6b9Kjpicf8EV",
+      "sourceCreatedTime": "2026-01-27T00:07:12.000Z",
+      "fields": {
+        "Name": "Wellmanprop",
+        "Subject": "Unit 6 Reserved❗ 115-119 Clayton Rd, Oakleigh East",
+        "Email": "projects@wellmanpropgroup.com",
+        "Body": "Walking Distance to Monash Uni Clayton Campus\r\n ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌  ‌ ‌  ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌  ‌ ‌   ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌  ‌ ‌   ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌  ‌ ‌  ‌ ‌ ‌  ‌ ‌  ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌  ‌ ‌   ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌  ‌ ‌   ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌  ‌ ‌ ‌ ‌ ‌ ‌ ‌ "
+      }
+    },
+    {
+      "sourceRecordId": "recSp94bpNk5G1sLC",
+      "sourceCreatedTime": "2025-11-18T08:20:32.000Z",
+      "fields": {
+        "Name": "Nicole Frew",
+        "Subject": "Just Listed - PEACEFUL 5-ACRE PLACID HILLS RETREAT, SPACIOUS 4-BED BRICK HOME WITH 4-BAY POWERED SHED",
+        "Email": "nicole@gattonrealestate.com.au",
+        "Body": "Good evening Rugesh\r\n\r\nEscape to peaceful acreage living on this tranquil 5-acre property in sought-after Placid Hills. Just minutes from Gatton, this versatile family home offers the perfect blend of space, comfort, and rural lifestyle appeal.\r\n\r\n\r\n\r\n📍 "
+      }
+    },
+    {
+      "sourceRecordId": "recSpr2eDmHuxGrZf",
+      "sourceCreatedTime": "2025-11-23T23:53:29.000Z",
+      "fields": {
+        "Name": "Ella Foy",
+        "Subject": "Auction Invitation &  Pre-Registration for 41 Tribulation Circuit, Buderim",
+        "Email": "ella@perrycooper.com.au",
+        "Body": "Hello,\r\n\r\nWe’re excited to invite you to the auction at 41 Tribulation Circuit, Buderim, on Tuesday, 25th November at 5:00 pm.\r\nThe property will be open for inspection from 4:30 pm – 5:00 pm, offering you a final opportunity to view the home before the a",
+        "Status": "Error 500",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/HhWXejwHcAQcFSQ2W2n0mA/qt9X5kODZU4JaBw903ofJD376YDNZc7B7bQIeFxLpnX2KUKOWihtr5KkMVXlwAlY0b9c4d029hFOy5gH3e4s9hG2BZJRbLZJDCR_vzOQT1GiEdlfb39MT6neORsDIOtm3KtyjSeqHotEx5-8eWqRnIzR_JCJuT1Xa-6zc75iPqAJxgZ1WJAJEzfv413B4vT8/hruD7k48i9FMCFK5y-JOH3wtZZRikjlLhCkBR5OgYJM",
+            "filename": "outlook_email_attachment.pdf",
+            "type": "application/pdf",
+            "size": 4088762
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "recSqKMBMzxhn5xbO",
+      "sourceCreatedTime": "2026-01-28T22:20:47.000Z",
+      "fields": {
+        "Name": "Mick Lay",
+        "Subject": "Deal of the Week: Could This Be Your Stylish, Low-Maintenance Retreat?",
+        "Email": "michael@lay2.com.au",
+        "Body": "Bayswater – Deal of the Week | Could This Be Your Stylish, Low-Maintenance Retreat?\r\n\r\nThis week’s Deal of the Week showcases a 3-bedroom home packed with modern upgrades and lifestyle appeal.\r\n\r\nKey Highlights\r\n\r\n  *   Three bedrooms, two bathrooms\r\n  * "
+      }
+    },
+    {
+      "sourceRecordId": "recSrOJAHRQw56o5t",
+      "sourceCreatedTime": "2026-01-29T05:40:35.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSrgYhMkeFRWaYB",
+      "sourceCreatedTime": "2025-11-10T06:06:49.000Z",
+      "fields": {
+        "Name": "McGrath Bayside Cleveland",
+        "Subject": "The Weekly Update | 10th November, 2025",
+        "Email": "fombaysidecleveland@mcgrath.com.au",
+        "Body": "The Weekly Update\r\n\r\n\r\n\r\nMcGrath Bayside Cleveland\r\n\r\nHow Gen X has won the generational capital gains race\r\n\r\nGen X has quietly won the property race. John McGrath shares why this generation came out ahead and what it means for today’s buyers, sellers an",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSs1VkOtlxrV4h4",
+      "sourceCreatedTime": "2026-02-05T15:20:06.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSs60PMkS38G0at",
+      "sourceCreatedTime": "2025-11-13T04:20:46.000Z",
+      "fields": {
+        "Name": "Pat O'Driscoll Real Estate",
+        "Subject": "PAT O'DRISCOLL REAL ESTATE NEWSLETTER",
+        "Email": "salesadmin2@podre.com.au",
+        "Body": "0749272122\r\nwww.podre.com.au\r\n\r\n\r\n\r\n\r\n\r\n\r\nPROPERTY OF THE WEEK\r\n\r\n\r\n\r\n\r\n\r\n86 Penlington Street, The Range\r\n\r\n\r\n        $1,100,000\r\n\r\nGRAND QUEENSLANDER IN ELEVATED RANGE POSITION\r\nCombining classic elegance with modern conveniences, this stunning proper",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSsRcbKoAJyV1z1",
+      "sourceCreatedTime": "2026-02-26T04:10:23.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSt61zInAPwG6ul",
+      "sourceCreatedTime": "2026-01-30T02:11:15.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recStQmSgec92RSaj",
+      "sourceCreatedTime": "2026-07-23T15:26:53.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recStjenGH0OWk2ew",
+      "sourceCreatedTime": "2026-03-06T04:37:19.000Z",
+      "fields": {
+        "Name": "Thomas Bettison",
+        "Subject": "COMING SOON TO MARKET | 20 Graham St, Kondinin",
+        "Email": "thomas.bettison@housesmart.com.au",
+        "Body": "MARKET PREVIEW - 20 Graham St\r\n\r\nHi Rugesh,\r\n\r\nPlease see the following property, launching to market in the near future.\r\n\r\nIf you are interested in securing this before the property goes live to all buyers, let me know.\r\n\r\nUpdate my criteria\r\nSay hello "
+      }
+    },
+    {
+      "sourceRecordId": "recSudE3gKe9RZTJS",
+      "sourceCreatedTime": "2025-11-07T03:16:16.000Z",
+      "fields": {
+        "Name": "Karen Bagenal",
+        "Subject": "Your Property Update [Price Reduction Alert]",
+        "Email": "karenbagenal@realwayipswich.com.au",
+        "Body": "0732940099\r\nwww.ipswich.realway.com.au\r\nPrice Update\r\n\r\nHi Rugesh,\r\n\r\nWe've had some price reductions recently on some properties you might be interested in. Give me a call if you have any questions or would like to take a look through any of these.",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSujyJB0pGqkUsT",
+      "sourceCreatedTime": "2025-09-07T00:46:30.000Z",
+      "fields": {
+        "Status": "No URL"
+      }
+    },
+    {
+      "sourceRecordId": "recSvcXKvp8grNQbK",
+      "sourceCreatedTime": "2025-09-06T17:16:58.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSvtFOO4sW71e9D",
+      "sourceCreatedTime": "2026-06-05T04:19:13.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSwFwlpnepwvsRL",
+      "sourceCreatedTime": "2025-08-14T10:38:13.000Z",
+      "fields": {
+        "Name": "Lavanethan Ravichandran",
+        "Subject": "PDF Test",
+        "Email": "lavan@ehsanjv.com",
+        "Body": "Testing"
+      }
+    },
+    {
+      "sourceRecordId": "recSwi3aFoR0TBkpm",
+      "sourceCreatedTime": "2025-10-10T10:43:01.000Z",
+      "fields": {
+        "Name": "Rossana Winters - Realty One Real Estate",
+        "Subject": "89-91 Stanley Street, Rockhampton",
+        "Email": "rossana@realtyonerealestate.com.au",
+        "Body": "Hi there,\r\n\r\nPlease see the attached link to a property that could suit your needs.  We have an open house this Saturday, 11 October 2025, from 9:00 a.m. to 10:00 a.m.\r\n\r\nhttps://www.domain.com.au/rockhampton-city-qld-4700-2020334228\r\n\r\nThis is a two-pr",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/oONUmg6Q7S5Pm7MJBephbg/CT_sKvb0ViuJ0mgn0IgM2xcwzZqso0IqBk7gy851O46hjmLkdIfqs4ULR_ODeQ9AaLDfxRYxjbVNTBsjn3cyCy3iCoCjRegPLHMC52Pf5VHjBkU_gO26L3hSHc04hGdlowIZvsOzz6W5qsbkZsjaYpkWl4cVUHfzlRFwJetl_pHb0vSkUSoGSP4BZaUKKJM-/Tcd7CYNJm29sukB211mcdfxdwpfGNXv2VtpNQttrYtM",
+            "filename": "outlook_email_attachment.png",
+            "type": "image/png",
+            "size": 12297
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "recSxUFJQURbLJG6i",
+      "sourceCreatedTime": "2026-04-07T06:21:38.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSy7BoY6BvFXPBT",
+      "sourceCreatedTime": "2026-02-27T04:07:23.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSy8veHo78x8lnH",
+      "sourceCreatedTime": "2025-11-24T01:36:44.000Z",
+      "fields": {
+        "Name": "Nicole Frew",
+        "Subject": "NEW Listing - RURAL SERENITY ON 2.2 ACRES IN ADARE",
+        "Email": "nicole@gattonrealestate.com.au",
+        "Body": "Good morning Rugesh\r\n\r\n\r\n\r\nEscape to a peaceful country setting where space, comfort and modern living come together beautifully.\r\n\r\n📍 162 Forestry Rd, Adare\r\n\r\n🔎 Open Homes: Thursday 27 Nov | 4:00 – 4:30pm & Saturday 29 Nov | 11:30AM – 12:00pm\r\n\r\n💰 Of"
+      }
+    },
+    {
+      "sourceRecordId": "recSytyW3h8DsCdHf",
+      "sourceCreatedTime": "2025-09-22T17:58:57.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSzBHyRxwT3ghDY",
+      "sourceCreatedTime": "2025-11-28T07:23:14.000Z",
+      "fields": {
+        "Name": "Professionals Caboolture/Morayfield Chippendale",
+        "Subject": "Hi,  Your Suburb Report is ready!",
+        "Email": "j.chippendale@professionalscaboolture.propertyemail.com.au",
+        "Body": "View in browser\r\n\r\nDear, ,\r\n\r\nDo you enjoy keeping up with how the property market is performing in your area? Our team is excited to offer you an exceptional tool to help you investigate and uncover insights into the real estate market.\r\n\r\nOur interactiv",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSzEp6Jmb2738QS",
+      "sourceCreatedTime": "2026-01-09T04:44:21.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSzY7enxjgUBZMV",
+      "sourceCreatedTime": "2026-06-06T02:21:03.000Z",
+      "fields": {
+        "Name": "Jasmine Dawson",
+        "Subject": "Kingsfield Builder Update - 6/06/2026",
+        "Email": "Jasmine@alc.land",
+        "Body": "Dear Builder Partners,\r\n\r\n\r\nHope you’re all having a great weekend!\r\n\r\n\r\nPlease see attached our price list with available lots. We would love to display and advertise your House and Land packages.\r\n\r\n\r\n\r\nKingsfield Town Centre, East Sunbury Village, ",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/iqNu0rtaIB9tWsY869VSRw/3w6ps1t6HCKWdtKmbZsdxs2ahu2LanggWHBWjqhqVvOlFThW3zRZOg8KbU9BmZFpXaVHl2xayHTxcYB3T40kaonWL40whaFCSSB7Pefthge97-sfc0l0Q1TG0o4SeAsvdszgDoKAi2SeoZDyLNIXenj8dSTxEzUBJ_ISnq3AixyajRThWdschTdNF9AAtr6Y/GzdRDQHWIIBisGXVjLMZv5PQsRFbtC-H7IQRJ7atnNQ",
+            "filename": "outlook_email_attachment.pdf",
+            "type": "application/pdf",
+            "size": 220661
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "recT0SfISUShko99l",
+      "sourceCreatedTime": "2026-02-01T02:54:34.000Z",
+      "fields": {
+        "Name": "Adam Bettison",
+        "Subject": "HouseSmart Real Estate Pty Ltd Monthly Market & Property Update",
+        "Email": "adam.bettison@housesmart.com.au",
+        "Body": "Monthly Market & Property Update\r\n\r\nGood Morning Rugesh,\r\n\r\nWelcome to February! The year is already moving by fast, and the property market with it. Many properties have settled after the Christmas break, and new properties moving on to the market refres",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recT0cPhyyRizaEpb",
+      "sourceCreatedTime": "2026-04-22T02:26:39.000Z",
+      "fields": {
+        "Name": "Hermitage Homes",
+        "Subject": "New Dual Key Product Webinar!",
+        "Email": "houseandland@hermitagehomes.com.au",
+        "Body": "Join our free dual key webinar and learn how to maximise your return!  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recT3WR5R7mhXw9VZ",
+      "sourceCreatedTime": "2025-10-31T15:28:14.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recT3benL3oZv86Kz",
+      "sourceCreatedTime": "2026-01-30T02:46:49.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recT4WvW4Qu2t9Ess",
+      "sourceCreatedTime": "2026-03-18T06:31:00.000Z",
+      "fields": {
+        "Name": "Tomoro",
+        "Subject": "March in Motion: Clarity and Confidence",
+        "Email": "hello@tomoro.mypropertyemail.com.au",
+        "Body": "Buying  Selling Auction Renting\r\n\r\n\r\nHi Rugesh,\r\n\r\nThe middle of March arrives with the year now firmly underway. The early pace has settled into a more consistent rhythm, and daily life often feels more organised and purposeful. With routines established",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recT5hBdW4kIqIR4g",
+      "sourceCreatedTime": "2025-10-19T20:49:59.000Z",
+      "fields": {
+        "Name": "Rick Holloway",
+        "Subject": "FW: Duplex Sale.",
+        "Email": "rick@thebobtraskgroup.com.au",
+        "Body": "STOCK UNDER 750K\r\nDuplex Sale Of The Week\r\nBe Quick at this Price\r\nGreat Location\r\nUnique Property\r\nBIG LAND\r\nQueensland's property market is in a significant growth phase, or \"boom,\" driven by sustained population growth, substantial infrastr",
+        "Status": "Error 500",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/rtg9OhiifEwzbINbbyF9GA/Bnk8Dr7Yhqf-I2rzaDwzA8FCh5F4BwGq0yDf7ZQ0Cq7ZRdec-wJshnqzzfG_IJrkBWTobyYytnXBRWX7yLd9uxlXDGzAsD3xWgLCqDmbOvszVEW1K6_8VkMD_-2Tq1_p9ZM5YpiwHXXpbAkkVDVdyNfZUSp0yH5T6wQgD2Nil2kGdGeTke6CE2kcUW7kdTdG/ZsI7K6BEmpvvRCk5PA79ZhuwjkTPYCmEgHxexIPDRfE",
+            "filename": "outlook_email_attachment.png",
+            "type": "image/png",
+            "size": 163414
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "recT66asiTxdHFDuF",
+      "sourceCreatedTime": "2026-06-05T06:54:10.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recT76Eo2rNo4jkv1",
+      "sourceCreatedTime": "2026-06-11T05:38:20.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recT7NQFUZrmZRXGl",
+      "sourceCreatedTime": "2025-11-27T06:51:47.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recT7z9DOVOE27OQO",
+      "sourceCreatedTime": "2025-12-18T05:25:56.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recTBw3szesDbgpaQ",
+      "sourceCreatedTime": "2026-04-21T22:41:10.000Z",
+      "fields": {
+        "Name": "McGrath NSW & QLD CO",
+        "Subject": "McGrath Property Alert",
+        "Email": "concierge@mcgrath.com.au",
+        "Body": "PROPERTY ALERT\r\n\r\n116 Minnamorra Avenue, Earlwood\r\n\r\n\r\n\r\n\r\n\r\n3\r\n\r\n\r\n\r\n2\r\n\r\n\r\n\r\n2\r\n\r\n\r\n\r\nFOR SALE\r\n\r\nFor Sale\r\n\r\n\r\n\r\nAGENTS\r\n\r\nAlexandra Stamatiou-Buda: 0415 901 279\r\n\r\nSpiro Economy: 0438 901 279\r\n\r\nVIEW MORE\r\nVIEW MORE\r\nG03/104a Bay Street, Pagewood",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recTCEmaFaXF1LRkK",
+      "sourceCreatedTime": "2025-10-14T05:10:23.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recTETtGkZlA2AEhe",
+      "sourceCreatedTime": "2026-01-31T01:24:36.000Z",
+      "fields": {
+        "Name": "McGrath NSW & QLD CO",
+        "Subject": "McGrath Property Alert",
+        "Email": "concierge@mcgrath.com.au",
+        "Body": "PROPERTY ALERT\r\n\r\n32 The Parapet, Castlecrag\r\n\r\n\r\n\r\n\r\n\r\n4\r\n\r\n\r\n\r\n2\r\n\r\n\r\n\r\n2\r\n\r\n\r\n\r\nAUCTION\r\n\r\nOn Site - Saturday 7 Mar 2:15pm\r\n\r\n\r\n\r\nVIEW\r\n\r\nSaturday 31 Jan 11:30am - 12:00pm\r\n\r\n\r\n\r\nAGENTS\r\n\r\nHarriet Halmarick: 0415 739 009\r\n\r\nElly Paterson: 0452 239 070",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recTExo3fFENSbqjZ",
+      "sourceCreatedTime": "2025-11-11T02:53:06.000Z",
+      "fields": {
+        "Name": "Thomas Bettison",
+        "Subject": "COMING SOON TO MARKET | 6/45 Norman Street, St James",
+        "Email": "thomas.bettison@housesmart.com.au",
+        "Body": "MARKET PREVIEW - 6/45 Norman Street\r\n\r\nHi Rugesh,\r\n\r\nPlease see the following property, launching to market in the near future.\r\n\r\nIf you are interested in securing this before the property goes live to all buyers, let me know.\r\n\r\nUpdate my criteria\r\nSay "
+      }
+    },
+    {
+      "sourceRecordId": "recTFEjDryJ2FMVq2",
+      "sourceCreatedTime": "2025-11-06T04:23:13.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recTGBlEiqefDFiqh",
+      "sourceCreatedTime": "2025-09-22T12:34:00.000Z",
+      "fields": {
+        "Status": "No URL"
+      }
+    },
+    {
+      "sourceRecordId": "recTI03L4xZe2tMeN",
+      "sourceCreatedTime": "2026-06-05T04:27:30.000Z",
+      "fields": {
+        "Name": "Clare Dawson",
+        "Subject": "The latest property listings from Clare Estate Agents",
+        "Email": "clare@clare.com.au",
+        "Body": "View in browser\r\n\r\nHi NPC\r\n\r\nPlease find below the latest listings from our office that are on the market.\r\n\r\nYou can quickly receive more information about any of the properties by clicking on them to reveal their full details.\r\n\r\nIf your property needs "
+      }
+    },
+    {
+      "sourceRecordId": "recTJczKXGwiClclh",
+      "sourceCreatedTime": "2026-03-26T00:44:38.000Z",
+      "fields": {
+        "Name": "Karen Bagenal",
+        "Subject": "The latest property listings from RealWay Ipswich",
+        "Email": "karenbagenal@realwayipswich.propertyemail.com.au",
+        "Body": "View in browser\r\n\r\nHi Rugesh\r\n\r\nPlease find below the latest listings from our office that are on the market.\r\n\r\nYou can quickly receive more information about any of the properties by clicking on them to reveal their full details.\r\n\r\nIf your property nee"
+      }
+    }
+  ]
+}

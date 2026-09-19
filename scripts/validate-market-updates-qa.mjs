@@ -1,0 +1,12 @@
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+const read = path => readFileSync(new URL(`../${path}`,import.meta.url),'utf8');
+const qa=read('supabase/functions/market-updates-qa/index.ts');
+const service=read('src/services/marketUpdatesService.ts');
+const page=read('src/pages/MarketUpdates.tsx');
+for(const token of ['createCorsHeaders','enforceCsrf',"'market_updates_qa_fast'","'market_updates_qa_deep'",".eq('created_by', userId)",".eq('status','published')","code:'retrieval_failed'",'contextIds.has(k.source_id!)','route_used: ai.telemetry.route_used']) assert.ok(qa.includes(token),token);
+assert.doesNotMatch(qa,/Access-Control-Allow-Origin': '\*'/);
+assert.match(service,/AbortError'\) throw e/);
+assert.match(service,/throw operationalError\('qa'/);
+for(const token of ['qaAbortRef','qaRequestRef','signal: controller.signal','cancelAsk','qaRequestRef.current !== requestId']) assert.ok(page.includes(token),token);
+console.log('Market Updates Phase 8 grounded Q&A contract validated.');

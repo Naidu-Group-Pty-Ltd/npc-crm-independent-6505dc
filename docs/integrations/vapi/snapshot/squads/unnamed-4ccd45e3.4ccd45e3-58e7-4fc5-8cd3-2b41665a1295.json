@@ -1,0 +1,29 @@
+{
+  "createdAt": "2024-06-24T13:35:01.675Z",
+  "id": "4ccd45e3-58e7-4fc5-8cd3-2b41665a1295",
+  "members": [
+    {
+      "assistantDestinations": [
+        {
+          "assistantName": "Ashley",
+          "type": "assistant"
+        },
+        {
+          "assistantName": "Raya",
+          "type": "assistant"
+        }
+      ],
+      "assistantId": "aa1a4037-720f-4bf4-b9c1-9826647a59b2"
+    },
+    {
+      "assistantDestinations": [],
+      "assistantId": "23f3a02a-b007-4233-987f-b28ca364c9cc"
+    },
+    {
+      "assistantDestinations": [],
+      "assistantId": "7beabed3-6bbb-430d-8648-29718e9cd647"
+    }
+  ],
+  "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+  "updatedAt": "2024-06-24T13:36:25.060Z"
+}

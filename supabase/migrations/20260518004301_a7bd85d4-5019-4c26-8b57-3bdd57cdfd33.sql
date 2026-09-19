@@ -1,0 +1,1 @@
+ALTER TABLE public.email_copilot_emails ADD COLUMN IF NOT EXISTS body_preview text GENERATED ALWAYS AS (left(body, 300)) STORED;

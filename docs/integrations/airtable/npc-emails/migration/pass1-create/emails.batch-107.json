@@ -1,0 +1,250 @@
+{
+  "table": "Emails",
+  "batch": 107,
+  "of": 107,
+  "recordCount": 25,
+  "records": [
+    {
+      "sourceRecordId": "reczhEJjx8YoKNHQ6",
+      "sourceCreatedTime": "2025-11-13T00:25:13.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recziVQsMFm395FeN",
+      "sourceCreatedTime": "2025-11-18T04:14:15.000Z",
+      "fields": {
+        "Name": "Rugesh Naidu",
+        "Subject": "NPC Services | Naidu Property Consulting Services | Introduction & Mailing List Allocation",
+        "Email": "rugesh@npcservices.com.au",
+        "Body": "Good afternoon,\r\nI hope this message finds you well.\r\n\r\n I’d like to take a moment to introduce NPC Services also known as Naidu Property Consulting Services, a dedicated buyer’s agency and property consulting business specialising in guiding clients thro"
+      }
+    },
+    {
+      "sourceRecordId": "reczjG1HaL9gY5cxb",
+      "sourceCreatedTime": "2026-01-30T05:42:31.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "reczjiXBs5JXSJct3",
+      "sourceCreatedTime": "2026-01-12T17:04:15.000Z",
+      "fields": {
+        "Name": "Tom Offermann Real Estate",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "sales@offermann.com.au",
+        "Body": "Edit my requirements\r\nVisit our Website\r\nProperty Alert\r\nTuesday, 13th January 2026\r\nHello Rugesh,\r\n\r\nThe following listings matched your Property Alert search requirements.\r\n\r\nNoosa Heads\r\n9 White Beech Road\r\nArresting Modern Cool Luxe; Set Amongst Lush ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "reczllMDoRN2B2mk5",
+      "sourceCreatedTime": "2025-10-18T22:34:49.000Z",
+      "fields": {
+        "Name": "Brodie Richmond",
+        "Subject": "Update Alert: Matched Properties",
+        "Email": "brodie@schmith.com.au",
+        "Body": "Hi Rugesh ,\r\n\r\nSee below, some properties that may be of interest to you.\r\nPlease reach out if you would like any further information, or simply just have a chat.\r\n\r\nBest wishes,\r\nBrodie Richmond\r\n+61493572251\r\nbrodie@schmith.com.au\r\n\r\n\r\n\r\nOpen for "
+      }
+    },
+    {
+      "sourceRecordId": "reczlrDJkkQeQ39ob",
+      "sourceCreatedTime": "2025-11-26T02:12:07.000Z",
+      "fields": {
+        "Name": "Shelter Real Estate",
+        "Subject": "Off Market Opportunities & Upcoming Listings",
+        "Email": "hello@shelterrealestate.com.au",
+        "Body": "Dear Rugesh,\r\n\r\nPlease see below a list of off market opportunities and upcoming listings going live in the next few weeks.\r\n\r\nOFF MARKET & PRE MARKET OPPORTUNITIES\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\nAddress\r\n\r\nType    B/B/C   Land (approx.)  Price guide     Contact Agen"
+      }
+    },
+    {
+      "sourceRecordId": "reczmI66ZA4a0zo9S",
+      "sourceCreatedTime": "2025-12-01T08:10:19.000Z",
+      "fields": {
+        "Name": "Ruby Alegarbes",
+        "Subject": "Your Matching Properties",
+        "Email": "info@robynfaa.com.au",
+        "Body": "Matching Properties\r\n\r\nHi Rugesh,\r\n\r\nHere is the property that match your criteria.\r\n\r\nFor more information, please contact us.\r\n\r\nYour Matching Properties\r\n\r\n55 Grendon Street, NORTH MACKAY\r\n$400,000\r\nWith power already installed, a totally cleared site,",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "reczmVpAxUBiaUFkO",
+      "sourceCreatedTime": "2026-01-30T05:24:24.000Z",
+      "fields": {
+        "Name": "LJ Hooker Greater Springfield",
+        "Subject": "Your Market Update",
+        "Email": "reception@ljhspringfield.com.au",
+        "Body": "Here's a quick update on what’s happening in our local real estate market.  ‌ ‌ ‌ ‌ ‌ ‌ ‌  ‌ ‌ ‌ ‌ ‌ ‌\r\n        Greater Springfield\r\nLocal Market Update | Sales\r\nHi\r\n\r\n\r\nI wanted to share a quick update on what's happening in our local real estate market.",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recznKr833o0VbTjN",
+      "sourceCreatedTime": "2026-01-18T02:26:14.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "reczngQsOp4fipfOy",
+      "sourceCreatedTime": "2025-11-14T00:21:15.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "reczntS6OGDHzoM97",
+      "sourceCreatedTime": "2026-03-06T04:13:59.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "reczohwskSKoEiXPY",
+      "sourceCreatedTime": "2026-02-25T04:37:02.000Z",
+      "fields": {
+        "Name": "Brodie Richmond",
+        "Subject": "Update Alert: Matched Properties",
+        "Email": "brodie@schmith.com.au",
+        "Body": "Hi Rugesh ,\r\n\r\nSee below, some properties that may be of interest to you.\r\nPlease reach out if you would like any further information, or simply just have a chat.\r\n\r\nBest wishes,\r\nBrodie Richmond\r\n+61493572251\r\nbrodie@schmith.com.au\r\n\r\n\r\n\r\nNew Listi"
+      }
+    },
+    {
+      "sourceRecordId": "reczqHxtURDgzAsip",
+      "sourceCreatedTime": "2026-01-24T09:52:13.000Z",
+      "fields": {
+        "Name": "Belle Property Australasia",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "noreply@belleproperty.com",
+        "Body": "Dear Rugesh,\r\n\r\nWe have found the following properties that match your property search requirements. Click here to update your preferences or click here to find a property on belleproperty.com.\r\nCurrent listings.\r\n\r\nDromana\r\n1/15 Codrington Street\r\nFor Sa",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "reczsPQy43LVMGxpi",
+      "sourceCreatedTime": "2026-02-16T04:10:44.000Z",
+      "fields": {
+        "Name": "Michael Enever",
+        "Subject": "NEW Price Property - EASTWOOD - Harcourts",
+        "Email": "michael.enever@harcourts.com.au",
+        "Body": "Hi Rugesh,\r\n\r\nPlease see the below property in EASTWOOD a suburb of BAIRNSDALE featuring a new price that may interest you or someone that you know.\r\nIn a desirable location, this could be your perfect opportunity for an investment and or personal p",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "reczsbRdofhXPlCZ4",
+      "sourceCreatedTime": "2026-06-09T06:45:04.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recztz9o7BJzq2plg",
+      "sourceCreatedTime": "2026-03-02T22:52:07.000Z",
+      "fields": {
+        "Name": "Grant Sutherland",
+        "Subject": "LIQUIDATORS' EOI | Strategic Industrial Landholding",
+        "Email": "gsutherland@sutherlandfarrelly.com.au",
+        "Body": "Liquidators' EOI / 300-400 Broderick Rd, Lara   No Images? Click here\r\n\r\n​\r\n​\r\n\r\nLiquidators' Sale by Expressions of Interest\r\nCLOSING THURSDAY 19 MARCH AT 3:00 PM\r\n300-400 BRODERICK ROAD, LARA\r\n​\r\n​\r\n\r\n\r\nSutherland Farrelly, in conjunction with Collier"
+      }
+    },
+    {
+      "sourceRecordId": "reczvXIBMKkBeD8LU",
+      "sourceCreatedTime": "2026-03-20T02:39:43.000Z",
+      "fields": {
+        "Name": "Adam Bettison",
+        "Subject": "HouseSmart Real Estate Pty Ltd Weekend Home Open Property Update",
+        "Email": "adam.bettison@housesmart.com.au",
+        "Body": "Weekend Home Opens & Property Update\r\n\r\nHi Rugesh\r\n\r\nEach week at HouseSmart brings significant buying, selling and leasing activity. Our team is active across the entire Perth market.\r\n\r\nFor any property related assistance, reach out to us by replying to"
+      }
+    },
+    {
+      "sourceRecordId": "reczw5ZlMTwIfb5fF",
+      "sourceCreatedTime": "2026-02-20T04:33:54.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "reczwtb0BPAgojLmd",
+      "sourceCreatedTime": "2025-12-05T02:59:39.000Z",
+      "fields": {
+        "Name": "Marty Maher",
+        "Subject": "Great Ocean Properties Weekly Update",
+        "Email": "marty@greatoceanproperties.com.au",
+        "Body": "Welcome\r\n\r\n\r\nGreat Ocean Properties Weekly Update\r\n\r\n\r\n\r\nDear Rugesh\r\n\r\nHello and welcome to your weekly update direct from the coast.\r\n\r\nFinally some incredible weather this week and it feels like Summer has arrived.\r\n\r\nIn real estate news this",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "reczxS5VVN82uIn91",
+      "sourceCreatedTime": "2026-04-02T03:45:24.000Z",
+      "fields": {
+        "Name": "Peter Coomer",
+        "Subject": "🏡 Hermitage Stocklist // Lot 314 Clearwater Estate – High Yield 9 Bedroom House & Land // HomePay Accredited Builder",
+        "Email": "pcoomer@hermitagehomes.com.au",
+        "Body": "🏡 Hermitage Stocklist // Lot 314 Clearwater Estate – High Yield 9 Bedroom House & Land // HomePay Accredited Builder ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏ "
+      }
+    },
+    {
+      "sourceRecordId": "reczxVVsbUylc3vT7",
+      "sourceCreatedTime": "2025-11-08T00:21:53.000Z",
+      "fields": {
+        "Name": "Natalie Tekin",
+        "Subject": "Kinbrook by Moremac - Builder Update",
+        "Email": "Natalie@alc.land",
+        "Body": "Dear Builder Partners,\r\n\r\nHope this email finds you well.\r\n\r\nPlease find the attached current Pricelist for Kinbrook.\r\n\r\nShould you require any further information or have any questions, please feel free to contact me.\r\n\r\nKind Regards,\r\nNat\r\n\r\nNatalie Tek",
+        "Status": "Error 500",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/UbgofVaauhI3GeRygHLfbQ/hLbPZ4nVSYDq35K4i0TPU1GHNpaRJXUVrB7nsB7wQ1G3FSTFM7nFpELtXvCAFeTTfRy_J9ToQkrwKyM7RX9z1H9RhbuLbOiksd_bzQF4lXm5x0X3ZX9c9rWhmbFPPS_IOaVQhdmU2H2B8UrEbcxszomV_OUEXyespL70N4P6gHQ3aFQmnEOb8pUTl-tOuoP4/dWpYMydCw7kFDUCyv7SbAbmnKpg6GRS86Q5SQQwC8Ow",
+            "filename": "outlook_email_attachment.pdf",
+            "type": "application/pdf",
+            "size": 182502
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "reczxdmNyl98MD2RK",
+      "sourceCreatedTime": "2025-08-14T10:03:23.000Z",
+      "fields": {
+        "Name": "Lavanethan Ravichandran",
+        "Subject": "Poster Image Test",
+        "Email": "lavan@ehsanjv.com",
+        "Body": "Testing"
+      }
+    },
+    {
+      "sourceRecordId": "reczyAFgeC3wv8GAU",
+      "sourceCreatedTime": "2025-11-14T06:51:56.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "reczyt2cO2gmGvLiT",
+      "sourceCreatedTime": "2026-04-16T05:36:00.000Z",
+      "fields": {
+        "Name": "Matt / MaveriX PM",
+        "Subject": "Aura: $1,060,000 & New Land Listing",
+        "Email": "matt@maverixpropertymarketing.com",
+        "Body": "$1,060,000 in Banya! Fixed Price! First In, First Served! Secure Now! | Download Plan | Rare Registered Vacant Land Available Now! Fixed Price! First In, First Served! | Download BLE | Off-Market Opportunity In Banya Enquire & Inspect Now! 243m2 House. 41"
+      }
+    },
+    {
+      "sourceRecordId": "reczz80vJT31sXuwB",
+      "sourceCreatedTime": "2026-03-31T00:35:38.000Z",
+      "fields": {
+        "Name": "Morgan Business Sales",
+        "Subject": "Morgan Business Sales - Latest Business Opportunities",
+        "Email": "jade@morganbusinesssales.com",
+        "Body": "Hi Rugesh,\r\n\r\nWe have some fantastic new listings to share with you.  Please click the links below to view more details and initiate your enquiry on any of these opportunities.\r\n\r\n\r\n\r\nFor more opportunities\r\n\r\nYou can view all of our current business oppo",
+        "Status": "Error 500"
+      }
+    }
+  ]
+}

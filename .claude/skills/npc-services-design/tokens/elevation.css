@@ -1,0 +1,32 @@
+/* ─────────────────────────────────────────────────────────────────
+   NPC Services — elevation.
+
+   The "warm shadow" is the light theme's signature: rgba(80, 60, 20, …).
+   Shadows in NPC light mode are BROWN, never blue-grey. A cool grey
+   shadow instantly reads as a different product.
+
+   NONE OF THIS APPLIES TO PRINT. WeasyPrint does not render box-shadow
+   usefully and paper has no elevation — the report layer expresses
+   hierarchy with rules, weight and ground colour instead.
+   ───────────────────────────────────────────────────────────────── */
+
+:root {
+  --elevation-1: 0 1px 2px 0 hsl(var(--foreground) / 0.06), 0 1px 3px 0 hsl(var(--foreground) / 0.05);
+  --elevation-2: 0 4px 8px -2px hsl(var(--foreground) / 0.08), 0 2px 4px -2px hsl(var(--foreground) / 0.06);
+  --elevation-3: 0 12px 24px -6px hsl(var(--foreground) / 0.12), 0 4px 8px -4px hsl(var(--foreground) / 0.08);
+  --elevation-4: 0 24px 48px -12px hsl(var(--foreground) / 0.18), 0 8px 16px -8px hsl(var(--foreground) / 0.10);
+
+  /* Warm shadows — the light theme signature. */
+  --shadow-card: 0 14px 34px rgba(80, 60, 20, 0.07);
+  --shadow-card-hover: 0 18px 44px rgba(80, 60, 20, 0.095);
+  --shadow-control: inset 0 1px 0 rgba(255, 255, 255, 0.42), 0 8px 18px rgba(80, 60, 20, 0.045);
+  --shadow-overlay: 0 24px 54px rgba(80, 60, 20, 0.14);
+
+  /* Focus ring — 3px, brand-tinted, never a hard outline. */
+  --ring-focus: 0 0 0 3px hsl(var(--ring) / 0.18);
+
+  /* Blur — glass surfaces. Chrome material, not decoration. */
+  --blur-control: 14px;
+  --blur-panel: 18px;
+  --blur-strong: 22px;
+}

@@ -1,0 +1,155 @@
+# Manual inspection of the archived open-data workbooks the loader will read.
+#
+# land.vic.gov.au and data.sa.gov.au refuse this project's egress (a Cloudflare
+# challenge and a plain 403), and the development container cannot reach
+# web.archive.org at all. A GitHub runner can reach the archive, so this
+# workflow fetches each capture with the `id_` flag (the original bytes) and
+# prints every workbook's sheet names, dimensions, first rows and a few sample
+# rows into the job log, plus a compact JSON fixture for the parsers' tests.
+# It writes nothing anywhere and holds no secret.
+name: Archived evidence source inspection (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      note:
+        description: Why this inspection is being run
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install --quiet openpyxl xlrd
+      - name: Fetch and describe each archived workbook
+        shell: bash
+        run: |
+          mkdir -p out
+          python3 - <<'PY'
+          import io, json, re, sys, time, urllib.request, urllib.error
+          from openpyxl import load_workbook
+          import xlrd
+
+          UA = 'npc-property-dashboard-archive-inspect (admin@aurixasystems.com.au)'
+          WB = 'https://web.archive.org/web/'
+          TARGETS = [
+            ('vic_houses_ts_2015_2025', WB + '20260803040929id_/https://www.land.vic.gov.au/__data/assets/excel_doc/0033/775617/houses-by-suburb-2015-2025.xlsx', r'^(Truganina|Traralgon|Warrandyte|Cobblebank|Melbourne|Ballarat)\b'),
+            ('vic_units_ts_2015_2025', WB + '20260803040929id_/https://www.land.vic.gov.au/__data/assets/excel_doc/0034/775618/units-by-suburb-2015-2025.xlsx', r'^(Truganina|Warrandyte|Melbourne|Richmond|Box Hill)\b'),
+            ('vic_houses_ts_2014_2024', WB + '20251120102927id_/https://www.land.vic.gov.au/__data/assets/excel_doc/0032/756581/houses-by-suburb-2014-2024.xlsx', r'^(Truganina|Traralgon)\b'),
+            ('vic_median_house_q4_2025', WB + '20260803040929id_/https://www.land.vic.gov.au/__data/assets/excel_doc/0030/773742/median-house-q4-2025.xls', r'^(Truganina|Traralgon|Warrandyte|Cobblebank)\b'),
+            ('vic_median_unit_q4_2025', WB + '20260803040931id_/https://www.land.vic.gov.au/__data/assets/excel_doc/0031/773743/median-unit-q4-2025.xls', r'^(Truganina|Warrandyte|Richmond)\b'),
+            ('vic_yearly_summary_q4_2025', WB + '20260803040929id_/https://www.land.vic.gov.au/__data/assets/excel_doc/0029/773741/yearly-summary-q4-2025.xls', r'.'),
+            ('sa_lsg_stats_2025_q1', WB + '20250516131629id_/https://data.sa.gov.au/data/dataset/0d447195-1158-4a3c-8cc7-0e333b87eb72/resource/d83bd5ec-e9f0-4e4b-b894-ff95217fb7de/download/lsg_stats_2025_q1.xlsx', r'^(Prospect|Glenelg|Mount Barker|Adelaide|Norwood|Salisbury|Mawson Lakes)\b'),
+            ('sa_lsg_stats_2024_q1', WB + '20250517063620id_/https://data.sa.gov.au/data/dataset/0d447195-1158-4a3c-8cc7-0e333b87eb72/resource/ed2b7d8c-0776-4cdd-adb4-93cb91fe80c3/download/lsg_stats_2024_q1.xlsx', r'^(Prospect|Glenelg|Mount Barker|Adelaide)\b'),
+            ('sa_lsg_stats_2020_q1', WB + '20210415104708id_/https://data.sa.gov.au/data/dataset/0d447195-1158-4a3c-8cc7-0e333b87eb72/resource/7c11abb4-42e8-4a9e-bc78-0d61a709f7df/download/copy-of-lsg_stats_2020_q1.xlsx', r'^(Prospect|Glenelg|Mount Barker|Adelaide)\b'),
+            ('sa_lsgstats_2015q1', WB + '20170315181941id_/https://data.sa.gov.au/data/dataset/0d447195-1158-4a3c-8cc7-0e333b87eb72/resource/84161cf1-fa29-45a2-9ef8-7e8da286e281/download/lsgstats-2015q1.xlsx', r'^(Prospect|Glenelg|Mount Barker|Adelaide)\b'),
+          ]
+
+          def fetch(url):
+            req = urllib.request.Request(url, headers={'User-Agent': UA, 'Accept': '*/*'})
+            for attempt in range(3):
+              try:
+                with urllib.request.urlopen(req, timeout=90) as r:
+                  return r.status, dict(r.headers), r.read()
+              except urllib.error.HTTPError as e:
+                if e.code in (429, 503) and attempt < 2:
+                  time.sleep(8 * (attempt + 1)); continue
+                return e.code, dict(e.headers), e.read()[:1500]
+              except Exception as e:
+                if attempt < 2:
+                  time.sleep(5); continue
+                return None, {}, repr(e).encode()
+
+          def cell(v, n=18):
+            s = '' if v is None else str(v)
+            s = re.sub(r'\s+', ' ', s)
+            return s[:n]
+
+          def grids_of(data):
+            """Every sheet as a list of rows, for xlsx (openpyxl) or xls (xlrd)."""
+            if data[:2] == b'PK':
+              wb = load_workbook(io.BytesIO(data), read_only=True, data_only=True)
+              return [(ws.title, [list(r) for r in ws.iter_rows(values_only=True)]) for ws in wb.worksheets]
+            if data[:8] == b'\xd0\xcf\x11\xe0\xa1\xb1\x1a\xe1':
+              book = xlrd.open_workbook(file_contents=data)
+              out = []
+              for sh in book.sheets():
+                rows = []
+                for i in range(sh.nrows):
+                  row = []
+                  for j in range(sh.ncols):
+                    c = sh.cell(i, j)
+                    v = c.value
+                    if c.ctype == xlrd.XL_CELL_EMPTY: v = None
+                    row.append(v)
+                  rows.append(row)
+                out.append((sh.name, rows))
+              return out
+            raise ValueError('not a workbook: ' + repr(data[:12]))
+
+          def find_rows(rows, pattern, limit=8):
+            out = []
+            for r in rows:
+              for col in range(0, min(3, len(r))):
+                v = r[col]
+                if v is not None and re.search(pattern, str(v).strip(), re.I):
+                  out.append(r); break
+              if len(out) >= limit: break
+            return out
+
+          fixtures = {}
+          for label, url, pattern in TARGETS:
+            status, headers, data = fetch(url)
+            print(f'\n=== {label} status={status} bytes={len(data)} type={headers.get("Content-Type") or headers.get("content-type")}')
+            if status != 200:
+              print('   body:', data[:300]); continue
+            ext = 'xlsx' if data[:2] == b'PK' else 'xls'
+            open(f'out/{label}.{ext}', 'wb').write(data)
+            try:
+              sheets = grids_of(data)
+            except Exception as e:
+              print('   cannot read:', repr(e)); continue
+            print('  sheets:', [s for s, _ in sheets])
+            fixtures[label] = {}
+            for sname, rows in sheets[:8]:
+              ncols = max((len(r) for r in rows), default=0)
+              nonempty = sum(1 for r in rows if any(v is not None for v in r))
+              print(f'\n  sheet "{sname}": rows={len(rows)} cols={ncols} nonempty_rows={nonempty}')
+              for r in rows[:16]:
+                print('    ' + ' | '.join(cell(v) for v in r[:16]))
+              if len(rows) > 20:
+                print('    ... last 4 rows:')
+                for r in rows[-4:]:
+                  print('    ' + ' | '.join(cell(v) for v in r[:16]))
+              samples = find_rows(rows, pattern, 8)
+              print(f'    sample rows matching {pattern!r}: {len(samples)}')
+              for r in samples:
+                nz = [(i, cell(v, 14)) for i, v in enumerate(r) if v is not None]
+                print('     ', nz[:24])
+              keep = rows[:16] + samples[:10] + rows[-3:]
+              fixtures[label][sname] = [[('' if v is None else (v if isinstance(v, (int, float)) else str(v))) for v in r[:60]] for r in keep]
+              # any licence / copyright text anywhere on the sheet
+              text = ' '.join(str(v) for r in rows for v in r if isinstance(v, str))
+              hits = re.findall(r'.{0,120}(?:Creative Commons|CC BY|copyright|licen[cs]e|Valuer|Land Services|Attribution).{0,120}', text, re.I)
+              for h in hits[:4]:
+                print('    NOTE:', re.sub(r'\s+', ' ', h)[:260])
+            time.sleep(2)
+          print('\n  FIXTURE_JSON_ARCHIVE_BEGIN')
+          print(json.dumps(fixtures, separators=(',', ':')))
+          print('  FIXTURE_JSON_ARCHIVE_END')
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: archived-evidence-source-files
+          path: out/
+          retention-days: 3
+          if-no-files-found: ignore

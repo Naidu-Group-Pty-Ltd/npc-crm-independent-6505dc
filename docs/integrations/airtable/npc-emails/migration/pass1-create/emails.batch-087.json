@@ -1,0 +1,456 @@
+{
+  "table": "Emails",
+  "batch": 87,
+  "of": 107,
+  "recordCount": 50,
+  "records": [
+    {
+      "sourceRecordId": "recnjMIR0wKFwQczC",
+      "sourceCreatedTime": "2026-06-15T08:29:53.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recnkCHw2XTsMu5lB",
+      "sourceCreatedTime": "2026-01-09T04:16:04.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recnkNxdqYGj1jxj8",
+      "sourceCreatedTime": "2026-01-21T00:18:29.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recnkTo13pCI56V7x",
+      "sourceCreatedTime": "2025-10-14T06:04:45.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recnlnMyEKDZMA1cx",
+      "sourceCreatedTime": "2025-12-25T05:26:09.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recnlrES8T2mYxfTJ",
+      "sourceCreatedTime": "2025-10-16T06:16:18.000Z",
+      "fields": {
+        "Name": "David Pino",
+        "Subject": "Weekly Listings Update",
+        "Email": "david@davidpinorealestate.com.au",
+        "Body": "Hello Rugesh ,\r\n\r\n\r\nHappy Thursday!\r\n\r\n\r\n\r\nIf you need any help with selling, leasing or buying a property, feel free to ask. Our team is ready to assist. If you're interested in any specific details or have any questions, let me know!\r\n\r\nPlease see below",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recnmGtqvUCghqC2c",
+      "sourceCreatedTime": "2025-10-09T06:42:34.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recnmNzFGnqSb5Mxl",
+      "sourceCreatedTime": "2026-01-29T07:35:48.000Z",
+      "fields": {
+        "Name": "LJ Hooker Greater Springfield",
+        "Subject": "Open For Inspection",
+        "Email": "reception@ljhspringfield.com.au",
+        "Body": "Check out our upcoming open homes! Could one of these be your new home?  ‌ ‌ ‌ ‌ ‌ ‌ ‌  ‌ ‌ ‌ ‌ ‌ ‌\r\n        Greater Springfield\r\nOpen For Inspection\r\nHi Rugesh\r\n\r\nWhile browsing online gives you a good sense of a property, there's truly no substitute for",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recnmOHO9akb4UlfC",
+      "sourceCreatedTime": "2026-06-04T03:21:14.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recno0rVrxzL1pmVX",
+      "sourceCreatedTime": "2026-04-22T06:11:11.000Z",
+      "fields": {
+        "Name": "LJ Hooker Southport",
+        "Subject": "Wrapping Up April with Strategic Property Decisions",
+        "Email": "southport@ljhooker.mypropertyemail.com.au",
+        "Body": "Buying a Property       Selling a Property      Buying at Auction       Renting a Property\r\n\r\n\r\nHi Rugesh,\r\n\r\nAs the final week of April arrives, the real estate market reflects a more settled and purposeful rhythm. Autumn is now well established, with co",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recnoKxzeXjHLiQzl",
+      "sourceCreatedTime": "2025-10-19T23:56:12.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recnodtshYhgt0s5o",
+      "sourceCreatedTime": "2025-12-19T02:34:10.000Z",
+      "fields": {
+        "Name": "Adam Bettison",
+        "Subject": "HouseSmart Real Estate Pty Ltd Weekend Home Open Property Update",
+        "Email": "adam.bettison@housesmart.com.au",
+        "Body": "Weekend Home Opens & Property Update\r\n\r\nHi Rugesh\r\n\r\nEach week at HouseSmart brings significant buying, selling and leasing activity. Our team is active across the entire Perth market.\r\n\r\nFor any property related assistance, reach out to us by replying to"
+      }
+    },
+    {
+      "sourceRecordId": "recnp7BtoO6B9nCxP",
+      "sourceCreatedTime": "2026-06-11T05:53:10.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recnqvtGOE7fuFtac",
+      "sourceCreatedTime": "2026-06-05T02:44:38.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recnrMQ1zfd7GZE9X",
+      "sourceCreatedTime": "2026-01-28T05:07:57.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recnrRG8Af4IFdeOV",
+      "sourceCreatedTime": "2026-03-12T07:54:27.000Z",
+      "fields": {
+        "Name": "John Hadley",
+        "Subject": "New Property Alert Match: 13 Cave st DONALD",
+        "Email": "noreply@phoenixsoftware.io",
+        "Body": "Hi Rugesh,\r\n\r\nGreat news! A property matching your preferences has just become available.\r\n\r\n\r\n\r\n\r\nFor Sale\r\n13 Cave st, DONALD VIC 3480\r\n$299,900\r\n3 bed | 1 bath | 1 car\r\nVERY STYLISH\r\n\r\nThis home has been renovated over the years into a very modern and "
+      }
+    },
+    {
+      "sourceRecordId": "recnrm3DYupu7h9OF",
+      "sourceCreatedTime": "2026-01-28T07:32:09.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recns1Wr5ySfJot28",
+      "sourceCreatedTime": "2025-11-21T04:43:19.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recns71GXJaqvEmwe",
+      "sourceCreatedTime": "2025-08-18T10:08:16.000Z",
+      "fields": {
+        "Name": "Lavan Kenobi",
+        "Subject": "Test Email",
+        "Email": "lavankenobi@gmail.com",
+        "Body": "Testing",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recntACsQhAdukgw3",
+      "sourceCreatedTime": "2026-01-01T03:37:15.000Z",
+      "fields": {
+        "Name": "Geoff Sellars",
+        "Subject": "Weekly Listings Update",
+        "Email": "geoff.sellars@raywhite.com",
+        "Body": "View this email in your browser\r\nDear NPC Services,\r\n\r\nPlease find below a collection of our latest property listings on the market! For further details on any of these properties, simply click on the property image.\r\n\r\nIt’s an exciting time for property ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recntY3bNZMXMB9DA",
+      "sourceCreatedTime": "2026-03-19T10:09:42.000Z",
+      "fields": {
+        "Name": "Brodie Richmond",
+        "Subject": "Update Alert: Matched Properties",
+        "Email": "brodie@schmith.com.au",
+        "Body": "Hi Rugesh ,\r\n\r\nSee below, some properties that may be of interest to you.\r\nPlease reach out if you would like any further information, or simply just have a chat.\r\n\r\nBest wishes,\r\nBrodie Richmond\r\n+61493572251\r\nbrodie@schmith.com.au\r\n\r\n\r\n\r\nPrice Red"
+      }
+    },
+    {
+      "sourceRecordId": "recnukNjU31yNqXLg",
+      "sourceCreatedTime": "2026-01-22T03:59:26.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recnvdk7TtbWPUPym",
+      "sourceCreatedTime": "2026-06-11T07:21:57.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recnwZLUMUQCo3tm4",
+      "sourceCreatedTime": "2025-11-11T05:12:34.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recnxRH0hu7GGuDl0",
+      "sourceCreatedTime": "2025-11-14T04:26:46.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recnyBl8dlUMYNjSh",
+      "sourceCreatedTime": "2026-03-27T09:16:59.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recnz9eN50eRNo4LG",
+      "sourceCreatedTime": "2026-06-15T08:36:29.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recnzOaupscxC3Pwl",
+      "sourceCreatedTime": "2026-01-15T00:12:33.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recnzn5GKSX7aSfSU",
+      "sourceCreatedTime": "2026-03-27T02:43:53.000Z",
+      "fields": {
+        "Name": "Tom Offermann Real Estate",
+        "Subject": "Noosa Property Wise with Tom Offermann",
+        "Email": "sales@offermann.com.au",
+        "Body": "THE OFFERMANN - Prestige Property Edition\r\nApril 2026\r\n\r\nOpen\r\n \r\n\r\nStellar Front Row: 32m Absolute Beachfront\r\n\r\nView\r\n \r\n\r\n\r\n\r\nIndisputable Glamour; Spectacular Pool Pavilion & Sun Terrace\r\n\r\nView\r\n \r\n\r\nA Landmark Estate of Provenance and Prestige\r\n\r\nVi",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "reco0GkRty17mABzb",
+      "sourceCreatedTime": "2025-09-23T04:03:09.000Z",
+      "fields": {
+        "Name": "David Pascoe",
+        "Subject": "RE: NPC Services | Naidu Property Consulting Services | Introduction & Mailing List Allocation",
+        "Email": "david@buyaustralianproperty.com.au",
+        "Body": "Sorry, don’t deal with buyers agents, not interested.\r\n\r\n\r\n\r\nP.S. I am alive, breathing and always grateful. CARPE DIEM!\r\n\r\nDisclaimer & Confidentiality:\r\nPlease consider the environmental impact before printing this email and its attachment(s)\r\nThe infor",
+        "Status": "Error 500",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/xZQoJp0EyGNO_KP6Fq4CrA/W97LfooZ58is2dRP-n4bQdeb70-ShscdFgf4mvUpvW0P-CkoedfDW8JDVGleAcbbfDIMKyJ96toNpqTeRcBzbarJ1KigmLR0SHVK5vRxHMuan_hYRgkI6j0tubZjPWh2div2daGpuXytycbLZIVCml96GwGjZJQcomGFbP2FlsqQGG5yHUxaaKgEthCuw3ek/WOiFBK6fv2hSE3OdvIrAQ0fChcSknZfiPVaIalHsmjg",
+            "filename": "outlook_email_attachment.png",
+            "type": "image/png",
+            "size": 3465
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "reco15CCviIXs9EMc",
+      "sourceCreatedTime": "2026-04-17T05:06:03.000Z",
+      "fields": {
+        "Name": "Hermitage Homes",
+        "Subject": "🏡 Hermitage Stocklist // New Dual Key Release // Homepay Accredited Builder - 17/04/2026 ",
+        "Email": "houseandland@hermitagehomes.com.au",
+        "Body": "🏡 Hermitage Stocklist // New Dual Key Release // Homepay Accredited Builder - 17/04/2026  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏ ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "reco1nmbn90Pa0iQP",
+      "sourceCreatedTime": "2026-04-17T10:06:06.000Z",
+      "fields": {
+        "Name": "Michael Enever",
+        "Subject": "NEW Listing - STRATFORD - Harcourts",
+        "Email": "michael.enever@harcourts.com.au",
+        "Body": "Hi Rugesh,\r\n\r\nPlease find below a residential property listing located in STRATFORD that represents tremendous opportunities for permanent occupancy or investment options and that may be of interest to you or someone that you know.\r\nIf you would lik"
+      }
+    },
+    {
+      "sourceRecordId": "reco1wLHIUPy9FIFq",
+      "sourceCreatedTime": "2025-08-18T03:43:45.000Z",
+      "fields": {
+        "Name": "Rugesh Naidu",
+        "Subject": "NPC Services | Naidu Property Consulting Services | Introduction & Mailing List Allocation",
+        "Email": "rugesh@npcservices.com.au",
+        "Body": "Good afternoon,I hope this message finds you well. I’d like to take a moment to introduce NPC Services, a dedicated buyer’s agency and property consulting business specialising in guiding clients through every stage of their investment journey.At NPC Services, we go beyond sourcing properties, we deliver a complete end-to-end solution, including strategic property planning and full support through due diligence, negotiations, and settlement.We currently have qualified clients actively ready to purchase across a range of budgets, and we’re looking to build strong relationships with agencies like yours. To streamline the process, it would be greatly appreciated if you could please add our acquisitions team to your weekly property mailing list below:Property@npcservices.com.auThis ensures our research division receives your latest on and off-market listings, promptly for reviewal and assessment, allowing us to respond quickly and match opportunities with ready buyers.I’m confident this collaboration will lead to excellent results for both your agency and our clients.Please feel free to contact me if you have any questions.Kind Regards[cid:03d4315d-df38-4d8b-a37d-5a0aefda1054]Mobile: 0433 005 110 | Email: rugesh@npcservices.com.au | Website: www.npcservices.com.au [http://www.npcservices.com.au/]\n[cid:03639952-a6b8-498a-a356-efbf03529f05] [http://www.linkedin.com/in/rugesh-naidu-1b0003123][cid:0e1f0afc-011c-4cfe-84ab-4f50ae4fc662] [https://www.instagram.com/npc.services]A blue circle with a white letter f in it AI-generated content may be incorrect. [cid:1979e8b8-5c04-4b23-adb7-c287a00f8d26] [https://www.facebook.com/profile.php?id=61577033127001]\nAddress: Level 5 Nexus Norwest, 4 Columbia Ct, Norwest NSW 2153\nNaidu Group Pty Ltd trading as Naidu Property Consulting ServicesACN: 684 555 771 | ABN: 50 684 555 771\nDisclaimer:\nAs a Professional Property Consultant & Buyers Agent, we provide information and advice based on our expertise and experience in the real estate market. Please be aware that the advice and insights offered are for general informational purposes only and should not be considered financial advice. While we strive to ensure the accuracy and relevance of the information provided, real estate markets are dynamic and subject to change and cannot guarantee the future performance or outcomes of any property investment. It is important to understand that real estate investments carry risks, including market fluctuations, changes in property values, and potential financial losses. Our services include assisting you in identifying and evaluating potential opportunities, negotiating purchase terms, and navigating the transaction process. Any decisions to purchase, sell, or invest in real estate should be made after careful consideration and consultation with appropriate financial, legal, and tax advisors. By engaging our services, you acknowledge that you have read and understood this disclaimer and agree to take full responsibility for your property-related decisions. Always conduct your own research and due diligence to ensure that any property transaction aligns with your financial objectives and risk profile.",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/Bjpcg1Is0HM5RgwFUiZr1A/0Og_QLfRDjdrQmO_ecpmVNtOzQbkrqtLR33sjot0nEc3yDlijKmipfUPua_-87Wr6tg4U9z_dGm1skAk0l5Kt3ZoCAR_-G_Linu7nF-vIswjG2br3zS3yu1HtTLEs1tGKz4azHBPIqOg23TK-abYuKwzi6jWJB09ySMF-FDi8zxt3pOWHInA9DKiJmc60gz3/iZLSxzRq102MmOEVm03uADsQKzNpu2KwhcZ85xtTKM4",
+            "filename": "outlook_email_attachment.png",
+            "type": "image/png",
+            "size": 3465
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "reco3AeB31nrTTTL2",
+      "sourceCreatedTime": "2025-09-27T07:16:15.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "reco3ieKJy7DZVprd",
+      "sourceCreatedTime": "2026-02-20T03:24:25.000Z",
+      "fields": {
+        "Name": "Ray White Rural Corporate",
+        "Subject": "Ray White Rural FirstByte",
+        "Email": "rural.corporate@raywhite.com",
+        "Body": "Hello ! Welcome to FirstByte\r\nYou are receiving this email as a valued member of the Ray White Rural database. FirstByte is our weekly rural property e-magazine that features our newest rural property listings. As a member of FirstByte, you’ll be the firs",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "reco3saLWDIXOKl2a",
+      "sourceCreatedTime": "2025-11-21T03:20:37.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "reco54pgT0bHWevV4",
+      "sourceCreatedTime": "2026-01-16T04:54:02.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "reco58c6HjOxliiN0",
+      "sourceCreatedTime": "2025-09-01T02:02:21.000Z",
+      "fields": {
+        "Name": "Thomas Bettison",
+        "Subject": "COMING SOON TO MARKET | 11 Pindi Court, South Guildford",
+        "Email": "thomas.bettison@housesmart.com.au",
+        "Body": "[https://resize.lockedoncloud.com/w:300-lovii/13/ac/9c/16/33/08/47/45/a8/4c/db/31/1d/e7/52/af.jpg] MARKET PREVIEW - 11 Pindi Court Hi Rugesh,\n\nPlease see the following property, launching to market in the near future.\n\nIf you are interested in securing this before the property goes live to all buyers, let me know.\n\nUpdate my criteria [https://open.lockedoncloud.com/ls/click?upn=u001.grSFijfx9QwcGN69aE-2BVAoEPfuAfSy5Ks6c-2Bn1nEvSLX2ObFNPWd4CyiIqokNNeZLSBImWEDTb0UhFJS-2FWXbTlfiLqniN4B8ZeYX2Kve-2BiG2uC9Pfi8hSRvkWPeptem2SCmsFOXO7c8yum9sNqYakobRb8ztABK-2BwLBfM4WC5dhc-2BDp5rbY5hzksZhggFJKPHWsOhUhIl-2BbnB5g-2BPLjVIkNBwMyRsuoaT6bEFWpvfhz1-2BfFOtcb1eRx00I4lXpMMrerEoQhCyjoyblLWlxamt2RNAk3g3MgO9qdnIwG-2BCEI-3DqsxU_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNP9FTRpZW8lvJFo1xdNKy4idio3QyCgwNdOVzuylNny5QE3cosFumL7LVl573QFALNtUME4rh961m8H-2FeKlLRluaHi9ivGZGU9a4zh8BgLU0aaiXiNUKDkU5Tj1Xw6iAaDn2a5jSgL5qQT7I-2FfYis4BD34TSeEyfGkMXvcmlV3L4OaLhQA-2F3vYr-2BgNRk-2BIw5liVoPS-2BgbfKcXaLTtLk3TmNMrgVZ85WgxpvAY45XpcvV49MQ99882rAoONZy7qWduKKIx7OfcWtRV5ARvqfoCl5Q-3D-3D]Say hello on Instagram [https://open.lockedoncloud.com/ls/click?upn=u001.UoJk9c7Fu9zG2Voz7TGO0Bo5wV6v9fbUhHa8GotdxWz0qj5RBp-2FLQxmF-2B2FAlLTPIop-2F0BYQCZwYHg4pu5WV1A-3D-3DcngP_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNP9FTRpZW8lvJFo1xdNKy4idio3QyCgwNdOVzuylNny5QE3cosFumL7LVl573QFALNtUME4rh961m8H-2FeKlLRluaHi9ivGZGU9a4zh8BgLU0aaiXiNUKDkU5Tj1Xw6iAaD4JJ1jVm6p7dlOwm7kZeMgUm-2F4YPxJhJAGEBN5eP-2FVHJVb86Gldwk5-2F0Nvy0CLTQ55KlsPpEelye9hrj0GoBWPrtGlw-2BTRP1ut3NuwSYFDRBVsVMoOoruG7JT6ghDurIxRgGV6cnRSwP8SCM1cLviVQ-3D-3D][https://resize.lockedoncloud.com/w:1300-lovii/25/57/d9/24/e4/34/42/8d/82/d3/15/0f/02/09/65/01.jpg] [https://open.lockedoncloud.com/ls/click?upn=u001.tWMArd79sd2M8kyJfTWHQUbqamgFHfZiYbIMUJWBDlxti3LzHY1hbRNAwXDeBnIFaIFlQ-2F-2BtWepHOk9TQkmgTCczWU6HPQ-2F4Wp6yzRcYiEnmAQYHboh0OXx5O13MxQ3Sp0HfljR6wgEq9SPvDEt0GU0XOoRRkasBhwnG4nYudWSN6rGGSa0mASwDzw9z3g63TO903k-2BbVjrHKXjoB1A-2F8sTKy44jDaBr8geg2yPNDPqIcMplA1Bz3e0HK-2BU1f4EqIRikpXtBsCQcypAugZdvAz8oTm32LMNrgqChV-2FRCvy-2BC6q-2FG8Uzd-2FyB41trPZJ038bqyeZUn568qHBibYog5-2Ft5yIS54ckSUe2hia8jHwRqcKEfDUobhgOO1EAOG19yEHGxXP9xE1QrWeIc3wAkXZgnrHeDdC08JTAHaWtGAcFu2Y37-2Btf3A6hIUOZMMZ-2FcNwRreZh7ihFJ8St7IRqIFvnJoD3tFe-2FzwVOT73SXSknGPLn2dDHvGCDDl4klnzwEIIMJm7OX6t-2FTVJ07sffRXuSORR1tGC4OSVRWHm9Y-2FsDfpSeLY-2FTUqU-2B4s6i7bOX9k9amj7UrWHEmb9uWiw-2F-2BGife3bm1EK6NwfsDa6IpdNUlLs3MtPokt5Nl-2Bt-2FL7hjVh-2FyDCnNfIkdzu-2FbFhlc6kMLdL-2F5d6-2BPWxe-2Bj6ZI3otnhRW5Iwd5fgrQVPMkQ-2F0-2FbTQ6h3e7HKoZrrEauEkJrj25RO5-2F1S-2BiNStjvaQ-2Bg-2FE0EWzjRqES1EHKyrC-2BvpuK9PuWrptA9keLz32zuUnphLYg-3D-3DLUrv_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNP9FTRpZW8lvJFo1xdNKy4idio3QyCgwNdOVzuylNny5QE3cosFumL7LVl573QFALNtUME4rh961m8H-2FeKlLRluaHi9ivGZGU9a4zh8BgLU0aaiXiNUKDkU5Tj1Xw6iAaDKJQ5-2FJqyW3bXib5z0e8ZetVZjjx6Mlfb1PWt3tolrwY-2FijXG7DwvtoHKOF4mVvsQAbJweciwgiuZ3Vq2GFrTUKclDpqsf3LLOeQg7uz9H2qUJHyN-2BzLBkQFIYBTIMX3VdeSjbIXWVw0-2FeorWzs5s6Q-3D-3D]11 Pindi Court, South Guildford \nFrom $789,000 4\nBed 2\nBath 2 \nCar Large Family Home with Family Room, Outdoor Patio & Huge Backyard!Welcome to this absolutely refreshing four-bedroom, two-bathroom property tucked away in a secluded position within South Guildford. Featuring a huge block size of approximately 534 square metres, this property has more than enough room for the growing family. With around 140 square metres of internal floorspace - including a large living area, separate family room, and spacious bedroom sizes - this property is the perfect next home. Don't miss out!\n\nProperty Highlights:\n• Four-bedroom, two-bathroom property\n• Built approximately 2002\n• Total lot area of approximately 534 square metres\n• Internal floorspace of approximately 140 square metres\n• Secluded position to the back of Pindi Court\n• Double carport, with pedestrian access to rear backyard\n• Welcoming entry zone leading to large family room to the front of the home\n• Built-in cabinetry to the family room\n• Main bedroom to the front of the house, with air conditioning, private ensuite and large walk-in robe\n• Minor bedrooms to the rear of the property, featuring built-in robes\n• Main living and dining area next to central kitchen\n• Air conditioning unit covering main living/dining area\n• Large windows for lots of natural light\n• Kitchen features overhead rangehood, gas hotplates, lots of cabinetry\n• Sliding door access to outdoor area\n• Patio with raised roof, perfect for outdoor entertainment\n• Built-in bar area\n• Backyard with lawn area, plus garden shed for storage View [https://open.lockedoncloud.com/ls/click?upn=u001.tWMArd79sd2M8kyJfTWHQUbqamgFHfZiYbIMUJWBDlxti3LzHY1hbRNAwXDeBnIFaIFlQ-2F-2BtWepHOk9TQkmgTCczWU6HPQ-2F4Wp6yzRcYiEnmAQYHboh0OXx5O13MxQ3Sp0HfljR6wgEq9SPvDEt0GU0XOoRRkasBhwnG4nYudWSN6rGGSa0mASwDzw9z3g63TO903k-2BbVjrHKXjoB1A-2F8sTKy44jDaBr8geg2yPNDPqIcMplA1Bz3e0HK-2BU1f4EqIRikpXtBsCQcypAugZdvAz8oTm32LMNrgqChV-2FRCvy-2BC6q-2FG8Uzd-2FyB41trPZJ038bqyeZUn568qHBibYog5-2Ft5yIS54ckSUe2hia8jHwRqcKEfDUobhgOO1EAOG19yEHGxXP9xE1QrWeIc3wAkXZgnrHeDdC08JTAHaWtGAcFu2Y37-2Btf3A6hIUOZMMZ-2FcNwRreZh7ihFJ8St7IRqIFvnJoD3tFe-2FzwVOT73SXSknGPLn2dDHvGCDDl4klnzwEIxx0ldhsroZz6Zskru6nO7QJh7bowdZDLVYo-2BALv2L3o-2FR62Htqer0UeA33kYQamdOUTMZKMFgGNTlbwmaZhuQOtOWjquibbiBHzLBE-2Fp8zzOD-2FODmNFA9jDFTaZ7HV7W1kv5d4ZdBjSbrN52X5npBG-2BFQas17xl75AHnbzAqVUPtK7oOx83UhRiHYNNoxCqa6FN92DNkrP2GZe0EUHlV0IHa1-2FLZW0Gbv3ABj3HAyJVEHKIfjg4pNiIPoqRitunUFpyk_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNP9FTRpZW8lvJFo1xdNKy4idio3QyCgwNdOVzuylNny5QE3cosFumL7LVl573QFALNtUME4rh961m8H-2FeKlLRluaHi9ivGZGU9a4zh8BgLU0aaiXiNUKDkU5Tj1Xw6iAaDUCc6JO5Be8kR2GDKvmHZFx7ioVfLVLjI5ZsuPCwx-2F08otCI-2FFO1VeCj5MuAGUrRKQBbwJWG2OEKLTJq9GvtuI3jVIj9HFjwk1h7N7o-2F0C6f6eP3gv17GvZpgMtVKFV1-2FXbb0JDh6JTpueVzhRhxWyg-3D-3D]\nWatch Video [https://open.lockedoncloud.com/ls/click?upn=u001.tWMArd79sd2M8kyJfTWHQUbqamgFHfZiYbIMUJWBDlxti3LzHY1hbRNAwXDeBnIFaIFlQ-2F-2BtWepHOk9TQkmgTCczWU6HPQ-2F4Wp6yzRcYiEnmAQYHboh0OXx5O13MxQ3Sp0HfljR6wgEq9SPvDEt0GU0XOoRRkasBhwnG4nYudWSN6rGGSa0mASwDzw9z3g63TO903k-2BbVjrHKXjoB1A-2F8sTKy44jDaBr8geg2yPNDPqIcMplA1Bz3e0HK-2BU1f4EqIRikpXtBsCQcypAugZdvAz8oTm32LMNrgqChV-2FRCvy-2BC6q-2FG8Uzd-2FyB41trPZJ038bqyeZUn568qHBibYog5-2Ft5yIS54ckSUe2hia8jHwRqcKEfDUobhgOO1EAOG19yEHGxXP9xE1QrWeIc3wAkXZgnrHeDdC08JTAHaWtGAcFu2Y37-2Btf3A6hIUOZMMZ-2FcNwRreZh7ihFJ8St7IRqIFvnJoD3tFe-2FzwVOT73SXSknGPLn2dDHvGCDDl4klnzwEIxiBNtZfRmOBTO8e1c-2F1fTZXuuAvIusBE-2FeIWeOgZ3ucxJdDGQBamSsT9nXY-2FPkrcA-2BjYliq-2F-2Fq0cToS0JqazHWhhfvcEE6YfgscU1Jw3kewRDUWXtMuyeyZWVG1SrgelkBXeo0-2FSm6JY7i5mzT4kfAtu3hpkvYY-2B8ZJFYqgB8cln4ny97ynsMRqg-2FVSIbBIViyRRwRAWYHulhsjrktJpCQ-3D-3DiFyF_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNP9FTRpZW8lvJFo1xdNKy4idio3QyCgwNdOVzuylNny5QE3cosFumL7LVl573QFALNtUME4rh961m8H-2FeKlLRluaHi9ivGZGU9a4zh8BgLU0aaiXiNUKDkU5Tj1Xw6iAaDEQppKrLyGEhNHcRt-2BV4Q8vtNH8vZqgdvmoR0fcYLhrui6Ip1eYw0BnBJEajy3deq5YiEd0-2BulJNmPW3uKhf-2Bsr2McyNyqRNlvinAhx87YhYgBobfFgan9mroSglIkvt5uu8fjzJ3V1qLCNEyc-2B1pqw-3D-3D]INSPECT\nBy appointment only KEY DETAILS \nLand size: 534 sqm\nWater rates: $1,200 per annum\n[https://resize.lockedoncloud.com/w:300-lovii/f7/b2/e4/0f/84/3d/48/75/81/1a/5b/5a/59/40/6f/b7.jpg] Adam Bettison\nEmail [adam.bettison@housesmart.com.au] | 0409 929 128 Kind Regards,\n\nThomas Bettison \nSales & Commercial Manager \nShop 18 & 19, 222 - 226 Belmont Avenue, Cloverdale WA 6105 \n\nM: 0401 378 355\nE: thomas.bettison@housesmart.com.au\nwww.housesmart.com.au\n\n\n[https://resize.lockedoncloud.com/w:490-lovii/8f/16/d8/17/a3/09/4d/47/b4/f9/c5/e3/7c/13/3f/92.jpg] Attention:\nThe information contained in this message and or attachments is intended only for the person or entity to which it is addressed and may contain confidential and/or privileged material. Any review, retransmission, dissemination or other use of, or taking of any action in reliance upon, this information by persons or entities other than the intended recipient is prohibited. If you received this in error, please contact the sender and delete the material from any system and destroy any copies. \n\n\n\nThis email was sent to property@npcservices.com.au from Thomas Bettison at HouseSmart Real Estate Pty Ltd\nShop 18 & 19/222-226 Belmont Avenue, Cloverdale\n- www.housesmart.com.au \n\nUpdate your preferences [https://open.lockedoncloud.com/ls/click?upn=u001.grSFijfx9QwcGN69aE-2BVAoEPfuAfSy5Ks6c-2Bn1nEvSJn5qfrQ4RvIFRcxfkZ35c9nG7Rc1Rbq21MOp3KeAX10D0tj-2B-2F9GPUNmc90go4-2FO3E3acmMu-2FpOlQX2aMijmO-2FR0O2593MGG2gQJLp5cxbVubF-2B-2BlDk-2BYAXFr1psNUNSrSofp8Maop4XLrINXqHhv8V1N3IzCq6nXYljkFtCJ5E-2Be4aAor69jw9fgF5Re9l9pipQdVJAGvsj45sR32cHEjB4XoGFc8bTjIUum7ZyYc8EB1bXf0VIxFfZ3S05Y5Di2Q-3DHTnf_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNP9FTRpZW8lvJFo1xdNKy4idio3QyCgwNdOVzuylNny5QE3cosFumL7LVl573QFALNtUME4rh961m8H-2FeKlLRluaHi9ivGZGU9a4zh8BgLU0aaiXiNUKDkU5Tj1Xw6iAaD9fwXo1xgrkjpLabv6Vrqa4x1Iq27DjOCdWH9XV-2B-2FEFfp7RmyEsh3KcS02XZdvmNy-2FEBP5CKrGbsUNW-2F4D3P1xgg0wd07GI1e-2BTbXy4BVAjE3rk6A5bKzlZukW8j-2FRPK42CvVBislxl-2F8yA-2BqQlhcbA-3D-3D] | Unsubscribe [https://open.lockedoncloud.com/ls/click?upn=u001.grSFijfx9QwcGN69aE-2BVAoEPfuAfSy5Ks6c-2Bn1nEvSJn5qfrQ4RvIFRcxfkZ35c9nG7Rc1Rbq21MOp3KeAX10D0tj-2B-2F9GPUNmc90go4-2FO3E3acmMu-2FpOlQX2aMijmO-2FR0O2593MGG2gQJLp5cxbVubF-2B-2BlDk-2BYAXFr1psNUNSrSofp8Maop4XLrINXqHhv8V1N3IzCq6nXYljkFtCJ5E-2Be4aAor69jw9fgF5Re9l9pipQdVJAGvsj45sR32cHEjB4XoGFc8bTjIUum7ZyYc8EB1bXf0VIxFfZ3S05Y5Di2Q-3DHbgV_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNP9FTRpZW8lvJFo1xdNKy4idio3QyCgwNdOVzuylNny5QE3cosFumL7LVl573QFALNtUME4rh961m8H-2FeKlLRluaHi9ivGZGU9a4zh8BgLU0aaiXiNUKDkU5Tj1Xw6iAaDBuAWWP2K0v3WrdpI2e0nRqYHe22E-2BYnU9T7-2B7iHxShar4k-2BZia5gDLovGWtlx-2B7XvEq62MPFH3lYrRmyXaZA4HbAmk7uZQHu9aob-2FheHy2bv1B22IG52TeKlEWK6pp537iMQKUWlWNgIhKV7C1ay5g-3D-3D] \n\nPowered by LockedOn [https://open.lockedoncloud.com/ls/click?upn=u001.z9OfLo0WsjRLa1-2FMRE80hdSH4WkrlzjGvST-2B-2Ffjb6dQ-3DVVv5_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNP9FTRpZW8lvJFo1xdNKy4idio3QyCgwNdOVzuylNny5QE3cosFumL7LVl573QFALNtUME4rh961m8H-2FeKlLRluaHi9ivGZGU9a4zh8BgLU0aaiXiNUKDkU5Tj1Xw6iAaDGzBTLQUMZbok8AHJ-2FlC-2BpmcykfcUY-2FbIVz3zYopNv-2FnSE0QEqs97mhhz7fVDDP-2B2KUHLwsSAniP3qhmvNhMnP7lr6tP9C7eNG0pJzSxhUiwhGNaO9D7y1-2Fsi-2B4uauBfIwisBjg0W0NJEzwFX9opPIg-3D-3D]\n\n[https://open.lockedoncloud.com/wf/open?upn=u001.WxS38R8iW630GnyWkMljOV-2BXDH84R4rTo3FDBLxDkF0LL5NA8ACs1TV2hAElxX97ZNgwlpUgM4oHJ3ryyRpWRkZb10jnqe0QIQYrWlSuyuxdH-2F0-2FN3Nvm7luUEhIjDZdJ-2FCBOV0-2FSs-2F-2BrFtFUeH7u8QVf-2BsVocLB4CWjZLUmHWua9PztuURs4geLSB4NfgVJ7JDbvZMaxUYlXoWXjnB3DIYU8msvvVShJbSxInMEqDAF72heJ9e7t4KFQFn004YDbjWUh1JFWtucoP-2FsCfA7aZvkD4wR4u19fcvh7zNUVTCJg04eLDIgMxoHSWCcqcsWArk-2FyhODnwCTQKUsxOa9kQ-3D-3D]"
+      }
+    },
+    {
+      "sourceRecordId": "reco5hw193q6cPpEQ",
+      "sourceCreatedTime": "2025-09-22T12:03:36.000Z",
+      "fields": {
+        "Name": "Jalin Realty Australia Pty Ltd",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "adrian.chen@jalinrealty.com",
+        "Body": "Edit my requirements\r\nVisit our Website\r\nProperty Alert\r\nFriday, 12th September 2025\r\nHello Naidu Group Pty Ltd,\r\n\r\nThe following listings matched your Property Alert search requirements.\r\n\r\nDocklands\r\n        1905/9 Waterside Place\r\nExperience Tranquil L",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "reco6E7jObFtfOMtu",
+      "sourceCreatedTime": "2026-03-25T06:39:09.000Z",
+      "fields": {
+        "Name": "Abby Holmes-Brown",
+        "Subject": "Be First to View - 21 Creekside Drive, Sippy Downs",
+        "Email": "sales@fnlifestyle.com.au",
+        "Body": "OFF MARKET OPPORTUNITY\r\n\r\n\r\n\r\n\r\nHi Rugesh,\r\n\r\nExclusive Sneak Peek in Sippy Downs - Off-Market Opportunity\r\n\r\nWe're excited to offer you an early look at 21 Creekside Drive, Sippy Downs, available exclusively to our database before any public re"
+      }
+    },
+    {
+      "sourceRecordId": "reco7IeIAKZ7t73xi",
+      "sourceCreatedTime": "2026-07-24T06:19:05.000Z",
+      "fields": {
+        "Name": "Hermitage Homes",
+        "Subject": "🏡 Hermitage Stocklist // Society 1056 Townhouses – Selling Fast // Wallan One Part Contracts – Selling Out Fast // Homepay Accredited Builder – 19/06/2026",
+        "Email": "houseandland@hermitagehomes.com.au",
+        "Body": "🏡 Hermitage Stocklist // Society 1056 Townhouses – Selling Fast // Wallan One Part Contracts – Selling Out Fast // Homepay Accredited Builder – 19/06/2026 ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  "
+      }
+    },
+    {
+      "sourceRecordId": "reco7KlLHX7IZKwe7",
+      "sourceCreatedTime": "2026-06-05T04:13:42.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "reco7RaJAQt62Muj6",
+      "sourceCreatedTime": "2025-12-05T08:34:39.000Z",
+      "fields": {
+        "Name": "Belle Property Australasia",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "noreply@belleproperty.com",
+        "Body": "Dear Rugesh,\r\n\r\nWe have found the following properties that match your property search requirements. Click here to update your preferences or click here to find a property on belleproperty.com.\r\nCurrent listings.\r\n\r\nDromana\r\n2/42 Francis Street\r\nFor Sale ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "reco7kZaTVQQkcN3n",
+      "sourceCreatedTime": "2025-12-02T23:42:48.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "reco9728JqCCsX28P",
+      "sourceCreatedTime": "2025-11-28T02:27:07.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "reco9bAnzxDhvalMr",
+      "sourceCreatedTime": "2026-03-03T02:52:03.000Z",
+      "fields": {
+        "Name": "McGrath Geelong | Newtown",
+        "Subject": "McGrath Update - Strong. Brilliant. Women.",
+        "Email": "fomgeelong@mcgrath.sendproperty.com.au",
+        "Body": "View in browser\r\n\r\n\r\nDear ,\r\n\r\nInternational Women’s Day is just around the corner and this year we’re celebrating the incredible achievements, resilience and leadership of women everywhere.\r\n\r\nOn March 8, we invite you to join us in recognising the contr",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recoBl49a4i4Ge2y7",
+      "sourceCreatedTime": "2026-03-03T22:16:12.000Z",
+      "fields": {
+        "Name": "McFall Real Estate",
+        "Subject": "Builders and Developers Land Update",
+        "Email": "joe@mcfallrealestate.com.au",
+        "Body": "View this email in your browser\r\n\r\n\r\n\r\nAVAILABLE LAND\r\n\r\n19 Urquhart Street, Gordon\r\n\r\nPrice Reduced now $370,000\r\n1744m2\r\n\r\n70 Simpson Street, Ballan\r\n\r\nOffers above $900,000\r\n2027m2\r\n\r\n\r\n88B Edols Street, Ballan\r\n\r\n\r\n\r\n$270,000\r\n338m2\r\n\r\n\r\nAutumn Grove "
+      }
+    },
+    {
+      "sourceRecordId": "recoCbt9xvBibjOvk",
+      "sourceCreatedTime": "2025-12-01T03:14:36.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recoCqtmYo0fkxvu5",
+      "sourceCreatedTime": "2025-08-27T03:42:01.000Z",
+      "fields": {
+        "Name": "Rugesh Naidu",
+        "Subject": "NPC Services | Naidu Property Consulting Services | Introduction & Mailing List Allocation",
+        "Email": "rugesh@npcservices.com.au",
+        "Body": "Good afternoon,\n\nI hope this message finds you well.\n\n\n\n\nI’d like to take a moment to introduce NPC Services also known as Naidu Property Consulting Services, a dedicated buyer’s agency and property consulting business specialising in guiding clients through every stage of their property purchase journey.\n\nWe currently have qualified clients actively ready to purchase across a range of budgets, and we’re looking to build strong relationships with agencies like yours. To streamline the process, it would be greatly appreciated if you could please add our acquisitions team to your weekly property mailing list below:\n\nProperty@npcservices.com.au [Property@npcservices.com.au]\n\nThis ensures our research division receives your latest on and off-market listings, promptly for reviewal and assessment, allowing us to respond quickly and match opportunities with ready buyers.\n\nI’m confident this collaboration will lead to excellent results for both your agency and our clients.\n\nPlease feel free to contact me if you have any questions\n\nKind Regards[cid:1970c7ce-c38c-4733-8b21-b7f639dcadf2]Mobile: 0433 005 110 | Email: rugesh@npcservices.com.au | Website: www.npcservices.com.au [http://www.npcservices.com.au/]\n[cid:6e311caa-9dd5-4856-b189-769eb254b211] [http://www.linkedin.com/in/rugesh-naidu-1b0003123][cid:ec9eee64-f5cb-4d5a-bbbc-f23a2bccee53] [https://www.instagram.com/npc.services]A blue circle with a white letter f in it AI-generated content may be incorrect. [cid:70c3a774-7600-45cb-a0d5-aa9e55c439db] [https://www.facebook.com/profile.php?id=61577033127001]\nAddress: Level 5 Nexus Norwest, 4 Columbia Ct, Norwest NSW 2153\nNaidu Group Pty Ltd trading as Naidu Property Consulting ServicesACN: 684 555 771 | ABN: 50 684 555 771\nDisclaimer:\nAs a Professional Property Consultant & Buyers Agent, we provide information and advice based on our expertise and experience in the real estate market. Please be aware that the advice and insights offered are for general informational purposes only and should not be considered financial advice. While we strive to ensure the accuracy and relevance of the information provided, real estate markets are dynamic and subject to change and cannot guarantee the future performance or outcomes of any property investment. It is important to understand that real estate investments carry risks, including market fluctuations, changes in property values, and potential financial losses. Our services include assisting you in identifying and evaluating potential opportunities, negotiating purchase terms, and navigating the transaction process. Any decisions to purchase, sell, or invest in real estate should be made after careful consideration and consultation with appropriate financial, legal, and tax advisors. By engaging our services, you acknowledge that you have read and understood this disclaimer and agree to take full responsibility for your property-related decisions. Always conduct your own research and due diligence to ensure that any property transaction aligns with your financial objectives and risk profile.",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recoD2kfA5SZmTeje",
+      "sourceCreatedTime": "2025-10-16T03:59:48.000Z",
+      "fields": {
+        "Name": "Pat O'Driscoll Real Estate",
+        "Subject": "PAT O'DRISCOLL REAL ESTATE NEWSLETTER",
+        "Email": "salesadmin2@podre.com.au",
+        "Body": "0749272122\r\nwww.podre.com.au\r\n\r\n\r\n\r\n\r\n\r\n\r\nPROPERTY OF THE WEEK\r\n\r\n\r\n\r\n\r\n\r\n27 Cant Street, Kawana\r\n\r\n\r\n        Offers Over $649,000\r\n\r\nBig House, Big Block, Big Opportunity\r\nThis large family home, situated on a massive 1211m2 block at the end of a peace"
+      }
+    }
+  ]
+}

@@ -1,0 +1,115 @@
+{
+  "source": {
+    "platform": "make.com",
+    "zone": "eu2.make.com",
+    "organizationId": 1620547,
+    "teamId": 528268
+  },
+  "exportedAt": "2026-08-18",
+  "dataStores": [
+    {
+      "id": 162851,
+      "name": "GHL Contact IDs",
+      "directory": "ghl-contact-ids.162851",
+      "dataStructureId": 580749,
+      "dataStructureName": "GHL Contact Details",
+      "fields": [
+        "vapiCallId",
+        "callerPhone",
+        "contactId",
+        "firstName",
+        "fullName",
+        "phone",
+        "contactState",
+        "contactFound",
+        "contactCreated",
+        "confirmedIntent",
+        "callerReason",
+        "handoffReady",
+        "source",
+        "createdAt",
+        "updatedAt"
+      ],
+      "maxSizeBytes": 104857600,
+      "recordCount": 74,
+      "malformedRecordCount": 0,
+      "fieldsWithUnresolvedTemplates": [
+        "callerPhone",
+        "contactState",
+        "phone"
+      ],
+      "usedByScenarios": [
+        {
+          "id": 9232935,
+          "name": "NPC Vapi - get_call_context v1"
+        },
+        {
+          "id": 9231443,
+          "name": "Vapi - GHL Contact Resolver v4 CANONICAL VARIABLES"
+        },
+        {
+          "id": 8306842,
+          "name": "Discovery Call Handoff"
+        }
+      ]
+    },
+    {
+      "id": 163613,
+      "name": "Vapi Calls Human Transfer",
+      "directory": "vapi-calls-human-transfer.163613",
+      "dataStructureId": 583111,
+      "dataStructureName": "My data structure",
+      "fields": [
+        "callerPhone",
+        "twilioParentCallSid",
+        "twilioSipChildCallSid",
+        "twilioFrom",
+        "twilioTo",
+        "vapiSipTarget",
+        "vapiCallId",
+        "status",
+        "transferDestination",
+        "transferRequestedAt",
+        "createdAt",
+        "updatedAt",
+        "expiresAt",
+        "lastError",
+        "notes"
+      ],
+      "maxSizeBytes": 52428800,
+      "recordCount": 8,
+      "malformedRecordCount": 5,
+      "fieldsWithUnresolvedTemplates": [],
+      "usedByScenarios": [
+        {
+          "id": 9263976,
+          "name": "NPC Twilio - Store Active Call Context"
+        },
+        {
+          "id": 9264620,
+          "name": "NPC Vapi - Transfer Caller to Human via Twilio Redirect"
+        }
+      ]
+    },
+    {
+      "id": 27908,
+      "name": "Property Posting Tracker",
+      "directory": "property-posting-tracker.27908",
+      "dataStructureId": 104789,
+      "dataStructureName": "Key Field",
+      "fields": [
+        "last_posted_property_index"
+      ],
+      "maxSizeBytes": 1048576,
+      "recordCount": 0,
+      "malformedRecordCount": 0,
+      "fieldsWithUnresolvedTemplates": [],
+      "usedByScenarios": [
+        {
+          "id": 1962678,
+          "name": "Real Estate Facebook Post Automation"
+        }
+      ]
+    }
+  ]
+}

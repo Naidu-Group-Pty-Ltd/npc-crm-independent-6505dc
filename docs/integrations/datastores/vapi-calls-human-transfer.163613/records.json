@@ -1,0 +1,70 @@
+[
+  {
+    "key": "12aaed515c3a",
+    "data": {}
+  },
+  {
+    "key": "{\n  \"callerPhone\": \"+61480845459\",\n  \"twilioParentCallSid\": \"CA3cd6736ad91cb8b662b2753c174c62c9\",\n  \"twilioSipChildCallSid\": \"\\\",\n  \"twilioFrom\": \"+61480845459\",\n  \"twilioTo\": \"+61286093299\",\n  \"vapiSipTarget\": \"sip:naidupropertyconsultingservices@sip.vapi.ai\\\",\n  \"vapiCallId\": \"\\\",\n  \"status\": \"active\\\",\n  \"transferDestination\": \"+61433005110\\\",\n  \"transferRequestedAt\": \"\\\",\n  \"createdAt\": \"2026-05-20T11:18:32.726Z\",\n  \"updatedAt\": \"2026-05-20T11:18:32.727Z\",\n  \"expiresAt\": \"2026-05-20T12:18:32.727Z\",\n  \"lastError\": \"\\\",\n  \"notes\": \"Active Twilio call context stored for human transfer.\\\"\n}",
+    "data": {}
+  },
+  {
+    "key": "{\n  \"callerPhone\": \"+61480845459\",\n  \"twilioParentCallSid\": \"CA4df5a38b22ca4a494941be6db051dbba\",\n  \"twilioSipChildCallSid\": \"\\\",\n  \"twilioFrom\": \"+61480845459\",\n  \"twilioTo\": \"+61286093299\",\n  \"vapiSipTarget\": \"sip:naidupropertyconsultingservices@sip.vapi.ai\\\",\n  \"vapiCallId\": \"\\\",\n  \"status\": \"active\\\",\n  \"transferDestination\": \"+61433005110\\\",\n  \"transferRequestedAt\": \"\\\",\n  \"createdAt\": \"2026-05-20T11:21:56.941Z\",\n  \"updatedAt\": \"2026-05-20T11:21:56.941Z\",\n  \"expiresAt\": \"2026-05-20T12:21:56.942Z\",\n  \"lastError\": \"\\\",\n  \"notes\": \"Active Twilio call context stored for human transfer.\\\"\n}",
+    "data": {}
+  },
+  {
+    "key": "{\n  \"callerPhone\": \"+61480845459\",\n  \"twilioParentCallSid\": \"CA9b9d505a07e0ee90bd562a4dd373d628\",\n  \"twilioSipChildCallSid\": \"\\\",\n  \"twilioFrom\": \"+61480845459\",\n  \"twilioTo\": \"+61286093299\",\n  \"vapiSipTarget\": \"sip:naidupropertyconsultingservices@sip.vapi.ai\\\",\n  \"vapiCallId\": \"\\\",\n  \"status\": \"active\\\",\n  \"transferDestination\": \"+61433005110\\\",\n  \"transferRequestedAt\": \"\\\",\n  \"createdAt\": \"2026-05-20T11:24:52.354Z\",\n  \"updatedAt\": \"2026-05-20T11:24:52.354Z\",\n  \"expiresAt\": \"2026-05-20T12:24:52.355Z\",\n  \"lastError\": \"\\\",\n  \"notes\": \"Active Twilio call context stored for human transfer.\\\"\n}",
+    "data": {}
+  },
+  {
+    "key": "{\n  \"callerPhone\": \"+61480845459\",\n  \"twilioParentCallSid\": \"CA69f4ed0b572b95182363c5b1f839fd41\",\n  \"twilioSipChildCallSid\": \"\\\",\n  \"twilioFrom\": \"+61480845459\",\n  \"twilioTo\": \"+61286093299\",\n  \"vapiSipTarget\": \"sip:naidupropertyconsultingservices@sip.vapi.ai\\\",\n  \"vapiCallId\": \"\\\",\n  \"status\": \"active\\\",\n  \"transferDestination\": \"+61433005110\\\",\n  \"transferRequestedAt\": \"\\\",\n  \"createdAt\": \"2026-05-20T11:32:42.642Z\",\n  \"updatedAt\": \"2026-05-20T11:32:42.643Z\",\n  \"expiresAt\": \"2026-05-20T12:32:42.643Z\",\n  \"lastError\": \"\\\",\n  \"notes\": \"Active Twilio call context stored for human transfer.\\\"\n}",
+    "data": {}
+  },
+  {
+    "key": "+61480845459",
+    "data": {
+      "callerPhone": "+61480845459",
+      "twilioParentCallSid": "CAa0061617a6aae8e4938a527ba6aacaa4",
+      "twilioFrom": "+61480845459",
+      "twilioTo": "+61286093299",
+      "vapiSipTarget": "sip:naidupropertyconsultingservices@sip.vapi.ai",
+      "status": "active",
+      "transferDestination": "+61433005110",
+      "createdAt": "2026-08-01T17:20:51.689Z",
+      "updatedAt": "2026-08-01T17:20:51.690Z",
+      "expiresAt": "2026-08-01T18:20:51.689Z",
+      "notes": "Active Twilio call context stored before routing caller to Angela/Vapi."
+    }
+  },
+  {
+    "key": "+61468417327",
+    "data": {
+      "callerPhone": "+61468417327",
+      "twilioParentCallSid": "CAd6dabc6b689f3334d67bf15bab8941ff",
+      "twilioFrom": "+61468417327",
+      "twilioTo": "+61286093299",
+      "vapiSipTarget": "sip:naidupropertyconsultingservices@sip.vapi.ai",
+      "status": "active",
+      "transferDestination": "+61433005110",
+      "createdAt": "2026-05-23T02:39:14.565Z",
+      "updatedAt": "2026-05-23T02:39:14.571Z",
+      "expiresAt": "2026-05-23T03:39:14.570Z",
+      "notes": "Active Twilio call context stored before routing caller to Angela/Vapi."
+    }
+  },
+  {
+    "key": "+61433005110",
+    "data": {
+      "callerPhone": "+61433005110",
+      "twilioParentCallSid": "CA53602af4ca4bccf3ab8b3e5fac328a54",
+      "twilioFrom": "+61433005110",
+      "twilioTo": "+61286093299",
+      "vapiSipTarget": "sip:naidupropertyconsultingservices@sip.vapi.ai",
+      "status": "active",
+      "transferDestination": "+61433005110",
+      "createdAt": "2026-07-22T06:55:10.285Z",
+      "updatedAt": "2026-07-22T06:55:10.286Z",
+      "expiresAt": "2026-07-22T07:55:10.286Z",
+      "notes": "Active Twilio call context stored before routing caller to Angela/Vapi."
+    }
+  }
+]

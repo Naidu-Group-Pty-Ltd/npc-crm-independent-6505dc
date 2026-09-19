@@ -1,0 +1,21 @@
+# Undefined identifiers in src/, frozen.
+#
+# `check-src-missing-names.mjs` treats TS2304/TS2552 ("Cannot find name") as
+# fatal and never baselineable — the browser-side twin of the rule
+# `check-edge-functions.mjs` applies to Edge Functions. The name does not
+# exist, so the line throws a ReferenceError the moment it runs, and in a
+# React component that means the render throws and the page is replaced by an
+# error boundary.
+#
+# THIS FILE IS EMPTY, and that is the point. When the gate was written the app
+# project reported 17 type errors and not one of them was this class, so there
+# is no debt to grandfather and nothing new may land. Entries would be keyed
+# by FILE and IDENTIFIER — `src/path/File.tsx::identifier` — never by line,
+# because a line number moves with every edit above it.
+#
+# It was promoted to fatal because it happened: `PortalAgreementConsent`
+# declared `beforeAccept` in its props type and rendered `{beforeAccept}`,
+# and never destructured it. Lint passed, `npm run build` passed (Vite strips
+# types rather than checking them), and the first thing that noticed was a
+# partner outside every portal opening an emailed compliance agreement and
+# being shown "Something went wrong".

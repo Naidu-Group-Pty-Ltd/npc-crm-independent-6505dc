@@ -1,0 +1,5 @@
+import assert from 'node:assert/strict';import{readFileSync}from'node:fs';
+const sql=readFileSync('supabase/migrations/20260730220000_field_ownership_outbox_projections_phase6.sql','utf8'),worker=readFileSync('supabase/functions/cross-portal-outbox-worker/index.ts','utf8'),comms=readFileSync('supabase/functions/solicitor-portal-comms/index.ts','utf8');
+for(const token of ['integration_outbox','integration_dead_letters','projection_checkpoints','integration_delivery_attempts','client_case_read_model','finance_case_read_model','solicitor_case_read_model','command_case_health_read_model','SKIP LOCKED','idempotency_key text NOT NULL UNIQUE','enqueue_legal_message','verify_legal_audit_chain_strict'])assert.ok(sql.includes(token),`missing ${token}`);
+assert.match(worker,/CROSS_PORTAL_WORKER_SECRET/);assert.match(worker,/integration_event_id:event\.id/);assert.match(worker,/onConflict:'integration_event_id'/);assert.match(worker,/2\*\*event\.attempts/);assert.match(worker,/integration_dead_letters/);
+assert.doesNotMatch(comms,/mirrorToClientPortal|mirrorToFinancePortal/);assert.match(comms,/outbox_pending/);console.log('Phase 6 migration and worker contract passed');

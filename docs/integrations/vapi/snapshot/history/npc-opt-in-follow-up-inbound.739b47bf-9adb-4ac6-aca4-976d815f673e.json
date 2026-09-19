@@ -1,0 +1,2737 @@
+{
+  "assistant": "NPC Opt In Follow Up Inbound",
+  "assistantId": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+  "note": "System prompts are replaced by promptRef; the text is in ../prompts/<ref>.md. Everything else is the API response verbatim.",
+  "versionCount": 33,
+  "versions": [
+    {
+      "createdAt": "2026-07-28T05:34:11.051Z",
+      "data": {
+        "analysisPlan": {
+          "minMessagesThreshold": 2
+        },
+        "artifactPlan": {
+          "scorecardIds": [
+            "cf81945a-c941-46a2-a538-2987abffe521"
+          ]
+        },
+        "backgroundSound": "office",
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-12-15T09:39:01.662Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi {{firstName}}. I'm Monica, from Naidu Property Consulting Services. How can I help you today?",
+        "firstMessageMode": "assistant-speaks-first",
+        "id": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "messages": [
+            {
+              "chars": 44208,
+              "promptRef": "1051983f61cdcf1b",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.6-luna",
+          "provider": "openai",
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6",
+            "6587bc7d-7382-4e33-a38d-95f5740df52a",
+            "f195a817-8346-475d-ad0e-8033f1d2e283",
+            "5c0c334c-6bbf-4399-b748-a3c50207e754"
+          ]
+        },
+        "name": "NPC Opt In Follow Up Inbound",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "headers": {
+            "x-vapi-webhook-secret": "{{REDACTED:VAPI_WEBHOOK_SECRET}}"
+          },
+          "staticIpAddressesEnabled": false,
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-07-28T05:34:11.027Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Monica from Naidu Property Consulting Services calling because you recently submitted a form on Facebook to book a discovery call. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "f60b53b2-8a45-11f1-b39e-fd42ac260829"
+    },
+    {
+      "createdAt": "2026-07-22T05:55:44.781Z",
+      "data": {
+        "analysisPlan": {
+          "minMessagesThreshold": 2
+        },
+        "artifactPlan": {
+          "scorecardIds": [
+            "cf81945a-c941-46a2-a538-2987abffe521"
+          ]
+        },
+        "backgroundSound": "office",
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-12-15T09:39:01.662Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi {{firstName}}. I'm Monica, from Naidu Property Consulting Services. How can I help you today?",
+        "firstMessageMode": "assistant-speaks-first",
+        "id": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 44208,
+              "promptRef": "1051983f61cdcf1b",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6",
+            "6587bc7d-7382-4e33-a38d-95f5740df52a",
+            "f195a817-8346-475d-ad0e-8033f1d2e283",
+            "5c0c334c-6bbf-4399-b748-a3c50207e754"
+          ]
+        },
+        "name": "NPC Opt In Follow Up Inbound",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "headers": {
+            "x-vapi-webhook-secret": "{{REDACTED:VAPI_WEBHOOK_SECRET}}"
+          },
+          "staticIpAddressesEnabled": false,
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-07-22T05:55:44.752Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Monica from Naidu Property Consulting Services calling because you recently submitted a form on Facebook to book a discovery call. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "fab034c2-8591-11f1-9300-0de6870a9d49"
+    },
+    {
+      "createdAt": "2026-05-20T12:01:41.443Z",
+      "data": {
+        "analysisPlan": {
+          "minMessagesThreshold": 2
+        },
+        "artifactPlan": {
+          "scorecardIds": [
+            "cf81945a-c941-46a2-a538-2987abffe521"
+          ]
+        },
+        "backgroundSound": "office",
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-12-15T09:39:01.662Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi {{firstName}}. I'm Monica, from Naidu Property Consulting Services. How can I help you today?",
+        "firstMessageMode": "assistant-speaks-first",
+        "id": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 44208,
+              "promptRef": "1051983f61cdcf1b",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6",
+            "6587bc7d-7382-4e33-a38d-95f5740df52a",
+            "f195a817-8346-475d-ad0e-8033f1d2e283",
+            "5c0c334c-6bbf-4399-b748-a3c50207e754"
+          ]
+        },
+        "name": "NPC Opt In Follow Up Inbound",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "staticIpAddressesEnabled": false,
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-05-20T12:01:41.417Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Monica from Naidu Property Consulting Services calling because you recently submitted a form on Facebook to book a discovery call. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "a9dad932-5443-11f1-a77c-55c45a147918"
+    },
+    {
+      "createdAt": "2026-05-14T17:05:43.726Z",
+      "data": {
+        "analysisPlan": {
+          "minMessagesThreshold": 2
+        },
+        "artifactPlan": {
+          "scorecardIds": [
+            "cf81945a-c941-46a2-a538-2987abffe521"
+          ]
+        },
+        "backgroundSound": "office",
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-12-15T09:39:01.662Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi {{firstName}}. I'm Monica, from Naidu Property Consulting Services. How can I help you today?",
+        "firstMessageMode": "assistant-speaks-first",
+        "id": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 44208,
+              "promptRef": "1051983f61cdcf1b",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "3a6a892d-2907-4da0-b2f8-a55d5b404a84",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6",
+            "6587bc7d-7382-4e33-a38d-95f5740df52a",
+            "f195a817-8346-475d-ad0e-8033f1d2e283"
+          ]
+        },
+        "name": "NPC Opt In Follow Up Inbound",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "staticIpAddressesEnabled": false,
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-05-14T17:05:43.705Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Monica from Naidu Property Consulting Services calling because you recently submitted a form on Facebook to book a discovery call. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "249fd4e1-4fb7-11f1-ad70-63ad9cd863d7"
+    },
+    {
+      "createdAt": "2026-05-14T16:59:56.775Z",
+      "data": {
+        "analysisPlan": {
+          "minMessagesThreshold": 2
+        },
+        "artifactPlan": {
+          "scorecardIds": [
+            "cf81945a-c941-46a2-a538-2987abffe521"
+          ]
+        },
+        "backgroundSound": "office",
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-12-15T09:39:01.662Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi {{firstName}}. I'm Monica, from Naidu Property Consulting Services. How can I help you today?",
+        "firstMessageMode": "assistant-speaks-first",
+        "id": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 39323,
+              "promptRef": "4410be2a6e33565f",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "3a6a892d-2907-4da0-b2f8-a55d5b404a84",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6",
+            "6587bc7d-7382-4e33-a38d-95f5740df52a",
+            "f195a817-8346-475d-ad0e-8033f1d2e283"
+          ]
+        },
+        "name": "NPC Opt In Follow Up Inbound",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "staticIpAddressesEnabled": false,
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-05-14T16:59:56.747Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Monica from Naidu Property Consulting Services calling because you recently submitted a form on Facebook to book a discovery call. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "55d32862-4fb6-11f1-8c5c-157f90cb69e4"
+    },
+    {
+      "createdAt": "2026-05-14T15:51:20.896Z",
+      "data": {
+        "analysisPlan": {
+          "minMessagesThreshold": 2
+        },
+        "artifactPlan": {
+          "scorecardIds": [
+            "cf81945a-c941-46a2-a538-2987abffe521"
+          ]
+        },
+        "backgroundSound": "office",
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-12-15T09:39:01.662Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi {{firstName}}. I'm Monica, from Naidu Property Consulting Services. How can I help you today?",
+        "firstMessageMode": "assistant-speaks-first",
+        "id": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 44208,
+              "promptRef": "1051983f61cdcf1b",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "3a6a892d-2907-4da0-b2f8-a55d5b404a84",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6",
+            "6587bc7d-7382-4e33-a38d-95f5740df52a",
+            "f195a817-8346-475d-ad0e-8033f1d2e283"
+          ]
+        },
+        "name": "NPC Opt In Follow Up Inbound",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "staticIpAddressesEnabled": false,
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-05-14T15:51:20.872Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Monica from Naidu Property Consulting Services calling because you recently submitted a form on Facebook to book a discovery call. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "c091dcf2-4fac-11f1-83fd-3f4dffe38877"
+    },
+    {
+      "createdAt": "2026-05-14T15:18:21.932Z",
+      "data": {
+        "analysisPlan": {
+          "minMessagesThreshold": 2
+        },
+        "artifactPlan": {
+          "scorecardIds": [
+            "cf81945a-c941-46a2-a538-2987abffe521"
+          ]
+        },
+        "backgroundSound": "office",
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-12-15T09:39:01.662Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi {{firstName}}. I'm Monica, from Naidu Property Consulting Services. How can I help you today?",
+        "firstMessageMode": "assistant-speaks-first",
+        "id": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 39323,
+              "promptRef": "4410be2a6e33565f",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "3a6a892d-2907-4da0-b2f8-a55d5b404a84",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6",
+            "6587bc7d-7382-4e33-a38d-95f5740df52a",
+            "f195a817-8346-475d-ad0e-8033f1d2e283"
+          ]
+        },
+        "name": "NPC Opt In Follow Up Inbound",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "staticIpAddressesEnabled": false,
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-05-14T15:18:21.911Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Monica from Naidu Property Consulting Services calling because you recently submitted a form on Facebook to book a discovery call. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "250412c1-4fa8-11f1-b38d-0dc40c827bf2"
+    },
+    {
+      "createdAt": "2026-05-14T14:36:28.417Z",
+      "data": {
+        "analysisPlan": {
+          "minMessagesThreshold": 2
+        },
+        "artifactPlan": {
+          "scorecardIds": [
+            "cf81945a-c941-46a2-a538-2987abffe521"
+          ]
+        },
+        "backgroundSound": "office",
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-12-15T09:39:01.662Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi {{firstName}}. I'm Monica, from Naidu Property Consulting Services. How can I help you today?",
+        "firstMessageMode": "assistant-speaks-first",
+        "id": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 39323,
+              "promptRef": "4410be2a6e33565f",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "3a6a892d-2907-4da0-b2f8-a55d5b404a84",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6",
+            "6587bc7d-7382-4e33-a38d-95f5740df52a",
+            "f195a817-8346-475d-ad0e-8033f1d2e283",
+            "0bd36de8-6d3a-43e5-9c3f-25ca6de97662"
+          ]
+        },
+        "name": "NPC Opt In Follow Up Inbound",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "staticIpAddressesEnabled": false,
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-05-14T14:36:28.388Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Monica from Naidu Property Consulting Services calling because you recently submitted a form on Facebook to book a discovery call. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "4ad7f802-4fa2-11f1-b5a5-2d4785dbd461"
+    },
+    {
+      "createdAt": "2026-05-14T14:35:54.393Z",
+      "data": {
+        "analysisPlan": {
+          "minMessagesThreshold": 2
+        },
+        "artifactPlan": {
+          "scorecardIds": [
+            "cf81945a-c941-46a2-a538-2987abffe521"
+          ]
+        },
+        "backgroundSound": "office",
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-12-15T09:39:01.662Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi {{firstName}}. I'm Monica, from Naidu Property Consulting Services. How can I help you today?",
+        "firstMessageMode": "assistant-speaks-first",
+        "id": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 39323,
+              "promptRef": "4410be2a6e33565f",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "3a6a892d-2907-4da0-b2f8-a55d5b404a84",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6",
+            "6587bc7d-7382-4e33-a38d-95f5740df52a"
+          ]
+        },
+        "name": "NPC Opt In Follow Up Inbound",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "staticIpAddressesEnabled": false,
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-05-14T14:35:54.376Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Monica from Naidu Property Consulting Services calling because you recently submitted a form on Facebook to book a discovery call. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "36907891-4fa2-11f1-8b85-4fd5ddeb0d85"
+    },
+    {
+      "createdAt": "2026-05-14T14:22:22.103Z",
+      "data": {
+        "analysisPlan": {
+          "minMessagesThreshold": 2
+        },
+        "artifactPlan": {
+          "scorecardIds": [
+            "cf81945a-c941-46a2-a538-2987abffe521"
+          ]
+        },
+        "backgroundSound": "office",
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-12-15T09:39:01.662Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi {{firstName}}. I'm Monica, from Naidu Property Consulting Services. How can I help you today?",
+        "firstMessageMode": "assistant-speaks-first",
+        "id": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 33621,
+              "promptRef": "9102d29d22fc2b86",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "3a6a892d-2907-4da0-b2f8-a55d5b404a84",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6",
+            "6587bc7d-7382-4e33-a38d-95f5740df52a"
+          ]
+        },
+        "name": "NPC Opt In Follow Up Inbound",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "staticIpAddressesEnabled": false,
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-05-14T14:22:22.088Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Monica from Naidu Property Consulting Services calling because you recently submitted a form on Facebook to book a discovery call. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "5266da71-4fa0-11f1-a0b0-c3e49ab8a59e"
+    },
+    {
+      "createdAt": "2026-05-14T07:49:08.760Z",
+      "data": {
+        "analysisPlan": {
+          "minMessagesThreshold": 2
+        },
+        "artifactPlan": {
+          "scorecardIds": [
+            "cf81945a-c941-46a2-a538-2987abffe521"
+          ]
+        },
+        "backgroundSound": "office",
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-12-15T09:39:01.662Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi {{firstName}}. I'm Monica, from Naidu Property Consulting Services. How can I help you today?",
+        "firstMessageMode": "assistant-speaks-first",
+        "id": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 32915,
+              "promptRef": "31666c5e553c2ff4",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "3a6a892d-2907-4da0-b2f8-a55d5b404a84",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6",
+            "6587bc7d-7382-4e33-a38d-95f5740df52a"
+          ]
+        },
+        "name": "NPC Opt In Follow Up Inbound",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "staticIpAddressesEnabled": false,
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-05-14T07:49:08.747Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Monica from Naidu Property Consulting Services calling because you recently submitted a form on Facebook to book a discovery call. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "63ac6982-4f69-11f1-ae00-0fd966e95bf9"
+    },
+    {
+      "createdAt": "2026-05-12T00:06:10.697Z",
+      "data": {
+        "analysisPlan": {
+          "minMessagesThreshold": 2
+        },
+        "artifactPlan": {
+          "scorecardIds": [
+            "cf81945a-c941-46a2-a538-2987abffe521"
+          ]
+        },
+        "backgroundSound": "office",
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-12-15T09:39:01.662Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi {{firstName}}. I'm Monica, from Naidu Property Consulting Services. How can I help you today?",
+        "firstMessageMode": "assistant-speaks-first",
+        "id": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 32931,
+              "promptRef": "47f578adca73e17b",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "3a6a892d-2907-4da0-b2f8-a55d5b404a84",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6",
+            "6587bc7d-7382-4e33-a38d-95f5740df52a"
+          ]
+        },
+        "name": "NPC Opt In Follow Up Inbound",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "staticIpAddressesEnabled": false,
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-05-12T00:06:10.665Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Monica from Naidu Property Consulting Services calling because you recently submitted a form on Facebook to book a discovery call. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "61d4df92-4d96-11f1-89d0-f5341eea6b83"
+    },
+    {
+      "createdAt": "2026-05-12T00:05:01.677Z",
+      "data": {
+        "analysisPlan": {
+          "minMessagesThreshold": 2
+        },
+        "artifactPlan": {
+          "scorecardIds": [
+            "cf81945a-c941-46a2-a538-2987abffe521"
+          ]
+        },
+        "backgroundSound": "office",
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-12-15T09:39:01.662Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi {{firstName}}. I'm Monica, from Naidu Property Consulting Services. How can I help you today?",
+        "firstMessageMode": "assistant-speaks-first",
+        "id": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 32931,
+              "promptRef": "47f578adca73e17b",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "3a6a892d-2907-4da0-b2f8-a55d5b404a84"
+          ]
+        },
+        "name": "NPC Opt In Follow Up Inbound",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "staticIpAddressesEnabled": false,
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-05-12T00:05:01.656Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Monica from Naidu Property Consulting Services calling because you recently submitted a form on Facebook to book a discovery call. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "38b141d2-4d96-11f1-a3d5-67c28cf5c336"
+    },
+    {
+      "createdAt": "2026-03-05T00:16:03.314Z",
+      "data": {
+        "analysisPlan": {
+          "minMessagesThreshold": 2
+        },
+        "artifactPlan": {
+          "scorecardIds": [
+            "cf81945a-c941-46a2-a538-2987abffe521"
+          ]
+        },
+        "backgroundSound": "office",
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-15T09:39:01.662Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi {{firstName}}. I'm Monica, from Naidu Property Consulting Services. How can I help you today?",
+        "firstMessageMode": "assistant-speaks-first",
+        "id": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 21711,
+              "promptRef": "93bc52e9c38d0e6b",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "32549379-811e-415b-8f8d-d1c481cd4aed",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Opt In Follow Up Inbound",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-03-05T00:16:03.294Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Monica from Naidu Property Consulting Services calling because you recently submitted a form on Facebook to book a discovery call. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "7ef80d22-1828-11f1-82df-632c11ec6d39"
+    },
+    {
+      "createdAt": "2026-03-04T08:02:00.416Z",
+      "data": {
+        "analysisPlan": {
+          "minMessagesThreshold": 2
+        },
+        "artifactPlan": {
+          "scorecardIds": [
+            "cf81945a-c941-46a2-a538-2987abffe521"
+          ]
+        },
+        "backgroundSound": "office",
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-15T09:39:01.662Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi {{firstName}}. I'm Monica, from Naidu Property Consulting Services. How can I help you today?",
+        "firstMessageMode": "assistant-speaks-first",
+        "id": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 21701,
+              "promptRef": "5dc422243ebf6c4c",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "32549379-811e-415b-8f8d-d1c481cd4aed",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Opt In Follow Up Inbound",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-03-04T08:02:00.403Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Monica from Naidu Property Consulting Services calling because you recently submitted a form on Facebook to book a discovery call. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "6c495ef2-17a0-11f1-a344-95b43102db88"
+    },
+    {
+      "createdAt": "2026-03-04T07:59:45.176Z",
+      "data": {
+        "analysisPlan": {
+          "minMessagesThreshold": 2
+        },
+        "artifactPlan": {
+          "scorecardIds": [
+            "cf81945a-c941-46a2-a538-2987abffe521"
+          ]
+        },
+        "backgroundSound": "office",
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-15T09:39:01.662Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi {{firstName}}. I'm Monica, from Naidu Property Consulting Services. How can I help you today?",
+        "firstMessageMode": "assistant-speaks-first",
+        "id": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 20580,
+              "promptRef": "1d18f5584adccae7",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "32549379-811e-415b-8f8d-d1c481cd4aed",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Opt In Follow Up Inbound",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-03-04T07:59:45.164Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Monica from Naidu Property Consulting Services calling because you recently submitted a form on Facebook to book a discovery call. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "1bad8982-17a0-11f1-b4ec-21e7138ae64f"
+    },
+    {
+      "createdAt": "2026-02-02T07:20:41.023Z",
+      "data": {
+        "analysisPlan": {
+          "minMessagesThreshold": 2
+        },
+        "artifactPlan": {
+          "scorecardIds": [
+            "cf81945a-c941-46a2-a538-2987abffe521"
+          ]
+        },
+        "backgroundSound": "office",
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-15T09:39:01.662Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi {{firstName}}. I'm Monica, from Naidu Property Consulting Services. How can I help you today?",
+        "firstMessageMode": "assistant-speaks-first",
+        "id": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 19857,
+              "promptRef": "6f85ae1a5c2673cf",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "32549379-811e-415b-8f8d-d1c481cd4aed",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Opt In Follow Up Inbound",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-02-02T07:20:41.011Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Monica from Naidu Property Consulting Services calling because you recently submitted a form on Facebook to book a discovery call. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "ae0facf1-0007-11f1-9944-1905641bd5b0"
+    },
+    {
+      "createdAt": "2026-02-02T07:13:20.242Z",
+      "data": {
+        "analysisPlan": {
+          "minMessagesThreshold": 2
+        },
+        "artifactPlan": {
+          "scorecardIds": [
+            "cf81945a-c941-46a2-a538-2987abffe521"
+          ]
+        },
+        "backgroundSound": "office",
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-15T09:39:01.662Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi {{firstName}}. I'm Monica, from Naidu Property Consulting Services. How can I help you today?",
+        "firstMessageMode": "assistant-speaks-first",
+        "id": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 17812,
+              "promptRef": "4f12b1d390545e7d",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "32549379-811e-415b-8f8d-d1c481cd4aed",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Opt In Follow Up Inbound",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-02-02T07:13:20.215Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Monica from Naidu Property Consulting Services calling because you recently submitted a form on Facebook to book a discovery call. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "a755d522-0006-11f1-8650-c52f6da74dba"
+    },
+    {
+      "createdAt": "2026-02-02T02:47:11.128Z",
+      "data": {
+        "analysisPlan": {
+          "minMessagesThreshold": 2
+        },
+        "artifactPlan": {
+          "scorecardIds": [
+            "cf81945a-c941-46a2-a538-2987abffe521"
+          ]
+        },
+        "backgroundSound": "office",
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-15T09:39:01.662Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi {{firstName}}. I'm Monica, from Naidu Property Consulting Services. How can I help you today?",
+        "firstMessageMode": "assistant-speaks-first",
+        "id": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 16956,
+              "promptRef": "85a0c976d436bbe3",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "32549379-811e-415b-8f8d-d1c481cd4aed",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Opt In Follow Up Inbound",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-02-02T02:47:11.098Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Monica from Naidu Property Consulting Services calling because you recently submitted a form on Facebook to book a discovery call. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "79004272-ffe1-11f0-b78a-a1e81daa98f2"
+    },
+    {
+      "createdAt": "2026-02-02T02:44:21.289Z",
+      "data": {
+        "analysisPlan": {
+          "minMessagesThreshold": 2
+        },
+        "artifactPlan": {
+          "scorecardIds": [
+            "cf81945a-c941-46a2-a538-2987abffe521"
+          ]
+        },
+        "backgroundSound": "office",
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-15T09:39:01.662Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi {{firstName}}. I'm Monica, from Naidu Property Consulting Services. How can I help you today?",
+        "firstMessageMode": "assistant-speaks-first",
+        "id": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 16838,
+              "promptRef": "782661c14d8f21b8",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "32549379-811e-415b-8f8d-d1c481cd4aed",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Opt In Follow Up Inbound",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-02-02T02:44:21.267Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Monica from Naidu Property Consulting Services calling because you recently submitted a form on Facebook to book a discovery call. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "13c4e282-ffe1-11f0-bdd9-736c99307fd6"
+    },
+    {
+      "createdAt": "2026-02-02T02:27:46.502Z",
+      "data": {
+        "analysisPlan": {
+          "minMessagesThreshold": 2
+        },
+        "artifactPlan": {
+          "scorecardIds": [
+            "cf81945a-c941-46a2-a538-2987abffe521"
+          ]
+        },
+        "backgroundSound": "office",
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-15T09:39:01.662Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi {{firstName}}. I'm Monica, from Naidu Property Consulting Services. How can I help you today?",
+        "firstMessageMode": "assistant-speaks-first",
+        "id": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 16731,
+              "promptRef": "7bdf9b840ebc7b74",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "32549379-811e-415b-8f8d-d1c481cd4aed",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Opt In Follow Up Inbound",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-02-02T02:27:46.480Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Monica from Naidu Property Consulting Services calling because you recently submitted a form on Facebook to book a discovery call. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "c2d49662-ffde-11f0-ad17-df2df385a6ac"
+    },
+    {
+      "createdAt": "2026-01-29T06:11:28.105Z",
+      "data": {
+        "analysisPlan": {
+          "minMessagesThreshold": 2
+        },
+        "artifactPlan": {
+          "scorecardIds": [
+            "cf81945a-c941-46a2-a538-2987abffe521"
+          ]
+        },
+        "backgroundDenoisingEnabled": true,
+        "backgroundSound": "office",
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-15T09:39:01.662Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi {{firstName}}. I'm Monica, from Naidu Property Consulting Services. How can I help you today?",
+        "firstMessageMode": "assistant-speaks-first",
+        "id": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 16731,
+              "promptRef": "7bdf9b840ebc7b74",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "32549379-811e-415b-8f8d-d1c481cd4aed",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Opt In Follow Up Inbound",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-29T06:11:28.070Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Monica from Naidu Property Consulting Services calling because you recently submitted a form on Facebook to book a discovery call. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "5913ad92-fcd9-11f0-9312-ef74ee2ca00a"
+    },
+    {
+      "createdAt": "2026-01-29T05:50:52.094Z",
+      "data": {
+        "analysisPlan": {
+          "minMessagesThreshold": 2
+        },
+        "artifactPlan": {
+          "scorecardIds": [
+            "cf81945a-c941-46a2-a538-2987abffe521"
+          ]
+        },
+        "backgroundDenoisingEnabled": true,
+        "backgroundSound": "office",
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-15T09:39:01.662Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi {{firstName}}. I'm Monica, from Naidu Property Consulting Services. How can I help you today?",
+        "firstMessageMode": "assistant-speaks-first",
+        "id": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 16653,
+              "promptRef": "b7246fe2998c9fd3",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "32549379-811e-415b-8f8d-d1c481cd4aed",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Opt In Follow Up Inbound",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-29T05:50:52.075Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Monica from Naidu Property Consulting Services calling because you recently submitted a form on Facebook to book a discovery call. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "785b5de2-fcd6-11f0-a3df-252ae2d8c0ae"
+    },
+    {
+      "createdAt": "2026-01-29T03:59:42.988Z",
+      "data": {
+        "analysisPlan": {
+          "minMessagesThreshold": 2
+        },
+        "artifactPlan": {
+          "scorecardIds": [
+            "cf81945a-c941-46a2-a538-2987abffe521"
+          ]
+        },
+        "backgroundDenoisingEnabled": true,
+        "backgroundSound": "office",
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-15T09:39:01.662Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi {{firstName}}. I'm Monica, from Naidu Property Consulting Services. How can I help you today?",
+        "firstMessageMode": "assistant-speaks-first",
+        "id": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 17351,
+              "promptRef": "f439348a394731f1",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "32549379-811e-415b-8f8d-d1c481cd4aed",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Opt In Follow Up Inbound",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-29T03:59:42.974Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Monica from Naidu Property Consulting Services calling because you recently submitted a form on Facebook to book a discovery call. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "f1428cc2-fcc6-11f0-8bea-a5409080832f"
+    },
+    {
+      "createdAt": "2026-01-29T03:58:51.593Z",
+      "data": {
+        "analysisPlan": {
+          "minMessagesThreshold": 2
+        },
+        "artifactPlan": {
+          "scorecardIds": [
+            "cf81945a-c941-46a2-a538-2987abffe521"
+          ]
+        },
+        "backgroundDenoisingEnabled": true,
+        "backgroundSound": "office",
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-15T09:39:01.662Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Monica, from Naidu Property Consulting Services. Am I speaking to {{firstName}} ?",
+        "firstMessageMode": "assistant-speaks-first",
+        "id": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 17351,
+              "promptRef": "f439348a394731f1",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "32549379-811e-415b-8f8d-d1c481cd4aed",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Opt In Follow Up Inbound",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-29T03:58:51.579Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Monica from Naidu Property Consulting Services calling because you recently submitted a form on Facebook to book a discovery call. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "d2a04b92-fcc6-11f0-8c41-49c65e5a8bd8"
+    },
+    {
+      "createdAt": "2026-01-29T03:58:29.530Z",
+      "data": {
+        "analysisPlan": {
+          "minMessagesThreshold": 2
+        },
+        "artifactPlan": {
+          "scorecardIds": [
+            "cf81945a-c941-46a2-a538-2987abffe521"
+          ]
+        },
+        "backgroundDenoisingEnabled": true,
+        "backgroundSound": "office",
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-15T09:39:01.662Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Monica, from Naidu Property Consulting Services. Am I speaking to {{firstName}} ?",
+        "firstMessageMode": "assistant-speaks-first",
+        "id": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 17351,
+              "promptRef": "f439348a394731f1",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "32549379-811e-415b-8f8d-d1c481cd4aed"
+          ]
+        },
+        "name": "NPC Opt In Follow Up Inbound",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-29T03:58:29.514Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Monica from Naidu Property Consulting Services calling because you recently submitted a form on Facebook to book a discovery call. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "c5799892-fcc6-11f0-8bea-a5409080832f"
+    },
+    {
+      "createdAt": "2026-01-29T03:51:31.855Z",
+      "data": {
+        "analysisPlan": {
+          "minMessagesThreshold": 2
+        },
+        "artifactPlan": {
+          "scorecardIds": [
+            "cf81945a-c941-46a2-a538-2987abffe521"
+          ]
+        },
+        "backgroundDenoisingEnabled": true,
+        "backgroundSound": "office",
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-15T09:39:01.662Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Monica, from Naidu Property Consulting Services. Am I speaking to {{firstName}} ?",
+        "firstMessageMode": "assistant-speaks-first",
+        "id": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 15714,
+              "promptRef": "35a7da666cad4d25",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "32549379-811e-415b-8f8d-d1c481cd4aed"
+          ]
+        },
+        "name": "NPC Opt In Follow Up Inbound",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-29T03:51:31.832Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Monica from Naidu Property Consulting Services calling because you recently submitted a form on Facebook to book a discovery call. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "cc8599f2-fcc5-11f0-91f1-3b813487ab6d"
+    },
+    {
+      "createdAt": "2026-01-20T05:51:24.787Z",
+      "data": {
+        "analysisPlan": {
+          "minMessagesThreshold": 2
+        },
+        "artifactPlan": {
+          "scorecardIds": [
+            "cf81945a-c941-46a2-a538-2987abffe521"
+          ]
+        },
+        "backgroundDenoisingEnabled": true,
+        "backgroundSound": "office",
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-15T09:39:01.662Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Monica, from Naidu Property Consulting Services. Am I speaking to {{firstName}} ?",
+        "firstMessageMode": "assistant-speaks-first",
+        "id": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 15772,
+              "promptRef": "342be861eb8eb065",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "32549379-811e-415b-8f8d-d1c481cd4aed"
+          ]
+        },
+        "name": "NPC Opt In Follow Up Inbound",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-20T05:51:24.760Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Monica from Naidu Property Consulting Services calling because you recently submitted a form on Facebook to book a discovery call. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "0e202c32-f5c4-11f0-97d4-7b5b4f17a254"
+    },
+    {
+      "createdAt": "2025-12-17T11:53:30.010Z",
+      "data": {
+        "analysisPlan": {
+          "minMessagesThreshold": 2
+        },
+        "artifactPlan": {
+          "scorecardIds": [
+            "cf81945a-c941-46a2-a538-2987abffe521"
+          ]
+        },
+        "backgroundDenoisingEnabled": true,
+        "backgroundSound": "office",
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-15T09:39:01.662Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Monica, from Naidu Property Consulting Services. Am I speaking to {{firstName}} ?",
+        "firstMessageMode": "assistant-speaks-first",
+        "id": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+        "maxDurationSeconds": 1444,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 15772,
+              "promptRef": "342be861eb8eb065",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "32549379-811e-415b-8f8d-d1c481cd4aed"
+          ]
+        },
+        "name": "NPC Opt In Follow Up Inbound",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-17T11:53:29.900Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Monica from Naidu Property Consulting Services calling because you recently submitted a form on Facebook to book a discovery call. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "01529fa2-db3f-11f0-96a9-352de2e8169b"
+    },
+    {
+      "createdAt": "2025-12-17T11:26:13.201Z",
+      "data": {
+        "analysisPlan": {
+          "minMessagesThreshold": 2
+        },
+        "artifactPlan": {
+          "scorecardIds": [
+            "cf81945a-c941-46a2-a538-2987abffe521"
+          ]
+        },
+        "backgroundDenoisingEnabled": true,
+        "backgroundSound": "office",
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-15T09:39:01.662Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Monica, from Naidu Property Consulting Services. Am I speaking to {{firstName}} ?",
+        "firstMessageMode": "assistant-speaks-first",
+        "id": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 15772,
+              "promptRef": "342be861eb8eb065",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "32549379-811e-415b-8f8d-d1c481cd4aed"
+          ]
+        },
+        "name": "NPC Opt In Follow Up Inbound",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-17T11:26:13.058Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Monica from Naidu Property Consulting Services calling because you recently submitted a form on Facebook to book a discovery call. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "31b56412-db3b-11f0-86a1-436ac69d7b06"
+    },
+    {
+      "createdAt": "2025-12-17T10:42:52.908Z",
+      "data": {
+        "analysisPlan": {
+          "minMessagesThreshold": 2
+        },
+        "artifactPlan": {
+          "scorecardIds": [
+            "cf81945a-c941-46a2-a538-2987abffe521"
+          ]
+        },
+        "backgroundDenoisingEnabled": true,
+        "backgroundSound": "office",
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-15T09:39:01.662Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Monica, from Naidu Property Consulting Services. Am I speaking to {{firstName}} ?",
+        "firstMessageMode": "assistant-speaks-first",
+        "id": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 15740,
+              "promptRef": "d5a5525e74200cc4",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "32549379-811e-415b-8f8d-d1c481cd4aed"
+          ]
+        },
+        "name": "NPC Opt In Follow Up Inbound",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-17T10:42:52.793Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Monica from Naidu Property Consulting Services calling because you recently submitted a form on Facebook to book a discovery call. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "23d02ac2-db35-11f0-b0d5-75dd1f80902f"
+    },
+    {
+      "createdAt": "2025-12-17T10:17:17.476Z",
+      "data": {
+        "analysisPlan": {
+          "minMessagesThreshold": 2
+        },
+        "artifactPlan": {
+          "scorecardIds": [
+            "cf81945a-c941-46a2-a538-2987abffe521"
+          ]
+        },
+        "backgroundDenoisingEnabled": true,
+        "backgroundSound": "office",
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-15T09:39:01.662Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Monica, from Naidu Property Consulting Services. Am I speaking to {{firstName}} ?",
+        "firstMessageMode": "assistant-speaks-first",
+        "id": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 15521,
+              "promptRef": "ea3fdc26c76ce134",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "32549379-811e-415b-8f8d-d1c481cd4aed"
+          ]
+        },
+        "name": "NPC Opt In Follow Up Inbound",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-17T10:17:17.340Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Monica from Naidu Property Consulting Services calling because you recently submitted a form on Facebook to book a discovery call. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "909fd642-db31-11f0-8564-c5c9402f19e6"
+    },
+    {
+      "createdAt": "2025-12-17T10:14:12.654Z",
+      "data": {
+        "analysisPlan": {
+          "minMessagesThreshold": 2
+        },
+        "artifactPlan": {
+          "scorecardIds": [
+            "cf81945a-c941-46a2-a538-2987abffe521"
+          ]
+        },
+        "backgroundDenoisingEnabled": true,
+        "backgroundSound": "office",
+        "compliancePlan": {
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-15T09:39:01.662Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Monica, from Naidu Property Consulting Services. Am I speaking to {{firstName}} ?",
+        "firstMessageMode": "assistant-speaks-first",
+        "id": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 15399,
+              "promptRef": "c221a9e32bbc7b6d",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "32549379-811e-415b-8f8d-d1c481cd4aed"
+          ]
+        },
+        "name": "NPC Opt In Follow Up Inbound",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-17T10:14:11.686Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Monica from Naidu Property Consulting Services calling because you recently submitted a form on Facebook to book a discovery call. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "22763ce2-db31-11f0-a102-3133cfe6993b"
+    }
+  ]
+}

@@ -1,0 +1,3221 @@
+{
+ "measured_at": "2026-09-18",
+ "publisher": "NSW Department of Communities and Justice (DCJ) \u2014 Rent and Sales Report",
+ "licence_page": "https://dcj.nsw.gov.au/content/dcj/dcj-website/dcj/statements/copyright-and-disclaimer.html",
+ "rent_workbook": "rent-tables-june-2026-quarter.xlsx (Table 2, Postcode sheet)",
+ "rent_period": "April to June 2026",
+ "rent_basis": "Median weekly rent for NEW BONDS LODGED \u2014 new lettings, not the whole rented stock",
+ "sales_workbook": "sales-tables-march-2026-quarter.xlsx (Table 4, Postcode sheet)",
+ "sales_period": "January to March 2026",
+ "geography": "New South Wales postcodes",
+ "dwelling_type": "Total (all dwellings) on BOTH sides",
+ "dwelling_type_note": "The two workbooks use different vocabularies \u2014 rents are House / Flat-Unit / Townhouse / Other, sales are Strata / Non Strata \u2014 and DCJ publishes no crosswalk between them. Pairing House with Non Strata would be an invention, so the distribution is computed on the one pairing the publisher itself defines on both sides.",
+ "suppression": "Cells marked (s) \u2014 30 or fewer bonds or properties \u2014 and '-' are excluded",
+ "method": "gross yield = median weekly rent x 52 / (median sale price) x 100",
+ "postcodes_with_rent": 432,
+ "postcodes_with_price": 414,
+ "postcodes_paired": 398,
+ "distribution": {
+  "p5": 2.112,
+  "p10": 2.34,
+  "p25": 2.848,
+  "median": 3.414,
+  "p75": 4.008,
+  "p90": 4.644,
+  "p95": 5.172,
+  "mean": 3.484,
+  "min": 0.5778,
+  "max": 8.4933
+ },
+ "platform_corpus_for_comparison": {
+  "median": 4.36,
+  "p75": 5.49,
+  "note": "The corpus is the properties this platform has been asked to report on \u2014 selected investment stock rather than the market, which is one reason the two differ."
+ },
+ "rows": [
+  {
+   "postcode": "2034",
+   "yield": 0.5778,
+   "weekly_rent": 995.0,
+   "median_price_000": 8954.0,
+   "new_bonds": 370.0,
+   "sales": 200.0
+  },
+  {
+   "postcode": "2030",
+   "yield": 1.2356,
+   "weekly_rent": 1200.0,
+   "median_price_000": 5050.0,
+   "new_bonds": 95.0,
+   "sales": 42.0
+  },
+  {
+   "postcode": "2063",
+   "yield": 1.3719,
+   "weekly_rent": 1240.0,
+   "median_price_000": 4700.0,
+   "new_bonds": 37.0,
+   "sales": null
+  },
+  {
+   "postcode": "2024",
+   "yield": 1.4857,
+   "weekly_rent": 1000.0,
+   "median_price_000": 3500.0,
+   "new_bonds": 150.0,
+   "sales": 45.0
+  },
+  {
+   "postcode": "2119",
+   "yield": 1.5971,
+   "weekly_rent": 860.0,
+   "median_price_000": 2800.0,
+   "new_bonds": 43.0,
+   "sales": null
+  },
+  {
+   "postcode": "2038",
+   "yield": 1.768,
+   "weekly_rent": 765.0,
+   "median_price_000": 2250.0,
+   "new_bonds": 108.0,
+   "sales": null
+  },
+  {
+   "postcode": "2110",
+   "yield": 1.7792,
+   "weekly_rent": 1100.0,
+   "median_price_000": 3215.0,
+   "new_bonds": 42.0,
+   "sales": null
+  },
+  {
+   "postcode": "2021",
+   "yield": 1.8019,
+   "weekly_rent": 850.0,
+   "median_price_000": 2453.0,
+   "new_bonds": 261.0,
+   "sales": 82.0
+  },
+  {
+   "postcode": "2100",
+   "yield": 1.8489,
+   "weekly_rent": 800.0,
+   "median_price_000": 2250.0,
+   "new_bonds": 131.0,
+   "sales": 55.0
+  },
+  {
+   "postcode": "2025",
+   "yield": 1.8658,
+   "weekly_rent": 1150.0,
+   "median_price_000": 3205.0,
+   "new_bonds": 105.0,
+   "sales": 44.0
+  },
+  {
+   "postcode": "2191",
+   "yield": 1.8778,
+   "weekly_rent": 780.0,
+   "median_price_000": 2160.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2132",
+   "yield": 1.8998,
+   "weekly_rent": 780.0,
+   "median_price_000": 2135.0,
+   "new_bonds": 53.0,
+   "sales": null
+  },
+  {
+   "postcode": "2120",
+   "yield": 1.9467,
+   "weekly_rent": 730.0,
+   "median_price_000": 1950.0,
+   "new_bonds": 68.0,
+   "sales": 91.0
+  },
+  {
+   "postcode": "2073",
+   "yield": 1.9783,
+   "weekly_rent": 1050.0,
+   "median_price_000": 2760.0,
+   "new_bonds": 91.0,
+   "sales": 59.0
+  },
+  {
+   "postcode": "2028",
+   "yield": 1.9896,
+   "weekly_rent": 1100.0,
+   "median_price_000": 2875.0,
+   "new_bonds": 96.0,
+   "sales": null
+  },
+  {
+   "postcode": "2125",
+   "yield": 2.0037,
+   "weekly_rent": 1050.0,
+   "median_price_000": 2725.0,
+   "new_bonds": 57.0,
+   "sales": null
+  },
+  {
+   "postcode": "2069",
+   "yield": 2.0373,
+   "weekly_rent": 1050.0,
+   "median_price_000": 2680.0,
+   "new_bonds": 66.0,
+   "sales": 59.0
+  },
+  {
+   "postcode": "2133",
+   "yield": 2.0495,
+   "weekly_rent": 700.0,
+   "median_price_000": 1776.0,
+   "new_bonds": 49.0,
+   "sales": null
+  },
+  {
+   "postcode": "2156",
+   "yield": 2.08,
+   "weekly_rent": 1100.0,
+   "median_price_000": 2750.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2158",
+   "yield": 2.0872,
+   "weekly_rent": 865.0,
+   "median_price_000": 2155.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2093",
+   "yield": 2.1118,
+   "weekly_rent": 995.0,
+   "median_price_000": 2450.0,
+   "new_bonds": 171.0,
+   "sales": 94.0
+  },
+  {
+   "postcode": "2115",
+   "yield": 2.146,
+   "weekly_rent": 780.0,
+   "median_price_000": 1890.0,
+   "new_bonds": 71.0,
+   "sales": 36.0
+  },
+  {
+   "postcode": "2092",
+   "yield": 2.1726,
+   "weekly_rent": 1525.0,
+   "median_price_000": 3650.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2097",
+   "yield": 2.1792,
+   "weekly_rent": 945.0,
+   "median_price_000": 2255.0,
+   "new_bonds": 100.0,
+   "sales": 50.0
+  },
+  {
+   "postcode": "2211",
+   "yield": 2.1825,
+   "weekly_rent": 745.0,
+   "median_price_000": 1775.0,
+   "new_bonds": 100.0,
+   "sales": 33.0
+  },
+  {
+   "postcode": "2206",
+   "yield": 2.1865,
+   "weekly_rent": 883.0,
+   "median_price_000": 2100.0,
+   "new_bonds": 96.0,
+   "sales": 40.0
+  },
+  {
+   "postcode": "2094",
+   "yield": 2.1975,
+   "weekly_rent": 950.0,
+   "median_price_000": 2248.0,
+   "new_bonds": 59.0,
+   "sales": null
+  },
+  {
+   "postcode": "2515",
+   "yield": 2.2019,
+   "weekly_rent": 885.0,
+   "median_price_000": 2090.0,
+   "new_bonds": 60.0,
+   "sales": 35.0
+  },
+  {
+   "postcode": "2101",
+   "yield": 2.2044,
+   "weekly_rent": 900.0,
+   "median_price_000": 2123.0,
+   "new_bonds": 147.0,
+   "sales": 66.0
+  },
+  {
+   "postcode": "2773",
+   "yield": 2.2308,
+   "weekly_rent": 725.0,
+   "median_price_000": 1690.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2075",
+   "yield": 2.235,
+   "weekly_rent": 1050.0,
+   "median_price_000": 2443.0,
+   "new_bonds": 93.0,
+   "sales": 74.0
+  },
+  {
+   "postcode": "2126",
+   "yield": 2.2652,
+   "weekly_rent": 1150.0,
+   "median_price_000": 2640.0,
+   "new_bonds": 64.0,
+   "sales": null
+  },
+  {
+   "postcode": "2079",
+   "yield": 2.2656,
+   "weekly_rent": 725.0,
+   "median_price_000": 1664.0,
+   "new_bonds": 33.0,
+   "sales": null
+  },
+  {
+   "postcode": "2074",
+   "yield": 2.2744,
+   "weekly_rent": 1100.0,
+   "median_price_000": 2515.0,
+   "new_bonds": 91.0,
+   "sales": 69.0
+  },
+  {
+   "postcode": "2076",
+   "yield": 2.2762,
+   "weekly_rent": 963.0,
+   "median_price_000": 2200.0,
+   "new_bonds": 98.0,
+   "sales": 61.0
+  },
+  {
+   "postcode": "2041",
+   "yield": 2.2765,
+   "weekly_rent": 950.0,
+   "median_price_000": 2170.0,
+   "new_bonds": 153.0,
+   "sales": 65.0
+  },
+  {
+   "postcode": "2227",
+   "yield": 2.2852,
+   "weekly_rent": 900.0,
+   "median_price_000": 2048.0,
+   "new_bonds": 92.0,
+   "sales": 76.0
+  },
+  {
+   "postcode": "2154",
+   "yield": 2.2902,
+   "weekly_rent": 850.0,
+   "median_price_000": 1930.0,
+   "new_bonds": 302.0,
+   "sales": 126.0
+  },
+  {
+   "postcode": "2103",
+   "yield": 2.3235,
+   "weekly_rent": 1000.0,
+   "median_price_000": 2238.0,
+   "new_bonds": 63.0,
+   "sales": null
+  },
+  {
+   "postcode": "2116",
+   "yield": 2.3317,
+   "weekly_rent": 630.0,
+   "median_price_000": 1405.0,
+   "new_bonds": 46.0,
+   "sales": null
+  },
+  {
+   "postcode": "2040",
+   "yield": 2.34,
+   "weekly_rent": 900.0,
+   "median_price_000": 2000.0,
+   "new_bonds": 223.0,
+   "sales": 93.0
+  },
+  {
+   "postcode": "2466",
+   "yield": 2.3451,
+   "weekly_rent": 460.0,
+   "median_price_000": 1020.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2106",
+   "yield": 2.3573,
+   "weekly_rent": 850.0,
+   "median_price_000": 1875.0,
+   "new_bonds": 73.0,
+   "sales": 35.0
+  },
+  {
+   "postcode": "2578",
+   "yield": 2.3583,
+   "weekly_rent": 600.0,
+   "median_price_000": 1323.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2299",
+   "yield": 2.3755,
+   "weekly_rent": 455.0,
+   "median_price_000": 996.0,
+   "new_bonds": 172.0,
+   "sales": 59.0
+  },
+  {
+   "postcode": "2176",
+   "yield": 2.4058,
+   "weekly_rent": 700.0,
+   "median_price_000": 1513.0,
+   "new_bonds": 161.0,
+   "sales": 72.0
+  },
+  {
+   "postcode": "2107",
+   "yield": 2.4074,
+   "weekly_rent": 1250.0,
+   "median_price_000": 2700.0,
+   "new_bonds": 69.0,
+   "sales": 45.0
+  },
+  {
+   "postcode": "2068",
+   "yield": 2.4227,
+   "weekly_rent": 1025.0,
+   "median_price_000": 2200.0,
+   "new_bonds": 114.0,
+   "sales": 69.0
+  },
+  {
+   "postcode": "2534",
+   "yield": 2.4336,
+   "weekly_rent": 790.0,
+   "median_price_000": 1688.0,
+   "new_bonds": 35.0,
+   "sales": null
+  },
+  {
+   "postcode": "2039",
+   "yield": 2.4348,
+   "weekly_rent": 995.0,
+   "median_price_000": 2125.0,
+   "new_bonds": 96.0,
+   "sales": 39.0
+  },
+  {
+   "postcode": "2027",
+   "yield": 2.4471,
+   "weekly_rent": 1200.0,
+   "median_price_000": 2550.0,
+   "new_bonds": 150.0,
+   "sales": 47.0
+  },
+  {
+   "postcode": "2758",
+   "yield": 2.4551,
+   "weekly_rent": 720.0,
+   "median_price_000": 1525.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2090",
+   "yield": 2.4632,
+   "weekly_rent": 900.0,
+   "median_price_000": 1900.0,
+   "new_bonds": 183.0,
+   "sales": 69.0
+  },
+  {
+   "postcode": "2117",
+   "yield": 2.4746,
+   "weekly_rent": 720.0,
+   "median_price_000": 1513.0,
+   "new_bonds": 118.0,
+   "sales": 58.0
+  },
+  {
+   "postcode": "2086",
+   "yield": 2.4939,
+   "weekly_rent": 1175.0,
+   "median_price_000": 2450.0,
+   "new_bonds": 48.0,
+   "sales": 43.0
+  },
+  {
+   "postcode": "2224",
+   "yield": 2.4949,
+   "weekly_rent": 950.0,
+   "median_price_000": 1980.0,
+   "new_bonds": 63.0,
+   "sales": 45.0
+  },
+  {
+   "postcode": "2095",
+   "yield": 2.5033,
+   "weekly_rent": 1100.0,
+   "median_price_000": 2285.0,
+   "new_bonds": 356.0,
+   "sales": 59.0
+  },
+  {
+   "postcode": "2199",
+   "yield": 2.5037,
+   "weekly_rent": 650.0,
+   "median_price_000": 1350.0,
+   "new_bonds": 107.0,
+   "sales": 44.0
+  },
+  {
+   "postcode": "2164",
+   "yield": 2.5257,
+   "weekly_rent": 680.0,
+   "median_price_000": 1400.0,
+   "new_bonds": 116.0,
+   "sales": 47.0
+  },
+  {
+   "postcode": "2208",
+   "yield": 2.5264,
+   "weekly_rent": 893.0,
+   "median_price_000": 1838.0,
+   "new_bonds": 66.0,
+   "sales": null
+  },
+  {
+   "postcode": "2071",
+   "yield": 2.5592,
+   "weekly_rent": 940.0,
+   "median_price_000": 1910.0,
+   "new_bonds": 88.0,
+   "sales": 31.0
+  },
+  {
+   "postcode": "2535",
+   "yield": 2.5752,
+   "weekly_rent": 780.0,
+   "median_price_000": 1575.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2177",
+   "yield": 2.5759,
+   "weekly_rent": 640.0,
+   "median_price_000": 1292.0,
+   "new_bonds": 57.0,
+   "sales": null
+  },
+  {
+   "postcode": "2518",
+   "yield": 2.6,
+   "weekly_rent": 650.0,
+   "median_price_000": 1300.0,
+   "new_bonds": 135.0,
+   "sales": 75.0
+  },
+  {
+   "postcode": "2207",
+   "yield": 2.607,
+   "weekly_rent": 750.0,
+   "median_price_000": 1496.0,
+   "new_bonds": 133.0,
+   "sales": 66.0
+  },
+  {
+   "postcode": "2204",
+   "yield": 2.6087,
+   "weekly_rent": 750.0,
+   "median_price_000": 1495.0,
+   "new_bonds": 316.0,
+   "sales": 79.0
+  },
+  {
+   "postcode": "2147",
+   "yield": 2.6202,
+   "weekly_rent": 650.0,
+   "median_price_000": 1290.0,
+   "new_bonds": 259.0,
+   "sales": 89.0
+  },
+  {
+   "postcode": "2768",
+   "yield": 2.6229,
+   "weekly_rent": 860.0,
+   "median_price_000": 1705.0,
+   "new_bonds": 97.0,
+   "sales": 52.0
+  },
+  {
+   "postcode": "2152",
+   "yield": 2.64,
+   "weekly_rent": 660.0,
+   "median_price_000": 1300.0,
+   "new_bonds": 87.0,
+   "sales": 37.0
+  },
+  {
+   "postcode": "2533",
+   "yield": 2.6441,
+   "weekly_rent": 750.0,
+   "median_price_000": 1475.0,
+   "new_bonds": 100.0,
+   "sales": 52.0
+  },
+  {
+   "postcode": "2102",
+   "yield": 2.6608,
+   "weekly_rent": 1050.0,
+   "median_price_000": 2052.0,
+   "new_bonds": 37.0,
+   "sales": 34.0
+  },
+  {
+   "postcode": "2479",
+   "yield": 2.6703,
+   "weekly_rent": 950.0,
+   "median_price_000": 1850.0,
+   "new_bonds": 33.0,
+   "sales": null
+  },
+  {
+   "postcode": "2143",
+   "yield": 2.68,
+   "weekly_rent": 670.0,
+   "median_price_000": 1300.0,
+   "new_bonds": 65.0,
+   "sales": null
+  },
+  {
+   "postcode": "2234",
+   "yield": 2.6872,
+   "weekly_rent": 925.0,
+   "median_price_000": 1790.0,
+   "new_bonds": 59.0,
+   "sales": 77.0
+  },
+  {
+   "postcode": "2517",
+   "yield": 2.6886,
+   "weekly_rent": 698.0,
+   "median_price_000": 1350.0,
+   "new_bonds": 62.0,
+   "sales": 41.0
+  },
+  {
+   "postcode": "2291",
+   "yield": 2.6963,
+   "weekly_rent": 700.0,
+   "median_price_000": 1350.0,
+   "new_bonds": 134.0,
+   "sales": 58.0
+  },
+  {
+   "postcode": "2042",
+   "yield": 2.6976,
+   "weekly_rent": 760.0,
+   "median_price_000": 1465.0,
+   "new_bonds": 297.0,
+   "sales": 63.0
+  },
+  {
+   "postcode": "2190",
+   "yield": 2.704,
+   "weekly_rent": 780.0,
+   "median_price_000": 1500.0,
+   "new_bonds": 114.0,
+   "sales": 43.0
+  },
+  {
+   "postcode": "2576",
+   "yield": 2.7101,
+   "weekly_rent": 800.0,
+   "median_price_000": 1535.0,
+   "new_bonds": 69.0,
+   "sales": 77.0
+  },
+  {
+   "postcode": "2752",
+   "yield": 2.7113,
+   "weekly_rent": 670.0,
+   "median_price_000": 1285.0,
+   "new_bonds": null,
+   "sales": 32.0
+  },
+  {
+   "postcode": "2197",
+   "yield": 2.7114,
+   "weekly_rent": 730.0,
+   "median_price_000": 1400.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2153",
+   "yield": 2.7117,
+   "weekly_rent": 850.0,
+   "median_price_000": 1630.0,
+   "new_bonds": 366.0,
+   "sales": 195.0
+  },
+  {
+   "postcode": "2508",
+   "yield": 2.7273,
+   "weekly_rent": 750.0,
+   "median_price_000": 1430.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2754",
+   "yield": 2.7277,
+   "weekly_rent": 630.0,
+   "median_price_000": 1201.0,
+   "new_bonds": 43.0,
+   "sales": null
+  },
+  {
+   "postcode": "2481",
+   "yield": 2.7368,
+   "weekly_rent": 1000.0,
+   "median_price_000": 1900.0,
+   "new_bonds": 140.0,
+   "sales": 59.0
+  },
+  {
+   "postcode": "2165",
+   "yield": 2.7451,
+   "weekly_rent": 615.0,
+   "median_price_000": 1165.0,
+   "new_bonds": 390.0,
+   "sales": 110.0
+  },
+  {
+   "postcode": "2209",
+   "yield": 2.7504,
+   "weekly_rent": 695.0,
+   "median_price_000": 1314.0,
+   "new_bonds": 80.0,
+   "sales": null
+  },
+  {
+   "postcode": "2221",
+   "yield": 2.7722,
+   "weekly_rent": 845.0,
+   "median_price_000": 1585.0,
+   "new_bonds": 68.0,
+   "sales": 45.0
+  },
+  {
+   "postcode": "2062",
+   "yield": 2.7733,
+   "weekly_rent": 840.0,
+   "median_price_000": 1575.0,
+   "new_bonds": 90.0,
+   "sales": null
+  },
+  {
+   "postcode": "2162",
+   "yield": 2.7857,
+   "weekly_rent": 750.0,
+   "median_price_000": 1400.0,
+   "new_bonds": 102.0,
+   "sales": 33.0
+  },
+  {
+   "postcode": "2210",
+   "yield": 2.7857,
+   "weekly_rent": 750.0,
+   "median_price_000": 1400.0,
+   "new_bonds": 146.0,
+   "sales": 87.0
+  },
+  {
+   "postcode": "2260",
+   "yield": 2.8013,
+   "weekly_rent": 835.0,
+   "median_price_000": 1550.0,
+   "new_bonds": 183.0,
+   "sales": 103.0
+  },
+  {
+   "postcode": "2251",
+   "yield": 2.8069,
+   "weekly_rent": 780.0,
+   "median_price_000": 1445.0,
+   "new_bonds": 165.0,
+   "sales": 125.0
+  },
+  {
+   "postcode": "2226",
+   "yield": 2.8104,
+   "weekly_rent": 935.0,
+   "median_price_000": 1730.0,
+   "new_bonds": 38.0,
+   "sales": 38.0
+  },
+  {
+   "postcode": "2037",
+   "yield": 2.8143,
+   "weekly_rent": 893.0,
+   "median_price_000": 1650.0,
+   "new_bonds": 294.0,
+   "sales": 70.0
+  },
+  {
+   "postcode": "2213",
+   "yield": 2.8159,
+   "weekly_rent": 900.0,
+   "median_price_000": 1662.0,
+   "new_bonds": 102.0,
+   "sales": 75.0
+  },
+  {
+   "postcode": "2026",
+   "yield": 2.829,
+   "weekly_rent": 1050.0,
+   "median_price_000": 1930.0,
+   "new_bonds": 750.0,
+   "sales": 134.0
+  },
+  {
+   "postcode": "2763",
+   "yield": 2.8438,
+   "weekly_rent": 700.0,
+   "median_price_000": 1280.0,
+   "new_bonds": 218.0,
+   "sales": 85.0
+  },
+  {
+   "postcode": "2317",
+   "yield": 2.8451,
+   "weekly_rent": 650.0,
+   "median_price_000": 1188.0,
+   "new_bonds": 55.0,
+   "sales": 32.0
+  },
+  {
+   "postcode": "2044",
+   "yield": 2.8476,
+   "weekly_rent": 920.0,
+   "median_price_000": 1680.0,
+   "new_bonds": 93.0,
+   "sales": null
+  },
+  {
+   "postcode": "2212",
+   "yield": 2.8479,
+   "weekly_rent": 873.0,
+   "median_price_000": 1594.0,
+   "new_bonds": 116.0,
+   "sales": 42.0
+  },
+  {
+   "postcode": "2166",
+   "yield": 2.8514,
+   "weekly_rent": 550.0,
+   "median_price_000": 1003.0,
+   "new_bonds": 323.0,
+   "sales": 118.0
+  },
+  {
+   "postcode": "2087",
+   "yield": 2.8528,
+   "weekly_rent": 1495.0,
+   "median_price_000": 2725.0,
+   "new_bonds": 47.0,
+   "sales": null
+  },
+  {
+   "postcode": "2229",
+   "yield": 2.8553,
+   "weekly_rent": 850.0,
+   "median_price_000": 1548.0,
+   "new_bonds": 209.0,
+   "sales": 142.0
+  },
+  {
+   "postcode": "2155",
+   "yield": 2.8808,
+   "weekly_rent": 795.0,
+   "median_price_000": 1435.0,
+   "new_bonds": 561.0,
+   "sales": 273.0
+  },
+  {
+   "postcode": "2161",
+   "yield": 2.8814,
+   "weekly_rent": 645.0,
+   "median_price_000": 1164.0,
+   "new_bonds": 211.0,
+   "sales": 83.0
+  },
+  {
+   "postcode": "2196",
+   "yield": 2.8815,
+   "weekly_rent": 650.0,
+   "median_price_000": 1173.0,
+   "new_bonds": 213.0,
+   "sales": 74.0
+  },
+  {
+   "postcode": "2774",
+   "yield": 2.884,
+   "weekly_rent": 660.0,
+   "median_price_000": 1190.0,
+   "new_bonds": 31.0,
+   "sales": 51.0
+  },
+  {
+   "postcode": "2048",
+   "yield": 2.8846,
+   "weekly_rent": 750.0,
+   "median_price_000": 1352.0,
+   "new_bonds": 89.0,
+   "sales": null
+  },
+  {
+   "postcode": "2230",
+   "yield": 2.8889,
+   "weekly_rent": 750.0,
+   "median_price_000": 1350.0,
+   "new_bonds": 411.0,
+   "sales": 153.0
+  },
+  {
+   "postcode": "2516",
+   "yield": 2.8889,
+   "weekly_rent": 900.0,
+   "median_price_000": 1620.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2257",
+   "yield": 2.9082,
+   "weekly_rent": 670.0,
+   "median_price_000": 1198.0,
+   "new_bonds": 252.0,
+   "sales": 138.0
+  },
+  {
+   "postcode": "2281",
+   "yield": 2.912,
+   "weekly_rent": 700.0,
+   "median_price_000": 1250.0,
+   "new_bonds": 93.0,
+   "sales": 64.0
+  },
+  {
+   "postcode": "2759",
+   "yield": 2.912,
+   "weekly_rent": 700.0,
+   "median_price_000": 1250.0,
+   "new_bonds": 140.0,
+   "sales": 44.0
+  },
+  {
+   "postcode": "2029",
+   "yield": 2.9213,
+   "weekly_rent": 1000.0,
+   "median_price_000": 1780.0,
+   "new_bonds": 149.0,
+   "sales": 38.0
+  },
+  {
+   "postcode": "2198",
+   "yield": 2.9213,
+   "weekly_rent": 850.0,
+   "median_price_000": 1513.0,
+   "new_bonds": 45.0,
+   "sales": null
+  },
+  {
+   "postcode": "2305",
+   "yield": 2.9263,
+   "weekly_rent": 695.0,
+   "median_price_000": 1235.0,
+   "new_bonds": 82.0,
+   "sales": 42.0
+  },
+  {
+   "postcode": "2258",
+   "yield": 2.9277,
+   "weekly_rent": 670.0,
+   "median_price_000": 1190.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2747",
+   "yield": 2.9351,
+   "weekly_rent": 600.0,
+   "median_price_000": 1063.0,
+   "new_bonds": 509.0,
+   "sales": 190.0
+  },
+  {
+   "postcode": "2749",
+   "yield": 2.9391,
+   "weekly_rent": 650.0,
+   "median_price_000": 1150.0,
+   "new_bonds": 91.0,
+   "sales": 31.0
+  },
+  {
+   "postcode": "2525",
+   "yield": 2.9425,
+   "weekly_rent": 713.0,
+   "median_price_000": 1260.0,
+   "new_bonds": 52.0,
+   "sales": null
+  },
+  {
+   "postcode": "2096",
+   "yield": 2.9471,
+   "weekly_rent": 900.0,
+   "median_price_000": 1588.0,
+   "new_bonds": 202.0,
+   "sales": 46.0
+  },
+  {
+   "postcode": "2256",
+   "yield": 2.9573,
+   "weekly_rent": 600.0,
+   "median_price_000": 1055.0,
+   "new_bonds": 130.0,
+   "sales": 51.0
+  },
+  {
+   "postcode": "2519",
+   "yield": 2.9714,
+   "weekly_rent": 700.0,
+   "median_price_000": 1225.0,
+   "new_bonds": 90.0,
+   "sales": 61.0
+  },
+  {
+   "postcode": "2067",
+   "yield": 2.9802,
+   "weekly_rent": 870.0,
+   "median_price_000": 1518.0,
+   "new_bonds": 418.0,
+   "sales": 74.0
+  },
+  {
+   "postcode": "2782",
+   "yield": 2.9843,
+   "weekly_rent": 660.0,
+   "median_price_000": 1150.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2023",
+   "yield": 2.9863,
+   "weekly_rent": 1005.0,
+   "median_price_000": 1750.0,
+   "new_bonds": 125.0,
+   "sales": 43.0
+  },
+  {
+   "postcode": "2168",
+   "yield": 2.9912,
+   "weekly_rent": 650.0,
+   "median_price_000": 1130.0,
+   "new_bonds": 189.0,
+   "sales": 67.0
+  },
+  {
+   "postcode": "2219",
+   "yield": 2.9971,
+   "weekly_rent": 800.0,
+   "median_price_000": 1388.0,
+   "new_bonds": 92.0,
+   "sales": 44.0
+  },
+  {
+   "postcode": "2769",
+   "yield": 3.001,
+   "weekly_rent": 913.0,
+   "median_price_000": 1582.0,
+   "new_bonds": 72.0,
+   "sales": null
+  },
+  {
+   "postcode": "2032",
+   "yield": 3.0036,
+   "weekly_rent": 800.0,
+   "median_price_000": 1385.0,
+   "new_bonds": 285.0,
+   "sales": 42.0
+  },
+  {
+   "postcode": "2567",
+   "yield": 3.0132,
+   "weekly_rent": 700.0,
+   "median_price_000": 1208.0,
+   "new_bonds": 171.0,
+   "sales": 130.0
+  },
+  {
+   "postcode": "2049",
+   "yield": 3.0208,
+   "weekly_rent": 725.0,
+   "median_price_000": 1248.0,
+   "new_bonds": 197.0,
+   "sales": 55.0
+  },
+  {
+   "postcode": "2130",
+   "yield": 3.0333,
+   "weekly_rent": 700.0,
+   "median_price_000": 1200.0,
+   "new_bonds": 131.0,
+   "sales": null
+  },
+  {
+   "postcode": "2173",
+   "yield": 3.0432,
+   "weekly_rent": 800.0,
+   "median_price_000": 1367.0,
+   "new_bonds": 68.0,
+   "sales": null
+  },
+  {
+   "postcode": "2047",
+   "yield": 3.0529,
+   "weekly_rent": 910.0,
+   "median_price_000": 1550.0,
+   "new_bonds": 131.0,
+   "sales": 47.0
+  },
+  {
+   "postcode": "2203",
+   "yield": 3.0563,
+   "weekly_rent": 720.0,
+   "median_price_000": 1225.0,
+   "new_bonds": 167.0,
+   "sales": 42.0
+  },
+  {
+   "postcode": "2022",
+   "yield": 3.0588,
+   "weekly_rent": 1000.0,
+   "median_price_000": 1700.0,
+   "new_bonds": 315.0,
+   "sales": 53.0
+  },
+  {
+   "postcode": "2571",
+   "yield": 3.0611,
+   "weekly_rent": 780.0,
+   "median_price_000": 1325.0,
+   "new_bonds": 100.0,
+   "sales": 69.0
+  },
+  {
+   "postcode": "2756",
+   "yield": 3.0615,
+   "weekly_rent": 680.0,
+   "median_price_000": 1155.0,
+   "new_bonds": 153.0,
+   "sales": 104.0
+  },
+  {
+   "postcode": "2770",
+   "yield": 3.0622,
+   "weekly_rent": 530.0,
+   "median_price_000": 900.0,
+   "new_bonds": 384.0,
+   "sales": 153.0
+  },
+  {
+   "postcode": "2577",
+   "yield": 3.064,
+   "weekly_rent": 700.0,
+   "median_price_000": 1188.0,
+   "new_bonds": 112.0,
+   "sales": 72.0
+  },
+  {
+   "postcode": "2761",
+   "yield": 3.0644,
+   "weekly_rent": 650.0,
+   "median_price_000": 1103.0,
+   "new_bonds": 146.0,
+   "sales": 76.0
+  },
+  {
+   "postcode": "2318",
+   "yield": 3.0696,
+   "weekly_rent": 670.0,
+   "median_price_000": 1135.0,
+   "new_bonds": 53.0,
+   "sales": 55.0
+  },
+  {
+   "postcode": "2574",
+   "yield": 3.0748,
+   "weekly_rent": 680.0,
+   "median_price_000": 1150.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2280",
+   "yield": 3.0783,
+   "weekly_rent": 650.0,
+   "median_price_000": 1098.0,
+   "new_bonds": 109.0,
+   "sales": 114.0
+  },
+  {
+   "postcode": "2233",
+   "yield": 3.0844,
+   "weekly_rent": 850.0,
+   "median_price_000": 1433.0,
+   "new_bonds": 73.0,
+   "sales": 78.0
+  },
+  {
+   "postcode": "2316",
+   "yield": 3.0952,
+   "weekly_rent": 750.0,
+   "median_price_000": 1260.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2016",
+   "yield": 3.0966,
+   "weekly_rent": 795.0,
+   "median_price_000": 1335.0,
+   "new_bonds": 464.0,
+   "sales": 55.0
+  },
+  {
+   "postcode": "2088",
+   "yield": 3.0985,
+   "weekly_rent": 895.0,
+   "median_price_000": 1502.0,
+   "new_bonds": 269.0,
+   "sales": 130.0
+  },
+  {
+   "postcode": "2137",
+   "yield": 3.1021,
+   "weekly_rent": 865.0,
+   "median_price_000": 1450.0,
+   "new_bonds": 218.0,
+   "sales": 89.0
+  },
+  {
+   "postcode": "2148",
+   "yield": 3.121,
+   "weekly_rent": 620.0,
+   "median_price_000": 1033.0,
+   "new_bonds": 656.0,
+   "sales": 202.0
+  },
+  {
+   "postcode": "2427",
+   "yield": 3.1225,
+   "weekly_rent": 490.0,
+   "median_price_000": 816.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2171",
+   "yield": 3.1278,
+   "weekly_rent": 800.0,
+   "median_price_000": 1330.0,
+   "new_bonds": 126.0,
+   "sales": 57.0
+  },
+  {
+   "postcode": "2566",
+   "yield": 3.1331,
+   "weekly_rent": 623.0,
+   "median_price_000": 1034.0,
+   "new_bonds": 140.0,
+   "sales": 64.0
+  },
+  {
+   "postcode": "2558",
+   "yield": 3.1383,
+   "weekly_rent": 650.0,
+   "median_price_000": 1077.0,
+   "new_bonds": 47.0,
+   "sales": null
+  },
+  {
+   "postcode": "2223",
+   "yield": 3.1446,
+   "weekly_rent": 690.0,
+   "median_price_000": 1141.0,
+   "new_bonds": 130.0,
+   "sales": 62.0
+  },
+  {
+   "postcode": "2489",
+   "yield": 3.1571,
+   "weekly_rent": 850.0,
+   "median_price_000": 1400.0,
+   "new_bonds": 31.0,
+   "sales": 35.0
+  },
+  {
+   "postcode": "2282",
+   "yield": 3.1681,
+   "weekly_rent": 725.0,
+   "median_price_000": 1190.0,
+   "new_bonds": 54.0,
+   "sales": 61.0
+  },
+  {
+   "postcode": "2089",
+   "yield": 3.1829,
+   "weekly_rent": 830.0,
+   "median_price_000": 1356.0,
+   "new_bonds": 227.0,
+   "sales": 66.0
+  },
+  {
+   "postcode": "2167",
+   "yield": 3.1856,
+   "weekly_rent": 680.0,
+   "median_price_000": 1110.0,
+   "new_bonds": 87.0,
+   "sales": null
+  },
+  {
+   "postcode": "2560",
+   "yield": 3.1967,
+   "weekly_rent": 600.0,
+   "median_price_000": 976.0,
+   "new_bonds": 603.0,
+   "sales": 271.0
+  },
+  {
+   "postcode": "2570",
+   "yield": 3.1967,
+   "weekly_rent": 750.0,
+   "median_price_000": 1220.0,
+   "new_bonds": 533.0,
+   "sales": 209.0
+  },
+  {
+   "postcode": "2766",
+   "yield": 3.1977,
+   "weekly_rent": 650.0,
+   "median_price_000": 1057.0,
+   "new_bonds": 86.0,
+   "sales": 39.0
+  },
+  {
+   "postcode": "2539",
+   "yield": 3.2066,
+   "weekly_rent": 600.0,
+   "median_price_000": 973.0,
+   "new_bonds": 146.0,
+   "sales": 102.0
+  },
+  {
+   "postcode": "2785",
+   "yield": 3.2165,
+   "weekly_rent": 600.0,
+   "median_price_000": 970.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2557",
+   "yield": 3.219,
+   "weekly_rent": 780.0,
+   "median_price_000": 1260.0,
+   "new_bonds": 159.0,
+   "sales": 60.0
+  },
+  {
+   "postcode": "2745",
+   "yield": 3.2242,
+   "weekly_rent": 780.0,
+   "median_price_000": 1258.0,
+   "new_bonds": 140.0,
+   "sales": 108.0
+  },
+  {
+   "postcode": "2780",
+   "yield": 3.2257,
+   "weekly_rent": 580.0,
+   "median_price_000": 935.0,
+   "new_bonds": 88.0,
+   "sales": 71.0
+  },
+  {
+   "postcode": "2070",
+   "yield": 3.2324,
+   "weekly_rent": 1150.0,
+   "median_price_000": 1850.0,
+   "new_bonds": 91.0,
+   "sales": 46.0
+  },
+  {
+   "postcode": "2546",
+   "yield": 3.2336,
+   "weekly_rent": 518.0,
+   "median_price_000": 833.0,
+   "new_bonds": 62.0,
+   "sales": 54.0
+  },
+  {
+   "postcode": "2767",
+   "yield": 3.2344,
+   "weekly_rent": 650.0,
+   "median_price_000": 1045.0,
+   "new_bonds": 102.0,
+   "sales": 36.0
+  },
+  {
+   "postcode": "2267",
+   "yield": 3.2393,
+   "weekly_rent": 570.0,
+   "median_price_000": 915.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2060",
+   "yield": 3.255,
+   "weekly_rent": 820.0,
+   "median_price_000": 1310.0,
+   "new_bonds": 339.0,
+   "sales": 110.0
+  },
+  {
+   "postcode": "2289",
+   "yield": 3.2555,
+   "weekly_rent": 740.0,
+   "median_price_000": 1182.0,
+   "new_bonds": 149.0,
+   "sales": 74.0
+  },
+  {
+   "postcode": "2526",
+   "yield": 3.2734,
+   "weekly_rent": 700.0,
+   "median_price_000": 1112.0,
+   "new_bonds": 84.0,
+   "sales": 56.0
+  },
+  {
+   "postcode": "2564",
+   "yield": 3.2906,
+   "weekly_rent": 598.0,
+   "median_price_000": 945.0,
+   "new_bonds": 84.0,
+   "sales": 35.0
+  },
+  {
+   "postcode": "2550",
+   "yield": 3.3026,
+   "weekly_rent": 510.0,
+   "median_price_000": 803.0,
+   "new_bonds": 83.0,
+   "sales": 74.0
+  },
+  {
+   "postcode": "2122",
+   "yield": 3.3051,
+   "weekly_rent": 750.0,
+   "median_price_000": 1180.0,
+   "new_bonds": 239.0,
+   "sales": 89.0
+  },
+  {
+   "postcode": "2300",
+   "yield": 3.3091,
+   "weekly_rent": 700.0,
+   "median_price_000": 1100.0,
+   "new_bonds": 292.0,
+   "sales": 77.0
+  },
+  {
+   "postcode": "2619",
+   "yield": 3.3147,
+   "weekly_rent": 800.0,
+   "median_price_000": 1255.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2035",
+   "yield": 3.3191,
+   "weekly_rent": 900.0,
+   "median_price_000": 1410.0,
+   "new_bonds": 377.0,
+   "sales": 103.0
+  },
+  {
+   "postcode": "2265",
+   "yield": 3.3202,
+   "weekly_rent": 650.0,
+   "median_price_000": 1018.0,
+   "new_bonds": 61.0,
+   "sales": 36.0
+  },
+  {
+   "postcode": "2304",
+   "yield": 3.3202,
+   "weekly_rent": 650.0,
+   "median_price_000": 1018.0,
+   "new_bonds": 172.0,
+   "sales": 76.0
+  },
+  {
+   "postcode": "2777",
+   "yield": 3.328,
+   "weekly_rent": 720.0,
+   "median_price_000": 1125.0,
+   "new_bonds": 43.0,
+   "sales": 51.0
+  },
+  {
+   "postcode": "2443",
+   "yield": 3.3285,
+   "weekly_rent": 530.0,
+   "median_price_000": 828.0,
+   "new_bonds": null,
+   "sales": 52.0
+  },
+  {
+   "postcode": "2537",
+   "yield": 3.3462,
+   "weekly_rent": 565.0,
+   "median_price_000": 878.0,
+   "new_bonds": 64.0,
+   "sales": 58.0
+  },
+  {
+   "postcode": "2505",
+   "yield": 3.3465,
+   "weekly_rent": 650.0,
+   "median_price_000": 1010.0,
+   "new_bonds": 35.0,
+   "sales": null
+  },
+  {
+   "postcode": "2307",
+   "yield": 3.3511,
+   "weekly_rent": 580.0,
+   "median_price_000": 900.0,
+   "new_bonds": 58.0,
+   "sales": null
+  },
+  {
+   "postcode": "2445",
+   "yield": 3.3676,
+   "weekly_rent": 680.0,
+   "median_price_000": 1050.0,
+   "new_bonds": 45.0,
+   "sales": 32.0
+  },
+  {
+   "postcode": "2031",
+   "yield": 3.3718,
+   "weekly_rent": 900.0,
+   "median_price_000": 1388.0,
+   "new_bonds": 602.0,
+   "sales": 160.0
+  },
+  {
+   "postcode": "2228",
+   "yield": 3.38,
+   "weekly_rent": 780.0,
+   "median_price_000": 1200.0,
+   "new_bonds": 166.0,
+   "sales": 95.0
+  },
+  {
+   "postcode": "2261",
+   "yield": 3.38,
+   "weekly_rent": 650.0,
+   "median_price_000": 1000.0,
+   "new_bonds": 376.0,
+   "sales": 266.0
+  },
+  {
+   "postcode": "2315",
+   "yield": 3.38,
+   "weekly_rent": 650.0,
+   "median_price_000": 1000.0,
+   "new_bonds": 133.0,
+   "sales": 105.0
+  },
+  {
+   "postcode": "2303",
+   "yield": 3.3872,
+   "weekly_rent": 725.0,
+   "median_price_000": 1113.0,
+   "new_bonds": 79.0,
+   "sales": null
+  },
+  {
+   "postcode": "2046",
+   "yield": 3.3888,
+   "weekly_rent": 885.0,
+   "median_price_000": 1358.0,
+   "new_bonds": 224.0,
+   "sales": 82.0
+  },
+  {
+   "postcode": "2326",
+   "yield": 3.3985,
+   "weekly_rent": 515.0,
+   "median_price_000": 788.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2099",
+   "yield": 3.4,
+   "weekly_rent": 850.0,
+   "median_price_000": 1300.0,
+   "new_bonds": 414.0,
+   "sales": 155.0
+  },
+  {
+   "postcode": "2456",
+   "yield": 3.4141,
+   "weekly_rent": 650.0,
+   "median_price_000": 990.0,
+   "new_bonds": 108.0,
+   "sales": 49.0
+  },
+  {
+   "postcode": "2779",
+   "yield": 3.4176,
+   "weekly_rent": 650.0,
+   "median_price_000": 989.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2536",
+   "yield": 3.4251,
+   "weekly_rent": 550.0,
+   "median_price_000": 835.0,
+   "new_bonds": 134.0,
+   "sales": 136.0
+  },
+  {
+   "postcode": "2214",
+   "yield": 3.4387,
+   "weekly_rent": 1025.0,
+   "median_price_000": 1550.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2484",
+   "yield": 3.4458,
+   "weekly_rent": 660.0,
+   "median_price_000": 996.0,
+   "new_bonds": 69.0,
+   "sales": 66.0
+  },
+  {
+   "postcode": "2765",
+   "yield": 3.4528,
+   "weekly_rent": 830.0,
+   "median_price_000": 1250.0,
+   "new_bonds": 643.0,
+   "sales": 305.0
+  },
+  {
+   "postcode": "2065",
+   "yield": 3.4667,
+   "weekly_rent": 900.0,
+   "median_price_000": 1350.0,
+   "new_bonds": 626.0,
+   "sales": 187.0
+  },
+  {
+   "postcode": "2295",
+   "yield": 3.4667,
+   "weekly_rent": 750.0,
+   "median_price_000": 1125.0,
+   "new_bonds": 42.0,
+   "sales": null
+  },
+  {
+   "postcode": "2583",
+   "yield": 3.4667,
+   "weekly_rent": 430.0,
+   "median_price_000": 645.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2548",
+   "yield": 3.4767,
+   "weekly_rent": 575.0,
+   "median_price_000": 860.0,
+   "new_bonds": 74.0,
+   "sales": 53.0
+  },
+  {
+   "postcode": "2422",
+   "yield": 3.4777,
+   "weekly_rent": 420.0,
+   "median_price_000": 628.0,
+   "new_bonds": 32.0,
+   "sales": null
+  },
+  {
+   "postcode": "2464",
+   "yield": 3.4845,
+   "weekly_rent": 650.0,
+   "median_price_000": 970.0,
+   "new_bonds": 75.0,
+   "sales": 33.0
+  },
+  {
+   "postcode": "2565",
+   "yield": 3.5034,
+   "weekly_rent": 700.0,
+   "median_price_000": 1039.0,
+   "new_bonds": 226.0,
+   "sales": 93.0
+  },
+  {
+   "postcode": "2061",
+   "yield": 3.5064,
+   "weekly_rent": 853.0,
+   "median_price_000": 1265.0,
+   "new_bonds": 144.0,
+   "sales": null
+  },
+  {
+   "postcode": "2179",
+   "yield": 3.51,
+   "weekly_rent": 810.0,
+   "median_price_000": 1200.0,
+   "new_bonds": 345.0,
+   "sales": 99.0
+  },
+  {
+   "postcode": "2487",
+   "yield": 3.5135,
+   "weekly_rent": 1000.0,
+   "median_price_000": 1480.0,
+   "new_bonds": 139.0,
+   "sales": 96.0
+  },
+  {
+   "postcode": "2263",
+   "yield": 3.5193,
+   "weekly_rent": 580.0,
+   "median_price_000": 857.0,
+   "new_bonds": 258.0,
+   "sales": 125.0
+  },
+  {
+   "postcode": "2575",
+   "yield": 3.5286,
+   "weekly_rent": 665.0,
+   "median_price_000": 980.0,
+   "new_bonds": 69.0,
+   "sales": 77.0
+  },
+  {
+   "postcode": "2136",
+   "yield": 3.536,
+   "weekly_rent": 680.0,
+   "median_price_000": 1000.0,
+   "new_bonds": 85.0,
+   "sales": 31.0
+  },
+  {
+   "postcode": "2072",
+   "yield": 3.5385,
+   "weekly_rent": 805.0,
+   "median_price_000": 1183.0,
+   "new_bonds": 86.0,
+   "sales": 36.0
+  },
+  {
+   "postcode": "2390",
+   "yield": 3.5396,
+   "weekly_rent": 388.0,
+   "median_price_000": 570.0,
+   "new_bonds": 68.0,
+   "sales": null
+  },
+  {
+   "postcode": "2298",
+   "yield": 3.5505,
+   "weekly_rent": 635.0,
+   "median_price_000": 930.0,
+   "new_bonds": 140.0,
+   "sales": 37.0
+  },
+  {
+   "postcode": "2454",
+   "yield": 3.5609,
+   "weekly_rent": 630.0,
+   "median_price_000": 920.0,
+   "new_bonds": 34.0,
+   "sales": 38.0
+  },
+  {
+   "postcode": "2753",
+   "yield": 3.5697,
+   "weekly_rent": 670.0,
+   "median_price_000": 976.0,
+   "new_bonds": 93.0,
+   "sales": 44.0
+  },
+  {
+   "postcode": "2085",
+   "yield": 3.5795,
+   "weekly_rent": 1575.0,
+   "median_price_000": 2288.0,
+   "new_bonds": null,
+   "sales": 38.0
+  },
+  {
+   "postcode": "2483",
+   "yield": 3.597,
+   "weekly_rent": 920.0,
+   "median_price_000": 1330.0,
+   "new_bonds": 63.0,
+   "sales": 46.0
+  },
+  {
+   "postcode": "2284",
+   "yield": 3.5972,
+   "weekly_rent": 680.0,
+   "median_price_000": 983.0,
+   "new_bonds": 77.0,
+   "sales": 52.0
+  },
+  {
+   "postcode": "2760",
+   "yield": 3.6009,
+   "weekly_rent": 590.0,
+   "median_price_000": 852.0,
+   "new_bonds": 390.0,
+   "sales": 121.0
+  },
+  {
+   "postcode": "2441",
+   "yield": 3.6174,
+   "weekly_rent": 480.0,
+   "median_price_000": 690.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2540",
+   "yield": 3.6279,
+   "weekly_rent": 600.0,
+   "median_price_000": 860.0,
+   "new_bonds": 327.0,
+   "sales": 245.0
+  },
+  {
+   "postcode": "2327",
+   "yield": 3.6305,
+   "weekly_rent": 495.0,
+   "median_price_000": 709.0,
+   "new_bonds": 52.0,
+   "sales": 34.0
+  },
+  {
+   "postcode": "2444",
+   "yield": 3.6341,
+   "weekly_rent": 615.0,
+   "median_price_000": 880.0,
+   "new_bonds": 561.0,
+   "sales": 306.0
+  },
+  {
+   "postcode": "2488",
+   "yield": 3.6379,
+   "weekly_rent": 850.0,
+   "median_price_000": 1215.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2482",
+   "yield": 3.6422,
+   "weekly_rent": 823.0,
+   "median_price_000": 1175.0,
+   "new_bonds": 52.0,
+   "sales": null
+  },
+  {
+   "postcode": "2290",
+   "yield": 3.6473,
+   "weekly_rent": 700.0,
+   "median_price_000": 998.0,
+   "new_bonds": 185.0,
+   "sales": 120.0
+  },
+  {
+   "postcode": "2283",
+   "yield": 3.6536,
+   "weekly_rent": 645.0,
+   "median_price_000": 918.0,
+   "new_bonds": 102.0,
+   "sales": 88.0
+  },
+  {
+   "postcode": "2582",
+   "yield": 3.6577,
+   "weekly_rent": 600.0,
+   "median_price_000": 853.0,
+   "new_bonds": 50.0,
+   "sales": 52.0
+  },
+  {
+   "postcode": "2428",
+   "yield": 3.6667,
+   "weekly_rent": 550.0,
+   "median_price_000": 780.0,
+   "new_bonds": 204.0,
+   "sales": 178.0
+  },
+  {
+   "postcode": "2146",
+   "yield": 3.6739,
+   "weekly_rent": 650.0,
+   "median_price_000": 920.0,
+   "new_bonds": 152.0,
+   "sales": 75.0
+  },
+  {
+   "postcode": "2287",
+   "yield": 3.6739,
+   "weekly_rent": 650.0,
+   "median_price_000": 920.0,
+   "new_bonds": 340.0,
+   "sales": 149.0
+  },
+  {
+   "postcode": "2174",
+   "yield": 3.6763,
+   "weekly_rent": 760.0,
+   "median_price_000": 1075.0,
+   "new_bonds": 162.0,
+   "sales": 43.0
+  },
+  {
+   "postcode": "2064",
+   "yield": 3.679,
+   "weekly_rent": 820.0,
+   "median_price_000": 1159.0,
+   "new_bonds": 103.0,
+   "sales": 40.0
+  },
+  {
+   "postcode": "2192",
+   "yield": 3.6792,
+   "weekly_rent": 600.0,
+   "median_price_000": 848.0,
+   "new_bonds": 135.0,
+   "sales": 40.0
+  },
+  {
+   "postcode": "2131",
+   "yield": 3.6847,
+   "weekly_rent": 693.0,
+   "median_price_000": 978.0,
+   "new_bonds": 306.0,
+   "sales": 80.0
+  },
+  {
+   "postcode": "2529",
+   "yield": 3.6873,
+   "weekly_rent": 780.0,
+   "median_price_000": 1100.0,
+   "new_bonds": 162.0,
+   "sales": 132.0
+  },
+  {
+   "postcode": "2250",
+   "yield": 3.694,
+   "weekly_rent": 650.0,
+   "median_price_000": 915.0,
+   "new_bonds": 495.0,
+   "sales": 368.0
+  },
+  {
+   "postcode": "2259",
+   "yield": 3.6947,
+   "weekly_rent": 675.0,
+   "median_price_000": 950.0,
+   "new_bonds": 477.0,
+   "sales": 272.0
+  },
+  {
+   "postcode": "2010",
+   "yield": 3.6963,
+   "weekly_rent": 853.0,
+   "median_price_000": 1200.0,
+   "new_bonds": 698.0,
+   "sales": 140.0
+  },
+  {
+   "postcode": "2528",
+   "yield": 3.7021,
+   "weekly_rent": 650.0,
+   "median_price_000": 913.0,
+   "new_bonds": 147.0,
+   "sales": 81.0
+  },
+  {
+   "postcode": "2572",
+   "yield": 3.7026,
+   "weekly_rent": 680.0,
+   "median_price_000": 955.0,
+   "new_bonds": 31.0,
+   "sales": null
+  },
+  {
+   "postcode": "2370",
+   "yield": 3.7069,
+   "weekly_rent": 360.0,
+   "median_price_000": 505.0,
+   "new_bonds": 43.0,
+   "sales": 32.0
+  },
+  {
+   "postcode": "2506",
+   "yield": 3.7101,
+   "weekly_rent": 630.0,
+   "median_price_000": 883.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2502",
+   "yield": 3.7184,
+   "weekly_rent": 640.0,
+   "median_price_000": 895.0,
+   "new_bonds": 99.0,
+   "sales": 52.0
+  },
+  {
+   "postcode": "2423",
+   "yield": 3.7192,
+   "weekly_rent": 540.0,
+   "median_price_000": 755.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2446",
+   "yield": 3.7335,
+   "weekly_rent": 555.0,
+   "median_price_000": 773.0,
+   "new_bonds": 76.0,
+   "sales": 60.0
+  },
+  {
+   "postcode": "2477",
+   "yield": 3.7408,
+   "weekly_rent": 705.0,
+   "median_price_000": 980.0,
+   "new_bonds": 66.0,
+   "sales": 55.0
+  },
+  {
+   "postcode": "2262",
+   "yield": 3.7488,
+   "weekly_rent": 620.0,
+   "median_price_000": 860.0,
+   "new_bonds": 168.0,
+   "sales": 99.0
+  },
+  {
+   "postcode": "2447",
+   "yield": 3.7519,
+   "weekly_rent": 570.0,
+   "median_price_000": 790.0,
+   "new_bonds": 35.0,
+   "sales": 35.0
+  },
+  {
+   "postcode": "2431",
+   "yield": 3.7536,
+   "weekly_rent": 545.0,
+   "median_price_000": 755.0,
+   "new_bonds": 42.0,
+   "sales": null
+  },
+  {
+   "postcode": "2530",
+   "yield": 3.7617,
+   "weekly_rent": 680.0,
+   "median_price_000": 940.0,
+   "new_bonds": 154.0,
+   "sales": 121.0
+  },
+  {
+   "postcode": "2640",
+   "yield": 3.7617,
+   "weekly_rent": 510.0,
+   "median_price_000": 705.0,
+   "new_bonds": 398.0,
+   "sales": 171.0
+  },
+  {
+   "postcode": "2680",
+   "yield": 3.7647,
+   "weekly_rent": 480.0,
+   "median_price_000": 663.0,
+   "new_bonds": 162.0,
+   "sales": 56.0
+  },
+  {
+   "postcode": "2323",
+   "yield": 3.7717,
+   "weekly_rent": 610.0,
+   "median_price_000": 841.0,
+   "new_bonds": 170.0,
+   "sales": 138.0
+  },
+  {
+   "postcode": "2474",
+   "yield": 3.7742,
+   "weekly_rent": 450.0,
+   "median_price_000": 620.0,
+   "new_bonds": 33.0,
+   "sales": null
+  },
+  {
+   "postcode": "2264",
+   "yield": 3.7757,
+   "weekly_rent": 668.0,
+   "median_price_000": 920.0,
+   "new_bonds": 130.0,
+   "sales": 83.0
+  },
+  {
+   "postcode": "2350",
+   "yield": 3.7818,
+   "weekly_rent": 480.0,
+   "median_price_000": 660.0,
+   "new_bonds": 311.0,
+   "sales": 141.0
+  },
+  {
+   "postcode": "2795",
+   "yield": 3.7844,
+   "weekly_rent": 540.0,
+   "median_price_000": 742.0,
+   "new_bonds": 330.0,
+   "sales": 190.0
+  },
+  {
+   "postcode": "2750",
+   "yield": 3.8019,
+   "weekly_rent": 620.0,
+   "median_price_000": 848.0,
+   "new_bonds": 547.0,
+   "sales": 262.0
+  },
+  {
+   "postcode": "2450",
+   "yield": 3.8095,
+   "weekly_rent": 600.0,
+   "median_price_000": 819.0,
+   "new_bonds": 401.0,
+   "sales": 210.0
+  },
+  {
+   "postcode": "2630",
+   "yield": 3.8144,
+   "weekly_rent": 490.0,
+   "median_price_000": 668.0,
+   "new_bonds": 74.0,
+   "sales": 36.0
+  },
+  {
+   "postcode": "2066",
+   "yield": 3.8165,
+   "weekly_rent": 800.0,
+   "median_price_000": 1090.0,
+   "new_bonds": 321.0,
+   "sales": 181.0
+  },
+  {
+   "postcode": "2321",
+   "yield": 3.8253,
+   "weekly_rent": 640.0,
+   "median_price_000": 870.0,
+   "new_bonds": 307.0,
+   "sales": 85.0
+  },
+  {
+   "postcode": "2448",
+   "yield": 3.8278,
+   "weekly_rent": 530.0,
+   "median_price_000": 720.0,
+   "new_bonds": 65.0,
+   "sales": 47.0
+  },
+  {
+   "postcode": "2620",
+   "yield": 3.835,
+   "weekly_rent": 590.0,
+   "median_price_000": 800.0,
+   "new_bonds": 336.0,
+   "sales": 228.0
+  },
+  {
+   "postcode": "2541",
+   "yield": 3.8389,
+   "weekly_rent": 550.0,
+   "median_price_000": 745.0,
+   "new_bonds": 265.0,
+   "sales": 133.0
+  },
+  {
+   "postcode": "2337",
+   "yield": 3.8435,
+   "weekly_rent": 510.0,
+   "median_price_000": 690.0,
+   "new_bonds": 56.0,
+   "sales": null
+  },
+  {
+   "postcode": "2799",
+   "yield": 3.8435,
+   "weekly_rent": 510.0,
+   "median_price_000": 690.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2800",
+   "yield": 3.8596,
+   "weekly_rent": 550.0,
+   "median_price_000": 741.0,
+   "new_bonds": 457.0,
+   "sales": 203.0
+  },
+  {
+   "postcode": "2285",
+   "yield": 3.86,
+   "weekly_rent": 700.0,
+   "median_price_000": 943.0,
+   "new_bonds": 249.0,
+   "sales": 128.0
+  },
+  {
+   "postcode": "2429",
+   "yield": 3.8606,
+   "weekly_rent": 490.0,
+   "median_price_000": 660.0,
+   "new_bonds": 37.0,
+   "sales": 35.0
+  },
+  {
+   "postcode": "2643",
+   "yield": 3.8698,
+   "weekly_rent": 480.0,
+   "median_price_000": 645.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2580",
+   "yield": 3.8739,
+   "weekly_rent": 520.0,
+   "median_price_000": 698.0,
+   "new_bonds": 237.0,
+   "sales": 128.0
+  },
+  {
+   "postcode": "2573",
+   "yield": 3.8843,
+   "weekly_rent": 620.0,
+   "median_price_000": 830.0,
+   "new_bonds": 110.0,
+   "sales": 38.0
+  },
+  {
+   "postcode": "2579",
+   "yield": 3.8854,
+   "weekly_rent": 665.0,
+   "median_price_000": 890.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2358",
+   "yield": 3.8894,
+   "weekly_rent": 460.0,
+   "median_price_000": 615.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2324",
+   "yield": 3.9,
+   "weekly_rent": 600.0,
+   "median_price_000": 800.0,
+   "new_bonds": 151.0,
+   "sales": 121.0
+  },
+  {
+   "postcode": "2019",
+   "yield": 3.9053,
+   "weekly_rent": 920.0,
+   "median_price_000": 1225.0,
+   "new_bonds": 152.0,
+   "sales": 50.0
+  },
+  {
+   "postcode": "2320",
+   "yield": 3.9079,
+   "weekly_rent": 620.0,
+   "median_price_000": 825.0,
+   "new_bonds": 314.0,
+   "sales": 203.0
+  },
+  {
+   "postcode": "2621",
+   "yield": 3.93,
+   "weekly_rent": 820.0,
+   "median_price_000": 1085.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2286",
+   "yield": 3.9302,
+   "weekly_rent": 650.0,
+   "median_price_000": 860.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2486",
+   "yield": 3.9394,
+   "weekly_rent": 875.0,
+   "median_price_000": 1155.0,
+   "new_bonds": 116.0,
+   "sales": 150.0
+  },
+  {
+   "postcode": "2549",
+   "yield": 3.9425,
+   "weekly_rent": 580.0,
+   "median_price_000": 765.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2852",
+   "yield": 3.9667,
+   "weekly_rent": 550.0,
+   "median_price_000": 721.0,
+   "new_bonds": 33.0,
+   "sales": null
+  },
+  {
+   "postcode": "2232",
+   "yield": 3.967,
+   "weekly_rent": 740.0,
+   "median_price_000": 970.0,
+   "new_bonds": 239.0,
+   "sales": 138.0
+  },
+  {
+   "postcode": "2043",
+   "yield": 3.9679,
+   "weekly_rent": 950.0,
+   "median_price_000": 1245.0,
+   "new_bonds": 170.0,
+   "sales": 64.0
+  },
+  {
+   "postcode": "2011",
+   "yield": 3.9749,
+   "weekly_rent": 730.0,
+   "median_price_000": 955.0,
+   "new_bonds": 572.0,
+   "sales": 134.0
+  },
+  {
+   "postcode": "2334",
+   "yield": 3.9802,
+   "weekly_rent": 620.0,
+   "median_price_000": 810.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2330",
+   "yield": 3.9847,
+   "weekly_rent": 600.0,
+   "median_price_000": 783.0,
+   "new_bonds": 129.0,
+   "sales": 88.0
+  },
+  {
+   "postcode": "2430",
+   "yield": 3.9941,
+   "weekly_rent": 520.0,
+   "median_price_000": 677.0,
+   "new_bonds": 245.0,
+   "sales": 192.0
+  },
+  {
+   "postcode": "2650",
+   "yield": 3.9942,
+   "weekly_rent": 530.0,
+   "median_price_000": 690.0,
+   "new_bonds": 541.0,
+   "sales": 300.0
+  },
+  {
+   "postcode": "2463",
+   "yield": 4.0076,
+   "weekly_rent": 605.0,
+   "median_price_000": 785.0,
+   "new_bonds": 40.0,
+   "sales": 41.0
+  },
+  {
+   "postcode": "2500",
+   "yield": 4.0095,
+   "weekly_rent": 650.0,
+   "median_price_000": 843.0,
+   "new_bonds": 563.0,
+   "sales": 196.0
+  },
+  {
+   "postcode": "2325",
+   "yield": 4.0213,
+   "weekly_rent": 580.0,
+   "median_price_000": 750.0,
+   "new_bonds": 305.0,
+   "sales": 138.0
+  },
+  {
+   "postcode": "2452",
+   "yield": 4.0376,
+   "weekly_rent": 660.0,
+   "median_price_000": 850.0,
+   "new_bonds": 101.0,
+   "sales": 65.0
+  },
+  {
+   "postcode": "2114",
+   "yield": 4.0444,
+   "weekly_rent": 700.0,
+   "median_price_000": 900.0,
+   "new_bonds": 304.0,
+   "sales": 101.0
+  },
+  {
+   "postcode": "2478",
+   "yield": 4.061,
+   "weekly_rent": 820.0,
+   "median_price_000": 1050.0,
+   "new_bonds": 194.0,
+   "sales": 140.0
+  },
+  {
+   "postcode": "2827",
+   "yield": 4.0784,
+   "weekly_rent": 320.0,
+   "median_price_000": 408.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2322",
+   "yield": 4.0857,
+   "weekly_rent": 660.0,
+   "median_price_000": 840.0,
+   "new_bonds": 222.0,
+   "sales": 120.0
+  },
+  {
+   "postcode": "2365",
+   "yield": 4.0857,
+   "weekly_rent": 385.0,
+   "median_price_000": 490.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2319",
+   "yield": 4.0945,
+   "weekly_rent": 600.0,
+   "median_price_000": 762.0,
+   "new_bonds": 44.0,
+   "sales": 35.0
+  },
+  {
+   "postcode": "2485",
+   "yield": 4.1053,
+   "weekly_rent": 750.0,
+   "median_price_000": 950.0,
+   "new_bonds": 120.0,
+   "sales": 100.0
+  },
+  {
+   "postcode": "2352",
+   "yield": 4.1076,
+   "weekly_rent": 470.0,
+   "median_price_000": 595.0,
+   "new_bonds": 38.0,
+   "sales": null
+  },
+  {
+   "postcode": "2641",
+   "yield": 4.1174,
+   "weekly_rent": 483.0,
+   "median_price_000": 610.0,
+   "new_bonds": 188.0,
+   "sales": 81.0
+  },
+  {
+   "postcode": "2193",
+   "yield": 4.127,
+   "weekly_rent": 750.0,
+   "median_price_000": 945.0,
+   "new_bonds": 173.0,
+   "sales": 52.0
+  },
+  {
+   "postcode": "2663",
+   "yield": 4.1398,
+   "weekly_rent": 410.0,
+   "median_price_000": 515.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2340",
+   "yield": 4.1401,
+   "weekly_rent": 500.0,
+   "median_price_000": 628.0,
+   "new_bonds": 509.0,
+   "sales": 242.0
+  },
+  {
+   "postcode": "2151",
+   "yield": 4.1728,
+   "weekly_rent": 650.0,
+   "median_price_000": 810.0,
+   "new_bonds": 199.0,
+   "sales": 69.0
+  },
+  {
+   "postcode": "2009",
+   "yield": 4.1736,
+   "weekly_rent": 980.0,
+   "median_price_000": 1221.0,
+   "new_bonds": 212.0,
+   "sales": 38.0
+  },
+  {
+   "postcode": "2480",
+   "yield": 4.1752,
+   "weekly_rent": 550.0,
+   "median_price_000": 685.0,
+   "new_bonds": 204.0,
+   "sales": 238.0
+  },
+  {
+   "postcode": "2821",
+   "yield": 4.1809,
+   "weekly_rent": 480.0,
+   "median_price_000": 597.0,
+   "new_bonds": 34.0,
+   "sales": null
+  },
+  {
+   "postcode": "2111",
+   "yield": 4.2043,
+   "weekly_rent": 760.0,
+   "median_price_000": 940.0,
+   "new_bonds": 153.0,
+   "sales": 75.0
+  },
+  {
+   "postcode": "2527",
+   "yield": 4.2043,
+   "weekly_rent": 760.0,
+   "median_price_000": 940.0,
+   "new_bonds": 125.0,
+   "sales": 123.0
+  },
+  {
+   "postcode": "2472",
+   "yield": 4.2113,
+   "weekly_rent": 575.0,
+   "median_price_000": 710.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2372",
+   "yield": 4.2226,
+   "weekly_rent": 445.0,
+   "median_price_000": 548.0,
+   "new_bonds": 38.0,
+   "sales": null
+  },
+  {
+   "postcode": "2007",
+   "yield": 4.2246,
+   "weekly_rent": 719.0,
+   "median_price_000": 885.0,
+   "new_bonds": 246.0,
+   "sales": 50.0
+  },
+  {
+   "postcode": "2015",
+   "yield": 4.2265,
+   "weekly_rent": 890.0,
+   "median_price_000": 1095.0,
+   "new_bonds": 217.0,
+   "sales": 88.0
+  },
+  {
+   "postcode": "2700",
+   "yield": 4.2391,
+   "weekly_rent": 375.0,
+   "median_price_000": 460.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2850",
+   "yield": 4.2449,
+   "weekly_rent": 600.0,
+   "median_price_000": 735.0,
+   "new_bonds": 224.0,
+   "sales": 122.0
+  },
+  {
+   "postcode": "2218",
+   "yield": 4.2573,
+   "weekly_rent": 700.0,
+   "median_price_000": 855.0,
+   "new_bonds": 153.0,
+   "sales": 62.0
+  },
+  {
+   "postcode": "2787",
+   "yield": 4.259,
+   "weekly_rent": 430.0,
+   "median_price_000": 525.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2830",
+   "yield": 4.2687,
+   "weekly_rent": 550.0,
+   "median_price_000": 670.0,
+   "new_bonds": 449.0,
+   "sales": 229.0
+  },
+  {
+   "postcode": "2293",
+   "yield": 4.3048,
+   "weekly_rent": 755.0,
+   "median_price_000": 912.0,
+   "new_bonds": 56.0,
+   "sales": null
+  },
+  {
+   "postcode": "2222",
+   "yield": 4.3049,
+   "weekly_rent": 630.0,
+   "median_price_000": 761.0,
+   "new_bonds": 76.0,
+   "sales": 51.0
+  },
+  {
+   "postcode": "2794",
+   "yield": 4.3333,
+   "weekly_rent": 400.0,
+   "median_price_000": 480.0,
+   "new_bonds": 80.0,
+   "sales": 47.0
+  },
+  {
+   "postcode": "2033",
+   "yield": 4.3415,
+   "weekly_rent": 799.0,
+   "median_price_000": 957.0,
+   "new_bonds": 397.0,
+   "sales": 35.0
+  },
+  {
+   "postcode": "2835",
+   "yield": 4.3452,
+   "weekly_rent": 305.0,
+   "median_price_000": 365.0,
+   "new_bonds": 38.0,
+   "sales": null
+  },
+  {
+   "postcode": "2036",
+   "yield": 4.3564,
+   "weekly_rent": 1100.0,
+   "median_price_000": 1313.0,
+   "new_bonds": 386.0,
+   "sales": 100.0
+  },
+  {
+   "postcode": "2866",
+   "yield": 4.3643,
+   "weekly_rent": 470.0,
+   "median_price_000": 560.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2790",
+   "yield": 4.3725,
+   "weekly_rent": 465.0,
+   "median_price_000": 553.0,
+   "new_bonds": 97.0,
+   "sales": 66.0
+  },
+  {
+   "postcode": "2113",
+   "yield": 4.3744,
+   "weekly_rent": 816.0,
+   "median_price_000": 970.0,
+   "new_bonds": 930.0,
+   "sales": 134.0
+  },
+  {
+   "postcode": "2627",
+   "yield": 4.4,
+   "weekly_rent": 825.0,
+   "median_price_000": 975.0,
+   "new_bonds": 179.0,
+   "sales": null
+  },
+  {
+   "postcode": "2666",
+   "yield": 4.4121,
+   "weekly_rent": 420.0,
+   "median_price_000": 495.0,
+   "new_bonds": 49.0,
+   "sales": null
+  },
+  {
+   "postcode": "2731",
+   "yield": 4.4239,
+   "weekly_rent": 570.0,
+   "median_price_000": 670.0,
+   "new_bonds": 65.0,
+   "sales": 31.0
+  },
+  {
+   "postcode": "2138",
+   "yield": 4.4436,
+   "weekly_rent": 940.0,
+   "median_price_000": 1100.0,
+   "new_bonds": 332.0,
+   "sales": 109.0
+  },
+  {
+   "postcode": "2460",
+   "yield": 4.4444,
+   "weekly_rent": 500.0,
+   "median_price_000": 585.0,
+   "new_bonds": 175.0,
+   "sales": 141.0
+  },
+  {
+   "postcode": "2135",
+   "yield": 4.4486,
+   "weekly_rent": 740.0,
+   "median_price_000": 865.0,
+   "new_bonds": 274.0,
+   "sales": 73.0
+  },
+  {
+   "postcode": "2194",
+   "yield": 4.4571,
+   "weekly_rent": 600.0,
+   "median_price_000": 700.0,
+   "new_bonds": 262.0,
+   "sales": 80.0
+  },
+  {
+   "postcode": "2134",
+   "yield": 4.4737,
+   "weekly_rent": 850.0,
+   "median_price_000": 988.0,
+   "new_bonds": 358.0,
+   "sales": 58.0
+  },
+  {
+   "postcode": "2160",
+   "yield": 4.4768,
+   "weekly_rent": 650.0,
+   "median_price_000": 755.0,
+   "new_bonds": 468.0,
+   "sales": 113.0
+  },
+  {
+   "postcode": "2335",
+   "yield": 4.4946,
+   "weekly_rent": 720.0,
+   "median_price_000": 833.0,
+   "new_bonds": 117.0,
+   "sales": null
+  },
+  {
+   "postcode": "2118",
+   "yield": 4.5023,
+   "weekly_rent": 755.0,
+   "median_price_000": 872.0,
+   "new_bonds": 193.0,
+   "sales": 89.0
+  },
+  {
+   "postcode": "2170",
+   "yield": 4.5314,
+   "weekly_rent": 610.0,
+   "median_price_000": 700.0,
+   "new_bonds": 983.0,
+   "sales": 389.0
+  },
+  {
+   "postcode": "2217",
+   "yield": 4.5561,
+   "weekly_rent": 750.0,
+   "median_price_000": 856.0,
+   "new_bonds": 325.0,
+   "sales": 121.0
+  },
+  {
+   "postcode": "2871",
+   "yield": 4.5595,
+   "weekly_rent": 420.0,
+   "median_price_000": 479.0,
+   "new_bonds": 57.0,
+   "sales": 32.0
+  },
+  {
+   "postcode": "2705",
+   "yield": 4.5605,
+   "weekly_rent": 435.0,
+   "median_price_000": 496.0,
+   "new_bonds": 60.0,
+   "sales": 43.0
+  },
+  {
+   "postcode": "2360",
+   "yield": 4.5669,
+   "weekly_rent": 440.0,
+   "median_price_000": 501.0,
+   "new_bonds": 101.0,
+   "sales": 92.0
+  },
+  {
+   "postcode": "2145",
+   "yield": 4.5922,
+   "weekly_rent": 680.0,
+   "median_price_000": 770.0,
+   "new_bonds": 842.0,
+   "sales": 327.0
+  },
+  {
+   "postcode": "2720",
+   "yield": 4.628,
+   "weekly_rent": 445.0,
+   "median_price_000": 500.0,
+   "new_bonds": 44.0,
+   "sales": 31.0
+  },
+  {
+   "postcode": "2470",
+   "yield": 4.6429,
+   "weekly_rent": 500.0,
+   "median_price_000": 560.0,
+   "new_bonds": 71.0,
+   "sales": 80.0
+  },
+  {
+   "postcode": "2380",
+   "yield": 4.6441,
+   "weekly_rent": 518.0,
+   "median_price_000": 580.0,
+   "new_bonds": 134.0,
+   "sales": 53.0
+  },
+  {
+   "postcode": "2646",
+   "yield": 4.6885,
+   "weekly_rent": 440.0,
+   "median_price_000": 488.0,
+   "new_bonds": 53.0,
+   "sales": 38.0
+  },
+  {
+   "postcode": "2216",
+   "yield": 4.7503,
+   "weekly_rent": 750.0,
+   "median_price_000": 821.0,
+   "new_bonds": 322.0,
+   "sales": 138.0
+  },
+  {
+   "postcode": "2333",
+   "yield": 4.7667,
+   "weekly_rent": 550.0,
+   "median_price_000": 600.0,
+   "new_bonds": 154.0,
+   "sales": 75.0
+  },
+  {
+   "postcode": "2141",
+   "yield": 4.7718,
+   "weekly_rent": 780.0,
+   "median_price_000": 850.0,
+   "new_bonds": 398.0,
+   "sales": 115.0
+  },
+  {
+   "postcode": "2050",
+   "yield": 4.7755,
+   "weekly_rent": 900.0,
+   "median_price_000": 980.0,
+   "new_bonds": 215.0,
+   "sales": 56.0
+  },
+  {
+   "postcode": "2121",
+   "yield": 4.7842,
+   "weekly_rent": 840.0,
+   "median_price_000": 913.0,
+   "new_bonds": 389.0,
+   "sales": 144.0
+  },
+  {
+   "postcode": "2870",
+   "yield": 4.8086,
+   "weekly_rent": 430.0,
+   "median_price_000": 465.0,
+   "new_bonds": 94.0,
+   "sales": 55.0
+  },
+  {
+   "postcode": "2440",
+   "yield": 4.8258,
+   "weekly_rent": 490.0,
+   "median_price_000": 528.0,
+   "new_bonds": 99.0,
+   "sales": 97.0
+  },
+  {
+   "postcode": "2077",
+   "yield": 4.8333,
+   "weekly_rent": 725.0,
+   "median_price_000": 780.0,
+   "new_bonds": 387.0,
+   "sales": 192.0
+  },
+  {
+   "postcode": "2200",
+   "yield": 4.8633,
+   "weekly_rent": 650.0,
+   "median_price_000": 695.0,
+   "new_bonds": 358.0,
+   "sales": 123.0
+  },
+  {
+   "postcode": "2586",
+   "yield": 4.888,
+   "weekly_rent": 470.0,
+   "median_price_000": 500.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2220",
+   "yield": 4.8995,
+   "weekly_rent": 750.0,
+   "median_price_000": 796.0,
+   "new_bonds": 320.0,
+   "sales": 129.0
+  },
+  {
+   "postcode": "2112",
+   "yield": 4.9164,
+   "weekly_rent": 780.0,
+   "median_price_000": 825.0,
+   "new_bonds": 354.0,
+   "sales": 169.0
+  },
+  {
+   "postcode": "2302",
+   "yield": 4.9245,
+   "weekly_rent": 715.0,
+   "median_price_000": 755.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2642",
+   "yield": 4.9636,
+   "weekly_rent": 420.0,
+   "median_price_000": 440.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2762",
+   "yield": 5.0219,
+   "weekly_rent": 705.0,
+   "median_price_000": 730.0,
+   "new_bonds": 401.0,
+   "sales": 185.0
+  },
+  {
+   "postcode": "2594",
+   "yield": 5.0358,
+   "weekly_rent": 460.0,
+   "median_price_000": 475.0,
+   "new_bonds": 89.0,
+   "sales": 44.0
+  },
+  {
+   "postcode": "2008",
+   "yield": 5.0535,
+   "weekly_rent": 897.0,
+   "median_price_000": 923.0,
+   "new_bonds": 658.0,
+   "sales": 52.0
+  },
+  {
+   "postcode": "2163",
+   "yield": 5.1071,
+   "weekly_rent": 550.0,
+   "median_price_000": 560.0,
+   "new_bonds": 58.0,
+   "sales": null
+  },
+  {
+   "postcode": "2195",
+   "yield": 5.1718,
+   "weekly_rent": 550.0,
+   "median_price_000": 553.0,
+   "new_bonds": 301.0,
+   "sales": 70.0
+  },
+  {
+   "postcode": "2343",
+   "yield": 5.2778,
+   "weekly_rent": 475.0,
+   "median_price_000": 468.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2205",
+   "yield": 5.3049,
+   "weekly_rent": 860.0,
+   "median_price_000": 843.0,
+   "new_bonds": 410.0,
+   "sales": 120.0
+  },
+  {
+   "postcode": "2020",
+   "yield": 5.3548,
+   "weekly_rent": 1003.0,
+   "median_price_000": 974.0,
+   "new_bonds": 476.0,
+   "sales": 116.0
+  },
+  {
+   "postcode": "2710",
+   "yield": 5.3568,
+   "weekly_rent": 410.0,
+   "median_price_000": 398.0,
+   "new_bonds": 69.0,
+   "sales": 50.0
+  },
+  {
+   "postcode": "2127",
+   "yield": 5.3867,
+   "weekly_rent": 808.0,
+   "median_price_000": 780.0,
+   "new_bonds": 518.0,
+   "sales": 155.0
+  },
+  {
+   "postcode": "2346",
+   "yield": 5.4194,
+   "weekly_rent": 420.0,
+   "median_price_000": 403.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2018",
+   "yield": 5.4405,
+   "weekly_rent": 950.0,
+   "median_price_000": 908.0,
+   "new_bonds": 330.0,
+   "sales": 93.0
+  },
+  {
+   "postcode": "2000",
+   "yield": 5.4476,
+   "weekly_rent": 1100.0,
+   "median_price_000": 1050.0,
+   "new_bonds": 972.0,
+   "sales": 147.0
+  },
+  {
+   "postcode": "2017",
+   "yield": 5.4874,
+   "weekly_rent": 1050.0,
+   "median_price_000": 995.0,
+   "new_bonds": 1046.0,
+   "sales": 154.0
+  },
+  {
+   "postcode": "2142",
+   "yield": 5.5525,
+   "weekly_rent": 630.0,
+   "median_price_000": 590.0,
+   "new_bonds": 313.0,
+   "sales": 98.0
+  },
+  {
+   "postcode": "2628",
+   "yield": 5.5529,
+   "weekly_rent": 598.0,
+   "median_price_000": 560.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2144",
+   "yield": 5.6127,
+   "weekly_rent": 680.0,
+   "median_price_000": 630.0,
+   "new_bonds": 361.0,
+   "sales": 113.0
+  },
+  {
+   "postcode": "2140",
+   "yield": 5.716,
+   "weekly_rent": 720.0,
+   "median_price_000": 655.0,
+   "new_bonds": 369.0,
+   "sales": 121.0
+  },
+  {
+   "postcode": "2820",
+   "yield": 5.8647,
+   "weekly_rent": 450.0,
+   "median_price_000": 399.0,
+   "new_bonds": 56.0,
+   "sales": 37.0
+  },
+  {
+   "postcode": "2150",
+   "yield": 5.871,
+   "weekly_rent": 700.0,
+   "median_price_000": 620.0,
+   "new_bonds": 782.0,
+   "sales": 222.0
+  },
+  {
+   "postcode": "2400",
+   "yield": 6.0352,
+   "weekly_rent": 383.0,
+   "median_price_000": 330.0,
+   "new_bonds": 88.0,
+   "sales": 51.0
+  },
+  {
+   "postcode": "2388",
+   "yield": 6.3609,
+   "weekly_rent": 400.0,
+   "median_price_000": 327.0,
+   "new_bonds": null,
+   "sales": null
+  },
+  {
+   "postcode": "2590",
+   "yield": 6.4673,
+   "weekly_rent": 495.0,
+   "median_price_000": 398.0,
+   "new_bonds": 34.0,
+   "sales": 35.0
+  },
+  {
+   "postcode": "2880",
+   "yield": 6.9333,
+   "weekly_rent": 340.0,
+   "median_price_000": 255.0,
+   "new_bonds": 125.0,
+   "sales": 128.0
+  },
+  {
+   "postcode": "2671",
+   "yield": 8.4933,
+   "weekly_rent": 490.0,
+   "median_price_000": 300.0,
+   "new_bonds": null,
+   "sales": null
+  }
+ ]
+}

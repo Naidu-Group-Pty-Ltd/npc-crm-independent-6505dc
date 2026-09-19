@@ -1,0 +1,46 @@
+name: PDF Import Regression
+
+# Phase 9E release gate: runs the CLASS 1 automated PDF-import release checks
+# (required files, JSON validity, focused Phase 8/9 tests, build, private-artifact
+# staging check) via the local release script. No secrets, no Supabase SQL, no
+# deployment, no browser automation.
+
+on:
+  pull_request:
+    paths:
+      - 'src/lib/reportTemplate/**'
+      - 'src/components/admin/pdfImport/**'
+      - 'src/pages/admin/PdfGoldenRegression.tsx'
+      - 'docs/pdf-import/**'
+      - 'scripts/regression/**'
+      - 'supabase/functions/template-import-pdf/**'
+      - 'supabase/migrations/**'
+      - 'package.json'
+      - 'package-lock.json'
+      - '.github/workflows/pdf-import-regression.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: pdf-import-regression-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  pdf-import-regression:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 20
+          cache: npm
+
+      # Matches the repo's existing ci.yml: `npm ci` is intentionally NOT used
+      # because the committed package-lock.json is out of sync with package.json
+      # on main. `npm install` reconciles the lockfile and installs.
+      - name: Install dependencies
+        run: npm install --no-audit --no-fund
+
+      - name: PDF import release gate (Class 1 automated)
+        run: bash scripts/regression/pdf-import-phase-9-release-check.sh

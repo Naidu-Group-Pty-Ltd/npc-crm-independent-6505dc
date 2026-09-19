@@ -1,0 +1,43 @@
+{
+  "async": false,
+  "function": {
+    "description": "This tool should be fired only once when a caller asks to one of three calls (discovery call, strategy session, initial finance consult)",
+    "name": "phoneNumber_inject",
+    "parameters": {
+      "properties": {
+        "{{contactId}}": {
+          "default": "",
+          "description": "",
+          "type": "string"
+        },
+        "{{firstName}}": {
+          "default": "",
+          "description": "",
+          "type": "string"
+        },
+        "{{fullName}}": {
+          "default": "",
+          "description": "",
+          "type": "string"
+        }
+      },
+      "required": [
+        "{{firstName}}",
+        "{{contactId}}",
+        "{{fullName}}"
+      ],
+      "type": "object"
+    }
+  },
+  "messages": [
+    {
+      "blocking": false,
+      "type": "request-start"
+    }
+  ],
+  "server": {
+    "timeoutSeconds": 20,
+    "url": "https://hook.eu2.make.com/2ubukyatwc0ig8zinphjjc4dciwhigqg"
+  },
+  "type": "function"
+}

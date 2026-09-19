@@ -1,0 +1,1867 @@
+[
+  {
+    "backgroundSound": "office",
+    "createdAt": "2024-05-03T14:16:21.371Z",
+    "endCallMessage": "Thank you for contacting Sham's Dental. Have a great day!",
+    "firstMessage": "Hello, this is Aishu from Sham's Dental Clinic. How can I assist you today?",
+    "firstMessageMode": null,
+    "hipaaEnabled": false,
+    "id": "aa1a4037-720f-4bf4-b9c1-9826647a59b2",
+    "isNpc": false,
+    "isServerUrlSecretSet": true,
+    "knowledgeBaseFileIds": [],
+    "latestVersion": "v1",
+    "maxDurationSeconds": null,
+    "model": {
+      "emotionRecognitionEnabled": true,
+      "maxTokens": 500,
+      "model": "gpt-4.1",
+      "provider": "openai",
+      "temperature": 1
+    },
+    "name": "Aishu",
+    "recordingEnabled": true,
+    "serverTimeoutSeconds": 20,
+    "serverUrl": "https://na-runtime.voiceglow.org/v2/agents/r0x0zyb31z7qsimc/vapi-event",
+    "silenceTimeoutSeconds": 16,
+    "systemPrompt": {
+      "chars": 4576,
+      "messageRoles": [
+        "system"
+      ],
+      "sha256_16": "45f0c848af754408"
+    },
+    "toolIds": [],
+    "transcriber": {
+      "language": "en",
+      "model": "nova-2",
+      "provider": "deepgram"
+    },
+    "updatedAt": "2025-06-20T16:26:19.538Z",
+    "voice": {
+      "model": "eleven_turbo_v2_5",
+      "provider": "11labs",
+      "similarityBoost": 0.75,
+      "speed": null,
+      "stability": 0.6,
+      "style": 0.2,
+      "voiceId": "2zRM7PkgwBPiau2jvVXc"
+    },
+    "voicemailMessage": "You've reached Mary's Dental voicemail. Please leave a message after the beep, and we'll get back to you as soon as possible."
+  },
+  {
+    "backgroundSound": null,
+    "createdAt": "2024-05-03T15:34:16.914Z",
+    "endCallMessage": "Thank you for contacting Mary's Dental. Have a great day!",
+    "firstMessage": "Hello, this is Ashley from Yellow Tree Enterprise. How can I assist you today?",
+    "firstMessageMode": null,
+    "hipaaEnabled": false,
+    "id": "23f3a02a-b007-4233-987f-b28ca364c9cc",
+    "isNpc": false,
+    "isServerUrlSecretSet": false,
+    "knowledgeBaseFileIds": [],
+    "latestVersion": "v1",
+    "maxDurationSeconds": null,
+    "model": {
+      "emotionRecognitionEnabled": null,
+      "maxTokens": 250,
+      "model": "gpt-3.5-turbo",
+      "provider": "openai",
+      "temperature": 1
+    },
+    "name": "Ashley",
+    "recordingEnabled": true,
+    "serverTimeoutSeconds": null,
+    "serverUrl": null,
+    "silenceTimeoutSeconds": null,
+    "systemPrompt": {
+      "chars": 7607,
+      "messageRoles": [
+        "system"
+      ],
+      "sha256_16": "aa24b55949114716"
+    },
+    "toolIds": [
+      {
+        "id": "b85639dd-2df5-416f-886a-406b68a34f04",
+        "name": null,
+        "resolves": false
+      }
+    ],
+    "transcriber": {
+      "language": "en",
+      "model": "nova-2",
+      "provider": "deepgram"
+    },
+    "updatedAt": "2024-07-18T13:41:05.978Z",
+    "voice": {
+      "model": null,
+      "provider": "11labs",
+      "similarityBoost": 0.75,
+      "speed": null,
+      "stability": 0.5,
+      "style": null,
+      "voiceId": "Pv96yrJYftf17x17ZCy1"
+    },
+    "voicemailMessage": "You've reached Mary's Dental voicemail. Please leave a message after the beep, and we'll get back to you as soon as possible."
+  },
+  {
+    "backgroundSound": "office",
+    "createdAt": "2024-07-22T18:25:24.030Z",
+    "endCallMessage": "Thank you for contacting Mary's Dental. Have a great day!",
+    "firstMessage": "வணக்கம், ஷாமின் பல் மருத்துவ மனையிலிருந்து அஷ்வினி பேசுகிறார். இன்று நான் உங்களுக்கு எப்படி உதவ முடியும்?",
+    "firstMessageMode": null,
+    "hipaaEnabled": false,
+    "id": "09d6a4cc-232c-435f-8673-7988dda4d79c",
+    "isNpc": false,
+    "isServerUrlSecretSet": false,
+    "knowledgeBaseFileIds": [],
+    "latestVersion": "v1",
+    "maxDurationSeconds": null,
+    "model": {
+      "emotionRecognitionEnabled": true,
+      "maxTokens": 780,
+      "model": "gpt-5.2-chat-latest",
+      "provider": "openai",
+      "temperature": 0.7
+    },
+    "name": "Ashwini",
+    "recordingEnabled": true,
+    "serverTimeoutSeconds": null,
+    "serverUrl": null,
+    "silenceTimeoutSeconds": null,
+    "systemPrompt": {
+      "chars": 4591,
+      "messageRoles": [
+        "system"
+      ],
+      "sha256_16": "f2534322e5af19b3"
+    },
+    "toolIds": [],
+    "transcriber": {
+      "language": "ta",
+      "model": "whisper",
+      "provider": "talkscriber"
+    },
+    "updatedAt": "2026-01-12T06:41:42.898Z",
+    "voice": {
+      "model": "eleven_multilingual_v2",
+      "provider": "11labs",
+      "similarityBoost": 0.75,
+      "speed": null,
+      "stability": 0.6,
+      "style": 0.2,
+      "voiceId": "JNaMjd7t4u3EhgkVknn3"
+    },
+    "voicemailMessage": "You've reached Mary's Dental voicemail. Please leave a message after the beep, and we'll get back to you as soon as possible."
+  },
+  {
+    "backgroundSound": null,
+    "createdAt": "2024-09-25T17:07:01.511Z",
+    "endCallMessage": null,
+    "firstMessage": "Hi, I am your virtual assistant, how can I help you today?",
+    "firstMessageMode": null,
+    "hipaaEnabled": null,
+    "id": "e3ecf7c3-a74a-4c43-bcc0-948ef6af0010",
+    "isNpc": false,
+    "isServerUrlSecretSet": true,
+    "knowledgeBaseFileIds": [],
+    "latestVersion": "v1",
+    "maxDurationSeconds": null,
+    "model": {
+      "emotionRecognitionEnabled": true,
+      "maxTokens": null,
+      "model": "gpt-4o",
+      "provider": "openai",
+      "temperature": 0.7
+    },
+    "name": "Bartini Bartenders",
+    "recordingEnabled": null,
+    "serverTimeoutSeconds": null,
+    "serverUrl": "https://na-runtime.voiceglow.org/v2/agents/h23l1g4pwl3pmlht/vapi-event",
+    "silenceTimeoutSeconds": 14,
+    "systemPrompt": {
+      "chars": 3673,
+      "messageRoles": [
+        "system"
+      ],
+      "sha256_16": "5c687dca51331ee3"
+    },
+    "toolIds": [],
+    "transcriber": {
+      "language": "en",
+      "model": "nova-2",
+      "provider": "deepgram"
+    },
+    "updatedAt": "2025-02-02T17:37:03.764Z",
+    "voice": {
+      "model": "eleven_turbo_v2_5",
+      "provider": "11labs",
+      "similarityBoost": 0.75,
+      "speed": null,
+      "stability": 0.5,
+      "style": null,
+      "voiceId": "mActWQg9kibLro6Z2ouY"
+    },
+    "voicemailMessage": null
+  },
+  {
+    "backgroundSound": "office",
+    "createdAt": "2024-07-22T18:20:49.910Z",
+    "endCallMessage": "Thank you for contacting Mary's Dental. Have a great day!",
+    "firstMessage": "Hello, ini Farah dari Klinik Pergigian Sham. Bagaimanakah saya boleh membantu anda hari ini?",
+    "firstMessageMode": null,
+    "hipaaEnabled": false,
+    "id": "ebbe25b1-3205-458b-8128-6e577ff6cf5e",
+    "isNpc": false,
+    "isServerUrlSecretSet": false,
+    "knowledgeBaseFileIds": [],
+    "latestVersion": "v1",
+    "maxDurationSeconds": null,
+    "model": {
+      "emotionRecognitionEnabled": true,
+      "maxTokens": 500,
+      "model": "gpt-4o",
+      "provider": "openai",
+      "temperature": 1
+    },
+    "name": "Farah",
+    "recordingEnabled": true,
+    "serverTimeoutSeconds": null,
+    "serverUrl": null,
+    "silenceTimeoutSeconds": null,
+    "systemPrompt": {
+      "chars": 4637,
+      "messageRoles": [
+        "system"
+      ],
+      "sha256_16": "567ebe4509ea53a9"
+    },
+    "toolIds": [],
+    "transcriber": {
+      "language": "ms",
+      "model": "nova-2",
+      "provider": "deepgram"
+    },
+    "updatedAt": "2024-07-24T12:14:53.523Z",
+    "voice": {
+      "model": "eleven_turbo_v2_5",
+      "provider": "11labs",
+      "similarityBoost": 0.75,
+      "speed": null,
+      "stability": 0.6,
+      "style": 0.2,
+      "voiceId": "q6bboItSc3laqmM0fge1"
+    },
+    "voicemailMessage": "You've reached Mary's Dental voicemail. Please leave a message after the beep, and we'll get back to you as soon as possible."
+  },
+  {
+    "backgroundSound": null,
+    "createdAt": "2025-02-02T17:13:21.260Z",
+    "endCallMessage": null,
+    "firstMessage": "Hi, this is Nisha speaking, how can I help you today?",
+    "firstMessageMode": null,
+    "hipaaEnabled": null,
+    "id": "54df9863-2f00-4504-b25f-8f3b3881523a",
+    "isNpc": false,
+    "isServerUrlSecretSet": true,
+    "knowledgeBaseFileIds": [],
+    "latestVersion": "v1",
+    "maxDurationSeconds": null,
+    "model": {
+      "emotionRecognitionEnabled": true,
+      "maxTokens": null,
+      "model": "gpt-4o-mini",
+      "provider": "openai",
+      "temperature": 0.7
+    },
+    "name": "JG Facilities Management",
+    "recordingEnabled": null,
+    "serverTimeoutSeconds": null,
+    "serverUrl": "https://na-gcp-api.vg-stuff.com/v2/agents/ye77v6945104xe1y/vapi-event",
+    "silenceTimeoutSeconds": 14,
+    "systemPrompt": {
+      "chars": 4300,
+      "messageRoles": [
+        "system"
+      ],
+      "sha256_16": "9b9d69174a8977b3"
+    },
+    "toolIds": [],
+    "transcriber": {
+      "language": "en",
+      "model": "nova-2",
+      "provider": "deepgram"
+    },
+    "updatedAt": "2025-04-26T15:14:54.903Z",
+    "voice": {
+      "model": "eleven_turbo_v2_5",
+      "provider": "11labs",
+      "similarityBoost": 0.75,
+      "speed": null,
+      "stability": 0.5,
+      "style": null,
+      "voiceId": "2zRM7PkgwBPiau2jvVXc"
+    },
+    "voicemailMessage": null
+  },
+  {
+    "backgroundSound": null,
+    "createdAt": "2024-11-03T15:36:41.138Z",
+    "endCallMessage": null,
+    "firstMessage": "Hi, I am your virtual assistant, how can I help you today?",
+    "firstMessageMode": null,
+    "hipaaEnabled": null,
+    "id": "201b2826-5af3-4030-b79a-bd722fa3830f",
+    "isNpc": false,
+    "isServerUrlSecretSet": true,
+    "knowledgeBaseFileIds": [],
+    "latestVersion": "v1",
+    "maxDurationSeconds": null,
+    "model": {
+      "emotionRecognitionEnabled": null,
+      "maxTokens": null,
+      "model": "gpt-4o",
+      "provider": "openai",
+      "temperature": 0.7
+    },
+    "name": "Kamileon Cube",
+    "recordingEnabled": null,
+    "serverTimeoutSeconds": null,
+    "serverUrl": "https://na-runtime.voiceglow.org/v2/agents/s8d1umelgul0j914/vapi-event",
+    "silenceTimeoutSeconds": null,
+    "systemPrompt": {
+      "chars": 3514,
+      "messageRoles": [
+        "system"
+      ],
+      "sha256_16": "062105b02d14c5ee"
+    },
+    "toolIds": [],
+    "transcriber": {
+      "language": null,
+      "model": null,
+      "provider": null
+    },
+    "updatedAt": "2024-11-05T13:02:22.795Z",
+    "voice": {
+      "model": "eleven_turbo_v2_5",
+      "provider": "11labs",
+      "similarityBoost": 0.75,
+      "speed": null,
+      "stability": 0.5,
+      "style": null,
+      "voiceId": "tnSpp4vdxKPjI9w0GnoV"
+    },
+    "voicemailMessage": null
+  },
+  {
+    "backgroundSound": "office",
+    "createdAt": "2024-07-22T18:12:59.875Z",
+    "endCallMessage": "Thank you for contacting Mary's Dental. Have a great day!",
+    "firstMessage": "大家好，我是来自 Sham 牙科诊所的 Mandy。今天我能为您提供什么帮助？",
+    "firstMessageMode": null,
+    "hipaaEnabled": false,
+    "id": "aacc0bb6-1761-4571-9216-bd751ecce218",
+    "isNpc": false,
+    "isServerUrlSecretSet": false,
+    "knowledgeBaseFileIds": [],
+    "latestVersion": "v1",
+    "maxDurationSeconds": null,
+    "model": {
+      "emotionRecognitionEnabled": true,
+      "maxTokens": 500,
+      "model": "gpt-4o",
+      "provider": "openai",
+      "temperature": 1
+    },
+    "name": "Mandy",
+    "recordingEnabled": true,
+    "serverTimeoutSeconds": null,
+    "serverUrl": null,
+    "silenceTimeoutSeconds": null,
+    "systemPrompt": {
+      "chars": 4593,
+      "messageRoles": [
+        "system"
+      ],
+      "sha256_16": "329cc3d9aad74f19"
+    },
+    "toolIds": [],
+    "transcriber": {
+      "language": "zh-CN",
+      "model": "nova-2",
+      "provider": "deepgram"
+    },
+    "updatedAt": "2024-07-22T21:20:18.743Z",
+    "voice": {
+      "model": "eleven_turbo_v2_5",
+      "provider": "11labs",
+      "similarityBoost": 0.75,
+      "speed": null,
+      "stability": 0.6,
+      "style": 0.2,
+      "voiceId": "pZOOamJ2G2xHhyr7HQ85"
+    },
+    "voicemailMessage": "You've reached Mary's Dental voicemail. Please leave a message after the beep, and we'll get back to you as soon as possible."
+  },
+  {
+    "backgroundSound": null,
+    "createdAt": "2025-12-09T11:41:22.750Z",
+    "endCallMessage": "Goodbye.",
+    "firstMessage": "Hi there. I'm Mary, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+    "firstMessageMode": "assistant-waits-for-user",
+    "hipaaEnabled": null,
+    "id": "cc46d882-55c0-454c-82e2-ef00ae000aec",
+    "isNpc": true,
+    "isServerUrlSecretSet": false,
+    "knowledgeBaseFileIds": [
+      "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+    ],
+    "latestVersion": "v3",
+    "maxDurationSeconds": null,
+    "model": {
+      "emotionRecognitionEnabled": null,
+      "maxTokens": null,
+      "model": "gpt-5.2-chat-latest",
+      "provider": "openai",
+      "temperature": null
+    },
+    "name": "NPC Active Nurturing",
+    "recordingEnabled": null,
+    "serverTimeoutSeconds": 20,
+    "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+    "silenceTimeoutSeconds": null,
+    "systemPrompt": {
+      "chars": 37089,
+      "messageRoles": [
+        "system"
+      ],
+      "sha256_16": "a70200392b91d1e5"
+    },
+    "toolIds": [
+      {
+        "id": "5c0c334c-6bbf-4399-b748-a3c50207e754",
+        "name": "transfer_to_human",
+        "resolves": true
+      },
+      {
+        "id": "f195a817-8346-475d-ad0e-8033f1d2e283",
+        "name": "ghl_create_booking",
+        "resolves": true
+      },
+      {
+        "id": "6587bc7d-7382-4e33-a38d-95f5740df52a",
+        "name": "ghl_check_availability",
+        "resolves": true
+      },
+      {
+        "id": "3e116e74-0dda-4277-ae38-468bdd3464e6",
+        "name": "ghl_resolve_contact",
+        "resolves": true
+      },
+      {
+        "id": "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+        "name": "end_call_tool",
+        "resolves": true
+      }
+    ],
+    "transcriber": {
+      "language": "en",
+      "model": "flux-general-en",
+      "provider": "deepgram"
+    },
+    "updatedAt": "2026-08-18T17:29:07.183Z",
+    "voice": {
+      "model": "eleven_flash_v2_5",
+      "provider": "11labs",
+      "similarityBoost": 0.75,
+      "speed": null,
+      "stability": 0.5,
+      "style": null,
+      "voiceId": "cgSgspJ2msm6clMCkdW9"
+    },
+    "voicemailMessage": "Hi, this is Mary calling from Naidu Property Consulting Services. I was just reaching out to check in, as you’d looked into property strategy with us some time ago. There’s no urgency at all — I simply wanted to see if this is still something you’d like to explore, or if you’d prefer to leave it for now. Feel free to call us back on this number so we can arrange that for you."
+  },
+  {
+    "backgroundSound": "office",
+    "createdAt": "2025-07-10T12:00:14.553Z",
+    "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+    "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+    "firstMessageMode": "assistant-waits-for-user",
+    "hipaaEnabled": false,
+    "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+    "isNpc": true,
+    "isServerUrlSecretSet": false,
+    "knowledgeBaseFileIds": [],
+    "latestVersion": "v1",
+    "maxDurationSeconds": null,
+    "model": {
+      "emotionRecognitionEnabled": null,
+      "maxTokens": 450,
+      "model": "gpt-5.1-chat-latest",
+      "provider": "openai",
+      "temperature": 0.9
+    },
+    "name": "NPC Discovery Call Follow Up",
+    "recordingEnabled": null,
+    "serverTimeoutSeconds": 20,
+    "serverUrl": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg",
+    "silenceTimeoutSeconds": null,
+    "systemPrompt": {
+      "chars": 16725,
+      "messageRoles": [
+        "system"
+      ],
+      "sha256_16": "086601c9de2e8026"
+    },
+    "toolIds": [
+      {
+        "id": "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+        "name": null,
+        "resolves": false
+      },
+      {
+        "id": "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+        "name": null,
+        "resolves": false
+      },
+      {
+        "id": "199be122-72f1-4bbb-ada3-aedba74b59b1",
+        "name": null,
+        "resolves": false
+      },
+      {
+        "id": "5934c762-0223-4112-bfb7-88931da17652",
+        "name": "ghl_delete_event_npc",
+        "resolves": true
+      }
+    ],
+    "transcriber": {
+      "language": "en",
+      "model": "nova-2",
+      "provider": "deepgram"
+    },
+    "updatedAt": "2025-11-26T06:56:48.029Z",
+    "voice": {
+      "model": "eleven_turbo_v2_5",
+      "provider": "11labs",
+      "similarityBoost": 0.75,
+      "speed": null,
+      "stability": 0.5,
+      "style": null,
+      "voiceId": "jBzLvP03992lMFEkj2kJ"
+    },
+    "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+  },
+  {
+    "backgroundSound": "https://youtu.be/EK_LN3XEcnw?si=w86ZMR0qSR_yqiRl",
+    "createdAt": "2025-11-24T04:09:25.199Z",
+    "endCallMessage": "Goodbye.",
+    "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+    "firstMessageMode": "assistant-waits-for-user",
+    "hipaaEnabled": null,
+    "id": "29d6c50e-36e4-406c-b2ea-93f7fc2997a4",
+    "isNpc": true,
+    "isServerUrlSecretSet": false,
+    "knowledgeBaseFileIds": [
+      "9fff4149-3aec-48f0-9378-d56760390216"
+    ],
+    "latestVersion": "v1",
+    "maxDurationSeconds": 929,
+    "model": {
+      "emotionRecognitionEnabled": null,
+      "maxTokens": 450,
+      "model": "gpt-5.2-chat-latest",
+      "provider": "openai",
+      "temperature": 0.9
+    },
+    "name": "NPC Discovery Call Follow Up Test",
+    "recordingEnabled": null,
+    "serverTimeoutSeconds": 20,
+    "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+    "silenceTimeoutSeconds": null,
+    "systemPrompt": {
+      "chars": 30100,
+      "messageRoles": [
+        "system"
+      ],
+      "sha256_16": "e7eff72e1a361515"
+    },
+    "toolIds": [
+      {
+        "id": "5934c762-0223-4112-bfb7-88931da17652",
+        "name": "ghl_delete_event_npc",
+        "resolves": true
+      },
+      {
+        "id": "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+        "name": "end_call_tool",
+        "resolves": true
+      },
+      {
+        "id": "5c0c334c-6bbf-4399-b748-a3c50207e754",
+        "name": "transfer_to_human",
+        "resolves": true
+      },
+      {
+        "id": "f195a817-8346-475d-ad0e-8033f1d2e283",
+        "name": "ghl_create_booking",
+        "resolves": true
+      },
+      {
+        "id": "6587bc7d-7382-4e33-a38d-95f5740df52a",
+        "name": "ghl_check_availability",
+        "resolves": true
+      },
+      {
+        "id": "3e116e74-0dda-4277-ae38-468bdd3464e6",
+        "name": "ghl_resolve_contact",
+        "resolves": true
+      }
+    ],
+    "transcriber": {
+      "language": "en",
+      "model": "flux-general-en",
+      "provider": "deepgram"
+    },
+    "updatedAt": "2026-07-22T05:50:14.886Z",
+    "voice": {
+      "model": "eleven_turbo_v2_5",
+      "provider": "11labs",
+      "similarityBoost": 0.75,
+      "speed": null,
+      "stability": 0.5,
+      "style": null,
+      "voiceId": "jBzLvP03992lMFEkj2kJ"
+    },
+    "voicemailMessage": "Hi, this is Rita from Naidu Property Consulting Services, just a quick reminder about your upcoming discovery call. If you're unable to attend, please call us back on this number so we can schedule a new slot that works for you."
+  },
+  {
+    "backgroundSound": null,
+    "createdAt": "2026-01-07T10:35:52.632Z",
+    "endCallMessage": "Goodbye.",
+    "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+    "firstMessageMode": "assistant-waits-for-user",
+    "hipaaEnabled": null,
+    "id": "c0bc54fd-a9fb-4970-822b-b471c198e43b",
+    "isNpc": true,
+    "isServerUrlSecretSet": false,
+    "knowledgeBaseFileIds": [
+      "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+    ],
+    "latestVersion": "v1",
+    "maxDurationSeconds": 929,
+    "model": {
+      "emotionRecognitionEnabled": null,
+      "maxTokens": 450,
+      "model": "gpt-5.2-chat-latest",
+      "provider": "openai",
+      "temperature": 0.9
+    },
+    "name": "NPC Discovery Call Follow Up Test 2",
+    "recordingEnabled": null,
+    "serverTimeoutSeconds": null,
+    "serverUrl": null,
+    "silenceTimeoutSeconds": null,
+    "systemPrompt": {
+      "chars": 29284,
+      "messageRoles": [
+        "system"
+      ],
+      "sha256_16": "ed3d59115281981f"
+    },
+    "toolIds": [
+      {
+        "id": "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+        "name": "end_call_tool",
+        "resolves": true
+      },
+      {
+        "id": "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+        "name": null,
+        "resolves": false
+      },
+      {
+        "id": "199be122-72f1-4bbb-ada3-aedba74b59b1",
+        "name": null,
+        "resolves": false
+      },
+      {
+        "id": "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+        "name": null,
+        "resolves": false
+      },
+      {
+        "id": "5934c762-0223-4112-bfb7-88931da17652",
+        "name": "ghl_delete_event_npc",
+        "resolves": true
+      }
+    ],
+    "transcriber": {
+      "language": "en",
+      "model": "flux-general-en",
+      "provider": "deepgram"
+    },
+    "updatedAt": "2026-03-04T08:07:50.298Z",
+    "voice": {
+      "model": "eleven_flash_v2_5",
+      "provider": "11labs",
+      "similarityBoost": 0.75,
+      "speed": null,
+      "stability": 0.5,
+      "style": null,
+      "voiceId": "jBzLvP03992lMFEkj2kJ"
+    },
+    "voicemailMessage": "Please call back when you're available."
+  },
+  {
+    "backgroundSound": null,
+    "createdAt": "2025-11-26T07:06:57.790Z",
+    "endCallMessage": "Goodbye.",
+    "firstMessage": "Hi there. I'm Tina, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+    "firstMessageMode": "assistant-waits-for-user",
+    "hipaaEnabled": null,
+    "id": "e1b76e7c-b9a2-461b-a951-e6b253a4d0d7",
+    "isNpc": true,
+    "isServerUrlSecretSet": false,
+    "knowledgeBaseFileIds": [
+      "9fff4149-3aec-48f0-9378-d56760390216"
+    ],
+    "latestVersion": "v1",
+    "maxDurationSeconds": null,
+    "model": {
+      "emotionRecognitionEnabled": null,
+      "maxTokens": 10000,
+      "model": "gpt-5.2-chat-latest",
+      "provider": "openai",
+      "temperature": 0.9
+    },
+    "name": "NPC Discovery Call No Show Follow Up",
+    "recordingEnabled": null,
+    "serverTimeoutSeconds": 20,
+    "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+    "silenceTimeoutSeconds": null,
+    "systemPrompt": {
+      "chars": 34672,
+      "messageRoles": [
+        "system"
+      ],
+      "sha256_16": "8853dbb50f69b9f1"
+    },
+    "toolIds": [
+      {
+        "id": "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+        "name": "end_call_tool",
+        "resolves": true
+      },
+      {
+        "id": "5c0c334c-6bbf-4399-b748-a3c50207e754",
+        "name": "transfer_to_human",
+        "resolves": true
+      },
+      {
+        "id": "f195a817-8346-475d-ad0e-8033f1d2e283",
+        "name": "ghl_create_booking",
+        "resolves": true
+      },
+      {
+        "id": "6587bc7d-7382-4e33-a38d-95f5740df52a",
+        "name": "ghl_check_availability",
+        "resolves": true
+      },
+      {
+        "id": "3e116e74-0dda-4277-ae38-468bdd3464e6",
+        "name": "ghl_resolve_contact",
+        "resolves": true
+      }
+    ],
+    "transcriber": {
+      "language": "en",
+      "model": "flux-general-en",
+      "provider": "deepgram"
+    },
+    "updatedAt": "2026-07-22T05:50:56.237Z",
+    "voice": {
+      "model": "eleven_flash_v2_5",
+      "provider": "11labs",
+      "similarityBoost": 0.75,
+      "speed": null,
+      "stability": 0.5,
+      "style": null,
+      "voiceId": "xgnMn9p1V1XVuxuyuuMC"
+    },
+    "voicemailMessage": "Hi, this is Tina from Naidu Property Consulting Services; we weren’t able to reach you for your discovery call earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+  },
+  {
+    "backgroundSound": null,
+    "createdAt": "2025-12-07T14:37:26.800Z",
+    "endCallMessage": "Goodbye.",
+    "firstMessage": "Hi there. I'm Sandra, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+    "firstMessageMode": "assistant-waits-for-user",
+    "hipaaEnabled": null,
+    "id": "a4ddecba-df99-49e4-8e47-4c4b57f4a991",
+    "isNpc": true,
+    "isServerUrlSecretSet": false,
+    "knowledgeBaseFileIds": [],
+    "latestVersion": "v1",
+    "maxDurationSeconds": null,
+    "model": {
+      "emotionRecognitionEnabled": null,
+      "maxTokens": null,
+      "model": "gpt-5.2-chat-latest",
+      "provider": "openai",
+      "temperature": null
+    },
+    "name": "NPC IFC Follow Up",
+    "recordingEnabled": null,
+    "serverTimeoutSeconds": 20,
+    "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+    "silenceTimeoutSeconds": null,
+    "systemPrompt": {
+      "chars": 40878,
+      "messageRoles": [
+        "system"
+      ],
+      "sha256_16": "e944028308fae22e"
+    },
+    "toolIds": [
+      {
+        "id": "006be564-14c2-4db9-9c90-6821d363b123",
+        "name": "ghl_delete_event_npc_3",
+        "resolves": true
+      },
+      {
+        "id": "ba13974d-8005-487d-81b9-4dc569a9f6d4",
+        "name": "ghl_delete_event_npc_3_1",
+        "resolves": true
+      },
+      {
+        "id": "5c0c334c-6bbf-4399-b748-a3c50207e754",
+        "name": "transfer_to_human",
+        "resolves": true
+      },
+      {
+        "id": "f195a817-8346-475d-ad0e-8033f1d2e283",
+        "name": "ghl_create_booking",
+        "resolves": true
+      },
+      {
+        "id": "6587bc7d-7382-4e33-a38d-95f5740df52a",
+        "name": "ghl_check_availability",
+        "resolves": true
+      },
+      {
+        "id": "3e116e74-0dda-4277-ae38-468bdd3464e6",
+        "name": "ghl_resolve_contact",
+        "resolves": true
+      }
+    ],
+    "transcriber": {
+      "language": "en",
+      "model": "flux-general-en",
+      "provider": "deepgram"
+    },
+    "updatedAt": "2026-07-22T05:53:32.459Z",
+    "voice": {
+      "model": "eleven_flash_v2_5",
+      "provider": "11labs",
+      "similarityBoost": 0.75,
+      "speed": null,
+      "stability": 0.5,
+      "style": null,
+      "voiceId": "02y4x5i9YrzYlFvGo1pp"
+    },
+    "voicemailMessage": "Hi, this is Sandra from Naidu Property Consulting Services, just a quick reminder about your upcoming initial finance consult. If you're unable to attend, please call us back on this number so we can schedule a new slot that works for you."
+  },
+  {
+    "backgroundSound": null,
+    "createdAt": "2025-12-15T18:30:39.240Z",
+    "endCallMessage": "Goodbye.",
+    "firstMessage": "Hi {{firstName}}. I'm Sandra, from Naidu Property Consulting Services. How can I help you today?",
+    "firstMessageMode": "assistant-speaks-first",
+    "hipaaEnabled": null,
+    "id": "7770a48b-68d1-48df-a03a-9cc5b9e91ad8",
+    "isNpc": true,
+    "isServerUrlSecretSet": false,
+    "knowledgeBaseFileIds": [
+      "9fff4149-3aec-48f0-9378-d56760390216"
+    ],
+    "latestVersion": "v2",
+    "maxDurationSeconds": 1444,
+    "model": {
+      "emotionRecognitionEnabled": null,
+      "maxTokens": null,
+      "model": "gpt-5.6-luna",
+      "provider": "openai",
+      "temperature": null
+    },
+    "name": "NPC IFC Inbound",
+    "recordingEnabled": null,
+    "serverTimeoutSeconds": 20,
+    "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+    "silenceTimeoutSeconds": null,
+    "systemPrompt": {
+      "chars": 41511,
+      "messageRoles": [
+        "system"
+      ],
+      "sha256_16": "73574a0312d5a231"
+    },
+    "toolIds": [
+      {
+        "id": "006be564-14c2-4db9-9c90-6821d363b123",
+        "name": "ghl_delete_event_npc_3",
+        "resolves": true
+      },
+      {
+        "id": "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+        "name": "end_call_tool",
+        "resolves": true
+      },
+      {
+        "id": "3e116e74-0dda-4277-ae38-468bdd3464e6",
+        "name": "ghl_resolve_contact",
+        "resolves": true
+      },
+      {
+        "id": "6587bc7d-7382-4e33-a38d-95f5740df52a",
+        "name": "ghl_check_availability",
+        "resolves": true
+      },
+      {
+        "id": "5c0c334c-6bbf-4399-b748-a3c50207e754",
+        "name": "transfer_to_human",
+        "resolves": true
+      },
+      {
+        "id": "f195a817-8346-475d-ad0e-8033f1d2e283",
+        "name": "ghl_create_booking",
+        "resolves": true
+      }
+    ],
+    "transcriber": {
+      "language": "en",
+      "model": "flux-general-en",
+      "provider": "deepgram"
+    },
+    "updatedAt": "2026-08-18T18:22:26.101Z",
+    "voice": {
+      "model": "eleven_flash_v2_5",
+      "provider": "11labs",
+      "similarityBoost": 0.75,
+      "speed": null,
+      "stability": 0.5,
+      "style": null,
+      "voiceId": "02y4x5i9YrzYlFvGo1pp"
+    },
+    "voicemailMessage": "Hi, this is Sandra from Naidu Property Consulting Services, just a quick reminder about your upcoming initial finance consult. If you're unable to attend, please call us back on this number so we can schedule a new slot that works for you."
+  },
+  {
+    "backgroundSound": null,
+    "createdAt": "2025-12-08T06:07:30.609Z",
+    "endCallMessage": "Goodbye.",
+    "firstMessage": "Hi there. I'm Sandra, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+    "firstMessageMode": "assistant-waits-for-user",
+    "hipaaEnabled": null,
+    "id": "4274ab0d-f8e6-4ab9-9b47-1f12255e73c0",
+    "isNpc": true,
+    "isServerUrlSecretSet": false,
+    "knowledgeBaseFileIds": [],
+    "latestVersion": "v1",
+    "maxDurationSeconds": null,
+    "model": {
+      "emotionRecognitionEnabled": null,
+      "maxTokens": null,
+      "model": "gpt-5.2-chat-latest",
+      "provider": "openai",
+      "temperature": null
+    },
+    "name": "NPC IFC No Show Follow Up",
+    "recordingEnabled": null,
+    "serverTimeoutSeconds": 20,
+    "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+    "silenceTimeoutSeconds": null,
+    "systemPrompt": {
+      "chars": 41404,
+      "messageRoles": [
+        "system"
+      ],
+      "sha256_16": "a240f7fbce7a468d"
+    },
+    "toolIds": [
+      {
+        "id": "5c0c334c-6bbf-4399-b748-a3c50207e754",
+        "name": "transfer_to_human",
+        "resolves": true
+      },
+      {
+        "id": "f195a817-8346-475d-ad0e-8033f1d2e283",
+        "name": "ghl_create_booking",
+        "resolves": true
+      },
+      {
+        "id": "6587bc7d-7382-4e33-a38d-95f5740df52a",
+        "name": "ghl_check_availability",
+        "resolves": true
+      },
+      {
+        "id": "3e116e74-0dda-4277-ae38-468bdd3464e6",
+        "name": "ghl_resolve_contact",
+        "resolves": true
+      },
+      {
+        "id": "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+        "name": "end_call_tool",
+        "resolves": true
+      }
+    ],
+    "transcriber": {
+      "language": "en",
+      "model": "flux-general-en",
+      "provider": "deepgram"
+    },
+    "updatedAt": "2026-07-22T05:54:02.637Z",
+    "voice": {
+      "model": "eleven_flash_v2_5",
+      "provider": "11labs",
+      "similarityBoost": 0.75,
+      "speed": null,
+      "stability": 0.5,
+      "style": null,
+      "voiceId": "02y4x5i9YrzYlFvGo1pp"
+    },
+    "voicemailMessage": "Hi, this is Tina from Naidu Property Consulting Services; we weren’t able to reach you for your initial finance consult earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+  },
+  {
+    "backgroundSound": null,
+    "createdAt": "2025-12-09T15:00:39.199Z",
+    "endCallMessage": "Goodbye.",
+    "firstMessage": "Hi there. Angela from Naidu Property Consulting Services speaking. How can I help you today?",
+    "firstMessageMode": null,
+    "hipaaEnabled": null,
+    "id": "bfff143e-03f7-4bc2-afbb-5734987f672f",
+    "isNpc": true,
+    "isServerUrlSecretSet": false,
+    "knowledgeBaseFileIds": [
+      "9fff4149-3aec-48f0-9378-d56760390216"
+    ],
+    "latestVersion": "v3",
+    "maxDurationSeconds": 16562,
+    "model": {
+      "emotionRecognitionEnabled": null,
+      "maxTokens": null,
+      "model": "gpt-5.6-luna",
+      "provider": "openai",
+      "temperature": null
+    },
+    "name": "NPC Inbound Agent",
+    "recordingEnabled": null,
+    "serverTimeoutSeconds": 20,
+    "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+    "silenceTimeoutSeconds": null,
+    "systemPrompt": {
+      "chars": 43970,
+      "messageRoles": [
+        "system"
+      ],
+      "sha256_16": "990ad3462f25e212"
+    },
+    "toolIds": [
+      {
+        "id": "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+        "name": "end_call_tool",
+        "resolves": true
+      },
+      {
+        "id": "3e116e74-0dda-4277-ae38-468bdd3464e6",
+        "name": "ghl_resolve_contact",
+        "resolves": true
+      },
+      {
+        "id": "9789b720-ee13-4389-ba33-678883eaa891",
+        "name": "phoneNumber_inject",
+        "resolves": true
+      },
+      {
+        "id": "0bd36de8-6d3a-43e5-9c3f-25ca6de97662",
+        "name": "get_call_context",
+        "resolves": true
+      },
+      {
+        "id": "5c0c334c-6bbf-4399-b748-a3c50207e754",
+        "name": "transfer_to_human",
+        "resolves": true
+      }
+    ],
+    "transcriber": {
+      "language": "en",
+      "model": "flux-general-en",
+      "provider": "deepgram"
+    },
+    "updatedAt": "2026-08-18T17:28:37.371Z",
+    "voice": {
+      "model": "eleven_flash_v2_5",
+      "provider": "11labs",
+      "similarityBoost": 0.75,
+      "speed": null,
+      "stability": 0.5,
+      "style": null,
+      "voiceId": "M7ya1YbaeFaPXljg9BpK"
+    },
+    "voicemailMessage": "Please call back when you're available."
+  },
+  {
+    "backgroundSound": "office",
+    "createdAt": "2025-11-18T03:38:18.725Z",
+    "endCallMessage": "Goodbye.",
+    "firstMessage": "Hi there. I'm Monica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+    "firstMessageMode": "assistant-waits-for-user",
+    "hipaaEnabled": null,
+    "id": "b3acdd28-558a-4893-9cfe-c3abacdbe6bd",
+    "isNpc": true,
+    "isServerUrlSecretSet": false,
+    "knowledgeBaseFileIds": [
+      "9fff4149-3aec-48f0-9378-d56760390216"
+    ],
+    "latestVersion": "v2",
+    "maxDurationSeconds": 929,
+    "model": {
+      "emotionRecognitionEnabled": null,
+      "maxTokens": 10000,
+      "model": "gpt-5.6-luna",
+      "provider": "openai",
+      "temperature": null
+    },
+    "name": "NPC Opt In Follow Up",
+    "recordingEnabled": null,
+    "serverTimeoutSeconds": 20,
+    "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+    "silenceTimeoutSeconds": null,
+    "systemPrompt": {
+      "chars": 36698,
+      "messageRoles": [
+        "system"
+      ],
+      "sha256_16": "8ec1d1a040db24f7"
+    },
+    "toolIds": [
+      {
+        "id": "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+        "name": "end_call_tool",
+        "resolves": true
+      },
+      {
+        "id": "5c0c334c-6bbf-4399-b748-a3c50207e754",
+        "name": "transfer_to_human",
+        "resolves": true
+      },
+      {
+        "id": "f195a817-8346-475d-ad0e-8033f1d2e283",
+        "name": "ghl_create_booking",
+        "resolves": true
+      },
+      {
+        "id": "6587bc7d-7382-4e33-a38d-95f5740df52a",
+        "name": "ghl_check_availability",
+        "resolves": true
+      },
+      {
+        "id": "3e116e74-0dda-4277-ae38-468bdd3464e6",
+        "name": "ghl_resolve_contact",
+        "resolves": true
+      }
+    ],
+    "transcriber": {
+      "language": "en",
+      "model": "flux-general-en",
+      "provider": "deepgram"
+    },
+    "updatedAt": "2026-08-18T18:03:28.910Z",
+    "voice": {
+      "model": "eleven_flash_v2_5",
+      "provider": "11labs",
+      "similarityBoost": 0.75,
+      "speed": null,
+      "stability": 0.5,
+      "style": null,
+      "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+    },
+    "voicemailMessage": "Hi, this is Monica from Naidu Property Consulting Services calling because you recently submitted a form on Facebook to book a discovery call. Feel free to call us back on this number so we can arrange that for you."
+  },
+  {
+    "backgroundSound": "office",
+    "createdAt": "2025-12-15T09:39:01.662Z",
+    "endCallMessage": "Goodbye.",
+    "firstMessage": "Hi {{firstName}}. I'm Monica, from Naidu Property Consulting Services. How can I help you today?",
+    "firstMessageMode": "assistant-speaks-first",
+    "hipaaEnabled": null,
+    "id": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+    "isNpc": true,
+    "isServerUrlSecretSet": false,
+    "knowledgeBaseFileIds": [
+      "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+    ],
+    "latestVersion": "v1",
+    "maxDurationSeconds": 1444,
+    "model": {
+      "emotionRecognitionEnabled": null,
+      "maxTokens": null,
+      "model": "gpt-5.6-luna",
+      "provider": "openai",
+      "temperature": null
+    },
+    "name": "NPC Opt In Follow Up Inbound",
+    "recordingEnabled": null,
+    "serverTimeoutSeconds": 20,
+    "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+    "silenceTimeoutSeconds": null,
+    "systemPrompt": {
+      "chars": 44426,
+      "messageRoles": [
+        "system"
+      ],
+      "sha256_16": "fa048ebb37a17a1b"
+    },
+    "toolIds": [
+      {
+        "id": "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+        "name": "end_call_tool",
+        "resolves": true
+      },
+      {
+        "id": "3e116e74-0dda-4277-ae38-468bdd3464e6",
+        "name": "ghl_resolve_contact",
+        "resolves": true
+      },
+      {
+        "id": "6587bc7d-7382-4e33-a38d-95f5740df52a",
+        "name": "ghl_check_availability",
+        "resolves": true
+      },
+      {
+        "id": "f195a817-8346-475d-ad0e-8033f1d2e283",
+        "name": "ghl_create_booking",
+        "resolves": true
+      },
+      {
+        "id": "5c0c334c-6bbf-4399-b748-a3c50207e754",
+        "name": "transfer_to_human",
+        "resolves": true
+      }
+    ],
+    "transcriber": {
+      "language": "en",
+      "model": "flux-general-en",
+      "provider": "deepgram"
+    },
+    "updatedAt": "2026-07-28T05:34:11.027Z",
+    "voice": {
+      "model": "eleven_flash_v2_5",
+      "provider": "11labs",
+      "similarityBoost": 0.75,
+      "speed": null,
+      "stability": 0.5,
+      "style": null,
+      "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+    },
+    "voicemailMessage": "Hi, this is Monica from Naidu Property Consulting Services calling because you recently submitted a form on Facebook to book a discovery call. Feel free to call us back on this number so we can arrange that for you."
+  },
+  {
+    "backgroundSound": null,
+    "createdAt": "2025-11-18T04:36:57.549Z",
+    "endCallMessage": "Goodbye.",
+    "firstMessage": "Hi there. I'm Erica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+    "firstMessageMode": "assistant-waits-for-user",
+    "hipaaEnabled": null,
+    "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+    "isNpc": true,
+    "isServerUrlSecretSet": false,
+    "knowledgeBaseFileIds": [
+      "9fff4149-3aec-48f0-9378-d56760390216"
+    ],
+    "latestVersion": "v1",
+    "maxDurationSeconds": 929,
+    "model": {
+      "emotionRecognitionEnabled": null,
+      "maxTokens": 10000,
+      "model": "gpt-5.2-chat-latest",
+      "provider": "openai",
+      "temperature": 0.9
+    },
+    "name": "NPC Quiz Follow Up",
+    "recordingEnabled": null,
+    "serverTimeoutSeconds": 20,
+    "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+    "silenceTimeoutSeconds": null,
+    "systemPrompt": {
+      "chars": 43388,
+      "messageRoles": [
+        "system"
+      ],
+      "sha256_16": "7137db62edcf31e7"
+    },
+    "toolIds": [
+      {
+        "id": "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+        "name": "end_call_tool",
+        "resolves": true
+      },
+      {
+        "id": "5c0c334c-6bbf-4399-b748-a3c50207e754",
+        "name": "transfer_to_human",
+        "resolves": true
+      },
+      {
+        "id": "f195a817-8346-475d-ad0e-8033f1d2e283",
+        "name": "ghl_create_booking",
+        "resolves": true
+      },
+      {
+        "id": "6587bc7d-7382-4e33-a38d-95f5740df52a",
+        "name": "ghl_check_availability",
+        "resolves": true
+      },
+      {
+        "id": "3e116e74-0dda-4277-ae38-468bdd3464e6",
+        "name": "ghl_resolve_contact",
+        "resolves": true
+      }
+    ],
+    "transcriber": {
+      "language": "en",
+      "model": "flux-general-en",
+      "provider": "deepgram"
+    },
+    "updatedAt": "2026-07-22T05:49:31.048Z",
+    "voice": {
+      "model": "eleven_flash_v2_5",
+      "provider": "11labs",
+      "similarityBoost": 0.75,
+      "speed": null,
+      "stability": 0.5,
+      "style": null,
+      "voiceId": "TcAStCk0faGcHdNIFX23"
+    },
+    "voicemailMessage": "Hi, this is Erica from Naidu Property Consulting Services following up on the quiz you completed. Feel free to call us back on this number so we can book your complimentary discovery call."
+  },
+  {
+    "backgroundSound": null,
+    "createdAt": "2025-11-28T13:03:39.202Z",
+    "endCallMessage": "Goodbye.",
+    "firstMessage": "Hi there. I'm Sandra, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+    "firstMessageMode": "assistant-waits-for-user",
+    "hipaaEnabled": null,
+    "id": "dcc0d0c4-1e01-4455-b895-7b268b1b96f0",
+    "isNpc": true,
+    "isServerUrlSecretSet": false,
+    "knowledgeBaseFileIds": [
+      "9fff4149-3aec-48f0-9378-d56760390216"
+    ],
+    "latestVersion": "v1",
+    "maxDurationSeconds": null,
+    "model": {
+      "emotionRecognitionEnabled": null,
+      "maxTokens": 10000,
+      "model": "gpt-5.2-chat-latest",
+      "provider": "openai",
+      "temperature": 0.9
+    },
+    "name": "NPC Strategy Session (Phone) Follow Up",
+    "recordingEnabled": null,
+    "serverTimeoutSeconds": 20,
+    "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+    "silenceTimeoutSeconds": null,
+    "systemPrompt": {
+      "chars": 40392,
+      "messageRoles": [
+        "system"
+      ],
+      "sha256_16": "ba6705b0801020e5"
+    },
+    "toolIds": [
+      {
+        "id": "87fb4ce8-b696-4925-bfbf-8bd9678d4e36",
+        "name": "ghl_delete_event_npc_2",
+        "resolves": true
+      },
+      {
+        "id": "a34b05ef-5218-4771-bf2b-4b171ad8f9c9",
+        "name": "ghl_delete_event_npc_2_1",
+        "resolves": true
+      },
+      {
+        "id": "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+        "name": "end_call_tool",
+        "resolves": true
+      },
+      {
+        "id": "5c0c334c-6bbf-4399-b748-a3c50207e754",
+        "name": "transfer_to_human",
+        "resolves": true
+      },
+      {
+        "id": "f195a817-8346-475d-ad0e-8033f1d2e283",
+        "name": "ghl_create_booking",
+        "resolves": true
+      },
+      {
+        "id": "6587bc7d-7382-4e33-a38d-95f5740df52a",
+        "name": "ghl_check_availability",
+        "resolves": true
+      },
+      {
+        "id": "3e116e74-0dda-4277-ae38-468bdd3464e6",
+        "name": "ghl_resolve_contact",
+        "resolves": true
+      }
+    ],
+    "transcriber": {
+      "language": "en",
+      "model": "flux-general-en",
+      "provider": "deepgram"
+    },
+    "updatedAt": "2026-07-22T05:51:45.632Z",
+    "voice": {
+      "model": "eleven_flash_v2_5",
+      "provider": "11labs",
+      "similarityBoost": 0.75,
+      "speed": null,
+      "stability": 0.5,
+      "style": null,
+      "voiceId": "02y4x5i9YrzYlFvGo1pp"
+    },
+    "voicemailMessage": "Hi, this is Sandra from Naidu Property Consulting Services, just a quick reminder about your upcoming strategy session. If you're unable to attend, please call us back on this number so we can schedule a new slot that works for you."
+  },
+  {
+    "backgroundSound": null,
+    "createdAt": "2025-11-28T14:28:15.693Z",
+    "endCallMessage": "Goodbye.",
+    "firstMessage": "Hi there. I'm Sandra, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+    "firstMessageMode": "assistant-waits-for-user",
+    "hipaaEnabled": null,
+    "id": "1f91270c-67e0-453b-83f4-6cf4d44abea1",
+    "isNpc": true,
+    "isServerUrlSecretSet": false,
+    "knowledgeBaseFileIds": [],
+    "latestVersion": "v1",
+    "maxDurationSeconds": null,
+    "model": {
+      "emotionRecognitionEnabled": null,
+      "maxTokens": null,
+      "model": "gpt-5.2-chat-latest",
+      "provider": "openai",
+      "temperature": null
+    },
+    "name": "NPC Strategy Session (Phone) No Show",
+    "recordingEnabled": null,
+    "serverTimeoutSeconds": 20,
+    "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+    "silenceTimeoutSeconds": null,
+    "systemPrompt": {
+      "chars": 40896,
+      "messageRoles": [
+        "system"
+      ],
+      "sha256_16": "d29318d258bdfdfd"
+    },
+    "toolIds": [
+      {
+        "id": "5c0c334c-6bbf-4399-b748-a3c50207e754",
+        "name": "transfer_to_human",
+        "resolves": true
+      },
+      {
+        "id": "f195a817-8346-475d-ad0e-8033f1d2e283",
+        "name": "ghl_create_booking",
+        "resolves": true
+      },
+      {
+        "id": "6587bc7d-7382-4e33-a38d-95f5740df52a",
+        "name": "ghl_check_availability",
+        "resolves": true
+      },
+      {
+        "id": "3e116e74-0dda-4277-ae38-468bdd3464e6",
+        "name": "ghl_resolve_contact",
+        "resolves": true
+      },
+      {
+        "id": "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+        "name": "end_call_tool",
+        "resolves": true
+      }
+    ],
+    "transcriber": {
+      "language": "en",
+      "model": "nova-2",
+      "provider": "deepgram"
+    },
+    "updatedAt": "2026-07-22T05:52:57.494Z",
+    "voice": {
+      "model": "eleven_flash_v2_5",
+      "provider": "11labs",
+      "similarityBoost": 0.75,
+      "speed": null,
+      "stability": 0.5,
+      "style": null,
+      "voiceId": "02y4x5i9YrzYlFvGo1pp"
+    },
+    "voicemailMessage": "Hi, this is Sandra from Naidu Property Consulting Services; we weren’t able to reach you for your strategy session earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+  },
+  {
+    "backgroundSound": null,
+    "createdAt": "2025-12-15T18:10:43.330Z",
+    "endCallMessage": "Goodbye.",
+    "firstMessage": "Hi {{firstName}}. I'm Sandra, from Naidu Property Consulting Services. How can I help you today?",
+    "firstMessageMode": "assistant-speaks-first",
+    "hipaaEnabled": null,
+    "id": "5ae449c8-1999-4f44-9115-9d63bf7444ae",
+    "isNpc": true,
+    "isServerUrlSecretSet": false,
+    "knowledgeBaseFileIds": [
+      "9fff4149-3aec-48f0-9378-d56760390216"
+    ],
+    "latestVersion": "v1",
+    "maxDurationSeconds": 1444,
+    "model": {
+      "emotionRecognitionEnabled": null,
+      "maxTokens": null,
+      "model": "gpt-5.6-luna",
+      "provider": "openai",
+      "temperature": null
+    },
+    "name": "NPC Strategy Session Inbound",
+    "recordingEnabled": null,
+    "serverTimeoutSeconds": 20,
+    "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+    "silenceTimeoutSeconds": null,
+    "systemPrompt": {
+      "chars": 40648,
+      "messageRoles": [
+        "system"
+      ],
+      "sha256_16": "a936d1dcdb82b25d"
+    },
+    "toolIds": [
+      {
+        "id": "87fb4ce8-b696-4925-bfbf-8bd9678d4e36",
+        "name": "ghl_delete_event_npc_2",
+        "resolves": true
+      },
+      {
+        "id": "a34b05ef-5218-4771-bf2b-4b171ad8f9c9",
+        "name": "ghl_delete_event_npc_2_1",
+        "resolves": true
+      },
+      {
+        "id": "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+        "name": "end_call_tool",
+        "resolves": true
+      },
+      {
+        "id": "3e116e74-0dda-4277-ae38-468bdd3464e6",
+        "name": "ghl_resolve_contact",
+        "resolves": true
+      },
+      {
+        "id": "6587bc7d-7382-4e33-a38d-95f5740df52a",
+        "name": "ghl_check_availability",
+        "resolves": true
+      },
+      {
+        "id": "f195a817-8346-475d-ad0e-8033f1d2e283",
+        "name": "ghl_create_booking",
+        "resolves": true
+      },
+      {
+        "id": "5c0c334c-6bbf-4399-b748-a3c50207e754",
+        "name": "transfer_to_human",
+        "resolves": true
+      }
+    ],
+    "transcriber": {
+      "language": "en",
+      "model": "flux-general-en",
+      "provider": "deepgram"
+    },
+    "updatedAt": "2026-07-28T05:34:39.337Z",
+    "voice": {
+      "model": "eleven_flash_v2_5",
+      "provider": "11labs",
+      "similarityBoost": 0.75,
+      "speed": null,
+      "stability": 0.5,
+      "style": null,
+      "voiceId": "02y4x5i9YrzYlFvGo1pp"
+    },
+    "voicemailMessage": "Hi, this is Sandra from Naidu Property Consulting Services, just a quick reminder about your upcoming strategy session. If you're unable to attend, please call us back on this number so we can schedule a new slot that works for you."
+  },
+  {
+    "backgroundSound": null,
+    "createdAt": "2024-11-04T16:14:14.725Z",
+    "endCallMessage": null,
+    "firstMessage": "Hi, I am your virtual assistant, how can I help you today?",
+    "firstMessageMode": null,
+    "hipaaEnabled": null,
+    "id": "3eb4592a-3cf9-4583-8304-f129837d9e38",
+    "isNpc": false,
+    "isServerUrlSecretSet": true,
+    "knowledgeBaseFileIds": [],
+    "latestVersion": "v1",
+    "maxDurationSeconds": null,
+    "model": {
+      "emotionRecognitionEnabled": null,
+      "maxTokens": null,
+      "model": "gpt-4o",
+      "provider": "openai",
+      "temperature": 0.7
+    },
+    "name": "Ramitta Barber",
+    "recordingEnabled": null,
+    "serverTimeoutSeconds": null,
+    "serverUrl": "https://na-runtime.voiceglow.org/v2/agents/kq45rqle09z9g8k1/vapi-event",
+    "silenceTimeoutSeconds": null,
+    "systemPrompt": {
+      "chars": 3304,
+      "messageRoles": [
+        "system"
+      ],
+      "sha256_16": "ba0ad0b7502371f6"
+    },
+    "toolIds": [],
+    "transcriber": {
+      "language": null,
+      "model": null,
+      "provider": null
+    },
+    "updatedAt": "2024-11-05T13:03:15.678Z",
+    "voice": {
+      "model": "eleven_turbo_v2_5",
+      "provider": "11labs",
+      "similarityBoost": 0.75,
+      "speed": null,
+      "stability": 0.5,
+      "style": null,
+      "voiceId": "KeVKuZR8nNe7vMcCOq9G"
+    },
+    "voicemailMessage": null
+  },
+  {
+    "backgroundSound": "office",
+    "createdAt": "2024-04-29T13:54:32.061Z",
+    "endCallMessage": "Thanks for reaching out to us. It was great assisting you. Have a wonderful day!",
+    "firstMessage": "Hi there! I'm Raya, your go-to for any queries regarding AutoFlow. How can I assist you today?",
+    "firstMessageMode": null,
+    "hipaaEnabled": false,
+    "id": "7beabed3-6bbb-430d-8648-29718e9cd647",
+    "isNpc": false,
+    "isServerUrlSecretSet": true,
+    "knowledgeBaseFileIds": [],
+    "latestVersion": "v1",
+    "maxDurationSeconds": null,
+    "model": {
+      "emotionRecognitionEnabled": null,
+      "maxTokens": 400,
+      "model": "gpt-3.5-turbo",
+      "provider": "openai",
+      "temperature": 0.7
+    },
+    "name": "Raya",
+    "recordingEnabled": true,
+    "serverTimeoutSeconds": null,
+    "serverUrl": "https://na-runtime.voiceglow.org/v2/agents/6ebv93sfgm2pdcvx/vapi-event",
+    "silenceTimeoutSeconds": null,
+    "systemPrompt": {
+      "chars": 21970,
+      "messageRoles": [
+        "system"
+      ],
+      "sha256_16": "85336f75206b160d"
+    },
+    "toolIds": [],
+    "transcriber": {
+      "language": "en",
+      "model": "nova-2",
+      "provider": "deepgram"
+    },
+    "updatedAt": "2024-07-22T22:34:12.077Z",
+    "voice": {
+      "model": null,
+      "provider": "11labs",
+      "similarityBoost": 0.75,
+      "speed": null,
+      "stability": 0.5,
+      "style": null,
+      "voiceId": "5Bjl83PFj5Nlg71jt4oW"
+    },
+    "voicemailMessage": "Hi, you've reached Leo at SmartHome Innovations. Sorry I missed your call. Please leave a message, and I'll get back to you as soon as possible."
+  },
+  {
+    "backgroundSound": "office",
+    "createdAt": "2024-07-22T20:09:37.380Z",
+    "endCallMessage": "Thank you for contacting Mary's Dental. Have a great day!",
+    "firstMessage": "Welcome to Sham's Dental Clinic. Please select your preferred language. English, Malay, Chinese or Tamil.",
+    "firstMessageMode": null,
+    "hipaaEnabled": false,
+    "id": "90d839b4-22c9-4b96-8293-9c3d9f356adb",
+    "isNpc": false,
+    "isServerUrlSecretSet": false,
+    "knowledgeBaseFileIds": [],
+    "latestVersion": "v1",
+    "maxDurationSeconds": null,
+    "model": {
+      "emotionRecognitionEnabled": true,
+      "maxTokens": 500,
+      "model": "gpt-4o",
+      "provider": "openai",
+      "temperature": 1
+    },
+    "name": "Sham Dental Main",
+    "recordingEnabled": true,
+    "serverTimeoutSeconds": null,
+    "serverUrl": null,
+    "silenceTimeoutSeconds": null,
+    "systemPrompt": {
+      "chars": 2222,
+      "messageRoles": [
+        "system"
+      ],
+      "sha256_16": "25c1ec9b85fe5650"
+    },
+    "toolIds": [],
+    "transcriber": {
+      "language": "en",
+      "model": "nova-2",
+      "provider": "deepgram"
+    },
+    "updatedAt": "2024-07-22T20:19:23.424Z",
+    "voice": {
+      "model": "eleven_turbo_v2_5",
+      "provider": "11labs",
+      "similarityBoost": 0.75,
+      "speed": null,
+      "stability": 0.6,
+      "style": 0.2,
+      "voiceId": "2zRM7PkgwBPiau2jvVXc"
+    },
+    "voicemailMessage": "You've reached Mary's Dental voicemail. Please leave a message after the beep, and we'll get back to you as soon as possible."
+  },
+  {
+    "backgroundSound": null,
+    "createdAt": "2025-04-27T03:53:21.915Z",
+    "endCallMessage": "Goodbye.",
+    "firstMessage": "Hi there! My name is Alice. I'm a virtual assistant at Unstructured Malaysia. How can I help you today?",
+    "firstMessageMode": null,
+    "hipaaEnabled": false,
+    "id": "bedc3a68-5e01-49b6-b09a-0928d149361f",
+    "isNpc": false,
+    "isServerUrlSecretSet": true,
+    "knowledgeBaseFileIds": [
+      "44486f26-2440-4f11-a317-9a028b02c7d2",
+      "fe539ff0-3d89-49e1-aa13-86a302a665ee",
+      "ef051271-aaba-467a-9cd0-931077c8a3d3",
+      "7fa5c742-4fc6-4569-9c27-348b0992c301",
+      "a665ee1f-51a6-491d-951c-7645fa52f35c",
+      "adbd668f-f28c-4026-a8a2-b62c5b10a58c",
+      "dcd95fb9-08a7-4eb8-a18f-cc72ed083a22",
+      "de8375fb-5813-4a33-b06f-78aace39d083",
+      "3159ff05-bef3-4549-8139-3b86747b63db",
+      "fad564e1-6da9-4f6e-80c7-e14da231da25"
+    ],
+    "latestVersion": "v1",
+    "maxDurationSeconds": null,
+    "model": {
+      "emotionRecognitionEnabled": null,
+      "maxTokens": null,
+      "model": "gpt-4.1",
+      "provider": "openai",
+      "temperature": 0.7
+    },
+    "name": "Unstructured Assistant New",
+    "recordingEnabled": null,
+    "serverTimeoutSeconds": null,
+    "serverUrl": "https://na-gcp-api.vg-stuff.com/v2/agents/LKIMyiw1oOzLfB3fCZvI/vapi-event",
+    "silenceTimeoutSeconds": null,
+    "systemPrompt": {
+      "chars": 4837,
+      "messageRoles": [
+        "system"
+      ],
+      "sha256_16": "3e88fc2a2092c146"
+    },
+    "toolIds": [],
+    "transcriber": {
+      "language": "en",
+      "model": "nova-3",
+      "provider": "deepgram"
+    },
+    "updatedAt": "2025-04-27T04:24:35.637Z",
+    "voice": {
+      "model": "eleven_turbo_v2_5",
+      "provider": "11labs",
+      "similarityBoost": 0.75,
+      "speed": null,
+      "stability": 0.5,
+      "style": null,
+      "voiceId": "jBzLvP03992lMFEkj2kJ"
+    },
+    "voicemailMessage": "Please call back when you're available."
+  },
+  {
+    "backgroundSound": null,
+    "createdAt": "2024-07-16T12:36:04.835Z",
+    "endCallMessage": null,
+    "firstMessage": "Hi there! My name is Khan. I'm a virtual assistant at Xenochrome Technologies. How can I help you today?",
+    "firstMessageMode": null,
+    "hipaaEnabled": false,
+    "id": "1f907ea6-adc6-41c4-accc-9ae3cd0739ab",
+    "isNpc": false,
+    "isServerUrlSecretSet": false,
+    "knowledgeBaseFileIds": [],
+    "latestVersion": "v1",
+    "maxDurationSeconds": null,
+    "model": {
+      "emotionRecognitionEnabled": true,
+      "maxTokens": 1000,
+      "model": "gpt-4.1",
+      "provider": "openai",
+      "temperature": 0.7
+    },
+    "name": "Xenochrome Assistant",
+    "recordingEnabled": null,
+    "serverTimeoutSeconds": null,
+    "serverUrl": "https://na-gcp-api.vg-stuff.com/v2/agents/NE4wWwtA5BGy5Cm/vapi-event",
+    "silenceTimeoutSeconds": null,
+    "systemPrompt": {
+      "chars": 4816,
+      "messageRoles": [
+        "system"
+      ],
+      "sha256_16": "feb9196375b98c44"
+    },
+    "toolIds": [
+      {
+        "id": "326c7c81-e4c2-4bcb-bcf3-134a1af73f49",
+        "name": "checkAvailability",
+        "resolves": true
+      }
+    ],
+    "transcriber": {
+      "language": "en",
+      "model": "nova-2",
+      "provider": "deepgram"
+    },
+    "updatedAt": "2025-05-20T13:53:21.691Z",
+    "voice": {
+      "model": "eleven_turbo_v2_5",
+      "provider": "11labs",
+      "similarityBoost": 0.75,
+      "speed": null,
+      "stability": 0.5,
+      "style": null,
+      "voiceId": "nWxiGsP4eBrWk3QtVY6K"
+    },
+    "voicemailMessage": null
+  }
+]

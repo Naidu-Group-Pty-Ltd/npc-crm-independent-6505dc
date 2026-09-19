@@ -1,0 +1,115 @@
+{
+  "id": "wfljwe75Zqv5u8uCx",
+  "name": "Delete Property Intake Records After 30 Days",
+  "description": "Retention purge for Property Intake Master, cloned from \"Delete Records After 30 Days\" (which does the same job for Properties). Runs daily at midnight Asia/Kuala_Lumpur and finds every record whose Created Time is more than 30 days ago. Created Time is a createdTime column, so the window is measured from when the record entered the table and cannot be back-dated by a later edit — the same field family the Properties purge keys off.",
+  "deploymentStatus": "deployed",
+  "deploymentError": null,
+  "trigger": {
+    "type": "cron",
+    "inputs": {
+      "config": {
+        "obj": {
+          "dateModified": "2026-08-04T16:00:00.000Z",
+          "localTriggerTimes": [
+            {
+              "obj": {
+                "hour": 0,
+                "minute": 0,
+                "second": 0
+              }
+            }
+          ],
+          "tz": "Asia/Kuala_Lumpur",
+          "width": 1
+        }
+      },
+      "start": "2026-08-04T16:00:00.000Z",
+      "type": "daily"
+    }
+  },
+  "nodes": [
+    {
+      "key": "wac8kjD7EWd0YfyZi",
+      "type": "findRecords",
+      "description": "Every Property Intake Master record created more than 30 days ago.",
+      "inputs": {
+        "limit": 1000,
+        "filtersObj": {
+          "obj": {
+            "operands": {
+              "tuple": [
+                {
+                  "obj": {
+                    "operands": {
+                      "tuple": [
+                        "fldoZWwTidEhcrmeg",
+                        {
+                          "obj": {
+                            "mode": "daysAgo",
+                            "numberOfDays": 30,
+                            "timeZone": "Asia/Kuala_Lumpur"
+                          }
+                        }
+                      ]
+                    },
+                    "operator": "<"
+                  }
+                }
+              ]
+            },
+            "operator": "and"
+          }
+        },
+        "queryType": "filtersObj",
+        "tableId": "tblWIg5cs85O30pcY"
+      }
+    },
+    {
+      "key": "wdepTEKAR6uYWitXy",
+      "type": "repeatingGroup",
+      "name": "",
+      "inputs": {
+        "items": {
+          "$ref": "wac8kjD7EWd0YfyZi",
+          "path": [
+            "records"
+          ]
+        }
+      },
+      "nodes": [
+        {
+          "key": "wacPNnMrRaCKL5iEJ",
+          "type": "customScript",
+          "inputs": {
+            "inputObj": {
+              "obj": {
+                "recordId": {
+                  "fn": "readProperty",
+                  "args": [
+                    {
+                      "fn": "pickBranchData",
+                      "args": [
+                        {
+                          "$ref": "wdepTEKAR6uYWitXy",
+                          "path": [
+                            "selectedNextNodes"
+                          ]
+                        }
+                      ]
+                    },
+                    "id"
+                  ]
+                },
+                "tableId": "tblWIg5cs85O30pcY"
+              }
+            },
+            "script": "let { recordId, tableId } = input.config();\n\nawait base.getTable(tableId).deleteRecordAsync(recordId);\n\nconsole.log(`Deleted record: ${recordId}`);\n"
+          },
+          "outputSchema": []
+        }
+      ]
+    }
+  ],
+  "deployedVersion": null,
+  "configurationStatus": "valid"
+}

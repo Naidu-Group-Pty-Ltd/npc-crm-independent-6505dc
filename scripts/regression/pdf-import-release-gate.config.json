@@ -1,0 +1,63 @@
+{
+  "version": "pdf-import-release-gate-config-v1",
+  "mode": "static",
+  "reportsDir": "reports/pdf-import-release-gate",
+  "requiredFiles": [
+    "docs/pdf-import/phase-10h-production-intelligence-lock.md",
+    "docs/pdf-import/production-operator-control-audit.schema.json",
+    "docs/pdf-import/self-healing-retry-audit.schema.json",
+    "scripts/regression/pdf-import-phase-10-final-check.sql",
+    "docs/pdf-import/phase-11a-production-rollout-readiness-review.md",
+    "scripts/regression/pdf-import-phase-11a-rollout-readiness-check.sql",
+    "src/lib/reportTemplate/ingestion/rolloutReadiness/rolloutReadinessEvaluator.ts",
+    "docs/pdf-import/phase-11b-role-based-operator-permissions.md",
+    "docs/pdf-import/pdf-import-permission-policy.schema.json",
+    "scripts/regression/pdf-import-phase-11b-permissions-check.sql",
+    "src/lib/reportTemplate/ingestion/operatorPermissions/operatorPermissionMatrix.ts",
+    "docs/pdf-import/phase-11c-monitoring-alerting-activation.md",
+    "docs/pdf-import/pdf-import-monitoring-event.schema.json",
+    "scripts/regression/pdf-import-phase-11c-monitoring-check.sql",
+    "src/lib/reportTemplate/ingestion/monitoring/monitoringEventRules.ts",
+    "supabase/functions/pdf-import-monitoring/index.ts",
+    "docs/pdf-import/phase-11d-release-gate-ci-integration.md",
+    "docs/pdf-import/phase-11d-release-gate-policy.md",
+    "docs/pdf-import/phase-11d-ci-setup.md",
+    "docs/pdf-import/pdf-import-release-gate-report.schema.json",
+    "scripts/regression/pdf-import-phase-11d-release-gate-check.sql",
+    "scripts/regression/pdf-import-release-gate.mjs",
+    "scripts/regression/pdf-import-release-gate.config.json",
+    "src/lib/reportTemplate/ingestion/releaseGate/releaseGateEvaluator.ts",
+    "src/lib/reportTemplate/ingestion/goldenCorpus/goldenCorpusRegistry.ts",
+    "src/lib/reportTemplate/ingestion/goldenCorpus/goldenCorpusOrchestrator.ts",
+    "src/lib/reportTemplate/ingestion/goldenCorpus/goldenRunBaselineComparison.ts",
+    "src/lib/reportTemplate/ingestion/exportParity/exportParityRunner.ts",
+    "src/lib/reportTemplate/ingestion/qualityGates/pdfImportQualityGateEvaluator.ts",
+    "src/lib/reportTemplate/ingestion/operatorControls/operatorControlRules.ts",
+    "src/lib/reportTemplate/ingestion/phase10Lock/phase10ProductionLockEvaluator.ts"
+  ],
+  "commands": {
+    "build": "npm run build",
+    "phase11dTests": "npx vitest run src/lib/reportTemplate/__tests__/releaseGateChecklist.spec.ts src/lib/reportTemplate/__tests__/releaseGateEvaluator.spec.ts src/lib/reportTemplate/__tests__/releaseGateFileChecks.spec.ts src/lib/reportTemplate/__tests__/releaseGateSafetyScanner.spec.ts src/lib/reportTemplate/__tests__/releaseGateReport.spec.ts src/lib/reportTemplate/__tests__/releaseGateDisplay.spec.ts"
+  },
+  "privateArtifactPatterns": [
+    "audit-output/",
+    ".pdf",
+    ".png",
+    ".jpg",
+    ".jpeg",
+    ".webp",
+    ".log",
+    ".env",
+    "supabase/config.toml.before-",
+    "signed-url",
+    "signed_url",
+    "cloud-run-log",
+    "supabase-log"
+  ],
+  "liveChecks": {
+    "enabled": false,
+    "supabase": false,
+    "monitoringFunction": false,
+    "cloudRunSidecar": false
+  }
+}

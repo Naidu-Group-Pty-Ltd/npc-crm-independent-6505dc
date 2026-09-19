@@ -1,0 +1,1 @@
+ALTER TABLE aml.role_assignments DROP CONSTRAINT IF EXISTS role_assignments_granted_by_fkey;

@@ -1,0 +1,51 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://npcservices.com.au/schemas/pdf-import-runbook-registry.schema.json",
+  "title": "PdfImportRunbookRegistry",
+  "description": "Phase 11F PDF import production runbook registry. Documentation governance metadata only.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "runbooks", "generatedAt"],
+  "properties": {
+    "version": { "type": "string", "const": "pdf-import-runbook-registry-v1" },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "runbooks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id", "title", "path", "domain", "audience", "criticality",
+          "requiredRoles", "relatedRoutes", "relatedAlerts", "relatedCapabilities", "requiredSections"
+        ],
+        "properties": {
+          "id": { "type": "string" },
+          "title": { "type": "string" },
+          "path": { "type": "string", "pattern": "^docs/pdf-import/runbooks/" },
+          "domain": {
+            "type": "string",
+            "enum": [
+              "orientation", "daily_operations", "weekly_operations", "import_workflow", "visual_quality",
+              "repair", "adaptive_reconciliation", "self_healing", "export_parity", "golden_regression",
+              "monitoring_alerts", "permissions", "retention", "release_gate", "incident_response",
+              "rollback", "client_communication", "escalation", "training"
+            ]
+          },
+          "audience": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "enum": ["pdf_viewer", "pdf_operator", "pdf_qa_operator", "pdf_admin", "developer_admin", "business_stakeholder"]
+            }
+          },
+          "criticality": { "type": "string", "enum": ["critical", "high", "medium", "low", "info"] },
+          "requiredRoles": { "type": "array", "items": { "type": "string" } },
+          "relatedRoutes": { "type": "array", "items": { "type": "string" } },
+          "relatedAlerts": { "type": "array", "items": { "type": "string" } },
+          "relatedCapabilities": { "type": "array", "items": { "type": "string" } },
+          "requiredSections": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    }
+  }
+}

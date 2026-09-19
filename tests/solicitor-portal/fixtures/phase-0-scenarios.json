@@ -1,0 +1,36 @@
+{
+  "firms": [
+    { "id": "firm-a", "name": "Alpha Legal" },
+    { "id": "firm-b", "name": "Beta Conveyancing" }
+  ],
+  "users": [
+    { "id": "sol-a", "firm_id": "firm-a", "role": "solicitor" },
+    { "id": "conv-a", "firm_id": "firm-a", "role": "conveyancer" },
+    { "id": "para-a", "firm_id": "firm-a", "role": "paralegal" },
+    { "id": "admin-a", "firm_id": "firm-a", "role": "practice_admin" }
+  ],
+  "financeUsers": [
+    { "id": "fin-1", "client_id": "client-repeat" },
+    { "id": "fin-2", "client_id": "client-repeat" }
+  ],
+  "assignments": [
+    { "solicitor_user_id": "sol-a", "client_id": "client-single", "legal_matter_id": "matter-single" },
+    { "solicitor_user_id": "sol-a", "client_id": "client-repeat", "legal_matter_id": "matter-a" }
+  ],
+  "matters": [
+    { "id": "matter-single", "client_id": "client-single", "firm_id": "firm-a", "assigned_solicitor_user_id": "sol-a", "shared_summary": "Ready to exchange", "internal_notes": "Privileged advice" },
+    { "id": "matter-a", "client_id": "client-repeat", "firm_id": "firm-a", "assigned_solicitor_user_id": "sol-a", "shared_summary": "Property A", "internal_notes": "Private A" },
+    { "id": "matter-b", "client_id": "client-repeat", "firm_id": "firm-a", "assigned_solicitor_user_id": "conv-a", "shared_summary": "Property B", "internal_notes": "Private B" },
+    { "id": "matter-other-firm", "client_id": "client-repeat", "firm_id": "firm-b", "assigned_solicitor_user_id": null, "shared_summary": "Beta matter", "internal_notes": "Beta private" },
+    { "id": "matter-null-firm", "client_id": "client-repeat", "firm_id": null, "assigned_solicitor_user_id": null, "shared_summary": "Unassigned", "internal_notes": "Unassigned private" }
+  ],
+  "permissions": {
+    "baseline": { "documents": { "view": true, "edit": true, "delete": false } },
+    "clientOverride": { "documents": { "view": false, "edit": false, "delete": false } }
+  },
+  "links": [
+    { "matter_id": "matter-a", "matter_client_id": "client-repeat", "purchase_file_id": "pf-a", "purchase_file_client_id": "client-repeat", "deal_id": "deal-a", "deal_client_id": "client-repeat", "state": "linked" },
+    { "matter_id": "matter-b", "matter_client_id": "client-repeat", "purchase_file_id": null, "purchase_file_client_id": null, "deal_id": null, "deal_client_id": null, "state": "unlinked" },
+    { "matter_id": "matter-single", "matter_client_id": "client-single", "purchase_file_id": "pf-wrong", "purchase_file_client_id": "client-repeat", "deal_id": "deal-wrong", "deal_client_id": "client-repeat", "state": "mismatched" }
+  ]
+}

@@ -1,0 +1,113 @@
+{
+  "capturedAt": "2026-09-17",
+  "source": "production investment_reports, read-only",
+  "note": "The protected financial baseline. Any change to a value or digest here means the growth or Cash Flow calculation moved and the preservation gate has failed.",
+  "reports": [
+    {
+      "id": "9bd41c05-7f9b-41e8-819a-a029f4121369",
+      "address": "18 Annabelle Crescent, Kellyville NSW 2155",
+      "acceptedGrowthInput": 6.2,
+      "assumptions": {
+        "capitalGrowth": 6.2,
+        "occupancyWeeks": 52,
+        "feeBasis": "collected_rent",
+        "growthTiming": "Year-1 figures carry one year of growth; settlement is year 0.",
+        "loanStructure": "Interest only for 5 years (term not recorded; assumed), then principal and interest over the remaining 25 years (30-year term)",
+        "scenarioGrowth": {
+          "conservative": { "capitalGrowth": 4.2, "rentGrowth": 2.5 },
+          "moderate": { "capitalGrowth": 6.2, "rentGrowth": 3 },
+          "optimistic": { "capitalGrowth": 8.2, "rentGrowth": 3.5 }
+        }
+      },
+      "keyMetrics": {
+        "lvr": 80, "annualNet": -48166, "weeklyNet": -926,
+        "netRentalYield": 2.18, "grossRentalYield": 2.97,
+        "occupancyWeeks": 52, "totalInvestment": 363537,
+        "cashOnCashReturn": -13.25, "annualLoanPayments": 77480,
+        "effectiveAnnualRent": 44200, "potentialAnnualRent": 44200,
+        "yieldBasis": "contractual_rent_before_finance_and_tax"
+      },
+      "loanDetails": {
+        "lvr": 80, "loanTerm": 30, "loanType": "interest_only",
+        "loanAmount": 1192000, "interestRate": 6.5, "annualPayment": 77480,
+        "totalInterest": 1609941, "interestOnlyPeriod": 5,
+        "interestOnlyPayment": 6456.67, "amortisingMonthlyPayment": 8048.47,
+        "interestOnlyPeriodAssumed": true, "repaymentBasis": "monthly ledger"
+      },
+      "seriesLen": { "conservative": 10, "moderate": 10, "optimistic": 10 },
+      "seriesDigest": {
+        "conservative": "d55ab3a03cb7c1a11ea1b0829658077f",
+        "moderate": "75badc6577c0b071634ae3eabb59fe86",
+        "optimistic": "d23f4b340ace456e4347f388efff7eb9"
+      },
+      "blockDigest": {
+        "income": "84c4de071a93c755ffb8c8f6ef6b7e13",
+        "annualCosts": "1f27888f58249dee738905ea563603af",
+        "initialCosts": "dbb17bb620ff44cc80a061e9a5904b0a",
+        "taxBenefits": "1c708f0aa124576eadbbcae87431c1e8",
+        "propertySpecs": "ab77de4f1bd8b471a9dc00bf8e9b200f",
+        "interestRateInfo": "d98c3e7100227558874f43a4795ba503",
+        "sensitivityAnalysis": "6d0fb3196447d7aa13bdaaaa47c7a34d"
+      },
+      "reproduction": {
+        "purchasePrice": 1490000, "weeklyRent": 850,
+        "year1PropertyValue": 1582380, "year10PropertyValue": 2719139,
+        "year1AnnualRent": 45526, "year10AnnualRent": 59401,
+        "year1Interest": 77480, "year1Principal": 0
+      }
+    },
+    {
+      "id": "3a4a3d9b-4d2d-4296-9e39-3fab0c2ae753",
+      "address": "262 Pallas Street, Maryborough QLD 4650",
+      "acceptedGrowthInput": 9.7,
+      "assumptions": {
+        "capitalGrowth": 9.7,
+        "occupancyWeeks": 52,
+        "feeBasis": "collected_rent",
+        "growthTiming": "Year-1 figures carry one year of growth; settlement is year 0.",
+        "loanStructure": "Principal and interest over 30 years",
+        "scenarioGrowth": {
+          "conservative": { "capitalGrowth": 7.7, "rentGrowth": 2.5 },
+          "moderate": { "capitalGrowth": 9.7, "rentGrowth": 3 },
+          "optimistic": { "capitalGrowth": 11.7, "rentGrowth": 3.5 }
+        }
+      },
+      "keyMetrics": {
+        "lvr": 80, "annualNet": -21770, "weeklyNet": -419,
+        "netRentalYield": 2.28, "grossRentalYield": 4.52,
+        "occupancyWeeks": 52, "totalInvestment": 136200,
+        "cashOnCashReturn": -15.98, "annualLoanPayments": 34890,
+        "effectiveAnnualRent": 26000, "potentialAnnualRent": 26000,
+        "yieldBasis": "contractual_rent_before_finance_and_tax"
+      },
+      "loanDetails": {
+        "lvr": 80, "loanTerm": 30, "loanType": "interest_only",
+        "loanAmount": 460000, "interestRate": 6.5, "annualPayment": 34890,
+        "totalInterest": 586705, "interestOnlyPeriod": 0,
+        "interestOnlyPayment": 2491.67, "amortisingMonthlyPayment": 2907.51,
+        "interestOnlyPeriodAssumed": false, "repaymentBasis": "monthly ledger"
+      },
+      "seriesLen": { "conservative": 10, "moderate": 10, "optimistic": 10 },
+      "seriesDigest": {
+        "conservative": "3d38664207f1dd63e23ecba264ce7ce7",
+        "moderate": "5d78a661a66d4d787230bf305127a83d",
+        "optimistic": "51a6a571274cf24e55b7e9b782b4d425"
+      },
+      "blockDigest": {
+        "income": "a49a1b945f5641260631fd2e9b0d7674",
+        "annualCosts": "f830086e61f7514cf12fc7bcfc7f948f",
+        "initialCosts": "c4ae9a52aaa249d837c70e6674935b71",
+        "taxBenefits": null,
+        "propertySpecs": "12336524bc24fd4a7b278f4e96b42c9f",
+        "interestRateInfo": "d98c3e7100227558874f43a4795ba503",
+        "sensitivityAnalysis": "bf0c7be8bd8c61b185b89b3067b56a47"
+      },
+      "reproduction": {
+        "purchasePrice": 575000, "weeklyRent": 500,
+        "year1PropertyValue": null, "year10PropertyValue": null,
+        "year1AnnualRent": null, "year10AnnualRent": null,
+        "year1Interest": null, "year1Principal": null
+      }
+    }
+  ]
+}

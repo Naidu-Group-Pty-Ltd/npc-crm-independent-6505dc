@@ -1,0 +1,20 @@
+{
+  "createdAt": "2026-05-07T03:06:47.279Z",
+  "id": "000f73e6-58c0-4204-a7ab-b15b7159bf1c",
+  "name": "Transcriber Request Failed Count",
+  "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+  "queries": [
+    {
+      "filters": [],
+      "on": "assistant.transcriber.requestFailed",
+      "operation": "count",
+      "table": "events",
+      "type": "vapiql-json"
+    }
+  ],
+  "timeRange": {
+    "start": "-1h"
+  },
+  "type": "text",
+  "updatedAt": "2026-05-07T03:06:47.279Z"
+}

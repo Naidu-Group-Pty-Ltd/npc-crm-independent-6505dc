@@ -1,0 +1,10 @@
+{
+  "createdAt": "2025-11-12T07:36:34.595Z",
+  "function": {
+    "name": "google_sheets_tool"
+  },
+  "id": "a1124ce2-f0f0-476d-969d-bdff57937775",
+  "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+  "type": "google.sheets.row.append",
+  "updatedAt": "2025-11-12T07:36:34.595Z"
+}

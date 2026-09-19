@@ -1,0 +1,7 @@
+{
+  "note": "Policies whose predicate is neutralised by a disjunctive literal true, frozen at the date below. A RATCHET: entries may be REMOVED as the debt is paid, never added. Regenerating this file to silence a new finding defeats the check. A frozen entry means the historical migration text still contains it — not that the live policy is still wrong.",
+  "generated": "2026-09-12",
+  "frozen": [
+    "tpl_comments_update_own_or_resolve"
+  ]
+}

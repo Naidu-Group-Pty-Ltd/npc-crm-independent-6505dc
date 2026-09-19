@@ -1,0 +1,532 @@
+{
+  "flow": [
+    {
+      "id": 1,
+      "mapper": {},
+      "module": "vapi:watchEndCallReport",
+      "version": 2,
+      "metadata": {
+        "restore": {
+          "parameters": {
+            "__IMTHOOK__": {
+              "data": {
+                "editable": "false"
+              },
+              "label": "My Vapi End of Call Report Webhook webhook"
+            }
+          }
+        },
+        "designer": {
+          "x": 0,
+          "y": 0
+        },
+        "parameters": [
+          {
+            "name": "__IMTHOOK__",
+            "type": "hook:vapi2",
+            "label": "Webhook",
+            "required": true
+          }
+        ]
+      },
+      "parameters": {
+        "__IMTHOOK__": 3507622
+      }
+    },
+    {
+      "id": 2,
+      "mapper": {
+        "base": "appFOpIVCltTyJKgM",
+        "table": "tblLAt3DyXbozg4Xi",
+        "record": {
+          "fldc91H7opxJyYmAp": {}
+        },
+        "typecast": false,
+        "useColumnId": false
+      },
+      "module": "airtable:ActionCreateRecord",
+      "version": 3,
+      "metadata": {
+        "expect": [
+          {
+            "name": "base",
+            "type": "select",
+            "label": "Base",
+            "required": true
+          },
+          {
+            "name": "typecast",
+            "type": "boolean",
+            "label": "Smart links",
+            "required": true
+          },
+          {
+            "name": "useColumnId",
+            "type": "boolean",
+            "label": "Use Column ID",
+            "required": true
+          },
+          {
+            "name": "table",
+            "type": "select",
+            "label": "Table",
+            "required": true
+          },
+          {
+            "name": "record",
+            "spec": [
+              {
+                "name": "fld61N1QzJJx8HJDb",
+                "type": "text",
+                "label": "First Name"
+              },
+              {
+                "name": "fldGEBZmwN01AEIBA",
+                "type": "text",
+                "label": "Last Name"
+              },
+              {
+                "name": "fldJ5Z4Ix7csAkajm",
+                "type": "text",
+                "label": "Email"
+              },
+              {
+                "name": "fldNmSyHWZFKWUYq1",
+                "type": "text",
+                "label": "Mobile Number"
+              },
+              {
+                "name": "fldMAnFAs8Gm823ag",
+                "time": true,
+                "type": "date",
+                "label": "Discovery Call Time"
+              },
+              {
+                "name": "fldQHoJYpaFEEq1KX",
+                "type": "text",
+                "label": "Call Summary"
+              },
+              {
+                "name": "fldc91H7opxJyYmAp",
+                "spec": [
+                  {
+                    "name": "id",
+                    "type": "text",
+                    "label": "ID"
+                  },
+                  {
+                    "name": "email",
+                    "type": "email",
+                    "label": "Email"
+                  }
+                ],
+                "type": "collection",
+                "label": "Assignee"
+              },
+              {
+                "mode": "edit",
+                "name": "fldOMkkBeeqYqGn0n",
+                "type": "select",
+                "label": "Status"
+              },
+              {
+                "name": "fld5gnlRBMzVnQEKo",
+                "spec": [
+                  {
+                    "name": "url",
+                    "type": "text",
+                    "label": "File URL"
+                  },
+                  {
+                    "name": "filename",
+                    "type": "filename",
+                    "label": "File name"
+                  }
+                ],
+                "type": "array",
+                "label": "Attachments"
+              }
+            ],
+            "type": "collection",
+            "label": "Record"
+          }
+        ],
+        "restore": {
+          "expect": {
+            "base": {
+              "label": "NPC Discovery Calls"
+            },
+            "table": {
+              "label": "Table 1",
+              "nested": [
+                {
+                  "name": "record",
+                  "spec": [
+                    {
+                      "name": "fld61N1QzJJx8HJDb",
+                      "type": "text",
+                      "label": "First Name"
+                    },
+                    {
+                      "name": "fldGEBZmwN01AEIBA",
+                      "type": "text",
+                      "label": "Last Name"
+                    },
+                    {
+                      "name": "fldJ5Z4Ix7csAkajm",
+                      "type": "text",
+                      "label": "Email"
+                    },
+                    {
+                      "name": "fldNmSyHWZFKWUYq1",
+                      "type": "text",
+                      "label": "Mobile Number"
+                    },
+                    {
+                      "name": "fldMAnFAs8Gm823ag",
+                      "time": true,
+                      "type": "date",
+                      "label": "Discovery Call Time"
+                    },
+                    {
+                      "name": "fldQHoJYpaFEEq1KX",
+                      "type": "text",
+                      "label": "Call Summary",
+                      "multiline": true
+                    },
+                    {
+                      "name": "fldc91H7opxJyYmAp",
+                      "spec": [
+                        {
+                          "help": "Unique user id",
+                          "name": "id",
+                          "type": "text",
+                          "label": "ID"
+                        },
+                        {
+                          "help": "User's email address",
+                          "name": "email",
+                          "type": "email",
+                          "label": "Email"
+                        }
+                      ],
+                      "type": "collection",
+                      "label": "Assignee"
+                    },
+                    {
+                      "mode": "edit",
+                      "name": "fldOMkkBeeqYqGn0n",
+                      "type": "select",
+                      "label": "Status",
+                      "dynamic": true,
+                      "options": [
+                        {
+                          "label": "Todo",
+                          "value": "Todo"
+                        },
+                        {
+                          "label": "In progress",
+                          "value": "In progress"
+                        },
+                        {
+                          "label": "Done",
+                          "value": "Done"
+                        }
+                      ],
+                      "validate": false
+                    },
+                    {
+                      "name": "fld5gnlRBMzVnQEKo",
+                      "spec": [
+                        {
+                          "help": "Airtable will download the file at the given url and keep its own copy of it.",
+                          "name": "url",
+                          "type": "text",
+                          "label": "File URL"
+                        },
+                        {
+                          "help": "If empty, Airtable will generate the name automatically.",
+                          "name": "filename",
+                          "type": "filename",
+                          "label": "File name"
+                        }
+                      ],
+                      "type": "array",
+                      "label": "Attachments",
+                      "editable": true
+                    }
+                  ],
+                  "type": "collection",
+                  "label": "Record"
+                }
+              ]
+            },
+            "record": {
+              "nested": {
+                "fld5gnlRBMzVnQEKo": {
+                  "mode": "chose"
+                },
+                "fldOMkkBeeqYqGn0n": {
+                  "mode": "edit"
+                }
+              }
+            },
+            "typecast": {
+              "mode": "chose"
+            },
+            "useColumnId": {
+              "mode": "chose"
+            }
+          },
+          "parameters": {
+            "__IMTCONN__": {
+              "data": {
+                "scoped": "true",
+                "connection": "airtable3"
+              },
+              "label": "My Airtable OAuth connection (User ID: usr1Hi4WZr8LIFA13)"
+            }
+          }
+        },
+        "designer": {
+          "x": 300,
+          "y": 0
+        },
+        "interface": [
+          {
+            "name": "id",
+            "type": "text",
+            "label": "ID"
+          },
+          {
+            "name": "createdTime",
+            "type": "date",
+            "label": "Created Time"
+          },
+          {
+            "name": "First Name",
+            "type": "text",
+            "label": "First Name"
+          },
+          {
+            "name": "Last Name",
+            "type": "text",
+            "label": "Last Name"
+          },
+          {
+            "name": "Email",
+            "type": "text",
+            "label": "Email"
+          },
+          {
+            "name": "Mobile Number",
+            "type": "text",
+            "label": "Mobile Number"
+          },
+          {
+            "name": "Discovery Call Time",
+            "time": true,
+            "type": "date",
+            "label": "Discovery Call Time"
+          },
+          {
+            "name": "Call Summary",
+            "type": "text",
+            "label": "Call Summary",
+            "multiline": true
+          },
+          {
+            "name": "Assignee",
+            "spec": [
+              {
+                "name": "id",
+                "type": "text",
+                "label": "ID"
+              },
+              {
+                "name": "email",
+                "type": "email",
+                "label": "Email"
+              },
+              {
+                "name": "name",
+                "type": "text",
+                "label": "Name"
+              }
+            ],
+            "type": "collection",
+            "label": "Assignee"
+          },
+          {
+            "name": "Status",
+            "type": "text",
+            "label": "Status"
+          },
+          {
+            "name": "Attachments",
+            "spec": [
+              {
+                "name": "id",
+                "type": "text",
+                "label": "ID"
+              },
+              {
+                "name": "width",
+                "type": "uinteger",
+                "label": "Width"
+              },
+              {
+                "name": "height",
+                "type": "uinteger",
+                "label": "Height"
+              },
+              {
+                "name": "url",
+                "type": "url",
+                "label": "URL"
+              },
+              {
+                "name": "filename",
+                "type": "filename",
+                "label": "File name"
+              },
+              {
+                "name": "size",
+                "type": "uinteger",
+                "label": "Size"
+              },
+              {
+                "name": "type",
+                "type": "text",
+                "label": "MIME type"
+              },
+              {
+                "name": "thumbnails",
+                "spec": [
+                  {
+                    "name": "small",
+                    "spec": [
+                      {
+                        "name": "url",
+                        "type": "url",
+                        "label": "URL"
+                      },
+                      {
+                        "name": "width",
+                        "type": "uinteger",
+                        "label": "Width"
+                      },
+                      {
+                        "name": "height",
+                        "type": "uinteger",
+                        "label": "Height"
+                      }
+                    ],
+                    "type": "collection",
+                    "label": "Small"
+                  },
+                  {
+                    "name": "large",
+                    "spec": [
+                      {
+                        "name": "url",
+                        "type": "url",
+                        "label": "URL"
+                      },
+                      {
+                        "name": "width",
+                        "type": "uinteger",
+                        "label": "Width"
+                      },
+                      {
+                        "name": "height",
+                        "type": "uinteger",
+                        "label": "Height"
+                      }
+                    ],
+                    "type": "collection",
+                    "label": "Large"
+                  },
+                  {
+                    "name": "full",
+                    "spec": [
+                      {
+                        "name": "url",
+                        "type": "url",
+                        "label": "URL"
+                      },
+                      {
+                        "name": "width",
+                        "type": "uinteger",
+                        "label": "Width"
+                      },
+                      {
+                        "name": "height",
+                        "type": "uinteger",
+                        "label": "Height"
+                      }
+                    ],
+                    "type": "collection",
+                    "label": "Full"
+                  }
+                ],
+                "type": "collection",
+                "label": "Thumbnails"
+              }
+            ],
+            "type": "array",
+            "label": "Attachments"
+          },
+          {
+            "name": "Attachment Summary",
+            "type": "text",
+            "label": "Attachment Summary"
+          },
+          {
+            "name": "Created",
+            "type": "date",
+            "label": "Created"
+          }
+        ],
+        "parameters": [
+          {
+            "name": "__IMTCONN__",
+            "type": "account:airtable3,airtable2",
+            "label": "Connection",
+            "required": true
+          }
+        ]
+      },
+      "parameters": {
+        "__IMTCONN__": 2426955
+      }
+    }
+  ],
+  "name": "NPC Discovery Call Summary",
+  "metadata": {
+    "instant": true,
+    "version": 1,
+    "designer": {
+      "orphans": []
+    },
+    "scenario": {
+      "dlq": false,
+      "slots": null,
+      "dataloss": false,
+      "maxErrors": 3,
+      "autoCommit": true,
+      "roundtrips": 1,
+      "sequential": false,
+      "confidential": false,
+      "freshVariables": false,
+      "autoCommitTriggerLast": true
+    }
+  },
+  "scheduling": {
+    "type": "immediately"
+  },
+  "interface": {
+    "input": [],
+    "output": []
+  }
+}

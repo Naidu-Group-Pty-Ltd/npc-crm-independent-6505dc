@@ -1,0 +1,10 @@
+{
+  "description": "Monitors appointment cancellations during calls",
+  "name": "Appointment Cancelled",
+  "schema": {
+    "description": "Mark true when customer cancels an existing appointment",
+    "type": "boolean"
+  },
+  "type": "ai",
+  "workflowIds": []
+}

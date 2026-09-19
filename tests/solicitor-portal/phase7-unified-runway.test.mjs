@@ -1,0 +1,7 @@
+import test from 'node:test'; import assert from 'node:assert/strict'; import fs from 'node:fs';
+const sql=fs.readFileSync('supabase/migrations/20260730230000_unified_milestones_settlement_runway_phase7.sql','utf8');
+test('one case task owns the shared completion state',()=>{ assert.match(sql,/UNIQUE\(case_id,task_key\)/); assert.match(sql,/row_version bigint NOT NULL DEFAULT 1/); });
+test('all audiences have explicit visibility contracts',()=>{ for(const audience of ['solicitor','finance','client','command_centre']) assert.match(sql,new RegExp(`WHEN '${audience}'`)); assert.match(sql,/legal_private/); assert.match(sql,/finance_private/); });
+test('stale and cross-domain task writes are rejected',()=>{ assert.match(sql,/STALE_VERSION/); assert.match(sql,/TASK_DOMAIN_FORBIDDEN/); assert.match(sql,/case_task_status_history/); });
+test('conflicts preserve both sources and authority',()=>{ assert.match(sql,/left_source jsonb NOT NULL/); assert.match(sql,/right_source jsonb NOT NULL/); assert.match(sql,/authoritative_milestone_id/); assert.match(sql,/requires_confirmation/); });
+test('portal task mutations are scoped through the verified case parent',()=>{ for (const file of ['supabase/functions/solicitor-portal-matters/index.ts','supabase/functions/finance-portal-settlement-runway/index.ts','supabase/functions/legal-matters-admin/index.ts']) { const source=fs.readFileSync(file,'utf8'); assert.match(source,/from\('case_tasks'\)[\s\S]{0,180}\.eq\('case_id', caseLink\.case_id\)/); } });

@@ -1,0 +1,1 @@
+ALTER TABLE public.agency_agreements ADD COLUMN IF NOT EXISTS secondary_buyer_email TEXT;

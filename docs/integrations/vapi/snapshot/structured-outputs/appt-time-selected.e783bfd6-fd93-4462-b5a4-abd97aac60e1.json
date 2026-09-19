@@ -1,0 +1,20 @@
+{
+  "assistantIds": [
+    "b3acdd28-558a-4893-9cfe-c3abacdbe6bd",
+    "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+    "e1b76e7c-b9a2-461b-a951-e6b253a4d0d7"
+  ],
+  "createdAt": "2025-11-18T08:29:38.892Z",
+  "description": "Capturing the exact appointment time is essential for scheduling.",
+  "id": "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+  "name": "Appt Time Selected",
+  "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+  "schema": {
+    "description": "ISO 8601 format for the selected appointment time",
+    "maxLength": 25,
+    "type": "string"
+  },
+  "type": "ai",
+  "updatedAt": "2025-11-27T08:06:41.985Z",
+  "workflowIds": []
+}

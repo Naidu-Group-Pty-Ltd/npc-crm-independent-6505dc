@@ -1,0 +1,7 @@
+{
+  "assistant": "Raya",
+  "assistantId": "7beabed3-6bbb-430d-8648-29718e9cd647",
+  "note": "System prompts are replaced by promptRef; the text is in ../prompts/<ref>.md. Everything else is the API response verbatim.",
+  "versionCount": 0,
+  "versions": []
+}

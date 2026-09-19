@@ -1,0 +1,31 @@
+---
+description: Frontend/UI tooling and rules — installed MCP servers, design skills, and semantic-token requirements. Use for any change under src/ UI, components, pages, or styling.
+globs: src/**/*.tsx,src/**/*.ts,src/**/*.css,tailwind.config.ts,components.json
+alwaysApply: false
+---
+
+# Frontend tooling & rules
+
+The cross-tool source of truth for UI work is **`FRONTEND_TOOLING.md`** at the repo
+root. Read it for anything touching the frontend. Summary:
+
+## Installed packages (use them when available)
+- **MCP servers** (`.mcp.json`): `shadcn` (add registry components), `chrome-devtools`
+  (run + inspect + screenshot the change in a browser), `@21st-dev/magic` (generate
+  net-new components, then adapt to our conventions).
+- **Design skills** (`.claude/skills/`): `frontend-design` (aesthetic direction for new
+  surfaces) and `web-design-guidelines` (accessibility / UX review).
+
+## Hard rules
+- This app is **shadcn/ui + Tailwind** (`components.json`). Prefer an existing shadcn
+  component or `src/components/ui/*` primitive before hand-rolling one.
+- **Semantic design tokens only** — never raw Tailwind palette classes (`bg-blue-500`,
+  `text-red-600`) or hardcoded hex/font values in shared UI. Consume the white-label CSS
+  tokens (`docs/WHITE_LABEL_TOKEN_CONTRACT.md`). `npm run audit:style` fails on new
+  hardcoded-color/font violations (new = 0).
+- Respect `components.json` aliases and the existing `tailwind.config.ts` / `src/index.css`.
+- Accessibility floor: visible focus, correct semantics/labels, `prefers-reduced-motion`,
+  responsive to mobile.
+- Before finishing a UI change: `npm run lint`, `npm run audit:style`, `npm run build`.
+
+Backend / security / AML rules: see `AGENTS.md` and `AGENTS_NPC_Property_Dashboard.md`.

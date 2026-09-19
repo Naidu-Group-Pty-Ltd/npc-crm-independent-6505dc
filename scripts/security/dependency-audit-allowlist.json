@@ -1,0 +1,55 @@
+{
+  "_comment": "SUPPLY-001: accepted dependency advisories. Each entry suppresses a finding from the CI dependency-audit gate (scripts/security/dependency-audit.mjs). Add an entry ONLY with a documented reason and a review date; re-evaluate on each audit. `id` matches an advisory URL, GHSA/CVE id, or a package name to accept all of its advisories.",
+  "_policy": "List advisories individually, never by bare package name. Accepting a package accepts everything published against it in future, including an advisory nobody has read yet.",
+  "advisories": [
+    {
+      "url": "https://github.com/advisories/GHSA-4w7w-66w2-5vf9",
+      "ghsa": "GHSA-4w7w-66w2-5vf9",
+      "package": "vite",
+      "reason": "Path traversal in the dev server's optimized-deps `.map` handling. This repository ships a static `vite build`; the dev server runs on a developer's own machine and is never exposed. The only fix is vite 8 — a major bump of the build toolchain, which is its own change with its own regression surface.",
+      "review_by": "2026-11-04"
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-fx2h-pf6j-xcff",
+      "ghsa": "GHSA-fx2h-pf6j-xcff",
+      "package": "vite",
+      "reason": "`server.fs.deny` bypass via Windows alternate path forms. Dev-server only, and no part of this project's build or deployment runs on Windows. Same fix, and same major-bump argument, as GHSA-4w7w-66w2-5vf9.",
+      "review_by": "2026-11-04"
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-v6wh-96g9-6wx3",
+      "ghsa": "GHSA-v6wh-96g9-6wx3",
+      "package": "vite",
+      "reason": "launch-editor discloses an NTLMv2 hash through UNC path handling on Windows. Reachable only through the dev server's open-in-editor overlay, on Windows. Same fix, and same major-bump argument, as GHSA-4w7w-66w2-5vf9.",
+      "review_by": "2026-11-04"
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-4r6h-8v6p-xvw6",
+      "ghsa": "GHSA-4r6h-8v6p-xvw6",
+      "package": "xlsx",
+      "reason": "Prototype pollution in SheetJS. `npm audit` reports no fixed version because SheetJS stopped publishing to the npm registry after 0.18 — the patched releases exist only on the vendor's own CDN, so there is no upgrade path from here. Accepted rather than ignored: the real remediation is to drop the dependency, and `exceljs` is already in this project and does the same work.",
+      "review_by": "2026-11-04"
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-5pgg-2g8v-p4x9",
+      "ghsa": "GHSA-5pgg-2g8v-p4x9",
+      "package": "xlsx",
+      "reason": "Regular-expression denial of service in SheetJS. Same absent upgrade path, and same remediation, as GHSA-4r6h-8v6p-xvw6.",
+      "review_by": "2026-11-04"
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-w3rx-r6r6-pgpr",
+      "ghsa": "GHSA-w3rx-r6r6-pgpr",
+      "package": "image-size",
+      "reason": "Infinite loop in the ICNS parser, reached only through pptxgenjs, whose only call site is src/lib/reportTemplate/pptxExporter.ts. That runs in the browser, on a PowerPoint export the user themselves started, over images from their own template — so the worst case is that user hanging their own tab, not a server-side denial of service. The only fix is pptxgenjs 1.x, a major bump of the deck exporter, which is its own change with its own regression surface. Same argument as the vite entries below.",
+      "review_by": "2026-11-04"
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-5p2g-fcmc-qvqq",
+      "ghsa": "GHSA-5p2g-fcmc-qvqq",
+      "package": "image-size",
+      "reason": "Infinite loop in the JXL and HEIF parsers. Same reachability and the same fix as GHSA-w3rx-r6r6-pgpr: browser-side, user-initiated, requires the pptxgenjs 1.x major bump.",
+      "review_by": "2026-11-04"
+    }
+  ]
+}

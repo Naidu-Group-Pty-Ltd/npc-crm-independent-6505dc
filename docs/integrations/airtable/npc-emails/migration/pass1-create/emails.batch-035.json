@@ -1,0 +1,462 @@
+{
+  "table": "Emails",
+  "batch": 35,
+  "of": 107,
+  "recordCount": 50,
+  "records": [
+    {
+      "sourceRecordId": "recJZIhCziIEyMJh5",
+      "sourceCreatedTime": "2025-11-26T05:59:11.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recJZi9I6wRsYqljX",
+      "sourceCreatedTime": "2025-09-22T18:33:14.000Z",
+      "fields": {
+        "Name": "Leanne Pearman",
+        "Subject": "Discover Jellis Craig's Recently Listed Properties",
+        "Email": "leannepearman@property.jelliscraig.com.au",
+        "Body": "View in browser\r\n\r\nDear Rugesh,\r\n\r\nWe are seeing many quality new properties continue to be listed each week, including this beautiful home located at 19 Jason Drive, Woodend. This is an exceptional home that is offered for sale for the first time in 25 y"
+      }
+    },
+    {
+      "sourceRecordId": "recJb5g6CLVhjaMaV",
+      "sourceCreatedTime": "2025-11-06T00:51:18.000Z",
+      "fields": {
+        "Name": "Karen Bagenal",
+        "Subject": "The latest property listings from RealWay Ipswich",
+        "Email": "karenbagenal@realwayipswich.propertyemail.com.au",
+        "Body": "View in browser\r\n\r\nHi Rugesh\r\n\r\nPlease find below the latest listings from our office that are on the market.\r\n\r\nYou can quickly receive more information about any of the properties by clicking on them to reveal their full details.\r\n\r\nIf your property nee",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recJcDoQgJpsn6fAz",
+      "sourceCreatedTime": "2025-10-21T07:21:43.000Z",
+      "fields": {
+        "Name": "Thomas Bettison",
+        "Subject": "COMING SOON TO MARKET | 3/15 Henry Street, Midland",
+        "Email": "thomas.bettison@housesmart.com.au",
+        "Body": "MARKET PREVIEW - 3/15 Henry Street\r\n\r\nHi Rugesh,\r\n\r\nPlease see the following property, launching to market in the near future.\r\n\r\nIf you are interested in securing this before the property goes live to all buyers, let me know.\r\n\r\nUpdate my criteria\r\nSay h"
+      }
+    },
+    {
+      "sourceRecordId": "recJf2CIkvUIRvPJi",
+      "sourceCreatedTime": "2026-01-29T08:40:06.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recJfTiXyqsfO2ORK",
+      "sourceCreatedTime": "2026-06-04T05:34:22.000Z",
+      "fields": {
+        "Name": "Teena Lee",
+        "Subject": "44 Bella Creek Rd, Bella Creek - Price Adjustment Now $1,950,000",
+        "Email": "Teena@RJRproperty.com.au",
+        "Body": "View this email in your browser\r\n\r\nHi there,\r\n\r\nA rare opportunity has just become even more attractive.\r\n\r\n\"Callemondah\", one of the Mary Valley's most unique rural holdings, has now been reduced in price and is offered at $1,950,000.\r\n\r\nHeld by the same"
+      }
+    },
+    {
+      "sourceRecordId": "recJfVOfD0yBabdTV",
+      "sourceCreatedTime": "2025-12-12T08:36:35.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recJfVqvdaI16Bfit",
+      "sourceCreatedTime": "2026-03-19T01:00:58.000Z",
+      "fields": {
+        "Name": "Josie Caruso",
+        "Subject": "JUST LISTED IN QUARRY HILL",
+        "Email": "josie@phproperty.com.au",
+        "Body": "Hello Rugesh,\r\n\r\n\r\nWe have a new property that could be matching your clients criteria! 6 Obrien Street, Quarry Hill and is being offered for $750,000 - $790,000.\r\n\r\n\r\n\r\nPLEASE NOTE: ALL PROPERTY INFORMATION IS ATTCHED ON THE WEBSITE LINK BELOW (ON THE RI",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recJgU0imJyELlLwg",
+      "sourceCreatedTime": "2026-06-10T07:36:17.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recJgml6bIFaKobA8",
+      "sourceCreatedTime": "2026-04-16T04:37:56.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recJh2s6iicRbJPkk",
+      "sourceCreatedTime": "2026-01-12T23:04:16.000Z",
+      "fields": {
+        "Name": "Ashleigh Thomas",
+        "Subject": "The Weekly Update | 13th January",
+        "Email": "fombaysidecleveland@mcgrath.com.au",
+        "Body": "The Weekly Update\r\n\r\nCURRENT LISTINGS\r\n\r\n\r\n\r\nVilla 107/22-28 Collingwood Road, Birkdale\r\n\r\n\r\n3\r\n\r\n\r\n\r\n1\r\n\r\n\r\n\r\n1\r\n\r\nOffers From $675,000\r\n\r\n\r\n\r\nThis beautifully presented three-bedroom freestanding home has been price-reduce...\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n15 Caravel"
+      }
+    },
+    {
+      "sourceRecordId": "recJhLMbet41oEubt",
+      "sourceCreatedTime": "2025-10-29T09:46:35.000Z",
+      "fields": {
+        "Name": "Sam Shaw",
+        "Subject": "Off Market Opportunity - 5 Somers Place, Traralgon",
+        "Email": "samshaw@wprci.com.au",
+        "Body": "Good afternoon,\r\n\r\nJust a quick email to advise that we have a new off market listing at 5 Somers Place, Traralgon that may be of interest to you. Please see the attached section 32 for your review.\r\n\r\nPlease follow the below link to view the marketing fo",
+        "Status": "Error 500",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/0LM5_Xt7XFkhzb7O4njKzQ/IONjtuiXjBfTVBKaJEc_gKgoP_u5-lKO5iLtReEUTMw--soxSyauJpn0e_-OSe-jLbslohGev1ed68lbnKRS6AskxDqPda7Ahkmtp9rHtLKS8t2MwfSOSDzHxBJxaDWJxVek1o_eR8IZA3_H0BOgPmc3u7QZ_opmb7tpbsGqbA0yHWZ0lLl7d8caqwQZqTZ8/-iwvq3-KgUQbu3Oc9_fkgOfngjrWLT3iFpa7x8bSj80",
+            "filename": "outlook_email_attachment.pdf",
+            "type": "application/pdf",
+            "size": 7547303
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "recJiZRxTqVRrGOUP",
+      "sourceCreatedTime": "2025-12-19T17:34:36.000Z",
+      "fields": {
+        "Name": "Tom Offermann Real Estate",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "sales@offermann.com.au",
+        "Body": "Edit my requirements\r\nVisit our Website\r\nProperty Alert\r\nSaturday, 20th December 2025\r\nHello Rugesh,\r\n\r\nThe following listings matched your Property Alert search requirements.\r\n\r\nNoosa Heads\r\n342/61 Noosa Springs Drive\r\nDazzling North-Facing Villa in Pres",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recJiiWcimJAIEnYV",
+      "sourceCreatedTime": "2025-10-16T10:21:11.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recJjVAjyaLcTNEti",
+      "sourceCreatedTime": "2025-11-24T04:24:40.000Z",
+      "fields": {
+        "Name": "Adam Bettison",
+        "Subject": "Just Listed | 75 James St, Kellerberrin",
+        "Email": "adam.bettison@housesmart.com.au",
+        "Body": "Just Listed - 75 James St\r\n\r\nHi Rugesh,\r\n\r\nAs a valued client of HouseSmart - we are pleased to present you with the latest listing that matches your criteria.\r\n\r\nLet us know if you'd like to come to the next home open, if you have any questions, or would"
+      }
+    },
+    {
+      "sourceRecordId": "recJkP9rl4Xes42Jc",
+      "sourceCreatedTime": "2025-10-08T08:52:14.000Z",
+      "fields": {
+        "Name": "Rohan Banning",
+        "Subject": "Your Property Update [New Listing Alert]",
+        "Email": "rohanbanning@remax.com.au",
+        "Body": "07 3157 5836\r\nremaxcentralres.com.au\r\nNew Listings\r\n\r\nHi Rugesh,\r\n\r\nWe've listed some new properties that I think you might be interested in.\r\n\r\n**Please click on the photo to find a price guide within the property fact sheet.\r\n\r\nGive me a call if you hav",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recJl7Kfe6CMJSVRW",
+      "sourceCreatedTime": "2025-10-29T09:42:25.000Z",
+      "fields": {
+        "Name": "CRE Brokers - Queensland & NSW",
+        "Subject": "Calling Last & Final Offers - Retirement Living Investment Opportunity - Broken Hill",
+        "Email": "mail@crebrokers.com",
+        "Body": "Calling Last & Final Offers - Retirement Living Investment Opportunity - Broken Hill\r\n\r\nVILLAGE OVERVIEW\r\n\r\nThe Village offers quality independent living for over 55's, and comprises a total of 42 fully self-contained rental units, configured to provide a"
+      }
+    },
+    {
+      "sourceRecordId": "recJlltc42zBwxj8B",
+      "sourceCreatedTime": "2025-10-08T08:39:58.000Z",
+      "fields": {
+        "Name": "Tom Offermann Real Estate",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "sales@offermann.com.au",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recJm1cLmqWoLhl96",
+      "sourceCreatedTime": "2025-11-17T03:52:08.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recJmOtl1PSaSqgN4",
+      "sourceCreatedTime": "2026-04-15T04:36:42.000Z",
+      "fields": {
+        "Name": "Tom Offermann Real Estate",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "sales@offermann.com.au",
+        "Body": "Edit my requirements\r\nVisit our Website\r\nProperty Alert\r\nWednesday, 15th April 2026\r\nHello Rugesh,\r\n\r\nThe following listings matched your Property Alert search requirements.\r\n\r\nNoosa Heads\r\n18/36 Edgar Bennett Avenue\r\nPenthouse Luxury Perched Above Laguna",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recJmakDjCVK8VDsI",
+      "sourceCreatedTime": "2026-03-13T05:24:53.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recJnbpHoItBveIQg",
+      "sourceCreatedTime": "2025-12-02T23:49:35.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recJofZb1ZFYmv11X",
+      "sourceCreatedTime": "2025-12-14T01:40:05.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recJpGzYmUtfmWviF",
+      "sourceCreatedTime": "2026-02-06T05:00:29.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recJpkeC7b6a5kV1z",
+      "sourceCreatedTime": "2026-06-11T05:53:10.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recJpwCP6PL3GmL0L",
+      "sourceCreatedTime": "2026-06-04T05:34:05.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recJrGwxXCLp2Lv1S",
+      "sourceCreatedTime": "2025-11-07T04:51:19.000Z",
+      "fields": {
+        "Name": "Divest Merge Acquire",
+        "Subject": "Momenta Holdings acquires The Australian Grinding Company",
+        "Email": "ask@divestma.com",
+        "Body": "Momenta Holdings acquires The Australian Grinding Company\r\n ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recJrKSjEEWu3DqOC",
+      "sourceCreatedTime": "2026-01-31T19:09:38.000Z",
+      "fields": {
+        "Name": "Belle Property Australasia",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "noreply@belleproperty.com",
+        "Body": "Dear Rugesh,\r\n\r\nWe have found the following properties that match your property search requirements. Click here to update your preferences or click here to find a property on belleproperty.com.\r\nCurrent listings.\r\n\r\nMount Eliza\r\n4/11 Leicester Avenue\r\nFor",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recJrSu2WJlgHYY9X",
+      "sourceCreatedTime": "2026-06-10T06:51:01.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recJu3SWVLznAuQbU",
+      "sourceCreatedTime": "2026-03-22T03:09:45.000Z",
+      "fields": {
+        "Name": "Urban Habitat Real Estate",
+        "Subject": "Urban Habitat's Property Update",
+        "Email": "admin@urbanhabitatrealestate.com.au",
+        "Body": "Hi Rugesh,\r\n\r\nWe are pleased to be able to share with you some great new listings!\r\n\r\nWhether you want something small or big, we may have the home for you!\r\n\r\nAlso, if you are a keen developer, check out our fantastic opportunity with the vacant land blo",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recJuaJC6lnVu8Qm5",
+      "sourceCreatedTime": "2026-06-23T15:20:41.000Z",
+      "fields": {
+        "Name": "Karen Bagenal",
+        "Subject": "Your Property Update [Price Reduction Alert]",
+        "Email": "karenbagenal@realwayipswich.com.au",
+        "Body": "0732940099\r\nwww.ipswich.realway.com.au\r\nPrice Update\r\n\r\nHi Rugesh,\r\n\r\nWe've had some price reductions recently on some properties you might be interested in. Give me a call if you have any questions or would like to take a look through any of these."
+      }
+    },
+    {
+      "sourceRecordId": "recJvHISp9QXHasSl",
+      "sourceCreatedTime": "2026-01-07T07:08:36.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recJvYgQR5COG16h1",
+      "sourceCreatedTime": "2025-11-06T02:55:52.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recJxfqXaaobjrhB3",
+      "sourceCreatedTime": "2026-04-02T04:06:08.000Z",
+      "fields": {
+        "Name": "Ray White Williamstown",
+        "Subject": "April Off Market Properties | Ray White Williamstown",
+        "Email": "williamstown.vic@raywhite.com",
+        "Body": "View this email in your browser\r\n\r\n\r\nOFF MARKET PROPERTIES\r\nGood day ,\r\n\r\nPlease find below a collection of our property listings currently available Off Market.\r\n\r\nFor further details on any of these properties, please contact one of our expert sales t",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recK0X12pzUC9IM3N",
+      "sourceCreatedTime": "2026-06-11T05:46:35.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recK0nw5C2a05nzxM",
+      "sourceCreatedTime": "2025-11-12T06:22:57.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recK1j7GkFDK7QaFQ",
+      "sourceCreatedTime": "2025-10-17T13:06:43.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recK2ERBx5Jv3DDZv",
+      "sourceCreatedTime": "2026-03-02T00:52:04.000Z",
+      "fields": {
+        "Name": "Bill Dontsios",
+        "Subject": "Off Market Opportunity to Buy This Amazing Property!",
+        "Email": "bdontsios@barryplant.com.au",
+        "Body": "Epping, 29 Deco Place\r\n\r\n        3\r\n        2\r\n        2\r\nOff Market Opportunity!\r\nModern, Low-Maintenance Living with Versatile Upstairs Retreat!\r\nFor Sale - $610,000 - $670,000\r\nPositioned in a peaceful and tightly held court, this beautifully presented",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recK2M34DaRlW5E23",
+      "sourceCreatedTime": "2026-04-20T04:25:55.000Z",
+      "fields": {
+        "Name": "Robyn Faa",
+        "Subject": "Just Listed | 9 Silver Gum Drive, Andergrove",
+        "Email": "robyn@robynfaa.com.au",
+        "Body": "Just Listed\r\n\r\nHi Rugesh\r\n\r\nWe are pleased to announce that 9 Silver Gum Drive, Andergrove has just been listed for sale!\r\n\r\nIf you would like additional information on this property, click the \"View Online\" tab below to find all Mapping, Rental Estimatio",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recK2a8Wj6xEoVaA2",
+      "sourceCreatedTime": "2025-11-27T03:48:06.000Z",
+      "fields": {
+        "Name": "Jon Snead",
+        "Subject": "Just Listed | Beautiful c1920s character home",
+        "Email": "jonsnead@mcgrath.com.au",
+        "Body": "JUST LISTED | OPEN INSPECTION THIS SAT 10:30 - 11.00AM\r\n\r\n\r\n15 Fernhurst Avenue, Cremorne\r\n\r\n\r\n\r\n\r\n\r\n3\r\n\r\n\r\n\r\n4\r\n\r\n\r\n\r\n2\r\n\r\n\r\n\r\nAuction Guide $3,750,000\r\n\r\n\r\n\r\nFramed in mature gardens, this beautiful c1920s character home reveals a masterful fusion of it"
+      }
+    },
+    {
+      "sourceRecordId": "recK2mQw2YCMaHyM2",
+      "sourceCreatedTime": "2025-10-10T11:17:00.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recK2nuVW7YlnBZu2",
+      "sourceCreatedTime": "2025-11-28T04:56:08.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recK2r8PE7nhigDUk",
+      "sourceCreatedTime": "2025-11-28T05:04:31.000Z",
+      "fields": {
+        "Name": "LJ Hooker Greater Springfield",
+        "Subject": "Your Market Update",
+        "Email": "reception@ljhspringfield.com.au",
+        "Body": "Here's a quick update on what’s happening in our local real estate market.  ‌ ‌ ‌ ‌ ‌ ‌ ‌  ‌ ‌ ‌ ‌ ‌ ‌\r\n        Greater Springfield\r\nLocal Market Update | Sales\r\nHi\r\n\r\n\r\nI wanted to share a quick update on what's happening in our local real estate market.",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recK3kVIqDFvHX6pR",
+      "sourceCreatedTime": "2026-06-11T08:21:19.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recK4oTwNJG858Nnk",
+      "sourceCreatedTime": "2026-03-30T08:35:38.000Z",
+      "fields": {
+        "Name": "Wellmanprop",
+        "Subject": "Unit 7 Reserved❗Irresistible Price on 662 Stud Rd, Scoresby",
+        "Email": "projects@wellmanpropgroup.com",
+        "Body": "Brand New Complete! Available for Inspection!\r\n ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌  ‌ ‌  ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌  ‌ ‌   ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌  ‌ ‌   ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌  ‌ ‌  ‌ ‌ ‌  ‌ ‌  ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌  ‌ ‌   ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌  ‌ ‌   ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌  ‌ ‌ ‌ ‌ ‌ ‌ ‌ "
+      }
+    },
+    {
+      "sourceRecordId": "recK63VhyMc0mBpYd",
+      "sourceCreatedTime": "2025-10-16T07:08:53.000Z",
+      "fields": {
+        "Name": "Keyline Realty",
+        "Subject": "Keyline Realty Property Update",
+        "Email": "keylinerealty@keylinerealty.com",
+        "Body": "Keyline Property Update\r\nHello Rugesh,\r\n\r\n\r\n\r\n\r\n\"What you do makes a difference, and you have to decide what kind of difference you want to make.\" - Jane Goodall\r\n\r\n\r\n\r\nCheck out our 5-Star Google Reviews!\r\n\r\n353 REVIEWS AND COUNTING!\r\n\r\n\r\n\r\n\r\nSee what ou",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recK65ugw7ks89jll",
+      "sourceCreatedTime": "2026-07-13T18:25:23.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recK6SgApa4bwXHEW",
+      "sourceCreatedTime": "2026-02-25T02:37:05.000Z",
+      "fields": {
+        "Name": "Shelter Real Estate",
+        "Subject": "Off Market Opportunities & Upcoming Listings",
+        "Email": "hello@shelterrealestate.com.au",
+        "Body": "Dear Rugesh,\r\n\r\nPlease see below a list of off market opportunities and upcoming listings going live in the next few weeks.\r\n\r\nOFF MARKET & PRE MARKET OPPORTUNITIES\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\nAddress\r\n\r\nType    B/B/C   Land (approx.)  Price guide     Contact "
+      }
+    },
+    {
+      "sourceRecordId": "recK71XBZ3krmz8aT",
+      "sourceCreatedTime": "2026-03-31T03:20:42.000Z",
+      "fields": {
+        "Name": "Karen Bagenal",
+        "Subject": "Your Property Update [Price Reduction Alert]",
+        "Email": "karenbagenal@realwayipswich.com.au",
+        "Body": "0732940099\r\nwww.ipswich.realway.com.au\r\nPrice Update\r\n\r\nHi Rugesh,\r\n\r\nWe've had some price reductions recently on some properties you might be interested in. Give me a call if you have any questions or would like to take a look through any of these.",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recK7je3aRzXvPnV0",
+      "sourceCreatedTime": "2025-12-03T02:39:33.000Z",
+      "fields": {
+        "Name": "Abby Holmes-Brown",
+        "Subject": "New Listing: Stunning Ex-Display Home With Pool in Birtinya!",
+        "Email": "sales@fnlifestyle.com.au",
+        "Body": "Just Listed\r\n\r\n\r\n\r\n\r\nHi Rugesh,\r\n\r\nDon't miss out! Experience this beautiful ex-display home in the highly sought-after Birtinya area, complete with a pool and double ensuite, this Saturday!\r\n\r\nKind Regards,\r\nAbby Holmes-Brown\r\n\r\nsales@fnlifesty"
+      }
+    }
+  ]
+}

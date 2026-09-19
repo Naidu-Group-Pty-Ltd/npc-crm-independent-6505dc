@@ -1,0 +1,1 @@
+UPDATE public.custom_users SET email = 'rugesh@npcservices.com.au', updated_at = now() WHERE id = 'd4ffa794-7398-43be-a618-dff099dd2bcd' AND email IS NULL;

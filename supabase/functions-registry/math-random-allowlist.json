@@ -1,0 +1,33 @@
+{
+  "comment": "Every Math.random() in supabase/functions/, named with its purpose. check-fabricated-data.mjs strips comments, counts calls per file, and fails on any file or count not covered here \u2014 counts may only fall. A random number is legitimate as jitter, an id, or a rendering handle; it is fabrication the moment it lands in a figure a report can carry. Adding an entry is a reviewed act and the purpose field is the review.",
+  "entries": {
+    "supabase/functions/_shared/ghl-rate-limiter.ts": {
+      "count": 1,
+      "purpose": "Retry backoff jitter (0.75x-1.25x of the base delay). Never a figure."
+    },
+    "supabase/functions/generate-investment-report/index.ts": {
+      "count": 2,
+      "purpose": "Retry jitter on the section loop (0-1000ms, 0-500ms). Never a figure."
+    },
+    "supabase/functions/render-investment-report-pdf/index.ts": {
+      "count": 2,
+      "purpose": "SVG gradient element ids (sg-/lg- handles). Rendering identity, not data."
+    },
+    "supabase/functions/report-qa/index.ts": {
+      "count": 1,
+      "purpose": "Stream id fallback when crypto.randomUUID is absent. An identifier, not a figure."
+    },
+    "supabase/functions/ai-dashboard-agent/index.ts": {
+      "count": 1,
+      "purpose": "Tool-call id fallback (call_<random>). An identifier, not a figure."
+    },
+    "supabase/functions/manage-ci-assessments/index.ts": {
+      "count": 1,
+      "purpose": "Assessment reference-code suffix. An identifier, not a figure."
+    },
+    "supabase/functions/admin-user-management/index.ts": {
+      "count": 2,
+      "purpose": "Temporary password generation. Not report data \u2014 but flagged: Math.random() is not a CSPRNG, and a credential drawn from it deserves crypto.getRandomValues(). Tracked as a hardening follow-up; this entry may not grow."
+    }
+  }
+}

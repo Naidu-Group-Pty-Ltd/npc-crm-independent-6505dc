@@ -1,0 +1,95 @@
+{
+  "capturedAt": "2026-08-18 (second pull, after the 17:28-17:29 edits)",
+  "assistants": [
+    {
+      "assistant": "NPC Active Nurturing",
+      "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+      "updatedAt": "2026-08-18T17:29:07.183Z",
+      "status": "Supabase edge function \u2014 project is not moving, no change needed"
+    },
+    {
+      "assistant": "NPC Discovery Call Follow Up",
+      "url": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg",
+      "updatedAt": "2025-11-26T06:56:48.029Z",
+      "status": "OLD Make account (eu2) \u2014 must be re-pointed"
+    },
+    {
+      "assistant": "NPC Discovery Call Follow Up Test",
+      "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+      "updatedAt": "2026-07-22T05:50:14.886Z",
+      "status": "Supabase edge function \u2014 project is not moving, no change needed"
+    },
+    {
+      "assistant": "NPC Discovery Call Follow Up Test 2",
+      "url": null,
+      "updatedAt": "2026-03-04T08:07:50.298Z",
+      "status": "no server URL set"
+    },
+    {
+      "assistant": "NPC Discovery Call No Show Follow Up",
+      "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+      "updatedAt": "2026-07-22T05:50:56.237Z",
+      "status": "Supabase edge function \u2014 project is not moving, no change needed"
+    },
+    {
+      "assistant": "NPC IFC Follow Up",
+      "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+      "updatedAt": "2026-07-22T05:53:32.459Z",
+      "status": "Supabase edge function \u2014 project is not moving, no change needed"
+    },
+    {
+      "assistant": "NPC IFC Inbound",
+      "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+      "updatedAt": "2026-07-28T05:35:04.018Z",
+      "status": "Supabase edge function \u2014 project is not moving, no change needed"
+    },
+    {
+      "assistant": "NPC IFC No Show Follow Up",
+      "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+      "updatedAt": "2026-07-22T05:54:02.637Z",
+      "status": "Supabase edge function \u2014 project is not moving, no change needed"
+    },
+    {
+      "assistant": "NPC Inbound Agent",
+      "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+      "updatedAt": "2026-08-18T17:28:37.371Z",
+      "status": "Supabase edge function \u2014 project is not moving, no change needed"
+    },
+    {
+      "assistant": "NPC Opt In Follow Up",
+      "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+      "updatedAt": "2026-07-22T05:47:27.452Z",
+      "status": "Supabase edge function \u2014 project is not moving, no change needed"
+    },
+    {
+      "assistant": "NPC Opt In Follow Up Inbound",
+      "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+      "updatedAt": "2026-07-28T05:34:11.027Z",
+      "status": "Supabase edge function \u2014 project is not moving, no change needed"
+    },
+    {
+      "assistant": "NPC Quiz Follow Up",
+      "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+      "updatedAt": "2026-07-22T05:49:31.048Z",
+      "status": "Supabase edge function \u2014 project is not moving, no change needed"
+    },
+    {
+      "assistant": "NPC Strategy Session (Phone) Follow Up",
+      "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+      "updatedAt": "2026-07-22T05:51:45.632Z",
+      "status": "Supabase edge function \u2014 project is not moving, no change needed"
+    },
+    {
+      "assistant": "NPC Strategy Session (Phone) No Show",
+      "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+      "updatedAt": "2026-07-22T05:52:57.494Z",
+      "status": "Supabase edge function \u2014 project is not moving, no change needed"
+    },
+    {
+      "assistant": "NPC Strategy Session Inbound",
+      "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+      "updatedAt": "2026-07-28T05:34:39.337Z",
+      "status": "Supabase edge function \u2014 project is not moving, no change needed"
+    }
+  ]
+}

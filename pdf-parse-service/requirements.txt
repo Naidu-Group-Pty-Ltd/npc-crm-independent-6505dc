@@ -1,0 +1,20 @@
+# Pin Docling so future agent runs reproduce identical output.
+fastapi==0.115.5
+uvicorn[standard]==0.32.1
+pydantic==2.10.3
+python-multipart==0.0.20
+httpx==0.28.1
+Pillow==11.0.0
+pypdfium2==4.30.0
+docling==2.14.0
+docling-core==2.82.0
+docling-ibm-models==3.13.3
+docling-parse==3.4.0
+# PyMuPDF (AGPL-3.0) — Phase 2 vector-graphics + span-typography extraction.
+# See NOTICE.md for the licensing note. Provides page.get_drawings() and
+# page.get_text("dict") consumed by _extract_fitz_layers in app.py.
+PyMuPDF==1.24.14
+# fontTools — repairs a PDF subset's cmap so glyphs the source drew are
+# reachable by Unicode when the program is re-served as a web font. Pure Python,
+# no compiled deps. See font_cmap_repair.py for why the repair is needed.
+fonttools==4.63.0

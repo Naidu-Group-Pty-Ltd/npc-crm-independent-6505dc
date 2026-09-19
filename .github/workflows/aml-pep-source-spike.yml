@@ -1,0 +1,87 @@
+name: AML PEP source reachability spike
+
+# Measures which candidate PEP sources can actually be downloaded from the
+# egress that INGESTION would use.
+#
+# This is a spike, not a pipeline. It writes nothing, it is on no schedule,
+# and it never fails the build: an unreachable government website is the
+# finding, not a broken repository, and a workflow that goes red for that
+# would train people to ignore it.
+#
+# ── Why it has to run here ────────────────────────────────────────────
+# The same script run from the development container reports 6 of 22 sources
+# usable and FAILS its own known-good control — DFAT's consolidated list,
+# which the sanctions loader pulls 3,846 entries from on a schedule from a
+# GitHub runner. So a result measured there is a lower bound on what a
+# scheduled loader could reach, and the comparison between the two
+# environments is the actual finding.
+#
+# Run it, read the summary, and put the numbers in
+# docs/aml/PEP_SOURCE_SPIKE.md before writing a single adapter.
+
+on:
+  workflow_dispatch:
+    inputs:
+      timeout_seconds:
+        description: 'Per-source timeout'
+        required: false
+        default: '60'
+
+permissions:
+  contents: read
+
+concurrency:
+  group: aml-pep-source-spike
+  cancel-in-progress: true
+
+jobs:
+  probe:
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      # Node 22 for the same reason the loaders pin it: this repository has
+      # been bitten once by a Node-20-only failure that hid behind an earlier
+      # step, and a spike that dies for an unrelated reason measures nothing.
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+
+      # No install. The prober uses only `node:` built-ins and `fetch`, so it
+      # cannot be broken by a dependency and needs no lockfile to be current.
+      - name: Probe every candidate source
+        id: spike
+        run: |
+          node scripts/aml/pep-source-spike.mjs \
+            --timeout "${{ github.event.inputs.timeout_seconds || '60' }}" \
+            --json pep-source-spike.json | tee spike.log
+
+      # The summary is the deliverable. Put it where a person reading the run
+      # sees it without downloading anything.
+      - name: Publish the report to the run summary
+        if: always()
+        run: |
+          {
+            echo '## AML PEP source reachability spike'
+            echo
+            echo 'Measured from a GitHub Actions runner — the egress a scheduled'
+            echo 'loader would use.'
+            echo
+            echo '```'
+            cat spike.log
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload the machine-readable report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: pep-source-spike
+          path: |
+            pep-source-spike.json
+            spike.log
+          retention-days: 30

@@ -1,0 +1,2 @@
+ALTER TABLE public.migration_jobs DROP CONSTRAINT IF EXISTS migration_jobs_domain_check;
+ALTER TABLE public.migration_jobs ADD CONSTRAINT migration_jobs_domain_check CHECK (domain IN ('contacts','opportunities','conversations','conversations_replay','notes','tasks','appointments'));

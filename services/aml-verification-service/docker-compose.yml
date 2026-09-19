@@ -1,0 +1,19 @@
+services:
+  aml-verification:
+    build: .
+    image: aml-verification-service:1.0.0
+    restart: unless-stopped
+    environment:
+      # Required. The service fails closed without it.
+      AML_SERVICE_TOKEN: "${AML_SERVICE_TOKEN:?set AML_SERVICE_TOKEN}"
+      AML_FACE_MATCH_THRESHOLD: "0.363"
+      AML_FACE_REVIEW_THRESHOLD: "0.28"
+      AML_LOG_LEVEL: "INFO"
+    ports:
+      - "127.0.0.1:8080:8080"
+    # No volumes: nothing is persisted. See the module docstring in app/main.py.
+    read_only: true
+    tmpfs:
+      - /tmp
+    security_opt:
+      - no-new-privileges:true

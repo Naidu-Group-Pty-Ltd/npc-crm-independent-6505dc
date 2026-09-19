@@ -1,0 +1,1 @@
+ALTER TABLE public.investment_reports ADD COLUMN IF NOT EXISTS total_sections INTEGER;

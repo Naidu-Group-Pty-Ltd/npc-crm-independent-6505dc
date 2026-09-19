@@ -1,0 +1,1386 @@
+{
+  "source": {
+    "spec": "https://api.vapi.ai/api-json",
+    "bytes": 2090067,
+    "snapshot": "raw re-pull taken in the same session, reads only"
+  },
+  "legend": {
+    "serverSideOnly": "Field the API assigns. Absent from the Create DTO by design; nothing is lost.",
+    "notAcceptedOnCreate": "Field the live record carries that the Create DTO does not declare. Either the spec is incomplete or a POST loses the value - see undocumentedButLive.",
+    "missingRequired": "Required by the Create DTO and absent from the live record."
+  },
+  "assistant": {
+    "listPath": "/assistant",
+    "createDtos": [
+      "CreateAssistantDTO"
+    ],
+    "records": [
+      {
+        "id": "c0bc54fd-a9fb-4970-822b-b471c198e43b",
+        "name": "NPC Discovery Call Follow Up Test 2",
+        "createDto": "CreateAssistantDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "isServerUrlSecretSet",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "7770a48b-68d1-48df-a03a-9cc5b9e91ad8",
+        "name": "NPC IFC Inbound",
+        "createDto": "CreateAssistantDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "isServerUrlSecretSet",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "5ae449c8-1999-4f44-9115-9d63bf7444ae",
+        "name": "NPC Strategy Session Inbound",
+        "createDto": "CreateAssistantDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "isServerUrlSecretSet",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+        "name": "NPC Opt In Follow Up Inbound",
+        "createDto": "CreateAssistantDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "isServerUrlSecretSet",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "bfff143e-03f7-4bc2-afbb-5734987f672f",
+        "name": "NPC Inbound Agent",
+        "createDto": "CreateAssistantDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "isServerUrlSecretSet",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "cc46d882-55c0-454c-82e2-ef00ae000aec",
+        "name": "NPC Active Nurturing",
+        "createDto": "CreateAssistantDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "isServerUrlSecretSet",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [
+          "backgroundDenoisingEnabled"
+        ],
+        "missingRequired": []
+      },
+      {
+        "id": "4274ab0d-f8e6-4ab9-9b47-1f12255e73c0",
+        "name": "NPC IFC No Show Follow Up",
+        "createDto": "CreateAssistantDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "isServerUrlSecretSet",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "a4ddecba-df99-49e4-8e47-4c4b57f4a991",
+        "name": "NPC IFC Follow Up",
+        "createDto": "CreateAssistantDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "isServerUrlSecretSet",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "1f91270c-67e0-453b-83f4-6cf4d44abea1",
+        "name": "NPC Strategy Session (Phone) No Show",
+        "createDto": "CreateAssistantDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "isServerUrlSecretSet",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "dcc0d0c4-1e01-4455-b895-7b268b1b96f0",
+        "name": "NPC Strategy Session (Phone) Follow Up",
+        "createDto": "CreateAssistantDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "isServerUrlSecretSet",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [
+          "backgroundDenoisingEnabled"
+        ],
+        "missingRequired": []
+      },
+      {
+        "id": "e1b76e7c-b9a2-461b-a951-e6b253a4d0d7",
+        "name": "NPC Discovery Call No Show Follow Up",
+        "createDto": "CreateAssistantDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "isServerUrlSecretSet",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "29d6c50e-36e4-406c-b2ea-93f7fc2997a4",
+        "name": "NPC Discovery Call Follow Up Test",
+        "createDto": "CreateAssistantDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "isServerUrlSecretSet",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+        "name": "NPC Quiz Follow Up",
+        "createDto": "CreateAssistantDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "isServerUrlSecretSet",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "b3acdd28-558a-4893-9cfe-c3abacdbe6bd",
+        "name": "NPC Opt In Follow Up",
+        "createDto": "CreateAssistantDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "isServerUrlSecretSet",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "name": "NPC Discovery Call Follow Up",
+        "createDto": "CreateAssistantDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "isServerUrlSecretSet",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [
+          "backgroundDenoisingEnabled",
+          "endCallFunctionEnabled",
+          "hipaaEnabled"
+        ],
+        "missingRequired": []
+      },
+      {
+        "id": "bedc3a68-5e01-49b6-b09a-0928d149361f",
+        "name": "Unstructured Assistant New",
+        "createDto": "CreateAssistantDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "isServerUrlSecretSet",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [
+          "backchannelingEnabled",
+          "backgroundDenoisingEnabled",
+          "hipaaEnabled",
+          "serverUrl"
+        ],
+        "missingRequired": []
+      },
+      {
+        "id": "54df9863-2f00-4504-b25f-8f3b3881523a",
+        "name": "JG Facilities Management",
+        "createDto": "CreateAssistantDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "isServerUrlSecretSet",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [
+          "backchannelingEnabled",
+          "backgroundDenoisingEnabled",
+          "serverUrl",
+          "silenceTimeoutSeconds"
+        ],
+        "missingRequired": []
+      },
+      {
+        "id": "3eb4592a-3cf9-4583-8304-f129837d9e38",
+        "name": "Ramitta Barber",
+        "createDto": "CreateAssistantDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "isServerUrlSecretSet",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [
+          "backchannelingEnabled",
+          "backgroundDenoisingEnabled",
+          "serverUrl"
+        ],
+        "missingRequired": []
+      },
+      {
+        "id": "201b2826-5af3-4030-b79a-bd722fa3830f",
+        "name": "Kamileon Cube",
+        "createDto": "CreateAssistantDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "isServerUrlSecretSet",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [
+          "backchannelingEnabled",
+          "backgroundDenoisingEnabled",
+          "serverUrl"
+        ],
+        "missingRequired": []
+      },
+      {
+        "id": "e3ecf7c3-a74a-4c43-bcc0-948ef6af0010",
+        "name": "Bartini Bartenders",
+        "createDto": "CreateAssistantDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "isServerUrlSecretSet",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [
+          "backchannelingEnabled",
+          "backgroundDenoisingEnabled",
+          "serverUrl",
+          "silenceTimeoutSeconds"
+        ],
+        "missingRequired": []
+      },
+      {
+        "id": "90d839b4-22c9-4b96-8293-9c3d9f356adb",
+        "name": "Sham Dental Main",
+        "createDto": "CreateAssistantDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "isServerUrlSecretSet",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [
+          "backchannelingEnabled",
+          "backgroundDenoisingEnabled",
+          "dialKeypadFunctionEnabled",
+          "endCallFunctionEnabled",
+          "hipaaEnabled",
+          "recordingEnabled",
+          "voicemailDetectionEnabled"
+        ],
+        "missingRequired": []
+      },
+      {
+        "id": "09d6a4cc-232c-435f-8673-7988dda4d79c",
+        "name": "Ashwini",
+        "createDto": "CreateAssistantDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "isServerUrlSecretSet",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [
+          "backchannelingEnabled",
+          "backgroundDenoisingEnabled",
+          "dialKeypadFunctionEnabled",
+          "endCallFunctionEnabled",
+          "hipaaEnabled",
+          "recordingEnabled",
+          "voicemailDetectionEnabled"
+        ],
+        "missingRequired": []
+      },
+      {
+        "id": "ebbe25b1-3205-458b-8128-6e577ff6cf5e",
+        "name": "Farah",
+        "createDto": "CreateAssistantDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "isServerUrlSecretSet",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [
+          "backchannelingEnabled",
+          "backgroundDenoisingEnabled",
+          "dialKeypadFunctionEnabled",
+          "endCallFunctionEnabled",
+          "hipaaEnabled",
+          "recordingEnabled",
+          "voicemailDetectionEnabled"
+        ],
+        "missingRequired": []
+      },
+      {
+        "id": "aacc0bb6-1761-4571-9216-bd751ecce218",
+        "name": "Mandy",
+        "createDto": "CreateAssistantDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "isServerUrlSecretSet",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [
+          "backchannelingEnabled",
+          "backgroundDenoisingEnabled",
+          "dialKeypadFunctionEnabled",
+          "endCallFunctionEnabled",
+          "hipaaEnabled",
+          "recordingEnabled",
+          "voicemailDetectionEnabled"
+        ],
+        "missingRequired": []
+      },
+      {
+        "id": "1f907ea6-adc6-41c4-accc-9ae3cd0739ab",
+        "name": "Xenochrome Assistant",
+        "createDto": "CreateAssistantDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "isServerUrlSecretSet",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [
+          "backchannelingEnabled",
+          "backgroundDenoisingEnabled",
+          "endCallFunctionEnabled",
+          "hipaaEnabled"
+        ],
+        "missingRequired": []
+      },
+      {
+        "id": "23f3a02a-b007-4233-987f-b28ca364c9cc",
+        "name": "Ashley",
+        "createDto": "CreateAssistantDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "isServerUrlSecretSet",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [
+          "dialKeypadFunctionEnabled",
+          "endCallFunctionEnabled",
+          "hipaaEnabled",
+          "recordingEnabled",
+          "voicemailDetectionEnabled"
+        ],
+        "missingRequired": []
+      },
+      {
+        "id": "aa1a4037-720f-4bf4-b9c1-9826647a59b2",
+        "name": "Aishu",
+        "createDto": "CreateAssistantDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "isServerUrlSecretSet",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [
+          "backchannelingEnabled",
+          "backgroundDenoisingEnabled",
+          "dialKeypadFunctionEnabled",
+          "endCallFunctionEnabled",
+          "hipaaEnabled",
+          "recordingEnabled",
+          "serverUrl",
+          "silenceTimeoutSeconds",
+          "voicemailDetectionEnabled"
+        ],
+        "missingRequired": []
+      },
+      {
+        "id": "7beabed3-6bbb-430d-8648-29718e9cd647",
+        "name": "Raya",
+        "createDto": "CreateAssistantDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "isServerUrlSecretSet",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [
+          "dialKeypadFunctionEnabled",
+          "endCallFunctionEnabled",
+          "hipaaEnabled",
+          "recordingEnabled",
+          "serverUrl",
+          "voicemailDetectionEnabled"
+        ],
+        "missingRequired": []
+      }
+    ]
+  },
+  "tool": {
+    "listPath": "/tool",
+    "createDtos": [
+      "CreateApiRequestToolDTO",
+      "CreateBashToolDTO",
+      "CreateCodeToolDTO",
+      "CreateComputerToolDTO",
+      "CreateDtmfToolDTO",
+      "CreateEndCallToolDTO",
+      "CreateFunctionToolDTO",
+      "CreateGoHighLevelCalendarAvailabilityToolDTO",
+      "CreateGoHighLevelCalendarEventCreateToolDTO",
+      "CreateGoHighLevelContactCreateToolDTO",
+      "CreateGoHighLevelContactGetToolDTO",
+      "CreateGoogleCalendarCheckAvailabilityToolDTO",
+      "CreateGoogleCalendarCreateEventToolDTO",
+      "CreateGoogleSheetsRowAppendToolDTO",
+      "CreateHandoffToolDTO",
+      "CreateMcpToolDTO",
+      "CreateQueryToolDTO",
+      "CreateSipRequestToolDTO",
+      "CreateSlackSendMessageToolDTO",
+      "CreateSmsToolDTO",
+      "CreateTextEditorToolDTO",
+      "CreateTransferCallToolDTO",
+      "CreateVoicemailToolDTO"
+    ],
+    "records": [
+      {
+        "id": "5c0c334c-6bbf-4399-b748-a3c50207e754",
+        "name": "transfer_to_human",
+        "createDto": "CreateFunctionToolDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "0bd36de8-6d3a-43e5-9c3f-25ca6de97662",
+        "name": "get_call_context",
+        "createDto": "CreateFunctionToolDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "32c907eb-ff8c-4a9e-868d-67eb1144ee42",
+        "name": "ghl_mcp",
+        "createDto": "CreateMcpToolDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [
+          "function"
+        ],
+        "missingRequired": []
+      },
+      {
+        "id": "c40722f1-a359-42e1-ba80-e99ef706a916",
+        "name": "phoneNumber_inject",
+        "createDto": "CreateFunctionToolDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "f195a817-8346-475d-ad0e-8033f1d2e283",
+        "name": "ghl_create_booking",
+        "createDto": "CreateFunctionToolDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "6587bc7d-7382-4e33-a38d-95f5740df52a",
+        "name": "ghl_check_availability",
+        "createDto": "CreateFunctionToolDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "3e116e74-0dda-4277-ae38-468bdd3464e6",
+        "name": "ghl_resolve_contact",
+        "createDto": "CreateFunctionToolDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "300e5550-fa2f-4fa6-99e2-0636b59f4973",
+        "name": "go_high_level_mcp_contact_get_tool",
+        "createDto": "CreateGoHighLevelContactGetToolDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [
+          "function"
+        ],
+        "missingRequired": []
+      },
+      {
+        "id": "3a6a892d-2907-4da0-b2f8-a55d5b404a84",
+        "name": "transfer_to_human",
+        "createDto": "CreateTransferCallToolDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [
+          "async",
+          "function"
+        ],
+        "missingRequired": []
+      },
+      {
+        "id": "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+        "name": "end_call_tool",
+        "createDto": "CreateEndCallToolDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [
+          "async",
+          "function"
+        ],
+        "missingRequired": []
+      },
+      {
+        "id": "9789b720-ee13-4389-ba33-678883eaa891",
+        "name": "phoneNumber_inject",
+        "createDto": "CreateFunctionToolDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "006be564-14c2-4db9-9c90-6821d363b123",
+        "name": "ghl_delete_event_npc_3",
+        "createDto": "CreateFunctionToolDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "ba13974d-8005-487d-81b9-4dc569a9f6d4",
+        "name": "ghl_delete_event_npc_3_1",
+        "createDto": "CreateFunctionToolDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "a34b05ef-5218-4771-bf2b-4b171ad8f9c9",
+        "name": "ghl_delete_event_npc_2_1",
+        "createDto": "CreateFunctionToolDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "87fb4ce8-b696-4925-bfbf-8bd9678d4e36",
+        "name": "ghl_delete_event_npc_2",
+        "createDto": "CreateFunctionToolDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "5934c762-0223-4112-bfb7-88931da17652",
+        "name": "ghl_delete_event_npc",
+        "createDto": "CreateFunctionToolDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "11317eb2-1b44-4e9e-ae7f-e6baaee0d77b",
+        "name": "get_contact_airtable_test",
+        "createDto": "CreateFunctionToolDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "e525406e-acaa-4e9d-b806-7ae9d21c358e",
+        "name": "go_high_level_mcp_contact_get_tool",
+        "createDto": "CreateGoHighLevelContactGetToolDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [
+          "function",
+          "metadata"
+        ],
+        "missingRequired": []
+      },
+      {
+        "id": "a1124ce2-f0f0-476d-969d-bdff57937775",
+        "name": "google_sheets_tool",
+        "createDto": "CreateGoogleSheetsRowAppendToolDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [
+          "function"
+        ],
+        "missingRequired": []
+      },
+      {
+        "id": "326c7c81-e4c2-4bcb-bcf3-134a1af73f49",
+        "name": "checkAvailability",
+        "createDto": "CreateFunctionToolDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "latestVersion",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      }
+    ]
+  },
+  "squad": {
+    "listPath": "/squad",
+    "createDtos": [
+      "CreateSquadDTO"
+    ],
+    "records": [
+      {
+        "id": "a9656ea1-3575-4ac6-b985-fd138be06cc5",
+        "name": "NPC Sales Force",
+        "createDto": "CreateSquadDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "b0297468-3249-42fa-9d7f-87f6a871421e",
+        "name": null,
+        "createDto": "CreateSquadDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "4ccd45e3-58e7-4fc5-8cd3-2b41665a1295",
+        "name": null,
+        "createDto": "CreateSquadDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      }
+    ]
+  },
+  "phoneNumber": {
+    "listPath": "/phone-number",
+    "createDtos": [
+      "CreateByoPhoneNumberDTO",
+      "CreateTelnyxPhoneNumberDTO",
+      "CreateTwilioPhoneNumberDTO",
+      "CreateVapiPhoneNumberDTO",
+      "CreateVonagePhoneNumberDTO"
+    ],
+    "records": [
+      {
+        "id": "de3918be-63a3-455c-bab7-bbd4872a2ea6",
+        "name": "Naidu Property Consulting Services",
+        "createDto": "CreateTwilioPhoneNumberDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "orgId",
+          "status",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "ae35b1f3-25c4-4620-ac13-525a58da96c9",
+        "name": "NPC Services",
+        "createDto": "CreateVapiPhoneNumberDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "orgId",
+          "status",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "f53c1661-29e9-4d8c-b595-b9da28cb46dc",
+        "name": "NPC Services",
+        "createDto": "CreateTwilioPhoneNumberDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "orgId",
+          "status",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "61e6c684-6f5a-4567-aeeb-50c1552fb223",
+        "name": "NPC Services",
+        "createDto": "CreateVapiPhoneNumberDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "orgId",
+          "status",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "4b168ab4-b351-4568-92d3-343fa7f2470d",
+        "name": "lavanethaan ravachandran",
+        "createDto": "CreateTwilioPhoneNumberDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "3a3a507e-ede7-44dd-bd01-262011467a4e",
+        "name": "Twilio Test",
+        "createDto": "CreateTwilioPhoneNumberDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      }
+    ]
+  },
+  "structuredOutput": {
+    "listPath": "/structured-output",
+    "createDtos": [
+      "CreateStructuredOutputDTO"
+    ],
+    "records": [
+      {
+        "id": "e6a0c195-3ef9-4661-951f-bd66a801cd62",
+        "name": "contact_id",
+        "createDto": "CreateStructuredOutputDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "00d9c6e4-6383-4b59-97be-b7dba41f0ace",
+        "name": "Appointment Cancelled",
+        "createDto": "CreateStructuredOutputDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782",
+        "name": "Zoom Call Booked",
+        "createDto": "CreateStructuredOutputDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "468022e7-2ba9-4154-8178-927586daf240",
+        "name": "Zoom Call Booked",
+        "createDto": "CreateStructuredOutputDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+        "name": "Appt Time Selected",
+        "createDto": "CreateStructuredOutputDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "94648165-f08f-4d2e-ad13-91ec7f41d443",
+        "name": "Appointment Booked",
+        "createDto": "CreateStructuredOutputDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      }
+    ]
+  },
+  "scorecard": {
+    "listPath": "/observability/scorecard",
+    "createDtos": [
+      "CreateScorecardDTO"
+    ],
+    "records": [
+      {
+        "id": "cf81945a-c941-46a2-a538-2987abffe521",
+        "name": "scorecard for assistant NPC Opt In Follow Up",
+        "createDto": "CreateScorecardDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      }
+    ]
+  },
+  "insight": {
+    "listPath": "/reporting/insight",
+    "createDtos": [
+      "CreateBarInsightFromCallTableDTO",
+      "CreateLineInsightFromCallTableDTO",
+      "CreatePieInsightFromCallTableDTO",
+      "CreateTextInsightFromCallTableDTO"
+    ],
+    "records": [
+      {
+        "id": "a454b1b1-83db-42be-9ca3-e08a0096ee4a",
+        "name": "Voice Request Failed Count",
+        "createDto": "CreateTextInsightFromCallTableDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "ae2cd7ed-b911-43cc-87c1-bcd8b3ca33b6",
+        "name": "Model Request Failed Count",
+        "createDto": "CreateTextInsightFromCallTableDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "f9126d1f-a913-4481-8f3a-a051324fb476",
+        "name": "Tool Failed Count",
+        "createDto": "CreateTextInsightFromCallTableDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "000f73e6-58c0-4204-a7ab-b15b7159bf1c",
+        "name": "Transcriber Request Failed Count",
+        "createDto": "CreateTextInsightFromCallTableDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "7e64bbaf-d6be-4064-89d0-781af0cf85dd",
+        "name": "Call Ended (Error) Count",
+        "createDto": "CreateTextInsightFromCallTableDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      },
+      {
+        "id": "88789258-e2d4-44a4-96a0-468ee2b66b8a",
+        "name": "Transfer Failed Count",
+        "createDto": "CreateTextInsightFromCallTableDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      }
+    ]
+  },
+  "board": {
+    "listPath": "/reporting/board",
+    "createDtos": [
+      "CreateBoardDTO"
+    ],
+    "records": [
+      {
+        "id": "dbd8261e-ca8a-479b-9d8b-c32bfaa92872",
+        "name": "Default Dashboard",
+        "createDto": "CreateBoardDTO",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      }
+    ]
+  },
+  "workflow": {
+    "listPath": "/workflow",
+    "createDtos": [
+      "CreateWorkflowDTO"
+    ],
+    "specNote": "The spec defines Workflow, CreateWorkflowDTO and UpdateWorkflowDTO but declares no /workflow path at all. GET /workflow serves 1 record live. The schemas are orphaned from the path list, not absent.",
+    "records": [
+      {
+        "id": "81f2958a-90cb-4ab0-b76a-1e0940babe42",
+        "name": "NPC Follow Up",
+        "serverSideOnly": [
+          "createdAt",
+          "id",
+          "orgId",
+          "updatedAt"
+        ],
+        "notAcceptedOnCreate": [],
+        "missingRequired": []
+      }
+    ]
+  },
+  "undocumentedButLive": {
+    "rule": "These keys are returned by the live API on real records but appear in NEITHER the read schema NOR the Create/Update DTO for that resource. The spec under-documents what the API stores, so it cannot be used alone to decide what a clone may send. Verify empirically: create one object, read it back, diff.",
+    "assistant": {
+      "backchannelingEnabled": {
+        "count": 11,
+        "carriers": [
+          "Aishu",
+          "Ashwini",
+          "Bartini Bartenders",
+          "Farah",
+          "JG Facilities Management",
+          "Kamileon Cube",
+          "Mandy",
+          "Ramitta Barber",
+          "Sham Dental Main",
+          "Unstructured Assistant New",
+          "Xenochrome Assistant"
+        ]
+      },
+      "backgroundDenoisingEnabled": {
+        "count": 14,
+        "carriers": [
+          "Aishu",
+          "Ashwini",
+          "Bartini Bartenders",
+          "Farah",
+          "JG Facilities Management",
+          "Kamileon Cube",
+          "Mandy",
+          "NPC Active Nurturing",
+          "NPC Discovery Call Follow Up",
+          "NPC Strategy Session (Phone) Follow Up",
+          "Ramitta Barber",
+          "Sham Dental Main",
+          "Unstructured Assistant New",
+          "Xenochrome Assistant"
+        ]
+      },
+      "dialKeypadFunctionEnabled": {
+        "count": 7,
+        "carriers": [
+          "Aishu",
+          "Ashley",
+          "Ashwini",
+          "Farah",
+          "Mandy",
+          "Raya",
+          "Sham Dental Main"
+        ]
+      },
+      "endCallFunctionEnabled": {
+        "count": 9,
+        "carriers": [
+          "Aishu",
+          "Ashley",
+          "Ashwini",
+          "Farah",
+          "Mandy",
+          "NPC Discovery Call Follow Up",
+          "Raya",
+          "Sham Dental Main",
+          "Xenochrome Assistant"
+        ]
+      },
+      "hipaaEnabled": {
+        "count": 10,
+        "carriers": [
+          "Aishu",
+          "Ashley",
+          "Ashwini",
+          "Farah",
+          "Mandy",
+          "NPC Discovery Call Follow Up",
+          "Raya",
+          "Sham Dental Main",
+          "Unstructured Assistant New",
+          "Xenochrome Assistant"
+        ]
+      },
+      "recordingEnabled": {
+        "count": 7,
+        "carriers": [
+          "Aishu",
+          "Ashley",
+          "Ashwini",
+          "Farah",
+          "Mandy",
+          "Raya",
+          "Sham Dental Main"
+        ]
+      },
+      "serverUrl": {
+        "count": 7,
+        "carriers": [
+          "Aishu",
+          "Bartini Bartenders",
+          "JG Facilities Management",
+          "Kamileon Cube",
+          "Ramitta Barber",
+          "Raya",
+          "Unstructured Assistant New"
+        ]
+      },
+      "silenceTimeoutSeconds": {
+        "count": 3,
+        "carriers": [
+          "Aishu",
+          "Bartini Bartenders",
+          "JG Facilities Management"
+        ]
+      },
+      "voicemailDetectionEnabled": {
+        "count": 7,
+        "carriers": [
+          "Aishu",
+          "Ashley",
+          "Ashwini",
+          "Farah",
+          "Mandy",
+          "Raya",
+          "Sham Dental Main"
+        ]
+      }
+    },
+    "tool": {
+      "async": {
+        "count": 2,
+        "carriers": [
+          "endCall:end_call_tool",
+          "transferCall:transfer_to_human"
+        ]
+      },
+      "function": {
+        "count": 6,
+        "carriers": [
+          "endCall:end_call_tool",
+          "gohighlevel.contact.get:go_high_level_mcp_contact_get_tool",
+          "gohighlevel.contact.get:go_high_level_mcp_contact_get_tool",
+          "google.sheets.row.append:google_sheets_tool",
+          "mcp:ghl_mcp",
+          "transferCall:transfer_to_human"
+        ]
+      },
+      "metadata": {
+        "count": 1,
+        "carriers": [
+          "gohighlevel.contact.get:go_high_level_mcp_contact_get_tool"
+        ]
+      }
+    }
+  }
+}

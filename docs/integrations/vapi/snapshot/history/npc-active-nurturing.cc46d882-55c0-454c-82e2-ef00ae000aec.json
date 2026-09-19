@@ -1,0 +1,1987 @@
+{
+  "assistant": "NPC Active Nurturing",
+  "assistantId": "cc46d882-55c0-454c-82e2-ef00ae000aec",
+  "note": "System prompts are replaced by promptRef; the text is in ../prompts/<ref>.md. Everything else is the API response verbatim.",
+  "versionCount": 26,
+  "versions": [
+    {
+      "createdAt": "2026-08-18T17:29:07.338Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e6a0c195-3ef9-4661-951f-bd66a801cd62"
+          ]
+        },
+        "backgroundDenoisingEnabled": true,
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started",
+          "assistant.started",
+          "metadata"
+        ],
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-12-09T11:41:22.750Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Mary, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "cc46d882-55c0-454c-82e2-ef00ae000aec",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "messages": [
+            {
+              "chars": 36839,
+              "promptRef": "4cec6908aedbc7c7",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "toolIds": [
+            "5c0c334c-6bbf-4399-b748-a3c50207e754",
+            "f195a817-8346-475d-ad0e-8033f1d2e283",
+            "6587bc7d-7382-4e33-a38d-95f5740df52a",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Active Nurturing",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "headers": {
+            "x-vapi-webhook-secret": "{{REDACTED:VAPI_WEBHOOK_SECRET}}"
+          },
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "serverMessages": [
+          "end-of-call-report"
+        ],
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-08-18T17:29:07.183Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cgSgspJ2msm6clMCkdW9"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Mary calling from Naidu Property Consulting Services. I was just reaching out to check in, as you’d looked into property strategy with us some time ago. There’s no urgency at all — I simply wanted to see if this is still something you’d like to explore, or if you’d prefer to leave it for now. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "50e606a2-9b2a-11f1-8953-05d91acc8951"
+    },
+    {
+      "createdAt": "2026-08-18T12:44:52.241Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e6a0c195-3ef9-4661-951f-bd66a801cd62"
+          ]
+        },
+        "backgroundDenoisingEnabled": true,
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started",
+          "assistant.started",
+          "metadata"
+        ],
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-12-09T11:41:22.750Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Mary, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "cc46d882-55c0-454c-82e2-ef00ae000aec",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "messages": [
+            {
+              "chars": 36839,
+              "promptRef": "4cec6908aedbc7c7",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "toolIds": [
+            "5c0c334c-6bbf-4399-b748-a3c50207e754",
+            "f195a817-8346-475d-ad0e-8033f1d2e283",
+            "6587bc7d-7382-4e33-a38d-95f5740df52a",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Active Nurturing",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "headers": {
+            "x-vapi-webhook-secret": "{{REDACTED:VAPI_WEBHOOK_SECRET}}"
+          },
+          "timeoutSeconds": 20,
+          "url": "https://hook.us2.make.com/my4fk4f1hyvrtq3qwl88oae8ntiku3v4"
+        },
+        "serverMessages": [
+          "end-of-call-report"
+        ],
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-08-18T12:44:52.165Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cgSgspJ2msm6clMCkdW9"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Mary calling from Naidu Property Consulting Services. I was just reaching out to check in, as you’d looked into property strategy with us some time ago. There’s no urgency at all — I simply wanted to see if this is still something you’d like to explore, or if you’d prefer to leave it for now. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "9b44c012-9b02-11f1-bc19-7b3ae6ae66e3"
+    },
+    {
+      "createdAt": "2026-07-22T05:54:31.418Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e6a0c195-3ef9-4661-951f-bd66a801cd62"
+          ]
+        },
+        "backgroundDenoisingEnabled": true,
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started",
+          "assistant.started",
+          "metadata"
+        ],
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-12-09T11:41:22.750Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Mary, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "cc46d882-55c0-454c-82e2-ef00ae000aec",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "messages": [
+            {
+              "chars": 36839,
+              "promptRef": "4cec6908aedbc7c7",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "toolIds": [
+            "5c0c334c-6bbf-4399-b748-a3c50207e754",
+            "f195a817-8346-475d-ad0e-8033f1d2e283",
+            "6587bc7d-7382-4e33-a38d-95f5740df52a",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Active Nurturing",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "headers": {
+            "x-vapi-webhook-secret": "{{REDACTED:VAPI_WEBHOOK_SECRET}}"
+          },
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "serverMessages": [
+          "end-of-call-report"
+        ],
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-07-22T05:54:31.387Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cgSgspJ2msm6clMCkdW9"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Mary calling from Naidu Property Consulting Services. I was just reaching out to check in, as you’d looked into property strategy with us some time ago. There’s no urgency at all — I simply wanted to see if this is still something you’d like to explore, or if you’d prefer to leave it for now. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "cef5e692-8591-11f1-8c1c-153931dc68ef"
+    },
+    {
+      "createdAt": "2026-05-21T08:01:03.114Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e6a0c195-3ef9-4661-951f-bd66a801cd62"
+          ]
+        },
+        "backgroundDenoisingEnabled": true,
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started",
+          "assistant.started",
+          "metadata"
+        ],
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-12-09T11:41:22.750Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Mary, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "cc46d882-55c0-454c-82e2-ef00ae000aec",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "messages": [
+            {
+              "chars": 36839,
+              "promptRef": "4cec6908aedbc7c7",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "toolIds": [
+            "5c0c334c-6bbf-4399-b748-a3c50207e754",
+            "f195a817-8346-475d-ad0e-8033f1d2e283",
+            "6587bc7d-7382-4e33-a38d-95f5740df52a",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Active Nurturing",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "serverMessages": [
+          "end-of-call-report"
+        ],
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-05-21T08:01:03.093Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cgSgspJ2msm6clMCkdW9"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Mary calling from Naidu Property Consulting Services. I was just reaching out to check in, as you’d looked into property strategy with us some time ago. There’s no urgency at all — I simply wanted to see if this is still something you’d like to explore, or if you’d prefer to leave it for now. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "365a6ea2-54eb-11f1-8e03-9934084d2b91"
+    },
+    {
+      "createdAt": "2026-03-04T08:03:24.094Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e6a0c195-3ef9-4661-951f-bd66a801cd62"
+          ]
+        },
+        "backgroundDenoisingEnabled": true,
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started",
+          "assistant.started",
+          "metadata"
+        ],
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-09T11:41:22.750Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Mary, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "cc46d882-55c0-454c-82e2-ef00ae000aec",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 19317,
+              "promptRef": "d3feca1d82641c7b",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0"
+          ]
+        },
+        "name": "NPC Active Nurturing",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "serverMessages": [
+          "end-of-call-report"
+        ],
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-03-04T08:03:24.080Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cgSgspJ2msm6clMCkdW9"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Mary calling from Naidu Property Consulting Services. I was just reaching out to check in, as you’d looked into property strategy with us some time ago. There’s no urgency at all — I simply wanted to see if this is still something you’d like to explore, or if you’d prefer to leave it for now. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "9e29c5e0-17a0-11f1-a6e4-0d1e27477568"
+    },
+    {
+      "createdAt": "2026-03-04T07:58:47.369Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e6a0c195-3ef9-4661-951f-bd66a801cd62"
+          ]
+        },
+        "backgroundDenoisingEnabled": true,
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started",
+          "assistant.started",
+          "metadata"
+        ],
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-09T11:41:22.750Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Mary, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "cc46d882-55c0-454c-82e2-ef00ae000aec",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 18196,
+              "promptRef": "118e6cfced39df00",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0"
+          ]
+        },
+        "name": "NPC Active Nurturing",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "serverMessages": [
+          "end-of-call-report"
+        ],
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-03-04T07:58:47.356Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cgSgspJ2msm6clMCkdW9"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Mary calling from Naidu Property Consulting Services. I was just reaching out to check in, as you’d looked into property strategy with us some time ago. There’s no urgency at all — I simply wanted to see if this is still something you’d like to explore, or if you’d prefer to leave it for now. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "f938e392-179f-11f1-a372-5b6dada6605b"
+    },
+    {
+      "createdAt": "2026-01-01T10:29:07.177Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e6a0c195-3ef9-4661-951f-bd66a801cd62"
+          ]
+        },
+        "backgroundDenoisingEnabled": true,
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started",
+          "assistant.started",
+          "metadata"
+        ],
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-09T11:41:22.750Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Mary, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "cc46d882-55c0-454c-82e2-ef00ae000aec",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 17473,
+              "promptRef": "42f00d67050600f5",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0"
+          ]
+        },
+        "name": "NPC Active Nurturing",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "serverMessages": [
+          "end-of-call-report"
+        ],
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-01T10:29:05.246Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cgSgspJ2msm6clMCkdW9"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Mary calling from Naidu Property Consulting Services. I was just reaching out to check in, as you’d looked into property strategy with us some time ago. There’s no urgency at all — I simply wanted to see if this is still something you’d like to explore, or if you’d prefer to leave it for now. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "b3d5dd92-e6fc-11f0-bd1c-739bf1a03511"
+    },
+    {
+      "createdAt": "2025-12-22T05:47:18.469Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e6a0c195-3ef9-4661-951f-bd66a801cd62"
+          ]
+        },
+        "backgroundDenoisingEnabled": true,
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started",
+          "assistant.started",
+          "metadata"
+        ],
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-09T11:41:22.750Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Mary, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "cc46d882-55c0-454c-82e2-ef00ae000aec",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 17412,
+              "promptRef": "7faa9d5434291ad8",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0"
+          ]
+        },
+        "name": "NPC Active Nurturing",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "serverMessages": [
+          "end-of-call-report"
+        ],
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-22T05:47:18.359Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cgSgspJ2msm6clMCkdW9"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Mary calling from Naidu Property Consulting Services. I was just reaching out to check in, as you’d looked into property strategy with us some time ago. There’s no urgency at all — I simply wanted to see if this is still something you’d like to explore, or if you’d prefer to leave it for now. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "ad544752-def9-11f0-94fe-dfa390df41ad"
+    },
+    {
+      "createdAt": "2025-12-18T01:48:24.174Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e6a0c195-3ef9-4661-951f-bd66a801cd62"
+          ]
+        },
+        "backgroundDenoisingEnabled": true,
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started",
+          "assistant.started",
+          "metadata"
+        ],
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-09T11:41:22.750Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Mary, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "cc46d882-55c0-454c-82e2-ef00ae000aec",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 17412,
+              "promptRef": "7faa9d5434291ad8",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9
+        },
+        "name": "NPC Active Nurturing",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "serverMessages": [
+          "end-of-call-report"
+        ],
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-18T01:48:22.839Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cgSgspJ2msm6clMCkdW9"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Mary calling from Naidu Property Consulting Services. I was just reaching out to check in, as you’d looked into property strategy with us some time ago. There’s no urgency at all — I simply wanted to see if this is still something you’d like to explore, or if you’d prefer to leave it for now. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "a3c570e2-dbb3-11f0-9dc5-c995fabff3de"
+    },
+    {
+      "createdAt": "2025-12-18T01:16:23.504Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e6a0c195-3ef9-4661-951f-bd66a801cd62"
+          ]
+        },
+        "backgroundDenoisingEnabled": true,
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started",
+          "assistant.started",
+          "metadata"
+        ],
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-09T11:41:22.750Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Mary, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "cc46d882-55c0-454c-82e2-ef00ae000aec",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 14592,
+              "promptRef": "e3a68ee5ccf1ac54",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9
+        },
+        "name": "NPC Active Nurturing",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "serverMessages": [
+          "end-of-call-report"
+        ],
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-18T01:16:22.645Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cgSgspJ2msm6clMCkdW9"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Mary calling from Naidu Property Consulting Services. I was just reaching out to check in, as you’d looked into property strategy with us some time ago. There’s no urgency at all — I simply wanted to see if this is still something you’d like to explore, or if you’d prefer to leave it for now. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "2af67501-dbaf-11f0-a81e-b7f3c42c8955"
+    },
+    {
+      "createdAt": "2025-12-18T01:15:53.246Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e6a0c195-3ef9-4661-951f-bd66a801cd62"
+          ]
+        },
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started",
+          "assistant.started",
+          "metadata"
+        ],
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-09T11:41:22.750Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Mary, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "cc46d882-55c0-454c-82e2-ef00ae000aec",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 14592,
+              "promptRef": "e3a68ee5ccf1ac54",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9
+        },
+        "name": "NPC Active Nurturing",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "serverMessages": [
+          "end-of-call-report"
+        ],
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-18T01:15:53.104Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cgSgspJ2msm6clMCkdW9"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Mary calling from Naidu Property Consulting Services. I was just reaching out to check in, as you’d looked into property strategy with us some time ago. There’s no urgency at all — I simply wanted to see if this is still something you’d like to explore, or if you’d prefer to leave it for now. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "18ed73e1-dbaf-11f0-b26c-9d81b2866a6f"
+    },
+    {
+      "createdAt": "2025-12-15T19:24:42.020Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e6a0c195-3ef9-4661-951f-bd66a801cd62"
+          ]
+        },
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started",
+          "assistant.started",
+          "metadata"
+        ],
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-09T11:41:22.750Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Mary, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "cc46d882-55c0-454c-82e2-ef00ae000aec",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 13734,
+              "promptRef": "24baba2631c8e4e7",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9
+        },
+        "name": "NPC Active Nurturing",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "serverMessages": [
+          "end-of-call-report"
+        ],
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-15T19:24:41.903Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cgSgspJ2msm6clMCkdW9"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Mary calling from Naidu Property Consulting Services. I was just reaching out to check in, as you’d looked into property strategy with us some time ago. There’s no urgency at all — I simply wanted to see if this is still something you’d like to explore, or if you’d prefer to leave it for now. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "b4ac0642-d9eb-11f0-ae15-372082196db3"
+    },
+    {
+      "createdAt": "2025-12-13T10:22:38.243Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e6a0c195-3ef9-4661-951f-bd66a801cd62"
+          ]
+        },
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started",
+          "assistant.started",
+          "metadata"
+        ],
+        "compliancePlan": {
+          "pciEnabled": false
+        },
+        "createdAt": "2025-12-09T11:41:22.750Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Mary, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "cc46d882-55c0-454c-82e2-ef00ae000aec",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 8098,
+              "promptRef": "ea2a40ad67f79bbe",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9
+        },
+        "name": "NPC Active Nurturing",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "serverMessages": [
+          "end-of-call-report"
+        ],
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-13T10:22:38.146Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cgSgspJ2msm6clMCkdW9"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Mary calling from Naidu Property Consulting Services. I was just reaching out to check in, as you’d looked into property strategy with us some time ago. There’s no urgency at all — I simply wanted to see if this is still something you’d like to explore, or if you’d prefer to leave it for now. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "a629ff32-d80d-11f0-b695-dfeca8b94fd7"
+    },
+    {
+      "createdAt": "2025-12-11T10:35:25.987Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e6a0c195-3ef9-4661-951f-bd66a801cd62"
+          ]
+        },
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started",
+          "assistant.started",
+          "metadata"
+        ],
+        "createdAt": "2025-12-09T11:41:22.750Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Mary, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "cc46d882-55c0-454c-82e2-ef00ae000aec",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 8098,
+              "promptRef": "ea2a40ad67f79bbe",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9
+        },
+        "name": "NPC Active Nurturing",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://hook.eu2.make.com/wzvaxu6ye39jxx2w6l6jac9ab7rf4175"
+        },
+        "serverMessages": [
+          "end-of-call-report"
+        ],
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-11T10:35:25.906Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cgSgspJ2msm6clMCkdW9"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Mary calling from Naidu Property Consulting Services. I was just reaching out to check in, as you’d looked into property strategy with us some time ago. There’s no urgency at all — I simply wanted to see if this is still something you’d like to explore, or if you’d prefer to leave it for now. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "1af2ef32-d67d-11f0-9b84-2d836d967198"
+    },
+    {
+      "createdAt": "2025-12-11T10:25:24.281Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e6a0c195-3ef9-4661-951f-bd66a801cd62"
+          ]
+        },
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started",
+          "assistant.started",
+          "metadata"
+        ],
+        "createdAt": "2025-12-09T11:41:22.750Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Mary, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "cc46d882-55c0-454c-82e2-ef00ae000aec",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 8098,
+              "promptRef": "ea2a40ad67f79bbe",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9
+        },
+        "name": "NPC Active Nurturing",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://hook.eu2.make.com/wzvaxu6ye39jxx2w6l6jac9ab7rf4175"
+        },
+        "serverMessages": [
+          "end-of-call-report"
+        ],
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-11T10:25:24.213Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cgSgspJ2msm6clMCkdW9"
+        },
+        "voicemailMessage": "Hi, this is Mary calling from Naidu Property Consulting Services. I was just reaching out to check in, as you’d looked into property strategy with us some time ago. There’s no urgency at all — I simply wanted to see if this is still something you’d like to explore, or if you’d prefer to leave it for now. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "b44dbb82-d67b-11f0-8abd-c11866288c74"
+    },
+    {
+      "createdAt": "2025-12-10T05:30:19.583Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e6a0c195-3ef9-4661-951f-bd66a801cd62"
+          ]
+        },
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started",
+          "assistant.started",
+          "metadata"
+        ],
+        "createdAt": "2025-12-09T11:41:22.750Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Mary, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "cc46d882-55c0-454c-82e2-ef00ae000aec",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 8098,
+              "promptRef": "ea2a40ad67f79bbe",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9
+        },
+        "name": "NPC Active Nurturing",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://hook.eu2.make.com/wzvaxu6ye39jxx2w6l6jac9ab7rf4175"
+        },
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "handoff-destination-request",
+          "user-interrupted",
+          "assistant.started",
+          "transcript[transcriptType=\"final\"]"
+        ],
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-10T05:30:19.505Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cgSgspJ2msm6clMCkdW9"
+        },
+        "voicemailMessage": "Hi, this is Mary calling from Naidu Property Consulting Services. I was just reaching out to check in, as you’d looked into property strategy with us some time ago. There’s no urgency at all — I simply wanted to see if this is still something you’d like to explore, or if you’d prefer to leave it for now. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "51119cf2-d589-11f0-b94f-69f0f7656775"
+    },
+    {
+      "createdAt": "2025-12-09T14:52:59.601Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e6a0c195-3ef9-4661-951f-bd66a801cd62"
+          ]
+        },
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started",
+          "assistant.started",
+          "metadata"
+        ],
+        "createdAt": "2025-12-09T11:41:22.750Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Mary, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "cc46d882-55c0-454c-82e2-ef00ae000aec",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 8098,
+              "promptRef": "ea2a40ad67f79bbe",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9
+        },
+        "name": "NPC Active Nurturing",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://hook.eu2.make.com/wzvaxu6ye39jxx2w6l6jac9ab7rf4175"
+        },
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "handoff-destination-request",
+          "user-interrupted",
+          "assistant.started",
+          "transcript[transcriptType=\"final\"]"
+        ],
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-09T14:52:59.529Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "nDJIICjR9zfJExIFeSCN"
+        },
+        "voicemailMessage": "Hi, this is Mary calling from Naidu Property Consulting Services. I was just reaching out to check in, as you’d looked into property strategy with us some time ago. There’s no urgency at all — I simply wanted to see if this is still something you’d like to explore, or if you’d prefer to leave it for now. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "c131cc12-d50e-11f0-8044-49b71679aa2f"
+    },
+    {
+      "createdAt": "2025-12-09T14:33:29.035Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e6a0c195-3ef9-4661-951f-bd66a801cd62"
+          ]
+        },
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started",
+          "assistant.started",
+          "metadata"
+        ],
+        "createdAt": "2025-12-09T11:41:22.750Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Mary, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "cc46d882-55c0-454c-82e2-ef00ae000aec",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 7704,
+              "promptRef": "2f9951987521649b",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9
+        },
+        "name": "NPC Active Nurturing",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://hook.eu2.make.com/wzvaxu6ye39jxx2w6l6jac9ab7rf4175"
+        },
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "handoff-destination-request",
+          "user-interrupted",
+          "assistant.started",
+          "transcript[transcriptType=\"final\"]"
+        ],
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-09T14:33:28.967Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "nDJIICjR9zfJExIFeSCN"
+        },
+        "voicemailMessage": "Hi, this is Mary calling from Naidu Property Consulting Services. I was just reaching out to check in, as you’d looked into property strategy with us some time ago. There’s no urgency at all — I simply wanted to see if this is still something you’d like to explore, or if you’d prefer to leave it for now. Feel free to call us back on this number so we can arrange that for you."
+      },
+      "versionId": "077b99b2-d50c-11f0-8ca6-7b0fe06a990a"
+    },
+    {
+      "createdAt": "2025-12-09T12:27:19.785Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e6a0c195-3ef9-4661-951f-bd66a801cd62"
+          ]
+        },
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started",
+          "assistant.started",
+          "metadata"
+        ],
+        "createdAt": "2025-12-09T11:41:22.750Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Mary, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "cc46d882-55c0-454c-82e2-ef00ae000aec",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 7704,
+              "promptRef": "2f9951987521649b",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9
+        },
+        "name": "NPC Active Nurturing",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://hook.eu2.make.com/wzvaxu6ye39jxx2w6l6jac9ab7rf4175"
+        },
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "handoff-destination-request",
+          "user-interrupted",
+          "assistant.started",
+          "transcript[transcriptType=\"final\"]"
+        ],
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-09T12:27:19.705Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "nDJIICjR9zfJExIFeSCN"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "67dbb592-d4fa-11f0-ba03-83b6bd91ee91"
+    },
+    {
+      "createdAt": "2025-12-09T11:58:44.093Z",
+      "data": {
+        "createdAt": "2025-12-09T11:41:22.750Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Mary, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "cc46d882-55c0-454c-82e2-ef00ae000aec",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 7704,
+              "promptRef": "2f9951987521649b",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9
+        },
+        "name": "NPC Active Nurturing",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "url": "https://hook.eu2.make.com/wzvaxu6ye39jxx2w6l6jac9ab7rf4175"
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-09T11:58:44.010Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "nDJIICjR9zfJExIFeSCN"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "6939e2d2-d4f6-11f0-862a-e7c6d07d2cac"
+    },
+    {
+      "createdAt": "2025-12-09T11:52:23.454Z",
+      "data": {
+        "createdAt": "2025-12-09T11:41:22.750Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Mary, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "cc46d882-55c0-454c-82e2-ef00ae000aec",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 7704,
+              "promptRef": "2f9951987521649b",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9
+        },
+        "name": "NPC Active Nurturing",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-09T11:52:23.381Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "nDJIICjR9zfJExIFeSCN"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "8658fbe2-d4f5-11f0-9da4-a78c7b1435be"
+    },
+    {
+      "createdAt": "2025-12-09T11:46:06.258Z",
+      "data": {
+        "createdAt": "2025-12-09T11:41:22.750Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Mary, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "cc46d882-55c0-454c-82e2-ef00ae000aec",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 5464,
+              "promptRef": "7e5e74c401b96035",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9
+        },
+        "name": "NPC Active Nurturing",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-09T11:46:06.205Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "nDJIICjR9zfJExIFeSCN"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "a5857122-d4f4-11f0-96b9-23a5d9506a3b"
+    },
+    {
+      "createdAt": "2025-12-09T11:43:59.371Z",
+      "data": {
+        "createdAt": "2025-12-09T11:41:22.750Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Mary, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "cc46d882-55c0-454c-82e2-ef00ae000aec",
+        "model": {
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 5464,
+              "promptRef": "7e5e74c401b96035",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9
+        },
+        "name": "NPC Active Nurturing",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-09T11:43:59.296Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "nDJIICjR9zfJExIFeSCN"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "59e3dea2-d4f4-11f0-8dfd-6d30e2838905"
+    },
+    {
+      "createdAt": "2025-12-09T11:43:23.067Z",
+      "data": {
+        "createdAt": "2025-12-09T11:41:22.750Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Mary, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "cc46d882-55c0-454c-82e2-ef00ae000aec",
+        "model": {
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 5464,
+              "promptRef": "7e5e74c401b96035",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9
+        },
+        "name": "NPC Active Nurturing",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-09T11:43:23.006Z",
+        "voice": {
+          "provider": "vapi",
+          "voiceId": "Elliot"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "444078b2-d4f4-11f0-8f03-dfa10b96eee1"
+    },
+    {
+      "createdAt": "2025-12-09T11:42:25.862Z",
+      "data": {
+        "createdAt": "2025-12-09T11:41:22.750Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hello.",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "cc46d882-55c0-454c-82e2-ef00ae000aec",
+        "model": {
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 5464,
+              "promptRef": "7e5e74c401b96035",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4o",
+          "provider": "openai",
+          "temperature": 0.9
+        },
+        "name": "NPC Active Nurturing",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-09T11:42:25.806Z",
+        "voice": {
+          "provider": "vapi",
+          "voiceId": "Elliot"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "2227ae62-d4f4-11f0-885e-1b140a10bb27"
+    },
+    {
+      "createdAt": "2025-12-09T11:41:22.813Z",
+      "data": {
+        "createdAt": "2025-12-09T11:41:22.750Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hello.",
+        "id": "cc46d882-55c0-454c-82e2-ef00ae000aec",
+        "model": {
+          "messages": [
+            {
+              "chars": 100,
+              "promptRef": "d60105898b40b8d2",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4o",
+          "provider": "openai"
+        },
+        "name": "NPC Active Nurturing",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-09T11:41:22.750Z",
+        "voice": {
+          "provider": "vapi",
+          "voiceId": "Elliot"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "fc932ad2-d4f3-11f0-8453-77158f573580"
+    }
+  ]
+}

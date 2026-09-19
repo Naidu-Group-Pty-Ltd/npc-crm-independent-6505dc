@@ -1,0 +1,7 @@
+{
+  "assistant": "Ramitta Barber",
+  "assistantId": "3eb4592a-3cf9-4583-8304-f129837d9e38",
+  "note": "System prompts are replaced by promptRef; the text is in ../prompts/<ref>.md. Everything else is the API response verbatim.",
+  "versionCount": 0,
+  "versions": []
+}

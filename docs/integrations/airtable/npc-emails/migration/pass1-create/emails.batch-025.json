@@ -1,0 +1,490 @@
+{
+  "table": "Emails",
+  "batch": 25,
+  "of": 107,
+  "recordCount": 50,
+  "records": [
+    {
+      "sourceRecordId": "recDqoe7zr0eQ1T1U",
+      "sourceCreatedTime": "2026-01-20T09:30:02.000Z",
+      "fields": {
+        "Name": "Thomas Bettison",
+        "Subject": "COMING SOON TO MARKET | 4/34 Loton Ave, Midland",
+        "Email": "thomas.bettison@housesmart.com.au",
+        "Body": "MARKET PREVIEW - 4/34 Loton Ave\r\n\r\nHi Rugesh,\r\n\r\nPlease see the following property, launching to market in the near future.\r\n\r\nIf you are interested in securing this before the property goes live to all buyers, let me know.\r\n\r\nUpdate my criteria\r\nSay hell",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recDrIJmbdFJS5PFl",
+      "sourceCreatedTime": "2026-03-24T09:28:43.000Z",
+      "fields": {
+        "Name": "Thomas Bettison",
+        "Subject": "COMING SOON TO MARKET | 35 Peninsula Avenue, Heathridge",
+        "Email": "thomas.bettison@housesmart.com.au",
+        "Body": "MARKET PREVIEW - 35 Peninsula Avenue\r\n\r\nHi Rugesh,\r\n\r\nPlease see the following property, launching to market in the near future.\r\n\r\nIf you are interested in securing this before the property goes live to all buyers, let me know.\r\n\r\nUpdate my criteria\r\nSay",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recDrTnHbdRM05nmB",
+      "sourceCreatedTime": "2025-10-16T05:58:18.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recDrtOPYYQQ1TI6l",
+      "sourceCreatedTime": "2026-01-06T05:37:27.000Z",
+      "fields": {
+        "Name": "Abby Holmes-Brown",
+        "Subject": "An Exclusive Off-Market Ex-Display Home in Palmview!",
+        "Email": "sales@fnlifestyle.com.au",
+        "Body": "Exclusive Invitation\r\n\r\n\r\n\r\n\r\nHi Rugesh,\r\n\r\nNew year, new off-market opportunities!\r\n\r\nStep into luxury with this stunning high-end designer home in Palmview. Modern, fresh and beautifully designed - perfect for those dreaming of an elevated lif"
+      }
+    },
+    {
+      "sourceRecordId": "recDtOmFUxTf4bgzC",
+      "sourceCreatedTime": "2025-12-10T05:08:37.000Z",
+      "fields": {
+        "Name": "Professionals Caboolture/Morayfield Chippendale",
+        "Subject": "Hi,, How can we help you?",
+        "Email": "j.chippendale@professionalscaboolture.propertyemail.com.au",
+        "Body": "Dear ,\r\n\r\nHow can we help you?\r\n\r\nWe know that in today’s fast-paced world, things can change quickly, including your needs when it comes to property.\r\n\r\nThat’s why we like to check in with you from time to time. We understand that your price range might ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recDvlnV1eFUWDcii",
+      "sourceCreatedTime": "2025-11-18T08:05:35.000Z",
+      "fields": {
+        "Name": "Nicole Frew",
+        "Subject": "JUST LISTED -  EXPANSIVE 3.8-ACRE LIFESTYLE HAVEN WITH MODERN ELEGANCE & SPARKLING POOL",
+        "Email": "nicole@gattonrealestate.com.au",
+        "Body": "Good morning Rugesh\r\n\r\nIntroducing a luxurious acreage retreat where modern elegance meets peaceful country living across 3.8 pristine acres in the Lockyer Valley.\r\n\r\n🏡✨ JUST LISTED – 24 JACANA DRIVE, ADARE ✨🏡\r\n\r\n📅 OPEN HOME – SATURDAY 22ND NOVEMBER"
+      }
+    },
+    {
+      "sourceRecordId": "recDwCC9QwIEUIzJV",
+      "sourceCreatedTime": "2026-02-24T06:22:13.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recDwDkjqxripHh0u",
+      "sourceCreatedTime": "2025-11-28T04:51:42.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recDwr3morggKrndy",
+      "sourceCreatedTime": "2025-09-23T01:48:12.000Z",
+      "fields": {
+        "Name": "Sam Shaw",
+        "Subject": "Off Market Opportunity - 9 Hillcrest Court, Traralgon",
+        "Email": "samshaw@wprci.com.au",
+        "Body": "Good afternoon,\r\n\r\nJust a quick email to advise that we have an off-market listing at 9 Hillcrest Court, Traralgon that may be of interest to you. Please see the attached section 32 for your review.\r\n\r\nPlease see the below link for the video walkthrough o",
+        "Status": "Error 500",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/K7cKhtWPX7P_r9KjJLGylw/2B8NzO7EzsZHRviTxRjdvIf3rRnrNtRqDVwqCoTP0IqQBUbEVQp5XmhFVFaKg2o-U7hbQ-BxM90vMVjGluxD4rjkiFMIWxbawfnCm_p2GnWkrXHU8X00kciUyJ4X1d38y6Cs6DMisx0w3u-vTVortsg33Q065qSR0ZbFlgUio-OA4weR3nxrb9lVx4kpjjzB/X_-aysM8HdZIRBEAKDbsS6gHsZmBZIzbj95fbRD6R2Q",
+            "filename": "outlook_email_attachment.pdf",
+            "type": "application/pdf",
+            "size": 200927
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "recE0lE01NNHHJ2uK",
+      "sourceCreatedTime": "2026-03-11T14:09:27.000Z",
+      "fields": {
+        "Name": "Belle Property Australasia",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "noreply@belleproperty.com",
+        "Body": "Dear Rugesh,\r\n\r\nWe have found the following properties that match your property search requirements. Click here to update your preferences or click here to find a property on belleproperty.com.\r\nCurrent listings.\r\n\r\nDromana\r\n2/1 Canna Street\r\nAuction $590",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recE19JUWdIbv1ZLb",
+      "sourceCreatedTime": "2025-10-19T00:34:54.000Z",
+      "fields": {
+        "Name": "Mark Flinn",
+        "Subject": "How is your local market performing?",
+        "Email": "mark.flinn@raywhite.com",
+        "Body": "View this email in your browser\r\nDear ,\r\n\r\nEver wonder how the market is performing in your area? I'm pleased to provide you with a dynamic market insights report that allows you to keep track of all your surrounding suburbs.\r\n\r\nSimply click below to take",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recE1HTdKZkRcikHg",
+      "sourceCreatedTime": "2025-10-16T22:30:50.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recE2LoBkWVrnJyX6",
+      "sourceCreatedTime": "2026-02-02T02:33:02.000Z",
+      "fields": {
+        "Name": "Wellmanprop",
+        "Subject": "🛎️February | WELLMAN PROP STOCK LIST - Weekly Updates❗",
+        "Email": "projects@wellmanpropgroup.com",
+        "Body": "Click Here to Access All Projects & Stocklist\r\n\r\nWELLMAN STOCKLIST\r\n\r\nWeekly Updates\r\n\r\n \r\n\r\nTOWNHOUSE (COMPLETE)\r\n\r\n30-32 Station Street, Ferntree Gully\r\n\r\n2-3B  1.5-2B  1-2CAR\r\n\r\n\r\nAsking Price:\r\n\r\nUnit 1: $748,000\r\n\r\nUnit 2: $878,000\r\n\r\nUnit 4: Sold"
+      }
+    },
+    {
+      "sourceRecordId": "recE2rWc9Se3UnPdr",
+      "sourceCreatedTime": "2026-01-02T04:10:37.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recE2shFbN2j5obFW",
+      "sourceCreatedTime": "2026-01-02T03:08:20.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recE3TNj7ks2pXjzJ",
+      "sourceCreatedTime": "2026-06-05T04:33:25.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recE3rpofBGJhhkr7",
+      "sourceCreatedTime": "2026-03-12T17:24:24.000Z",
+      "fields": {
+        "Name": "Tom Offermann Real Estate",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "sales@offermann.com.au",
+        "Body": "Edit my requirements\r\nVisit our Website\r\nProperty Alert\r\nFriday, 13th March 2026\r\nHello Rugesh,\r\n\r\nThe following listings matched your Property Alert search requirements.\r\n\r\nNoosa Heads\r\n14B Wyandra Street\r\nStellar Brand New Home in the heart of Noosa Hea",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recE4mEr8v7CCY41w",
+      "sourceCreatedTime": "2025-12-12T02:41:58.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recE5dIpTlf3KvBck",
+      "sourceCreatedTime": "2026-03-19T01:01:20.000Z",
+      "fields": {
+        "Name": "Ray White Williamstown",
+        "Subject": "11 Victoria Street: Views, Savings + Q3 Move-In",
+        "Email": "williamstown.vic@raywhite.com",
+        "Body": "View this email in your browser\r\n\r\n\r\nPENTHOUSES 501 & 502\r\n\r\n11 VICTORIA STREET, FOOTSCRAY\r\n\r\nHello,\r\n\r\nSkip the weekend crowds and secure the ultimate three-in-one property win.\r\n\r\nThis Off Market opportunity at 11 Victoria Street pairs magnificent vie"
+      }
+    },
+    {
+      "sourceRecordId": "recE67S2HGCa9V63I",
+      "sourceCreatedTime": "2025-08-25T03:57:00.000Z",
+      "fields": {
+        "Name": "Rugesh Naidu",
+        "Subject": "NPC Services | Naidu Property Consulting Services | Introduction & Mailing List Allocation ",
+        "Email": "rugesh@npcservices.com.au",
+        "Body": "Good afternoon,I hope this message finds you well.\n\n\n\n\nI’d like to take a moment to introduce NPC Services also known as Naidu Property Consulting Services, a dedicated buyer’s agency and property consulting business specialising in guiding clients through every stage of their property purchase journey.\n\nWe currently have qualified clients actively ready to purchase across a range of budgets, and we’re looking to build strong relationships with agencies like yours. To streamline the process, it would be greatly appreciated if you could please add our acquisitions team to your weekly property mailing list below:\n\nProperty@npcservices.com.au [Property@npcservices.com.au]\n\nThis ensures our research division receives your latest on and off-market listings, promptly for reviewal and assessment, allowing us to respond quickly and match opportunities with ready buyers.\n\nI’m confident this collaboration will lead to excellent results for both your agency and our clients.\n\nPlease feel free to contact me if you have any questions\n\n\nKind Regards[cid:77aa8f47-8117-40d6-8935-8d754980dd22]Mobile: 0433 005 110 | Email: rugesh@npcservices.com.au | Website: www.npcservices.com.au [http://www.npcservices.com.au/]\n[cid:b96acb81-7dcb-431d-8764-3981a547c8c1] [http://www.linkedin.com/in/rugesh-naidu-1b0003123][cid:97a36508-0ec2-4ec1-b445-53d535b73134] [https://www.instagram.com/npc.services]A blue circle with a white letter f in it AI-generated content may be incorrect. [cid:711f657f-b27f-457f-bac6-17611b0e2056] [https://www.facebook.com/profile.php?id=61577033127001]\nAddress: Level 5 Nexus Norwest, 4 Columbia Ct, Norwest NSW 2153\nNaidu Group Pty Ltd trading as Naidu Property Consulting ServicesACN: 684 555 771 | ABN: 50 684 555 771\nDisclaimer:\nAs a Professional Property Consultant & Buyers Agent, we provide information and advice based on our expertise and experience in the real estate market. Please be aware that the advice and insights offered are for general informational purposes only and should not be considered financial advice. While we strive to ensure the accuracy and relevance of the information provided, real estate markets are dynamic and subject to change and cannot guarantee the future performance or outcomes of any property investment. It is important to understand that real estate investments carry risks, including market fluctuations, changes in property values, and potential financial losses. Our services include assisting you in identifying and evaluating potential opportunities, negotiating purchase terms, and navigating the transaction process. Any decisions to purchase, sell, or invest in real estate should be made after careful consideration and consultation with appropriate financial, legal, and tax advisors. By engaging our services, you acknowledge that you have read and understood this disclaimer and agree to take full responsibility for your property-related decisions. Always conduct your own research and due diligence to ensure that any property transaction aligns with your financial objectives and risk profile.",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recE6fXpTwsDLbawb",
+      "sourceCreatedTime": "2025-11-25T21:56:54.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recE6yPi6VWcvytG4",
+      "sourceCreatedTime": "2026-01-06T17:07:30.000Z",
+      "fields": {
+        "Name": "Tom Offermann Real Estate",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "sales@offermann.com.au",
+        "Body": "Edit my requirements\r\nVisit our Website\r\nProperty Alert\r\nWednesday, 7th January 2026\r\nHello Rugesh,\r\n\r\nThe following listings matched your Property Alert search requirements.\r\n\r\nNoosa Heads\r\n2 Smoke Bush Drive\r\nContemporary Luxe Living Surrounded by Natur",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recE6zQn1B5SDt7wT",
+      "sourceCreatedTime": "2025-11-12T07:17:49.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recE7s8Oeyb3im2bX",
+      "sourceCreatedTime": "2026-01-07T07:15:16.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recE7xchV1XTlAjhA",
+      "sourceCreatedTime": "2025-10-18T22:06:06.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recE8ZnidAWIvJEWd",
+      "sourceCreatedTime": "2025-09-22T12:57:16.000Z",
+      "fields": {
+        "Status": "No URL"
+      }
+    },
+    {
+      "sourceRecordId": "recE943eoWlGOyubF",
+      "sourceCreatedTime": "2026-03-10T22:09:16.000Z",
+      "fields": {
+        "Name": "McFall Real Estate",
+        "Subject": "PRICE REDUCED",
+        "Email": "joe@mcfallrealestate.com.au",
+        "Body": "View this email in your browser\r\n\r\n\r\n\r\n\r\n        Price reduction now $1,800,000\r\n\r\n\r\n\r\n\r\n\r\n\r\n65 acres\r\n\r\nPermanent Spring\r\n\r\nFertile Red Soil\r\n\r\nBreathtaking Views\r\n\r\nPrice reduction was $1,850,000 now\r\n\r\n$1,800,000\r\n\r\n\r\n\r\n\r\nCall our office to find out mo"
+      }
+    },
+    {
+      "sourceRecordId": "recE9RI6pzbkXkLaC",
+      "sourceCreatedTime": "2026-03-17T01:03:48.000Z",
+      "fields": {
+        "Name": "Ooranya Estate - Land Sale",
+        "Subject": "Ooranya Estate - H&L One Part Contracts",
+        "Email": "sales@bevanprojects.com.au",
+        "Body": "View this email in your browser\r\n\r\n\r\n\r\nDear ,\r\n\r\nAt Ooranya Estate, we have\r\ncollaborated with a variety of builders\r\nto offer you, our valued partners\r\n\r\n\r\n\r\nph: 0427 664 855\r\nemail: sales@bevanprojects.com.au\r\npostal address: PO Box 482\r\nPort Melb",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recE9fQ1jfEYFDQWF",
+      "sourceCreatedTime": "2025-08-11T09:51:00.000Z",
+      "fields": {
+        "Name": "Lavan Kenobi",
+        "Subject": "Fwd: Test Email",
+        "Email": "lavankenobi@gmail.com",
+        "Body": "\n---------- Forwarded message ---------\nFrom: Lavan Kenobi <lavankenobi@gmail.com [lavankenobi@gmail.com]>\nDate: Mon, 11 Aug 2025, 17:39\nSubject: Test Email\nTo: <property@npcservices.com.au [property@npcservices.com.au]>\n\n\nThis is a test email"
+      }
+    },
+    {
+      "sourceRecordId": "recE9sLt08QRtnZiG",
+      "sourceCreatedTime": "2025-11-06T04:21:09.000Z",
+      "fields": {
+        "Name": "Pat O'Driscoll Real Estate",
+        "Subject": "PAT O'DRISCOLL REAL ESTATE NEWSLETTER",
+        "Email": "salesadmin2@podre.com.au",
+        "Body": "0749272122\r\nwww.podre.com.au\r\n\r\n\r\n\r\n\r\n\r\n\r\nPROPERTY OF THE WEEK\r\n\r\n\r\n\r\n\r\n\r\n3 / 51 Bremner Street, Blackwater\r\n\r\n\r\n        Offers Over $199,000\r\n\r\nHigh-Yield Investment Opportunity in Blackwater – 11% Gross Returns!\r\nLooking to grow your investment portfo"
+      }
+    },
+    {
+      "sourceRecordId": "recEAGgDxuHI5Uimy",
+      "sourceCreatedTime": "2025-10-16T01:29:08.000Z",
+      "fields": {
+        "Name": "Catherine Tidy",
+        "Subject": "Fletcher Riley's Newsletter - This Week in Luxury: Just Listed, Just Sold and Exclusive Open Homes",
+        "Email": "admin@fletcherriley.com.au",
+        "Body": "Welcome to our weekly newsletter!\r\n\r\nWe are always trying to offer the very best level of service to our clients, keeping you informed of upcoming listings, current properties for sale and recently sold properties so you have a clear snapshot of the Sunsh"
+      }
+    },
+    {
+      "sourceRecordId": "recEANJ16exfS4y8D",
+      "sourceCreatedTime": "2025-10-17T03:33:40.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recEAY0uvJQxjDPV6",
+      "sourceCreatedTime": "2025-12-19T15:19:36.000Z",
+      "fields": {
+        "Name": "ACTIVE AGENTS (QLD) PTY LTD",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "info@activeagents.com.au",
+        "Body": "Edit my requirements\r\nVisit our Website\r\nProperty Alert\r\nSaturday, 20th December 2025\r\nHello Rugesh,\r\n\r\nThe following listings matched your Property Alert search requirements.\r\n\r\nUrangan\r\n11/654 Esplanade\r\n\r\nOffers considered from $719,000\r\n\r\n        3   ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recEB9no9hoWMjmS3",
+      "sourceCreatedTime": "2026-03-30T01:05:31.000Z",
+      "fields": {
+        "Name": "Abby Holmes-Brown",
+        "Subject": "4 BRAND NEW LISTINGS HITTING THE MARKET - BE FIRST IN!",
+        "Email": "sales@fnlifestyle.com.au",
+        "Body": "Just Listed\r\n\r\n\r\n\r\n\r\nHi Rugesh,\r\n\r\nEXPLORE our 4 brand new listings - where space, style and location come together perfectly!\r\n\r\nScroll down and fall in love with the incredible variety and standout features these stunning homes have to offer.",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recECdPAPLaBH8Aiy",
+      "sourceCreatedTime": "2025-11-21T18:21:45.000Z",
+      "fields": {
+        "Name": "Tom Offermann Real Estate",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "sales@offermann.com.au",
+        "Body": "Edit my requirements\r\nVisit our Website\r\nProperty Alert\r\nSaturday, 22nd November 2025\r\nHello Rugesh,\r\n\r\nThe following listings matched your Property Alert search requirements.\r\n\r\nEumundi\r\n7 Finley Road\r\nSomewhat Like A Fairytale, But More Like A Dream Com",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recEDAznKFDDcvMVI",
+      "sourceCreatedTime": "2025-11-18T05:05:34.000Z",
+      "fields": {
+        "Name": "Jon Mordue",
+        "Subject": "Single Contract House and Land Beaudesert $969,000",
+        "Email": "jon@projectpropertysales.com.au",
+        "Body": "SINGLE CONTRACT\r\n\r\nBEAUDESERT HOUSE AND LAND PACKAGE PRICED AT $969,000\r\n\r\nLAND REGISTERS IN FEBRUARY 2026\r\n\r\n4 BED, 2 BATH, 2 LIVING, 2 CAR\r\n\r\nLAND SIZE:      632M2\r\nHOUSE SIZE:  201M2 (188M2 INTERNAL, 10M2 EXTERNAL, 3M2 ENTRY)\r\n\r\n\r\nCOMMISSION: $44,000",
+        "Status": "Error 500",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/rsbpx1LK-yFKv2JQUr-bAw/87vJZzrtyG_cNdM4L0nX6wZVxjEQWUn4QV0Gsl5Bn5CpM_sElTtMHbUkH0T7pZdZm5TWeck_ySVCWO1T31ActAN0_wovF5B81p8EE4f3LLPcWL7XePoaWzvHdT2HIctr42H0OEGL3raF6_PTty3NkfATVCGjTZcgbL8NPmMc8tQKMn01sn9_Z7NOGoTMOvI7/TAcpsG-Sb3M6oTBGMLHig4wCULlpbt3bvfc7zqf9Sqk",
+            "filename": "outlook_email_attachment.pdf",
+            "type": "application/pdf",
+            "size": 70236
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "recEDt3yeWX9WPGjb",
+      "sourceCreatedTime": "2026-06-08T04:36:03.000Z",
+      "fields": {
+        "Name": "Gemma Coady Team - Freedom Property",
+        "Subject": "EXCLUSIVE OFF-MARKET OPPORTUNITIES",
+        "Email": "gemmacoadyteam@freedomproperty.com.au",
+        "Body": "Hi there,\r\n\r\nWe currently have a number of properties on the market, coming soon, and available off-market. If any of the properties below interest you, feel free to reach out for more details or to arrange a private inspection.\r\n\r\n📍OFF-MARKET | 2/2 Fitz"
+      }
+    },
+    {
+      "sourceRecordId": "recEGslKoUSyB13Uo",
+      "sourceCreatedTime": "2026-04-21T03:11:04.000Z",
+      "fields": {
+        "Name": "Karen Bagenal",
+        "Subject": "Your Property Update [New Listing Alert]",
+        "Email": "karenbagenal@realwayipswich.com.au",
+        "Body": "0732940099\r\nwww.ipswich.realway.com.au\r\nNew Listings\r\n\r\nHi Rugesh,\r\n\r\nWe've listed some new properties that I think you might be interested in. Give me a call if you have any questions or would like to take a look through any of these.\r\n\r\n\r\n17 Balaclava S",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recEHH34yRNiHd0LT",
+      "sourceCreatedTime": "2026-07-13T18:22:27.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recEHX5MeFR20jDuR",
+      "sourceCreatedTime": "2026-03-25T04:29:05.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recEIakzD0Llojf7z",
+      "sourceCreatedTime": "2025-11-29T05:38:30.000Z",
+      "fields": {
+        "Name": "McGrath",
+        "Subject": "McGrath Property Alert",
+        "Email": "concierge@mcgrath.com.au",
+        "Body": "PROPERTY ALERT\r\n\r\n9/8-10 Louisa Road, Birchgrove\r\n\r\n\r\n\r\n\r\n\r\n2\r\n\r\n\r\n\r\n1\r\n\r\n\r\n\r\n1\r\n\r\n\r\n\r\nFOR SALE\r\n\r\nPrice Guide on Request\r\n\r\n\r\n\r\nVIEW\r\n\r\nSaturday 29 Nov 3:30pm - 3:45pm\r\n\r\n\r\n\r\nAGENTS\r\n\r\nScott Bunnell: 0451 151 171\r\n\r\nCindy Kennedy: 0404 000 570\r\n\r\nVIEW MO",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recEJ9cmSWCVjUQxG",
+      "sourceCreatedTime": "2026-03-28T18:20:33.000Z",
+      "fields": {
+        "Name": "McGrath NSW & QLD CO",
+        "Subject": "McGrath Property Alert",
+        "Email": "concierge@mcgrath.com.au",
+        "Body": "PROPERTY ALERT\r\n\r\n579 Homer Street, Earlwood\r\n\r\n\r\n\r\n\r\n\r\n3\r\n\r\n\r\n\r\n2\r\n\r\n\r\n\r\n2\r\n\r\n\r\n\r\nFOR SALE\r\n\r\nFor Sale $1,850,000\r\n\r\n\r\n\r\nAGENTS\r\n\r\nAlexandra Stamatiou-Buda: 0415 901 279\r\n\r\nSpiro Economy: 0438 901 279\r\n\r\nVIEW MORE\r\nVIEW MORE\r\nMCGRATH.COM.AU\r\nMCGRATH.COM."
+      }
+    },
+    {
+      "sourceRecordId": "recEJEce60OG7BEhx",
+      "sourceCreatedTime": "2025-09-22T12:07:52.000Z",
+      "fields": {
+        "Name": "Adam Bettison",
+        "Subject": "HouseSmart Real Estate Pty Ltd Weekend Home Open Property Update",
+        "Email": "adam.bettison@housesmart.com.au",
+        "Body": "Weekend Home Opens & Property Update\r\n\r\nHi Rugesh\r\n\r\nEach week at HouseSmart brings significant buying, selling and leasing activity. Our team is active across the entire Perth market.\r\n\r\nFor any property related assistance, reach out to us by replying to"
+      }
+    },
+    {
+      "sourceRecordId": "recEJOA0lvvjg6IjV",
+      "sourceCreatedTime": "2025-08-23T19:45:48.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recEJYg8zJMqkJYMo",
+      "sourceCreatedTime": "2025-10-08T08:46:49.000Z",
+      "fields": {
+        "Name": "Julie Byers",
+        "Subject": "Re: NPC Services | Naidu Property Consulting Services | Introduction & Mailing List Allocation",
+        "Email": "julie.byers@raywhite.com",
+        "Body": "Hi,\r\nDone\r\nKind regards\r\nJulie\r\n\r\nOn Tue, 7 Oct 2025 at 16:17, Rugesh Naidu <rugesh@npcservices.com.au> wrote:\r\nGood afternoon,\r\nI hope this message finds you well.\r\n\r\n I’d like to take a moment to introduce NPC Services also known as Naidu Property Consu",
+        "Status": "Error 500",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/I9CDHqnCP6q_C2X-lAu3pw/oIQZ9xKF0aQcJzZe2DtY2ECBFtYtnXa5IKULTTpidHxHA_a2_woG91EpPaByuphZTQWavW-k5gnlUgBWM_vkhjdF2vbA0Zw8aM9IwfWP2Y6S0X3Zq6U8mU_oHfxC7-gHb2bj0YB1vIEaBs0A1bZG7UrWOtuGOrc0TmvZ_jEPrWUxZIukIBS8JwzEGwew2Y_D/y5LPThXtwef9mo6_VdNawD6Zlhe6hTK9TMqJNOV1KP4",
+            "filename": "outlook_email_attachment.png",
+            "type": "image/png",
+            "size": 3465
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "recEJsz75h0RxP01h",
+      "sourceCreatedTime": "2025-12-05T04:44:59.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recEKuuKM9lUX9PGK",
+      "sourceCreatedTime": "2026-06-15T08:39:11.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recELjHPZWPISTn7X",
+      "sourceCreatedTime": "2026-06-05T23:38:18.000Z",
+      "fields": {
+        "Name": "McGrath NSW & QLD CO",
+        "Subject": "McGrath Property Alert",
+        "Email": "concierge@mcgrath.com.au",
+        "Body": "PROPERTY ALERT\r\n\r\n15/20 Abbott Street, Coogee\r\n\r\n\r\n\r\n\r\n\r\n2\r\n\r\n\r\n\r\n1\r\n\r\n\r\n\r\n1\r\n\r\n\r\n\r\nAUCTION\r\n\r\nOn Site - Saturday 13 Jun 10:30am\r\n\r\n\r\n\r\nVIEW\r\n\r\nSaturday 6 Jun 9:00am - 9:30am\r\n\r\n\r\n\r\nAGENTS\r\n\r\nMarnie Seinor: 0425 255 200\r\n\r\nDanielle Leemhuis: 0402 642 718"
+      }
+    },
+    {
+      "sourceRecordId": "recEMaOkdwKCWW7gc",
+      "sourceCreatedTime": "2026-04-07T06:18:56.000Z",
+      "fields": {
+        "Name": "John Hadley",
+        "Subject": "New Property Alert Match: 19 Taverner Street BIRCHIP",
+        "Email": "noreply@phoenixsoftware.io",
+        "Body": "Hi Rugesh,\r\n\r\nGreat news! A property matching your preferences has just become available.\r\n\r\n\r\n\r\n\r\nFor Sale\r\n19 Taverner Street, BIRCHIP VIC 3483\r\n$340,000\r\n3 bed | 1 bath | 2 car\r\nCENTRAL HOME\r\n\r\nWith the hospital over the back fence this property is in ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recENiIXqIaUd2Yk7",
+      "sourceCreatedTime": "2025-11-06T07:29:05.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    }
+  ]
+}

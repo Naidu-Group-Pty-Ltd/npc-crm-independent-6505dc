@@ -1,0 +1,27 @@
+# Template Builder rehaul — renderer isolation contract.
+#
+# Files below are the LOCKED renderer surface (jsPDF + WeasyPrint production
+# path). The editor rehaul plan (docs/TEMPLATE_BUILDER_REHAUL_PLAN.md §3)
+# guarantees these stay byte-identical; goldenRender.spec.ts pins the contract.
+#
+# Add the appropriate reviewers/teams to the right-hand column — any PR
+# touching these paths requires their explicit approval. Lovable agents and
+# Codex runs must NOT modify these files as part of editor-only work.
+
+src/lib/reportTemplate/htmlRenderer.ts                              @lavan96
+src/lib/reportTemplate/pdfRenderer.ts                               @lavan96
+src/lib/reportTemplate/weasyPreview.ts                              @lavan96
+src/lib/reportTemplate/bindingResolver.ts                           @lavan96
+src/lib/reportTemplate/cssTokens.ts                                 @lavan96
+src/lib/reportTemplate/blocks/                                      @lavan96
+src/lib/reportTemplate/routeReportThroughTemplate.ts                @lavan96
+src/lib/reportTemplate/resolveTemplate.ts                           @lavan96
+src/lib/reportTemplate/buildBindingContext.ts                       @lavan96
+supabase/functions/render-template-pdf/                             @lavan96
+supabase/functions/_shared/resolveReportTemplate.ts                 @lavan96
+supabase/functions/_shared/buildBindingContext.ts                   @lavan96
+src/components/reports/*PDFGenerator.tsx                            @lavan96
+
+# Editor schema is EXTEND-ONLY — additive optional fields are fine, but
+# renames/removals/repurposes break the contract.
+src/lib/reportTemplate/templateSchema.ts                            @lavan96

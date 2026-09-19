@@ -1,0 +1,27 @@
+import { chromium } from 'playwright';
+import { readFileSync } from 'node:fs';
+import { renderTemplateToHtml } from '../../src/lib/reportTemplate/htmlRenderer';
+import { evalConditional } from '../../src/lib/reportTemplate/bindingResolver';
+import { buildMarketIntelligenceReport } from '../../supabase/functions/_shared/reports/marketIntelligence/normalise.pure';
+import { applyMarketIntelligenceProjection } from '../../supabase/functions/_shared/marketIntelligenceProjection.pure';
+import { applyOrganisationProjection } from '../../supabase/functions/_shared/organisationProjection.pure';
+import { MARKET_INTELLIGENCE_TEMPLATES } from './investmentCompass/marketIntelligence';
+const row=JSON.parse(readFileSync('/tmp/claude-0/-home-user/2d1fcc99-8bfb-51aa-8aa3-79bd8050091a/scratchpad/format-rows2.json','utf8')).market_intelligence;
+const ORG={company_name:'NPC',email_signature_phone:'1',email_signature_email:'a@b.c',email_signature_website:'w',email_signature_address:'x'};
+const built:any=buildMarketIntelligenceReport({row,preparedOn:'2026-08-13T00:00:00.000Z',brandName:'NPC',audienceOverride:null} as any);
+const data:any={report:{},brand:{}}; if(built.ok) applyMarketIntelligenceProjection(data,built.report); applyOrganisationProjection(data,ORG as any);
+const t:any=(MARKET_INTELLIGENCE_TEMPLATES as any[]).find(x=>x.slug==='market-intelligence-le-03-grand-folio');
+const visible=(t.schema.pages as any[]).filter(p=>!p.conditional||evalConditional(String(p.conditional),{data,tokens:{}} as any));
+const idx=visible.findIndex(p=>p.name==='The calendar');
+const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium-1194/chrome-linux/chrome'});
+const {html}=renderTemplateToHtml(t.schema,{data});
+const pg=await b.newPage({viewport:{width:794,height:1123}});
+await pg.setContent(html,{waitUntil:'load'});
+const box=await pg.locator('.tpl-page').nth(idx).evaluate((el:any)=>{
+  const pr=el.getBoundingClientRect();
+  return (Array.from(el.children) as any[]).map(c=>{const r=c.getBoundingClientRect();
+    return {t:+((r.top-pr.top)*0.75).toFixed(0),h:+(r.height*0.75).toFixed(0),b:+((r.bottom-pr.top)*0.75).toFixed(0),tx:(c.textContent||'').replace(/\s+/g,' ').slice(0,30)};});});
+for(const x of box) console.log('  ',JSON.stringify(x));
+const rows=await pg.locator('.tpl-page').nth(idx).locator('tr').count();
+console.log('  table rows (incl header):',rows,' footer top: 820pt');
+await b.close();

@@ -1,0 +1,257 @@
+{
+  "resolved": {
+    "apptyShYE0yzL4IGB": {
+      "kind": "base",
+      "name": "NPC Emails"
+    },
+    "fld0VFB3UfSf4gCkp": {
+      "kind": "field",
+      "table": "BRQ Detailed Responses",
+      "name": "Applicant"
+    },
+    "fld1OdfUYrs5HjI9A": {
+      "kind": "field",
+      "table": "Properties",
+      "name": "Baths"
+    },
+    "fld1ytmg0havMGDhc": {
+      "kind": "field",
+      "table": "Aurixa Waitlist",
+      "name": "Current Bottlenecks"
+    },
+    "fld3KnZoGuhtkO10g": {
+      "kind": "field",
+      "table": "Properties",
+      "name": "Suburb"
+    },
+    "fld3M4swxHe27aBJY": {
+      "kind": "field",
+      "table": "Properties",
+      "name": "State"
+    },
+    "fld3z79Sm1uc7vCHY": {
+      "kind": "field",
+      "table": "Business Readiness Responses",
+      "name": "Decision Authority"
+    },
+    "fld6o2raVanGj6rp5": {
+      "kind": "field",
+      "table": "Aurixa Waitlist",
+      "name": "Business Readiness Responses"
+    },
+    "fldA5j0e9NPipgCuU": {
+      "kind": "field",
+      "table": "Aurixa Waitlist",
+      "name": "Annual Transactional Value"
+    },
+    "fldAH7gzIq2bicqvQ": {
+      "kind": "field",
+      "table": "Aurixa Waitlist",
+      "name": "Additional Notes"
+    },
+    "fldDdM4JA87pPyXJm": {
+      "kind": "field",
+      "table": "Business Readiness Responses",
+      "name": "Top Operational Problems"
+    },
+    "fldDrgTTRE2Kbrnd6": {
+      "kind": "field",
+      "table": "Properties",
+      "name": "Price"
+    },
+    "fldFQ6BGtLiiJfVQh": {
+      "kind": "field",
+      "table": "Properties",
+      "name": "Project Name"
+    },
+    "fldIc6c8nE8DMdUPW": {
+      "kind": "field",
+      "table": "Strategic Review Bookings",
+      "name": "Application ID"
+    },
+    "fldIplSF8qLS3ncql": {
+      "kind": "field",
+      "table": "Business Readiness Responses",
+      "name": "Application ID"
+    },
+    "fldIqQHM6g4gPUrrx": {
+      "kind": "field",
+      "table": "Business Readiness Responses",
+      "name": "Role"
+    },
+    "fldJSOnXU9dbndMyN": {
+      "kind": "field",
+      "table": "Aurixa Waitlist",
+      "name": "Last Name"
+    },
+    "fldKXSWWLc8DWCBhH": {
+      "kind": "field",
+      "table": "Aurixa Waitlist",
+      "name": "Entity Name"
+    },
+    "fldNNBdlp9WU63Vv8": {
+      "kind": "field",
+      "table": "Properties",
+      "name": "Address"
+    },
+    "fldNmKtbJUXJCLtLM": {
+      "kind": "field",
+      "table": "Aurixa Waitlist",
+      "name": "Your Role"
+    },
+    "fldOLKfVW7fWKJaVE": {
+      "kind": "field",
+      "table": "Aurixa Waitlist",
+      "name": "Entity Classification"
+    },
+    "fldOYn2KqkkG4Mtcg": {
+      "kind": "field",
+      "table": "Properties",
+      "name": "Beds"
+    },
+    "fldPsXQ0BpioCvSvr": {
+      "kind": "field",
+      "table": "Business Readiness Responses",
+      "name": "Implementation Timeline"
+    },
+    "fldPxNxDBNncb2d9h": {
+      "kind": "field",
+      "table": "Aurixa Waitlist",
+      "name": "Primary Areas to Improve"
+    },
+    "fldQp2I1sxkrLXsvl": {
+      "kind": "field",
+      "table": "Business Readiness Responses",
+      "name": "Preferred Next Step"
+    },
+    "fldQxBIDhmdbCj9Tn": {
+      "kind": "field",
+      "table": "BRQ Detailed Responses",
+      "name": "Application ID"
+    },
+    "fldSPnEkz8LTPep5j": {
+      "kind": "field",
+      "table": "Business Readiness Responses",
+      "name": "Required Aurixa Capabilities (Ranked)"
+    },
+    "fldU6Ny4Ck482jpGg": {
+      "kind": "field",
+      "table": "Aurixa Waitlist",
+      "name": "Application ID"
+    },
+    "fldV4WV5a0fexdItk": {
+      "kind": "field",
+      "table": "Business Readiness Responses",
+      "name": "Applicant Reference"
+    },
+    "fldVCnqoOizBS557y": {
+      "kind": "field",
+      "table": "Properties",
+      "name": "Property Type"
+    },
+    "fldhyP7rjITi94tFH": {
+      "kind": "field",
+      "table": "Aurixa Waitlist",
+      "name": "Phone"
+    },
+    "fldnpJNgmzOP2NOkt": {
+      "kind": "field",
+      "table": "Strategic Review Bookings",
+      "name": "Applicant"
+    },
+    "fldoZWwTidEhcrmeg": {
+      "kind": "field",
+      "table": "Property Intake Master",
+      "name": "Created Time"
+    },
+    "fldpThwtKAXHfQNut": {
+      "kind": "field",
+      "table": "Aurixa Waitlist",
+      "name": "Application ID Key"
+    },
+    "fldtKYX4KlL42xkVf": {
+      "kind": "field",
+      "table": "Properties",
+      "name": "Created"
+    },
+    "fldti4XWR1B1NMzNW": {
+      "kind": "field",
+      "table": "Business Readiness Responses",
+      "name": "User Count"
+    },
+    "fldvcq6GjkuBTREON": {
+      "kind": "field",
+      "table": "Aurixa Waitlist",
+      "name": "Corporate Email"
+    },
+    "fldyvxPM3x4LVi33h": {
+      "kind": "field",
+      "table": "Aurixa Waitlist",
+      "name": "First Name"
+    },
+    "tblB1t18q6aUTNI0g": {
+      "kind": "table",
+      "name": "BRQ Detailed Responses"
+    },
+    "tblH9cW4EhVs6D5H1": {
+      "kind": "table",
+      "name": "Properties"
+    },
+    "tblHzGiB591W3GpoZ": {
+      "kind": "table",
+      "name": "Aurixa Waitlist"
+    },
+    "tblWIg5cs85O30pcY": {
+      "kind": "table",
+      "name": "Property Intake Master"
+    },
+    "tblXQx00T3CKEVnvV": {
+      "kind": "table",
+      "name": "Business Readiness Responses"
+    },
+    "tbljj5XQbC2a4ON1U": {
+      "kind": "table",
+      "name": "Strategic Review Bookings"
+    },
+    "wfl2oNZFRFNLijUCS": {
+      "kind": "automation",
+      "name": "Link Stage 2 response to applicant"
+    },
+    "wflC3shfecZCs4CUx": {
+      "kind": "automation",
+      "name": "Automation 1"
+    },
+    "wflM9vUhBoHb0ZE8r": {
+      "kind": "automation",
+      "name": "Aurixa Lead Capture"
+    },
+    "wflOUO4qcLHFpMUA8": {
+      "kind": "automation",
+      "name": "Delete Records After 30 Days"
+    },
+    "wflV2MkgLeNmGwq0B": {
+      "kind": "automation",
+      "name": "Auto-generate report"
+    },
+    "wflY5xS7RjU4W047M": {
+      "kind": "automation",
+      "name": "Link Stage 2 detailed response to applicant"
+    },
+    "wflYVh8DI3YVnsCjT": {
+      "kind": "automation",
+      "name": "Send Confirmation Email on New Business Readiness Response"
+    },
+    "wflh1IWRe0okzxeTK": {
+      "kind": "automation",
+      "name": "Notify Aurixa Team on New Business Readiness Submission"
+    },
+    "wfljwe75Zqv5u8uCx": {
+      "kind": "automation",
+      "name": "Delete Property Intake Records After 30 Days"
+    },
+    "wfllWJM4uuYu6L83r": {
+      "kind": "automation",
+      "name": "Link Stage 3 booking to applicant"
+    }
+  }
+}

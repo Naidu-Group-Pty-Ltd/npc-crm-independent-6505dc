@@ -1,0 +1,214 @@
+{
+  "probeRunAt": "2026-09-18T04:31:19.838Z",
+  "method": "ArcGIS identify at a single coordinate, tolerance 0 (exact containment at the point)",
+  "coverageCaveat": "A point-in-polygon identify describes the POINT, not the whole parcel. A layer that does not intersect the point may still intersect part of the lot, so \"answered, no intersection\" is never a clearance for the parcel.",
+  "subjects": [
+    {
+      "label": "Annabelle",
+      "reportId": "9bd41c05-7f9b-41e8-819a-a029f4121369",
+      "address": "18 Annabelle Crescent, Kellyville NSW 2155",
+      "jurisdiction": "NSW",
+      "lat": -33.7115485,
+      "lng": 150.9586199,
+      "coordinateBasis": "stored location_intelligence coordinate (verified at enrichment)"
+    },
+    {
+      "label": "Pallas",
+      "reportId": "3a4a3d9b-4d2d-4296-9e39-3fab0c2ae753",
+      "address": "262 Pallas Street, Maryborough QLD 4650",
+      "jurisdiction": "QLD",
+      "lat": -25.5406,
+      "lng": 152.7017,
+      "coordinateBasis": "geocoded from the stored address for this probe"
+    }
+  ],
+  "rows": [
+    {
+      "subject": "Annabelle",
+      "reportId": "9bd41c05-7f9b-41e8-819a-a029f4121369",
+      "address": "18 Annabelle Crescent, Kellyville NSW 2155",
+      "jurisdiction": "NSW",
+      "register": "NSW Planning Portal — Principal Planning Layers",
+      "licence": "CC BY 4.0",
+      "url": "https://mapprod3.environment.nsw.gov.au/arcgis/rest/services/ePlanning/Planning_Portal_Principal_Planning/MapServer/identify?f=json&geometry=%7B%22x%22%3A150.9586199%2C%22y%22%3A-33.7115485%7D&geometryType=esriGeometryPoint&sr=4326&layers=all&tolerance=0&mapExtent=150.9581199%2C-33.7120485%2C150.9591199%2C-33.7110485&imageDisplay=400%2C400%2C96&returnGeometry=false",
+      "retrievedAt": "2026-09-18T04:31:10.981Z",
+      "httpStatus": 200,
+      "outcome": "answered_with_intersection",
+      "resultCount": 4,
+      "layersReturned": [
+        "14: Height of Buildings Map",
+        "19: Land Zoning Map",
+        "22: Minimum Lot Size",
+        "8: Local Environmental Plan"
+      ],
+      "findings": [
+        {
+          "layerId": 8,
+          "layerName": "Local Environmental Plan",
+          "value": "The Hills Local Environmental Plan 2019",
+          "attributes": {
+            "EPI Name": "The Hills Local Environmental Plan 2019",
+            "LGA Name": "THE HILLS SHIRE",
+            "Published Date": "12/6/2019",
+            "Commenced Date": "12/6/2019",
+            "Currency Date": "12/6/2019",
+            "Layer Class": "Included",
+            "Legislative Clause": "Null"
+          }
+        },
+        {
+          "layerId": 14,
+          "layerName": "Height of Buildings Map",
+          "value": "The Hills Local Environmental Plan 2019",
+          "attributes": {
+            "EPI Name": "The Hills Local Environmental Plan 2019",
+            "LGA Name": "THE HILLS SHIRE",
+            "Published Date": "12/12/2025",
+            "Commenced Date": "12/12/2025",
+            "Currency Date": "2/27/2026",
+            "Maximum Building Height": "10",
+            "Units": "m",
+            "Legislative Clause": "Clause 4.3",
+            "MAX_B_H_M": "10"
+          }
+        },
+        {
+          "layerId": 19,
+          "layerName": "Land Zoning Map",
+          "value": "The Hills Local Environmental Plan 2019",
+          "attributes": {
+            "EPI Name": "The Hills Local Environmental Plan 2019",
+            "LGA Name": "THE HILLS SHIRE",
+            "Published Date": "7/16/2021",
+            "Commenced Date": "7/16/2021",
+            "Currency Date": "8/7/2026",
+            "Zone": "R2",
+            "Purpose": "Null"
+          }
+        },
+        {
+          "layerId": 22,
+          "layerName": "Minimum Lot Size",
+          "value": "The Hills Local Environmental Plan 2019",
+          "attributes": {
+            "EPI Name": "The Hills Local Environmental Plan 2019",
+            "LGA Name": "THE HILLS SHIRE",
+            "Published Date": "8/7/2026",
+            "Commenced Date": "8/7/2026",
+            "Currency Date": "8/7/2026",
+            "Layer Class": "700-749",
+            "Lot Size": "700",
+            "Units": "m²",
+            "Legislative Clause": "Null"
+          }
+        }
+      ],
+      "note": "The register answered and the point falls inside at least one mapped layer."
+    },
+    {
+      "subject": "Annabelle",
+      "reportId": "9bd41c05-7f9b-41e8-819a-a029f4121369",
+      "address": "18 Annabelle Crescent, Kellyville NSW 2155",
+      "jurisdiction": "NSW",
+      "register": "NSW Planning Portal — Hazard",
+      "licence": "CC BY 4.0",
+      "url": "https://mapprod3.environment.nsw.gov.au/arcgis/rest/services/ePlanning/Planning_Portal_Hazard/MapServer/identify?f=json&geometry=%7B%22x%22%3A150.9586199%2C%22y%22%3A-33.7115485%7D&geometryType=esriGeometryPoint&sr=4326&layers=all%3A229%2C230%2C231%2C232&tolerance=0&mapExtent=150.9581199%2C-33.7120485%2C150.9591199%2C-33.7110485&imageDisplay=400%2C400%2C96&returnGeometry=false",
+      "retrievedAt": "2026-09-18T04:31:13.139Z",
+      "httpStatus": 200,
+      "outcome": "answered_no_intersection",
+      "resultCount": 0,
+      "layersReturned": [],
+      "findings": [],
+      "note": "The register answered and the point falls inside no mapped layer of this service. This is a completed query, not a clearance for the parcel."
+    },
+    {
+      "subject": "Annabelle",
+      "reportId": "9bd41c05-7f9b-41e8-819a-a029f4121369",
+      "address": "18 Annabelle Crescent, Kellyville NSW 2155",
+      "jurisdiction": "NSW",
+      "register": "NSW Planning Portal — Protection",
+      "licence": "CC BY 4.0",
+      "url": "https://mapprod3.environment.nsw.gov.au/arcgis/rest/services/ePlanning/Planning_Portal_Protection/MapServer/identify?f=json&geometry=%7B%22x%22%3A150.9586199%2C%22y%22%3A-33.7115485%7D&geometryType=esriGeometryPoint&sr=4326&layers=all%3A234%2C235%2C236%2C237%2C238%2C239%2C240%2C241%2C242%2C243%2C244%2C245&tolerance=0&mapExtent=150.9581199%2C-33.7120485%2C150.9591199%2C-33.7110485&imageDisplay=400%2C400%2C96&returnGeometry=false",
+      "retrievedAt": "2026-09-18T04:31:13.873Z",
+      "httpStatus": 200,
+      "outcome": "answered_no_intersection",
+      "resultCount": 0,
+      "layersReturned": [],
+      "findings": [],
+      "note": "The register answered and the point falls inside no mapped layer of this service. This is a completed query, not a clearance for the parcel."
+    },
+    {
+      "subject": "Pallas",
+      "reportId": "3a4a3d9b-4d2d-4296-9e39-3fab0c2ae753",
+      "address": "262 Pallas Street, Maryborough QLD 4650",
+      "jurisdiction": "QLD",
+      "register": "Queensland StatePlanning — regional plans, priority living areas and state development instruments",
+      "licence": "CC BY 4.0",
+      "url": "https://spatial-gis.information.qld.gov.au/arcgis/rest/services/PlanningCadastre/StatePlanning/MapServer/identify?f=json&geometry=%7B%22x%22%3A152.7017%2C%22y%22%3A-25.5406%7D&geometryType=esriGeometryPoint&sr=4326&layers=all&tolerance=0&mapExtent=152.7012%2C-25.5411%2C152.70219999999998%2C-25.540100000000002&imageDisplay=400%2C400%2C96&returnGeometry=false",
+      "retrievedAt": "2026-09-18T04:31:14.722Z",
+      "httpStatus": 200,
+      "outcome": "answered_with_intersection",
+      "resultCount": 2,
+      "layersReturned": [
+        "10: Priority Living Area",
+        "90: Regional planning boundaries"
+      ],
+      "findings": [
+        {
+          "layerId": 10,
+          "layerName": "Priority Living Area",
+          "value": "Maryborough Priority Living Area",
+          "attributes": {}
+        },
+        {
+          "layerId": 90,
+          "layerName": "Regional planning boundaries",
+          "value": "Wide Bay Burnett Regional Plan",
+          "attributes": {}
+        }
+      ],
+      "note": "The register answered and the point falls inside at least one mapped layer."
+    },
+    {
+      "subject": "Pallas",
+      "reportId": "3a4a3d9b-4d2d-4296-9e39-3fab0c2ae753",
+      "address": "262 Pallas Street, Maryborough QLD 4650",
+      "jurisdiction": "QLD",
+      "register": "Queensland FloodCheck — Rapid Hazard Assessment",
+      "licence": "CC BY 4.0",
+      "url": "https://spatial-gis.information.qld.gov.au/arcgis/rest/services/FloodCheck/RapidHazardAssessment/MapServer/identify?f=json&geometry=%7B%22x%22%3A152.7017%2C%22y%22%3A-25.5406%7D&geometryType=esriGeometryPoint&sr=4326&layers=all%3A0&tolerance=0&mapExtent=152.7012%2C-25.5411%2C152.70219999999998%2C-25.540100000000002&imageDisplay=400%2C400%2C96&returnGeometry=false",
+      "retrievedAt": "2026-09-18T04:31:17.697Z",
+      "httpStatus": 200,
+      "outcome": "answered_with_intersection",
+      "resultCount": 1,
+      "layersReturned": [
+        "0: Rapid Hazard Assessment"
+      ],
+      "findings": [
+        {
+          "layerId": 0,
+          "layerName": "Rapid Hazard Assessment",
+          "value": "Lower Mary River",
+          "attributes": {}
+        }
+      ],
+      "note": "The register answered and the point falls inside at least one mapped layer."
+    },
+    {
+      "subject": "Pallas",
+      "reportId": "3a4a3d9b-4d2d-4296-9e39-3fab0c2ae753",
+      "address": "262 Pallas Street, Maryborough QLD 4650",
+      "jurisdiction": "QLD",
+      "register": "Queensland Matters of State Environmental Significance",
+      "licence": "CC BY 4.0",
+      "url": "https://spatial-gis.information.qld.gov.au/arcgis/rest/services/Environment/MattersOfStateEnvironmentalSignificance/MapServer/identify?f=json&geometry=%7B%22x%22%3A152.7017%2C%22y%22%3A-25.5406%7D&geometryType=esriGeometryPoint&sr=4326&layers=all&tolerance=0&mapExtent=152.7012%2C-25.5411%2C152.70219999999998%2C-25.540100000000002&imageDisplay=400%2C400%2C96&returnGeometry=false",
+      "retrievedAt": "2026-09-18T04:31:19.030Z",
+      "httpStatus": 200,
+      "outcome": "answered_no_intersection",
+      "resultCount": 0,
+      "layersReturned": [],
+      "findings": [],
+      "note": "The register answered and the point falls inside no mapped layer of this service. This is a completed query, not a clearance for the parcel."
+    }
+  ]
+}

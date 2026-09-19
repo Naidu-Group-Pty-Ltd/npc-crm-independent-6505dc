@@ -1,0 +1,2299 @@
+{
+  "namespace": "NPCServicesDesignSystem_f624bc",
+  "globalCssPaths": [
+    "tokens/fonts.css",
+    "tokens/colors.css",
+    "tokens/typography.css",
+    "tokens/spacing.css",
+    "tokens/elevation.css",
+    "tokens/motion.css",
+    "tokens/surfaces.css",
+    "styles.css"
+  ],
+  "themes": [
+    {
+      "selector": ".dark",
+      "label": "Dark"
+    }
+  ],
+  "fonts": [
+    {
+      "family": "Cinzel",
+      "weight": "700",
+      "style": "normal",
+      "cssPath": "tokens/fonts.css",
+      "files": [
+        "assets/fonts/Cinzel-Bold.ttf"
+      ]
+    },
+    {
+      "family": "Playfair Display",
+      "weight": "500",
+      "style": "normal",
+      "cssPath": "tokens/fonts.css",
+      "files": [
+        "assets/fonts/PlayfairDisplay-Medium.ttf"
+      ]
+    }
+  ],
+  "brandFonts": [
+    {
+      "family": "Cinzel",
+      "status": "ok",
+      "tokens": [
+        "--font-display"
+      ],
+      "path": "tokens/fonts.css"
+    },
+    {
+      "family": "Playfair Display",
+      "status": "ok",
+      "tokens": [
+        "--font-serif"
+      ],
+      "path": "tokens/fonts.css"
+    }
+  ],
+  "tokens": [
+    {
+      "name": "--background",
+      "value": "42 54% 96%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--foreground",
+      "value": "34 20% 16%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--card",
+      "value": "42 82% 99%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--card-foreground",
+      "value": "34 17% 17%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--popover",
+      "value": "42 82% 99%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--popover-foreground",
+      "value": "34 17% 17%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--primary",
+      "value": "262 66% 46%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--primary-foreground",
+      "value": "0 0% 100%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--primary-hover",
+      "value": "262 66% 38%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--accent",
+      "value": "268 58% 54%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--accent-foreground",
+      "value": "0 0% 100%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--secondary",
+      "value": "40 54% 93%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--secondary-foreground",
+      "value": "34 17% 17%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--secondary-hover",
+      "value": "39 48% 89%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--muted",
+      "value": "39 44% 91%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--muted-foreground",
+      "value": "33 14% 38%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--brand",
+      "value": "43 74% 49%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--brand-foreground",
+      "value": "0 0% 10%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--brand-light",
+      "value": "43 80% 94%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--brand-50",
+      "value": "43 74% 96%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--brand-100",
+      "value": "43 74% 90%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--brand-200",
+      "value": "43 74% 82%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--brand-300",
+      "value": "43 74% 72%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--brand-400",
+      "value": "43 74% 62%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--brand-500",
+      "value": "43 74% 52%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--brand-600",
+      "value": "43 74% 45%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--brand-700",
+      "value": "43 74% 38%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--brand-800",
+      "value": "43 74% 32%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--brand-900",
+      "value": "43 74% 28%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--brand-950",
+      "value": "43 74% 17%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--success",
+      "value": "142 71% 45%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--success-foreground",
+      "value": "0 0% 100%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--success-light",
+      "value": "142 69% 95%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--warning",
+      "value": "43 74% 49%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--warning-foreground",
+      "value": "0 0% 100%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--warning-light",
+      "value": "43 74% 95%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--destructive",
+      "value": "0 84% 60%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--destructive-foreground",
+      "value": "0 0% 100%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--destructive-light",
+      "value": "0 93% 97%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--info",
+      "value": "200 98% 39%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--info-foreground",
+      "value": "0 0% 100%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--info-light",
+      "value": "200 100% 96%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--chart-1",
+      "value": "43 74% 49%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--chart-2",
+      "value": "41 62% 58%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--chart-3",
+      "value": "142 71% 45%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--chart-4",
+      "value": "0 84% 60%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--chart-5",
+      "value": "262 42% 54%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--chart-6",
+      "value": "25 86% 55%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--chart-7",
+      "value": "173 70% 38%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--chart-8",
+      "value": "330 58% 48%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--chart-9",
+      "value": "43 74% 35%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--chart-10",
+      "value": "88 44% 43%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--border",
+      "value": "36 30% 81%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--input",
+      "value": "36 30% 81%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--ring",
+      "value": "262 66% 46%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--sidebar-background",
+      "value": "39 52% 94%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--sidebar-foreground",
+      "value": "34 20% 22%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--sidebar-primary",
+      "value": "262 66% 46%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--sidebar-primary-foreground",
+      "value": "0 0% 100%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--sidebar-accent",
+      "value": "268 58% 54%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--sidebar-accent-foreground",
+      "value": "0 0% 100%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--sidebar-border",
+      "value": "36 30% 83%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--sidebar-ring",
+      "value": "262 66% 46%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--topbar-background",
+      "value": "42 82% 99%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--sidebar-surface",
+      "value": "39 52% 94%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--mobile-nav-background",
+      "value": "42 82% 99%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--aurixa-obsidian",
+      "value": "34 20% 12%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--aurixa-aurora-1",
+      "value": "43 74% 62%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--aurixa-aurora-2",
+      "value": "262 66% 58%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--aurixa-aurora-3",
+      "value": "200 98% 55%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--aurixa-glass-bg",
+      "value": "42 82% 99%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--aurixa-glass-border",
+      "value": "36 30% 78%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--aurixa-glow",
+      "value": "43 74% 55%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--aurixa-hairline",
+      "value": "43 40% 70%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--background",
+      "value": "0 0% 4%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--foreground",
+      "value": "40 6% 90%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--card",
+      "value": "0 0% 7%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--card-foreground",
+      "value": "40 6% 90%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--popover",
+      "value": "0 0% 7%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--popover-foreground",
+      "value": "40 6% 90%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--primary",
+      "value": "43 74% 49%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--primary-foreground",
+      "value": "0 0% 5%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--primary-hover",
+      "value": "43 74% 42%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--accent",
+      "value": "43 74% 49%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--accent-foreground",
+      "value": "0 0% 5%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--secondary",
+      "value": "0 0% 12%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--secondary-foreground",
+      "value": "40 6% 90%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--secondary-hover",
+      "value": "0 0% 16%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--muted",
+      "value": "0 0% 12%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--muted-foreground",
+      "value": "0 0% 55%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--brand",
+      "value": "43 74% 49%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--brand-foreground",
+      "value": "0 0% 8%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--brand-light",
+      "value": "43 70% 14%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--success",
+      "value": "142 71% 45%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--success-foreground",
+      "value": "0 0% 100%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--success-light",
+      "value": "142 69% 12%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--warning",
+      "value": "43 74% 49%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--warning-foreground",
+      "value": "0 0% 5%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--warning-light",
+      "value": "43 74% 12%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--destructive",
+      "value": "0 84% 60%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--destructive-foreground",
+      "value": "0 0% 100%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--destructive-light",
+      "value": "0 93% 12%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--info",
+      "value": "200 98% 59%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--info-foreground",
+      "value": "0 0% 5%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--info-light",
+      "value": "200 80% 14%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--chart-2",
+      "value": "200 98% 59%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--chart-3",
+      "value": "142 71% 55%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--chart-4",
+      "value": "0 84% 68%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--chart-5",
+      "value": "262 60% 67%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--chart-6",
+      "value": "25 95% 60%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--chart-7",
+      "value": "173 80% 48%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--chart-8",
+      "value": "330 70% 62%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--chart-9",
+      "value": "43 74% 58%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--chart-10",
+      "value": "88 50% 56%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--border",
+      "value": "0 0% 18%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--input",
+      "value": "0 0% 18%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--ring",
+      "value": "43 74% 49%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--sidebar-background",
+      "value": "0 0% 6%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--sidebar-foreground",
+      "value": "40 6% 90%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--sidebar-primary",
+      "value": "43 74% 49%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--sidebar-primary-foreground",
+      "value": "0 0% 5%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--sidebar-accent",
+      "value": "43 74% 49%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--sidebar-accent-foreground",
+      "value": "0 0% 5%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--sidebar-border",
+      "value": "0 0% 14%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--sidebar-ring",
+      "value": "43 74% 49%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--topbar-background",
+      "value": "0 0% 7%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--sidebar-surface",
+      "value": "0 0% 6%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--mobile-nav-background",
+      "value": "0 0% 7%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--aurixa-obsidian",
+      "value": "0 0% 5%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--aurixa-aurora-1",
+      "value": "43 74% 55%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--aurixa-aurora-2",
+      "value": "262 66% 60%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--aurixa-aurora-3",
+      "value": "200 98% 58%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--aurixa-glass-bg",
+      "value": "0 0% 9%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--aurixa-glass-border",
+      "value": "43 30% 24%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--aurixa-glow",
+      "value": "43 74% 49%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--aurixa-hairline",
+      "value": "43 40% 30%",
+      "kind": "color",
+      "definedIn": "tokens/colors.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--font-sans",
+      "value": "ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, \"Segoe UI\", Roboto, \"Helvetica Neue\", Arial, \"Noto Sans\", sans-serif, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+      "kind": "font",
+      "definedIn": "tokens/typography.css",
+      "annotation": "font"
+    },
+    {
+      "name": "--font-heading",
+      "value": "var(--font-sans)",
+      "kind": "font",
+      "definedIn": "tokens/typography.css",
+      "annotation": "font"
+    },
+    {
+      "name": "--font-mono",
+      "value": "ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, \"Liberation Mono\", \"Courier New\", monospace",
+      "kind": "font",
+      "definedIn": "tokens/typography.css",
+      "annotation": "font"
+    },
+    {
+      "name": "--font-display",
+      "value": "\"Cinzel\", Georgia, \"Times New Roman\", serif",
+      "kind": "font",
+      "definedIn": "tokens/typography.css",
+      "annotation": "font"
+    },
+    {
+      "name": "--font-serif",
+      "value": "\"Playfair Display\", Georgia, \"Times New Roman\", serif",
+      "kind": "font",
+      "definedIn": "tokens/typography.css",
+      "annotation": "font"
+    },
+    {
+      "name": "--base-font-size",
+      "value": "1rem",
+      "kind": "font",
+      "definedIn": "tokens/typography.css",
+      "annotation": "font"
+    },
+    {
+      "name": "--text-2xs",
+      "value": "0.625rem",
+      "kind": "font",
+      "definedIn": "tokens/typography.css"
+    },
+    {
+      "name": "--text-xs",
+      "value": "0.6875rem",
+      "kind": "font",
+      "definedIn": "tokens/typography.css"
+    },
+    {
+      "name": "--text-sm",
+      "value": "0.75rem",
+      "kind": "font",
+      "definedIn": "tokens/typography.css"
+    },
+    {
+      "name": "--text-base",
+      "value": "0.875rem",
+      "kind": "font",
+      "definedIn": "tokens/typography.css"
+    },
+    {
+      "name": "--text-md",
+      "value": "1rem",
+      "kind": "font",
+      "definedIn": "tokens/typography.css"
+    },
+    {
+      "name": "--text-lg",
+      "value": "1.125rem",
+      "kind": "font",
+      "definedIn": "tokens/typography.css"
+    },
+    {
+      "name": "--text-xl",
+      "value": "1.25rem",
+      "kind": "font",
+      "definedIn": "tokens/typography.css"
+    },
+    {
+      "name": "--text-2xl",
+      "value": "1.5rem",
+      "kind": "font",
+      "definedIn": "tokens/typography.css"
+    },
+    {
+      "name": "--text-3xl",
+      "value": "1.75rem",
+      "kind": "font",
+      "definedIn": "tokens/typography.css"
+    },
+    {
+      "name": "--text-4xl",
+      "value": "2.25rem",
+      "kind": "font",
+      "definedIn": "tokens/typography.css"
+    },
+    {
+      "name": "--weight-normal",
+      "value": "400",
+      "kind": "font",
+      "definedIn": "tokens/typography.css",
+      "annotation": "font"
+    },
+    {
+      "name": "--weight-medium",
+      "value": "500",
+      "kind": "font",
+      "definedIn": "tokens/typography.css",
+      "annotation": "font"
+    },
+    {
+      "name": "--weight-semibold",
+      "value": "600",
+      "kind": "font",
+      "definedIn": "tokens/typography.css",
+      "annotation": "font"
+    },
+    {
+      "name": "--weight-bold",
+      "value": "700",
+      "kind": "font",
+      "definedIn": "tokens/typography.css",
+      "annotation": "font"
+    },
+    {
+      "name": "--leading-tight",
+      "value": "1.15",
+      "kind": "font",
+      "definedIn": "tokens/typography.css",
+      "annotation": "font"
+    },
+    {
+      "name": "--leading-snug",
+      "value": "1.35",
+      "kind": "font",
+      "definedIn": "tokens/typography.css",
+      "annotation": "font"
+    },
+    {
+      "name": "--leading-normal",
+      "value": "1.5",
+      "kind": "font",
+      "definedIn": "tokens/typography.css",
+      "annotation": "font"
+    },
+    {
+      "name": "--leading-relaxed",
+      "value": "1.6",
+      "kind": "font",
+      "definedIn": "tokens/typography.css",
+      "annotation": "font"
+    },
+    {
+      "name": "--tracking-tight",
+      "value": "-0.045em",
+      "kind": "font",
+      "definedIn": "tokens/typography.css"
+    },
+    {
+      "name": "--tracking-snug",
+      "value": "-0.02em",
+      "kind": "font",
+      "definedIn": "tokens/typography.css",
+      "annotation": "font"
+    },
+    {
+      "name": "--tracking-normal",
+      "value": "0",
+      "kind": "font",
+      "definedIn": "tokens/typography.css",
+      "annotation": "font"
+    },
+    {
+      "name": "--tracking-eyebrow",
+      "value": "0.18em",
+      "kind": "font",
+      "definedIn": "tokens/typography.css"
+    },
+    {
+      "name": "--tracking-wide",
+      "value": "0.14em",
+      "kind": "font",
+      "definedIn": "tokens/typography.css",
+      "annotation": "font"
+    },
+    {
+      "name": "--tracking-widest",
+      "value": "0.34em",
+      "kind": "font",
+      "definedIn": "tokens/typography.css"
+    },
+    {
+      "name": "--text-body",
+      "value": "hsl(var(--foreground))",
+      "kind": "color",
+      "definedIn": "tokens/typography.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--text-muted",
+      "value": "hsl(var(--muted-foreground))",
+      "kind": "color",
+      "definedIn": "tokens/typography.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--text-emphasis",
+      "value": "hsl(var(--primary))",
+      "kind": "color",
+      "definedIn": "tokens/typography.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--text-brand",
+      "value": "hsl(var(--brand))",
+      "kind": "color",
+      "definedIn": "tokens/typography.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--text-on-brand",
+      "value": "hsl(var(--brand-foreground))",
+      "kind": "color",
+      "definedIn": "tokens/typography.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--space-0",
+      "value": "0",
+      "kind": "spacing",
+      "definedIn": "tokens/spacing.css",
+      "annotation": "spacing"
+    },
+    {
+      "name": "--space-1",
+      "value": "0.25rem",
+      "kind": "spacing",
+      "definedIn": "tokens/spacing.css"
+    },
+    {
+      "name": "--space-2",
+      "value": "0.5rem",
+      "kind": "spacing",
+      "definedIn": "tokens/spacing.css"
+    },
+    {
+      "name": "--space-3",
+      "value": "0.75rem",
+      "kind": "spacing",
+      "definedIn": "tokens/spacing.css"
+    },
+    {
+      "name": "--space-4",
+      "value": "1rem",
+      "kind": "spacing",
+      "definedIn": "tokens/spacing.css"
+    },
+    {
+      "name": "--space-5",
+      "value": "1.25rem",
+      "kind": "spacing",
+      "definedIn": "tokens/spacing.css"
+    },
+    {
+      "name": "--space-6",
+      "value": "1.5rem",
+      "kind": "spacing",
+      "definedIn": "tokens/spacing.css"
+    },
+    {
+      "name": "--space-8",
+      "value": "2rem",
+      "kind": "spacing",
+      "definedIn": "tokens/spacing.css"
+    },
+    {
+      "name": "--space-10",
+      "value": "2.5rem",
+      "kind": "spacing",
+      "definedIn": "tokens/spacing.css",
+      "annotation": "spacing"
+    },
+    {
+      "name": "--space-12",
+      "value": "3rem",
+      "kind": "spacing",
+      "definedIn": "tokens/spacing.css",
+      "annotation": "spacing"
+    },
+    {
+      "name": "--space-16",
+      "value": "4rem",
+      "kind": "spacing",
+      "definedIn": "tokens/spacing.css",
+      "annotation": "spacing"
+    },
+    {
+      "name": "--radius",
+      "value": "0.75rem",
+      "kind": "radius",
+      "definedIn": "tokens/spacing.css",
+      "annotation": "radius"
+    },
+    {
+      "name": "--radius-sm",
+      "value": "0.375rem",
+      "kind": "radius",
+      "definedIn": "tokens/spacing.css",
+      "annotation": "radius"
+    },
+    {
+      "name": "--radius-md",
+      "value": "0.5rem",
+      "kind": "radius",
+      "definedIn": "tokens/spacing.css",
+      "annotation": "radius"
+    },
+    {
+      "name": "--radius-lg",
+      "value": "0.75rem",
+      "kind": "radius",
+      "definedIn": "tokens/spacing.css"
+    },
+    {
+      "name": "--radius-xl",
+      "value": "1.25rem",
+      "kind": "radius",
+      "definedIn": "tokens/spacing.css"
+    },
+    {
+      "name": "--radius-2xl",
+      "value": "1.5rem",
+      "kind": "radius",
+      "definedIn": "tokens/spacing.css"
+    },
+    {
+      "name": "--radius-3xl",
+      "value": "2rem",
+      "kind": "radius",
+      "definedIn": "tokens/spacing.css"
+    },
+    {
+      "name": "--radius-pill",
+      "value": "9999px",
+      "kind": "radius",
+      "definedIn": "tokens/spacing.css"
+    },
+    {
+      "name": "--radius-button",
+      "value": "0.85rem",
+      "kind": "radius",
+      "definedIn": "tokens/spacing.css",
+      "annotation": "radius"
+    },
+    {
+      "name": "--content-max",
+      "value": "1600px",
+      "kind": "spacing",
+      "definedIn": "tokens/spacing.css"
+    },
+    {
+      "name": "--sidebar-width",
+      "value": "18rem",
+      "kind": "spacing",
+      "definedIn": "tokens/spacing.css"
+    },
+    {
+      "name": "--sidebar-width-icon",
+      "value": "3rem",
+      "kind": "spacing",
+      "definedIn": "tokens/spacing.css",
+      "annotation": "spacing"
+    },
+    {
+      "name": "--topbar-height",
+      "value": "72px",
+      "kind": "spacing",
+      "definedIn": "tokens/spacing.css"
+    },
+    {
+      "name": "--control-height",
+      "value": "2.5rem",
+      "kind": "spacing",
+      "definedIn": "tokens/spacing.css"
+    },
+    {
+      "name": "--control-height-touch",
+      "value": "2.75rem",
+      "kind": "spacing",
+      "definedIn": "tokens/spacing.css"
+    },
+    {
+      "name": "--elevation-1",
+      "value": "0 1px 2px 0 hsl(var(--foreground) / 0.06), 0 1px 3px 0 hsl(var(--foreground) / 0.05)",
+      "kind": "shadow",
+      "definedIn": "tokens/elevation.css",
+      "annotation": "shadow"
+    },
+    {
+      "name": "--elevation-2",
+      "value": "0 4px 8px -2px hsl(var(--foreground) / 0.08), 0 2px 4px -2px hsl(var(--foreground) / 0.06)",
+      "kind": "shadow",
+      "definedIn": "tokens/elevation.css",
+      "annotation": "shadow"
+    },
+    {
+      "name": "--elevation-3",
+      "value": "0 12px 24px -6px hsl(var(--foreground) / 0.12), 0 4px 8px -4px hsl(var(--foreground) / 0.08)",
+      "kind": "shadow",
+      "definedIn": "tokens/elevation.css",
+      "annotation": "shadow"
+    },
+    {
+      "name": "--elevation-4",
+      "value": "0 24px 48px -12px hsl(var(--foreground) / 0.18), 0 8px 16px -8px hsl(var(--foreground) / 0.10)",
+      "kind": "shadow",
+      "definedIn": "tokens/elevation.css",
+      "annotation": "shadow"
+    },
+    {
+      "name": "--shadow-card",
+      "value": "0 14px 34px rgba(80, 60, 20, 0.07)",
+      "kind": "shadow",
+      "definedIn": "tokens/elevation.css",
+      "annotation": "shadow"
+    },
+    {
+      "name": "--shadow-card-hover",
+      "value": "0 18px 44px rgba(80, 60, 20, 0.095)",
+      "kind": "shadow",
+      "definedIn": "tokens/elevation.css",
+      "annotation": "shadow"
+    },
+    {
+      "name": "--shadow-control",
+      "value": "inset 0 1px 0 rgba(255, 255, 255, 0.42), 0 8px 18px rgba(80, 60, 20, 0.045)",
+      "kind": "shadow",
+      "definedIn": "tokens/elevation.css",
+      "annotation": "shadow"
+    },
+    {
+      "name": "--shadow-button-hover",
+      "value": "0 10px 22px rgba(80, 60, 20, 0.08)",
+      "kind": "shadow",
+      "definedIn": "tokens/elevation.css",
+      "annotation": "shadow"
+    },
+    {
+      "name": "--shadow-button-primary",
+      "value": "0 12px 24px rgba(120, 85, 20, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.22)",
+      "kind": "shadow",
+      "definedIn": "tokens/elevation.css",
+      "annotation": "shadow"
+    },
+    {
+      "name": "--shadow-overlay",
+      "value": "0 24px 54px rgba(80, 60, 20, 0.14)",
+      "kind": "shadow",
+      "definedIn": "tokens/elevation.css",
+      "annotation": "shadow"
+    },
+    {
+      "name": "--shadow-table",
+      "value": "0 12px 28px rgba(80, 60, 20, 0.06)",
+      "kind": "shadow",
+      "definedIn": "tokens/elevation.css",
+      "annotation": "shadow"
+    },
+    {
+      "name": "--shadow-panel",
+      "value": "0 20px 48px -30px hsl(var(--primary) / 0.34)",
+      "kind": "shadow",
+      "definedIn": "tokens/elevation.css",
+      "annotation": "shadow"
+    },
+    {
+      "name": "--shadow-panel-muted",
+      "value": "0 18px 40px -28px hsl(var(--primary) / 0.28)",
+      "kind": "shadow",
+      "definedIn": "tokens/elevation.css",
+      "annotation": "shadow"
+    },
+    {
+      "name": "--shadow-kpi",
+      "value": "0 22px 44px -30px hsl(var(--primary) / 0.32)",
+      "kind": "shadow",
+      "definedIn": "tokens/elevation.css",
+      "annotation": "shadow"
+    },
+    {
+      "name": "--shadow-sidebar",
+      "value": "18px 0 50px -36px hsl(var(--brand-900) / 0.34), inset -1px 0 0 hsl(0 0% 100% / 0.52)",
+      "kind": "shadow",
+      "definedIn": "tokens/elevation.css",
+      "annotation": "shadow"
+    },
+    {
+      "name": "--shadow-topbar",
+      "value": "0 18px 46px -30px hsl(var(--brand-900) / 0.24), inset 0 -1px 0 hsl(var(--border-soft) / 0.46)",
+      "kind": "shadow",
+      "definedIn": "tokens/elevation.css",
+      "annotation": "shadow"
+    },
+    {
+      "name": "--ring-focus",
+      "value": "0 0 0 3px hsl(var(--ring) / 0.18)",
+      "kind": "shadow",
+      "definedIn": "tokens/elevation.css",
+      "annotation": "shadow"
+    },
+    {
+      "name": "--ring-focus-strong",
+      "value": "0 0 0 3px hsl(var(--primary) / 0.16), 0 8px 18px rgba(80, 60, 20, 0.055)",
+      "kind": "shadow",
+      "definedIn": "tokens/elevation.css",
+      "annotation": "shadow"
+    },
+    {
+      "name": "--blur-control",
+      "value": "14px",
+      "kind": "spacing",
+      "definedIn": "tokens/elevation.css",
+      "annotation": "spacing"
+    },
+    {
+      "name": "--blur-panel",
+      "value": "18px",
+      "kind": "spacing",
+      "definedIn": "tokens/elevation.css",
+      "annotation": "spacing"
+    },
+    {
+      "name": "--blur-strong",
+      "value": "22px",
+      "kind": "spacing",
+      "definedIn": "tokens/elevation.css",
+      "annotation": "spacing"
+    },
+    {
+      "name": "--elevation-1",
+      "value": "0 1px 2px 0 hsl(0 0% 0% / 0.35), 0 1px 3px 0 hsl(0 0% 0% / 0.30)",
+      "kind": "shadow",
+      "definedIn": "tokens/elevation.css",
+      "scope": ".dark",
+      "annotation": "shadow"
+    },
+    {
+      "name": "--elevation-2",
+      "value": "0 4px 8px -2px hsl(0 0% 0% / 0.45), 0 2px 4px -2px hsl(0 0% 0% / 0.35)",
+      "kind": "shadow",
+      "definedIn": "tokens/elevation.css",
+      "scope": ".dark",
+      "annotation": "shadow"
+    },
+    {
+      "name": "--elevation-3",
+      "value": "0 12px 24px -6px hsl(0 0% 0% / 0.55), 0 4px 8px -4px hsl(0 0% 0% / 0.40)",
+      "kind": "shadow",
+      "definedIn": "tokens/elevation.css",
+      "scope": ".dark",
+      "annotation": "shadow"
+    },
+    {
+      "name": "--elevation-4",
+      "value": "0 24px 48px -12px hsl(0 0% 0% / 0.65), 0 8px 16px -8px hsl(0 0% 0% / 0.45)",
+      "kind": "shadow",
+      "definedIn": "tokens/elevation.css",
+      "scope": ".dark",
+      "annotation": "shadow"
+    },
+    {
+      "name": "--shadow-card",
+      "value": "0 22px 70px rgba(0, 0, 0, 0.28)",
+      "kind": "shadow",
+      "definedIn": "tokens/elevation.css",
+      "scope": ".dark",
+      "annotation": "shadow"
+    },
+    {
+      "name": "--shadow-card-hover",
+      "value": "0 24px 80px rgba(0, 0, 0, 0.34)",
+      "kind": "shadow",
+      "definedIn": "tokens/elevation.css",
+      "scope": ".dark",
+      "annotation": "shadow"
+    },
+    {
+      "name": "--shadow-control",
+      "value": "inset 0 1px 0 rgba(255, 255, 255, 0.06)",
+      "kind": "shadow",
+      "definedIn": "tokens/elevation.css",
+      "scope": ".dark",
+      "annotation": "shadow"
+    },
+    {
+      "name": "--shadow-button-hover",
+      "value": "0 14px 30px rgba(0, 0, 0, 0.22)",
+      "kind": "shadow",
+      "definedIn": "tokens/elevation.css",
+      "scope": ".dark",
+      "annotation": "shadow"
+    },
+    {
+      "name": "--shadow-overlay",
+      "value": "0 24px 54px rgba(0, 0, 0, 0.45)",
+      "kind": "shadow",
+      "definedIn": "tokens/elevation.css",
+      "scope": ".dark",
+      "annotation": "shadow"
+    },
+    {
+      "name": "--motion-fast",
+      "value": "1ms",
+      "kind": "other",
+      "definedIn": "tokens/motion.css",
+      "annotation": "other"
+    },
+    {
+      "name": "--motion-base",
+      "value": "1ms",
+      "kind": "other",
+      "definedIn": "tokens/motion.css",
+      "annotation": "other"
+    },
+    {
+      "name": "--motion-slow",
+      "value": "1ms",
+      "kind": "other",
+      "definedIn": "tokens/motion.css",
+      "annotation": "other"
+    },
+    {
+      "name": "--motion-theme",
+      "value": "1ms",
+      "kind": "other",
+      "definedIn": "tokens/motion.css",
+      "annotation": "other"
+    },
+    {
+      "name": "--motion-ease-out",
+      "value": "cubic-bezier(0.22, 1, 0.36, 1)",
+      "kind": "other",
+      "definedIn": "tokens/motion.css",
+      "annotation": "other"
+    },
+    {
+      "name": "--motion-ease-emphasized",
+      "value": "cubic-bezier(0.2, 0, 0, 1)",
+      "kind": "other",
+      "definedIn": "tokens/motion.css",
+      "annotation": "other"
+    },
+    {
+      "name": "--lift-hover",
+      "value": "0px",
+      "kind": "spacing",
+      "definedIn": "tokens/motion.css",
+      "annotation": "spacing"
+    },
+    {
+      "name": "--press-scale",
+      "value": "1",
+      "kind": "other",
+      "definedIn": "tokens/motion.css",
+      "annotation": "other"
+    },
+    {
+      "name": "--press-scale-subtle",
+      "value": "1",
+      "kind": "other",
+      "definedIn": "tokens/motion.css",
+      "annotation": "other"
+    },
+    {
+      "name": "--icon-hover-scale",
+      "value": "1",
+      "kind": "other",
+      "definedIn": "tokens/motion.css",
+      "annotation": "other"
+    },
+    {
+      "name": "--surface-1",
+      "value": "42 82% 99%",
+      "kind": "color",
+      "definedIn": "tokens/surfaces.css"
+    },
+    {
+      "name": "--surface-2",
+      "value": "41 62% 97%",
+      "kind": "color",
+      "definedIn": "tokens/surfaces.css"
+    },
+    {
+      "name": "--surface-3",
+      "value": "39 44% 91%",
+      "kind": "color",
+      "definedIn": "tokens/surfaces.css"
+    },
+    {
+      "name": "--surface-elevated",
+      "value": "42 82% 99%",
+      "kind": "color",
+      "definedIn": "tokens/surfaces.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--surface-muted",
+      "value": "39 44% 91%",
+      "kind": "color",
+      "definedIn": "tokens/surfaces.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--border-soft",
+      "value": "36 30% 81%",
+      "kind": "color",
+      "definedIn": "tokens/surfaces.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--border-strong",
+      "value": "37 32% 72%",
+      "kind": "color",
+      "definedIn": "tokens/surfaces.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--dashboard-surface",
+      "value": "42 82% 99%",
+      "kind": "color",
+      "definedIn": "tokens/surfaces.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--dashboard-surface-elevated",
+      "value": "41 62% 97%",
+      "kind": "color",
+      "definedIn": "tokens/surfaces.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--dashboard-surface-muted",
+      "value": "39 44% 91%",
+      "kind": "color",
+      "definedIn": "tokens/surfaces.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--dashboard-border-soft",
+      "value": "36 30% 81%",
+      "kind": "color",
+      "definedIn": "tokens/surfaces.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--dashboard-border-strong",
+      "value": "37 32% 72%",
+      "kind": "color",
+      "definedIn": "tokens/surfaces.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--dashboard-primary-soft",
+      "value": "262 42% 91%",
+      "kind": "color",
+      "definedIn": "tokens/surfaces.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--dashboard-primary-strong",
+      "value": "262 66% 46%",
+      "kind": "color",
+      "definedIn": "tokens/surfaces.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--dashboard-shell-bg",
+      "value": "radial-gradient(circle at 12% 0%, hsl(var(--dashboard-primary-soft) / 0.12), transparent 18rem), radial-gradient(circle at 92% 6%, hsl(var(--dashboard-primary-strong) / 0.025), transparent 16rem), linear-gradient(180deg, hsl(var(--background)), hsl(var(--surface-2)) 52%, hsl(var(--surface-1)) 100%)",
+      "kind": "other",
+      "definedIn": "tokens/surfaces.css",
+      "annotation": "other"
+    },
+    {
+      "name": "--dashboard-shell-grid",
+      "value": "linear-gradient(hsl(var(--border) / 0.12) 1px, transparent 1px), linear-gradient(90deg, hsl(var(--border) / 0.08) 1px, transparent 1px)",
+      "kind": "other",
+      "definedIn": "tokens/surfaces.css",
+      "annotation": "other"
+    },
+    {
+      "name": "--dashboard-shell-grid-size",
+      "value": "36px 36px",
+      "kind": "other",
+      "definedIn": "tokens/surfaces.css",
+      "annotation": "other"
+    },
+    {
+      "name": "--aurora-gradient",
+      "value": "radial-gradient(1200px 400px at 20% -10%, hsl(var(--aurixa-aurora-1) / 0.28), transparent 60%), radial-gradient(800px 300px at 90% 10%, hsl(var(--aurixa-aurora-2) / 0.22), transparent 55%), radial-gradient(600px 220px at 50% 100%, hsl(var(--aurixa-aurora-3) / 0.18), transparent 60%)",
+      "kind": "other",
+      "definedIn": "tokens/surfaces.css",
+      "annotation": "other"
+    },
+    {
+      "name": "--glass-tint",
+      "value": "hsl(var(--aurixa-glass-bg) / 0.72)",
+      "kind": "color",
+      "definedIn": "tokens/surfaces.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--glass-hairline",
+      "value": "hsl(var(--aurixa-glass-border) / 0.55)",
+      "kind": "color",
+      "definedIn": "tokens/surfaces.css",
+      "annotation": "color"
+    },
+    {
+      "name": "--logo-height-sidebar",
+      "value": "2.5rem",
+      "kind": "spacing",
+      "definedIn": "tokens/surfaces.css",
+      "annotation": "spacing"
+    },
+    {
+      "name": "--logo-height-mobile",
+      "value": "2rem",
+      "kind": "spacing",
+      "definedIn": "tokens/surfaces.css",
+      "annotation": "spacing"
+    },
+    {
+      "name": "--logo-height-compact",
+      "value": "1.75rem",
+      "kind": "spacing",
+      "definedIn": "tokens/surfaces.css",
+      "annotation": "spacing"
+    },
+    {
+      "name": "--logo-max-width",
+      "value": "120px",
+      "kind": "spacing",
+      "definedIn": "tokens/surfaces.css",
+      "annotation": "spacing"
+    },
+    {
+      "name": "--surface-1",
+      "value": "0 0% 7%",
+      "kind": "color",
+      "definedIn": "tokens/surfaces.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--surface-2",
+      "value": "0 0% 9%",
+      "kind": "color",
+      "definedIn": "tokens/surfaces.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--surface-3",
+      "value": "0 0% 12%",
+      "kind": "color",
+      "definedIn": "tokens/surfaces.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--surface-elevated",
+      "value": "0 0% 9%",
+      "kind": "color",
+      "definedIn": "tokens/surfaces.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--surface-muted",
+      "value": "0 0% 12%",
+      "kind": "color",
+      "definedIn": "tokens/surfaces.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--border-soft",
+      "value": "0 0% 18%",
+      "kind": "color",
+      "definedIn": "tokens/surfaces.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--border-strong",
+      "value": "43 22% 28%",
+      "kind": "color",
+      "definedIn": "tokens/surfaces.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--dashboard-surface",
+      "value": "0 0% 7%",
+      "kind": "color",
+      "definedIn": "tokens/surfaces.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--dashboard-surface-elevated",
+      "value": "0 0% 9%",
+      "kind": "color",
+      "definedIn": "tokens/surfaces.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--dashboard-surface-muted",
+      "value": "0 0% 12%",
+      "kind": "color",
+      "definedIn": "tokens/surfaces.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--dashboard-border-soft",
+      "value": "0 0% 18%",
+      "kind": "color",
+      "definedIn": "tokens/surfaces.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--dashboard-border-strong",
+      "value": "43 22% 28%",
+      "kind": "color",
+      "definedIn": "tokens/surfaces.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--dashboard-primary-soft",
+      "value": "43 70% 14%",
+      "kind": "color",
+      "definedIn": "tokens/surfaces.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--dashboard-primary-strong",
+      "value": "43 74% 49%",
+      "kind": "color",
+      "definedIn": "tokens/surfaces.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--glass-tint",
+      "value": "hsl(var(--aurixa-glass-bg) / 0.62)",
+      "kind": "color",
+      "definedIn": "tokens/surfaces.css",
+      "scope": ".dark",
+      "annotation": "color"
+    },
+    {
+      "name": "--glass-hairline",
+      "value": "hsl(var(--aurixa-glass-border) / 0.55)",
+      "kind": "color",
+      "definedIn": "tokens/surfaces.css",
+      "scope": ".dark",
+      "annotation": "color"
+    }
+  ],
+  "cards": [
+    {
+      "path": "guidelines/brand-aurora.card.html",
+      "group": "Brand",
+      "viewport": "700x190",
+      "subtitle": "The Aurixa AI signature \u2014 gold, amethyst, sky",
+      "name": "Aurora & glass"
+    },
+    {
+      "path": "guidelines/brand-imagery.card.html",
+      "group": "Brand",
+      "viewport": "700x220",
+      "subtitle": "Report cover photography \u2014 obsidian, gold, monochrome skylines",
+      "name": "Report imagery"
+    },
+    {
+      "path": "guidelines/brand-logo.card.html",
+      "group": "Brand",
+      "viewport": "700x210",
+      "subtitle": "The woven N monogram and the signature lockup",
+      "name": "Logo & monogram"
+    },
+    {
+      "path": "guidelines/brand-partners.card.html",
+      "group": "Brand",
+      "viewport": "700x200",
+      "subtitle": "Third-party logos shipped with the product",
+      "name": "Data-source marks"
+    },
+    {
+      "path": "guidelines/brand-shell.card.html",
+      "group": "Brand",
+      "viewport": "700x180",
+      "subtitle": "Warm wash, faint amethyst glow, 36px grid",
+      "name": "Page background"
+    },
+    {
+      "path": "guidelines/iconography.card.html",
+      "group": "Brand",
+      "viewport": "700x210",
+      "subtitle": "Lucide, 16px, 2px stroke, muted by default",
+      "name": "Iconography"
+    },
+    {
+      "path": "ui_kits/client-portal/index.html",
+      "group": "Client Portal",
+      "viewport": "1440x900",
+      "subtitle": "What NPC's clients see \u2014 dashboard, deal progress, action items, documents",
+      "name": "Client Portal"
+    },
+    {
+      "path": "guidelines/colors-borders.card.html",
+      "group": "Colors",
+      "viewport": "700x150",
+      "subtitle": "Soft beige hairlines, stronger rules, the 3px focus ring",
+      "name": "Borders & rings"
+    },
+    {
+      "path": "guidelines/colors-brand-gold.card.html",
+      "group": "Colors",
+      "viewport": "700x150",
+      "subtitle": "The NPC gold \u2014 --brand-50 through --brand-950, hue locked at 43",
+      "name": "Brand gold ramp"
+    },
+    {
+      "path": "guidelines/colors-charts.card.html",
+      "group": "Colors",
+      "viewport": "700x150",
+      "subtitle": "Ten categorical slots, gold-led",
+      "name": "Chart ramp"
+    },
+    {
+      "path": "guidelines/colors-dark.card.html",
+      "group": "Colors",
+      "viewport": "700x170",
+      "subtitle": "Obsidian ladder with gold emphasis \u2014 the original dashboard theme",
+      "name": "Dark theme"
+    },
+    {
+      "path": "guidelines/colors-emphasis.card.html",
+      "group": "Colors",
+      "viewport": "700x160",
+      "subtitle": "Amethyst leads light mode, gold leads dark mode",
+      "name": "Emphasis colours"
+    },
+    {
+      "path": "guidelines/colors-semantic.card.html",
+      "group": "Colors",
+      "viewport": "700x160",
+      "subtitle": "Fixed by design \u2014 success, warning, destructive, info",
+      "name": "Semantic colours"
+    },
+    {
+      "path": "guidelines/colors-surfaces.card.html",
+      "group": "Colors",
+      "viewport": "700x160",
+      "subtitle": "Warm ivory page, porcelain cards, champagne wells, warm sand chrome",
+      "name": "Light surfaces"
+    },
+    {
+      "path": "guidelines/colors-text.card.html",
+      "group": "Colors",
+      "viewport": "700x150",
+      "subtitle": "Graphite body, warm muted secondary, amethyst emphasis",
+      "name": "Text colours"
+    },
+    {
+      "path": "ui_kits/command-centre/index.html",
+      "group": "Command Centre",
+      "viewport": "1440x900",
+      "subtitle": "Internal advisor dashboard \u2014 Overview and Deal Pipeline",
+      "name": "Command Centre"
+    },
+    {
+      "path": "components/core/core.card.html",
+      "group": "Components",
+      "viewport": "700x350",
+      "subtitle": "Actions, status pills, form controls and the segmented tab rail",
+      "name": "Core \u2014 Button, Badge, Input, Tabs"
+    },
+    {
+      "path": "components/data/data.card.html",
+      "group": "Components",
+      "viewport": "700x340",
+      "subtitle": "The KPI row every NPC dashboard opens with, plus the list surface",
+      "name": "Data \u2014 KPI tiles, trend chips, tables"
+    },
+    {
+      "path": "components/navigation/navigation.card.html",
+      "group": "Components",
+      "viewport": "700x340",
+      "subtitle": "The grouped sidebar, sticky glass top bar, icon buttons and avatars",
+      "name": "Navigation \u2014 brand lockup, sidebar, top bar"
+    },
+    {
+      "path": "components/surfaces/surfaces.card.html",
+      "group": "Components",
+      "viewport": "700x340",
+      "subtitle": "ThemeFrame variants, the Aurixa glass surface, section headers",
+      "name": "Surfaces \u2014 frames, glass, empty states"
+    },
+    {
+      "path": "guidelines/interaction-states.card.html",
+      "group": "Elevation",
+      "viewport": "700x200",
+      "subtitle": "Hover lifts 2px, press shrinks, focus halos",
+      "name": "Interaction states"
+    },
+    {
+      "path": "guidelines/motion.card.html",
+      "group": "Elevation",
+      "viewport": "700x180",
+      "subtitle": "120\u2013320ms, ease-out, no bounce",
+      "name": "Motion"
+    },
+    {
+      "path": "guidelines/shadow-elevation.card.html",
+      "group": "Elevation",
+      "viewport": "700x170",
+      "subtitle": "--elevation-1 to 4, theme-agnostic",
+      "name": "Elevation steps"
+    },
+    {
+      "path": "guidelines/shadow-warm.card.html",
+      "group": "Elevation",
+      "viewport": "700x180",
+      "subtitle": "The light-theme signature \u2014 brown, never blue-grey",
+      "name": "Warm shadows"
+    },
+    {
+      "path": "ui_kits/finance-portal/index.html",
+      "group": "Finance Portal",
+      "viewport": "1440x900",
+      "subtitle": "Broker-facing triage dashboard and purchase-file deal rooms",
+      "name": "Finance Partner Portal"
+    },
+    {
+      "path": "ui_kits/partner-portals/index.html",
+      "group": "Partner Portals",
+      "viewport": "1440x900",
+      "subtitle": "The two narrow-audience partner surfaces \u2014 switch persona in the sidebar",
+      "name": "Solicitor & Builder Portals"
+    },
+    {
+      "path": "guidelines/layout-rails.card.html",
+      "group": "Spacing",
+      "viewport": "700x180",
+      "subtitle": "Content width, sidebar, top bar, control heights",
+      "name": "Layout rails"
+    },
+    {
+      "path": "guidelines/radius-scale.card.html",
+      "group": "Spacing",
+      "viewport": "700x170",
+      "subtitle": "Soft everywhere \u2014 6px minimum, 32px page frames",
+      "name": "Radius scale"
+    },
+    {
+      "path": "guidelines/spacing-in-use.card.html",
+      "group": "Spacing",
+      "viewport": "700x210",
+      "subtitle": "A panel built from the scale",
+      "name": "Spacing in use"
+    },
+    {
+      "path": "guidelines/spacing-scale.card.html",
+      "group": "Spacing",
+      "viewport": "700x200",
+      "subtitle": "4px base \u2014 --space-1 through --space-12",
+      "name": "Spacing scale"
+    },
+    {
+      "path": "guidelines/type-body.card.html",
+      "group": "Type",
+      "viewport": "700x210",
+      "subtitle": "System sans stack, 10px \u2192 20px",
+      "name": "Body scale"
+    },
+    {
+      "path": "guidelines/type-display.card.html",
+      "group": "Type",
+      "viewport": "700x180",
+      "subtitle": "Cinzel Bold and Playfair Display Medium \u2014 report covers only",
+      "name": "Display faces"
+    },
+    {
+      "path": "guidelines/type-eyebrow.card.html",
+      "group": "Type",
+      "viewport": "700x180",
+      "subtitle": "The single strongest typographic signature of the brand",
+      "name": "The letterspaced eyebrow"
+    },
+    {
+      "path": "guidelines/type-mono.card.html",
+      "group": "Type",
+      "viewport": "700x150",
+      "subtitle": "Tokens, ids, keyboard hints",
+      "name": "Mono"
+    },
+    {
+      "path": "guidelines/type-numerals.card.html",
+      "group": "Type",
+      "viewport": "700x170",
+      "subtitle": "Tabular figures, tight tracking, small muted units",
+      "name": "Numerals"
+    }
+  ]
+}

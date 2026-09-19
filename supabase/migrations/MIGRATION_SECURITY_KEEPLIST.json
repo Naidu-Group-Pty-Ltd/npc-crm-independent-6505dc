@@ -1,0 +1,131 @@
+{
+  "$comment": "WP-17: reviewed exemptions from scripts/security/check-migration-security.mjs. Each entry suppresses one rule for one named object and must carry a reason a reviewer can check. Policy, mirroring scripts/security/dependency-audit-allowlist.json: exempt an OBJECT, never a migration file — exempting a file exempts everything anyone adds to it later, including the thing nobody has read yet.",
+  "$rules": {
+    "secdef_search_path": "A SECURITY DEFINER function runs with the definer's privileges. Without `SET search_path` the caller chooses which schema an unqualified name resolves in, which turns the function into an escalation primitive.",
+    "secdef_execute": "A new SECURITY DEFINER function in `public` is reachable by the publishable key in the browser bundle until EXECUTE is revoked from PUBLIC AND from `anon` AND from `authenticated`. Both halves cost a production defect and both no-op revokes SUCCEED, so neither reports anything alone. CREATE grants EXECUTE to PUBLIC and every role inherits it, so revoking `anon` alone removes a grant it never had — the RLS-W5 lesson (20260725096000). This project ALSO carries default privileges granting EXECUTE on new functions in `public` directly to `anon` and `authenticated`, so revoking PUBLIC alone leaves those standing: measured on the live catalogue 2026-09-16, `geocode_cache_touch` and `market_sales_refresh` each read `postgres=X | anon=X | authenticated=X | service_role=X` with no PUBLIC entry, both after a migration whose stated purpose was to close them (20261129090000).",
+    "view_security_invoker": "A view without `security_invoker = true` reads its base tables with the owner's rights, so RLS on those tables does not apply to anyone who can select the view.",
+    "table_rls": "A table created without ENABLE ROW LEVEL SECURITY is readable and writable by any role holding a table grant, and PostgREST exposes it."
+  },
+  "exemptions": [
+    {
+      "rule": "secdef_execute",
+      "object": "public.has_role",
+      "reason": "RLS policy predicate referenced by 33 policies. Policy expressions are evaluated in the querying role's context, so revoking EXECUTE from that role makes every policy using it fail closed.",
+      "review_by": "2027-02-09"
+    },
+    {
+      "rule": "secdef_execute",
+      "object": "public.has_aml_role",
+      "reason": "RLS policy predicate (AML). Same evaluation-context constraint as public.has_role.",
+      "review_by": "2027-02-09"
+    },
+    {
+      "rule": "secdef_execute",
+      "object": "public.has_aml_write_role",
+      "reason": "RLS policy predicate referenced by 21 policies. Same evaluation-context constraint as public.has_role.",
+      "review_by": "2027-02-09"
+    },
+    {
+      "rule": "secdef_execute",
+      "object": "public.has_any_aml_role",
+      "reason": "RLS policy predicate (AML). Same evaluation-context constraint as public.has_role.",
+      "review_by": "2027-02-09"
+    },
+    {
+      "rule": "secdef_execute",
+      "object": "public.current_user_can_view",
+      "reason": "RLS policy predicate referenced by 19 policies (module-permission gate). Same evaluation-context constraint as public.has_role.",
+      "review_by": "2027-02-09"
+    },
+    {
+      "rule": "secdef_execute",
+      "object": "public.current_user_can_edit",
+      "reason": "RLS policy predicate referenced by 10 policies. Same evaluation-context constraint as public.has_role.",
+      "review_by": "2027-02-09"
+    },
+    {
+      "rule": "secdef_execute",
+      "object": "public.current_user_can_delete",
+      "reason": "RLS policy predicate referenced by 3 policies. Same evaluation-context constraint as public.has_role.",
+      "review_by": "2027-02-09"
+    },
+    {
+      "rule": "secdef_execute",
+      "object": "aml.has_aml_role",
+      "reason": "RLS policy predicate in the aml schema. Same evaluation-context constraint as public.has_role.",
+      "review_by": "2027-02-09"
+    },
+    {
+      "rule": "secdef_execute",
+      "object": "aml.has_any_aml_role",
+      "reason": "RLS policy predicate in the aml schema. Same evaluation-context constraint as public.has_role.",
+      "review_by": "2027-02-09"
+    },
+    {
+      "rule": "secdef_execute",
+      "object": "aml.has_tenant_aml_role",
+      "reason": "RLS policy predicate referenced by 5 policies, and called from the browser (src/lib/aml). Same evaluation-context constraint as public.has_role.",
+      "review_by": "2027-02-09"
+    },
+    {
+      "rule": "secdef_execute",
+      "object": "aml.has_any_tenant_aml_role",
+      "reason": "RLS policy predicate referenced by 7 policies, and called from the browser (src/lib/aml). Same evaluation-context constraint as public.has_role.",
+      "review_by": "2027-02-09"
+    },
+    {
+      "rule": "secdef_execute",
+      "object": "aml.is_superadmin",
+      "reason": "RLS policy predicate in the aml schema. Same evaluation-context constraint as public.has_role.",
+      "review_by": "2027-02-09"
+    },
+    {
+      "rule": "secdef_execute",
+      "object": "public.get_shared_qa_answer",
+      "reason": "Powers the public share-token QA view and is called with the anon client by design; the function gates on the share token internally. Documented in docs/security/RLS_WARNING_TIER_REMEDIATION.md.",
+      "review_by": "2027-02-09"
+    },
+    {
+      "rule": "secdef_execute",
+      "object": "public.resolve_report_template",
+      "reason": "Resolved from the browser during report rendering; returns non-sensitive template structure. Documented in docs/security/RLS_WARNING_TIER_REMEDIATION.md.",
+      "review_by": "2027-02-09"
+    },
+    {
+      "rule": "secdef_execute",
+      "object": "public.retry_failed_bulk_items",
+      "reason": "Called from the browser by src/components/listings/BulkGenerationModal.tsx with the authenticated client. anon EXECUTE is revoked (RLS-W5, 20260725096000) and stays revoked.",
+      "review_by": "2027-02-09"
+    },
+    {
+      "rule": "secdef_execute",
+      "object": "public.api_usage_billing_breakdown",
+      "reason": "Called from the browser by src/components/api-usage/BillingRecoveryTab.tsx with the authenticated client. anon EXECUTE is revoked by WP-17 (20260909000000) and stays revoked.",
+      "review_by": "2027-02-09"
+    },
+    {
+      "rule": "secdef_execute",
+      "object": "public.get_all_cache_stats",
+      "reason": "Ops helper reached through authenticated edge functions. anon EXECUTE revoked by RLS-W3/W5.",
+      "review_by": "2027-02-09"
+    },
+    {
+      "rule": "secdef_execute",
+      "object": "public.get_api_health_stats",
+      "reason": "Ops helper reached through authenticated edge functions. anon EXECUTE revoked by RLS-W3/W5.",
+      "review_by": "2027-02-09"
+    },
+    {
+      "rule": "secdef_execute",
+      "object": "public.get_report_changelog",
+      "reason": "Ops helper reached through authenticated edge functions. anon EXECUTE revoked by RLS-W3/W5.",
+      "review_by": "2027-02-09"
+    },
+    {
+      "rule": "secdef_execute",
+      "object": "aml.tg_emit_verification_requested",
+      "reason": "NOT an exemption from the revoke — 20260913200000 performs it, and the rule is file-scoped so it cannot see that follow-up. Note for whoever reviews this: the object never held the grant. Measured proacl before the revoke was `postgres=X | service_role=X`, because ALTER DEFAULT PRIVILEGES on the `aml` schema grants new functions to service_role only — unlike `public`, whose default grants anon and authenticated. The rule's premise is the Postgres default and does not hold in this schema. It is also a trigger function (RETURNS trigger), so it was never PostgREST-callable.",
+      "review_by": "2027-02-09"
+    }
+  ]
+}

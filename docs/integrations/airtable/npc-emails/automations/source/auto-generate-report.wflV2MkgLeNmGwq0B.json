@@ -1,0 +1,117 @@
+{
+  "id": "wflV2MkgLeNmGwq0B",
+  "name": "Auto-generate report",
+  "description": null,
+  "deploymentStatus": "deployed",
+  "deploymentError": null,
+  "trigger": {
+    "type": "recordCreated",
+    "inputs": {
+      "tableId": "tblH9cW4EhVs6D5H1"
+    }
+  },
+  "nodes": [
+    {
+      "key": "wacOjjBiIFQqnH96X",
+      "type": "customScript",
+      "inputs": {
+        "inputObj": {
+          "obj": {
+            "recordId": {
+              "$ref": "trigger",
+              "path": [
+                "id"
+              ]
+            },
+            "address": {
+              "$ref": "trigger",
+              "path": [
+                "cellValuesByFieldId",
+                "fldNNBdlp9WU63Vv8"
+              ]
+            },
+            "suburb": {
+              "$ref": "trigger",
+              "path": [
+                "cellValuesByFieldId",
+                "fld3KnZoGuhtkO10g"
+              ]
+            },
+            "propertyType": {
+              "$ref": "trigger",
+              "path": [
+                "cellValuesByFieldId",
+                "fldVCnqoOizBS557y",
+                "name"
+              ]
+            },
+            "price": {
+              "$ref": "trigger",
+              "path": [
+                "cellValuesByFieldId",
+                "fldDrgTTRE2Kbrnd6"
+              ]
+            },
+            "beds": {
+              "$ref": "trigger",
+              "path": [
+                "cellValuesByFieldId",
+                "fldOYn2KqkkG4Mtcg"
+              ]
+            },
+            "baths": {
+              "$ref": "trigger",
+              "path": [
+                "cellValuesByFieldId",
+                "fld1OdfUYrs5HjI9A"
+              ]
+            },
+            "state": {
+              "$ref": "trigger",
+              "path": [
+                "cellValuesByFieldId",
+                "fld3M4swxHe27aBJY"
+              ]
+            },
+            "propertyName": {
+              "$ref": "trigger",
+              "path": [
+                "cellValuesByFieldId",
+                "fldFQ6BGtLiiJfVQh"
+              ]
+            }
+          }
+        },
+        "script": "let config = input.config();\n\n// Build the listing data from your Airtable fields\nlet payload = {\n  listing: {\n    id: config.recordId,\n    address: config.address || '',\n    propertyName: config.propertyName || '',\n    suburb: config.suburb || '',\n    propertyType: config.propertyType || '',\n    price: config.price || null,\n    beds: config.beds || null,\n    baths: config.baths || null,\n    state: config.state || ''\n  }\n};\n\n// Send POST request to webhook\nlet response = await fetch('https://dduzbchuswwbefdunfct.supabase.co/functions/v1/auto-report-webhook', {\n  method: 'POST',\n  headers: {\n    'Content-Type': 'application/json'\n  },\n  body: JSON.stringify(payload)\n});\n\nlet result = await response.json();\nconsole.log('Webhook response:', result);\n"
+      },
+      "outputSchema": []
+    },
+    {
+      "key": "wde6YylHsCkYOmoA1",
+      "type": "conditionalGroup",
+      "branches": [
+        {
+          "condition": {
+            "conjunction": "and",
+            "conditions": [
+              {
+                "left": {
+                  "$ref": "trigger",
+                  "path": [
+                    "cellValuesByFieldId",
+                    "fldNNBdlp9WU63Vv8"
+                  ]
+                },
+                "operator": "isNotEmpty",
+                "valueType": "text",
+                "dataType": "literal"
+              }
+            ]
+          },
+          "nodes": []
+        }
+      ]
+    }
+  ],
+  "configurationStatus": "valid"
+}

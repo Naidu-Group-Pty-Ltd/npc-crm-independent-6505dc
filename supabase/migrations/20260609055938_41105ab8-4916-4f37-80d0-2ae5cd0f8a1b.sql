@@ -1,0 +1,1 @@
+ALTER FUNCTION public.link_emails_on_client_create() SET statement_timeout TO '60s';

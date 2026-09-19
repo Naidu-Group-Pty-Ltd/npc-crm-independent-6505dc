@@ -1,0 +1,86 @@
+{
+  "counts": {
+    "assistants": 15,
+    "danglingToolRefs": 3,
+    "files": 2,
+    "phoneNumbers": 4,
+    "squads": 1,
+    "workflows": 1,
+    "toolsManaged": 12,
+    "toolsInline": 3
+  },
+  "danglingToolReferences": {
+    "199be122-72f1-4bbb-ada3-aedba74b59b1": [
+      "NPC Discovery Call Follow Up Test 2",
+      "NPC Discovery Call Follow Up"
+    ],
+    "4aa1a306-b057-4b0a-bcc0-f38749637ee0": [
+      "NPC Discovery Call Follow Up Test 2",
+      "NPC Discovery Call Follow Up"
+    ],
+    "4d3ab4a4-2662-4b5a-9089-068faf7a2b00": [
+      "NPC Discovery Call Follow Up Test 2",
+      "NPC Discovery Call Follow Up"
+    ]
+  },
+  "excludedAssistants": [
+    "Aishu",
+    "Ashley",
+    "Ashwini",
+    "Bartini Bartenders",
+    "Farah",
+    "JG Facilities Management",
+    "Kamileon Cube",
+    "Mandy",
+    "Ramitta Barber",
+    "Raya",
+    "Sham Dental Main",
+    "Unstructured Assistant New",
+    "Xenochrome Assistant"
+  ],
+  "files": [
+    {
+      "bytes": "18567",
+      "id": "9fff4149-3aec-48f0-9378-d56760390216",
+      "mimetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "name": "Npc Services Information Document (1).do",
+      "sha256_16": "9f5cea5627ddc8c3"
+    },
+    {
+      "bytes": "21622",
+      "id": "b3b1fdd2-8784-48af-aa1a-cc20740b72ff",
+      "mimetype": "application/pdf",
+      "name": "Npc Services Information Document (1).pd",
+      "sha256_16": "70b32a1a3285aa64"
+    }
+  ],
+  "redactionCount": 2,
+  "redactions": [
+    "twilioAccountSid"
+  ],
+  "scope": {
+    "assistantsInOrg": 28,
+    "evidence": [
+      "squad 'NPC Sales Force' membership",
+      "phone numbers named 'NPC Services' / 'Naidu Property Consulting Services'",
+      "the 'NPC ' assistant-name prefix"
+    ],
+    "excluded": 13,
+    "note": "Vapi's API exposes no folder concept \u2014 /folder, /folders, /workspace, /project all 404, and no assistant carries a folder field. The NPC set below is computed from evidence, not read.",
+    "npcAssistants": 15
+  },
+  "source": {
+    "apiBase": "https://api.vapi.ai",
+    "exportedAt": "2026-08-18",
+    "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+    "platform": "vapi"
+  },
+  "toolsAudit": "see tools-audit.json \u2014 12 managed + 3 inline; the inline ones live inside the squad and workflow payloads",
+  "assistantServerUrls": {
+    "onNewMakeUs2": 2,
+    "onOldMakeEu2": 1,
+    "onSupabaseEdgeFunction": 11,
+    "none": 1,
+    "detail": "assistant-server-urls.json"
+  }
+}

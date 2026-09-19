@@ -1,0 +1,18 @@
+{
+  "assistantIds": [
+    "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+    "b3acdd28-558a-4893-9cfe-c3abacdbe6bd"
+  ],
+  "createdAt": "2025-11-20T03:33:05.296Z",
+  "description": "Tracking whether the call was booked is crucial for measuring the assistant's effectiveness in securing appointments.",
+  "id": "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782",
+  "name": "Zoom Call Booked",
+  "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+  "schema": {
+    "description": "Indicates if the Zoom call was booked",
+    "type": "boolean"
+  },
+  "type": "ai",
+  "updatedAt": "2025-11-20T04:02:30.425Z",
+  "workflowIds": []
+}

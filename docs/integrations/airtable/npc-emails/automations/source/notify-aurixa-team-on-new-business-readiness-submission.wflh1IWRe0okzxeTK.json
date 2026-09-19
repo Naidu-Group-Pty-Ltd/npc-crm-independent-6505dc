@@ -1,0 +1,270 @@
+{
+  "id": "wflh1IWRe0okzxeTK",
+  "name": "Notify Aurixa Team on New Business Readiness Submission",
+  "description": null,
+  "deploymentStatus": "deployed",
+  "deploymentError": null,
+  "trigger": {
+    "type": "recordCreated",
+    "inputs": {
+      "tableId": "tblXQx00T3CKEVnvV"
+    }
+  },
+  "nodes": [
+    {
+      "key": "wacQqFKqkZG6H2Ss5",
+      "type": "findRecords",
+      "inputs": {
+        "limit": 1,
+        "tableId": "tblHzGiB591W3GpoZ",
+        "queryType": "filtersObj",
+        "filtersObj": {
+          "obj": {
+            "operator": "and",
+            "operands": {
+              "tuple": [
+                {
+                  "obj": {
+                    "operator": "hasAnyOf",
+                    "operands": {
+                      "tuple": [
+                        "fld6o2raVanGj6rp5",
+                        [
+                          {
+                            "$ref": "trigger",
+                            "path": [
+                              "id"
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "key": "wacbcPQdxgR2XpqME",
+      "type": "sendEmail",
+      "inputs": {
+        "to": [
+          {
+            "template": [
+              "admin@aurixasystems.com.au"
+            ]
+          },
+          {
+            "template": [
+              "rugesh@aurixasystems.com.au"
+            ]
+          },
+          {
+            "template": [
+              "lavan@aurixasystems.com.au"
+            ]
+          },
+          {
+            "template": [
+              "arvinraj@aurixasystems.com.au"
+            ]
+          },
+          {
+            "template": [
+              "mithrubanbupathy@aurixasystems.com.au"
+            ]
+          }
+        ],
+        "subject": {
+          "template": [
+            "New Business Readiness Questionnaire Submitted"
+          ]
+        },
+        "message": {
+          "template": [
+            "A new Business Readiness Questionnaire has been submitted. Below are the key details:\n\n- **Applicant Name**: ",
+            {
+              "fn": "map",
+              "args": [
+                {
+                  "fn": "map",
+                  "args": [
+                    {
+                      "$ref": "wacQqFKqkZG6H2Ss5",
+                      "path": [
+                        "records"
+                      ]
+                    },
+                    {
+                      "fn": "propertyGetter",
+                      "args": [
+                        "cellValuesByFieldId"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "fn": "propertyGetter",
+                  "args": [
+                    "fldyvxPM3x4LVi33h"
+                  ]
+                }
+              ]
+            },
+            " ",
+            {
+              "fn": "map",
+              "args": [
+                {
+                  "fn": "map",
+                  "args": [
+                    {
+                      "$ref": "wacQqFKqkZG6H2Ss5",
+                      "path": [
+                        "records"
+                      ]
+                    },
+                    {
+                      "fn": "propertyGetter",
+                      "args": [
+                        "cellValuesByFieldId"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "fn": "propertyGetter",
+                  "args": [
+                    "fldJSOnXU9dbndMyN"
+                  ]
+                }
+              ]
+            },
+            "\n- **Organization**: ",
+            {
+              "fn": "map",
+              "args": [
+                {
+                  "fn": "map",
+                  "args": [
+                    {
+                      "$ref": "wacQqFKqkZG6H2Ss5",
+                      "path": [
+                        "records"
+                      ]
+                    },
+                    {
+                      "fn": "propertyGetter",
+                      "args": [
+                        "cellValuesByFieldId"
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "fn": "propertyGetter",
+                  "args": [
+                    "fldKXSWWLc8DWCBhH"
+                  ]
+                }
+              ]
+            },
+            "\n- **Role**: ",
+            {
+              "$ref": "trigger",
+              "path": [
+                "cellValuesByFieldId",
+                "fldIqQHM6g4gPUrrx"
+              ]
+            },
+            "\n- **Decision Authority**: ",
+            {
+              "$ref": "trigger",
+              "path": [
+                "cellValuesByFieldId",
+                "fld3z79Sm1uc7vCHY",
+                "name"
+              ]
+            },
+            "\n- **Implementation Timeline**: ",
+            {
+              "$ref": "trigger",
+              "path": [
+                "cellValuesByFieldId",
+                "fldPsXQ0BpioCvSvr",
+                "name"
+              ]
+            },
+            "\n- **User Count**: ",
+            {
+              "$ref": "trigger",
+              "path": [
+                "cellValuesByFieldId",
+                "fldti4XWR1B1NMzNW",
+                "name"
+              ]
+            },
+            "\n- **Top Operational Problems**: ",
+            {
+              "fn": "map",
+              "args": [
+                {
+                  "$ref": "trigger",
+                  "path": [
+                    "cellValuesByFieldId",
+                    "fldDdM4JA87pPyXJm"
+                  ]
+                },
+                {
+                  "fn": "propertyGetter",
+                  "args": [
+                    "name"
+                  ]
+                }
+              ]
+            },
+            "\n- **Required Capabilities**: ",
+            {
+              "fn": "map",
+              "args": [
+                {
+                  "$ref": "trigger",
+                  "path": [
+                    "cellValuesByFieldId",
+                    "fldSPnEkz8LTPep5j"
+                  ]
+                },
+                {
+                  "fn": "propertyGetter",
+                  "args": [
+                    "name"
+                  ]
+                }
+              ]
+            },
+            "\n- **Preferred Next Step**: ",
+            {
+              "$ref": "trigger",
+              "path": [
+                "cellValuesByFieldId",
+                "fldQp2I1sxkrLXsvl",
+                "name"
+              ]
+            },
+            "\n\n",
+            {
+              "$ref": "trigger",
+              "path": [
+                "url"
+              ]
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configurationStatus": "valid"
+}

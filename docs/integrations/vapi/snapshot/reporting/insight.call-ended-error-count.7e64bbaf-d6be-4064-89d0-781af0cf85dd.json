@@ -1,0 +1,26 @@
+{
+  "createdAt": "2026-05-07T03:06:47.276Z",
+  "id": "7e64bbaf-d6be-4064-89d0-781af0cf85dd",
+  "name": "Call Ended (Error) Count",
+  "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+  "queries": [
+    {
+      "filters": [
+        {
+          "column": "status",
+          "operator": "=",
+          "value": "fail"
+        }
+      ],
+      "on": "call.ended",
+      "operation": "count",
+      "table": "events",
+      "type": "vapiql-json"
+    }
+  ],
+  "timeRange": {
+    "start": "-1h"
+  },
+  "type": "text",
+  "updatedAt": "2026-05-07T03:06:47.276Z"
+}

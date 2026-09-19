@@ -1,0 +1,23 @@
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+import { describe, expect, it } from 'vitest';
+/*
+ * Repo-relative, not `import.meta.url`.
+ *
+ * Under this Vitest the transformed module's `import.meta.url` is not a
+ * file-scheme URL, so `fileURLToPath` threw during COLLECTION and this file
+ * failed before its assertion ran — a preview-isolation contract that was
+ * enforcing nothing. Same repair as the other source-text contracts here.
+ */
+
+describe('TemplateBuilderEdit presence security', () => {
+  it('does not activate the unauthorised public template presence channel', () => {
+    const source = readFileSync(
+      join(process.cwd(), 'src/pages/admin/TemplateBuilderEdit.tsx'),
+      'utf8',
+    );
+
+    expect(source).not.toContain('<TemplatePresenceBar');
+    expect(source).not.toContain("from '@/components/templateBuilder/TemplatePresenceBar'");
+  });
+});

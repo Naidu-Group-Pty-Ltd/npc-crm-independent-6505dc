@@ -1,0 +1,471 @@
+{
+  "table": "Emails",
+  "batch": 54,
+  "of": 107,
+  "recordCount": 50,
+  "records": [
+    {
+      "sourceRecordId": "recUTROUsEHfXPOEY",
+      "sourceCreatedTime": "2026-06-05T04:14:28.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUU1f14Bfz6kDkQ",
+      "sourceCreatedTime": "2026-06-23T15:07:48.000Z",
+      "fields": {
+        "Name": "McGrath NSW & QLD CO",
+        "Subject": "McGrath Property Alert",
+        "Email": "concierge@mcgrath.com.au",
+        "Body": "PROPERTY ALERT\r\n\r\n1101/43-45 Wilson Street, Botany\r\n\r\n\r\n\r\n\r\n\r\n3\r\n\r\n\r\n\r\n2\r\n\r\n\r\n\r\n2\r\n\r\n\r\n\r\nFOR SALE\r\n\r\nFor Sale $1,130,000 - $1,220,000\r\n\r\n\r\n\r\nVIEW\r\n\r\nSaturday 13 Jun 12:15pm - 12:45pm\r\n\r\n\r\n\r\nAGENTS\r\n\r\nPeter Delimitrou: 0416 134 441\r\n\r\nPatrick Byron: 0415 7"
+      }
+    },
+    {
+      "sourceRecordId": "recUUUWhOOLckRQ1s",
+      "sourceCreatedTime": "2025-11-21T09:38:52.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUUYu3UTaJzp206",
+      "sourceCreatedTime": "2026-03-12T15:24:27.000Z",
+      "fields": {
+        "Name": "Belle Property Australasia",
+        "Subject": "Your First to See Listings Alert",
+        "Email": "noreply@belleproperty.com",
+        "Body": "Dear Rugesh,\r\n\r\nWe have found the following properties that match your property search requirements. Click here to update your preferences or click here to find a property on belleproperty.com.\r\nCurrent listings.\r\n\r\nDromana\r\n44 Watson Avenue\r\nFor Sale $76",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUVKjoKH7qYgxGd",
+      "sourceCreatedTime": "2025-11-28T23:38:27.000Z",
+      "fields": {
+        "Name": "Brodie Richmond",
+        "Subject": "Update Alert: Matched Properties",
+        "Email": "brodie@schmith.com.au",
+        "Body": "Hi Rugesh ,\r\n\r\nSee below, some properties that may be of interest to you.\r\nPlease reach out if you would like any further information, or simply just have a chat.\r\n\r\nBest wishes,\r\nBrodie Richmond\r\n+61493572251\r\nbrodie@schmith.com.au\r\n\r\n\r\n\r\nOpen for ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUVdedb2WCl4Avo",
+      "sourceCreatedTime": "2026-04-02T22:21:03.000Z",
+      "fields": {
+        "Name": "Nola Brown",
+        "Subject": "Nola @ Horsham Real Estate.      Book a One on One phone call with Nola. ",
+        "Email": "nola@horshamrealestate.com.au",
+        "Body": "Hi Rugesh\r\n\r\n\r\n\r\nThank you for your enquiry regarding investing in Horsham.\r\n\r\n\r\n\r\nI would welcome the opportunity to discuss property and the 3 exciting new industries coming to Horsham which is going to boost rental yields and capital growth in the shor",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUVw7IOFUNp2yD5",
+      "sourceCreatedTime": "2026-02-23T02:49:52.000Z",
+      "fields": {
+        "Name": "Thomas Bettison",
+        "Subject": "COMING SOON TO MARKET | 2 Alexandra Pl, Bentley",
+        "Email": "thomas.bettison@housesmart.com.au",
+        "Body": "MARKET PREVIEW - 2 Alexandra Pl\r\n\r\nHi Rugesh,\r\n\r\nPlease see the following property, launching to market in the near future.\r\n\r\nIf you are interested in securing this before the property goes live to all buyers, let me know.\r\n\r\nUpdate my criteria\r\nSay hell"
+      }
+    },
+    {
+      "sourceRecordId": "recUW3iaLVvSJ7V3q",
+      "sourceCreatedTime": "2026-01-01T00:30:47.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUWWy5TnlSORYPx",
+      "sourceCreatedTime": "2025-12-05T04:46:12.000Z",
+      "fields": {
+        "Name": "Leanne Pearman",
+        "Subject": "Discover Jellis Craig's Recently Listed Properties",
+        "Email": "leannepearman@property.jelliscraig.com.au",
+        "Body": "View in browser\r\n\r\nDear Rugesh,\r\n\r\nThis brand-new barn-inspired architectural residence at 1/29 Hodge Street, brings refined living to a quiet Daylesford enclave just moments from the heart of town. Thoughtfully crafted with beautiful natural materials an",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUWthw0zP2vpIfj",
+      "sourceCreatedTime": "2025-12-25T00:25:50.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUXQKpbkLmOExtY",
+      "sourceCreatedTime": "2026-03-26T00:43:42.000Z",
+      "fields": {
+        "Name": "Abby Holmes-Brown",
+        "Subject": "Hot Listings of the Week: Discover Your Dream Home",
+        "Email": "sales@fnlifestyle.com.au",
+        "Body": "Current Listings\r\n\r\n\r\n\r\n\r\nHi Rugesh,\r\n\r\nLooking for a place that truly feels like home?\r\n\r\nExplore our beautifully presented sale listings and discover something special.\r\n\r\nFrom stylish interiors to prime locations, there's something for everyo",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUZxSlZmoNJK9T5",
+      "sourceCreatedTime": "2026-01-19T21:37:09.000Z",
+      "fields": {
+        "Name": "Rick Holloway",
+        "Subject": "FW: Registered duplex sale $749,990",
+        "Email": "rick@thebobtraskgroup.com.au",
+        "Body": "SMSF\r\nRentals Needed Urgent\r\nDETACHED DUPLEX & DUPLEX SALE\r\nSTARTING FROM $749,990\r\nHIGH  YIELD $900 PER WEEK RETURN\r\nREGISTERED READY TO BUILD\r\nALL BLOCKS OVER 400 SQM PER DWELLING\r\nSelling Quick\r\nBig Blocks\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\nRegards\r\n\r\n“Whatever you ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUaqvzWDhBDR2Ad",
+      "sourceCreatedTime": "2025-10-10T10:30:27.000Z",
+      "fields": {
+        "Name": "Rohan Banning",
+        "Subject": "Your Property Update [New Listing Alert]",
+        "Email": "rohanbanning@remax.com.au",
+        "Body": "07 3157 5836\r\nremaxcentralres.com.au\r\nNew Listings\r\n\r\nHi Rugesh,\r\n\r\nWe've listed some new properties that I think you might be interested in.\r\n\r\n**Please click on the photo to find a price guide within the property fact sheet.\r\n\r\nGive me a call if you hav",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUbk5YyLJmoKt32",
+      "sourceCreatedTime": "2025-11-27T01:08:09.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUbsqxfQH0cYQpa",
+      "sourceCreatedTime": "2025-08-27T05:58:18.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUcOtN2WUeVpFyF",
+      "sourceCreatedTime": "2026-03-04T08:07:12.000Z",
+      "fields": {
+        "Name": "Team Raspa",
+        "Subject": "We’ve Grown — And So Have Our Services",
+        "Email": "info@raspa.com.au",
+        "Body": "Your Family Force in Real Estate\r\nAn Exciting New Chapter at Raspa Property Group\r\n\r\nHi Rugesh,\r\n\r\nWe’re excited to share an important update as Raspa Property Group enters a new chapter of growth and opportunity. After many years of dedicated service to ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUcqz68VFnSdlgc",
+      "sourceCreatedTime": "2025-12-09T06:55:02.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUd1eqOT1w5RcCc",
+      "sourceCreatedTime": "2025-11-07T04:46:22.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUe66BOf5bhXHh1",
+      "sourceCreatedTime": "2026-04-16T04:36:02.000Z",
+      "fields": {
+        "Name": "McGrath Geelong | Newtown",
+        "Subject": "Properties available for your inspection",
+        "Email": "fomgeelong@mcgrath.sendproperty.com.au",
+        "Body": "Dear ,\r\n\r\nWe are pleased to present you with this week’s open for inspection times.\r\n\r\nThe team at McGrath Geelong | Newtown look forward to seeing you at our open for inspections this week.\r\n\r\nKind Regards,\r\nMcGrath Geelong | Newtown\r\n+61 3 5223 2040\r\nOp",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUeR76Kjc7U4Ry7",
+      "sourceCreatedTime": "2026-07-13T17:53:20.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUeU2jYhk1ZBeMs",
+      "sourceCreatedTime": "2026-06-09T06:42:16.000Z",
+      "fields": {
+        "Name": "Ray White Rural Corporate",
+        "Subject": "Ray White Rural FirstByte 9/6/26",
+        "Email": "rural.corporate@raywhite.com",
+        "Body": "Hello ! Here are your top properties of the week.\r\n\r\nPeaceful Hinterland Living\r\nTamborine Mountain, Scenic Rim, Qld\r\n______\r\nBeautifully maintained elevated 5 bedroom residence with a rare combination of space, tranquillity & modern comfort. Just minutes"
+      }
+    },
+    {
+      "sourceRecordId": "recUfFCJ6KY0AMYBJ",
+      "sourceCreatedTime": "2026-01-31T17:39:33.000Z",
+      "fields": {
+        "Name": "Tom Offermann Real Estate",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "sales@offermann.com.au",
+        "Body": "Edit my requirements\r\nVisit our Website\r\nProperty Alert\r\nSunday, 1st February 2026\r\nHello Rugesh,\r\n\r\nThe following listings matched your Property Alert search requirements.\r\n\r\nNoosa Heads\r\n17/30 Hastings Street\r\nUndeniable Lure of a Beach House on Hasting",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUg5fGgn3AxTiaz",
+      "sourceCreatedTime": "2025-11-21T02:33:39.000Z",
+      "fields": {
+        "Name": "Adam Bettison",
+        "Subject": "HouseSmart Real Estate Pty Ltd Weekend Home Open Property Update",
+        "Email": "adam.bettison@housesmart.com.au",
+        "Body": "Weekend Home Opens & Property Update\r\n\r\nHi Rugesh\r\n\r\nEach week at HouseSmart brings significant buying, selling and leasing activity. Our team is active across the entire Perth market.\r\n\r\nFor any property related assistance, reach out to us by replying to",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUgDNSM27ARsJxG",
+      "sourceCreatedTime": "2026-02-01T02:57:01.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUhWxYJV2475Om5",
+      "sourceCreatedTime": "2025-11-26T02:42:10.000Z",
+      "fields": {
+        "Name": "Brodie Richmond",
+        "Subject": "Update Alert: Matched Properties",
+        "Email": "brodie@schmith.com.au",
+        "Body": "Hi Rugesh ,\r\n\r\nSee below, some properties that may be of interest to you.\r\nPlease reach out if you would like any further information, or simply just have a chat.\r\n\r\nBest wishes,\r\nBrodie Richmond\r\n+61493572251\r\nbrodie@schmith.com.au\r\n\r\n\r\n\r\nOpen for ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUhumLGHabUso9X",
+      "sourceCreatedTime": "2026-06-04T06:01:20.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUifPRH38ChAD5G",
+      "sourceCreatedTime": "2025-12-19T03:50:00.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUirnG53TpbylcO",
+      "sourceCreatedTime": "2025-10-11T08:01:50.000Z",
+      "fields": {
+        "Name": "McGrath",
+        "Subject": "McGrath Property Alert",
+        "Email": "concierge@mcgrath.com.au",
+        "Body": "PROPERTY ALERT\r\n\r\n1/1 Hayden Place, Botany\r\n\r\n\r\n\r\n\r\n\r\n3\r\n\r\n\r\n\r\n1\r\n\r\n\r\n\r\n1\r\n\r\n\r\n\r\nFOR SALE\r\n\r\nUnder Contract\r\n\r\n\r\n\r\nAGENTS\r\n\r\nErsin Esmek: 0415 647 111\r\n\r\nAdam Pierce: 0415 345 507\r\n\r\nVIEW MORE\r\nVIEW MORE\r\n911/1 Sterling Circuit, Camperdown\r\n\r\n\r\n\r\n\r\n\r\n1",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUjWnJzrnDPYHth",
+      "sourceCreatedTime": "2025-11-05T10:36:12.000Z",
+      "fields": {
+        "Name": "McGrath",
+        "Subject": "McGrath Property Alert",
+        "Email": "concierge@mcgrath.com.au",
+        "Body": "PROPERTY ALERT\r\n\r\n9/15 Hampden Road, Artarmon\r\n\r\n\r\n\r\n\r\n\r\n2\r\n\r\n\r\n\r\n1\r\n\r\n\r\n\r\n1\r\n\r\n\r\n\r\nAUCTION\r\n\r\nOn Site - Saturday 22 Nov 12:00pm\r\n\r\n\r\n\r\nVIEW\r\n\r\nWednesday 5 Nov 11:30am - 12:00pm\r\n\r\n\r\n\r\nAGENTS\r\n\r\nHamish Gibbs: 0448 593 201\r\n\r\nMun-Nee Morgan: 0408 208 120",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUjoHuMb3p1TCgh",
+      "sourceCreatedTime": "2025-11-27T23:58:23.000Z",
+      "fields": {
+        "Name": "Marty Maher",
+        "Subject": "Great Ocean Properties Weekly Update",
+        "Email": "marty@greatoceanproperties.com.au",
+        "Body": "Welcome\r\n\r\n\r\nGreat Ocean Properties Weekly Update\r\n\r\n\r\n\r\nDear Rugesh\r\n\r\nHello and welcome to your weekly update direct from the coast.\r\n\r\nBeautiful glassy surf on the coast this morning and a successful board meeting was held. All in attendance ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUkO7RaqEcl7As2",
+      "sourceCreatedTime": "2025-12-05T23:49:42.000Z",
+      "fields": {
+        "Name": "Brodie Richmond",
+        "Subject": "Update Alert: Matched Properties",
+        "Email": "brodie@schmith.com.au",
+        "Body": "Hi Rugesh ,\r\n\r\nSee below, some properties that may be of interest to you.\r\nPlease reach out if you would like any further information, or simply just have a chat.\r\n\r\nBest wishes,\r\nBrodie Richmond\r\n+61493572251\r\nbrodie@schmith.com.au\r\n\r\n\r\n\r\nNew Listi",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUkq92XU690VEFd",
+      "sourceCreatedTime": "2026-02-26T04:07:03.000Z",
+      "fields": {
+        "Name": "Richard Shalhoub",
+        "Subject": "Just Listed - 1/10 Dalgety Rd, Walsh Bay",
+        "Email": "richardshalhoub@mcgrath.com.au",
+        "Body": "JUST LISTED\r\n\r\n\r\n1/10 Dalgety Road, Walsh Bay\r\n\r\n\r\n\r\n\r\n\r\n2\r\n\r\n\r\n\r\n2\r\n\r\n\r\n\r\n1\r\n\r\n\r\n\r\nContact Agent\r\n\r\n\r\n\r\nSet within prestigious Towns Place with views to the Harbour Bridge, this dual level luxury residence delivers refined elegance and exclusivity in a c",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUlGrsCViCclBkI",
+      "sourceCreatedTime": "2025-10-29T07:48:32.000Z",
+      "fields": {
+        "Name": "Jon Mordue",
+        "Subject": "Melbourne sheds. Built. Coms 4.4%. ",
+        "Email": "jon@projectpropertysales.com.au",
+        "Body": " \r\n\r\n\r\nNewly Built, Boutique Block of Warehouses\r\nMoorabbin, VIC 3189\r\n\r\nOnly 6 Warehouses Remaining\r\n- Built October 2025\r\n- Sizes ranging from 155sqm to 202sqm\r\n- Priced from $835,000 to $1,070,000\r\n- Purchase as a going concern with 3 months lease ",
+        "Status": "Error 500",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/F-kHm3JkT1CQWWbYveaCnA/3Zp-k4UsiZpruEqdx91aKhGZVlJhhsODXTMqAHrXxWiRcXwyLb7H16TcMes4uRIVD2dNYaSDmehRGgoAyzJc1ZW1K-fJNG8-4hb-9cEMA3O0TnTxojeQ7v5qJQwrRDbRbMABIqO4Mn87FiKscGfwjp_DAfTF1iKNZMRXHUZR4VcZXj6WUhGR6s38RR4yYsCi/MvYs9oodMw2FsNitB6Rby43NQarPZ2ez2_pQPFOxnRI",
+            "filename": "outlook_email_attachment.png",
+            "type": "image/png",
+            "size": 2948
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "recUlh34tgTbmcDZG",
+      "sourceCreatedTime": "2025-12-03T04:41:59.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUmE8gpZxlJtVw1",
+      "sourceCreatedTime": "2026-03-24T02:10:09.000Z",
+      "fields": {
+        "Name": "Jon Mordue",
+        "Subject": "REGISTERED House and Land Package @ Doolandella, QLD 4077 | $1,138,120",
+        "Email": "jon@projectpropertysales.com.au",
+        "Body": "REGISTERED House and Land Package @ Doolandella, QLD 4077 | $1,138,120\r\n\r\nFull Turnkey | Fixed Price\r\n Address\r\n Lot\r\n Bed\r\n Bath\r\n Car\r\n Land Rego\r\n Land m2\r\n House m2\r\n Package $\r\nRental $\r\n Package\r\n Video Link\r\nBurnsdie (Dual Key)\r\n8\r\n5\r\n3\r\n2\r\nQ3 2026"
+      }
+    },
+    {
+      "sourceRecordId": "recUn9fTMmqOoWXbn",
+      "sourceCreatedTime": "2025-11-21T01:14:42.000Z",
+      "fields": {
+        "Name": "David Pino",
+        "Subject": "Weekly Listings Update",
+        "Email": "david@davidpinorealestate.com.au",
+        "Body": "Hello Rugesh ,\r\n\r\n\r\nHappy Thursday!\r\n\r\n\r\n\r\nIf you need any help with selling, leasing or buying a property, feel free to ask. Our team is ready to assist. If you're interested in any specific details or have any questions, let me know!\r\n\r\nPlease see below",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUn9zFByPodQXgU",
+      "sourceCreatedTime": "2025-10-16T06:00:58.000Z",
+      "fields": {
+        "Name": "LJ Hooker Greater Springfield",
+        "Subject": "Open For Inspection",
+        "Email": "reception@ljhspringfield.com.au",
+        "Body": "Check out our upcoming open homes! Could one of these be your new home?  ‌ ‌ ‌ ‌ ‌ ‌ ‌  ‌ ‌ ‌ ‌ ‌ ‌\r\n        Greater Springfield\r\nOpen For Inspection\r\nHi Rugesh\r\n\r\nWhile browsing online gives you a good sense of a property, there's truly no substitute for"
+      }
+    },
+    {
+      "sourceRecordId": "recUnw6Na9RfUulwc",
+      "sourceCreatedTime": "2026-01-30T02:39:39.000Z",
+      "fields": {
+        "Name": "Adam Bettison",
+        "Subject": "HouseSmart Real Estate Pty Ltd Weekend Home Open Property Update",
+        "Email": "adam.bettison@housesmart.com.au",
+        "Body": "Weekend Home Opens & Property Update\r\n\r\nHi Rugesh\r\n\r\nEach week at HouseSmart brings significant buying, selling and leasing activity. Our team is active across the entire Perth market.\r\n\r\nFor any property related assistance, reach out to us by replying to",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUoTpbQu8E5n6bf",
+      "sourceCreatedTime": "2026-06-11T05:35:13.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUonKxm0JcMqS0C",
+      "sourceCreatedTime": "2026-02-20T04:32:29.000Z",
+      "fields": {
+        "Name": "Wellmanprop",
+        "Subject": "🛎️February | WELLMAN PROP STOCK LIST - Weekly Updates❗",
+        "Email": "projects@wellmanpropgroup.com",
+        "Body": "Click Here to Access All Projects & Stocklist\r\n\r\nWELLMAN STOCKLIST\r\n\r\nWeekly Updates\r\n\r\n \r\n\r\nTOWNHOUSE (COMPLETE)\r\n\r\n30-32 Station Street, Ferntree Gully\r\n\r\n2-3B  1.5-2B  1-2CAR\r\n\r\n\r\nAsking Price:\r\n\r\nUnit 1: $748,000\r\n\r\nUnit 2: $878,000\r\n\r\nUnit 4: Sold"
+      }
+    },
+    {
+      "sourceRecordId": "recUpMsL33f2WYtYy",
+      "sourceCreatedTime": "2025-11-10T06:10:05.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUq2Rd6rg0Pwe43",
+      "sourceCreatedTime": "2025-09-27T07:13:41.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUqBzUEzMqCKncj",
+      "sourceCreatedTime": "2025-09-10T16:22:22.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUqJjGnefZYcEKY",
+      "sourceCreatedTime": "2025-08-23T11:38:21.000Z",
+      "fields": {
+        "Name": "Lavan Kenobi",
+        "Subject": "Fwd: Fw: Your Matching Properties",
+        "Email": "lavankenobi@gmail.com",
+        "Body": "\n\n---------- Forwarded message ---------\nFrom: Naidu Property Consulting Services (NPC SERVICES) <property@npcservices.com.au [property@npcservices.com.au]>\nDate: Fri, Aug 22, 2025 at 2:57 AM\nSubject: Fw: Your Matching Properties\nTo: lavankenobi@gmail.com [lavankenobi@gmail.com] <lavankenobi@gmail.com [lavankenobi@gmail.com]>\n\n\n\n\n\n\nFrom: Adam Bettison <no-reply@lockedoncloud.com [no-reply@lockedoncloud.com]> on behalf of Adam Bettison <adam.bettison@housesmart.com.au [adam.bettison@housesmart.com.au]>\nSent: Wednesday, August 20, 2025 10:53 AM\nTo: Naidu Property Consulting Services (NPC SERVICES) <property@npcservices.com.au [property@npcservices.com.au]>\nSubject: Your Matching Properties [https://resize.lockedoncloud.com/w:300-lovii/13/ac/9c/16/33/08/47/45/a8/4c/db/31/1d/e7/52/af.jpg] Matching Properties Hi Rugesh,\n\nHere is a list of all the properties that match your criteria.\n\nTo change your buying criteria, please follow the button below.\n\nIf any of the below properties interest you, just let me know!\n\nUpdate My Criteria [https://open.lockedoncloud.com/ls/click?upn=u001.grSFijfx9QwcGN69aE-2BVAoEPfuAfSy5Ks6c-2Bn1nEvSLX2ObFNPWd4CyiIqokNNeZLSBImWEDTb0UhFJS-2FWXbTppsWGmHg8-2Bdtb6-2F4HV8xBuHihNKrqTu-2BcZxhgb-2FImfRw9GehrvqCb7fY9TZQn1GEGLpFUpsUg2WHqk0lzWOqLqeSp1TIlHr8yhIoDSA4QVN-2BNLejQ9VtVjCpxMkmk0dGGw6Z-2BsQh3koisKMbM4yEknOGiFu6xgV2GxZRIR3FlGJxAuz0H-2FQ6DGvPMeQoJfC9BF-2BZQFAKecpslUWMolqQIA-3DccdH_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNPvmfKeHOuDyDKJDP2Q5Tf-2FH0GhK3J1maBIwymI2yc6cZmbMP6YfIq0IlHME7Viy-2FUV1o-2B4u8zbk9bRNV5B89EzKPtK60OBMuwewge1Ry4OP7ZZpHNLP0G-2Bw7zCwJSV1ekJV5dqiRKtETpm3Y7RzhSiTmITFhFpye-2FMTNjht5I0y3L-2BIZF858PXN3p39nuThXZpvF8Bu8pHaztvnNe6Xld3Gwa6aDW6CfCHQeRDRVdb4QbcFtqQLVETq7Vz9hHSIp2MPzHf2p924aU8M6re8EKtg-3D-3D]Your Matching Properties [https://resize.lockedoncloud.com/lovii-w:800-h:533/2a/35/96/c7/17/c2/41/a2/9d/34/58/8f/32/8a/4c/db.png] [https://open.lockedoncloud.com/ls/click?upn=u001.tWMArd79sd2M8kyJfTWHQUbqamgFHfZiYbIMUJWBDlxti3LzHY1hbRNAwXDeBnIFaIFlQ-2F-2BtWepHOk9TQkmgTH9rZfRyj3kf7QHIse8hHJAsN8h0wUdgIZkohBqOhulmS4Yj5Ti60gNISnq4WjstCjdQ90H0Zeia6IcQj9mBaNHdcdKfWdXjMSlGQGCRjLz1CUr9y2z5hVnyDpKi7FAo4eO1m2AtvUbgmwz14f33enZReClDtn-2BItXVXXnPAtorpDvH-2BcQCUnDOM4L5Jiz5hOewfnpqNYj1iQzaxe1Ey4iWt9P9ZjUzfkp5OpPlYgtVNG8nQpi3FhkS7YyCtSz-2FAhW-2F-2BGslvLugskp6Vhh019ZEdNNChCzGNT54YhCqMhjbnO97-2BMUg3d3Uhl3uso-2BZ5SXG6csUOxH4ZdAgiAHoH2SGmg9P6szZJmG42KGTgOeX-2BblDsQu9fnP5xC9u8C4n75ZDJJV4nQKtbnL6EyzHAphc-2FtaptO39Nf4OJu85jWq11lnENGvO3-2BY3X-2FxMXNm5KAqT25BOV5tszVGeeQAIYSYg9KxX8SFyuXS8d7DbUqK-2BPeUYVvcT-2Bte2WEHqAV1w3wdq4p6UdECVjQCuOzF1iB1tcHN0Mmm3WX5iRuHEafjKIqbdfrEuMevkY2lvX5LR7TmT1U8V7KMV2VBMEukLCZMYRhjVCeMKa1TtWl5lxFCDNXlZf1aw7UmWOk-2BSW8-2BlbKArZUrLFvcixBpuhwrXD8WQ-3DO_0w_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNPvmfKeHOuDyDKJDP2Q5Tf-2FH0GhK3J1maBIwymI2yc6cZmbMP6YfIq0IlHME7Viy-2FUV1o-2B4u8zbk9bRNV5B89EzKPtK60OBMuwewge1Ry4OP7ZZpHNLP0G-2Bw7zCwJSV1ekQG-2BI-2FT0h-2FKmLvk-2BLdoQd5ChaV8JYNTUYiq9HDD6OajXqth-2FGLkFUxBXwibM1iIe0-2FPzZ-2Bbl-2BgeXY4Mop6bY0ZIotxvGXOGRlYyZRIT3-2B-2Bt9PiLjhw-2BFK2vCBzZhCLWpdvNmnx6LGlHEKUkQ8mkRD7A-3D-3D]11 May Close, Armadale \nFrom $599,000 3\nBed 1\nBath 2 (6)\nCar This property is blessed for size both inside and out, perfect for the large family or those wanting their own space to call... More [https://open.lockedoncloud.com/ls/click?upn=u001.tWMArd79sd2M8kyJfTWHQUbqamgFHfZiYbIMUJWBDlxti3LzHY1hbRNAwXDeBnIFaIFlQ-2F-2BtWepHOk9TQkmgTH9rZfRyj3kf7QHIse8hHJAsN8h0wUdgIZkohBqOhulmS4Yj5Ti60gNISnq4WjstCjdQ90H0Zeia6IcQj9mBaNHdcdKfWdXjMSlGQGCRjLz1CUr9y2z5hVnyDpKi7FAo4eO1m2AtvUbgmwz14f33enZReClDtn-2BItXVXXnPAtorpDvH-2BcQCUnDOM4L5Jiz5hOewfnpqNYj1iQzaxe1Ey4iWt9P9ZjUzfkp5OpPlYgtVNG8nQpi3FhkS7YyCtSz-2FAhW-2F-2BGslvLugskp6Vhh019ZEdNNChCzGNT54YhCqMhjbnO97-2BMUg3d3Uhl3uso-2BZ5SXG6csUOxH4ZdAgiAHoH2SGmg9P6szZJmG42KGTgOeX-2BblDsQu9fnP5xC9u8C4n75ZDJJV4nQKtbnL6EyzHAphc-2FtaptO39Nf4OJu85jWq11lnENGvO3-2BY3X-2FxMXNm5KAqT25BOV5tszVGeeQAIYSYg9KxX8SFyuXS8d7DbUqK-2BPeUYVvcT-2Bte2WEHqAV1w3wdq4p6UdECVjQCuOzF1iB1tcHN0Mmm3WX5iRuHEafjKIqbdfrEuMevkY2lvX5LR7TmT1U8V7KMV2VBMEukLCZMYRhjVCeMKa1TtWl5lxFCDNXlZf1aw7UmWOk-2BSW8-2BlbKArZUrLFvcixBpuhwrXD8WQ-3D9B2I_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNPvmfKeHOuDyDKJDP2Q5Tf-2FH0GhK3J1maBIwymI2yc6cZmbMP6YfIq0IlHME7Viy-2FUV1o-2B4u8zbk9bRNV5B89EzKPtK60OBMuwewge1Ry4OP7ZZpHNLP0G-2Bw7zCwJSV1ek8QEnIp3q785RHXvHQP2MQu-2F1Vex132R7rVfFnPbSGcgC9cMY6zX-2BgbpDBeUYMaJ8OxHCEFj7KSinUkPg1xtcrF-2BPpu-2F-2BdZxXejxjTE3XgDrk2XH0mnv2AUsSyml37VqspDKSyLXnZOE4dKyKGL87rA-3D-3D] Play video [https://open.lockedoncloud.com/ls/click?upn=u001.tWMArd79sd2M8kyJfTWHQUbqamgFHfZiYbIMUJWBDlxti3LzHY1hbRNAwXDeBnIFaIFlQ-2F-2BtWepHOk9TQkmgTH9rZfRyj3kf7QHIse8hHJAsN8h0wUdgIZkohBqOhulmS4Yj5Ti60gNISnq4WjstCjdQ90H0Zeia6IcQj9mBaNHdcdKfWdXjMSlGQGCRjLz1CUr9y2z5hVnyDpKi7FAo4eO1m2AtvUbgmwz14f33enZReClDtn-2BItXVXXnPAtorpDvH-2BcQCUnDOM4L5Jiz5hOewfnpqNYj1iQzaxe1Ey4iWt9P9ZjUzfkp5OpPlYgtVNG8nQpi3FhkS7YyCtSz-2FAhW-2F-2BGslvLugskp6Vhh019ZEdNNChCzGNT54YhCqMhjbnO97-2BMUg3d3Uhl3uso-2BZ5SXG6csUOxH4ZdAgiAHoH2SGmg9P6szZJmG42KGTgOeX-2BblDsQu9fnP5xC9u8C4n75ZDJJV4nQKtbnL6EyzHAphc-2FtaptO39Nf4OJu85jWq115i7KuFuSa3BrpEka7k6WnIBZ2aRpgz0WVxITaoF5eU3S9hqBnYM896lzEJhsMQ38Srrs07dXHf6bWM2whIWoTlZ9t61KWyuTOcXGmA0c-2BQQyiQLyn8beqXqlAUZB0f0gBp7odB2FouR7EvsoiteQljNijxvrOlzgbHTz-2F3XMcJVeMW1xUmYGpAor4QP2JTXV9DzkC1wlw4-2FWq-2FDFJitFaXHc92iwuXCxPwW59cb3-2FgU-3DWMMB_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNPvmfKeHOuDyDKJDP2Q5Tf-2FH0GhK3J1maBIwymI2yc6cZmbMP6YfIq0IlHME7Viy-2FUV1o-2B4u8zbk9bRNV5B89EzKPtK60OBMuwewge1Ry4OP7ZZpHNLP0G-2Bw7zCwJSV1ekjNMyXkDHc-2F78SYEtb4G-2FnkIWMYM7gTyPm3b4yIUcV2AP2bi-2BlL-2FXpfiBU-2BUJ14JqdRoByI89dOgLKKBqLUMwUvx9meybWHmN7VifSqWr4AH1Sppj59kNY0syio-2B3mm0-2F-2BEkA4CFOh7UJp2f-2FLfh6Rg-3D-3D] Open: 23rd Aug 2025 @ 2:45PM - 3:15PM [https://resize.lockedoncloud.com/lovii-w:800-h:533/cd/f8/1e/16/81/92/44/83/af/3f/fa/97/9d/52/49/8c.jpg] [https://open.lockedoncloud.com/ls/click?upn=u001.tWMArd79sd2M8kyJfTWHQUbqamgFHfZiYbIMUJWBDlxti3LzHY1hbRNAwXDeBnIFaIFlQ-2F-2BtWepHOk9TQkmgTAcUY9onnSq0Dqf8LaoZHg-2BenvZdXATmTDq0mq7nIr1oaHuj8I2uTPKyvspzfeEeF1-2BVVq5OkAePddkaO05dzwB9piSrCcyoV6BWXrsOp5OKtsxZOA9nfN41rDRNcZOcbjF-2BzZ7F9YKuppK951pVfMUDHyc0UxqXiWEDESyNMYLoalxiPoo0uYgKHtIZkr-2BJJhCrkyVSd-2FthaODTf5h-2B8Op5VF5paWudlyQjFCG-2BJSzy1Jf9R-2BwcaBkKH6qlZzJsmwtWsJVLekYUeVspzTqLB5XhycnvqHKfFr-2F4Zh36D3QGSBB0ZC0NJykZmQGGGhCZDVcu23x5zlnQOPeuB0J6GCBe9t8CqEiQ7cH7QopPJ4qcNU07jLt656AZ79ulO6kMRG7WDNqRpGALLvWrD8jqoEuaGEqXPbw-2BI3TOh07Ku5rGMwTYvTdbQcRt9iF-2F8IfnmdRxFWKMNlIzMK7vehpaQOTlgbBPMUYliGwaOfiT4wgN-2F1qbm4IpScDnENlphYTkWE9ERH6DGJIUwzPveF6vwgFf-2FbwRgs-2BGVSaEi8Ec8PwZCqQd-2Bw-2BlIrEODRxehYKDTpnmObJNa1R0pwR6pkH9dEfh8Md4naSKtiTCxouMRJMEdpTKtI7F2sQrNpybGN9xAQIKsvYSo160Uw05NxkRUyA-3D2801_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNPvmfKeHOuDyDKJDP2Q5Tf-2FH0GhK3J1maBIwymI2yc6cZmbMP6YfIq0IlHME7Viy-2FUV1o-2B4u8zbk9bRNV5B89EzKPtK60OBMuwewge1Ry4OP7ZZpHNLP0G-2Bw7zCwJSV1ekFPg2dsR3XsJlv13y-2FHFty0ob5Nw5dKUtGaEOxZSNjfpujsNbB78a0RCzOkNoCb6axOTFJFelHCptNk3yxs-2FUdjfe4gv8RPUdpFiDHvMdr1VgJ81Mp2l6i-2F3e3HHhVDBgK2-2BbpHNzJkfWGk1wFDl3MA-3D-3D]27 Lifford Way, Bellevue \nFrom $549,000 3\nBed 1\nBath 1 (2)\nCar NOTE: First Access to the property is the home open on Saturday, no prior viewings are being held. Welcome to 27 Lifford Way - a... More [https://open.lockedoncloud.com/ls/click?upn=u001.tWMArd79sd2M8kyJfTWHQUbqamgFHfZiYbIMUJWBDlxti3LzHY1hbRNAwXDeBnIFaIFlQ-2F-2BtWepHOk9TQkmgTAcUY9onnSq0Dqf8LaoZHg-2BenvZdXATmTDq0mq7nIr1oaHuj8I2uTPKyvspzfeEeF1-2BVVq5OkAePddkaO05dzwB9piSrCcyoV6BWXrsOp5OKtsxZOA9nfN41rDRNcZOcbjF-2BzZ7F9YKuppK951pVfMUDHyc0UxqXiWEDESyNMYLoalxiPoo0uYgKHtIZkr-2BJJhCrkyVSd-2FthaODTf5h-2B8Op5VF5paWudlyQjFCG-2BJSzy1Jf9R-2BwcaBkKH6qlZzJsmwtWsJVLekYUeVspzTqLB5XhycnvqHKfFr-2F4Zh36D3QGSBB0ZC0NJykZmQGGGhCZDVcu23x5zlnQOPeuB0J6GCBe9t8CqEiQ7cH7QopPJ4qcNU07jLt656AZ79ulO6kMRG7WDNqRpGALLvWrD8jqoEuaGEqXPbw-2BI3TOh07Ku5rGMwTYvTdbQcRt9iF-2F8IfnmdRxFWKMNlIzMK7vehpaQOTlgbBPMUYliGwaOfiT4wgN-2F1qbm4IpScDnENlphYTkWE9ERH6DGJIUwzPveF6vwgFf-2FbwRgs-2BGVSaEi8Ec8PwZCqQd-2Bw-2BlIrEODRxehYKDTpnmObJNa1R0pwR6pkH9dEfh8Md4naSKtiTCxouMRJMEdpTKtI7F2sQrNpybGN9xAQIKsvYSo160Uw05NxkRUyA-3DePbM_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNPvmfKeHOuDyDKJDP2Q5Tf-2FH0GhK3J1maBIwymI2yc6cZmbMP6YfIq0IlHME7Viy-2FUV1o-2B4u8zbk9bRNV5B89EzKPtK60OBMuwewge1Ry4OP7ZZpHNLP0G-2Bw7zCwJSV1ekbZ9D2LLdwECdrRKnjaumAf9AhRcLS7Z0rKz2uNqzEFsnpls93UxrdRTLiVcNeJZ5KfkPyivUrqkpAG-2BNAVFqzU-2FkyYALl9C4ggqSgsPA2n4wyPW-2FNivb-2Fs3lcD-2BMWOSoOPBq9Rm9FlWCx2dJzhCHMA-3D-3D] Play video [https://open.lockedoncloud.com/ls/click?upn=u001.tWMArd79sd2M8kyJfTWHQUbqamgFHfZiYbIMUJWBDlxti3LzHY1hbRNAwXDeBnIFaIFlQ-2F-2BtWepHOk9TQkmgTAcUY9onnSq0Dqf8LaoZHg-2BenvZdXATmTDq0mq7nIr1oaHuj8I2uTPKyvspzfeEeF1-2BVVq5OkAePddkaO05dzwB9piSrCcyoV6BWXrsOp5OKtsxZOA9nfN41rDRNcZOcbjF-2BzZ7F9YKuppK951pVfMUDHyc0UxqXiWEDESyNMYLoalxiPoo0uYgKHtIZkr-2BJJhCrkyVSd-2FthaODTf5h-2B8Op5VF5paWudlyQjFCG-2BJSzy1Jf9R-2BwcaBkKH6qlZzJsmwtWsJVLekYUeVspzTqLB5XhycnvqHKfFr-2F4Zh36D3QGSBB0ZC0NJykZmQGGGhCZDVcu23x5zlnQOPeuB0J6GCBe9t8CqEiQ7cH7QopPJ4qcNU07jLt656AZ79ulO6kMRG7WDNqRpGALLvWrD8jqoEuaGEqXPbw-2BI3TOh07Ku5rGsL6VanCYQw0BELnuOoPi5LniV1u9NBmqXvwK7tnHv5aTe6VEzfELKxcM73jrIIjKdIUWiP3fp5Cdj3KknQv2jE0RR0UWeNsxjIWe90KWdHT9G9ZImDdsaVp6x7pAQVLMsyzIvsMDJk2Fk-2F5Qs91dcngrpI49X8htcsoOcdXi1Rh6L50O4z98pntifHGW45ZNm6c1Smz02U-2Fuify7F0d0mmwDebOLxG-2BUCNn7mFZvhNk-3DQsf7_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNPvmfKeHOuDyDKJDP2Q5Tf-2FH0GhK3J1maBIwymI2yc6cZmbMP6YfIq0IlHME7Viy-2FUV1o-2B4u8zbk9bRNV5B89EzKPtK60OBMuwewge1Ry4OP7ZZpHNLP0G-2Bw7zCwJSV1ekHcgI0M6AtFP9hhF7xaZkdkPWN4-2BSR0yXKWzCoSMykgglM4kP12QkJ7sKcgnFk0piHlhAaV-2BhFfJsUSXMwNTw7zr4myHLdqbL52snd53sZOSoKY1dm0v2ptv9vNBSMBtbC0uoyJo7-2F3av-2BVEj2KeK7g-3D-3D] Open: 23rd Aug 2025 @ 10:00AM - 10:30AM [https://resize.lockedoncloud.com/lovii-w:800-h:533/83/b1/6c/25/53/9b/43/57/8b/fc/9d/52/04/22/77/3c.jpg] [https://open.lockedoncloud.com/ls/click?upn=u001.tWMArd79sd2M8kyJfTWHQUbqamgFHfZiYbIMUJWBDlxti3LzHY1hbRNAwXDeBnIFaIFlQ-2F-2BtWepHOk9TQkmgTCczWU6HPQ-2F4Wp6yzRcYiEnQ7dY1-2Bl5-2FZN-2BXINT18Aat4RL-2F9LhR81s1LdQdMGdPwa2U5vq-2FAy3xu31jrbm4g8oHDdqdLebN6iTWDcV07hUU5d-2BFP9WI7kH4vizL32VWz74ZWoZnPeGCMfOvNoelFNW5v3teShSFcpdjn1KCuLtaZtsY9kJi4qLypOdLBRg7CBK-2B5UIdm6ENBURR3H1MYZOlvq4V4TmnsmzVyNGSk5d-2BP6tgfZ7uZYUu1NaBJvnFaK46TClx7A66WEP0Gb4DH-2B8vxQxil1VGoMEYYbvBn39XifquDpu8AGRFX-2BHAu5lJQn3CsFoRPYDWilLMclVdCqKcZaXmeR2SDH8JS8q8gwA14NRrmWZJ88t8tIdjk3juQ2j041f1sQch6f82NnRNePSsHjPzFGQprwZlbqatE2J-2BJnazLhZQ2F-2FK95kUe8LQJlZZgnnu8fVbeea0J-2B3az9IciJyfRWVc30mfWXyth3JoAVvyMrnDXRefvt-2FhNesTVAOOyeJiztFtf5WClzFeppnBgHOh8wOG8GROxnyQw-2FtcjUnOHFJDgYpr3b1675Cm3JsyxO06A9wRtJ5o3Wc5LFAtbyUSaAgfebw26fN43dsdQb0sOnYZArbiCj-2FX1awZUisEa-2F29Oanz4zAlzrwkDIk-3DjiaO_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNPvmfKeHOuDyDKJDP2Q5Tf-2FH0GhK3J1maBIwymI2yc6cZmbMP6YfIq0IlHME7Viy-2FUV1o-2B4u8zbk9bRNV5B89EzKPtK60OBMuwewge1Ry4OP7ZZpHNLP0G-2Bw7zCwJSV1ekwsVS7XvNamqNy6Si-2F-2FFTMo6aZ6iALn02-2BycTY83sVjqoMNQU2JG3Xp9uVpr-2BB-2FVKdBpQmOq0gL9-2Bf90M7x7hgLznid91e-2FiLEKABadfxm7ipCzZgAStll-2FHvWVaW3YJSOfTWnECGYITCdfv21J-2BJ2A-3D-3D]5 Castella Drive, Dudley Park \nFrom $649,000 4\nBed 2\nBath 2 (4)\nCar With approximately 141 square metres of internal living space, this property is blessed for size and space. Situated across from... More [https://open.lockedoncloud.com/ls/click?upn=u001.tWMArd79sd2M8kyJfTWHQUbqamgFHfZiYbIMUJWBDlxti3LzHY1hbRNAwXDeBnIFaIFlQ-2F-2BtWepHOk9TQkmgTCczWU6HPQ-2F4Wp6yzRcYiEnQ7dY1-2Bl5-2FZN-2BXINT18Aat4RL-2F9LhR81s1LdQdMGdPwa2U5vq-2FAy3xu31jrbm4g8oHDdqdLebN6iTWDcV07hUU5d-2BFP9WI7kH4vizL32VWz74ZWoZnPeGCMfOvNoelFNW5v3teShSFcpdjn1KCuLtaZtsY9kJi4qLypOdLBRg7CBK-2B5UIdm6ENBURR3H1MYZOlvq4V4TmnsmzVyNGSk5d-2BP6tgfZ7uZYUu1NaBJvnFaK46TClx7A66WEP0Gb4DH-2B8vxQxil1VGoMEYYbvBn39XifquDpu8AGRFX-2BHAu5lJQn3CsFoRPYDWilLMclVdCqKcZaXmeR2SDH8JS8q8gwA14NRrmWZJ88t8tIdjk3juQ2j041f1sQch6f82NnRNePSsHjPzFGQprwZlbqatE2J-2BJnazLhZQ2F-2FK95kUe8LQJlZZgnnu8fVbeea0J-2B3az9IciJyfRWVc30mfWXyth3JoAVvyMrnDXRefvt-2FhNesTVAOOyeJiztFtf5WClzFeppnBgHOh8wOG8GROxnyQw-2FtcjUnOHFJDgYpr3b1675Cm3JsyxO06A9wRtJ5o3Wc5LFAtbyUSaAgfebw26fN43dsdQb0sOnYZArbiCj-2FX1awZUisEa-2F29Oanz4zAlzrwkDIk-3DyYVb_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNPvmfKeHOuDyDKJDP2Q5Tf-2FH0GhK3J1maBIwymI2yc6cZmbMP6YfIq0IlHME7Viy-2FUV1o-2B4u8zbk9bRNV5B89EzKPtK60OBMuwewge1Ry4OP7ZZpHNLP0G-2Bw7zCwJSV1ekypqFAjTQpZJcHXQxbXXSGizf3tYrnmZ8CuJWBHytBtuameA0JVLg2WhY0umiLeE4EzFRnS9BL4HWJ5I-2FMGFWFxgt4p93ukAIgjoWpu1W6U3fA48wJ9kLQuKvAQqZau2SPe2W1SQsVhCo-2FsM54U0ujg-3D-3D] Open: 23rd Aug 2025 @ 10:30AM - 11:00AM [https://resize.lockedoncloud.com/lovii-w:800-h:533/f2/5b/08/be/b7/42/4a/d6/95/90/0e/fe/b1/76/bd/2a.jpg] [https://open.lockedoncloud.com/ls/click?upn=u001.tWMArd79sd2M8kyJfTWHQUbqamgFHfZiYbIMUJWBDlxti3LzHY1hbRNAwXDeBnIFaIFlQ-2F-2BtWepHOk9TQkmgTEOxjlJhy8HVdAZBM89V3O8HhXwXZf3wGm5Fundm5YbGYIcjzxSGdy9pkBf6ebYUOctciKS23G0nowv3ioSgEcy2zofTMgzgbOVi37SDhLBKjYErki4cWwgOcxW31wvH4knul673qYoq4dtVjNTVC1tUJqfiXNr-2FLkrNhuu8FQMtWnazIQQm23vV5kl2D-2BEyaBrSiUg1zPQFKuyQgeptCg17gz5zJaAOojUv8n9aI2u27fuzdCuKlgCPbK8MSKnmFwAZQhdnO-2Fv3v9pfIjSz4l-2BxG6cT8lyW8hDDVZZllX7pzAbmAqza6QEzcXKNZq5HCerFVVXk-2B6fE-2FYgDcpk-2BmOkAtrG1gnCnEom5TfipOtM021KUgn0PDEw52z6iYsz-2Fme7QlNjg9IoSDvoOaBTllnTQ-2F1Q-2F9XQ72u2h4Wsm1foDBW17876LTdAZ4FN4dgjo8gZLfxERF0NEMMF0P4hrPFdZkghr6MEb9TK179RkFe8E5jBFUDoiNWTtR7k9miTPw3A7YFH3RKjsqWb3UaL9Zs78JPXFxbjS-2FZb43PMnAa0dnayytd8HHp1oP0qzWa0-2FhVh-2BTY4FqiZfvEn-2BMCvLdGocw1DPX-2BqAv7Bs3PZqyYg-2BPg1qVTZwSIVOhGbgFnCHr7PGb9TmW1Xc6wDLPh7Eerasc3ySU-2FI6JdRW3GehzYcCoLxb_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNPvmfKeHOuDyDKJDP2Q5Tf-2FH0GhK3J1maBIwymI2yc6cZmbMP6YfIq0IlHME7Viy-2FUV1o-2B4u8zbk9bRNV5B89EzKPtK60OBMuwewge1Ry4OP7ZZpHNLP0G-2Bw7zCwJSV1ekqdcLHaiRhL2laAEoxZLIJ7-2BoTeZF8K3L40QPF5ohTZwwt-2B-2B-2Bnx04iAxFqw1HQAdeWXMYOrCC0pOKpDtj85VEhiKHGT3pfYfgyTe5zstRjtLj0Cd-2B5bITZBOg0euOiaFFhAY6iJ9JQxNI5dXz7N-2F9JA-3D-3D]7 Ingleby Court, Gingin \nFrom $489,000 3\nBed 1\nBath 1 (4)\nCar Welcome to 7 Ingleby Court — a large family home filled with spacious rooms throughout, and a well-designed exterior for outdoor... More [https://open.lockedoncloud.com/ls/click?upn=u001.tWMArd79sd2M8kyJfTWHQUbqamgFHfZiYbIMUJWBDlxti3LzHY1hbRNAwXDeBnIFaIFlQ-2F-2BtWepHOk9TQkmgTEOxjlJhy8HVdAZBM89V3O8HhXwXZf3wGm5Fundm5YbGYIcjzxSGdy9pkBf6ebYUOctciKS23G0nowv3ioSgEcy2zofTMgzgbOVi37SDhLBKjYErki4cWwgOcxW31wvH4knul673qYoq4dtVjNTVC1tUJqfiXNr-2FLkrNhuu8FQMtWnazIQQm23vV5kl2D-2BEyaBrSiUg1zPQFKuyQgeptCg17gz5zJaAOojUv8n9aI2u27fuzdCuKlgCPbK8MSKnmFwAZQhdnO-2Fv3v9pfIjSz4l-2BxG6cT8lyW8hDDVZZllX7pzAbmAqza6QEzcXKNZq5HCerFVVXk-2B6fE-2FYgDcpk-2BmOkAtrG1gnCnEom5TfipOtM021KUgn0PDEw52z6iYsz-2Fme7QlNjg9IoSDvoOaBTllnTQ-2F1Q-2F9XQ72u2h4Wsm1foDBW17876LTdAZ4FN4dgjo8gZLfxERF0NEMMF0P4hrPFdZkghr6MEb9TK179RkFe8E5jBFUDoiNWTtR7k9miTPw3A7YFH3RKjsqWb3UaL9Zs78JPXFxbjS-2FZb43PMnAa0dnayytd8HHp1oP0qzWa0-2FhVh-2BTY4FqiZfvEn-2BMCvLdGocw1DPX-2BqAv7Bs3PZqyYg-2BPg1qVTZwSIVOhGbgFnCHr7PGb9TmW1Xc6wDLPh7Eerasc3ySU-2FI6JdRW3GehzYcCO4iy_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNPvmfKeHOuDyDKJDP2Q5Tf-2FH0GhK3J1maBIwymI2yc6cZmbMP6YfIq0IlHME7Viy-2FUV1o-2B4u8zbk9bRNV5B89EzKPtK60OBMuwewge1Ry4OP7ZZpHNLP0G-2Bw7zCwJSV1ek9-2BjjG6eqY2B-2Fe03bn-2F72ZpsB0mfPW5iYmnly0gSrxV0bJwI-2F27sG8Er-2FPUgYQOZid9f7-2FoN35LmTE7NveszBQEq3MPuWShcHD0JIi5GDmn2dWSKrLfAiO9kB1HckMXRfG0pGC9QbTo9yb8XfG-2FnJLA-3D-3D] Play video [https://open.lockedoncloud.com/ls/click?upn=u001.tWMArd79sd2M8kyJfTWHQUbqamgFHfZiYbIMUJWBDlxti3LzHY1hbRNAwXDeBnIFaIFlQ-2F-2BtWepHOk9TQkmgTEOxjlJhy8HVdAZBM89V3O8HhXwXZf3wGm5Fundm5YbGYIcjzxSGdy9pkBf6ebYUOctciKS23G0nowv3ioSgEcy2zofTMgzgbOVi37SDhLBKjYErki4cWwgOcxW31wvH4knul673qYoq4dtVjNTVC1tUJqfiXNr-2FLkrNhuu8FQMtWnazIQQm23vV5kl2D-2BEyaBrSiUg1zPQFKuyQgeptCg17gz5zJaAOojUv8n9aI2u27fuzdCuKlgCPbK8MSKnmFwAZQhdnO-2Fv3v9pfIjSz4l-2BxG6cT8lyW8hDDVZZllX7pzAbmAqza6QEzcXKNZq5HCerFVVXk-2B6fE-2FYgDcpk-2BmOkAtrG1gnCnEom5TfipOtM021KUgn0PDEw52z6iYsz-2Fme7QlNjg9IoSDvoOaBTllnSeojnMisNgeeTVsszZj4Cg7wXoKAUD-2Bk9gSGqA8wfXlMCCyvXCfA-2BUh2zpyVWk51SvZ51lhZvb-2F9oDJJYgfCWghtIyFOByZDfPUj1DuuoSX8vjYfKL92hxTLFGjedt1tjPrNLi6er3XPrM4go0hV-2FmOZx2VLVLOux-2BM-2BfO781TmUIdet-2B1Lg1lyecpMtr-2BrBc8GozzSeO-2BAhElN6P0XHaSN0fh8ykMXw-2Fp4ZHvFKa6E4rL0PPgGYLYDOp2CH8ZKKQ-3Dh8RL_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNPvmfKeHOuDyDKJDP2Q5Tf-2FH0GhK3J1maBIwymI2yc6cZmbMP6YfIq0IlHME7Viy-2FUV1o-2B4u8zbk9bRNV5B89EzKPtK60OBMuwewge1Ry4OP7ZZpHNLP0G-2Bw7zCwJSV1ekd49khDch2LQiW3Yk1EGx-2FOil9cl9OM3O21dkPqKYIgPNqJEnsZs2ncqaEImy48y0I2y2z2Tl9gSArwb3tlb7Id9VQO0UKczJXFLvXF1plUeEKBmhwe71BDDCGdeSHEQPAaqvdnjdXTh33BLT-2Fu83EA-3D-3D] Open: 23rd Aug 2025 @ 2:30PM - 3:00PM [https://resize.lockedoncloud.com/lovii-w:800-h:533/89/37/fe/d2/7c/ca/43/bd/af/6a/34/e8/a2/8a/2c/b6.jpg] [https://open.lockedoncloud.com/ls/click?upn=u001.tWMArd79sd2M8kyJfTWHQUbqamgFHfZiYbIMUJWBDlxti3LzHY1hbRNAwXDeBnIFaIFlQ-2F-2BtWepHOk9TQkmgTCczWU6HPQ-2F4Wp6yzRcYiEkqefBf4MFJRrYqmieh-2BxQaney8vPw0WHYAcgNEYNActSAAvBRyxhzxaOrzrpchDm-2BTy8TcUo8Z-2BhCThx8MwDsZwSg6CQiNSXDLmS2N519imGRux9z9xG0Lyi-2BCLe4duEKA-2FBxxtx6OOo6smr-2F52YvYExwGOr1c-2FfJC-2Bky6oBihRO8g7-2FzllK1sAQvVRT-2B35yoJLvmHZZxyjqEH0IakqDnKlEPrmpYE5117vOvnYyQrABRWK8A05Mu4NtQgBLbxL2WEDE2gqw3AQ1u3KlyGBm0-2FpLyZS-2F8BIOuNeOTK-2BZT779GY8vQtzzQds7R5OPSrUjLLAj8CWjjrp1VaaMALr6mJwmihcQZ13aGiamq6oHF1OPNv-2Fjwo5vNWt5oIt3awn6o6zHOw7qD-2B-2BiGom-2Bxb3tKV4HpLuz-2F1eGqEEXWkBMcFItaoQc5F6cQFFWLisnRZwK3RmNV-2B1Fy61BkU-2B3fKMnqRQTR4tYcIQCznRPt8f04j7o9j7M9G1DLDzOAbV2gsDn-2BSwR8I6bqsXVZmhuc-2BQW1niXWCczGmWxFbhpFpUw-2BiDSnveOvMOWXF32gWceITMdibwNStGR3Vu1kJdDRq99OYPDOPz7r8hMAyJ2GQpeSWDDkCK4KiP0CLy2RvsNUlbRA-3D3DGH_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNPvmfKeHOuDyDKJDP2Q5Tf-2FH0GhK3J1maBIwymI2yc6cZmbMP6YfIq0IlHME7Viy-2FUV1o-2B4u8zbk9bRNV5B89EzKPtK60OBMuwewge1Ry4OP7ZZpHNLP0G-2Bw7zCwJSV1ekZ1G8O-2BzE1Kbfs62aoplbj3xWNHXSGUcVEjTN58ST5K1RvkVO2HGSG4PsxbNOPIkDSJCCQkLixjgCpVPWPWieleh6b7SB6EzmAoe3T79DqbKvBJfSz-2BorwG4rpeyx8ud67GijD-2FWdihGyywGzEeHCTA-3D-3D]1/17 Third Avenue, Kelmscott \nFrom $499,000 3\nBed 2\nBath 2 (4)\nCar Welcome to this exciting three-bedroom, two-bathroom Kelmscott home. Built originally in 2009, the home enjoys a comfortable 105... More [https://open.lockedoncloud.com/ls/click?upn=u001.tWMArd79sd2M8kyJfTWHQUbqamgFHfZiYbIMUJWBDlxti3LzHY1hbRNAwXDeBnIFaIFlQ-2F-2BtWepHOk9TQkmgTCczWU6HPQ-2F4Wp6yzRcYiEkqefBf4MFJRrYqmieh-2BxQaney8vPw0WHYAcgNEYNActSAAvBRyxhzxaOrzrpchDm-2BTy8TcUo8Z-2BhCThx8MwDsZwSg6CQiNSXDLmS2N519imGRux9z9xG0Lyi-2BCLe4duEKA-2FBxxtx6OOo6smr-2F52YvYExwGOr1c-2FfJC-2Bky6oBihRO8g7-2FzllK1sAQvVRT-2B35yoJLvmHZZxyjqEH0IakqDnKlEPrmpYE5117vOvnYyQrABRWK8A05Mu4NtQgBLbxL2WEDE2gqw3AQ1u3KlyGBm0-2FpLyZS-2F8BIOuNeOTK-2BZT779GY8vQtzzQds7R5OPSrUjLLAj8CWjjrp1VaaMALr6mJwmihcQZ13aGiamq6oHF1OPNv-2Fjwo5vNWt5oIt3awn6o6zHOw7qD-2B-2BiGom-2Bxb3tKV4HpLuz-2F1eGqEEXWkBMcFItaoQc5F6cQFFWLisnRZwK3RmNV-2B1Fy61BkU-2B3fKMnqRQTR4tYcIQCznRPt8f04j7o9j7M9G1DLDzOAbV2gsDn-2BSwR8I6bqsXVZmhuc-2BQW1niXWCczGmWxFbhpFpUw-2BiDSnveOvMOWXF32gWceITMdibwNStGR3Vu1kJdDRq99OYPDOPz7r8hMAyJ2GQpeSWDDkCK4KiP0CLy2RvsNUlbRA-3Dl4db_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNPvmfKeHOuDyDKJDP2Q5Tf-2FH0GhK3J1maBIwymI2yc6cZmbMP6YfIq0IlHME7Viy-2FUV1o-2B4u8zbk9bRNV5B89EzKPtK60OBMuwewge1Ry4OP7ZZpHNLP0G-2Bw7zCwJSV1ekc6fMrBGdC1A0fACYGeKdaHj88b1fZsbZS-2FvXD2-2B0bxSsPfPVXfsEtkBdDt1sLCjlQ6zBJC-2FL-2Fy2Jpi-2F9Lc-2BhJP-2BJL5-2BAnCa4t7R4shfXOl2kQaBBba98F5ztEtgX59ijJJo5ijTu2RHU8T8EJXAfLQ-3D-3D] [https://resize.lockedoncloud.com/lovii-w:800-h:533/8e/f0/e1/e9/c1/3b/4d/71/a0/9c/3c/e4/46/c3/56/f3.jpg] [https://open.lockedoncloud.com/ls/click?upn=u001.tWMArd79sd2M8kyJfTWHQUbqamgFHfZiYbIMUJWBDlxti3LzHY1hbRNAwXDeBnIFaIFlQ-2F-2BtWepHOk9TQkmgTCczWU6HPQ-2F4Wp6yzRcYiEnRkZ35XgilxEuZfSIVkWbhNDDfjQ8M2dVEVHIBMIt2ZKxgQ3Ji0M3PViOADLI-2B-2BJANYseI40Rr6zn7ECQKuo9qnLCcowmwYCNa0B-2Bazoy1PyvXMHS86OdEXa0b2dalzrC85W5OZW8vcIdcstfL-2ByF4C-2BsVf32LpYroanTEHLjoTgoHLpN08bn5ZWz9faBD22mrkyieGVKjLRt-2Ft8yMxLvFUzvHrJujxozsdoW6-2FVjzrqkFewLuiyOH1jFhi0cqs6VyZwe4426suI9cdY3WR8vGFRimo-2FptFgvsyC12zJpYSDFGBVBZKtbuBCiSHpyT-2F6LEuVkvd6f1SYp90D7sAA1hg8xeKiZDclUTuMZkrphTTdxDrRNLiXXEg2QMwdNKDGQgmjyUoAFz2vLq1-2BhI4k4iWQC9bIcvu-2B-2BM38JWlU14confmJ4yx2TXjD6CcE02hVRVZssMFpHKP9682Yyze1bEt0cJVNE8avymkXyjWSFGBVgdhTeUnt5N0uirMJCPoZ-2BlqRubImP-2FQw7vtUfwX3Ec9o3qL0Pp86x7PSqY2MuHaTwWFR65eJsJmsnibbKzSKoAkJxZ1rQsmEMBTpxdT3B9U0YN5-2BQic0KBvb2btoQtDO7-2BVtbLS7oUnY2hH31XlLI-3D_-pA_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNPvmfKeHOuDyDKJDP2Q5Tf-2FH0GhK3J1maBIwymI2yc6cZmbMP6YfIq0IlHME7Viy-2FUV1o-2B4u8zbk9bRNV5B89EzKPtK60OBMuwewge1Ry4OP7ZZpHNLP0G-2Bw7zCwJSV1ekJAxq2ksObSVBx17OXlHP7wGkYGfdsiTogxhEpvBWWZ-2FSlOI4onzSQwkVymUqzZJcU70rGZpXBU8fEMaasHLlNalcq-2F-2Bs0qEniUZQJ1wOAIfUW-2BGVFKsNSZTjlUOcWqOycZjn-2Be6-2BpGJXYD06zI-2FdBg-3D-3D]707/2 Rutland Avenue, Lathlain \nFrom $569,000 2\nBed 2\nBath 2\nCar Welcome to 707/2 Rutland Avenue - situated within the well-known Red Castle apartment block, this property offers a modern yet... More [https://open.lockedoncloud.com/ls/click?upn=u001.tWMArd79sd2M8kyJfTWHQUbqamgFHfZiYbIMUJWBDlxti3LzHY1hbRNAwXDeBnIFaIFlQ-2F-2BtWepHOk9TQkmgTCczWU6HPQ-2F4Wp6yzRcYiEnRkZ35XgilxEuZfSIVkWbhNDDfjQ8M2dVEVHIBMIt2ZKxgQ3Ji0M3PViOADLI-2B-2BJANYseI40Rr6zn7ECQKuo9qnLCcowmwYCNa0B-2Bazoy1PyvXMHS86OdEXa0b2dalzrC85W5OZW8vcIdcstfL-2ByF4C-2BsVf32LpYroanTEHLjoTgoHLpN08bn5ZWz9faBD22mrkyieGVKjLRt-2Ft8yMxLvFUzvHrJujxozsdoW6-2FVjzrqkFewLuiyOH1jFhi0cqs6VyZwe4426suI9cdY3WR8vGFRimo-2FptFgvsyC12zJpYSDFGBVBZKtbuBCiSHpyT-2F6LEuVkvd6f1SYp90D7sAA1hg8xeKiZDclUTuMZkrphTTdxDrRNLiXXEg2QMwdNKDGQgmjyUoAFz2vLq1-2BhI4k4iWQC9bIcvu-2B-2BM38JWlU14confmJ4yx2TXjD6CcE02hVRVZssMFpHKP9682Yyze1bEt0cJVNE8avymkXyjWSFGBVgdhTeUnt5N0uirMJCPoZ-2BlqRubImP-2FQw7vtUfwX3Ec9o3qL0Pp86x7PSqY2MuHaTwWFR65eJsJmsnibbKzSKoAkJxZ1rQsmEMBTpxdT3B9U0YN5-2BQic0KBvb2btoQtDO7-2BVtbLS7oUnY2hH31XlLI-3D8PiW_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNPvmfKeHOuDyDKJDP2Q5Tf-2FH0GhK3J1maBIwymI2yc6cZmbMP6YfIq0IlHME7Viy-2FUV1o-2B4u8zbk9bRNV5B89EzKPtK60OBMuwewge1Ry4OP7ZZpHNLP0G-2Bw7zCwJSV1ekLFnTn7Tn14ly7M6-2BL4SSdKPVqnt0beW7u5F-2F39VNprmb2ut5nXHdXcwV-2FUp09hqJRpvKlSUtf0-2FWRcp0EJ-2FB8rgh9tdbgHxcMUzNpAEKTXFqnjeWxldvf37Ncsr8tkjVpNuIe3kcseY-2BQRxiRNzlzg-3D-3D] Play video [https://open.lockedoncloud.com/ls/click?upn=u001.tWMArd79sd2M8kyJfTWHQUbqamgFHfZiYbIMUJWBDlxti3LzHY1hbRNAwXDeBnIFaIFlQ-2F-2BtWepHOk9TQkmgTCczWU6HPQ-2F4Wp6yzRcYiEnRkZ35XgilxEuZfSIVkWbhNDDfjQ8M2dVEVHIBMIt2ZKxgQ3Ji0M3PViOADLI-2B-2BJANYseI40Rr6zn7ECQKuo9qnLCcowmwYCNa0B-2Bazoy1PyvXMHS86OdEXa0b2dalzrC85W5OZW8vcIdcstfL-2ByF4C-2BsVf32LpYroanTEHLjoTgoHLpN08bn5ZWz9faBD22mrkyieGVKjLRt-2Ft8yMxLvFUzvHrJujxozsdoW6-2FVjzrqkFewLuiyOH1jFhi0cqs6VyZwe4426suI9cdY3WR8vGFRimo-2FptFgvsyC12zJpYSDFGBVBZKtbuBCiSHpyT-2F6LEuVkvd6f1SYp90D7sAA1hg8xeKiZDclUTuMZkrphTTdxDrRNLiXXEg2QMwdNKDGQgmjyUoAFz2vLq1-2BhI4k4igzYkS4M4HUiSHE-2F2G7kcaQehtp-2FeCgTOzwFvKjFrHOqszOD4vyK5Rvu0J-2FHJaTfagy8CSK50xES8MGjry5E7tvAjeg0UUGisk0oc0dAlCk6Uc6gmJSSMk7VPGixQFEiAouglpi4qDHuwJoT-2BQqjvY0-2BWsM-2Bz-2BVyMB0N4394WI1sVNcD9kg3NxN57b-2B-2FqvifjEEgXsV0AzjxwpN8R6p9EtOdgf1Gtavxs39-2FTv2hv-2Frg-3DVhZd_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNPvmfKeHOuDyDKJDP2Q5Tf-2FH0GhK3J1maBIwymI2yc6cZmbMP6YfIq0IlHME7Viy-2FUV1o-2B4u8zbk9bRNV5B89EzKPtK60OBMuwewge1Ry4OP7ZZpHNLP0G-2Bw7zCwJSV1ekA9gaoTV95b4-2Bgljr7c0qk-2FSNeM5wiMoSuIGiEZonpiCRSgeO-2FBHpYZ4Vw-2B-2BcD0qBYBSbA2ozp1V67Fu41zDojN61Nx0GDHkFXl3-2FRg9ElfS5-2BsOQTXViqBq0GiYRi-2FDPkz1RD0jSsAwgxlAODrU0tQ-3D-3D] Open: 23rd Aug 2025 @ 1:30PM - 2:00PM [https://resize.lockedoncloud.com/lovii-w:800-h:533/b0/2d/99/92/2a/a1/4e/54/b9/24/35/aa/2b/d4/32/08.jpg] [https://open.lockedoncloud.com/ls/click?upn=u001.tWMArd79sd2M8kyJfTWHQUbqamgFHfZiYbIMUJWBDlxti3LzHY1hbRNAwXDeBnIFaIFlQ-2F-2BtWepHOk9TQkmgTBvqPYPKptUI5fIqhhe16sgZm0AGOAUuOGAs02oVfmL-2F2Eto6hdMLxv4Z8dZ-2BzJXmH5xruQl7lGfAOrLej-2BQYuNvUJy4PhXourAxkyCqOTu4weF7lCz1GeepsQHZ9-2FZSHwm2CpMVUXjriG8rKxCId96LTaYh-2FJkIpaXhs2mfktiaQj1IT3f9BRV-2FKy1OMsqtwYdY-2FHnDHq-2BtCK-2FFbjr7zO813k-2B3LBtgG27vVEpXRKtXbOTyM9VBmRN4qHEk5i-2FbvRPaH0dXkY42e6qCZzbfCwJHhaqQOKQ3zkfieYrinA3VqrLCV84iGFHAX1XzSvOS0ccy9HdnUgxcC-2FSMPg1ul17OFsbXtwJkDtpFCEN0HLQ-2FmW5-2F6xhpfnVn4mutWPjx7cRKVse-2B9h2B8yDnk2VLSCR0FqeL2TsHmHXXyyFuOLBcu4cPA6aLpWiQJNHW8LJYYav2rs1-2B5Ey6FXlN-2FkdGPRqW-2FZp-2BHwYs-2Fbr-2FPCzW6FM-2FIge6LaHr9AhpqkAJSueNtb4ePmOWoQuBar2Zgrvxb4VwrQfMN-2FuxrThShNEp2wD6O5Kj15SbouQWjNZ7zs74jrtNrhfHC20CyNxepTvmaFEM-2Bp70WjZ2OtyHJ4lFH9SiFpSxfYTbl9RFOlthE4AXzoaqeIEmc-2BoLY8Y8DA2RF8cCSLU8-2B2TxeaVC7RkceU-2F6c4Pk_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNPvmfKeHOuDyDKJDP2Q5Tf-2FH0GhK3J1maBIwymI2yc6cZmbMP6YfIq0IlHME7Viy-2FUV1o-2B4u8zbk9bRNV5B89EzKPtK60OBMuwewge1Ry4OP7ZZpHNLP0G-2Bw7zCwJSV1ek2Szm6aGFBK-2FW2i5jP8cFFQRFmNcgipE68bmyfI7MyC-2BPgcIHitL-2F-2BV2ZWh71pCPdATrodVJsjbZXczosHHUivyqPaIVd-2BsvIuzTNee1h5NOpcfEH7PBlIYBdcF57EF4n3uDZjSaZNz30PzAtdRc4tA-3D-3D]28 Kerwin Way, Lockridge \nFrom $649,000 5\nBed 1\nBath 2 (4)\nCar Welcome to 28 Kerwin Way - a large family home filled with spacious rooms throughout, five bedrooms altogether, and a large... More [https://open.lockedoncloud.com/ls/click?upn=u001.tWMArd79sd2M8kyJfTWHQUbqamgFHfZiYbIMUJWBDlxti3LzHY1hbRNAwXDeBnIFaIFlQ-2F-2BtWepHOk9TQkmgTBvqPYPKptUI5fIqhhe16sgZm0AGOAUuOGAs02oVfmL-2F2Eto6hdMLxv4Z8dZ-2BzJXmH5xruQl7lGfAOrLej-2BQYuNvUJy4PhXourAxkyCqOTu4weF7lCz1GeepsQHZ9-2FZSHwm2CpMVUXjriG8rKxCId96LTaYh-2FJkIpaXhs2mfktiaQj1IT3f9BRV-2FKy1OMsqtwYdY-2FHnDHq-2BtCK-2FFbjr7zO813k-2B3LBtgG27vVEpXRKtXbOTyM9VBmRN4qHEk5i-2FbvRPaH0dXkY42e6qCZzbfCwJHhaqQOKQ3zkfieYrinA3VqrLCV84iGFHAX1XzSvOS0ccy9HdnUgxcC-2FSMPg1ul17OFsbXtwJkDtpFCEN0HLQ-2FmW5-2F6xhpfnVn4mutWPjx7cRKVse-2B9h2B8yDnk2VLSCR0FqeL2TsHmHXXyyFuOLBcu4cPA6aLpWiQJNHW8LJYYav2rs1-2B5Ey6FXlN-2FkdGPRqW-2FZp-2BHwYs-2Fbr-2FPCzW6FM-2FIge6LaHr9AhpqkAJSueNtb4ePmOWoQuBar2Zgrvxb4VwrQfMN-2FuxrThShNEp2wD6O5Kj15SbouQWjNZ7zs74jrtNrhfHC20CyNxepTvmaFEM-2Bp70WjZ2OtyHJ4lFH9SiFpSxfYTbl9RFOlthE4AXzoaqeIEmc-2BoLY8Y8DA2RF8cCSLU8-2B2TxeaVC7RkceU-2F6h5Pq_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNPvmfKeHOuDyDKJDP2Q5Tf-2FH0GhK3J1maBIwymI2yc6cZmbMP6YfIq0IlHME7Viy-2FUV1o-2B4u8zbk9bRNV5B89EzKPtK60OBMuwewge1Ry4OP7ZZpHNLP0G-2Bw7zCwJSV1eky8u5zdZKgbjYsSA6u23-2BQH22Oo0218OiTNXHdoE4POpLYvEk6j9z3TM3wXxK-2FdQ1T2Du-2Fckbu0DwUJU6WQVk6QLRrZ20pxmPCNSylucelDt7IxkXU-2FsXYBY1WcoSP0XC9w81NsGcFkfnNCr5bCUw-2Bw-3D-3D] Open: 23rd Aug 2025 @ 11:45AM - 12:15PM [https://resize.lockedoncloud.com/lovii-w:800-h:533/b3/21/32/d1/7b/67/42/3c/98/f8/2a/6c/89/6f/40/47.jpg] [https://open.lockedoncloud.com/ls/click?upn=u001.tWMArd79sd2M8kyJfTWHQUbqamgFHfZiYbIMUJWBDlxti3LzHY1hbRNAwXDeBnIFaIFlQ-2F-2BtWepHOk9TQkmgTDQ-2FSBFjnsr-2Bh6LMuoqX-2F-2F5nwYoveYFCCZUIVUaAD-2BJsrmNw6O-2B9YNbadpvXkxXKJ4zxJBBoGvmshrP7ODglq3nFL7sYrBulAjI4XwhuhZr0B4Ujyzqdu8t1aLRWDIDBgzTWPA2fj92kXmTTsFFyiwvnB9g-2Bz8298t4Hd5vPAnJb0Y255HMfkWRyDPqLQK9gqZa9QKxF-2BVMIlCP1pYOzHUaVfTlxhUEEH82AksqBQW-2BQYf5MgiuyNl6jou8oVtMatedl-2B-2FOxJNQxLap-2Fuh7aS6sTdRgKeQNTwsU8dVOZGP-2FGP02mNUO3IuIT2vdkKw42TSNV55sQEs-2BWrRe-2FtuN0j7qTQdPAv1kxR9A4lCiefuI0aFBHbYX0CeQKlPEeTFFkNzu-2FAJlgCe3XyQFbSPgbMJ7P2HUiMcBNmUIKCEReZSPWzsr6OyBj78U2Lic9d7rNH1Ac7nJjw7rQMuBAsbczV9Q9RexAb3wWtXUGmD59YNRtPlJcGeXFlDA2l-2F3-2BDCV-2BfsrkdrxR17HUeHf1rYsD3iPds1NQVSUA0RnKvOHLb9GmeVZwb1vwjwcYhW-2F7K8B2O3vSw21O3MX0hOzowKmnikFiCsf6bMlTktaYvVF8KVAmw1yLx8Vv83KB7a8Kei7124f-2B0AYi-2FO-2F4Y5RdPf29jwo-3DFU9i_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNPvmfKeHOuDyDKJDP2Q5Tf-2FH0GhK3J1maBIwymI2yc6cZmbMP6YfIq0IlHME7Viy-2FUV1o-2B4u8zbk9bRNV5B89EzKPtK60OBMuwewge1Ry4OP7ZZpHNLP0G-2Bw7zCwJSV1ekWT5LFxsbV90LOY-2B6i32xaHJOeBY6JRZM5bzCr4P15uYHGnixqr0bsdg6Rp8unGGNMj39Q6OskKLVmtHvW9NSRoJX7Wo7lHD8QfmcxIXhXsfUNzgEm5Vz1TkShVpuRntyDq6-2FLQlv7pKKdFYH6Wr9Hg-3D-3D]67 Altone Road, Lockridge \nFrom $699,000 3\nBed 1\nBath 1 (2)\nCar Welcome to 67 Altone Road, Lockridge. With a total block size of 692 square metres, and zoning of R20/50, this property has... More [https://open.lockedoncloud.com/ls/click?upn=u001.tWMArd79sd2M8kyJfTWHQUbqamgFHfZiYbIMUJWBDlxti3LzHY1hbRNAwXDeBnIFaIFlQ-2F-2BtWepHOk9TQkmgTDQ-2FSBFjnsr-2Bh6LMuoqX-2F-2F5nwYoveYFCCZUIVUaAD-2BJsrmNw6O-2B9YNbadpvXkxXKJ4zxJBBoGvmshrP7ODglq3nFL7sYrBulAjI4XwhuhZr0B4Ujyzqdu8t1aLRWDIDBgzTWPA2fj92kXmTTsFFyiwvnB9g-2Bz8298t4Hd5vPAnJb0Y255HMfkWRyDPqLQK9gqZa9QKxF-2BVMIlCP1pYOzHUaVfTlxhUEEH82AksqBQW-2BQYf5MgiuyNl6jou8oVtMatedl-2B-2FOxJNQxLap-2Fuh7aS6sTdRgKeQNTwsU8dVOZGP-2FGP02mNUO3IuIT2vdkKw42TSNV55sQEs-2BWrRe-2FtuN0j7qTQdPAv1kxR9A4lCiefuI0aFBHbYX0CeQKlPEeTFFkNzu-2FAJlgCe3XyQFbSPgbMJ7P2HUiMcBNmUIKCEReZSPWzsr6OyBj78U2Lic9d7rNH1Ac7nJjw7rQMuBAsbczV9Q9RexAb3wWtXUGmD59YNRtPlJcGeXFlDA2l-2F3-2BDCV-2BfsrkdrxR17HUeHf1rYsD3iPds1NQVSUA0RnKvOHLb9GmeVZwb1vwjwcYhW-2F7K8B2O3vSw21O3MX0hOzowKmnikFiCsf6bMlTktaYvVF8KVAmw1yLx8Vv83KB7a8Kei7124f-2B0AYi-2FO-2F4Y5RdPf29jwo-3DvyJ1_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNPvmfKeHOuDyDKJDP2Q5Tf-2FH0GhK3J1maBIwymI2yc6cZmbMP6YfIq0IlHME7Viy-2FUV1o-2B4u8zbk9bRNV5B89EzKPtK60OBMuwewge1Ry4OP7ZZpHNLP0G-2Bw7zCwJSV1ek-2BPjCmcD3-2BKhThqbnlpHGj9mgEtCsvNaqNhfO7XmLJI0-2FuyS-2BxaiSQ7wL9Tr1BmW3PioCYOOVqTZdxRGePUA2oWrlzxfHJxImI-2BgFZKr9EZDYWNRUK9ZeEjDPS3QnJ04x0imbEtWd6KLyxdzLmQ-2BN8w-3D-3D] Open: 23rd Aug 2025 @ 12:30PM - 1:00PM [https://resize.lockedoncloud.com/lovii-w:800-h:533/fd/e3/e9/06/56/f4/4b/d9/a4/5c/53/a8/5b/2b/cf/8c.jpg] [https://open.lockedoncloud.com/ls/click?upn=u001.tWMArd79sd2M8kyJfTWHQUbqamgFHfZiYbIMUJWBDlxti3LzHY1hbRNAwXDeBnIFaIFlQ-2F-2BtWepHOk9TQkmgTA29bUCl4x9oFLYaEJ5se-2BA1nD69N-2FqgDTiutMEAvk9PaQTCnVK2Q-2BKmw0vuyYoCCn61oD40CRF1IHUXlJtdQXx9eAxwufF6bVnZG7t9YNmuAlENDFTpTDy8U1n2TX8TwxGe1ekUOR3w2V4pw3pV-2BJjC3uIXl4iuQu1P5S5XMzsEa2BI7UkVgOaii-2Be-2B7Nn9coLoQH5Er7bO7vsFx1LixmWBpBwsCPBQgEoJJ1p4hmsBIJLU08QqJYiGE84wwxvtLk60JQbYLim13ECx-2FLwrCg4B-2FgrETTmmXfAskZ9-2Fa7yjt9IpFVHj5RqCpCsusjeT1bJd33MYKBqo0La7aSE3oGS0dkzIMfx9EGYGSCsmOWBUPaENMGVYkYInh6skMnnpCVoPyUx9EIqNaWCoF7b0AdaeTURBrWgg7y8lkRtko-2FvZtjw3ADyuecY83x6ra1kfUzLu9T3G-2FzE8MQ5AnmCxHsrZeZxBkq95H4Il-2FDLLJJvJxWVBvsM1DzizVK6wyc2IzcTN-2Fv26Fz-2FGu-2F71SuAzkbXQTqDPs3qvLDOp2q-2B7oOIrIMVyaudNllX59MRo6X3mVFPKRfCP3VVkiR7BStsecVhX0r3yjQ2v4wqwlNGIExFK9uTjPilxjtcQr8CjITpXI-2B4Qfj68x4N3ZpHGyqNlGmeJpZ92XWYMp-2Fyrzefy3-2Fo5UT2z_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNPvmfKeHOuDyDKJDP2Q5Tf-2FH0GhK3J1maBIwymI2yc6cZmbMP6YfIq0IlHME7Viy-2FUV1o-2B4u8zbk9bRNV5B89EzKPtK60OBMuwewge1Ry4OP7ZZpHNLP0G-2Bw7zCwJSV1ekCGXCwfLykOUv4GJ5osilKZVlcRGJ-2FFRlerrL-2BfJolgozZ9-2FANQi-2FJ7O4kPImFvVUBE5JYIuXbc3ZUsJTZtuJJs2BF4M6b6emqg9r0pBwJ2QHqLAlB-2FpdF7-2FRUe-2BYRYmaFmQa6tUTy6oFl-2BnAnWqH6g-3D-3D]161 Fitzgerald Street East, Northam \nFrom $799,000 - 7.45% Rental Return Incredible opportunity to purchase a historical component of the Northam township. In 1915, the Bank of NSW moved into these... More [https://open.lockedoncloud.com/ls/click?upn=u001.tWMArd79sd2M8kyJfTWHQUbqamgFHfZiYbIMUJWBDlxti3LzHY1hbRNAwXDeBnIFaIFlQ-2F-2BtWepHOk9TQkmgTA29bUCl4x9oFLYaEJ5se-2BA1nD69N-2FqgDTiutMEAvk9PaQTCnVK2Q-2BKmw0vuyYoCCn61oD40CRF1IHUXlJtdQXx9eAxwufF6bVnZG7t9YNmuAlENDFTpTDy8U1n2TX8TwxGe1ekUOR3w2V4pw3pV-2BJjC3uIXl4iuQu1P5S5XMzsEa2BI7UkVgOaii-2Be-2B7Nn9coLoQH5Er7bO7vsFx1LixmWBpBwsCPBQgEoJJ1p4hmsBIJLU08QqJYiGE84wwxvtLk60JQbYLim13ECx-2FLwrCg4B-2FgrETTmmXfAskZ9-2Fa7yjt9IpFVHj5RqCpCsusjeT1bJd33MYKBqo0La7aSE3oGS0dkzIMfx9EGYGSCsmOWBUPaENMGVYkYInh6skMnnpCVoPyUx9EIqNaWCoF7b0AdaeTURBrWgg7y8lkRtko-2FvZtjw3ADyuecY83x6ra1kfUzLu9T3G-2FzE8MQ5AnmCxHsrZeZxBkq95H4Il-2FDLLJJvJxWVBvsM1DzizVK6wyc2IzcTN-2Fv26Fz-2FGu-2F71SuAzkbXQTqDPs3qvLDOp2q-2B7oOIrIMVyaudNllX59MRo6X3mVFPKRfCP3VVkiR7BStsecVhX0r3yjQ2v4wqwlNGIExFK9uTjPilxjtcQr8CjITpXI-2B4Qfj68x4N3ZpHGyqNlGmeJpZ92XWYMp-2Fyrzefy3-2Fo5CClv_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNPvmfKeHOuDyDKJDP2Q5Tf-2FH0GhK3J1maBIwymI2yc6cZmbMP6YfIq0IlHME7Viy-2FUV1o-2B4u8zbk9bRNV5B89EzKPtK60OBMuwewge1Ry4OP7ZZpHNLP0G-2Bw7zCwJSV1ek6fzCHXWAhAKQcg34ZrDm9NiZkvr7aUsBK2xCTQPbOaWpRH578kXjbcHShh1ACIfrBsH1XrcgwyG1f14FHFixuljQ868JW3ari6htrTiYf0x-2BSlhKAQbT0-2FGMusJeQ8ghww4nLzdd0YeL7fo1wrjw8Q-3D-3D] [https://resize.lockedoncloud.com/lovii-w:800-h:533/88/e6/62/48/dc/c9/46/f1/85/a3/25/d1/fc/f4/58/90.jpg] [https://open.lockedoncloud.com/ls/click?upn=u001.tWMArd79sd2M8kyJfTWHQUbqamgFHfZiYbIMUJWBDlxti3LzHY1hbRNAwXDeBnIFaIFlQ-2F-2BtWepHOk9TQkmgTHLbjRiMivRXyZNJqQUzAmR5nlDLXvKuI2Wk60s9K6CqSH5px0eTKdqWw8gVvC-2F8y5fkGTXYRWlUKr-2BeTdKPnUSN-2FZOEMouvOyfCui1lWy7YVFjMfNUduwsqYA7dW3pQca91jv4gq6s7M3WNvrWLsiDMrk2fwQVq2Ds8lDWUtJGoELEOFETsL-2FqfYb3kvxz1lqzfEc3JvjmdcwpeauE2bhQAeQMcxjpIQwOYAnh-2BeOW0R7bXVNuDf3qUiTi-2BnJtc4bsg12vaM3FxnL2MyfO47uHnLNIIX-2BmCeBSqVruy-2Bwvt7RsqfFpQBq8KRdqXFdyUHdmpybe-2BVM7daEWZv-2Fke66sf9N5rx6BuhQd6WjQXFGhA4fCzQK4g61ULisPYEvoCGkgMY-2BndL5bjYxcUfkRNeR8qAzm02gBlGqZXTf0TuE323n8cobEUsN6ngLpuK9YAGAGsM0PhJ8A-2BNb-2FWBVwRvsI4pxoGG5ds-2FovKycag3cHwr9dAzReUfUWi9OdlLWzqfF3gfYlnudRJxmRbLljxZXZm8fxXuVp9oR-2FMyWFCGnSCknuqOvep5S1tzFD4ANLp2HeZCkc3vEGgmL42rRhNRs5S13e6-2BVhF4c-2FxwqNrKJHBv3fPe6GdfpWpSExqoGQ8P6TsrLq3-2BzcOWxg0zt3csGapcVXG2Jy30AlsSyVwp717hTXq3dIRy2GWKRoEVdfDmC5zmGlWH0CevmwEzbbsIpA-3DqG56_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNPvmfKeHOuDyDKJDP2Q5Tf-2FH0GhK3J1maBIwymI2yc6cZmbMP6YfIq0IlHME7Viy-2FUV1o-2B4u8zbk9bRNV5B89EzKPtK60OBMuwewge1Ry4OP7ZZpHNLP0G-2Bw7zCwJSV1ekILvH8AVHEgbm1WFX9PJkskWK9zt-2FUuPNW04h938kL8z2Qo8-2BbYkBHCXo2bz2-2BTrpcpM3cNi8-2F16kCj-2FZAgfa4CMU9EnByUhqUP8dwknVypYN3AhqxdtrxpUX6DtrQG1-2F0wPAiQm1Ra03iC9nr2CfXg-3D-3D]142 Fitzgerald Street, Northam \nBest Offer in the $800,000's Welcome to 142 Fitzgerald Street, Northam — a strategically located retail asset on the town’s busiest commercial strip. Fully... More [https://open.lockedoncloud.com/ls/click?upn=u001.tWMArd79sd2M8kyJfTWHQUbqamgFHfZiYbIMUJWBDlxti3LzHY1hbRNAwXDeBnIFaIFlQ-2F-2BtWepHOk9TQkmgTHLbjRiMivRXyZNJqQUzAmR5nlDLXvKuI2Wk60s9K6CqSH5px0eTKdqWw8gVvC-2F8y5fkGTXYRWlUKr-2BeTdKPnUSN-2FZOEMouvOyfCui1lWy7YVFjMfNUduwsqYA7dW3pQca91jv4gq6s7M3WNvrWLsiDMrk2fwQVq2Ds8lDWUtJGoELEOFETsL-2FqfYb3kvxz1lqzfEc3JvjmdcwpeauE2bhQAeQMcxjpIQwOYAnh-2BeOW0R7bXVNuDf3qUiTi-2BnJtc4bsg12vaM3FxnL2MyfO47uHnLNIIX-2BmCeBSqVruy-2Bwvt7RsqfFpQBq8KRdqXFdyUHdmpybe-2BVM7daEWZv-2Fke66sf9N5rx6BuhQd6WjQXFGhA4fCzQK4g61ULisPYEvoCGkgMY-2BndL5bjYxcUfkRNeR8qAzm02gBlGqZXTf0TuE323n8cobEUsN6ngLpuK9YAGAGsM0PhJ8A-2BNb-2FWBVwRvsI4pxoGG5ds-2FovKycag3cHwr9dAzReUfUWi9OdlLWzqfF3gfYlnudRJxmRbLljxZXZm8fxXuVp9oR-2FMyWFCGnSCknuqOvep5S1tzFD4ANLp2HeZCkc3vEGgmL42rRhNRs5S13e6-2BVhF4c-2FxwqNrKJHBv3fPe6GdfpWpSExqoGQ8P6TsrLq3-2BzcOWxg0zt3csGapcVXG2Jy30AlsSyVwp717hTXq3dIRy2GWKRoEVdfDmC5zmGlWH0CevmwEzbbsIpA-3D30eq_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNPvmfKeHOuDyDKJDP2Q5Tf-2FH0GhK3J1maBIwymI2yc6cZmbMP6YfIq0IlHME7Viy-2FUV1o-2B4u8zbk9bRNV5B89EzKPtK60OBMuwewge1Ry4OP7ZZpHNLP0G-2Bw7zCwJSV1ekzhVV3vpvsxGYPlcfa5MRIRWpo-2FzLG0QE4-2FvwWREIe7T30HpGKFwmp0Sqmep9QOQ6pI7uqOrdsOX1hcsoTalqcfXjcv5w9Kffr8lTqHROabbvxXTqTg2RW3dRuv0KxtwnjVnBDPMngebO46IqF4Ld4g-3D-3D] [https://resize.lockedoncloud.com/lovii-w:800-h:533/78/b9/2f/1f/96/61/46/ac/bb/48/5b/0f/e4/af/09/4c.png] [https://open.lockedoncloud.com/ls/click?upn=u001.tWMArd79sd2M8kyJfTWHQUbqamgFHfZiYbIMUJWBDlxti3LzHY1hbRNAwXDeBnIFaIFlQ-2F-2BtWepHOk9TQkmgTCczWU6HPQ-2F4Wp6yzRcYiEm9jxQLLz7xeXq5nglu6IZlftn9Pwrppb2-2FyqNEQ0RxbSU53WHr1mJdISrv2nEf5POpCU6eDJXQ0peCyQvi7fFO-2BnpPbMLEyGRn3H8-2BCBwYuguI0epHBTzj0GE-2BJ-2Fz8qSuVQBjPFZynqgju-2FdW9vHpx4LC91h3H9A2Nzs4TEd6Ltxw21Zu0m9NQBrHHHjytxeXgWLhexb5XNdXcRapPEXGNxmPeEPNZn3V5-2FnhGbawkBB1tAzNl3K2QfOIdhgBHufDFE-2BSwfe4sjuxrGcg-2FJTeyc52SlWYROXFec3KvXifSfhYR3U1xctWF-2Bg9377i6N5j1uDDMZKyLWooY3rbRtWvWqZY4lkHZxpySZ0ltsguZNXkF58VHQLqvDEF6gzqttQ36lPI7hIS8soCMLqqsHtrMRHyEwdiyQsWPVpX6iSB7f5plruNxxu6Rn5fcfRgJr6cPkyT-2F7ofulM-2Frg-2B-2BkXEnW-2BTWhGbb2BeyLSTz-2FQ2V6oshsuqxlDGNlLLjMUuk58itf5fQuu-2Fb8xUACkw-2Bj-2FrGnXydNMBJoMtX4m9Yp6hqYpdhjkbhnioGj8M6soy-2BYNFbAgtMss1OtGin9Rl7003Kxx4-2BFm47STDxV-2FvxzS9QlCxuIxKD9Ux2hRwkf4sFFOjw-3DL0C8_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNPvmfKeHOuDyDKJDP2Q5Tf-2FH0GhK3J1maBIwymI2yc6cZmbMP6YfIq0IlHME7Viy-2FUV1o-2B4u8zbk9bRNV5B89EzKPtK60OBMuwewge1Ry4OP7ZZpHNLP0G-2Bw7zCwJSV1ekZrV0pNsIb2Y2lWRP56W-2FsJGyO3l-2BrgX6zPlbTsCAxy-2BzT3r6Wc2oqoxdYgim10vXu4PR51nUESShIjhnOvzS22ofPxf4HpaaRSz-2BwUFFPoadcPM5ZHL3VVfEnIad7zApJeGeGKx106p0j0btVx4Y-2BQ-3D-3D]79/61 Elvire Street, Viveash \nFrom $569,000 3\nBed 1\nBath 0 (2)\nCar Situated within the Waters Edge estate, this property presents a great lifestyle opportunity with access to a pool, playground,... More [https://open.lockedoncloud.com/ls/click?upn=u001.tWMArd79sd2M8kyJfTWHQUbqamgFHfZiYbIMUJWBDlxti3LzHY1hbRNAwXDeBnIFaIFlQ-2F-2BtWepHOk9TQkmgTCczWU6HPQ-2F4Wp6yzRcYiEm9jxQLLz7xeXq5nglu6IZlftn9Pwrppb2-2FyqNEQ0RxbSU53WHr1mJdISrv2nEf5POpCU6eDJXQ0peCyQvi7fFO-2BnpPbMLEyGRn3H8-2BCBwYuguI0epHBTzj0GE-2BJ-2Fz8qSuVQBjPFZynqgju-2FdW9vHpx4LC91h3H9A2Nzs4TEd6Ltxw21Zu0m9NQBrHHHjytxeXgWLhexb5XNdXcRapPEXGNxmPeEPNZn3V5-2FnhGbawkBB1tAzNl3K2QfOIdhgBHufDFE-2BSwfe4sjuxrGcg-2FJTeyc52SlWYROXFec3KvXifSfhYR3U1xctWF-2Bg9377i6N5j1uDDMZKyLWooY3rbRtWvWqZY4lkHZxpySZ0ltsguZNXkF58VHQLqvDEF6gzqttQ36lPI7hIS8soCMLqqsHtrMRHyEwdiyQsWPVpX6iSB7f5plruNxxu6Rn5fcfRgJr6cPkyT-2F7ofulM-2Frg-2B-2BkXEnW-2BTWhGbb2BeyLSTz-2FQ2V6oshsuqxlDGNlLLjMUuk58itf5fQuu-2Fb8xUACkw-2Bj-2FrGnXydNMBJoMtX4m9Yp6hqYpdhjkbhnioGj8M6soy-2BYNFbAgtMss1OtGin9Rl7003Kxx4-2BFm47STDxV-2FvxzS9QlCxuIxKD9Ux2hRwkf4sFFOjw-3DwVCN_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNPvmfKeHOuDyDKJDP2Q5Tf-2FH0GhK3J1maBIwymI2yc6cZmbMP6YfIq0IlHME7Viy-2FUV1o-2B4u8zbk9bRNV5B89EzKPtK60OBMuwewge1Ry4OP7ZZpHNLP0G-2Bw7zCwJSV1ekpD-2BpJGXH8COmCh8ab1Z0yiFJg-2F3X4VRmDbI0duwyBOxJhv4PF8Fv0s2s-2Fvfd87rpT6KFB-2Bs7GHj-2FGJv-2BNWoEbGknlGG6WBXXhu-2BLGZrz5teXIJD1BTLT-2BTqIwrG2MKNW4SRZ-2FBLzG-2Bkf7CLPo2eD5w-3D-3D] Open: 23rd Aug 2025 @ 11:00AM - 11:30AM [https://resize.lockedoncloud.com/lovii-w:800-h:533/28/f6/dc/59/24/26/4b/8e/a3/b0/82/ce/42/91/d9/93.jpg] [https://open.lockedoncloud.com/ls/click?upn=u001.tWMArd79sd2M8kyJfTWHQUbqamgFHfZiYbIMUJWBDlxti3LzHY1hbRNAwXDeBnIFaIFlQ-2F-2BtWepHOk9TQkmgTPhI4hcfZa-2F3cYyjw-2FH5C-2F6LvSfWZpM4eDdFic0LskWT5nmigfXE1oldxogH-2FFzeoSih9L39HYIacmeavKe8BtSv5cES38585edh7qUEZiLQCbMDlNoSci91z7-2F2fSFdbODV7ZNV-2F-2B8Qtw2ZWA1QL6alCfLMFd7CU0qV1a8vf5dEC1U-2FA6VkmGJyIQS8D6WA38ghMZie5mMgAMdLOW6yWNlQjqcgvOQ17cSKDJsk74-2BQ-2BLfPB9WqJEdnF-2BSiBMSX6SaebUbVoqeLGmUu6HhC8VbFzFwMXFNOHRQlv-2FPcAYifQPag5532sV1xAIWBT-2B2fejBfajqn9-2FDsUnuK2cyJRiH11y-2Bb6pD6Oo-2FH0ow62azr4KcQyTJKK3cJdDxCU-2BGm9qZTHrQ9SwqmpDvJ2HeSCIo88QqlHn-2BBzMW-2B2uUclQKM8api-2BxJZ6SazQF5K5ZIyZeyYbhoYgEysZp9PK2ynSkXXG4TtXvVvOCv2ZLMgfRBQARqXbFSjjVbuY7Udhex8dMbVFxxrxKUZspOfnp35ZVbYiOKD5gMLGPwQpRsmuKTR6ryqQ4hZhmFk1WK-2FLx2SL1PlbE42UG4PuwZ3NBfdL5O37eOi3B0lyhXA74gbNFN1615-2BGwkeXjhqKJGBwbZ5-2B-2F6M2xtDZxYKarows7zzoghK5nrBzPgEkh79O0j0GnqPlWZi_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNPvmfKeHOuDyDKJDP2Q5Tf-2FH0GhK3J1maBIwymI2yc6cZmbMP6YfIq0IlHME7Viy-2FUV1o-2B4u8zbk9bRNV5B89EzKPtK60OBMuwewge1Ry4OP7ZZpHNLP0G-2Bw7zCwJSV1ekPzjKboBnlNVXnz7voomLuppFMviME1Od3nk7xPaukKzAUUsqwpBWRgPil6UCHOqMiccUFHfmlMZXWU13dreQoI7zZOENARiq736wXTokkZ2N6kkTuzBtYH42eCADxQQ67kAr5guHe-2BAdZuyr1leWMA-3D-3D]44A Blythe Avenue, Yokine \nOFF MARKET - From $799,000 2\nBed 2\nBath 1\nCar Welcome to 44A Blythe Avenue, Yokine — a beautifully designed two-bedroom, two-bathroom townhouse built in 2022, offering the... More [https://open.lockedoncloud.com/ls/click?upn=u001.tWMArd79sd2M8kyJfTWHQUbqamgFHfZiYbIMUJWBDlxti3LzHY1hbRNAwXDeBnIFaIFlQ-2F-2BtWepHOk9TQkmgTPhI4hcfZa-2F3cYyjw-2FH5C-2F6LvSfWZpM4eDdFic0LskWT5nmigfXE1oldxogH-2FFzeoSih9L39HYIacmeavKe8BtSv5cES38585edh7qUEZiLQCbMDlNoSci91z7-2F2fSFdbODV7ZNV-2F-2B8Qtw2ZWA1QL6alCfLMFd7CU0qV1a8vf5dEC1U-2FA6VkmGJyIQS8D6WA38ghMZie5mMgAMdLOW6yWNlQjqcgvOQ17cSKDJsk74-2BQ-2BLfPB9WqJEdnF-2BSiBMSX6SaebUbVoqeLGmUu6HhC8VbFzFwMXFNOHRQlv-2FPcAYifQPag5532sV1xAIWBT-2B2fejBfajqn9-2FDsUnuK2cyJRiH11y-2Bb6pD6Oo-2FH0ow62azr4KcQyTJKK3cJdDxCU-2BGm9qZTHrQ9SwqmpDvJ2HeSCIo88QqlHn-2BBzMW-2B2uUclQKM8api-2BxJZ6SazQF5K5ZIyZeyYbhoYgEysZp9PK2ynSkXXG4TtXvVvOCv2ZLMgfRBQARqXbFSjjVbuY7Udhex8dMbVFxxrxKUZspOfnp35ZVbYiOKD5gMLGPwQpRsmuKTR6ryqQ4hZhmFk1WK-2FLx2SL1PlbE42UG4PuwZ3NBfdL5O37eOi3B0lyhXA74gbNFN1615-2BGwkeXjhqKJGBwbZ5-2B-2F6M2xtDZxYKarows7zzoghK5nrBzPgEkh79O0j0GnqPDONu_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNPvmfKeHOuDyDKJDP2Q5Tf-2FH0GhK3J1maBIwymI2yc6cZmbMP6YfIq0IlHME7Viy-2FUV1o-2B4u8zbk9bRNV5B89EzKPtK60OBMuwewge1Ry4OP7ZZpHNLP0G-2Bw7zCwJSV1ekKSdV0ovIurrPoI6ebKrYlAVBPSDNnaR6y6Vrx0vuv-2BwaFftSDRVVcZ6IrPZLWw09gbPOTe-2B7pZc5TF4sqGNh1S2h1OTvmSti4eSHAmFsp7iCGwUa2-2FVqBVxkPmrijaGN3ZZ44Sl5Jy-2FObmZg1Wm9Ow-3D-3D] Kind Regards,\n\nAdam Bettison \nManaging Director \nShop 18 & 19, 222 - 226 Belmont Avenue, Cloverdale WA 6105 \n\nM: 0409 929 128\nE: adam.bettison@housesmart.com.au [adam.bettison@housesmart.com.au]\nwww.housesmart.com.au [http://www.housesmart.com.au]\n\n\n[https://resize.lockedoncloud.com/w:490-lovii/8f/16/d8/17/a3/09/4d/47/b4/f9/c5/e3/7c/13/3f/92.jpg] Attention:\nThe information contained in this message and or attachments is intended only for the person or entity to which it is addressed and may contain confidential and/or privileged material. Any review, retransmission, dissemination or other use of, or taking of any action in reliance upon, this information by persons or entities other than the intended recipient is prohibited. If you received this in error, please contact the sender and delete the material from any system and destroy any copies. \n\n\n\nThis email was sent to property@npcservices.com.au [property@npcservices.com.au] from Adam Bettison at HouseSmart Real Estate Pty Ltd\nShop 18 & 19/222-226 Belmont Avenue, Cloverdale\n- www.housesmart.com.au [http://www.housesmart.com.au] \n\nUpdate your preferences [https://open.lockedoncloud.com/ls/click?upn=u001.grSFijfx9QwcGN69aE-2BVAoEPfuAfSy5Ks6c-2Bn1nEvSJn5qfrQ4RvIFRcxfkZ35c9nG7Rc1Rbq21MOp3KeAX10ENNPJvOXEq1n-2BCeZhMyQzoVOKxR5NCLUj9lEJKDHS8Xu5iP7aFoFKJYssf1vDzZxOwDMBc-2FuZzb4aLQtdYBUAdmFxakgDU7iSGDBntWBYvgEls-2BSwhU-2Fz4Mx8N1JM26DWdlVSWAlJUHs8-2BTfYu3Lhb-2BGAZRbFY2JlnXgk3Og8FcUrV-2FqOsJM9T2mbyo67C1CG2oogg6Xp-2BrRpwccbOc81c-3DfoEu_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNPvmfKeHOuDyDKJDP2Q5Tf-2FH0GhK3J1maBIwymI2yc6cZmbMP6YfIq0IlHME7Viy-2FUV1o-2B4u8zbk9bRNV5B89EzKPtK60OBMuwewge1Ry4OP7ZZpHNLP0G-2Bw7zCwJSV1eksB1ctyAdBKilq4jAOGi74eBGF1JrnaXrx-2BjDIgD7EZ5q-2BDz888o4TbcRSQ0whP-2BVWbw5oyTmXHtuca-2FMwIHUkzahV8rETIWGiTTjObcX3UUYteKlPWAFj5CENN3vLU32yKtY2fGTu3KuRMkL7GtZFg-3D-3D] | Unsubscribe [https://open.lockedoncloud.com/ls/click?upn=u001.grSFijfx9QwcGN69aE-2BVAoEPfuAfSy5Ks6c-2Bn1nEvSJn5qfrQ4RvIFRcxfkZ35c9nG7Rc1Rbq21MOp3KeAX10ENNPJvOXEq1n-2BCeZhMyQzoVOKxR5NCLUj9lEJKDHS8Xu5iP7aFoFKJYssf1vDzZxOwDMBc-2FuZzb4aLQtdYBUAdmFxakgDU7iSGDBntWBYvgEls-2BSwhU-2Fz4Mx8N1JM26DWdlVSWAlJUHs8-2BTfYu3Lhb-2BGAZRbFY2JlnXgk3Og8FcUrV-2FqOsJM9T2mbyo67C1CG2oogg6Xp-2BrRpwccbOc81c-3DpttD_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNPvmfKeHOuDyDKJDP2Q5Tf-2FH0GhK3J1maBIwymI2yc6cZmbMP6YfIq0IlHME7Viy-2FUV1o-2B4u8zbk9bRNV5B89EzKPtK60OBMuwewge1Ry4OP7ZZpHNLP0G-2Bw7zCwJSV1ekHHTMEK7KMVSbva25YMIm35SNNnlOp4jjNf-2F0Cb76ff6K7dObm3PXD4aVKBRAmJSgsi-2Bx8wLwVmRmIeeGGkVMAnwEhUND4lz2j-2Fb-2F7-2FFxSnH7UkunJt6nl4NpEYUJQ-2FqHACu9Jmy7j4ALRX9gQu-2FsMw-3D-3D] \n\nPowered by LockedOn [https://open.lockedoncloud.com/ls/click?upn=u001.z9OfLo0WsjRLa1-2FMRE80hdSH4WkrlzjGvST-2B-2Ffjb6dQ-3DgIw8_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNPvmfKeHOuDyDKJDP2Q5Tf-2FH0GhK3J1maBIwymI2yc6cZmbMP6YfIq0IlHME7Viy-2FUV1o-2B4u8zbk9bRNV5B89EzKPtK60OBMuwewge1Ry4OP7ZZpHNLP0G-2Bw7zCwJSV1ekPBFVEJlLDbSqTozxbtdpl6gabkPNG5-2FYZemR9vLf5qLJVPKjvyTmG0JnldVPn4ULonJX1xA6Vq8-2FeBg7A6TaNCy1NS62X3MSBYXPvtyscGRmwt7-2FNnGD-2Fh55E-2B4J3adFqkW0w5SZFO7zILRQZhL0TQ-3D-3D]\n\n[https://open.lockedoncloud.com/wf/open?upn=u001.WxS38R8iW630GnyWkMljOV-2BXDH84R4rTo3FDBLxDkF0LL5NA8ACs1TV2hAElxX97Wkg3siubaKXfo1UsyCDBOy5yjQ8pM1ZjopLvepBEr-2Fra9H4uF-2B7J6hmcXBIbIdk7UT0GEYBGV2taMlmwgkGwKjCwj1x87IxbbdVW5XDQXadzCXv4LaEVTLp4XXhAWOIJ3Iz4FrgO9nUvhO-2BU8GGx-2B3qa3spS7IEPZ-2BwOSU9ik7bN3RY72-2BY93YUzUa89MvY4mJfnzB3ORS3-2FPrgG9ica-2B40rY6KteyIR7moNWUT9eSNfzJ8erX9GOQNVvYUD9N8kUhBrIukGxwz7t-2B6yE7AX3A-3D-3D]"
+      }
+    },
+    {
+      "sourceRecordId": "recUrRpUhNAI7sPPd",
+      "sourceCreatedTime": "2026-06-11T00:42:40.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUrpGPxE58uK8cM",
+      "sourceCreatedTime": "2025-10-16T00:49:48.000Z",
+      "fields": {
+        "Name": "Gretel Hitchcock",
+        "Subject": "Investor Relationship Update",
+        "Email": "gretel@phproperty.com.au",
+        "Body": "Dear Rugesh,\r\n\r\nI’d like to share that Catherine will be stepping away from the Business Development Management role, and I’ll be taking on this position moving forward.\r\n\r\nWith over four years of experience in the real estate industry, I’ve built my care",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUs2utXq6TRlcdw",
+      "sourceCreatedTime": "2025-12-17T22:50:22.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUsc3L0nlKsySs9",
+      "sourceCreatedTime": "2025-11-10T06:10:07.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUtDTaRC2cAj9TP",
+      "sourceCreatedTime": "2025-11-06T04:15:59.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recUtHrZyoDPUCQKL",
+      "sourceCreatedTime": "2026-01-21T05:18:14.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    }
+  ]
+}

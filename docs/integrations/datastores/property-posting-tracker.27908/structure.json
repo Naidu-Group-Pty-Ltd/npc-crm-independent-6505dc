@@ -1,0 +1,14 @@
+{
+  "id": 104789,
+  "name": "Key Field",
+  "teamId": 528268,
+  "spec": [
+    {
+      "name": "last_posted_property_index",
+      "label": null,
+      "type": "number",
+      "default": 0,
+      "required": false
+    }
+  ]
+}

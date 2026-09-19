@@ -1,0 +1,24 @@
+{
+  "table": "Strategic Review Bookings",
+  "batch": 1,
+  "of": 1,
+  "recordCount": 2,
+  "records": [
+    {
+      "sourceRecordId": "recAw3wE7mMlSqDNU",
+      "sourceCreatedTime": "2026-08-01T00:36:02.000Z",
+      "fields": {
+        "Booking Reference": "No reference · "
+      }
+    },
+    {
+      "sourceRecordId": "recgyILdZbCmsNR8W",
+      "sourceCreatedTime": "2026-07-31T21:01:12.000Z",
+      "fields": {
+        "Booking Reference": "No reference · ",
+        "Stage 3 Access Method": "Direct visit",
+        "Booking Status": "Requested"
+      }
+    }
+  ]
+}

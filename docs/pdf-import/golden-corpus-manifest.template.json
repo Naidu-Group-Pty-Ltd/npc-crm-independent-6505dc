@@ -1,0 +1,162 @@
+{
+  "version": "pdf-import-golden-corpus-v1",
+  "notes": "Do not commit private/client PDFs. This file is a metadata template only.",
+  "corpus": [
+    {
+      "corpusId": "golden-simple-001",
+      "category": "simple_one_page",
+      "fileName": "",
+      "pageCount": 1,
+      "expected": {
+        "importShouldSucceed": true,
+        "visualQaShouldRun": true,
+        "repairShouldRunOrSkipSafely": true,
+        "applyRepairShouldOpenEditor": true,
+        "templatePageCountShouldMatch": true
+      },
+      "baseline": {
+        "importId": "",
+        "templateId": "",
+        "engineVersion": "",
+        "visualQualityScore": null,
+        "repairStatus": "",
+        "repairFinalScore": null,
+        "repairScoreDelta": null,
+        "templateVersionAfterApply": null,
+        "latestSnapshotLabel": "",
+        "humanEditorDecision": "",
+        "knownDefects": []
+      }
+    },
+    {
+      "corpusId": "golden-design-001",
+      "category": "design_heavy_one_page",
+      "fileName": "",
+      "pageCount": 1,
+      "expected": {
+        "importShouldSucceed": true,
+        "visualQaShouldRun": true,
+        "repairShouldRunOrSkipSafely": true,
+        "applyRepairShouldOpenEditor": true,
+        "templatePageCountShouldMatch": true
+      },
+      "baseline": {
+        "importId": "",
+        "templateId": "",
+        "engineVersion": "",
+        "visualQualityScore": null,
+        "repairStatus": "",
+        "repairFinalScore": null,
+        "repairScoreDelta": null,
+        "templateVersionAfterApply": null,
+        "latestSnapshotLabel": "",
+        "humanEditorDecision": "",
+        "knownDefects": []
+      }
+    },
+    {
+      "corpusId": "golden-report-001",
+      "category": "multi_page_report",
+      "fileName": "",
+      "pageCount": null,
+      "expected": {
+        "importShouldSucceed": true,
+        "visualQaShouldRun": true,
+        "repairShouldRunOrSkipSafely": true,
+        "applyRepairShouldOpenEditor": true,
+        "templatePageCountShouldMatch": true
+      },
+      "baseline": {
+        "importId": "",
+        "templateId": "",
+        "engineVersion": "",
+        "visualQualityScore": null,
+        "repairStatus": "",
+        "repairFinalScore": null,
+        "repairScoreDelta": null,
+        "templateVersionAfterApply": null,
+        "latestSnapshotLabel": "",
+        "humanEditorDecision": "",
+        "knownDefects": []
+      }
+    },
+    {
+      "corpusId": "golden-table-001",
+      "category": "table_heavy",
+      "fileName": "",
+      "pageCount": null,
+      "expected": {
+        "importShouldSucceed": true,
+        "visualQaShouldRun": true,
+        "repairShouldRunOrSkipSafely": true,
+        "applyRepairShouldOpenEditor": true,
+        "templatePageCountShouldMatch": true
+      },
+      "baseline": {
+        "importId": "",
+        "templateId": "",
+        "engineVersion": "",
+        "visualQualityScore": null,
+        "repairStatus": "",
+        "repairFinalScore": null,
+        "repairScoreDelta": null,
+        "templateVersionAfterApply": null,
+        "latestSnapshotLabel": "",
+        "humanEditorDecision": "",
+        "knownDefects": []
+      }
+    },
+    {
+      "corpusId": "golden-image-001",
+      "category": "image_heavy",
+      "fileName": "",
+      "pageCount": null,
+      "expected": {
+        "importShouldSucceed": true,
+        "visualQaShouldRun": true,
+        "repairShouldRunOrSkipSafely": true,
+        "applyRepairShouldOpenEditor": true,
+        "templatePageCountShouldMatch": true
+      },
+      "baseline": {
+        "importId": "",
+        "templateId": "",
+        "engineVersion": "",
+        "visualQualityScore": null,
+        "repairStatus": "",
+        "repairFinalScore": null,
+        "repairScoreDelta": null,
+        "templateVersionAfterApply": null,
+        "latestSnapshotLabel": "",
+        "humanEditorDecision": "",
+        "knownDefects": []
+      }
+    },
+    {
+      "corpusId": "golden-ocr-001",
+      "category": "scanned_ocr",
+      "fileName": "",
+      "pageCount": null,
+      "expected": {
+        "importShouldSucceed": true,
+        "visualQaShouldRun": true,
+        "repairShouldRunOrSkipSafely": true,
+        "applyRepairShouldOpenEditor": true,
+        "templatePageCountShouldMatch": true
+      },
+      "baseline": {
+        "importId": "",
+        "templateId": "",
+        "engineVersion": "",
+        "visualQualityScore": null,
+        "repairStatus": "",
+        "repairFinalScore": null,
+        "repairScoreDelta": null,
+        "templateVersionAfterApply": null,
+        "latestSnapshotLabel": "",
+        "humanEditorDecision": "",
+        "knownDefects": []
+      }
+    }
+  ]
+}

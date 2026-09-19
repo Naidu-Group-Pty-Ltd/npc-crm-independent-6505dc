@@ -1,0 +1,16 @@
+{
+  "name": "Transfer Failed Count",
+  "queries": [
+    {
+      "filters": [],
+      "on": "call.transferFailed",
+      "operation": "count",
+      "table": "events",
+      "type": "vapiql-json"
+    }
+  ],
+  "timeRange": {
+    "start": "-1h"
+  },
+  "type": "text"
+}

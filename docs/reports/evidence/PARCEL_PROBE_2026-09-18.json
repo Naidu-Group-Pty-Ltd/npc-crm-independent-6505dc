@@ -1,0 +1,248 @@
+{
+  "probeRunAt": "2026-09-18T07:48:58.211Z",
+  "egress": "session sandbox (same class as the six-register planning probe)",
+  "steps": [
+    {
+      "name": "QLD LandParcelPropertyFramework service metadata",
+      "outcome": "HTTP 200, 20 layers, 1199 ms",
+      "layers": [
+        {
+          "id": 0,
+          "name": "Addresses"
+        },
+        {
+          "id": 1,
+          "name": "Land Parcels"
+        },
+        {
+          "id": 2,
+          "name": "Cadastral Natural Boundaries"
+        },
+        {
+          "id": 3,
+          "name": "Parcel positional accuracy"
+        },
+        {
+          "id": 4,
+          "name": "Cadastral parcels"
+        },
+        {
+          "id": 5,
+          "name": "[Deprecated] Cadastral parcels - gt 1ha"
+        },
+        {
+          "id": 6,
+          "name": "[Deprecated] Cadastral parcels - gt 10ha"
+        },
+        {
+          "id": 8,
+          "name": "Base Parcels Only"
+        },
+        {
+          "id": 9,
+          "name": "Easement Parcels Only"
+        },
+        {
+          "id": 10,
+          "name": "Strata Parcels Only"
+        },
+        {
+          "id": 11,
+          "name": "Volumetric Parcels Only"
+        },
+        {
+          "id": 50,
+          "name": "Properties"
+        },
+        {
+          "id": 13,
+          "name": "Tenure"
+        },
+        {
+          "id": 14,
+          "name": "Location"
+        },
+        {
+          "id": 15,
+          "name": "Populated Places"
+        },
+        {
+          "id": 16,
+          "name": "Queensland Coastline"
+        },
+        {
+          "id": 17,
+          "name": "Queensland Border"
+        },
+        {
+          "id": 18,
+          "name": "Administrative Boundaries"
+        },
+        {
+          "id": 19,
+          "name": "Locality Boundaries"
+        },
+        {
+          "id": 20,
+          "name": "Local Government Areas"
+        }
+      ]
+    },
+    {
+      "name": "QLD cadastre layer 1 (Land Parcels) query at the Pallas coordinate",
+      "outcome": "HTTP 200, 282 ms, no feature",
+      "attributeKeys": null,
+      "lotplan": null,
+      "lot": null,
+      "plan": null
+    },
+    {
+      "name": "QLD cadastre layer 3 (Parcel positional accuracy) query at the Pallas coordinate",
+      "outcome": "HTTP 200, 252 ms, lot/plan fields present, 1 ring(s), 9 vertices",
+      "attributeKeys": [
+        "lot",
+        "plan",
+        "lotplan",
+        "tenure",
+        "lot_area",
+        "excl_area",
+        "lot_volume",
+        "feat_name",
+        "alias_name",
+        "acc_code",
+        "surv_ind",
+        "cover_typ",
+        "parcel_typ",
+        "locality",
+        "shire_name",
+        "smis_map",
+        "objectid",
+        "st_area(shape)",
+        "st_perimeter(shape)"
+      ],
+      "lotplan": "3SP239114",
+      "lot": "3",
+      "plan": "SP239114"
+    },
+    {
+      "name": "QLD cadastre layer 4 (Cadastral parcels) query at the Pallas coordinate",
+      "outcome": "HTTP 200, 239 ms, lot/plan fields present, 1 ring(s), 9 vertices",
+      "attributeKeys": [
+        "lot",
+        "plan",
+        "lotplan",
+        "tenure",
+        "lot_area",
+        "excl_area",
+        "lot_volume",
+        "feat_name",
+        "alias_name",
+        "acc_code",
+        "surv_ind",
+        "cover_typ",
+        "parcel_typ",
+        "locality",
+        "shire_name",
+        "smis_map",
+        "objectid",
+        "st_area(shape)",
+        "st_perimeter(shape)"
+      ],
+      "lotplan": "3SP239114",
+      "lot": "3",
+      "plan": "SP239114"
+    },
+    {
+      "name": "QLD cadastre layer 5 ([Deprecated] Cadastral parcels - gt 1ha) query at the Pallas coordinate",
+      "outcome": "HTTP 200, 239 ms, no feature",
+      "attributeKeys": null,
+      "lotplan": null,
+      "lot": null,
+      "plan": null
+    },
+    {
+      "name": "QLD cadastre layer 6 ([Deprecated] Cadastral parcels - gt 10ha) query at the Pallas coordinate",
+      "outcome": "HTTP 200, 253 ms, no feature",
+      "attributeKeys": null,
+      "lotplan": null,
+      "lot": null,
+      "plan": null
+    },
+    {
+      "name": "QLD cadastre layer 8 (Base Parcels Only) query at the Pallas coordinate",
+      "outcome": "HTTP 200, 253 ms, lot/plan fields present, 1 ring(s), 9 vertices",
+      "attributeKeys": [
+        "lot",
+        "plan",
+        "lotplan",
+        "tenure",
+        "lot_area",
+        "excl_area",
+        "lot_volume",
+        "feat_name",
+        "alias_name",
+        "acc_code",
+        "surv_ind",
+        "cover_typ",
+        "parcel_typ",
+        "locality",
+        "shire_name",
+        "smis_map",
+        "objectid",
+        "st_area(shape)",
+        "st_perimeter(shape)"
+      ],
+      "lotplan": "3SP239114",
+      "lot": "3",
+      "plan": "SP239114"
+    },
+    {
+      "name": "QLD cadastre layer 9 (Easement Parcels Only) query at the Pallas coordinate",
+      "outcome": "HTTP 200, 239 ms, no feature",
+      "attributeKeys": null,
+      "lotplan": null,
+      "lot": null,
+      "plan": null
+    },
+    {
+      "name": "QLD cadastre layer 10 (Strata Parcels Only) query at the Pallas coordinate",
+      "outcome": "HTTP 200, 241 ms, no feature",
+      "attributeKeys": null,
+      "lotplan": null,
+      "lot": null,
+      "plan": null
+    },
+    {
+      "name": "QLD cadastre layer 11 (Volumetric Parcels Only) query at the Pallas coordinate",
+      "outcome": "HTTP 200, 249 ms, no feature",
+      "attributeKeys": null,
+      "lotplan": null,
+      "lot": null,
+      "plan": null
+    },
+    {
+      "name": "FloodCheck identify at the POINT",
+      "outcome": "HTTP 200, 302 ms, 1 result(s)",
+      "labels": [
+        "Rapid Hazard Assessment: Lower Mary River"
+      ]
+    },
+    {
+      "name": "FloodCheck identify with the PARCEL polygon (POST)",
+      "outcome": "HTTP 200, 318 ms, 1 result(s)",
+      "labels": [
+        "Rapid Hazard Assessment: Lower Mary River"
+      ],
+      "comparison": "point 1 vs parcel 1 — a parcel sweep can only find MORE, never less"
+    },
+    {
+      "name": "NSW_Cadastre/9 (Lot) metadata",
+      "outcome": "HTTP 200, 998 ms, name=Lot, capabilities=Map,Query,Data"
+    },
+    {
+      "name": "NSW_Cadastre/9 query at the Annabelle coordinate (15 s budget)",
+      "outcome": "HTTP 200, 423 ms, no feature",
+      "attributes": null
+    }
+  ]
+}

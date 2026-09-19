@@ -1,0 +1,36 @@
+/* ─────────────────────────────────────────────────────────────────
+   NPC Services — surface + border aliases.
+
+   The product never styles a panel with a raw colour; it reaches for one
+   of these named surfaces. --surface-N and --dashboard-* are the same
+   ladder under two names. These are PROTECTED tokens: a tenant's
+   White-Label brand colour may not override them.
+
+   PRECEDENCE: all of these exist in src/styles/tokens.css, which is
+   authoritative. Reproduced here as the published brand specification.
+   ───────────────────────────────────────────────────────────────── */
+
+:root {
+  --surface-1: 42 82% 99%;   /* porcelain — cards, topbar */
+  --surface-2: 41 62% 97%;   /* elevated — controls, panels */
+  --surface-3: 39 44% 91%;   /* champagne — wells, muted rows */
+  --surface-elevated: 42 82% 99%;
+  --surface-muted: 39 44% 91%;
+
+  --border-soft: 36 30% 81%;
+  --border-strong: 37 32% 72%;
+
+  /* Brand logo sizing — one source of truth for every lockup. */
+  --logo-height-sidebar: 2.5rem;
+  --logo-height-mobile: 2rem;
+  --logo-height-compact: 1.75rem;
+  --logo-max-width: 120px;
+}
+
+.dark {
+  --surface-1: 0 0% 7%;
+  --surface-2: 0 0% 9%;
+  --surface-3: 0 0% 12%;
+  --border-soft: 0 0% 18%;
+  --border-strong: 43 22% 28%;
+}

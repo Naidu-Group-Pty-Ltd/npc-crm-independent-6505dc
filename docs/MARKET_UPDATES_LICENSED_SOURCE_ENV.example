@@ -1,0 +1,25 @@
+# Market Updates — licensed content providers.
+# All three sources stay disabled until credentials AND written redistribution rights exist.
+# Scraping the public or paywalled sites is not an acceptable fallback for any of them.
+# Set these as Edge Function secrets; never commit real values.
+
+# Australian Financial Review
+AFR_CONTENT_API_BASE_URL=
+AFR_CONTENT_API_KEY=
+AFR_CONTENT_API_CLIENT_ID=
+AFR_CONTENT_INTEGRATION_ENABLED=false
+
+# Reuters
+REUTERS_CONTENT_API_URL=
+REUTERS_CONTENT_API_KEY=
+REUTERS_CONTENT_FEED_URL=
+REUTERS_CONTENT_ENABLED=false
+
+# Bloomberg
+BLOOMBERG_TEXTUAL_NEWS_ENDPOINT=
+BLOOMBERG_CLIENT_ID=
+BLOOMBERG_CLIENT_SECRET=
+BLOOMBERG_CONTENT_ENABLED=false
+
+# ABS Indicator API (the Data API used by abs-data-service needs no key)
+ABS_INDICATOR_API_KEY=

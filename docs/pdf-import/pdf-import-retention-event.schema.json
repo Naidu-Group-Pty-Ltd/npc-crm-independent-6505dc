@@ -1,0 +1,96 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://npcservices.com.au/schemas/pdf-import-retention-event.schema.json",
+  "title": "PdfImportRetentionEvent",
+  "description": "Phase 11E dry-run PDF import retention/cleanup candidate. Metadata references only - never raw PDF/OCR text, raster content, signed URLs, or secrets.",
+  "type": "object",
+  "additionalProperties": true,
+  "required": [
+    "version",
+    "retentionRuleId",
+    "domain",
+    "decision",
+    "cleanupAction",
+    "safetyLevel",
+    "status",
+    "scope",
+    "dedupeKey",
+    "title",
+    "message",
+    "evidence",
+    "recommendedAction",
+    "firstSeenAt",
+    "lastSeenAt",
+    "occurrenceCount"
+  ],
+  "properties": {
+    "version": { "type": "string", "const": "pdf-import-retention-event-v1" },
+    "retentionRuleId": { "type": "string" },
+    "domain": {
+      "type": "string",
+      "enum": [
+        "source_pdf", "docling_artifact", "page_manifest", "diagnostics", "visual_quality",
+        "visual_repair", "export_parity", "golden_regression", "golden_history", "monitoring_events",
+        "phase10_metadata", "operator_audit", "storage_orphan", "metadata_reference", "unknown"
+      ]
+    },
+    "decision": { "type": "string", "enum": ["retain", "review", "archive_candidate", "delete_candidate", "blocked", "unknown"] },
+    "cleanupAction": {
+      "type": "string",
+      "enum": [
+        "no_action", "mark_for_review", "archive_later", "delete_later", "compact_metadata_later",
+        "repair_reference", "preserve_for_audit", "preserve_for_regression", "preserve_for_manual_review", "blocked_from_cleanup"
+      ]
+    },
+    "safetyLevel": {
+      "type": "string",
+      "enum": ["safe_to_recommend", "requires_operator_approval", "requires_developer_approval", "manual_only", "blocked"]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["candidate", "reviewed", "approved_for_future_cleanup", "rejected", "blocked", "completed", "superseded"]
+    },
+    "title": { "type": "string" },
+    "message": { "type": "string" },
+    "scope": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["type", "id"],
+      "properties": {
+        "type": { "type": "string" },
+        "id": { "type": "string" },
+        "label": { "type": ["string", "null"] }
+      }
+    },
+    "dedupeKey": { "type": "string" },
+    "storageBucket": { "type": ["string", "null"] },
+    "storageObjectPath": { "type": ["string", "null"] },
+    "importId": { "type": ["string", "null"] },
+    "templateId": { "type": ["string", "null"] },
+    "monitoringEventId": { "type": ["string", "null"] },
+    "goldenRunId": { "type": ["string", "null"] },
+    "evidence": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["code", "label", "value", "message"],
+        "properties": {
+          "code": { "type": "string" },
+          "label": { "type": "string" },
+          "value": { "type": ["string", "number", "boolean", "null"] },
+          "message": { "type": "string" }
+        }
+      }
+    },
+    "recommendedAction": { "type": "string" },
+    "estimatedBytes": { "type": ["number", "null"], "minimum": 0 },
+    "objectCreatedAt": { "type": ["string", "null"], "format": "date-time" },
+    "objectUpdatedAt": { "type": ["string", "null"], "format": "date-time" },
+    "source": { "type": "string" },
+    "runId": { "type": ["string", "null"] },
+    "firstSeenAt": { "type": "string", "format": "date-time" },
+    "lastSeenAt": { "type": "string", "format": "date-time" },
+    "occurrenceCount": { "type": "integer", "minimum": 1 }
+  }
+}

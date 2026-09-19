@@ -1,0 +1,88 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://npcservices.com.au/schemas/pdf-import-production-rollout-lock.schema.json",
+  "title": "PdfImportProductionRolloutLock",
+  "description": "Phase 11H final production rollout lock report. Read-only governance output. Contains no secrets, signed URLs, or raw metadata.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version", "decision", "rolloutMode", "score", "checks", "summary", "blockers", "conditions", "generatedAt"
+  ],
+  "properties": {
+    "version": { "type": "string", "const": "pdf-import-production-rollout-lock-v1" },
+    "decision": {
+      "type": "string",
+      "enum": [
+        "production_rollout_locked",
+        "production_rollout_locked_with_conditions",
+        "production_rollout_not_locked"
+      ]
+    },
+    "rolloutMode": {
+      "type": "string",
+      "enum": [
+        "internal_dev_only",
+        "admin_limited",
+        "controlled_team_rollout",
+        "broad_production",
+        "blocked"
+      ]
+    },
+    "score": { "type": "number", "minimum": 0, "maximum": 100 },
+    "checks": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/check" }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "total", "pass", "warning", "fail", "unknown", "notApplicable", "criticalFailures", "highFailures"
+      ],
+      "properties": {
+        "total": { "type": "integer", "minimum": 0 },
+        "pass": { "type": "integer", "minimum": 0 },
+        "warning": { "type": "integer", "minimum": 0 },
+        "fail": { "type": "integer", "minimum": 0 },
+        "unknown": { "type": "integer", "minimum": 0 },
+        "notApplicable": { "type": "integer", "minimum": 0 },
+        "criticalFailures": { "type": "integer", "minimum": 0 },
+        "highFailures": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "blockers": { "type": "array", "items": { "$ref": "#/definitions/check" } },
+    "conditions": { "type": "array", "items": { "$ref": "#/definitions/check" } },
+    "generatedAt": { "type": "string", "format": "date-time" }
+  },
+  "definitions": {
+    "check": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "domain", "severity", "status", "title", "message", "evidence", "remediation", "requiredFor"],
+      "properties": {
+        "id": { "type": "string" },
+        "domain": {
+          "type": "string",
+          "enum": [
+            "phase10_lock", "rollout_readiness", "permissions", "monitoring_alerting", "release_gate",
+            "retention", "runbooks", "client_reporting", "security_privacy", "database_storage",
+            "ui_routes", "tests_build", "production_preview", "private_artifacts", "deployment", "rollout_scope"
+          ]
+        },
+        "severity": { "type": "string", "enum": ["critical", "high", "medium", "low", "info"] },
+        "status": { "type": "string", "enum": ["pass", "warning", "fail", "unknown", "not_applicable"] },
+        "title": { "type": "string" },
+        "message": { "type": "string" },
+        "evidence": { "type": "array", "items": { "type": "string" } },
+        "remediation": { "type": "string" },
+        "requiredFor": {
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": ["internal_dev_only", "admin_limited", "controlled_team_rollout", "broad_production", "blocked"]
+          }
+        }
+      }
+    }
+  }
+}

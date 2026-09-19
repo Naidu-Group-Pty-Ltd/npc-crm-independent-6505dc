@@ -1,0 +1,132 @@
+# PDF Extraction V3 · E12 — golden-corpus + release gates.
+#
+# PR   → static + generated-fast gates (fork-safe, no private secrets).
+# Push → generated-full gate on main.
+# Nightly → full generated corpus (25/80-page, determinism, browser/export).
+# Manual → protected private-controlled gate (no fork access, sanitized reports).
+#
+# Least-privilege permissions; private corpus secrets are NEVER exposed to fork PRs.
+name: pdf-extraction-v3-gates
+
+on:
+  pull_request:
+    paths:
+      - 'src/lib/reportTemplate/ingestion/releaseV3/**'
+      - 'scripts/regression/pdf-extraction-v3/**'
+      - 'tests-e2e/pdf-extraction-v3/**'
+      - '.github/workflows/pdf-extraction-v3-gates.yml'
+  push:
+    branches: [main]
+    paths:
+      - 'src/lib/reportTemplate/ingestion/releaseV3/**'
+      - 'tests-e2e/pdf-extraction-v3/**'
+  schedule:
+    - cron: '0 15 * * *' # nightly (UTC)
+  workflow_dispatch:
+    inputs:
+      tier:
+        description: 'Release tier'
+        required: true
+        default: 'full'
+        type: choice
+        options: [static, fast, full, private]
+
+permissions:
+  contents: read
+
+jobs:
+  # Tier 1 + 2 — fast PR gate. No private secrets; safe for fork PRs.
+  static-and-fast:
+    if: github.event_name == 'pull_request' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 20
+      - run: npm install --no-audit --no-fund
+      - name: Private-artifact scan
+        run: node scripts/regression/pdf-extraction-v3/artifact-scan.mjs
+      - name: Static gate
+        run: node scripts/regression/pdf-extraction-v3/run-release-gate.mjs --tier=static
+      - name: Generated-fast gate (real browser + export)
+        run: |
+          npx playwright install chromium
+          node scripts/regression/pdf-extraction-v3/run-release-gate.mjs --tier=fast
+      - name: Upload sanitized report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: pdf-v3-release-gate-fast
+          path: reports/pdf-extraction-v3/*.json
+          retention-days: 14
+
+  # Tier 3 — generated-full gate (main push + nightly).
+  generated-full:
+    if: github.event_name == 'push' || github.event_name == 'schedule'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    permissions:
+      contents: read
+    env:
+      PDF_V3_NIGHTLY: ${{ github.event_name == 'schedule' && '1' || '0' }}
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 20
+      - run: npm install --no-audit --no-fund
+      - run: npx playwright install chromium
+      - name: Private-artifact scan
+        run: node scripts/regression/pdf-extraction-v3/artifact-scan.mjs
+      - name: Generated-full gate
+        run: node scripts/regression/pdf-extraction-v3/run-release-gate.mjs --tier=full
+      - name: Upload sanitized report
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: pdf-v3-release-gate-full
+          path: reports/pdf-extraction-v3/*.json
+          retention-days: 30
+
+  # Tier 4 — private controlled gate. Manual dispatch only, protected environment,
+  # NEVER runs on fork PRs, private source resolved via a protected secret and never
+  # uploaded. Disabled unless explicitly dispatched with tier=private.
+  private-controlled:
+    if: github.event_name == 'workflow_dispatch' && github.event.inputs.tier == 'private'
+    runs-on: ubuntu-latest
+    timeout-minutes: 60
+    environment: pdf-v3-private
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          ref: ${{ github.sha }}
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 20
+      - run: npm install --no-audit --no-fund
+      - run: npx playwright install chromium
+      - name: Private-artifact scan (pre)
+        run: node scripts/regression/pdf-extraction-v3/artifact-scan.mjs
+      - name: Private controlled gate
+        env:
+          PDF_V3_PRIVATE: '1'
+          # The private source resolver key is read from a protected secret at
+          # runtime; the source is never uploaded and the report is sanitized.
+          PDF_V3_PRIVATE_RESOLVER: ${{ secrets.PDF_V3_PRIVATE_RESOLVER }}
+        run: node scripts/regression/pdf-extraction-v3/run-release-gate.mjs --tier=full
+      - name: Private-artifact scan (post, report dir)
+        if: always()
+        run: node scripts/regression/pdf-extraction-v3/artifact-scan.mjs --dir reports/pdf-extraction-v3
+      - name: Upload sanitized report only
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: pdf-v3-release-gate-private
+          path: reports/pdf-extraction-v3/*.json
+          retention-days: 7

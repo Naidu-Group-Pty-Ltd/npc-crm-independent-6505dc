@@ -1,0 +1,696 @@
+[
+  {
+    "id": "rec6X7YlTYARFEtL3",
+    "createdTime": "2026-08-15T14:12:39.000Z",
+    "cellValuesByFieldId": {
+      "fldyvxPM3x4LVi33h": "Karrupu"
+    }
+  },
+  {
+    "id": "recDbhPfIsRza1s2G",
+    "createdTime": "2026-08-15T14:12:39.000Z",
+    "cellValuesByFieldId": {
+      "fld0WleiJUhMh22bx": "SEND",
+      "fld1ytmg0havMGDhc": "sddsds gdg",
+      "fld3UfJ8BTk0rCPsV": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "fld4IH1BJ16NGrZQA": "GRANT",
+      "fld7BS5w42aJwbNPC": "/contact",
+      "fld8EBHBh9ywpSeET": "stage-1-priority-access-v3",
+      "fldA5j0e9NPipgCuU": {
+        "id": "seleGfmxT4akQ9iNl",
+        "name": "10_to_25",
+        "color": "blueLight2"
+      },
+      "fldAH7gzIq2bicqvQ": "sdhs g",
+      "fldBZYe8s6dAqhPKD": 0,
+      "fldCnw0PfWdWCOwAp": "collection-notice-2026-07-v1",
+      "fldEj8mFBIPDHwrwx": "Expired",
+      "fldGhrqs3G4NVsq49": "UHpUSHlsVHNSUDJkUVQxbQ",
+      "fldIfSFxluMqIG1OG": 0,
+      "fldJSOnXU9dbndMyN": "Naidu",
+      "fldKXSWWLc8DWCBhH": "Naidu Property Consulting Services",
+      "fldMH5GbTY4Cjx2Oe": "Applicant has not reached Stage 2 yet",
+      "fldNmKtbJUXJCLtLM": {
+        "id": "sel9YgQRZo8I70oMc",
+        "name": "Chief Executive Officer",
+        "color": "grayLight2"
+      },
+      "fldOLKfVW7fWKJaVE": {
+        "id": "sel42ueOkHR0kpS2V",
+        "name": "property_advisory",
+        "color": "blueLight2"
+      },
+      "fldPxNxDBNncb2d9h": [
+        {
+          "id": "selZtGDTPffKVOeRl",
+          "name": "Disconnected systems and duplicate data entry",
+          "color": "grayLight2"
+        },
+        {
+          "id": "selX2qUiNloBGBiH2",
+          "name": "Manual report preparation",
+          "color": "grayLight2"
+        },
+        {
+          "id": "selzXorD3kN9RXagP",
+          "name": "Document collection and management",
+          "color": "grayLight2"
+        }
+      ],
+      "fldRrc6RfMo5aiP8q": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "fldU6Ny4Ck482jpGg": "AX-B3E8EB102E",
+      "fldVxmHPUx7XC4uoq": "AURIXA Contact Waitlist Page",
+      "fldW5JPpfo3NhGrqY": 0,
+      "fldY840DzLbyfSVwf": 0,
+      "fldbusLVIAf3pTrO5": "AURIXA Contact Waitlist Page",
+      "fldg7WvQ5zzsovjHe": "https://aurixasystems.com.au/schedule-strategic-review?ref=AX-B3E8EB102E",
+      "fldhyP7rjITi94tFH": "+61433005110",
+      "fldiRaNRxqLQz3RIP": "2026-08-15T14:12:38.259Z",
+      "fldpThwtKAXHfQNut": "AX-B3E8EB102E",
+      "fldq1l9bTCrckpQDk": "HOLD",
+      "fldqYOwyWRRdkZyrY": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "fldrn1evbYmFjoPyA": 0,
+      "fldt1e2VtGmzzawsb": true,
+      "fldtNFwOfeTaaELKI": 0,
+      "fldvMwzASD4sHzdV8": true,
+      "fldvcq6GjkuBTREON": "rugesh@npcservices.com.au",
+      "fldwJSa1M5a09T5bn": "2026-08-16T14:12:54.437Z",
+      "fldx6YHHBqspMfiot": "https://aurixasystems.com.au/questionnaire?token=UHpUSHlsVHNSUDJkUVQxbQ&expires=2026-08-16T14%3A12%3A54.437Z",
+      "fldyvxPM3x4LVi33h": "Rugesh"
+    }
+  },
+  {
+    "id": "recLkSfiVW6qvTsGL",
+    "createdTime": "2026-07-29T20:27:15.000Z",
+    "cellValuesByFieldId": {
+      "fld0WleiJUhMh22bx": "SEND",
+      "fld1ytmg0havMGDhc": "grr",
+      "fld3UfJ8BTk0rCPsV": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "fld4IH1BJ16NGrZQA": "GRANT",
+      "fld7BS5w42aJwbNPC": "/contact",
+      "fld8EBHBh9ywpSeET": "stage-1-priority-access-v3",
+      "fldA5j0e9NPipgCuU": {
+        "id": "selpn5NP0DRhuPrEj",
+        "name": "pre_launch_under_10",
+        "color": "blueLight2"
+      },
+      "fldBZYe8s6dAqhPKD": 0,
+      "fldCnw0PfWdWCOwAp": "collection-notice-2026-07-v1",
+      "fldEj8mFBIPDHwrwx": "Expired",
+      "fldGhrqs3G4NVsq49": "SjRTbmxOS3Z6S2tMY2xLMA",
+      "fldIfSFxluMqIG1OG": 0,
+      "fldJSOnXU9dbndMyN": "Ravachandran",
+      "fldKXSWWLc8DWCBhH": "Xenochrome Technologies",
+      "fldMH5GbTY4Cjx2Oe": "Applicant has not reached Stage 2 yet",
+      "fldNmKtbJUXJCLtLM": {
+        "id": "selGQC0P44rt7rg3P",
+        "name": "Founder or Director",
+        "color": "grayLight2"
+      },
+      "fldOLKfVW7fWKJaVE": {
+        "id": "sellc8vSWHHsSBkxV",
+        "name": "buyers_agent",
+        "color": "blueLight2"
+      },
+      "fldPxNxDBNncb2d9h": [
+        {
+          "id": "selZtGDTPffKVOeRl",
+          "name": "Disconnected systems and duplicate data entry",
+          "color": "grayLight2"
+        },
+        {
+          "id": "selX2qUiNloBGBiH2",
+          "name": "Manual report preparation",
+          "color": "grayLight2"
+        },
+        {
+          "id": "selruo5AGEeyV6aw6",
+          "name": "Finance or broker coordination",
+          "color": "grayLight2"
+        }
+      ],
+      "fldRrc6RfMo5aiP8q": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "fldU6Ny4Ck482jpGg": "AX-C239DA5FF2",
+      "fldVxmHPUx7XC4uoq": "AURIXA Contact Waitlist Page",
+      "fldW5JPpfo3NhGrqY": 0,
+      "fldY840DzLbyfSVwf": 0,
+      "fldbusLVIAf3pTrO5": "AURIXA Contact Waitlist Page",
+      "fldg7WvQ5zzsovjHe": "https://aurixasystems.com.au/schedule-strategic-review?ref=AX-C239DA5FF2",
+      "fldhyP7rjITi94tFH": "+60182548567",
+      "fldiRaNRxqLQz3RIP": "2026-07-29T20:27:14.711Z",
+      "fldpThwtKAXHfQNut": "AX-C239DA5FF2",
+      "fldq1l9bTCrckpQDk": "HOLD",
+      "fldqYOwyWRRdkZyrY": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "fldrn1evbYmFjoPyA": 0,
+      "fldt1e2VtGmzzawsb": true,
+      "fldtNFwOfeTaaELKI": 0,
+      "fldvMwzASD4sHzdV8": true,
+      "fldvcq6GjkuBTREON": "lavankenobi@gmail.com",
+      "fldwJSa1M5a09T5bn": "2026-07-30T20:27:19.482Z",
+      "fldx6YHHBqspMfiot": "https://aurixasystems.com.au/questionnaire?token=SjRTbmxOS3Z6S2tMY2xLMA&expires=2026-07-30T20%3A27%3A19.482Z",
+      "fldyvxPM3x4LVi33h": "Lavanethaan"
+    }
+  },
+  {
+    "id": "recN3HKhh7tfCRqbf",
+    "createdTime": "2026-07-29T20:47:12.000Z",
+    "cellValuesByFieldId": {
+      "fld0WleiJUhMh22bx": "SEND",
+      "fld1ytmg0havMGDhc": "grr",
+      "fld3UfJ8BTk0rCPsV": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "fld4IH1BJ16NGrZQA": "GRANT",
+      "fld7BS5w42aJwbNPC": "/contact",
+      "fld8EBHBh9ywpSeET": "stage-1-priority-access-v3",
+      "fldA5j0e9NPipgCuU": {
+        "id": "selpn5NP0DRhuPrEj",
+        "name": "pre_launch_under_10",
+        "color": "blueLight2"
+      },
+      "fldBZYe8s6dAqhPKD": 0,
+      "fldCnw0PfWdWCOwAp": "collection-notice-2026-07-v1",
+      "fldEG921RoAqVzPWO": "AAMkADBlYzM0YTlkLWZiOTEtNDQ2YS05MjVjLTZhYzA0NWIyMGExMQBGAAAAAAAUu593InGqS43UqSZY2JKNBwBv-aPQVWqHSItTdfEGS9CDAAAAAAEPAABv-aPQVWqHSItTdfEGS9CDAAAqq1lJAAA=",
+      "fldEj8mFBIPDHwrwx": "Expired",
+      "fldGhrqs3G4NVsq49": "TFJ2SWVIdjVzaWhwWGUwSw",
+      "fldIfSFxluMqIG1OG": 0,
+      "fldJSOnXU9dbndMyN": "Ravachandran",
+      "fldKXSWWLc8DWCBhH": "Xenochrome Technologies",
+      "fldMH5GbTY4Cjx2Oe": "Applicant has not reached Stage 2 yet",
+      "fldNmKtbJUXJCLtLM": {
+        "id": "selGQC0P44rt7rg3P",
+        "name": "Founder or Director",
+        "color": "grayLight2"
+      },
+      "fldOLKfVW7fWKJaVE": {
+        "id": "sellc8vSWHHsSBkxV",
+        "name": "buyers_agent",
+        "color": "blueLight2"
+      },
+      "fldPxNxDBNncb2d9h": [
+        {
+          "id": "selZtGDTPffKVOeRl",
+          "name": "Disconnected systems and duplicate data entry",
+          "color": "grayLight2"
+        },
+        {
+          "id": "selX2qUiNloBGBiH2",
+          "name": "Manual report preparation",
+          "color": "grayLight2"
+        },
+        {
+          "id": "selruo5AGEeyV6aw6",
+          "name": "Finance or broker coordination",
+          "color": "grayLight2"
+        }
+      ],
+      "fldRrc6RfMo5aiP8q": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "fldU6Ny4Ck482jpGg": "AX-2321D1BBBE",
+      "fldVxmHPUx7XC4uoq": "AURIXA Contact Waitlist Page",
+      "fldW5JPpfo3NhGrqY": 0,
+      "fldY840DzLbyfSVwf": 0,
+      "fldbusLVIAf3pTrO5": "AURIXA Contact Waitlist Page",
+      "fldg7WvQ5zzsovjHe": "https://aurixasystems.com.au/schedule-strategic-review?ref=AX-2321D1BBBE",
+      "fldhyP7rjITi94tFH": "+60182548567",
+      "fldiRaNRxqLQz3RIP": "2026-07-29T20:47:11.180Z",
+      "fldpThwtKAXHfQNut": "AX-2321D1BBBE",
+      "fldq1l9bTCrckpQDk": "HOLD",
+      "fldqYOwyWRRdkZyrY": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "fldrn1evbYmFjoPyA": 0,
+      "fldt1e2VtGmzzawsb": true,
+      "fldtNFwOfeTaaELKI": 0,
+      "fldvMwzASD4sHzdV8": true,
+      "fldvcq6GjkuBTREON": "lavankenobi@gmail.com",
+      "fldwJSa1M5a09T5bn": "2026-07-30T20:47:20.093Z",
+      "fldx6YHHBqspMfiot": "https://aurixasystems.com.au/questionnaire?token=TFJ2SWVIdjVzaWhwWGUwSw&expires=2026-07-30T20%3A47%3A20.093Z",
+      "fldyvxPM3x4LVi33h": "Lavanethaan"
+    }
+  },
+  {
+    "id": "recS5OzCXyvIc7Kl9",
+    "createdTime": "2026-08-05T05:31:52.000Z",
+    "cellValuesByFieldId": {
+      "fld0WleiJUhMh22bx": "HOLD",
+      "fld1ytmg0havMGDhc": "My firm's pipeline is clogged due to high volume usage. Please make it flow smoothly",
+      "fld3UfJ8BTk0rCPsV": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "fld4IH1BJ16NGrZQA": "GRANT",
+      "fld6qdif1DuDb75JB": "2026-08-05",
+      "fld7BS5w42aJwbNPC": "/contact",
+      "fld8EBHBh9ywpSeET": "stage-1-priority-access-v3",
+      "fldA5j0e9NPipgCuU": {
+        "id": "selgPRHnI4sKOd6jG",
+        "name": "26_to_75",
+        "color": "blueLight2"
+      },
+      "fldAH7gzIq2bicqvQ": "Sometimes I feel excited and sometimes I'm confused. Sometimes I'm forgetful. Please help me.",
+      "fldBZYe8s6dAqhPKD": 0,
+      "fldCnw0PfWdWCOwAp": "collection-notice-2026-07-v1",
+      "fldEj8mFBIPDHwrwx": "Expired",
+      "fldGhrqs3G4NVsq49": "TVh2bTR6eUJNVXlBMEdpQg",
+      "fldIfSFxluMqIG1OG": 2,
+      "fldJSOnXU9dbndMyN": "Joseph",
+      "fldKXSWWLc8DWCBhH": "Kothavalli & CO",
+      "fldNmKtbJUXJCLtLM": {
+        "id": "selFa6vYlesuCsZ4w",
+        "name": "Other",
+        "color": "grayLight2"
+      },
+      "fldOLKfVW7fWKJaVE": {
+        "id": "selGrl3OPWINb4Pyk",
+        "name": "mortgage_finance",
+        "color": "blueLight2"
+      },
+      "fldOa3c0og10Q9Thv": "Applicant already reached Stage 2",
+      "fldPxNxDBNncb2d9h": [
+        {
+          "id": "selmPeipVnwkKdUid",
+          "name": "Client onboarding delays",
+          "color": "grayLight2"
+        },
+        {
+          "id": "seluZ9D8JtPue6oA0",
+          "name": "Client communication and follow-up",
+          "color": "grayLight2"
+        },
+        {
+          "id": "sel14ikZUd17bulr1",
+          "name": "Workflow visibility and accountability",
+          "color": "grayLight2"
+        }
+      ],
+      "fldRrc6RfMo5aiP8q": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "fldU6Ny4Ck482jpGg": "AX-84EFE0685A",
+      "fldVxmHPUx7XC4uoq": "AURIXA Contact Waitlist Page",
+      "fldW5JPpfo3NhGrqY": 0,
+      "fldY840DzLbyfSVwf": 0,
+      "fldbusLVIAf3pTrO5": "AURIXA Contact Waitlist Page",
+      "fldg7WvQ5zzsovjHe": "https://aurixasystems.com.au/schedule-strategic-review?ref=AX-84EFE0685A",
+      "fldhyP7rjITi94tFH": "+61420500544",
+      "fldiRaNRxqLQz3RIP": "2026-08-05T05:31:51.347Z",
+      "fldoc77Gh5nZDBCcg": [
+        {
+          "id": "recW0FM1q9Lyqi2VF",
+          "name": "9"
+        },
+        {
+          "id": "rectszlHImnpCHOEL",
+          "name": "10"
+        }
+      ],
+      "fldpThwtKAXHfQNut": "AX-84EFE0685A",
+      "fldq1l9bTCrckpQDk": "SEND",
+      "fldqYOwyWRRdkZyrY": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "fldrn1evbYmFjoPyA": 1,
+      "fldt1e2VtGmzzawsb": true,
+      "fldtNFwOfeTaaELKI": 0,
+      "fldvMwzASD4sHzdV8": true,
+      "fldvcq6GjkuBTREON": "reena128@hotmail.com",
+      "fldwJSa1M5a09T5bn": "2026-08-06T05:31:57.142Z",
+      "fldx6YHHBqspMfiot": "https://aurixasystems.com.au/questionnaire?token=TVh2bTR6eUJNVXlBMEdpQg&expires=2026-08-06T05%3A31%3A57.142Z",
+      "fldyvxPM3x4LVi33h": "Reena"
+    }
+  },
+  {
+    "id": "recVY5eHYraex8AEf",
+    "createdTime": "2026-07-29T20:25:30.000Z",
+    "cellValuesByFieldId": {
+      "fld0WleiJUhMh22bx": "SEND",
+      "fld1ytmg0havMGDhc": "grr",
+      "fld3UfJ8BTk0rCPsV": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "fld4IH1BJ16NGrZQA": "GRANT",
+      "fld7BS5w42aJwbNPC": "/contact",
+      "fld8EBHBh9ywpSeET": "stage-1-priority-access-v3",
+      "fldA5j0e9NPipgCuU": {
+        "id": "selpn5NP0DRhuPrEj",
+        "name": "pre_launch_under_10",
+        "color": "blueLight2"
+      },
+      "fldBZYe8s6dAqhPKD": 0,
+      "fldCnw0PfWdWCOwAp": "collection-notice-2026-07-v1",
+      "fldEj8mFBIPDHwrwx": "Expired",
+      "fldGhrqs3G4NVsq49": "Z3N6czhmZmdydWNXd1p1dA",
+      "fldIfSFxluMqIG1OG": 0,
+      "fldJSOnXU9dbndMyN": "Ravachandran",
+      "fldKXSWWLc8DWCBhH": "Xenochrome Technologies",
+      "fldMH5GbTY4Cjx2Oe": "Applicant has not reached Stage 2 yet",
+      "fldNmKtbJUXJCLtLM": {
+        "id": "selGQC0P44rt7rg3P",
+        "name": "Founder or Director",
+        "color": "grayLight2"
+      },
+      "fldOLKfVW7fWKJaVE": {
+        "id": "sellc8vSWHHsSBkxV",
+        "name": "buyers_agent",
+        "color": "blueLight2"
+      },
+      "fldPxNxDBNncb2d9h": [
+        {
+          "id": "selZtGDTPffKVOeRl",
+          "name": "Disconnected systems and duplicate data entry",
+          "color": "grayLight2"
+        },
+        {
+          "id": "selX2qUiNloBGBiH2",
+          "name": "Manual report preparation",
+          "color": "grayLight2"
+        },
+        {
+          "id": "selruo5AGEeyV6aw6",
+          "name": "Finance or broker coordination",
+          "color": "grayLight2"
+        }
+      ],
+      "fldRrc6RfMo5aiP8q": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "fldU6Ny4Ck482jpGg": "AX-5908BBFB3C",
+      "fldVxmHPUx7XC4uoq": "AURIXA Contact Waitlist Page",
+      "fldW5JPpfo3NhGrqY": 0,
+      "fldY840DzLbyfSVwf": 0,
+      "fldbusLVIAf3pTrO5": "AURIXA Contact Waitlist Page",
+      "fldg7WvQ5zzsovjHe": "https://aurixasystems.com.au/schedule-strategic-review?ref=AX-5908BBFB3C",
+      "fldhyP7rjITi94tFH": "+60182548567",
+      "fldiRaNRxqLQz3RIP": "2026-07-29T20:25:29.711Z",
+      "fldpThwtKAXHfQNut": "AX-5908BBFB3C",
+      "fldq1l9bTCrckpQDk": "HOLD",
+      "fldqYOwyWRRdkZyrY": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "fldrn1evbYmFjoPyA": 0,
+      "fldt1e2VtGmzzawsb": true,
+      "fldtNFwOfeTaaELKI": 0,
+      "fldvMwzASD4sHzdV8": true,
+      "fldvcq6GjkuBTREON": "lavankenobi@gmail.com",
+      "fldwJSa1M5a09T5bn": "2026-07-30T20:25:34.908Z",
+      "fldx6YHHBqspMfiot": "https://aurixasystems.com.au/questionnaire?token=Z3N6czhmZmdydWNXd1p1dA&expires=2026-07-30T20%3A25%3A34.908Z",
+      "fldyvxPM3x4LVi33h": "Lavanethaan"
+    }
+  },
+  {
+    "id": "rechxkPmAYfFHVhid",
+    "createdTime": "2026-08-15T14:12:39.000Z",
+    "cellValuesByFieldId": {
+      "fld0WleiJUhMh22bx": "SEND",
+      "fld1ytmg0havMGDhc": "My firm's pipeline is clogged due to high volume usage. Please make it flow smoothly",
+      "fld3UfJ8BTk0rCPsV": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "fld4IH1BJ16NGrZQA": "GRANT",
+      "fld7BS5w42aJwbNPC": "/contact",
+      "fld8EBHBh9ywpSeET": "stage-1-priority-access-v3",
+      "fldA5j0e9NPipgCuU": {
+        "id": "selgPRHnI4sKOd6jG",
+        "name": "26_to_75",
+        "color": "blueLight2"
+      },
+      "fldAH7gzIq2bicqvQ": "Sometimes I feel excited and sometimes I'm confused. Sometimes I'm forgetful. Please help me.",
+      "fldBZYe8s6dAqhPKD": 0,
+      "fldCnw0PfWdWCOwAp": "collection-notice-2026-07-v1",
+      "fldEj8mFBIPDHwrwx": "Expired",
+      "fldGhrqs3G4NVsq49": "N2dESHdFZmhWOG1Sb3hPaA",
+      "fldIfSFxluMqIG1OG": 0,
+      "fldJSOnXU9dbndMyN": "Joseph",
+      "fldKXSWWLc8DWCBhH": "Kothavalli & CO",
+      "fldMH5GbTY4Cjx2Oe": "Applicant has not reached Stage 2 yet",
+      "fldNmKtbJUXJCLtLM": {
+        "id": "selFa6vYlesuCsZ4w",
+        "name": "Other",
+        "color": "grayLight2"
+      },
+      "fldOLKfVW7fWKJaVE": {
+        "id": "selGrl3OPWINb4Pyk",
+        "name": "mortgage_finance",
+        "color": "blueLight2"
+      },
+      "fldPxNxDBNncb2d9h": [
+        {
+          "id": "selmPeipVnwkKdUid",
+          "name": "Client onboarding delays",
+          "color": "grayLight2"
+        },
+        {
+          "id": "seluZ9D8JtPue6oA0",
+          "name": "Client communication and follow-up",
+          "color": "grayLight2"
+        },
+        {
+          "id": "sel14ikZUd17bulr1",
+          "name": "Workflow visibility and accountability",
+          "color": "grayLight2"
+        }
+      ],
+      "fldRrc6RfMo5aiP8q": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "fldU6Ny4Ck482jpGg": "AX-84EFE0685A",
+      "fldVxmHPUx7XC4uoq": "AURIXA Contact Waitlist Page",
+      "fldW5JPpfo3NhGrqY": 0,
+      "fldY840DzLbyfSVwf": 0,
+      "fldbusLVIAf3pTrO5": "AURIXA Contact Waitlist Page",
+      "fldg7WvQ5zzsovjHe": "https://aurixasystems.com.au/schedule-strategic-review?ref=AX-84EFE0685A",
+      "fldhyP7rjITi94tFH": "+61420500544",
+      "fldiRaNRxqLQz3RIP": "2026-08-15T14:12:38.187Z",
+      "fldpThwtKAXHfQNut": "AX-84EFE0685A",
+      "fldq1l9bTCrckpQDk": "HOLD",
+      "fldqYOwyWRRdkZyrY": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "fldrn1evbYmFjoPyA": 0,
+      "fldt1e2VtGmzzawsb": true,
+      "fldtNFwOfeTaaELKI": 0,
+      "fldvMwzASD4sHzdV8": true,
+      "fldvcq6GjkuBTREON": "reena128@hotmail.com",
+      "fldwJSa1M5a09T5bn": "2026-08-16T14:12:56.086Z",
+      "fldx6YHHBqspMfiot": "https://aurixasystems.com.au/questionnaire?token=N2dESHdFZmhWOG1Sb3hPaA&expires=2026-08-16T14%3A12%3A56.086Z",
+      "fldyvxPM3x4LVi33h": "Reena"
+    }
+  },
+  {
+    "id": "recjjJozJjnpBvQfG",
+    "createdTime": "2026-08-15T14:12:39.000Z",
+    "cellValuesByFieldId": {
+      "fld0WleiJUhMh22bx": "HOLD",
+      "fld3UfJ8BTk0rCPsV": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "fld4IH1BJ16NGrZQA": "DENY",
+      "fld9SUmHHtIQcEaoH": "No Application ID on the record",
+      "fldBZYe8s6dAqhPKD": 0,
+      "fldEj8mFBIPDHwrwx": "Expired",
+      "fldGhrqs3G4NVsq49": "WnRUVlBlRFZQaVFjNnFGbQ",
+      "fldIfSFxluMqIG1OG": 0,
+      "fldMH5GbTY4Cjx2Oe": "Applicant has not reached Stage 2 yet",
+      "fldOa3c0og10Q9Thv": "No Application ID on the record",
+      "fldRrc6RfMo5aiP8q": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "fldW5JPpfo3NhGrqY": 0,
+      "fldY840DzLbyfSVwf": 0,
+      "fldiRaNRxqLQz3RIP": "2026-08-15T14:12:38.167Z",
+      "fldq1l9bTCrckpQDk": "HOLD",
+      "fldqYOwyWRRdkZyrY": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "fldrn1evbYmFjoPyA": 0,
+      "fldtNFwOfeTaaELKI": 0,
+      "fldwJSa1M5a09T5bn": "2026-08-16T14:12:51.842Z",
+      "fldx6YHHBqspMfiot": "https://aurixasystems.com.au/questionnaire?token=WnRUVlBlRFZQaVFjNnFGbQ&expires=2026-08-16T14%3A12%3A51.842Z"
+    }
+  },
+  {
+    "id": "recmxSC7BpDyW6xik",
+    "createdTime": "2026-08-15T14:12:39.000Z",
+    "cellValuesByFieldId": {
+      "fld0WleiJUhMh22bx": "HOLD",
+      "fld3UfJ8BTk0rCPsV": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "fld4IH1BJ16NGrZQA": "DENY",
+      "fld9SUmHHtIQcEaoH": "No Application ID on the record",
+      "fldBZYe8s6dAqhPKD": 0,
+      "fldEj8mFBIPDHwrwx": "Expired",
+      "fldGhrqs3G4NVsq49": "VnZRYnZQT2t5cXRKNGdmSA",
+      "fldIfSFxluMqIG1OG": 0,
+      "fldMH5GbTY4Cjx2Oe": "Applicant has not reached Stage 2 yet",
+      "fldOa3c0og10Q9Thv": "No Application ID on the record",
+      "fldRrc6RfMo5aiP8q": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "fldW5JPpfo3NhGrqY": 0,
+      "fldY840DzLbyfSVwf": 0,
+      "fldiRaNRxqLQz3RIP": "2026-08-15T14:12:38.217Z",
+      "fldq1l9bTCrckpQDk": "HOLD",
+      "fldqYOwyWRRdkZyrY": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "fldrn1evbYmFjoPyA": 0,
+      "fldtNFwOfeTaaELKI": 0,
+      "fldwJSa1M5a09T5bn": "2026-08-16T14:12:50.506Z",
+      "fldx6YHHBqspMfiot": "https://aurixasystems.com.au/questionnaire?token=VnZRYnZQT2t5cXRKNGdmSA&expires=2026-08-16T14%3A12%3A50.506Z"
+    }
+  },
+  {
+    "id": "recnC8j6YucPUCX4L",
+    "createdTime": "2026-07-31T10:10:19.000Z",
+    "cellValuesByFieldId": {
+      "fld0WleiJUhMh22bx": "HOLD",
+      "fld1ytmg0havMGDhc": "bbb",
+      "fld3UfJ8BTk0rCPsV": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "fld4IH1BJ16NGrZQA": "GRANT",
+      "fld6qdif1DuDb75JB": "2026-07-31",
+      "fld7BS5w42aJwbNPC": "/contact",
+      "fld8EBHBh9ywpSeET": "stage-1-priority-access-v3",
+      "fldA5j0e9NPipgCuU": {
+        "id": "selgPRHnI4sKOd6jG",
+        "name": "26_to_75",
+        "color": "blueLight2"
+      },
+      "fldBZYe8s6dAqhPKD": 0,
+      "fldCnw0PfWdWCOwAp": "collection-notice-2026-07-v1",
+      "fldEG921RoAqVzPWO": "AAMkADBlYzM0YTlkLWZiOTEtNDQ2YS05MjVjLTZhYzA0NWIyMGExMQBGAAAAAAAUu593InGqS43UqSZY2JKNBwBv-aPQVWqHSItTdfEGS9CDAAAAAAEPAABv-aPQVWqHSItTdfEGS9CDAAArLfNjAAA=",
+      "fldEj8mFBIPDHwrwx": "Expired",
+      "fldGhrqs3G4NVsq49": "V2J1bHdIcnFjVmx1QjVFZg",
+      "fldIfSFxluMqIG1OG": 1,
+      "fldJSOnXU9dbndMyN": "Naidu",
+      "fldKXSWWLc8DWCBhH": "Naidu Property Consulting Services",
+      "fldNmKtbJUXJCLtLM": {
+        "id": "sel9YgQRZo8I70oMc",
+        "name": "Chief Executive Officer",
+        "color": "grayLight2"
+      },
+      "fldOLKfVW7fWKJaVE": {
+        "id": "sel42ueOkHR0kpS2V",
+        "name": "property_advisory",
+        "color": "blueLight2"
+      },
+      "fldOa3c0og10Q9Thv": "Applicant already reached Stage 2",
+      "fldPxNxDBNncb2d9h": [
+        {
+          "id": "selZtGDTPffKVOeRl",
+          "name": "Disconnected systems and duplicate data entry",
+          "color": "grayLight2"
+        },
+        {
+          "id": "selzXorD3kN9RXagP",
+          "name": "Document collection and management",
+          "color": "grayLight2"
+        },
+        {
+          "id": "selArOXXWqGL5KjVx",
+          "name": "Compliance and AML administration",
+          "color": "grayLight2"
+        }
+      ],
+      "fldRrc6RfMo5aiP8q": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "fldU6Ny4Ck482jpGg": "AX-C94B1D8EC9",
+      "fldVxmHPUx7XC4uoq": "AURIXA Contact Waitlist Page",
+      "fldW5JPpfo3NhGrqY": 0,
+      "fldY840DzLbyfSVwf": 0,
+      "fldbusLVIAf3pTrO5": "AURIXA Contact Waitlist Page",
+      "fldg7WvQ5zzsovjHe": "https://aurixasystems.com.au/schedule-strategic-review?ref=AX-C94B1D8EC9",
+      "fldhyP7rjITi94tFH": "+61433005110",
+      "fldiRaNRxqLQz3RIP": "2026-07-31T10:10:18.868Z",
+      "fldoc77Gh5nZDBCcg": [
+        {
+          "id": "recaLOzCdW6u1kTX3",
+          "name": "7"
+        }
+      ],
+      "fldpThwtKAXHfQNut": "AX-C94B1D8EC9",
+      "fldq1l9bTCrckpQDk": "SEND",
+      "fldqYOwyWRRdkZyrY": {
+        "state": "empty",
+        "value": null,
+        "isStale": true
+      },
+      "fldrn1evbYmFjoPyA": 1,
+      "fldt1e2VtGmzzawsb": true,
+      "fldtNFwOfeTaaELKI": 0,
+      "fldvMwzASD4sHzdV8": true,
+      "fldvcq6GjkuBTREON": "rugesh@npcservices.com.au",
+      "fldwJSa1M5a09T5bn": "2026-08-01T10:10:29.130Z",
+      "fldx6YHHBqspMfiot": "https://aurixasystems.com.au/questionnaire?token=V2J1bHdIcnFjVmx1QjVFZg&expires=2026-08-01T10%3A10%3A29.130Z",
+      "fldyvxPM3x4LVi33h": "Rugesh"
+    }
+  }
+]

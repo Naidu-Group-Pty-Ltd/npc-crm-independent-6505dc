@@ -1,0 +1,3105 @@
+{
+  "assistant": "NPC Quiz Follow Up",
+  "assistantId": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+  "note": "System prompts are replaced by promptRef; the text is in ../prompts/<ref>.md. Everything else is the API response verbatim.",
+  "versionCount": 39,
+  "versions": [
+    {
+      "createdAt": "2026-07-22T05:49:31.065Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-11-18T04:36:57.549Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Erica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 43190,
+              "promptRef": "9ed1872e2b1a7476",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "5c0c334c-6bbf-4399-b748-a3c50207e754",
+            "f195a817-8346-475d-ad0e-8033f1d2e283",
+            "6587bc7d-7382-4e33-a38d-95f5740df52a",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6"
+          ]
+        },
+        "name": "NPC Quiz Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "headers": {
+            "x-vapi-webhook-secret": "{{REDACTED:VAPI_WEBHOOK_SECRET}}"
+          },
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "language": "en",
+          "model": "flux-general-en",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-07-22T05:49:31.048Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "TcAStCk0faGcHdNIFX23"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Erica from Naidu Property Consulting Services following up on the quiz you completed. Feel free to call us back on this number so we can book your complimentary discovery call."
+      },
+      "versionId": "1befd292-8591-11f1-9102-3522932d7198"
+    },
+    {
+      "createdAt": "2026-05-20T20:27:06.469Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-11-18T04:36:57.549Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Erica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 43190,
+              "promptRef": "9ed1872e2b1a7476",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "5c0c334c-6bbf-4399-b748-a3c50207e754",
+            "f195a817-8346-475d-ad0e-8033f1d2e283",
+            "6587bc7d-7382-4e33-a38d-95f5740df52a",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6"
+          ]
+        },
+        "name": "NPC Quiz Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "language": "en",
+          "model": "flux-general-en",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-05-20T20:27:06.440Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "TcAStCk0faGcHdNIFX23"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Erica from Naidu Property Consulting Services following up on the quiz you completed. Feel free to call us back on this number so we can book your complimentary discovery call."
+      },
+      "versionId": "44fa9952-548a-11f1-ad07-0b6524350b8c"
+    },
+    {
+      "createdAt": "2026-03-04T08:06:57.345Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-18T04:36:57.549Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Erica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 31276,
+              "promptRef": "e7ee88794d204e43",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Quiz Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "language": "en",
+          "model": "flux-general-en",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-03-04T08:06:57.327Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "TcAStCk0faGcHdNIFX23"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Erica from Naidu Property Consulting Services following up on the quiz you completed. Feel free to call us back on this number so we can book your complimentary discovery call."
+      },
+      "versionId": "1d454b11-17a1-11f1-b562-0d9dad74246c"
+    },
+    {
+      "createdAt": "2026-03-04T07:53:30.988Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-18T04:36:57.549Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Erica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 30155,
+              "promptRef": "448e125779921c42",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Quiz Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "language": "en",
+          "model": "flux-general-en",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-03-04T07:53:30.961Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "TcAStCk0faGcHdNIFX23"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Erica from Naidu Property Consulting Services following up on the quiz you completed. Feel free to call us back on this number so we can book your complimentary discovery call."
+      },
+      "versionId": "3ca4d3b2-179f-11f1-9cab-8b594e3ce187"
+    },
+    {
+      "createdAt": "2026-02-03T08:38:13.495Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-18T04:36:57.549Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Erica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 30030,
+              "promptRef": "3166c07ee849025a",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Quiz Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "language": "en",
+          "model": "flux-general-en",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-02-03T08:38:13.440Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "TcAStCk0faGcHdNIFX23"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Erica from Naidu Property Consulting Services following up on the quiz you completed. Feel free to call us back on this number so we can book your complimentary discovery call."
+      },
+      "versionId": "ad905072-00db-11f1-be2e-2fd8f4ee1727"
+    },
+    {
+      "createdAt": "2026-02-03T08:36:30.101Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-18T04:36:57.549Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Erica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 30056,
+              "promptRef": "8b432811e1ee49f8",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Quiz Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "language": "en",
+          "model": "flux-general-en",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-02-03T08:36:30.079Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "TcAStCk0faGcHdNIFX23"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Erica from Naidu Property Consulting Services following up on the quiz you completed. Feel free to call us back on this number so we can book your complimentary discovery call."
+      },
+      "versionId": "6fefa451-00db-11f1-b637-53bc40990d7c"
+    },
+    {
+      "createdAt": "2026-01-31T05:25:31.359Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-18T04:36:57.549Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Erica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 27073,
+              "promptRef": "17468b058e89b1fc",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Quiz Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "language": "en",
+          "model": "flux-general-en",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-31T05:25:31.327Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "TcAStCk0faGcHdNIFX23"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Erica from Naidu Property Consulting Services following up on the quiz you completed. Feel free to call us back on this number so we can book your complimentary discovery call."
+      },
+      "versionId": "42c0f7e2-fe65-11f0-af9a-d1cd95dafea1"
+    },
+    {
+      "createdAt": "2026-01-31T05:25:04.423Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-18T04:36:57.549Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Erica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 27073,
+              "promptRef": "17468b058e89b1fc",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Quiz Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "audioEnhancer": false,
+          "confidenceThreshold": 0.4,
+          "language": "en",
+          "model": "fast",
+          "prosody": false,
+          "provider": "gladia"
+        },
+        "updatedAt": "2026-01-31T05:25:04.399Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "TcAStCk0faGcHdNIFX23"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Erica from Naidu Property Consulting Services following up on the quiz you completed. Feel free to call us back on this number so we can book your complimentary discovery call."
+      },
+      "versionId": "32b30372-fe65-11f0-ada4-d11235bfbadd"
+    },
+    {
+      "createdAt": "2026-01-31T05:24:37.733Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-18T04:36:57.549Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Erica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 27073,
+              "promptRef": "17468b058e89b1fc",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Quiz Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "nova-3",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-31T05:24:37.711Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "TcAStCk0faGcHdNIFX23"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Erica from Naidu Property Consulting Services following up on the quiz you completed. Feel free to call us back on this number so we can book your complimentary discovery call."
+      },
+      "versionId": "22ca7152-fe65-11f0-a3e8-71a00aa40a62"
+    },
+    {
+      "createdAt": "2026-01-31T04:23:36.972Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-18T04:36:57.549Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Erica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 27073,
+              "promptRef": "17468b058e89b1fc",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Quiz Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-31T04:23:36.942Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "TcAStCk0faGcHdNIFX23"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Erica from Naidu Property Consulting Services following up on the quiz you completed. Feel free to call us back on this number so we can book your complimentary discovery call."
+      },
+      "versionId": "9ccea4c2-fe5c-11f0-8713-514e9c8ea4d9"
+    },
+    {
+      "createdAt": "2026-01-27T02:28:47.116Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-18T04:36:57.549Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Erica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 26935,
+              "promptRef": "a4ff0e08442886c4",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Quiz Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-27T02:28:47.082Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "TcAStCk0faGcHdNIFX23"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Erica from Naidu Property Consulting Services following up on the quiz you completed. Feel free to call us back on this number so we can book your complimentary discovery call."
+      },
+      "versionId": "e87b0cc2-fb27-11f0-a650-ab63683e9e1e"
+    },
+    {
+      "createdAt": "2026-01-27T02:15:42.629Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-18T04:36:57.549Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Erica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 26848,
+              "promptRef": "ac2a693164ba4637",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Quiz Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-27T02:15:42.599Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "TcAStCk0faGcHdNIFX23"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Erica from Naidu Property Consulting Services following up on the quiz you completed. Feel free to call us back on this number so we can book your complimentary discovery call."
+      },
+      "versionId": "14e3d551-fb26-11f0-ae84-9b03272fbed9"
+    },
+    {
+      "createdAt": "2026-01-27T01:46:32.700Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-18T04:36:57.549Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Erica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 25986,
+              "promptRef": "b08cad64b8cc158f",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Quiz Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-27T01:46:32.684Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "TcAStCk0faGcHdNIFX23"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Erica from Naidu Property Consulting Services following up on the quiz you completed. Feel free to call us back on this number so we can book your complimentary discovery call."
+      },
+      "versionId": "01d9dbc2-fb22-11f0-8202-274da7cc3f76"
+    },
+    {
+      "createdAt": "2026-01-27T01:41:47.433Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-18T04:36:57.549Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Erica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 25844,
+              "promptRef": "ff71dcafd2697fc2",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Quiz Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-27T01:41:47.390Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "TcAStCk0faGcHdNIFX23"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Erica from Naidu Property Consulting Services following up on the quiz you completed. Feel free to call us back on this number so we can book your complimentary discovery call."
+      },
+      "versionId": "57d16a84-fb21-11f0-a864-85f62c8a3b91"
+    },
+    {
+      "createdAt": "2026-01-27T01:39:14.208Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-18T04:36:57.549Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Erica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 1000,
+          "messages": [
+            {
+              "chars": 25786,
+              "promptRef": "5ce7206c82658703",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Quiz Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-27T01:39:14.192Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "TcAStCk0faGcHdNIFX23"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Erica from Naidu Property Consulting Services following up on the quiz you completed. Feel free to call us back on this number so we can book your complimentary discovery call."
+      },
+      "versionId": "fc7d4a02-fb20-11f0-b926-95a4cebc641d"
+    },
+    {
+      "createdAt": "2026-01-27T01:14:44.024Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-18T04:36:57.549Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Erica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 25786,
+              "promptRef": "5ce7206c82658703",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Quiz Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-27T01:14:44.000Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "TcAStCk0faGcHdNIFX23"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Erica from Naidu Property Consulting Services following up on the quiz you completed. Feel free to call us back on this number so we can book your complimentary discovery call."
+      },
+      "versionId": "9030dc74-fb1d-11f0-8741-6558eec93e64"
+    },
+    {
+      "createdAt": "2026-01-27T01:04:07.840Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-18T04:36:57.549Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Erica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 25777,
+              "promptRef": "8309d74eed44364d",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Quiz Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-27T01:04:07.814Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "TcAStCk0faGcHdNIFX23"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Erica from Naidu Property Consulting Services following up on the quiz you completed. Feel free to call us back on this number so we can book your complimentary discovery call."
+      },
+      "versionId": "14ff0a02-fb1c-11f0-b240-ef0dc266659a"
+    },
+    {
+      "createdAt": "2026-01-26T13:48:28.492Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-18T04:36:57.549Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Erica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 25777,
+              "promptRef": "8309d74eed44364d",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Quiz Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-26T13:48:28.479Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "TcAStCk0faGcHdNIFX23"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Erica from Naidu Property Consulting Services following up on the quiz you completed. Feel free to call us back on this number so we can book your complimentary discovery call."
+      },
+      "versionId": "b1a970c2-fabd-11f0-a52d-89c31c644b14"
+    },
+    {
+      "createdAt": "2026-01-12T09:21:19.976Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-18T04:36:57.549Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Erica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 17922,
+              "promptRef": "dd28182c629c701b",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Quiz Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-12T09:21:19.950Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "TcAStCk0faGcHdNIFX23"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Erica from Naidu Property Consulting Services following up on the quiz you completed. Feel free to call us back on this number so we can book your complimentary discovery call."
+      },
+      "versionId": "0e237e82-ef98-11f0-8e42-7f5eb83237b7"
+    },
+    {
+      "createdAt": "2026-01-12T03:40:35.883Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-18T04:36:57.549Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Erica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 17923,
+              "promptRef": "b3ea2897f3dbf1e2",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Quiz Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-12T03:40:35.857Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "TcAStCk0faGcHdNIFX23"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Erica from Naidu Property Consulting Services following up on the quiz you completed. Feel free to call us back on this number so we can book your complimentary discovery call."
+      },
+      "versionId": "748277b2-ef68-11f0-bb6e-9b2189d8486d"
+    },
+    {
+      "createdAt": "2026-01-12T02:58:03.684Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-18T04:36:57.549Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Erica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 17832,
+              "promptRef": "ed62b7972f1d202f",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Quiz Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-12T02:58:03.641Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "TcAStCk0faGcHdNIFX23"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Erica from Naidu Property Consulting Services following up on the quiz you completed. Feel free to call us back on this number so we can book your complimentary discovery call."
+      },
+      "versionId": "8347ce42-ef62-11f0-917d-81490674cb83"
+    },
+    {
+      "createdAt": "2026-01-12T02:49:36.140Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-18T04:36:57.549Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Erica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 20319,
+              "promptRef": "024f01547872cb08",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Quiz Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-12T02:49:36.124Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "TcAStCk0faGcHdNIFX23"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Erica from Naidu Property Consulting Services following up on the quiz you completed. Feel free to call us back on this number so we can book your complimentary discovery call."
+      },
+      "versionId": "54c295b2-ef61-11f0-91fd-f548d848e582"
+    },
+    {
+      "createdAt": "2026-01-12T02:44:28.675Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-18T04:36:57.549Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Erica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 13948,
+              "promptRef": "e0c173111179a019",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Quiz Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-12T02:44:28.637Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "TcAStCk0faGcHdNIFX23"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Erica from Naidu Property Consulting Services following up on the quiz you completed. Feel free to call us back on this number so we can book your complimentary discovery call."
+      },
+      "versionId": "9d7f4d32-ef60-11f0-bbac-6b60b6a4800a"
+    },
+    {
+      "createdAt": "2026-01-12T02:42:55.802Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-18T04:36:57.549Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Erica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 11355,
+              "promptRef": "5df6e2722e19dc80",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Quiz Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-12T02:42:55.781Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "TcAStCk0faGcHdNIFX23"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Erica from Naidu Property Consulting Services following up on the quiz you completed. Feel free to call us back on this number so we can book your complimentary discovery call."
+      },
+      "versionId": "662401a2-ef60-11f0-b5e5-21d8fe7146a8"
+    },
+    {
+      "createdAt": "2026-01-12T02:25:03.072Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-18T04:36:57.549Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Erica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 8755,
+              "promptRef": "2b71c1daa1812e28",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Quiz Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-12T02:25:03.029Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "TcAStCk0faGcHdNIFX23"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Erica from Naidu Property Consulting Services following up on the quiz you completed. Feel free to call us back on this number so we can book your complimentary discovery call."
+      },
+      "versionId": "e6be6602-ef5d-11f0-9965-7d7eda00071c"
+    },
+    {
+      "createdAt": "2026-01-12T02:23:10.710Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-18T04:36:57.549Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Erica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 8681,
+              "promptRef": "506122ec08ae7557",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Quiz Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-12T02:23:10.695Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "TcAStCk0faGcHdNIFX23"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Erica from Naidu Property Consulting Services following up on the quiz you completed. Feel free to call us back on this number so we can book your complimentary discovery call."
+      },
+      "versionId": "a3c55162-ef5d-11f0-a78d-178644576e0c"
+    },
+    {
+      "createdAt": "2026-01-11T14:35:15.078Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-18T04:36:57.549Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Erica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 19497,
+              "promptRef": "fc1cfbde9324f653",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Quiz Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-11T14:35:15.063Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "TcAStCk0faGcHdNIFX23"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Erica from Naidu Property Consulting Services following up on the quiz you completed. Feel free to call us back on this number so we can book your complimentary discovery call."
+      },
+      "versionId": "be523a62-eefa-11f0-a2a3-f546e50880c3"
+    },
+    {
+      "createdAt": "2026-01-11T14:28:39.820Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-18T04:36:57.549Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Erica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 19356,
+              "promptRef": "600f3f1325b9397f",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Quiz Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-11T14:28:39.793Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "TcAStCk0faGcHdNIFX23"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Erica from Naidu Property Consulting Services following up on the quiz you completed. Feel free to call us back on this number so we can book your complimentary discovery call."
+      },
+      "versionId": "d2ba7db2-eef9-11f0-a2a3-f546e50880c3"
+    },
+    {
+      "createdAt": "2026-01-11T14:26:30.604Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-18T04:36:57.549Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Erica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 12387,
+              "promptRef": "43e7929dee33546c",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Quiz Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-11T14:26:30.580Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "TcAStCk0faGcHdNIFX23"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Erica from Naidu Property Consulting Services following up on the quiz you completed. Feel free to call us back on this number so we can book your complimentary discovery call."
+      },
+      "versionId": "85b5d8c1-eef9-11f0-b76a-65db4cde61dd"
+    },
+    {
+      "createdAt": "2026-01-11T14:23:40.768Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-18T04:36:57.549Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Erica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 9225,
+              "promptRef": "dc58b7ab3d523a3c",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Quiz Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-11T14:23:40.745Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "TcAStCk0faGcHdNIFX23"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Erica from Naidu Property Consulting Services following up on the quiz you completed. Feel free to call us back on this number so we can book your complimentary discovery call."
+      },
+      "versionId": "207aee02-eef9-11f0-b62f-f9b8828cea1e"
+    },
+    {
+      "createdAt": "2026-01-11T14:17:19.909Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-18T04:36:57.549Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Erica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 6490,
+              "promptRef": "3247136f95806939",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Quiz Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-11T14:17:19.899Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "TcAStCk0faGcHdNIFX23"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Erica from Naidu Property Consulting Services following up on the quiz you completed. Feel free to call us back on this number so we can book your complimentary discovery call."
+      },
+      "versionId": "3d787552-eef8-11f0-b397-3d207fb53b21"
+    },
+    {
+      "createdAt": "2026-01-11T14:13:52.992Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-18T04:36:57.549Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Erica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 6490,
+              "promptRef": "3247136f95806939",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Quiz Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-11T14:13:52.966Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "TcAStCk0faGcHdNIFX23"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Erica from Naidu Property Consulting Services following up on the quiz you completed. Feel free to call us back on this number so we can book your complimentary discovery call."
+      },
+      "versionId": "c2236e02-eef7-11f0-96ae-cf685153b1c0"
+    },
+    {
+      "createdAt": "2026-01-11T14:12:51.256Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-18T04:36:57.549Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Erica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 6490,
+              "promptRef": "3247136f95806939",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "promptCacheKey": "erica_v1",
+          "promptCacheRetention": "24h",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Quiz Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-11T14:12:51.231Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "TcAStCk0faGcHdNIFX23"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Erica from Naidu Property Consulting Services following up on the quiz you completed. Feel free to call us back on this number so we can book your complimentary discovery call."
+      },
+      "versionId": "9d574382-eef7-11f0-914c-2d899b67524b"
+    },
+    {
+      "createdAt": "2026-01-08T11:02:41.447Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-18T04:36:57.549Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Erica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 19278,
+              "promptRef": "0febc89a01b10d5b",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "promptCacheKey": "erica_v1",
+          "promptCacheRetention": "24h",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Quiz Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-08T11:02:41.337Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "TcAStCk0faGcHdNIFX23"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Erica from Naidu Property Consulting Services following up on the quiz you completed. Feel free to call us back on this number so we can book your complimentary discovery call."
+      },
+      "versionId": "8d535372-ec81-11f0-842e-ad202c58b5c2"
+    },
+    {
+      "createdAt": "2026-01-08T10:58:24.959Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-18T04:36:57.549Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Erica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 19278,
+              "promptRef": "0febc89a01b10d5b",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "promptCacheKey": "monica_v1",
+          "promptCacheRetention": "24h",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Quiz Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-08T10:58:24.849Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "TcAStCk0faGcHdNIFX23"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Erica from Naidu Property Consulting Services following up on the quiz you completed. Feel free to call us back on this number so we can book your complimentary discovery call."
+      },
+      "versionId": "f4725cf1-ec80-11f0-88c9-4b884531427f"
+    },
+    {
+      "createdAt": "2026-01-08T10:57:38.895Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-18T04:36:57.549Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Erica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 19278,
+              "promptRef": "0febc89a01b10d5b",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Quiz Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-08T10:57:38.785Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "TcAStCk0faGcHdNIFX23"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Erica from Naidu Property Consulting Services following up on the quiz you completed. Feel free to call us back on this number so we can book your complimentary discovery call."
+      },
+      "versionId": "d8fd8df1-ec80-11f0-9648-bfb165158ff5"
+    },
+    {
+      "createdAt": "2026-01-08T07:21:10.380Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-18T04:36:57.549Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Erica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 19278,
+              "promptRef": "0febc89a01b10d5b",
+              "role": "system"
+            }
+          ],
+          "model": "anthropic/claude-haiku-4.5",
+          "provider": "openrouter",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Quiz Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-08T07:21:10.247Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "TcAStCk0faGcHdNIFX23"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Erica from Naidu Property Consulting Services following up on the quiz you completed. Feel free to call us back on this number so we can book your complimentary discovery call."
+      },
+      "versionId": "9b3b72c2-ec62-11f0-864c-53c8ed0bbb10"
+    },
+    {
+      "createdAt": "2026-01-07T06:46:32.440Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-18T04:36:57.549Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Erica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 19278,
+              "promptRef": "0febc89a01b10d5b",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "promptCacheKey": "erica_v1",
+          "promptCacheRetention": "24h",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Quiz Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-07T06:46:32.308Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "TcAStCk0faGcHdNIFX23"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Erica from Naidu Property Consulting Services following up on the quiz you completed. Feel free to call us back on this number so we can book your complimentary discovery call."
+      },
+      "versionId": "9a451072-eb94-11f0-8396-01254d63845c"
+    },
+    {
+      "createdAt": "2026-01-07T05:20:10.500Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-18T04:36:57.549Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Erica, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 19273,
+              "promptRef": "dc4482455720733d",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "promptCacheKey": "erica_v1",
+          "promptCacheRetention": "24h",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Quiz Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-07T05:20:10.380Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "TcAStCk0faGcHdNIFX23"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Erica from Naidu Property Consulting Services following up on the quiz you completed. Feel free to call us back on this number so we can book your complimentary discovery call."
+      },
+      "versionId": "8997ec42-eb88-11f0-8b7b-67c18c102fc3"
+    }
+  ]
+}

@@ -1,0 +1,49 @@
+# Undefined identifiers on live Edge Function code paths, frozen.
+#
+# `check-edge-functions.mjs` treats TS2304/TS2552 ("Cannot find name") as
+# fatal and never baselineable: the module LOADS, so it is not a boot
+# failure — it serves every other operation perfectly and throws a
+# ReferenceError on one branch, when somebody finally exercises it. That is
+# harder to find than a function that is simply down.
+#
+# It was promoted to fatal because it happened: `defer_pep_determination`
+# called `appendCaseEvent`, and the function in that file is `appendEvent`.
+# It reached production and the operator saw "the server refused it" with
+# nothing to act on.
+#
+# These entries already existed at that moment. They are frozen here, keyed
+# by FILE and IDENTIFIER rather than by line — a line number moves with every
+# edit above it, so a positional key would either churn or silently start
+# covering a different defect. Nothing new can be added by a passing build;
+# each removal is a real fix.
+#
+# EVERY LINE BELOW IS A LIVE DEFECT, and several are in authorisation
+# helpers. Each belongs to the programme that owns that function. Shortening
+# this list is always an improvement; lengthening it needs a reason.
+#
+# The one exception is `EdgeRuntime`, which is not debt: it is a real global
+# the Supabase Edge Runtime provides and Deno's type declarations do not
+# describe.
+
+supabase/functions/calculate-borrowing-capacity/index.ts::DEFAULT_PROPERTY_POLICY
+supabase/functions/finance-portal-batch6/index.ts::canAccessPurchaseFile
+supabase/functions/finance-portal-batch6/index.ts::canAccessPurchaseFileResource
+supabase/functions/finance-portal-batch9-10/index.ts::hasFinancePortalPermission
+supabase/functions/finance-portal-briefing-runner/index.ts::CRON_SECRET
+supabase/functions/finance-portal-briefing-runner/index.ts::verifyRequiredCronSecret
+supabase/functions/generate-investment-report/index.ts::queryType
+supabase/functions/generate-investment-report/index.ts::requestBody
+supabase/functions/hero-image-studio/index.ts::MAX_REQUEST_BYTES
+supabase/functions/hero-image-studio/index.ts::enforceActorQuota
+supabase/functions/hero-image-studio/index.ts::enforceRawBodyLimit
+supabase/functions/hero-image-studio/index.ts::validateImageUpload
+supabase/functions/solicitor-portal-comms/index.ts::assignedClientIds
+supabase/functions/solicitor-portal-comms/index.ts::resolveClientPermissions
+supabase/functions/solicitor-portal-compliance/index.ts::assignedClientIds
+supabase/functions/solicitor-portal-matters/index.ts::assignedClientIds
+supabase/functions/solicitor-portal-matters/index.ts::resolveClientPermissions
+supabase/functions/template-analytics/index.ts::actorId
+supabase/functions/template-analytics/index.ts::actorName
+
+# Not debt — a real Supabase Edge Runtime global with no type declaration.
+supabase/functions/vapi-call-webhook/index.ts::EdgeRuntime

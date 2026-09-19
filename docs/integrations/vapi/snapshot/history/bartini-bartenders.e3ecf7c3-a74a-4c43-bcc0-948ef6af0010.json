@@ -1,0 +1,7 @@
+{
+  "assistant": "Bartini Bartenders",
+  "assistantId": "e3ecf7c3-a74a-4c43-bcc0-948ef6af0010",
+  "note": "System prompts are replaced by promptRef; the text is in ../prompts/<ref>.md. Everything else is the API response verbatim.",
+  "versionCount": 0,
+  "versions": []
+}

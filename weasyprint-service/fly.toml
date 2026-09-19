@@ -1,0 +1,57 @@
+# The render container on Fly.io — the same Dockerfile, off Google Cloud.
+#
+# Deployed by `.github/workflows/deploy-render-fly.yml`; nothing here is
+# specific to Fly beyond the machine shape. The edge functions only ever see
+# the URL and the bearer token, which that workflow writes into the Supabase
+# project's secrets after the container has proved itself.
+#
+# One machine, stopped when idle, started by the first request. The ceiling
+# on what this can cost is that one machine's hourly price — there is no
+# autoscaling here to run away.
+
+app = "aurixa-weasyprint-service"
+primary_region = "syd"
+
+[build]
+  dockerfile = "Dockerfile"
+
+[env]
+  PORT = "8080"
+  WEASYPRINT_WARMUP = "1"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  auto_stop_machines = "stop"
+  auto_start_machines = true
+  # 0 = the machine stops when idle and the first request after a quiet spell
+  # pays a ~10 s boot (gunicorn preload + warm-up render). 1 = one machine is
+  # always warm, at that machine's monthly price. See RENDER_SERVICE_AVAILABILITY.md,
+  # "Choosing the machine plan".
+  min_machines_running = 0
+  processes = ["app"]
+
+  # A render is CPU-bound and the container runs 2 gunicorn workers, so two
+  # renders run at once and a third queues. With these limits Fly's proxy
+  # prefers a machine with fewer than 2 renders in flight, starts a stopped
+  # second machine (where one exists) once every running one has 2, and
+  # never sends a machine more than 4 — the same ceiling the Cloud Run
+  # service ran with (`--concurrency 4`).
+  [http_service.concurrency]
+    type = "requests"
+    soft_limit = 2
+    hard_limit = 4
+
+  # A stopped machine boots gunicorn under `--preload` and renders a warm-up
+  # page before it listens; the grace period covers that so a cold machine is
+  # not marked unhealthy while it warms.
+  [[http_service.checks]]
+    interval = "30s"
+    timeout = "5s"
+    grace_period = "60s"
+    method = "GET"
+    path = "/healthz"
+
+[[vm]]
+  size = "performance-1x"
+  memory = "2048mb"

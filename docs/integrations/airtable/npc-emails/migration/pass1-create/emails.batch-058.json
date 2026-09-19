@@ -1,0 +1,447 @@
+{
+  "table": "Emails",
+  "batch": 58,
+  "of": 107,
+  "recordCount": 50,
+  "records": [
+    {
+      "sourceRecordId": "recWjidZbEzdwl0yB",
+      "sourceCreatedTime": "2025-12-18T05:19:03.000Z",
+      "fields": {
+        "Name": "Professionals Caboolture/Morayfield Chippendale",
+        "Subject": "Weekly Listings Update",
+        "Email": "j.chippendale@professionalscaboolture.propertyemail.com.au",
+        "Body": "Dear ,\r\n\r\nOn behalf of Professionals Caboolture/Morayfield, I am pleased to present some of our latest listings. I hope there's something that takes your fancy and I'm happy to take your call if that's the case!\r\n\r\nTo ensure that you receive the most accu",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recWkiKoth6ymT5UW",
+      "sourceCreatedTime": "2025-11-13T05:20:45.000Z",
+      "fields": {
+        "Name": "Robyn Faa",
+        "Subject": "Robyn Faa Real Estate Property Update",
+        "Email": "robyn@robynfaa.com.au",
+        "Body": "Property Update\r\n\r\nHi Rugesh\r\n\r\nAnother great week at Robyn Faa Real Estate with tons of buyer enquiry and some great new listings coming up.\r\n\r\nIf you have any questions around buying or selling please feel free to get in contact with us.\r\n\r\nOpen Homes T"
+      }
+    },
+    {
+      "sourceRecordId": "recWn15RWRJOOhBkw",
+      "sourceCreatedTime": "2026-01-07T07:25:04.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recWnRJyMKFhFgmTA",
+      "sourceCreatedTime": "2026-06-11T05:26:29.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recWoN1C9oroEDK01",
+      "sourceCreatedTime": "2026-01-09T04:16:03.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recWoS7RXVHn0NsTY",
+      "sourceCreatedTime": "2026-01-30T03:39:21.000Z",
+      "fields": {
+        "Name": "Alex Harris",
+        "Subject": "New Property Alert Match: 4 / 283-285 Weyba Road NOOSAVILLE",
+        "Email": "alex@noosa4sale.com.au",
+        "Body": "Hi Rugesh,\r\n\r\nGreat news! A property matching your preferences has just become available.\r\n\r\n\r\n\r\n\r\nFor Sale\r\n4 / 283-285 Weyba Road, NOOSAVILLE QLD 4566\r\nContact Agent\r\n2 bed | 2 bath | 1 car\r\nIt's A Holiday Every Day!\r\n\r\nWelcome to unit 4, a fully and ta"
+      }
+    },
+    {
+      "sourceRecordId": "recWpcPrAer7kem0T",
+      "sourceCreatedTime": "2025-10-14T07:03:08.000Z",
+      "fields": {
+        "Name": "Abby Holmes-Brown",
+        "Subject": "PREMIUM OFF-MARKET OPPORTUNITY",
+        "Email": "sales@fnlifestyle.com.au",
+        "Body": "PREMIUM OFF-MARKET OPPORTUNITY\r\n\r\n\r\n\r\n\r\nHi Rugesh,\r\n\r\nYour fresh start in luxury living awaits!!\r\n\r\nStep into a world of refined luxury with this exclusive off-market new build. Currently under construction and set for completion in March 2026, "
+      }
+    },
+    {
+      "sourceRecordId": "recWpoZluLlUs4JCz",
+      "sourceCreatedTime": "2025-11-05T10:42:02.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recWpt1uJhMf02ibX",
+      "sourceCreatedTime": "2026-06-11T05:39:57.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recWqeUHgf2R53FGt",
+      "sourceCreatedTime": "2025-09-22T22:55:36.000Z",
+      "fields": {
+        "Name": "Diane Singh",
+        "Subject": "Properties",
+        "Email": "diane.singh@prdnorthernbeaches.com.au",
+        "Body": "Hi Rugesh,\r\n\r\nHere is our property list for today.  If anything interests you let me know and I will get a salesperson to liaise with you.\r\n\r\n\r\nKind regards Di\r\nMob: 0408 775 465",
+        "Status": "Error 500",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/CgAh7CwDrEbE8XRwlIej_w/9so4aa71eh4MK8mKqqm-ReoPBTvNYqKwOI1VuOUJ8U83mQtBaeqbQCTeVkMf4LUiOJEo4IdJpwyccGEaUquPwPmkq3gQvSTzWjttlNnPUwBOpglYOXxacMzSlUqMzC4jGaS7fVhvAPVHJjxPr6mfpGHEhX8MBJOQ5hqPt67ZRTZvL6UbBpWpmAacSNLRyHxO/DiXZVRoFDfBM3gXYLMKTNOlkijvM-ycnoeYmJcwY5rk",
+            "filename": "outlook_email_attachment.xlsx",
+            "type": "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "size": 13445
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "recWuY3JfX0RinBg6",
+      "sourceCreatedTime": "2026-06-04T05:34:06.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recWuq0eXxuLQMUzy",
+      "sourceCreatedTime": "2026-07-13T18:34:28.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recWvUj8uJXX0HPJB",
+      "sourceCreatedTime": "2026-01-09T04:40:53.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recWvcVjKLasZU5kS",
+      "sourceCreatedTime": "2026-01-06T23:07:30.000Z",
+      "fields": {
+        "Name": "Rick Holloway",
+        "Subject": "FW: DINMORE 4X2X2 SECONDARY SMSF",
+        "Email": "rick@thebobtraskgroup.com.au",
+        "Body": "2026 KICK OFF THE YEAR SPECIAL\r\nHIGH  YIELD $1,270 PER WEEK\r\nSMSF INVESTMENT’S\r\nBIG BLOCK BIG RETURNS\r\nRegistered in January\r\nSecondary Dwelling Four by Two-by-Two\r\n&THREE-BY-TWO-BY-TWO\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\nRegards\r\n\r\n“Whatever you need, if we don",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recWwUveo8hNHrUY2",
+      "sourceCreatedTime": "2026-03-09T04:24:39.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recWwWpQvtaIa3UiO",
+      "sourceCreatedTime": "2025-11-04T08:41:12.000Z",
+      "fields": {
+        "Name": "Brodie Richmond",
+        "Subject": "Update Alert: Matched Properties",
+        "Email": "brodie@schmith.com.au",
+        "Body": "Hi Rugesh ,\r\n\r\nSee below, some properties that may be of interest to you.\r\nPlease reach out if you would like any further information, or simply just have a chat.\r\n\r\nBest wishes,\r\nBrodie Richmond\r\n+61493572251\r\nbrodie@schmith.com.au\r\n\r\n\r\n\r\nOpen for ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recWwdKOyQDkgmGwj",
+      "sourceCreatedTime": "2025-10-19T23:19:52.000Z",
+      "fields": {
+        "Name": "Lyn Deasy",
+        "Subject": "Your Property Update [New Listing Alert]",
+        "Email": "lyn.deasy@podre.com.au",
+        "Body": "0749272122\r\nwww.podre.com.au\r\nNew Listings\r\n\r\nHi Rugesh,\r\n\r\nWe've listed some new properties that I think you might be interested in. Give me a call if you have any questions or would like to take a look through any of these.\r\n\r\n\r\n27A Main Street, Park Av",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recWwkR9ckrRr7Zwc",
+      "sourceCreatedTime": "2025-08-16T16:44:46.000Z",
+      "fields": {
+        "Name": "Lavan Kenobi",
+        "Subject": "Fwd: What's new on the market this week",
+        "Email": "lavankenobi@gmail.com",
+        "Body": "\n\n---------- Forwarded message ---------\nFrom: Lavan Kenobi <lavankenobi@gmail.com [lavankenobi@gmail.com]>\nDate: Sun, Aug 17, 2025 at 12:35 AM\nSubject: Fwd: What's new on the market this week\nTo: <property@npcservices.com.au [property@npcservices.com.au]>\n\n\n\n\n---------- Forwarded message ---------\nFrom: Rugesh Naidu <naidu.rugesh@gmail.com [naidu.rugesh@gmail.com]>\nDate: Sat, Aug 16, 2025 at 7:21 AM\nSubject: Fwd: What's new on the market this week\nTo: lavankenobi@gmail.com [lavankenobi@gmail.com] <lavankenobi@gmail.com [lavankenobi@gmail.com]>\n\n\n\n\n---------- Forwarded message ---------\nFrom: Rugesh Naidu <naidu.rugesh@gmail.com [naidu.rugesh@gmail.com]>\nDate: Tue, 12 Aug 2025, 11:48 am\nSubject: Fwd: What's new on the market this week\nTo: <mithrubanbupathy@npcservices.com.au [mithrubanbupathy@npcservices.com.au]>\n\n\n\n\n---------- Forwarded message ---------\nFrom: John Matthew & Sons <admin@jmsons.com.au [admin@jmsons.com.au]>\nDate: Fri, Aug 8, 2025 at 2:48 PM\nSubject: What's new on the market this week\nTo: <naidu.rugesh@gmail.com [naidu.rugesh@gmail.com]>\n\n\n[https://www.jmsons.com.au/et/open?token=eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY4OTU4MWE0MjM4MDVfNDczZDZmZjUwODIwMzAwZDZAOWY4N2IwNmUtYjg0Mi00MGUzLTg3YzUtMTk5MDNiODZiN2U2Lm1haWwiLCJleHAiOjIzODU3ODA1MTZ9.3lZcEnPST4_y7_PywwwaMMiBPpt0uxWEuc9l6L8U-i0] [http://s3.amazonaws.com/eagleweb/global/img/fast_and_easy/images/open.gif] John Matthew & Sons [http://base64.eagleagent.com.au/VEx6LWVLSVhrSWpBM1RNSmkzS1lSS2YtRHU0PS8weDE1MC9maWx0ZXJzOnF1YWxpdHkoMTAwKS9odHRwOi8vczMtdXMtd2VzdC0yLmFtYXpvbmF3cy5jb20vZWFnbGVhZ2VudC1vcmlnL3VwbG9hZHMlMjUyRjE1NjcxMzI0MTU4NzItbWJlenlwN3NzYy04MzQzZDRlN2E2NDUxMWViNTdjZjIxNDU4MGI1ZTQ0MyUyNTJGc21hbGwuanBn/uploads%252F1567132415872-mbezyp7ssc-8343d4e7a64511eb57cf214580b5e443%252Fsmall.jpg] [https://www.jmsons.com.au/et/click?token=eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY4OTU4MWE0MjM4MDVfNDczZDZmZjUwODIwMzAwZDZAOWY4N2IwNmUtYjg0Mi00MGUzLTg3YzUtMTk5MDNiODZiN2U2Lm1haWwiLCJ1cmwiOiJodHRwOi8vd3d3Lmptc29ucy5jb20uYXUvIiwiZXhwIjoyMzg1NzgwNTE2fQ.pFwF5F85YPWF-WXKdBBBiyWGE2aiTopuxLRLGqgC7BE]Hope you're having a great week and you're getting closer to finding your next property. Here is an update on some of our latest listings. Please do not hesitate to contact us if you have any questions.\n\nUpcoming inspections for sale image alt [http://base64.eagleagent.com.au/aWhEd2FYWkRrWi04bEpmODZxbmxuQUxBU1RjPS8yNjB4MTUwL3NtYXJ0L2ZpbHRlcnM6cXVhbGl0eSg5MCkvaHR0cDovL3MzLXVzLXdlc3QtMi5hbWF6b25hd3MuY29tL2VhZ2xlYWdlbnQtb3JpZy91cGxvYWRzJTI1MkYxNzUyODI3MDQwOTc4LTV0cWt6M2FxczgtMGVkZDg4MGU2MjM2OTI1M2ZjMzU1YWUyMGViZWM5ZWYlMjUyRkRKSV8yMDI1MDcxNzE1NTUxM18wMDI0X0QuSlBH/uploads%252F1752827040978-5tqkz3aqs8-0edd880e62369253fc355ae20ebec9ef%252FDJI_20250717155513_0024_D.JPG] [https://www.jmsons.com.au/et/click?token=eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY4OTU4MWE0MjM4MDVfNDczZDZmZjUwODIwMzAwZDZAOWY4N2IwNmUtYjg0Mi00MGUzLTg3YzUtMTk5MDNiODZiN2U2Lm1haWwiLCJ1cmwiOiJodHRwczovL3d3dy5qbXNvbnMuY29tLmF1L3Byb3BlcnR5P3Byb3BlcnR5X2lkPTE2MjY0NTEvNDZjLWRhdmlzLXN0cmVldC1ib3VsZGVyIiwiZXhwIjoyMzg1NzgwNTE2fQ.eBvR3yMaBCnz5bPVC8H4BTWYprepQ3T-_qbRVnoZWU0]bed icon [http://s3.amazonaws.com/eagleweb/global/img/fast_and_easy/images/icon-bed.png] 3 bath icon [http://s3.amazonaws.com/eagleweb/global/img/fast_and_easy/images/icon-bath.png] 1 car icon [http://s3.amazonaws.com/eagleweb/global/img/fast_and_easy/images/icon-car.png] 2 $359,000 [https://www.jmsons.com.au/et/click?token=eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY4OTU4MWE0MjM4MDVfNDczZDZmZjUwODIwMzAwZDZAOWY4N2IwNmUtYjg0Mi00MGUzLTg3YzUtMTk5MDNiODZiN2U2Lm1haWwiLCJ1cmwiOiJodHRwczovL3d3dy5qbXNvbnMuY29tLmF1L3Byb3BlcnR5P3Byb3BlcnR5X2lkPTE2MjY0NTEvNDZjLWRhdmlzLXN0cmVldC1ib3VsZGVyIiwiZXhwIjoyMzg1NzgwNTE2fQ.eBvR3yMaBCnz5bPVC8H4BTWYprepQ3T-_qbRVnoZWU0]\n46C Davis Street, Boulder [https://www.jmsons.com.au/et/click?token=eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY4OTU4MWE0MjM4MDVfNDczZDZmZjUwODIwMzAwZDZAOWY4N2IwNmUtYjg0Mi00MGUzLTg3YzUtMTk5MDNiODZiN2U2Lm1haWwiLCJ1cmwiOiJodHRwczovL3d3dy5qbXNvbnMuY29tLmF1L3Byb3BlcnR5P3Byb3BlcnR5X2lkPTE2MjY0NTEvNDZjLWRhdmlzLXN0cmVldC1ib3VsZGVyIiwiZXhwIjoyMzg1NzgwNTE2fQ.eBvR3yMaBCnz5bPVC8H4BTWYprepQ3T-_qbRVnoZWU0] \n\nSat 09 Aug, 10:45 AM - 11:15 AM [https://www.jmsons.com.au/et/click?token=eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY4OTU4MWE0MjM4MDVfNDczZDZmZjUwODIwMzAwZDZAOWY4N2IwNmUtYjg0Mi00MGUzLTg3YzUtMTk5MDNiODZiN2U2Lm1haWwiLCJ1cmwiOiJodHRwczovL3d3dy5lYWdsZWFnZW50LmNvbS5hdS9pbnNwZWN0aW9ucy8yNjM4MzU4LmljcyIsImV4cCI6MjM4NTc4MDUxNn0.0CvQsmDxJAeSbAWC3fJAFKw4iY97bd2sXNuevLFRByA]\nimage alt [http://base64.eagleagent.com.au/bkNSTjhzMmh5bThmd2JCMTBLQ2RjSnl5c25ZPS8yNjB4MTUwL3NtYXJ0L2ZpbHRlcnM6cXVhbGl0eSg5MCkvaHR0cDovL3MzLXVzLXdlc3QtMi5hbWF6b25hd3MuY29tL2VhZ2xlYWdlbnQtb3JpZy91cGxvYWRzJTI1MkYxNzUyNzQwMTAzMzI1LWtjNTl3MHk5cHZtLTVkNTNmM2VkYTk5NDg0NjhhYzcyYmNmNTlmODY3OWRkJTI1MkYxNS5KUEc=/uploads%252F1752740103325-kc59w0y9pvm-5d53f3eda9948468ac72bcf59f8679dd%252F15.JPG] [https://www.jmsons.com.au/et/click?token=eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY4OTU4MWE0MjM4MDVfNDczZDZmZjUwODIwMzAwZDZAOWY4N2IwNmUtYjg0Mi00MGUzLTg3YzUtMTk5MDNiODZiN2U2Lm1haWwiLCJ1cmwiOiJodHRwczovL3d3dy5qbXNvbnMuY29tLmF1L3Byb3BlcnR5P3Byb3BlcnR5X2lkPTE2MzA2OTkvODAtY2xhbmN5LXN0cmVldC1ib3VsZGVyIiwiZXhwIjoyMzg1NzgwNTE2fQ.WEFd6qawkg0A0eT8hp4IndA_fNsapIcVJagS-Q5yoCE]bed icon [http://s3.amazonaws.com/eagleweb/global/img/fast_and_easy/images/icon-bed.png] 2 bath icon [http://s3.amazonaws.com/eagleweb/global/img/fast_and_easy/images/icon-bath.png] 1 car icon [http://s3.amazonaws.com/eagleweb/global/img/fast_and_easy/images/icon-car.png] 4 $375,000 [https://www.jmsons.com.au/et/click?token=eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY4OTU4MWE0MjM4MDVfNDczZDZmZjUwODIwMzAwZDZAOWY4N2IwNmUtYjg0Mi00MGUzLTg3YzUtMTk5MDNiODZiN2U2Lm1haWwiLCJ1cmwiOiJodHRwczovL3d3dy5qbXNvbnMuY29tLmF1L3Byb3BlcnR5P3Byb3BlcnR5X2lkPTE2MzA2OTkvODAtY2xhbmN5LXN0cmVldC1ib3VsZGVyIiwiZXhwIjoyMzg1NzgwNTE2fQ.WEFd6qawkg0A0eT8hp4IndA_fNsapIcVJagS-Q5yoCE]\n80 Clancy Street, Boulder [https://www.jmsons.com.au/et/click?token=eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY4OTU4MWE0MjM4MDVfNDczZDZmZjUwODIwMzAwZDZAOWY4N2IwNmUtYjg0Mi00MGUzLTg3YzUtMTk5MDNiODZiN2U2Lm1haWwiLCJ1cmwiOiJodHRwczovL3d3dy5qbXNvbnMuY29tLmF1L3Byb3BlcnR5P3Byb3BlcnR5X2lkPTE2MzA2OTkvODAtY2xhbmN5LXN0cmVldC1ib3VsZGVyIiwiZXhwIjoyMzg1NzgwNTE2fQ.WEFd6qawkg0A0eT8hp4IndA_fNsapIcVJagS-Q5yoCE] \n\nSat 09 Aug, 11:45 AM - 12:15 PM [https://www.jmsons.com.au/et/click?token=eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY4OTU4MWE0MjM4MDVfNDczZDZmZjUwODIwMzAwZDZAOWY4N2IwNmUtYjg0Mi00MGUzLTg3YzUtMTk5MDNiODZiN2U2Lm1haWwiLCJ1cmwiOiJodHRwczovL3d3dy5lYWdsZWFnZW50LmNvbS5hdS9pbnNwZWN0aW9ucy8yNjM4MDI4LmljcyIsImV4cCI6MjM4NTc4MDUxNn0.yuzQuBN4X919gizfPX-7AyJysIclcnIfqYOM1NZKk5Y]\nimage alt [http://base64.eagleagent.com.au/ajRzdmhoVW5ud3N3QzFPTjZhNmJ2OHF5X3BNPS8yNjB4MTUwL3NtYXJ0L2ZpbHRlcnM6cXVhbGl0eSg5MCkvaHR0cDovL3MzLXVzLXdlc3QtMi5hbWF6b25hd3MuY29tL2VhZ2xlYWdlbnQtb3JpZy91cGxvYWRzJTI1MkYxNzUzMzI4NTQzNzU3LWE2MHk4MWUydG1pLWQ3YmJkMjFiMDA0Y2U2ZjdiMjJlOWM0NmJkYjdjNzU2JTI1MkYxLTUrSG9yc2VmaWVsZCtQbGFjZSUyNTJDK1ZpY3RvcnkrSGVpZ2h0cy0xLmpwZw==/uploads%252F1753328543757-a60y81e2tmi-d7bbd21b004ce6f7b22e9c46bdb7c756%252F1-5+Horsefield+Place%252C+Victory+Heights-1.jpg] [https://www.jmsons.com.au/et/click?token=eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY4OTU4MWE0MjM4MDVfNDczZDZmZjUwODIwMzAwZDZAOWY4N2IwNmUtYjg0Mi00MGUzLTg3YzUtMTk5MDNiODZiN2U2Lm1haWwiLCJ1cmwiOiJodHRwczovL3d3dy5qbXNvbnMuY29tLmF1L3Byb3BlcnR5P3Byb3BlcnR5X2lkPTE2MzMzNDgvMS01LWhvcnNmaWVsZC1wbGFjZS1ib3VsZGVyIiwiZXhwIjoyMzg1NzgwNTE2fQ.HuW3NcfgqJOmvMT800kKodnIaf2ZuIA6IUs4RphpVgY]bed icon [http://s3.amazonaws.com/eagleweb/global/img/fast_and_easy/images/icon-bed.png] 3 bath icon [http://s3.amazonaws.com/eagleweb/global/img/fast_and_easy/images/icon-bath.png] 1 car icon [http://s3.amazonaws.com/eagleweb/global/img/fast_and_easy/images/icon-car.png] 2 $365,000 [https://www.jmsons.com.au/et/click?token=eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY4OTU4MWE0MjM4MDVfNDczZDZmZjUwODIwMzAwZDZAOWY4N2IwNmUtYjg0Mi00MGUzLTg3YzUtMTk5MDNiODZiN2U2Lm1haWwiLCJ1cmwiOiJodHRwczovL3d3dy5qbXNvbnMuY29tLmF1L3Byb3BlcnR5P3Byb3BlcnR5X2lkPTE2MzMzNDgvMS01LWhvcnNmaWVsZC1wbGFjZS1ib3VsZGVyIiwiZXhwIjoyMzg1NzgwNTE2fQ.HuW3NcfgqJOmvMT800kKodnIaf2ZuIA6IUs4RphpVgY]\n1 / 5 Horsfield Place, Boulder [https://www.jmsons.com.au/et/click?token=eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY4OTU4MWE0MjM4MDVfNDczZDZmZjUwODIwMzAwZDZAOWY4N2IwNmUtYjg0Mi00MGUzLTg3YzUtMTk5MDNiODZiN2U2Lm1haWwiLCJ1cmwiOiJodHRwczovL3d3dy5qbXNvbnMuY29tLmF1L3Byb3BlcnR5P3Byb3BlcnR5X2lkPTE2MzMzNDgvMS01LWhvcnNmaWVsZC1wbGFjZS1ib3VsZGVyIiwiZXhwIjoyMzg1NzgwNTE2fQ.HuW3NcfgqJOmvMT800kKodnIaf2ZuIA6IUs4RphpVgY] \n\nSat 09 Aug, 1:00 PM - 1:30 PM [https://www.jmsons.com.au/et/click?token=eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY4OTU4MWE0MjM4MDVfNDczZDZmZjUwODIwMzAwZDZAOWY4N2IwNmUtYjg0Mi00MGUzLTg3YzUtMTk5MDNiODZiN2U2Lm1haWwiLCJ1cmwiOiJodHRwczovL3d3dy5lYWdsZWFnZW50LmNvbS5hdS9pbnNwZWN0aW9ucy8yNjM4MDM1LmljcyIsImV4cCI6MjM4NTc4MDUxNn0.GW7uWketARFM-UibmUZmriBVR2lXsOrsdTHciXa2KlE]\nimage alt [http://base64.eagleagent.com.au/S0FBSEE1b3JGZ1kyZDlaRWdMd2ZFb1JGYzNrPS8yNjB4MTUwL3NtYXJ0L2ZpbHRlcnM6cXVhbGl0eSg5MCkvaHR0cDovL3MzLXVzLXdlc3QtMi5hbWF6b25hd3MuY29tL2VhZ2xlYWdlbnQtb3JpZy91cGxvYWRzJTI1MkYxNzUzNzYwOTE0NDY5LW9zMDBxdXZtMXhmLTJmZWMxODIwMzA4MWJkOWQ1OTFjY2VlMTBhZjcyNzU3JTI1MkZpbWFnZTQuanBn/uploads%252F1753760914469-os00quvm1xf-2fec18203081bd9d591ccee10af72757%252Fimage4.jpg] [https://www.jmsons.com.au/et/click?token=eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY4OTU4MWE0MjM4MDVfNDczZDZmZjUwODIwMzAwZDZAOWY4N2IwNmUtYjg0Mi00MGUzLTg3YzUtMTk5MDNiODZiN2U2Lm1haWwiLCJ1cmwiOiJodHRwczovL3d3dy5qbXNvbnMuY29tLmF1L3Byb3BlcnR5P3Byb3BlcnR5X2lkPTE2MzU1MzEvMjcxLWVnYW4tc3RyZWV0LWthbGdvb3JsaWUiLCJleHAiOjIzODU3ODA1MTZ9.yW2mTpehORUZcrncqQHkxZ8kU0gJc2W8bV-vaOX8JmU]bed icon [http://s3.amazonaws.com/eagleweb/global/img/fast_and_easy/images/icon-bed.png] 4 bath icon [http://s3.amazonaws.com/eagleweb/global/img/fast_and_easy/images/icon-bath.png] 2 car icon [http://s3.amazonaws.com/eagleweb/global/img/fast_and_easy/images/icon-car.png] 1 $470,000 [https://www.jmsons.com.au/et/click?token=eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY4OTU4MWE0MjM4MDVfNDczZDZmZjUwODIwMzAwZDZAOWY4N2IwNmUtYjg0Mi00MGUzLTg3YzUtMTk5MDNiODZiN2U2Lm1haWwiLCJ1cmwiOiJodHRwczovL3d3dy5qbXNvbnMuY29tLmF1L3Byb3BlcnR5P3Byb3BlcnR5X2lkPTE2MzU1MzEvMjcxLWVnYW4tc3RyZWV0LWthbGdvb3JsaWUiLCJleHAiOjIzODU3ODA1MTZ9.yW2mTpehORUZcrncqQHkxZ8kU0gJc2W8bV-vaOX8JmU]\n271 Egan Street, Kalgoorlie [https://www.jmsons.com.au/et/click?token=eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY4OTU4MWE0MjM4MDVfNDczZDZmZjUwODIwMzAwZDZAOWY4N2IwNmUtYjg0Mi00MGUzLTg3YzUtMTk5MDNiODZiN2U2Lm1haWwiLCJ1cmwiOiJodHRwczovL3d3dy5qbXNvbnMuY29tLmF1L3Byb3BlcnR5P3Byb3BlcnR5X2lkPTE2MzU1MzEvMjcxLWVnYW4tc3RyZWV0LWthbGdvb3JsaWUiLCJleHAiOjIzODU3ODA1MTZ9.yW2mTpehORUZcrncqQHkxZ8kU0gJc2W8bV-vaOX8JmU] \n\nSun 10 Aug, 11:00 AM - 11:30 AM [https://www.jmsons.com.au/et/click?token=eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY4OTU4MWE0MjM4MDVfNDczZDZmZjUwODIwMzAwZDZAOWY4N2IwNmUtYjg0Mi00MGUzLTg3YzUtMTk5MDNiODZiN2U2Lm1haWwiLCJ1cmwiOiJodHRwczovL3d3dy5lYWdsZWFnZW50LmNvbS5hdS9pbnNwZWN0aW9ucy8yNjM4MDMwLmljcyIsImV4cCI6MjM4NTc4MDUxNn0.0n17IB-giz-Faef02PoyKjL5u7LkKWq4Fxni-AZaqSo]\nimage alt [http://base64.eagleagent.com.au/RjBPV3dkRFFIakVIeGhjRGlJY3hLQktXQmdZPS8yNjB4MTUwL3NtYXJ0L2ZpbHRlcnM6cXVhbGl0eSg5MCkvaHR0cDovL3MzLXVzLXdlc3QtMi5hbWF6b25hd3MuY29tL2VhZ2xlYWdlbnQtb3JpZy91cGxvYWRzJTI1MkYxNzQ0MjU0MzUzODA3LWh0cjV5OHplYjhmLTBhMDVkZWZjNzQ5OWFiMDIyYzk1MzBjYzViMzhmNzRmJTI1MkYxK0VyaW4rQ291cnQlMjUyQytWaWN0b3J5K0hlaWdodHMuKy0xLmpwZw==/uploads%252F1744254353807-htr5y8zeb8f-0a05defc7499ab022c9530cc5b38f74f%252F1+Erin+Court%252C+Victory+Heights.+-1.jpg] [https://www.jmsons.com.au/et/click?token=eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY4OTU4MWE0MjM4MDVfNDczZDZmZjUwODIwMzAwZDZAOWY4N2IwNmUtYjg0Mi00MGUzLTg3YzUtMTk5MDNiODZiN2U2Lm1haWwiLCJ1cmwiOiJodHRwczovL3d3dy5qbXNvbnMuY29tLmF1L3Byb3BlcnR5P3Byb3BlcnR5X2lkPTE1Nzk2NzAvMS1lcmluLWNvdXJ0LWJvdWxkZXIiLCJleHAiOjIzODU3ODA1MTZ9.SzkN8Mg02eJD9kQliSQ4M7bQtTw52n6mx9VHZIbyGZo]bed icon [http://s3.amazonaws.com/eagleweb/global/img/fast_and_easy/images/icon-bed.png] 6 bath icon [http://s3.amazonaws.com/eagleweb/global/img/fast_and_easy/images/icon-bath.png] 2 car icon [http://s3.amazonaws.com/eagleweb/global/img/fast_and_easy/images/icon-car.png] 2 $649,000 [https://www.jmsons.com.au/et/click?token=eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY4OTU4MWE0MjM4MDVfNDczZDZmZjUwODIwMzAwZDZAOWY4N2IwNmUtYjg0Mi00MGUzLTg3YzUtMTk5MDNiODZiN2U2Lm1haWwiLCJ1cmwiOiJodHRwczovL3d3dy5qbXNvbnMuY29tLmF1L3Byb3BlcnR5P3Byb3BlcnR5X2lkPTE1Nzk2NzAvMS1lcmluLWNvdXJ0LWJvdWxkZXIiLCJleHAiOjIzODU3ODA1MTZ9.SzkN8Mg02eJD9kQliSQ4M7bQtTw52n6mx9VHZIbyGZo]\n1 Erin Court, Boulder [https://www.jmsons.com.au/et/click?token=eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY4OTU4MWE0MjM4MDVfNDczZDZmZjUwODIwMzAwZDZAOWY4N2IwNmUtYjg0Mi00MGUzLTg3YzUtMTk5MDNiODZiN2U2Lm1haWwiLCJ1cmwiOiJodHRwczovL3d3dy5qbXNvbnMuY29tLmF1L3Byb3BlcnR5P3Byb3BlcnR5X2lkPTE1Nzk2NzAvMS1lcmluLWNvdXJ0LWJvdWxkZXIiLCJleHAiOjIzODU3ODA1MTZ9.SzkN8Mg02eJD9kQliSQ4M7bQtTw52n6mx9VHZIbyGZo] \n\nSun 10 Aug, 12:00 PM - 12:30 PM [https://www.jmsons.com.au/et/click?token=eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY4OTU4MWE0MjM4MDVfNDczZDZmZjUwODIwMzAwZDZAOWY4N2IwNmUtYjg0Mi00MGUzLTg3YzUtMTk5MDNiODZiN2U2Lm1haWwiLCJ1cmwiOiJodHRwczovL3d3dy5lYWdsZWFnZW50LmNvbS5hdS9pbnNwZWN0aW9ucy8yNjM4MDMzLmljcyIsImV4cCI6MjM4NTc4MDUxNn0.xfpaApQzq0ELONKVUY8s7pYDAwQhDjoXPCsiiMWX7pw]\nimage alt [http://base64.eagleagent.com.au/eXR0VUEtcTF3cWRNZlNJbV8tendPdTdKLV9RPS8yNjB4MTUwL3NtYXJ0L2ZpbHRlcnM6cXVhbGl0eSg5MCkvaHR0cDovL3MzLXVzLXdlc3QtMi5hbWF6b25hd3MuY29tL2VhZ2xlYWdlbnQtb3JpZy91cGxvYWRzJTI1MkYxNzUyMDI5MzcwNzc5LWdlcjdzMGRmc2QtNzk5MDU3NDMyZmQ3ODdlYjhmMmNhNzA3ZmYxMTJhOTIlMjUyRjE2K1dhcm1hbitXYXklMjUyQytWaWN0b3J5K0hlaWdodHMtMS5qcGc=/uploads%252F1752029370779-ger7s0dfsd-799057432fd787eb8f2ca707ff112a92%252F16+Warman+Way%252C+Victory+Heights-1.jpg] [https://www.jmsons.com.au/et/click?token=eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY4OTU4MWE0MjM4MDVfNDczZDZmZjUwODIwMzAwZDZAOWY4N2IwNmUtYjg0Mi00MGUzLTg3YzUtMTk5MDNiODZiN2U2Lm1haWwiLCJ1cmwiOiJodHRwczovL3d3dy5qbXNvbnMuY29tLmF1L3Byb3BlcnR5P3Byb3BlcnR5X2lkPTE2MjMwMTkvMTYtd2FybWFuLXdheS12aWN0b3J5LWhlaWdodHMiLCJleHAiOjIzODU3ODA1MTZ9.w-1CRhw55ygE5KmYxOqhr8J1M9bBjzXRLQFdPRTo6ws]bed icon [http://s3.amazonaws.com/eagleweb/global/img/fast_and_easy/images/icon-bed.png] 4 bath icon [http://s3.amazonaws.com/eagleweb/global/img/fast_and_easy/images/icon-bath.png] 1 car icon [http://s3.amazonaws.com/eagleweb/global/img/fast_and_easy/images/icon-car.png] 2 $410,000 [https://www.jmsons.com.au/et/click?token=eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY4OTU4MWE0MjM4MDVfNDczZDZmZjUwODIwMzAwZDZAOWY4N2IwNmUtYjg0Mi00MGUzLTg3YzUtMTk5MDNiODZiN2U2Lm1haWwiLCJ1cmwiOiJodHRwczovL3d3dy5qbXNvbnMuY29tLmF1L3Byb3BlcnR5P3Byb3BlcnR5X2lkPTE2MjMwMTkvMTYtd2FybWFuLXdheS12aWN0b3J5LWhlaWdodHMiLCJleHAiOjIzODU3ODA1MTZ9.w-1CRhw55ygE5KmYxOqhr8J1M9bBjzXRLQFdPRTo6ws]\n16 Warman Way, Victory Heights [https://www.jmsons.com.au/et/click?token=eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY4OTU4MWE0MjM4MDVfNDczZDZmZjUwODIwMzAwZDZAOWY4N2IwNmUtYjg0Mi00MGUzLTg3YzUtMTk5MDNiODZiN2U2Lm1haWwiLCJ1cmwiOiJodHRwczovL3d3dy5qbXNvbnMuY29tLmF1L3Byb3BlcnR5P3Byb3BlcnR5X2lkPTE2MjMwMTkvMTYtd2FybWFuLXdheS12aWN0b3J5LWhlaWdodHMiLCJleHAiOjIzODU3ODA1MTZ9.w-1CRhw55ygE5KmYxOqhr8J1M9bBjzXRLQFdPRTo6ws] \n\nSun 10 Aug, 1:00 PM - 1:30 PM [https://www.jmsons.com.au/et/click?token=eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY4OTU4MWE0MjM4MDVfNDczZDZmZjUwODIwMzAwZDZAOWY4N2IwNmUtYjg0Mi00MGUzLTg3YzUtMTk5MDNiODZiN2U2Lm1haWwiLCJ1cmwiOiJodHRwczovL3d3dy5lYWdsZWFnZW50LmNvbS5hdS9pbnNwZWN0aW9ucy8yNjM4MDM3LmljcyIsImV4cCI6MjM4NTc4MDUxNn0.2y4kta1WzpBGKpCFW9SnVCVfkZ4DngKaz77y2adDgyA]\nimage alt [http://base64.eagleagent.com.au/V2c2MmU4WHduTks3SjJrSEtxSnpvZ3h4aFNjPS8yNjB4MTUwL3NtYXJ0L2ZpbHRlcnM6cXVhbGl0eSg5MCkvaHR0cDovL3MzLXVzLXdlc3QtMi5hbWF6b25hd3MuY29tL2VhZ2xlYWdlbnQtb3JpZy91cGxvYWRzJTI1MkYxNzUyNTUzMDY4OTQyLWh2OGV5cTc5Y3ctMzNiODMwYjNkZjY4NTMwYzk4MjlhZmIzYmRhNTVhOWMlMjUyRjI3LmpwZw==/uploads%252F1752553068942-hv8eyq79cw-33b830b3df68530c9829afb3bda55a9c%252F27.jpg] [https://www.jmsons.com.au/et/click?token=eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY4OTU4MWE0MjM4MDVfNDczZDZmZjUwODIwMzAwZDZAOWY4N2IwNmUtYjg0Mi00MGUzLTg3YzUtMTk5MDNiODZiN2U2Lm1haWwiLCJ1cmwiOiJodHRwczovL3d3dy5qbXNvbnMuY29tLmF1L3Byb3BlcnR5P3Byb3BlcnR5X2lkPTE2MjY0ODUvOTAtY2FtcGJlbGwtc3RyZWV0LWxhbWluZ3RvbiIsImV4cCI6MjM4NTc4MDUxNn0.m88CKqpMFIJY3gNfvJPrUyetecmdwCVDK6B_vuL7mxs]bed icon [http://s3.amazonaws.com/eagleweb/global/img/fast_and_easy/images/icon-bed.png] 6 bath icon [http://s3.amazonaws.com/eagleweb/global/img/fast_and_easy/images/icon-bath.png] 3 car icon [http://s3.amazonaws.com/eagleweb/global/img/fast_and_easy/images/icon-car.png] 2 $940,000 [https://www.jmsons.com.au/et/click?token=eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY4OTU4MWE0MjM4MDVfNDczZDZmZjUwODIwMzAwZDZAOWY4N2IwNmUtYjg0Mi00MGUzLTg3YzUtMTk5MDNiODZiN2U2Lm1haWwiLCJ1cmwiOiJodHRwczovL3d3dy5qbXNvbnMuY29tLmF1L3Byb3BlcnR5P3Byb3BlcnR5X2lkPTE2MjY0ODUvOTAtY2FtcGJlbGwtc3RyZWV0LWxhbWluZ3RvbiIsImV4cCI6MjM4NTc4MDUxNn0.m88CKqpMFIJY3gNfvJPrUyetecmdwCVDK6B_vuL7mxs]\n90 Campbell Street, Lamington [https://www.jmsons.com.au/et/click?token=eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY4OTU4MWE0MjM4MDVfNDczZDZmZjUwODIwMzAwZDZAOWY4N2IwNmUtYjg0Mi00MGUzLTg3YzUtMTk5MDNiODZiN2U2Lm1haWwiLCJ1cmwiOiJodHRwczovL3d3dy5qbXNvbnMuY29tLmF1L3Byb3BlcnR5P3Byb3BlcnR5X2lkPTE2MjY0ODUvOTAtY2FtcGJlbGwtc3RyZWV0LWxhbWluZ3RvbiIsImV4cCI6MjM4NTc4MDUxNn0.m88CKqpMFIJY3gNfvJPrUyetecmdwCVDK6B_vuL7mxs] \n\nSat 16 Aug, 1:30 PM - 2:00 PM [https://www.jmsons.com.au/et/click?token=eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY4OTU4MWE0MjM4MDVfNDczZDZmZjUwODIwMzAwZDZAOWY4N2IwNmUtYjg0Mi00MGUzLTg3YzUtMTk5MDNiODZiN2U2Lm1haWwiLCJ1cmwiOiJodHRwczovL3d3dy5lYWdsZWFnZW50LmNvbS5hdS9pbnNwZWN0aW9ucy8yNjQyMzQ5LmljcyIsImV4cCI6MjM4NTc4MDUxNn0.GL7iL3Wz9aB8XHJgAl0_BT3H8W9_85_IWX_1LcAUsPs]\nJust listed for sale image alt [http://base64.eagleagent.com.au/ZUNjMlc4UVh1eXZjTzQzVWhHSmIxRFpHQU5BPS8yNjB4MTUwL3NtYXJ0L2ZpbHRlcnM6cXVhbGl0eSg5MCkvaHR0cDovL3MzLXVzLXdlc3QtMi5hbWF6b25hd3MuY29tL2VhZ2xlYWdlbnQtb3JpZy91cGxvYWRzJTI1MkYxNzU0MzY2NDMzMjg3LW5sZnoxaWY1aWloLTFlZGUzMTdhYjU2OWJiZDM3MzYwN2I3MDJjNTNjMGJjJTI1MkZpbWFnZTExKyUyNTI4MSUyNTI5LmpwZw==/uploads%252F1754366433287-nlfz1if5iih-1ede317ab569bbd373607b702c53c0bc%252Fimage11+%25281%2529.jpg] [https://www.jmsons.com.au/et/click?token=eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY4OTU4MWE0MjM4MDVfNDczZDZmZjUwODIwMzAwZDZAOWY4N2IwNmUtYjg0Mi00MGUzLTg3YzUtMTk5MDNiODZiN2U2Lm1haWwiLCJ1cmwiOiJodHRwczovL3d3dy5qbXNvbnMuY29tLmF1L3Byb3BlcnR5P3Byb3BlcnR5X2lkPTE2NDA4OTkvMS1wcmVzaWRlbnQtc3RyZWV0LWthbGdvb3JsaWUiLCJleHAiOjIzODU3ODA1MTZ9.09E0vxlFno0DyczI5xrIsBGBgLFDQ_2JZSPLQrI4dE0]bed icon [http://s3.amazonaws.com/eagleweb/global/img/fast_and_easy/images/icon-bed.png] 8 bath icon [http://s3.amazonaws.com/eagleweb/global/img/fast_and_easy/images/icon-bath.png] 4 $1,100,000 [https://www.jmsons.com.au/et/click?token=eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY4OTU4MWE0MjM4MDVfNDczZDZmZjUwODIwMzAwZDZAOWY4N2IwNmUtYjg0Mi00MGUzLTg3YzUtMTk5MDNiODZiN2U2Lm1haWwiLCJ1cmwiOiJodHRwczovL3d3dy5qbXNvbnMuY29tLmF1L3Byb3BlcnR5P3Byb3BlcnR5X2lkPTE2NDA4OTkvMS1wcmVzaWRlbnQtc3RyZWV0LWthbGdvb3JsaWUiLCJleHAiOjIzODU3ODA1MTZ9.09E0vxlFno0DyczI5xrIsBGBgLFDQ_2JZSPLQrI4dE0]\n1 President Street, Kalgoorlie [https://www.jmsons.com.au/et/click?token=eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY4OTU4MWE0MjM4MDVfNDczZDZmZjUwODIwMzAwZDZAOWY4N2IwNmUtYjg0Mi00MGUzLTg3YzUtMTk5MDNiODZiN2U2Lm1haWwiLCJ1cmwiOiJodHRwczovL3d3dy5qbXNvbnMuY29tLmF1L3Byb3BlcnR5P3Byb3BlcnR5X2lkPTE2NDA4OTkvMS1wcmVzaWRlbnQtc3RyZWV0LWthbGdvb3JsaWUiLCJleHAiOjIzODU3ODA1MTZ9.09E0vxlFno0DyczI5xrIsBGBgLFDQ_2JZSPLQrI4dE0] \n\nRare Investment Opportunity – 4 Fully Self-Contained Units with ~10% Yield image alt [http://base64.eagleagent.com.au/V2c2MmU4WHduTks3SjJrSEtxSnpvZ3h4aFNjPS8yNjB4MTUwL3NtYXJ0L2ZpbHRlcnM6cXVhbGl0eSg5MCkvaHR0cDovL3MzLXVzLXdlc3QtMi5hbWF6b25hd3MuY29tL2VhZ2xlYWdlbnQtb3JpZy91cGxvYWRzJTI1MkYxNzUyNTUzMDY4OTQyLWh2OGV5cTc5Y3ctMzNiODMwYjNkZjY4NTMwYzk4MjlhZmIzYmRhNTVhOWMlMjUyRjI3LmpwZw==/uploads%252F1752553068942-hv8eyq79cw-33b830b3df68530c9829afb3bda55a9c%252F27.jpg] [https://www.jmsons.com.au/et/click?token=eyJhbGciOiJIUzI1NiJ9.eyJpZCI6IjY4OTU4MWE0MjM4MDVfNDczZDZmZjUwODIwMzAwZDZAOWY4N2IwNmUtYjg0Mi00MGUzLTg3YzUtMTk5MDNiODZiN2U2Lm1haWwiLCJ1cmwiOiJodHRwczovL3d3dy5qbXNvbnMuY29tLmF1L3Byb3BlcnR5P3Byb3BlcnR5X2lkPTE2MjY0ODUvOTAtY2FtcGJlbGwtc3RyZWV0LWxhbWluZ3RvbiIsImV4cCI6MjM4NTc4MDUxNn0.m88CKqpMFIJY3gNfvJPrUyetecmdwCVDK6B_vuL7mxs]"
+      }
+    },
+    {
+      "sourceRecordId": "recWxT8StFRAiM37j",
+      "sourceCreatedTime": "2025-10-16T10:18:45.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recWyqfgi9MsuTjOY",
+      "sourceCreatedTime": "2025-12-23T17:21:51.000Z",
+      "fields": {
+        "Name": "Tom Offermann Real Estate",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "sales@offermann.com.au",
+        "Body": "Edit my requirements\r\nVisit our Website\r\nProperty Alert\r\nWednesday, 24th December 2025\r\nHello Rugesh,\r\n\r\nThe following listings matched your Property Alert search requirements.\r\n\r\nNoosaville\r\n21/140 Noosa Parade\r\nWhat's Not to Love About a Penthouse with ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recWz5Qx7xR6E1Vsn",
+      "sourceCreatedTime": "2025-09-10T17:15:36.000Z",
+      "fields": {
+        "Name": "Mick Lay",
+        "Subject": "Newsletter - What Does $1,470,000 Buy You in Bayswater?",
+        "Email": "michael@lay2.com.au",
+        "Body": "What Does $1,470,000 Buy You in Bayswater?\r\n\r\n\r\nHi Rugesh\r\n\r\nA home that blends luxury, individuality, and clever design has quietly changed hands.\r\nCurious what $1.47M buys in this sought-after suburb?\r\n\r\n\r\nWhat Does $1,470,000 Buy You in Bayswater?\r\n\r\n "
+      }
+    },
+    {
+      "sourceRecordId": "recWzmXDExNiFwnKb",
+      "sourceCreatedTime": "2026-01-14T01:49:09.000Z",
+      "fields": {
+        "Name": "Abby Holmes-Brown",
+        "Subject": "Open Home This Sunday - Don't Miss Out!",
+        "Email": "sales@fnlifestyle.com.au",
+        "Body": "Don't Miss Out!!\r\n\r\n\r\n\r\n\r\nHi Rugesh,\r\n\r\nGuess what? Your favourite Bli Bli property is now even more tempting with an update on the price.\r\n\r\nPop by the open home this Sunday and take another look!\r\n\r\nContact Stuart Pearson on 0430 911 848 for m"
+      }
+    },
+    {
+      "sourceRecordId": "recX0VuCl0ziFjy1d",
+      "sourceCreatedTime": "2026-04-08T07:10:49.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recX1LNzLXR5rXMfU",
+      "sourceCreatedTime": "2026-06-11T05:25:19.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recX1pcidv7REgEUP",
+      "sourceCreatedTime": "2025-10-08T08:24:09.000Z",
+      "fields": {
+        "Name": "Adam Bettison",
+        "Subject": "Just Listed | 56B Hamilton Street, Bassendean",
+        "Email": "adam.bettison@housesmart.com.au",
+        "Body": "Just Listed - 56B Hamilton Street\r\n\r\nHi Rugesh,\r\n\r\nAs a valued client of HouseSmart - we are pleased to present you with the latest listing that matches your criteria.\r\n\r\nLet us know if you'd like to come to the next home open, if you have any questions, ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recX1tGhqJVnQOX3a",
+      "sourceCreatedTime": "2025-12-12T03:38:34.000Z",
+      "fields": {
+        "Name": "Jon Mordue",
+        "Subject": "Melbourne, VIC 3058 – Secure Your Investment – The New Home Base from Business from $196,980",
+        "Email": "jon@projectpropertysales.com.au",
+        "Body": "BUILT STOCKLIST\r\n\r\n__________________________________________________________________________________________________________\r\n\r\n\r\n\r\n\r\n\r\nHighgate Hill, The Hills Apartments – Completion end of December 2025\r\n\r\n  *   1 x 2 bedroom priced at $1,350,000\r\n  *"
+      }
+    },
+    {
+      "sourceRecordId": "recX1w3n7JlK1EmvI",
+      "sourceCreatedTime": "2026-06-11T05:53:09.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recX29vJk3fcK6kw1",
+      "sourceCreatedTime": "2026-04-15T04:22:45.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recX2HLXObucpDFZ1",
+      "sourceCreatedTime": "2025-11-05T07:24:08.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recX2ngJi4M0cSsia",
+      "sourceCreatedTime": "2025-11-13T07:28:25.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recX2yRPruQTHtY51",
+      "sourceCreatedTime": "2025-09-22T12:49:33.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recX4pnhpvW1O5YKn",
+      "sourceCreatedTime": "2026-02-09T01:12:25.000Z",
+      "fields": {
+        "Name": "Wellmanprop",
+        "Subject": "🛎️February | WELLMAN PROP STOCK LIST - Weekly Updates❗",
+        "Email": "projects@wellmanpropgroup.com",
+        "Body": "Click Here to Access All Projects & Stocklist\r\n\r\nWELLMAN STOCKLIST\r\n\r\nWeekly Updates\r\n\r\n \r\n\r\nTOWNHOUSE (COMPLETE)\r\n\r\n30-32 Station Street, Ferntree Gully\r\n\r\n2-3B  1.5-2B  1-2CAR\r\n\r\n\r\nAsking Price:\r\n\r\nUnit 1: $748,000\r\n\r\nUnit 2: $878,000\r\n\r\nUnit 4: Sold"
+      }
+    },
+    {
+      "sourceRecordId": "recX4tpPKjdrSzLT6",
+      "sourceCreatedTime": "2026-06-04T08:10:38.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recX5V90FUDsm6YVe",
+      "sourceCreatedTime": "2026-04-03T00:36:03.000Z",
+      "fields": {
+        "Name": "Ooranya Estate - Easter 2026",
+        "Subject": "Ooranya Estate - Happy Easter!",
+        "Email": "sales@bevanprojects.com.au",
+        "Body": "View this email in your browser\r\n\r\n\r\n\r\nDear ,\r\n\r\nMay Easter bring you and your family a season of growth and success. We're honored to be part of your journey.\r\n\r\nFrom the team at Ooranya Estate, we wish our valued customers a very Happy Easter to y",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recX6hgy8S3StPuLj",
+      "sourceCreatedTime": "2026-06-04T05:46:55.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recX6vKyWsVw6yqbw",
+      "sourceCreatedTime": "2026-02-25T02:37:31.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recX7yMPJ7GELfTU5",
+      "sourceCreatedTime": "2025-10-07T10:24:12.000Z",
+      "fields": {
+        "Name": "Thomas Bettison",
+        "Subject": "COMING SOON TO MARKET | 7 Meelah Way, Koongamia",
+        "Email": "thomas.bettison@housesmart.com.au",
+        "Body": "MARKET PREVIEW - 7 Meelah Way\r\n\r\nHi Rugesh,\r\n\r\nPlease see the following property, launching to market in the near future.\r\n\r\nIf you are interested in securing this before the property goes live to all buyers, let me know.\r\n\r\nUpdate my criteria\r\nSay hello ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXA8IEsa0wf9jlc",
+      "sourceCreatedTime": "2026-04-01T03:17:05.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXAAb5qaeMDB3k8",
+      "sourceCreatedTime": "2025-11-06T20:15:13.000Z",
+      "fields": {
+        "Name": "Belle Property Australasia",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "noreply@belleproperty.com",
+        "Body": "Dear Rugesh,\r\n\r\nWe have found the following properties that match your property search requirements. Click here to update your preferences or click here to find a property on belleproperty.com.\r\nCurrent listings.\r\n\r\nDromana\r\n8 Jackson Way\r\nFor Sale $3,500",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXAH1UhDBhP5jIW",
+      "sourceCreatedTime": "2026-01-08T03:22:27.000Z",
+      "fields": {
+        "Name": "Geoff Sellars",
+        "Subject": "Weekly Listings Update",
+        "Email": "geoff.sellars@raywhite.com",
+        "Body": "View this email in your browser\r\nDear NPC Services,\r\n\r\nPlease find below a collection of our latest property listings on the market! For further details on any of these properties, simply click on the property image.\r\n\r\nIt’s an exciting time for property ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXAbsLfeqLQUpWU",
+      "sourceCreatedTime": "2025-11-06T02:55:39.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXAwOeNAlwERu4E",
+      "sourceCreatedTime": "2025-12-04T08:00:09.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXBbjPGVWmYsL5F",
+      "sourceCreatedTime": "2025-11-19T01:20:28.000Z",
+      "fields": {
+        "Name": "Manpreet Sandhu",
+        "Subject": "Exclusive Off-Market Investment Deals – South-East Melbourne",
+        "Email": "manpreet@fatehrealestate.com.au",
+        "Body": "Dear sir/madam,\r\n\r\nIf you’ve been waiting for the right moment to invest in Melbourne’s booming property market, this is it.\r\n\r\nFateh Real Estate is unlocking exclusive, off-market investment opportunities across South-East Melbourne — properties not adve",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXBmFuZIpzsxOmk",
+      "sourceCreatedTime": "2025-11-24T04:39:40.000Z",
+      "fields": {
+        "Name": "Josie Caruso",
+        "Subject": "COMING SOON IN ASCOT",
+        "Email": "josie@phproperty.com.au",
+        "Body": "Hello Rugesh,\r\n\r\n\r\nWe would like to advise that a new property will be coming to market shortly.\r\n\r\nIf you have buyers who may be suited to this type of property, you are welcome to enquire now for further details.\r\n\r\nThis is simply an early notification "
+      }
+    },
+    {
+      "sourceRecordId": "recXC7bAEhhGtnFy2",
+      "sourceCreatedTime": "2026-03-26T07:59:13.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXD59R70JcBM6zg",
+      "sourceCreatedTime": "2026-03-30T06:05:35.000Z",
+      "fields": {
+        "Name": "Joe Morrow",
+        "Subject": "JUST LISTED - MERRIWA",
+        "Email": "joe@c21goldkey.com.au",
+        "Body": "Please find below details of a brand new listing at 10 Hitek Court, Merriwa which may be of interest to you.  First home open is booked for this coming Saturday 10.15-10.45am so be quick to view before its too late! If you require further information in t"
+      }
+    },
+    {
+      "sourceRecordId": "recXDqf9ry1DcB8uj",
+      "sourceCreatedTime": "2025-11-27T03:45:59.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXEeDu5Lvnl7Z5u",
+      "sourceCreatedTime": "2026-04-02T02:51:05.000Z",
+      "fields": {
+        "Name": "Courtney Lee",
+        "Subject": "JUST LISTED - THE COMPLETE LIFESTYLE PACKAGE: 125 ACRES, EXPANSIVE SHEDS, SOLAR POWER & A 5 BEDROOM HOME",
+        "Email": "courtney@gattonrealestate.com.au",
+        "Body": "Dear Rugesh\r\n\r\nWelcome to 36 Wallers Road, Ringwood - where space, privacy and endless potential come together to create the ultimate rural escape.\r\n\r\n🌿🏡 A Rare Acreage Lifestyle Awaits… 125 Acres of Opportunity! 🏡🌿\r\n\r\n✨ Offers Over $1,595,000\r\n\r\n📍 O"
+      }
+    },
+    {
+      "sourceRecordId": "recXF1y55TZFZA6my",
+      "sourceCreatedTime": "2025-11-21T04:47:07.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recXGMtzgsFn7NFch",
+      "sourceCreatedTime": "2025-10-29T09:40:35.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    }
+  ]
+}

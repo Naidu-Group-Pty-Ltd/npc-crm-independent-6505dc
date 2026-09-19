@@ -1,0 +1,42 @@
+AML Verification Service
+Copyright (c) 2026 NPC Services
+
+This product bundles, at runtime, machine-learning models obtained from the
+OpenCV Model Zoo (https://github.com/opencv/opencv_zoo). Those models are
+distributed under the Apache License, Version 2.0, and that licence extends to
+the model weights as distributed — which is why they can be used here.
+
+--------------------------------------------------------------------------------
+SFace — face recognition
+    File:      face_recognition_sface_2021dec.onnx
+    Source:    opencv/opencv_zoo, models/face_recognition_sface
+    Licence:   Apache License 2.0
+    Copyright: Shenzhen Institute of Artificial Intelligence and Robotics
+               for Society (SIAT)
+    Paper:     Zhong et al., "SFace: Sigmoid-Constrained Hypersphere Loss for
+               Robust Face Recognition"
+
+YuNet — face detection
+    File:      face_detection_yunet_2023mar.onnx
+    Source:    opencv/opencv_zoo, models/face_detection_yunet
+    Licence:   Apache License 2.0
+--------------------------------------------------------------------------------
+
+Attribution obligation
+    Apache-2.0 requires that the copyright notice and licence text travel with
+    the model. scripts/fetch_models.sh downloads the upstream LICENSE files
+    alongside the weights for this reason. Do not remove them.
+
+Models that must NOT be substituted here
+    InsightFace / ArcFace weights (including the `buffalo_*` packages, and the
+    defaults used by CompreFace and DeepFace) are licensed for NON-COMMERCIAL
+    RESEARCH ONLY. Using them in this service would be a licence breach.
+    InsightFace directs commercial users to recognition-oss-pack@insightface.ai.
+
+    The permissive licence badge on a repository says nothing about the weights
+    it downloads at runtime. Verify the weights, not the repository.
+
+Third-party Python dependencies
+    See requirements.txt. FastAPI (MIT), Uvicorn (BSD-3-Clause), Pydantic (MIT),
+    NumPy (BSD-3-Clause), OpenCV (Apache-2.0), pytesseract (Apache-2.0).
+    Tesseract OCR itself is Apache-2.0.

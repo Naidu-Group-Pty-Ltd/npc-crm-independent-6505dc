@@ -1,0 +1,125 @@
+{
+  "async": false,
+  "function": {
+    "description": "Resolve an inbound caller contact in GoHighLevel. The caller phone number is injected automatically by Vapi as a trusted static parameter and must not be generated, guessed, formatted, or manually supplied by the assistant. The tool must search by the injected phone number first. If no contact is found and the caller's name is known, the tool may create the contact.",
+    "name": "ghl_resolve_contact",
+    "parameters": {
+      "properties": {
+        "first_name": {
+          "description": "The caller's first name, only if known.",
+          "type": "string"
+        },
+        "full_name": {
+          "description": "The caller's full name, only after the caller provides it or it is already known from context.",
+          "type": "string"
+        },
+        "last_name": {
+          "description": "The caller's last name, only if known.",
+          "type": "string"
+        }
+      },
+      "required": [],
+      "type": "object"
+    }
+  },
+  "messages": [
+    {
+      "blocking": false,
+      "content": "",
+      "type": "request-start"
+    }
+  ],
+  "parameters": [
+    {
+      "key": "phone",
+      "value": "{{ customer.number }}"
+    },
+    {
+      "key": "customer_number",
+      "value": "{{ customer.number }}"
+    },
+    {
+      "key": "called_number",
+      "value": "{{ phoneNumber.number }}"
+    },
+    {
+      "key": "vapi_call_id",
+      "value": "{{ call.id }}"
+    },
+    {
+      "key": "call_type",
+      "value": "{{ call.type }}"
+    }
+  ],
+  "server": {
+    "staticIpAddressesEnabled": false,
+    "timeoutSeconds": 20,
+    "url": "https://hook.eu2.make.com/db3ws2lmqi4qh9ozsyt1tvn3j8tbeahm"
+  },
+  "type": "function",
+  "variableExtractionPlan": {
+    "aliases": [
+      {
+        "key": "contactId",
+        "value": "{{ $.contactId }}"
+      },
+      {
+        "key": "firstName",
+        "value": "{{ $.firstName }}"
+      },
+      {
+        "key": "fullName",
+        "value": "{{ $.fullName }}"
+      },
+      {
+        "key": "phone",
+        "value": "{{ $.phone }}"
+      },
+      {
+        "key": "contactState",
+        "value": "{{ $.contactState }}"
+      },
+      {
+        "key": "contactFound",
+        "value": "{{ $.contactFound }}"
+      },
+      {
+        "key": "contactCreated",
+        "value": "{{ $.contactCreated }}"
+      },
+      {
+        "key": "requiresName",
+        "value": "{{ $.requiresName }}"
+      },
+      {
+        "key": "requiresPhone",
+        "value": "{{ $.requiresPhone }}"
+      },
+      {
+        "key": "ghlContactId",
+        "value": "{{ $.contactId }}"
+      },
+      {
+        "key": "ghlFirstName",
+        "value": "{{ $.firstName }}"
+      },
+      {
+        "key": "ghlFullName",
+        "value": "{{ $.fullName }}"
+      },
+      {
+        "key": "ghlContactPhone",
+        "value": "{{ $.phone }}"
+      },
+      {
+        "key": "ghlContactState",
+        "value": "{{ $.contactState }}"
+      }
+    ],
+    "schema": {
+      "properties": {},
+      "required": [],
+      "type": "object"
+    }
+  }
+}

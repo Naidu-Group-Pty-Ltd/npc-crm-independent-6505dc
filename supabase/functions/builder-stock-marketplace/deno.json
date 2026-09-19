@@ -1,0 +1,25 @@
+{
+  "//": [
+    "Type-check scope for the builder-stock Edge Functions that SURVIVED the",
+    "network extraction (Phase 7): the Command Centre marketplace read and the",
+    "network sync door, plus the shared modules they import.",
+    "",
+    "No tsconfig in this repository covers supabase/functions, so",
+    "helper-signature errors in Edge Functions are invisible to CI — that is",
+    "how the alignment review findings P1-P3 reached PR #1749, and why this",
+    "scope exists at all. It lived in builder-portal-admin/ while the portal",
+    "family was the scope; the portal left, the check stayed.",
+    "",
+    "Run with: npm run typecheck:builder-edge"
+  ],
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true,
+    "lib": ["deno.window", "esnext"]
+  },
+  "lint": {
+    "rules": {
+      "tags": ["recommended"]
+    }
+  }
+}

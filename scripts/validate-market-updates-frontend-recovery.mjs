@@ -1,0 +1,14 @@
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+const read=path=>readFileSync(new URL(`../${path}`,import.meta.url),'utf8');
+const page=read('src/pages/MarketUpdates.tsx');
+const service=read('src/services/marketUpdatesService.ts');
+const admin=read('src/components/market-updates/MarketSourcesAdminDialog.tsx');
+const status=read('supabase/functions/market-updates-status/index.ts');
+for(const token of ['Promise.allSettled','hasActiveFilters','No canonical source registry','Sources are configured but none are enabled','Ingestion is running','Items are awaiting review','No published updates yet','Published updates hidden by filters','Review candidates','Retry page data','View latest run','runSummary','Candidate review']) assert.ok(page.includes(token),token);
+assert.doesNotMatch(page,/Filters exclude available updates/);
+assert.match(page,/feedEmptyState.kind === 'filters'.*Clear filters/);
+assert.match(service,/followMarketIngestionRun/);
+for(const token of ['Search market sources','Filter market sources by status','overflow-x-hidden']) assert.ok(admin.includes(token),token);
+assert.match(status,/nextScheduledFetch/);
+console.log('Market Updates Phase 9 frontend recovery contract validated.');

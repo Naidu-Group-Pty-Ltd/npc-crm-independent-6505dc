@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+const read = path => readFileSync(new URL(`../${path}`, import.meta.url),'utf8');
+const migration=read('supabase/migrations/20260726200000_market_digest_deterministic_windows.sql');
+const windows=read('supabase/functions/market-updates-digest/periodWindow.ts');
+const digest=read('supabase/functions/market-updates-digest/index.ts');
+const ingest=read('supabase/functions/market-updates-ingest/index.ts');
+for(const token of ['period_key text','market_digests_period_key_unique','queued_at','candidate_count','safe_error_message']) assert.ok(migration.includes(token),token);
+for(const token of ["period === '24h'","period === 'weekly'","period === 'biweekly'","period === 'monthly'","period === 'quarterly'","Date.UTC(day.getUTCFullYear(), 0, 1)"]) assert.ok(windows.includes(token),token);
+for(const token of ["status:'queued'","status:'generating'","status:'no_data'","status:'failed'",'onConflict:\'period,period_key\'','allowedIds','candidate_count']) assert.ok(digest.includes(token),token);
+assert.match(digest,/if \(req\.method === "OPTIONS"\)[^\n]*\n\s*if \(req\.method !== "POST"\)/);
+assert.match(digest,/status: 405,[\s\S]*?allow: "POST"/);
+assert.match(digest,/\.lt\("ingested_at", end\.toISOString\(\)\)/);
+assert.match(ingest,/const digestResponse = await fetch/);
+assert.doesNotMatch(ingest,/if\(summary\.published>0&&!test\)\{[\s\S]*?\)\.catch\(\(\)=>undefined\)/);
+console.log('Market Updates Phase 7 deterministic digest contract validated.');

@@ -1,0 +1,25 @@
+{
+  "compilerOptions": {
+    "target": "es2020",
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "lib": ["dom", "dom.iterable", "es2023"],
+    "declaration": true,
+    "emitDeclarationOnly": true,
+    "declarationMap": false,
+    "skipLibCheck": true,
+    "strict": false,
+    "strictNullChecks": false,
+    "noImplicitAny": false,
+    "allowSyntheticDefaultImports": true,
+    "esModuleInterop": true,
+    "baseUrl": "..",
+    "paths": {
+      "@/*": ["src/*"]
+    },
+    "rootDir": "../src",
+    "outDir": ".cache/ds-pkg/types"
+  },
+  "include": ["../src/components/ui/**/*.ts", "../src/components/ui/**/*.tsx"]
+}

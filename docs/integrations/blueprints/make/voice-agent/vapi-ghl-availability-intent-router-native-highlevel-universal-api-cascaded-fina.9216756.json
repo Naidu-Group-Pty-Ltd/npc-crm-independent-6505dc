@@ -1,0 +1,3378 @@
+{
+  "flow": [
+    {
+      "id": 1,
+      "mapper": {},
+      "module": "gateway:CustomWebHook",
+      "version": 1,
+      "metadata": {
+        "restore": {
+          "parameters": {
+            "hook": {
+              "data": {
+                "editable": "true"
+              },
+              "label": "NPC Availability Checker v2"
+            }
+          }
+        },
+        "designer": {
+          "x": 0,
+          "y": 750,
+          "name": "Vapi Availability Tool Webhook"
+        },
+        "interface": [
+          {
+            "name": "message",
+            "spec": [
+              {
+                "name": "type",
+                "type": "text"
+              },
+              {
+                "name": "timestamp",
+                "type": "number"
+              },
+              {
+                "name": "toolCallList",
+                "spec": {
+                  "spec": [
+                    {
+                      "name": "id",
+                      "type": "text"
+                    },
+                    {
+                      "name": "name",
+                      "type": "text"
+                    },
+                    {
+                      "name": "arguments",
+                      "spec": [
+                        {
+                          "name": "booking_intent_text",
+                          "type": "text"
+                        },
+                        {
+                          "name": "startDateMs",
+                          "type": "text"
+                        },
+                        {
+                          "name": "endDateMs",
+                          "type": "text"
+                        },
+                        {
+                          "name": "timezone",
+                          "type": "text"
+                        },
+                        {
+                          "name": "duration_minutes",
+                          "type": "number"
+                        },
+                        {
+                          "name": "preferred_date_text",
+                          "type": "text"
+                        },
+                        {
+                          "name": "search_reason",
+                          "type": "text"
+                        },
+                        {
+                          "name": "caller_context",
+                          "type": "text"
+                        }
+                      ],
+                      "type": "collection"
+                    }
+                  ],
+                  "type": "collection"
+                },
+                "type": "array"
+              }
+            ],
+            "type": "collection"
+          }
+        ],
+        "parameters": [
+          {
+            "name": "hook",
+            "type": "hook:gateway-webhook",
+            "label": "Webhook",
+            "required": true
+          },
+          {
+            "name": "maxResults",
+            "type": "number",
+            "label": "Maximum number of results"
+          }
+        ]
+      },
+      "parameters": {
+        "hook": 4117850,
+        "maxResults": 1
+      }
+    },
+    {
+      "id": 2,
+      "mapper": {
+        "model": "gpt-5.5",
+        "top_p": "1",
+        "select": "chat",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are a booking intent and availability-window resolver inside a Make.com automation for a Vapi AI voice agent booking flow for NPC Services.\r\n\r\nYour job has two parts:\r\n\r\n1. Determine which GoHighLevel calendar availability branch should be used.\r\n2. Resolve the caller's requested natural-language date/time into a future Australia/Sydney availability search window.\r\n\r\nYou must output ONLY valid JSON.\r\nDo not include markdown, code fences, commentary, explanations, or natural language outside the JSON object.\r\n\r\nDefault timezone:\r\nAustralia/Sydney\r\n\r\nBusiness availability rules:\r\n- Availability may only be checked Monday to Friday.\r\n- Availability may only be checked between 1:00 PM and 6:00 PM Australia/Sydney.\r\n- Same-day bookings are not allowed.\r\n- The search window must always be in the future relative to the provided current time.\r\n- For a standard day search, use 1:00 PM Australia/Sydney as the start and 6:00 PM Australia/Sydney as the end.\r\n- Duration is 30 minutes unless the input explicitly provides another valid duration.\r\n- Never use UTC calendar dates for caller-facing date logic.\r\n- Never calculate “tomorrow” by adding 24 hours. Instead, convert the current time into the Australia/Sydney calendar date, then advance the calendar date by one day.\r\n- If the selected date falls on Saturday or Sunday, shift to the next Monday.\r\n- If the caller asks for today, shift to the next valid business day.\r\n- If the caller asks for a past date or a date that resolves to today, shift to the next valid business day.\r\n- If the caller gives a specific future weekday, use that weekday if it is Monday to Friday.\r\n- If the caller gives a specific time window within business hours, use that window.\r\n- If the caller gives “afternoon”, “any time tomorrow”, “any time next week”, or no specific time, use 1:00 PM to 6:00 PM Australia/Sydney for the selected valid business day.\r\n- If the caller asks for a time before 1:00 PM, shift the start to 1:00 PM.\r\n- If the caller asks for a time after 6:00 PM, set date_resolution_status to \"needs_date_clarification\".\r\n- If the requested window partially overlaps 1:00 PM to 6:00 PM, clamp it to the valid overlap only.\r\n- endDateMs must always be greater than startDateMs.\r\n- startDateMs and endDateMs must be Unix timestamps in milliseconds as strings.\r\n- startIso and endIso must be ISO-8601 timestamps with Australia/Sydney offset, for example \"2026-05-18T13:00:00+10:00\".\r\n\r\nAllowed intent_index values:\r\n- \"root\" = Discovery Call\r\n- \"2\" = Strategy Session (Phone)\r\n- \"2_1\" = Strategy Session (Zoom)\r\n- \"3\" = Initial Finance Consult (Phone)\r\n- \"3_1\" = Initial Finance Consult (Zoom)\r\n- \"clarification_needed\" = the appointment type, delivery mode, or date/time cannot be determined confidently\r\n\r\nIntent classification rules:\r\n1. If the caller asks for a discovery call, intro call, first chat, initial discussion, general call to learn more, or early qualification call, classify as \"root\".\r\n2. If the caller asks for a strategy session and clearly wants a phone call, classify as \"2\".\r\n3. If the caller asks for a strategy session and clearly wants Zoom, video call, online meeting, virtual meeting, or remote meeting, classify as \"2_1\".\r\n4. If the caller asks for an initial finance consult, finance consultation, initial finance consultation, IFC, or finance consult and clearly wants a phone call, classify as \"3\".\r\n5. If the caller asks for an initial finance consult, finance consultation, initial finance consultation, IFC, or finance consult and clearly wants Zoom, video call, online meeting, virtual meeting, or remote meeting, classify as \"3_1\".\r\n6. If the caller says strategy session but does not specify phone or Zoom, choose \"clarification_needed\".\r\n7. If the caller says initial finance consult, finance consultation, finance consult, or IFC but does not specify phone or Zoom, choose \"clarification_needed\".\r\n8. If the caller only says they want to book an appointment but does not specify the appointment type, choose \"clarification_needed\".\r\n9. If there is conflict between labels, prioritize the most specific explicit phrase from the caller's latest request.\r\n10. Do not infer finance consult from discovery call unless finance consultation, IFC, or finance consult is clearly stated.\r\n11. Do not infer Zoom unless the caller mentions Zoom, video, online, virtual, remote, or web meeting.\r\n12. Do not infer phone unless the caller mentions phone, call me, telephone, mobile, cell, speaking by phone, or a normal phone call.\r\n13. If the user asks for a call and the appointment type is Discovery Call, the mode does not need clarification; classify as \"root\".\r\n14. If preferred_date_text only contains date/time information, do not use it to infer appointment type.\r\n15. If caller_context contains historical context but booking_intent_text contains a clearer latest request, prioritize booking_intent_text.\r\n\r\nConfidence rules:\r\n- Use confidence 0.90 to 1.00 when appointment type, mode, and date window are clear.\r\n- Use confidence 0.70 to 0.89 when appointment type is clear but wording is indirect.\r\n- Use confidence below 0.70 when clarification is needed.\r\n\r\nClarification rules:\r\n- If appointment type or required delivery mode is unclear, set needs_clarification to true.\r\n- If the date/time cannot be resolved into a future valid business-day window, set date_resolution_status to \"needs_date_clarification\".\r\n- If either needs_clarification is true or date_resolution_status is \"needs_date_clarification\", set intent_index to \"clarification_needed\" only when the appointment type/mode itself is unclear.\r\n- If the appointment type is clear but date is unclear, keep the correct intent_index but set date_resolution_status to \"needs_date_clarification\" and provide date_clarification_question.\r\n\r\nReturn exactly one JSON object using this schema:\r\n\r\n{\r\n  \"intent_index\": \"\",\r\n  \"intent_label\": \"\",\r\n  \"confidence\": 0.0,\r\n  \"needs_clarification\": false,\r\n  \"clarification_question\": \"\",\r\n  \"routing_reason\": \"\",\r\n  \"timezone\": \"Australia/Sydney\",\r\n  \"duration_minutes\": 30,\r\n  \"preferred_date_text_original\": \"\",\r\n  \"preferred_date_text_normalized\": \"\",\r\n  \"date_resolution_status\": \"\",\r\n  \"date_clarification_question\": \"\",\r\n  \"date_resolution_reason\": \"\",\r\n  \"selected_date\": \"\",\r\n  \"startIso\": \"\",\r\n  \"endIso\": \"\",\r\n  \"startDateMs\": \"\",\r\n  \"endDateMs\": \"\",\r\n  \"is_future_window\": false,\r\n  \"is_same_day\": false,\r\n  \"is_weekday\": false,\r\n  \"business_window_applied\": true\r\n}\r\n\r\nThe intent_index value must be exactly one of:\r\n\"root\", \"2\", \"2_1\", \"3\", \"3_1\", \"clarification_needed\".\r\n\r\nThe intent_label value must be exactly one of:\r\n\"Discovery Call\", \"Strategy Session (Phone)\", \"Strategy Session (Zoom)\", \"Initial Finance Consult (Phone)\", \"Initial Finance Consult (Zoom)\", \"Clarification Needed\".\r\n\r\nThe date_resolution_status value must be exactly one of:\r\n\"resolved\", \"needs_date_clarification\".\r\n\r\nIf date_resolution_status is \"resolved\":\r\n- startDateMs must be a 13-digit Unix millisecond timestamp string.\r\n- endDateMs must be a 13-digit Unix millisecond timestamp string.\r\n- startIso must not be empty.\r\n- endIso must not be empty.\r\n- is_future_window must be true.\r\n- is_same_day must be false.\r\n- is_weekday must be true.\r\n\r\nFor non-clarification appointment intents, set needs_clarification to false and clarification_question to an empty string.\r\n\r\nFor date clarification, write a short date_clarification_question the voice agent can ask naturally, for example:\r\n- \"What weekday would suit you best between 1 PM and 6 PM?\"\r\n- \"Would tomorrow afternoon between 1 PM and 6 PM work for you?\"\r\n- \"Could we look at the next available weekday between 1 PM and 6 PM?\""
+          },
+          {
+            "role": "user",
+            "content": "Resolve this Vapi booking availability request.\r\n\r\nCurrent time in Make:\r\n{{now}}\r\n\r\nDefault timezone:\r\nAustralia/Sydney\r\n\r\nIf available, current timestamp values from Vapi/session context:\r\ncurrentDateUnix:\r\n{{ifempty(get(1.message.toolCallList; 1) + .function.arguments.currentDateUnix; ifempty(get(1.message.toolCallList; 1) + .arguments.currentDateUnix; ))}}\r\n\r\ncurrentDateIso:\r\n{{ifempty(get(1.message.toolCallList; 1) + .function.arguments.currentDateIso; ifempty(get(1.message.toolCallList; 1) + .arguments.currentDateIso; ))}}\r\n\r\nnowMs:\r\n{{ifempty(get(1.message.toolCallList; 1) + .function.arguments.nowMs; ifempty(get(1.message.toolCallList; 1) + .arguments.nowMs; ))}}\r\n\r\nnowIso:\r\n{{ifempty(get(1.message.toolCallList; 1) + .function.arguments.nowIso; ifempty(get(1.message.toolCallList; 1) + .arguments.nowIso; ))}}\r\n\r\nbooking_intent_text:\r\n{{ifempty(get(1.message.toolCallList; 1) + .function.arguments.booking_intent_text; ifempty(get(1.message.toolCallList; 1) + .arguments.booking_intent_text; ifempty(1.booking_intent_text; )))}}\r\n\r\npreferred_date_text:\r\n{{ifempty(get(1.message.toolCallList; 1) + .function.arguments.preferred_date_text; ifempty(get(1.message.toolCallList; 1) + .arguments.preferred_date_text; ifempty(1.preferred_date_text; )))}}\r\n\r\nsearch_reason:\r\n{{ifempty(get(1.message.toolCallList; 1) + .function.arguments.search_reason; ifempty(get(1.message.toolCallList; 1) + .arguments.search_reason; ifempty(1.search_reason; )))}}\r\n\r\ncaller_context:\r\n{{ifempty(get(1.message.toolCallList; 1) + .function.arguments.caller_context; ifempty(get(1.message.toolCallList; 1) + .arguments.caller_context; ifempty(1.caller_context; )))}}\r\n\r\nIncoming agent-provided startDateMs, if any:\r\n{{ifempty(get(1.message.toolCallList; 1) + .function.arguments.startDateMs; ifempty(get(1.message.toolCallList; 1) + .arguments.startDateMs; ))}}\r\n\r\nIncoming agent-provided endDateMs, if any:\r\n{{ifempty(get(1.message.toolCallList; 1) + .function.arguments.endDateMs; ifempty(get(1.message.toolCallList; 1) + .arguments.endDateMs; ))}}\r\n\r\nIncoming agent-provided timezone, if any:\r\n{{ifempty(get(1.message.toolCallList; 1) + .function.arguments.timezone; ifempty(get(1.message.toolCallList; 1) + .arguments.timezone; \"Australia/Sydney\"))}}\r\n\r\nIncoming agent-provided duration_minutes, if any:\r\n{{ifempty(get(1.message.toolCallList; 1) + .function.arguments.duration_minutes; ifempty(get(1.message.toolCallList; 1) + .arguments.duration_minutes; 30))}}\r\n\r\nImportant:\r\n- Use the current time above as the source of truth.\r\n- If incoming agent-provided startDateMs/endDateMs conflict with preferred_date_text, fix them.\r\n- If preferred_date_text says \"tomorrow\", resolve it as the next Australia/Sydney calendar date after the current date.\r\n- Do not allow same-day windows.\r\n- Output only the strict JSON object requested in the system instructions."
+          }
+        ],
+        "max_tokens": "900",
+        "temperature": "1",
+        "n_completions": "1",
+        "response_format": "json_object",
+        "reasoning_effort": "medium",
+        "parseJSONResponse": true
+      },
+      "module": "openai-gpt-3:CreateCompletion",
+      "version": 1,
+      "metadata": {
+        "expect": [
+          {
+            "name": "select",
+            "type": "select",
+            "label": "Select Method",
+            "required": true,
+            "validate": {
+              "enum": [
+                "chat",
+                "prompt"
+              ]
+            }
+          },
+          {
+            "name": "temperature",
+            "type": "number",
+            "label": "Temperature",
+            "validate": {
+              "max": 2,
+              "min": 0
+            }
+          },
+          {
+            "name": "top_p",
+            "type": "number",
+            "label": "Top P",
+            "validate": {
+              "max": 1,
+              "min": 0
+            }
+          },
+          {
+            "name": "n_completions",
+            "type": "number",
+            "label": "Number"
+          },
+          {
+            "name": "frequency_penalty",
+            "type": "number",
+            "label": "Frequency Penalty",
+            "validate": {
+              "max": 2,
+              "min": -2
+            }
+          },
+          {
+            "name": "presence_penalty",
+            "type": "number",
+            "label": "Presence Penalty",
+            "validate": {
+              "max": 2,
+              "min": -2
+            }
+          },
+          {
+            "name": "logit_bias",
+            "spec": {
+              "name": "value",
+              "spec": [
+                {
+                  "name": "token",
+                  "type": "text",
+                  "label": "Token ID",
+                  "required": true
+                },
+                {
+                  "name": "probability",
+                  "type": "number",
+                  "label": "Probability",
+                  "required": true,
+                  "validate": {
+                    "max": 100,
+                    "min": -100
+                  }
+                }
+              ],
+              "type": "collection",
+              "label": "Token Probability"
+            },
+            "type": "array",
+            "label": "Token Probability"
+          },
+          {
+            "name": "seed",
+            "type": "integer",
+            "label": "Seed"
+          },
+          {
+            "name": "tool_choice",
+            "type": "select",
+            "label": "Tool Choice",
+            "validate": {
+              "enum": [
+                "none",
+                "auto",
+                "required"
+              ]
+            }
+          },
+          {
+            "name": "stop",
+            "spec": {
+              "name": "value",
+              "type": "text",
+              "label": "Stop Sequence"
+            },
+            "type": "array",
+            "label": "Stop Sequences",
+            "validate": {
+              "maxItems": 4
+            }
+          },
+          {
+            "name": "additionalParameters",
+            "spec": {
+              "name": "value",
+              "spec": [
+                {
+                  "name": "key",
+                  "type": "text",
+                  "label": "Parameter Name",
+                  "required": true
+                },
+                {
+                  "name": "type",
+                  "type": "select",
+                  "label": "Input Type",
+                  "options": [
+                    {
+                      "label": "Text",
+                      "value": "text",
+                      "nested": [
+                        {
+                          "name": "value",
+                          "type": "text",
+                          "label": "Parameter Value"
+                        }
+                      ],
+                      "default": true
+                    },
+                    {
+                      "label": "Number",
+                      "value": "number",
+                      "nested": [
+                        {
+                          "name": "value",
+                          "type": "number",
+                          "label": "Parameter Value"
+                        }
+                      ]
+                    },
+                    {
+                      "label": "Boolean",
+                      "value": "boolean",
+                      "nested": [
+                        {
+                          "name": "value",
+                          "type": "boolean",
+                          "label": "Parameter Value"
+                        }
+                      ]
+                    },
+                    {
+                      "label": "Date",
+                      "value": "date",
+                      "nested": [
+                        {
+                          "name": "value",
+                          "type": "date",
+                          "label": "Parameter Value"
+                        }
+                      ]
+                    },
+                    {
+                      "label": "Any",
+                      "value": "any",
+                      "nested": [
+                        {
+                          "name": "value",
+                          "type": "any",
+                          "label": "Parameter Value"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "type": "collection",
+              "label": "Input Parameter"
+            },
+            "type": "array",
+            "label": "Other Input Parameters"
+          },
+          {
+            "name": "model",
+            "type": "select",
+            "label": "Model",
+            "required": true
+          },
+          {
+            "name": "max_tokens",
+            "type": "uinteger",
+            "label": "Max Output Tokens"
+          },
+          {
+            "name": "messages",
+            "spec": {
+              "name": "value",
+              "spec": [
+                {
+                  "name": "role",
+                  "type": "select",
+                  "label": "Role",
+                  "options": {
+                    "store": [
+                      {
+                        "label": "User",
+                        "value": "user",
+                        "nested": [
+                          {
+                            "help": "Text content of the message on behalf of the selected __Role__.",
+                            "name": "content",
+                            "type": "text",
+                            "label": "Text Content"
+                          }
+                        ],
+                        "default": true
+                      },
+                      {
+                        "label": "Assistant",
+                        "value": "assistant",
+                        "nested": [
+                          {
+                            "help": "Text content of the message on behalf of the selected __Role__.",
+                            "name": "content",
+                            "type": "text",
+                            "label": "Text Content"
+                          },
+                          {
+                            "mode": "edit",
+                            "name": "tool_calls",
+                            "spec": {
+                              "spec": [
+                                {
+                                  "name": "type",
+                                  "type": "hidden",
+                                  "default": "function"
+                                },
+                                {
+                                  "help": "Map this directly from the output of a previous **Create a Completion** module. Look for `Choices[]: Message.Tool Calls[]: ID`.",
+                                  "name": "id",
+                                  "type": "text",
+                                  "label": "Tool call ID"
+                                },
+                                {
+                                  "name": "function",
+                                  "spec": [
+                                    {
+                                      "help": "The name of the function previously called.",
+                                      "name": "name",
+                                      "type": "text",
+                                      "label": "Name",
+                                      "required": true
+                                    },
+                                    {
+                                      "help": "The arguments previously output by the AI.",
+                                      "name": "arguments",
+                                      "type": "text",
+                                      "label": "Arguments",
+                                      "required": true
+                                    }
+                                  ],
+                                  "type": "collection",
+                                  "label": "Function"
+                                }
+                              ],
+                              "type": "collection",
+                              "label": "Tool Call"
+                            },
+                            "type": "array",
+                            "label": "Tool Calls",
+                            "labels": {
+                              "add": "Add tool call"
+                            },
+                            "mappable": {
+                              "help": "You can map the entire `Choices[]: Message.Tool Calls` array from a previous Create a Completion module here."
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "label": "Developer / System",
+                        "value": "system",
+                        "nested": [
+                          {
+                            "help": "Text content of the message on behalf of the selected __Role__.",
+                            "name": "content",
+                            "type": "text",
+                            "label": "Text Content"
+                          }
+                        ]
+                      },
+                      {
+                        "label": "Tool",
+                        "value": "tool",
+                        "nested": [
+                          {
+                            "help": "The return of the function. This role should only be used when you have processed a previous function call and want to send the output of the function execution back to the AI.",
+                            "name": "content",
+                            "type": "text",
+                            "label": "Text Content",
+                            "required": true
+                          },
+                          {
+                            "help": "Map this directly from the output of a previous **Create a Completion** module. Look for `Choices[]: Message.Tool Calls[]: ID`.",
+                            "name": "tool_call_id",
+                            "type": "text",
+                            "label": "Tool Call ID.",
+                            "required": true
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "required": true
+                }
+              ],
+              "type": "collection",
+              "label": "Message"
+            },
+            "type": "array",
+            "label": "Messages",
+            "required": true
+          },
+          {
+            "name": "response_format",
+            "type": "select",
+            "label": "Response Format",
+            "validate": {
+              "enum": [
+                "text",
+                "json_object"
+              ]
+            }
+          },
+          {
+            "name": "reasoning_effort",
+            "type": "select",
+            "label": "Reasoning Effort",
+            "validate": {
+              "enum": [
+                "minimal",
+                "low",
+                "medium",
+                "high"
+              ]
+            }
+          },
+          {
+            "name": "parseJSONResponse",
+            "type": "boolean",
+            "label": "Parse JSON Response",
+            "required": true
+          }
+        ],
+        "restore": {
+          "expect": {
+            "stop": {
+              "mode": "chose"
+            },
+            "model": {
+              "mode": "chose",
+              "label": "gpt-5.5"
+            },
+            "select": {
+              "label": "Create a Chat Completion (GPT and o1 models)"
+            },
+            "messages": {
+              "mode": "chose",
+              "items": [
+                {
+                  "role": {
+                    "mode": "chose",
+                    "label": "Developer / System"
+                  }
+                },
+                {
+                  "role": {
+                    "mode": "chose",
+                    "label": "User"
+                  }
+                }
+              ]
+            },
+            "logit_bias": {
+              "mode": "chose"
+            },
+            "tool_choice": {
+              "mode": "chose",
+              "label": "Empty"
+            },
+            "response_format": {
+              "mode": "chose",
+              "label": "JSON Object"
+            },
+            "reasoning_effort": {
+              "mode": "chose",
+              "label": "Medium"
+            },
+            "parseJSONResponse": {
+              "mode": "chose"
+            },
+            "additionalParameters": {
+              "mode": "chose"
+            }
+          },
+          "parameters": {
+            "__IMTCONN__": {
+              "data": {
+                "scoped": "true",
+                "connection": "openai-gpt-3"
+              },
+              "label": "My OpenAI connection"
+            }
+          }
+        },
+        "advanced": true,
+        "designer": {
+          "x": 300,
+          "y": 750,
+          "name": "OpenAI Native - Booking Intent Determiner"
+        },
+        "interface": [
+          {
+            "name": "result",
+            "type": "any",
+            "label": "Result"
+          },
+          {
+            "name": "id",
+            "type": "text",
+            "label": "ID"
+          },
+          {
+            "name": "object",
+            "type": "text",
+            "label": "Object"
+          },
+          {
+            "name": "created",
+            "type": "date",
+            "label": "Created"
+          },
+          {
+            "name": "model",
+            "type": "text",
+            "label": "Model"
+          },
+          {
+            "name": "choices",
+            "spec": [
+              {
+                "name": "text",
+                "type": "text",
+                "label": "Text"
+              },
+              {
+                "name": "index",
+                "type": "number",
+                "label": "Index"
+              },
+              {
+                "name": "logprobs",
+                "type": "text",
+                "label": "Log Probs"
+              },
+              {
+                "name": "finish_reason",
+                "type": "text",
+                "label": "Finish Reason"
+              },
+              {
+                "name": "message",
+                "spec": [
+                  {
+                    "name": "role",
+                    "type": "text",
+                    "label": "Role"
+                  },
+                  {
+                    "name": "content",
+                    "type": "text",
+                    "label": "Content"
+                  },
+                  {
+                    "name": "tool_calls",
+                    "spec": [
+                      {
+                        "name": "id",
+                        "type": "text",
+                        "label": "ID"
+                      },
+                      {
+                        "name": "type",
+                        "type": "text",
+                        "label": "Type"
+                      },
+                      {
+                        "name": "function",
+                        "spec": [
+                          {
+                            "name": "name",
+                            "type": "text",
+                            "label": "Name"
+                          },
+                          {
+                            "name": "arguments",
+                            "type": "text",
+                            "label": "Arguments"
+                          }
+                        ],
+                        "type": "collection",
+                        "label": "Function"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Tool Calls"
+                  },
+                  {
+                    "name": "refusal",
+                    "type": "text",
+                    "label": "Refusal"
+                  },
+                  {
+                    "name": "annotations",
+                    "spec": [
+                      {
+                        "name": "type",
+                        "type": "text",
+                        "label": "Type"
+                      },
+                      {
+                        "name": "url_citation",
+                        "spec": [
+                          {
+                            "name": "end_index",
+                            "type": "number",
+                            "label": "End Index"
+                          },
+                          {
+                            "name": "start_index",
+                            "type": "number",
+                            "label": "Start Index"
+                          },
+                          {
+                            "name": "title",
+                            "type": "text",
+                            "label": "Title"
+                          },
+                          {
+                            "name": "url",
+                            "type": "text",
+                            "label": "URL"
+                          }
+                        ],
+                        "type": "collection",
+                        "label": "URL Citation"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Annotations"
+                  }
+                ],
+                "type": "collection",
+                "label": "Message"
+              }
+            ],
+            "type": "array",
+            "label": "Choices"
+          },
+          {
+            "name": "usage",
+            "spec": [
+              {
+                "name": "prompt_tokens",
+                "type": "number",
+                "label": "Prompt Tokens"
+              },
+              {
+                "name": "completion_tokens",
+                "type": "text",
+                "label": "Completion Tokens"
+              },
+              {
+                "name": "total_tokens",
+                "type": "number",
+                "label": "Total Tokens"
+              },
+              {
+                "name": "prompt_tokens_details",
+                "spec": [
+                  {
+                    "name": "cached_tokens",
+                    "type": "uinteger",
+                    "label": "Cached Tokens"
+                  },
+                  {
+                    "name": "text_tokens",
+                    "type": "uinteger",
+                    "label": "Text Tokens"
+                  },
+                  {
+                    "name": "image_tokens",
+                    "type": "uinteger",
+                    "label": "Image Tokens"
+                  },
+                  {
+                    "name": "audio_tokens",
+                    "type": "uinteger",
+                    "label": "Audio Tokens"
+                  }
+                ],
+                "type": "collection",
+                "label": "Prompt Tokens Details"
+              },
+              {
+                "name": "completion_tokens_details",
+                "spec": [
+                  {
+                    "name": "reasoning_tokens",
+                    "type": "uinteger",
+                    "label": "Reasoning Tokens"
+                  },
+                  {
+                    "name": "text_tokens",
+                    "type": "uinteger",
+                    "label": "Text Tokens"
+                  },
+                  {
+                    "name": "audio_tokens",
+                    "type": "uinteger",
+                    "label": "Audio Tokens"
+                  },
+                  {
+                    "name": "accepted_prediction_tokens",
+                    "type": "uinteger",
+                    "label": "Accepted Prediction Tokens"
+                  },
+                  {
+                    "name": "rejected_prediction_tokens",
+                    "type": "uinteger",
+                    "label": "Rejected Prediction Tokens"
+                  }
+                ],
+                "type": "collection",
+                "label": "Completion Tokens Details"
+              }
+            ],
+            "type": "collection",
+            "label": "Usage"
+          },
+          {
+            "name": "service_tier",
+            "type": "text",
+            "label": "Service Tier"
+          },
+          {
+            "name": "system_fingerprint",
+            "type": "text",
+            "label": "System Fingerprint"
+          }
+        ],
+        "parameters": [
+          {
+            "name": "__IMTCONN__",
+            "type": "account:openai-gpt-3",
+            "label": "Connection",
+            "required": true
+          }
+        ]
+      },
+      "parameters": {
+        "__IMTCONN__": 1868931
+      }
+    },
+    {
+      "id": 3,
+      "mapper": null,
+      "module": "builtin:BasicRouter",
+      "routes": [
+        {
+          "flow": [
+            {
+              "id": 4,
+              "filter": {
+                "name": "Intent is root - Discovery Call",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{2.result.intent_index}}",
+                      "b": "root",
+                      "o": "text:equal"
+                    },
+                    {
+                      "a": "{{2.result.needs_clarification}}",
+                      "b": "false",
+                      "o": "text:equal"
+                    }
+                  ]
+                ]
+              },
+              "mapper": {
+                "qs": [
+                  {
+                    "key": "startDate",
+                    "value": "{{2.result.startDateMs}}"
+                  },
+                  {
+                    "key": "endDate",
+                    "value": "{{2.result.endDateMs}}"
+                  },
+                  {
+                    "key": "timezone",
+                    "value": "{{1.message.toolCalls[].function.arguments.timezone}}"
+                  }
+                ],
+                "url": "/calendars/5M1rPVCdLebDqDEfuF3I/free-slots",
+                "method": "GET",
+                "headers": [
+                  {
+                    "key": "Version",
+                    "value": "2021-07-28"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "module": "highlevel:universal",
+              "version": 1,
+              "metadata": {
+                "expect": [
+                  {
+                    "name": "url",
+                    "type": "text",
+                    "label": "URL",
+                    "required": true
+                  },
+                  {
+                    "name": "method",
+                    "type": "select",
+                    "label": "Method",
+                    "required": true,
+                    "validate": {
+                      "enum": [
+                        "GET",
+                        "POST",
+                        "PUT",
+                        "PATCH",
+                        "DELETE"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "headers",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key"
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Headers"
+                  },
+                  {
+                    "name": "qs",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key"
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Query String"
+                  },
+                  {
+                    "name": "body",
+                    "type": "any",
+                    "label": "Body"
+                  }
+                ],
+                "restore": {
+                  "expect": {
+                    "qs": {
+                      "mode": "chose",
+                      "items": [
+                        null,
+                        null,
+                        null
+                      ]
+                    },
+                    "method": {
+                      "mode": "chose",
+                      "label": "GET"
+                    },
+                    "headers": {
+                      "mode": "chose",
+                      "items": [
+                        null,
+                        null
+                      ]
+                    }
+                  },
+                  "parameters": {
+                    "__IMTCONN__": {
+                      "data": {
+                        "scoped": "true",
+                        "connection": "highlevel3"
+                      },
+                      "label": "NPG GHL New (Location: Naidu Property Consulting Services)"
+                    }
+                  }
+                },
+                "designer": {
+                  "x": 900,
+                  "y": 0,
+                  "name": "HighLevel Native API - Free Slots - Discovery Call"
+                },
+                "parameters": [
+                  {
+                    "name": "__IMTCONN__",
+                    "type": "account:highlevel3,highlevel4",
+                    "label": "Connection",
+                    "required": true
+                  }
+                ]
+              },
+              "parameters": {
+                "__IMTCONN__": 14198933
+              }
+            },
+            {
+              "id": 5,
+              "mapper": {
+                "body": "{\r\n  \"results\": [\r\n    {\r\n      \"toolCallId\": \"{{1.message.toolCalls[].id}}\",\r\n      \"result\": {\r\n        \"success\": true,\r\n        \"intent_index\": \"root\",\r\n        \"booking_type\": \"Discovery Call\",\r\n        \"calendarId\": \"5M1rPVCdLebDqDEfuF3I\",\r\n        \"timezone\": \"{{1.message.toolCalls[].function.arguments.timezone}}\",\r\n        \"startDateMs\": \"{{1.message.toolCalls[].function.arguments.startDateMs}}\",\r\n        \"endDateMs\": \"{{1.message.toolCalls[].function.arguments.endDateMs}}\",\r\n        \"duration_minutes\": \"{{1.message.toolCalls[].function.arguments.duration_minutes}}\",\r\n        \"message\": \"Availability returned from GoHighLevel. Offer only slots from the availability object. Do not create a booking from this tool.\",\r\n        \"classifier_intent_index\": \"{{2.result.intent_index}}\",\r\n        \"classifier_intent_label\": \"{{2.result.intent_label}}\",\r\n        \"classifier_confidence\": \"{{2.result.confidence}}\",\r\n        \"classifier_needs_clarification\": \"{{2.result.needs_clarification}}\",\r\n        \"classifier_clarification_question\": \"{{2.result.clarification_question}}\",\r\n        \"classifier_routing_reason\": \"{{2.result.routing_reason}}\",\r\n        \"availability\": {{4.body}}      }\r\n    }\r\n  ]\r\n}",
+                "status": "200",
+                "headers": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "module": "gateway:WebhookRespond",
+              "version": 1,
+              "metadata": {
+                "expect": [
+                  {
+                    "name": "status",
+                    "type": "uinteger",
+                    "label": "Status",
+                    "required": true,
+                    "validate": {
+                      "min": 100
+                    }
+                  },
+                  {
+                    "name": "body",
+                    "type": "any",
+                    "label": "Body"
+                  },
+                  {
+                    "name": "headers",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key",
+                        "required": true,
+                        "validate": {
+                          "max": 256
+                        }
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value",
+                        "required": true,
+                        "validate": {
+                          "max": 4096
+                        }
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Custom headers",
+                    "validate": {
+                      "maxItems": 16
+                    }
+                  }
+                ],
+                "restore": {
+                  "expect": {
+                    "headers": {
+                      "mode": "chose",
+                      "items": [
+                        null
+                      ]
+                    }
+                  }
+                },
+                "designer": {
+                  "x": 1200,
+                  "y": 0,
+                  "name": "Return Discovery Call Availability to Vapi"
+                }
+              },
+              "parameters": {}
+            }
+          ]
+        },
+        {
+          "flow": [
+            {
+              "id": 6,
+              "filter": {
+                "name": "Intent is 2 - Strategy Session (Phone)",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{2.result.intent_index}}",
+                      "b": "2",
+                      "o": "text:equal"
+                    },
+                    {
+                      "a": "{{2.result.needs_clarification}}",
+                      "b": "false",
+                      "o": "text:equal"
+                    }
+                  ]
+                ]
+              },
+              "mapper": {
+                "qs": [
+                  {
+                    "key": "startDate",
+                    "value": "{{2.result.startDateMs}}"
+                  },
+                  {
+                    "key": "endDate",
+                    "value": "{{2.result.endDateMs}}"
+                  },
+                  {
+                    "key": "timezone",
+                    "value": "{{1.message.toolCalls[].function.arguments.timezone}}"
+                  }
+                ],
+                "url": "/calendars/Nr7WZglMgBoYVReScWBA/free-slots",
+                "method": "GET",
+                "headers": [
+                  {
+                    "key": "Version",
+                    "value": "2021-07-28"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "module": "highlevel:universal",
+              "version": 1,
+              "metadata": {
+                "expect": [
+                  {
+                    "name": "url",
+                    "type": "text",
+                    "label": "URL",
+                    "required": true
+                  },
+                  {
+                    "name": "method",
+                    "type": "select",
+                    "label": "Method",
+                    "required": true,
+                    "validate": {
+                      "enum": [
+                        "GET",
+                        "POST",
+                        "PUT",
+                        "PATCH",
+                        "DELETE"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "headers",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key"
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Headers"
+                  },
+                  {
+                    "name": "qs",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key"
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Query String"
+                  },
+                  {
+                    "name": "body",
+                    "type": "any",
+                    "label": "Body"
+                  }
+                ],
+                "restore": {
+                  "expect": {
+                    "qs": {
+                      "mode": "chose",
+                      "items": [
+                        null,
+                        null,
+                        null
+                      ]
+                    },
+                    "method": {
+                      "mode": "chose",
+                      "label": "GET"
+                    },
+                    "headers": {
+                      "mode": "chose",
+                      "items": [
+                        null,
+                        null
+                      ]
+                    }
+                  },
+                  "parameters": {
+                    "__IMTCONN__": {
+                      "data": {
+                        "scoped": "true",
+                        "connection": "highlevel3"
+                      },
+                      "label": "NPG GHL New (Location: Naidu Property Consulting Services)"
+                    }
+                  }
+                },
+                "designer": {
+                  "x": 900,
+                  "y": 300,
+                  "name": "HighLevel Native API - Free Slots - Strategy Session Phone"
+                },
+                "parameters": [
+                  {
+                    "name": "__IMTCONN__",
+                    "type": "account:highlevel3,highlevel4",
+                    "label": "Connection",
+                    "required": true
+                  }
+                ]
+              },
+              "parameters": {
+                "__IMTCONN__": 14198933
+              }
+            },
+            {
+              "id": 7,
+              "mapper": {
+                "body": "{ \"results\": [ { \"toolCallId\": \"{{1.message.toolCallList[].id}}\", \"result\": { \"success\": true, \"intent_index\": \"2\", \"booking_type\": \"Strategy Session (Phone)\", \"calendarId\": \"Nr7WZglMgBoYVReScWBA\", \"timezone\": \"{{1.message.toolCalls[].function.arguments.timezone}}\", \"startDateMs\": \"{{1.message.toolCalls[].function.arguments.startDateMs}}\", \"endDateMs\": \"{{1.message.toolCalls[].function.arguments.endDateMs}}\", \"duration_minutes\": \"{{1.message.toolCalls[].function.arguments.duration_minutes}}\", \"message\": \"Availability returned from GoHighLevel. Offer only slots from the availability object. Do not create a booking from this tool.\", \"classifier_intent_index\": \"{{2.result.intent_index}}\", \"classifier_intent_label\": \"{{2.result.intent_label}}\", \"classifier_confidence\": \"{{2.result.confidence}}\", \"classifier_needs_clarification\": \"{{2.result.needs_clarification}}\", \"classifier_clarification_question\": \"{{2.result.clarification_question}}\", \"classifier_routing_reason\": \"{{2.result.routing_reason}}\", \"availability\": {{6.body}} } } ] }",
+                "status": "200",
+                "headers": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "module": "gateway:WebhookRespond",
+              "version": 1,
+              "metadata": {
+                "expect": [
+                  {
+                    "name": "status",
+                    "type": "uinteger",
+                    "label": "Status",
+                    "required": true,
+                    "validate": {
+                      "min": 100
+                    }
+                  },
+                  {
+                    "name": "body",
+                    "type": "any",
+                    "label": "Body"
+                  },
+                  {
+                    "name": "headers",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key",
+                        "required": true,
+                        "validate": {
+                          "max": 256
+                        }
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value",
+                        "required": true,
+                        "validate": {
+                          "max": 4096
+                        }
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Custom headers",
+                    "validate": {
+                      "maxItems": 16
+                    }
+                  }
+                ],
+                "restore": {
+                  "expect": {
+                    "headers": {
+                      "mode": "chose",
+                      "items": [
+                        null
+                      ]
+                    }
+                  }
+                },
+                "designer": {
+                  "x": 1200,
+                  "y": 300,
+                  "name": "Return Strategy Session (Phone) Availability to Vapi"
+                }
+              },
+              "parameters": {}
+            }
+          ]
+        },
+        {
+          "flow": [
+            {
+              "id": 8,
+              "filter": {
+                "name": "Intent is 2_1 - Strategy Session (Zoom)",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{2.result.intent_index}}",
+                      "b": "2_1",
+                      "o": "text:equal"
+                    },
+                    {
+                      "a": "{{2.result.needs_clarification}}",
+                      "b": "false",
+                      "o": "text:equal"
+                    }
+                  ]
+                ]
+              },
+              "mapper": {
+                "qs": [
+                  {
+                    "key": "startDate",
+                    "value": "{{2.result.startDateMs}}"
+                  },
+                  {
+                    "key": "endDate",
+                    "value": "{{2.result.endDateMs}}"
+                  },
+                  {
+                    "key": "timezone",
+                    "value": "{{1.message.toolCalls[].function.arguments.timezone}}"
+                  }
+                ],
+                "url": "/calendars/SWDeCPXczWmwl6DdEGT/free-slots",
+                "method": "GET",
+                "headers": [
+                  {
+                    "key": "Version",
+                    "value": "2021-07-28"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "module": "highlevel:universal",
+              "version": 1,
+              "metadata": {
+                "expect": [
+                  {
+                    "name": "url",
+                    "type": "text",
+                    "label": "URL",
+                    "required": true
+                  },
+                  {
+                    "name": "method",
+                    "type": "select",
+                    "label": "Method",
+                    "required": true,
+                    "validate": {
+                      "enum": [
+                        "GET",
+                        "POST",
+                        "PUT",
+                        "PATCH",
+                        "DELETE"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "headers",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key"
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Headers"
+                  },
+                  {
+                    "name": "qs",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key"
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Query String"
+                  },
+                  {
+                    "name": "body",
+                    "type": "any",
+                    "label": "Body"
+                  }
+                ],
+                "restore": {
+                  "expect": {
+                    "qs": {
+                      "mode": "chose",
+                      "items": [
+                        null,
+                        null,
+                        null
+                      ]
+                    },
+                    "method": {
+                      "mode": "chose",
+                      "label": "GET"
+                    },
+                    "headers": {
+                      "mode": "chose",
+                      "items": [
+                        null,
+                        null
+                      ]
+                    }
+                  },
+                  "parameters": {
+                    "__IMTCONN__": {
+                      "data": {
+                        "scoped": "true",
+                        "connection": "highlevel3"
+                      },
+                      "label": "NPG GHL New (Location: Naidu Property Consulting Services)"
+                    }
+                  }
+                },
+                "designer": {
+                  "x": 900,
+                  "y": 600,
+                  "name": "HighLevel Native API - Free Slots - Strategy Session Zoom"
+                },
+                "parameters": [
+                  {
+                    "name": "__IMTCONN__",
+                    "type": "account:highlevel3,highlevel4",
+                    "label": "Connection",
+                    "required": true
+                  }
+                ]
+              },
+              "parameters": {
+                "__IMTCONN__": 14198933
+              }
+            },
+            {
+              "id": 9,
+              "mapper": {
+                "body": "{ \"results\": [ { \"toolCallId\": \"{{1.message.toolCallList[].id}}\", \"result\": { \"success\": true, \"intent_index\": \"2_1\", \"booking_type\": \"Strategy Session (Zoom)\", \"calendarId\": \"SWDeCPXczWmwl6DdEGT\", \"timezone\": \"{{1.message.toolCalls[].function.arguments.timezone}}\", \"startDateMs\": \"{{1.message.toolCalls[].function.arguments.startDateMs}}\", \"endDateMs\": \"{{1.message.toolCalls[].function.arguments.endDateMs}}\", \"duration_minutes\": \"{{1.message.toolCalls[].function.arguments.duration_minutes}}\", \"message\": \"Availability returned from GoHighLevel. Offer only slots from the availability object. Do not create a booking from this tool.\", \"classifier_intent_index\": \"{{2.result.intent_index}}\", \"classifier_intent_label\": \"{{2.result.intent_label}}\", \"classifier_confidence\": \"{{2.result.confidence}}\", \"classifier_needs_clarification\": \"{{2.result.needs_clarification}}\", \"classifier_clarification_question\": \"{{2.result.clarification_question}}\", \"classifier_routing_reason\": \"{{2.result.routing_reason}}\", \"availability\": {{8.body}} } } ] }",
+                "status": "200",
+                "headers": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "module": "gateway:WebhookRespond",
+              "version": 1,
+              "metadata": {
+                "expect": [
+                  {
+                    "name": "status",
+                    "type": "uinteger",
+                    "label": "Status",
+                    "required": true,
+                    "validate": {
+                      "min": 100
+                    }
+                  },
+                  {
+                    "name": "body",
+                    "type": "any",
+                    "label": "Body"
+                  },
+                  {
+                    "name": "headers",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key",
+                        "required": true,
+                        "validate": {
+                          "max": 256
+                        }
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value",
+                        "required": true,
+                        "validate": {
+                          "max": 4096
+                        }
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Custom headers",
+                    "validate": {
+                      "maxItems": 16
+                    }
+                  }
+                ],
+                "restore": {
+                  "expect": {
+                    "headers": {
+                      "mode": "chose",
+                      "items": [
+                        null
+                      ]
+                    }
+                  }
+                },
+                "designer": {
+                  "x": 1200,
+                  "y": 600,
+                  "name": "Return Strategy Session (Zoom) Availability to Vapi"
+                }
+              },
+              "parameters": {}
+            }
+          ]
+        },
+        {
+          "flow": [
+            {
+              "id": 10,
+              "filter": {
+                "name": "Intent is 3 - Initial Finance Consult (Phone)",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{2.result.intent_index}}",
+                      "b": "3",
+                      "o": "text:equal"
+                    },
+                    {
+                      "a": "{{2.result.needs_clarification}}",
+                      "b": "false",
+                      "o": "text:equal"
+                    }
+                  ]
+                ]
+              },
+              "mapper": {
+                "qs": [
+                  {
+                    "key": "startDate",
+                    "value": "{{2.result.startDateMs}}"
+                  },
+                  {
+                    "key": "endDate",
+                    "value": "{{2.result.startDateMs}}"
+                  },
+                  {
+                    "key": "timezone",
+                    "value": "{{1.message.toolCalls[].function.arguments.timezone}}"
+                  }
+                ],
+                "url": "/calendars/SYn3BWdOefiNHOC4KPVw/free-slots",
+                "method": "GET",
+                "headers": [
+                  {
+                    "key": "Version",
+                    "value": "2021-07-28"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "module": "highlevel:universal",
+              "version": 1,
+              "metadata": {
+                "expect": [
+                  {
+                    "name": "url",
+                    "type": "text",
+                    "label": "URL",
+                    "required": true
+                  },
+                  {
+                    "name": "method",
+                    "type": "select",
+                    "label": "Method",
+                    "required": true,
+                    "validate": {
+                      "enum": [
+                        "GET",
+                        "POST",
+                        "PUT",
+                        "PATCH",
+                        "DELETE"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "headers",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key"
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Headers"
+                  },
+                  {
+                    "name": "qs",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key"
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Query String"
+                  },
+                  {
+                    "name": "body",
+                    "type": "any",
+                    "label": "Body"
+                  }
+                ],
+                "restore": {
+                  "expect": {
+                    "qs": {
+                      "mode": "chose",
+                      "items": [
+                        null,
+                        null,
+                        null
+                      ]
+                    },
+                    "method": {
+                      "mode": "chose",
+                      "label": "GET"
+                    },
+                    "headers": {
+                      "mode": "chose",
+                      "items": [
+                        null,
+                        null
+                      ]
+                    }
+                  },
+                  "parameters": {
+                    "__IMTCONN__": {
+                      "data": {
+                        "scoped": "true",
+                        "connection": "highlevel3"
+                      },
+                      "label": "NPG GHL New (Location: Naidu Property Consulting Services)"
+                    }
+                  }
+                },
+                "designer": {
+                  "x": 900,
+                  "y": 900,
+                  "name": "HighLevel Native API - Free Slots - IFC Phone"
+                },
+                "parameters": [
+                  {
+                    "name": "__IMTCONN__",
+                    "type": "account:highlevel3,highlevel4",
+                    "label": "Connection",
+                    "required": true
+                  }
+                ]
+              },
+              "parameters": {
+                "__IMTCONN__": 14198933
+              }
+            },
+            {
+              "id": 11,
+              "mapper": {
+                "body": "{ \"results\": [ { \"toolCallId\": \"{{1.message.toolCalls[].id}}, \"result\": { \"success\": true, \"intent_index\": \"3\", \"booking_type\": \"Initial Finance Consult (Phone)\", \"calendarId\": \"SYn3BWdOefiNHOC4KPVw\", \"timezone\": \"{{1.message.toolCalls[].function.arguments.timezone}}\", \"startDateMs\": \"{{1.message.toolCalls[].function.arguments.startDateMs}}\", \"endDateMs\": \"{{1.message.toolCalls[].function.arguments.endDateMs}}\", \"duration_minutes\": \"{{1.message.toolCalls[].function.arguments.duration_minutes}}\", \"message\": \"Availability returned from GoHighLevel. Offer only slots from the availability object. Do not create a booking from this tool.\", \"classifier_intent_index\": \"{{2.result.intent_index}}\", \"classifier_intent_label\": \"{{2.result.intent_label}}\", \"classifier_confidence\": \"{{2.result.confidence}}\", \"classifier_needs_clarification\": \"{{2.result.needs_clarification}}\", \"classifier_clarification_question\": \"{{2.result.clarification_question}}\", \"classifier_routing_reason\": \"{{2.result.routing_reason}}\", \"availability\": {{10.body}} } } ] }",
+                "status": "200",
+                "headers": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "module": "gateway:WebhookRespond",
+              "version": 1,
+              "metadata": {
+                "expect": [
+                  {
+                    "name": "status",
+                    "type": "uinteger",
+                    "label": "Status",
+                    "required": true,
+                    "validate": {
+                      "min": 100
+                    }
+                  },
+                  {
+                    "name": "body",
+                    "type": "any",
+                    "label": "Body"
+                  },
+                  {
+                    "name": "headers",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key",
+                        "required": true,
+                        "validate": {
+                          "max": 256
+                        }
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value",
+                        "required": true,
+                        "validate": {
+                          "max": 4096
+                        }
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Custom headers",
+                    "validate": {
+                      "maxItems": 16
+                    }
+                  }
+                ],
+                "restore": {
+                  "expect": {
+                    "headers": {
+                      "mode": "chose",
+                      "items": [
+                        null
+                      ]
+                    }
+                  }
+                },
+                "designer": {
+                  "x": 1200,
+                  "y": 900,
+                  "name": "Return Initial Finance Consult (Phone) Availability to Vapi"
+                }
+              },
+              "parameters": {}
+            }
+          ]
+        },
+        {
+          "flow": [
+            {
+              "id": 12,
+              "filter": {
+                "name": "Intent is 3_1 - Initial Finance Consult (Zoom)",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{2.result.intent_index}}",
+                      "b": "3_1",
+                      "o": "text:equal"
+                    },
+                    {
+                      "a": "{{2.result.needs_clarification}}",
+                      "b": "false",
+                      "o": "text:equal"
+                    }
+                  ]
+                ]
+              },
+              "mapper": {
+                "qs": [
+                  {
+                    "key": "startDate",
+                    "value": "{{2.result.startDateMs}}"
+                  },
+                  {
+                    "key": "endDate",
+                    "value": "{{2.result.endDateMs}}"
+                  },
+                  {
+                    "key": "timezone",
+                    "value": "{{1.message.toolCalls[].function.arguments.timezone}}"
+                  }
+                ],
+                "url": "/calendars/cyb8qKO11DgUMMHHK4ZJI/free-slots",
+                "method": "GET",
+                "headers": [
+                  {
+                    "key": "Version",
+                    "value": "2021-07-28"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "module": "highlevel:universal",
+              "version": 1,
+              "metadata": {
+                "expect": [
+                  {
+                    "name": "url",
+                    "type": "text",
+                    "label": "URL",
+                    "required": true
+                  },
+                  {
+                    "name": "method",
+                    "type": "select",
+                    "label": "Method",
+                    "required": true,
+                    "validate": {
+                      "enum": [
+                        "GET",
+                        "POST",
+                        "PUT",
+                        "PATCH",
+                        "DELETE"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "headers",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key"
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Headers"
+                  },
+                  {
+                    "name": "qs",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key"
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Query String"
+                  },
+                  {
+                    "name": "body",
+                    "type": "any",
+                    "label": "Body"
+                  }
+                ],
+                "restore": {
+                  "expect": {
+                    "qs": {
+                      "mode": "chose",
+                      "items": [
+                        null,
+                        null,
+                        null
+                      ]
+                    },
+                    "method": {
+                      "mode": "chose",
+                      "label": "GET"
+                    },
+                    "headers": {
+                      "mode": "chose",
+                      "items": [
+                        null,
+                        null
+                      ]
+                    }
+                  },
+                  "parameters": {
+                    "__IMTCONN__": {
+                      "data": {
+                        "scoped": "true",
+                        "connection": "highlevel3"
+                      },
+                      "label": "NPG GHL New (Location: Naidu Property Consulting Services)"
+                    }
+                  }
+                },
+                "designer": {
+                  "x": 900,
+                  "y": 1200,
+                  "name": "HighLevel Native API - Free Slots - IFC Zoom"
+                },
+                "parameters": [
+                  {
+                    "name": "__IMTCONN__",
+                    "type": "account:highlevel3,highlevel4",
+                    "label": "Connection",
+                    "required": true
+                  }
+                ]
+              },
+              "parameters": {
+                "__IMTCONN__": 14198933
+              }
+            },
+            {
+              "id": 13,
+              "mapper": {
+                "body": "{ \"results\": [ { \"toolCallId\": \"{{1.message.toolCallList[].id}}\", \"result\": { \"success\": true, \"intent_index\": \"3_1\", \"booking_type\": \"Initial Finance Consult (Zoom)\", \"calendarId\": \"cyb8qKO11DgUMMHHK4ZJI\", \"timezone\": \"{{1.message.toolCalls[].function.arguments.timezone}}\", \"startDateMs\": \"{{1.message.toolCalls[].function.arguments.startDateMs}}\", \"endDateMs\": \"{{1.message.toolCalls[].function.arguments.endDateMs}}\", \"duration_minutes\": \"{{1.message.toolCalls[].function.arguments.duration_minutes}}\", \"message\": \"Availability returned from GoHighLevel. Offer only slots from the availability object. Do not create a booking from this tool.\", \"classifier_intent_index\": \"{{2.result.intent_index}}\", \"classifier_intent_label\": \"{{2.result.intent_label}}\", \"classifier_confidence\": \"{{2.result.confidence}}\", \"classifier_needs_clarification\": \"{{2.result.needs_clarification}}\", \"classifier_clarification_question\": \"{{2.result.clarification_question}}\", \"classifier_routing_reason\": \"{{2.result.routing_reason}}\", \"availability\": {{12.body}} } } ] }",
+                "status": "200",
+                "headers": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "module": "gateway:WebhookRespond",
+              "version": 1,
+              "metadata": {
+                "expect": [
+                  {
+                    "name": "status",
+                    "type": "uinteger",
+                    "label": "Status",
+                    "required": true,
+                    "validate": {
+                      "min": 100
+                    }
+                  },
+                  {
+                    "name": "body",
+                    "type": "any",
+                    "label": "Body"
+                  },
+                  {
+                    "name": "headers",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key",
+                        "required": true,
+                        "validate": {
+                          "max": 256
+                        }
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value",
+                        "required": true,
+                        "validate": {
+                          "max": 4096
+                        }
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Custom headers",
+                    "validate": {
+                      "maxItems": 16
+                    }
+                  }
+                ],
+                "restore": {
+                  "expect": {
+                    "headers": {
+                      "mode": "chose",
+                      "items": [
+                        null
+                      ]
+                    }
+                  }
+                },
+                "designer": {
+                  "x": 1200,
+                  "y": 1200,
+                  "name": "Return Initial Finance Consult (Zoom) Availability to Vapi"
+                }
+              },
+              "parameters": {}
+            }
+          ]
+        },
+        {
+          "flow": [
+            {
+              "id": 14,
+              "filter": {
+                "name": "Intent needs clarification or classifier requests clarification",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{2.result.intent_index}}",
+                      "b": "clarification_needed",
+                      "o": "text:equal"
+                    }
+                  ],
+                  [
+                    {
+                      "a": "{{2.result.needs_clarification}}",
+                      "b": "true",
+                      "o": "text:equal"
+                    }
+                  ]
+                ]
+              },
+              "mapper": {
+                "body": "{\n  \"results\": [\n    {\n      \"toolCallId\": \"{{get(1.message.toolCallList; 1).id}}\",\n      \"result\": {\n        \"success\": false,\n        \"needs_clarification\": true,\n        \"message\": \"The booking type or call mode is unclear. Ask the caller a short clarification question before checking availability.\",\n        \"clarification_question\": \"{{2.result.clarification_question}}\",\n        \"allowed_booking_types\": [\n          \"Discovery Call\",\n          \"Strategy Session (Phone)\",\n          \"Strategy Session (Zoom)\",\n          \"Initial Finance Consult (Phone)\",\n          \"Initial Finance Consult (Zoom)\"\n        ],\n        \"classifier_intent_index\": \"{{2.result.intent_index}}\",\n        \"classifier_intent_label\": \"{{2.result.intent_label}}\",\n        \"classifier_confidence\": \"{{2.result.confidence}}\",\n        \"classifier_needs_clarification\": \"{{2.result.needs_clarification}}\",\n        \"classifier_clarification_question\": \"{{2.result.clarification_question}}\",\n        \"classifier_routing_reason\": \"{{2.result.routing_reason}}\"\n      }\n    }\n  ]\n}",
+                "status": "200",
+                "headers": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "module": "gateway:WebhookRespond",
+              "version": 1,
+              "metadata": {
+                "expect": [
+                  {
+                    "name": "status",
+                    "type": "uinteger",
+                    "label": "Status",
+                    "required": true,
+                    "validate": {
+                      "min": 100
+                    }
+                  },
+                  {
+                    "name": "body",
+                    "type": "any",
+                    "label": "Body"
+                  },
+                  {
+                    "name": "headers",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key",
+                        "required": true,
+                        "validate": {
+                          "max": 256
+                        }
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value",
+                        "required": true,
+                        "validate": {
+                          "max": 4096
+                        }
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Custom headers",
+                    "validate": {
+                      "maxItems": 16
+                    }
+                  }
+                ],
+                "restore": {
+                  "expect": {
+                    "headers": {
+                      "mode": "chose",
+                      "items": [
+                        null
+                      ]
+                    }
+                  }
+                },
+                "designer": {
+                  "x": 900,
+                  "y": 1500,
+                  "name": "Return Clarification Needed to Vapi"
+                }
+              },
+              "parameters": {}
+            }
+          ]
+        }
+      ],
+      "version": 1,
+      "metadata": {
+        "designer": {
+          "x": 600,
+          "y": 750,
+          "name": "Route by OpenAI intent_index"
+        }
+      },
+      "parameters": {}
+    }
+  ],
+  "name": "Vapi - GHL Availability Intent Router - Native HighLevel Universal API - Cascaded FINAL",
+  "metadata": {
+    "instant": true,
+    "version": 1,
+    "designer": {
+      "orphans": [],
+      "samples": {
+        "1": {
+          "message": {
+            "call": {
+              "id": "019e3f51-ef51-7997-b880-cc88b3e946e1",
+              "cost": 0,
+              "type": "inboundPhoneCall",
+              "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+              "status": "ringing",
+              "monitor": {
+                "listenUrl": "wss://phone-call-websocket.aws-us-west-2-backend-production1.vapi.ai/019e3f51-ef51-7997-b880-cc88b3e...",
+                "controlUrl": "https://phone-call-websocket.aws-us-west-2-backend-production1.vapi.ai/019e3f51-ef51-7997-b880-cc88b..."
+              },
+              "squadId": "a9656ea1-3575-4ac6-b985-fd138be06cc5",
+              "customer": {
+                "name": "+61480845459",
+                "number": "+61480845459",
+                "sipUri": "sip:+61480845459@44.238.177.138:5060"
+              },
+              "createdAt": "2026-05-19T08:19:54.833Z",
+              "transport": {
+                "callSid": "f5ddd450-c39d-45ae-9f5e-1b332e4f389c",
+                "provider": "vapi.sip",
+                "sbcCallSid": "62ac2512ccff080f6c2078a0cd821dc8@0.0.0.0",
+                "conversationType": "voice"
+              },
+              "updatedAt": "2026-05-19T08:19:54.833Z",
+              "phoneNumberId": "ae35b1f3-25c4-4620-ac13-525a58da96c9",
+              "phoneCallProvider": "vapi",
+              "assistantOverrides": {
+                "variableValues": {
+                  "cid": "62ac2512ccff080f6c2078a0cd821dc8@0.0.0.0",
+                  "account-sid": "c033b672-5b99-42ae-9ce2-b231e9a522fb",
+                  "forwarded-for": "54.172.60.1",
+                  "twilio-callsid": "CAa972702f23aca1203f6c9395b06bc039",
+                  "application-sid": "79d078c8-76b2-452a-99e0-ddd5abbf6269",
+                  "voip-carrier-sid": "bdf16bcf-a774-46b0-873d-9105dcda3ce9",
+                  "twilio-accountsid": "{{SECRET:TWILIO_ACCOUNT_SID}}",
+                  "originating-carrier": "Twilio"
+                }
+              },
+              "phoneCallTransport": "sip",
+              "phoneCallProviderId": "f5ddd450-c39d-45ae-9f5e-1b332e4f389c",
+              "phoneCallProviderDetails": {
+                "sip": {
+                  "raw": "INVITE sip:naidupropertyconsultingservices@sip.vapi.ai SIP/2.0\r\nVia: SIP/2.0/UDP 44.238.177.138;rpor...",
+                  "uri": "sip:naidupropertyconsultingservices@sip.vapi.ai",
+                  "body": "v=0\r\no=root 267717878 267717878 IN IP4 172.30.42.239\r\ns=Twilio Media Gateway\r\nc=IN IP4 172.30.42.239...",
+                  "method": "INVITE",
+                  "headers": {
+                    "to": "<sip:naidupropertyconsultingservices@sip.vapi.ai>",
+                    "via": "SIP/2.0/UDP 44.238.177.138;rport=5060;branch=z9hG4bK0caD62Q8QZ2Up;received=172.31.9.106",
+                    "cseq": "115035605 INVITE",
+                    "from": "\"+61480845459\" <sip:+61480845459@44.238.177.138:5060>;tag=UK13Dj57r319c",
+                    "X-CID": "62ac2512ccff080f6c2078a0cd821dc8@0.0.0.0",
+                    "allow": "INVITE, ACK, CANCEL, OPTIONS, BYE, REFER, NOTIFY",
+                    "min-se": "120",
+                    "call-id": "5b6bb9be-cdfe-123f-ac95-0a6b2821a33f",
+                    "contact": "<sip:172.31.9.106:5060>",
+                    "user-agent": "Twilio Gateway",
+                    "content-type": "application/sdp",
+                    "max-forwards": "70",
+                    "X-Account-Sid": "c033b672-5b99-42ae-9ce2-b231e9a522fb",
+                    "content-length": "289",
+                    "X-Forwarded-For": "54.172.60.1",
+                    "X-Twilio-CallSid": "CAa972702f23aca1203f6c9395b06bc039",
+                    "X-Application-Sid": "79d078c8-76b2-452a-99e0-ddd5abbf6269",
+                    "X-Voip-Carrier-Sid": "bdf16bcf-a774-46b0-873d-9105dcda3ce9",
+                    "X-Twilio-AccountSid": "{{SECRET:TWILIO_ACCOUNT_SID}}",
+                    "p-asserted-identity": "<sip:+61480845459@sip.twilio.com>",
+                    "X-Originating-Carrier": "Twilio"
+                  },
+                  "payload": [
+                    {
+                      "type": "application/sdp",
+                      "content": "v=0\r\no=root 267717878 267717878 IN IP4 172.30.42.239\r\ns=Twilio Media Gateway\r\nc=IN IP4 172.30.42.239..."
+                    }
+                  ],
+                  "version": "2.0"
+                },
+                "sbcCallId": "62ac2512ccff080f6c2078a0cd821dc8@0.0.0.0"
+              }
+            },
+            "type": "tool-calls",
+            "artifact": {
+              "messages": [
+                {
+                  "name": "handoff_to_assistant",
+                  "role": "tool_calls",
+                  "time": 1779178887574,
+                  "result": "Handoff initiated.",
+                  "source": null,
+                  "endTime": 1779178884050,
+                  "message": "Yeah. Tomorrow is fine.",
+                  "duration": 968,
+                  "metadata": {
+                    "toolType": "handoff",
+                    "wordLevelConfidence": [
+                      {
+                        "end": 1779178884050,
+                        "word": "fine.",
+                        "start": 1779178883808,
+                        "language": null,
+                        "confidence": 1,
+                        "punctuated_word": "fine."
+                      }
+                    ]
+                  },
+                  "toolCalls": [
+                    {
+                      "id": "call_E2PnJLOIXetoWQEsrgWsCKym",
+                      "type": "function",
+                      "function": {
+                        "name": "ghl_check_availability",
+                        "arguments": "{\n  \"timezone\": \"Australia/Sydney\",\n  \"startDateMs\": \"1768887600000\",\n  \"endDateMs\": \"1768905600000\"..."
+                      }
+                    }
+                  ],
+                  "toolCallId": "call_hOucu0UjZYZzBXxTZu0EHzst",
+                  "secondsFromStart": 92.373
+                }
+              ],
+              "variables": {
+                "cid": "62ac2512ccff080f6c2078a0cd821dc8@0.0.0.0",
+                "day": "19",
+                "now": "May 19, 2026, 8:19 AM UTC",
+                "call": {
+                  "id": "019e3f51-ef51-7997-b880-cc88b3e946e1",
+                  "type": "inboundPhoneCall",
+                  "status": "ringing",
+                  "createdAt": "2026-05-19T08:19:54.833Z",
+                  "transport": {
+                    "callSid": "f5ddd450-c39d-45ae-9f5e-1b332e4f389c",
+                    "provider": "vapi.sip",
+                    "sbcCallSid": "62ac2512ccff080f6c2078a0cd821dc8@0.0.0.0",
+                    "conversationType": "voice"
+                  },
+                  "phoneCallProvider": "vapi"
+                },
+                "date": "May 19, 2026 UTC",
+                "time": "8:19 AM UTC",
+                "year": "2026",
+                "month": "May",
+                "phone": "+61480845459",
+                "customer": {
+                  "name": "+61480845459",
+                  "number": "+61480845459",
+                  "sipUri": "sip:+61480845459@44.238.177.138:5060"
+                },
+                "fullName": "lazarus ",
+                "contactId": "iH04pC64TJ3roKnCnyvx",
+                "firstName": "lazarus",
+                "transport": {
+                  "callSid": "f5ddd450-c39d-45ae-9f5e-1b332e4f389c",
+                  "provider": "vapi.sip",
+                  "sbcCallSid": "62ac2512ccff080f6c2078a0cd821dc8@0.0.0.0",
+                  "conversationType": "voice"
+                },
+                "account-sid": "c033b672-5b99-42ae-9ce2-b231e9a522fb",
+                "ghlFullName": "lazarus ",
+                "phoneNumber": {
+                  "id": "ae35b1f3-25c4-4620-ac13-525a58da96c9",
+                  "name": "NPC Services",
+                  "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+                  "server": {
+                    "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+                    "timeoutSeconds": 20
+                  },
+                  "sipUri": "sip:naidupropertyconsultingservices@sip.vapi.ai",
+                  "status": "active",
+                  "squadId": "a9656ea1-3575-4ac6-b985-fd138be06cc5",
+                  "provider": "vapi",
+                  "createdAt": "2026-01-31T08:01:39.887Z",
+                  "updatedAt": "2026-01-31T08:02:57.530Z"
+                },
+                "contactFound": true,
+                "contactState": "RESOLVED",
+                "ghlContactId": "iH04pC64TJ3roKnCnyvx",
+                "ghlFirstName": "lazarus",
+                "requiresName": false,
+                "forwarded-for": "54.172.60.1",
+                "requiresPhone": false,
+                "contactCreated": false,
+                "twilio-callsid": "CAa972702f23aca1203f6c9395b06bc039",
+                "application-sid": "79d078c8-76b2-452a-99e0-ddd5abbf6269",
+                "currentDateTime": "Tuesday, May 19, 2026 at 8:19 AM UTC",
+                "ghlContactPhone": "+61480845459",
+                "ghlContactState": "RESOLVED",
+                "voip-carrier-sid": "bdf16bcf-a774-46b0-873d-9105dcda3ce9",
+                "twilio-accountsid": "{{SECRET:TWILIO_ACCOUNT_SID}}",
+                "originating-carrier": "Twilio"
+              },
+              "variableValues": {
+                "cid": "62ac2512ccff080f6c2078a0cd821dc8@0.0.0.0",
+                "day": "19",
+                "now": "May 19, 2026, 8:19 AM UTC",
+                "call": {
+                  "id": "019e3f51-ef51-7997-b880-cc88b3e946e1",
+                  "type": "inboundPhoneCall",
+                  "status": "ringing",
+                  "createdAt": "2026-05-19T08:19:54.833Z",
+                  "transport": {
+                    "callSid": "f5ddd450-c39d-45ae-9f5e-1b332e4f389c",
+                    "provider": "vapi.sip",
+                    "sbcCallSid": "62ac2512ccff080f6c2078a0cd821dc8@0.0.0.0",
+                    "conversationType": "voice"
+                  },
+                  "phoneCallProvider": "vapi"
+                },
+                "date": "May 19, 2026 UTC",
+                "time": "8:19 AM UTC",
+                "year": "2026",
+                "month": "May",
+                "phone": "+61480845459",
+                "customer": {
+                  "name": "+61480845459",
+                  "number": "+61480845459",
+                  "sipUri": "sip:+61480845459@44.238.177.138:5060"
+                },
+                "fullName": "lazarus ",
+                "contactId": "iH04pC64TJ3roKnCnyvx",
+                "firstName": "lazarus",
+                "transport": {
+                  "callSid": "f5ddd450-c39d-45ae-9f5e-1b332e4f389c",
+                  "provider": "vapi.sip",
+                  "sbcCallSid": "62ac2512ccff080f6c2078a0cd821dc8@0.0.0.0",
+                  "conversationType": "voice"
+                },
+                "account-sid": "c033b672-5b99-42ae-9ce2-b231e9a522fb",
+                "ghlFullName": "lazarus ",
+                "phoneNumber": {
+                  "id": "ae35b1f3-25c4-4620-ac13-525a58da96c9",
+                  "name": "NPC Services",
+                  "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+                  "server": {
+                    "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+                    "timeoutSeconds": 20
+                  },
+                  "sipUri": "sip:naidupropertyconsultingservices@sip.vapi.ai",
+                  "status": "active",
+                  "squadId": "a9656ea1-3575-4ac6-b985-fd138be06cc5",
+                  "provider": "vapi",
+                  "createdAt": "2026-01-31T08:01:39.887Z",
+                  "updatedAt": "2026-01-31T08:02:57.530Z"
+                },
+                "contactFound": true,
+                "contactState": "RESOLVED",
+                "ghlContactId": "iH04pC64TJ3roKnCnyvx",
+                "ghlFirstName": "lazarus",
+                "requiresName": false,
+                "forwarded-for": "54.172.60.1",
+                "requiresPhone": false,
+                "contactCreated": false,
+                "twilio-callsid": "CAa972702f23aca1203f6c9395b06bc039",
+                "application-sid": "79d078c8-76b2-452a-99e0-ddd5abbf6269",
+                "currentDateTime": "Tuesday, May 19, 2026 at 8:19 AM UTC",
+                "ghlContactPhone": "+61480845459",
+                "ghlContactState": "RESOLVED",
+                "voip-carrier-sid": "bdf16bcf-a774-46b0-873d-9105dcda3ce9",
+                "twilio-accountsid": "{{SECRET:TWILIO_ACCOUNT_SID}}",
+                "originating-carrier": "Twilio"
+              },
+              "messagesOpenAIFormatted": [
+                {
+                  "role": "tool",
+                  "content": "Tool Result Still Pending But Proceed Further If Possible.",
+                  "tool_calls": [
+                    {
+                      "id": "call_E2PnJLOIXetoWQEsrgWsCKym",
+                      "type": "function",
+                      "function": {
+                        "name": "ghl_check_availability",
+                        "arguments": "{\n  \"timezone\": \"Australia/Sydney\",\n  \"startDateMs\": \"1768887600000\",\n  \"endDateMs\": \"1768905600000\"..."
+                      }
+                    }
+                  ],
+                  "tool_call_id": "call_E2PnJLOIXetoWQEsrgWsCKym"
+                }
+              ]
+            },
+            "customer": {
+              "name": "+61480845459",
+              "number": "+61480845459",
+              "sipUri": "sip:+61480845459@44.238.177.138:5060"
+            },
+            "assistant": {
+              "id": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+              "name": "NPC Opt In Follow Up Inbound",
+              "hooks": [],
+              "model": {
+                "model": "gpt-5.2-chat-latest",
+                "tools": [
+                  {
+                    "type": "query",
+                    "async": null,
+                    "server": {
+                      "url": "https://hook.eu2.make.com/eop70ky2635nobauh7lyof13sctvl0ga",
+                      "timeoutSeconds": 20,
+                      "staticIpAddressesEnabled": null
+                    },
+                    "function": {
+                      "name": "defaultQueryTool",
+                      "parameters": {
+                        "type": "object",
+                        "required": [
+                          "knowledgeBaseNames"
+                        ],
+                        "properties": {
+                          "notes": {
+                            "type": "string",
+                            "description": "Internal appointment notes, including caller context, selected slot, and any relevant call details."
+                          },
+                          "endTime": {
+                            "type": "string",
+                            "description": "The confirmed appointment end time in ISO 8601 format with timezone offset. Example: '2026-05-20T10:..."
+                          },
+                          "timezone": {
+                            "type": "string",
+                            "description": "The appointment timezone. Always use 'Australia/Sydney'."
+                          },
+                          "contactId": {
+                            "type": "string",
+                            "description": "The GoHighLevel contact ID returned by the contact resolver tool. This is required before creating a..."
+                          },
+                          "endDateMs": {
+                            "type": "string",
+                            "description": "The end of the availability search window as a Unix timestamp in milliseconds. Must be after startDa..."
+                          },
+                          "full_name": {
+                            "type": "string",
+                            "description": "The caller's full name, only after the caller provides it or it is already known from context."
+                          },
+                          "last_name": {
+                            "type": "string",
+                            "description": "The caller's last name, only if known."
+                          },
+                          "startTime": {
+                            "type": "string",
+                            "description": "The confirmed appointment start time in ISO 8601 format with timezone offset. Example: '2026-05-20T1..."
+                          },
+                          "first_name": {
+                            "type": "string",
+                            "description": "The caller's first name, only if known."
+                          },
+                          "locationId": {
+                            "type": "string",
+                            "description": "The GoHighLevel location/sub-account ID for NPC Services."
+                          },
+                          "destination": {
+                            "enum": [
+                              "+61433005110"
+                            ],
+                            "type": "string",
+                            "description": "The destination to transfer the call to. Options: +61433005110"
+                          },
+                          "startDateMs": {
+                            "type": "string",
+                            "description": "The start of the availability search window as a Unix timestamp in milliseconds. Must be a future ti..."
+                          },
+                          "search_reason": {
+                            "type": "string",
+                            "description": "Short internal reason for this booking. Example: 'Caller confirmed discovery call slot after availab..."
+                          },
+                          "caller_context": {
+                            "type": "string",
+                            "description": "Relevant booking context, including the confirmed appointment pathway and whether the caller selecte..."
+                          },
+                          "duration_minutes": {
+                            "type": "number",
+                            "description": "The requested appointment duration in minutes. Use 30 unless the system prompt or booking type speci..."
+                          },
+                          "knowledgeBaseNames": {
+                            "type": "array",
+                            "items": {
+                              "enum": [
+                                "default"
+                              ],
+                              "type": "string",
+                              "description": "The unique name of a knowledge base"
+                            },
+                            "minItems": 1,
+                            "description": "Names of the knowledge bases to query based on their relevance to the user's question."
+                          },
+                          "booking_intent_text": {
+                            "type": "string",
+                            "description": "The caller's confirmed appointment type in natural language. Include whether they want a Discovery C..."
+                          },
+                          "preferred_date_text": {
+                            "type": "string",
+                            "description": "The caller's selected appointment time in natural language. Example: '20 May 2026 at 10:00 AM'."
+                          }
+                        }
+                      },
+                      "description": "Use this function to query the knowledge base or files in the knowledge base\n\nAvailable knowledge ba..."
+                    },
+                    "messages": [
+                      {
+                        "role": "assistant",
+                        "type": "request-start",
+                        "content": "Got it — I’ll connect you with a team member now.",
+                        "blocking": true,
+                        "contents": [],
+                        "conditions": [
+                          {
+                            "param": "destination",
+                            "value": "+61433005110",
+                            "operator": "eq"
+                          }
+                        ],
+                        "endCallAfterSpokenEnabled": null
+                      }
+                    ],
+                    "parameters": [
+                      {
+                        "key": "call_type",
+                        "value": "{{ call.type }}"
+                      }
+                    ],
+                    "destinations": [
+                      {
+                        "type": "number",
+                        "number": "+61433005110",
+                        "message": "Got it — I’ll connect you with a team member now.",
+                        "callerId": "+61433005110",
+                        "transferPlan": {
+                          "mode": "warm-transfer-experimental",
+                          "message": null,
+                          "sipVerb": "refer",
+                          "summaryPlan": {
+                            "enabled": true,
+                            "messages": [
+                              {
+                                "role": "user",
+                                "content": "Here is the transcript:\n\n{{transcript}}\n\n"
+                              }
+                            ],
+                            "timeoutSeconds": 5,
+                            "useAssistantLlm": null
+                          },
+                          "fallbackPlan": {
+                            "message": "Could not transfer your call, goodbye.",
+                            "endCallEnabled": true
+                          }
+                        },
+                        "numberE164CheckEnabled": null
+                      }
+                    ],
+                    "knowledgeBases": [
+                      {
+                        "name": "default",
+                        "fileIds": [
+                          "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+                        ],
+                        "provider": "google",
+                        "description": "Use the knowledge base to answer questions if necessary"
+                      }
+                    ],
+                    "variableExtractionPlan": {
+                      "schema": {
+                        "type": "object",
+                        "required": [],
+                        "properties": {}
+                      },
+                      "aliases": [
+                        {
+                          "key": "ghlContactState",
+                          "value": "{{ $.contactState }}"
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "toolIds": [],
+                "messages": [
+                  {
+                    "role": "system",
+                    "content": "# **NPC Services – “Monica” Voice Agent System Prompt**\n\n*(Opt-In Lead Follow-Up + Discovery Call Bo..."
+                  }
+                ],
+                "provider": "openai",
+                "functions": [],
+                "maxTokens": 10000,
+                "temperature": 0.9,
+                "numFastTurns": 0,
+                "fallbackModels": [],
+                "semanticCachingEnabled": false,
+                "emotionRecognitionEnabled": false
+              },
+              "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+              "voice": {
+                "model": "eleven_flash_v2_5",
+                "voiceId": "cJi4iYb9fQ8QIRKkX8Fd",
+                "provider": "11labs",
+                "chunkPlan": {
+                  "enabled": true,
+                  "formatPlan": {
+                    "enabled": true,
+                    "replacements": [],
+                    "formattersEnabled": [
+                      "markdown"
+                    ],
+                    "numberToDigitsCutoff": 2100
+                  },
+                  "minCharacters": 30,
+                  "punctuationBoundaries": [
+                    "。"
+                  ]
+                },
+                "stability": 0.5,
+                "fallbackPlan": {
+                  "voices": []
+                },
+                "cachingEnabled": true,
+                "similarityBoost": 0.75,
+                "inputMinCharacters": 30,
+                "inputReformattingEnabled": true,
+                "inputPreprocessingEnabled": true,
+                "inputPunctuationBoundaries": [
+                  "。"
+                ]
+              },
+              "server": {
+                "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+                "secret": "",
+                "headers": {},
+                "backoffPlan": {
+                  "type": "fixed",
+                  "maxRetries": 0,
+                  "baseDelaySeconds": 0,
+                  "excludedStatusCodes": []
+                },
+                "credentialId": "",
+                "timeoutSeconds": 20,
+                "staticIpAddressesEnabled": false
+              },
+              "metadata": {
+                "position": {
+                  "x": 711.4278688524591,
+                  "y": 92.12315573770486
+                }
+              },
+              "assistant": {
+                "id": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+                "name": "NPC Opt In Follow Up Inbound",
+                "model": {
+                  "model": "gpt-5.2-chat-latest",
+                  "tools": [
+                    {
+                      "id": "f195a817-8346-475d-ad0e-8033f1d2e283",
+                      "type": "function",
+                      "async": null,
+                      "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+                      "server": {
+                        "url": "https://hook.eu2.make.com/eop70ky2635nobauh7lyof13sctvl0ga",
+                        "timeoutSeconds": 20,
+                        "staticIpAddressesEnabled": null
+                      },
+                      "function": {
+                        "name": "ghl_create_booking",
+                        "parameters": {
+                          "type": "object",
+                          "required": [
+                            "booking_intent_text"
+                          ],
+                          "properties": {
+                            "notes": {
+                              "type": "string",
+                              "description": "Internal appointment notes, including caller context, selected slot, and any relevant call details."
+                            },
+                            "endTime": {
+                              "type": "string",
+                              "description": "The confirmed appointment end time in ISO 8601 format with timezone offset. Example: '2026-05-20T10:..."
+                            },
+                            "timezone": {
+                              "type": "string",
+                              "description": "The appointment timezone. Always use 'Australia/Sydney'."
+                            },
+                            "contactId": {
+                              "type": "string",
+                              "description": "The GoHighLevel contact ID returned by the contact resolver tool. This is required before creating a..."
+                            },
+                            "endDateMs": {
+                              "type": "string",
+                              "description": "The end of the availability search window as a Unix timestamp in milliseconds. Must be after startDa..."
+                            },
+                            "full_name": {
+                              "type": "string",
+                              "description": "The caller's full name, only after the caller provides it or it is already known from context."
+                            },
+                            "last_name": {
+                              "type": "string",
+                              "description": "The caller's last name, only if known."
+                            },
+                            "startTime": {
+                              "type": "string",
+                              "description": "The confirmed appointment start time in ISO 8601 format with timezone offset. Example: '2026-05-20T1..."
+                            },
+                            "first_name": {
+                              "type": "string",
+                              "description": "The caller's first name, only if known."
+                            },
+                            "locationId": {
+                              "type": "string",
+                              "description": "The GoHighLevel location/sub-account ID for NPC Services."
+                            },
+                            "startDateMs": {
+                              "type": "string",
+                              "description": "The start of the availability search window as a Unix timestamp in milliseconds. Must be a future ti..."
+                            },
+                            "search_reason": {
+                              "type": "string",
+                              "description": "Short internal reason for this booking. Example: 'Caller confirmed discovery call slot after availab..."
+                            },
+                            "caller_context": {
+                              "type": "string",
+                              "description": "Relevant booking context, including the confirmed appointment pathway and whether the caller selecte..."
+                            },
+                            "duration_minutes": {
+                              "type": "number",
+                              "description": "The requested appointment duration in minutes. Use 30 unless the system prompt or booking type speci..."
+                            },
+                            "booking_intent_text": {
+                              "type": "string",
+                              "description": "The caller's confirmed appointment type in natural language. Include whether they want a Discovery C..."
+                            },
+                            "preferred_date_text": {
+                              "type": "string",
+                              "description": "The caller's selected appointment time in natural language. Example: '20 May 2026 at 10:00 AM'."
+                            }
+                          }
+                        },
+                        "description": "Use this tool to create a confirmed GoHighLevel appointment for NPC Services after the caller has se..."
+                      },
+                      "messages": [
+                        {
+                          "role": "assistant",
+                          "type": "request-complete",
+                          "content": "All set, your appointment has been booked.",
+                          "blocking": true,
+                          "endCallAfterSpokenEnabled": null
+                        }
+                      ],
+                      "createdAt": "2026-05-12T07:49:39.353Z",
+                      "updatedAt": "2026-05-14T17:53:57.196Z",
+                      "parameters": [
+                        {
+                          "key": "call_type",
+                          "value": "{{ call.type }}"
+                        }
+                      ],
+                      "destinations": [
+                        {
+                          "type": "number",
+                          "number": "+61433005110",
+                          "message": "Got it — I’ll connect you with a team member now.",
+                          "callerId": "+61433005110",
+                          "transferPlan": {
+                            "mode": "warm-transfer-experimental",
+                            "message": null,
+                            "sipVerb": "refer",
+                            "summaryPlan": {
+                              "enabled": true,
+                              "messages": [
+                                {
+                                  "role": "user",
+                                  "content": "Here is the transcript:\n\n{{transcript}}\n\n"
+                                }
+                              ],
+                              "timeoutSeconds": 5,
+                              "useAssistantLlm": null
+                            },
+                            "fallbackPlan": {
+                              "message": "Could not transfer your call, goodbye.",
+                              "endCallEnabled": true
+                            }
+                          },
+                          "numberE164CheckEnabled": null
+                        }
+                      ],
+                      "variableExtractionPlan": {
+                        "schema": {
+                          "type": "object",
+                          "required": [],
+                          "properties": {}
+                        },
+                        "aliases": [
+                          {
+                            "key": "ghlContactState",
+                            "value": "{{ $.contactState }}"
+                          }
+                        ]
+                      }
+                    }
+                  ],
+                  "toolIds": [
+                    "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+                  ],
+                  "messages": [
+                    {
+                      "role": "system",
+                      "content": "# **NPC Services – “Monica” Voice Agent System Prompt**\n\n*(Opt-In Lead Follow-Up + Discovery Call Bo..."
+                    }
+                  ],
+                  "provider": "openai",
+                  "maxTokens": 10000,
+                  "temperature": 0.9,
+                  "knowledgeBase": {
+                    "fileIds": [
+                      "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+                    ],
+                    "provider": "google"
+                  }
+                },
+                "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+                "voice": {
+                  "model": "eleven_flash_v2_5",
+                  "voiceId": "cJi4iYb9fQ8QIRKkX8Fd",
+                  "provider": "11labs",
+                  "stability": 0.5,
+                  "similarityBoost": 0.75
+                },
+                "server": {
+                  "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+                  "timeoutSeconds": 20,
+                  "staticIpAddressesEnabled": false
+                },
+                "metadata": {
+                  "position": {
+                    "x": 711.4278688524591,
+                    "y": 92.12315573770486
+                  }
+                },
+                "createdAt": "2025-12-15T09:39:01.662Z",
+                "updatedAt": "2026-05-14T17:05:43.705Z",
+                "transcriber": {
+                  "model": "flux-general-en",
+                  "language": "en",
+                  "provider": "deepgram",
+                  "eotThreshold": 0.7,
+                  "eotTimeoutMs": 5000
+                },
+                "analysisPlan": {
+                  "minMessagesThreshold": 2
+                },
+                "artifactPlan": {
+                  "scorecardIds": [
+                    "cf81945a-c941-46a2-a538-2987abffe521"
+                  ]
+                },
+                "firstMessage": "Hi {{firstName}}. I'm Monica, from Naidu Property Consulting Services. How can I help you today?",
+                "compliancePlan": {
+                  "pciEnabled": false,
+                  "zdrEnabled": false,
+                  "hipaaEnabled": false
+                },
+                "endCallMessage": "Goodbye.",
+                "variableValues": {
+                  "cid": "62ac2512ccff080f6c2078a0cd821dc8@0.0.0.0",
+                  "account-sid": "c033b672-5b99-42ae-9ce2-b231e9a522fb",
+                  "forwarded-for": "54.172.60.1",
+                  "twilio-callsid": "CAa972702f23aca1203f6c9395b06bc039",
+                  "application-sid": "79d078c8-76b2-452a-99e0-ddd5abbf6269",
+                  "voip-carrier-sid": "bdf16bcf-a774-46b0-873d-9105dcda3ce9",
+                  "twilio-accountsid": "{{SECRET:TWILIO_ACCOUNT_SID}}",
+                  "originating-carrier": "Twilio"
+                },
+                "backgroundSound": "office",
+                "firstMessageMode": "assistant-speaks-first",
+                "voicemailMessage": "Hi, this is Monica from Naidu Property Consulting Services calling because you recently submitted a ...",
+                "maxDurationSeconds": 1444,
+                "voicemailDetection": {
+                  "provider": "vapi",
+                  "backoffPlan": {
+                    "maxRetries": 6,
+                    "startAtSeconds": 5,
+                    "frequencySeconds": 5
+                  },
+                  "beepMaxAwaitSeconds": 12
+                }
+              },
+              "createdAt": "2025-12-15T09:39:01.662Z",
+              "updatedAt": "2026-05-14T17:05:43.705Z",
+              "sampleRate": 16000,
+              "messagePlan": {
+                "idleMessages": [],
+                "idleTimeoutSeconds": 10,
+                "silenceTimeoutMessage": "",
+                "idleMessageMaxSpokenCount": 3,
+                "idleMessageResetCountOnUserSpeechEnabled": false
+              },
+              "monitorPlan": {
+                "monitorIds": [],
+                "listenEnabled": true,
+                "controlEnabled": true,
+                "listenAuthenticationEnabled": false,
+                "controlAuthenticationEnabled": false
+              },
+              "transcriber": {
+                "model": "flux-general-en",
+                "keyterm": [],
+                "keywords": [],
+                "language": "en",
+                "numerals": false,
+                "provider": "deepgram",
+                "mipOptOut": false,
+                "smartFormat": false,
+                "eotThreshold": 0.7,
+                "eotTimeoutMs": 5000,
+                "fallbackPlan": {
+                  "autoFallback": {
+                    "enabled": false
+                  },
+                  "transcribers": []
+                },
+                "profanityFilter": false,
+                "confidenceThreshold": 0.4,
+                "codeSwitchingEnabled": false
+              },
+              "analysisPlan": {
+                "outcomeIds": [],
+                "summaryPlan": {
+                  "enabled": true,
+                  "messages": [
+                    {
+                      "role": "user",
+                      "content": "Here is the transcript:\n\n{{transcript}}\n\n. Here is the ended reason of the call:\n\n{{endedReason}}\n\n"
+                    }
+                  ],
+                  "customLlmUrl": "",
+                  "timeoutSeconds": 5,
+                  "useAssistantLlm": false
+                },
+                "structuredDataPlan": {
+                  "enabled": false,
+                  "messages": [],
+                  "customLlmUrl": "",
+                  "timeoutSeconds": 5,
+                  "useAssistantLlm": false
+                },
+                "minMessagesThreshold": 2,
+                "successEvaluationPlan": {
+                  "rubric": "PassFail",
+                  "enabled": true,
+                  "messages": [
+                    {
+                      "role": "user",
+                      "content": "Here was the system prompt of the call:\n\n{{systemPrompt}}\n\n"
+                    }
+                  ],
+                  "customLlmUrl": "",
+                  "timeoutSeconds": 5,
+                  "useAssistantLlm": false
+                },
+                "structuredDataMultiPlan": []
+              },
+              "artifactPlan": {
+                "scorecards": [],
+                "loggingPath": "/",
+                "scorecardIds": [
+                  "cf81945a-c941-46a2-a538-2987abffe521"
+                ],
+                "loggingEnabled": true,
+                "transcriptPlan": {
+                  "enabled": true,
+                  "userName": "User",
+                  "assistantName": "AI"
+                },
+                "recordingEnabled": true,
+                "structuredOutputs": [],
+                "structuredOutputIds": [],
+                "videoRecordingEnabled": false,
+                "fullMessageHistoryEnabled": false,
+                "pcapUseCustomStorageEnabled": true,
+                "loggingUseCustomStorageEnabled": true,
+                "recordingUseCustomStorageEnabled": true
+              },
+              "firstMessage": "Hi {{firstName}}. I'm Monica, from Naidu Property Consulting Services. How can I help you today?",
+              "clientMessages": [
+                "conversation-update"
+              ],
+              "compliancePlan": {
+                "pciEnabled": false,
+                "zdrEnabled": false,
+                "hipaaEnabled": false,
+                "securityFilterPlan": {
+                  "mode": "sanitize",
+                  "enabled": false,
+                  "filters": [
+                    {
+                      "type": "prompt-injection"
+                    }
+                  ],
+                  "replacementText": "[FILTERED]"
+                },
+                "hipaaWithDataRetentionEnabled": false
+              },
+              "endCallMessage": "Goodbye.",
+              "endCallPhrases": [],
+              "fillersEnabled": false,
+              "serverMessages": [
+                "conversation-update"
+              ],
+              "backgroundSound": "office",
+              "keypadInputPlan": {
+                "enabled": false,
+                "delimiters": [
+                  "#"
+                ],
+                "timeoutSeconds": 2
+              },
+              "firstMessageMode": "assistant-speaks-first",
+              "stopSpeakingPlan": {
+                "numWords": 0,
+                "voiceSeconds": 0.2,
+                "backoffSeconds": 1,
+                "interruptionPhrases": [
+                  "stop"
+                ],
+                "acknowledgementPhrases": [
+                  "i understand"
+                ]
+              },
+              "voicemailMessage": "Hi, this is Monica from Naidu Property Consulting Services calling because you recently submitted a ...",
+              "startSpeakingPlan": {
+                "waitSeconds": 0.4,
+                "customEndpointingRules": [],
+                "transcriptionEndpointingPlan": {
+                  "onNumberSeconds": 0.5,
+                  "onPunctuationSeconds": 0.1,
+                  "onNoPunctuationSeconds": 1.5
+                }
+              },
+              "maxDurationSeconds": 1444,
+              "voicemailDetection": {
+                "type": "audio",
+                "provider": "vapi",
+                "backoffPlan": {
+                  "maxRetries": 6,
+                  "startAtSeconds": 5,
+                  "frequencySeconds": 5
+                },
+                "beepMaxAwaitSeconds": 12
+              },
+              "interruptionsEnabled": true,
+              "backchannelingEnabled": false,
+              "silenceTimeoutSeconds": 30,
+              "liveTranscriptsEnabled": false,
+              "customerJoinTimeoutSeconds": 15,
+              "modelOutputInMessagesEnabled": false,
+              "backgroundSpeechDenoisingPlan": {
+                "smartDenoisingPlan": {
+                  "enabled": true
+                },
+                "fourierDenoisingPlan": {
+                  "enabled": false,
+                  "windowSizeMs": 3000,
+                  "staticThreshold": -35,
+                  "baselineOffsetDb": -15,
+                  "baselinePercentile": 85,
+                  "mediaDetectionEnabled": true
+                }
+              },
+              "firstMessageInterruptionsEnabled": false
+            },
+            "timestamp": 1779178887589,
+            "toolCalls": [
+              {
+                "id": "call_E2PnJLOIXetoWQEsrgWsCKym",
+                "type": "function",
+                "function": {
+                  "name": "ghl_check_availability",
+                  "arguments": {
+                    "timezone": "Australia/Sydney",
+                    "endDateMs": "1768905600000",
+                    "startDateMs": "1768887600000",
+                    "search_reason": "Caller requested tomorrow availability for phone discovery call.",
+                    "caller_context": "Existing contact lazarus booking a phone discovery call.",
+                    "duration_minutes": 30,
+                    "booking_intent_text": "The caller wants to book a Discovery Call by phone.",
+                    "preferred_date_text": "tomorrow between 1 PM and 6 PM"
+                  }
+                }
+              }
+            ],
+            "phoneNumber": {
+              "id": "ae35b1f3-25c4-4620-ac13-525a58da96c9",
+              "name": "NPC Services",
+              "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+              "server": {
+                "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+                "timeoutSeconds": 20
+              },
+              "sipUri": "sip:naidupropertyconsultingservices@sip.vapi.ai",
+              "status": "active",
+              "squadId": "a9656ea1-3575-4ac6-b985-fd138be06cc5",
+              "provider": "vapi",
+              "createdAt": "2026-01-31T08:01:39.887Z",
+              "updatedAt": "2026-01-31T08:02:57.530Z"
+            },
+            "toolCallList": [
+              {
+                "id": "call_E2PnJLOIXetoWQEsrgWsCKym",
+                "type": "function",
+                "function": {
+                  "name": "ghl_check_availability",
+                  "arguments": {
+                    "timezone": "Australia/Sydney",
+                    "endDateMs": "1768905600000",
+                    "startDateMs": "1768887600000",
+                    "search_reason": "Caller requested tomorrow availability for phone discovery call.",
+                    "caller_context": "Existing contact lazarus booking a phone discovery call.",
+                    "duration_minutes": 30,
+                    "booking_intent_text": "The caller wants to book a Discovery Call by phone.",
+                    "preferred_date_text": "tomorrow between 1 PM and 6 PM"
+                  }
+                }
+              }
+            ],
+            "toolWithToolCallList": [
+              {
+                "type": "function",
+                "server": {
+                  "url": "https://hook.eu2.make.com/3xslmou0jpbwxbutg8we362f9jsh96q0",
+                  "timeoutSeconds": 20,
+                  "staticIpAddressesEnabled": false
+                },
+                "function": {
+                  "name": "ghl_check_availability",
+                  "parameters": {
+                    "type": "object",
+                    "required": [
+                      "booking_intent_text"
+                    ],
+                    "properties": {
+                      "timezone": {
+                        "type": "string",
+                        "description": "The timezone for the availability search. Always use 'Australia/Sydney' unless the system explicitly..."
+                      },
+                      "endDateMs": {
+                        "type": "string",
+                        "description": "The end of the availability search window as a Unix timestamp in milliseconds. Must be after startDa..."
+                      },
+                      "startDateMs": {
+                        "type": "string",
+                        "description": "The start of the availability search window as a Unix timestamp in milliseconds. Must be a future ti..."
+                      },
+                      "search_reason": {
+                        "type": "string",
+                        "description": "Short internal reason for the availability search. Example: 'Caller requested strategy session phone..."
+                      },
+                      "caller_context": {
+                        "type": "string",
+                        "description": "Relevant call context that may help classify the correct booking intent. Include whether the caller ..."
+                      },
+                      "duration_minutes": {
+                        "type": "number",
+                        "description": "The requested appointment duration in minutes. Use 30 unless the system prompt or booking type speci..."
+                      },
+                      "booking_intent_text": {
+                        "type": "string",
+                        "description": "The caller's requested appointment type in natural language. Include whether they want a Discovery C..."
+                      },
+                      "preferred_date_text": {
+                        "type": "string",
+                        "description": "The caller's preferred date or time window in natural language, if mentioned. Example: 'next Tuesday..."
+                      }
+                    }
+                  },
+                  "description": "Use this tool to check GoHighLevel calendar availability for NPC Services appointment bookings. This..."
+                },
+                "messages": [
+                  {
+                    "type": "request-start",
+                    "content": "Let me check the available times for you.",
+                    "blocking": false,
+                    "contents": [],
+                    "conditions": []
+                  }
+                ],
+                "toolCall": {
+                  "id": "call_E2PnJLOIXetoWQEsrgWsCKym",
+                  "type": "function",
+                  "function": {
+                    "name": "ghl_check_availability",
+                    "arguments": {
+                      "timezone": "Australia/Sydney",
+                      "endDateMs": "1768905600000",
+                      "startDateMs": "1768887600000",
+                      "search_reason": "Caller requested tomorrow availability for phone discovery call.",
+                      "caller_context": "Existing contact lazarus booking a phone discovery call.",
+                      "duration_minutes": 30,
+                      "booking_intent_text": "The caller wants to book a Discovery Call by phone.",
+                      "preferred_date_text": "tomorrow between 1 PM and 6 PM"
+                    }
+                  }
+                },
+                "variableExtractionPlan": {
+                  "schema": {
+                    "type": "object",
+                    "required": [],
+                    "properties": {}
+                  }
+                }
+              }
+            ]
+          }
+        },
+        "2": {
+          "id": "chatcmpl-Dh9zdo2noXsOLohy8SOzYMiWsTvUi",
+          "model": "gpt-5.5-2026-04-23",
+          "usage": {
+            "total_tokens": 4236,
+            "prompt_tokens": 3427,
+            "completion_tokens": 809,
+            "prompt_tokens_details": {
+              "audio_tokens": 0,
+              "cached_tokens": 0
+            },
+            "completion_tokens_details": {
+              "audio_tokens": 0,
+              "reasoning_tokens": 512,
+              "accepted_prediction_tokens": 0,
+              "rejected_prediction_tokens": 0
+            }
+          },
+          "object": "chat.completion",
+          "result": {
+            "endIso": "2026-05-20T18:00:00+10:00",
+            "startIso": "2026-05-20T13:00:00+10:00",
+            "timezone": "Australia/Sydney",
+            "endDateMs": "1779264000000",
+            "confidence": 0.98,
+            "is_weekday": true,
+            "is_same_day": false,
+            "startDateMs": "1779246000000",
+            "intent_index": "root",
+            "intent_label": "Discovery Call",
+            "selected_date": "2026-05-20",
+            "routing_reason": "The latest request clearly asks to book a Discovery Call; delivery mode does not require clarificati...",
+            "duration_minutes": 30,
+            "is_future_window": true,
+            "needs_clarification": false,
+            "clarification_question": "",
+            "date_resolution_reason": "Current time is 2026-05-19 in Australia/Sydney. Tomorrow resolves to the next Australia/Sydney calen...",
+            "date_resolution_status": "resolved",
+            "business_window_applied": true,
+            "date_clarification_question": "",
+            "preferred_date_text_original": "tomorrow between 1 PM and 6 PM",
+            "preferred_date_text_normalized": "2026-05-20 between 1:00 PM and 6:00 PM Australia/Sydney"
+          },
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "{\"intent_index\":\"root\",\"intent_label\":\"Discovery Call\",\"confidence\":0.98,\"needs_clarification\":false...",
+                "refusal": null,
+                "annotations": []
+              },
+              "finish_reason": "stop"
+            }
+          ],
+          "created": "2026-05-19T08:21:29.000Z",
+          "service_tier": "default",
+          "system_fingerprint": null
+        },
+        "4": {
+          "body": {
+            "traceId": "1d78ea94-3b94-48cc-841f-592bc6baf4fe"
+          },
+          "headers": {
+            "date": "Tue, 19 May 2026 08:21:40 GMT",
+            "etag": "W/\"32-kAMzE6Nk2WflqBSMPSUPDgbXOjs\"",
+            "vary": "Accept-Encoding",
+            "cf-ray": "9fe1b0794a9cbe43-DUB",
+            "server": "cloudflare",
+            "connection": "close",
+            "set-cookie": [
+              "__cf_bm=XuChPI4SICskVBh1S_J1Rlob3QHdWSrlbUUGA73unO0-1779178899.407436-1.0.1.1-d_Jp7dJVteT0Y2nir6JeQg..."
+            ],
+            "content-type": "application/json; charset=utf-8",
+            "x-powered-by": "Express",
+            "content-length": "50",
+            "cf-cache-status": "DYNAMIC",
+            "timing-allow-origin": "*",
+            "access-control-max-age": "31536000",
+            "strict-transport-security": "max-age=31536000",
+            "access-control-allow-origin": "*",
+            "x-envoy-upstream-service-time": "468"
+          },
+          "statusCode": 200
+        }
+      }
+    },
+    "scenario": {
+      "dlq": false,
+      "slots": null,
+      "dataloss": false,
+      "maxErrors": 3,
+      "autoCommit": true,
+      "roundtrips": 1,
+      "sequential": false,
+      "confidential": false,
+      "freshVariables": false,
+      "autoCommitTriggerLast": true
+    }
+  },
+  "scheduling": {
+    "type": "immediately",
+    "maximum_runs_per_minute": null
+  },
+  "interface": {
+    "input": [],
+    "output": []
+  }
+}

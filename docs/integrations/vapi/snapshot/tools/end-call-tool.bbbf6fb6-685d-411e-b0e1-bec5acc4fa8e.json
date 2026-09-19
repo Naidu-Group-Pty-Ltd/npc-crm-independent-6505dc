@@ -1,0 +1,25 @@
+{
+  "async": false,
+  "createdAt": "2026-01-05T09:57:06.341Z",
+  "function": {
+    "description": "This tool should be called only after the agent has completed the closing sequence \nand said goodbye to the caller.",
+    "name": "end_call_tool",
+    "parameters": {
+      "properties": {},
+      "required": [],
+      "type": "object"
+    }
+  },
+  "id": "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+  "latestVersion": "v1",
+  "messages": [
+    {
+      "blocking": true,
+      "content": "",
+      "type": "request-start"
+    }
+  ],
+  "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+  "type": "endCall",
+  "updatedAt": "2026-01-12T06:28:36.694Z"
+}

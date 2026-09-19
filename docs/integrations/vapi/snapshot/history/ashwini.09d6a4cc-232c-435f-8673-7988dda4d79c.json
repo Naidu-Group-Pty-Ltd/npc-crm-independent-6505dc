@@ -1,0 +1,580 @@
+{
+  "assistant": "Ashwini",
+  "assistantId": "09d6a4cc-232c-435f-8673-7988dda4d79c",
+  "note": "System prompts are replaced by promptRef; the text is in ../prompts/<ref>.md. Everything else is the API response verbatim.",
+  "versionCount": 4,
+  "versions": [
+    {
+      "createdAt": "2026-01-12T06:41:42.934Z",
+      "data": {
+        "backchannelingEnabled": true,
+        "backgroundDenoisingEnabled": true,
+        "backgroundSound": "office",
+        "clientMessages": [
+          "transcript",
+          "hang",
+          "function-call",
+          "speech-update",
+          "metadata",
+          "conversation-update"
+        ],
+        "createdAt": "2024-07-22T18:25:24.030Z",
+        "dialKeypadFunctionEnabled": false,
+        "endCallFunctionEnabled": true,
+        "endCallMessage": "Thank you for contacting Mary's Dental. Have a great day!",
+        "firstMessage": "வணக்கம், ஷாமின் பல் மருத்துவ மனையிலிருந்து அஷ்வினி பேசுகிறார். இன்று நான் உங்களுக்கு எப்படி உதவ முடியும்?",
+        "hipaaEnabled": false,
+        "id": "09d6a4cc-232c-435f-8673-7988dda4d79c",
+        "model": {
+          "emotionRecognitionEnabled": true,
+          "functions": [
+            {
+              "async": false,
+              "description": "This function is used to check the clinic's availability",
+              "name": "check_availabilty",
+              "parameters": {
+                "properties": {
+                  "times": {
+                    "description": "The user's requested appointment time",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "serverUrl": "https://hook.eu2.make.com/swc0eae35kv9jg8ujalk3cea8lxg3men"
+            },
+            {
+              "async": false,
+              "description": "Use this function to book the appointment, after checking having checked for the slot's availability",
+              "name": "book_appointment",
+              "parameters": {
+                "properties": {
+                  "Contact": {
+                    "description": "",
+                    "type": "string"
+                  },
+                  "Description": {
+                    "description": "Purpose of the appointment",
+                    "type": "string"
+                  },
+                  "Email": {
+                    "description": "",
+                    "type": "string"
+                  },
+                  "Name": {
+                    "description": "",
+                    "type": "string"
+                  },
+                  "endTime": {
+                    "description": "This is end of the appointment. Save this as 30 minutes from the start time.",
+                    "type": "string"
+                  },
+                  "startTime": {
+                    "description": "Start time of the slot user wants to book. The date and time must be formated like this example:2024-04-18T12:00:00.000000+03:00",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "serverUrl": "https://hook.eu2.make.com/zev0o0v2ka0oqh9bcy5yytdnsjfc5akq"
+            },
+            {
+              "async": false,
+              "description": "Use this function to cancel an appointment, after matching the name, contact number and date/time of the appointment given by the user.",
+              "name": "Cancel_appointment",
+              "parameters": {
+                "properties": {
+                  "Email": {
+                    "description": "",
+                    "type": "string"
+                  },
+                  "Name": {
+                    "description": "Name of the customer",
+                    "type": "string"
+                  },
+                  "endTime": {
+                    "description": "This is end of the appointment. Save this as 1 hour from the start time. Make sure it is ISO format as well",
+                    "type": "string"
+                  },
+                  "startTime": {
+                    "description": "Start time of the slot to booked. Please convert the user input into ISO time format. Make sure the date is in the future relative to the current date/time",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "serverUrl": "https://hook.eu2.make.com/8cy4j2jsrfn9k3iz6e3ksu4m5jb3huav"
+            }
+          ],
+          "maxTokens": 780,
+          "messages": [
+            {
+              "chars": 4591,
+              "promptRef": "f2534322e5af19b3",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.7
+        },
+        "name": "Ashwini",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "recordingEnabled": true,
+        "serverMessages": [
+          "end-of-call-report",
+          "status-update",
+          "hang",
+          "function-call"
+        ],
+        "transcriber": {
+          "language": "ta",
+          "model": "whisper",
+          "provider": "talkscriber"
+        },
+        "updatedAt": "2026-01-12T06:41:42.898Z",
+        "voice": {
+          "model": "eleven_multilingual_v2",
+          "optimizeStreamingLatency": 1,
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.6,
+          "style": 0.2,
+          "voiceId": "JNaMjd7t4u3EhgkVknn3"
+        },
+        "voicemailDetectionEnabled": false,
+        "voicemailMessage": "You've reached Mary's Dental voicemail. Please leave a message after the beep, and we'll get back to you as soon as possible."
+      },
+      "versionId": "c1c6b452-ef81-11f0-82f1-61fdebba9cb4"
+    },
+    {
+      "createdAt": "2026-01-12T06:38:29.270Z",
+      "data": {
+        "backchannelingEnabled": true,
+        "backgroundDenoisingEnabled": true,
+        "backgroundSound": "office",
+        "clientMessages": [
+          "transcript",
+          "hang",
+          "function-call",
+          "speech-update",
+          "metadata",
+          "conversation-update"
+        ],
+        "createdAt": "2024-07-22T18:25:24.030Z",
+        "dialKeypadFunctionEnabled": false,
+        "endCallFunctionEnabled": true,
+        "endCallMessage": "Thank you for contacting Mary's Dental. Have a great day!",
+        "firstMessage": "வணக்கம், ஷாமின் பல் மருத்துவ மனையிலிருந்து அஷ்வினி பேசுகிறார். இன்று நான் உங்களுக்கு எப்படி உதவ முடியும்?",
+        "hipaaEnabled": false,
+        "id": "09d6a4cc-232c-435f-8673-7988dda4d79c",
+        "model": {
+          "emotionRecognitionEnabled": true,
+          "functions": [
+            {
+              "async": false,
+              "description": "This function is used to check the clinic's availability",
+              "name": "check_availabilty",
+              "parameters": {
+                "properties": {
+                  "times": {
+                    "description": "The user's requested appointment time",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "serverUrl": "https://hook.eu2.make.com/swc0eae35kv9jg8ujalk3cea8lxg3men"
+            },
+            {
+              "async": false,
+              "description": "Use this function to book the appointment, after checking having checked for the slot's availability",
+              "name": "book_appointment",
+              "parameters": {
+                "properties": {
+                  "Contact": {
+                    "description": "",
+                    "type": "string"
+                  },
+                  "Description": {
+                    "description": "Purpose of the appointment",
+                    "type": "string"
+                  },
+                  "Email": {
+                    "description": "",
+                    "type": "string"
+                  },
+                  "Name": {
+                    "description": "",
+                    "type": "string"
+                  },
+                  "endTime": {
+                    "description": "This is end of the appointment. Save this as 30 minutes from the start time.",
+                    "type": "string"
+                  },
+                  "startTime": {
+                    "description": "Start time of the slot user wants to book. The date and time must be formated like this example:2024-04-18T12:00:00.000000+03:00",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "serverUrl": "https://hook.eu2.make.com/zev0o0v2ka0oqh9bcy5yytdnsjfc5akq"
+            },
+            {
+              "async": false,
+              "description": "Use this function to cancel an appointment, after matching the name, contact number and date/time of the appointment given by the user.",
+              "name": "Cancel_appointment",
+              "parameters": {
+                "properties": {
+                  "Email": {
+                    "description": "",
+                    "type": "string"
+                  },
+                  "Name": {
+                    "description": "Name of the customer",
+                    "type": "string"
+                  },
+                  "endTime": {
+                    "description": "This is end of the appointment. Save this as 1 hour from the start time. Make sure it is ISO format as well",
+                    "type": "string"
+                  },
+                  "startTime": {
+                    "description": "Start time of the slot to booked. Please convert the user input into ISO time format. Make sure the date is in the future relative to the current date/time",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "serverUrl": "https://hook.eu2.make.com/8cy4j2jsrfn9k3iz6e3ksu4m5jb3huav"
+            }
+          ],
+          "maxTokens": 780,
+          "messages": [
+            {
+              "chars": 4591,
+              "promptRef": "f2534322e5af19b3",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.7
+        },
+        "name": "Ashwini",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "recordingEnabled": true,
+        "serverMessages": [
+          "end-of-call-report",
+          "status-update",
+          "hang",
+          "function-call"
+        ],
+        "transcriber": {
+          "language": "ta",
+          "model": "whisper",
+          "provider": "talkscriber"
+        },
+        "updatedAt": "2026-01-12T06:38:29.242Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "optimizeStreamingLatency": 1,
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.6,
+          "style": 0.2,
+          "voiceId": "JNaMjd7t4u3EhgkVknn3"
+        },
+        "voicemailDetectionEnabled": false,
+        "voicemailMessage": "You've reached Mary's Dental voicemail. Please leave a message after the beep, and we'll get back to you as soon as possible."
+      },
+      "versionId": "4e57ec52-ef81-11f0-a2a8-079e329f0c7e"
+    },
+    {
+      "createdAt": "2026-01-12T06:38:10.595Z",
+      "data": {
+        "backchannelingEnabled": true,
+        "backgroundDenoisingEnabled": true,
+        "backgroundSound": "office",
+        "clientMessages": [
+          "transcript",
+          "hang",
+          "function-call",
+          "speech-update",
+          "metadata",
+          "conversation-update"
+        ],
+        "createdAt": "2024-07-22T18:25:24.030Z",
+        "dialKeypadFunctionEnabled": false,
+        "endCallFunctionEnabled": true,
+        "endCallMessage": "Thank you for contacting Mary's Dental. Have a great day!",
+        "firstMessage": "வணக்கம், ஷாமின் பல் மருத்துவ மனையிலிருந்து அஷ்வினி பேசுகிறார். இன்று நான் உங்களுக்கு எப்படி உதவ முடியும்?",
+        "hipaaEnabled": false,
+        "id": "09d6a4cc-232c-435f-8673-7988dda4d79c",
+        "model": {
+          "emotionRecognitionEnabled": true,
+          "functions": [
+            {
+              "async": false,
+              "description": "This function is used to check the clinic's availability",
+              "name": "check_availabilty",
+              "parameters": {
+                "properties": {
+                  "times": {
+                    "description": "The user's requested appointment time",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "serverUrl": "https://hook.eu2.make.com/swc0eae35kv9jg8ujalk3cea8lxg3men"
+            },
+            {
+              "async": false,
+              "description": "Use this function to book the appointment, after checking having checked for the slot's availability",
+              "name": "book_appointment",
+              "parameters": {
+                "properties": {
+                  "Contact": {
+                    "description": "",
+                    "type": "string"
+                  },
+                  "Description": {
+                    "description": "Purpose of the appointment",
+                    "type": "string"
+                  },
+                  "Email": {
+                    "description": "",
+                    "type": "string"
+                  },
+                  "Name": {
+                    "description": "",
+                    "type": "string"
+                  },
+                  "endTime": {
+                    "description": "This is end of the appointment. Save this as 30 minutes from the start time.",
+                    "type": "string"
+                  },
+                  "startTime": {
+                    "description": "Start time of the slot user wants to book. The date and time must be formated like this example:2024-04-18T12:00:00.000000+03:00",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "serverUrl": "https://hook.eu2.make.com/zev0o0v2ka0oqh9bcy5yytdnsjfc5akq"
+            },
+            {
+              "async": false,
+              "description": "Use this function to cancel an appointment, after matching the name, contact number and date/time of the appointment given by the user.",
+              "name": "Cancel_appointment",
+              "parameters": {
+                "properties": {
+                  "Email": {
+                    "description": "",
+                    "type": "string"
+                  },
+                  "Name": {
+                    "description": "Name of the customer",
+                    "type": "string"
+                  },
+                  "endTime": {
+                    "description": "This is end of the appointment. Save this as 1 hour from the start time. Make sure it is ISO format as well",
+                    "type": "string"
+                  },
+                  "startTime": {
+                    "description": "Start time of the slot to booked. Please convert the user input into ISO time format. Make sure the date is in the future relative to the current date/time",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "serverUrl": "https://hook.eu2.make.com/8cy4j2jsrfn9k3iz6e3ksu4m5jb3huav"
+            }
+          ],
+          "maxTokens": 780,
+          "messages": [
+            {
+              "chars": 4591,
+              "promptRef": "f2534322e5af19b3",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.7
+        },
+        "name": "Ashwini",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "recordingEnabled": true,
+        "serverMessages": [
+          "end-of-call-report",
+          "status-update",
+          "hang",
+          "function-call"
+        ],
+        "transcriber": {
+          "language": "ta",
+          "model": "whisper",
+          "provider": "talkscriber"
+        },
+        "updatedAt": "2026-01-12T06:38:10.576Z",
+        "voice": {
+          "model": "eleven_multilingual_v2",
+          "optimizeStreamingLatency": 1,
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.6,
+          "style": 0.2,
+          "voiceId": "JNaMjd7t4u3EhgkVknn3"
+        },
+        "voicemailDetectionEnabled": false,
+        "voicemailMessage": "You've reached Mary's Dental voicemail. Please leave a message after the beep, and we'll get back to you as soon as possible."
+      },
+      "versionId": "43367f32-ef81-11f0-bcd4-e561a720b5d6"
+    },
+    {
+      "createdAt": "2026-01-12T06:37:48.509Z",
+      "data": {
+        "backchannelingEnabled": true,
+        "backgroundDenoisingEnabled": true,
+        "backgroundSound": "office",
+        "clientMessages": [
+          "transcript",
+          "hang",
+          "function-call",
+          "speech-update",
+          "metadata",
+          "conversation-update"
+        ],
+        "createdAt": "2024-07-22T18:25:24.030Z",
+        "dialKeypadFunctionEnabled": false,
+        "endCallFunctionEnabled": true,
+        "endCallMessage": "Thank you for contacting Mary's Dental. Have a great day!",
+        "firstMessage": "வணக்கம், ஷாமின் பல் மருத்துவ மனையிலிருந்து அஷ்வினி பேசுகிறார். இன்று நான் உங்களுக்கு எப்படி உதவ முடியும்?",
+        "hipaaEnabled": false,
+        "id": "09d6a4cc-232c-435f-8673-7988dda4d79c",
+        "model": {
+          "emotionRecognitionEnabled": true,
+          "functions": [
+            {
+              "async": false,
+              "description": "This function is used to check the clinic's availability",
+              "name": "check_availabilty",
+              "parameters": {
+                "properties": {
+                  "times": {
+                    "description": "The user's requested appointment time",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "serverUrl": "https://hook.eu2.make.com/swc0eae35kv9jg8ujalk3cea8lxg3men"
+            },
+            {
+              "async": false,
+              "description": "Use this function to book the appointment, after checking having checked for the slot's availability",
+              "name": "book_appointment",
+              "parameters": {
+                "properties": {
+                  "Contact": {
+                    "description": "",
+                    "type": "string"
+                  },
+                  "Description": {
+                    "description": "Purpose of the appointment",
+                    "type": "string"
+                  },
+                  "Email": {
+                    "description": "",
+                    "type": "string"
+                  },
+                  "Name": {
+                    "description": "",
+                    "type": "string"
+                  },
+                  "endTime": {
+                    "description": "This is end of the appointment. Save this as 30 minutes from the start time.",
+                    "type": "string"
+                  },
+                  "startTime": {
+                    "description": "Start time of the slot user wants to book. The date and time must be formated like this example:2024-04-18T12:00:00.000000+03:00",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "serverUrl": "https://hook.eu2.make.com/zev0o0v2ka0oqh9bcy5yytdnsjfc5akq"
+            },
+            {
+              "async": false,
+              "description": "Use this function to cancel an appointment, after matching the name, contact number and date/time of the appointment given by the user.",
+              "name": "Cancel_appointment",
+              "parameters": {
+                "properties": {
+                  "Email": {
+                    "description": "",
+                    "type": "string"
+                  },
+                  "Name": {
+                    "description": "Name of the customer",
+                    "type": "string"
+                  },
+                  "endTime": {
+                    "description": "This is end of the appointment. Save this as 1 hour from the start time. Make sure it is ISO format as well",
+                    "type": "string"
+                  },
+                  "startTime": {
+                    "description": "Start time of the slot to booked. Please convert the user input into ISO time format. Make sure the date is in the future relative to the current date/time",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "serverUrl": "https://hook.eu2.make.com/8cy4j2jsrfn9k3iz6e3ksu4m5jb3huav"
+            }
+          ],
+          "maxTokens": 780,
+          "messages": [
+            {
+              "chars": 4591,
+              "promptRef": "f2534322e5af19b3",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4o",
+          "provider": "openai",
+          "temperature": 0.7
+        },
+        "name": "Ashwini",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "recordingEnabled": true,
+        "serverMessages": [
+          "end-of-call-report",
+          "status-update",
+          "hang",
+          "function-call"
+        ],
+        "transcriber": {
+          "language": "ta",
+          "model": "whisper",
+          "provider": "talkscriber"
+        },
+        "updatedAt": "2026-01-12T06:37:48.493Z",
+        "voice": {
+          "model": "eleven_multilingual_v2",
+          "optimizeStreamingLatency": 1,
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.6,
+          "style": 0.2,
+          "voiceId": "JNaMjd7t4u3EhgkVknn3"
+        },
+        "voicemailDetectionEnabled": false,
+        "voicemailMessage": "You've reached Mary's Dental voicemail. Please leave a message after the beep, and we'll get back to you as soon as possible."
+      },
+      "versionId": "360c49c2-ef81-11f0-bbd8-6b495cea3326"
+    }
+  ]
+}

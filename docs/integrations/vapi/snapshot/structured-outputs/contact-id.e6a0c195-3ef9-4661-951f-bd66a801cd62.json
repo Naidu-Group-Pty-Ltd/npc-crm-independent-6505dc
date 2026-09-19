@@ -1,0 +1,16 @@
+{
+  "assistantIds": [
+    "cc46d882-55c0-454c-82e2-ef00ae000aec"
+  ],
+  "createdAt": "2025-12-09T12:23:34.253Z",
+  "description": "GHL contact id",
+  "id": "e6a0c195-3ef9-4661-951f-bd66a801cd62",
+  "name": "contact_id",
+  "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+  "schema": {
+    "type": "string"
+  },
+  "type": "ai",
+  "updatedAt": "2025-12-09T12:23:34.253Z",
+  "workflowIds": []
+}

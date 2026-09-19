@@ -1,0 +1,4027 @@
+[
+  {
+    "bucket": "google_branch",
+    "reportId": "2e6e7c11-e928-40d5-9df9-76a3ef8d4c98",
+    "geography": {
+      "state": "NSW",
+      "status": "resolved",
+      "suburb": "Sydney"
+    },
+    "locationIntelligence": {
+      "commute": {
+        "mode": "estimated",
+        "distanceKm": 0,
+        "durationMinutes": 0
+      },
+      "schools": {
+        "topSchools": [],
+        "nearestSchool": "N/A",
+        "distanceToSchool": 0,
+        "schoolsWithin3km": 0
+      },
+      "amenities": [
+        {
+          "count": 0,
+          "score": 0,
+          "nearest": "N/A",
+          "category": "Public Transport",
+          "distance": 0
+        },
+        {
+          "count": 0,
+          "score": 0,
+          "nearest": "N/A",
+          "category": "Schools",
+          "distance": 0
+        },
+        {
+          "count": 0,
+          "score": 0,
+          "nearest": "N/A",
+          "category": "Healthcare",
+          "distance": 0
+        },
+        {
+          "count": 0,
+          "score": 0,
+          "nearest": "N/A",
+          "category": "Shopping",
+          "distance": 0
+        },
+        {
+          "count": 0,
+          "score": 0,
+          "nearest": "N/A",
+          "category": "Recreation",
+          "distance": 0
+        }
+      ],
+      "lifestyle": {
+        "parks": 0,
+        "nearestPark": "N/A",
+        "restaurants": 0,
+        "nearestShopping": "N/A",
+        "shoppingCenters": 0
+      },
+      "transport": {
+        "nearestStation": "N/A",
+        "distanceToStation": 0,
+        "stationsWithin2km": 0
+      },
+      "walkScore": 0,
+      "healthcare": {
+        "nearestHospital": "N/A",
+        "distanceToHospital": 0,
+        "facilitiesWithin5km": 0
+      },
+      "coordinates": {
+        "lat": -33.8688,
+        "lng": 151.2093
+      }
+    },
+    "storedProvenance": {
+      "transportShape": "places_measured",
+      "walkScore": "measured_capped",
+      "commute": "legacy_non_evidence",
+      "wholeObjectNonEvidence": false
+    }
+  },
+  {
+    "bucket": "google_branch",
+    "reportId": "83e7de0c-1f04-4896-943e-b7695e3fc1c5",
+    "geography": {
+      "state": "WA",
+      "status": "resolved",
+      "suburb": "Bayswater (WA)"
+    },
+    "locationIntelligence": {
+      "commute": {
+        "mode": "estimated",
+        "distanceKm": 3286.2,
+        "durationMinutes": 4929
+      },
+      "schools": {
+        "topSchools": [
+          {
+            "name": "Smiling Buddha Yoga Centre",
+            "rating": 5,
+            "distance": 0.6
+          },
+          {
+            "name": "Bayswater Primary School",
+            "rating": 0,
+            "distance": 0.74
+          },
+          {
+            "name": "Great Beginnings Bayswater",
+            "rating": 4.8,
+            "distance": 0.9
+          },
+          {
+            "name": "Chisholm Catholic College, Perth",
+            "rating": 0,
+            "distance": 1.73
+          },
+          {
+            "name": "GuitarWorks",
+            "rating": 5,
+            "distance": 1.94
+          }
+        ],
+        "nearestSchool": "Smiling Buddha Yoga Centre",
+        "distanceToSchool": 0.6,
+        "schoolsWithin3km": 10
+      },
+      "amenities": [
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Bayswater",
+          "category": "Public Transport",
+          "distance": 0.48
+        },
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Smiling Buddha Yoga Centre",
+          "category": "Schools",
+          "distance": 0.6
+        },
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Bayswater Medical Centre",
+          "category": "Healthcare",
+          "distance": 0.96
+        },
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Bayswater Shopping Centre",
+          "category": "Shopping",
+          "distance": 0.37
+        },
+        {
+          "count": 10,
+          "score": 80,
+          "nearest": "Zara Design Home Decor",
+          "category": "Recreation",
+          "distance": 0.27
+        }
+      ],
+      "lifestyle": {
+        "parks": 10,
+        "nearestPark": "Zara Design Home Decor",
+        "restaurants": 10,
+        "nearestShopping": "Bayswater Shopping Centre",
+        "shoppingCenters": 10
+      },
+      "transport": {
+        "nearestStation": "Bayswater",
+        "distanceToStation": 0.48,
+        "stationsWithin2km": 10
+      },
+      "walkScore": 100,
+      "healthcare": {
+        "nearestHospital": "Bayswater Medical Centre",
+        "distanceToHospital": 0.96,
+        "facilitiesWithin5km": 10
+      },
+      "coordinates": {
+        "lat": -31.9164799,
+        "lng": 115.9172336
+      }
+    },
+    "storedProvenance": {
+      "transportShape": "places_measured",
+      "walkScore": "measured_capped",
+      "commute": "legacy_non_evidence",
+      "wholeObjectNonEvidence": false
+    }
+  },
+  {
+    "bucket": "google_branch",
+    "reportId": "994c44f9-e9b0-4f8a-8d9f-19bb9fa4f95f",
+    "geography": {
+      "state": "QLD",
+      "status": "resolved",
+      "suburb": "Moranbah"
+    },
+    "locationIntelligence": {
+      "commute": {
+        "mode": "public_transit",
+        "distanceKm": 1192.9,
+        "durationMinutes": 1487
+      },
+      "schools": {
+        "topSchools": [
+          {
+            "name": "Moranbah State High School",
+            "rating": 0,
+            "distance": 0.47
+          },
+          {
+            "name": "Moranbah East State School",
+            "rating": 0,
+            "distance": 0.56
+          },
+          {
+            "name": "Safely Swim",
+            "rating": 5,
+            "distance": 1.19
+          },
+          {
+            "name": "Janelle Vitale Swim School",
+            "rating": 0,
+            "distance": 1.64
+          },
+          {
+            "name": "Moranbah State School",
+            "rating": 0,
+            "distance": 1.66
+          }
+        ],
+        "nearestSchool": "Moranbah State High School",
+        "distanceToSchool": 0.47,
+        "schoolsWithin3km": 7
+      },
+      "amenities": [
+        {
+          "count": 1,
+          "score": 20,
+          "nearest": "Moranbah Town Square Bus Stop",
+          "category": "Public Transport",
+          "distance": 1.72
+        },
+        {
+          "count": 7,
+          "score": 70,
+          "nearest": "Moranbah State High School",
+          "category": "Schools",
+          "distance": 0.47
+        },
+        {
+          "count": 2,
+          "score": 30,
+          "nearest": "Moranbah Hospital",
+          "category": "Healthcare",
+          "distance": 0.85
+        },
+        {
+          "count": 1,
+          "score": 12,
+          "nearest": "Moranbah Fair",
+          "category": "Shopping",
+          "distance": 2.12
+        },
+        {
+          "count": 9,
+          "score": 72,
+          "nearest": "O'donell Park",
+          "category": "Recreation",
+          "distance": 0.18
+        }
+      ],
+      "lifestyle": {
+        "parks": 9,
+        "nearestPark": "O'donell Park",
+        "restaurants": 10,
+        "nearestShopping": "Moranbah Fair",
+        "shoppingCenters": 1
+      },
+      "transport": {
+        "nearestStation": "Moranbah Town Square Bus Stop",
+        "distanceToStation": 1.72,
+        "stationsWithin2km": 1
+      },
+      "walkScore": 62,
+      "healthcare": {
+        "nearestHospital": "Moranbah Hospital",
+        "distanceToHospital": 0.85,
+        "facilitiesWithin5km": 2
+      },
+      "coordinates": {
+        "lat": -21.9993496,
+        "lng": 148.0641236
+      }
+    },
+    "storedProvenance": {
+      "transportShape": "places_measured",
+      "walkScore": "measured_capped",
+      "commute": "measured",
+      "wholeObjectNonEvidence": false
+    }
+  },
+  {
+    "bucket": "google_branch",
+    "reportId": "c6ed90e6-8fa5-4d67-a061-e7dbb986ce71",
+    "geography": {
+      "state": "QLD",
+      "status": "resolved",
+      "suburb": "Moranbah"
+    },
+    "locationIntelligence": {
+      "commute": {
+        "mode": "public_transit",
+        "distanceKm": 1191.7,
+        "durationMinutes": 1471
+      },
+      "schools": {
+        "topSchools": [
+          {
+            "name": "Moranbah East State School",
+            "rating": 0,
+            "distance": 0.47
+          },
+          {
+            "name": "Moranbah State High School",
+            "rating": 0,
+            "distance": 0.7
+          },
+          {
+            "name": "Safely Swim",
+            "rating": 5,
+            "distance": 0.78
+          },
+          {
+            "name": "C&K Moranbah Community Kindergarten and Preschool",
+            "rating": 5,
+            "distance": 1.26
+          },
+          {
+            "name": "Janelle Vitale Swim School",
+            "rating": 0,
+            "distance": 1.34
+          }
+        ],
+        "nearestSchool": "Moranbah East State School",
+        "distanceToSchool": 0.47,
+        "schoolsWithin3km": 7
+      },
+      "amenities": [
+        {
+          "count": 1,
+          "score": 20,
+          "nearest": "Moranbah Town Square Bus Stop",
+          "category": "Public Transport",
+          "distance": 1.35
+        },
+        {
+          "count": 7,
+          "score": 70,
+          "nearest": "Moranbah East State School",
+          "category": "Schools",
+          "distance": 0.47
+        },
+        {
+          "count": 2,
+          "score": 30,
+          "nearest": "Moranbah Hospital",
+          "category": "Healthcare",
+          "distance": 0.52
+        },
+        {
+          "count": 1,
+          "score": 12,
+          "nearest": "Moranbah Fair",
+          "category": "Shopping",
+          "distance": 1.69
+        },
+        {
+          "count": 10,
+          "score": 80,
+          "nearest": "Gilchrist Park",
+          "category": "Recreation",
+          "distance": 0.42
+        }
+      ],
+      "lifestyle": {
+        "parks": 10,
+        "nearestPark": "Gilchrist Park",
+        "restaurants": 10,
+        "nearestShopping": "Moranbah Fair",
+        "shoppingCenters": 1
+      },
+      "transport": {
+        "nearestStation": "Moranbah Town Square Bus Stop",
+        "distanceToStation": 1.35,
+        "stationsWithin2km": 1
+      },
+      "walkScore": 62,
+      "healthcare": {
+        "nearestHospital": "Moranbah Hospital",
+        "distanceToHospital": 0.52,
+        "facilitiesWithin5km": 2
+      },
+      "coordinates": {
+        "lat": -22.006014,
+        "lng": 148.0590271
+      }
+    },
+    "storedProvenance": {
+      "transportShape": "places_measured",
+      "walkScore": "measured_capped",
+      "commute": "measured",
+      "wholeObjectNonEvidence": false
+    }
+  },
+  {
+    "bucket": "google_branch",
+    "reportId": "da1eef24-aa2f-4a09-9ad4-3fb5b6de45a1",
+    "geography": {
+      "state": "QLD",
+      "status": "resolved",
+      "suburb": "Caboolture"
+    },
+    "locationIntelligence": {
+      "commute": {
+        "mode": "public_transit",
+        "distanceKm": 1095.7,
+        "durationMinutes": 1080
+      },
+      "schools": {
+        "topSchools": [
+          {
+            "name": "St Peter's Catholic Primary School",
+            "rating": 0,
+            "distance": 0.1
+          },
+          {
+            "name": "Caboolture State School",
+            "rating": 0,
+            "distance": 0.5
+          },
+          {
+            "name": "Caboolture State High School",
+            "rating": 0,
+            "distance": 0.94
+          },
+          {
+            "name": "Caboolture Apex Kindergarten & Preschool",
+            "rating": 5,
+            "distance": 0.97
+          },
+          {
+            "name": "Caboolture Early Years Place",
+            "rating": 5,
+            "distance": 1.04
+          }
+        ],
+        "nearestSchool": "St Peter's Catholic Primary School",
+        "distanceToSchool": 0.1,
+        "schoolsWithin3km": 10
+      },
+      "amenities": [
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "St Peter's Primary School",
+          "category": "Public Transport",
+          "distance": 0.01
+        },
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "St Peter's Catholic Primary School",
+          "category": "Schools",
+          "distance": 0.1
+        },
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Evoca Women's Health",
+          "category": "Healthcare",
+          "distance": 0.29
+        },
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "East Caboolture Village",
+          "category": "Shopping",
+          "distance": 0.28
+        },
+        {
+          "count": 10,
+          "score": 80,
+          "nearest": "Wallace Street Park",
+          "category": "Recreation",
+          "distance": 0.4
+        }
+      ],
+      "lifestyle": {
+        "parks": 10,
+        "nearestPark": "Wallace Street Park",
+        "restaurants": 10,
+        "nearestShopping": "East Caboolture Village",
+        "shoppingCenters": 10
+      },
+      "transport": {
+        "nearestStation": "St Peter's Primary School",
+        "distanceToStation": 0.01,
+        "stationsWithin2km": 10
+      },
+      "walkScore": 100,
+      "healthcare": {
+        "nearestHospital": "Evoca Women's Health",
+        "distanceToHospital": 0.29,
+        "facilitiesWithin5km": 10
+      },
+      "coordinates": {
+        "lat": -27.0796844,
+        "lng": 152.9518951
+      }
+    },
+    "storedProvenance": {
+      "transportShape": "places_measured",
+      "walkScore": "measured_capped",
+      "commute": "measured",
+      "wholeObjectNonEvidence": false
+    }
+  },
+  {
+    "bucket": "offshore",
+    "reportId": "01ae888d-3f32-42e2-a822-895d7fc67fb2",
+    "geography": {
+      "state": null,
+      "status": "unresolved",
+      "suburb": null
+    },
+    "locationIntelligence": {
+      "commute": {
+        "mode": "estimated",
+        "distanceKm": 17039.2,
+        "durationMinutes": 25559
+      },
+      "schools": {
+        "topSchools": [
+          {
+            "name": "Early Learners Day Nursery",
+            "rating": 4.2,
+            "distance": 0.53
+          },
+          {
+            "name": "St Francis De Sales Infants & Nursery School",
+            "rating": 0,
+            "distance": 0.7
+          },
+          {
+            "name": "Kirkdale, St. Lawrence Primary School",
+            "rating": 0,
+            "distance": 0.84
+          },
+          {
+            "name": "Fountains Children's Centre & Nursery",
+            "rating": 4.8,
+            "distance": 1.19
+          },
+          {
+            "name": "Northcote Primary School",
+            "rating": 0,
+            "distance": 1.53
+          }
+        ],
+        "nearestSchool": "Early Learners Day Nursery",
+        "distanceToSchool": 0.53,
+        "schoolsWithin3km": 10
+      },
+      "amenities": [
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "bus, car & coach trimming liverpool - Liverpool coach trimmers",
+          "category": "Public Transport",
+          "distance": 0.97
+        },
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Early Learners Day Nursery",
+          "category": "Schools",
+          "distance": 0.53
+        },
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Samvat Clinic",
+          "category": "Healthcare",
+          "distance": 1.79
+        },
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Strand Shopping Centre",
+          "category": "Shopping",
+          "distance": 1.14
+        },
+        {
+          "count": 10,
+          "score": 80,
+          "nearest": "Bootle South Recreation Ground",
+          "category": "Recreation",
+          "distance": 0.23
+        }
+      ],
+      "lifestyle": {
+        "parks": 10,
+        "nearestPark": "Bootle South Recreation Ground",
+        "restaurants": 10,
+        "nearestShopping": "Strand Shopping Centre",
+        "shoppingCenters": 10
+      },
+      "transport": {
+        "summary": "Excellent public transport access with 3 stops within 1km. Multiple transport modes including train, light rail, and bus services.",
+        "nearestStop": "Central Station",
+        "qualityScore": 83,
+        "accessibility": {
+          "lifts": true,
+          "tactilePaving": true,
+          "wheelchairAccessible": true
+        },
+        "detailedStops": [
+          {
+            "name": "Central Station",
+            "type": "Train",
+            "routes": [
+              "T1",
+              "T2",
+              "T3",
+              "T4",
+              "T8"
+            ],
+            "distance": 450,
+            "accessibility": {
+              "facilities": [
+                "lifts",
+                "tactile"
+              ],
+              "wheelchairAccessible": true
+            }
+          },
+          {
+            "name": "Eddy Avenue Light Rail",
+            "type": "Light Rail",
+            "routes": [
+              "L1",
+              "L2",
+              "L3"
+            ],
+            "distance": 500,
+            "accessibility": {
+              "facilities": [
+                "level_access"
+              ],
+              "wheelchairAccessible": true
+            }
+          },
+          {
+            "name": "George Street Bus Stop",
+            "type": "Bus",
+            "routes": [
+              "372",
+              "393",
+              "396",
+              "397"
+            ],
+            "distance": 320,
+            "accessibility": {
+              "wheelchairAccessible": true
+            }
+          }
+        ],
+        "routeCoverage": [
+          {
+            "type": "Train",
+            "route": "T2 Inner West Line",
+            "frequency": 12
+          },
+          {
+            "type": "Light Rail",
+            "route": "L1 Dulwich Hill",
+            "frequency": 8
+          },
+          {
+            "type": "Bus",
+            "route": "372 Bus",
+            "frequency": 6
+          }
+        ],
+        "distanceToStop": 450,
+        "realTimeAlerts": [],
+        "stopsWithin1km": 3,
+        "transportTypes": [
+          "Train",
+          "Light Rail",
+          "Bus",
+          "Ferry"
+        ],
+        "serviceFrequency": {
+          "peak": 18,
+          "offPeak": 8
+        }
+      },
+      "walkScore": 95,
+      "healthcare": {
+        "nearestHospital": "Samvat Clinic",
+        "distanceToHospital": 1.79,
+        "facilitiesWithin5km": 10
+      },
+      "coordinates": {
+        "lat": 53.44362750000001,
+        "lng": -2.9830677
+      }
+    },
+    "storedProvenance": {
+      "transportShape": "state_template",
+      "walkScore": "offshore",
+      "commute": "offshore",
+      "wholeObjectNonEvidence": true
+    }
+  },
+  {
+    "bucket": "offshore",
+    "reportId": "02ff42b2-fcd3-4b5c-97ef-7808079e7c4d",
+    "geography": {
+      "state": null,
+      "status": "unresolved",
+      "suburb": null
+    },
+    "locationIntelligence": {
+      "commute": {
+        "mode": "estimated",
+        "distanceKm": 15865.6,
+        "durationMinutes": 23798
+      },
+      "schools": {
+        "topSchools": [
+          {
+            "name": "Team Triumph Triathlon Club",
+            "rating": 5,
+            "distance": 0.3
+          },
+          {
+            "name": "Trille des Bois Public Elementary School",
+            "rating": 0,
+            "distance": 0.33
+          },
+          {
+            "name": "St. Brigid School",
+            "rating": 0,
+            "distance": 0.56
+          },
+          {
+            "name": "St-Laurent Academy - Ottawa Private School",
+            "rating": 0,
+            "distance": 0.61
+          },
+          {
+            "name": "Ashbury College",
+            "rating": 0,
+            "distance": 0.64
+          }
+        ],
+        "nearestSchool": "Team Triumph Triathlon Club",
+        "distanceToSchool": 0.3,
+        "schoolsWithin3km": 10
+      },
+      "amenities": [
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Beechwood / St Charles",
+          "category": "Public Transport",
+          "distance": 0.22
+        },
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Team Triumph Triathlon Club",
+          "category": "Schools",
+          "distance": 0.3
+        },
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Professional Physiotherapy Centers",
+          "category": "Healthcare",
+          "distance": 1.14
+        },
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Montreal Square",
+          "category": "Shopping",
+          "distance": 2.11
+        },
+        {
+          "count": 10,
+          "score": 80,
+          "nearest": "Lindenlea Park",
+          "category": "Recreation",
+          "distance": 0.37
+        }
+      ],
+      "lifestyle": {
+        "parks": 10,
+        "nearestPark": "Lindenlea Park",
+        "restaurants": 10,
+        "nearestShopping": "Montreal Square",
+        "shoppingCenters": 10
+      },
+      "transport": {
+        "summary": "Excellent public transport access with 3 stops within 1km. Multiple transport modes including train, light rail, and bus services.",
+        "nearestStop": "Central Station",
+        "qualityScore": 83,
+        "accessibility": {
+          "lifts": true,
+          "tactilePaving": true,
+          "wheelchairAccessible": true
+        },
+        "detailedStops": [
+          {
+            "name": "Central Station",
+            "type": "Train",
+            "routes": [
+              "T1",
+              "T2",
+              "T3",
+              "T4",
+              "T8"
+            ],
+            "distance": 450,
+            "accessibility": {
+              "facilities": [
+                "lifts",
+                "tactile"
+              ],
+              "wheelchairAccessible": true
+            }
+          },
+          {
+            "name": "Eddy Avenue Light Rail",
+            "type": "Light Rail",
+            "routes": [
+              "L1",
+              "L2",
+              "L3"
+            ],
+            "distance": 500,
+            "accessibility": {
+              "facilities": [
+                "level_access"
+              ],
+              "wheelchairAccessible": true
+            }
+          },
+          {
+            "name": "George Street Bus Stop",
+            "type": "Bus",
+            "routes": [
+              "372",
+              "393",
+              "396",
+              "397"
+            ],
+            "distance": 320,
+            "accessibility": {
+              "wheelchairAccessible": true
+            }
+          }
+        ],
+        "routeCoverage": [
+          {
+            "type": "Train",
+            "route": "T2 Inner West Line",
+            "frequency": 12
+          },
+          {
+            "type": "Light Rail",
+            "route": "L1 Dulwich Hill",
+            "frequency": 8
+          },
+          {
+            "type": "Bus",
+            "route": "372 Bus",
+            "frequency": 6
+          }
+        ],
+        "distanceToStop": 450,
+        "realTimeAlerts": [],
+        "stopsWithin1km": 3,
+        "transportTypes": [
+          "Train",
+          "Light Rail",
+          "Bus",
+          "Ferry"
+        ],
+        "serviceFrequency": {
+          "peak": 18,
+          "offPeak": 8
+        }
+      },
+      "walkScore": 95,
+      "healthcare": {
+        "nearestHospital": "Professional Physiotherapy Centers",
+        "distanceToHospital": 1.14,
+        "facilitiesWithin5km": 10
+      },
+      "coordinates": {
+        "lat": 45.442966,
+        "lng": -75.67248090000001
+      }
+    },
+    "storedProvenance": {
+      "transportShape": "state_template",
+      "walkScore": "offshore",
+      "commute": "offshore",
+      "wholeObjectNonEvidence": true
+    }
+  },
+  {
+    "bucket": "offshore",
+    "reportId": "04257bd9-1f4e-4bb3-b75a-c96ddc8c37b3",
+    "geography": {
+      "state": null,
+      "status": "unresolved",
+      "suburb": null
+    },
+    "locationIntelligence": {
+      "commute": {
+        "mode": "estimated",
+        "distanceKm": 15076.5,
+        "durationMinutes": 22615
+      },
+      "schools": {
+        "topSchools": [
+          {
+            "name": "Swain County Middle School Library",
+            "rating": 0,
+            "distance": 1.11
+          },
+          {
+            "name": "Swain County Middle School",
+            "rating": 0,
+            "distance": 1.12
+          },
+          {
+            "name": "Mountain Discovery Charter School Gymnasium and Activity Center",
+            "rating": 0,
+            "distance": 1.2
+          },
+          {
+            "name": "Bright Adventures",
+            "rating": 5,
+            "distance": 1.21
+          },
+          {
+            "name": "Grace Christian Academy",
+            "rating": 0,
+            "distance": 1.4
+          }
+        ],
+        "nearestSchool": "Swain County Middle School Library",
+        "distanceToSchool": 1.11,
+        "schoolsWithin3km": 8
+      },
+      "amenities": [
+        {
+          "count": 2,
+          "score": 40,
+          "nearest": "Swain County Courthouse",
+          "category": "Public Transport",
+          "distance": 1.17
+        },
+        {
+          "count": 8,
+          "score": 80,
+          "nearest": "Swain County Middle School Library",
+          "category": "Schools",
+          "distance": 1.11
+        },
+        {
+          "count": 6,
+          "score": 90,
+          "nearest": "Sylva Pediatric Associates",
+          "category": "Healthcare",
+          "distance": 1.72
+        },
+        {
+          "count": 1,
+          "score": 12,
+          "nearest": "Valley Village Shopping Center",
+          "category": "Shopping",
+          "distance": 0.81
+        },
+        {
+          "count": 8,
+          "score": 64,
+          "nearest": "Park",
+          "category": "Recreation",
+          "distance": 1.38
+        }
+      ],
+      "lifestyle": {
+        "parks": 8,
+        "nearestPark": "Park",
+        "restaurants": 10,
+        "nearestShopping": "Valley Village Shopping Center",
+        "shoppingCenters": 1
+      },
+      "transport": {
+        "summary": "Excellent public transport access with 3 stops within 1km. Multiple transport modes including train, light rail, and bus services.",
+        "nearestStop": "Central Station",
+        "qualityScore": 83,
+        "accessibility": {
+          "lifts": true,
+          "tactilePaving": true,
+          "wheelchairAccessible": true
+        },
+        "detailedStops": [
+          {
+            "name": "Central Station",
+            "type": "Train",
+            "routes": [
+              "T1",
+              "T2",
+              "T3",
+              "T4",
+              "T8"
+            ],
+            "distance": 450,
+            "accessibility": {
+              "facilities": [
+                "lifts",
+                "tactile"
+              ],
+              "wheelchairAccessible": true
+            }
+          },
+          {
+            "name": "Eddy Avenue Light Rail",
+            "type": "Light Rail",
+            "routes": [
+              "L1",
+              "L2",
+              "L3"
+            ],
+            "distance": 500,
+            "accessibility": {
+              "facilities": [
+                "level_access"
+              ],
+              "wheelchairAccessible": true
+            }
+          },
+          {
+            "name": "George Street Bus Stop",
+            "type": "Bus",
+            "routes": [
+              "372",
+              "393",
+              "396",
+              "397"
+            ],
+            "distance": 320,
+            "accessibility": {
+              "wheelchairAccessible": true
+            }
+          }
+        ],
+        "routeCoverage": [
+          {
+            "type": "Train",
+            "route": "T2 Inner West Line",
+            "frequency": 12
+          },
+          {
+            "type": "Light Rail",
+            "route": "L1 Dulwich Hill",
+            "frequency": 8
+          },
+          {
+            "type": "Bus",
+            "route": "372 Bus",
+            "frequency": 6
+          }
+        ],
+        "distanceToStop": 450,
+        "realTimeAlerts": [],
+        "stopsWithin1km": 3,
+        "transportTypes": [
+          "Train",
+          "Light Rail",
+          "Bus",
+          "Ferry"
+        ],
+        "serviceFrequency": {
+          "peak": 18,
+          "offPeak": 8
+        }
+      },
+      "walkScore": 82,
+      "healthcare": {
+        "nearestHospital": "Sylva Pediatric Associates",
+        "distanceToHospital": 1.72,
+        "facilitiesWithin5km": 6
+      },
+      "coordinates": {
+        "lat": 35.4261146,
+        "lng": -83.46061519999999
+      }
+    },
+    "storedProvenance": {
+      "transportShape": "state_template",
+      "walkScore": "offshore",
+      "commute": "offshore",
+      "wholeObjectNonEvidence": true
+    }
+  },
+  {
+    "bucket": "offshore",
+    "reportId": "076ac251-d10b-419c-a51c-bb293b1a4119",
+    "geography": {
+      "state": null,
+      "status": "unresolved",
+      "suburb": null
+    },
+    "locationIntelligence": {
+      "commute": {
+        "mode": "estimated",
+        "distanceKm": 16994.2,
+        "durationMinutes": 25491
+      },
+      "schools": {
+        "topSchools": [
+          {
+            "name": "City Lit",
+            "rating": 4.4,
+            "distance": 1.1
+          },
+          {
+            "name": "Westminster School",
+            "rating": 0,
+            "distance": 1.21
+          },
+          {
+            "name": "Transcendental Meditation® Central London - Official",
+            "rating": 5,
+            "distance": 1.31
+          },
+          {
+            "name": "European School of Economics",
+            "rating": 4.5,
+            "distance": 1.54
+          },
+          {
+            "name": "Queen Mother Sports Centre",
+            "rating": 3.4,
+            "distance": 1.82
+          }
+        ],
+        "nearestSchool": "City Lit",
+        "distanceToSchool": 1.1,
+        "schoolsWithin3km": 10
+      },
+      "amenities": [
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Charing Cross",
+          "category": "Public Transport",
+          "distance": 0.57
+        },
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "City Lit",
+          "category": "Schools",
+          "distance": 1.1
+        },
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "St Thomas' Hospital",
+          "category": "Healthcare",
+          "distance": 1.46
+        },
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Burlington Arcade",
+          "category": "Shopping",
+          "distance": 0.47
+        },
+        {
+          "count": 10,
+          "score": 80,
+          "nearest": "Golden Square",
+          "category": "Recreation",
+          "distance": 0.42
+        }
+      ],
+      "lifestyle": {
+        "parks": 10,
+        "nearestPark": "Golden Square",
+        "restaurants": 10,
+        "nearestShopping": "Burlington Arcade",
+        "shoppingCenters": 10
+      },
+      "transport": {
+        "summary": "Excellent public transport access with 3 stops within 1km. Multiple transport modes including train, light rail, and bus services.",
+        "nearestStop": "Central Station",
+        "qualityScore": 83,
+        "accessibility": {
+          "lifts": true,
+          "tactilePaving": true,
+          "wheelchairAccessible": true
+        },
+        "detailedStops": [
+          {
+            "name": "Central Station",
+            "type": "Train",
+            "routes": [
+              "T1",
+              "T2",
+              "T3",
+              "T4",
+              "T8"
+            ],
+            "distance": 450,
+            "accessibility": {
+              "facilities": [
+                "lifts",
+                "tactile"
+              ],
+              "wheelchairAccessible": true
+            }
+          },
+          {
+            "name": "Eddy Avenue Light Rail",
+            "type": "Light Rail",
+            "routes": [
+              "L1",
+              "L2",
+              "L3"
+            ],
+            "distance": 500,
+            "accessibility": {
+              "facilities": [
+                "level_access"
+              ],
+              "wheelchairAccessible": true
+            }
+          },
+          {
+            "name": "George Street Bus Stop",
+            "type": "Bus",
+            "routes": [
+              "372",
+              "393",
+              "396",
+              "397"
+            ],
+            "distance": 320,
+            "accessibility": {
+              "wheelchairAccessible": true
+            }
+          }
+        ],
+        "routeCoverage": [
+          {
+            "type": "Train",
+            "route": "T2 Inner West Line",
+            "frequency": 12
+          },
+          {
+            "type": "Light Rail",
+            "route": "L1 Dulwich Hill",
+            "frequency": 8
+          },
+          {
+            "type": "Bus",
+            "route": "372 Bus",
+            "frequency": 6
+          }
+        ],
+        "distanceToStop": 450,
+        "realTimeAlerts": [],
+        "stopsWithin1km": 3,
+        "transportTypes": [
+          "Train",
+          "Light Rail",
+          "Bus",
+          "Ferry"
+        ],
+        "serviceFrequency": {
+          "peak": 18,
+          "offPeak": 8
+        }
+      },
+      "walkScore": 95,
+      "healthcare": {
+        "nearestHospital": "St Thomas' Hospital",
+        "distanceToHospital": 1.46,
+        "facilitiesWithin5km": 10
+      },
+      "coordinates": {
+        "lat": 51.50900919999999,
+        "lng": -0.1328395
+      }
+    },
+    "storedProvenance": {
+      "transportShape": "state_template",
+      "walkScore": "offshore",
+      "commute": "offshore",
+      "wholeObjectNonEvidence": true
+    }
+  },
+  {
+    "bucket": "offshore",
+    "reportId": "093554b6-aa93-4c08-b5ff-e34b1576baf0",
+    "geography": {
+      "state": null,
+      "status": "unresolved",
+      "suburb": null
+    },
+    "locationIntelligence": {
+      "commute": {
+        "mode": "estimated",
+        "distanceKm": 17054.1,
+        "durationMinutes": 25581
+      },
+      "schools": {
+        "topSchools": [
+          {
+            "name": "Kids Planet Bromley",
+            "rating": 4.7,
+            "distance": 0.86
+          },
+          {
+            "name": "Learning4Life",
+            "rating": 4.8,
+            "distance": 1.28
+          },
+          {
+            "name": "Mind the Monkeys",
+            "rating": 0,
+            "distance": 1.31
+          },
+          {
+            "name": "Kumon Maths & English",
+            "rating": 5,
+            "distance": 1.31
+          },
+          {
+            "name": "Wordsley Pre-school & Playgroup",
+            "rating": 4,
+            "distance": 1.48
+          }
+        ],
+        "nearestSchool": "Kids Planet Bromley",
+        "distanceToSchool": 0.86,
+        "schoolsWithin3km": 10
+      },
+      "amenities": [
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Pheasant St",
+          "category": "Public Transport",
+          "distance": 0.27
+        },
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Kids Planet Bromley",
+          "category": "Schools",
+          "distance": 0.86
+        },
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Poplar Centre",
+          "category": "Healthcare",
+          "distance": 0.85
+        },
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "RODAWN",
+          "category": "Shopping",
+          "distance": 0.44
+        },
+        {
+          "count": 10,
+          "score": 80,
+          "nearest": "Old Railway",
+          "category": "Recreation",
+          "distance": 0.5
+        }
+      ],
+      "lifestyle": {
+        "parks": 10,
+        "nearestPark": "Old Railway",
+        "restaurants": 10,
+        "nearestShopping": "RODAWN",
+        "shoppingCenters": 10
+      },
+      "transport": {
+        "summary": "Excellent public transport access with 3 stops within 1km. Multiple transport modes including train, light rail, and bus services.",
+        "nearestStop": "Central Station",
+        "qualityScore": 83,
+        "accessibility": {
+          "lifts": true,
+          "tactilePaving": true,
+          "wheelchairAccessible": true
+        },
+        "detailedStops": [
+          {
+            "name": "Central Station",
+            "type": "Train",
+            "routes": [
+              "T1",
+              "T2",
+              "T3",
+              "T4",
+              "T8"
+            ],
+            "distance": 450,
+            "accessibility": {
+              "facilities": [
+                "lifts",
+                "tactile"
+              ],
+              "wheelchairAccessible": true
+            }
+          },
+          {
+            "name": "Eddy Avenue Light Rail",
+            "type": "Light Rail",
+            "routes": [
+              "L1",
+              "L2",
+              "L3"
+            ],
+            "distance": 500,
+            "accessibility": {
+              "facilities": [
+                "level_access"
+              ],
+              "wheelchairAccessible": true
+            }
+          },
+          {
+            "name": "George Street Bus Stop",
+            "type": "Bus",
+            "routes": [
+              "372",
+              "393",
+              "396",
+              "397"
+            ],
+            "distance": 320,
+            "accessibility": {
+              "wheelchairAccessible": true
+            }
+          }
+        ],
+        "routeCoverage": [
+          {
+            "type": "Train",
+            "route": "T2 Inner West Line",
+            "frequency": 12
+          },
+          {
+            "type": "Light Rail",
+            "route": "L1 Dulwich Hill",
+            "frequency": 8
+          },
+          {
+            "type": "Bus",
+            "route": "372 Bus",
+            "frequency": 6
+          }
+        ],
+        "distanceToStop": 450,
+        "realTimeAlerts": [],
+        "stopsWithin1km": 3,
+        "transportTypes": [
+          "Train",
+          "Light Rail",
+          "Bus",
+          "Ferry"
+        ],
+        "serviceFrequency": {
+          "peak": 18,
+          "offPeak": 8
+        }
+      },
+      "walkScore": 95,
+      "healthcare": {
+        "nearestHospital": "Poplar Centre",
+        "distanceToHospital": 0.85,
+        "facilitiesWithin5km": 10
+      },
+      "coordinates": {
+        "lat": 52.4857175,
+        "lng": -2.1329034
+      }
+    },
+    "storedProvenance": {
+      "transportShape": "state_template",
+      "walkScore": "offshore",
+      "commute": "offshore",
+      "wholeObjectNonEvidence": true
+    }
+  },
+  {
+    "bucket": "offshore",
+    "reportId": "0973cc74-be1a-495a-b702-818b455b1d06",
+    "geography": {
+      "state": null,
+      "status": "unresolved",
+      "suburb": null
+    },
+    "locationIntelligence": {
+      "commute": {
+        "mode": "estimated",
+        "distanceKm": 17141,
+        "durationMinutes": 25711
+      },
+      "schools": {
+        "topSchools": [
+          {
+            "name": "Little Mead Primary Academy",
+            "rating": 0,
+            "distance": 0.35
+          },
+          {
+            "name": "Breathing Space Mindfulness & Wellbeing",
+            "rating": 0,
+            "distance": 1.18
+          },
+          {
+            "name": "Kumon Maths & English",
+            "rating": 5,
+            "distance": 1.5
+          },
+          {
+            "name": "Orchard School Bristol",
+            "rating": 0,
+            "distance": 1.54
+          },
+          {
+            "name": "Horfield Leisure Centre",
+            "rating": 4,
+            "distance": 1.64
+          }
+        ],
+        "nearestSchool": "Little Mead Primary Academy",
+        "distanceToSchool": 0.35,
+        "schoolsWithin3km": 10
+      },
+      "amenities": [
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Arnside Road",
+          "category": "Public Transport",
+          "distance": 0.02
+        },
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Little Mead Primary Academy",
+          "category": "Schools",
+          "distance": 0.35
+        },
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Southmead and Henbury Family Practice",
+          "category": "Healthcare",
+          "distance": 0.23
+        },
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Unit 13 shield retail centre",
+          "category": "Shopping",
+          "distance": 2.13
+        },
+        {
+          "count": 10,
+          "score": 80,
+          "nearest": "Glencoyne Square",
+          "category": "Recreation",
+          "distance": 0.2
+        }
+      ],
+      "lifestyle": {
+        "parks": 10,
+        "nearestPark": "Glencoyne Square",
+        "restaurants": 10,
+        "nearestShopping": "Unit 13 shield retail centre",
+        "shoppingCenters": 10
+      },
+      "transport": {
+        "summary": "Excellent public transport access with 3 stops within 1km. Multiple transport modes including train, light rail, and bus services.",
+        "nearestStop": "Central Station",
+        "qualityScore": 83,
+        "accessibility": {
+          "lifts": true,
+          "tactilePaving": true,
+          "wheelchairAccessible": true
+        },
+        "detailedStops": [
+          {
+            "name": "Central Station",
+            "type": "Train",
+            "routes": [
+              "T1",
+              "T2",
+              "T3",
+              "T4",
+              "T8"
+            ],
+            "distance": 450,
+            "accessibility": {
+              "facilities": [
+                "lifts",
+                "tactile"
+              ],
+              "wheelchairAccessible": true
+            }
+          },
+          {
+            "name": "Eddy Avenue Light Rail",
+            "type": "Light Rail",
+            "routes": [
+              "L1",
+              "L2",
+              "L3"
+            ],
+            "distance": 500,
+            "accessibility": {
+              "facilities": [
+                "level_access"
+              ],
+              "wheelchairAccessible": true
+            }
+          },
+          {
+            "name": "George Street Bus Stop",
+            "type": "Bus",
+            "routes": [
+              "372",
+              "393",
+              "396",
+              "397"
+            ],
+            "distance": 320,
+            "accessibility": {
+              "wheelchairAccessible": true
+            }
+          }
+        ],
+        "routeCoverage": [
+          {
+            "type": "Train",
+            "route": "T2 Inner West Line",
+            "frequency": 12
+          },
+          {
+            "type": "Light Rail",
+            "route": "L1 Dulwich Hill",
+            "frequency": 8
+          },
+          {
+            "type": "Bus",
+            "route": "372 Bus",
+            "frequency": 6
+          }
+        ],
+        "distanceToStop": 450,
+        "realTimeAlerts": [],
+        "stopsWithin1km": 3,
+        "transportTypes": [
+          "Train",
+          "Light Rail",
+          "Bus",
+          "Ferry"
+        ],
+        "serviceFrequency": {
+          "peak": 18,
+          "offPeak": 8
+        }
+      },
+      "walkScore": 95,
+      "healthcare": {
+        "nearestHospital": "Southmead and Henbury Family Practice",
+        "distanceToHospital": 0.23,
+        "facilitiesWithin5km": 10
+      },
+      "coordinates": {
+        "lat": 51.5025886,
+        "lng": -2.6026263
+      }
+    },
+    "storedProvenance": {
+      "transportShape": "state_template",
+      "walkScore": "offshore",
+      "commute": "offshore",
+      "wholeObjectNonEvidence": true
+    }
+  },
+  {
+    "bucket": "templated_and_misdirected",
+    "reportId": "0083413f-196b-4b95-aad5-d90fc983811a",
+    "geography": {
+      "state": "QLD",
+      "status": "resolved",
+      "suburb": "Fortitude Valley"
+    },
+    "locationIntelligence": {
+      "commute": {
+        "mode": "public_transit",
+        "distanceKm": 993.1,
+        "durationMinutes": 917
+      },
+      "schools": {
+        "topSchools": [
+          {
+            "name": "Goodstart Early Learning Fortitude Valley",
+            "rating": 4.2,
+            "distance": 0.39
+          },
+          {
+            "name": "Jazz Music Institute",
+            "rating": 4.8,
+            "distance": 0.61
+          },
+          {
+            "name": "St Joseph's College, Gregory Terrace",
+            "rating": 0,
+            "distance": 1.55
+          },
+          {
+            "name": "IES College",
+            "rating": 0,
+            "distance": 1.95
+          },
+          {
+            "name": "Brisbane Girls Grammar School",
+            "rating": 0,
+            "distance": 2.13
+          }
+        ],
+        "nearestSchool": "Goodstart Early Learning Fortitude Valley",
+        "distanceToSchool": 0.39,
+        "schoolsWithin3km": 10
+      },
+      "amenities": [
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Hawthorne ferry terminal",
+          "category": "Public Transport",
+          "distance": 1.51
+        },
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Goodstart Early Learning Fortitude Valley",
+          "category": "Schools",
+          "distance": 0.39
+        },
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "St Andrew's War Memorial Hospital",
+          "category": "Healthcare",
+          "distance": 2.1
+        },
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Homme Upholstery Studio",
+          "category": "Shopping",
+          "distance": 0.34
+        },
+        {
+          "count": 10,
+          "score": 80,
+          "nearest": "Morse Street Park",
+          "category": "Recreation",
+          "distance": 0.16
+        }
+      ],
+      "lifestyle": {
+        "parks": 10,
+        "nearestPark": "Morse Street Park",
+        "restaurants": 10,
+        "nearestShopping": "Homme Upholstery Studio",
+        "shoppingCenters": 10
+      },
+      "transport": {
+        "summary": "Excellent public transport access with 3 stops within 1km. Multiple transport modes including train, light rail, and bus services.",
+        "nearestStop": "Central Station",
+        "qualityScore": 83,
+        "accessibility": {
+          "lifts": true,
+          "tactilePaving": true,
+          "wheelchairAccessible": true
+        },
+        "detailedStops": [
+          {
+            "name": "Central Station",
+            "type": "Train",
+            "routes": [
+              "T1",
+              "T2",
+              "T3",
+              "T4",
+              "T8"
+            ],
+            "distance": 450,
+            "accessibility": {
+              "facilities": [
+                "lifts",
+                "tactile"
+              ],
+              "wheelchairAccessible": true
+            }
+          },
+          {
+            "name": "Eddy Avenue Light Rail",
+            "type": "Light Rail",
+            "routes": [
+              "L1",
+              "L2",
+              "L3"
+            ],
+            "distance": 500,
+            "accessibility": {
+              "facilities": [
+                "level_access"
+              ],
+              "wheelchairAccessible": true
+            }
+          },
+          {
+            "name": "George Street Bus Stop",
+            "type": "Bus",
+            "routes": [
+              "372",
+              "393",
+              "396",
+              "397"
+            ],
+            "distance": 320,
+            "accessibility": {
+              "wheelchairAccessible": true
+            }
+          }
+        ],
+        "routeCoverage": [
+          {
+            "type": "Train",
+            "route": "T2 Inner West Line",
+            "frequency": 12
+          },
+          {
+            "type": "Light Rail",
+            "route": "L1 Dulwich Hill",
+            "frequency": 8
+          },
+          {
+            "type": "Bus",
+            "route": "372 Bus",
+            "frequency": 6
+          }
+        ],
+        "distanceToStop": 450,
+        "realTimeAlerts": [],
+        "stopsWithin1km": 3,
+        "transportTypes": [
+          "Train",
+          "Light Rail",
+          "Bus",
+          "Ferry"
+        ],
+        "serviceFrequency": {
+          "peak": 18,
+          "offPeak": 8
+        }
+      },
+      "walkScore": 95,
+      "healthcare": {
+        "nearestHospital": "St Andrew's War Memorial Hospital",
+        "distanceToHospital": 2.1,
+        "facilitiesWithin5km": 10
+      },
+      "coordinates": {
+        "lat": -27.4536168,
+        "lng": 153.040412
+      }
+    },
+    "storedProvenance": {
+      "transportShape": "state_template",
+      "walkScore": "legacy_non_evidence",
+      "commute": "measured_misdirected",
+      "wholeObjectNonEvidence": false
+    }
+  },
+  {
+    "bucket": "templated_and_misdirected",
+    "reportId": "00cf5978-687e-4570-a708-6cc17a33273c",
+    "geography": {
+      "state": "WA",
+      "status": "resolved",
+      "suburb": "Embleton"
+    },
+    "locationIntelligence": {
+      "commute": {
+        "mode": "estimated",
+        "distanceKm": 3287.6,
+        "durationMinutes": 4931
+      },
+      "schools": {
+        "topSchools": [
+          {
+            "name": "Music Rocks Australia & MRE Academy",
+            "rating": 4.9,
+            "distance": 0.92
+          },
+          {
+            "name": "Chisholm Catholic College, Perth",
+            "rating": 0,
+            "distance": 1.16
+          },
+          {
+            "name": "Weld Square Primary School",
+            "rating": 0,
+            "distance": 1.24
+          },
+          {
+            "name": "GuitarWorks",
+            "rating": 5,
+            "distance": 1.52
+          },
+          {
+            "name": "Morley Primary School",
+            "rating": 0,
+            "distance": 1.57
+          }
+        ],
+        "nearestSchool": "Music Rocks Australia & MRE Academy",
+        "distanceToSchool": 0.92,
+        "schoolsWithin3km": 10
+      },
+      "amenities": [
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Broun Av Before Mcgregor St",
+          "category": "Public Transport",
+          "distance": 0.52
+        },
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Music Rocks Australia & MRE Academy",
+          "category": "Schools",
+          "distance": 0.92
+        },
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Rudloc Road Medical & Dental Centre Morley",
+          "category": "Healthcare",
+          "distance": 0.62
+        },
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Galleria Shopping Centre",
+          "category": "Shopping",
+          "distance": 0.83
+        },
+        {
+          "count": 10,
+          "score": 80,
+          "nearest": "Mckenzie Reserve",
+          "category": "Recreation",
+          "distance": 0.12
+        }
+      ],
+      "lifestyle": {
+        "parks": 10,
+        "nearestPark": "Mckenzie Reserve",
+        "restaurants": 10,
+        "nearestShopping": "Galleria Shopping Centre",
+        "shoppingCenters": 10
+      },
+      "transport": {
+        "summary": "Excellent public transport access with 3 stops within 1km. Multiple transport modes including train, light rail, and bus services.",
+        "nearestStop": "Central Station",
+        "qualityScore": 83,
+        "accessibility": {
+          "lifts": true,
+          "tactilePaving": true,
+          "wheelchairAccessible": true
+        },
+        "detailedStops": [
+          {
+            "name": "Central Station",
+            "type": "Train",
+            "routes": [
+              "T1",
+              "T2",
+              "T3",
+              "T4",
+              "T8"
+            ],
+            "distance": 450,
+            "accessibility": {
+              "facilities": [
+                "lifts",
+                "tactile"
+              ],
+              "wheelchairAccessible": true
+            }
+          },
+          {
+            "name": "Eddy Avenue Light Rail",
+            "type": "Light Rail",
+            "routes": [
+              "L1",
+              "L2",
+              "L3"
+            ],
+            "distance": 500,
+            "accessibility": {
+              "facilities": [
+                "level_access"
+              ],
+              "wheelchairAccessible": true
+            }
+          },
+          {
+            "name": "George Street Bus Stop",
+            "type": "Bus",
+            "routes": [
+              "372",
+              "393",
+              "396",
+              "397"
+            ],
+            "distance": 320,
+            "accessibility": {
+              "wheelchairAccessible": true
+            }
+          }
+        ],
+        "routeCoverage": [
+          {
+            "type": "Train",
+            "route": "T2 Inner West Line",
+            "frequency": 12
+          },
+          {
+            "type": "Light Rail",
+            "route": "L1 Dulwich Hill",
+            "frequency": 8
+          },
+          {
+            "type": "Bus",
+            "route": "372 Bus",
+            "frequency": 6
+          }
+        ],
+        "distanceToStop": 450,
+        "realTimeAlerts": [],
+        "stopsWithin1km": 3,
+        "transportTypes": [
+          "Train",
+          "Light Rail",
+          "Bus",
+          "Ferry"
+        ],
+        "serviceFrequency": {
+          "peak": 18,
+          "offPeak": 8
+        }
+      },
+      "walkScore": 95,
+      "healthcare": {
+        "nearestHospital": "Rudloc Road Medical & Dental Centre Morley",
+        "distanceToHospital": 0.62,
+        "facilitiesWithin5km": 10
+      },
+      "coordinates": {
+        "lat": -31.9017548,
+        "lng": 115.9061882
+      }
+    },
+    "storedProvenance": {
+      "transportShape": "state_template",
+      "walkScore": "legacy_non_evidence",
+      "commute": "legacy_non_evidence",
+      "wholeObjectNonEvidence": false
+    }
+  },
+  {
+    "bucket": "templated_and_misdirected",
+    "reportId": "018121c3-0da7-48dd-b492-eee6d24e62a0",
+    "geography": {
+      "state": "VIC",
+      "status": "resolved",
+      "suburb": "Woodend (Vic.)"
+    },
+    "locationIntelligence": {
+      "commute": {
+        "mode": "public_transit",
+        "distanceKm": 1043.2,
+        "durationMinutes": 804
+      },
+      "schools": {
+        "topSchools": [
+          {
+            "name": "Woodend Kindergarten",
+            "rating": 0,
+            "distance": 0.17
+          },
+          {
+            "name": "Macedon Ranges ST Ambrose's Parish School",
+            "rating": 0,
+            "distance": 0.22
+          },
+          {
+            "name": "Woodend Primary School",
+            "rating": 0,
+            "distance": 0.38
+          },
+          {
+            "name": "Goodstart Early Learning Woodend",
+            "rating": 5,
+            "distance": 0.44
+          },
+          {
+            "name": "Nido Early School Woodend",
+            "rating": 5,
+            "distance": 0.72
+          }
+        ],
+        "nearestSchool": "Woodend Kindergarten",
+        "distanceToSchool": 0.17,
+        "schoolsWithin3km": 6
+      },
+      "amenities": [
+        {
+          "count": 3,
+          "score": 60,
+          "nearest": "Anslow St/High St",
+          "category": "Public Transport",
+          "distance": 0.35
+        },
+        {
+          "count": 6,
+          "score": 60,
+          "nearest": "Woodend Kindergarten",
+          "category": "Schools",
+          "distance": 0.17
+        },
+        {
+          "count": 3,
+          "score": 45,
+          "nearest": "SkinGP Skin Cancer Clinic, Woodend",
+          "category": "Healthcare",
+          "distance": 0.35
+        },
+        {
+          "count": 2,
+          "score": 24,
+          "nearest": "19th Hole Shopping Centre",
+          "category": "Shopping",
+          "distance": 0.28
+        },
+        {
+          "count": 10,
+          "score": 80,
+          "nearest": "Campaspe Park Recreation Reserve",
+          "category": "Recreation",
+          "distance": 0.09
+        }
+      ],
+      "lifestyle": {
+        "parks": 10,
+        "nearestPark": "Campaspe Park Recreation Reserve",
+        "restaurants": 10,
+        "nearestShopping": "19th Hole Shopping Centre",
+        "shoppingCenters": 2
+      },
+      "transport": {
+        "summary": "Excellent public transport access with 3 stops within 1km. Multiple transport modes including train, light rail, and bus services.",
+        "nearestStop": "Central Station",
+        "qualityScore": 83,
+        "accessibility": {
+          "lifts": true,
+          "tactilePaving": true,
+          "wheelchairAccessible": true
+        },
+        "detailedStops": [
+          {
+            "name": "Central Station",
+            "type": "Train",
+            "routes": [
+              "T1",
+              "T2",
+              "T3",
+              "T4",
+              "T8"
+            ],
+            "distance": 450,
+            "accessibility": {
+              "facilities": [
+                "lifts",
+                "tactile"
+              ],
+              "wheelchairAccessible": true
+            }
+          },
+          {
+            "name": "Eddy Avenue Light Rail",
+            "type": "Light Rail",
+            "routes": [
+              "L1",
+              "L2",
+              "L3"
+            ],
+            "distance": 500,
+            "accessibility": {
+              "facilities": [
+                "level_access"
+              ],
+              "wheelchairAccessible": true
+            }
+          },
+          {
+            "name": "George Street Bus Stop",
+            "type": "Bus",
+            "routes": [
+              "372",
+              "393",
+              "396",
+              "397"
+            ],
+            "distance": 320,
+            "accessibility": {
+              "wheelchairAccessible": true
+            }
+          }
+        ],
+        "routeCoverage": [
+          {
+            "type": "Train",
+            "route": "T2 Inner West Line",
+            "frequency": 12
+          },
+          {
+            "type": "Light Rail",
+            "route": "L1 Dulwich Hill",
+            "frequency": 8
+          },
+          {
+            "type": "Bus",
+            "route": "372 Bus",
+            "frequency": 6
+          }
+        ],
+        "distanceToStop": 450,
+        "realTimeAlerts": [],
+        "stopsWithin1km": 3,
+        "transportTypes": [
+          "Train",
+          "Light Rail",
+          "Bus",
+          "Ferry"
+        ],
+        "serviceFrequency": {
+          "peak": 18,
+          "offPeak": 8
+        }
+      },
+      "walkScore": 84,
+      "healthcare": {
+        "nearestHospital": "SkinGP Skin Cancer Clinic, Woodend",
+        "distanceToHospital": 0.35,
+        "facilitiesWithin5km": 3
+      },
+      "coordinates": {
+        "lat": -37.3565685,
+        "lng": 144.5323649
+      }
+    },
+    "storedProvenance": {
+      "transportShape": "state_template",
+      "walkScore": "legacy_non_evidence",
+      "commute": "measured_misdirected",
+      "wholeObjectNonEvidence": false
+    }
+  },
+  {
+    "bucket": "templated_and_misdirected",
+    "reportId": "026348a1-ac09-4f1f-8661-b4cf71a67f08",
+    "geography": {
+      "state": "WA",
+      "status": "resolved",
+      "suburb": "Bennett Springs"
+    },
+    "locationIntelligence": {
+      "commute": {
+        "mode": "estimated",
+        "distanceKm": 3287,
+        "durationMinutes": 4930
+      },
+      "schools": {
+        "topSchools": [
+          {
+            "name": "Beechboro Christian School",
+            "rating": 0,
+            "distance": 1.12
+          },
+          {
+            "name": "Meerilinga Children and Community Service Beechboro",
+            "rating": 4.7,
+            "distance": 1.15
+          },
+          {
+            "name": "EPW School of Pro Wrestling",
+            "rating": 4.5,
+            "distance": 1.2
+          },
+          {
+            "name": "West Beechboro Primary School",
+            "rating": 0,
+            "distance": 1.34
+          },
+          {
+            "name": "Beechboro Primary School",
+            "rating": 0,
+            "distance": 1.49
+          }
+        ],
+        "nearestSchool": "Beechboro Christian School",
+        "distanceToSchool": 1.12,
+        "schoolsWithin3km": 10
+      },
+      "amenities": [
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Bridgeman Dr Before Dunlin Gdns",
+          "category": "Public Transport",
+          "distance": 0.1
+        },
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Beechboro Christian School",
+          "category": "Schools",
+          "distance": 1.12
+        },
+        {
+          "count": 9,
+          "score": 100,
+          "nearest": "Beechboro Family Practice",
+          "category": "Healthcare",
+          "distance": 0.09
+        },
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Springs Shopping Centre",
+          "category": "Shopping",
+          "distance": 0.15
+        },
+        {
+          "count": 10,
+          "score": 80,
+          "nearest": "Alstonia Park",
+          "category": "Recreation",
+          "distance": 0.12
+        }
+      ],
+      "lifestyle": {
+        "parks": 10,
+        "nearestPark": "Alstonia Park",
+        "restaurants": 10,
+        "nearestShopping": "Springs Shopping Centre",
+        "shoppingCenters": 10
+      },
+      "transport": {
+        "summary": "Excellent public transport access with 3 stops within 1km. Multiple transport modes including train, light rail, and bus services.",
+        "nearestStop": "Central Station",
+        "qualityScore": 83,
+        "accessibility": {
+          "lifts": true,
+          "tactilePaving": true,
+          "wheelchairAccessible": true
+        },
+        "detailedStops": [
+          {
+            "name": "Central Station",
+            "type": "Train",
+            "routes": [
+              "T1",
+              "T2",
+              "T3",
+              "T4",
+              "T8"
+            ],
+            "distance": 450,
+            "accessibility": {
+              "facilities": [
+                "lifts",
+                "tactile"
+              ],
+              "wheelchairAccessible": true
+            }
+          },
+          {
+            "name": "Eddy Avenue Light Rail",
+            "type": "Light Rail",
+            "routes": [
+              "L1",
+              "L2",
+              "L3"
+            ],
+            "distance": 500,
+            "accessibility": {
+              "facilities": [
+                "level_access"
+              ],
+              "wheelchairAccessible": true
+            }
+          },
+          {
+            "name": "George Street Bus Stop",
+            "type": "Bus",
+            "routes": [
+              "372",
+              "393",
+              "396",
+              "397"
+            ],
+            "distance": 320,
+            "accessibility": {
+              "wheelchairAccessible": true
+            }
+          }
+        ],
+        "routeCoverage": [
+          {
+            "type": "Train",
+            "route": "T2 Inner West Line",
+            "frequency": 12
+          },
+          {
+            "type": "Light Rail",
+            "route": "L1 Dulwich Hill",
+            "frequency": 8
+          },
+          {
+            "type": "Bus",
+            "route": "372 Bus",
+            "frequency": 6
+          }
+        ],
+        "distanceToStop": 450,
+        "realTimeAlerts": [],
+        "stopsWithin1km": 3,
+        "transportTypes": [
+          "Train",
+          "Light Rail",
+          "Bus",
+          "Ferry"
+        ],
+        "serviceFrequency": {
+          "peak": 18,
+          "offPeak": 8
+        }
+      },
+      "walkScore": 95,
+      "healthcare": {
+        "nearestHospital": "Beechboro Family Practice",
+        "distanceToHospital": 0.09,
+        "facilitiesWithin5km": 9
+      },
+      "coordinates": {
+        "lat": -31.85791469999999,
+        "lng": 115.9259245
+      }
+    },
+    "storedProvenance": {
+      "transportShape": "state_template",
+      "walkScore": "legacy_non_evidence",
+      "commute": "legacy_non_evidence",
+      "wholeObjectNonEvidence": false
+    }
+  },
+  {
+    "bucket": "templated_and_misdirected",
+    "reportId": "02c7e09a-188d-4204-bc3a-0ac2d1d99a2c",
+    "geography": {
+      "state": "QLD",
+      "status": "resolved",
+      "suburb": "Cooloola Cove"
+    },
+    "locationIntelligence": {
+      "commute": {
+        "mode": "public_transit",
+        "distanceKm": 1234.6,
+        "durationMinutes": 1366
+      },
+      "schools": {
+        "topSchools": [],
+        "nearestSchool": "N/A",
+        "distanceToSchool": 0,
+        "schoolsWithin3km": 0
+      },
+      "amenities": [
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Golden Hind Ave at Investigator Ave",
+          "category": "Public Transport",
+          "distance": 0.95
+        },
+        {
+          "count": 0,
+          "score": 0,
+          "nearest": "N/A",
+          "category": "Schools",
+          "distance": 0
+        },
+        {
+          "count": 1,
+          "score": 15,
+          "nearest": "Cooloola Coast General Practice - Cooloola Cove",
+          "category": "Healthcare",
+          "distance": 1.39
+        },
+        {
+          "count": 1,
+          "score": 12,
+          "nearest": "Cooloola Cove Shopping Centre",
+          "category": "Shopping",
+          "distance": 1.38
+        },
+        {
+          "count": 2,
+          "score": 16,
+          "nearest": "Centenary Of Federation Park",
+          "category": "Recreation",
+          "distance": 0.58
+        }
+      ],
+      "lifestyle": {
+        "parks": 2,
+        "nearestPark": "Centenary Of Federation Park",
+        "restaurants": 0,
+        "nearestShopping": "Cooloola Cove Shopping Centre",
+        "shoppingCenters": 1
+      },
+      "transport": {
+        "summary": "Excellent public transport access with 3 stops within 1km. Multiple transport modes including train, light rail, and bus services.",
+        "nearestStop": "Central Station",
+        "qualityScore": 83,
+        "accessibility": {
+          "lifts": true,
+          "tactilePaving": true,
+          "wheelchairAccessible": true
+        },
+        "detailedStops": [
+          {
+            "name": "Central Station",
+            "type": "Train",
+            "routes": [
+              "T1",
+              "T2",
+              "T3",
+              "T4",
+              "T8"
+            ],
+            "distance": 450,
+            "accessibility": {
+              "facilities": [
+                "lifts",
+                "tactile"
+              ],
+              "wheelchairAccessible": true
+            }
+          },
+          {
+            "name": "Eddy Avenue Light Rail",
+            "type": "Light Rail",
+            "routes": [
+              "L1",
+              "L2",
+              "L3"
+            ],
+            "distance": 500,
+            "accessibility": {
+              "facilities": [
+                "level_access"
+              ],
+              "wheelchairAccessible": true
+            }
+          },
+          {
+            "name": "George Street Bus Stop",
+            "type": "Bus",
+            "routes": [
+              "372",
+              "393",
+              "396",
+              "397"
+            ],
+            "distance": 320,
+            "accessibility": {
+              "wheelchairAccessible": true
+            }
+          }
+        ],
+        "routeCoverage": [
+          {
+            "type": "Train",
+            "route": "T2 Inner West Line",
+            "frequency": 12
+          },
+          {
+            "type": "Light Rail",
+            "route": "L1 Dulwich Hill",
+            "frequency": 8
+          },
+          {
+            "type": "Bus",
+            "route": "372 Bus",
+            "frequency": 6
+          }
+        ],
+        "distanceToStop": 450,
+        "realTimeAlerts": [],
+        "stopsWithin1km": 3,
+        "transportTypes": [
+          "Train",
+          "Light Rail",
+          "Bus",
+          "Ferry"
+        ],
+        "serviceFrequency": {
+          "peak": 18,
+          "offPeak": 8
+        }
+      },
+      "walkScore": 38,
+      "healthcare": {
+        "nearestHospital": "Cooloola Coast General Practice - Cooloola Cove",
+        "distanceToHospital": 1.39,
+        "facilitiesWithin5km": 1
+      },
+      "coordinates": {
+        "lat": -25.9710255,
+        "lng": 152.9720072
+      }
+    },
+    "storedProvenance": {
+      "transportShape": "state_template",
+      "walkScore": "legacy_non_evidence",
+      "commute": "measured_misdirected",
+      "wholeObjectNonEvidence": false
+    }
+  },
+  {
+    "bucket": "templated_and_misdirected",
+    "reportId": "039e1f1b-c1e0-47cb-8032-2c8c6ab7d0dc",
+    "geography": {
+      "state": "QLD",
+      "status": "resolved",
+      "suburb": "Nambour"
+    },
+    "locationIntelligence": {
+      "commute": {
+        "mode": "public_transit",
+        "distanceKm": 1099.4,
+        "durationMinutes": 1280
+      },
+      "schools": {
+        "topSchools": [
+          {
+            "name": "Elliott Music",
+            "rating": 5,
+            "distance": 0.65
+          },
+          {
+            "name": "Burnside State School",
+            "rating": 0,
+            "distance": 0.9
+          },
+          {
+            "name": "Burnside State High School",
+            "rating": 0,
+            "distance": 1.02
+          },
+          {
+            "name": "Brookes Street Nambour Community Kindergarten",
+            "rating": 5,
+            "distance": 1.24
+          },
+          {
+            "name": "Nambour State College",
+            "rating": 2.9,
+            "distance": 1.32
+          }
+        ],
+        "nearestSchool": "Elliott Music",
+        "distanceToSchool": 0.65,
+        "schoolsWithin3km": 10
+      },
+      "amenities": [
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Nambour General Hospital",
+          "category": "Public Transport",
+          "distance": 0.36
+        },
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Elliott Music",
+          "category": "Schools",
+          "distance": 0.65
+        },
+        {
+          "count": 5,
+          "score": 75,
+          "nearest": "Nambour General Hospital",
+          "category": "Healthcare",
+          "distance": 0.31
+        },
+        {
+          "count": 4,
+          "score": 48,
+          "nearest": "Nambour Mill Village",
+          "category": "Shopping",
+          "distance": 0.95
+        },
+        {
+          "count": 10,
+          "score": 80,
+          "nearest": "Mooloo Crescent Park",
+          "category": "Recreation",
+          "distance": 0.19
+        }
+      ],
+      "lifestyle": {
+        "parks": 10,
+        "nearestPark": "Mooloo Crescent Park",
+        "restaurants": 10,
+        "nearestShopping": "Nambour Mill Village",
+        "shoppingCenters": 4
+      },
+      "transport": {
+        "summary": "Excellent public transport access with 3 stops within 1km. Multiple transport modes including train, light rail, and bus services.",
+        "nearestStop": "Central Station",
+        "qualityScore": 83,
+        "accessibility": {
+          "lifts": true,
+          "tactilePaving": true,
+          "wheelchairAccessible": true
+        },
+        "detailedStops": [
+          {
+            "name": "Central Station",
+            "type": "Train",
+            "routes": [
+              "T1",
+              "T2",
+              "T3",
+              "T4",
+              "T8"
+            ],
+            "distance": 450,
+            "accessibility": {
+              "facilities": [
+                "lifts",
+                "tactile"
+              ],
+              "wheelchairAccessible": true
+            }
+          },
+          {
+            "name": "Eddy Avenue Light Rail",
+            "type": "Light Rail",
+            "routes": [
+              "L1",
+              "L2",
+              "L3"
+            ],
+            "distance": 500,
+            "accessibility": {
+              "facilities": [
+                "level_access"
+              ],
+              "wheelchairAccessible": true
+            }
+          },
+          {
+            "name": "George Street Bus Stop",
+            "type": "Bus",
+            "routes": [
+              "372",
+              "393",
+              "396",
+              "397"
+            ],
+            "distance": 320,
+            "accessibility": {
+              "wheelchairAccessible": true
+            }
+          }
+        ],
+        "routeCoverage": [
+          {
+            "type": "Train",
+            "route": "T2 Inner West Line",
+            "frequency": 12
+          },
+          {
+            "type": "Light Rail",
+            "route": "L1 Dulwich Hill",
+            "frequency": 8
+          },
+          {
+            "type": "Bus",
+            "route": "372 Bus",
+            "frequency": 6
+          }
+        ],
+        "distanceToStop": 450,
+        "realTimeAlerts": [],
+        "stopsWithin1km": 3,
+        "transportTypes": [
+          "Train",
+          "Light Rail",
+          "Bus",
+          "Ferry"
+        ],
+        "serviceFrequency": {
+          "peak": 18,
+          "offPeak": 8
+        }
+      },
+      "walkScore": 88,
+      "healthcare": {
+        "nearestHospital": "Nambour General Hospital",
+        "distanceToHospital": 0.31,
+        "facilitiesWithin5km": 5
+      },
+      "coordinates": {
+        "lat": -26.6223698,
+        "lng": 152.9493206
+      }
+    },
+    "storedProvenance": {
+      "transportShape": "state_template",
+      "walkScore": "legacy_non_evidence",
+      "commute": "measured_misdirected",
+      "wholeObjectNonEvidence": false
+    }
+  },
+  {
+    "bucket": "templated_own_capital",
+    "reportId": "00bed0ca-0c37-4df7-81ad-faa2f1231f4c",
+    "geography": {
+      "state": "QLD",
+      "status": "resolved",
+      "suburb": "Gympie"
+    },
+    "locationIntelligence": {
+      "commute": {
+        "mode": "public_transit",
+        "distanceKm": 183.9,
+        "durationMinutes": 328
+      },
+      "schools": {
+        "topSchools": [
+          {
+            "name": "Uniting Early Learning Gympie",
+            "rating": 5,
+            "distance": 0.82
+          },
+          {
+            "name": "James Nash State High School",
+            "rating": 0,
+            "distance": 1.25
+          },
+          {
+            "name": "Kids Bizz Early Education Centre",
+            "rating": 4.4,
+            "distance": 1.54
+          },
+          {
+            "name": "Goodstart Early Learning Gympie",
+            "rating": 5,
+            "distance": 1.71
+          },
+          {
+            "name": "Gympie Central School",
+            "rating": 0,
+            "distance": 1.97
+          }
+        ],
+        "nearestSchool": "Uniting Early Learning Gympie",
+        "distanceToSchool": 0.82,
+        "schoolsWithin3km": 10
+      },
+      "amenities": [
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Old Maryborough Road at Heights Drive",
+          "category": "Public Transport",
+          "distance": 0.28
+        },
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Uniting Early Learning Gympie",
+          "category": "Schools",
+          "distance": 0.82
+        },
+        {
+          "count": 8,
+          "score": 100,
+          "nearest": "Dr Bull Vasectomy Clinic",
+          "category": "Healthcare",
+          "distance": 1.61
+        },
+        {
+          "count": 7,
+          "score": 84,
+          "nearest": "Goldfields Plaza",
+          "category": "Shopping",
+          "distance": 2.14
+        },
+        {
+          "count": 8,
+          "score": 64,
+          "nearest": "Centenary Park",
+          "category": "Recreation",
+          "distance": 0.57
+        }
+      ],
+      "lifestyle": {
+        "parks": 8,
+        "nearestPark": "Centenary Park",
+        "restaurants": 10,
+        "nearestShopping": "Goldfields Plaza",
+        "shoppingCenters": 7
+      },
+      "transport": {
+        "summary": "Very good transport access with 3 stops within 1km. Unique ferry services complement train and bus networks.",
+        "nearestStop": "Queen Street Bus Station",
+        "qualityScore": 56,
+        "accessibility": {
+          "lifts": true,
+          "tactilePaving": false,
+          "wheelchairAccessible": true
+        },
+        "detailedStops": [
+          {
+            "name": "Brisbane Central Station",
+            "type": "Train",
+            "routes": [
+              "Beenleigh",
+              "Gold Coast",
+              "Airport"
+            ],
+            "distance": 520,
+            "accessibility": {
+              "facilities": [
+                "lifts"
+              ],
+              "wheelchairAccessible": true
+            }
+          },
+          {
+            "name": "Queen Street Bus Station",
+            "type": "Bus",
+            "routes": [
+              "111",
+              "222",
+              "333",
+              "444"
+            ],
+            "distance": 350,
+            "accessibility": {
+              "wheelchairAccessible": true
+            }
+          },
+          {
+            "name": "South Bank Ferry Terminal",
+            "type": "Ferry",
+            "routes": [
+              "CityHopper"
+            ],
+            "distance": 680,
+            "accessibility": {
+              "wheelchairAccessible": true
+            }
+          }
+        ],
+        "routeCoverage": [
+          {
+            "type": "Train",
+            "route": "Beenleigh Line",
+            "frequency": 8
+          },
+          {
+            "type": "Bus",
+            "route": "333 Bus",
+            "frequency": 10
+          },
+          {
+            "type": "Ferry",
+            "route": "CityHopper Ferry",
+            "frequency": 4
+          }
+        ],
+        "distanceToStop": 350,
+        "realTimeAlerts": [],
+        "stopsWithin1km": 3,
+        "transportTypes": [
+          "Train",
+          "Bus",
+          "Ferry"
+        ],
+        "serviceFrequency": {
+          "peak": 14,
+          "offPeak": 7
+        }
+      },
+      "walkScore": 86,
+      "healthcare": {
+        "nearestHospital": "Dr Bull Vasectomy Clinic",
+        "distanceToHospital": 1.61,
+        "facilitiesWithin5km": 8
+      },
+      "coordinates": {
+        "lat": -26.1701432,
+        "lng": 152.6675507
+      }
+    },
+    "storedProvenance": {
+      "transportShape": "state_template",
+      "walkScore": "legacy_non_evidence",
+      "commute": "measured",
+      "wholeObjectNonEvidence": false
+    }
+  },
+  {
+    "bucket": "templated_own_capital",
+    "reportId": "021c802b-4d89-42c3-9573-7e78bc726edd",
+    "geography": {
+      "state": "QLD",
+      "status": "resolved",
+      "suburb": "Gympie"
+    },
+    "locationIntelligence": {
+      "commute": {
+        "mode": "public_transit",
+        "distanceKm": 183.9,
+        "durationMinutes": 328
+      },
+      "schools": {
+        "topSchools": [
+          {
+            "name": "Uniting Early Learning Gympie",
+            "rating": 5,
+            "distance": 0.82
+          },
+          {
+            "name": "James Nash State High School",
+            "rating": 0,
+            "distance": 1.25
+          },
+          {
+            "name": "Kids Bizz Early Education Centre",
+            "rating": 4.4,
+            "distance": 1.54
+          },
+          {
+            "name": "Goodstart Early Learning Gympie",
+            "rating": 5,
+            "distance": 1.71
+          },
+          {
+            "name": "Gympie Central School",
+            "rating": 0,
+            "distance": 1.97
+          }
+        ],
+        "nearestSchool": "Uniting Early Learning Gympie",
+        "distanceToSchool": 0.82,
+        "schoolsWithin3km": 10
+      },
+      "amenities": [
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Old Maryborough Road at Heights Drive",
+          "category": "Public Transport",
+          "distance": 0.28
+        },
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Uniting Early Learning Gympie",
+          "category": "Schools",
+          "distance": 0.82
+        },
+        {
+          "count": 8,
+          "score": 100,
+          "nearest": "Dr Bull Vasectomy Clinic",
+          "category": "Healthcare",
+          "distance": 1.61
+        },
+        {
+          "count": 7,
+          "score": 84,
+          "nearest": "Goldfields Plaza",
+          "category": "Shopping",
+          "distance": 2.14
+        },
+        {
+          "count": 8,
+          "score": 64,
+          "nearest": "Centenary Park",
+          "category": "Recreation",
+          "distance": 0.57
+        }
+      ],
+      "lifestyle": {
+        "parks": 8,
+        "nearestPark": "Centenary Park",
+        "restaurants": 10,
+        "nearestShopping": "Goldfields Plaza",
+        "shoppingCenters": 7
+      },
+      "transport": {
+        "summary": "Very good transport access with 3 stops within 1km. Unique ferry services complement train and bus networks.",
+        "nearestStop": "Queen Street Bus Station",
+        "qualityScore": 56,
+        "accessibility": {
+          "lifts": true,
+          "tactilePaving": false,
+          "wheelchairAccessible": true
+        },
+        "detailedStops": [
+          {
+            "name": "Brisbane Central Station",
+            "type": "Train",
+            "routes": [
+              "Beenleigh",
+              "Gold Coast",
+              "Airport"
+            ],
+            "distance": 520,
+            "accessibility": {
+              "facilities": [
+                "lifts"
+              ],
+              "wheelchairAccessible": true
+            }
+          },
+          {
+            "name": "Queen Street Bus Station",
+            "type": "Bus",
+            "routes": [
+              "111",
+              "222",
+              "333",
+              "444"
+            ],
+            "distance": 350,
+            "accessibility": {
+              "wheelchairAccessible": true
+            }
+          },
+          {
+            "name": "South Bank Ferry Terminal",
+            "type": "Ferry",
+            "routes": [
+              "CityHopper"
+            ],
+            "distance": 680,
+            "accessibility": {
+              "wheelchairAccessible": true
+            }
+          }
+        ],
+        "routeCoverage": [
+          {
+            "type": "Train",
+            "route": "Beenleigh Line",
+            "frequency": 8
+          },
+          {
+            "type": "Bus",
+            "route": "333 Bus",
+            "frequency": 10
+          },
+          {
+            "type": "Ferry",
+            "route": "CityHopper Ferry",
+            "frequency": 4
+          }
+        ],
+        "distanceToStop": 350,
+        "realTimeAlerts": [],
+        "stopsWithin1km": 3,
+        "transportTypes": [
+          "Train",
+          "Bus",
+          "Ferry"
+        ],
+        "serviceFrequency": {
+          "peak": 14,
+          "offPeak": 7
+        }
+      },
+      "walkScore": 86,
+      "healthcare": {
+        "nearestHospital": "Dr Bull Vasectomy Clinic",
+        "distanceToHospital": 1.61,
+        "facilitiesWithin5km": 8
+      },
+      "coordinates": {
+        "lat": -26.1701432,
+        "lng": 152.6675507
+      }
+    },
+    "storedProvenance": {
+      "transportShape": "state_template",
+      "walkScore": "legacy_non_evidence",
+      "commute": "measured",
+      "wholeObjectNonEvidence": false
+    }
+  },
+  {
+    "bucket": "templated_own_capital",
+    "reportId": "0237e8d9-faef-4d22-b26a-0a52fa12ea34",
+    "geography": {
+      "state": "QLD",
+      "status": "resolved",
+      "suburb": "Fernvale (Qld)"
+    },
+    "locationIntelligence": {
+      "commute": {
+        "mode": "public_transit",
+        "distanceKm": 62.9,
+        "durationMinutes": 139
+      },
+      "schools": {
+        "topSchools": [
+          {
+            "name": "Goodstart Early Learning Fernvale",
+            "rating": 4.7,
+            "distance": 0.86
+          },
+          {
+            "name": "Fernvale Childcare Centre | Journey Early Learning",
+            "rating": 5,
+            "distance": 1.42
+          },
+          {
+            "name": "Fernvale State School",
+            "rating": 0,
+            "distance": 2.77
+          }
+        ],
+        "nearestSchool": "Goodstart Early Learning Fernvale",
+        "distanceToSchool": 0.86,
+        "schoolsWithin3km": 3
+      },
+      "amenities": [
+        {
+          "count": 7,
+          "score": 100,
+          "nearest": "Brisbane Valley Hwy at Fernvale Sth CLOSED 17-4-23",
+          "category": "Public Transport",
+          "distance": 1.33
+        },
+        {
+          "count": 3,
+          "score": 30,
+          "nearest": "Goodstart Early Learning Fernvale",
+          "category": "Schools",
+          "distance": 0.86
+        },
+        {
+          "count": 1,
+          "score": 15,
+          "nearest": "Banks Creek Medical Centre",
+          "category": "Healthcare",
+          "distance": 1.38
+        },
+        {
+          "count": 1,
+          "score": 12,
+          "nearest": "Fernvale Village Shopping Centre",
+          "category": "Shopping",
+          "distance": 1.21
+        },
+        {
+          "count": 3,
+          "score": 24,
+          "nearest": "Honeywood Park",
+          "category": "Recreation",
+          "distance": 0.74
+        }
+      ],
+      "lifestyle": {
+        "parks": 3,
+        "nearestPark": "Honeywood Park",
+        "restaurants": 9,
+        "nearestShopping": "Fernvale Village Shopping Centre",
+        "shoppingCenters": 1
+      },
+      "transport": {
+        "summary": "Very good transport access with 3 stops within 1km. Unique ferry services complement train and bus networks.",
+        "nearestStop": "Queen Street Bus Station",
+        "qualityScore": 56,
+        "accessibility": {
+          "lifts": true,
+          "tactilePaving": false,
+          "wheelchairAccessible": true
+        },
+        "detailedStops": [
+          {
+            "name": "Brisbane Central Station",
+            "type": "Train",
+            "routes": [
+              "Beenleigh",
+              "Gold Coast",
+              "Airport"
+            ],
+            "distance": 520,
+            "accessibility": {
+              "facilities": [
+                "lifts"
+              ],
+              "wheelchairAccessible": true
+            }
+          },
+          {
+            "name": "Queen Street Bus Station",
+            "type": "Bus",
+            "routes": [
+              "111",
+              "222",
+              "333",
+              "444"
+            ],
+            "distance": 350,
+            "accessibility": {
+              "wheelchairAccessible": true
+            }
+          },
+          {
+            "name": "South Bank Ferry Terminal",
+            "type": "Ferry",
+            "routes": [
+              "CityHopper"
+            ],
+            "distance": 680,
+            "accessibility": {
+              "wheelchairAccessible": true
+            }
+          }
+        ],
+        "routeCoverage": [
+          {
+            "type": "Train",
+            "route": "Beenleigh Line",
+            "frequency": 8
+          },
+          {
+            "type": "Bus",
+            "route": "333 Bus",
+            "frequency": 10
+          },
+          {
+            "type": "Ferry",
+            "route": "CityHopper Ferry",
+            "frequency": 4
+          }
+        ],
+        "distanceToStop": 350,
+        "realTimeAlerts": [],
+        "stopsWithin1km": 3,
+        "transportTypes": [
+          "Train",
+          "Bus",
+          "Ferry"
+        ],
+        "serviceFrequency": {
+          "peak": 14,
+          "offPeak": 7
+        }
+      },
+      "walkScore": 51,
+      "healthcare": {
+        "nearestHospital": "Banks Creek Medical Centre",
+        "distanceToHospital": 1.38,
+        "facilitiesWithin5km": 1
+      },
+      "coordinates": {
+        "lat": -27.4657152,
+        "lng": 152.6622934
+      }
+    },
+    "storedProvenance": {
+      "transportShape": "state_template",
+      "walkScore": "legacy_non_evidence",
+      "commute": "measured",
+      "wholeObjectNonEvidence": false
+    }
+  },
+  {
+    "bucket": "templated_own_capital",
+    "reportId": "03978e7b-5402-4d56-82b4-a894c9fc3d71",
+    "geography": {
+      "state": "VIC",
+      "status": "resolved",
+      "suburb": "Bell Park"
+    },
+    "locationIntelligence": {
+      "commute": {
+        "mode": "public_transit",
+        "distanceKm": 86.5,
+        "durationMinutes": 116
+      },
+      "schools": {
+        "topSchools": [
+          {
+            "name": "North Geelong Secondary College",
+            "rating": 0,
+            "distance": 0.52
+          },
+          {
+            "name": "Bell Park North Primary School",
+            "rating": 0,
+            "distance": 1.01
+          },
+          {
+            "name": "Kardinia International College",
+            "rating": 0,
+            "distance": 1.14
+          },
+          {
+            "name": "Rollins Primary School - Main Campus",
+            "rating": 0,
+            "distance": 1.83
+          },
+          {
+            "name": "Bell Post Hill Kindergarten",
+            "rating": 3.5,
+            "distance": 1.88
+          }
+        ],
+        "nearestSchool": "North Geelong Secondary College",
+        "distanceToSchool": 0.52,
+        "schoolsWithin3km": 10
+      },
+      "amenities": [
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Nelson Park School",
+          "category": "Public Transport",
+          "distance": 0.28
+        },
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "North Geelong Secondary College",
+          "category": "Schools",
+          "distance": 0.52
+        },
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Limitless Chiropractic Geelong (formally Shannon Avenue Chiropractic)",
+          "category": "Healthcare",
+          "distance": 1.97
+        },
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Pakington Strand",
+          "category": "Shopping",
+          "distance": 2.64
+        },
+        {
+          "count": 10,
+          "score": 80,
+          "nearest": "Castle Reserve",
+          "category": "Recreation",
+          "distance": 0.17
+        }
+      ],
+      "lifestyle": {
+        "parks": 10,
+        "nearestPark": "Castle Reserve",
+        "restaurants": 10,
+        "nearestShopping": "Pakington Strand",
+        "shoppingCenters": 10
+      },
+      "transport": {
+        "summary": "Outstanding public transport network with 3 stops within 1km. Renowned tram network plus extensive train and bus coverage.",
+        "nearestStop": "Swanston Street Tram",
+        "qualityScore": 82,
+        "accessibility": {
+          "lifts": true,
+          "tactilePaving": true,
+          "wheelchairAccessible": true
+        },
+        "detailedStops": [
+          {
+            "name": "Flinders Street Station",
+            "type": "Train",
+            "routes": [
+              "Cranbourne",
+              "Pakenham",
+              "Frankston"
+            ],
+            "distance": 380,
+            "accessibility": {
+              "facilities": [
+                "lifts",
+                "tactile"
+              ],
+              "wheelchairAccessible": true
+            }
+          },
+          {
+            "name": "Swanston Street Tram",
+            "type": "Tram",
+            "routes": [
+              "1",
+              "3",
+              "5",
+              "6",
+              "16",
+              "64",
+              "67",
+              "72"
+            ],
+            "distance": 250,
+            "accessibility": {
+              "facilities": [
+                "low_floor"
+              ],
+              "wheelchairAccessible": true
+            }
+          },
+          {
+            "name": "Collins Street Bus",
+            "type": "Bus",
+            "routes": [
+              "216",
+              "219",
+              "220"
+            ],
+            "distance": 420,
+            "accessibility": {
+              "wheelchairAccessible": true
+            }
+          }
+        ],
+        "routeCoverage": [
+          {
+            "type": "Train",
+            "route": "Cranbourne Line",
+            "frequency": 10
+          },
+          {
+            "type": "Tram",
+            "route": "Route 1 Tram",
+            "frequency": 15
+          },
+          {
+            "type": "Bus",
+            "route": "216 Bus",
+            "frequency": 8
+          }
+        ],
+        "distanceToStop": 250,
+        "realTimeAlerts": [],
+        "stopsWithin1km": 3,
+        "transportTypes": [
+          "Train",
+          "Tram",
+          "Bus"
+        ],
+        "serviceFrequency": {
+          "peak": 20,
+          "offPeak": 10
+        }
+      },
+      "walkScore": 95,
+      "healthcare": {
+        "nearestHospital": "Limitless Chiropractic Geelong (formally Shannon Avenue Chiropractic)",
+        "distanceToHospital": 1.97,
+        "facilitiesWithin5km": 10
+      },
+      "coordinates": {
+        "lat": -38.1144129,
+        "lng": 144.3396432
+      }
+    },
+    "storedProvenance": {
+      "transportShape": "state_template",
+      "walkScore": "legacy_non_evidence",
+      "commute": "measured",
+      "wholeObjectNonEvidence": false
+    }
+  },
+  {
+    "bucket": "templated_own_capital",
+    "reportId": "046188b2-f346-4b4e-bf9d-f8bb5a9655ef",
+    "geography": {
+      "state": "VIC",
+      "status": "resolved",
+      "suburb": "Wyndham Vale"
+    },
+    "locationIntelligence": {
+      "commute": {
+        "mode": "public_transit",
+        "distanceKm": 47.4,
+        "durationMinutes": 81
+      },
+      "schools": {
+        "topSchools": [
+          {
+            "name": "Vocals With Jess",
+            "rating": 5,
+            "distance": 0.53
+          },
+          {
+            "name": "Nido Early School Wyndham Vale",
+            "rating": 4,
+            "distance": 0.68
+          },
+          {
+            "name": "Aspire Early Education & Kindergarten Manor Lakes",
+            "rating": 4.2,
+            "distance": 1.59
+          },
+          {
+            "name": "Ngarri Primary School",
+            "rating": 0,
+            "distance": 2.07
+          },
+          {
+            "name": "Holyoake Parade Primary School",
+            "rating": 0,
+            "distance": 2.08
+          }
+        ],
+        "nearestSchool": "Vocals With Jess",
+        "distanceToSchool": 0.53,
+        "schoolsWithin3km": 9
+      },
+      "amenities": [
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Anniversary Ave/Stanmore Cres",
+          "category": "Public Transport",
+          "distance": 0.18
+        },
+        {
+          "count": 9,
+          "score": 90,
+          "nearest": "Vocals With Jess",
+          "category": "Schools",
+          "distance": 0.53
+        },
+        {
+          "count": 3,
+          "score": 45,
+          "nearest": "Manor Lakes Medical Centre",
+          "category": "Healthcare",
+          "distance": 3.65
+        },
+        {
+          "count": 5,
+          "score": 60,
+          "nearest": "SymmetricHomes Display home",
+          "category": "Shopping",
+          "distance": 0.7
+        },
+        {
+          "count": 8,
+          "score": 64,
+          "nearest": "Stanmore Crescent Park",
+          "category": "Recreation",
+          "distance": 0.17
+        }
+      ],
+      "lifestyle": {
+        "parks": 8,
+        "nearestPark": "Stanmore Crescent Park",
+        "restaurants": 10,
+        "nearestShopping": "SymmetricHomes Display home",
+        "shoppingCenters": 5
+      },
+      "transport": {
+        "summary": "Outstanding public transport network with 3 stops within 1km. Renowned tram network plus extensive train and bus coverage.",
+        "nearestStop": "Swanston Street Tram",
+        "qualityScore": 82,
+        "accessibility": {
+          "lifts": true,
+          "tactilePaving": true,
+          "wheelchairAccessible": true
+        },
+        "detailedStops": [
+          {
+            "name": "Flinders Street Station",
+            "type": "Train",
+            "routes": [
+              "Cranbourne",
+              "Pakenham",
+              "Frankston"
+            ],
+            "distance": 380,
+            "accessibility": {
+              "facilities": [
+                "lifts",
+                "tactile"
+              ],
+              "wheelchairAccessible": true
+            }
+          },
+          {
+            "name": "Swanston Street Tram",
+            "type": "Tram",
+            "routes": [
+              "1",
+              "3",
+              "5",
+              "6",
+              "16",
+              "64",
+              "67",
+              "72"
+            ],
+            "distance": 250,
+            "accessibility": {
+              "facilities": [
+                "low_floor"
+              ],
+              "wheelchairAccessible": true
+            }
+          },
+          {
+            "name": "Collins Street Bus",
+            "type": "Bus",
+            "routes": [
+              "216",
+              "219",
+              "220"
+            ],
+            "distance": 420,
+            "accessibility": {
+              "wheelchairAccessible": true
+            }
+          }
+        ],
+        "routeCoverage": [
+          {
+            "type": "Train",
+            "route": "Cranbourne Line",
+            "frequency": 10
+          },
+          {
+            "type": "Tram",
+            "route": "Route 1 Tram",
+            "frequency": 15
+          },
+          {
+            "type": "Bus",
+            "route": "216 Bus",
+            "frequency": 8
+          }
+        ],
+        "distanceToStop": 250,
+        "realTimeAlerts": [],
+        "stopsWithin1km": 3,
+        "transportTypes": [
+          "Train",
+          "Tram",
+          "Bus"
+        ],
+        "serviceFrequency": {
+          "peak": 20,
+          "offPeak": 10
+        }
+      },
+      "walkScore": 90,
+      "healthcare": {
+        "nearestHospital": "Manor Lakes Medical Centre",
+        "distanceToHospital": 3.65,
+        "facilitiesWithin5km": 3
+      },
+      "coordinates": {
+        "lat": -37.8488342,
+        "lng": 144.5914691
+      }
+    },
+    "storedProvenance": {
+      "transportShape": "state_template",
+      "walkScore": "legacy_non_evidence",
+      "commute": "measured",
+      "wholeObjectNonEvidence": false
+    }
+  },
+  {
+    "bucket": "templated_own_capital",
+    "reportId": "04753abc-336d-4b5b-b5e1-d714a2527081",
+    "geography": {
+      "state": "QLD",
+      "status": "resolved",
+      "suburb": "Cooloola Cove"
+    },
+    "locationIntelligence": {
+      "commute": {
+        "mode": "public_transit",
+        "distanceKm": 250.9,
+        "durationMinutes": 342
+      },
+      "schools": {
+        "topSchools": [],
+        "nearestSchool": "N/A",
+        "distanceToSchool": 0,
+        "schoolsWithin3km": 0
+      },
+      "amenities": [
+        {
+          "count": 10,
+          "score": 100,
+          "nearest": "Marco Polo Dr at Pamir Ct",
+          "category": "Public Transport",
+          "distance": 0.15
+        },
+        {
+          "count": 0,
+          "score": 0,
+          "nearest": "N/A",
+          "category": "Schools",
+          "distance": 0
+        },
+        {
+          "count": 1,
+          "score": 15,
+          "nearest": "Cooloola Coast General Practice - Cooloola Cove",
+          "category": "Healthcare",
+          "distance": 0.95
+        },
+        {
+          "count": 1,
+          "score": 12,
+          "nearest": "Cooloola Cove Shopping Centre",
+          "category": "Shopping",
+          "distance": 0.97
+        },
+        {
+          "count": 2,
+          "score": 16,
+          "nearest": "Billabong Park",
+          "category": "Recreation",
+          "distance": 1.04
+        }
+      ],
+      "lifestyle": {
+        "parks": 2,
+        "nearestPark": "Billabong Park",
+        "restaurants": 0,
+        "nearestShopping": "Cooloola Cove Shopping Centre",
+        "shoppingCenters": 1
+      },
+      "transport": {
+        "summary": "Very good transport access with 3 stops within 1km. Unique ferry services complement train and bus networks.",
+        "nearestStop": "Queen Street Bus Station",
+        "qualityScore": 56,
+        "accessibility": {
+          "lifts": true,
+          "tactilePaving": false,
+          "wheelchairAccessible": true
+        },
+        "detailedStops": [
+          {
+            "name": "Brisbane Central Station",
+            "type": "Train",
+            "routes": [
+              "Beenleigh",
+              "Gold Coast",
+              "Airport"
+            ],
+            "distance": 520,
+            "accessibility": {
+              "facilities": [
+                "lifts"
+              ],
+              "wheelchairAccessible": true
+            }
+          },
+          {
+            "name": "Queen Street Bus Station",
+            "type": "Bus",
+            "routes": [
+              "111",
+              "222",
+              "333",
+              "444"
+            ],
+            "distance": 350,
+            "accessibility": {
+              "wheelchairAccessible": true
+            }
+          },
+          {
+            "name": "South Bank Ferry Terminal",
+            "type": "Ferry",
+            "routes": [
+              "CityHopper"
+            ],
+            "distance": 680,
+            "accessibility": {
+              "wheelchairAccessible": true
+            }
+          }
+        ],
+        "routeCoverage": [
+          {
+            "type": "Train",
+            "route": "Beenleigh Line",
+            "frequency": 8
+          },
+          {
+            "type": "Bus",
+            "route": "333 Bus",
+            "frequency": 10
+          },
+          {
+            "type": "Ferry",
+            "route": "CityHopper Ferry",
+            "frequency": 4
+          }
+        ],
+        "distanceToStop": 350,
+        "realTimeAlerts": [],
+        "stopsWithin1km": 3,
+        "transportTypes": [
+          "Train",
+          "Bus",
+          "Ferry"
+        ],
+        "serviceFrequency": {
+          "peak": 14,
+          "offPeak": 7
+        }
+      },
+      "walkScore": 30,
+      "healthcare": {
+        "nearestHospital": "Cooloola Coast General Practice - Cooloola Cove",
+        "distanceToHospital": 0.95,
+        "facilitiesWithin5km": 1
+      },
+      "coordinates": {
+        "lat": -25.9792343,
+        "lng": 152.9859534
+      }
+    },
+    "storedProvenance": {
+      "transportShape": "state_template",
+      "walkScore": "legacy_non_evidence",
+      "commute": "measured",
+      "wholeObjectNonEvidence": false
+    }
+  }
+]

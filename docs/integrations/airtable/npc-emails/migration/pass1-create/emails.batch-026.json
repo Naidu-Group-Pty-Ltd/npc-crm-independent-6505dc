@@ -1,0 +1,451 @@
+{
+  "table": "Emails",
+  "batch": 26,
+  "of": 107,
+  "recordCount": 50,
+  "records": [
+    {
+      "sourceRecordId": "recEOSlAYLVd4Frrn",
+      "sourceCreatedTime": "2025-10-17T06:07:34.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recEPjBgSkIEalB15",
+      "sourceCreatedTime": "2025-09-22T18:01:28.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recEQICnqqCsCeHrJ",
+      "sourceCreatedTime": "2025-11-07T04:51:31.000Z",
+      "fields": {
+        "Name": "Peter Coomer",
+        "Subject": "🏡 Hermitage Stocklist // One-Part Contracts Available!! // Geelong Rooming Houses from $766K - up to 10% yield - 07/11/2025",
+        "Email": "pcoomer@hermitagehomes.com.au",
+        "Body": "🏡 Hermitage Stocklist // One-Part Contracts Available!! // Geelong Rooming Houses from $766K - up to 10% yield - 07/11/2025\r\n\r\nHi ,\r\n\r\n\r\n\r\nGeelong is set to be the next BOOMING suburb. Check out this link below from\r\nThe Greater City of Geelong's post on",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recEQQZvMozIAaMDb",
+      "sourceCreatedTime": "2025-12-02T01:10:56.000Z",
+      "fields": {
+        "Name": "Nicole Frew",
+        "Subject": "JUST LISTED - 5 ACRES OF LIFESTYLE & POTENTIAL IN PLACID HILLS!",
+        "Email": "nicole@gattonrealestate.com.au",
+        "Body": "Good morning Rugesh\r\n\r\nIf you’ve been searching for acreage that offers space, infrastructure and endless possibility, this is the one. Set on 5 fully fenced acres in sought-after Placid Hills, this versatile property delivers the perfect blend of peacefu"
+      }
+    },
+    {
+      "sourceRecordId": "recEQea5qwISxiPcn",
+      "sourceCreatedTime": "2026-01-16T02:41:52.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recES24T5BGABctQ3",
+      "sourceCreatedTime": "2025-10-07T02:45:07.000Z",
+      "fields": {
+        "Name": "Thomas Bettison",
+        "Subject": "COMING SOON TO MARKET | 45/1 Sheen Street, Subiaco",
+        "Email": "thomas.bettison@housesmart.com.au",
+        "Body": "MARKET PREVIEW - 45/1 Sheen Street\r\n\r\nHi Rugesh,\r\n\r\nPlease see the following property, launching to market in the near future.\r\n\r\nIf you are interested in securing this before the property goes live to all buyers, let me know.\r\n\r\nUpdate my criteria\r\nSay h",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recESt9JbWXoOZff1",
+      "sourceCreatedTime": "2026-06-11T05:44:18.000Z",
+      "fields": {
+        "Name": "Nav Hena",
+        "Subject": "Property List -  Team Jim Cross",
+        "Email": "navhena@mcgrath.com.au",
+        "Body": "Hello Npc Services (naidu Property Consulting Services),\r\n\r\n\r\n\r\nGood afternoon,\r\n\r\nI hope you are doing well.\r\n\r\nPlease see attached e-newsletter containing all properties that may be of interest to you and your clients.\r\n\r\nIf you have any questions or wo"
+      }
+    },
+    {
+      "sourceRecordId": "recET9hJwgWh454XN",
+      "sourceCreatedTime": "2026-01-27T06:22:17.000Z",
+      "fields": {
+        "Name": "Rossana Winters - Realty One Real Estate",
+        "Subject": "152 Denham Terrace, Allenstown",
+        "Email": "rossana@realtyonerealestate.com.au",
+        "Body": "Hi there,\r\n\r\nDo not miss out on this opportunity.  Price $550,000 and it rents out for $540 per week.  Freshly renovated with a great tenant.\r\n\r\nhttps://www.realtyonerealestate.com.au/property/152-denham-terrace/\r\n\r\nPlease give me a call.\r\n\r\nCheers,\r\nRoss"
+      }
+    },
+    {
+      "sourceRecordId": "recETWpxbBFAxGH8K",
+      "sourceCreatedTime": "2026-02-27T09:22:05.000Z",
+      "fields": {
+        "Name": "Scott Swingler",
+        "Subject": "Exciting New Prices Within Designed To Effect An Immediate Sale!",
+        "Email": "scott@shore-property.com.au",
+        "Body": "Want to change how you receive these emails?\r\nYou can click to unsubscribe from this list.\r\n \r\nDiscover\r\n \r\n\r\nIn City Beach Last Year...\r\n\r\n\r\n \r\n \r\n\r\nWant to find out about new properties before they hit the market?\r\n\r\n\r\n\r\nFollow us on Socials.\r\n\r\n \r\n\r\nTh",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recETXg81vKWOXCRn",
+      "sourceCreatedTime": "2025-11-17T03:54:21.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recEU5ISunwHFPttC",
+      "sourceCreatedTime": "2025-11-11T05:12:35.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recEUILV3ZZEFy8Uu",
+      "sourceCreatedTime": "2026-07-13T18:24:06.000Z",
+      "fields": {
+        "Name": "Sharon Collins",
+        "Subject": "New Stock Just Released + Strong Market Signs Boosting Buyer Confidence",
+        "Email": "sharon.c@ascentaliving.com.au",
+        "Body": "Hi Team,\r\n\r\nWe’re excited to share our latest House & Land stocklist, featuring high‑demand locations and turnkey packages that continue to perform strongly across both owner‑occupier and investor markets.\r\n\r\nThe timing couldn’t be better. Recent market"
+      }
+    },
+    {
+      "sourceRecordId": "recEWABbvRLS7MYhw",
+      "sourceCreatedTime": "2025-10-07T02:22:40.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recEXvW60qcqGW8bO",
+      "sourceCreatedTime": "2025-08-23T16:41:37.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recEXyjo8TR1omkk5",
+      "sourceCreatedTime": "2025-10-17T04:21:28.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recEYFKNx3muXSwYO",
+      "sourceCreatedTime": "2025-11-27T07:37:13.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recEaMbh3OvlAh2V3",
+      "sourceCreatedTime": "2026-01-15T03:33:47.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recEaakOz5hefAws8",
+      "sourceCreatedTime": "2026-01-07T06:52:28.000Z",
+      "fields": {
+        "Name": "Catherine Tidy",
+        "Subject": "Fletcher Riley's Newsletter - This Week in Luxury: Just Listed, Just Sold and Exclusive Open Homes",
+        "Email": "admin@fletcherriley.com.au",
+        "Body": "Welcome to our first weekly newsletter for 2026!\r\n\r\n\r\n\r\nA new year brings fresh momentum to the Sunshine Coast property market, with 2026 shaping up to be a year of opportunity, confidence and renewed buyer interest. Our coastal lifestyle continues to att"
+      }
+    },
+    {
+      "sourceRecordId": "recEbfvJ6Z3PQgEh5",
+      "sourceCreatedTime": "2025-12-05T02:54:21.000Z",
+      "fields": {
+        "Name": "Adam Bettison",
+        "Subject": "HouseSmart Real Estate Pty Ltd Weekend Home Open Property Update",
+        "Email": "adam.bettison@housesmart.com.au",
+        "Body": "Weekend Home Opens & Property Update\r\n\r\nHi Rugesh\r\n\r\nEach week at HouseSmart brings significant buying, selling and leasing activity. Our team is active across the entire Perth market.\r\n\r\nFor any property related assistance, reach out to us by replying to",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recEdjsLV3HrdDU7z",
+      "sourceCreatedTime": "2025-10-29T07:21:33.000Z",
+      "fields": {
+        "Name": "Lyn Deasy",
+        "Subject": "Your Property Update [New Listing Alert]",
+        "Email": "lyn.deasy@podre.com.au",
+        "Body": "0749272122\r\nwww.podre.com.au\r\nNew Listings\r\n\r\nHi Rugesh,\r\n\r\nWe've listed some new properties that I think you might be interested in. Give me a call if you have any questions or would like to take a look through any of these.\r\n\r\n\r\n11 O'Shanesy Street, Koo"
+      }
+    },
+    {
+      "sourceRecordId": "recEeea3lS626FydS",
+      "sourceCreatedTime": "2025-10-16T03:44:55.000Z",
+      "fields": {
+        "Name": "Lyn Deasy",
+        "Subject": "Your Property Update [New Listing Alert]",
+        "Email": "lyn.deasy@podre.com.au",
+        "Body": "0749272122\r\nwww.podre.com.au\r\nNew Listings\r\n\r\nHi Rugesh,\r\n\r\nWe've listed some new properties that I think you might be interested in. Give me a call if you have any questions or would like to take a look through any of these.\r\n\r\n\r\n188 Upper Dawson Road, T",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recEfBofns1bBJzgw",
+      "sourceCreatedTime": "2025-11-21T02:41:26.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recEfZDOu4Y42MgFz",
+      "sourceCreatedTime": "2026-04-02T01:06:00.000Z",
+      "fields": {
+        "Name": "Jon Mordue",
+        "Subject": "Dual Key Package Available @ Park Ridge, QLD 4125 | $1,199,000",
+        "Email": "jon@projectpropertysales.com.au",
+        "Body": "​Dual Key Package Available @ Park Ridge, QLD 4125 | $1,199,000\r\n\r\nFull Turnkey | Fixed Price\r\n Address\r\n Lot\r\n Bed\r\n Bath\r\n Car\r\n Land Rego\r\n Land m2\r\n House m2\r\n Package $\r\nRental $\r\n Package\r\nBurnside (Dual Key)\r\n3\r\n5\r\n3\r\n3\r\nQ3 2026\r\n605\r\n265\r\n$1,292,8"
+      }
+    },
+    {
+      "sourceRecordId": "recEgLqjlhs2VtT3u",
+      "sourceCreatedTime": "2025-11-27T06:56:22.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recEgYfE0eXvnrpEL",
+      "sourceCreatedTime": "2025-10-10T10:06:50.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recEixCYSihHGLPXY",
+      "sourceCreatedTime": "2026-03-10T07:09:20.000Z",
+      "fields": {
+        "Name": "Michael Enever",
+        "Subject": "NEW Price Property - OMEO VALLEY - Harcourts",
+        "Email": "michael.enever@harcourts.com.au",
+        "Body": "Hi Rugesh,\r\n\r\nPlease see the below property in OMEO VALLEY featuring a new price that may interest you or someone that you know.\r\nIf you would like further information about the property shown, or to discuss your property requirements, please don't "
+      }
+    },
+    {
+      "sourceRecordId": "recEjPbTWfGvfwMot",
+      "sourceCreatedTime": "2025-12-02T06:34:02.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recEjpwAM107MyyIB",
+      "sourceCreatedTime": "2025-11-14T05:56:47.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recEkEcTGCb83IFVF",
+      "sourceCreatedTime": "2026-01-20T04:01:57.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recEkZWfSOclkkJfG",
+      "sourceCreatedTime": "2026-03-25T06:40:40.000Z",
+      "fields": {
+        "Name": "Joe Morrow",
+        "Subject": "JUST LISTED - BUTLER",
+        "Email": "joe@c21goldkey.com.au",
+        "Body": "Just Listed! 4 Brampton Avenue, Butler – Great space, great location and ready to move in. Home Opens Sat & Sun 11:00–11:45am.\r\n ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ "
+      }
+    },
+    {
+      "sourceRecordId": "recEkdwMCfb8YItXN",
+      "sourceCreatedTime": "2026-06-23T15:40:39.000Z",
+      "fields": {
+        "Name": "Wellmanprop",
+        "Subject": "🛎️June | WELLMAN PROP STOCK LIST - Weekly Updates❗",
+        "Email": "projects@wellmanpropgroup.com",
+        "Body": "Click Here to Access All Projects & Stocklist\r\n\r\nWELLMAN STOCKLIST\r\n\r\nWeekly Updates\r\n\r\n \r\n\r\nTOWNHOUSE (COMPLETE)\r\n\r\n26-28 Scoresby Rd, Bayswater\r\n\r\n2-3B 1.5-3B 1-2CAR\r\n\r\n\r\nAsking Price:\r\n\r\nUnit 6: $719,900\r\n\r\nUnit 11: $699,900\r\nUnit 13: $899,900\r\n\r\nUnit "
+      }
+    },
+    {
+      "sourceRecordId": "recElIHQGsC16Awp0",
+      "sourceCreatedTime": "2025-11-05T00:50:57.000Z",
+      "fields": {
+        "Name": "Gemma Coady Team - Freedom Property",
+        "Subject": "Two incredible off-market townhomes in Cleveland - View Thursday",
+        "Email": "gemmacoadyteam@freedomproperty.com.au",
+        "Body": "Hello,\r\n\r\nI’ve got two incredible off-market townhomes in Cleveland that define space, quality, and lifestyle.\r\nSee them exclusively this Thursday, 6 November, before they hit the open market.\r\n\r\n________________________________\r\n🏡 1) Sophisticated Coast"
+      }
+    },
+    {
+      "sourceRecordId": "recEmsgtYluU14Y28",
+      "sourceCreatedTime": "2025-11-06T02:55:42.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recEny6jHUSid27PQ",
+      "sourceCreatedTime": "2025-12-08T09:04:44.000Z",
+      "fields": {
+        "Name": "Thomas Bettison",
+        "Subject": "For Sale | 4/40 Bennett Springs Drive, Bennett Springs",
+        "Email": "thomas.bettison@housesmart.com.au",
+        "Body": "For Sale - 4/40 Bennett Springs Drive\r\n\r\nHi Rugesh,\r\n\r\nPlease enjoy the below property in preparation for the next home open!\r\n\r\nFollow us on Instagram to get a sneak-peek at upcoming listings!\r\n\r\nUpdate my criteria\r\nSay hello on Instagram\r\nMake an Offer"
+      }
+    },
+    {
+      "sourceRecordId": "recEp2bqAVDigtplJ",
+      "sourceCreatedTime": "2026-02-03T19:09:17.000Z",
+      "fields": {
+        "Name": "Wellmanprop",
+        "Subject": "🛎️February | WELLMAN PROP STOCK LIST - Weekly Updates❗",
+        "Email": "projects@wellmanpropgroup.com",
+        "Body": "Click Here to Access All Projects & Stocklist\r\n\r\nWELLMAN STOCKLIST\r\n\r\nWeekly Updates\r\n\r\n \r\n\r\nTOWNHOUSE (COMPLETE)\r\n\r\n30-32 Station Street, Ferntree Gully\r\n\r\n2-3B  1.5-2B  1-2CAR\r\n\r\n\r\nAsking Price:\r\n\r\nUnit 1: $748,000\r\n\r\nUnit 2: $878,000\r\n\r\nUnit 4: Sold"
+      }
+    },
+    {
+      "sourceRecordId": "recEp9u3tLcpa8Yxt",
+      "sourceCreatedTime": "2026-03-18T18:15:56.000Z",
+      "fields": {
+        "Name": "Tom Offermann Real Estate",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "sales@offermann.com.au",
+        "Body": "Edit my requirements\r\nVisit our Website\r\nProperty Alert\r\nThursday, 19th March 2026\r\nHello Rugesh,\r\n\r\nThe following listings matched your Property Alert search requirements.\r\n\r\nCooroibah\r\n24 Amaroo Place\r\nAvantgarde Amaroo: Undisputedly Outstanding 10 Mins",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recEppOQnJcRCvYU0",
+      "sourceCreatedTime": "2025-11-13T06:53:24.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recEpqdOTGAUxBh6V",
+      "sourceCreatedTime": "2026-01-28T02:59:33.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recEq8iyEbSU97ZJ0",
+      "sourceCreatedTime": "2025-11-14T06:34:35.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recEr1dBlkmEZ2Wfo",
+      "sourceCreatedTime": "2026-04-03T03:02:10.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recErzJAWiF50SLws",
+      "sourceCreatedTime": "2026-04-21T00:40:58.000Z",
+      "fields": {
+        "Name": "Sam Shaw",
+        "Subject": "Off Market Investment Opportunity - 57 Lafayette Street, Traralgon ",
+        "Email": "samshaw@wprci.com.au",
+        "Body": "Good afternoon,\r\n\r\nJust a quick email to advise that we have a new off market listing at 57 Lafayette Street, Traralgon that may be of interest to you. Please find attached a copy of the section 32 for this property for your perusal.\r\n\r\nPlease see the bel",
+        "Status": "Error 500",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/ua3OCSoZ4zm7I2QJ2sHEpQ/ButRE2v3XPPil-TQpPiKE9ThTb3vJfUGBPONe_e4IyXsBulF1Y2GmiqOvpWz5w8-26FeZNB8zmPQW4N5k7JP70v4X4cA5lmUOGLzJAgXce0y_SYfdHafbJwYZ7rfpIdfOByaawjRFqJ8wyYPR7Q4jcZBgsP0Eo5cDYKCzt4X4zVGjUW5hoYK3gAUMeeLaSK5/sbopHO37xzJkk5ReITbYx55WFioZQFH4YVvd5dQKGkU",
+            "filename": "outlook_email_attachment.pdf",
+            "type": "application/pdf",
+            "size": 1361912
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "recEsKnbjfc4mu4AV",
+      "sourceCreatedTime": "2025-12-09T00:19:37.000Z",
+      "fields": {
+        "Name": "Brodie Richmond",
+        "Subject": "Update Alert: Matched Properties",
+        "Email": "brodie@schmith.com.au",
+        "Body": "Hi Rugesh ,\r\n\r\nSee below, some properties that may be of interest to you.\r\nPlease reach out if you would like any further information, or simply just have a chat.\r\n\r\nBest wishes,\r\nBrodie Richmond\r\n+61493572251\r\nbrodie@schmith.com.au\r\n\r\n\r\n\r\nOpen for "
+      }
+    },
+    {
+      "sourceRecordId": "recEtKGRfdQgRS9on",
+      "sourceCreatedTime": "2025-09-27T07:15:06.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recEuMPebiXJL1NqV",
+      "sourceCreatedTime": "2025-11-18T05:35:31.000Z",
+      "fields": {
+        "Name": "Andrew Bradley",
+        "Subject": "In case you missed it!",
+        "Email": "andrew@brisrealty.com.au",
+        "Body": "Good Afternoon\r\nI wanted to let you know about an exceptional off-market opportunity on Merthyr Road, New Farm.\r\nThis beautifully appointed three-bedroom, two-and-a-half-bathroom residence offers secure parking for two cars and a private pool, all positio"
+      }
+    },
+    {
+      "sourceRecordId": "recEujDfMvjYETfCq",
+      "sourceCreatedTime": "2026-01-18T02:24:24.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recEuyTVUyK67ERZ3",
+      "sourceCreatedTime": "2025-10-19T23:56:11.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recEuzN327p96DAuw",
+      "sourceCreatedTime": "2025-12-10T00:09:31.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recEvHR8fswC6mcHT",
+      "sourceCreatedTime": "2025-11-28T00:17:41.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recEvo51zUJ8wsHzz",
+      "sourceCreatedTime": "2026-04-21T23:41:11.000Z",
+      "fields": {
+        "Name": "Balmoral Estate",
+        "Subject": "Weekly Updated Price Lists (Balmoral Estate)",
+        "Email": "info@balmoralestate.com.au",
+        "Body": "Hi Guys,\r\nI hope you're all doing well.\r\nPlease find attached the weekly updated price list.\r\nI wanted to share a quick update regarding our new office. At this stage, we are expected to open on 29/04/26. If there are any changes to this timeline, I will ",
+        "Status": "Error 500",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/XZvTmzqcLr9UvwcUBiqGag/cIM5iNvEyCQ7GQQ7qCfszCj2dGyqOgx8S_58XI9ZNMwJnORXQL5qJvbLZ8VOABldlM_FPeCOZqSR0bk96KHHgQXEggGmTq7_dxhHs9etanxY6V0cU4QDwAMl3jCcbBDxD7mqn75RumknU-1yFHdqF_KPH81g4MxRda9cLXQWcAHg9lk0-Ltv6JG1XCdqfs21/qhyfVTxHIoozIIQ3zt-L883wbZrA4bZHccJQbTSj_As",
+            "filename": "outlook_email_attachment.pdf",
+            "type": "application/pdf",
+            "size": 358295
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "recEwBhHSG1mPzrgZ",
+      "sourceCreatedTime": "2025-10-14T05:04:00.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    }
+  ]
+}

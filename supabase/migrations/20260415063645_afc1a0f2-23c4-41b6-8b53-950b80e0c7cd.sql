@@ -1,0 +1,2 @@
+ALTER TABLE public.client_reminders DROP CONSTRAINT client_reminders_reminder_type_check;
+ALTER TABLE public.client_reminders ADD CONSTRAINT client_reminders_reminder_type_check CHECK (reminder_type = ANY (ARRAY['follow_up','review','call','meeting','document','other','task','settlement','finance','admin']));

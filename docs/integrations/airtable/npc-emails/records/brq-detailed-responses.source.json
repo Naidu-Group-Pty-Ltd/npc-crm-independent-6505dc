@@ -1,0 +1,1193 @@
+[
+  {
+    "id": "rec2hdWjZ2U498yDF",
+    "createdTime": "2026-08-15T14:06:37.000Z",
+    "cellValuesByFieldId": {
+      "fldnyikq9LYuvIDBg": 13
+    }
+  },
+  {
+    "id": "rec2wVVyKwkHxZbWf",
+    "createdTime": "2026-08-05T05:44:12.000Z",
+    "cellValuesByFieldId": {
+      "fld01sN6A3FErtREA": [
+        {
+          "id": "selqFaey0FtShAskY",
+          "name": "Not yet known",
+          "color": "blueLight1"
+        }
+      ],
+      "fld7s4mY0lPY8QcFs": "[\n    \"Email automation\",\n    \"Document management\",\n    \"Project or task management\",\n    \"AML, KYC or identity verification\"\n]",
+      "fldAhbe6eq2QLgW6q": {
+        "id": "seldHzybjyf8ku0Dt",
+        "name": "Yes",
+        "color": "blueLight2"
+      },
+      "fldAiYTrmHilAge6V": [
+        {
+          "id": "selLttYj7HXaokvsI",
+          "name": "NSW",
+          "color": "cyanLight2"
+        }
+      ],
+      "fldD2gocAcXDSpdKp": "Unlinked - no matching applicant",
+      "fldHN3kzYDk2Y0loJ": {
+        "id": "selCSsrIrwPXwEUg3",
+        "name": "Yes",
+        "color": "blueLight2"
+      },
+      "fldIrFIm6SQijlG1w": {
+        "id": "selveJ1vrcynLRtNY",
+        "name": "More than A$5,000 per month",
+        "color": "yellowLight2"
+      },
+      "fldOQWXVrchvDxGx8": "mithrubanbupathy3@gmail.com",
+      "fldOwGMSo3KKz3w7f": {
+        "id": "selAsKPkfMtsbobV4",
+        "name": "Same-session handoff",
+        "color": "blueLight2"
+      },
+      "fldQxBIDhmdbCj9Tn": "AX-B2DE678C70",
+      "fldQy0a1JsqKyQbR3": [
+        {
+          "id": "sel73gtZ4nCykrUDZ",
+          "name": "1. CRM",
+          "color": "blueLight2"
+        },
+        {
+          "id": "selmmIilGQoEs3cLN",
+          "name": "2. Client and partner portals",
+          "color": "cyanLight2"
+        },
+        {
+          "id": "seli3gB3GRiVZePR3",
+          "name": "3. Onboarding and workflow",
+          "color": "cyanLight2"
+        },
+        {
+          "id": "selfInwkyDHTSL6BS",
+          "name": "4. Buyer's agency workflow",
+          "color": "greenLight2"
+        },
+        {
+          "id": "sel9IzceS47dsjHdW",
+          "name": "5. Finance portal",
+          "color": "tealLight2"
+        }
+      ],
+      "fldYeClSqaAkMfuDI": {
+        "id": "selbG6gp2PGGtowjn",
+        "name": "Yes",
+        "color": "blueLight2"
+      },
+      "fldYzjJUkW0dnNqTg": {
+        "id": "selOBOQN5nTwQbjqC",
+        "name": "Franchise or network",
+        "color": "greenLight2"
+      },
+      "fldZHgeXZvhQ1lCNn": {
+        "id": "sels61XLgyzoUTLy2",
+        "name": "Immediately",
+        "color": "blueLight2"
+      },
+      "fldaGBSVBJEYWnULf": {
+        "id": "sel9K7M0i9H5vZTja",
+        "name": "Not yet known",
+        "color": "tealLight2"
+      },
+      "fldb5f2yphlvL5bVs": {
+        "id": "selAP2EILOpIdON8D",
+        "name": "",
+        "color": "blueLight2"
+      },
+      "fldcrDjFZyD53Mjh5": {
+        "id": "selRYVv96IhhJQnmg",
+        "name": "",
+        "color": "blueLight2"
+      },
+      "fldex822E2qFor4ls": {
+        "id": "selabQdd8E6zKiMGu",
+        "name": "More than 40 hours",
+        "color": "yellowLight2"
+      },
+      "fldili7tUe7CEYoie": {
+        "id": "selLsX7kGfA4h5wjN",
+        "name": "Recommend to the decision-maker",
+        "color": "tealLight2"
+      },
+      "fldjPsjuRlJCnDRoJ": [
+        {
+          "id": "selFCYTk6ZIeU9pK7",
+          "name": "Email automation",
+          "color": "tealLight2"
+        },
+        {
+          "id": "selFfc1zvSU74d5K1",
+          "name": "Document management",
+          "color": "yellowLight2"
+        },
+        {
+          "id": "selBHkCdaUsNRcFmG",
+          "name": "Project or task management",
+          "color": "blueLight1"
+        },
+        {
+          "id": "selB70Zf6UFInMUpq",
+          "name": "AML, KYC or identity verification",
+          "color": "pinkLight2"
+        }
+      ],
+      "fldkCuF9i6zTO1CaR": {
+        "id": "selG5X1i5YIFywrQZ",
+        "name": "More than 100",
+        "color": "orangeLight2"
+      },
+      "fldkXZXdCTYva071e": {
+        "id": "selR9jPrrjdBBqX2O",
+        "name": "Founder or Director",
+        "color": "blueLight2"
+      },
+      "fldl63dWOPR5VQfbP": {
+        "id": "selqZHXtICP4tIurZ",
+        "name": "General platform demonstration",
+        "color": "blueLight2"
+      },
+      "fldnqFS7pmnx59GW8": [
+        {
+          "id": "seliWIxQflkvUtP0p",
+          "name": "Google Workspace",
+          "color": "cyanLight2"
+        },
+        {
+          "id": "selyi4lXqyehbyqgS",
+          "name": "Identity-verification provider",
+          "color": "pinkLight2"
+        },
+        {
+          "id": "selkLvvlhNnIXpDDZ",
+          "name": "Existing CRM",
+          "color": "redLight2"
+        }
+      ],
+      "fldnyikq9LYuvIDBg": 12,
+      "fldrRMLViqDRxmf5Y": [
+        {
+          "id": "selpZF1Q8JeY2oQDT",
+          "name": "Slow client onboarding",
+          "color": "tealLight2"
+        },
+        {
+          "id": "selwnpnmARKUhBA0a",
+          "name": "Limited pipeline visibility",
+          "color": "orangeLight2"
+        },
+        {
+          "id": "selb7H5YWu78X6nf6",
+          "name": "Manual document handling",
+          "color": "purpleLight2"
+        }
+      ],
+      "fldruykoZf1R7lgyU": {
+        "id": "sel05FWWR2Y7OVPyv",
+        "name": "Not yet known",
+        "color": "redLight2"
+      },
+      "fldx7n55HTzh93g3D": "2026-08-05T05:44:10.766Z"
+    }
+  },
+  {
+    "id": "recFqe6cUv6zhvquR",
+    "createdTime": "2026-08-05T05:44:02.000Z",
+    "cellValuesByFieldId": {
+      "fld01sN6A3FErtREA": [
+        {
+          "id": "selqFaey0FtShAskY",
+          "name": "Not yet known",
+          "color": "blueLight1"
+        }
+      ],
+      "fld7s4mY0lPY8QcFs": "[\n    \"Email automation\",\n    \"Document management\",\n    \"Project or task management\",\n    \"AML, KYC or identity verification\"\n]",
+      "fldAhbe6eq2QLgW6q": {
+        "id": "seldHzybjyf8ku0Dt",
+        "name": "Yes",
+        "color": "blueLight2"
+      },
+      "fldAiYTrmHilAge6V": [
+        {
+          "id": "selLttYj7HXaokvsI",
+          "name": "NSW",
+          "color": "cyanLight2"
+        }
+      ],
+      "fldD2gocAcXDSpdKp": "Unlinked - no matching applicant",
+      "fldHN3kzYDk2Y0loJ": {
+        "id": "selCSsrIrwPXwEUg3",
+        "name": "Yes",
+        "color": "blueLight2"
+      },
+      "fldIrFIm6SQijlG1w": {
+        "id": "selveJ1vrcynLRtNY",
+        "name": "More than A$5,000 per month",
+        "color": "yellowLight2"
+      },
+      "fldOQWXVrchvDxGx8": "mithrubanbupathy3@gmail.com",
+      "fldOwGMSo3KKz3w7f": {
+        "id": "selAsKPkfMtsbobV4",
+        "name": "Same-session handoff",
+        "color": "blueLight2"
+      },
+      "fldQxBIDhmdbCj9Tn": "AX-B2DE678C70",
+      "fldQy0a1JsqKyQbR3": [
+        {
+          "id": "sel73gtZ4nCykrUDZ",
+          "name": "1. CRM",
+          "color": "blueLight2"
+        },
+        {
+          "id": "selmmIilGQoEs3cLN",
+          "name": "2. Client and partner portals",
+          "color": "cyanLight2"
+        },
+        {
+          "id": "seli3gB3GRiVZePR3",
+          "name": "3. Onboarding and workflow",
+          "color": "cyanLight2"
+        },
+        {
+          "id": "selfInwkyDHTSL6BS",
+          "name": "4. Buyer's agency workflow",
+          "color": "greenLight2"
+        },
+        {
+          "id": "sel9IzceS47dsjHdW",
+          "name": "5. Finance portal",
+          "color": "tealLight2"
+        }
+      ],
+      "fldYeClSqaAkMfuDI": {
+        "id": "selbG6gp2PGGtowjn",
+        "name": "Yes",
+        "color": "blueLight2"
+      },
+      "fldYzjJUkW0dnNqTg": {
+        "id": "selOBOQN5nTwQbjqC",
+        "name": "Franchise or network",
+        "color": "greenLight2"
+      },
+      "fldZHgeXZvhQ1lCNn": {
+        "id": "sels61XLgyzoUTLy2",
+        "name": "Immediately",
+        "color": "blueLight2"
+      },
+      "fldaGBSVBJEYWnULf": {
+        "id": "sel9K7M0i9H5vZTja",
+        "name": "Not yet known",
+        "color": "tealLight2"
+      },
+      "fldb5f2yphlvL5bVs": {
+        "id": "selAP2EILOpIdON8D",
+        "name": "",
+        "color": "blueLight2"
+      },
+      "fldcrDjFZyD53Mjh5": {
+        "id": "selRYVv96IhhJQnmg",
+        "name": "",
+        "color": "blueLight2"
+      },
+      "fldex822E2qFor4ls": {
+        "id": "selabQdd8E6zKiMGu",
+        "name": "More than 40 hours",
+        "color": "yellowLight2"
+      },
+      "fldili7tUe7CEYoie": {
+        "id": "selLsX7kGfA4h5wjN",
+        "name": "Recommend to the decision-maker",
+        "color": "tealLight2"
+      },
+      "fldjPsjuRlJCnDRoJ": [
+        {
+          "id": "selFCYTk6ZIeU9pK7",
+          "name": "Email automation",
+          "color": "tealLight2"
+        },
+        {
+          "id": "selFfc1zvSU74d5K1",
+          "name": "Document management",
+          "color": "yellowLight2"
+        },
+        {
+          "id": "selBHkCdaUsNRcFmG",
+          "name": "Project or task management",
+          "color": "blueLight1"
+        },
+        {
+          "id": "selB70Zf6UFInMUpq",
+          "name": "AML, KYC or identity verification",
+          "color": "pinkLight2"
+        }
+      ],
+      "fldkCuF9i6zTO1CaR": {
+        "id": "selG5X1i5YIFywrQZ",
+        "name": "More than 100",
+        "color": "orangeLight2"
+      },
+      "fldkXZXdCTYva071e": {
+        "id": "selR9jPrrjdBBqX2O",
+        "name": "Founder or Director",
+        "color": "blueLight2"
+      },
+      "fldl63dWOPR5VQfbP": {
+        "id": "selqZHXtICP4tIurZ",
+        "name": "General platform demonstration",
+        "color": "blueLight2"
+      },
+      "fldnqFS7pmnx59GW8": [
+        {
+          "id": "seliWIxQflkvUtP0p",
+          "name": "Google Workspace",
+          "color": "cyanLight2"
+        },
+        {
+          "id": "selyi4lXqyehbyqgS",
+          "name": "Identity-verification provider",
+          "color": "pinkLight2"
+        },
+        {
+          "id": "selkLvvlhNnIXpDDZ",
+          "name": "Existing CRM",
+          "color": "redLight2"
+        }
+      ],
+      "fldnyikq9LYuvIDBg": 11,
+      "fldrRMLViqDRxmf5Y": [
+        {
+          "id": "selpZF1Q8JeY2oQDT",
+          "name": "Slow client onboarding",
+          "color": "tealLight2"
+        },
+        {
+          "id": "selwnpnmARKUhBA0a",
+          "name": "Limited pipeline visibility",
+          "color": "orangeLight2"
+        },
+        {
+          "id": "selb7H5YWu78X6nf6",
+          "name": "Manual document handling",
+          "color": "purpleLight2"
+        }
+      ],
+      "fldruykoZf1R7lgyU": {
+        "id": "sel05FWWR2Y7OVPyv",
+        "name": "Not yet known",
+        "color": "redLight2"
+      },
+      "fldx7n55HTzh93g3D": "2026-08-05T05:43:59.974Z"
+    }
+  },
+  {
+    "id": "recJjndYpSXX6HNGy",
+    "createdTime": "2026-07-29T15:07:10.000Z",
+    "cellValuesByFieldId": {
+      "fldD2gocAcXDSpdKp": "Unlinked - no Application ID",
+      "fldnyikq9LYuvIDBg": 3
+    }
+  },
+  {
+    "id": "recPzE2OyY8ukNryo",
+    "createdTime": "2026-07-29T12:48:34.000Z",
+    "cellValuesByFieldId": {
+      "fld01sN6A3FErtREA": [
+        {
+          "id": "sel701hFoKh0IG629",
+          "name": "Dedicated environment",
+          "color": "purpleLight2"
+        },
+        {
+          "id": "selEd7u0R55Lwvzi5",
+          "name": "None",
+          "color": "grayLight2"
+        }
+      ],
+      "fldAhbe6eq2QLgW6q": {
+        "id": "selO8Deixd6AUXKgV",
+        "name": "Not yet known",
+        "color": "tealLight2"
+      },
+      "fldAiYTrmHilAge6V": [
+        {
+          "id": "selo3qvy1iL0qCx64",
+          "name": "VIC",
+          "color": "redLight2"
+        },
+        {
+          "id": "selYFCa1PhknUfZhY",
+          "name": "WA",
+          "color": "pinkLight2"
+        }
+      ],
+      "fldD2gocAcXDSpdKp": "Unlinked - no Application ID",
+      "fldHN3kzYDk2Y0loJ": {
+        "id": "selu9DUs5xaxyyALw",
+        "name": "Not yet known",
+        "color": "tealLight2"
+      },
+      "fldIrFIm6SQijlG1w": {
+        "id": "selN7NpyVlEhUpxms",
+        "name": "Project or enterprise budget",
+        "color": "orangeLight2"
+      },
+      "fldQjQlVfhmhcEoCp": true,
+      "fldQy0a1JsqKyQbR3": [
+        {
+          "id": "seldzQJXJ4QMpneas",
+          "name": "AML and compliance",
+          "color": "yellowLight1"
+        },
+        {
+          "id": "selE9WwUOupICk2GI",
+          "name": "Market intelligence",
+          "color": "redLight1"
+        }
+      ],
+      "fldV7hUq0W0i7bMBs": [
+        {
+          "id": "sel8gorTRXfo58W31",
+          "name": "Separate individual applications",
+          "color": "greenLight2"
+        },
+        {
+          "id": "selY6X6LR967Qpt0W",
+          "name": "Other",
+          "color": "yellowLight2"
+        }
+      ],
+      "fldYeClSqaAkMfuDI": {
+        "id": "selBAJmrCohh79rQv",
+        "name": "Not yet known",
+        "color": "tealLight2"
+      },
+      "fldYzjJUkW0dnNqTg": {
+        "id": "sel6UhexElQ8qRomC",
+        "name": "National organisation",
+        "color": "yellowLight2"
+      },
+      "fldZHgeXZvhQ1lCNn": {
+        "id": "selLje6rGmsiL0uwo",
+        "name": "6–12 months",
+        "color": "yellowLight2"
+      },
+      "fldaGBSVBJEYWnULf": {
+        "id": "sel9K7M0i9H5vZTja",
+        "name": "Not yet known",
+        "color": "tealLight2"
+      },
+      "fldb5f2yphlvL5bVs": {
+        "id": "selputbYrZNXaEM1d",
+        "name": "After go-live",
+        "color": "greenLight2"
+      },
+      "fldcrDjFZyD53Mjh5": {
+        "id": "selfTA8ucWpAx3sFM",
+        "name": "Not yet known",
+        "color": "tealLight2"
+      },
+      "fldex822E2qFor4ls": {
+        "id": "selabQdd8E6zKiMGu",
+        "name": "More than 40 hours",
+        "color": "yellowLight2"
+      },
+      "fldiF7YL3e3MBNfHg": true,
+      "fldili7tUe7CEYoie": {
+        "id": "selTm971FvYkdxFw5",
+        "name": "Researching",
+        "color": "greenLight2"
+      },
+      "fldjPsjuRlJCnDRoJ": [
+        {
+          "id": "selBHkCdaUsNRcFmG",
+          "name": "Project or task management",
+          "color": "blueLight1"
+        },
+        {
+          "id": "selxmh8qiOkx9tEUX",
+          "name": "No central system",
+          "color": "cyanLight1"
+        }
+      ],
+      "fldkCuF9i6zTO1CaR": {
+        "id": "selG5X1i5YIFywrQZ",
+        "name": "More than 100",
+        "color": "orangeLight2"
+      },
+      "fldkXZXdCTYva071e": {
+        "id": "selAeaMRRL0FzoSA5",
+        "name": "Finance or Mortgage Professional",
+        "color": "purpleLight2"
+      },
+      "fldl63dWOPR5VQfbP": {
+        "id": "selJxSWp5hbeaLx3l",
+        "name": "Pricing discussion",
+        "color": "yellowLight2"
+      },
+      "fldnqFS7pmnx59GW8": [
+        {
+          "id": "selbErAM12N2vbTAJ",
+          "name": "Custom internal system",
+          "color": "blueLight1"
+        },
+        {
+          "id": "selQTI7tuITFFHZQ7",
+          "name": "None initially",
+          "color": "cyanLight1"
+        }
+      ],
+      "fldnyikq9LYuvIDBg": 1,
+      "fldrRMLViqDRxmf5Y": [
+        {
+          "id": "selZYU1fjd8SusbeC",
+          "name": "Limited analytics",
+          "color": "blueLight1"
+        },
+        {
+          "id": "sel9wSxo88qCFkJgf",
+          "name": "Difficulty scaling",
+          "color": "cyanLight1"
+        }
+      ],
+      "fldruykoZf1R7lgyU": {
+        "id": "selAsqYhgpkb0aFNT",
+        "name": "Multiple systems or complex migration",
+        "color": "orangeLight2"
+      }
+    }
+  },
+  {
+    "id": "recVImc9527a8v2Xv",
+    "createdTime": "2026-07-29T15:07:10.000Z",
+    "cellValuesByFieldId": {
+      "fldD2gocAcXDSpdKp": "Unlinked - no Application ID",
+      "fldnyikq9LYuvIDBg": 4
+    }
+  },
+  {
+    "id": "recW0FM1q9Lyqi2VF",
+    "createdTime": "2026-08-05T05:39:19.000Z",
+    "cellValuesByFieldId": {
+      "fld01sN6A3FErtREA": [
+        {
+          "id": "seltv8nqBZbAZ0IDP",
+          "name": "Single sign-on",
+          "color": "cyanLight2"
+        }
+      ],
+      "fld0VFB3UfSf4gCkp": [
+        {
+          "id": "recS5OzCXyvIc7Kl9",
+          "name": "Reena"
+        }
+      ],
+      "fld7s4mY0lPY8QcFs": "[\n    \"Telephony\"\n]",
+      "fldAhbe6eq2QLgW6q": {
+        "id": "selgLI10DUQa6Jut1",
+        "name": "",
+        "color": "blueLight2"
+      },
+      "fldAiYTrmHilAge6V": [
+        {
+          "id": "selYFCa1PhknUfZhY",
+          "name": "WA",
+          "color": "pinkLight2"
+        }
+      ],
+      "fldD2gocAcXDSpdKp": "Linked",
+      "fldFL2rcmNLNa4b27": 50,
+      "fldHN3kzYDk2Y0loJ": {
+        "id": "selAjotqRwB8ARfZL",
+        "name": "",
+        "color": "blueLight2"
+      },
+      "fldIrFIm6SQijlG1w": {
+        "id": "selYfxkSqDVCOClVE",
+        "name": "A$1,000-A$2,500 per month",
+        "color": "blueLight2"
+      },
+      "fldOQWXVrchvDxGx8": "reena128@hotmail.com",
+      "fldOwGMSo3KKz3w7f": {
+        "id": "selAsKPkfMtsbobV4",
+        "name": "Same-session handoff",
+        "color": "blueLight2"
+      },
+      "fldPlbZQsHgnAq2pX": "Curry sauce",
+      "fldQPgdUvRWPmfsyr": "All looking old. Need more young clients. ",
+      "fldQxBIDhmdbCj9Tn": "AX-84EFE0685A",
+      "fldQy0a1JsqKyQbR3": [
+        {
+          "id": "selcy1j0wfvgYcdYs",
+          "name": "1. AI Voice Agents & Call Logging",
+          "color": "blueLight2"
+        },
+        {
+          "id": "selmmIilGQoEs3cLN",
+          "name": "2. Client and partner portals",
+          "color": "cyanLight2"
+        },
+        {
+          "id": "selBWMz1HQumvzJWs",
+          "name": "3. Borrowing capacity",
+          "color": "tealLight2"
+        },
+        {
+          "id": "selARI7ZVfUdWx2Vf",
+          "name": "4. Finance portal",
+          "color": "greenLight2"
+        },
+        {
+          "id": "sel5QODN4Iqf82e4a",
+          "name": "5. CRM",
+          "color": "yellowLight2"
+        }
+      ],
+      "fldXnunso1DkYaTNJ": 1000,
+      "fldYeClSqaAkMfuDI": {
+        "id": "sel3YqqBTpbLStBDM",
+        "name": "",
+        "color": "blueLight2"
+      },
+      "fldYzjJUkW0dnNqTg": {
+        "id": "seluxD73cCgETPZ7J",
+        "name": "One office or entity",
+        "color": "blueLight2"
+      },
+      "fldZHgeXZvhQ1lCNn": {
+        "id": "sels61XLgyzoUTLy2",
+        "name": "Immediately",
+        "color": "blueLight2"
+      },
+      "fldaGBSVBJEYWnULf": {
+        "id": "selGHxrc5A3tLgV5W",
+        "name": "Yes",
+        "color": "blueLight2"
+      },
+      "fldb5f2yphlvL5bVs": {
+        "id": "seldOpqIlesNzSjNf",
+        "name": "Within 30 days of go-live",
+        "color": "cyanLight2"
+      },
+      "fldcrDjFZyD53Mjh5": {
+        "id": "selRYVv96IhhJQnmg",
+        "name": "",
+        "color": "blueLight2"
+      },
+      "fldex822E2qFor4ls": {
+        "id": "selA5bIOXnKvOJo1n",
+        "name": "Less than 5 hours",
+        "color": "blueLight2"
+      },
+      "fldili7tUe7CEYoie": {
+        "id": "selWcCx0ABXZ8htaC",
+        "name": "Other",
+        "color": "yellowLight2"
+      },
+      "fldjPsjuRlJCnDRoJ": [
+        {
+          "id": "sel9IewZjzlzAb1Ub",
+          "name": "Telephony",
+          "color": "purpleLight2"
+        }
+      ],
+      "fldkCuF9i6zTO1CaR": {
+        "id": "selKk8oWJRVYm8Jhd",
+        "name": "1-3",
+        "color": "blueLight2"
+      },
+      "fldkXZXdCTYva071e": {
+        "id": "selfsnq5eAHCZXOYO",
+        "name": "Other",
+        "color": "blueLight1"
+      },
+      "fldkt4W0bX83xary7": " Arrange meet between clients",
+      "fldl63dWOPR5VQfbP": {
+        "id": "selqZHXtICP4tIurZ",
+        "name": "General platform demonstration",
+        "color": "blueLight2"
+      },
+      "fldmdMDsGsnHebUQO": "All waste piece. Need fresh faces. ",
+      "fldnqFS7pmnx59GW8": [
+        {
+          "id": "selKuBFjIQaGTbfS3",
+          "name": "MYOB",
+          "color": "yellowLight2"
+        }
+      ],
+      "fldnyikq9LYuvIDBg": 9,
+      "fldrRMLViqDRxmf5Y": [
+        {
+          "id": "selwnpnmARKUhBA0a",
+          "name": "Limited pipeline visibility",
+          "color": "orangeLight2"
+        },
+        {
+          "id": "selpZF1Q8JeY2oQDT",
+          "name": "Slow client onboarding",
+          "color": "tealLight2"
+        },
+        {
+          "id": "sel9wSxo88qCFkJgf",
+          "name": "Difficulty scaling",
+          "color": "cyanLight1"
+        }
+      ],
+      "fldruykoZf1R7lgyU": {
+        "id": "selMEaD8oDhz2unf0",
+        "name": "Templates and reports",
+        "color": "yellowLight2"
+      },
+      "fldwhS1urFwQAHDU4": "Please ready 4 clients nacchunu. ",
+      "fldx7n55HTzh93g3D": "2026-08-05T05:39:17.906Z"
+    }
+  },
+  {
+    "id": "recaLOzCdW6u1kTX3",
+    "createdTime": "2026-07-31T14:03:25.000Z",
+    "cellValuesByFieldId": {
+      "fld01sN6A3FErtREA": [
+        {
+          "id": "selZMp7JVhQ71v0t9",
+          "name": "Multi-factor authentication",
+          "color": "blueLight2"
+        },
+        {
+          "id": "selslSxmYKUzAyrMY",
+          "name": "Role-based access control",
+          "color": "greenLight2"
+        },
+        {
+          "id": "selT1Wg4Rgle6FtcM",
+          "name": "Vendor-risk assessment",
+          "color": "redLight2"
+        }
+      ],
+      "fld0VFB3UfSf4gCkp": [
+        {
+          "id": "recnC8j6YucPUCX4L",
+          "name": "Rugesh"
+        }
+      ],
+      "fld7s4mY0lPY8QcFs": "[\n    \"Email automation\",\n    \"CRM\",\n    \"Reporting\"\n]",
+      "fldAhbe6eq2QLgW6q": {
+        "id": "selgLI10DUQa6Jut1",
+        "name": "",
+        "color": "blueLight2"
+      },
+      "fldAiYTrmHilAge6V": [
+        {
+          "id": "selLttYj7HXaokvsI",
+          "name": "NSW",
+          "color": "cyanLight2"
+        }
+      ],
+      "fldD2gocAcXDSpdKp": "Linked",
+      "fldFL2rcmNLNa4b27": 566666,
+      "fldHN3kzYDk2Y0loJ": {
+        "id": "selAjotqRwB8ARfZL",
+        "name": "",
+        "color": "blueLight2"
+      },
+      "fldIrFIm6SQijlG1w": {
+        "id": "selveJ1vrcynLRtNY",
+        "name": "More than A$5,000 per month",
+        "color": "yellowLight2"
+      },
+      "fldOQWXVrchvDxGx8": "rugesh@npcservices.com.au",
+      "fldPlbZQsHgnAq2pX": "salesfore",
+      "fldQPgdUvRWPmfsyr": "dgdgsgsd",
+      "fldQxBIDhmdbCj9Tn": "AX-C94B1D8EC9",
+      "fldQy0a1JsqKyQbR3": [
+        {
+          "id": "selv6wvuTckHBIg1x",
+          "name": "1. Borrowing capacity",
+          "color": "blueLight2"
+        },
+        {
+          "id": "selbOqAvFVBbAOahu",
+          "name": "2. AI communications",
+          "color": "cyanLight2"
+        },
+        {
+          "id": "selhCdYYj2DtMU0jt",
+          "name": "3. Market intelligence",
+          "color": "tealLight2"
+        },
+        {
+          "id": "selfInwkyDHTSL6BS",
+          "name": "4. Buyer's agency workflow",
+          "color": "greenLight2"
+        },
+        {
+          "id": "selvOQilb7CmKLK5J",
+          "name": "5. Property comparison and due diligence",
+          "color": "yellowLight2"
+        }
+      ],
+      "fldT9KiZfh9RMRI6b": "dbnfdnfdnf",
+      "fldYeClSqaAkMfuDI": {
+        "id": "sel3YqqBTpbLStBDM",
+        "name": "",
+        "color": "blueLight2"
+      },
+      "fldYzjJUkW0dnNqTg": {
+        "id": "seluxD73cCgETPZ7J",
+        "name": "One office or entity",
+        "color": "blueLight2"
+      },
+      "fldZHgeXZvhQ1lCNn": {
+        "id": "sels61XLgyzoUTLy2",
+        "name": "Immediately",
+        "color": "blueLight2"
+      },
+      "fldaGBSVBJEYWnULf": {
+        "id": "selPl7wi2qhCTkEWa",
+        "name": "No",
+        "color": "cyanLight2"
+      },
+      "fldb5f2yphlvL5bVs": {
+        "id": "selJIBHJbsozWLMCV",
+        "name": "At go-live",
+        "color": "blueLight2"
+      },
+      "fldcrDjFZyD53Mjh5": {
+        "id": "selIhS5sooY4VmcH8",
+        "name": "Yes",
+        "color": "blueLight2"
+      },
+      "fldeoijadB9yy67tJ": "hsgsdhsdhs",
+      "fldex822E2qFor4ls": {
+        "id": "selZ3dBZBAtsmfYFI",
+        "name": "5-10 hours",
+        "color": "blueLight2"
+      },
+      "fldili7tUe7CEYoie": {
+        "id": "selCLRILznfOEo0Hg",
+        "name": "Final decision-maker",
+        "color": "blueLight2"
+      },
+      "fldjPsjuRlJCnDRoJ": [
+        {
+          "id": "selFCYTk6ZIeU9pK7",
+          "name": "Email automation",
+          "color": "tealLight2"
+        },
+        {
+          "id": "selwUdCtsYc9VDV3K",
+          "name": "CRM",
+          "color": "blueLight2"
+        },
+        {
+          "id": "selyViQ1NFbGaBsZp",
+          "name": "Reporting",
+          "color": "orangeLight2"
+        }
+      ],
+      "fldkCuF9i6zTO1CaR": {
+        "id": "selKk8oWJRVYm8Jhd",
+        "name": "1-3",
+        "color": "blueLight2"
+      },
+      "fldkXZXdCTYva071e": {
+        "id": "selcUDa7lGQuMlyA6",
+        "name": "Chief Executive Officer",
+        "color": "cyanLight2"
+      },
+      "fldl63dWOPR5VQfbP": {
+        "id": "selqZHXtICP4tIurZ",
+        "name": "General platform demonstration",
+        "color": "blueLight2"
+      },
+      "fldnqFS7pmnx59GW8": [
+        {
+          "id": "selkLvvlhNnIXpDDZ",
+          "name": "Existing CRM",
+          "color": "redLight2"
+        },
+        {
+          "id": "selKuBFjIQaGTbfS3",
+          "name": "MYOB",
+          "color": "yellowLight2"
+        },
+        {
+          "id": "seltTWDKR9o2sWLwh",
+          "name": "Xero",
+          "color": "greenLight2"
+        },
+        {
+          "id": "selXZLmbJRGAKHu7p",
+          "name": "Electronic signing",
+          "color": "grayLight2"
+        },
+        {
+          "id": "selW86mlBK5TzwtvF",
+          "name": "Cotality or CoreLogic",
+          "color": "orangeLight2"
+        },
+        {
+          "id": "selyi4lXqyehbyqgS",
+          "name": "Identity-verification provider",
+          "color": "pinkLight2"
+        },
+        {
+          "id": "selagvi23GEx3Rf8q",
+          "name": "GoHighLevel",
+          "color": "tealLight2"
+        },
+        {
+          "id": "selHvFa7pc60Uodxs",
+          "name": "Microsoft 365",
+          "color": "blueLight2"
+        },
+        {
+          "id": "sel9ArAnZbbHJ4wYv",
+          "name": "Existing Phone or VoIP System",
+          "color": "purpleLight2"
+        },
+        {
+          "id": "selbErAM12N2vbTAJ",
+          "name": "Custom internal system",
+          "color": "blueLight1"
+        },
+        {
+          "id": "seliWIxQflkvUtP0p",
+          "name": "Google Workspace",
+          "color": "cyanLight2"
+        }
+      ],
+      "fldnyikq9LYuvIDBg": 7,
+      "fldpJ0RifBF9GI9p6": "fbfdbfdnfdndsnndnsn",
+      "fldqntcoEO6MyPJGD": "everything",
+      "fldrRMLViqDRxmf5Y": [
+        {
+          "id": "selORqzeInqU2ONNF",
+          "name": "Duplicate data entry",
+          "color": "blueLight2"
+        },
+        {
+          "id": "selpZF1Q8JeY2oQDT",
+          "name": "Slow client onboarding",
+          "color": "tealLight2"
+        },
+        {
+          "id": "selhBKZurkPF7JELE",
+          "name": "Inconsistent client communications",
+          "color": "yellowLight2"
+        }
+      ],
+      "fldruykoZf1R7lgyU": {
+        "id": "selA3472w488HSC3s",
+        "name": "Basic contacts",
+        "color": "cyanLight2"
+      },
+      "fldwhS1urFwQAHDU4": "dbdgdsds",
+      "fldx7n55HTzh93g3D": "2026-07-31T10:15:10.675Z"
+    }
+  },
+  {
+    "id": "recd4ouSQK6Ys3EbF",
+    "createdTime": "2026-07-29T18:49:02.000Z",
+    "cellValuesByFieldId": {
+      "fldD2gocAcXDSpdKp": "Unlinked - no Application ID",
+      "fldnyikq9LYuvIDBg": 5
+    }
+  },
+  {
+    "id": "rece11cH1IFyM1J0T",
+    "createdTime": "2026-07-29T18:49:02.000Z",
+    "cellValuesByFieldId": {
+      "fldD2gocAcXDSpdKp": "Unlinked - no Application ID",
+      "fldnyikq9LYuvIDBg": 6
+    }
+  },
+  {
+    "id": "recgDSshuhdpzn06P",
+    "createdTime": "2026-07-29T12:54:09.000Z",
+    "cellValuesByFieldId": {
+      "fldD2gocAcXDSpdKp": "Unlinked - no Application ID",
+      "fldnyikq9LYuvIDBg": 2
+    }
+  },
+  {
+    "id": "rectszlHImnpCHOEL",
+    "createdTime": "2026-08-05T05:39:39.000Z",
+    "cellValuesByFieldId": {
+      "fld01sN6A3FErtREA": [
+        {
+          "id": "seltv8nqBZbAZ0IDP",
+          "name": "Single sign-on",
+          "color": "cyanLight2"
+        }
+      ],
+      "fld0VFB3UfSf4gCkp": [
+        {
+          "id": "recS5OzCXyvIc7Kl9",
+          "name": "Reena"
+        }
+      ],
+      "fld7s4mY0lPY8QcFs": "[\n    \"Telephony\"\n]",
+      "fldAhbe6eq2QLgW6q": {
+        "id": "selgLI10DUQa6Jut1",
+        "name": "",
+        "color": "blueLight2"
+      },
+      "fldAiYTrmHilAge6V": [
+        {
+          "id": "selYFCa1PhknUfZhY",
+          "name": "WA",
+          "color": "pinkLight2"
+        }
+      ],
+      "fldD2gocAcXDSpdKp": "Linked",
+      "fldFL2rcmNLNa4b27": 50,
+      "fldHN3kzYDk2Y0loJ": {
+        "id": "selAjotqRwB8ARfZL",
+        "name": "",
+        "color": "blueLight2"
+      },
+      "fldIrFIm6SQijlG1w": {
+        "id": "selYfxkSqDVCOClVE",
+        "name": "A$1,000-A$2,500 per month",
+        "color": "blueLight2"
+      },
+      "fldOQWXVrchvDxGx8": "reena128@hotmail.com",
+      "fldOwGMSo3KKz3w7f": {
+        "id": "selAsKPkfMtsbobV4",
+        "name": "Same-session handoff",
+        "color": "blueLight2"
+      },
+      "fldPlbZQsHgnAq2pX": "Curry sauce",
+      "fldQPgdUvRWPmfsyr": "All looking old. Need more young clients. ",
+      "fldQxBIDhmdbCj9Tn": "AX-84EFE0685A",
+      "fldQy0a1JsqKyQbR3": [
+        {
+          "id": "selcy1j0wfvgYcdYs",
+          "name": "1. AI Voice Agents & Call Logging",
+          "color": "blueLight2"
+        },
+        {
+          "id": "selmmIilGQoEs3cLN",
+          "name": "2. Client and partner portals",
+          "color": "cyanLight2"
+        },
+        {
+          "id": "selBWMz1HQumvzJWs",
+          "name": "3. Borrowing capacity",
+          "color": "tealLight2"
+        },
+        {
+          "id": "selARI7ZVfUdWx2Vf",
+          "name": "4. Finance portal",
+          "color": "greenLight2"
+        },
+        {
+          "id": "sel5QODN4Iqf82e4a",
+          "name": "5. CRM",
+          "color": "yellowLight2"
+        }
+      ],
+      "fldXnunso1DkYaTNJ": 1000,
+      "fldYeClSqaAkMfuDI": {
+        "id": "sel3YqqBTpbLStBDM",
+        "name": "",
+        "color": "blueLight2"
+      },
+      "fldYzjJUkW0dnNqTg": {
+        "id": "seluxD73cCgETPZ7J",
+        "name": "One office or entity",
+        "color": "blueLight2"
+      },
+      "fldZHgeXZvhQ1lCNn": {
+        "id": "sels61XLgyzoUTLy2",
+        "name": "Immediately",
+        "color": "blueLight2"
+      },
+      "fldaGBSVBJEYWnULf": {
+        "id": "selGHxrc5A3tLgV5W",
+        "name": "Yes",
+        "color": "blueLight2"
+      },
+      "fldb5f2yphlvL5bVs": {
+        "id": "seldOpqIlesNzSjNf",
+        "name": "Within 30 days of go-live",
+        "color": "cyanLight2"
+      },
+      "fldcrDjFZyD53Mjh5": {
+        "id": "selRYVv96IhhJQnmg",
+        "name": "",
+        "color": "blueLight2"
+      },
+      "fldex822E2qFor4ls": {
+        "id": "selA5bIOXnKvOJo1n",
+        "name": "Less than 5 hours",
+        "color": "blueLight2"
+      },
+      "fldili7tUe7CEYoie": {
+        "id": "selWcCx0ABXZ8htaC",
+        "name": "Other",
+        "color": "yellowLight2"
+      },
+      "fldjPsjuRlJCnDRoJ": [
+        {
+          "id": "sel9IewZjzlzAb1Ub",
+          "name": "Telephony",
+          "color": "purpleLight2"
+        }
+      ],
+      "fldkCuF9i6zTO1CaR": {
+        "id": "selKk8oWJRVYm8Jhd",
+        "name": "1-3",
+        "color": "blueLight2"
+      },
+      "fldkXZXdCTYva071e": {
+        "id": "selfsnq5eAHCZXOYO",
+        "name": "Other",
+        "color": "blueLight1"
+      },
+      "fldkt4W0bX83xary7": " Arrange meet between clients",
+      "fldl63dWOPR5VQfbP": {
+        "id": "selqZHXtICP4tIurZ",
+        "name": "General platform demonstration",
+        "color": "blueLight2"
+      },
+      "fldmdMDsGsnHebUQO": "All waste piece. Need fresh faces. ",
+      "fldnqFS7pmnx59GW8": [
+        {
+          "id": "selKuBFjIQaGTbfS3",
+          "name": "MYOB",
+          "color": "yellowLight2"
+        }
+      ],
+      "fldnyikq9LYuvIDBg": 10,
+      "fldrRMLViqDRxmf5Y": [
+        {
+          "id": "selwnpnmARKUhBA0a",
+          "name": "Limited pipeline visibility",
+          "color": "orangeLight2"
+        },
+        {
+          "id": "selpZF1Q8JeY2oQDT",
+          "name": "Slow client onboarding",
+          "color": "tealLight2"
+        },
+        {
+          "id": "sel9wSxo88qCFkJgf",
+          "name": "Difficulty scaling",
+          "color": "cyanLight1"
+        }
+      ],
+      "fldruykoZf1R7lgyU": {
+        "id": "selMEaD8oDhz2unf0",
+        "name": "Templates and reports",
+        "color": "yellowLight2"
+      },
+      "fldwhS1urFwQAHDU4": "Please ready 4 clients nacchunu. ",
+      "fldx7n55HTzh93g3D": "2026-08-05T05:39:38.153Z"
+    }
+  }
+]

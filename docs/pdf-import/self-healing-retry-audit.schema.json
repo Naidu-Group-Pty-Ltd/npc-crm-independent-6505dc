@@ -1,0 +1,148 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://npcservices.com.au/schemas/pdf-import/self-healing-retry-audit.schema.json",
+  "title": "PDF Import Self-Healing Retry Audit",
+  "description": "Controlled, plan-first self-healing retry audit. Metadata only — never calls AI, mutates templates, reruns imports, or performs browser-dependent actions automatically, and never stores raw PDF/OCR text or screenshots. Only safe metadata-level actions may execute after an explicit operator trigger.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "importId",
+    "templateId",
+    "sourceFilename",
+    "planId",
+    "mode",
+    "status",
+    "actions",
+    "summary",
+    "warnings",
+    "blockers",
+    "generatedAt",
+    "executedAt",
+    "persistedAt"
+  ],
+  "definitions": {
+    "evidenceItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "label", "value", "weight", "message"],
+      "properties": {
+        "code": { "type": "string" },
+        "label": { "type": "string" },
+        "value": { "type": ["string", "number", "boolean", "null"] },
+        "weight": { "type": "number" },
+        "message": { "type": "string" }
+      }
+    },
+    "actionId": {
+      "type": "string",
+      "enum": [
+        "reload_snapshot",
+        "build_import_intelligence_profile",
+        "persist_import_intelligence_profile",
+        "build_repair_pattern_analysis",
+        "persist_repair_pattern_analysis",
+        "build_adaptive_reconciliation_policy",
+        "persist_adaptive_reconciliation_policy",
+        "run_export_parity_automation",
+        "persist_export_parity_summary",
+        "rerun_golden_regression",
+        "persist_golden_regression_summary",
+        "save_golden_run_history",
+        "rerun_visual_qa",
+        "rerun_repair",
+        "run_ai_reconciliation",
+        "rerun_export_parity_manual",
+        "rerun_import",
+        "inspect_template_editor",
+        "inspect_storage_artifacts",
+        "inspect_pdf_import_jobs",
+        "inspect_supabase_function_logs",
+        "inspect_cloud_run_logs",
+        "block_until_manual_review"
+      ]
+    },
+    "safetyLevel": {
+      "type": "string",
+      "enum": ["safe_automatic", "operator_confirmed", "manual_only", "blocked"]
+    },
+    "actionStatus": {
+      "type": "string",
+      "enum": ["pending", "skipped", "completed", "failed", "blocked", "manual_required", "not_supported"]
+    },
+    "actionPlan": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "actionId",
+        "label",
+        "safetyLevel",
+        "status",
+        "priority",
+        "reasonCodes",
+        "prerequisites",
+        "evidence",
+        "maxAttempts",
+        "attemptCount",
+        "message"
+      ],
+      "properties": {
+        "actionId": { "$ref": "#/definitions/actionId" },
+        "label": { "type": "string" },
+        "safetyLevel": { "$ref": "#/definitions/safetyLevel" },
+        "status": { "$ref": "#/definitions/actionStatus" },
+        "priority": { "type": "number" },
+        "reasonCodes": { "type": "array", "items": { "type": "string" } },
+        "prerequisites": { "type": "array", "items": { "type": "string" } },
+        "evidence": { "type": "array", "items": { "$ref": "#/definitions/evidenceItem" } },
+        "maxAttempts": { "type": "number", "minimum": 0 },
+        "attemptCount": { "type": "number", "minimum": 0 },
+        "message": { "type": "string" },
+        "resultMessage": { "type": ["string", "null"] }
+      }
+    }
+  },
+  "properties": {
+    "version": { "type": "string", "const": "pdf-import-self-healing-retry-audit-v1" },
+    "importId": { "type": ["string", "null"] },
+    "templateId": { "type": ["string", "null"] },
+    "sourceFilename": { "type": ["string", "null"] },
+    "planId": { "type": "string" },
+    "mode": {
+      "type": "string",
+      "enum": ["dry_run", "audit_only", "execute_safe", "execute_confirmed"]
+    },
+    "status": {
+      "type": "string",
+      "enum": ["planned", "completed", "completed_with_warnings", "partial", "blocked", "failed", "no_action"]
+    },
+    "actions": { "type": "array", "items": { "$ref": "#/definitions/actionPlan" } },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "totalActions",
+        "executableActions",
+        "completedActions",
+        "failedActions",
+        "skippedActions",
+        "manualActions",
+        "blockedActions"
+      ],
+      "properties": {
+        "totalActions": { "type": "number", "minimum": 0 },
+        "executableActions": { "type": "number", "minimum": 0 },
+        "completedActions": { "type": "number", "minimum": 0 },
+        "failedActions": { "type": "number", "minimum": 0 },
+        "skippedActions": { "type": "number", "minimum": 0 },
+        "manualActions": { "type": "number", "minimum": 0 },
+        "blockedActions": { "type": "number", "minimum": 0 }
+      }
+    },
+    "warnings": { "type": "array", "items": { "type": "string" } },
+    "blockers": { "type": "array", "items": { "type": "string" } },
+    "generatedAt": { "type": "string" },
+    "executedAt": { "type": ["string", "null"] },
+    "persistedAt": { "type": ["string", "null"] }
+  }
+}

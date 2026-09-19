@@ -1,0 +1,741 @@
+{
+ "reportId": "8c6edc56-6fce-4613-a3f3-82f3fe3769e2",
+ "address": "1/27D Mitchell Street",
+ "engine": "69.0",
+ "expectRenderer": "weasyprint",
+ "base": "http://127.0.0.1:5173",
+ "ms": 19476,
+ "result": "FRONT END \u2014 PASS",
+ "findings": [
+  {
+   "step": "report opens (address heading visible)",
+   "ok": true,
+   "detail": "1/27D Mitchell Street"
+  },
+  {
+   "step": "no \"Something went wrong\" boundary",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "step": "no loading loop (skeletons cleared)",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "step": "report editor opens",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "step": "edit is written through the broker",
+   "ok": true,
+   "detail": "manage-investment-reports update carried the edit"
+  },
+  {
+   "step": "editor confirms the save",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "step": "editor closes",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "step": "page remains interactive after closing the editor",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "step": "edit persists on the page",
+   "ok": true,
+   "detail": "the document card shows the new text"
+  },
+  {
+   "step": "templates selector visible",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "step": "template picker opens",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "step": "selectable templates appear",
+   "ok": true,
+   "detail": "5 radio options"
+  },
+  {
+   "step": "the requested template was offered",
+   "ok": true,
+   "detail": "no template requested"
+  },
+  {
+   "step": "template selection persists (written through the broker)",
+   "ok": true,
+   "detail": "investment \u2192 7c4b5a97-1f2c-420c-b147-6babda098510"
+  },
+  {
+   "step": "Publishing & Export panel present",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "step": "export controls respond (toggle a switch and back)",
+   "ok": true,
+   "detail": "5 switches"
+  },
+  {
+   "step": "one client-PDF action per surface, no legacy button",
+   "ok": true,
+   "detail": "[\"Download PDF\",\"Generate Client PDF\"]"
+  },
+  {
+   "step": "finalisation button disabled while in flight",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "step": "one finalisation \u2192 one render request",
+   "ok": true,
+   "detail": "1 render-template-pdf call(s)"
+  },
+  {
+   "step": "render asked in final mode and named the report",
+   "ok": true,
+   "detail": "{\"mode\":\"final\",\"reportId\":\"8c6edc56-6fce-4613-a3f3-82f3fe3769e2\",\"templateId\":\"7c4b5a97-1f2c-420c-b147-6babda098510\",\"bytes\":254189}"
+  },
+  {
+   "step": "a PDF download arrived",
+   "ok": true,
+   "detail": "Snapshot_Report_1_27D_Mitchell_Street_2026-09-18.pdf 254189B"
+  },
+  {
+   "step": "Send to Client opens",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "step": "send publishes a portal row with a stored document",
+   "ok": true,
+   "detail": "storage_path=template-builder/2026-09-18/1789748375920-Snapshot_Report_1_"
+  },
+  {
+   "step": "send reuses the finalised document (no second render)",
+   "ok": true,
+   "detail": "0 additional render(s)"
+  },
+  {
+   "step": "the portal row names the finalised PDF",
+   "ok": true,
+   "detail": "portal=template-builder/2026-09-18/1789748375920-Snapshot final=template-builder/2026-09-18/1789748375920-Snapshot"
+  },
+  {
+   "step": "send did not trigger a browser download",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "step": "no console errors",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "step": "no uncaught page errors",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "step": "no failed front-end requests",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "step": "every request the page made was answered",
+   "ok": true,
+   "detail": ""
+  },
+  {
+   "step": "no unexpected navigation",
+   "ok": true,
+   "detail": "http://127.0.0.1:5173/investment-report/8c6edc56-6fce-4613-a3f3-82f3fe3769e2"
+  }
+ ],
+ "downloads": [
+  {
+   "name": "Snapshot_Report_1_27D_Mitchell_Street_2026-09-18.pdf",
+   "file": "/home/user/npc-property-dashbord/.verify/s6/snapshot-mitchell/Snapshot_Report_1_27D_Mitchell_Street_2026-09-18.pdf",
+   "bytes": 254189
+  }
+ ],
+ "renders": [
+  {
+   "mode": "final",
+   "reportId": "8c6edc56-6fce-4613-a3f3-82f3fe3769e2",
+   "templateId": "7c4b5a97-1f2c-420c-b147-6babda098510",
+   "htmlBytes": 581699,
+   "at": 1789748375920,
+   "path": "template-builder/2026-09-18/1789748375920-Snapshot_Report_1_27D_Mitchell_Street_2026-09-18.pdf",
+   "bytes": 254189
+  }
+ ],
+ "selections": [
+  {
+   "id": "sel-investment",
+   "owner_user_id": "00000000-0000-4000-8000-00000000c0de",
+   "report_type": "investment",
+   "template_id": "7c4b5a97-1f2c-420c-b147-6babda098510",
+   "selected_at": "2026-09-18T16:19:33.610Z",
+   "updated_at": "2026-09-18T16:19:33.614Z"
+  }
+ ],
+ "portalReports": [
+  {
+   "id": "portal-1789748380614",
+   "report_title": "1/27D Mitchell Street",
+   "report_type": "investment",
+   "report_tier": "snapshot",
+   "storage_path": "template-builder/2026-09-18/1789748375920-Snapshot_Report_1_27D_Mitchell_Street_2026-09-18.pdf",
+   "source_report_id": "8c6edc56-6fce-4613-a3f3-82f3fe3769e2",
+   "notes": null,
+   "client_visible_notes": null,
+   "published_at": "2026-09-18T16:19:40.613Z"
+  }
+ ],
+ "updates": [
+  [
+   "property_address",
+   "report_content",
+   "sources_content"
+  ],
+  [
+   "pdf_url"
+  ]
+ ],
+ "unfulfilled": [],
+ "consoleErrors": [
+  "WebSocket connection to 'wss://dduzbchuswwbefdunfct.supabase.co/realtime/v1/websocket?apikey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkdXpiY2h1c3d3YmVmZHVuZmN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0NDM4NzksImV4cC",
+  "WebSocket connection to 'wss://dduzbchuswwbefdunfct.supabase.co/realtime/v1/websocket?apikey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkdXpiY2h1c3d3YmVmZHVuZmN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0NDM4NzksImV4cC",
+  "WebSocket connection to 'wss://dduzbchuswwbefdunfct.supabase.co/realtime/v1/websocket?apikey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkdXpiY2h1c3d3YmVmZHVuZmN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0NDM4NzksImV4cC",
+  "WebSocket connection to 'wss://dduzbchuswwbefdunfct.supabase.co/realtime/v1/websocket?apikey=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkdXpiY2h1c3d3YmVmZHVuZmN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0NDM4NzksImV4cC"
+ ],
+ "pageErrors": [],
+ "netFail": [],
+ "fatal": null,
+ "probes": [
+  {
+   "label": "before menu",
+   "bodyPointer": "(unset)",
+   "dialogs": 0,
+   "openMenus": 0
+  },
+  {
+   "label": "menu open",
+   "bodyPointer": "none",
+   "dialogs": 0,
+   "openMenus": 1
+  },
+  {
+   "label": "editor open",
+   "bodyPointer": "none",
+   "dialogs": 1,
+   "openMenus": 0
+  },
+  {
+   "label": "after save",
+   "bodyPointer": "none",
+   "dialogs": 1,
+   "openMenus": 0
+  },
+  {
+   "label": "after cancel",
+   "bodyPointer": "(unset)",
+   "dialogs": 0,
+   "openMenus": 0
+  }
+ ],
+ "requestLog": [
+  {
+   "kind": "fn:custom-auth-verify-v2",
+   "method": "POST",
+   "url": "/functions/v1/custom-auth-verify-v2",
+   "fulfilled": true
+  },
+  {
+   "kind": "rest:whitelabel_settings",
+   "method": "GET",
+   "url": "/rest/v1/whitelabel_settings",
+   "fulfilled": true
+  },
+  {
+   "kind": "fn:get-investment-reports",
+   "method": "POST",
+   "url": "/functions/v1/get-investment-reports",
+   "fulfilled": true
+  },
+  {
+   "kind": "fn:internal-messaging",
+   "method": "POST",
+   "url": "/functions/v1/internal-messaging",
+   "fulfilled": true
+  },
+  {
+   "kind": "fn:internal-messaging",
+   "method": "POST",
+   "url": "/functions/v1/internal-messaging",
+   "fulfilled": true
+  },
+  {
+   "kind": "fn:notifications-feed-v2",
+   "method": "POST",
+   "url": "/functions/v1/notifications-feed-v2",
+   "fulfilled": true
+  },
+  {
+   "kind": "fn:admin-user-management",
+   "method": "POST",
+   "url": "/functions/v1/admin-user-management",
+   "fulfilled": true
+  },
+  {
+   "kind": "fn:mission-control-balance",
+   "method": "POST",
+   "url": "/functions/v1/mission-control-balance",
+   "fulfilled": true
+  },
+  {
+   "kind": "fn:mission-control-announcements",
+   "method": "POST",
+   "url": "/functions/v1/mission-control-announcements",
+   "fulfilled": true
+  },
+  {
+   "kind": "fn:mission-control-plan-change",
+   "method": "POST",
+   "url": "/functions/v1/mission-control-plan-change",
+   "fulfilled": true
+  },
+  {
+   "kind": "fn:mission-control-feedback-prompt",
+   "method": "POST",
+   "url": "/functions/v1/mission-control-feedback-prompt",
+   "fulfilled": true
+  },
+  {
+   "kind": "fn:mission-control-balance",
+   "method": "POST",
+   "url": "/functions/v1/mission-control-balance",
+   "fulfilled": true
+  },
+  {
+   "kind": "fn:mission-control-gate",
+   "method": "POST",
+   "url": "/functions/v1/mission-control-gate",
+   "fulfilled": true
+  },
+  {
+   "kind": "fn:mission-control-balance",
+   "method": "POST",
+   "url": "/functions/v1/mission-control-balance",
+   "fulfilled": true
+  },
+  {
+   "kind": "fn:get-investment-reports",
+   "method": "POST",
+   "url": "/functions/v1/get-investment-reports",
+   "fulfilled": true
+  },
+  {
+   "kind": "fn:get-investment-reports",
+   "method": "POST",
+   "url": "/functions/v1/get-investment-reports",
+   "fulfilled": true
+  },
+  {
+   "kind": "fn:log-activity",
+   "method": "POST",
+   "url": "/functions/v1/log-activity",
+   "fulfilled": true
+  },
+  {
+   "kind": "fn:manage-templates",
+   "method": "POST",
+   "url": "/functions/v1/manage-templates",
+   "fulfilled": true
+  },
+  {
+   "kind": "fn:manage-templates",
+   "method": "POST",
+   "url": "/functions/v1/manage-templates",
+   "fulfilled": true
+  },
+  {
+   "kind": "fn:manage-investment-reports",
+   "method": "POST",
+   "url": "/functions/v1/manage-investment-reports",
+   "fulfilled": true
+  },
+  {
+   "kind": "fn:log-activity",
+   "method": "POST",
+   "url": "/functions/v1/log-activity",
+   "fulfilled": true
+  },
+  {
+   "kind": "fn:manage-template-library",
+   "method": "POST",
+   "url": "/functions/v1/manage-template-library",
+   "fulfilled": true
+  },
+  {
+   "kind": "fn:manage-templates",
+   "method": "POST",
+   "url": "/functions/v1/manage-templates",
+   "fulfilled": true
+  },
+  {
+   "kind": "external",
+   "method": "GET",
+   "url": "/s/cinzel/v26/8vIJ7ww63mVu7gt79mT7.woff2",
+   "fulfilled": false
+  },
+  {
+   "kind": "external",
+   "method": "GET",
+   "url": "/s/ibmplexmono/v20/-F63fjptAgt5VM-kVkqdyU8n1i8q1w.woff2",
+   "fulfilled": false
+  },
+  {
+   "kind": "external",
+   "method": "GET",
+   "url": "/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3pQPwlBFgg.woff2",
+   "fulfilled": false
+  },
+  {
+   "kind": "external",
+   "method": "GET",
+   "url": "/s/playfairdisplay/v40/nuFRD-vYSZviVYUb_rj3ij__anPXDTnCjmHKM4nYO7KN_qiTXtHA-Q.woff2",
+   "fulfilled": false
+  },
+  {
+   "kind": "external",
+   "method": "GET",
+   "url": "/s/playfairdisplay/v40/nuFiD-vYSZviVYUb_rj3ij__anPXDTzYgA.woff2",
+   "fulfilled": false
+  },
+  {
+   "kind": "external",
+   "method": "GET",
+   "url": "/s/cinzel/v26/8vIJ7ww63mVu7gt79mT7.woff2",
+   "fulfilled": false
+  },
+  {
+   "kind": "external",
+   "method": "GET",
+   "url": "/s/ibmplexmono/v20/-F63fjptAgt5VM-kVkqdyU8n1i8q1w.woff2",
+   "fulfilled": false
+  },
+  {
+   "kind": "external",
+   "method": "GET",
+   "url": "/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3pQPwlBFgg.woff2",
+   "fulfilled": false
+  },
+  {
+   "kind": "external",
+   "method": "GET",
+   "url": "/s/playfairdisplay/v40/nuFRD-vYSZviVYUb_rj3ij__anPXDTnCjmHKM4nYO7KN_qiTXtHA-Q.woff2",
+   "fulfilled": false
+  },
+  {
+   "kind": "external",
+   "method": "GET",
+   "url": "/s/playfairdisplay/v40/nuFiD-vYSZviVYUb_rj3ij__anPXDTzYgA.woff2",
+   "fulfilled": false
+  },
+  {
+   "kind": "external",
+   "method": "GET",
+   "url": "/s/notoserif/v33/ga6daw1J5X9T9RW6j9bNVls-hfgvz8JcMofYTYf6D30.woff2",
+   "fulfilled": false
+  },
+  {
+   "kind": "external",
+   "method": "GET",
+   "url": "/s/notoserif/v33/ga6saw1J5X9T9RW6j9bNfFIMZhhWnFTyNZIQD1-_FXP0RgnaOg9MYBNLg_cIrqs.woff2",
+   "fulfilled": false
+  },
+  {
+   "kind": "external",
+   "method": "GET",
+   "url": "/s/ibmplexmono/v20/-F63fjptAgt5VM-kVkqdyU8n1i8q1w.woff2",
+   "fulfilled": false
+  },
+  {
+   "kind": "external",
+   "method": "GET",
+   "url": "/s/ibmplexmono/v20/-F6qfjptAgt5VM-kVkqdyU8n3pQPwlBFgg.woff2",
+   "fulfilled": false
+  },
+  {
+   "kind": "fn:get-investment-reports",
+   "method": "POST",
+   "url": "/functions/v1/get-investment-reports",
+   "fulfilled": true
+  },
+  {
+   "kind": "fn:manage-templates",
+   "method": "POST",
+   "url": "/functions/v1/manage-templates",
+   "fulfilled": true
+  },
+  {
+   "kind": "fn:manage-templates",
+   "method": "POST",
+   "url": "/functions/v1/manage-templates",
+   "fulfilled": true
+  },
+  {
+   "kind": "fn:get-investment-reports",
+   "method": "POST",
+   "url": "/functions/v1/get-investment-reports",
+   "fulfilled": true
+  },
+  {
+   "kind": "fn:manage-templates",
+   "method": "POST",
+   "url": "/functions/v1/manage-templates",
+   "fulfilled": true
+  },
+  {
+   "kind": "fn:get-investment-reports",
+   "method": "POST",
+   "url": "/functions/v1/get-investment-reports",
+   "fulfilled": true
+  },
+  {
+   "kind": "fn:manage-templates",
+   "method": "POST",
+   "url": "/functions/v1/manage-templates",
+   "fulfilled": true
+  },
+  {
+   "kind": "fn:get-investment-reports",
+   "method": "POST",
+   "url": "/functions/v1/get-investment-reports",
+   "fulfilled": true
+  },
+  {
+   "kind": "gw:report_structure_templates",
+   "method": "GET",
+   "url": "/functions/v1/authenticated-data/report_structure_templates",
+   "fulfilled": true
+  },
+  {
+   "kind": "rest:whitelabel_settings",
+   "method": "GET",
+   "url": "/rest/v1/whitelabel_settings",
+   "fulfilled": true
+  },
+  {
+   "kind": "rest:whitelabel_settings",
+   "method": "GET",
+   "url": "/rest/v1/whitelabel_settings",
+   "fulfilled": true
+  },
+  {
+   "kind": "gw:global_report_settings",
+   "method": "GET",
+   "url": "/functions/v1/authenticated-data/global_report_settings",
+   "fulfilled": true
+  },
+  {
+   "kind": "storage",
+   "method": "GET",
+   "url": "/storage/v1/object/public/branding-assets/3d5d1dda-5321-4f5d-bee4-e5691a7ff6c8/e6aafc1d-bee5-4ba1-a0f9-ad8e39e7b33a-1785",
+   "fulfilled": true
+  },
+  {
+   "kind": "storage",
+   "method": "GET",
+   "url": "/storage/v1/object/public/branding-assets/3d5d1dda-5321-4f5d-bee4-e5691a7ff6c8/6da0f436-1ced-4f94-9c85-e6e5462b177c-1785",
+   "fulfilled": true
+  },
+  {
+   "kind": "storage",
+   "method": "GET",
+   "url": "/storage/v1/object/public/branding-assets/3d5d1dda-5321-4f5d-bee4-e5691a7ff6c8/d7b53212-0f67-44e5-be19-154469450727-1785",
+   "fulfilled": true
+  },
+  {
+   "kind": "storage",
+   "method": "GET",
+   "url": "/storage/v1/object/public/branding-assets/3d5d1dda-5321-4f5d-bee4-e5691a7ff6c8/6e1340c0-d1ff-46e9-8a44-87f29803b066-1785",
+   "fulfilled": true
+  },
+  {
+   "kind": "storage",
+   "method": "GET",
+   "url": "/storage/v1/object/public/branding-assets/3d5d1dda-5321-4f5d-bee4-e5691a7ff6c8/615db046-6e02-48f0-9ce5-b2070c6d9d49-1785",
+   "fulfilled": true
+  },
+  {
+   "kind": "storage",
+   "method": "GET",
+   "url": "/storage/v1/object/public/branding-assets/3d5d1dda-5321-4f5d-bee4-e5691a7ff6c8/e4309500-27d3-4c04-b0ad-2b6089204682-1785",
+   "fulfilled": true
+  },
+  {
+   "kind": "fn:render-template-pdf",
+   "method": "POST",
+   "url": "/functions/v1/render-template-pdf",
+   "fulfilled": true
+  },
+  {
+   "kind": "fn:get-investment-reports",
+   "method": "POST",
+   "url": "/functions/v1/get-investment-reports",
+   "fulfilled": true
+  },
+  {
+   "kind": "fn:log-activity",
+   "method": "POST",
+   "url": "/functions/v1/log-activity",
+   "fulfilled": true
+  },
+  {
+   "kind": "fn:log-activity",
+   "method": "POST",
+   "url": "/functions/v1/log-activity",
+   "fulfilled": true
+  },
+  {
+   "kind": "fn:get-client-data",
+   "method": "POST",
+   "url": "/functions/v1/get-client-data",
+   "fulfilled": true
+  },
+  {
+   "kind": "fn:get-investment-reports",
+   "method": "POST",
+   "url": "/functions/v1/get-investment-reports",
+   "fulfilled": true
+  },
+  {
+   "kind": "fn:manage-templates",
+   "method": "POST",
+   "url": "/functions/v1/manage-templates",
+   "fulfilled": true
+  },
+  {
+   "kind": "fn:manage-investment-reports",
+   "method": "POST",
+   "url": "/functions/v1/manage-investment-reports",
+   "fulfilled": true
+  },
+  {
+   "kind": "fn:manage-client-data",
+   "method": "POST",
+   "url": "/functions/v1/manage-client-data",
+   "fulfilled": true
+  },
+  {
+   "kind": "fn:internal-messaging",
+   "method": "POST",
+   "url": "/functions/v1/internal-messaging",
+   "fulfilled": true
+  }
+ ],
+ "requestKinds": [
+  [
+   "fn:custom-auth-verify-v2",
+   1
+  ],
+  [
+   "rest:whitelabel_settings",
+   3
+  ],
+  [
+   "fn:get-investment-reports",
+   9
+  ],
+  [
+   "fn:internal-messaging",
+   3
+  ],
+  [
+   "fn:notifications-feed-v2",
+   1
+  ],
+  [
+   "fn:admin-user-management",
+   1
+  ],
+  [
+   "fn:mission-control-balance",
+   3
+  ],
+  [
+   "fn:mission-control-announcements",
+   1
+  ],
+  [
+   "fn:mission-control-plan-change",
+   1
+  ],
+  [
+   "fn:mission-control-feedback-prompt",
+   1
+  ],
+  [
+   "fn:mission-control-gate",
+   1
+  ],
+  [
+   "fn:log-activity",
+   4
+  ],
+  [
+   "fn:manage-templates",
+   8
+  ],
+  [
+   "fn:manage-investment-reports",
+   2
+  ],
+  [
+   "fn:manage-template-library",
+   1
+  ],
+  [
+   "external",
+   14
+  ],
+  [
+   "gw:report_structure_templates",
+   1
+  ],
+  [
+   "gw:global_report_settings",
+   1
+  ],
+  [
+   "storage",
+   6
+  ],
+  [
+   "fn:render-template-pdf",
+   1
+  ],
+  [
+   "fn:get-client-data",
+   1
+  ],
+  [
+   "fn:manage-client-data",
+   1
+  ]
+ ]
+}

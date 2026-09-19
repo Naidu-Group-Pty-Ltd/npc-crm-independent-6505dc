@@ -1,0 +1,71 @@
+{
+  "version": "docling-vnext-capabilities-v1",
+  "note": "Baseline populated from OFFICIAL PyPI metadata + real docling-core==2.87.1 schema introspection during E2. Fields marked model_ready:null are resolved at image build/CI time by running docling_capabilities.introspect() against the installed vnext image (torch-dependent pipeline option models are not installed in this planning environment).",
+  "selected_candidate": {
+    "docling": "2.113.0",
+    "docling_slim": "2.113.0",
+    "docling_core": "2.87.1",
+    "docling_ibm_models": "3.13.3",
+    "docling_parse": "7.8.1",
+    "pypdfium2": "5.12.1",
+    "pymupdf": "1.24.14",
+    "torch": "2.13.0",
+    "transformers": "5.8.1",
+    "easyocr": "1.7.2",
+    "python": ">=3.11,<3.13",
+    "uv_lock_sha256": "88609f938b98f2fabe423df434ddd5a4b0d7a50674e20a2e77f5ac80c937b87c",
+    "resolved_package_count": 173
+  },
+  "baseline_production": {
+    "docling": "2.14.0",
+    "docling_core": "2.82.0",
+    "docling_ibm_models": "3.13.3",
+    "docling_parse": "3.4.0",
+    "pypdfium2": "4.30.0",
+    "pymupdf": "1.24.14"
+  },
+  "breaking_changes_since_2_14": [
+    "docling is now a thin meta-package delegating to docling-slim[standard]; extras (easyocr, rapidocr, vlm, remote-serving) select feature sets.",
+    "docling-parse major bump 3.4.0 -> 7.8.1.",
+    "docling-core 2.82.0 -> 2.87.1 (backward-compatible document field names; additive new fields orientation/formatting/hyperlink/meta/source/field_items).",
+    "PictureItem.classification field removed; picture classification now lives in PictureItem.annotations as PictureClassificationData(predicted_classes[]).",
+    "Chart extraction output is first-class typed picture annotations: PictureBarChartData / PictureLineChartData / PicturePieChartData / PictureScatterChartData / PictureStackedBarChartData / PictureTabularChartData / PictureChartData.",
+    "Picture description is PictureDescriptionData(text, provenance) in annotations.",
+    "model_downloader path/API must be verified against the installed package (do not assume docling.utils.model_downloader signature is unchanged)."
+  ],
+  "verified_schema_fields": {
+    "TableCell": ["bbox", "col_span", "column_header", "end_col_offset_idx", "end_row_offset_idx", "fillable", "row_header", "row_section", "row_span", "start_col_offset_idx", "start_row_offset_idx", "text"],
+    "TableData": ["num_cols", "num_rows", "orientation", "table_cells"],
+    "ProvenanceItem": ["bbox", "charspan", "page_no"],
+    "PictureItem": ["annotations", "captions", "children", "content_layer", "image", "label", "meta", "parent", "prov", "references", "self_ref", "source"],
+    "TextItem": ["children", "content_layer", "formatting", "hyperlink", "label", "meta", "orig", "parent", "prov", "self_ref", "source", "text"],
+    "DoclingDocument": ["body", "field_items", "field_regions", "form_items", "furniture", "groups", "key_value_items", "name", "origin", "pages", "pictures", "schema_name", "tables", "texts", "version"],
+    "PictureClassificationData": ["kind", "provenance", "predicted_classes"],
+    "PictureChartData": ["kind", "title"]
+  },
+  "features": {
+    "note": "apiPresent from PyPI/schema research; modelReady/effective are probed against the installed image at build/CI time (introspect()).",
+    "ocr_easyocr": { "apiPresent": true, "requiredExtras": ["easyocr"], "modelReady": null },
+    "ocr_rapidocr": { "apiPresent": true, "requiredExtras": ["rapidocr"], "modelReady": null },
+    "force_full_page_ocr": { "apiPresent": true, "modelReady": null },
+    "table_structure": { "apiPresent": true, "modelReady": null },
+    "table_accurate_mode": { "apiPresent": true, "modelReady": null },
+    "table_cell_matching": { "apiPresent": true, "modelReady": null },
+    "picture_image_generation": { "apiPresent": true, "modelReady": null },
+    "table_image_generation": { "apiPresent": true, "modelReady": null },
+    "page_image_generation": { "apiPresent": true, "modelReady": null },
+    "picture_classification": { "apiPresent": true, "modelReady": null },
+    "picture_description": { "apiPresent": true, "modelReady": null },
+    "chart_extraction": { "apiPresent": true, "modelReady": null, "requiredExtras": ["vlm-or-model-download"] },
+    "chart_to_csv": { "apiPresent": true, "modelReady": null },
+    "chart_to_code": { "apiPresent": true, "modelReady": null },
+    "chart_to_summary": { "apiPresent": true, "modelReady": null },
+    "formula_enrichment": { "apiPresent": true, "modelReady": null },
+    "code_enrichment": { "apiPresent": true, "modelReady": null },
+    "threaded_standard_pipeline": { "apiPresent": true, "modelReady": null },
+    "vlm_pipeline_local": { "apiPresent": true, "requiredExtras": ["vlm"], "modelReady": null },
+    "remote_vlm": { "apiPresent": true, "configured": false, "effective": false },
+    "backend_text": { "apiPresent": true, "modelReady": null },
+    "cuda": { "apiPresent": true, "configured": false, "effective": false }
+  }
+}

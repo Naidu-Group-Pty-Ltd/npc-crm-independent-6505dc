@@ -1,0 +1,20 @@
+{
+  "createdAt": "2026-05-07T03:06:47.286Z",
+  "id": "a454b1b1-83db-42be-9ca3-e08a0096ee4a",
+  "name": "Voice Request Failed Count",
+  "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+  "queries": [
+    {
+      "filters": [],
+      "on": "assistant.voice.requestFailed",
+      "operation": "count",
+      "table": "events",
+      "type": "vapiql-json"
+    }
+  ],
+  "timeRange": {
+    "start": "-1h"
+  },
+  "type": "text",
+  "updatedAt": "2026-05-07T03:06:47.286Z"
+}

@@ -1,0 +1,3482 @@
+{
+  "flow": [
+    {
+      "id": 1,
+      "mapper": {},
+      "module": "gateway:CustomWebHook",
+      "version": 1,
+      "metadata": {
+        "restore": {
+          "parameters": {
+            "hook": {
+              "data": {
+                "editable": "true"
+              },
+              "label": "NPC GHL Contact Resolver v4.1"
+            }
+          }
+        },
+        "designer": {
+          "x": 0,
+          "y": 300,
+          "name": "Vapi Tool Call Webhook"
+        },
+        "parameters": [
+          {
+            "name": "hook",
+            "type": "hook:gateway-webhook",
+            "label": "Webhook",
+            "required": true
+          },
+          {
+            "name": "maxResults",
+            "type": "number",
+            "label": "Maximum number of results"
+          }
+        ]
+      },
+      "parameters": {
+        "hook": 4126221,
+        "maxResults": 1
+      }
+    },
+    {
+      "id": 9,
+      "mapper": {
+        "limit": "10",
+        "search": "{{1.message.customer.number}}"
+      },
+      "module": "highlevel:searchContacts",
+      "version": 1,
+      "metadata": {
+        "expect": [
+          {
+            "name": "search",
+            "type": "text",
+            "label": "Query"
+          },
+          {
+            "name": "limit",
+            "type": "uinteger",
+            "label": "Limit"
+          }
+        ],
+        "restore": {
+          "parameters": {
+            "__IMTCONN__": {
+              "data": {
+                "scoped": "true",
+                "connection": "highlevel3"
+              },
+              "label": "NPG GHL New (Location: Naidu Property Consulting Services)"
+            }
+          }
+        },
+        "designer": {
+          "x": 300,
+          "y": 300,
+          "name": "Search GHL Contact by Injected Phone"
+        },
+        "interface": [
+          {
+            "name": "__IMTLENGTH__",
+            "type": "uinteger",
+            "label": "Total number of bundles"
+          },
+          {
+            "name": "__IMTINDEX__",
+            "type": "uinteger",
+            "label": "Bundle order position"
+          },
+          {
+            "name": "id",
+            "type": "text",
+            "label": "Contact ID"
+          },
+          {
+            "name": "locationId",
+            "type": "text",
+            "label": "Location ID"
+          },
+          {
+            "name": "contactName",
+            "type": "text",
+            "label": "Contact Name"
+          },
+          {
+            "name": "firstName",
+            "type": "text",
+            "label": "First Name"
+          },
+          {
+            "name": "lastName",
+            "type": "text",
+            "label": "Last Name"
+          },
+          {
+            "name": "companyName",
+            "type": "text",
+            "label": "Company Name"
+          },
+          {
+            "name": "email",
+            "type": "text",
+            "label": "Email"
+          },
+          {
+            "name": "phone",
+            "type": "text",
+            "label": "Phone"
+          },
+          {
+            "name": "dnd",
+            "type": "boolean",
+            "label": "Dnd"
+          },
+          {
+            "name": "type",
+            "type": "text",
+            "label": "Type"
+          },
+          {
+            "name": "source",
+            "type": "text",
+            "label": "Source"
+          },
+          {
+            "name": "assignedTo",
+            "type": "text",
+            "label": "Assigned To"
+          },
+          {
+            "name": "city",
+            "type": "text",
+            "label": "City"
+          },
+          {
+            "name": "state",
+            "type": "text",
+            "label": "State"
+          },
+          {
+            "name": "postalCode",
+            "type": "text",
+            "label": "Postal Code"
+          },
+          {
+            "name": "address1",
+            "type": "text",
+            "label": "Address 1"
+          },
+          {
+            "name": "dateOfBirth",
+            "type": "text",
+            "label": "Date Of Birth"
+          },
+          {
+            "name": "lastActivity",
+            "type": "number",
+            "label": "Last Activity"
+          },
+          {
+            "name": "lastConversationMessageType",
+            "type": "number",
+            "label": "Last Conversation Message Type"
+          },
+          {
+            "name": "lastConversationId",
+            "type": "text",
+            "label": "Last Conversation ID"
+          },
+          {
+            "name": "conversations",
+            "spec": {
+              "spec": [
+                {
+                  "name": "id",
+                  "type": "text",
+                  "label": "ID"
+                }
+              ],
+              "type": "collection"
+            },
+            "type": "array",
+            "label": "Conversations"
+          },
+          {
+            "name": "dateAdded",
+            "type": "date",
+            "label": "Date Added"
+          },
+          {
+            "name": "dateUpdated",
+            "type": "date",
+            "label": "Date Updated"
+          },
+          {
+            "name": "tags",
+            "spec": {
+              "type": "text"
+            },
+            "type": "array",
+            "label": "Tags"
+          },
+          {
+            "name": "followers",
+            "type": "array",
+            "label": "Followers"
+          },
+          {
+            "name": "country",
+            "type": "text",
+            "label": "Country"
+          },
+          {
+            "name": "timezone",
+            "type": "text",
+            "label": "Timezone"
+          },
+          {
+            "name": "additionalEmails",
+            "type": "array",
+            "label": "Additional Emails"
+          },
+          {
+            "name": "attributions",
+            "spec": {
+              "spec": [
+                {
+                  "name": "utmSessionSource",
+                  "type": "text",
+                  "label": "Utm Session Source"
+                },
+                {
+                  "name": "isFirst",
+                  "type": "boolean",
+                  "label": "Is First"
+                },
+                {
+                  "name": "medium",
+                  "type": "text",
+                  "label": "Medium"
+                }
+              ],
+              "type": "collection"
+            },
+            "type": "array",
+            "label": "Attributions"
+          },
+          {
+            "name": "customField",
+            "spec": [
+              {
+                "name": "0Ns0OrfYtlZB9EUk3kGj",
+                "type": "text",
+                "label": "How long have you been in business?"
+              },
+              {
+                "name": "543Zlk0tZVif2GaEizTq",
+                "type": "text",
+                "label": "How soon are you looking to work with us if we’re a good fit?"
+              },
+              {
+                "name": "5l192QyBO2SsGwYkKmi0",
+                "type": "array",
+                "label": "Last month my sales were"
+              },
+              {
+                "name": "64lncTX1mFBReqcdreo2",
+                "type": "array",
+                "label": "How soon are you looking to streamline your lead generation and marketing systems for your business?"
+              },
+              {
+                "name": "6mAsOT0GHdcWIOjdwzBu",
+                "type": "text",
+                "label": "How much deposit (savings or equity) can you access, if required?"
+              },
+              {
+                "name": "7ExKIyCB0tF1Ak8K2oQo",
+                "type": "array",
+                "label": "How long have your been in business?"
+              },
+              {
+                "name": "CIRlYuMwpWCEdHcE7v1X",
+                "type": "array",
+                "label": "If we could help improve one thing financially for you, what would it be?"
+              },
+              {
+                "name": "CSDQRHlcNpJqBXz9WD8T",
+                "type": "text",
+                "label": "I understand that in order for my application to proceed or to be considered, I must book a time to speak with the team on the next page"
+              },
+              {
+                "name": "CbWJe3cxZlaIPLZ0xBGW",
+                "type": "text",
+                "label": "What is your current resident status?"
+              },
+              {
+                "name": "DUcILTExlRXl0bOx41E0",
+                "type": "text",
+                "label": "How have rising interest rates impacted your thinking? "
+              },
+              {
+                "name": "E5M8Pf0a8zB6Nn2DSYeE",
+                "type": "text",
+                "label": "What best describes your current loan position?"
+              },
+              {
+                "name": "G4Ar3PdNFYKAUYjWU1SH",
+                "type": "text",
+                "label": "Do you currently have the capacity for an extra 5 jobs per month?"
+              },
+              {
+                "name": "G4eOh0nHuOdpY0JAJq0z",
+                "type": "text",
+                "label": "What state do you provide your services in?"
+              },
+              {
+                "name": "Gk3al1bqg5lG1hXqwJCd",
+                "type": "text",
+                "label": "Are you a renter, owner-occupier, or investor?"
+              },
+              {
+                "name": "H5g6rKG3oKfdozIXTEJS",
+                "type": "array",
+                "label": "Can you keep a secret?"
+              },
+              {
+                "name": "HQSRVa22Zpj7fjGmilz5",
+                "type": "text",
+                "label": "Who is responsile for your lead gen?"
+              },
+              {
+                "name": "HjFD5NGcOPkdvUDDGQtI",
+                "type": "text",
+                "label": "What product or service do you sell?"
+              },
+              {
+                "name": "Hwm2Wkbywo3VzxY5nose",
+                "type": "text",
+                "label": "What do you feel you need the most help with in your business right now to reach your goals?"
+              },
+              {
+                "name": "IQFKna38WTiNywSIfIvH",
+                "type": "array",
+                "label": "What is the current growth stage of your business?"
+              },
+              {
+                "name": "IcLrO8ivyKbSkKRgEFsh",
+                "type": "text",
+                "label": "How many people work with you to deliver your services? (Counting your employees or subs)"
+              },
+              {
+                "name": "Ig6VzPQIAr5Z64MYmBMT",
+                "type": "text",
+                "label": "Do you have a marketing funnel?"
+              },
+              {
+                "name": "IkP27ngo9Mpid3n3ayNx",
+                "type": "text",
+                "label": "What’s your website address? (If you have one)"
+              },
+              {
+                "name": "IveIvmQmmHP7V3UQsNeb",
+                "type": "array",
+                "label": "How many leads do you generate per week?"
+              },
+              {
+                "name": "Jea7Rc5b9JwBDJZST6fZ",
+                "type": "text",
+                "label": "What is your 12–24 month goal?"
+              },
+              {
+                "name": "LIUY0HKcTRJ3NtmdsqQw",
+                "type": "text",
+                "label": "What would help you feel confident to move forward?"
+              },
+              {
+                "name": "Nw0ytmmtT55sUS9cBPbS",
+                "type": "array",
+                "label": "Which of the following best describes you?"
+              },
+              {
+                "name": "QUkZVFxaQhJ9Tbub8eFi",
+                "type": "text",
+                "label": "Have your finances been pre-approved?"
+              },
+              {
+                "name": "QdDzZtegigriKskGO5vF",
+                "type": "text",
+                "label": "Are you a business owner?"
+              },
+              {
+                "name": "TAO1meOAGB4jk6HDbQzi",
+                "type": "text",
+                "label": "How much deposit (savings or equity) can you access, if required?"
+              },
+              {
+                "name": "TrG3rIoCB59iVkWbc7Cz",
+                "type": "array",
+                "label": "When you speak to leads, are they people you want to be working with?"
+              },
+              {
+                "name": "Vq9QKP9E0lC3Mg5gLT6e",
+                "type": "array",
+                "label": "Do you currently have a website?"
+              },
+              {
+                "name": "YDa5P4dvDYJdvGykyIAJ",
+                "type": "text",
+                "label": "Is your e-commerce business ready to maximise sales through social media?"
+              },
+              {
+                "name": "YIoa5FwMubZCyIJm60eq",
+                "type": "text",
+                "label": "Do you have a website?"
+              },
+              {
+                "name": "YTFLaFwTLdUARbbVKq02",
+                "type": "text",
+                "label": "Do you want to access equity as part of this refinance?"
+              },
+              {
+                "name": "YrBAohoUlEgnhAoC7kJT",
+                "type": "array",
+                "label": "Who is currently responsible for your lead generation?"
+              },
+              {
+                "name": "aLjqFQwB2FaLxrQ9PvKx",
+                "type": "array",
+                "label": "Who is responsible for your marketing?"
+              },
+              {
+                "name": "b9ojBN2ljjSDiAFmgboE",
+                "type": "text",
+                "label": "What is your primary reason for refinancing?"
+              },
+              {
+                "name": "bKLPFf28zVi9QtKaLyPP",
+                "type": "array",
+                "label": "How do you currently get leads to find work? (Check all that apply) "
+              },
+              {
+                "name": "bOtPOkh1lWRdmgOpzGFR",
+                "type": "array",
+                "label": "What prompted you to explore property finance options today?"
+              },
+              {
+                "name": "bc2jOOI1IDBcWtLK0w44",
+                "type": "text",
+                "label": "In one sentence, what trade and home improvement services do you provide?",
+                "multiline": true
+              },
+              {
+                "name": "gzW9HmMvMm29roTYGtsU",
+                "type": "text",
+                "label": "What are you trying to achieve over the next 5–10 years?"
+              },
+              {
+                "name": "hCFQ6oMAaYDIXtYJPKY8",
+                "type": "text",
+                "label": "Are you currently doing any online marketing?"
+              },
+              {
+                "name": "ieT6MorXuAxqBfMcbwMz",
+                "type": "text",
+                "label": "What area do you provide your services in?"
+              },
+              {
+                "name": "iwiKznayDueILt9OsGQS",
+                "type": "text",
+                "label": "How much income do you earn per year (combined, if buying with a partner)?"
+              },
+              {
+                "name": "jE7vfPeyLgNw84RYbVrM",
+                "type": "array",
+                "label": "What type of support are you looking for?"
+              },
+              {
+                "name": "mCVZbWp6UXTQIVT1QonL",
+                "type": "text",
+                "label": "Thank you for sharing. What’s your first name?"
+              },
+              {
+                "name": "mLRo3ScGtHJRIgBZQM22",
+                "type": "text",
+                "label": "When do you need to start getting new business leads through the door?"
+              },
+              {
+                "name": "nWnstgFe43x12dT0NWEY",
+                "type": "text",
+                "label": "Are you an owner-occupier, or investor?"
+              },
+              {
+                "name": "rP4SWU29dsYQpdJBagva",
+                "type": "text",
+                "label": "Do you understand this is not an employment opportunity?"
+              },
+              {
+                "name": "rzfDNjbGhpR39SJcFSHm",
+                "type": "array",
+                "label": "Are you currently running paid ads?"
+              },
+              {
+                "name": "sGAnJOdQMBfY1tVqvN32",
+                "type": "text",
+                "label": "What’s your biggest concern in today’s market?"
+              },
+              {
+                "name": "sTT1R88GJRK85vDvRD9C",
+                "type": "text",
+                "label": "What is your current resident status?"
+              },
+              {
+                "name": "vw0yoNSul2ouC61EvbrV",
+                "type": "text",
+                "label": "What’s your current monthly marketing budget?"
+              },
+              {
+                "name": "z9W89OMw7u8VRJOQgQBc",
+                "type": "text",
+                "label": "How long have you been actively searching for a property?"
+              }
+            ],
+            "type": "collection",
+            "label": "Custom Fields"
+          }
+        ],
+        "parameters": [
+          {
+            "name": "__IMTCONN__",
+            "type": "account:highlevel,highlevel3",
+            "label": "Connection",
+            "required": true
+          }
+        ]
+      },
+      "parameters": {
+        "__IMTCONN__": 14198933
+      }
+    },
+    {
+      "id": 3,
+      "mapper": null,
+      "module": "builtin:BasicRouter",
+      "routes": [
+        {
+          "flow": [
+            {
+              "id": 8,
+              "filter": {
+                "name": "No contact found and no caller name supplied - request full name",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{9.id}}",
+                      "o": "notexist"
+                    },
+                    {
+                      "a": "{{get(1.message.toolCallList; 1)}}{{.function.arguments.full_name}}",
+                      "o": "notexist"
+                    },
+                    {
+                      "a": "{{get(1.message.toolCallList; 1)}}{{.function.arguments.first_name}}",
+                      "o": "notexist"
+                    },
+                    {
+                      "a": "{{get(1.message.toolCallList; 1)}}{{.function.arguments.last_name}}",
+                      "o": "notexist"
+                    }
+                  ]
+                ]
+              },
+              "mapper": {
+                "body": "{\n  \"contactId\": \"\",\n  \"firstName\": \"\",\n  \"fullName\": \"\",\n  \"phone\": \"{{get(1.message.toolCallList; 1).function.arguments.phone}}\",\n  \"contactState\": \"NEEDS_NAME\",\n  \"contactFound\": false,\n  \"contactCreated\": false,\n  \"requiresName\": true,\n  \"requiresPhone\": false,\n  \"results\": [\n    {\n      \"toolCallId\": \"{{get(1.message.toolCallList; 1).id}}\",\n      \"result\": {\n        \"success\": true,\n        \"contactFound\": false,\n        \"contactCreated\": false,\n        \"contactId\": \"\",\n        \"firstName\": \"\",\n        \"fullName\": \"\",\n        \"phone\": \"{{get(1.message.toolCallList; 1).function.arguments.phone}}\",\n        \"contactState\": \"NEEDS_NAME\",\n        \"requiresName\": true,\n        \"requiresPhone\": false,\n        \"nextAction\": \"askForFullName\",\n        \"message\": \"No existing contact was found. Ask the caller for their full name once, then call ghl_resolve_contact again with name fields only.\"\n      }\n    }\n  ]\n}",
+                "status": "200",
+                "headers": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "module": "gateway:WebhookRespond",
+              "version": 1,
+              "metadata": {
+                "expect": [
+                  {
+                    "name": "status",
+                    "type": "uinteger",
+                    "label": "Status",
+                    "required": true,
+                    "validate": {
+                      "min": 100
+                    }
+                  },
+                  {
+                    "name": "body",
+                    "type": "any",
+                    "label": "Body"
+                  },
+                  {
+                    "name": "headers",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key",
+                        "required": true,
+                        "validate": {
+                          "max": 256
+                        }
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value",
+                        "required": true,
+                        "validate": {
+                          "max": 4096
+                        }
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Custom headers",
+                    "validate": {
+                      "maxItems": 16
+                    }
+                  }
+                ],
+                "restore": {
+                  "expect": {
+                    "headers": {
+                      "mode": "chose",
+                      "items": [
+                        null
+                      ]
+                    }
+                  }
+                },
+                "designer": {
+                  "x": 900,
+                  "y": 0,
+                  "name": "Return NEEDS_NAME to Vapi"
+                }
+              },
+              "parameters": {}
+            }
+          ]
+        },
+        {
+          "flow": [
+            {
+              "id": 10,
+              "filter": {
+                "name": "No contact found and caller name supplied - create contact",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{9.id}}",
+                      "o": "notexist"
+                    },
+                    {
+                      "a": "{{get(1.message.toolCallList; 1)}}{{.function.arguments.full_name}}",
+                      "o": "exist"
+                    }
+                  ],
+                  [
+                    {
+                      "a": "{{9.id}}",
+                      "o": "notexist"
+                    },
+                    {
+                      "a": "{{get(1.message.toolCallList; 1)}}{{.function.arguments.first_name}}",
+                      "o": "exist"
+                    }
+                  ],
+                  [
+                    {
+                      "a": "{{9.id}}",
+                      "o": "notexist"
+                    },
+                    {
+                      "a": "{{get(1.message.toolCallList; 1)}}{{.function.arguments.last_name}}",
+                      "o": "exist"
+                    }
+                  ]
+                ]
+              },
+              "mapper": {
+                "dnd": false,
+                "phone": "{{get(1.message.toolCallList; 1)}}{{.function.arguments.phone}}",
+                "address": {},
+                "lastName": "{{get(1.message.toolCallList; 1)}}{{.function.arguments.last_name}}",
+                "timezone": "Australia/Sydney",
+                "firstName": "{{ifempty(get(1.message.toolCallList; 1) + .function.arguments.first_name; get(1.message.toolCallList; 1) + .function.arguments.full_name)}}",
+                "customField": {}
+              },
+              "module": "highlevel:createAContact",
+              "version": 1,
+              "metadata": {
+                "expect": [
+                  {
+                    "name": "email",
+                    "type": "email",
+                    "label": "Email"
+                  },
+                  {
+                    "name": "phone",
+                    "type": "text",
+                    "label": "Phone"
+                  },
+                  {
+                    "name": "firstName",
+                    "type": "text",
+                    "label": "First Name"
+                  },
+                  {
+                    "name": "lastName",
+                    "type": "text",
+                    "label": "Last Name"
+                  },
+                  {
+                    "name": "gender",
+                    "type": "text",
+                    "label": "Gender"
+                  },
+                  {
+                    "name": "dateOfBirth",
+                    "time": false,
+                    "type": "date",
+                    "label": "Date of Birth"
+                  },
+                  {
+                    "name": "companyName",
+                    "type": "text",
+                    "label": "Company Name"
+                  },
+                  {
+                    "name": "website",
+                    "type": "url",
+                    "label": "Website"
+                  },
+                  {
+                    "name": "tags",
+                    "type": "select",
+                    "label": "Tags",
+                    "multiple": true
+                  },
+                  {
+                    "name": "address",
+                    "spec": [
+                      {
+                        "name": "address1",
+                        "type": "text",
+                        "label": "Street"
+                      },
+                      {
+                        "name": "city",
+                        "type": "text",
+                        "label": "City"
+                      },
+                      {
+                        "name": "state",
+                        "type": "text",
+                        "label": "State"
+                      },
+                      {
+                        "name": "postalCode",
+                        "type": "text",
+                        "label": "PostalCode"
+                      },
+                      {
+                        "name": "country",
+                        "type": "select",
+                        "label": "Country"
+                      }
+                    ],
+                    "type": "collection",
+                    "label": "Address"
+                  },
+                  {
+                    "name": "source",
+                    "type": "text",
+                    "label": "Source"
+                  },
+                  {
+                    "name": "timezone",
+                    "type": "select",
+                    "label": "Timezone"
+                  },
+                  {
+                    "name": "dnd",
+                    "type": "boolean",
+                    "label": "Dnd",
+                    "required": true
+                  },
+                  {
+                    "name": "customField",
+                    "spec": [
+                      {
+                        "name": "0Ns0OrfYtlZB9EUk3kGj",
+                        "type": "select",
+                        "label": "How long have you been in business?"
+                      },
+                      {
+                        "name": "543Zlk0tZVif2GaEizTq",
+                        "type": "select",
+                        "label": "How soon are you looking to work with us if we’re a good fit?"
+                      },
+                      {
+                        "name": "5l192QyBO2SsGwYkKmi0",
+                        "type": "select",
+                        "label": "Last month my sales were",
+                        "multiple": true,
+                        "validate": {
+                          "enum": [
+                            "$0 - $1,000",
+                            "$1,001 - $5,000",
+                            "$5,001 - $10,000",
+                            "$10,000 - $50,000",
+                            "$50,001 - $100,000",
+                            "$100,001 - $200,000",
+                            "$200,001 - $500,000",
+                            "$500,001 - $1,000,000",
+                            "$1,000,000 +"
+                          ]
+                        }
+                      },
+                      {
+                        "name": "64lncTX1mFBReqcdreo2",
+                        "type": "select",
+                        "label": "How soon are you looking to streamline your lead generation and marketing systems for your business?",
+                        "multiple": true,
+                        "validate": {
+                          "enum": [
+                            "ASAP",
+                            "In the coming months",
+                            "In 6+ months",
+                            "Unsure"
+                          ]
+                        }
+                      },
+                      {
+                        "name": "6mAsOT0GHdcWIOjdwzBu",
+                        "type": "select",
+                        "label": "How much deposit (savings or equity) can you access, if required?"
+                      },
+                      {
+                        "name": "7ExKIyCB0tF1Ak8K2oQo",
+                        "type": "select",
+                        "label": "How long have your been in business?",
+                        "multiple": true,
+                        "validate": {
+                          "enum": [
+                            "Less than 1 year",
+                            "1-2 years",
+                            "3-5 years",
+                            "More than 5 years"
+                          ]
+                        }
+                      },
+                      {
+                        "name": "CIRlYuMwpWCEdHcE7v1X",
+                        "type": "select",
+                        "label": "If we could help improve one thing financially for you, what would it be?",
+                        "multiple": true,
+                        "validate": {
+                          "enum": [
+                            "Lower repayments",
+                            "Increase borrowing power",
+                            "Faster approval",
+                            "Better investment strategy",
+                            "Access to equity",
+                            "Reduce financial stress"
+                          ]
+                        }
+                      },
+                      {
+                        "name": "CSDQRHlcNpJqBXz9WD8T",
+                        "type": "select",
+                        "label": "I understand that in order for my application to proceed or to be considered, I must book a time to speak with the team on the next page"
+                      },
+                      {
+                        "name": "CbWJe3cxZlaIPLZ0xBGW",
+                        "type": "select",
+                        "label": "What is your current resident status?"
+                      },
+                      {
+                        "name": "DUcILTExlRXl0bOx41E0",
+                        "type": "select",
+                        "label": "How have rising interest rates impacted your thinking? "
+                      },
+                      {
+                        "name": "E5M8Pf0a8zB6Nn2DSYeE",
+                        "type": "select",
+                        "label": "What best describes your current loan position?"
+                      },
+                      {
+                        "name": "G4Ar3PdNFYKAUYjWU1SH",
+                        "type": "select",
+                        "label": "Do you currently have the capacity for an extra 5 jobs per month?"
+                      },
+                      {
+                        "name": "G4eOh0nHuOdpY0JAJq0z",
+                        "type": "select",
+                        "label": "What state do you provide your services in?"
+                      },
+                      {
+                        "name": "Gk3al1bqg5lG1hXqwJCd",
+                        "type": "select",
+                        "label": "Are you a renter, owner-occupier, or investor?"
+                      },
+                      {
+                        "name": "H5g6rKG3oKfdozIXTEJS",
+                        "type": "select",
+                        "label": "Can you keep a secret?",
+                        "multiple": true,
+                        "validate": {
+                          "enum": [
+                            "Yes",
+                            "No"
+                          ]
+                        }
+                      },
+                      {
+                        "name": "HQSRVa22Zpj7fjGmilz5",
+                        "type": "select",
+                        "label": "Who is responsile for your lead gen?"
+                      },
+                      {
+                        "name": "HjFD5NGcOPkdvUDDGQtI",
+                        "type": "text",
+                        "label": "What product or service do you sell?"
+                      },
+                      {
+                        "name": "Hwm2Wkbywo3VzxY5nose",
+                        "type": "text",
+                        "label": "What do you feel you need the most help with in your business right now to reach your goals?"
+                      },
+                      {
+                        "name": "IQFKna38WTiNywSIfIvH",
+                        "type": "select",
+                        "label": "What is the current growth stage of your business?",
+                        "multiple": true,
+                        "validate": {
+                          "enum": [
+                            "Getting Started ($0 -$10k/month)",
+                            "Ready To Grow ($10k - $20k/month)",
+                            "Scaling ($20k - $50k/month)"
+                          ]
+                        }
+                      },
+                      {
+                        "name": "IcLrO8ivyKbSkKRgEFsh",
+                        "type": "select",
+                        "label": "How many people work with you to deliver your services? (Counting your employees or subs)"
+                      },
+                      {
+                        "name": "Ig6VzPQIAr5Z64MYmBMT",
+                        "type": "select",
+                        "label": "Do you have a marketing funnel?"
+                      },
+                      {
+                        "name": "IkP27ngo9Mpid3n3ayNx",
+                        "type": "text",
+                        "label": "What’s your website address? (If you have one)"
+                      },
+                      {
+                        "name": "IveIvmQmmHP7V3UQsNeb",
+                        "type": "select",
+                        "label": "How many leads do you generate per week?",
+                        "multiple": true,
+                        "validate": {
+                          "enum": [
+                            "0-10",
+                            "10-20",
+                            "20+"
+                          ]
+                        }
+                      },
+                      {
+                        "name": "Jea7Rc5b9JwBDJZST6fZ",
+                        "type": "select",
+                        "label": "What is your 12–24 month goal?"
+                      },
+                      {
+                        "name": "LIUY0HKcTRJ3NtmdsqQw",
+                        "type": "select",
+                        "label": "What would help you feel confident to move forward?"
+                      },
+                      {
+                        "name": "Nw0ytmmtT55sUS9cBPbS",
+                        "type": "select",
+                        "label": "Which of the following best describes you?",
+                        "multiple": true,
+                        "validate": {
+                          "enum": [
+                            "Passionate about fitness and looking to make a living out of it",
+                            "Looking into changing careers",
+                            "Already a PT and looking for more info"
+                          ]
+                        }
+                      },
+                      {
+                        "name": "QUkZVFxaQhJ9Tbub8eFi",
+                        "type": "select",
+                        "label": "Have your finances been pre-approved?"
+                      },
+                      {
+                        "name": "QdDzZtegigriKskGO5vF",
+                        "type": "select",
+                        "label": "Are you a business owner?"
+                      },
+                      {
+                        "name": "TAO1meOAGB4jk6HDbQzi",
+                        "type": "select",
+                        "label": "How much deposit (savings or equity) can you access, if required?"
+                      },
+                      {
+                        "name": "TrG3rIoCB59iVkWbc7Cz",
+                        "type": "select",
+                        "label": "When you speak to leads, are they people you want to be working with?",
+                        "multiple": true,
+                        "validate": {
+                          "enum": [
+                            "Yes",
+                            "No"
+                          ]
+                        }
+                      },
+                      {
+                        "name": "Vq9QKP9E0lC3Mg5gLT6e",
+                        "type": "select",
+                        "label": "Do you currently have a website?",
+                        "multiple": true,
+                        "validate": {
+                          "enum": [
+                            "Yes",
+                            "No"
+                          ]
+                        }
+                      },
+                      {
+                        "name": "YDa5P4dvDYJdvGykyIAJ",
+                        "type": "select",
+                        "label": "Is your e-commerce business ready to maximise sales through social media?"
+                      },
+                      {
+                        "name": "YIoa5FwMubZCyIJm60eq",
+                        "type": "select",
+                        "label": "Do you have a website?"
+                      },
+                      {
+                        "name": "YTFLaFwTLdUARbbVKq02",
+                        "type": "select",
+                        "label": "Do you want to access equity as part of this refinance?"
+                      },
+                      {
+                        "name": "YrBAohoUlEgnhAoC7kJT",
+                        "type": "select",
+                        "label": "Who is currently responsible for your lead generation?",
+                        "multiple": true,
+                        "validate": {
+                          "enum": [
+                            "Me",
+                            "External - I use an agency",
+                            "Internal - a member of my team"
+                          ]
+                        }
+                      },
+                      {
+                        "name": "aLjqFQwB2FaLxrQ9PvKx",
+                        "type": "select",
+                        "label": "Who is responsible for your marketing?",
+                        "multiple": true,
+                        "validate": {
+                          "enum": [
+                            "You",
+                            "An employee",
+                            "An agency"
+                          ]
+                        }
+                      },
+                      {
+                        "name": "b9ojBN2ljjSDiAFmgboE",
+                        "type": "select",
+                        "label": "What is your primary reason for refinancing?"
+                      },
+                      {
+                        "name": "bKLPFf28zVi9QtKaLyPP",
+                        "type": "select",
+                        "label": "How do you currently get leads to find work? (Check all that apply) ",
+                        "multiple": true,
+                        "validate": {
+                          "enum": [
+                            "Relying on referrals & word of mouth",
+                            "Hi-Pages and/or other lead sites",
+                            "Posting on socials",
+                            "Google Ads",
+                            "SEO",
+                            "Radio",
+                            "Newspapers",
+                            "Other"
+                          ]
+                        }
+                      },
+                      {
+                        "name": "bOtPOkh1lWRdmgOpzGFR",
+                        "type": "select",
+                        "label": "What prompted you to explore property finance options today?",
+                        "multiple": true,
+                        "validate": {
+                          "enum": [
+                            "Rising repayments",
+                            "Looking to buy property",
+                            "Wanting to invest",
+                            "Fixed rate loan ending",
+                            "Need cash flow relief",
+                            "Curious about my options"
+                          ]
+                        }
+                      },
+                      {
+                        "name": "bc2jOOI1IDBcWtLK0w44",
+                        "type": "text",
+                        "label": "In one sentence, what trade and home improvement services do you provide?"
+                      },
+                      {
+                        "name": "gzW9HmMvMm29roTYGtsU",
+                        "type": "select",
+                        "label": "What are you trying to achieve over the next 5–10 years?"
+                      },
+                      {
+                        "name": "hCFQ6oMAaYDIXtYJPKY8",
+                        "type": "select",
+                        "label": "Are you currently doing any online marketing?"
+                      },
+                      {
+                        "name": "ieT6MorXuAxqBfMcbwMz",
+                        "type": "text",
+                        "label": "What area do you provide your services in?"
+                      },
+                      {
+                        "name": "iwiKznayDueILt9OsGQS",
+                        "type": "select",
+                        "label": "How much income do you earn per year (combined, if buying with a partner)?"
+                      },
+                      {
+                        "name": "jE7vfPeyLgNw84RYbVrM",
+                        "type": "select",
+                        "label": "What type of support are you looking for?",
+                        "multiple": true,
+                        "validate": {
+                          "enum": [
+                            "Loan approval guidance",
+                            "Property investment advice",
+                            "Refinancing support",
+                            "Borrowing assessment",
+                            "Market insights",
+                            "Full end-to-end assistance"
+                          ]
+                        }
+                      },
+                      {
+                        "name": "mCVZbWp6UXTQIVT1QonL",
+                        "type": "text",
+                        "label": "Thank you for sharing. What’s your first name?"
+                      },
+                      {
+                        "name": "mLRo3ScGtHJRIgBZQM22",
+                        "type": "select",
+                        "label": "When do you need to start getting new business leads through the door?"
+                      },
+                      {
+                        "name": "nWnstgFe43x12dT0NWEY",
+                        "type": "select",
+                        "label": "Are you an owner-occupier, or investor?"
+                      },
+                      {
+                        "name": "rP4SWU29dsYQpdJBagva",
+                        "type": "select",
+                        "label": "Do you understand this is not an employment opportunity?"
+                      },
+                      {
+                        "name": "rzfDNjbGhpR39SJcFSHm",
+                        "type": "select",
+                        "label": "Are you currently running paid ads?",
+                        "multiple": true,
+                        "validate": {
+                          "enum": [
+                            "Yes",
+                            "No"
+                          ]
+                        }
+                      },
+                      {
+                        "name": "sGAnJOdQMBfY1tVqvN32",
+                        "type": "select",
+                        "label": "What’s your biggest concern in today’s market?"
+                      },
+                      {
+                        "name": "sTT1R88GJRK85vDvRD9C",
+                        "type": "select",
+                        "label": "What is your current resident status?"
+                      },
+                      {
+                        "name": "vw0yoNSul2ouC61EvbrV",
+                        "type": "select",
+                        "label": "What’s your current monthly marketing budget?"
+                      },
+                      {
+                        "name": "z9W89OMw7u8VRJOQgQBc",
+                        "type": "select",
+                        "label": "How long have you been actively searching for a property?"
+                      }
+                    ],
+                    "type": "collection",
+                    "label": "Custom Fields"
+                  }
+                ],
+                "restore": {
+                  "expect": {
+                    "dnd": {
+                      "mode": "chose"
+                    },
+                    "tags": {
+                      "mode": "chose"
+                    },
+                    "address": {
+                      "nested": {
+                        "country": {
+                          "mode": "chose"
+                        }
+                      }
+                    },
+                    "timezone": {
+                      "mode": "chose",
+                      "label": "(GMT+10:00) Australia/Sydney"
+                    },
+                    "customField": {
+                      "nested": {
+                        "0Ns0OrfYtlZB9EUk3kGj": {
+                          "mode": "chose",
+                          "label": "Empty"
+                        },
+                        "543Zlk0tZVif2GaEizTq": {
+                          "mode": "chose",
+                          "label": "Empty"
+                        },
+                        "5l192QyBO2SsGwYkKmi0": {
+                          "mode": "chose"
+                        },
+                        "64lncTX1mFBReqcdreo2": {
+                          "mode": "chose"
+                        },
+                        "6mAsOT0GHdcWIOjdwzBu": {
+                          "mode": "chose",
+                          "label": "Empty"
+                        },
+                        "7ExKIyCB0tF1Ak8K2oQo": {
+                          "mode": "chose"
+                        },
+                        "CIRlYuMwpWCEdHcE7v1X": {
+                          "mode": "chose"
+                        },
+                        "CSDQRHlcNpJqBXz9WD8T": {
+                          "mode": "chose",
+                          "label": "Empty"
+                        },
+                        "CbWJe3cxZlaIPLZ0xBGW": {
+                          "mode": "chose",
+                          "label": "Empty"
+                        },
+                        "DUcILTExlRXl0bOx41E0": {
+                          "mode": "chose",
+                          "label": "Empty"
+                        },
+                        "E5M8Pf0a8zB6Nn2DSYeE": {
+                          "mode": "chose",
+                          "label": "Empty"
+                        },
+                        "G4Ar3PdNFYKAUYjWU1SH": {
+                          "mode": "chose",
+                          "label": "Empty"
+                        },
+                        "G4eOh0nHuOdpY0JAJq0z": {
+                          "mode": "chose",
+                          "label": "Empty"
+                        },
+                        "Gk3al1bqg5lG1hXqwJCd": {
+                          "mode": "chose",
+                          "label": "Empty"
+                        },
+                        "H5g6rKG3oKfdozIXTEJS": {
+                          "mode": "chose"
+                        },
+                        "HQSRVa22Zpj7fjGmilz5": {
+                          "mode": "chose",
+                          "label": "Empty"
+                        },
+                        "IQFKna38WTiNywSIfIvH": {
+                          "mode": "chose"
+                        },
+                        "IcLrO8ivyKbSkKRgEFsh": {
+                          "mode": "chose",
+                          "label": "Empty"
+                        },
+                        "Ig6VzPQIAr5Z64MYmBMT": {
+                          "mode": "chose",
+                          "label": "Empty"
+                        },
+                        "IveIvmQmmHP7V3UQsNeb": {
+                          "mode": "chose"
+                        },
+                        "Jea7Rc5b9JwBDJZST6fZ": {
+                          "mode": "chose",
+                          "label": "Empty"
+                        },
+                        "LIUY0HKcTRJ3NtmdsqQw": {
+                          "mode": "chose",
+                          "label": "Empty"
+                        },
+                        "Nw0ytmmtT55sUS9cBPbS": {
+                          "mode": "chose"
+                        },
+                        "QUkZVFxaQhJ9Tbub8eFi": {
+                          "mode": "chose",
+                          "label": "Empty"
+                        },
+                        "QdDzZtegigriKskGO5vF": {
+                          "mode": "chose",
+                          "label": "Empty"
+                        },
+                        "TAO1meOAGB4jk6HDbQzi": {
+                          "mode": "chose",
+                          "label": "Empty"
+                        },
+                        "TrG3rIoCB59iVkWbc7Cz": {
+                          "mode": "chose"
+                        },
+                        "Vq9QKP9E0lC3Mg5gLT6e": {
+                          "mode": "chose"
+                        },
+                        "YDa5P4dvDYJdvGykyIAJ": {
+                          "mode": "chose",
+                          "label": "Empty"
+                        },
+                        "YIoa5FwMubZCyIJm60eq": {
+                          "mode": "chose",
+                          "label": "Empty"
+                        },
+                        "YTFLaFwTLdUARbbVKq02": {
+                          "mode": "chose",
+                          "label": "Empty"
+                        },
+                        "YrBAohoUlEgnhAoC7kJT": {
+                          "mode": "chose"
+                        },
+                        "aLjqFQwB2FaLxrQ9PvKx": {
+                          "mode": "chose"
+                        },
+                        "b9ojBN2ljjSDiAFmgboE": {
+                          "mode": "chose",
+                          "label": "Empty"
+                        },
+                        "bKLPFf28zVi9QtKaLyPP": {
+                          "mode": "chose"
+                        },
+                        "bOtPOkh1lWRdmgOpzGFR": {
+                          "mode": "chose"
+                        },
+                        "gzW9HmMvMm29roTYGtsU": {
+                          "mode": "chose",
+                          "label": "Empty"
+                        },
+                        "hCFQ6oMAaYDIXtYJPKY8": {
+                          "mode": "chose",
+                          "label": "Empty"
+                        },
+                        "iwiKznayDueILt9OsGQS": {
+                          "mode": "chose",
+                          "label": "Empty"
+                        },
+                        "jE7vfPeyLgNw84RYbVrM": {
+                          "mode": "chose"
+                        },
+                        "mLRo3ScGtHJRIgBZQM22": {
+                          "mode": "chose",
+                          "label": "Empty"
+                        },
+                        "nWnstgFe43x12dT0NWEY": {
+                          "mode": "chose",
+                          "label": "Empty"
+                        },
+                        "rP4SWU29dsYQpdJBagva": {
+                          "mode": "chose",
+                          "label": "Empty"
+                        },
+                        "rzfDNjbGhpR39SJcFSHm": {
+                          "mode": "chose"
+                        },
+                        "sGAnJOdQMBfY1tVqvN32": {
+                          "mode": "chose",
+                          "label": "Empty"
+                        },
+                        "sTT1R88GJRK85vDvRD9C": {
+                          "mode": "chose",
+                          "label": "Empty"
+                        },
+                        "vw0yoNSul2ouC61EvbrV": {
+                          "mode": "chose",
+                          "label": "Empty"
+                        },
+                        "z9W89OMw7u8VRJOQgQBc": {
+                          "mode": "chose",
+                          "label": "Empty"
+                        }
+                      }
+                    }
+                  },
+                  "parameters": {
+                    "__IMTCONN__": {
+                      "data": {
+                        "scoped": "true",
+                        "connection": "highlevel3"
+                      },
+                      "label": "NPG GHL New (Location: Naidu Property Consulting Services)"
+                    }
+                  }
+                },
+                "designer": {
+                  "x": 900,
+                  "y": 300,
+                  "name": "Create GHL Contact from Caller Name"
+                },
+                "interface": [
+                  {
+                    "name": "id",
+                    "type": "text",
+                    "label": "Contact ID"
+                  },
+                  {
+                    "name": "timezone",
+                    "type": "text",
+                    "label": "Timezone"
+                  },
+                  {
+                    "name": "type",
+                    "type": "text",
+                    "label": "Type"
+                  },
+                  {
+                    "name": "locationId",
+                    "type": "text",
+                    "label": "Location ID"
+                  },
+                  {
+                    "name": "dnd",
+                    "type": "boolean",
+                    "label": "Dnd"
+                  },
+                  {
+                    "name": "inboundDndSettings",
+                    "spec": [
+                      {
+                        "name": "all",
+                        "spec": [
+                          {
+                            "name": "message",
+                            "type": "text",
+                            "label": "Message"
+                          },
+                          {
+                            "name": "status",
+                            "type": "text",
+                            "label": "Status"
+                          }
+                        ],
+                        "type": "collection",
+                        "label": "All"
+                      }
+                    ],
+                    "type": "collection",
+                    "label": "Inbound Dnd Settings"
+                  },
+                  {
+                    "name": "dndSettings",
+                    "spec": [
+                      {
+                        "name": "Call",
+                        "spec": [
+                          {
+                            "name": "code",
+                            "type": "text",
+                            "label": "Code"
+                          },
+                          {
+                            "name": "message",
+                            "type": "text",
+                            "label": "Message"
+                          },
+                          {
+                            "name": "status",
+                            "type": "text",
+                            "label": "Status"
+                          }
+                        ],
+                        "type": "collection",
+                        "label": "Call"
+                      },
+                      {
+                        "name": "Email",
+                        "spec": [
+                          {
+                            "name": "code",
+                            "type": "text",
+                            "label": "Code"
+                          },
+                          {
+                            "name": "message",
+                            "type": "text",
+                            "label": "Message"
+                          },
+                          {
+                            "name": "status",
+                            "type": "text",
+                            "label": "Status"
+                          }
+                        ],
+                        "type": "collection",
+                        "label": "Email"
+                      },
+                      {
+                        "name": "SMS",
+                        "spec": [
+                          {
+                            "name": "code",
+                            "type": "text",
+                            "label": "Code"
+                          },
+                          {
+                            "name": "message",
+                            "type": "text",
+                            "label": "Message"
+                          },
+                          {
+                            "name": "status",
+                            "type": "text",
+                            "label": "Status"
+                          }
+                        ],
+                        "type": "collection",
+                        "label": "SMS"
+                      },
+                      {
+                        "name": "WhatsApp",
+                        "spec": [
+                          {
+                            "name": "code",
+                            "type": "text",
+                            "label": "Code"
+                          },
+                          {
+                            "name": "message",
+                            "type": "text",
+                            "label": "Message"
+                          },
+                          {
+                            "name": "status",
+                            "type": "text",
+                            "label": "Status"
+                          }
+                        ],
+                        "type": "collection",
+                        "label": "WhatsApp"
+                      },
+                      {
+                        "name": "GMB",
+                        "spec": [
+                          {
+                            "name": "code",
+                            "type": "text",
+                            "label": "Code"
+                          },
+                          {
+                            "name": "message",
+                            "type": "text",
+                            "label": "Message"
+                          },
+                          {
+                            "name": "status",
+                            "type": "text",
+                            "label": "Status"
+                          }
+                        ],
+                        "type": "collection",
+                        "label": "GMB"
+                      },
+                      {
+                        "name": "FB",
+                        "spec": [
+                          {
+                            "name": "code",
+                            "type": "text",
+                            "label": "Code"
+                          },
+                          {
+                            "name": "message",
+                            "type": "text",
+                            "label": "Message"
+                          },
+                          {
+                            "name": "status",
+                            "type": "text",
+                            "label": "Status"
+                          }
+                        ],
+                        "type": "collection",
+                        "label": "FB"
+                      }
+                    ],
+                    "type": "collection",
+                    "label": "Dnd Settings"
+                  },
+                  {
+                    "name": "createdBy",
+                    "spec": [
+                      {
+                        "name": "sourceId",
+                        "type": "text",
+                        "label": "Source ID"
+                      },
+                      {
+                        "name": "channel",
+                        "type": "text",
+                        "label": "Channel"
+                      },
+                      {
+                        "name": "source",
+                        "type": "text",
+                        "label": "Source"
+                      },
+                      {
+                        "name": "sourceName",
+                        "type": "text",
+                        "label": "Source Name"
+                      },
+                      {
+                        "name": "timestamp",
+                        "type": "date",
+                        "label": "Timestamp"
+                      }
+                    ],
+                    "type": "collection",
+                    "label": "Created By"
+                  },
+                  {
+                    "name": "tags",
+                    "type": "array",
+                    "label": "Tags"
+                  },
+                  {
+                    "name": "dateAdded",
+                    "type": "date",
+                    "label": "Date Added"
+                  },
+                  {
+                    "name": "additionalEmails",
+                    "type": "array",
+                    "label": "Additional Emails"
+                  },
+                  {
+                    "name": "additionalPhones",
+                    "type": "array",
+                    "label": "Additional Phones"
+                  },
+                  {
+                    "name": "country",
+                    "type": "text",
+                    "label": "Country"
+                  },
+                  {
+                    "name": "lastName",
+                    "type": "text",
+                    "label": "Last Name"
+                  },
+                  {
+                    "name": "lastNameLowerCase",
+                    "type": "text",
+                    "label": "Last Name Lower Case"
+                  },
+                  {
+                    "name": "emailLowerCase",
+                    "type": "text",
+                    "label": "Email Lower Case"
+                  },
+                  {
+                    "name": "email",
+                    "type": "text",
+                    "label": "Email"
+                  },
+                  {
+                    "name": "postalCode",
+                    "type": "text",
+                    "label": "Postal Code"
+                  },
+                  {
+                    "name": "dateUpdated",
+                    "type": "date",
+                    "label": "Date Updated"
+                  },
+                  {
+                    "name": "fullNameLowerCase",
+                    "type": "text",
+                    "label": "Full Name Lower Case"
+                  },
+                  {
+                    "name": "firstName",
+                    "type": "text",
+                    "label": "First Name"
+                  },
+                  {
+                    "name": "firstNameLowerCase",
+                    "type": "text",
+                    "label": "First Name Lower Case"
+                  },
+                  {
+                    "name": "source",
+                    "type": "text",
+                    "label": "Source"
+                  },
+                  {
+                    "name": "companyName",
+                    "type": "text",
+                    "label": "Company Name"
+                  },
+                  {
+                    "name": "website",
+                    "type": "text",
+                    "label": "Website"
+                  },
+                  {
+                    "name": "phone",
+                    "type": "text",
+                    "label": "Phone"
+                  },
+                  {
+                    "name": "customField",
+                    "spec": [
+                      {
+                        "name": "0Ns0OrfYtlZB9EUk3kGj",
+                        "type": "text",
+                        "label": "How long have you been in business?"
+                      },
+                      {
+                        "name": "543Zlk0tZVif2GaEizTq",
+                        "type": "text",
+                        "label": "How soon are you looking to work with us if we’re a good fit?"
+                      },
+                      {
+                        "name": "5l192QyBO2SsGwYkKmi0",
+                        "type": "array",
+                        "label": "Last month my sales were"
+                      },
+                      {
+                        "name": "64lncTX1mFBReqcdreo2",
+                        "type": "array",
+                        "label": "How soon are you looking to streamline your lead generation and marketing systems for your business?"
+                      },
+                      {
+                        "name": "6mAsOT0GHdcWIOjdwzBu",
+                        "type": "text",
+                        "label": "How much deposit (savings or equity) can you access, if required?"
+                      },
+                      {
+                        "name": "7ExKIyCB0tF1Ak8K2oQo",
+                        "type": "array",
+                        "label": "How long have your been in business?"
+                      },
+                      {
+                        "name": "CIRlYuMwpWCEdHcE7v1X",
+                        "type": "array",
+                        "label": "If we could help improve one thing financially for you, what would it be?"
+                      },
+                      {
+                        "name": "CSDQRHlcNpJqBXz9WD8T",
+                        "type": "text",
+                        "label": "I understand that in order for my application to proceed or to be considered, I must book a time to speak with the team on the next page"
+                      },
+                      {
+                        "name": "CbWJe3cxZlaIPLZ0xBGW",
+                        "type": "text",
+                        "label": "What is your current resident status?"
+                      },
+                      {
+                        "name": "DUcILTExlRXl0bOx41E0",
+                        "type": "text",
+                        "label": "How have rising interest rates impacted your thinking? "
+                      },
+                      {
+                        "name": "E5M8Pf0a8zB6Nn2DSYeE",
+                        "type": "text",
+                        "label": "What best describes your current loan position?"
+                      },
+                      {
+                        "name": "G4Ar3PdNFYKAUYjWU1SH",
+                        "type": "text",
+                        "label": "Do you currently have the capacity for an extra 5 jobs per month?"
+                      },
+                      {
+                        "name": "G4eOh0nHuOdpY0JAJq0z",
+                        "type": "text",
+                        "label": "What state do you provide your services in?"
+                      },
+                      {
+                        "name": "Gk3al1bqg5lG1hXqwJCd",
+                        "type": "text",
+                        "label": "Are you a renter, owner-occupier, or investor?"
+                      },
+                      {
+                        "name": "H5g6rKG3oKfdozIXTEJS",
+                        "type": "array",
+                        "label": "Can you keep a secret?"
+                      },
+                      {
+                        "name": "HQSRVa22Zpj7fjGmilz5",
+                        "type": "text",
+                        "label": "Who is responsile for your lead gen?"
+                      },
+                      {
+                        "name": "HjFD5NGcOPkdvUDDGQtI",
+                        "type": "text",
+                        "label": "What product or service do you sell?"
+                      },
+                      {
+                        "name": "Hwm2Wkbywo3VzxY5nose",
+                        "type": "text",
+                        "label": "What do you feel you need the most help with in your business right now to reach your goals?"
+                      },
+                      {
+                        "name": "IQFKna38WTiNywSIfIvH",
+                        "type": "array",
+                        "label": "What is the current growth stage of your business?"
+                      },
+                      {
+                        "name": "IcLrO8ivyKbSkKRgEFsh",
+                        "type": "text",
+                        "label": "How many people work with you to deliver your services? (Counting your employees or subs)"
+                      },
+                      {
+                        "name": "Ig6VzPQIAr5Z64MYmBMT",
+                        "type": "text",
+                        "label": "Do you have a marketing funnel?"
+                      },
+                      {
+                        "name": "IkP27ngo9Mpid3n3ayNx",
+                        "type": "text",
+                        "label": "What’s your website address? (If you have one)"
+                      },
+                      {
+                        "name": "IveIvmQmmHP7V3UQsNeb",
+                        "type": "array",
+                        "label": "How many leads do you generate per week?"
+                      },
+                      {
+                        "name": "Jea7Rc5b9JwBDJZST6fZ",
+                        "type": "text",
+                        "label": "What is your 12–24 month goal?"
+                      },
+                      {
+                        "name": "LIUY0HKcTRJ3NtmdsqQw",
+                        "type": "text",
+                        "label": "What would help you feel confident to move forward?"
+                      },
+                      {
+                        "name": "Nw0ytmmtT55sUS9cBPbS",
+                        "type": "array",
+                        "label": "Which of the following best describes you?"
+                      },
+                      {
+                        "name": "QUkZVFxaQhJ9Tbub8eFi",
+                        "type": "text",
+                        "label": "Have your finances been pre-approved?"
+                      },
+                      {
+                        "name": "QdDzZtegigriKskGO5vF",
+                        "type": "text",
+                        "label": "Are you a business owner?"
+                      },
+                      {
+                        "name": "TAO1meOAGB4jk6HDbQzi",
+                        "type": "text",
+                        "label": "How much deposit (savings or equity) can you access, if required?"
+                      },
+                      {
+                        "name": "TrG3rIoCB59iVkWbc7Cz",
+                        "type": "array",
+                        "label": "When you speak to leads, are they people you want to be working with?"
+                      },
+                      {
+                        "name": "Vq9QKP9E0lC3Mg5gLT6e",
+                        "type": "array",
+                        "label": "Do you currently have a website?"
+                      },
+                      {
+                        "name": "YDa5P4dvDYJdvGykyIAJ",
+                        "type": "text",
+                        "label": "Is your e-commerce business ready to maximise sales through social media?"
+                      },
+                      {
+                        "name": "YIoa5FwMubZCyIJm60eq",
+                        "type": "text",
+                        "label": "Do you have a website?"
+                      },
+                      {
+                        "name": "YTFLaFwTLdUARbbVKq02",
+                        "type": "text",
+                        "label": "Do you want to access equity as part of this refinance?"
+                      },
+                      {
+                        "name": "YrBAohoUlEgnhAoC7kJT",
+                        "type": "array",
+                        "label": "Who is currently responsible for your lead generation?"
+                      },
+                      {
+                        "name": "aLjqFQwB2FaLxrQ9PvKx",
+                        "type": "array",
+                        "label": "Who is responsible for your marketing?"
+                      },
+                      {
+                        "name": "b9ojBN2ljjSDiAFmgboE",
+                        "type": "text",
+                        "label": "What is your primary reason for refinancing?"
+                      },
+                      {
+                        "name": "bKLPFf28zVi9QtKaLyPP",
+                        "type": "array",
+                        "label": "How do you currently get leads to find work? (Check all that apply) "
+                      },
+                      {
+                        "name": "bOtPOkh1lWRdmgOpzGFR",
+                        "type": "array",
+                        "label": "What prompted you to explore property finance options today?"
+                      },
+                      {
+                        "name": "bc2jOOI1IDBcWtLK0w44",
+                        "type": "text",
+                        "label": "In one sentence, what trade and home improvement services do you provide?",
+                        "multiline": true
+                      },
+                      {
+                        "name": "gzW9HmMvMm29roTYGtsU",
+                        "type": "text",
+                        "label": "What are you trying to achieve over the next 5–10 years?"
+                      },
+                      {
+                        "name": "hCFQ6oMAaYDIXtYJPKY8",
+                        "type": "text",
+                        "label": "Are you currently doing any online marketing?"
+                      },
+                      {
+                        "name": "ieT6MorXuAxqBfMcbwMz",
+                        "type": "text",
+                        "label": "What area do you provide your services in?"
+                      },
+                      {
+                        "name": "iwiKznayDueILt9OsGQS",
+                        "type": "text",
+                        "label": "How much income do you earn per year (combined, if buying with a partner)?"
+                      },
+                      {
+                        "name": "jE7vfPeyLgNw84RYbVrM",
+                        "type": "array",
+                        "label": "What type of support are you looking for?"
+                      },
+                      {
+                        "name": "mCVZbWp6UXTQIVT1QonL",
+                        "type": "text",
+                        "label": "Thank you for sharing. What’s your first name?"
+                      },
+                      {
+                        "name": "mLRo3ScGtHJRIgBZQM22",
+                        "type": "text",
+                        "label": "When do you need to start getting new business leads through the door?"
+                      },
+                      {
+                        "name": "nWnstgFe43x12dT0NWEY",
+                        "type": "text",
+                        "label": "Are you an owner-occupier, or investor?"
+                      },
+                      {
+                        "name": "rP4SWU29dsYQpdJBagva",
+                        "type": "text",
+                        "label": "Do you understand this is not an employment opportunity?"
+                      },
+                      {
+                        "name": "rzfDNjbGhpR39SJcFSHm",
+                        "type": "array",
+                        "label": "Are you currently running paid ads?"
+                      },
+                      {
+                        "name": "sGAnJOdQMBfY1tVqvN32",
+                        "type": "text",
+                        "label": "What’s your biggest concern in today’s market?"
+                      },
+                      {
+                        "name": "sTT1R88GJRK85vDvRD9C",
+                        "type": "text",
+                        "label": "What is your current resident status?"
+                      },
+                      {
+                        "name": "vw0yoNSul2ouC61EvbrV",
+                        "type": "text",
+                        "label": "What’s your current monthly marketing budget?"
+                      },
+                      {
+                        "name": "z9W89OMw7u8VRJOQgQBc",
+                        "type": "text",
+                        "label": "How long have you been actively searching for a property?"
+                      }
+                    ],
+                    "type": "collection",
+                    "label": "Custom Fields"
+                  }
+                ],
+                "parameters": [
+                  {
+                    "name": "__IMTCONN__",
+                    "type": "account:highlevel,highlevel3",
+                    "label": "Connection",
+                    "required": true
+                  }
+                ]
+              },
+              "parameters": {
+                "__IMTCONN__": 14198933
+              }
+            },
+            {
+              "id": 12,
+              "mapper": {
+                "key": "{{1.message.customer.number}}",
+                "data": {
+                  "phone": "{{1.message.customer.number}}",
+                  "source": "",
+                  "fullName": "{{10.firstName}} {{10.lastName}}",
+                  "contactId": "{{10.id}}",
+                  "createdAt": "{{1.message.call.createdAt}}",
+                  "firstName": "{{10.firstName}}",
+                  "updatedAt": "{{1.message.call.updatedAt}}",
+                  "vapiCallId": "{{1.message.toolWithToolCallList[].toolCall.function.arguments.vapi_call_id}}",
+                  "callerPhone": "{{1.message.customer.number}}",
+                  "callerReason": "",
+                  "contactFound": false,
+                  "contactState": "RESOLVED",
+                  "contactCreated": true,
+                  "confirmedIntent": ""
+                },
+                "overwrite": true
+              },
+              "module": "datastore:AddRecord",
+              "version": 1,
+              "metadata": {
+                "expect": [
+                  {
+                    "name": "key",
+                    "type": "text",
+                    "label": "Key"
+                  },
+                  {
+                    "name": "overwrite",
+                    "type": "boolean",
+                    "label": "Overwrite an existing record",
+                    "required": true
+                  },
+                  {
+                    "name": "data",
+                    "spec": [
+                      {
+                        "name": "vapiCallId",
+                        "type": "text",
+                        "label": "Vapi call ID"
+                      },
+                      {
+                        "name": "callerPhone",
+                        "type": "text",
+                        "label": "Caller phone"
+                      },
+                      {
+                        "name": "contactId",
+                        "type": "text",
+                        "label": "Contact ID"
+                      },
+                      {
+                        "name": "firstName",
+                        "type": "text",
+                        "label": "First name"
+                      },
+                      {
+                        "name": "fullName",
+                        "type": "text",
+                        "label": "Full name"
+                      },
+                      {
+                        "name": "phone",
+                        "type": "text",
+                        "label": "Phone"
+                      },
+                      {
+                        "name": "contactState",
+                        "type": "text",
+                        "label": "Contact state"
+                      },
+                      {
+                        "name": "contactFound",
+                        "type": "boolean",
+                        "label": "Contact found"
+                      },
+                      {
+                        "name": "contactCreated",
+                        "type": "boolean",
+                        "label": "Contact created"
+                      },
+                      {
+                        "name": "confirmedIntent",
+                        "type": "text",
+                        "label": "Confirmed intent"
+                      },
+                      {
+                        "name": "callerReason",
+                        "type": "text",
+                        "label": "Caller reason"
+                      },
+                      {
+                        "name": "handoffReady",
+                        "type": "boolean",
+                        "label": "Handoff ready"
+                      },
+                      {
+                        "name": "source",
+                        "type": "text",
+                        "label": "Source"
+                      },
+                      {
+                        "name": "createdAt",
+                        "type": "date",
+                        "label": "Created at"
+                      },
+                      {
+                        "name": "updatedAt",
+                        "type": "date",
+                        "label": "Updated at"
+                      }
+                    ],
+                    "type": "collection",
+                    "label": "Record"
+                  }
+                ],
+                "restore": {
+                  "expect": {
+                    "data": {
+                      "nested": {
+                        "contactFound": {
+                          "mode": "chose"
+                        },
+                        "handoffReady": {
+                          "mode": "chose"
+                        },
+                        "contactCreated": {
+                          "mode": "chose"
+                        }
+                      }
+                    },
+                    "overwrite": {
+                      "mode": "chose"
+                    }
+                  },
+                  "parameters": {
+                    "datastore": {
+                      "label": "GHL Contact IDs"
+                    }
+                  }
+                },
+                "designer": {
+                  "x": 1200,
+                  "y": 300
+                },
+                "parameters": [
+                  {
+                    "name": "datastore",
+                    "type": "datastore",
+                    "label": "Data store",
+                    "required": true
+                  }
+                ]
+              },
+              "parameters": {
+                "datastore": 162851
+              }
+            },
+            {
+              "id": 6,
+              "mapper": {
+                "body": "{\n  \"contactId\": \"{{10.id}}\",\n  \"firstName\": \"{{10.firstName}}\",\n  \"fullName\": \"{{10.firstName}} {{10.lastName}}\",\n  \"phone\": \"{{10.phone}}\",\n  \"contactState\": \"RESOLVED\",\n  \"contactFound\": false,\n  \"contactCreated\": true,\n  \"requiresName\": false,\n  \"requiresPhone\": false,\n  \"results\": [\n    {\n      \"toolCallId\": \"{{1.message.toolCalls[].id}}\",\n      \"result\": {\n        \"success\": true,\n        \"contactFound\": false,\n        \"contactCreated\": true,\n        \"contactId\": \"{{10.id}}\",\n        \"firstName\": \"{{10.firstName}}\",\n        \"fullName\": \"{{10.firstName}} {{10.lastName}}\",\n        \"phone\": \"{{10.phone}}\",\n        \"contactState\": \"RESOLVED\",\n        \"requiresName\": false,\n        \"requiresPhone\": false,\n        \"nextAction\": \"continueConversation\"\n      }\n    }\n  ]\n}",
+                "status": "200",
+                "headers": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "module": "gateway:WebhookRespond",
+              "version": 1,
+              "metadata": {
+                "expect": [
+                  {
+                    "name": "status",
+                    "type": "uinteger",
+                    "label": "Status",
+                    "required": true,
+                    "validate": {
+                      "min": 100
+                    }
+                  },
+                  {
+                    "name": "body",
+                    "type": "any",
+                    "label": "Body"
+                  },
+                  {
+                    "name": "headers",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key",
+                        "required": true,
+                        "validate": {
+                          "max": 256
+                        }
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value",
+                        "required": true,
+                        "validate": {
+                          "max": 4096
+                        }
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Custom headers",
+                    "validate": {
+                      "maxItems": 16
+                    }
+                  }
+                ],
+                "restore": {
+                  "expect": {
+                    "headers": {
+                      "mode": "chose",
+                      "items": [
+                        null
+                      ]
+                    }
+                  }
+                },
+                "designer": {
+                  "x": 1500,
+                  "y": 300,
+                  "name": "Return Newly Created Contact to Vapi"
+                }
+              },
+              "parameters": {}
+            }
+          ]
+        },
+        {
+          "flow": [
+            {
+              "id": 11,
+              "filter": {
+                "name": "",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{9.id}}",
+                      "o": "exist"
+                    }
+                  ]
+                ]
+              },
+              "mapper": {
+                "key": "{{1.message.customer.number}}",
+                "data": {
+                  "phone": "{{1.message.customer.number}}",
+                  "source": "",
+                  "fullName": "{{9.firstName}} {{9.lastName}}",
+                  "contactId": "{{9.id}}",
+                  "createdAt": "{{1.message.call.createdAt}}",
+                  "firstName": "{{9.firstName}}",
+                  "updatedAt": "{{1.message.call.updatedAt}}",
+                  "vapiCallId": "{{1.message.toolWithToolCallList[].toolCall.function.arguments.vapi_call_id}}",
+                  "callerPhone": "{{1.message.customer.number}}",
+                  "callerReason": "",
+                  "contactFound": true,
+                  "contactState": "RESOLVED",
+                  "contactCreated": false,
+                  "confirmedIntent": ""
+                },
+                "overwrite": true
+              },
+              "module": "datastore:AddRecord",
+              "version": 1,
+              "metadata": {
+                "expect": [
+                  {
+                    "name": "key",
+                    "type": "text",
+                    "label": "Key"
+                  },
+                  {
+                    "name": "overwrite",
+                    "type": "boolean",
+                    "label": "Overwrite an existing record",
+                    "required": true
+                  },
+                  {
+                    "name": "data",
+                    "spec": [
+                      {
+                        "name": "vapiCallId",
+                        "type": "text",
+                        "label": "Vapi call ID"
+                      },
+                      {
+                        "name": "callerPhone",
+                        "type": "text",
+                        "label": "Caller phone"
+                      },
+                      {
+                        "name": "contactId",
+                        "type": "text",
+                        "label": "Contact ID"
+                      },
+                      {
+                        "name": "firstName",
+                        "type": "text",
+                        "label": "First name"
+                      },
+                      {
+                        "name": "fullName",
+                        "type": "text",
+                        "label": "Full name"
+                      },
+                      {
+                        "name": "phone",
+                        "type": "text",
+                        "label": "Phone"
+                      },
+                      {
+                        "name": "contactState",
+                        "type": "text",
+                        "label": "Contact state"
+                      },
+                      {
+                        "name": "contactFound",
+                        "type": "boolean",
+                        "label": "Contact found"
+                      },
+                      {
+                        "name": "contactCreated",
+                        "type": "boolean",
+                        "label": "Contact created"
+                      },
+                      {
+                        "name": "confirmedIntent",
+                        "type": "text",
+                        "label": "Confirmed intent"
+                      },
+                      {
+                        "name": "callerReason",
+                        "type": "text",
+                        "label": "Caller reason"
+                      },
+                      {
+                        "name": "handoffReady",
+                        "type": "boolean",
+                        "label": "Handoff ready"
+                      },
+                      {
+                        "name": "source",
+                        "type": "text",
+                        "label": "Source"
+                      },
+                      {
+                        "name": "createdAt",
+                        "type": "date",
+                        "label": "Created at"
+                      },
+                      {
+                        "name": "updatedAt",
+                        "type": "date",
+                        "label": "Updated at"
+                      }
+                    ],
+                    "type": "collection",
+                    "label": "Record"
+                  }
+                ],
+                "restore": {
+                  "expect": {
+                    "data": {
+                      "nested": {
+                        "contactFound": {
+                          "mode": "chose"
+                        },
+                        "handoffReady": {
+                          "mode": "chose"
+                        },
+                        "contactCreated": {
+                          "mode": "chose"
+                        }
+                      }
+                    },
+                    "overwrite": {
+                      "mode": "chose"
+                    }
+                  },
+                  "parameters": {
+                    "datastore": {
+                      "label": "GHL Contact IDs"
+                    }
+                  }
+                },
+                "designer": {
+                  "x": 900,
+                  "y": 600
+                },
+                "parameters": [
+                  {
+                    "name": "datastore",
+                    "type": "datastore",
+                    "label": "Data store",
+                    "required": true
+                  }
+                ]
+              },
+              "parameters": {
+                "datastore": 162851
+              }
+            },
+            {
+              "id": 4,
+              "filter": {
+                "name": "Contact found by phone",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{9.id}}",
+                      "o": "exist"
+                    }
+                  ]
+                ]
+              },
+              "mapper": {
+                "body": "{\r\n  \"contactId\": \"{{9.id}}\",\r\n  \"firstName\": \"{{9.firstName}}\",\r\n  \"fullName\": \"{{9.firstName}} {{9.lastName}}\",\r\n  \"phone\": \"{{9.phone}}\",\r\n  \"contactState\": \"RESOLVED\",\r\n  \"contactFound\": true,\r\n  \"contactCreated\": false,\r\n  \"requiresName\": false,\r\n  \"requiresPhone\": false,\r\n  \"results\": [\r\n    {\r\n      \"toolCallId\": \"{{1.message.toolCalls[].id}}\",\r\n      \"result\": \"{\\\"success\\\":true,\\\"contactFound\\\":true,\\\"contactCreated\\\":false,\\\"contactId\\\":\\\"{{9.id}}\\\",\\\"firstName\\\":\\\"{{9.firstName}}\\\",\\\"fullName\\\":\\\"{{9.firstName}} {{9.lastName}}\\\",\\\"phone\\\":\\\"{{9.phone}}\\\",\\\"contactState\\\":\\\"RESOLVED\\\",\\\"requiresName\\\":false,\\\"requiresPhone\\\":false,\\\"nextAction\\\":\\\"continueConversation\\\",\\\"message\\\":\\\"Existing contact resolved successfully. The caller's first name is {{9.firstName}}. Use this first name naturally in the next spoken response.\\\"}\"\r\n    }\r\n  ]\r\n}",
+                "status": "200",
+                "headers": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "module": "gateway:WebhookRespond",
+              "version": 1,
+              "metadata": {
+                "expect": [
+                  {
+                    "name": "status",
+                    "type": "uinteger",
+                    "label": "Status",
+                    "required": true,
+                    "validate": {
+                      "min": 100
+                    }
+                  },
+                  {
+                    "name": "body",
+                    "type": "any",
+                    "label": "Body"
+                  },
+                  {
+                    "name": "headers",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key",
+                        "required": true,
+                        "validate": {
+                          "max": 256
+                        }
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value",
+                        "required": true,
+                        "validate": {
+                          "max": 4096
+                        }
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Custom headers",
+                    "validate": {
+                      "maxItems": 16
+                    }
+                  }
+                ],
+                "restore": {
+                  "expect": {
+                    "headers": {
+                      "mode": "chose",
+                      "items": [
+                        null
+                      ]
+                    }
+                  }
+                },
+                "designer": {
+                  "x": 1200,
+                  "y": 600,
+                  "name": "Return Existing Contact to Vapi"
+                }
+              },
+              "parameters": {}
+            }
+          ]
+        }
+      ],
+      "version": 1,
+      "metadata": {
+        "designer": {
+          "x": 600,
+          "y": 300,
+          "name": "Route by GHL Search Result and Caller Name"
+        }
+      },
+      "parameters": {}
+    }
+  ],
+  "name": "Vapi - GHL Contact Resolver v4 CANONICAL VARIABLES (Search First, Create Only If Needed)",
+  "metadata": {
+    "instant": true,
+    "version": 1,
+    "designer": {
+      "orphans": [
+        [
+          {
+            "id": 5,
+            "mapper": {
+              "ca": "",
+              "qs": [],
+              "url": "https://services.leadconnectorhq.com/contacts/",
+              "data": "",
+              "gzip": true,
+              "method": "post",
+              "headers": [
+                {
+                  "name": "Authorization",
+                  "value": "Bearer {{SECRET:GHL_PIT_TOKEN_CONTACTS}}"
+                },
+                {
+                  "name": "Version",
+                  "value": "2021-07-28"
+                },
+                {
+                  "name": "Content-Type",
+                  "value": "application/json"
+                },
+                {
+                  "name": "Accept",
+                  "value": "application/json"
+                }
+              ],
+              "timeout": "30",
+              "useMtls": false,
+              "authPass": "",
+              "authUser": "",
+              "bodyType": "raw",
+              "contentType": "application/json",
+              "serializeUrl": false,
+              "shareCookies": false,
+              "parseResponse": true,
+              "followRedirect": true,
+              "useQuerystring": false,
+              "followAllRedirects": false,
+              "rejectUnauthorized": true
+            },
+            "module": "http:ActionSendData",
+            "version": 3,
+            "metadata": {
+              "expect": [
+                {
+                  "name": "url",
+                  "type": "url",
+                  "label": "URL",
+                  "required": true
+                },
+                {
+                  "name": "serializeUrl",
+                  "type": "boolean",
+                  "label": "Serialize URL",
+                  "required": true
+                },
+                {
+                  "name": "method",
+                  "type": "select",
+                  "label": "Method",
+                  "required": true,
+                  "validate": {
+                    "enum": [
+                      "get",
+                      "head",
+                      "post",
+                      "put",
+                      "patch",
+                      "delete",
+                      "options"
+                    ]
+                  }
+                },
+                {
+                  "name": "headers",
+                  "spec": [
+                    {
+                      "name": "name",
+                      "type": "text",
+                      "label": "Name",
+                      "required": true
+                    },
+                    {
+                      "name": "value",
+                      "type": "text",
+                      "label": "Value"
+                    }
+                  ],
+                  "type": "array",
+                  "label": "Headers"
+                },
+                {
+                  "name": "qs",
+                  "spec": [
+                    {
+                      "name": "name",
+                      "type": "text",
+                      "label": "Name",
+                      "required": true
+                    },
+                    {
+                      "name": "value",
+                      "type": "text",
+                      "label": "Value"
+                    }
+                  ],
+                  "type": "array",
+                  "label": "Query String"
+                },
+                {
+                  "name": "bodyType",
+                  "type": "select",
+                  "label": "Body type",
+                  "validate": {
+                    "enum": [
+                      "raw",
+                      "x_www_form_urlencoded",
+                      "multipart_form_data"
+                    ]
+                  }
+                },
+                {
+                  "name": "parseResponse",
+                  "type": "boolean",
+                  "label": "Parse response",
+                  "required": true
+                },
+                {
+                  "name": "authUser",
+                  "type": "text",
+                  "label": "User name"
+                },
+                {
+                  "name": "authPass",
+                  "type": "password",
+                  "label": "Password"
+                },
+                {
+                  "name": "timeout",
+                  "type": "uinteger",
+                  "label": "Timeout",
+                  "validate": {
+                    "max": 300,
+                    "min": 1
+                  }
+                },
+                {
+                  "name": "shareCookies",
+                  "type": "boolean",
+                  "label": "Share cookies with other HTTP modules",
+                  "required": true
+                },
+                {
+                  "name": "ca",
+                  "type": "cert",
+                  "label": "Self-signed certificate"
+                },
+                {
+                  "name": "rejectUnauthorized",
+                  "type": "boolean",
+                  "label": "Reject connections that are using unverified (self-signed) certificates",
+                  "required": true
+                },
+                {
+                  "name": "followRedirect",
+                  "type": "boolean",
+                  "label": "Follow redirect",
+                  "required": true
+                },
+                {
+                  "name": "useQuerystring",
+                  "type": "boolean",
+                  "label": "Disable serialization of multiple same query string keys as arrays",
+                  "required": true
+                },
+                {
+                  "name": "gzip",
+                  "type": "boolean",
+                  "label": "Request compressed content",
+                  "required": true
+                },
+                {
+                  "name": "useMtls",
+                  "type": "boolean",
+                  "label": "Use Mutual TLS",
+                  "required": true
+                },
+                {
+                  "name": "contentType",
+                  "type": "select",
+                  "label": "Content type",
+                  "validate": {
+                    "enum": [
+                      "text/plain",
+                      "application/json",
+                      "application/xml",
+                      "text/xml",
+                      "text/html",
+                      "custom"
+                    ]
+                  }
+                },
+                {
+                  "name": "data",
+                  "type": "buffer",
+                  "label": "Request content"
+                },
+                {
+                  "name": "followAllRedirects",
+                  "type": "boolean",
+                  "label": "Follow all redirect",
+                  "required": true
+                }
+              ],
+              "restore": {
+                "expect": {
+                  "qs": {
+                    "mode": "chose"
+                  },
+                  "method": {
+                    "mode": "chose",
+                    "label": "POST"
+                  },
+                  "headers": {
+                    "mode": "chose",
+                    "items": [
+                      null,
+                      null,
+                      null,
+                      null
+                    ]
+                  },
+                  "bodyType": {
+                    "label": "Raw"
+                  },
+                  "contentType": {
+                    "label": "JSON (application/json)"
+                  }
+                }
+              },
+              "designer": {
+                "x": 0,
+                "y": 900,
+                "name": "GHL Create Contact After Search Miss",
+                "messages": [
+                  {
+                    "message": "This module is not connected to the flow. This module and everything after it will be skipped during execution. <autoconnect>Link it to your scenario to include them.</autoconnect>",
+                    "category": "link",
+                    "severity": "warning"
+                  }
+                ]
+              },
+              "parameters": [
+                {
+                  "name": "handleErrors",
+                  "type": "boolean",
+                  "label": "Evaluate all states as errors (except for 2xx and 3xx )",
+                  "required": true
+                },
+                {
+                  "name": "useNewZLibDeCompress",
+                  "type": "hidden"
+                }
+              ]
+            },
+            "parameters": {
+              "handleErrors": false,
+              "useNewZLibDeCompress": true
+            }
+          }
+        ]
+      ],
+      "samples": {
+        "1": {
+          "message": {
+            "call": {
+              "id": "019e264b-84de-7000-91f6-d1bd0aefb405",
+              "cost": 0,
+              "type": "inboundPhoneCall",
+              "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+              "status": "ringing",
+              "monitor": {
+                "listenUrl": "wss://phone-call-websocket.aws-us-west-2-backend-production1.vapi.ai/019e264b-84de-7000-91f6-d1bd0ae...",
+                "controlUrl": "https://phone-call-websocket.aws-us-west-2-backend-production1.vapi.ai/019e264b-84de-7000-91f6-d1bd0..."
+              },
+              "squadId": "a9656ea1-3575-4ac6-b985-fd138be06cc5",
+              "customer": {
+                "name": "+61480845459",
+                "number": "+61480845459",
+                "sipUri": "sip:+61480845459@44.238.177.138:5060"
+              },
+              "createdAt": "2026-05-14T11:42:23.966Z",
+              "transport": {
+                "callSid": "ee515e65-a307-4da1-a0b3-58080b271002",
+                "provider": "vapi.sip",
+                "sbcCallSid": "9b03b90bfcd52282cf6ac52a6c6e5824@0.0.0.0",
+                "conversationType": "voice"
+              },
+              "updatedAt": "2026-05-14T11:42:23.966Z",
+              "phoneNumberId": "ae35b1f3-25c4-4620-ac13-525a58da96c9",
+              "phoneCallProvider": "vapi",
+              "assistantOverrides": {
+                "variableValues": {
+                  "cid": "9b03b90bfcd52282cf6ac52a6c6e5824@0.0.0.0",
+                  "account-sid": "c033b672-5b99-42ae-9ce2-b231e9a522fb",
+                  "forwarded-for": "54.172.60.3",
+                  "twilio-callsid": "CA277319d1c459eac61c2196ca3a662116",
+                  "application-sid": "79d078c8-76b2-452a-99e0-ddd5abbf6269",
+                  "voip-carrier-sid": "bdf16bcf-a774-46b0-873d-9105dcda3ce9",
+                  "twilio-accountsid": "{{SECRET:TWILIO_ACCOUNT_SID}}",
+                  "originating-carrier": "Twilio"
+                }
+              },
+              "phoneCallTransport": "sip",
+              "phoneCallProviderId": "ee515e65-a307-4da1-a0b3-58080b271002",
+              "phoneCallProviderDetails": {
+                "sip": {
+                  "raw": "INVITE sip:naidupropertyconsultingservices@sip.vapi.ai SIP/2.0\r\nVia: SIP/2.0/UDP 44.238.177.138;rpor...",
+                  "uri": "sip:naidupropertyconsultingservices@sip.vapi.ai",
+                  "body": "v=0\r\no=root 318799387 318799387 IN IP4 172.30.31.14\r\ns=Twilio Media Gateway\r\nc=IN IP4 172.30.31.14\r\n...",
+                  "method": "INVITE",
+                  "headers": {
+                    "to": "<sip:naidupropertyconsultingservices@sip.vapi.ai>",
+                    "via": "SIP/2.0/UDP 44.238.177.138;rport=5060;branch=z9hG4bKaQym5HU3N2Ntp;received=172.31.9.106",
+                    "cseq": "114825679 INVITE",
+                    "from": "\"+61480845459\" <sip:+61480845459@44.238.177.138:5060>;tag=gZ7r8cj90p18H",
+                    "X-CID": "9b03b90bfcd52282cf6ac52a6c6e5824@0.0.0.0",
+                    "allow": "INVITE, ACK, CANCEL, OPTIONS, BYE, REFER, NOTIFY",
+                    "min-se": "120",
+                    "call-id": "d0ce5335-ca2c-123f-f19b-0a6b2821a33f",
+                    "contact": "<sip:172.31.9.106:5060>",
+                    "user-agent": "Twilio Gateway",
+                    "content-type": "application/sdp",
+                    "max-forwards": "70",
+                    "X-Account-Sid": "c033b672-5b99-42ae-9ce2-b231e9a522fb",
+                    "content-length": "287",
+                    "X-Forwarded-For": "54.172.60.3",
+                    "X-Twilio-CallSid": "CA277319d1c459eac61c2196ca3a662116",
+                    "X-Application-Sid": "79d078c8-76b2-452a-99e0-ddd5abbf6269",
+                    "X-Voip-Carrier-Sid": "bdf16bcf-a774-46b0-873d-9105dcda3ce9",
+                    "X-Twilio-AccountSid": "{{SECRET:TWILIO_ACCOUNT_SID}}",
+                    "p-asserted-identity": "<sip:+61480845459@sip.twilio.com>",
+                    "X-Originating-Carrier": "Twilio"
+                  },
+                  "payload": [
+                    {
+                      "type": "application/sdp",
+                      "content": "v=0\r\no=root 318799387 318799387 IN IP4 172.30.31.14\r\ns=Twilio Media Gateway\r\nc=IN IP4 172.30.31.14\r\n..."
+                    }
+                  ],
+                  "version": "2.0"
+                },
+                "sbcCallId": "9b03b90bfcd52282cf6ac52a6c6e5824@0.0.0.0"
+              }
+            },
+            "type": "tool-calls",
+            "artifact": {
+              "messages": [
+                {
+                  "role": "tool_calls",
+                  "time": 1778758955516,
+                  "source": null,
+                  "endTime": 1778758952856,
+                  "message": "Hello?",
+                  "duration": 296,
+                  "metadata": {
+                    "wordLevelConfidence": [
+                      {
+                        "end": 1778758952856,
+                        "word": "Hello?",
+                        "start": 1778758952560,
+                        "language": null,
+                        "confidence": 1,
+                        "punctuated_word": "Hello?"
+                      }
+                    ]
+                  },
+                  "toolCalls": [
+                    {
+                      "id": "call_UEHYkSwswHC6NoEcIlzxM1GQ",
+                      "type": "function",
+                      "function": {
+                        "name": "ghl_resolve_contact",
+                        "arguments": "{}"
+                      }
+                    }
+                  ],
+                  "secondsFromStart": 11.241
+                }
+              ],
+              "variables": {
+                "cid": "9b03b90bfcd52282cf6ac52a6c6e5824@0.0.0.0",
+                "day": "14",
+                "now": "May 14, 2026, 11:42 AM UTC",
+                "call": {
+                  "id": "019e264b-84de-7000-91f6-d1bd0aefb405",
+                  "type": "inboundPhoneCall",
+                  "status": "ringing",
+                  "createdAt": "2026-05-14T11:42:23.966Z",
+                  "transport": {
+                    "callSid": "ee515e65-a307-4da1-a0b3-58080b271002",
+                    "provider": "vapi.sip",
+                    "sbcCallSid": "9b03b90bfcd52282cf6ac52a6c6e5824@0.0.0.0",
+                    "conversationType": "voice"
+                  },
+                  "phoneCallProvider": "vapi"
+                },
+                "date": "May 14, 2026 UTC",
+                "time": "11:42 AM UTC",
+                "year": "2026",
+                "month": "May",
+                "customer": {
+                  "name": "+61480845459",
+                  "number": "+61480845459",
+                  "sipUri": "sip:+61480845459@44.238.177.138:5060"
+                },
+                "transport": {
+                  "callSid": "ee515e65-a307-4da1-a0b3-58080b271002",
+                  "provider": "vapi.sip",
+                  "sbcCallSid": "9b03b90bfcd52282cf6ac52a6c6e5824@0.0.0.0",
+                  "conversationType": "voice"
+                },
+                "account-sid": "c033b672-5b99-42ae-9ce2-b231e9a522fb",
+                "phoneNumber": {
+                  "id": "ae35b1f3-25c4-4620-ac13-525a58da96c9",
+                  "name": "NPC Services",
+                  "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+                  "server": {
+                    "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+                    "timeoutSeconds": 20
+                  },
+                  "sipUri": "sip:naidupropertyconsultingservices@sip.vapi.ai",
+                  "status": "active",
+                  "squadId": "a9656ea1-3575-4ac6-b985-fd138be06cc5",
+                  "provider": "vapi",
+                  "createdAt": "2026-01-31T08:01:39.887Z",
+                  "updatedAt": "2026-01-31T08:02:57.530Z"
+                },
+                "forwarded-for": "54.172.60.3",
+                "twilio-callsid": "CA277319d1c459eac61c2196ca3a662116",
+                "application-sid": "79d078c8-76b2-452a-99e0-ddd5abbf6269",
+                "currentDateTime": "Thursday, May 14, 2026 at 11:42 AM UTC",
+                "voip-carrier-sid": "bdf16bcf-a774-46b0-873d-9105dcda3ce9",
+                "twilio-accountsid": "{{SECRET:TWILIO_ACCOUNT_SID}}",
+                "originating-carrier": "Twilio"
+              },
+              "variableValues": {
+                "cid": "9b03b90bfcd52282cf6ac52a6c6e5824@0.0.0.0",
+                "day": "14",
+                "now": "May 14, 2026, 11:42 AM UTC",
+                "call": {
+                  "id": "019e264b-84de-7000-91f6-d1bd0aefb405",
+                  "type": "inboundPhoneCall",
+                  "status": "ringing",
+                  "createdAt": "2026-05-14T11:42:23.966Z",
+                  "transport": {
+                    "callSid": "ee515e65-a307-4da1-a0b3-58080b271002",
+                    "provider": "vapi.sip",
+                    "sbcCallSid": "9b03b90bfcd52282cf6ac52a6c6e5824@0.0.0.0",
+                    "conversationType": "voice"
+                  },
+                  "phoneCallProvider": "vapi"
+                },
+                "date": "May 14, 2026 UTC",
+                "time": "11:42 AM UTC",
+                "year": "2026",
+                "month": "May",
+                "customer": {
+                  "name": "+61480845459",
+                  "number": "+61480845459",
+                  "sipUri": "sip:+61480845459@44.238.177.138:5060"
+                },
+                "transport": {
+                  "callSid": "ee515e65-a307-4da1-a0b3-58080b271002",
+                  "provider": "vapi.sip",
+                  "sbcCallSid": "9b03b90bfcd52282cf6ac52a6c6e5824@0.0.0.0",
+                  "conversationType": "voice"
+                },
+                "account-sid": "c033b672-5b99-42ae-9ce2-b231e9a522fb",
+                "phoneNumber": {
+                  "id": "ae35b1f3-25c4-4620-ac13-525a58da96c9",
+                  "name": "NPC Services",
+                  "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+                  "server": {
+                    "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+                    "timeoutSeconds": 20
+                  },
+                  "sipUri": "sip:naidupropertyconsultingservices@sip.vapi.ai",
+                  "status": "active",
+                  "squadId": "a9656ea1-3575-4ac6-b985-fd138be06cc5",
+                  "provider": "vapi",
+                  "createdAt": "2026-01-31T08:01:39.887Z",
+                  "updatedAt": "2026-01-31T08:02:57.530Z"
+                },
+                "forwarded-for": "54.172.60.3",
+                "twilio-callsid": "CA277319d1c459eac61c2196ca3a662116",
+                "application-sid": "79d078c8-76b2-452a-99e0-ddd5abbf6269",
+                "currentDateTime": "Thursday, May 14, 2026 at 11:42 AM UTC",
+                "voip-carrier-sid": "bdf16bcf-a774-46b0-873d-9105dcda3ce9",
+                "twilio-accountsid": "{{SECRET:TWILIO_ACCOUNT_SID}}",
+                "originating-carrier": "Twilio"
+              },
+              "messagesOpenAIFormatted": [
+                {
+                  "role": "tool",
+                  "content": "Tool Result Still Pending But Proceed Further If Possible.",
+                  "tool_calls": [
+                    {
+                      "id": "call_UEHYkSwswHC6NoEcIlzxM1GQ",
+                      "type": "function",
+                      "function": {
+                        "name": "ghl_resolve_contact",
+                        "arguments": "{}"
+                      }
+                    }
+                  ],
+                  "tool_call_id": "call_UEHYkSwswHC6NoEcIlzxM1GQ"
+                }
+              ]
+            },
+            "customer": {
+              "name": "+61480845459",
+              "number": "+61480845459",
+              "sipUri": "sip:+61480845459@44.238.177.138:5060"
+            },
+            "assistant": {
+              "id": "bfff143e-03f7-4bc2-afbb-5734987f672f",
+              "name": "NPC Inbound Agent",
+              "model": {
+                "model": "gpt-5.2-chat-latest",
+                "tools": [
+                  {
+                    "id": "0bd36de8-6d3a-43e5-9c3f-25ca6de97662",
+                    "type": "handoff",
+                    "async": null,
+                    "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+                    "server": {
+                      "url": "https://hook.eu2.make.com/o51u3jb5g1nn1lxiluziezpr7gh5vvt8",
+                      "timeoutSeconds": 20,
+                      "staticIpAddressesEnabled": null
+                    },
+                    "function": {
+                      "name": "handoff_to_assistant",
+                      "parameters": {
+                        "type": "object",
+                        "required": [
+                          "{{firstName}}"
+                        ],
+                        "properties": {
+                          "full_name": {
+                            "type": "string",
+                            "description": "The caller's full name, only after the caller provides it or it is already known from context."
+                          },
+                          "last_name": {
+                            "type": "string",
+                            "description": "The caller's last name, only if known."
+                          },
+                          "first_name": {
+                            "type": "string",
+                            "description": "The caller's first name, only if known."
+                          },
+                          "{{fullName}}": {
+                            "type": "string",
+                            "default": null,
+                            "description": null
+                          },
+                          "{{contactId}}": {
+                            "type": "string",
+                            "default": null,
+                            "description": null
+                          },
+                          "{{firstName}}": {
+                            "type": "string",
+                            "default": null,
+                            "description": null
+                          }
+                        }
+                      },
+                      "description": "Retrieves the stored live call context for the current Vapi call from the external session store. Us..."
+                    },
+                    "messages": [
+                      {
+                        "type": "request-start",
+                        "content": "Please hold on while I hand you over to the relevant agent to book your call",
+                        "blocking": true,
+                        "endCallAfterSpokenEnabled": null
+                      }
+                    ],
+                    "createdAt": {},
+                    "updatedAt": {},
+                    "parameters": [
+                      {
+                        "key": "phone",
+                        "value": "{{ customer.number }}"
+                      }
+                    ],
+                    "destinations": [
+                      {
+                        "type": "assistant",
+                        "number": "+61433005110",
+                        "message": "Got it — I’ll connect you with a team member now.",
+                        "callerId": "+61433005110",
+                        "assistantId": "7770a48b-68d1-48df-a03a-9cc5b9e91ad8",
+                        "description": "When user asks to book or reschedule an initital finance consult a.k.a IFC",
+                        "transferPlan": {
+                          "mode": "warm-transfer-experimental",
+                          "message": null,
+                          "sipVerb": "refer",
+                          "summaryPlan": {
+                            "enabled": true,
+                            "messages": [
+                              {
+                                "role": "user",
+                                "content": "Here is the transcript:\n\n{{transcript}}\n\n"
+                              }
+                            ],
+                            "timeoutSeconds": 5,
+                            "useAssistantLlm": null
+                          },
+                          "fallbackPlan": {
+                            "message": "Could not transfer your call, goodbye.",
+                            "endCallEnabled": true
+                          }
+                        },
+                        "assistantName": "NPC IFC Inbound",
+                        "numberE164CheckEnabled": null,
+                        "variableExtractionPlan": {
+                          "schema": {
+                            "type": "object",
+                            "required": [],
+                            "properties": {
+                              "firstName": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ],
+                    "variableExtractionPlan": {
+                      "schema": {
+                        "type": "object",
+                        "required": [],
+                        "properties": {}
+                      },
+                      "aliases": [
+                        {
+                          "key": "vapiCallId",
+                          "value": "{{ $.vapiCallId }}"
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "toolIds": [
+                  "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+                ],
+                "messages": [
+                  {
+                    "role": "system",
+                    "content": "# **NPC Services – “Angela” Inbound Voice Agent System Prompt**\n\n*(General Enquiries, Knowledge-Base..."
+                  }
+                ],
+                "provider": "openai",
+                "maxTokens": 10000,
+                "temperature": 0.9,
+                "knowledgeBase": {
+                  "fileIds": [
+                    "9fff4149-3aec-48f0-9378-d56760390216"
+                  ],
+                  "provider": "google"
+                }
+              },
+              "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+              "voice": {
+                "model": "eleven_flash_v2_5",
+                "voiceId": "M7ya1YbaeFaPXljg9BpK",
+                "provider": "11labs",
+                "stability": 0.5,
+                "similarityBoost": 0.75
+              },
+              "server": {
+                "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+                "timeoutSeconds": 20,
+                "staticIpAddressesEnabled": false
+              },
+              "metadata": {
+                "position": {
+                  "x": 237.34521448871288,
+                  "y": 427.4425751045537
+                }
+              },
+              "createdAt": "2025-12-09T15:00:39.199Z",
+              "updatedAt": "2026-05-14T10:36:25.042Z",
+              "transcriber": {
+                "model": "flux-general-en",
+                "language": "en",
+                "provider": "deepgram"
+              },
+              "firstMessage": "Hi there. Angela from Naidu Property Consulting Services speaking. How can I help you today?",
+              "compliancePlan": {
+                "pciEnabled": false,
+                "zdrEnabled": false,
+                "hipaaEnabled": false
+              },
+              "endCallMessage": "Goodbye.",
+              "variableValues": {
+                "cid": "9b03b90bfcd52282cf6ac52a6c6e5824@0.0.0.0",
+                "account-sid": "c033b672-5b99-42ae-9ce2-b231e9a522fb",
+                "forwarded-for": "54.172.60.3",
+                "twilio-callsid": "CA277319d1c459eac61c2196ca3a662116",
+                "application-sid": "79d078c8-76b2-452a-99e0-ddd5abbf6269",
+                "voip-carrier-sid": "bdf16bcf-a774-46b0-873d-9105dcda3ce9",
+                "twilio-accountsid": "{{SECRET:TWILIO_ACCOUNT_SID}}",
+                "originating-carrier": "Twilio"
+              },
+              "voicemailMessage": "Please call back when you're available.",
+              "startSpeakingPlan": {
+                "waitSeconds": 4
+              },
+              "maxDurationSeconds": 1444
+            },
+            "timestamp": 1778758955527,
+            "toolCalls": [
+              {
+                "id": "call_UEHYkSwswHC6NoEcIlzxM1GQ",
+                "type": "function",
+                "function": {
+                  "name": "ghl_resolve_contact",
+                  "arguments": {
+                    "phone": "+61480845459",
+                    "call_type": "inboundPhoneCall",
+                    "vapi_call_id": "019e264b-84de-7000-91f6-d1bd0aefb405",
+                    "called_number": "{{ phoneNumber.number }}",
+                    "customer_number": "+61480845459"
+                  }
+                }
+              }
+            ],
+            "phoneNumber": {
+              "id": "ae35b1f3-25c4-4620-ac13-525a58da96c9",
+              "name": "NPC Services",
+              "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+              "server": {
+                "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+                "timeoutSeconds": 20
+              },
+              "sipUri": "sip:naidupropertyconsultingservices@sip.vapi.ai",
+              "status": "active",
+              "squadId": "a9656ea1-3575-4ac6-b985-fd138be06cc5",
+              "provider": "vapi",
+              "createdAt": "2026-01-31T08:01:39.887Z",
+              "updatedAt": "2026-01-31T08:02:57.530Z"
+            },
+            "toolCallList": [
+              {
+                "id": "call_UEHYkSwswHC6NoEcIlzxM1GQ",
+                "type": "function",
+                "function": {
+                  "name": "ghl_resolve_contact",
+                  "arguments": {
+                    "phone": "+61480845459",
+                    "call_type": "inboundPhoneCall",
+                    "vapi_call_id": "019e264b-84de-7000-91f6-d1bd0aefb405",
+                    "called_number": "{{ phoneNumber.number }}",
+                    "customer_number": "+61480845459"
+                  }
+                }
+              }
+            ],
+            "toolWithToolCallList": [
+              {
+                "type": "function",
+                "async": false,
+                "server": {
+                  "url": "https://hook.eu2.make.com/db3ws2lmqi4qh9ozsyt1tvn3j8tbeahm",
+                  "timeoutSeconds": 20,
+                  "staticIpAddressesEnabled": false
+                },
+                "function": {
+                  "name": "ghl_resolve_contact",
+                  "parameters": {
+                    "type": "object",
+                    "required": [],
+                    "properties": {
+                      "full_name": {
+                        "type": "string",
+                        "description": "The caller's full name, only after the caller provides it or it is already known from context."
+                      },
+                      "last_name": {
+                        "type": "string",
+                        "description": "The caller's last name, only if known."
+                      },
+                      "first_name": {
+                        "type": "string",
+                        "description": "The caller's first name, only if known."
+                      }
+                    }
+                  },
+                  "description": "Resolve an inbound caller contact in GoHighLevel. The caller phone number is injected automatically ..."
+                },
+                "messages": [
+                  {
+                    "type": "request-start",
+                    "content": "",
+                    "blocking": false,
+                    "contents": [],
+                    "conditions": []
+                  }
+                ],
+                "toolCall": {
+                  "id": "call_UEHYkSwswHC6NoEcIlzxM1GQ",
+                  "type": "function",
+                  "function": {
+                    "name": "ghl_resolve_contact",
+                    "arguments": {
+                      "phone": "+61480845459",
+                      "call_type": "inboundPhoneCall",
+                      "vapi_call_id": "019e264b-84de-7000-91f6-d1bd0aefb405",
+                      "called_number": "{{ phoneNumber.number }}",
+                      "customer_number": "+61480845459"
+                    }
+                  }
+                },
+                "parameters": [
+                  {
+                    "key": "call_type",
+                    "value": "{{ call.type }}"
+                  }
+                ],
+                "variableExtractionPlan": {
+                  "schema": {
+                    "type": "object",
+                    "required": [],
+                    "properties": {}
+                  },
+                  "aliases": [
+                    {
+                      "key": "ghlContactState",
+                      "value": "{{ $.contactState }}"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        "9": {
+          "id": "iH04pC64TJ3roKnCnyvx",
+          "dnd": false,
+          "tags": [],
+          "type": "lead",
+          "email": "lavan@npcservices.com.au",
+          "phone": "+61480845459",
+          "country": "AU",
+          "timezone": "Australia/Sydney",
+          "dateAdded": "2026-05-13T17:00:27.748Z",
+          "firstName": "lazarus",
+          "followers": [],
+          "locationId": "H7NNnJKSofGaRJHTkAd3",
+          "startAfter": [
+            "2026-05-13T17:00:27.748Z"
+          ],
+          "contactName": "lazarus",
+          "customField": {},
+          "dateUpdated": "2026-05-14T07:56:47.783Z",
+          "dndSettings": {},
+          "__IMTINDEX__": 1,
+          "firstNameRaw": "Lazarus",
+          "__IMTLENGTH__": 1,
+          "additionalEmails": []
+        },
+        "11": {
+          "key": "019e264b-84de-7000-91f6-d1bd0aefb405"
+        }
+      }
+    },
+    "scenario": {
+      "dlq": false,
+      "slots": null,
+      "dataloss": false,
+      "maxErrors": 3,
+      "autoCommit": true,
+      "roundtrips": 1,
+      "sequential": false,
+      "confidential": false,
+      "freshVariables": false,
+      "autoCommitTriggerLast": true
+    }
+  },
+  "scheduling": {
+    "type": "immediately"
+  },
+  "interface": {
+    "input": [],
+    "output": []
+  }
+}

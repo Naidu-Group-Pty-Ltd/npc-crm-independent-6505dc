@@ -1,0 +1,1246 @@
+{
+  "phases": [
+    {
+      "phase": "00-file",
+      "count": 2
+    },
+    {
+      "phase": "01-tool",
+      "count": 12
+    },
+    {
+      "phase": "02-structured-output",
+      "count": 6
+    },
+    {
+      "phase": "03-scorecard",
+      "count": 1
+    },
+    {
+      "phase": "04-assistant",
+      "count": 15
+    },
+    {
+      "phase": "05-squad",
+      "count": 1
+    },
+    {
+      "phase": "06-workflow",
+      "count": 1
+    },
+    {
+      "phase": "07-phone-number",
+      "count": 4
+    },
+    {
+      "phase": "08-insight",
+      "count": 6
+    },
+    {
+      "phase": "09-board",
+      "count": 1
+    }
+  ],
+  "payloads": [
+    {
+      "file": "payloads/00-file/9fff4149-3aec-48f0-9378-d56760390216.json",
+      "phase": "00-file",
+      "resource": "file",
+      "dto": null,
+      "endpoint": "POST /file",
+      "oldId": "9fff4149-3aec-48f0-9378-d56760390216",
+      "name": "Npc Services Information Document (1).do",
+      "optional": false,
+      "refs": {},
+      "env": [],
+      "warnings": [],
+      "bytesFile": "../npc-services/files/9fff4149-3aec-48f0-9378-d56760390216.doc.docx"
+    },
+    {
+      "file": "payloads/00-file/b3b1fdd2-8784-48af-aa1a-cc20740b72ff.json",
+      "phase": "00-file",
+      "resource": "file",
+      "dto": null,
+      "endpoint": "POST /file",
+      "oldId": "b3b1fdd2-8784-48af-aa1a-cc20740b72ff",
+      "name": "Npc Services Information Document (1).pd",
+      "optional": false,
+      "refs": {},
+      "env": [],
+      "warnings": [],
+      "bytesFile": "../npc-services/files/b3b1fdd2-8784-48af-aa1a-cc20740b72ff.doc.pdf"
+    },
+    {
+      "file": "payloads/01-tool/end-call-tool.bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e.json",
+      "phase": "01-tool",
+      "resource": "tool",
+      "dto": "CreateEndCallToolDTO",
+      "endpoint": "POST /tool",
+      "oldId": "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+      "name": "end_call_tool",
+      "optional": false,
+      "refs": {},
+      "env": [],
+      "warnings": [
+        "contested field kept (absent from spec, may be dropped by POST): async",
+        "contested field kept (absent from spec, may be dropped by POST): function"
+      ]
+    },
+    {
+      "file": "payloads/01-tool/get-call-context.0bd36de8-6d3a-43e5-9c3f-25ca6de97662.json",
+      "phase": "01-tool",
+      "resource": "tool",
+      "dto": "CreateFunctionToolDTO",
+      "endpoint": "POST /tool",
+      "oldId": "0bd36de8-6d3a-43e5-9c3f-25ca6de97662",
+      "name": "get_call_context",
+      "optional": false,
+      "refs": {},
+      "env": [],
+      "warnings": []
+    },
+    {
+      "file": "payloads/01-tool/ghl-check-availability.6587bc7d-7382-4e33-a38d-95f5740df52a.json",
+      "phase": "01-tool",
+      "resource": "tool",
+      "dto": "CreateFunctionToolDTO",
+      "endpoint": "POST /tool",
+      "oldId": "6587bc7d-7382-4e33-a38d-95f5740df52a",
+      "name": "ghl_check_availability",
+      "optional": false,
+      "refs": {},
+      "env": [],
+      "warnings": []
+    },
+    {
+      "file": "payloads/01-tool/ghl-create-booking.f195a817-8346-475d-ad0e-8033f1d2e283.json",
+      "phase": "01-tool",
+      "resource": "tool",
+      "dto": "CreateFunctionToolDTO",
+      "endpoint": "POST /tool",
+      "oldId": "f195a817-8346-475d-ad0e-8033f1d2e283",
+      "name": "ghl_create_booking",
+      "optional": false,
+      "refs": {},
+      "env": [],
+      "warnings": []
+    },
+    {
+      "file": "payloads/01-tool/ghl-delete-event-npc-2-1.a34b05ef-5218-4771-bf2b-4b171ad8f9c9.json",
+      "phase": "01-tool",
+      "resource": "tool",
+      "dto": "CreateFunctionToolDTO",
+      "endpoint": "POST /tool",
+      "oldId": "a34b05ef-5218-4771-bf2b-4b171ad8f9c9",
+      "name": "ghl_delete_event_npc_2_1",
+      "optional": false,
+      "refs": {},
+      "env": [],
+      "warnings": []
+    },
+    {
+      "file": "payloads/01-tool/ghl-delete-event-npc-2.87fb4ce8-b696-4925-bfbf-8bd9678d4e36.json",
+      "phase": "01-tool",
+      "resource": "tool",
+      "dto": "CreateFunctionToolDTO",
+      "endpoint": "POST /tool",
+      "oldId": "87fb4ce8-b696-4925-bfbf-8bd9678d4e36",
+      "name": "ghl_delete_event_npc_2",
+      "optional": false,
+      "refs": {},
+      "env": [],
+      "warnings": []
+    },
+    {
+      "file": "payloads/01-tool/ghl-delete-event-npc-3-1.ba13974d-8005-487d-81b9-4dc569a9f6d4.json",
+      "phase": "01-tool",
+      "resource": "tool",
+      "dto": "CreateFunctionToolDTO",
+      "endpoint": "POST /tool",
+      "oldId": "ba13974d-8005-487d-81b9-4dc569a9f6d4",
+      "name": "ghl_delete_event_npc_3_1",
+      "optional": false,
+      "refs": {},
+      "env": [],
+      "warnings": []
+    },
+    {
+      "file": "payloads/01-tool/ghl-delete-event-npc-3.006be564-14c2-4db9-9c90-6821d363b123.json",
+      "phase": "01-tool",
+      "resource": "tool",
+      "dto": "CreateFunctionToolDTO",
+      "endpoint": "POST /tool",
+      "oldId": "006be564-14c2-4db9-9c90-6821d363b123",
+      "name": "ghl_delete_event_npc_3",
+      "optional": false,
+      "refs": {},
+      "env": [],
+      "warnings": []
+    },
+    {
+      "file": "payloads/01-tool/ghl-delete-event-npc.5934c762-0223-4112-bfb7-88931da17652.json",
+      "phase": "01-tool",
+      "resource": "tool",
+      "dto": "CreateFunctionToolDTO",
+      "endpoint": "POST /tool",
+      "oldId": "5934c762-0223-4112-bfb7-88931da17652",
+      "name": "ghl_delete_event_npc",
+      "optional": false,
+      "refs": {},
+      "env": [],
+      "warnings": []
+    },
+    {
+      "file": "payloads/01-tool/ghl-resolve-contact.3e116e74-0dda-4277-ae38-468bdd3464e6.json",
+      "phase": "01-tool",
+      "resource": "tool",
+      "dto": "CreateFunctionToolDTO",
+      "endpoint": "POST /tool",
+      "oldId": "3e116e74-0dda-4277-ae38-468bdd3464e6",
+      "name": "ghl_resolve_contact",
+      "optional": false,
+      "refs": {},
+      "env": [],
+      "warnings": []
+    },
+    {
+      "file": "payloads/01-tool/phonenumber-inject.9789b720-ee13-4389-ba33-678883eaa891.json",
+      "phase": "01-tool",
+      "resource": "tool",
+      "dto": "CreateFunctionToolDTO",
+      "endpoint": "POST /tool",
+      "oldId": "9789b720-ee13-4389-ba33-678883eaa891",
+      "name": "phoneNumber_inject",
+      "optional": false,
+      "refs": {},
+      "env": [],
+      "warnings": []
+    },
+    {
+      "file": "payloads/01-tool/transfer-to-human.5c0c334c-6bbf-4399-b748-a3c50207e754.json",
+      "phase": "01-tool",
+      "resource": "tool",
+      "dto": "CreateFunctionToolDTO",
+      "endpoint": "POST /tool",
+      "oldId": "5c0c334c-6bbf-4399-b748-a3c50207e754",
+      "name": "transfer_to_human",
+      "optional": false,
+      "refs": {},
+      "env": [],
+      "warnings": []
+    },
+    {
+      "file": "payloads/02-structured-output/appointment-booked.94648165-f08f-4d2e-ad13-91ec7f41d443.json",
+      "phase": "02-structured-output",
+      "resource": "structured-output",
+      "dto": "CreateStructuredOutputDTO",
+      "endpoint": "POST /structured-output",
+      "oldId": "94648165-f08f-4d2e-ad13-91ec7f41d443",
+      "name": "Appointment Booked",
+      "optional": false,
+      "refs": {},
+      "env": [],
+      "warnings": [
+        "assistantIds deferred to a post-assistant PATCH (cycle: assistants reference this object and are created later)"
+      ],
+      "deferred": {
+        "assistantIds": [
+          "b3acdd28-558a-4893-9cfe-c3abacdbe6bd",
+          "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+          "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+          "e1b76e7c-b9a2-461b-a951-e6b253a4d0d7"
+        ]
+      }
+    },
+    {
+      "file": "payloads/02-structured-output/appointment-cancelled.00d9c6e4-6383-4b59-97be-b7dba41f0ace.json",
+      "phase": "02-structured-output",
+      "resource": "structured-output",
+      "dto": "CreateStructuredOutputDTO",
+      "endpoint": "POST /structured-output",
+      "oldId": "00d9c6e4-6383-4b59-97be-b7dba41f0ace",
+      "name": "Appointment Cancelled",
+      "optional": false,
+      "refs": {},
+      "env": [],
+      "warnings": [
+        "assistantIds deferred to a post-assistant PATCH (cycle: assistants reference this object and are created later)"
+      ],
+      "deferred": {
+        "assistantIds": [
+          "38e71746-75f8-4a7f-b527-f0b7528d76f0"
+        ]
+      }
+    },
+    {
+      "file": "payloads/02-structured-output/appt-time-selected.e783bfd6-fd93-4462-b5a4-abd97aac60e1.json",
+      "phase": "02-structured-output",
+      "resource": "structured-output",
+      "dto": "CreateStructuredOutputDTO",
+      "endpoint": "POST /structured-output",
+      "oldId": "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+      "name": "Appt Time Selected",
+      "optional": false,
+      "refs": {},
+      "env": [],
+      "warnings": [
+        "assistantIds deferred to a post-assistant PATCH (cycle: assistants reference this object and are created later)"
+      ],
+      "deferred": {
+        "assistantIds": [
+          "b3acdd28-558a-4893-9cfe-c3abacdbe6bd",
+          "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+          "e1b76e7c-b9a2-461b-a951-e6b253a4d0d7"
+        ]
+      }
+    },
+    {
+      "file": "payloads/02-structured-output/contact-id.e6a0c195-3ef9-4661-951f-bd66a801cd62.json",
+      "phase": "02-structured-output",
+      "resource": "structured-output",
+      "dto": "CreateStructuredOutputDTO",
+      "endpoint": "POST /structured-output",
+      "oldId": "e6a0c195-3ef9-4661-951f-bd66a801cd62",
+      "name": "contact_id",
+      "optional": false,
+      "refs": {},
+      "env": [],
+      "warnings": [
+        "assistantIds deferred to a post-assistant PATCH (cycle: assistants reference this object and are created later)"
+      ],
+      "deferred": {
+        "assistantIds": [
+          "cc46d882-55c0-454c-82e2-ef00ae000aec"
+        ]
+      }
+    },
+    {
+      "file": "payloads/02-structured-output/zoom-call-booked.468022e7-2ba9-4154-8178-927586daf240.json",
+      "phase": "02-structured-output",
+      "resource": "structured-output",
+      "dto": "CreateStructuredOutputDTO",
+      "endpoint": "POST /structured-output",
+      "oldId": "468022e7-2ba9-4154-8178-927586daf240",
+      "name": "Zoom Call Booked",
+      "optional": true,
+      "refs": {},
+      "env": [],
+      "warnings": []
+    },
+    {
+      "file": "payloads/02-structured-output/zoom-call-booked.a5b2f26a-dcfc-4e2f-82d9-87bcaa572782.json",
+      "phase": "02-structured-output",
+      "resource": "structured-output",
+      "dto": "CreateStructuredOutputDTO",
+      "endpoint": "POST /structured-output",
+      "oldId": "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782",
+      "name": "Zoom Call Booked",
+      "optional": false,
+      "refs": {},
+      "env": [],
+      "warnings": [
+        "assistantIds deferred to a post-assistant PATCH (cycle: assistants reference this object and are created later)"
+      ],
+      "deferred": {
+        "assistantIds": [
+          "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+          "b3acdd28-558a-4893-9cfe-c3abacdbe6bd"
+        ]
+      }
+    },
+    {
+      "file": "payloads/03-scorecard/scorecard.scorecard-for-assistant-npc-opt-in-follow-up.cf81945a-c941-46a2-a538-2987abffe521.json",
+      "phase": "03-scorecard",
+      "resource": "scorecard",
+      "dto": "CreateScorecardDTO",
+      "endpoint": "POST /observability/scorecard",
+      "oldId": "cf81945a-c941-46a2-a538-2987abffe521",
+      "name": "scorecard for assistant NPC Opt In Follow Up",
+      "optional": false,
+      "refs": {},
+      "env": [],
+      "warnings": [
+        "assistantIds deferred to a post-assistant PATCH (cycle: assistants reference this object and are created later)"
+      ],
+      "deferred": {
+        "assistantIds": [
+          "b3acdd28-558a-4893-9cfe-c3abacdbe6bd",
+          "739b47bf-9adb-4ac6-aca4-976d815f673e"
+        ]
+      }
+    },
+    {
+      "file": "payloads/04-assistant/npc-active-nurturing.cc46d882-55c0-454c-82e2-ef00ae000aec.json",
+      "phase": "04-assistant",
+      "resource": "assistant",
+      "dto": "CreateAssistantDTO",
+      "endpoint": "POST /assistant",
+      "oldId": "cc46d882-55c0-454c-82e2-ef00ae000aec",
+      "name": "NPC Active Nurturing",
+      "optional": false,
+      "refs": {
+        "/artifactPlan/structuredOutputIds/0": {
+          "resource": "structured-output",
+          "oldId": "e6a0c195-3ef9-4661-951f-bd66a801cd62"
+        },
+        "/model/knowledgeBase/fileIds/0": {
+          "resource": "file",
+          "oldId": "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+        },
+        "/model/toolIds/0": {
+          "resource": "tool",
+          "oldId": "5c0c334c-6bbf-4399-b748-a3c50207e754"
+        },
+        "/model/toolIds/1": {
+          "resource": "tool",
+          "oldId": "f195a817-8346-475d-ad0e-8033f1d2e283"
+        },
+        "/model/toolIds/2": {
+          "resource": "tool",
+          "oldId": "6587bc7d-7382-4e33-a38d-95f5740df52a"
+        },
+        "/model/toolIds/3": {
+          "resource": "tool",
+          "oldId": "3e116e74-0dda-4277-ae38-468bdd3464e6"
+        },
+        "/model/toolIds/4": {
+          "resource": "tool",
+          "oldId": "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+        }
+      },
+      "env": [
+        "VAPI_WEBHOOK_SECRET"
+      ],
+      "warnings": [
+        "contested field kept (absent from spec, may be dropped by POST): backgroundDenoisingEnabled"
+      ]
+    },
+    {
+      "file": "payloads/04-assistant/npc-discovery-call-follow-up-test-2.c0bc54fd-a9fb-4970-822b-b471c198e43b.json",
+      "phase": "04-assistant",
+      "resource": "assistant",
+      "dto": "CreateAssistantDTO",
+      "endpoint": "POST /assistant",
+      "oldId": "c0bc54fd-a9fb-4970-822b-b471c198e43b",
+      "name": "NPC Discovery Call Follow Up Test 2",
+      "optional": false,
+      "refs": {
+        "/model/knowledgeBase/fileIds/0": {
+          "resource": "file",
+          "oldId": "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+        },
+        "/model/toolIds/0": {
+          "resource": "tool",
+          "oldId": "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+        },
+        "/model/toolIds/1": {
+          "resource": "tool",
+          "oldId": "5934c762-0223-4112-bfb7-88931da17652"
+        }
+      },
+      "env": [],
+      "warnings": [
+        "dangling toolId dropped (deleted in source org): 4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+        "dangling toolId dropped (deleted in source org): 199be122-72f1-4bbb-ada3-aedba74b59b1",
+        "dangling toolId dropped (deleted in source org): 4aa1a306-b057-4b0a-bcc0-f38749637ee0"
+      ]
+    },
+    {
+      "file": "payloads/04-assistant/npc-discovery-call-follow-up-test.29d6c50e-36e4-406c-b2ea-93f7fc2997a4.json",
+      "phase": "04-assistant",
+      "resource": "assistant",
+      "dto": "CreateAssistantDTO",
+      "endpoint": "POST /assistant",
+      "oldId": "29d6c50e-36e4-406c-b2ea-93f7fc2997a4",
+      "name": "NPC Discovery Call Follow Up Test",
+      "optional": false,
+      "refs": {
+        "/model/knowledgeBase/fileIds/0": {
+          "resource": "file",
+          "oldId": "9fff4149-3aec-48f0-9378-d56760390216"
+        },
+        "/model/toolIds/0": {
+          "resource": "tool",
+          "oldId": "5934c762-0223-4112-bfb7-88931da17652"
+        },
+        "/model/toolIds/1": {
+          "resource": "tool",
+          "oldId": "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+        },
+        "/model/toolIds/2": {
+          "resource": "tool",
+          "oldId": "5c0c334c-6bbf-4399-b748-a3c50207e754"
+        },
+        "/model/toolIds/3": {
+          "resource": "tool",
+          "oldId": "f195a817-8346-475d-ad0e-8033f1d2e283"
+        },
+        "/model/toolIds/4": {
+          "resource": "tool",
+          "oldId": "6587bc7d-7382-4e33-a38d-95f5740df52a"
+        },
+        "/model/toolIds/5": {
+          "resource": "tool",
+          "oldId": "3e116e74-0dda-4277-ae38-468bdd3464e6"
+        }
+      },
+      "env": [
+        "VAPI_WEBHOOK_SECRET"
+      ],
+      "warnings": []
+    },
+    {
+      "file": "payloads/04-assistant/npc-discovery-call-follow-up.38e71746-75f8-4a7f-b527-f0b7528d76f0.json",
+      "phase": "04-assistant",
+      "resource": "assistant",
+      "dto": "CreateAssistantDTO",
+      "endpoint": "POST /assistant",
+      "oldId": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+      "name": "NPC Discovery Call Follow Up",
+      "optional": false,
+      "refs": {
+        "/artifactPlan/structuredOutputIds/0": {
+          "resource": "structured-output",
+          "oldId": "94648165-f08f-4d2e-ad13-91ec7f41d443"
+        },
+        "/artifactPlan/structuredOutputIds/1": {
+          "resource": "structured-output",
+          "oldId": "00d9c6e4-6383-4b59-97be-b7dba41f0ace"
+        },
+        "/model/toolIds/0": {
+          "resource": "tool",
+          "oldId": "5934c762-0223-4112-bfb7-88931da17652"
+        }
+      },
+      "env": [
+        "VAPI_WEBHOOK_SECRET"
+      ],
+      "warnings": [
+        "repaired `server` - see REPAIRS in build_payloads.py for the reason",
+        "dangling toolId dropped (deleted in source org): 4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+        "dangling toolId dropped (deleted in source org): 4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+        "dangling toolId dropped (deleted in source org): 199be122-72f1-4bbb-ada3-aedba74b59b1",
+        "contested field kept (absent from spec, may be dropped by POST): backgroundDenoisingEnabled",
+        "contested field kept (absent from spec, may be dropped by POST): endCallFunctionEnabled",
+        "contested field kept (absent from spec, may be dropped by POST): hipaaEnabled"
+      ]
+    },
+    {
+      "file": "payloads/04-assistant/npc-discovery-call-no-show-follow-up.e1b76e7c-b9a2-461b-a951-e6b253a4d0d7.json",
+      "phase": "04-assistant",
+      "resource": "assistant",
+      "dto": "CreateAssistantDTO",
+      "endpoint": "POST /assistant",
+      "oldId": "e1b76e7c-b9a2-461b-a951-e6b253a4d0d7",
+      "name": "NPC Discovery Call No Show Follow Up",
+      "optional": false,
+      "refs": {
+        "/artifactPlan/structuredOutputIds/0": {
+          "resource": "structured-output",
+          "oldId": "e783bfd6-fd93-4462-b5a4-abd97aac60e1"
+        },
+        "/artifactPlan/structuredOutputIds/1": {
+          "resource": "structured-output",
+          "oldId": "94648165-f08f-4d2e-ad13-91ec7f41d443"
+        },
+        "/model/knowledgeBase/fileIds/0": {
+          "resource": "file",
+          "oldId": "9fff4149-3aec-48f0-9378-d56760390216"
+        },
+        "/model/toolIds/0": {
+          "resource": "tool",
+          "oldId": "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+        },
+        "/model/toolIds/1": {
+          "resource": "tool",
+          "oldId": "5c0c334c-6bbf-4399-b748-a3c50207e754"
+        },
+        "/model/toolIds/2": {
+          "resource": "tool",
+          "oldId": "f195a817-8346-475d-ad0e-8033f1d2e283"
+        },
+        "/model/toolIds/3": {
+          "resource": "tool",
+          "oldId": "6587bc7d-7382-4e33-a38d-95f5740df52a"
+        },
+        "/model/toolIds/4": {
+          "resource": "tool",
+          "oldId": "3e116e74-0dda-4277-ae38-468bdd3464e6"
+        }
+      },
+      "env": [
+        "VAPI_WEBHOOK_SECRET"
+      ],
+      "warnings": []
+    },
+    {
+      "file": "payloads/04-assistant/npc-ifc-follow-up.a4ddecba-df99-49e4-8e47-4c4b57f4a991.json",
+      "phase": "04-assistant",
+      "resource": "assistant",
+      "dto": "CreateAssistantDTO",
+      "endpoint": "POST /assistant",
+      "oldId": "a4ddecba-df99-49e4-8e47-4c4b57f4a991",
+      "name": "NPC IFC Follow Up",
+      "optional": false,
+      "refs": {
+        "/model/toolIds/0": {
+          "resource": "tool",
+          "oldId": "006be564-14c2-4db9-9c90-6821d363b123"
+        },
+        "/model/toolIds/1": {
+          "resource": "tool",
+          "oldId": "ba13974d-8005-487d-81b9-4dc569a9f6d4"
+        },
+        "/model/toolIds/2": {
+          "resource": "tool",
+          "oldId": "5c0c334c-6bbf-4399-b748-a3c50207e754"
+        },
+        "/model/toolIds/3": {
+          "resource": "tool",
+          "oldId": "f195a817-8346-475d-ad0e-8033f1d2e283"
+        },
+        "/model/toolIds/4": {
+          "resource": "tool",
+          "oldId": "6587bc7d-7382-4e33-a38d-95f5740df52a"
+        },
+        "/model/toolIds/5": {
+          "resource": "tool",
+          "oldId": "3e116e74-0dda-4277-ae38-468bdd3464e6"
+        }
+      },
+      "env": [
+        "VAPI_WEBHOOK_SECRET"
+      ],
+      "warnings": []
+    },
+    {
+      "file": "payloads/04-assistant/npc-ifc-inbound.7770a48b-68d1-48df-a03a-9cc5b9e91ad8.json",
+      "phase": "04-assistant",
+      "resource": "assistant",
+      "dto": "CreateAssistantDTO",
+      "endpoint": "POST /assistant",
+      "oldId": "7770a48b-68d1-48df-a03a-9cc5b9e91ad8",
+      "name": "NPC IFC Inbound",
+      "optional": false,
+      "refs": {
+        "/model/knowledgeBase/fileIds/0": {
+          "resource": "file",
+          "oldId": "9fff4149-3aec-48f0-9378-d56760390216"
+        },
+        "/model/toolIds/0": {
+          "resource": "tool",
+          "oldId": "006be564-14c2-4db9-9c90-6821d363b123"
+        },
+        "/model/toolIds/1": {
+          "resource": "tool",
+          "oldId": "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+        },
+        "/model/toolIds/2": {
+          "resource": "tool",
+          "oldId": "3e116e74-0dda-4277-ae38-468bdd3464e6"
+        },
+        "/model/toolIds/3": {
+          "resource": "tool",
+          "oldId": "6587bc7d-7382-4e33-a38d-95f5740df52a"
+        },
+        "/model/toolIds/4": {
+          "resource": "tool",
+          "oldId": "5c0c334c-6bbf-4399-b748-a3c50207e754"
+        },
+        "/model/toolIds/5": {
+          "resource": "tool",
+          "oldId": "f195a817-8346-475d-ad0e-8033f1d2e283"
+        }
+      },
+      "env": [
+        "VAPI_WEBHOOK_SECRET"
+      ],
+      "warnings": []
+    },
+    {
+      "file": "payloads/04-assistant/npc-ifc-no-show-follow-up.4274ab0d-f8e6-4ab9-9b47-1f12255e73c0.json",
+      "phase": "04-assistant",
+      "resource": "assistant",
+      "dto": "CreateAssistantDTO",
+      "endpoint": "POST /assistant",
+      "oldId": "4274ab0d-f8e6-4ab9-9b47-1f12255e73c0",
+      "name": "NPC IFC No Show Follow Up",
+      "optional": false,
+      "refs": {
+        "/model/toolIds/0": {
+          "resource": "tool",
+          "oldId": "5c0c334c-6bbf-4399-b748-a3c50207e754"
+        },
+        "/model/toolIds/1": {
+          "resource": "tool",
+          "oldId": "f195a817-8346-475d-ad0e-8033f1d2e283"
+        },
+        "/model/toolIds/2": {
+          "resource": "tool",
+          "oldId": "6587bc7d-7382-4e33-a38d-95f5740df52a"
+        },
+        "/model/toolIds/3": {
+          "resource": "tool",
+          "oldId": "3e116e74-0dda-4277-ae38-468bdd3464e6"
+        },
+        "/model/toolIds/4": {
+          "resource": "tool",
+          "oldId": "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+        }
+      },
+      "env": [
+        "VAPI_WEBHOOK_SECRET"
+      ],
+      "warnings": []
+    },
+    {
+      "file": "payloads/04-assistant/npc-inbound-agent.bfff143e-03f7-4bc2-afbb-5734987f672f.json",
+      "phase": "04-assistant",
+      "resource": "assistant",
+      "dto": "CreateAssistantDTO",
+      "endpoint": "POST /assistant",
+      "oldId": "bfff143e-03f7-4bc2-afbb-5734987f672f",
+      "name": "NPC Inbound Agent",
+      "optional": false,
+      "refs": {
+        "/model/knowledgeBase/fileIds/0": {
+          "resource": "file",
+          "oldId": "9fff4149-3aec-48f0-9378-d56760390216"
+        },
+        "/model/toolIds/0": {
+          "resource": "tool",
+          "oldId": "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+        },
+        "/model/toolIds/1": {
+          "resource": "tool",
+          "oldId": "3e116e74-0dda-4277-ae38-468bdd3464e6"
+        },
+        "/model/toolIds/2": {
+          "resource": "tool",
+          "oldId": "9789b720-ee13-4389-ba33-678883eaa891"
+        },
+        "/model/toolIds/3": {
+          "resource": "tool",
+          "oldId": "0bd36de8-6d3a-43e5-9c3f-25ca6de97662"
+        },
+        "/model/toolIds/4": {
+          "resource": "tool",
+          "oldId": "5c0c334c-6bbf-4399-b748-a3c50207e754"
+        }
+      },
+      "env": [
+        "VAPI_WEBHOOK_SECRET"
+      ],
+      "warnings": []
+    },
+    {
+      "file": "payloads/04-assistant/npc-opt-in-follow-up-inbound.739b47bf-9adb-4ac6-aca4-976d815f673e.json",
+      "phase": "04-assistant",
+      "resource": "assistant",
+      "dto": "CreateAssistantDTO",
+      "endpoint": "POST /assistant",
+      "oldId": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+      "name": "NPC Opt In Follow Up Inbound",
+      "optional": false,
+      "refs": {
+        "/artifactPlan/scorecardIds/0": {
+          "resource": "scorecard",
+          "oldId": "cf81945a-c941-46a2-a538-2987abffe521"
+        },
+        "/model/knowledgeBase/fileIds/0": {
+          "resource": "file",
+          "oldId": "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+        },
+        "/model/toolIds/0": {
+          "resource": "tool",
+          "oldId": "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+        },
+        "/model/toolIds/1": {
+          "resource": "tool",
+          "oldId": "3e116e74-0dda-4277-ae38-468bdd3464e6"
+        },
+        "/model/toolIds/2": {
+          "resource": "tool",
+          "oldId": "6587bc7d-7382-4e33-a38d-95f5740df52a"
+        },
+        "/model/toolIds/3": {
+          "resource": "tool",
+          "oldId": "f195a817-8346-475d-ad0e-8033f1d2e283"
+        },
+        "/model/toolIds/4": {
+          "resource": "tool",
+          "oldId": "5c0c334c-6bbf-4399-b748-a3c50207e754"
+        }
+      },
+      "env": [
+        "VAPI_WEBHOOK_SECRET"
+      ],
+      "warnings": []
+    },
+    {
+      "file": "payloads/04-assistant/npc-opt-in-follow-up.b3acdd28-558a-4893-9cfe-c3abacdbe6bd.json",
+      "phase": "04-assistant",
+      "resource": "assistant",
+      "dto": "CreateAssistantDTO",
+      "endpoint": "POST /assistant",
+      "oldId": "b3acdd28-558a-4893-9cfe-c3abacdbe6bd",
+      "name": "NPC Opt In Follow Up",
+      "optional": false,
+      "refs": {
+        "/artifactPlan/scorecardIds/0": {
+          "resource": "scorecard",
+          "oldId": "cf81945a-c941-46a2-a538-2987abffe521"
+        },
+        "/model/knowledgeBase/fileIds/0": {
+          "resource": "file",
+          "oldId": "9fff4149-3aec-48f0-9378-d56760390216"
+        },
+        "/model/toolIds/0": {
+          "resource": "tool",
+          "oldId": "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+        },
+        "/model/toolIds/1": {
+          "resource": "tool",
+          "oldId": "5c0c334c-6bbf-4399-b748-a3c50207e754"
+        },
+        "/model/toolIds/2": {
+          "resource": "tool",
+          "oldId": "f195a817-8346-475d-ad0e-8033f1d2e283"
+        },
+        "/model/toolIds/3": {
+          "resource": "tool",
+          "oldId": "6587bc7d-7382-4e33-a38d-95f5740df52a"
+        },
+        "/model/toolIds/4": {
+          "resource": "tool",
+          "oldId": "3e116e74-0dda-4277-ae38-468bdd3464e6"
+        }
+      },
+      "env": [
+        "VAPI_WEBHOOK_SECRET"
+      ],
+      "warnings": []
+    },
+    {
+      "file": "payloads/04-assistant/npc-quiz-follow-up.72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f.json",
+      "phase": "04-assistant",
+      "resource": "assistant",
+      "dto": "CreateAssistantDTO",
+      "endpoint": "POST /assistant",
+      "oldId": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+      "name": "NPC Quiz Follow Up",
+      "optional": false,
+      "refs": {
+        "/artifactPlan/structuredOutputIds/0": {
+          "resource": "structured-output",
+          "oldId": "e783bfd6-fd93-4462-b5a4-abd97aac60e1"
+        },
+        "/artifactPlan/structuredOutputIds/1": {
+          "resource": "structured-output",
+          "oldId": "94648165-f08f-4d2e-ad13-91ec7f41d443"
+        },
+        "/artifactPlan/structuredOutputIds/2": {
+          "resource": "structured-output",
+          "oldId": "a5b2f26a-dcfc-4e2f-82d9-87bcaa572782"
+        },
+        "/model/knowledgeBase/fileIds/0": {
+          "resource": "file",
+          "oldId": "9fff4149-3aec-48f0-9378-d56760390216"
+        },
+        "/model/toolIds/0": {
+          "resource": "tool",
+          "oldId": "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+        },
+        "/model/toolIds/1": {
+          "resource": "tool",
+          "oldId": "5c0c334c-6bbf-4399-b748-a3c50207e754"
+        },
+        "/model/toolIds/2": {
+          "resource": "tool",
+          "oldId": "f195a817-8346-475d-ad0e-8033f1d2e283"
+        },
+        "/model/toolIds/3": {
+          "resource": "tool",
+          "oldId": "6587bc7d-7382-4e33-a38d-95f5740df52a"
+        },
+        "/model/toolIds/4": {
+          "resource": "tool",
+          "oldId": "3e116e74-0dda-4277-ae38-468bdd3464e6"
+        }
+      },
+      "env": [
+        "VAPI_WEBHOOK_SECRET"
+      ],
+      "warnings": []
+    },
+    {
+      "file": "payloads/04-assistant/npc-strategy-session-inbound.5ae449c8-1999-4f44-9115-9d63bf7444ae.json",
+      "phase": "04-assistant",
+      "resource": "assistant",
+      "dto": "CreateAssistantDTO",
+      "endpoint": "POST /assistant",
+      "oldId": "5ae449c8-1999-4f44-9115-9d63bf7444ae",
+      "name": "NPC Strategy Session Inbound",
+      "optional": false,
+      "refs": {
+        "/model/knowledgeBase/fileIds/0": {
+          "resource": "file",
+          "oldId": "9fff4149-3aec-48f0-9378-d56760390216"
+        },
+        "/model/toolIds/0": {
+          "resource": "tool",
+          "oldId": "87fb4ce8-b696-4925-bfbf-8bd9678d4e36"
+        },
+        "/model/toolIds/1": {
+          "resource": "tool",
+          "oldId": "a34b05ef-5218-4771-bf2b-4b171ad8f9c9"
+        },
+        "/model/toolIds/2": {
+          "resource": "tool",
+          "oldId": "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+        },
+        "/model/toolIds/3": {
+          "resource": "tool",
+          "oldId": "3e116e74-0dda-4277-ae38-468bdd3464e6"
+        },
+        "/model/toolIds/4": {
+          "resource": "tool",
+          "oldId": "6587bc7d-7382-4e33-a38d-95f5740df52a"
+        },
+        "/model/toolIds/5": {
+          "resource": "tool",
+          "oldId": "f195a817-8346-475d-ad0e-8033f1d2e283"
+        },
+        "/model/toolIds/6": {
+          "resource": "tool",
+          "oldId": "5c0c334c-6bbf-4399-b748-a3c50207e754"
+        }
+      },
+      "env": [
+        "VAPI_WEBHOOK_SECRET"
+      ],
+      "warnings": []
+    },
+    {
+      "file": "payloads/04-assistant/npc-strategy-session-phone-follow-up.dcc0d0c4-1e01-4455-b895-7b268b1b96f0.json",
+      "phase": "04-assistant",
+      "resource": "assistant",
+      "dto": "CreateAssistantDTO",
+      "endpoint": "POST /assistant",
+      "oldId": "dcc0d0c4-1e01-4455-b895-7b268b1b96f0",
+      "name": "NPC Strategy Session (Phone) Follow Up",
+      "optional": false,
+      "refs": {
+        "/model/knowledgeBase/fileIds/0": {
+          "resource": "file",
+          "oldId": "9fff4149-3aec-48f0-9378-d56760390216"
+        },
+        "/model/toolIds/0": {
+          "resource": "tool",
+          "oldId": "87fb4ce8-b696-4925-bfbf-8bd9678d4e36"
+        },
+        "/model/toolIds/1": {
+          "resource": "tool",
+          "oldId": "a34b05ef-5218-4771-bf2b-4b171ad8f9c9"
+        },
+        "/model/toolIds/2": {
+          "resource": "tool",
+          "oldId": "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+        },
+        "/model/toolIds/3": {
+          "resource": "tool",
+          "oldId": "5c0c334c-6bbf-4399-b748-a3c50207e754"
+        },
+        "/model/toolIds/4": {
+          "resource": "tool",
+          "oldId": "f195a817-8346-475d-ad0e-8033f1d2e283"
+        },
+        "/model/toolIds/5": {
+          "resource": "tool",
+          "oldId": "6587bc7d-7382-4e33-a38d-95f5740df52a"
+        },
+        "/model/toolIds/6": {
+          "resource": "tool",
+          "oldId": "3e116e74-0dda-4277-ae38-468bdd3464e6"
+        }
+      },
+      "env": [
+        "VAPI_WEBHOOK_SECRET"
+      ],
+      "warnings": [
+        "contested field kept (absent from spec, may be dropped by POST): backgroundDenoisingEnabled"
+      ]
+    },
+    {
+      "file": "payloads/04-assistant/npc-strategy-session-phone-no-show.1f91270c-67e0-453b-83f4-6cf4d44abea1.json",
+      "phase": "04-assistant",
+      "resource": "assistant",
+      "dto": "CreateAssistantDTO",
+      "endpoint": "POST /assistant",
+      "oldId": "1f91270c-67e0-453b-83f4-6cf4d44abea1",
+      "name": "NPC Strategy Session (Phone) No Show",
+      "optional": false,
+      "refs": {
+        "/model/toolIds/0": {
+          "resource": "tool",
+          "oldId": "5c0c334c-6bbf-4399-b748-a3c50207e754"
+        },
+        "/model/toolIds/1": {
+          "resource": "tool",
+          "oldId": "f195a817-8346-475d-ad0e-8033f1d2e283"
+        },
+        "/model/toolIds/2": {
+          "resource": "tool",
+          "oldId": "6587bc7d-7382-4e33-a38d-95f5740df52a"
+        },
+        "/model/toolIds/3": {
+          "resource": "tool",
+          "oldId": "3e116e74-0dda-4277-ae38-468bdd3464e6"
+        },
+        "/model/toolIds/4": {
+          "resource": "tool",
+          "oldId": "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+        }
+      },
+      "env": [
+        "VAPI_WEBHOOK_SECRET"
+      ],
+      "warnings": []
+    },
+    {
+      "file": "payloads/05-squad/npc-sales-force.a9656ea1-3575-4ac6-b985-fd138be06cc5.json",
+      "phase": "05-squad",
+      "resource": "squad",
+      "dto": "CreateSquadDTO",
+      "endpoint": "POST /squad",
+      "oldId": "a9656ea1-3575-4ac6-b985-fd138be06cc5",
+      "name": "NPC Sales Force",
+      "optional": false,
+      "refs": {
+        "/members/0/assistantId": {
+          "resource": "assistant",
+          "oldId": "bfff143e-03f7-4bc2-afbb-5734987f672f"
+        },
+        "/members/0/assistantOverrides/tools:append/0/destinations/0/assistantId": {
+          "resource": "assistant",
+          "oldId": "739b47bf-9adb-4ac6-aca4-976d815f673e"
+        },
+        "/members/0/assistantOverrides/tools:append/0/destinations/1/assistantId": {
+          "resource": "assistant",
+          "oldId": "5ae449c8-1999-4f44-9115-9d63bf7444ae"
+        },
+        "/members/0/assistantOverrides/tools:append/0/destinations/2/assistantId": {
+          "resource": "assistant",
+          "oldId": "7770a48b-68d1-48df-a03a-9cc5b9e91ad8"
+        },
+        "/members/1/assistantId": {
+          "resource": "assistant",
+          "oldId": "739b47bf-9adb-4ac6-aca4-976d815f673e"
+        },
+        "/members/2/assistantId": {
+          "resource": "assistant",
+          "oldId": "5ae449c8-1999-4f44-9115-9d63bf7444ae"
+        },
+        "/members/3/assistantId": {
+          "resource": "assistant",
+          "oldId": "7770a48b-68d1-48df-a03a-9cc5b9e91ad8"
+        }
+      },
+      "env": [],
+      "warnings": []
+    },
+    {
+      "file": "payloads/06-workflow/npc-follow-up.81f2958a-90cb-4ab0-b76a-1e0940babe42.json",
+      "phase": "06-workflow",
+      "resource": "workflow",
+      "dto": "CreateWorkflowDTO",
+      "endpoint": "POST /workflow",
+      "oldId": "81f2958a-90cb-4ab0-b76a-1e0940babe42",
+      "name": "NPC Follow Up",
+      "optional": false,
+      "refs": {},
+      "env": [],
+      "warnings": []
+    },
+    {
+      "file": "payloads/07-phone-number/naidu-property-consulting-services.de3918be-63a3-455c-bab7-bbd4872a2ea6.json",
+      "phase": "07-phone-number",
+      "resource": "phone-number",
+      "dto": "CreateTwilioPhoneNumberDTO",
+      "endpoint": "POST /phone-number",
+      "oldId": "de3918be-63a3-455c-bab7-bbd4872a2ea6",
+      "name": "Naidu Property Consulting Services",
+      "optional": false,
+      "refs": {},
+      "env": [
+        "TWILIO_ACCOUNT_SID"
+      ],
+      "warnings": []
+    },
+    {
+      "file": "payloads/07-phone-number/npc-services.61e6c684-6f5a-4567-aeeb-50c1552fb223.json",
+      "phase": "07-phone-number",
+      "resource": "phone-number",
+      "dto": "CreateVapiPhoneNumberDTO",
+      "endpoint": "POST /phone-number",
+      "oldId": "61e6c684-6f5a-4567-aeeb-50c1552fb223",
+      "name": "NPC Services",
+      "optional": false,
+      "refs": {
+        "/assistantId": {
+          "resource": "assistant",
+          "oldId": "38e71746-75f8-4a7f-b527-f0b7528d76f0"
+        }
+      },
+      "env": [
+        "VAPI_SIP_URI_ASSISTANT"
+      ],
+      "warnings": [
+        "sipUri replaced by VAPI_SIP_URI_ASSISTANT: choose an unguessable username; the old URI cannot be reused while the source org holds it"
+      ]
+    },
+    {
+      "file": "payloads/07-phone-number/npc-services.ae35b1f3-25c4-4620-ac13-525a58da96c9.json",
+      "phase": "07-phone-number",
+      "resource": "phone-number",
+      "dto": "CreateVapiPhoneNumberDTO",
+      "endpoint": "POST /phone-number",
+      "oldId": "ae35b1f3-25c4-4620-ac13-525a58da96c9",
+      "name": "NPC Services",
+      "optional": false,
+      "refs": {
+        "/squadId": {
+          "resource": "squad",
+          "oldId": "a9656ea1-3575-4ac6-b985-fd138be06cc5"
+        }
+      },
+      "env": [
+        "VAPI_SIP_URI_SQUAD",
+        "VAPI_WEBHOOK_SECRET"
+      ],
+      "warnings": [
+        "sipUri replaced by VAPI_SIP_URI_SQUAD: choose an unguessable username; the old URI cannot be reused while the source org holds it"
+      ]
+    },
+    {
+      "file": "payloads/07-phone-number/npc-services.f53c1661-29e9-4d8c-b595-b9da28cb46dc.json",
+      "phase": "07-phone-number",
+      "resource": "phone-number",
+      "dto": "CreateTwilioPhoneNumberDTO",
+      "endpoint": "POST /phone-number",
+      "oldId": "f53c1661-29e9-4d8c-b595-b9da28cb46dc",
+      "name": "NPC Services",
+      "optional": false,
+      "refs": {},
+      "env": [
+        "TWILIO_ACCOUNT_SID"
+      ],
+      "warnings": []
+    },
+    {
+      "file": "payloads/08-insight/insight.call-ended-error-count.7e64bbaf-d6be-4064-89d0-781af0cf85dd.json",
+      "phase": "08-insight",
+      "resource": "insight",
+      "dto": "CreateTextInsightFromCallTableDTO",
+      "endpoint": "POST /reporting/insight",
+      "oldId": "7e64bbaf-d6be-4064-89d0-781af0cf85dd",
+      "name": "Call Ended (Error) Count",
+      "optional": true,
+      "refs": {},
+      "env": [],
+      "warnings": []
+    },
+    {
+      "file": "payloads/08-insight/insight.model-request-failed-count.ae2cd7ed-b911-43cc-87c1-bcd8b3ca33b6.json",
+      "phase": "08-insight",
+      "resource": "insight",
+      "dto": "CreateTextInsightFromCallTableDTO",
+      "endpoint": "POST /reporting/insight",
+      "oldId": "ae2cd7ed-b911-43cc-87c1-bcd8b3ca33b6",
+      "name": "Model Request Failed Count",
+      "optional": true,
+      "refs": {},
+      "env": [],
+      "warnings": []
+    },
+    {
+      "file": "payloads/08-insight/insight.tool-failed-count.f9126d1f-a913-4481-8f3a-a051324fb476.json",
+      "phase": "08-insight",
+      "resource": "insight",
+      "dto": "CreateTextInsightFromCallTableDTO",
+      "endpoint": "POST /reporting/insight",
+      "oldId": "f9126d1f-a913-4481-8f3a-a051324fb476",
+      "name": "Tool Failed Count",
+      "optional": true,
+      "refs": {},
+      "env": [],
+      "warnings": []
+    },
+    {
+      "file": "payloads/08-insight/insight.transcriber-request-failed-count.000f73e6-58c0-4204-a7ab-b15b7159bf1c.json",
+      "phase": "08-insight",
+      "resource": "insight",
+      "dto": "CreateTextInsightFromCallTableDTO",
+      "endpoint": "POST /reporting/insight",
+      "oldId": "000f73e6-58c0-4204-a7ab-b15b7159bf1c",
+      "name": "Transcriber Request Failed Count",
+      "optional": true,
+      "refs": {},
+      "env": [],
+      "warnings": []
+    },
+    {
+      "file": "payloads/08-insight/insight.transfer-failed-count.88789258-e2d4-44a4-96a0-468ee2b66b8a.json",
+      "phase": "08-insight",
+      "resource": "insight",
+      "dto": "CreateTextInsightFromCallTableDTO",
+      "endpoint": "POST /reporting/insight",
+      "oldId": "88789258-e2d4-44a4-96a0-468ee2b66b8a",
+      "name": "Transfer Failed Count",
+      "optional": true,
+      "refs": {},
+      "env": [],
+      "warnings": []
+    },
+    {
+      "file": "payloads/08-insight/insight.voice-request-failed-count.a454b1b1-83db-42be-9ca3-e08a0096ee4a.json",
+      "phase": "08-insight",
+      "resource": "insight",
+      "dto": "CreateTextInsightFromCallTableDTO",
+      "endpoint": "POST /reporting/insight",
+      "oldId": "a454b1b1-83db-42be-9ca3-e08a0096ee4a",
+      "name": "Voice Request Failed Count",
+      "optional": true,
+      "refs": {},
+      "env": [],
+      "warnings": []
+    },
+    {
+      "file": "payloads/09-board/board.default-dashboard.dbd8261e-ca8a-479b-9d8b-c32bfaa92872.json",
+      "phase": "09-board",
+      "resource": "board",
+      "dto": "CreateBoardDTO",
+      "endpoint": "POST /reporting/board",
+      "oldId": "dbd8261e-ca8a-479b-9d8b-c32bfaa92872",
+      "name": "Default Dashboard",
+      "optional": true,
+      "refs": {},
+      "env": [],
+      "warnings": []
+    }
+  ],
+  "summary": {
+    "payloads": 49,
+    "optional": 8,
+    "envVars": [
+      "TWILIO_ACCOUNT_SID",
+      "VAPI_SIP_URI_ASSISTANT",
+      "VAPI_SIP_URI_SQUAD",
+      "VAPI_WEBHOOK_SECRET"
+    ],
+    "crossReferences": 105,
+    "warnings": 22,
+    "legacyMakeUrls": 11,
+    "sourceOrgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd"
+  }
+}

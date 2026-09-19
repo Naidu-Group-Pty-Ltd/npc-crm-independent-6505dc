@@ -1,0 +1,10 @@
+{
+  "assistantId": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+  "fallbackDestination": {
+    "number": "+60182548567",
+    "type": "number"
+  },
+  "name": "NPC Services",
+  "provider": "vapi",
+  "sipUri": "{{REDACTED:VAPI_SIP_URI_ASSISTANT}}"
+}

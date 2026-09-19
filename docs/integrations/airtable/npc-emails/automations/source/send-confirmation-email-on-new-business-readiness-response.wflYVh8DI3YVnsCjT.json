@@ -1,0 +1,102 @@
+{
+  "id": "wflYVh8DI3YVnsCjT",
+  "name": "Send Confirmation Email on New Business Readiness Response",
+  "description": null,
+  "deploymentStatus": "deployed",
+  "deploymentError": null,
+  "trigger": {
+    "type": "recordCreated",
+    "inputs": {
+      "tableId": "tblXQx00T3CKEVnvV"
+    }
+  },
+  "nodes": [
+    {
+      "key": "wacAxR2BPuOFW5qqg",
+      "type": "findRecords",
+      "inputs": {
+        "limit": 1,
+        "tableId": "tblHzGiB591W3GpoZ",
+        "queryType": "filtersObj",
+        "filtersObj": {
+          "obj": {
+            "operator": "and",
+            "operands": {
+              "tuple": [
+                {
+                  "obj": {
+                    "operator": "hasAnyOf",
+                    "operands": {
+                      "tuple": [
+                        "fld6o2raVanGj6rp5",
+                        [
+                          {
+                            "$ref": "trigger",
+                            "path": [
+                              "id"
+                            ]
+                          }
+                        ]
+                      ]
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "key": "wacEm1dVhPHCFb45T",
+      "type": "sendEmail",
+      "inputs": {
+        "to": [
+          {
+            "template": [
+              {
+                "fn": "map",
+                "args": [
+                  {
+                    "fn": "map",
+                    "args": [
+                      {
+                        "$ref": "wacAxR2BPuOFW5qqg",
+                        "path": [
+                          "records"
+                        ]
+                      },
+                      {
+                        "fn": "propertyGetter",
+                        "args": [
+                          "cellValuesByFieldId"
+                        ]
+                      }
+                    ]
+                  },
+                  {
+                    "fn": "propertyGetter",
+                    "args": [
+                      "fldvcq6GjkuBTREON"
+                    ]
+                  }
+                ]
+              }
+            ]
+          }
+        ],
+        "subject": {
+          "template": [
+            "Your Aurixa Readiness Profile Has Been Received"
+          ]
+        },
+        "message": {
+          "template": [
+            "Thank you for completing the Business Readiness Questionnaire. Our team will review your information against your organisation's operational, technical and implementation requirements. We aim to complete the initial review within two business days and will contact you at this email address with next steps."
+          ]
+        }
+      }
+    }
+  ],
+  "configurationStatus": "valid"
+}

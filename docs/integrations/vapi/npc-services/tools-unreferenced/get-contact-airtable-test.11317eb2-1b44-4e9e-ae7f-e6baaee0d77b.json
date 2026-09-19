@@ -1,0 +1,46 @@
+{
+  "async": true,
+  "createdAt": "2025-11-12T07:44:07.443Z",
+  "function": {
+    "description": "Extract lead data such as full name, phone number, discovery call time",
+    "name": "get_contact_airtable_test",
+    "parameters": {
+      "properties": {
+        "discovery_call_time": {
+          "default": "",
+          "description": "",
+          "type": "string"
+        },
+        "full_name": {
+          "default": "",
+          "description": "Lead full name",
+          "type": "string"
+        },
+        "phone_number": {
+          "default": "",
+          "description": "",
+          "type": "string"
+        }
+      },
+      "required": [],
+      "type": "object"
+    }
+  },
+  "id": "11317eb2-1b44-4e9e-ae7f-e6baaee0d77b",
+  "messages": [
+    {
+      "blocking": false,
+      "type": "request-start"
+    }
+  ],
+  "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+  "server": {
+    "headers": {
+      "Authorization": "{{REDACTED:AIRTABLE_PAT}}",
+      "Content-Type": "application/json"
+    },
+    "url": "https://airtable.com/apptyShYE0yzL4IGB/tblH9cW4EhVs6D5H1/Lead_Data_Test"
+  },
+  "type": "function",
+  "updatedAt": "2025-11-14T06:04:01.328Z"
+}

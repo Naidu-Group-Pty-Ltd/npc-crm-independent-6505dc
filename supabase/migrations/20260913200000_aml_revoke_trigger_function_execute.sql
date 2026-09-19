@@ -1,0 +1,34 @@
+-- Revoke EXECUTE on aml.tg_emit_verification_requested() from PUBLIC.
+--
+-- WP-17's `secdef_execute` rule reads CREATE FUNCTION as granting EXECUTE to
+-- PUBLIC, which `anon` — the publishable key in the browser bundle — inherits.
+-- The Standalone capture migration (20260911000000) created this function
+-- SECURITY DEFINER and never revoked, so the rule fired.
+--
+-- WHAT THE DATABASE ACTUALLY HAD, measured before this ran:
+--
+--     proacl = postgres=X/postgres | service_role=X/postgres
+--
+-- No PUBLIC, no anon, no authenticated. The rule's premise is a Postgres
+-- default, and the `aml` schema overrides it: ALTER DEFAULT PRIVILEGES there
+-- grants new functions to `service_role` and nothing else, where the `public`
+-- schema's default grants anon and authenticated. So the exposure the gate
+-- describes was real for `public` and never existed for `aml`. This statement
+-- is therefore a no-op that makes the intent explicit rather than a fix for a
+-- live hole — do not cite it as evidence that one existed.
+--
+-- It is still worth stating. Default privileges are a property of the schema at
+-- CREATE time, not of the function: whoever changes them next silently changes
+-- the posture of every `aml` function that relies on them, and this one no
+-- longer would. Reachability was narrow anyway — the function RETURNS trigger,
+-- so Postgres refuses to call it directly and PostgREST will not expose it,
+-- though a role able to CREATE TRIGGER on its own table could still have
+-- pointed a definer-rights writer at public.integration_outbox.
+--
+-- The existing trigger is unaffected. EXECUTE on a trigger function is checked
+-- when the trigger is CREATEd, not each time it fires, and the owner keeps its
+-- grant — so trg_aml_verification_outbox keeps emitting. Verified after
+-- applying: the ACL is byte-identical and the trigger is still attached.
+
+REVOKE EXECUTE ON FUNCTION aml.tg_emit_verification_requested()
+  FROM PUBLIC, anon, authenticated;

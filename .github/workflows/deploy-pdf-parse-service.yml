@@ -1,0 +1,462 @@
+name: Deploy the PDF-import sidecar
+
+# Ships `pdf-parse-service/` to Cloud Run.
+#
+# This exists because nothing did. `ci.yml` tests three pure modules out of that
+# directory and publishes nothing; `pdf-vnext-j1-container-gate.yml` is a manual
+# runtime gate that builds and throws the image away. There is no `docker push`,
+# no `cloudbuild.yaml` and no `gcloud` anywhere else for this service — the only
+# path to production is a person running the commands in
+# `pdf-parse-service/DEPLOY.md` by hand.
+#
+# So every fix that lives inside the container has been inert in production
+# since it merged: `text_alignment.py`, `source_measure` v2's per-line
+# `x0/x1/baseline`, `font_cmap_repair.py`, and the per-font `ascender`/
+# `descender` that lets the importer place a block by its baseline. Four
+# measured fixes, shipped nowhere.
+#
+# ── Why a push never cuts over traffic ───────────────────────────────────────
+# The sidecar and `pdf-parse-dispatch` share a cache fingerprint. The dispatcher
+# keys stored artifacts on ENGINE_VERSION_FAMILY and LANE_POLICY_VERSION, and a
+# cache hit skips the sidecar completely — so if one side ships without the
+# other, the dispatcher serves artifacts produced under the OLD semantics and
+# reports them as current. Nothing downstream can notice, because nothing
+# downstream runs. `pdf-parse-service/LANE-POLICY.md` G3 is the rule.
+#
+# A push therefore only ever **stages**: it builds, deploys a revision with
+# `--no-traffic`, verifies it on its own tagged URL, and stops. Promoting is a
+# deliberate `workflow_dispatch` with `promote: cutover`, and the human doing it
+# is the one who also ships the dispatcher.
+#
+# ── This workflow changes the image, and nothing else ────────────────────────
+# There are deliberately NO `--set-env-vars` here. `gcloud run deploy
+# --set-env-vars` REPLACES the whole environment, so restating a partial set
+# would wipe `PDF_PARSE_SERVICE_TOKEN`, `SUPABASE_URL` and
+# `SUPABASE_SERVICE_ROLE_KEY` off the service. The sidecar fails closed on the
+# first (503 on every request) and 503s on `callback_upload_not_configured` for
+# the others — which is every job the dispatcher submits. `DEPLOY.md` sets those
+# because it CREATES the service; this workflow only ever replaces its image.
+# The verify job asserts both are still present, so a wipe cannot reach traffic.
+#
+# ── No key exists ────────────────────────────────────────────────────────────
+# Authentication is Workload Identity Federation, reusing the same provider and
+# deploy account as `deploy-weasyprint-service.yml`. `id-token: write` is what
+# mints the OIDC token Google exchanges, and is the only unusual permission.
+#
+# Opt-in by configuration: without the repository variables this reports what it
+# would have done and stops, so adding this file starts nothing and paints
+# nothing red. The one-time Google setup is in `docs/reports/CONTAINER_RELEASE.md`.
+
+on:
+  workflow_dispatch:
+    inputs:
+      promote:
+        description: 'canary = stage with no traffic. cutover = stage, verify, then send traffic.'
+        required: true
+        default: canary
+        type: choice
+        options: [canary, cutover]
+      image_tag:
+        description: 'Image tag. Defaults to the short commit SHA.'
+        required: false
+        type: string
+  push:
+    branches: [main]
+    paths:
+      - 'pdf-parse-service/**'
+      - '.github/workflows/deploy-pdf-parse-service.yml'
+
+permissions:
+  contents: read
+  id-token: write
+
+# Never two releases of one image at once, and never cancel one mid-flight: a
+# half-finished cutover is worse than a late one.
+concurrency:
+  group: deploy-pdf-parse-service
+  cancel-in-progress: false
+
+env:
+  # NOT `GCP_REGION`. The render container runs in australia-southeast1 and this
+  # sidecar runs in asia-southeast1 (`DEPLOY.md` §0). Sharing one variable would
+  # silently deploy one of them into the other's region, creating a second
+  # service rather than updating the first.
+  REGION: ${{ vars.PDF_PARSE_REGION || 'asia-southeast1' }}
+  SERVICE: ${{ vars.PDF_PARSE_SERVICE_NAME || 'pdf-parse-service' }}
+
+jobs:
+  # ── Is this repository configured, and do the two sides agree? ─────────────
+  # The lockstep check runs HERE, before the build, because a repo whose sidecar
+  # and dispatcher disagree must not produce an image at all — the failure it
+  # guards against is a cache that serves stale semantics for ever, and the
+  # cheapest place to stop that is before anything is published.
+  gate:
+    runs-on: ubuntu-latest
+    outputs:
+      ready: ${{ steps.check.outputs.ready }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      # No `npm ci` first: the check has zero dependencies precisely so it can
+      # refuse a build before anything is installed.
+      - name: The sidecar and the dispatcher agree about the engine
+        run: |
+          node scripts/regression/pdf-parse-engine-lockstep.mjs --selftest
+          node scripts/regression/pdf-parse-engine-lockstep.mjs --static
+
+      - id: check
+        env:
+          PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+          PROVIDER: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          DEPLOYER: ${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT }}
+        run: |
+          set -euo pipefail
+          missing=''
+          [ -n "${PROJECT_ID:-}" ] || missing="$missing GCP_PROJECT_ID"
+          [ -n "${PROVIDER:-}" ]   || missing="$missing GCP_WORKLOAD_IDENTITY_PROVIDER"
+          [ -n "${DEPLOYER:-}" ]   || missing="$missing GCP_DEPLOY_SERVICE_ACCOUNT"
+
+          if [ -z "$missing" ]; then
+            echo 'ready=true' >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
+
+          echo 'ready=false' >> "$GITHUB_OUTPUT"
+          {
+            echo '### The PDF-import sidecar was NOT deployed'
+            echo
+            echo 'Federated deploy is not configured, so this run changed nothing.'
+            echo 'The engine-lockstep check above still ran and still applies.'
+            echo
+            echo 'Missing repository variables (Settings → Secrets and variables → Actions → Variables):'
+            echo
+            for v in $missing; do echo "- \`$v\`"; done
+            echo
+            echo 'Optional, with defaults:'
+            echo
+            echo '- `PDF_PARSE_REGION` (default `asia-southeast1` — NOT the render container'"'"'s region)'
+            echo '- `PDF_PARSE_SERVICE_NAME` (default `pdf-parse-service`)'
+            echo '- `PDF_PARSE_IMAGE` (default `gcr.io/$GCP_PROJECT_ID/pdf-parse-service`)'
+            echo
+            echo 'The one-time Google Cloud setup is in `docs/reports/CONTAINER_RELEASE.md`.'
+            echo 'Until then the image ships by hand, using `pdf-parse-service/DEPLOY.md`.'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  # ── Build ──────────────────────────────────────────────────────────────────
+  build:
+    needs: gate
+    if: needs.gate.outputs.ready == 'true'
+    runs-on: ubuntu-latest
+    outputs:
+      image: ${{ steps.image.outputs.ref }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - id: image
+        env:
+          PROJECT_ID: ${{ vars.GCP_PROJECT_ID }}
+          # `gcr.io` is what DEPLOY.md has always used. It is on its way out in
+          # favour of Artifact Registry; set PDF_PARSE_IMAGE to an
+          # `…-docker.pkg.dev/…` path to move, rather than forcing that
+          # migration as a side effect of this workflow.
+          BASE: ${{ vars.PDF_PARSE_IMAGE }}
+          TAG: ${{ inputs.image_tag }}
+        run: |
+          set -euo pipefail
+          base="${BASE:-gcr.io/$PROJECT_ID/pdf-parse-service}"
+          tag="${TAG:-$(git rev-parse --short HEAD)}"
+          echo "ref=${base}:${tag}" >> "$GITHUB_OUTPUT"
+          echo "building ${base}:${tag}"
+
+      - uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT }}
+
+      - uses: google-github-actions/setup-gcloud@v3
+
+      # --timeout is 3600s rather than the render container's 1800s: this image
+      # bakes Docling's layout, table and enrichment models into a layer, which
+      # DEPLOY.md §3 measures at 6–10 minutes on a cold cache before `pip
+      # install` of the runtime has finished.
+      - name: Build on Cloud Build
+        run: |
+          gcloud builds submit \
+            --project "${{ vars.GCP_PROJECT_ID }}" \
+            --tag "${{ steps.image.outputs.ref }}" \
+            --timeout=3600s \
+            ./pdf-parse-service
+
+  # ── Stage a revision that serves nobody ────────────────────────────────────
+  stage:
+    needs: [gate, build]
+    if: needs.gate.outputs.ready == 'true'
+    runs-on: ubuntu-latest
+    outputs:
+      canary: ${{ steps.deploy.outputs.canary }}
+      previous: ${{ steps.previous.outputs.revision }}
+    steps:
+      - uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT }}
+
+      - uses: google-github-actions/setup-gcloud@v3
+
+      # Recorded before anything moves. After a cutover nothing else remembers
+      # which revision was serving, and that is precisely when it is wanted.
+      - id: previous
+        name: Remember the revision currently serving traffic
+        run: |
+          set -euo pipefail
+          rev=$(gcloud run services describe "$SERVICE" \
+                  --project "${{ vars.GCP_PROJECT_ID }}" --region "$REGION" \
+                  --format=json 2>/dev/null \
+                | jq -r '[.status.traffic[]? | select((.percent // 0) > 0)] | sort_by(.percent) | reverse | .[0].revisionName // ""' || true)
+          echo "revision=${rev}" >> "$GITHUB_OUTPUT"
+          echo "currently serving: ${rev:-<none — first deploy>}"
+
+      # Resource flags are restated because each was measured, and because a
+      # service that drifted off them should be corrected by a deploy:
+      #
+      # `--no-cpu-throttling` is NOT optional. `/parse` returns 202 immediately
+      # and runs the whole Docling pipeline in a FastAPI background task. Cloud
+      # Run allocates CPU during request processing, so work continuing after
+      # the response is throttled toward zero until another request wakes the
+      # instance. Without it the production ledger shows two 94-page jobs at
+      # 357s and 46,424s — a 130x spread on identical work.
+      #
+      # `--concurrency 2` with 8Gi: Docling holds its layout and table models in
+      # memory per worker, so concurrency is bounded by RAM rather than CPU.
+      #
+      # `--allow-unauthenticated` is deliberate: the service does its own bearer
+      # check and returns 503 when no token is set, so it fails closed. Cloud
+      # Run IAM in front would be a second credential for the dispatcher to hold.
+      #
+      # Env vars are deliberately absent — see this file's header.
+      - id: deploy
+        name: Deploy with no traffic
+        run: |
+          set -euo pipefail
+          tag="ci${GITHUB_SHA::7}"
+          gcloud run deploy "$SERVICE" \
+            --project "${{ vars.GCP_PROJECT_ID }}" \
+            --image "${{ needs.build.outputs.image }}" \
+            --region "$REGION" \
+            --platform managed \
+            --allow-unauthenticated \
+            --no-cpu-throttling \
+            --cpu 2 --memory 8Gi \
+            --concurrency 2 --timeout 300 \
+            --min-instances 0 --max-instances 10 \
+            --no-traffic --tag "$tag"
+
+          url=$(gcloud run services describe "$SERVICE" \
+                  --project "${{ vars.GCP_PROJECT_ID }}" --region "$REGION" \
+                  --format=json \
+                | jq -r --arg tag "$tag" '[.status.traffic[]? | select(.tag == $tag) | .url] | first // ""')
+          # An empty URL means the tag did not attach, and every check below
+          # would then run against nothing and pass. Fail here instead.
+          [ -n "$url" ] || { echo "::error::the tagged revision has no URL"; exit 1; }
+          echo "canary=$url" >> "$GITHUB_OUTPUT"
+          echo "staged at $url — no production traffic"
+
+  # ── Prove the new revision before anyone reaches it ────────────────────────
+  verify:
+    needs: [gate, build, stage]
+    if: needs.gate.outputs.ready == 'true'
+    runs-on: ubuntu-latest
+    env:
+      CANARY: ${{ needs.stage.outputs.canary }}
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT }}
+
+      - uses: google-github-actions/setup-gcloud@v3
+
+      # `/healthz` and `/` are the only two paths the bearer middleware exempts
+      # (app.py `require_bearer`), so the canary can be identified without a
+      # credential at all.
+      #
+      # Retried: the image prewarms Docling on startup, and a cold instance can
+      # take tens of seconds to answer its first request.
+      - id: health
+        name: Ask the canary what it is
+        run: |
+          set -euo pipefail
+          for attempt in 1 2 3 4 5 6 7 8 9 10; do
+            if curl -sf --max-time 30 "$CANARY/healthz" -o /tmp/healthz.json; then
+              echo "answered on attempt $attempt"
+              cat /tmp/healthz.json
+              exit 0
+            fi
+            echo "no answer yet (attempt $attempt) — the image prewarms Docling on startup"
+            sleep 15
+          done
+          echo '::error::the staged revision never answered /healthz'
+          exit 1
+
+      # The check that makes a cache-poisoning deploy impossible: the staged
+      # image must be THIS commit, and must carry every marker the dispatcher
+      # keys its artifact cache on.
+      - name: The canary is this commit, and the dispatcher agrees with it
+        run: node scripts/regression/pdf-parse-engine-lockstep.mjs --deployed /tmp/healthz.json
+
+      # `callback_upload_configured` is false when SUPABASE_URL or
+      # SUPABASE_SERVICE_ROLE_KEY is missing from the service. Every job the
+      # dispatcher submits uses callback mode, so that state 503s on
+      # `callback_upload_not_configured` for 100% of real traffic while
+      # `/healthz` still answers `ok: true`. This is the check that catches an
+      # environment wiped by a careless deploy.
+      - name: The canary can actually complete a job
+        run: |
+          set -euo pipefail
+          configured=$(jq -r '.callback_upload_configured // false' /tmp/healthz.json)
+          [ "$configured" = "true" ] || {
+            echo '::error::callback_upload_configured is false — SUPABASE_URL / SUPABASE_SERVICE_ROLE_KEY are not set on the service, so every dispatched job would 503'
+            exit 1
+          }
+          echo 'callback upload configured'
+
+      # Read from the deployed service rather than kept as a GitHub secret: the
+      # deploy account can already describe the service, and a second copy of
+      # this token would be a second place to rotate it.
+      - id: token
+        name: The service still has a bearer token
+        run: |
+          set -euo pipefail
+          value=$(gcloud run services describe "$SERVICE" \
+            --project "${{ vars.GCP_PROJECT_ID }}" --region "$REGION" \
+            --format=json | jq -r '[.spec.template.spec.containers[]?.env[]? | select(.name == "PDF_PARSE_SERVICE_TOKEN") | .value | select(. != null and . != "")] | first // ""')
+          if [ -z "$value" ]; then
+            echo '::error::PDF_PARSE_SERVICE_TOKEN is not set on the service — it fails closed and returns 503 to every request'
+            exit 1
+          fi
+          echo "::add-mask::$value"
+          echo "value=$value" >> "$GITHUB_OUTPUT"
+
+      # Reported, never gated. Which capabilities are ON is a cost decision made
+      # per deploy, not something this workflow should assert — but the
+      # programme's finding was that nobody could see them: OCR ran on 0 of
+      # 1,164 pages and the picture classifier on 2 of 84 jobs, both because a
+      # switch was off and nothing said so. Printing them into the release
+      # summary is how that stops being invisible.
+      - name: Say which capabilities this revision has
+        env:
+          TOKEN: ${{ steps.token.outputs.value }}
+        run: |
+          set -euo pipefail
+          if curl -sf --max-time 60 -H "Authorization: Bearer $TOKEN" \
+               "$CANARY/capabilities" -o /tmp/capabilities.json; then
+            {
+              echo '### Sidecar capabilities on this revision'
+              echo
+              echo '```json'
+              jq -S '.' /tmp/capabilities.json
+              echo '```'
+            } >> "$GITHUB_STEP_SUMMARY"
+          else
+            echo '::warning::could not read /capabilities — reported only, not gated'
+          fi
+
+      - name: Say what is staged and what would promote it
+        run: |
+          {
+            echo '### PDF-import sidecar staged, not serving'
+            echo
+            echo "- image: \`${{ needs.build.outputs.image }}\`"
+            echo "- canary: ${CANARY}"
+            echo "- currently serving: \`${{ needs.stage.outputs.previous }}\`"
+            echo
+            echo 'Verified: the revision is this commit, it carries every marker'
+            echo '`pdf-parse-dispatch` keys its artifact cache on, its lane policy matches,'
+            echo 'callback upload is configured and a bearer token is set.'
+            echo
+            echo 'To send traffic to it, run this workflow again with **promote: cutover**.'
+            echo 'Ship `supabase/functions/pdf-parse-dispatch` in the same release —'
+            echo 'the two share a cache fingerprint (LANE-POLICY.md G3).'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+  # ── Send traffic, only when a person asked for it ──────────────────────────
+  promote:
+    needs: [gate, build, stage, verify]
+    if: needs.gate.outputs.ready == 'true' && inputs.promote == 'cutover'
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - uses: google-github-actions/auth@v3
+        with:
+          workload_identity_provider: ${{ vars.GCP_WORKLOAD_IDENTITY_PROVIDER }}
+          service_account: ${{ vars.GCP_DEPLOY_SERVICE_ACCOUNT }}
+
+      - uses: google-github-actions/setup-gcloud@v3
+
+      # `--to-latest` sends traffic; it does not remove the tag. A tag pins its
+      # revision against garbage collection, and Cloud Run has a hard ceiling on
+      # revisions — so leaving one behind on every release accumulates revisions
+      # that can never be reclaimed. Removing it here is the only place that
+      # knows the release finished.
+      - name: Send traffic to the verified revision
+        run: |
+          set -euo pipefail
+          gcloud run services update-traffic "$SERVICE" \
+            --project "${{ vars.GCP_PROJECT_ID }}" --region "$REGION" \
+            --to-latest
+          gcloud run services update-traffic "$SERVICE" \
+            --project "${{ vars.GCP_PROJECT_ID }}" --region "$REGION" \
+            --remove-tags "ci${GITHUB_SHA::7}"
+
+      # The same check as on the canary, against the live URL. `--to-latest` can
+      # succeed while traffic lands somewhere unexpected if another revision was
+      # deployed between the two jobs, and the engine version is the cheapest
+      # thing that would show it.
+      - name: Live traffic is on this commit's engine
+        run: |
+          set -euo pipefail
+          url=$(gcloud run services describe "$SERVICE" \
+                  --project "${{ vars.GCP_PROJECT_ID }}" --region "$REGION" \
+                  --format='value(status.url)')
+          curl -sf --max-time 60 --retry 5 --retry-delay 10 --retry-connrefused \
+            "$url/healthz" -o /tmp/live.json
+          node scripts/regression/pdf-parse-engine-lockstep.mjs --deployed /tmp/live.json
+          echo "live at $url"
+
+      # Written with the real revision name substituted, so recovering never
+      # needs anyone to find a document first.
+      - name: Leave the rollback command behind
+        if: always()
+        run: |
+          {
+            echo '### PDF-import sidecar promoted'
+            echo
+            echo "Live on \`${{ needs.build.outputs.image }}\`."
+            echo
+            echo 'Roll back with:'
+            echo
+            echo '```bash'
+            echo "gcloud run services update-traffic ${SERVICE} \\"
+            echo "  --project ${{ vars.GCP_PROJECT_ID }} --region ${REGION} \\"
+            echo "  --to-revisions=${{ needs.stage.outputs.previous }}=100"
+            echo '```'
+            echo
+            echo '**Ship `pdf-parse-dispatch` with this release.** The dispatcher keys its'
+            echo 'artifact cache on `ENGINE_VERSION_FAMILY` and `LANE_POLICY_VERSION`; if it'
+            echo 'still runs the old values, a cache hit serves artifacts built under the old'
+            echo 'semantics and skips this container entirely (LANE-POLICY.md G3).'
+            echo
+            echo 'Already-imported templates do not change. The new geometry applies on'
+            echo 're-import only.'
+          } >> "$GITHUB_STEP_SUMMARY"

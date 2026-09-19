@@ -1,0 +1,3732 @@
+[
+  {
+    "assistant": "Aishu",
+    "assistantId": "aa1a4037-720f-4bf4-b9c1-9826647a59b2",
+    "versionCount": 1,
+    "versions": [
+      {
+        "createdAt": "2025-06-20T16:26:19.945Z",
+        "model": "gpt-4.1",
+        "promptChars": 4576,
+        "promptSha256_16": "45f0c848af754408",
+        "serverUrl": "https://na-runtime.voiceglow.org/v2/agents/r0x0zyb31z7qsimc/vapi-event",
+        "voiceId": "2zRM7PkgwBPiau2jvVXc"
+      }
+    ]
+  },
+  {
+    "assistant": "Ashley",
+    "assistantId": "23f3a02a-b007-4233-987f-b28ca364c9cc",
+    "versionCount": 0,
+    "versions": []
+  },
+  {
+    "assistant": "Ashwini",
+    "assistantId": "09d6a4cc-232c-435f-8673-7988dda4d79c",
+    "versionCount": 4,
+    "versions": [
+      {
+        "createdAt": "2026-01-12T06:41:42.934Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 4591,
+        "promptSha256_16": "f2534322e5af19b3",
+        "serverUrl": null,
+        "voiceId": "JNaMjd7t4u3EhgkVknn3"
+      },
+      {
+        "createdAt": "2026-01-12T06:38:29.270Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 4591,
+        "promptSha256_16": "f2534322e5af19b3",
+        "serverUrl": null,
+        "voiceId": "JNaMjd7t4u3EhgkVknn3"
+      },
+      {
+        "createdAt": "2026-01-12T06:38:10.595Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 4591,
+        "promptSha256_16": "f2534322e5af19b3",
+        "serverUrl": null,
+        "voiceId": "JNaMjd7t4u3EhgkVknn3"
+      },
+      {
+        "createdAt": "2026-01-12T06:37:48.509Z",
+        "model": "gpt-4o",
+        "promptChars": 4591,
+        "promptSha256_16": "f2534322e5af19b3",
+        "serverUrl": null,
+        "voiceId": "JNaMjd7t4u3EhgkVknn3"
+      }
+    ]
+  },
+  {
+    "assistant": "Bartini Bartenders",
+    "assistantId": "e3ecf7c3-a74a-4c43-bcc0-948ef6af0010",
+    "versionCount": 0,
+    "versions": []
+  },
+  {
+    "assistant": "Farah",
+    "assistantId": "ebbe25b1-3205-458b-8128-6e577ff6cf5e",
+    "versionCount": 0,
+    "versions": []
+  },
+  {
+    "assistant": "JG Facilities Management",
+    "assistantId": "54df9863-2f00-4504-b25f-8f3b3881523a",
+    "versionCount": 0,
+    "versions": []
+  },
+  {
+    "assistant": "Kamileon Cube",
+    "assistantId": "201b2826-5af3-4030-b79a-bd722fa3830f",
+    "versionCount": 0,
+    "versions": []
+  },
+  {
+    "assistant": "Mandy",
+    "assistantId": "aacc0bb6-1761-4571-9216-bd751ecce218",
+    "versionCount": 0,
+    "versions": []
+  },
+  {
+    "assistant": "NPC Active Nurturing",
+    "assistantId": "cc46d882-55c0-454c-82e2-ef00ae000aec",
+    "versionCount": 26,
+    "versions": [
+      {
+        "createdAt": "2026-08-18T17:29:07.338Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 36839,
+        "promptSha256_16": "4cec6908aedbc7c7",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cgSgspJ2msm6clMCkdW9"
+      },
+      {
+        "createdAt": "2026-08-18T12:44:52.241Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 36839,
+        "promptSha256_16": "4cec6908aedbc7c7",
+        "serverUrl": "https://hook.us2.make.com/my4fk4f1hyvrtq3qwl88oae8ntiku3v4",
+        "voiceId": "cgSgspJ2msm6clMCkdW9"
+      },
+      {
+        "createdAt": "2026-07-22T05:54:31.418Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 36839,
+        "promptSha256_16": "4cec6908aedbc7c7",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cgSgspJ2msm6clMCkdW9"
+      },
+      {
+        "createdAt": "2026-05-21T08:01:03.114Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 36839,
+        "promptSha256_16": "4cec6908aedbc7c7",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cgSgspJ2msm6clMCkdW9"
+      },
+      {
+        "createdAt": "2026-03-04T08:03:24.094Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 19317,
+        "promptSha256_16": "d3feca1d82641c7b",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cgSgspJ2msm6clMCkdW9"
+      },
+      {
+        "createdAt": "2026-03-04T07:58:47.369Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 18196,
+        "promptSha256_16": "118e6cfced39df00",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cgSgspJ2msm6clMCkdW9"
+      },
+      {
+        "createdAt": "2026-01-01T10:29:07.177Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 17473,
+        "promptSha256_16": "42f00d67050600f5",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cgSgspJ2msm6clMCkdW9"
+      },
+      {
+        "createdAt": "2025-12-22T05:47:18.469Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 17412,
+        "promptSha256_16": "7faa9d5434291ad8",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cgSgspJ2msm6clMCkdW9"
+      },
+      {
+        "createdAt": "2025-12-18T01:48:24.174Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 17412,
+        "promptSha256_16": "7faa9d5434291ad8",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cgSgspJ2msm6clMCkdW9"
+      },
+      {
+        "createdAt": "2025-12-18T01:16:23.504Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 14592,
+        "promptSha256_16": "e3a68ee5ccf1ac54",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cgSgspJ2msm6clMCkdW9"
+      },
+      {
+        "createdAt": "2025-12-18T01:15:53.246Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 14592,
+        "promptSha256_16": "e3a68ee5ccf1ac54",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cgSgspJ2msm6clMCkdW9"
+      },
+      {
+        "createdAt": "2025-12-15T19:24:42.020Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 13734,
+        "promptSha256_16": "24baba2631c8e4e7",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cgSgspJ2msm6clMCkdW9"
+      },
+      {
+        "createdAt": "2025-12-13T10:22:38.243Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 8098,
+        "promptSha256_16": "ea2a40ad67f79bbe",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cgSgspJ2msm6clMCkdW9"
+      },
+      {
+        "createdAt": "2025-12-11T10:35:25.987Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 8098,
+        "promptSha256_16": "ea2a40ad67f79bbe",
+        "serverUrl": "https://hook.eu2.make.com/wzvaxu6ye39jxx2w6l6jac9ab7rf4175",
+        "voiceId": "cgSgspJ2msm6clMCkdW9"
+      },
+      {
+        "createdAt": "2025-12-11T10:25:24.281Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 8098,
+        "promptSha256_16": "ea2a40ad67f79bbe",
+        "serverUrl": "https://hook.eu2.make.com/wzvaxu6ye39jxx2w6l6jac9ab7rf4175",
+        "voiceId": "cgSgspJ2msm6clMCkdW9"
+      },
+      {
+        "createdAt": "2025-12-10T05:30:19.583Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 8098,
+        "promptSha256_16": "ea2a40ad67f79bbe",
+        "serverUrl": "https://hook.eu2.make.com/wzvaxu6ye39jxx2w6l6jac9ab7rf4175",
+        "voiceId": "cgSgspJ2msm6clMCkdW9"
+      },
+      {
+        "createdAt": "2025-12-09T14:52:59.601Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 8098,
+        "promptSha256_16": "ea2a40ad67f79bbe",
+        "serverUrl": "https://hook.eu2.make.com/wzvaxu6ye39jxx2w6l6jac9ab7rf4175",
+        "voiceId": "nDJIICjR9zfJExIFeSCN"
+      },
+      {
+        "createdAt": "2025-12-09T14:33:29.035Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 7704,
+        "promptSha256_16": "2f9951987521649b",
+        "serverUrl": "https://hook.eu2.make.com/wzvaxu6ye39jxx2w6l6jac9ab7rf4175",
+        "voiceId": "nDJIICjR9zfJExIFeSCN"
+      },
+      {
+        "createdAt": "2025-12-09T12:27:19.785Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 7704,
+        "promptSha256_16": "2f9951987521649b",
+        "serverUrl": "https://hook.eu2.make.com/wzvaxu6ye39jxx2w6l6jac9ab7rf4175",
+        "voiceId": "nDJIICjR9zfJExIFeSCN"
+      },
+      {
+        "createdAt": "2025-12-09T11:58:44.093Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 7704,
+        "promptSha256_16": "2f9951987521649b",
+        "serverUrl": "https://hook.eu2.make.com/wzvaxu6ye39jxx2w6l6jac9ab7rf4175",
+        "voiceId": "nDJIICjR9zfJExIFeSCN"
+      },
+      {
+        "createdAt": "2025-12-09T11:52:23.454Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 7704,
+        "promptSha256_16": "2f9951987521649b",
+        "serverUrl": null,
+        "voiceId": "nDJIICjR9zfJExIFeSCN"
+      },
+      {
+        "createdAt": "2025-12-09T11:46:06.258Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 5464,
+        "promptSha256_16": "7e5e74c401b96035",
+        "serverUrl": null,
+        "voiceId": "nDJIICjR9zfJExIFeSCN"
+      },
+      {
+        "createdAt": "2025-12-09T11:43:59.371Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 5464,
+        "promptSha256_16": "7e5e74c401b96035",
+        "serverUrl": null,
+        "voiceId": "nDJIICjR9zfJExIFeSCN"
+      },
+      {
+        "createdAt": "2025-12-09T11:43:23.067Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 5464,
+        "promptSha256_16": "7e5e74c401b96035",
+        "serverUrl": null,
+        "voiceId": "Elliot"
+      },
+      {
+        "createdAt": "2025-12-09T11:42:25.862Z",
+        "model": "gpt-4o",
+        "promptChars": 5464,
+        "promptSha256_16": "7e5e74c401b96035",
+        "serverUrl": null,
+        "voiceId": "Elliot"
+      },
+      {
+        "createdAt": "2025-12-09T11:41:22.813Z",
+        "model": "gpt-4o",
+        "promptChars": 100,
+        "promptSha256_16": "d60105898b40b8d2",
+        "serverUrl": null,
+        "voiceId": "Elliot"
+      }
+    ]
+  },
+  {
+    "assistant": "NPC Discovery Call Follow Up",
+    "assistantId": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+    "versionCount": 40,
+    "versions": [
+      {
+        "createdAt": "2025-11-26T06:56:48.158Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 16648,
+        "promptSha256_16": "7fc47f617c0a7eda",
+        "serverUrl": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg",
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2025-11-26T06:53:03.940Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 17100,
+        "promptSha256_16": "867d4786a78ae143",
+        "serverUrl": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg",
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2025-11-26T03:56:25.817Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 6281,
+        "promptSha256_16": "4ae844d94db0b93e",
+        "serverUrl": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg",
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2025-11-24T07:46:46.975Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 6281,
+        "promptSha256_16": "4ae844d94db0b93e",
+        "serverUrl": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg",
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2025-11-24T04:26:03.327Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 6281,
+        "promptSha256_16": "4ae844d94db0b93e",
+        "serverUrl": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg",
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2025-11-24T04:08:37.919Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 6281,
+        "promptSha256_16": "4ae844d94db0b93e",
+        "serverUrl": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg",
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2025-11-24T03:10:42.264Z",
+        "model": "gpt-4o-mini",
+        "promptChars": 6281,
+        "promptSha256_16": "4ae844d94db0b93e",
+        "serverUrl": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg",
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2025-11-20T04:37:48.293Z",
+        "model": "gpt-4o-mini",
+        "promptChars": 6086,
+        "promptSha256_16": "334bd4faa9386853",
+        "serverUrl": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg",
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2025-11-18T05:52:30.702Z",
+        "model": "gpt-4o",
+        "promptChars": 6086,
+        "promptSha256_16": "334bd4faa9386853",
+        "serverUrl": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg",
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2025-11-18T04:44:14.235Z",
+        "model": "gpt-4o",
+        "promptChars": 6086,
+        "promptSha256_16": "334bd4faa9386853",
+        "serverUrl": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg",
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2025-11-18T04:43:18.108Z",
+        "model": "gpt-4o",
+        "promptChars": 6086,
+        "promptSha256_16": "334bd4faa9386853",
+        "serverUrl": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg",
+        "voiceId": "25bLwNw4T14AIILU3SLV"
+      },
+      {
+        "createdAt": "2025-11-18T04:21:21.216Z",
+        "model": "gpt-4o",
+        "promptChars": 6086,
+        "promptSha256_16": "334bd4faa9386853",
+        "serverUrl": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg",
+        "voiceId": "7SG1YzJ0DRGq9iGmANwb"
+      },
+      {
+        "createdAt": "2025-11-18T04:03:43.605Z",
+        "model": "gpt-4o",
+        "promptChars": 4044,
+        "promptSha256_16": "d6231e0ed70645a5",
+        "serverUrl": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg",
+        "voiceId": "7SG1YzJ0DRGq9iGmANwb"
+      },
+      {
+        "createdAt": "2025-11-18T04:01:58.518Z",
+        "model": "gpt-4o-mini",
+        "promptChars": 4044,
+        "promptSha256_16": "d6231e0ed70645a5",
+        "serverUrl": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg",
+        "voiceId": "7SG1YzJ0DRGq9iGmANwb"
+      },
+      {
+        "createdAt": "2025-11-18T03:50:06.107Z",
+        "model": "gpt-4o-mini",
+        "promptChars": 4044,
+        "promptSha256_16": "d6231e0ed70645a5",
+        "serverUrl": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg",
+        "voiceId": "25bLwNw4T14AIILU3SLV"
+      },
+      {
+        "createdAt": "2025-11-18T03:37:40.895Z",
+        "model": "gpt-4o-mini",
+        "promptChars": 4046,
+        "promptSha256_16": "4f68bb2a5a57ef09",
+        "serverUrl": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg",
+        "voiceId": "25bLwNw4T14AIILU3SLV"
+      },
+      {
+        "createdAt": "2025-11-17T08:53:56.108Z",
+        "model": "gpt-4o-mini",
+        "promptChars": 4046,
+        "promptSha256_16": "4f68bb2a5a57ef09",
+        "serverUrl": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg",
+        "voiceId": "25bLwNw4T14AIILU3SLV"
+      },
+      {
+        "createdAt": "2025-11-17T08:51:32.842Z",
+        "model": "gpt-4o-mini",
+        "promptChars": 4044,
+        "promptSha256_16": "4eb34b0b5a0a2cac",
+        "serverUrl": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg",
+        "voiceId": "25bLwNw4T14AIILU3SLV"
+      },
+      {
+        "createdAt": "2025-11-17T02:26:39.791Z",
+        "model": "gpt-4o-mini",
+        "promptChars": 4044,
+        "promptSha256_16": "4eb34b0b5a0a2cac",
+        "serverUrl": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg",
+        "voiceId": "25bLwNw4T14AIILU3SLV"
+      },
+      {
+        "createdAt": "2025-11-12T07:32:59.071Z",
+        "model": "gpt-4o-mini",
+        "promptChars": 4044,
+        "promptSha256_16": "4eb34b0b5a0a2cac",
+        "serverUrl": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg",
+        "voiceId": "25bLwNw4T14AIILU3SLV"
+      },
+      {
+        "createdAt": "2025-10-31T15:08:25.458Z",
+        "model": "gpt-5-nano",
+        "promptChars": 3947,
+        "promptSha256_16": "78f77e38eeda409b",
+        "serverUrl": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg",
+        "voiceId": "25bLwNw4T14AIILU3SLV"
+      },
+      {
+        "createdAt": "2025-10-14T07:52:46.894Z",
+        "model": "gpt-5-nano",
+        "promptChars": 3947,
+        "promptSha256_16": "78f77e38eeda409b",
+        "serverUrl": null,
+        "voiceId": "25bLwNw4T14AIILU3SLV"
+      },
+      {
+        "createdAt": "2025-10-14T07:50:59.945Z",
+        "model": "gpt-5-nano",
+        "promptChars": 3947,
+        "promptSha256_16": "78f77e38eeda409b",
+        "serverUrl": null,
+        "voiceId": "25bLwNw4T14AIILU3SLV"
+      },
+      {
+        "createdAt": "2025-10-14T07:48:34.172Z",
+        "model": "gpt-5-nano",
+        "promptChars": 3914,
+        "promptSha256_16": "1dfa45b9c4660a5f",
+        "serverUrl": null,
+        "voiceId": "FGY2WhTYpPnrIDTdsKH5"
+      },
+      {
+        "createdAt": "2025-07-12T05:56:56.475Z",
+        "model": "gpt-4o-mini",
+        "promptChars": 3914,
+        "promptSha256_16": "1dfa45b9c4660a5f",
+        "serverUrl": null,
+        "voiceId": "FGY2WhTYpPnrIDTdsKH5"
+      },
+      {
+        "createdAt": "2025-07-12T05:54:53.458Z",
+        "model": "gpt-4.1-nano",
+        "promptChars": 3914,
+        "promptSha256_16": "1dfa45b9c4660a5f",
+        "serverUrl": null,
+        "voiceId": "FGY2WhTYpPnrIDTdsKH5"
+      },
+      {
+        "createdAt": "2025-07-12T05:54:18.801Z",
+        "model": "gpt-4.1-nano",
+        "promptChars": 3914,
+        "promptSha256_16": "1dfa45b9c4660a5f",
+        "serverUrl": null,
+        "voiceId": "FGY2WhTYpPnrIDTdsKH5"
+      },
+      {
+        "createdAt": "2025-07-12T05:52:14.445Z",
+        "model": "gpt-4o-mini",
+        "promptChars": 3914,
+        "promptSha256_16": "1dfa45b9c4660a5f",
+        "serverUrl": null,
+        "voiceId": "FGY2WhTYpPnrIDTdsKH5"
+      },
+      {
+        "createdAt": "2025-07-12T05:51:36.602Z",
+        "model": "gpt-4o-mini",
+        "promptChars": 3914,
+        "promptSha256_16": "1dfa45b9c4660a5f",
+        "serverUrl": null,
+        "voiceId": "cgSgspJ2msm6clMCkdW9"
+      },
+      {
+        "createdAt": "2025-07-12T05:51:03.784Z",
+        "model": "gpt-4o-mini",
+        "promptChars": 3914,
+        "promptSha256_16": "1dfa45b9c4660a5f",
+        "serverUrl": null,
+        "voiceId": "cgSgspJ2msm6clMCkdW9"
+      },
+      {
+        "createdAt": "2025-07-10T12:23:10.979Z",
+        "model": "gpt-4.1-nano",
+        "promptChars": 3914,
+        "promptSha256_16": "1dfa45b9c4660a5f",
+        "serverUrl": null,
+        "voiceId": "nova"
+      },
+      {
+        "createdAt": "2025-07-10T12:22:48.916Z",
+        "model": "gpt-4.1-nano",
+        "promptChars": 3914,
+        "promptSha256_16": "1dfa45b9c4660a5f",
+        "serverUrl": null,
+        "voiceId": "shimmer"
+      },
+      {
+        "createdAt": "2025-07-10T12:22:23.542Z",
+        "model": "gpt-4.1-nano",
+        "promptChars": 3914,
+        "promptSha256_16": "1dfa45b9c4660a5f",
+        "serverUrl": null,
+        "voiceId": "fable"
+      },
+      {
+        "createdAt": "2025-07-10T12:21:36.930Z",
+        "model": "gpt-4.1-nano",
+        "promptChars": 3914,
+        "promptSha256_16": "1dfa45b9c4660a5f",
+        "serverUrl": null,
+        "voiceId": "248be419-c632-4f23-adf1-5324ed7dbf1d"
+      },
+      {
+        "createdAt": "2025-07-10T12:18:42.646Z",
+        "model": "gpt-4.1-nano",
+        "promptChars": 3914,
+        "promptSha256_16": "1dfa45b9c4660a5f",
+        "serverUrl": null,
+        "voiceId": "5GZaeOOG7yqLdoTRsaa6"
+      },
+      {
+        "createdAt": "2025-07-10T12:17:27.500Z",
+        "model": "gpt-4.1-nano",
+        "promptChars": 3914,
+        "promptSha256_16": "1dfa45b9c4660a5f",
+        "serverUrl": null,
+        "voiceId": "5GZaeOOG7yqLdoTRsaa6"
+      },
+      {
+        "createdAt": "2025-07-10T12:09:19.812Z",
+        "model": "gpt-4.1-nano",
+        "promptChars": 3914,
+        "promptSha256_16": "1dfa45b9c4660a5f",
+        "serverUrl": null,
+        "voiceId": "MiueK1FXuZTCItgbQwPu"
+      },
+      {
+        "createdAt": "2025-07-10T12:08:00.051Z",
+        "model": "gpt-4.1-nano",
+        "promptChars": 3897,
+        "promptSha256_16": "6ba6ec7e43b587ff",
+        "serverUrl": null,
+        "voiceId": "MiueK1FXuZTCItgbQwPu"
+      },
+      {
+        "createdAt": "2025-07-10T12:07:03.310Z",
+        "model": "gpt-4.1-nano",
+        "promptChars": 3897,
+        "promptSha256_16": "6ba6ec7e43b587ff",
+        "serverUrl": null,
+        "voiceId": "Kq9pDHHIMmJsG9PEqOtv"
+      },
+      {
+        "createdAt": "2025-07-10T12:00:14.564Z",
+        "model": "gpt-4o",
+        "promptChars": 9304,
+        "promptSha256_16": "c10a7d7f8b333599",
+        "serverUrl": null,
+        "voiceId": "Elliot"
+      }
+    ]
+  },
+  {
+    "assistant": "NPC Discovery Call Follow Up Test",
+    "assistantId": "29d6c50e-36e4-406c-b2ea-93f7fc2997a4",
+    "versionCount": 27,
+    "versions": [
+      {
+        "createdAt": "2026-07-22T05:50:14.905Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 29806,
+        "promptSha256_16": "78fceb4d02d6ed77",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-05-20T21:23:20.875Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 29806,
+        "promptSha256_16": "78fceb4d02d6ed77",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-05-20T21:22:35.933Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 29806,
+        "promptSha256_16": "78fceb4d02d6ed77",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-02-03T05:50:09.714Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 35540,
+        "promptSha256_16": "6fdd1c07b5741ca0",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-02-03T05:37:48.114Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 35540,
+        "promptSha256_16": "6fdd1c07b5741ca0",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-07T11:26:08.239Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 35572,
+        "promptSha256_16": "d95d9532016d8db8",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-07T10:59:37.994Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 34868,
+        "promptSha256_16": "f43a629056cd9984",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-07T10:27:51.030Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 34791,
+        "promptSha256_16": "b3dd9659895e6387",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-07T10:22:42.687Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 34791,
+        "promptSha256_16": "b3dd9659895e6387",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-07T10:21:45.408Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 34791,
+        "promptSha256_16": "b3dd9659895e6387",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-07T10:21:25.199Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 34791,
+        "promptSha256_16": "b3dd9659895e6387",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-07T09:58:00.243Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 35191,
+        "promptSha256_16": "84bf68587c92a8d9",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-07T09:51:59.047Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 35191,
+        "promptSha256_16": "84bf68587c92a8d9",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-07T09:45:26.050Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 35191,
+        "promptSha256_16": "84bf68587c92a8d9",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-07T09:34:44.022Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 35001,
+        "promptSha256_16": "aa5186c68329a810",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-07T09:05:58.100Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 33688,
+        "promptSha256_16": "dd0980c053e9810a",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-07T08:53:23.416Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 30507,
+        "promptSha256_16": "1b65e3f72a3ba57e",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-07T08:43:32.030Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 30513,
+        "promptSha256_16": "c9f5977f97217e66",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-07T08:35:43.157Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 31224,
+        "promptSha256_16": "9aca9c70b17fd602",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-07T07:59:56.892Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 30821,
+        "promptSha256_16": "0c65255778627ed7",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-07T07:51:59.584Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 30092,
+        "promptSha256_16": "a95e44a75442d6ba",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-07T07:29:40.872Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 30107,
+        "promptSha256_16": "f7a659cf1513df55",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-07T07:02:44.271Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 30104,
+        "promptSha256_16": "c49b723e2d47eee5",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-07T06:53:10.722Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 32179,
+        "promptSha256_16": "c8fd7980f0a148e0",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-07T06:50:04.405Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 32178,
+        "promptSha256_16": "519c35886d23fda3",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-07T06:36:56.216Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 30028,
+        "promptSha256_16": "5e48a02206a2f630",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-07T06:30:37.770Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 30026,
+        "promptSha256_16": "8766e85c65398c29",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      }
+    ]
+  },
+  {
+    "assistant": "NPC Discovery Call Follow Up Test 2",
+    "assistantId": "c0bc54fd-a9fb-4970-822b-b471c198e43b",
+    "versionCount": 34,
+    "versions": [
+      {
+        "createdAt": "2026-03-04T08:07:50.324Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 29264,
+        "promptSha256_16": "2b3a5be47da3473f",
+        "serverUrl": null,
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-03-04T07:55:23.232Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 28144,
+        "promptSha256_16": "427370b73ad6e42f",
+        "serverUrl": null,
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-02-03T06:04:49.523Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 27421,
+        "promptSha256_16": "e4bf6e431656858d",
+        "serverUrl": null,
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-02-03T05:56:33.640Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 27421,
+        "promptSha256_16": "e4bf6e431656858d",
+        "serverUrl": null,
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-29T01:11:21.090Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 26712,
+        "promptSha256_16": "2cdbb8a028e6275f",
+        "serverUrl": null,
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-29T01:00:43.227Z",
+        "model": "gpt-4o-mini",
+        "promptChars": 26712,
+        "promptSha256_16": "2cdbb8a028e6275f",
+        "serverUrl": null,
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-12T09:14:03.283Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 26712,
+        "promptSha256_16": "2cdbb8a028e6275f",
+        "serverUrl": null,
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-12T08:46:49.298Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 26735,
+        "promptSha256_16": "a139dfa326eab749",
+        "serverUrl": null,
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-12T08:34:07.207Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 26666,
+        "promptSha256_16": "261bdec467e5031f",
+        "serverUrl": null,
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-12T08:19:04.997Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 26047,
+        "promptSha256_16": "bfcd908ea350c7d4",
+        "serverUrl": null,
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-12T08:14:35.560Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 25985,
+        "promptSha256_16": "e419981b9b3660e4",
+        "serverUrl": null,
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-12T08:03:15.383Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 27584,
+        "promptSha256_16": "b0bdabf1a7c8bcb3",
+        "serverUrl": null,
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-12T07:55:22.120Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 27111,
+        "promptSha256_16": "10dbbedfb76aa724",
+        "serverUrl": null,
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-12T07:54:04.207Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 27128,
+        "promptSha256_16": "908aa06692bda18d",
+        "serverUrl": null,
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-12T07:45:04.457Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 27138,
+        "promptSha256_16": "4636f0de0a6a1dd9",
+        "serverUrl": null,
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-12T06:48:37.535Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 25593,
+        "promptSha256_16": "51b8768619947132",
+        "serverUrl": null,
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-12T06:41:15.184Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 25977,
+        "promptSha256_16": "7d017bbba9e0f1ee",
+        "serverUrl": null,
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-12T06:40:41.534Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 25977,
+        "promptSha256_16": "7d017bbba9e0f1ee",
+        "serverUrl": null,
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-12T06:26:53.689Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 25977,
+        "promptSha256_16": "7d017bbba9e0f1ee",
+        "serverUrl": null,
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-12T06:21:21.152Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 25452,
+        "promptSha256_16": "7809b550566c5aa2",
+        "serverUrl": null,
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-12T05:53:58.532Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 24929,
+        "promptSha256_16": "9d9567109dcd39da",
+        "serverUrl": null,
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-12T05:39:39.319Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 23105,
+        "promptSha256_16": "e54eebcb2635dceb",
+        "serverUrl": null,
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-12T05:21:43.643Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 23096,
+        "promptSha256_16": "e2f2d6a0bfade4d7",
+        "serverUrl": null,
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-12T04:53:22.293Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 19430,
+        "promptSha256_16": "92107a6dfe8c8287",
+        "serverUrl": null,
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-12T04:47:25.472Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 15497,
+        "promptSha256_16": "0fb16bcfe191111f",
+        "serverUrl": null,
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-12T04:36:40.565Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 15368,
+        "promptSha256_16": "4f3252c05e7b11b2",
+        "serverUrl": null,
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-12T04:36:19.026Z",
+        "model": "anthropic/claude-haiku-4.5",
+        "promptChars": 15368,
+        "promptSha256_16": "4f3252c05e7b11b2",
+        "serverUrl": null,
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-12T04:35:38.344Z",
+        "model": "anthropic/claude-haiku-4.5",
+        "promptChars": 15368,
+        "promptSha256_16": "4f3252c05e7b11b2",
+        "serverUrl": null,
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-12T04:35:04.227Z",
+        "model": "anthropic/claude-haiku-4.5",
+        "promptChars": 15368,
+        "promptSha256_16": "4f3252c05e7b11b2",
+        "serverUrl": null,
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-12T04:33:37.391Z",
+        "model": "anthropic/claude-haiku-4.5",
+        "promptChars": 12775,
+        "promptSha256_16": "4eaa28e0696c1fbc",
+        "serverUrl": null,
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-08T11:00:00.653Z",
+        "model": "anthropic/claude-haiku-4.5",
+        "promptChars": 41750,
+        "promptSha256_16": "f16d37a77b6d6cef",
+        "serverUrl": null,
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-08T10:27:52.846Z",
+        "model": "anthropic/claude-haiku-4.5",
+        "promptChars": 40917,
+        "promptSha256_16": "e524b534b13e5c1b",
+        "serverUrl": null,
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-08T10:23:43.298Z",
+        "model": "anthropic/claude-haiku-4.5",
+        "promptChars": 40878,
+        "promptSha256_16": "e6e9cacf26edb0c3",
+        "serverUrl": null,
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-08T10:20:48.354Z",
+        "model": "anthropic/claude-haiku-4.5",
+        "promptChars": 40874,
+        "promptSha256_16": "87de0cc743d7f020",
+        "serverUrl": null,
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      }
+    ]
+  },
+  {
+    "assistant": "NPC Discovery Call No Show Follow Up",
+    "assistantId": "e1b76e7c-b9a2-461b-a951-e6b253a4d0d7",
+    "versionCount": 28,
+    "versions": [
+      {
+        "createdAt": "2026-07-22T05:50:56.256Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 34436,
+        "promptSha256_16": "d588dd1d13b78bc5",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "xgnMn9p1V1XVuxuyuuMC"
+      },
+      {
+        "createdAt": "2026-05-20T21:45:23.882Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 34436,
+        "promptSha256_16": "d588dd1d13b78bc5",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "xgnMn9p1V1XVuxuyuuMC"
+      },
+      {
+        "createdAt": "2026-05-20T21:38:19.718Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 34400,
+        "promptSha256_16": "9211b6dca895787f",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "xgnMn9p1V1XVuxuyuuMC"
+      },
+      {
+        "createdAt": "2026-05-20T21:37:29.467Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 34400,
+        "promptSha256_16": "9211b6dca895787f",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "xgnMn9p1V1XVuxuyuuMC"
+      },
+      {
+        "createdAt": "2026-03-04T08:06:25.978Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 33224,
+        "promptSha256_16": "892cca7e4056e77c",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "xgnMn9p1V1XVuxuyuuMC"
+      },
+      {
+        "createdAt": "2026-03-04T07:56:03.870Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 32103,
+        "promptSha256_16": "ca632a4939512328",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "xgnMn9p1V1XVuxuyuuMC"
+      },
+      {
+        "createdAt": "2026-02-03T06:07:56.855Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 31380,
+        "promptSha256_16": "b1550ca0171874e2",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "xgnMn9p1V1XVuxuyuuMC"
+      },
+      {
+        "createdAt": "2026-02-03T06:01:31.924Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 31367,
+        "promptSha256_16": "9fd110f47ffd13b0",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "xgnMn9p1V1XVuxuyuuMC"
+      },
+      {
+        "createdAt": "2026-01-16T06:59:04.680Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 31351,
+        "promptSha256_16": "e936ea39ce3d5aa4",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "xgnMn9p1V1XVuxuyuuMC"
+      },
+      {
+        "createdAt": "2026-01-16T04:08:34.852Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 31352,
+        "promptSha256_16": "c2ca946d0e0e092c",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "xgnMn9p1V1XVuxuyuuMC"
+      },
+      {
+        "createdAt": "2026-01-16T03:52:27.751Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 31355,
+        "promptSha256_16": "995e98e844d28dbf",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "xgnMn9p1V1XVuxuyuuMC"
+      },
+      {
+        "createdAt": "2026-01-16T03:43:02.047Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 31347,
+        "promptSha256_16": "4c8352a93bbca5cc",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "xgnMn9p1V1XVuxuyuuMC"
+      },
+      {
+        "createdAt": "2026-01-16T03:32:04.273Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 31491,
+        "promptSha256_16": "cf23c2c47ffcba9b",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "xgnMn9p1V1XVuxuyuuMC"
+      },
+      {
+        "createdAt": "2026-01-16T03:31:06.235Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 31491,
+        "promptSha256_16": "cf23c2c47ffcba9b",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "tvWD4i07Hg5L4uEvbxYV"
+      },
+      {
+        "createdAt": "2026-01-16T03:29:29.546Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 31491,
+        "promptSha256_16": "cf23c2c47ffcba9b",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "roYauZ4bOLAKvVZTPLre"
+      },
+      {
+        "createdAt": "2026-01-16T03:28:42.809Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 31491,
+        "promptSha256_16": "cf23c2c47ffcba9b",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "9EU0h6CVtEDS6vriwwq5"
+      },
+      {
+        "createdAt": "2026-01-16T03:27:44.304Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 31491,
+        "promptSha256_16": "cf23c2c47ffcba9b",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "uFA9UGUhpwqGjVhz3lA2"
+      },
+      {
+        "createdAt": "2026-01-16T03:27:06.608Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 31491,
+        "promptSha256_16": "cf23c2c47ffcba9b",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "7SG1YzJ0DRGq9iGmANwb"
+      },
+      {
+        "createdAt": "2026-01-16T03:06:34.418Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 31486,
+        "promptSha256_16": "da6e438e10ab4517",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "7SG1YzJ0DRGq9iGmANwb"
+      },
+      {
+        "createdAt": "2026-01-16T03:03:48.776Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 31507,
+        "promptSha256_16": "b12e9e2cde453af0",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "7SG1YzJ0DRGq9iGmANwb"
+      },
+      {
+        "createdAt": "2026-01-16T02:48:43.557Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 31584,
+        "promptSha256_16": "f8ba6401c0e97864",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "7SG1YzJ0DRGq9iGmANwb"
+      },
+      {
+        "createdAt": "2026-01-16T02:36:17.070Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 31127,
+        "promptSha256_16": "5e4b8d89cd03b7ee",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "7SG1YzJ0DRGq9iGmANwb"
+      },
+      {
+        "createdAt": "2026-01-16T02:02:23.507Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 30674,
+        "promptSha256_16": "4706c608f1870d53",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "7SG1YzJ0DRGq9iGmANwb"
+      },
+      {
+        "createdAt": "2026-01-16T01:56:55.554Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 30567,
+        "promptSha256_16": "2e344e41d2f90f4c",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "7SG1YzJ0DRGq9iGmANwb"
+      },
+      {
+        "createdAt": "2026-01-16T01:44:08.983Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 30496,
+        "promptSha256_16": "31ce04f07e8b2d37",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "7SG1YzJ0DRGq9iGmANwb"
+      },
+      {
+        "createdAt": "2026-01-16T01:25:51.032Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 30034,
+        "promptSha256_16": "eae7fb8eec43824d",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "7SG1YzJ0DRGq9iGmANwb"
+      },
+      {
+        "createdAt": "2026-01-15T10:44:23.419Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 30016,
+        "promptSha256_16": "fe9639f275795e56",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "7SG1YzJ0DRGq9iGmANwb"
+      },
+      {
+        "createdAt": "2026-01-15T10:03:49.491Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 30012,
+        "promptSha256_16": "91144b8963a2fac8",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "7SG1YzJ0DRGq9iGmANwb"
+      }
+    ]
+  },
+  {
+    "assistant": "NPC IFC Follow Up",
+    "assistantId": "a4ddecba-df99-49e4-8e47-4c4b57f4a991",
+    "versionCount": 16,
+    "versions": [
+      {
+        "createdAt": "2026-07-22T05:53:32.478Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 40470,
+        "promptSha256_16": "e3c3b0f0adf56343",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-05-21T07:51:48.332Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 40470,
+        "promptSha256_16": "e3c3b0f0adf56343",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-05-21T07:27:21.478Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 40470,
+        "promptSha256_16": "e3c3b0f0adf56343",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-03-04T08:27:17.008Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 26010,
+        "promptSha256_16": "e9c110a5fa06dd1b",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-03-04T08:05:29.883Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 25983,
+        "promptSha256_16": "910830ca07fb7bc2",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-03-04T07:58:03.500Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 24862,
+        "promptSha256_16": "ff054d2d6891d9ef",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-01-01T10:27:57.628Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 24139,
+        "promptSha256_16": "edc5be6ebcc1960d",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-13T10:19:27.281Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 24078,
+        "promptSha256_16": "e8e210011af2dc29",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-08T09:52:14.560Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 24078,
+        "promptSha256_16": "e8e210011af2dc29",
+        "serverUrl": null,
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-08T09:27:12.666Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 24078,
+        "promptSha256_16": "e8e210011af2dc29",
+        "serverUrl": null,
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-08T03:44:56.342Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 24078,
+        "promptSha256_16": "e8e210011af2dc29",
+        "serverUrl": null,
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-07T15:12:17.532Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 24078,
+        "promptSha256_16": "e8e210011af2dc29",
+        "serverUrl": null,
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-07T14:39:17.622Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 24078,
+        "promptSha256_16": "e8e210011af2dc29",
+        "serverUrl": null,
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-07T14:38:24.075Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 24078,
+        "promptSha256_16": "e8e210011af2dc29",
+        "serverUrl": null,
+        "voiceId": "Elliot"
+      },
+      {
+        "createdAt": "2025-12-07T14:37:52.468Z",
+        "model": "gpt-4o",
+        "promptChars": 24078,
+        "promptSha256_16": "e8e210011af2dc29",
+        "serverUrl": null,
+        "voiceId": "Elliot"
+      },
+      {
+        "createdAt": "2025-12-07T14:37:26.849Z",
+        "model": "gpt-4o",
+        "promptChars": 100,
+        "promptSha256_16": "d60105898b40b8d2",
+        "serverUrl": null,
+        "voiceId": "Elliot"
+      }
+    ]
+  },
+  {
+    "assistant": "NPC IFC Inbound",
+    "assistantId": "7770a48b-68d1-48df-a03a-9cc5b9e91ad8",
+    "versionCount": 28,
+    "versions": [
+      {
+        "createdAt": "2026-08-18T18:22:26.241Z",
+        "model": "gpt-5.6-luna",
+        "promptChars": 41289,
+        "promptSha256_16": "e9ff28456b09fa38",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-07-28T05:35:04.036Z",
+        "model": "gpt-5.6-luna",
+        "promptChars": 41289,
+        "promptSha256_16": "e9ff28456b09fa38",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-07-22T05:56:51.858Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 41289,
+        "promptSha256_16": "e9ff28456b09fa38",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-05-20T12:02:18.324Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 41289,
+        "promptSha256_16": "e9ff28456b09fa38",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-05-14T20:20:02.974Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 41289,
+        "promptSha256_16": "e9ff28456b09fa38",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-05-12T00:06:33.098Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 29865,
+        "promptSha256_16": "82bb7fe57cab7343",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-03-05T00:24:54.802Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 22925,
+        "promptSha256_16": "8e41cf3f0053c8d3",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-03-04T08:24:07.915Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 22906,
+        "promptSha256_16": "0c969316439490a5",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-03-04T08:00:52.850Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 22878,
+        "promptSha256_16": "eb4059f11defbd05",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-02-02T02:28:17.230Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 21034,
+        "promptSha256_16": "c4795a003f30535b",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-01-29T07:26:37.778Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 21034,
+        "promptSha256_16": "c4795a003f30535b",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-01-29T07:12:09.527Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 21034,
+        "promptSha256_16": "c4795a003f30535b",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-01-29T06:17:04.414Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 18675,
+        "promptSha256_16": "b4713ca94b5b5604",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-01-29T06:15:23.761Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 17544,
+        "promptSha256_16": "8fe624ed4bbb8daf",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-01-20T05:52:49.361Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 17544,
+        "promptSha256_16": "8fe624ed4bbb8daf",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-01-20T05:52:19.551Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 17544,
+        "promptSha256_16": "8fe624ed4bbb8daf",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-17T11:51:09.579Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 17544,
+        "promptSha256_16": "8fe624ed4bbb8daf",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-17T11:24:20.704Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 17544,
+        "promptSha256_16": "8fe624ed4bbb8daf",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-17T11:22:45.554Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 17528,
+        "promptSha256_16": "6cdb7f23f6eeb89d",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-17T11:12:22.022Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 17409,
+        "promptSha256_16": "8123ce18b6c56f8e",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-17T11:08:20.765Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 17409,
+        "promptSha256_16": "8123ce18b6c56f8e",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-17T11:06:45.557Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 17411,
+        "promptSha256_16": "e99625641b7baf0d",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-17T10:10:25.315Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 17301,
+        "promptSha256_16": "e7c1cf21f0b32092",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-17T05:06:31.865Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 17301,
+        "promptSha256_16": "e7c1cf21f0b32092",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-16T09:38:32.126Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 17301,
+        "promptSha256_16": "e7c1cf21f0b32092",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-15T18:32:24.411Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 17301,
+        "promptSha256_16": "e7c1cf21f0b32092",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-15T18:31:13.150Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 24078,
+        "promptSha256_16": "e8e210011af2dc29",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-15T18:30:39.369Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 24078,
+        "promptSha256_16": "e8e210011af2dc29",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      }
+    ]
+  },
+  {
+    "assistant": "NPC IFC No Show Follow Up",
+    "assistantId": "4274ab0d-f8e6-4ab9-9b47-1f12255e73c0",
+    "versionCount": 18,
+    "versions": [
+      {
+        "createdAt": "2026-07-22T05:54:02.670Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 41012,
+        "promptSha256_16": "5fbfbd6aa6e77361",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-05-21T07:52:05.500Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 41012,
+        "promptSha256_16": "5fbfbd6aa6e77361",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-05-21T07:50:26.806Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 41012,
+        "promptSha256_16": "5fbfbd6aa6e77361",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-03-04T08:28:03.702Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 29638,
+        "promptSha256_16": "22900e0758849283",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-03-04T08:05:09.919Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 29611,
+        "promptSha256_16": "1c67c7e0944cef3b",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-03-04T07:58:26.198Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 28490,
+        "promptSha256_16": "8bf32fc273bcdb70",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-01-01T10:28:26.248Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 27767,
+        "promptSha256_16": "6a6f7ec430e343c9",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-13T10:19:53.300Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 27706,
+        "promptSha256_16": "819eba760064db2a",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-08T09:52:57.777Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 27706,
+        "promptSha256_16": "819eba760064db2a",
+        "serverUrl": null,
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-08T09:23:50.679Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 27706,
+        "promptSha256_16": "819eba760064db2a",
+        "serverUrl": null,
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-08T09:09:15.720Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 27706,
+        "promptSha256_16": "819eba760064db2a",
+        "serverUrl": null,
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-08T08:29:34.537Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 27706,
+        "promptSha256_16": "819eba760064db2a",
+        "serverUrl": null,
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-08T07:54:34.944Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 27706,
+        "promptSha256_16": "819eba760064db2a",
+        "serverUrl": null,
+        "voiceId": "nDJIICjR9zfJExIFeSCN"
+      },
+      {
+        "createdAt": "2025-12-08T06:52:10.138Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 27706,
+        "promptSha256_16": "819eba760064db2a",
+        "serverUrl": null,
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-08T06:12:52.210Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 27933,
+        "promptSha256_16": "267ac9d1d315491e",
+        "serverUrl": null,
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-08T06:09:50.005Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 27315,
+        "promptSha256_16": "33d878ce7823d280",
+        "serverUrl": null,
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-08T06:08:51.466Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 27315,
+        "promptSha256_16": "33d878ce7823d280",
+        "serverUrl": null,
+        "voiceId": "Elliot"
+      },
+      {
+        "createdAt": "2025-12-08T06:07:30.667Z",
+        "model": "gpt-4o",
+        "promptChars": 100,
+        "promptSha256_16": "d60105898b40b8d2",
+        "serverUrl": null,
+        "voiceId": "Elliot"
+      }
+    ]
+  },
+  {
+    "assistant": "NPC Inbound Agent",
+    "assistantId": "bfff143e-03f7-4bc2-afbb-5734987f672f",
+    "versionCount": 30,
+    "versions": [
+      {
+        "createdAt": "2026-08-18T17:28:37.460Z",
+        "model": "gpt-5.6-luna",
+        "promptChars": 43746,
+        "promptSha256_16": "f28f1c74af59e13e",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "M7ya1YbaeFaPXljg9BpK"
+      },
+      {
+        "createdAt": "2026-08-18T12:48:43.382Z",
+        "model": "gpt-5.6-luna",
+        "promptChars": 43746,
+        "promptSha256_16": "f28f1c74af59e13e",
+        "serverUrl": "https://hook.us2.make.com/8k9ofpknay6jvcjuz9h8cg4vbpm51rrw",
+        "voiceId": "M7ya1YbaeFaPXljg9BpK"
+      },
+      {
+        "createdAt": "2026-07-28T05:33:42.611Z",
+        "model": "gpt-5.6-luna",
+        "promptChars": 43746,
+        "promptSha256_16": "f28f1c74af59e13e",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "M7ya1YbaeFaPXljg9BpK"
+      },
+      {
+        "createdAt": "2026-07-22T05:55:04.131Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 43746,
+        "promptSha256_16": "f28f1c74af59e13e",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "M7ya1YbaeFaPXljg9BpK"
+      },
+      {
+        "createdAt": "2026-05-20T11:16:07.021Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 43746,
+        "promptSha256_16": "f28f1c74af59e13e",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "M7ya1YbaeFaPXljg9BpK"
+      },
+      {
+        "createdAt": "2026-05-15T04:47:08.910Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 43746,
+        "promptSha256_16": "f28f1c74af59e13e",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "M7ya1YbaeFaPXljg9BpK"
+      },
+      {
+        "createdAt": "2026-05-14T10:36:25.060Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 43746,
+        "promptSha256_16": "f28f1c74af59e13e",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "M7ya1YbaeFaPXljg9BpK"
+      },
+      {
+        "createdAt": "2026-05-14T10:33:24.254Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 43746,
+        "promptSha256_16": "f28f1c74af59e13e",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "M7ya1YbaeFaPXljg9BpK"
+      },
+      {
+        "createdAt": "2026-05-14T07:33:53.618Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 36992,
+        "promptSha256_16": "25a75342cea88513",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "M7ya1YbaeFaPXljg9BpK"
+      },
+      {
+        "createdAt": "2026-05-14T06:39:31.770Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 36992,
+        "promptSha256_16": "25a75342cea88513",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "M7ya1YbaeFaPXljg9BpK"
+      },
+      {
+        "createdAt": "2026-05-14T05:43:56.611Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 36992,
+        "promptSha256_16": "25a75342cea88513",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "M7ya1YbaeFaPXljg9BpK"
+      },
+      {
+        "createdAt": "2026-05-13T15:07:24.084Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 35019,
+        "promptSha256_16": "5e4fa7c4c26ea068",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "M7ya1YbaeFaPXljg9BpK"
+      },
+      {
+        "createdAt": "2026-05-13T10:16:05.306Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 34203,
+        "promptSha256_16": "261fdd908c40b27a",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "M7ya1YbaeFaPXljg9BpK"
+      },
+      {
+        "createdAt": "2026-05-13T09:44:42.422Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 34201,
+        "promptSha256_16": "da5888e0b97baec2",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "M7ya1YbaeFaPXljg9BpK"
+      },
+      {
+        "createdAt": "2026-05-13T06:30:14.375Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 30332,
+        "promptSha256_16": "8311f43c3760cb52",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "M7ya1YbaeFaPXljg9BpK"
+      },
+      {
+        "createdAt": "2026-05-11T23:56:06.076Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 25970,
+        "promptSha256_16": "28ff82b537e94b60",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "M7ya1YbaeFaPXljg9BpK"
+      },
+      {
+        "createdAt": "2026-05-11T23:54:35.846Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 25970,
+        "promptSha256_16": "28ff82b537e94b60",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "M7ya1YbaeFaPXljg9BpK"
+      },
+      {
+        "createdAt": "2026-03-05T00:13:08.809Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 22750,
+        "promptSha256_16": "81f460f3c53948ed",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "M7ya1YbaeFaPXljg9BpK"
+      },
+      {
+        "createdAt": "2026-03-04T08:20:51.928Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 22702,
+        "promptSha256_16": "49246892097223b5",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "M7ya1YbaeFaPXljg9BpK"
+      },
+      {
+        "createdAt": "2026-03-04T08:02:36.907Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 20689,
+        "promptSha256_16": "6b8f488d4a267dd7",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "M7ya1YbaeFaPXljg9BpK"
+      },
+      {
+        "createdAt": "2026-03-04T07:59:20.538Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 19568,
+        "promptSha256_16": "ad262fcf01407e3c",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "M7ya1YbaeFaPXljg9BpK"
+      },
+      {
+        "createdAt": "2026-02-02T02:27:24.157Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 18845,
+        "promptSha256_16": "5139d0ad80ec16d1",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "M7ya1YbaeFaPXljg9BpK"
+      },
+      {
+        "createdAt": "2026-01-29T05:36:07.536Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 18845,
+        "promptSha256_16": "5139d0ad80ec16d1",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "M7ya1YbaeFaPXljg9BpK"
+      },
+      {
+        "createdAt": "2026-01-29T03:21:32.279Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 18584,
+        "promptSha256_16": "6bd8340033ac4329",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "M7ya1YbaeFaPXljg9BpK"
+      },
+      {
+        "createdAt": "2026-01-29T03:14:20.028Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 18664,
+        "promptSha256_16": "f3e1dbea30b1d60c",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "M7ya1YbaeFaPXljg9BpK"
+      },
+      {
+        "createdAt": "2026-01-29T02:44:26.494Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 17711,
+        "promptSha256_16": "d13b194022858cc4",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "M7ya1YbaeFaPXljg9BpK"
+      },
+      {
+        "createdAt": "2026-01-29T02:23:52.713Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 17662,
+        "promptSha256_16": "006daf6ba3a3b710",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "M7ya1YbaeFaPXljg9BpK"
+      },
+      {
+        "createdAt": "2026-01-29T02:14:04.251Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 17662,
+        "promptSha256_16": "e7380b06aca7e573",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "M7ya1YbaeFaPXljg9BpK"
+      },
+      {
+        "createdAt": "2026-01-29T02:10:31.798Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 15298,
+        "promptSha256_16": "3858cd6708b606d4",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "M7ya1YbaeFaPXljg9BpK"
+      },
+      {
+        "createdAt": "2026-01-29T01:45:27.403Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 15298,
+        "promptSha256_16": "3858cd6708b606d4",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "M7ya1YbaeFaPXljg9BpK"
+      }
+    ]
+  },
+  {
+    "assistant": "NPC Opt In Follow Up",
+    "assistantId": "b3acdd28-558a-4893-9cfe-c3abacdbe6bd",
+    "versionCount": 33,
+    "versions": [
+      {
+        "createdAt": "2026-08-18T18:03:28.955Z",
+        "model": "gpt-5.6-luna",
+        "promptChars": 36674,
+        "promptSha256_16": "62305c9c0b68fc68",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-07-22T05:47:27.470Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 36674,
+        "promptSha256_16": "62305c9c0b68fc68",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-05-20T20:15:25.408Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 36674,
+        "promptSha256_16": "62305c9c0b68fc68",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-03-04T07:51:11.477Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 36674,
+        "promptSha256_16": "62305c9c0b68fc68",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-02-03T07:51:25.486Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 35430,
+        "promptSha256_16": "359da758db0edab7",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-02-03T07:20:35.711Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 35251,
+        "promptSha256_16": "a80f603992e76d51",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-02-03T07:02:04.630Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 35083,
+        "promptSha256_16": "291039562d57ff1f",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-01-31T05:19:46.917Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 32279,
+        "promptSha256_16": "93c264f02a1f1a50",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-01-31T04:22:58.577Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 32279,
+        "promptSha256_16": "93c264f02a1f1a50",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-01-29T01:11:44.959Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 32141,
+        "promptSha256_16": "3a3ba49db9a57806",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-01-29T01:01:38.091Z",
+        "model": "gpt-4o-mini",
+        "promptChars": 32141,
+        "promptSha256_16": "3a3ba49db9a57806",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-01-27T03:32:27.164Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 32141,
+        "promptSha256_16": "3a3ba49db9a57806",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-01-27T02:31:07.666Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 32119,
+        "promptSha256_16": "be48af94eacd6d9c",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-01-27T02:14:21.641Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 32110,
+        "promptSha256_16": "1a3cbcd4239e233b",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-01-27T01:06:57.978Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 31247,
+        "promptSha256_16": "ec5474d2c24a8c4c",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-01-26T09:18:41.402Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 31247,
+        "promptSha256_16": "ec5474d2c24a8c4c",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-01-26T09:06:17.291Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 29801,
+        "promptSha256_16": "c3885d9178af8022",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-01-26T09:05:27.789Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 29664,
+        "promptSha256_16": "329ef981c40867cd",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-01-26T08:49:03.323Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 29598,
+        "promptSha256_16": "157f0b185d2b92e2",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-01-25T09:50:23.151Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 20468,
+        "promptSha256_16": "cf1c782356eea096",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-01-11T13:44:00.700Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 20459,
+        "promptSha256_16": "49268ddd9b7a90dd",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-01-11T13:21:10.745Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 18920,
+        "promptSha256_16": "8add3d8205f08596",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-01-11T13:08:58.882Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 18816,
+        "promptSha256_16": "9f5a9c7b3607b5f0",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-01-11T11:23:39.672Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 16054,
+        "promptSha256_16": "9705552f4a291e82",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-01-11T11:02:25.739Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 15628,
+        "promptSha256_16": "ecab70bc7c54b6f5",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-01-11T11:01:59.860Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 15628,
+        "promptSha256_16": "ecab70bc7c54b6f5",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-01-11T06:39:34.563Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 15565,
+        "promptSha256_16": "888d03e45dd29e6c",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "jBzLvP03992lMFEkj2kJ"
+      },
+      {
+        "createdAt": "2026-01-10T06:05:37.941Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 15565,
+        "promptSha256_16": "888d03e45dd29e6c",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-01-09T10:17:23.317Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 15382,
+        "promptSha256_16": "3571c6b67eb34012",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-01-09T10:07:44.931Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 15231,
+        "promptSha256_16": "7016c052e0dc6337",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-01-09T10:04:28.671Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 15203,
+        "promptSha256_16": "535b924ef2aac706",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-01-09T09:51:58.897Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 15108,
+        "promptSha256_16": "9853b085b6ba2482",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-01-09T09:39:05.335Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 15000,
+        "promptSha256_16": "85a89e14c1575ec3",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      }
+    ]
+  },
+  {
+    "assistant": "NPC Opt In Follow Up Inbound",
+    "assistantId": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+    "versionCount": 33,
+    "versions": [
+      {
+        "createdAt": "2026-07-28T05:34:11.051Z",
+        "model": "gpt-5.6-luna",
+        "promptChars": 44208,
+        "promptSha256_16": "1051983f61cdcf1b",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-07-22T05:55:44.781Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 44208,
+        "promptSha256_16": "1051983f61cdcf1b",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-05-20T12:01:41.443Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 44208,
+        "promptSha256_16": "1051983f61cdcf1b",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-05-14T17:05:43.726Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 44208,
+        "promptSha256_16": "1051983f61cdcf1b",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-05-14T16:59:56.775Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 39323,
+        "promptSha256_16": "4410be2a6e33565f",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-05-14T15:51:20.896Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 44208,
+        "promptSha256_16": "1051983f61cdcf1b",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-05-14T15:18:21.932Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 39323,
+        "promptSha256_16": "4410be2a6e33565f",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-05-14T14:36:28.417Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 39323,
+        "promptSha256_16": "4410be2a6e33565f",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-05-14T14:35:54.393Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 39323,
+        "promptSha256_16": "4410be2a6e33565f",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-05-14T14:22:22.103Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 33621,
+        "promptSha256_16": "9102d29d22fc2b86",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-05-14T07:49:08.760Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 32915,
+        "promptSha256_16": "31666c5e553c2ff4",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-05-12T00:06:10.697Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 32931,
+        "promptSha256_16": "47f578adca73e17b",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-05-12T00:05:01.677Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 32931,
+        "promptSha256_16": "47f578adca73e17b",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-03-05T00:16:03.314Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 21711,
+        "promptSha256_16": "93bc52e9c38d0e6b",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-03-04T08:02:00.416Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 21701,
+        "promptSha256_16": "5dc422243ebf6c4c",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-03-04T07:59:45.176Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 20580,
+        "promptSha256_16": "1d18f5584adccae7",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-02-02T07:20:41.023Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 19857,
+        "promptSha256_16": "6f85ae1a5c2673cf",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-02-02T07:13:20.242Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 17812,
+        "promptSha256_16": "4f12b1d390545e7d",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-02-02T02:47:11.128Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 16956,
+        "promptSha256_16": "85a0c976d436bbe3",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-02-02T02:44:21.289Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 16838,
+        "promptSha256_16": "782661c14d8f21b8",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-02-02T02:27:46.502Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 16731,
+        "promptSha256_16": "7bdf9b840ebc7b74",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-01-29T06:11:28.105Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 16731,
+        "promptSha256_16": "7bdf9b840ebc7b74",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-01-29T05:50:52.094Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 16653,
+        "promptSha256_16": "b7246fe2998c9fd3",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-01-29T03:59:42.988Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 17351,
+        "promptSha256_16": "f439348a394731f1",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-01-29T03:58:51.593Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 17351,
+        "promptSha256_16": "f439348a394731f1",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-01-29T03:58:29.530Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 17351,
+        "promptSha256_16": "f439348a394731f1",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-01-29T03:51:31.855Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 15714,
+        "promptSha256_16": "35a7da666cad4d25",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2026-01-20T05:51:24.787Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 15772,
+        "promptSha256_16": "342be861eb8eb065",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2025-12-17T11:53:30.010Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 15772,
+        "promptSha256_16": "342be861eb8eb065",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2025-12-17T11:26:13.201Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 15772,
+        "promptSha256_16": "342be861eb8eb065",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2025-12-17T10:42:52.908Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 15740,
+        "promptSha256_16": "d5a5525e74200cc4",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2025-12-17T10:17:17.476Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 15521,
+        "promptSha256_16": "ea3fdc26c76ce134",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      },
+      {
+        "createdAt": "2025-12-17T10:14:12.654Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 15399,
+        "promptSha256_16": "c221a9e32bbc7b6d",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "cJi4iYb9fQ8QIRKkX8Fd"
+      }
+    ]
+  },
+  {
+    "assistant": "NPC Quiz Follow Up",
+    "assistantId": "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+    "versionCount": 39,
+    "versions": [
+      {
+        "createdAt": "2026-07-22T05:49:31.065Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 43190,
+        "promptSha256_16": "9ed1872e2b1a7476",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "TcAStCk0faGcHdNIFX23"
+      },
+      {
+        "createdAt": "2026-05-20T20:27:06.469Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 43190,
+        "promptSha256_16": "9ed1872e2b1a7476",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "TcAStCk0faGcHdNIFX23"
+      },
+      {
+        "createdAt": "2026-03-04T08:06:57.345Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 31276,
+        "promptSha256_16": "e7ee88794d204e43",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "TcAStCk0faGcHdNIFX23"
+      },
+      {
+        "createdAt": "2026-03-04T07:53:30.988Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 30155,
+        "promptSha256_16": "448e125779921c42",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "TcAStCk0faGcHdNIFX23"
+      },
+      {
+        "createdAt": "2026-02-03T08:38:13.495Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 30030,
+        "promptSha256_16": "3166c07ee849025a",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "TcAStCk0faGcHdNIFX23"
+      },
+      {
+        "createdAt": "2026-02-03T08:36:30.101Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 30056,
+        "promptSha256_16": "8b432811e1ee49f8",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "TcAStCk0faGcHdNIFX23"
+      },
+      {
+        "createdAt": "2026-01-31T05:25:31.359Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 27073,
+        "promptSha256_16": "17468b058e89b1fc",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "TcAStCk0faGcHdNIFX23"
+      },
+      {
+        "createdAt": "2026-01-31T05:25:04.423Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 27073,
+        "promptSha256_16": "17468b058e89b1fc",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "TcAStCk0faGcHdNIFX23"
+      },
+      {
+        "createdAt": "2026-01-31T05:24:37.733Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 27073,
+        "promptSha256_16": "17468b058e89b1fc",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "TcAStCk0faGcHdNIFX23"
+      },
+      {
+        "createdAt": "2026-01-31T04:23:36.972Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 27073,
+        "promptSha256_16": "17468b058e89b1fc",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "TcAStCk0faGcHdNIFX23"
+      },
+      {
+        "createdAt": "2026-01-27T02:28:47.116Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 26935,
+        "promptSha256_16": "a4ff0e08442886c4",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "TcAStCk0faGcHdNIFX23"
+      },
+      {
+        "createdAt": "2026-01-27T02:15:42.629Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 26848,
+        "promptSha256_16": "ac2a693164ba4637",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "TcAStCk0faGcHdNIFX23"
+      },
+      {
+        "createdAt": "2026-01-27T01:46:32.700Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 25986,
+        "promptSha256_16": "b08cad64b8cc158f",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "TcAStCk0faGcHdNIFX23"
+      },
+      {
+        "createdAt": "2026-01-27T01:41:47.433Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 25844,
+        "promptSha256_16": "ff71dcafd2697fc2",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "TcAStCk0faGcHdNIFX23"
+      },
+      {
+        "createdAt": "2026-01-27T01:39:14.208Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 25786,
+        "promptSha256_16": "5ce7206c82658703",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "TcAStCk0faGcHdNIFX23"
+      },
+      {
+        "createdAt": "2026-01-27T01:14:44.024Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 25786,
+        "promptSha256_16": "5ce7206c82658703",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "TcAStCk0faGcHdNIFX23"
+      },
+      {
+        "createdAt": "2026-01-27T01:04:07.840Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 25777,
+        "promptSha256_16": "8309d74eed44364d",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "TcAStCk0faGcHdNIFX23"
+      },
+      {
+        "createdAt": "2026-01-26T13:48:28.492Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 25777,
+        "promptSha256_16": "8309d74eed44364d",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "TcAStCk0faGcHdNIFX23"
+      },
+      {
+        "createdAt": "2026-01-12T09:21:19.976Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 17922,
+        "promptSha256_16": "dd28182c629c701b",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "TcAStCk0faGcHdNIFX23"
+      },
+      {
+        "createdAt": "2026-01-12T03:40:35.883Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 17923,
+        "promptSha256_16": "b3ea2897f3dbf1e2",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "TcAStCk0faGcHdNIFX23"
+      },
+      {
+        "createdAt": "2026-01-12T02:58:03.684Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 17832,
+        "promptSha256_16": "ed62b7972f1d202f",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "TcAStCk0faGcHdNIFX23"
+      },
+      {
+        "createdAt": "2026-01-12T02:49:36.140Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 20319,
+        "promptSha256_16": "024f01547872cb08",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "TcAStCk0faGcHdNIFX23"
+      },
+      {
+        "createdAt": "2026-01-12T02:44:28.675Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 13948,
+        "promptSha256_16": "e0c173111179a019",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "TcAStCk0faGcHdNIFX23"
+      },
+      {
+        "createdAt": "2026-01-12T02:42:55.802Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 11355,
+        "promptSha256_16": "5df6e2722e19dc80",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "TcAStCk0faGcHdNIFX23"
+      },
+      {
+        "createdAt": "2026-01-12T02:25:03.072Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 8755,
+        "promptSha256_16": "2b71c1daa1812e28",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "TcAStCk0faGcHdNIFX23"
+      },
+      {
+        "createdAt": "2026-01-12T02:23:10.710Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 8681,
+        "promptSha256_16": "506122ec08ae7557",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "TcAStCk0faGcHdNIFX23"
+      },
+      {
+        "createdAt": "2026-01-11T14:35:15.078Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 19497,
+        "promptSha256_16": "fc1cfbde9324f653",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "TcAStCk0faGcHdNIFX23"
+      },
+      {
+        "createdAt": "2026-01-11T14:28:39.820Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 19356,
+        "promptSha256_16": "600f3f1325b9397f",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "TcAStCk0faGcHdNIFX23"
+      },
+      {
+        "createdAt": "2026-01-11T14:26:30.604Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 12387,
+        "promptSha256_16": "43e7929dee33546c",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "TcAStCk0faGcHdNIFX23"
+      },
+      {
+        "createdAt": "2026-01-11T14:23:40.768Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 9225,
+        "promptSha256_16": "dc58b7ab3d523a3c",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "TcAStCk0faGcHdNIFX23"
+      },
+      {
+        "createdAt": "2026-01-11T14:17:19.909Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 6490,
+        "promptSha256_16": "3247136f95806939",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "TcAStCk0faGcHdNIFX23"
+      },
+      {
+        "createdAt": "2026-01-11T14:13:52.992Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 6490,
+        "promptSha256_16": "3247136f95806939",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "TcAStCk0faGcHdNIFX23"
+      },
+      {
+        "createdAt": "2026-01-11T14:12:51.256Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 6490,
+        "promptSha256_16": "3247136f95806939",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "TcAStCk0faGcHdNIFX23"
+      },
+      {
+        "createdAt": "2026-01-08T11:02:41.447Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 19278,
+        "promptSha256_16": "0febc89a01b10d5b",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "TcAStCk0faGcHdNIFX23"
+      },
+      {
+        "createdAt": "2026-01-08T10:58:24.959Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 19278,
+        "promptSha256_16": "0febc89a01b10d5b",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "TcAStCk0faGcHdNIFX23"
+      },
+      {
+        "createdAt": "2026-01-08T10:57:38.895Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 19278,
+        "promptSha256_16": "0febc89a01b10d5b",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "TcAStCk0faGcHdNIFX23"
+      },
+      {
+        "createdAt": "2026-01-08T07:21:10.380Z",
+        "model": "anthropic/claude-haiku-4.5",
+        "promptChars": 19278,
+        "promptSha256_16": "0febc89a01b10d5b",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "TcAStCk0faGcHdNIFX23"
+      },
+      {
+        "createdAt": "2026-01-07T06:46:32.440Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 19278,
+        "promptSha256_16": "0febc89a01b10d5b",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "TcAStCk0faGcHdNIFX23"
+      },
+      {
+        "createdAt": "2026-01-07T05:20:10.500Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 19273,
+        "promptSha256_16": "dc4482455720733d",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "TcAStCk0faGcHdNIFX23"
+      }
+    ]
+  },
+  {
+    "assistant": "NPC Strategy Session (Phone) Follow Up",
+    "assistantId": "dcc0d0c4-1e01-4455-b895-7b268b1b96f0",
+    "versionCount": 28,
+    "versions": [
+      {
+        "createdAt": "2026-07-22T05:51:45.655Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 39984,
+        "promptSha256_16": "4068959bec585946",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-05-21T07:17:48.628Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 39984,
+        "promptSha256_16": "4068959bec585946",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-05-21T07:17:03.277Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 39984,
+        "promptSha256_16": "4068959bec585946",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-03-04T08:25:08.916Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 34693,
+        "promptSha256_16": "5fcc51c1f6081139",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-03-04T08:06:04.712Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 34687,
+        "promptSha256_16": "9bbaa2dc04c94013",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-03-04T07:57:12.159Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 33566,
+        "promptSha256_16": "7e0adbb5d03ae0dc",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-01-26T07:36:35.276Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 32843,
+        "promptSha256_16": "d2148dd43ea0cc31",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-01-26T07:28:39.781Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 32831,
+        "promptSha256_16": "66c9a9a27c86f2a1",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-01-26T07:11:43.575Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 32883,
+        "promptSha256_16": "cd2a6d4087f95c1a",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-01-26T06:58:27.610Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 32806,
+        "promptSha256_16": "78e8e78d21f58bae",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-01-26T06:44:51.618Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 32618,
+        "promptSha256_16": "236ffb920a3cbc1d",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-01-25T11:30:06.272Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 32464,
+        "promptSha256_16": "802e67f31329d65d",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-01-25T11:16:58.972Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 32201,
+        "promptSha256_16": "2cba47b0a997f5aa",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-01-25T10:57:07.207Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 31851,
+        "promptSha256_16": "0b2721a08b0e4928",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-01-25T10:53:17.706Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 31778,
+        "promptSha256_16": "f149cb46d0e15bdd",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-01-25T10:48:27.606Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 31777,
+        "promptSha256_16": "d2ea637666c4e29b",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-01-25T10:38:09.645Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 31725,
+        "promptSha256_16": "88ff35d7792105de",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-01-22T10:03:56.930Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 30580,
+        "promptSha256_16": "490f9d11f4889f88",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-01-22T09:49:01.313Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 30562,
+        "promptSha256_16": "f26a4896af2ec52b",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-01-22T09:22:38.399Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 27697,
+        "promptSha256_16": "d05480964a98e7de",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-01-22T09:10:34.843Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 27685,
+        "promptSha256_16": "1fff9e6becc65fb7",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-01-22T05:53:50.462Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 27685,
+        "promptSha256_16": "1fff9e6becc65fb7",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-01-22T05:52:30.544Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 27665,
+        "promptSha256_16": "cdca7cae41bf48d4",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-01-22T02:48:58.530Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 27158,
+        "promptSha256_16": "bbb9170d443be40f",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-01-22T02:43:16.072Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 27157,
+        "promptSha256_16": "880ead202afd4778",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-01-22T02:23:06.877Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 27197,
+        "promptSha256_16": "24ef1b91d11b0918",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-01-16T08:31:36.986Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 27127,
+        "promptSha256_16": "fe7cccfb52ca9574",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-01-16T08:14:16.409Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 27002,
+        "promptSha256_16": "d096c217a0e3fb23",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      }
+    ]
+  },
+  {
+    "assistant": "NPC Strategy Session (Phone) No Show",
+    "assistantId": "1f91270c-67e0-453b-83f4-6cf4d44abea1",
+    "versionCount": 21,
+    "versions": [
+      {
+        "createdAt": "2026-07-22T05:52:57.524Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 40504,
+        "promptSha256_16": "12c2a817c04c2bc7",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-05-21T07:51:14.889Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 40504,
+        "promptSha256_16": "12c2a817c04c2bc7",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-05-21T07:42:25.745Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 40504,
+        "promptSha256_16": "12c2a817c04c2bc7",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-05-21T07:41:42.693Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 40504,
+        "promptSha256_16": "12c2a817c04c2bc7",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-03-04T08:26:18.645Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 29226,
+        "promptSha256_16": "f621662ef6cca28a",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-03-04T08:05:47.809Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 29220,
+        "promptSha256_16": "9c8f2ce16b20c9e4",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-03-04T07:57:39.949Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 28099,
+        "promptSha256_16": "ab401838b68e707b",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-01-01T10:27:12.271Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 27376,
+        "promptSha256_16": "edf74b7333124a44",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-13T10:18:55.896Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 27315,
+        "promptSha256_16": "33d878ce7823d280",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-08T09:51:41.829Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 27315,
+        "promptSha256_16": "33d878ce7823d280",
+        "serverUrl": null,
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-08T09:21:05.405Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 27315,
+        "promptSha256_16": "33d878ce7823d280",
+        "serverUrl": null,
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-08T05:45:11.616Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 27315,
+        "promptSha256_16": "33d878ce7823d280",
+        "serverUrl": null,
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-08T05:44:19.414Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 27574,
+        "promptSha256_16": "2d2f57dbb5e5eaeb",
+        "serverUrl": null,
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-05T07:20:46.457Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 28179,
+        "promptSha256_16": "c623d4abcf0d8895",
+        "serverUrl": null,
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-05T05:47:05.102Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 26268,
+        "promptSha256_16": "49a0c688df29f490",
+        "serverUrl": null,
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-01T05:15:01.910Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 20724,
+        "promptSha256_16": "3ca62c61eb5c17aa",
+        "serverUrl": null,
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-01T05:14:02.707Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 20724,
+        "promptSha256_16": "3ca62c61eb5c17aa",
+        "serverUrl": null,
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-11-28T14:40:25.522Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 20724,
+        "promptSha256_16": "3ca62c61eb5c17aa",
+        "serverUrl": null,
+        "voiceId": "Elliot"
+      },
+      {
+        "createdAt": "2025-11-28T14:30:24.793Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 100,
+        "promptSha256_16": "d60105898b40b8d2",
+        "serverUrl": null,
+        "voiceId": "Elliot"
+      },
+      {
+        "createdAt": "2025-11-28T14:28:36.387Z",
+        "model": "gpt-4o",
+        "promptChars": 100,
+        "promptSha256_16": "d60105898b40b8d2",
+        "serverUrl": null,
+        "voiceId": "Elliot"
+      },
+      {
+        "createdAt": "2025-11-28T14:28:15.774Z",
+        "model": "gpt-4o",
+        "promptChars": 100,
+        "promptSha256_16": "d60105898b40b8d2",
+        "serverUrl": null,
+        "voiceId": "Elliot"
+      }
+    ]
+  },
+  {
+    "assistant": "NPC Strategy Session Inbound",
+    "assistantId": "5ae449c8-1999-4f44-9115-9d63bf7444ae",
+    "versionCount": 31,
+    "versions": [
+      {
+        "createdAt": "2026-07-28T05:34:39.354Z",
+        "model": "gpt-5.6-luna",
+        "promptChars": 40414,
+        "promptSha256_16": "b4660d57479a593e",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-07-22T05:56:12.153Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 40414,
+        "promptSha256_16": "b4660d57479a593e",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-05-20T12:01:59.073Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 40414,
+        "promptSha256_16": "b4660d57479a593e",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-05-14T19:25:14.655Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 40414,
+        "promptSha256_16": "b4660d57479a593e",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-05-14T19:03:31.557Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 29359,
+        "promptSha256_16": "ba76a3bcef29becb",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-05-12T00:05:51.368Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 29359,
+        "promptSha256_16": "ba76a3bcef29becb",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-03-05T00:22:19.282Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 23066,
+        "promptSha256_16": "a7ca1f0d20d53326",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-03-04T08:22:45.636Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 23054,
+        "promptSha256_16": "82744be1e9c0b2df",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-03-04T08:22:09.776Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 23052,
+        "promptSha256_16": "1db9f033245c5fb9",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-03-04T08:01:30.230Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 23048,
+        "promptSha256_16": "6a539b23898be7b2",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-03-04T08:00:03.368Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 21927,
+        "promptSha256_16": "526cfa93e3d21cd4",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-02-02T02:46:09.017Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 21204,
+        "promptSha256_16": "6e1f908f52a9bae9",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-02-02T02:28:01.891Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 20986,
+        "promptSha256_16": "95aecbb992a1e90e",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-01-29T07:27:03.687Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 20986,
+        "promptSha256_16": "95aecbb992a1e90e",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-01-29T07:10:34.163Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 20986,
+        "promptSha256_16": "95aecbb992a1e90e",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-01-29T06:54:41.145Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 18620,
+        "promptSha256_16": "59bb22fa91c4dfa6",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-01-29T06:16:25.160Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 18537,
+        "promptSha256_16": "6aa91d92d477cbd7",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-01-29T06:14:56.899Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 17406,
+        "promptSha256_16": "d276ad86c6766712",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2026-01-20T05:52:05.217Z",
+        "model": "gpt-5.2-chat-latest",
+        "promptChars": 17406,
+        "promptSha256_16": "d276ad86c6766712",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-17T11:53:04.239Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 17406,
+        "promptSha256_16": "d276ad86c6766712",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-17T11:24:42.798Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 17406,
+        "promptSha256_16": "d276ad86c6766712",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-17T10:44:09.174Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 17390,
+        "promptSha256_16": "a6ae24aeed3e2240",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-17T10:20:34.864Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 17171,
+        "promptSha256_16": "a8673270c073422d",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-17T10:09:44.411Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 17013,
+        "promptSha256_16": "0fe2572c2a822c3e",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-17T08:58:55.898Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 17013,
+        "promptSha256_16": "0fe2572c2a822c3e",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-17T08:23:12.701Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 16036,
+        "promptSha256_16": "ac336fda34dacae2",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-17T05:06:13.216Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 17264,
+        "promptSha256_16": "8c8acbe94cbb5c5a",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-15T18:12:16.371Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 17264,
+        "promptSha256_16": "8c8acbe94cbb5c5a",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-15T18:11:54.224Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 17264,
+        "promptSha256_16": "8c8acbe94cbb5c5a",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-15T18:11:08.942Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 23764,
+        "promptSha256_16": "15e191962cc6e485",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      },
+      {
+        "createdAt": "2025-12-15T18:10:43.527Z",
+        "model": "gpt-5.1-chat-latest",
+        "promptChars": 23764,
+        "promptSha256_16": "15e191962cc6e485",
+        "serverUrl": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+        "voiceId": "02y4x5i9YrzYlFvGo1pp"
+      }
+    ]
+  },
+  {
+    "assistant": "Ramitta Barber",
+    "assistantId": "3eb4592a-3cf9-4583-8304-f129837d9e38",
+    "versionCount": 0,
+    "versions": []
+  },
+  {
+    "assistant": "Raya",
+    "assistantId": "7beabed3-6bbb-430d-8648-29718e9cd647",
+    "versionCount": 0,
+    "versions": []
+  },
+  {
+    "assistant": "Sham Dental Main",
+    "assistantId": "90d839b4-22c9-4b96-8293-9c3d9f356adb",
+    "versionCount": 0,
+    "versions": []
+  },
+  {
+    "assistant": "Unstructured Assistant New",
+    "assistantId": "bedc3a68-5e01-49b6-b09a-0928d149361f",
+    "versionCount": 0,
+    "versions": []
+  },
+  {
+    "assistant": "Xenochrome Assistant",
+    "assistantId": "1f907ea6-adc6-41c4-accc-9ae3cd0739ab",
+    "versionCount": 6,
+    "versions": [
+      {
+        "createdAt": "2025-05-20T13:53:21.703Z",
+        "model": "gpt-4.1",
+        "promptChars": 4816,
+        "promptSha256_16": "feb9196375b98c44",
+        "serverUrl": "https://na-gcp-api.vg-stuff.com/v2/agents/NE4wWwtA5BGy5Cm/vapi-event",
+        "voiceId": "nWxiGsP4eBrWk3QtVY6K"
+      },
+      {
+        "createdAt": "2025-05-14T22:36:15.092Z",
+        "model": "gpt-4.1",
+        "promptChars": 4816,
+        "promptSha256_16": "feb9196375b98c44",
+        "serverUrl": "https://na-gcp-api.vg-stuff.com/v2/agents/NE4wWwtA5BGy5Cm/vapi-event",
+        "voiceId": "nWxiGsP4eBrWk3QtVY6K"
+      },
+      {
+        "createdAt": "2025-05-01T06:32:30.767Z",
+        "model": "gpt-4.1",
+        "promptChars": 4816,
+        "promptSha256_16": "feb9196375b98c44",
+        "serverUrl": "https://na-gcp-api.vg-stuff.com/v2/agents/NE4wWwtA5BGy5Cm/vapi-event",
+        "voiceId": "nWxiGsP4eBrWk3QtVY6K"
+      },
+      {
+        "createdAt": "2025-05-01T06:31:33.285Z",
+        "model": "gpt-4.1",
+        "promptChars": 4816,
+        "promptSha256_16": "feb9196375b98c44",
+        "serverUrl": "https://na-gcp-api.vg-stuff.com/v2/agents/NE4wWwtA5BGy5Cm/vapi-event",
+        "voiceId": "nWxiGsP4eBrWk3QtVY6K"
+      },
+      {
+        "createdAt": "2025-05-01T06:28:28.140Z",
+        "model": "gpt-4.1",
+        "promptChars": 4816,
+        "promptSha256_16": "feb9196375b98c44",
+        "serverUrl": "https://na-gcp-api.vg-stuff.com/v2/agents/NE4wWwtA5BGy5Cm/vapi-event",
+        "voiceId": "nWxiGsP4eBrWk3QtVY6K"
+      },
+      {
+        "createdAt": "2025-05-01T06:27:40.404Z",
+        "model": "gpt-4.1",
+        "promptChars": 4816,
+        "promptSha256_16": "feb9196375b98c44",
+        "serverUrl": "https://na-gcp-api.vg-stuff.com/v2/agents/NE4wWwtA5BGy5Cm/vapi-event",
+        "voiceId": "nWxiGsP4eBrWk3QtVY6K"
+      }
+    ]
+  }
+]

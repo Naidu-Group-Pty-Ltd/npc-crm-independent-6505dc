@@ -1,0 +1,467 @@
+{
+  "table": "Emails",
+  "batch": 49,
+  "of": 107,
+  "recordCount": 50,
+  "records": [
+    {
+      "sourceRecordId": "recRRlWRO04Htc2to",
+      "sourceCreatedTime": "2025-12-08T04:49:40.000Z",
+      "fields": {
+        "Name": "Justine Valender",
+        "Subject": "You Helped Make This Happen 🤍 Thank You",
+        "Email": "jvalender@centurionrealestate.net.au",
+        "Body": "Dear Rugesh ,\r\n\r\nWe Have Some Exciting News to Share…\r\n\r\nWe are incredibly proud to share that Centurion Real Estate has been named a Finalist for REIWA - \"Property Management Team\" of the Year, and one of our very own sales representatives has also been ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recRSFiGxNQspYoBQ",
+      "sourceCreatedTime": "2026-06-04T23:51:02.000Z",
+      "fields": {
+        "Name": "Westgarth Realty",
+        "Subject": "Latest Property Update",
+        "Email": "admin@westgarths.com.au",
+        "Body": "Good morning Rugesh,\r\n\r\nWe hope your week is going well and your property search is progressing nicely.\r\n\r\nWe just wanted to share a quick update on some of our latest listings that may be of interest. If anything catches your eye or you’d like more infor"
+      }
+    },
+    {
+      "sourceRecordId": "recRSwO9gINKIgVnD",
+      "sourceCreatedTime": "2026-06-15T08:34:08.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recRUOafdQJDWMaf6",
+      "sourceCreatedTime": "2026-06-12T03:05:26.000Z",
+      "fields": {
+        "Name": "Michael Enever",
+        "Subject": "NEW Feature Property Listing - PAYNESVILLE - Harcourts - Agent Michael Enever",
+        "Email": "michael.enever@harcourts.com.au",
+        "Body": "Hi Rugesh,\r\n\r\nPlease find below a NEW property listing located in PAYNESVILLE that may be of interest to you, or someone that you know.\r\nIf you would like further information about the property shown, or to discuss your property requirements, please"
+      }
+    },
+    {
+      "sourceRecordId": "recRUSlUVnJ1BuIs5",
+      "sourceCreatedTime": "2026-06-04T05:46:54.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recRV8VaNXRu73b1N",
+      "sourceCreatedTime": "2026-03-11T11:54:26.000Z",
+      "fields": {
+        "Name": "John Hadley",
+        "Subject": "New Property Alert Match: 33-35 Bell St BEULAH",
+        "Email": "noreply@phoenixsoftware.io",
+        "Body": "Hi Rugesh,\r\n\r\nGreat news! A property matching your preferences has just become available.\r\n\r\n\r\n\r\n\r\nFor Sale\r\n33-35 Bell St, BEULAH VIC 3395\r\n$55,000\r\nbed |  bath | 0 car\r\nA BLOCK FULL OF GUM TREES\r\n\r\nHave you ever dreamed of owning your own gum tree plant"
+      }
+    },
+    {
+      "sourceRecordId": "recRVeOqqh7o9d4pA",
+      "sourceCreatedTime": "2025-10-22T05:39:52.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recRVxNwIBZPLQPw5",
+      "sourceCreatedTime": "2025-12-25T05:23:20.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recRWYxW0RaOGpXeq",
+      "sourceCreatedTime": "2026-06-23T15:39:05.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recRX8rxebcLQLCmB",
+      "sourceCreatedTime": "2026-03-12T03:09:24.000Z",
+      "fields": {
+        "Name": "Teena Lee",
+        "Subject": "Open Home - 44 Bella Creek Road, Bella Creek",
+        "Email": "Teena@RJRproperty.com.au",
+        "Body": "View this email in your browser\r\n\r\n\r\nDear Rugesh\r\nOPEN HOME SATURDAY 14th MARCH 2026\r\n44 Bella Creek Road, Bella Creek\r\nFrom 12:45pm to 1:45pm\r\nWe are writing to you today to let you know that we have 44 Bella Creek Rd, Bella Creek open for inspection on "
+      }
+    },
+    {
+      "sourceRecordId": "recRXG877RNtEwoLE",
+      "sourceCreatedTime": "2026-03-20T09:19:57.000Z",
+      "fields": {
+        "Name": "Westgarth Realty",
+        "Subject": "Upcoming Home Inspections for this weekend",
+        "Email": "admin@westgarths.com.au",
+        "Body": "Home    About    Contact\r\n\r\nUpcoming Inspections\r\n\r\n\r\n\r\n15 Donely Street, Oakey\r\n\r\n\r\n3               1               3               615 sqm\r\n\r\n\r\n\r\n\r\n\r\nCharming Character Home with High Ceilings & Established Gardens\r\n\r\n\r\nWarm, welcoming and move-in rea"
+      }
+    },
+    {
+      "sourceRecordId": "recRYnsEf4DExJWC3",
+      "sourceCreatedTime": "2026-03-25T04:28:46.000Z",
+      "fields": {
+        "Name": "Ella Foy",
+        "Subject": "NEW LISTINGS STARTING THIS WEEK",
+        "Email": "ella@perrycooper.com.au",
+        "Body": "Hey guys,\r\n\r\nHope you are having a great week!! See below what we have happening on the weekend:\r\n\r\n1304/19 Kombi Street, Bokarina (First open home this Saturday 9-9:30am)\r\nhttps://www.perrycooper.com.au/properties?address=4983050-19-Kombi%20Street-Bokari"
+      }
+    },
+    {
+      "sourceRecordId": "recRZEUvlE7xPuKeg",
+      "sourceCreatedTime": "2026-01-21T05:18:13.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recRaaEAXz5VyPVo6",
+      "sourceCreatedTime": "2026-01-21T03:32:03.000Z",
+      "fields": {
+        "Name": "Rossana Winters - Realty One Real Estate",
+        "Subject": "152 Denham Terrace, Allenstown",
+        "Email": "rossana@realtyonerealestate.com.au",
+        "Body": "Hi there,\r\n\r\nPlease see the attached link with a property that you might be interested in.\r\n\r\nhttps://www.realtyonerealestate.com.au/property/152-denham-terrace/\r\n\r\nPlease give me a call if you have any questions.\r\n\r\nCheers,\r\nRossana Winters\r\nRealtyOne Re",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recRd3GNji4yrU4sp",
+      "sourceCreatedTime": "2026-02-25T05:00:41.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recRdTqJ1pxSgE4SK",
+      "sourceCreatedTime": "2026-04-22T04:11:20.000Z",
+      "fields": {
+        "Name": "Pat O'Driscoll Real Estate",
+        "Subject": "PAT O'DRISCOLL REAL ESTATE NEWSLETTER",
+        "Email": "salesadmin2@podre.com.au",
+        "Body": "0749272122\r\nwww.podre.com.au\r\n\r\n\r\n\r\n\r\n\r\n\r\nPROPERTY OF THE WEEK\r\n\r\n\r\n\r\n\r\n\r\n3 New Exhibition Road, Wandal\r\n\r\n\r\n        Offers Over $450,000\r\n\r\nUnlock the Potential – Classic Wandal Home Ready for a Transformation!\r\nPacked with character and endless possib"
+      }
+    },
+    {
+      "sourceRecordId": "recRf3Q2ho1LBa1Bt",
+      "sourceCreatedTime": "2026-01-21T05:18:12.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recRfD3d4wiZtSZS6",
+      "sourceCreatedTime": "2026-03-23T06:40:26.000Z",
+      "fields": {
+        "Name": "Patti Stanley",
+        "Subject": "20A Richards Road, High Wycombe New Off Market Listing Launch!!",
+        "Email": "pattistanley@centurionrealestate.net.au",
+        "Body": "20A Richards Road, High Wycombe\r\nOffers from $849,000\r\n3\r\nBed     2\r\nBath    2\r\nCar\r\nFrom the moment you walk through the door, this beautifully presented residence invites you to unwind, relax, and enjoy the lifestyle you deserve.\r\n\r\nThis 2018 built home"
+      }
+    },
+    {
+      "sourceRecordId": "recRfU6wdfT7yDNJq",
+      "sourceCreatedTime": "2026-01-30T00:23:42.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recRfqh3avfaVK2hN",
+      "sourceCreatedTime": "2026-06-03T07:22:40.000Z",
+      "fields": {
+        "Name": "Westgarth Realty",
+        "Subject": "1 new property that match your criteria",
+        "Email": "admin@westgarths.com.au",
+        "Body": "Dear Rugesh, Here are the results for your email alerts from Westgarth Realty as at 03/06/2026\r\n\r\n\r\n        3               2               4               1513 sqm\r\nOffers over $840,000\r\n33 Werth Street, Oakey\r\n\r\nWhat a bonanza this could be. 151"
+      }
+    },
+    {
+      "sourceRecordId": "recRg7INMuNTHXxtD",
+      "sourceCreatedTime": "2025-10-16T05:28:06.000Z",
+      "fields": {
+        "Name": "Professionals Caboolture/Morayfield Chippendale",
+        "Subject": "Weekly Listings Update",
+        "Email": "j.chippendale@professionalscaboolture.propertyemail.com.au",
+        "Body": "Dear ,\r\n\r\nOn behalf of Professionals Caboolture/Morayfield, I am pleased to present some of our latest listings. I hope there's something that takes your fancy and I'm happy to take your call if that's the case!\r\n\r\nTo ensure that you receive the most accu"
+      }
+    },
+    {
+      "sourceRecordId": "recRi9qSIJVsdpVqL",
+      "sourceCreatedTime": "2025-09-07T01:03:38.000Z",
+      "fields": {
+        "Name": "Scott Swingler",
+        "Subject": "Vale Tony Brand | Architect Whose Designs Were Instrumental In The Creation Of Our Iconic Beachfront",
+        "Email": "scott@shore-property.com.au",
+        "Body": "Want to change how you receive these emails?\r\nYou can click to unsubscribe from this list.\r\n \r\nDiscover\r\n\r\nVale Tony Brand\r\n\r\nWe are saddened to hear of the passing of Tony Brand, a renowned Western Australian architect who has left a remarkable legacy of"
+      }
+    },
+    {
+      "sourceRecordId": "recRjeuHmVOgR4hdB",
+      "sourceCreatedTime": "2025-10-31T15:29:47.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recRjnBxNBQfGOrMb",
+      "sourceCreatedTime": "2025-12-05T15:34:40.000Z",
+      "fields": {
+        "Name": "Tom Offermann Real Estate",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "sales@offermann.com.au",
+        "Body": "Edit my requirements\r\nVisit our Website\r\nProperty Alert\r\nSaturday, 6th December 2025\r\nHello Rugesh,\r\n\r\nThe following listings matched your Property Alert search requirements.\r\n\r\nEumundi\r\n7 Finley Road\r\nSomewhat Like A Fairytale, But More Like A Dream Come",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recRjuVRYbL1qZWvN",
+      "sourceCreatedTime": "2026-01-07T02:38:13.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recRkwtGrgTW1hRmH",
+      "sourceCreatedTime": "2026-03-21T00:09:41.000Z",
+      "fields": {
+        "Name": "Natalie Tekin",
+        "Subject": "Kinbrook by Moremac - Builder Update",
+        "Email": "Natalie@alc.land",
+        "Body": "Dear Builder Partners,\r\n\r\nHope this email finds you well.\r\n\r\nPlease find the attached current Pricelist for Kinbrook.\r\n\r\nShould you require any further information or have any questions, please feel free to contact me.\r\n\r\nKind Regards,\r\nNat\r\n\r\n\r\nNatalie T",
+        "Status": "Error 500",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/srlqXg17S0HAI9MOHwLXNw/fdPWh0qltUc4IRqBtrcnFBfYexg_peuT3nKqG5yLoWP9_pHT3NnNRRX5tfz8Vc2b4oyYP1rsaBTAaKzOlVySxYGGZ2zFJHTQExPzWX1prKxO284riz-PL1woXN0sQKJmT6Y9VgF1t00-mP6T3PY9XaGT4aHB2YJqUYGerY6dgsHjqVZuYAsczW-tBJ8rLZ_V/qlehfh2U1IiCDX8vrGrSJqKjvQSw4JmfwK-DGbSNunQ",
+            "filename": "outlook_email_attachment.pdf",
+            "type": "application/pdf",
+            "size": 173386
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "recRlMcT8TrHaUc3f",
+      "sourceCreatedTime": "2025-08-31T21:47:26.000Z",
+      "fields": {
+        "Name": "Pesia Harrison",
+        "Email": "pesia@rentalspecialist.com.au",
+        "Body": "\n\n\n\n\n\n\n\nKind Regards,\n\n\n\n[cid:image001.jpg@01DC1B13.4AD27F70]\n\nPesia Harrison\n\nThe Rental Specialists Real Estate\n\n117 Hume Street, Wodonga, Victoria 3690\n\nBH: (02) 6056 8682 AH: 0438 485 398 \n\nE: pesia@rentalspecialist.com.au [pesia@rentalspecialist.com.au]\n\nW: www.rentalspecialist.com.au [http://www.rentalspecialist.com.au/]\n\nVIC Licence: 043719L NSW Licence: 824924\n\n\n\nThis email message, including any attached files, is confidential and intended solely for the use of the individual or entity to whom it is addressed. The Rental Specialists Real Estate prohibits the right to publish, copy, distribute or disclose any information contained in this email, or its attachments, by any party other than the intended recipient.\n\nIf you have received this email in error please notify the sender and delete it from your system.",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recRlm5oF2teL0FXJ",
+      "sourceCreatedTime": "2025-10-31T14:00:01.000Z",
+      "fields": {
+        "Name": "RJR Property",
+        "Subject": "RJR News - October/November 2025 Issue",
+        "Email": "newsletter@RJRproperty.com.au",
+        "Body": "View this email in your browser\r\n\r\n \r\n07 5488 6000\r\n\r\nDear Rugesh,\r\n\r\nRJR Property - Keeping you up to date with the current Real Estate market, in both Sales & Rentals.\r\n\r\nHere is the October/November Issue of our RJR News:\r\nRJR News - October/November 2",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recRmhK5T65Z1oiBb",
+      "sourceCreatedTime": "2025-09-23T00:56:40.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recRnGAP0rH4Bm0nI",
+      "sourceCreatedTime": "2026-01-30T02:44:55.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recRoTTvKjD3litRN",
+      "sourceCreatedTime": "2026-03-03T05:37:06.000Z",
+      "fields": {
+        "Name": "Ray White Rural Corporate",
+        "Subject": "Ray White Rural FirstByte 3/3/26",
+        "Email": "rural.corporate@raywhite.com",
+        "Body": "Hello ! Here are your top properties of the week.\r\n\r\nQuality Maranoa Breeding or Backgrounding Country\r\n‘Verniew’, Mitchell, Qld\r\n_______\r\n10,898.77ha* (26,930.68ac*) freehold with double frontage to the Maranoa River, Buffel grass & lighter timbered fore",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recRpa5mlTMt9Fn95",
+      "sourceCreatedTime": "2025-12-04T16:10:08.000Z",
+      "fields": {
+        "Name": "Richard Stacey",
+        "Subject": "Property Investment Opportunity - 36 Twilight Mews AUBIN GROVE WA",
+        "Email": "richard@peakcentral.com.au",
+        "Body": "Hello Rugesh,\r\n\r\nPlease find below links highlighting an exciting investment opportunity that may be of interest to you.\r\n\r\nAsking price From $849,000\r\n\r\nVacant possession available, with a future rental potential of $680 - $720 per week, as determined by",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recRqKXuJ3SELYwaw",
+      "sourceCreatedTime": "2025-12-16T22:53:21.000Z",
+      "fields": {
+        "Name": "McGrath NSW & QLD CO",
+        "Subject": "McGrath Property Alert",
+        "Email": "concierge@mcgrath.com.au",
+        "Body": "PROPERTY ALERT\r\n\r\n17/9 Myrtle Street, Botany\r\n\r\n\r\n\r\n\r\n\r\n4\r\n\r\n\r\n\r\n2\r\n\r\n\r\n\r\n2\r\n\r\n\r\n\r\nFOR SALE\r\n\r\nGuide $1,750,000 - $1,775,000\r\n\r\n\r\n\r\nVIEW\r\n\r\nWednesday 17 Dec 5:15pm - 5:45pm\r\n\r\n\r\n\r\nAGENTS\r\n\r\nPatrick Byron: 0415 768 686\r\n\r\nVIEW MORE\r\nVIEW MORE\r\nMCGRATH.COM."
+      }
+    },
+    {
+      "sourceRecordId": "recRqMxY5o7GrKqGo",
+      "sourceCreatedTime": "2025-12-26T04:07:15.000Z",
+      "fields": {
+        "Name": "Clare Dawson",
+        "Subject": "The latest property listings from Clare Estate Agents",
+        "Email": "Clare@clareestateagents.propertyemail.com.au",
+        "Body": "View in browser\r\n\r\nHi NPC\r\n\r\nPlease find below the latest listings from our office that are on the market.\r\n\r\nYou can quickly receive more information about any of the properties by clicking on them to reveal their full details.\r\n\r\nIf your property needs "
+      }
+    },
+    {
+      "sourceRecordId": "recRqboQ5TOnJrdxs",
+      "sourceCreatedTime": "2025-10-21T02:28:37.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recRqmyKQWUKmJIa9",
+      "sourceCreatedTime": "2025-08-14T10:04:05.000Z",
+      "fields": {
+        "Name": "Lavanethan Ravichandran",
+        "Subject": "Poster Image Test",
+        "Email": "lavan@ehsanjv.com",
+        "Body": "Testing"
+      }
+    },
+    {
+      "sourceRecordId": "recRr22jdFfBbgWzJ",
+      "sourceCreatedTime": "2026-06-10T05:40:58.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recRrzNlpm3s0QICW",
+      "sourceCreatedTime": "2025-12-17T22:50:21.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recRtTbvU4BIMXNO7",
+      "sourceCreatedTime": "2026-07-13T17:45:57.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recRtXGgvG5rdouJX",
+      "sourceCreatedTime": "2025-12-04T13:38:35.000Z",
+      "fields": {
+        "Name": "Michelle Peck",
+        "Subject": "How far does our reach extend? Here's the full picture.",
+        "Email": "michelle@peakcentral.com.au",
+        "Body": "The latest issue of Peak Central's Market Update\r\n\r\n\r\n\r\n\r\nHello Rugesh,\r\n\r\nWelcome to our latest update! Keeping you informed with valuable insights and information with regard to your real estate journey.\r\n\r\nKind Regards,\r\nMichelle Peck\r\n\r\n\r\n\r\n\r\nMich"
+      }
+    },
+    {
+      "sourceRecordId": "recRtyc76SX8dzgWX",
+      "sourceCreatedTime": "2026-02-24T00:42:26.000Z",
+      "fields": {
+        "Name": "Adam Bettison",
+        "Subject": "Just Listed | 20 Thorburn Avenue, Beechboro",
+        "Email": "adam.bettison@housesmart.com.au",
+        "Body": "Just Listed - 20 Thorburn Avenue\r\n\r\nHi Rugesh,\r\n\r\nAs a valued client of HouseSmart - we are pleased to present you with the latest listing that matches your criteria.\r\n\r\nLet us know if you'd like to come to the next home open, if you have any questions, o",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recRuV2VV6iJ2wqfR",
+      "sourceCreatedTime": "2026-03-03T23:22:14.000Z",
+      "fields": {
+        "Name": "Bill Dontsios",
+        "Subject": "Stylish, Low-Maintenance Flipped Living in a Thriving Location!",
+        "Email": "bdontsios@barryplant.com.au",
+        "Body": "Wollert, 45 Kanangra Terrace\r\n\r\n        2\r\n        2\r\n        1\r\nJUST LISTED\r\nStylish, Low-Maintenance Flipped Living in a Thriving Location!\r\nFor Sale - $470,000 - $510,000\r\nPerfectly positioned in the heart of thriving Wollert, this architecturally desi",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recRufYQD35wpQEph",
+      "sourceCreatedTime": "2026-03-06T05:22:54.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recRvPfaSFgMCt7Tv",
+      "sourceCreatedTime": "2026-06-10T05:37:34.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recRvtxxxsrCFEmsd",
+      "sourceCreatedTime": "2025-10-10T10:52:18.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recRxgYWXqpQsGJHg",
+      "sourceCreatedTime": "2026-03-19T06:09:45.000Z",
+      "fields": {
+        "Name": "Abby Holmes-Brown",
+        "Subject": "Saturday Open Homes!",
+        "Email": "sales@fnlifestyle.com.au",
+        "Body": "Current Listings\r\n\r\n\r\n\r\n\r\nHi Rugesh,\r\n\r\nLooking for your next move? Whether you're searching for your forever home, your next investment, or a peaceful retreat - we've got something special for you.\r\n\r\nScroll through our latest listings, fresh o"
+      }
+    },
+    {
+      "sourceRecordId": "recRxmfc0l3iTwCVn",
+      "sourceCreatedTime": "2026-06-11T03:35:26.000Z",
+      "fields": {
+        "Name": "Jon Mordue",
+        "Subject": "BUILT 2 and 3 bedroom apartments from $930,000 in Brisbane's City Fringe",
+        "Email": "jon@projectpropertysales.com.au",
+        "Body": " \r\n\r\n\r\n\r\nInner-City Living\r\n\r\n4km to Brisbane CBD\r\n \r\n\r\nBoutique Block of Only 9 Apartments\r\n\r\n45 Cartwright St, Windsor, QLD 4030\r\n \r\n\r\n3% plus GST per sale\r\n\r\nBuilding is 5 years old\r\n\r\n(Ready to Move In - Unit 8 - Top Floor 2 Bedroom\r\nwith City a"
+      }
+    },
+    {
+      "sourceRecordId": "recRzzEePDqInCMre",
+      "sourceCreatedTime": "2026-01-08T02:37:28.000Z",
+      "fields": {
+        "Name": "Abby Holmes-Brown",
+        "Subject": "Your Fresh Start Begins Here!",
+        "Email": "sales@fnlifestyle.com.au",
+        "Body": "Just Listed\r\n\r\n\r\n\r\n\r\nHi Rugesh,\r\n\r\nStep into a home ready to welcome its next owner!\r\n\r\nWith plenty of space, a great location and room for a fresh start, this is one not to miss.\r\n\r\nJoin Stuart this Saturday and see where your next chapter coul"
+      }
+    },
+    {
+      "sourceRecordId": "recS0tEEia6ojCkgY",
+      "sourceCreatedTime": "2026-03-27T00:13:52.000Z",
+      "fields": {
+        "Name": "Peter Coomer",
+        "Subject": "🏡 Hermitage Stocklist // HomePay Accredited Builder – ask us how // Exclusive Lots in Acclaim Estate & Mambourin Green – Starting from $650K – 27/03/2026 ",
+        "Email": "pcoomer@hermitagehomes.com.au",
+        "Body": "🏡 Hermitage Stocklist // HomePay Accredited Builder – ask us how // Exclusive Lots in Acclaim Estate & Mambourin Green – Starting from $650K – 27/03/2026  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recS2D5omMuNoKCeH",
+      "sourceCreatedTime": "2026-01-08T05:22:32.000Z",
+      "fields": {
+        "Name": "Belle Property Australasia",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "noreply@belleproperty.com",
+        "Body": "Dear Rugesh,\r\n\r\nWe have found the following properties that match your property search requirements. Click here to update your preferences or click here to find a property on belleproperty.com.\r\nCurrent listings.\r\n\r\nMount Low\r\n9 Marblewood Circuit\r\nFor Sa",
+        "Status": "Error 500"
+      }
+    }
+  ]
+}

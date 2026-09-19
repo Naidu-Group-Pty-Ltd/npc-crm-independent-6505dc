@@ -1,0 +1,251 @@
+{
+  "//": [
+    "Frozen migration dependency-order findings: a statement that runs before the",
+    "object it needs is created. A version is the order a migration runs in, and",
+    "this tree's versions are sequence numbers wearing a date's clothes — they run",
+    "months ahead of the wall clock — so naming a new migration after today puts it",
+    "in the middle of applied history.",
+    "",
+    "This is an inventory, not an exemption list. Every entry below is a real",
+    "ordering fault in history that is not worth rewriting: the 2025-01 files are",
+    "rollback and RLS-fix migrations that could never have run (their own headers",
+    "record the parse errors) and are never replayed, because clone backends are",
+    "built by catalog introspection rather than by replaying this directory.",
+    "",
+    "Regenerate with `npm run check:migration-order -- --update`. Never hand-edit."
+  ],
+  "schema_version": 1,
+  "findings": [
+    {
+      "file": "20250124120001_rollback_client_data_rls_policies.sql",
+      "object": "client_activities",
+      "form": "create policy on",
+      "created_by": "20251230234123_db40c905-2e0a-4a7f-bf94-ab0bc23c7881.sql",
+      "reason": "created by a later migration"
+    },
+    {
+      "file": "20250124120001_rollback_client_data_rls_policies.sql",
+      "object": "client_branding_profiles",
+      "form": "create policy on",
+      "created_by": "20251223165935_958c02b3-ecca-4ec4-bcab-fe329cd99d5a.sql",
+      "reason": "created by a later migration"
+    },
+    {
+      "file": "20250124120001_rollback_client_data_rls_policies.sql",
+      "object": "client_files",
+      "form": "create policy on",
+      "created_by": "20251230234123_db40c905-2e0a-4a7f-bf94-ab0bc23c7881.sql",
+      "reason": "created by a later migration"
+    },
+    {
+      "file": "20250124120001_rollback_client_data_rls_policies.sql",
+      "object": "client_notes",
+      "form": "create policy on",
+      "created_by": "20251230232947_3179b057-c488-41b0-8ea5-9820c97952f5.sql",
+      "reason": "created by a later migration"
+    },
+    {
+      "file": "20250124120001_rollback_client_data_rls_policies.sql",
+      "object": "client_tag_assignments",
+      "form": "create policy on",
+      "created_by": "20251230234123_db40c905-2e0a-4a7f-bf94-ab0bc23c7881.sql",
+      "reason": "created by a later migration"
+    },
+    {
+      "file": "20250124120001_rollback_client_data_rls_policies.sql",
+      "object": "client_tags",
+      "form": "create policy on",
+      "created_by": "20251230234123_db40c905-2e0a-4a7f-bf94-ab0bc23c7881.sql",
+      "reason": "created by a later migration"
+    },
+    {
+      "file": "20250124130001_rollback_financial_data_rls_policies.sql",
+      "object": "borrowing_capacity_assessments",
+      "form": "create policy on",
+      "created_by": "20260120013214_0c7ddbc4-8fd4-44bf-ba20-088ea20c1b79.sql",
+      "reason": "created by a later migration"
+    },
+    {
+      "file": "20250124130001_rollback_financial_data_rls_policies.sql",
+      "object": "cash_flow_analyses",
+      "form": "create policy on",
+      "created_by": "20251218063922_812efb2e-fc19-4c97-9923-1a251c6b10e9.sql",
+      "reason": "created by a later migration"
+    },
+    {
+      "file": "20250124130001_rollback_financial_data_rls_policies.sql",
+      "object": "portfolio_analysis_reports",
+      "form": "create policy on",
+      "created_by": "20260119044552_ff2d889a-972f-43ed-b1a0-671660cba529.sql",
+      "reason": "created by a later migration"
+    },
+    {
+      "file": "20250124130001_rollback_financial_data_rls_policies.sql",
+      "object": "portfolio_reviews",
+      "form": "create policy on",
+      "created_by": "20260119004645_5a45b099-f50e-4151-b7da-560df82cc3ce.sql",
+      "reason": "created by a later migration"
+    },
+    {
+      "file": "20250124140000_fix_email_communication_rls_policies.sql",
+      "object": "email_copilot_emails",
+      "form": "create policy on",
+      "created_by": "20251209112552_e14ca84e-9494-4ca8-91fd-3ca4fb604321.sql",
+      "reason": "created by a later migration"
+    },
+    {
+      "file": "20250124140000_fix_email_communication_rls_policies.sql",
+      "object": "email_copilot_sent_replies",
+      "form": "create policy on",
+      "created_by": "20251210083507_a5c6850c-9578-4bc5-9514-ac471349a090.sql",
+      "reason": "created by a later migration"
+    },
+    {
+      "file": "20250124140000_fix_email_communication_rls_policies.sql",
+      "object": "vapi_call_logs",
+      "form": "create policy on",
+      "created_by": "20251213093316_ddd3b8bd-f7dc-4b60-b465-cc58118f5023.sql",
+      "reason": "created by a later migration"
+    },
+    {
+      "file": "20250124150000_fix_report_analysis_rls_policies.sql",
+      "object": "borrowing_capacity_assessments",
+      "form": "create policy on",
+      "created_by": "20260120013214_0c7ddbc4-8fd4-44bf-ba20-088ea20c1b79.sql",
+      "reason": "created by a later migration"
+    },
+    {
+      "file": "20250124150000_fix_report_analysis_rls_policies.sql",
+      "object": "cash_flow_analyses",
+      "form": "create policy on",
+      "created_by": "20251218063922_812efb2e-fc19-4c97-9923-1a251c6b10e9.sql",
+      "reason": "created by a later migration"
+    },
+    {
+      "file": "20250124150000_fix_report_analysis_rls_policies.sql",
+      "object": "investment_reports",
+      "form": "create policy on",
+      "created_by": "20250912170521_208618a7-d33a-4e4b-96c2-455f4efcf772.sql",
+      "reason": "created by a later migration"
+    },
+    {
+      "file": "20250124150000_fix_report_analysis_rls_policies.sql",
+      "object": "portfolio_analysis_reports",
+      "form": "create policy on",
+      "created_by": "20260119044552_ff2d889a-972f-43ed-b1a0-671660cba529.sql",
+      "reason": "created by a later migration"
+    },
+    {
+      "file": "20250124150000_fix_report_analysis_rls_policies.sql",
+      "object": "portfolio_reviews",
+      "form": "create policy on",
+      "created_by": "20260119004645_5a45b099-f50e-4151-b7da-560df82cc3ce.sql",
+      "reason": "created by a later migration"
+    },
+    {
+      "file": "20250124150000_fix_report_analysis_rls_policies.sql",
+      "object": "property_comparisons",
+      "form": "create policy on",
+      "created_by": "20251113170408_4ac5058f-3f3d-43d9-9830-1d5464df2f6c.sql",
+      "reason": "created by a later migration"
+    },
+    {
+      "file": "20250124170000_fix_automation_system_rls_policies.sql",
+      "object": "api_health_log",
+      "form": "create policy on",
+      "created_by": "20251029033729_a303b60c-2bdd-4059-8612-bd1077827562.sql",
+      "reason": "created by a later migration"
+    },
+    {
+      "file": "20250124170000_fix_automation_system_rls_policies.sql",
+      "object": "auto_report_generation_log",
+      "form": "create policy on",
+      "created_by": "20251205035215_f3cedfa4-1871-4f6b-b474-073d579bb010.sql",
+      "reason": "created by a later migration"
+    },
+    {
+      "file": "20250124170000_fix_automation_system_rls_policies.sql",
+      "object": "auto_report_master_settings",
+      "form": "create policy on",
+      "created_by": "20251205035215_f3cedfa4-1871-4f6b-b474-073d579bb010.sql",
+      "reason": "created by a later migration"
+    },
+    {
+      "file": "20250124170000_fix_automation_system_rls_policies.sql",
+      "object": "auto_report_processed_listings",
+      "form": "create policy on",
+      "created_by": "20251205040028_daf73239-970a-49a3-8b89-7a25ca134da6.sql",
+      "reason": "created by a later migration"
+    },
+    {
+      "file": "20250124170000_fix_automation_system_rls_policies.sql",
+      "object": "auto_report_switches",
+      "form": "create policy on",
+      "created_by": "20251205035215_f3cedfa4-1871-4f6b-b474-073d579bb010.sql",
+      "reason": "created by a later migration"
+    },
+    {
+      "file": "20250124170000_fix_automation_system_rls_policies.sql",
+      "object": "report_structure_templates",
+      "form": "create policy on",
+      "created_by": "20251223165935_958c02b3-ecca-4ec4-bcab-fe329cd99d5a.sql",
+      "reason": "created by a later migration"
+    },
+    {
+      "file": "20250124180000_fix_integration_bulk_rls_policies.sql",
+      "object": "bulk_generation_items",
+      "form": "create policy on",
+      "created_by": "20251113174135_134af553-89e4-44ff-87ae-dfdcccad8041.sql",
+      "reason": "created by a later migration"
+    },
+    {
+      "file": "20250124180000_fix_integration_bulk_rls_policies.sql",
+      "object": "bulk_generation_jobs",
+      "form": "create policy on",
+      "created_by": "20251113174135_134af553-89e4-44ff-87ae-dfdcccad8041.sql",
+      "reason": "created by a later migration"
+    },
+    {
+      "file": "20250124180000_fix_integration_bulk_rls_policies.sql",
+      "object": "ghl_pipeline_stages",
+      "form": "create policy on",
+      "created_by": "20260119091255_50dd5922-ac3f-4475-8395-01648875a8ca.sql",
+      "reason": "created by a later migration"
+    },
+    {
+      "file": "20250124180000_fix_integration_bulk_rls_policies.sql",
+      "object": "ghl_pipelines",
+      "form": "create policy on",
+      "created_by": "20260119091255_50dd5922-ac3f-4475-8395-01648875a8ca.sql",
+      "reason": "created by a later migration"
+    },
+    {
+      "file": "20250124180000_fix_integration_bulk_rls_policies.sql",
+      "object": "integration_configs",
+      "form": "create policy on",
+      "created_by": "20251230113803_ed9691c9-c18b-44b4-b44e-e85a9cae4d41.sql",
+      "reason": "created by a later migration"
+    },
+    {
+      "file": "20260807120000_aml_screening_repair.sql",
+      "object": "aml.party_screening_subjects",
+      "form": "create trigger on",
+      "created_by": "20260901000000_aml_integration_completion.sql",
+      "reason": "created by a later migration"
+    },
+    {
+      "file": "20260807120000_aml_screening_repair.sql",
+      "object": "aml.party_screening_subjects",
+      "form": "references",
+      "created_by": "20260901000000_aml_integration_completion.sql",
+      "reason": "created by a later migration"
+    },
+    {
+      "file": "20260808144246_7496517e-b65c-4f63-837d-fd6a29512666.sql",
+      "object": "workflow_trigger_events",
+      "form": "create index on",
+      "created_by": "20260815000000_create_workflow_trigger_events.sql",
+      "reason": "created by a later migration"
+    }
+  ]
+}

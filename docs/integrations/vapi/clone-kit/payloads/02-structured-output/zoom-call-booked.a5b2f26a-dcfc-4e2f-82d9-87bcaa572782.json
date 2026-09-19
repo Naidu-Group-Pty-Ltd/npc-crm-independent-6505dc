@@ -1,0 +1,10 @@
+{
+  "description": "Tracking whether the call was booked is crucial for measuring the assistant's effectiveness in securing appointments.",
+  "name": "Zoom Call Booked",
+  "schema": {
+    "description": "Indicates if the Zoom call was booked",
+    "type": "boolean"
+  },
+  "type": "ai",
+  "workflowIds": []
+}

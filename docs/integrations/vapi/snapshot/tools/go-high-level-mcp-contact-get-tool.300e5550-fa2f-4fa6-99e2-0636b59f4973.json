@@ -1,0 +1,11 @@
+{
+  "createdAt": "2026-05-11T03:06:18.897Z",
+  "function": {
+    "name": "go_high_level_mcp_contact_get_tool"
+  },
+  "id": "300e5550-fa2f-4fa6-99e2-0636b59f4973",
+  "latestVersion": "v1",
+  "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+  "type": "gohighlevel.contact.get",
+  "updatedAt": "2026-05-11T03:06:18.897Z"
+}

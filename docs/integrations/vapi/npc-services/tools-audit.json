@@ -1,0 +1,269 @@
+{
+  "question": "Is every tool the NPC set needs captured, and what must change when it is recreated?",
+  "answer": "Yes \u2014 12 managed tools plus 3 inline tools. The 12 were captured as standalone files; the 3 inline ones live inside the squad and workflow payloads and had NOT been called out as tools needing migration until this audit.",
+  "method": "Every NPC assistant, squad, workflow and phone number was walked recursively. Two passes: (a) every UUID in every string, matched against the /tool list \u2014 this proves no managed tool is reachable by a path other than model.toolIds; (b) every object under ANY key containing 'tool', which is what caught 'tools:append' \u2014 a key a plain 'tools' check misses.",
+  "managedTools": {
+    "count": 12,
+    "allReferencedVia": "model.toolIds only",
+    "items": [
+      {
+        "name": "end_call_tool",
+        "id": "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+        "type": "endCall",
+        "serverUrl": null,
+        "usedBy": [
+          "NPC Active Nurturing",
+          "NPC Discovery Call Follow Up Test",
+          "NPC Discovery Call Follow Up Test 2",
+          "NPC Discovery Call No Show Follow Up",
+          "NPC IFC Inbound",
+          "NPC IFC No Show Follow Up",
+          "NPC Inbound Agent",
+          "NPC Opt In Follow Up",
+          "NPC Opt In Follow Up Inbound",
+          "NPC Quiz Follow Up",
+          "NPC Strategy Session (Phone) Follow Up",
+          "NPC Strategy Session (Phone) No Show",
+          "NPC Strategy Session Inbound"
+        ],
+        "usedByCount": 13,
+        "capturedAt": "tools/end_call_tool"
+      },
+      {
+        "name": "ghl_resolve_contact",
+        "id": "3e116e74-0dda-4277-ae38-468bdd3464e6",
+        "type": "function",
+        "serverUrl": "https://hook.eu2.make.com/db3ws2lmqi4qh9ozsyt1tvn3j8tbeahm",
+        "usedBy": [
+          "NPC Active Nurturing",
+          "NPC Discovery Call Follow Up Test",
+          "NPC Discovery Call No Show Follow Up",
+          "NPC IFC Follow Up",
+          "NPC IFC Inbound",
+          "NPC IFC No Show Follow Up",
+          "NPC Inbound Agent",
+          "NPC Opt In Follow Up",
+          "NPC Opt In Follow Up Inbound",
+          "NPC Quiz Follow Up",
+          "NPC Strategy Session (Phone) Follow Up",
+          "NPC Strategy Session (Phone) No Show",
+          "NPC Strategy Session Inbound"
+        ],
+        "usedByCount": 13,
+        "capturedAt": "tools/ghl_resolve_contact"
+      },
+      {
+        "name": "transfer_to_human",
+        "id": "5c0c334c-6bbf-4399-b748-a3c50207e754",
+        "type": "function",
+        "serverUrl": "https://hook.eu2.make.com/jb85m14jchgktf09sfxt4jmf8yggaw32",
+        "usedBy": [
+          "NPC Active Nurturing",
+          "NPC Discovery Call Follow Up Test",
+          "NPC Discovery Call No Show Follow Up",
+          "NPC IFC Follow Up",
+          "NPC IFC Inbound",
+          "NPC IFC No Show Follow Up",
+          "NPC Inbound Agent",
+          "NPC Opt In Follow Up",
+          "NPC Opt In Follow Up Inbound",
+          "NPC Quiz Follow Up",
+          "NPC Strategy Session (Phone) Follow Up",
+          "NPC Strategy Session (Phone) No Show",
+          "NPC Strategy Session Inbound"
+        ],
+        "usedByCount": 13,
+        "capturedAt": "tools/transfer_to_human"
+      },
+      {
+        "name": "ghl_check_availability",
+        "id": "6587bc7d-7382-4e33-a38d-95f5740df52a",
+        "type": "function",
+        "serverUrl": "https://hook.eu2.make.com/3xslmou0jpbwxbutg8we362f9jsh96q0",
+        "usedBy": [
+          "NPC Active Nurturing",
+          "NPC Discovery Call Follow Up Test",
+          "NPC Discovery Call No Show Follow Up",
+          "NPC IFC Follow Up",
+          "NPC IFC Inbound",
+          "NPC IFC No Show Follow Up",
+          "NPC Opt In Follow Up",
+          "NPC Opt In Follow Up Inbound",
+          "NPC Quiz Follow Up",
+          "NPC Strategy Session (Phone) Follow Up",
+          "NPC Strategy Session (Phone) No Show",
+          "NPC Strategy Session Inbound"
+        ],
+        "usedByCount": 12,
+        "capturedAt": "tools/ghl_check_availability"
+      },
+      {
+        "name": "ghl_create_booking",
+        "id": "f195a817-8346-475d-ad0e-8033f1d2e283",
+        "type": "function",
+        "serverUrl": "https://hook.eu2.make.com/eop70ky2635nobauh7lyof13sctvl0ga",
+        "usedBy": [
+          "NPC Active Nurturing",
+          "NPC Discovery Call Follow Up Test",
+          "NPC Discovery Call No Show Follow Up",
+          "NPC IFC Follow Up",
+          "NPC IFC No Show Follow Up",
+          "NPC Opt In Follow Up",
+          "NPC Opt In Follow Up Inbound",
+          "NPC Quiz Follow Up",
+          "NPC Strategy Session (Phone) Follow Up",
+          "NPC Strategy Session (Phone) No Show",
+          "NPC Strategy Session Inbound"
+        ],
+        "usedByCount": 11,
+        "capturedAt": "tools/ghl_create_booking"
+      },
+      {
+        "name": "ghl_delete_event_npc",
+        "id": "5934c762-0223-4112-bfb7-88931da17652",
+        "type": "function",
+        "serverUrl": "https://hook.eu2.make.com/9inh27jwcxodgecrbwvjosx7i5xedm67",
+        "usedBy": [
+          "NPC Discovery Call Follow Up",
+          "NPC Discovery Call Follow Up Test",
+          "NPC Discovery Call Follow Up Test 2"
+        ],
+        "usedByCount": 3,
+        "capturedAt": "tools/ghl_delete_event_npc"
+      },
+      {
+        "name": "ghl_delete_event_npc_3",
+        "id": "006be564-14c2-4db9-9c90-6821d363b123",
+        "type": "function",
+        "serverUrl": "https://hook.eu2.make.com/ks0eu13idcgwr9wf8tp4ak7a1gqj8e6i",
+        "usedBy": [
+          "NPC IFC Follow Up",
+          "NPC IFC Inbound"
+        ],
+        "usedByCount": 2,
+        "capturedAt": "tools/ghl_delete_event_npc_3"
+      },
+      {
+        "name": "ghl_delete_event_npc_2",
+        "id": "87fb4ce8-b696-4925-bfbf-8bd9678d4e36",
+        "type": "function",
+        "serverUrl": "https://hook.eu2.make.com/ujov89m0me5kmc012fzc6l5bhn4t8oep",
+        "usedBy": [
+          "NPC Strategy Session (Phone) Follow Up",
+          "NPC Strategy Session Inbound"
+        ],
+        "usedByCount": 2,
+        "capturedAt": "tools/ghl_delete_event_npc_2"
+      },
+      {
+        "name": "ghl_delete_event_npc_2_1",
+        "id": "a34b05ef-5218-4771-bf2b-4b171ad8f9c9",
+        "type": "function",
+        "serverUrl": "https://hook.eu2.make.com/w5e69pe59ahue41em25rvh97j91wtxbj",
+        "usedBy": [
+          "NPC Strategy Session (Phone) Follow Up",
+          "NPC Strategy Session Inbound"
+        ],
+        "usedByCount": 2,
+        "capturedAt": "tools/ghl_delete_event_npc_2_1"
+      },
+      {
+        "name": "phoneNumber_inject",
+        "id": "9789b720-ee13-4389-ba33-678883eaa891",
+        "type": "function",
+        "serverUrl": "https://hook.eu2.make.com/2ubukyatwc0ig8zinphjjc4dciwhigqg",
+        "usedBy": [
+          "NPC Inbound Agent"
+        ],
+        "usedByCount": 1,
+        "capturedAt": "tools/phoneNumber_inject"
+      },
+      {
+        "name": "get_call_context",
+        "id": "0bd36de8-6d3a-43e5-9c3f-25ca6de97662",
+        "type": "function",
+        "serverUrl": "https://hook.eu2.make.com/o51u3jb5g1nn1lxiluziezpr7gh5vvt8",
+        "usedBy": [
+          "NPC Inbound Agent"
+        ],
+        "usedByCount": 1,
+        "capturedAt": "tools/get_call_context"
+      },
+      {
+        "name": "ghl_delete_event_npc_3_1",
+        "id": "ba13974d-8005-487d-81b9-4dc569a9f6d4",
+        "type": "function",
+        "serverUrl": "https://hook.eu2.make.com/u60ggcqrdo9tq4gbiwabe67w9nwg255m",
+        "usedBy": [
+          "NPC IFC Follow Up"
+        ],
+        "usedByCount": 1,
+        "capturedAt": "tools/ghl_delete_event_npc_3_1"
+      }
+    ]
+  },
+  "inlineTools": [
+    {
+      "where": "squads/npc-sales-force \u2192 members[0].assistantOverrides['tools:append']",
+      "type": "handoff",
+      "function": "handoff_to_assistant",
+      "onAssistant": "NPC Inbound Agent",
+      "why": "This is the routing brain of the inbound squad \u2014 it is how the receptionist hands a caller to the right booking agent. It is not in /tool and not in any toolIds array.",
+      "destinationsByAssistantId": [
+        {
+          "assistantId": "739b47bf-9adb-4ac6-aca4-976d815f673e",
+          "name": "NPC Opt In Follow Up Inbound"
+        },
+        {
+          "assistantId": "5ae449c8-1999-4f44-9115-9d63bf7444ae",
+          "name": "NPC Strategy Session Inbound"
+        },
+        {
+          "assistantId": "7770a48b-68d1-48df-a03a-9cc5b9e91ad8",
+          "name": "NPC IFC Inbound"
+        }
+      ],
+      "cloneAction": "Recreate with the squad, and REMAP all three assistantIds to the new account's ids. Left unremapped they point at the old org and the handoff silently fails."
+    },
+    {
+      "where": "workflows/npc-follow-up \u2192 nodes[22]",
+      "type": "transferCall",
+      "function": "untitled_tool",
+      "defect": "destinations is an EMPTY array \u2014 the transfer node cannot transfer to anything",
+      "cloneAction": "Carried across as-is. Decide whether to configure a destination or delete the node."
+    },
+    {
+      "where": "workflows/npc-follow-up \u2192 nodes[23]",
+      "type": "endCall",
+      "function": "untitled_tool",
+      "defect": "its spoken message is \"Thank you for calling Wellness Partners. Have a wonderful day!\" \u2014 a leftover from the template this workflow was built from, not an NPC line",
+      "cloneAction": "Carried across as-is. Fix the wording before this workflow is used."
+    }
+  ],
+  "danglingToolReferences": {
+    "note": "Referenced by assistants but GET /tool/{id} returns 404 \u2014 deleted from the org while the assistants kept pointing at them. Nothing to capture; recorded so a clone does not treat the gap as an export failure.",
+    "ids": {
+      "4d3ab4a4-2662-4b5a-9089-068faf7a2b00": [
+        "NPC Discovery Call Follow Up",
+        "NPC Discovery Call Follow Up Test 2"
+      ],
+      "4aa1a306-b057-4b0a-bcc0-f38749637ee0": [
+        "NPC Discovery Call Follow Up",
+        "NPC Discovery Call Follow Up Test 2"
+      ],
+      "199be122-72f1-4bbb-ada3-aedba74b59b1": [
+        "NPC Discovery Call Follow Up",
+        "NPC Discovery Call Follow Up Test 2"
+      ]
+    }
+  },
+  "unreferencedTools": {
+    "count": 7,
+    "where": "tools-unreferenced/",
+    "note": "Present in the org, called by no assistant. Captured because two carry live credentials and one (get_contact_airtable_test) points at the OLD Airtable base. Not required by the clone."
+  },
+  "versionHistory": {
+    "correction": "This bundle previously implied tools have no version history. They do \u2014 GET /tool/{id}/versions (plural). The singular form 404s, which is what produced the wrong conclusion.",
+    "captured": "../snapshot/tool-versions/"
+  }
+}

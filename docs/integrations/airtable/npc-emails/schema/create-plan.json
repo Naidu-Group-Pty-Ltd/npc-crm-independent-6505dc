@@ -1,0 +1,6471 @@
+{
+  "note": "Replay in order. Phase A creates every table with its writable, non-link fields. Phase B adds linked-record fields once both sides exist. Phase C adds computed fields last, since they reference other fields by name.",
+  "phaseA_tablesAndPlainFields": [
+    {
+      "sourceTableId": "tbltAY2t8eiaMzOXs",
+      "name": "Emails",
+      "primaryFieldName": "Name",
+      "primaryFieldType": "singleLineText",
+      "fields": [
+        {
+          "name": "Name",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Notes",
+          "type": "multilineText"
+        },
+        {
+          "name": "Assignee",
+          "type": "singleCollaborator"
+        },
+        {
+          "name": "Status",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Todo",
+                "color": "redLight2"
+              },
+              {
+                "name": "In progress",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Done",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Error 500",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Address not found",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "No URL",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Invalid AI JSON",
+                "color": "blueLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Attachments",
+          "type": "multipleAttachments",
+          "options": {
+            "isReversed": false
+          }
+        },
+        {
+          "name": "Email",
+          "type": "email"
+        },
+        {
+          "name": "Subject",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Body",
+          "type": "multilineText"
+        }
+      ]
+    },
+    {
+      "sourceTableId": "tblH9cW4EhVs6D5H1",
+      "name": "Properties",
+      "primaryFieldName": "Address",
+      "primaryFieldType": "singleLineText",
+      "fields": [
+        {
+          "name": "Address",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Project Name",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Suburb",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Price",
+          "type": "currency",
+          "options": {
+            "precision": 2,
+            "symbol": "$"
+          }
+        },
+        {
+          "name": "Beds",
+          "type": "number",
+          "options": {
+            "precision": 0
+          }
+        },
+        {
+          "name": "Baths",
+          "type": "number",
+          "options": {
+            "precision": 0
+          }
+        },
+        {
+          "name": "Car Spaces",
+          "type": "number",
+          "options": {
+            "precision": 0
+          }
+        },
+        {
+          "name": "Property Type",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "House",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Apartment",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Townhouse",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Other",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Unit",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Villa",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Duplex",
+                "color": "redLight2"
+              },
+              {
+                "name": "Land",
+                "color": "pinkLight2"
+              },
+              {
+                "name": "Retail",
+                "color": "purpleLight2"
+              },
+              {
+                "name": "Commercial",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Rural",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Land",
+                "color": "cyanLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Category",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "listing",
+                "color": "blueLight2"
+              },
+              {
+                "name": "news",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "other",
+                "color": "tealLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Inspection Start",
+          "type": "date",
+          "options": {
+            "dateFormat": {
+              "name": "local",
+              "format": "l"
+            }
+          }
+        },
+        {
+          "name": "Inspection End",
+          "type": "date",
+          "options": {
+            "dateFormat": {
+              "name": "local",
+              "format": "l"
+            }
+          }
+        },
+        {
+          "name": "Inspection Notes",
+          "type": "multilineText"
+        },
+        {
+          "name": "Agency Name",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Agent Name",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Agent Phone",
+          "type": "phoneNumber"
+        },
+        {
+          "name": "Lot Number",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Zipcode",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Confidence Score",
+          "type": "number",
+          "options": {
+            "precision": 2
+          }
+        },
+        {
+          "name": "Property Description",
+          "type": "multilineText"
+        },
+        {
+          "name": "Square Feet",
+          "type": "number",
+          "options": {
+            "precision": 0
+          }
+        },
+        {
+          "name": "Zoning Type",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Residential",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Commercial",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Industrial",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Land",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Other",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Rural",
+                "color": "yellowLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Sale or Rent",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Sale",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Rent",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Other",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Unknown",
+                "color": "tealLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Sale Method",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Auction",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Private Treaty",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Expression of Interest",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Tender",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Other",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "EOI",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Set Date",
+                "color": "redLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Rent Period",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "per_week",
+                "color": "blueLight2"
+              },
+              {
+                "name": "per_month",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "per_annum",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Other",
+                "color": "greenLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Source",
+          "type": "email"
+        },
+        {
+          "name": "Web Link",
+          "type": "url"
+        },
+        {
+          "name": "State",
+          "type": "singleLineText"
+        }
+      ]
+    },
+    {
+      "sourceTableId": "tblisKjaSRnkY1KBC",
+      "name": "Lead Data Test",
+      "primaryFieldName": "Name",
+      "primaryFieldType": "singleLineText",
+      "fields": [
+        {
+          "name": "Name",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Discovery Call Time",
+          "type": "dateTime",
+          "options": {
+            "dateFormat": {
+              "name": "local",
+              "format": "l"
+            },
+            "timeFormat": {
+              "name": "12hour",
+              "format": "h:mma"
+            },
+            "timeZone": "client"
+          }
+        },
+        {
+          "name": "Phone Number",
+          "type": "phoneNumber"
+        },
+        {
+          "name": "Notes",
+          "type": "multilineText"
+        },
+        {
+          "name": "Assignee",
+          "type": "singleCollaborator"
+        },
+        {
+          "name": "Status",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Todo",
+                "color": "redLight2"
+              },
+              {
+                "name": "In progress",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Done",
+                "color": "greenLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Attachments",
+          "type": "multipleAttachments",
+          "options": {
+            "isReversed": false
+          }
+        }
+      ]
+    },
+    {
+      "sourceTableId": "tblwFLyi86JSgXwt3",
+      "name": "Opt-In Calls",
+      "primaryFieldName": "Contact Name",
+      "primaryFieldType": "singleLineText",
+      "fields": [
+        {
+          "name": "Contact Name",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Contact ID",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Email",
+          "type": "email"
+        },
+        {
+          "name": "Phone Number",
+          "type": "phoneNumber"
+        },
+        {
+          "name": "Call ID",
+          "type": "singleLineText"
+        }
+      ]
+    },
+    {
+      "sourceTableId": "tblcUXKwhZbscJRY7",
+      "name": "Quiz Sub Calls",
+      "primaryFieldName": "Contact Name",
+      "primaryFieldType": "singleLineText",
+      "fields": [
+        {
+          "name": "Contact Name",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Contact ID",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Email",
+          "type": "email"
+        },
+        {
+          "name": "Phone Number",
+          "type": "phoneNumber"
+        },
+        {
+          "name": "Call ID",
+          "type": "singleLineText"
+        }
+      ]
+    },
+    {
+      "sourceTableId": "tblWIg5cs85O30pcY",
+      "name": "Property Intake Master",
+      "primaryFieldName": "Property Record Name",
+      "primaryFieldType": "formula",
+      "fields": [
+        {
+          "name": "Record Type",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Source Email Only",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Property Listing",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Property Update",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Attachment Record",
+                "color": "greenLight2"
+              },
+              {
+                "name": "URL / Web Record",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Error Record",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Manual Entry",
+                "color": "redLight2"
+              },
+              {
+                "name": "Unknown",
+                "color": "pinkLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Source Type",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Email Body",
+                "color": "blueLight2"
+              },
+              {
+                "name": "PDF",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "DOCX",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Image",
+                "color": "greenLight2"
+              },
+              {
+                "name": "URL",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Web Scrape",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Google Maps",
+                "color": "redLight2"
+              },
+              {
+                "name": "Manual Entry",
+                "color": "pinkLight2"
+              },
+              {
+                "name": "Mixed Source",
+                "color": "purpleLight2"
+              },
+              {
+                "name": "Unknown",
+                "color": "grayLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Processing Status",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "New",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Processing",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Extracted",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Partially Extracted",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Enriched",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Completed",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Needs Human Review",
+                "color": "redLight2"
+              },
+              {
+                "name": "Failed",
+                "color": "pinkLight2"
+              },
+              {
+                "name": "Ignored",
+                "color": "purpleLight2"
+              },
+              {
+                "name": "Duplicate",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Archived",
+                "color": "blueLight1"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Processing Stage",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Email Logged",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Body Converted",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Body Chunked",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Attachments Listed",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Attachment Downloaded",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Document Uploaded",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Document Extracted",
+                "color": "redLight2"
+              },
+              {
+                "name": "Image Uploaded",
+                "color": "pinkLight2"
+              },
+              {
+                "name": "Image Analysed",
+                "color": "purpleLight2"
+              },
+              {
+                "name": "URL Detected",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Webpage Scraped",
+                "color": "blueLight1"
+              },
+              {
+                "name": "AI Parsed",
+                "color": "cyanLight1"
+              },
+              {
+                "name": "Property Created",
+                "color": "tealLight1"
+              },
+              {
+                "name": "Property Updated",
+                "color": "greenLight1"
+              },
+              {
+                "name": "Geocoded",
+                "color": "yellowLight1"
+              },
+              {
+                "name": "Enriched",
+                "color": "orangeLight1"
+              },
+              {
+                "name": "Human Reviewed",
+                "color": "redLight1"
+              },
+              {
+                "name": "Completed",
+                "color": "pinkLight1"
+              },
+              {
+                "name": "Error",
+                "color": "purpleLight1"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Record Status",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Active",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Needs Review",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Archived",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Duplicate",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Rejected",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Test Record",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Unknown",
+                "color": "redLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Extraction Batch ID",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Email Subject",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Sender Email",
+          "type": "email"
+        },
+        {
+          "name": "Email Body Preview",
+          "type": "multilineText"
+        },
+        {
+          "name": "Email Received At",
+          "type": "dateTime",
+          "options": {
+            "dateFormat": {
+              "name": "us",
+              "format": "M/D/YYYY"
+            },
+            "timeFormat": {
+              "name": "12hour",
+              "format": "h:mma"
+            },
+            "timeZone": "utc"
+          }
+        },
+        {
+          "name": "Email Attachment Count",
+          "type": "number",
+          "options": {
+            "precision": 0
+          }
+        },
+        {
+          "name": "Source Attachment Name",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Source Attachment Type",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "PDF",
+                "color": "blueLight2"
+              },
+              {
+                "name": "DOCX",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Image",
+                "color": "tealLight2"
+              },
+              {
+                "name": "JPG",
+                "color": "greenLight2"
+              },
+              {
+                "name": "JPEG",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "PNG",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "HTML",
+                "color": "redLight2"
+              },
+              {
+                "name": "TXT",
+                "color": "pinkLight2"
+              },
+              {
+                "name": "XLSX",
+                "color": "purpleLight2"
+              },
+              {
+                "name": "Other",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Unknown",
+                "color": "blueLight1"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Duplicate Status",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "New",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Possible Duplicate",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Confirmed Duplicate",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Updated Existing",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Not Duplicate",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Needs Review",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Unknown",
+                "color": "redLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Address",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Suburb",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Postcode",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Project Name",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Lot",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Email Is Read",
+          "type": "checkbox",
+          "options": {
+            "icon": "thumbsUp",
+            "color": "greenBright"
+          }
+        },
+        {
+          "name": "Email Web Link",
+          "type": "url"
+        },
+        {
+          "name": "Price Numeric",
+          "type": "currency",
+          "options": {
+            "precision": 2,
+            "symbol": "$"
+          }
+        },
+        {
+          "name": "Beds",
+          "type": "number",
+          "options": {
+            "precision": 0
+          }
+        },
+        {
+          "name": "Baths",
+          "type": "number",
+          "options": {
+            "precision": 0
+          }
+        },
+        {
+          "name": "Car Spaces",
+          "type": "number",
+          "options": {
+            "precision": 0
+          }
+        },
+        {
+          "name": "Property Type",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "House",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Apartment",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Townhouse",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Unit",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Villa",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Duplex",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Land",
+                "color": "redLight2"
+              },
+              {
+                "name": "Retail",
+                "color": "pinkLight2"
+              },
+              {
+                "name": "Office",
+                "color": "purpleLight2"
+              },
+              {
+                "name": "Medical",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Hospitality",
+                "color": "blueLight1"
+              },
+              {
+                "name": "Showroom",
+                "color": "cyanLight1"
+              },
+              {
+                "name": "Suite",
+                "color": "tealLight1"
+              },
+              {
+                "name": "Warehouse",
+                "color": "greenLight1"
+              },
+              {
+                "name": "Factory",
+                "color": "yellowLight1"
+              },
+              {
+                "name": "Workshop",
+                "color": "orangeLight1"
+              },
+              {
+                "name": "Hardstand",
+                "color": "redLight1"
+              },
+              {
+                "name": "Farm",
+                "color": "pinkLight1"
+              },
+              {
+                "name": "Acreage",
+                "color": "purpleLight1"
+              },
+              {
+                "name": "Mixed Use",
+                "color": "grayLight1"
+              },
+              {
+                "name": "Other",
+                "color": "blueBright"
+              },
+              {
+                "name": "Unknown",
+                "color": "cyanBright"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Scenario Run ID",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Make Module Source",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Sender Name",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Recipient Email",
+          "type": "email"
+        },
+        {
+          "name": "Email Body Plain Text",
+          "type": "multilineText"
+        },
+        {
+          "name": "Email Body HTML",
+          "type": "multilineText"
+        },
+        {
+          "name": "Email Sent At",
+          "type": "dateTime",
+          "options": {
+            "dateFormat": {
+              "name": "us",
+              "format": "M/D/YYYY"
+            },
+            "timeFormat": {
+              "name": "12hour",
+              "format": "h:mma"
+            },
+            "timeZone": "utc"
+          }
+        },
+        {
+          "name": "Email Message ID",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Email Conversation ID",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Internet Message ID",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Email Has Attachments",
+          "type": "checkbox",
+          "options": {
+            "icon": "thumbsUp",
+            "color": "greenBright"
+          }
+        },
+        {
+          "name": "Email Extracted URLs",
+          "type": "multilineText"
+        },
+        {
+          "name": "Email Notes",
+          "type": "multilineText"
+        },
+        {
+          "name": "Raw Email Payload",
+          "type": "multilineText"
+        },
+        {
+          "name": "Source Attachment MIME Type",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Source Attachment Size",
+          "type": "number",
+          "options": {
+            "precision": 0
+          }
+        },
+        {
+          "name": "Source Attachment URL",
+          "type": "url"
+        },
+        {
+          "name": "Google Drive File URL",
+          "type": "url"
+        },
+        {
+          "name": "Google Drive File ID",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Google Drive Folder URL",
+          "type": "url"
+        },
+        {
+          "name": "Source Document Date",
+          "type": "date",
+          "options": {
+            "dateFormat": {
+              "name": "local",
+              "format": "l"
+            }
+          }
+        },
+        {
+          "name": "Source Document Page Count",
+          "type": "number",
+          "options": {
+            "precision": 0
+          }
+        },
+        {
+          "name": "Source Document Extracted Text",
+          "type": "multilineText"
+        },
+        {
+          "name": "Source Document Extraction Status",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Not Started",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Extracted",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Partially Extracted",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Failed",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Not Required",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Unknown",
+                "color": "orangeLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Raw Document Extractor Output",
+          "type": "multilineText"
+        },
+        {
+          "name": "Original Row Text",
+          "type": "multilineText"
+        },
+        {
+          "name": "Raw Source Snippet",
+          "type": "multilineText"
+        },
+        {
+          "name": "Duplicate Match Notes",
+          "type": "multilineText"
+        },
+        {
+          "name": "Matched Existing Record ID",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Match Confidence",
+          "type": "number",
+          "options": {
+            "precision": 2
+          }
+        },
+        {
+          "name": "Is Latest Version",
+          "type": "checkbox",
+          "options": {
+            "icon": "thumbsUp",
+            "color": "greenBright"
+          }
+        },
+        {
+          "name": "Parent / Original Property Record ID",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Previous Duplicate Keys",
+          "type": "multilineText"
+        },
+        {
+          "name": "Unit Number",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Street Number",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Street Name",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Street Type",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Street",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Road",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Avenue",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Court",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Crescent",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Circuit",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Parade",
+                "color": "redLight2"
+              },
+              {
+                "name": "Terrace",
+                "color": "pinkLight2"
+              },
+              {
+                "name": "Place",
+                "color": "purpleLight2"
+              },
+              {
+                "name": "Boulevard",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Lane",
+                "color": "blueLight1"
+              },
+              {
+                "name": "Drive",
+                "color": "cyanLight1"
+              },
+              {
+                "name": "Highway",
+                "color": "tealLight1"
+              },
+              {
+                "name": "Way",
+                "color": "greenLight1"
+              },
+              {
+                "name": "Mews",
+                "color": "yellowLight1"
+              },
+              {
+                "name": "Close",
+                "color": "orangeLight1"
+              },
+              {
+                "name": "Other",
+                "color": "redLight1"
+              },
+              {
+                "name": "Unknown",
+                "color": "pinkLight1"
+              },
+              {
+                "name": "Approach",
+                "color": "purpleLight1"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Normalized Address",
+          "type": "singleLineText"
+        },
+        {
+          "name": "State",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "NSW",
+                "color": "blueLight2"
+              },
+              {
+                "name": "VIC",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "QLD",
+                "color": "tealLight2"
+              },
+              {
+                "name": "WA",
+                "color": "greenLight2"
+              },
+              {
+                "name": "SA",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "TAS",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "ACT",
+                "color": "redLight2"
+              },
+              {
+                "name": "NT",
+                "color": "pinkLight2"
+              },
+              {
+                "name": "Unknown",
+                "color": "purpleLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Country",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Australia",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Other",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Unknown",
+                "color": "tealLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Full Address",
+          "type": "multilineText"
+        },
+        {
+          "name": "Geocoded Full Address",
+          "type": "multilineText"
+        },
+        {
+          "name": "Latitude",
+          "type": "number",
+          "options": {
+            "precision": 2
+          }
+        },
+        {
+          "name": "Longitude",
+          "type": "number",
+          "options": {
+            "precision": 2
+          }
+        },
+        {
+          "name": "Google Maps Link",
+          "type": "url"
+        },
+        {
+          "name": "Geocoding Status",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Not Started",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Geocoded",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Partial Match",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Failed",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Needs Review",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Unknown",
+                "color": "orangeLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Geocoding Raw Response",
+          "type": "multilineText"
+        },
+        {
+          "name": "Estate Name",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Stage",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Builder / Developer",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Sector",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Residential",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Commercial",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Industrial",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Rural",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Land",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Mixed Use",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Other",
+                "color": "redLight2"
+              },
+              {
+                "name": "Unknown",
+                "color": "pinkLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Intent",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Sale",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Rent",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Lease",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Sale or Lease",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Unknown",
+                "color": "yellowLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Category",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Residential Sale",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Residential Rent",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Commercial Sale",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Commercial Lease",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Industrial Sale",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Industrial Lease",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Rural Sale",
+                "color": "redLight2"
+              },
+              {
+                "name": "Land Sale",
+                "color": "pinkLight2"
+              },
+              {
+                "name": "Mixed Use",
+                "color": "purpleLight2"
+              },
+              {
+                "name": "Other",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Unknown",
+                "color": "blueLight1"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Zoning",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Listing Status",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Available",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Available Now",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Coming Soon",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Under Offer",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Sold",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Leased",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Withdrawn",
+                "color": "redLight2"
+              },
+              {
+                "name": "Unavailable",
+                "color": "pinkLight2"
+              },
+              {
+                "name": "Unknown",
+                "color": "purpleLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Contract Type",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Turnkey",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Split",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "House & Land",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Land Only",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Build Only",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Other",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Unknown",
+                "color": "redLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Package Type",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "House & Land",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Land",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Apartment",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Townhouse",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Unit",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Commercial",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Industrial",
+                "color": "redLight2"
+              },
+              {
+                "name": "Rural",
+                "color": "pinkLight2"
+              },
+              {
+                "name": "Other",
+                "color": "purpleLight2"
+              },
+              {
+                "name": "Unknown",
+                "color": "grayLight2"
+              },
+              {
+                "name": "House",
+                "color": "blueLight1"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Registration Month Year",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Registration Date",
+          "type": "date",
+          "options": {
+            "dateFormat": {
+              "name": "local",
+              "format": "l"
+            }
+          }
+        },
+        {
+          "name": "Sale Method",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Private Treaty",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Auction",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "EOI",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Tender",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Set Date",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Contact Agent",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Unknown",
+                "color": "redLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Rent Period",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "per_week",
+                "color": "blueLight2"
+              },
+              {
+                "name": "per_month",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "per_annum",
+                "color": "tealLight2"
+              },
+              {
+                "name": "per_day",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Unknown",
+                "color": "yellowLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Display Price Text",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Price Min",
+          "type": "currency",
+          "options": {
+            "precision": 2,
+            "symbol": "$"
+          }
+        },
+        {
+          "name": "Price Max",
+          "type": "currency",
+          "options": {
+            "precision": 2,
+            "symbol": "$"
+          }
+        },
+        {
+          "name": "Total Price",
+          "type": "currency",
+          "options": {
+            "precision": 2,
+            "symbol": "$"
+          }
+        },
+        {
+          "name": "Land Price",
+          "type": "currency",
+          "options": {
+            "precision": 2,
+            "symbol": "$"
+          }
+        },
+        {
+          "name": "Build Price",
+          "type": "currency",
+          "options": {
+            "precision": 2,
+            "symbol": "$"
+          }
+        },
+        {
+          "name": "Rent Amount",
+          "type": "currency",
+          "options": {
+            "precision": 2,
+            "symbol": "$"
+          }
+        },
+        {
+          "name": "Price Qualifier",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Fixed",
+                "color": "blueLight2"
+              },
+              {
+                "name": "From",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Guide",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Range",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Contact Agent",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "POA",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Offers Over",
+                "color": "redLight2"
+              },
+              {
+                "name": "Auction",
+                "color": "pinkLight2"
+              },
+              {
+                "name": "Unknown",
+                "color": "purpleLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "GST Applicable",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Yes",
+                "color": "blueLight2"
+              },
+              {
+                "name": "No",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Unknown",
+                "color": "tealLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Outgoings PA",
+          "type": "currency",
+          "options": {
+            "precision": 2,
+            "symbol": "$"
+          }
+        },
+        {
+          "name": "Bond / Deposit",
+          "type": "currency",
+          "options": {
+            "precision": 2,
+            "symbol": "$"
+          }
+        },
+        {
+          "name": "Lease Term",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Price Notes",
+          "type": "multilineText"
+        },
+        {
+          "name": "Parking Details",
+          "type": "multilineText"
+        },
+        {
+          "name": "Land Size SQM",
+          "type": "number",
+          "options": {
+            "precision": 2
+          }
+        },
+        {
+          "name": "Building Area SQM",
+          "type": "number",
+          "options": {
+            "precision": 2
+          }
+        },
+        {
+          "name": "Floor Area SQM",
+          "type": "number",
+          "options": {
+            "precision": 2
+          }
+        },
+        {
+          "name": "Total Area SQM",
+          "type": "number",
+          "options": {
+            "precision": 2
+          }
+        },
+        {
+          "name": "Frontage M",
+          "type": "number",
+          "options": {
+            "precision": 2
+          }
+        },
+        {
+          "name": "Area Unit Original",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Storeys",
+          "type": "number",
+          "options": {
+            "precision": 0
+          }
+        },
+        {
+          "name": "Property Features",
+          "type": "multipleSelects",
+          "options": {
+            "choices": [
+              {
+                "name": "Pool",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Gym",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Study",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Balcony",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Courtyard",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Alfresco",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Garage",
+                "color": "redLight2"
+              },
+              {
+                "name": "Carport",
+                "color": "pinkLight2"
+              },
+              {
+                "name": "Air Conditioning",
+                "color": "purpleLight2"
+              },
+              {
+                "name": "Heating",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Ensuite",
+                "color": "blueLight1"
+              },
+              {
+                "name": "Walk-in Robe",
+                "color": "cyanLight1"
+              },
+              {
+                "name": "Solar",
+                "color": "tealLight1"
+              },
+              {
+                "name": "Storage",
+                "color": "greenLight1"
+              },
+              {
+                "name": "Lift Access",
+                "color": "yellowLight1"
+              },
+              {
+                "name": "Loading Dock",
+                "color": "orangeLight1"
+              },
+              {
+                "name": "Roller Door",
+                "color": "redLight1"
+              },
+              {
+                "name": "Hardstand",
+                "color": "pinkLight1"
+              },
+              {
+                "name": "Office Space",
+                "color": "purpleLight1"
+              },
+              {
+                "name": "Showroom",
+                "color": "grayLight1"
+              },
+              {
+                "name": "High Clearance",
+                "color": "blueBright"
+              },
+              {
+                "name": "Yard",
+                "color": "cyanBright"
+              },
+              {
+                "name": "Warehouse",
+                "color": "tealBright"
+              },
+              {
+                "name": "Workshop",
+                "color": "greenBright"
+              },
+              {
+                "name": "Retail Frontage",
+                "color": "yellowBright"
+              },
+              {
+                "name": "Other",
+                "color": "orangeBright"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Availability Date",
+          "type": "date",
+          "options": {
+            "dateFormat": {
+              "name": "local",
+              "format": "l"
+            }
+          }
+        },
+        {
+          "name": "Settlement Date",
+          "type": "date",
+          "options": {
+            "dateFormat": {
+              "name": "local",
+              "format": "l"
+            }
+          }
+        },
+        {
+          "name": "Property Description",
+          "type": "multilineText"
+        },
+        {
+          "name": "Summary",
+          "type": "multilineText"
+        },
+        {
+          "name": "Agent Name",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Agent Phone",
+          "type": "phoneNumber"
+        },
+        {
+          "name": "Agent Mobile",
+          "type": "phoneNumber"
+        },
+        {
+          "name": "Agent Email",
+          "type": "email"
+        },
+        {
+          "name": "Agent Role",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Sales Agent",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Leasing Agent",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Developer Representative",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Property Manager",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Agency Contact",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Builder Contact",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Unknown",
+                "color": "redLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Agency Name",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Agency Office Phone",
+          "type": "phoneNumber"
+        },
+        {
+          "name": "Agency Email",
+          "type": "email"
+        },
+        {
+          "name": "Agency Website",
+          "type": "url"
+        },
+        {
+          "name": "Agent / Agency Notes",
+          "type": "multilineText"
+        },
+        {
+          "name": "Inspection Start",
+          "type": "dateTime",
+          "options": {
+            "dateFormat": {
+              "name": "us",
+              "format": "M/D/YYYY"
+            },
+            "timeFormat": {
+              "name": "12hour",
+              "format": "h:mma"
+            },
+            "timeZone": "utc"
+          }
+        },
+        {
+          "name": "Inspection End",
+          "type": "dateTime",
+          "options": {
+            "dateFormat": {
+              "name": "us",
+              "format": "M/D/YYYY"
+            },
+            "timeFormat": {
+              "name": "12hour",
+              "format": "h:mma"
+            },
+            "timeZone": "utc"
+          }
+        },
+        {
+          "name": "Inspection Notes",
+          "type": "multilineText"
+        },
+        {
+          "name": "Open Home Available",
+          "type": "checkbox",
+          "options": {
+            "icon": "thumbsUp",
+            "color": "greenBright"
+          }
+        },
+        {
+          "name": "Next Inspection Date",
+          "type": "dateTime",
+          "options": {
+            "dateFormat": {
+              "name": "us",
+              "format": "M/D/YYYY"
+            },
+            "timeFormat": {
+              "name": "12hour",
+              "format": "h:mma"
+            },
+            "timeZone": "utc"
+          }
+        },
+        {
+          "name": "Private Inspection Required",
+          "type": "checkbox",
+          "options": {
+            "icon": "thumbsUp",
+            "color": "greenBright"
+          }
+        },
+        {
+          "name": "Inspection Raw Text",
+          "type": "multilineText"
+        },
+        {
+          "name": "Web Link",
+          "type": "url"
+        },
+        {
+          "name": "Source Web Link",
+          "type": "url"
+        },
+        {
+          "name": "Alternate Web Links",
+          "type": "multilineText"
+        },
+        {
+          "name": "Listing Images",
+          "type": "multipleAttachments",
+          "options": {
+            "isReversed": true
+          }
+        },
+        {
+          "name": "Floorplan",
+          "type": "multipleAttachments",
+          "options": {
+            "isReversed": true
+          }
+        },
+        {
+          "name": "Brochure",
+          "type": "multipleAttachments",
+          "options": {
+            "isReversed": true
+          }
+        },
+        {
+          "name": "Additional Attachments",
+          "type": "multipleAttachments",
+          "options": {
+            "isReversed": true
+          }
+        },
+        {
+          "name": "Scraped Website Text",
+          "type": "multilineText"
+        },
+        {
+          "name": "Scraped Website HTML",
+          "type": "multilineText"
+        },
+        {
+          "name": "Web Scrape Status",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Not Started",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Scraped",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Partially Scraped",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Failed",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Not Required",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Unknown",
+                "color": "orangeLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Web Enrichment Summary",
+          "type": "multilineText"
+        },
+        {
+          "name": "Enrichment Status",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Not Started",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Enriched",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Partially Enriched",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Failed",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Needs Review",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Unknown",
+                "color": "orangeLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Enriched Fields",
+          "type": "multipleSelects",
+          "options": {
+            "choices": [
+              {
+                "name": "Beds",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Baths",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Car Spaces",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Price",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Land Size",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Building Area",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Agent Details",
+                "color": "redLight2"
+              },
+              {
+                "name": "Web Link",
+                "color": "pinkLight2"
+              },
+              {
+                "name": "Images",
+                "color": "purpleLight2"
+              },
+              {
+                "name": "Description",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Inspection Details",
+                "color": "blueLight1"
+              },
+              {
+                "name": "State",
+                "color": "cyanLight1"
+              },
+              {
+                "name": "Postcode",
+                "color": "tealLight1"
+              },
+              {
+                "name": "Other",
+                "color": "greenLight1"
+              }
+            ]
+          }
+        },
+        {
+          "name": "AI Model",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Prompt Version",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Extraction Method",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "OpenAI Text Extraction",
+                "color": "blueLight2"
+              },
+              {
+                "name": "OpenAI Image Analysis",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Make Document Extractor",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Firecrawl Web Scrape",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Google Maps Geocoding",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Manual",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Other",
+                "color": "redLight2"
+              },
+              {
+                "name": "Unknown",
+                "color": "pinkLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Extracted At",
+          "type": "dateTime",
+          "options": {
+            "dateFormat": {
+              "name": "us",
+              "format": "M/D/YYYY"
+            },
+            "timeFormat": {
+              "name": "12hour",
+              "format": "h:mma"
+            },
+            "timeZone": "utc"
+          }
+        },
+        {
+          "name": "Input Character Count",
+          "type": "number",
+          "options": {
+            "precision": 0
+          }
+        },
+        {
+          "name": "Output Character Count",
+          "type": "number",
+          "options": {
+            "precision": 0
+          }
+        },
+        {
+          "name": "Extracted Listings Count",
+          "type": "number",
+          "options": {
+            "precision": 0
+          }
+        },
+        {
+          "name": "Raw AI Input",
+          "type": "multilineText"
+        },
+        {
+          "name": "Raw AI Output",
+          "type": "multilineText"
+        },
+        {
+          "name": "Raw Extracted JSON",
+          "type": "multilineText"
+        },
+        {
+          "name": "Parsed JSON Valid",
+          "type": "checkbox",
+          "options": {
+            "icon": "thumbsUp",
+            "color": "greenBright"
+          }
+        },
+        {
+          "name": "JSON Parse Status",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Valid",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Invalid",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Partially Valid",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Empty",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Not Applicable",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Unknown",
+                "color": "orangeLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "AI Parsing Notes",
+          "type": "multilineText"
+        },
+        {
+          "name": "Extraction Confidence",
+          "type": "number",
+          "options": {
+            "precision": 2
+          }
+        },
+        {
+          "name": "Address Confidence",
+          "type": "number",
+          "options": {
+            "precision": 2
+          }
+        },
+        {
+          "name": "Price Confidence",
+          "type": "number",
+          "options": {
+            "precision": 2
+          }
+        },
+        {
+          "name": "Specs Confidence",
+          "type": "number",
+          "options": {
+            "precision": 2
+          }
+        },
+        {
+          "name": "Agent Details Confidence",
+          "type": "number",
+          "options": {
+            "precision": 2
+          }
+        },
+        {
+          "name": "Overall Data Quality Score",
+          "type": "number",
+          "options": {
+            "precision": 2
+          }
+        },
+        {
+          "name": "Needs Human Review",
+          "type": "checkbox",
+          "options": {
+            "icon": "thumbsUp",
+            "color": "greenBright"
+          }
+        },
+        {
+          "name": "Review Reason",
+          "type": "multipleSelects",
+          "options": {
+            "choices": [
+              {
+                "name": "Missing Address",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Missing Suburb",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Missing Postcode",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Missing Price",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Missing Beds/Baths/Car",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Missing Agent Details",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Low Confidence",
+                "color": "redLight2"
+              },
+              {
+                "name": "Possible Duplicate",
+                "color": "pinkLight2"
+              },
+              {
+                "name": "Invalid JSON",
+                "color": "purpleLight2"
+              },
+              {
+                "name": "Bad OCR",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Conflicting Data",
+                "color": "blueLight1"
+              },
+              {
+                "name": "Missing Web Link",
+                "color": "cyanLight1"
+              },
+              {
+                "name": "Web Scrape Failed",
+                "color": "tealLight1"
+              },
+              {
+                "name": "Geocoding Failed",
+                "color": "greenLight1"
+              },
+              {
+                "name": "Airtable Mapping Issue",
+                "color": "yellowLight1"
+              },
+              {
+                "name": "Other",
+                "color": "orangeLight1"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Human Review Status",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Pending",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Reviewed",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Approved",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Rejected",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Needs Follow-up",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Not Required",
+                "color": "orangeLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Reviewed At",
+          "type": "dateTime",
+          "options": {
+            "dateFormat": {
+              "name": "us",
+              "format": "M/D/YYYY"
+            },
+            "timeFormat": {
+              "name": "12hour",
+              "format": "h:mma"
+            },
+            "timeZone": "utc"
+          }
+        },
+        {
+          "name": "Human Review Notes",
+          "type": "multilineText"
+        },
+        {
+          "name": "Reviewed By",
+          "type": "singleCollaborator"
+        },
+        {
+          "name": "Error Type",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "None",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Invalid AI JSON",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Empty Listings",
+                "color": "tealLight2"
+              },
+              {
+                "name": "No Listings Found",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Missing Required Fields",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Missing Address",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Missing Price",
+                "color": "redLight2"
+              },
+              {
+                "name": "Attachment Download Failed",
+                "color": "pinkLight2"
+              },
+              {
+                "name": "Document Extraction Failed",
+                "color": "purpleLight2"
+              },
+              {
+                "name": "Image Extraction Failed",
+                "color": "grayLight2"
+              },
+              {
+                "name": "URL Extraction Failed",
+                "color": "blueLight1"
+              },
+              {
+                "name": "Web Scrape Failed",
+                "color": "cyanLight1"
+              },
+              {
+                "name": "Geocoding Failed",
+                "color": "tealLight1"
+              },
+              {
+                "name": "Airtable Create Failed",
+                "color": "greenLight1"
+              },
+              {
+                "name": "Airtable Update Failed",
+                "color": "yellowLight1"
+              },
+              {
+                "name": "Duplicate Detection Failed",
+                "color": "orangeLight1"
+              },
+              {
+                "name": "Mapping Error",
+                "color": "redLight1"
+              },
+              {
+                "name": "Model Error",
+                "color": "pinkLight1"
+              },
+              {
+                "name": "Timeout",
+                "color": "purpleLight1"
+              },
+              {
+                "name": "Unknown Error",
+                "color": "grayLight1"
+              },
+              {
+                "name": "Conflicting Data",
+                "color": "blueBright"
+              },
+              {
+                "name": "Missing Web Link",
+                "color": "blueLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Error Message",
+          "type": "multilineText"
+        },
+        {
+          "name": "Last Error Module",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Failed Field Mapping",
+          "type": "multilineText"
+        },
+        {
+          "name": "Retry Count",
+          "type": "number",
+          "options": {
+            "precision": 0
+          }
+        },
+        {
+          "name": "Last Retry At",
+          "type": "dateTime",
+          "options": {
+            "dateFormat": {
+              "name": "us",
+              "format": "M/D/YYYY"
+            },
+            "timeFormat": {
+              "name": "12hour",
+              "format": "h:mma"
+            },
+            "timeZone": "utc"
+          }
+        },
+        {
+          "name": "Resolved Error",
+          "type": "checkbox",
+          "options": {
+            "icon": "thumbsUp",
+            "color": "greenBright"
+          }
+        },
+        {
+          "name": "Error Resolution Notes",
+          "type": "multilineText"
+        },
+        {
+          "name": "First Seen At",
+          "type": "dateTime",
+          "options": {
+            "dateFormat": {
+              "name": "us",
+              "format": "M/D/YYYY"
+            },
+            "timeFormat": {
+              "name": "12hour",
+              "format": "h:mma"
+            },
+            "timeZone": "utc"
+          }
+        },
+        {
+          "name": "Last Seen At",
+          "type": "dateTime",
+          "options": {
+            "dateFormat": {
+              "name": "us",
+              "format": "M/D/YYYY"
+            },
+            "timeFormat": {
+              "name": "12hour",
+              "format": "h:mma"
+            },
+            "timeZone": "utc"
+          }
+        },
+        {
+          "name": "Last Updated From Source",
+          "type": "dateTime",
+          "options": {
+            "dateFormat": {
+              "name": "us",
+              "format": "M/D/YYYY"
+            },
+            "timeFormat": {
+              "name": "12hour",
+              "format": "h:mma"
+            },
+            "timeZone": "utc"
+          }
+        },
+        {
+          "name": "Last Processed At",
+          "type": "dateTime",
+          "options": {
+            "dateFormat": {
+              "name": "us",
+              "format": "M/D/YYYY"
+            },
+            "timeFormat": {
+              "name": "12hour",
+              "format": "h:mma"
+            },
+            "timeZone": "utc"
+          }
+        },
+        {
+          "name": "Price Changed",
+          "type": "checkbox",
+          "options": {
+            "icon": "thumbsUp",
+            "color": "greenBright"
+          }
+        },
+        {
+          "name": "Previous Price",
+          "type": "currency",
+          "options": {
+            "precision": 2,
+            "symbol": "$"
+          }
+        },
+        {
+          "name": "Current Price Snapshot",
+          "type": "currency",
+          "options": {
+            "precision": 2,
+            "symbol": "$"
+          }
+        },
+        {
+          "name": "Status Changed",
+          "type": "checkbox",
+          "options": {
+            "icon": "thumbsUp",
+            "color": "greenBright"
+          }
+        },
+        {
+          "name": "Previous Status",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Current Status Snapshot",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Change Type",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "New Property",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Existing Property Updated",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Price Changed",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Status Changed",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Web Link Added",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Agent Details Updated",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Address Updated",
+                "color": "redLight2"
+              },
+              {
+                "name": "Specs Updated",
+                "color": "pinkLight2"
+              },
+              {
+                "name": "Duplicate Detected",
+                "color": "purpleLight2"
+              },
+              {
+                "name": "Manual Review",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Other",
+                "color": "blueLight1"
+              },
+              {
+                "name": "None",
+                "color": "cyanLight1"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Change Summary",
+          "type": "multilineText"
+        },
+        {
+          "name": "Change Detected At",
+          "type": "dateTime",
+          "options": {
+            "dateFormat": {
+              "name": "us",
+              "format": "M/D/YYYY"
+            },
+            "timeFormat": {
+              "name": "12hour",
+              "format": "h:mma"
+            },
+            "timeZone": "utc"
+          }
+        },
+        {
+          "name": "Historical Notes",
+          "type": "multilineText"
+        },
+        {
+          "name": "Internal Notes",
+          "type": "multilineText"
+        },
+        {
+          "name": "Client Notes",
+          "type": "multilineText"
+        },
+        {
+          "name": "Admin Notes",
+          "type": "multilineText"
+        },
+        {
+          "name": "Tags",
+          "type": "multipleSelects",
+          "options": {
+            "choices": [
+              {
+                "name": "High Priority",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Good Opportunity",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Needs Follow-up",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Developer Stock",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Residential",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Commercial",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Industrial",
+                "color": "redLight2"
+              },
+              {
+                "name": "Land",
+                "color": "pinkLight2"
+              },
+              {
+                "name": "Rental",
+                "color": "purpleLight2"
+              },
+              {
+                "name": "Sale",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Missing Data",
+                "color": "blueLight1"
+              },
+              {
+                "name": "Duplicate Risk",
+                "color": "cyanLight1"
+              },
+              {
+                "name": "Test",
+                "color": "tealLight1"
+              },
+              {
+                "name": "Other",
+                "color": "greenLight1"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Follow-up Required",
+          "type": "checkbox",
+          "options": {
+            "icon": "thumbsUp",
+            "color": "greenBright"
+          }
+        },
+        {
+          "name": "Follow-up Date",
+          "type": "date",
+          "options": {
+            "dateFormat": {
+              "name": "local",
+              "format": "l"
+            }
+          }
+        },
+        {
+          "name": "Follow-up Notes",
+          "type": "multilineText"
+        },
+        {
+          "name": "Assignee",
+          "type": "singleCollaborator"
+        },
+        {
+          "name": "Listing Image URLs",
+          "type": "multilineText",
+          "description": "Newline-separated source image URLs captured at intake (web scrape, portal listing, agency site). Written by the NPC Email 1 Make scenario. These are candidates, not storage: the dashboard's listing-images function copies the bytes into its own bucket and renders from there, because portal hotlinks rot and Airtable attachment URLs expire within hours. Keep newest-first - the first URL is treated as the hero shot."
+        },
+        {
+          "name": "Images Captured At",
+          "type": "dateTime",
+          "description": "When this record's image set was last captured or refreshed by intake. This is the freshness signal the Listings page sorts and labels on - it answers \"how recent are these photos\", which Created Time cannot, because a record created in January can have its photos re-scraped in August. Set it whenever Listing Images or Listing Image URLs is written; leave it alone when nothing about the images changed.",
+          "options": {
+            "dateFormat": {
+              "name": "iso",
+              "format": "YYYY-MM-DD"
+            },
+            "timeFormat": {
+              "name": "24hour",
+              "format": "HH:mm"
+            },
+            "timeZone": "Australia/Sydney"
+          }
+        },
+        {
+          "name": "Primary Image URL",
+          "type": "url",
+          "description": "The hero shot - the first entry of Listing Image URLs, lifted into its own column so a card, an interface gallery or a report cover can read one value instead of parsing a newline list."
+        },
+        {
+          "name": "Image Count",
+          "type": "number",
+          "description": "How many image candidates intake captured for this record. Zero is meaningful: it separates \"we looked and there were no photos\" from \"we never looked\", which Listing Image URLs being empty cannot express on its own.",
+          "options": {
+            "precision": 0
+          }
+        },
+        {
+          "name": "Image Source",
+          "type": "singleSelect",
+          "description": "Where the image candidates came from. Ranked in the dashboard: an agent's own photos outrank a scrape, and Street View is a picture of a location rather than of the property, so it only ever leads when nothing else exists.",
+          "options": {
+            "choices": [
+              {
+                "name": "Email Attachment",
+                "color": "greenBright"
+              },
+              {
+                "name": "Web Scrape",
+                "color": "blueBright"
+              },
+              {
+                "name": "Portal Listing",
+                "color": "cyanBright"
+              },
+              {
+                "name": "Agency Website",
+                "color": "purpleBright"
+              },
+              {
+                "name": "Google Street View",
+                "color": "yellowBright"
+              },
+              {
+                "name": "Manual",
+                "color": "grayBright"
+              },
+              {
+                "name": "None Found",
+                "color": "redBright"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Intake Content Hash",
+          "type": "singleLineText",
+          "description": "Stable fingerprint of the listing's identifying content (normalised address + suburb + postcode, or project + stage when there is no street address). Intake writes it so duplicate detection can match on one exact value instead of a LIKE against a free-text address - the old approach, which broke on apostrophes and on the same property arriving with \"St\" one week and \"Street\" the next."
+        }
+      ]
+    },
+    {
+      "sourceTableId": "tblHzGiB591W3GpoZ",
+      "name": "Aurixa Waitlist",
+      "primaryFieldName": "First Name",
+      "primaryFieldType": "singleLineText",
+      "fields": [
+        {
+          "name": "First Name",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Last Name",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Corporate Email",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Entity Name",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Entity Classification",
+          "type": "singleSelect",
+          "description": "Map from payload field `entityClassification`. From form version stage-1-priority-access-v3 the option set is: buyers_agent, property_advisory, real_estate_agency, mortgage_finance, developer, construction, accounting_smsf, conveyancing_legal, property_management, multi_service_group, technology_partner, other. Retired slugs (wealth_advisor, financial_planner, investment_group, enterprise, enterprise_property_network) are historical only. Readable equivalents are available in payload field `organisationTypeLabel`.",
+          "options": {
+            "choices": [
+              {
+                "name": "Buyer's Agent",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Property Advisory Firm",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Real Estate Agency",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Mortgage and Finance Business",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Wealth Management Firm",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Financial Planning Office",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Investment Group",
+                "color": "redLight2"
+              },
+              {
+                "name": "Developer",
+                "color": "pinkLight2"
+              },
+              {
+                "name": "Enterprise Aggregrate",
+                "color": "purpleLight2"
+              },
+              {
+                "name": "Enterprise Property Network",
+                "color": "grayLight2"
+              },
+              {
+                "name": "buyers_agent",
+                "color": "blueLight2"
+              },
+              {
+                "name": "real_estate_agency",
+                "color": "blueLight2"
+              },
+              {
+                "name": "investment_group",
+                "color": "blueLight2"
+              },
+              {
+                "name": "developer",
+                "color": "blueLight2"
+              },
+              {
+                "name": "multi_service_group",
+                "color": "blueLight2"
+              },
+              {
+                "name": "construction",
+                "color": "blueLight2"
+              },
+              {
+                "name": "conveyancing_legal",
+                "color": "blueLight2"
+              },
+              {
+                "name": "accounting_smsf",
+                "color": "blueLight2"
+              },
+              {
+                "name": "mortgage_finance",
+                "color": "blueLight2"
+              },
+              {
+                "name": "property_advisory",
+                "color": "blueLight2"
+              },
+              {
+                "name": "other",
+                "color": "blueLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Annual Transactional Value",
+          "type": "singleSelect",
+          "description": "Map from payload field `annualOriginationTransactionVolume`. From form version stage-1-priority-access-v3 the incoming values are CLIENT/TRANSACTION COUNTS, not dollar brackets: pre_launch_under_10, 10_to_25, 26_to_75, 76_to_150, 151_to_300, 301_to_500, over_500, not_yet_known. The older dollar-bracket choices are historical. Readable equivalents are available in payload field `annualVolumeLabel`.",
+          "options": {
+            "choices": [
+              {
+                "name": "Under $50 Million",
+                "color": "blueLight2"
+              },
+              {
+                "name": "$50 Million - $150 Million",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "$151 Million - $500 Million",
+                "color": "tealLight2"
+              },
+              {
+                "name": "$500 Million +",
+                "color": "greenLight2"
+              },
+              {
+                "name": "tier_1",
+                "color": "blueLight2"
+              },
+              {
+                "name": "tier_3",
+                "color": "blueLight2"
+              },
+              {
+                "name": "tier_4",
+                "color": "blueLight2"
+              },
+              {
+                "name": "over_500",
+                "color": "blueLight2"
+              },
+              {
+                "name": "10_to_25",
+                "color": "blueLight2"
+              },
+              {
+                "name": "151_to_300",
+                "color": "blueLight2"
+              },
+              {
+                "name": "301_to_500",
+                "color": "blueLight2"
+              },
+              {
+                "name": "26_to_75",
+                "color": "blueLight2"
+              },
+              {
+                "name": "pre_launch_under_10",
+                "color": "blueLight2"
+              },
+              {
+                "name": "not_yet_known",
+                "color": "blueLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Current Bottlenecks",
+          "type": "multilineText",
+          "description": "Applicant's own description of current technology/workflow bottlenecks. Required, max 1000 characters. Map from payload field `currentTechStackBottlenecks`. From form version stage-1-priority-access-v3 this carries the applicant's text only — the structured priorities now live in \"Primary Areas to Improve\"."
+        },
+        {
+          "name": "Status",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "On Waitlist",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Invited",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Active",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Declined",
+                "color": "greenLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Date Added",
+          "type": "dateTime",
+          "options": {
+            "dateFormat": {
+              "name": "iso",
+              "format": "YYYY-MM-DD"
+            },
+            "timeFormat": {
+              "name": "12hour",
+              "format": "h:mma"
+            },
+            "timeZone": "utc"
+          }
+        },
+        {
+          "name": "Notes",
+          "type": "multilineText"
+        },
+        {
+          "name": "Phone",
+          "type": "phoneNumber",
+          "description": "Map from payload field `mobileNumber`. Required from form version stage-1-priority-access-v3 and normalised to E.164 (+61… for Australian numbers, explicit country code otherwise)."
+        },
+        {
+          "name": "Your Role",
+          "type": "singleSelect",
+          "description": "Stage 1 waitlist form. Map from payload field `roleLabel` (human-readable). The slug equivalent is `role`.",
+          "options": {
+            "choices": [
+              {
+                "name": "Founder or Director",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Chief Executive Officer",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Chief Operating Officer",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Technology or Systems Lead",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Operations Manager",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Compliance or Risk Manager",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Buyer's Agent",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Property Advisor",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Finance or Mortgage Professional",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Administration or Support",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Other",
+                "color": "grayLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Primary Areas to Improve",
+          "type": "multipleSelects",
+          "description": "Stage 1 waitlist form, maximum three selections. Map from payload field `primaryAreasToImproveLabels` (array). The slug equivalent is `primaryAreasToImprove`.",
+          "options": {
+            "choices": [
+              {
+                "name": "Disconnected systems and duplicate data entry",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Client onboarding delays",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Manual report preparation",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Client communication and follow-up",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Finance or broker coordination",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Document collection and management",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Compliance and AML administration",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Property research and due diligence",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Workflow visibility and accountability",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Data security and access controls",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Other",
+                "color": "grayLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Additional Notes",
+          "type": "multilineText",
+          "description": "Stage 1 waitlist form, optional free text, max 500 characters. Map from payload field `additionalNotes`. Applicant-supplied — keep separate from the internal Notes field."
+        },
+        {
+          "name": "Application ID",
+          "type": "singleLineText",
+          "description": "Non-sequential public application reference generated by the form (AX-XXXXXXXXXX). Map from payload field `applicationId`. Also sent as the X-Application-Id header — use it as the deduplication key."
+        },
+        {
+          "name": "Form Version",
+          "type": "singleLineText",
+          "description": "Schema version of the waitlist form that produced the record, currently stage-1-priority-access-v3. Map from payload field `formVersion`."
+        },
+        {
+          "name": "Privacy Acknowledged",
+          "type": "checkbox",
+          "description": "Required collection-notice acknowledgement, ticked by the applicant at submission. Map from payload field `privacyAcknowledged`.",
+          "options": {
+            "icon": "check",
+            "color": "greenBright"
+          }
+        },
+        {
+          "name": "Marketing Consent",
+          "type": "checkbox",
+          "description": "Optional, separate consent to product, event and future-intake updates. Unticked by default — do not send marketing unless this is true. Map from payload field `marketingConsent`.",
+          "options": {
+            "icon": "check",
+            "color": "tealBright"
+          }
+        },
+        {
+          "name": "Privacy Notice Version",
+          "type": "singleLineText",
+          "description": "Version of the collection notice shown at submission, currently collection-notice-2026-07-v1. Map from payload field `privacyNoticeVersion`."
+        },
+        {
+          "name": "Source",
+          "type": "singleLineText",
+          "description": "Submission source recorded by the form, e.g. AURIXA Contact Waitlist Page. Map from payload field `source`."
+        },
+        {
+          "name": "Landing Page",
+          "type": "singleLineText",
+          "description": "First page of the visitor's session including query string, captured silently. Map from payload field `landingPage`."
+        },
+        {
+          "name": "Referrer",
+          "type": "singleLineText",
+          "description": "Referring URL for the visitor's session, blank on direct visits. Map from payload field `referrer`."
+        },
+        {
+          "name": "UTM Source",
+          "type": "singleLineText",
+          "description": "Campaign utm_source captured from the landing URL. Map from payload field `utmSource`."
+        },
+        {
+          "name": "UTM Medium",
+          "type": "singleLineText",
+          "description": "Campaign utm_medium captured from the landing URL. Map from payload field `utmMedium`."
+        },
+        {
+          "name": "UTM Campaign",
+          "type": "singleLineText",
+          "description": "Campaign utm_campaign captured from the landing URL. Map from payload field `utmCampaign`."
+        },
+        {
+          "name": "UTM Term",
+          "type": "singleLineText",
+          "description": "Campaign utm_term captured from the landing URL. Map from payload field `utmTerm`."
+        },
+        {
+          "name": "UTM Content",
+          "type": "singleLineText",
+          "description": "Campaign utm_content captured from the landing URL. Map from payload field `utmContent`."
+        },
+        {
+          "name": "Token",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Bypass URL",
+          "type": "url"
+        },
+        {
+          "name": "Email Message ID",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Stage 2 Invite Sent At",
+          "type": "dateTime",
+          "description": "When the Stage 1 reminder inviting the applicant into Stage 2 was last sent. Written by the \"Aurixa Waitlist Stage 1\" Make scenario in the same module that stores Email Message ID.",
+          "options": {
+            "dateFormat": {
+              "name": "iso",
+              "format": "YYYY-MM-DD"
+            },
+            "timeFormat": {
+              "name": "24hour",
+              "format": "HH:mm"
+            },
+            "timeZone": "Australia/Sydney"
+          }
+        },
+        {
+          "name": "Stage 2 Invite Count",
+          "type": "number",
+          "description": "How many Stage 2 invitations have gone to this applicant. Increment it when the reminder sends, so a repeating schedule can be capped without a second source of truth.",
+          "options": {
+            "precision": 0
+          }
+        },
+        {
+          "name": "Stage 3 Invite Sent At",
+          "type": "dateTime",
+          "description": "When the reminder inviting the applicant to book their strategic review was last sent. Mirrors Stage 2 Invite Sent At.",
+          "options": {
+            "dateFormat": {
+              "name": "iso",
+              "format": "YYYY-MM-DD"
+            },
+            "timeFormat": {
+              "name": "24hour",
+              "format": "HH:mm"
+            },
+            "timeZone": "utc"
+          }
+        },
+        {
+          "name": "Stage 3 Invite Count",
+          "type": "number",
+          "description": "How many invitations to book a strategic review have gone to this applicant. Increment it when the reminder sends, so a repeating schedule can be capped without a second source of truth.",
+          "options": {
+            "precision": 0
+          }
+        }
+      ]
+    },
+    {
+      "sourceTableId": "tblXQx00T3CKEVnvV",
+      "name": "Business Readiness Responses",
+      "primaryFieldName": "Record ID",
+      "primaryFieldType": "autoNumber",
+      "fields": [
+        {
+          "name": "Role",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Decision Authority",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Final decision-maker",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Part of decision group",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Recommend to decision-maker",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Researching",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Other",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Not yet known",
+                "color": "orangeLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "User Count",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "1-3",
+                "color": "blueLight2"
+              },
+              {
+                "name": "4-10",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "11-25",
+                "color": "tealLight2"
+              },
+              {
+                "name": "26-50",
+                "color": "greenLight2"
+              },
+              {
+                "name": "51-100",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "more than 100",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "not yet known",
+                "color": "redLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Office Structure",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "One office/entity",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Multiple offices one entity",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Multiple legal entities",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Franchise/network",
+                "color": "greenLight2"
+              },
+              {
+                "name": "National",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "International/multi-jurisdiction",
+                "color": "orangeLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Operating Locations",
+          "type": "multipleSelects",
+          "options": {
+            "choices": [
+              {
+                "name": "ACT",
+                "color": "blueLight2"
+              },
+              {
+                "name": "NSW",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "NT",
+                "color": "tealLight2"
+              },
+              {
+                "name": "QLD",
+                "color": "greenLight2"
+              },
+              {
+                "name": "SA",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "TAS",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "VIC",
+                "color": "redLight2"
+              },
+              {
+                "name": "WA",
+                "color": "pinkLight2"
+              },
+              {
+                "name": "New Zealand",
+                "color": "purpleLight2"
+              },
+              {
+                "name": "Malaysia",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Other international markets",
+                "color": "blueLight1"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Current Systems Used",
+          "type": "multipleSelects",
+          "options": {
+            "choices": [
+              {
+                "name": "CRM",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Onboarding",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Email automation",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Property data",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Document management",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Reporting",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Accounting",
+                "color": "redLight2"
+              },
+              {
+                "name": "AML/KYC/IDV",
+                "color": "pinkLight2"
+              },
+              {
+                "name": "Telephony",
+                "color": "purpleLight2"
+              },
+              {
+                "name": "Calendar",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Project/task management",
+                "color": "blueLight1"
+              },
+              {
+                "name": "No central system",
+                "color": "cyanLight1"
+              },
+              {
+                "name": "Other",
+                "color": "tealLight1"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Other Current Systems (if applicable)",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Top Operational Problems",
+          "type": "multipleSelects",
+          "options": {
+            "choices": [
+              {
+                "name": "Duplicate entry",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Fragmented platforms",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Slow onboarding",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Manual reports",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Inconsistent communications",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Limited pipeline visibility",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Poor task accountability",
+                "color": "redLight2"
+              },
+              {
+                "name": "Finance handover delays",
+                "color": "pinkLight2"
+              },
+              {
+                "name": "Manual documents",
+                "color": "purpleLight2"
+              },
+              {
+                "name": "Compliance administration",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Limited analytics",
+                "color": "blueLight1"
+              },
+              {
+                "name": "Difficulty scaling",
+                "color": "cyanLight1"
+              },
+              {
+                "name": "Other",
+                "color": "tealLight1"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Other Operational Problem (if applicable)",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Admin Time Spent (hrs/week)",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Less than 5 hours",
+                "color": "blueLight2"
+              },
+              {
+                "name": "5-10",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "11-20",
+                "color": "tealLight2"
+              },
+              {
+                "name": "21-40",
+                "color": "greenLight2"
+              },
+              {
+                "name": "more than 40",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "not measured",
+                "color": "orangeLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Workflow Description",
+          "type": "multilineText"
+        },
+        {
+          "name": "Required Aurixa Capabilities (Ranked)",
+          "type": "multipleSelects",
+          "options": {
+            "choices": [
+              {
+                "name": "CRM",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Onboarding/workflow",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Buyer’s agency workflow",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Client/partner portals",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Finance portal",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Borrowing capacity",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Cash-flow/portfolio analysis",
+                "color": "redLight2"
+              },
+              {
+                "name": "Property comparison/due diligence",
+                "color": "pinkLight2"
+              },
+              {
+                "name": "Report generation",
+                "color": "purpleLight2"
+              },
+              {
+                "name": "Suburb/market reporting",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Template builder",
+                "color": "blueLight1"
+              },
+              {
+                "name": "AI communications",
+                "color": "cyanLight1"
+              },
+              {
+                "name": "Voice automation",
+                "color": "tealLight1"
+              },
+              {
+                "name": "Calendar/task automation",
+                "color": "greenLight1"
+              },
+              {
+                "name": "AML/compliance",
+                "color": "yellowLight1"
+              },
+              {
+                "name": "SMSF workflow",
+                "color": "orangeLight1"
+              },
+              {
+                "name": "Market intelligence",
+                "color": "redLight1"
+              },
+              {
+                "name": "API/integrations",
+                "color": "pinkLight1"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Integration Needs",
+          "type": "multipleSelects",
+          "options": {
+            "choices": [
+              {
+                "name": "Microsoft 365",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Google Workspace",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "GoHighLevel",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Xero",
+                "color": "greenLight2"
+              },
+              {
+                "name": "MYOB",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Cotality/CoreLogic",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Existing CRM",
+                "color": "redLight2"
+              },
+              {
+                "name": "IDV provider",
+                "color": "pinkLight2"
+              },
+              {
+                "name": "Telephony",
+                "color": "purpleLight2"
+              },
+              {
+                "name": "E-sign",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Custom internal system",
+                "color": "blueLight1"
+              },
+              {
+                "name": "None initially",
+                "color": "cyanLight1"
+              },
+              {
+                "name": "Not known",
+                "color": "tealLight1"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Custom Integration Details (if applicable)",
+          "type": "multilineText"
+        },
+        {
+          "name": "Data Migration Requirements",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "No",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Basic contacts",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Client/pipeline",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Documents/history",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Templates/reports",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Multiple systems/complex",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Not known",
+                "color": "redLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Data Migration Details",
+          "type": "multilineText"
+        },
+        {
+          "name": "Implementation Timeline",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Immediately",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Within 30 days",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "60-90 days",
+                "color": "tealLight2"
+              },
+              {
+                "name": "3-6 months",
+                "color": "greenLight2"
+              },
+              {
+                "name": "6-12 months",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Researching only",
+                "color": "orangeLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Security Requirements",
+          "type": "multipleSelects",
+          "options": {
+            "choices": [
+              {
+                "name": "MFA",
+                "color": "blueLight2"
+              },
+              {
+                "name": "SSO",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Australian data residency",
+                "color": "tealLight2"
+              },
+              {
+                "name": "RBAC",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Penetration testing",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "SLA",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Vendor risk assessment",
+                "color": "redLight2"
+              },
+              {
+                "name": "Cyber insurance",
+                "color": "pinkLight2"
+              },
+              {
+                "name": "Dedicated environment",
+                "color": "purpleLight2"
+              },
+              {
+                "name": "None",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Not known",
+                "color": "blueLight1"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Security Policies or Certifications (if applicable)",
+          "type": "multilineText"
+        },
+        {
+          "name": "Preferred Next Step",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "General demo",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Workflow-specific demo",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Technical integration consultation",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Enterprise security consultation",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Pricing discussion",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Written information only",
+                "color": "orangeLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Budget Range",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Not yet",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Under A$1,000/month",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "A$1,000-A$2,500",
+                "color": "tealLight2"
+              },
+              {
+                "name": "A$2,500-A$5,000",
+                "color": "greenLight2"
+              },
+              {
+                "name": "More than A$5,000",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Project/enterprise budget",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Prefer private discussion",
+                "color": "redLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Completion Status",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Draft",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Submitted",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Reviewed",
+                "color": "tealLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Submission Date",
+          "type": "date",
+          "options": {
+            "dateFormat": {
+              "name": "local",
+              "format": "l"
+            }
+          }
+        },
+        {
+          "name": "Review Status",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Pending",
+                "color": "blueLight2"
+              },
+              {
+                "name": "In Review",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Complete",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Requires Follow Up",
+                "color": "greenLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Reviewer Notes",
+          "type": "multilineText"
+        },
+        {
+          "name": "Section Progress",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Org Profile",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Current Systems",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Capabilities",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Readiness",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Complete",
+                "color": "yellowLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Sensitive Data Consent",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Given",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Not given",
+                "color": "cyanLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Applicant Can Resume",
+          "type": "checkbox",
+          "options": {
+            "icon": "thumbsUp",
+            "color": "greenBright"
+          }
+        },
+        {
+          "name": "Needs Conditional Review",
+          "type": "checkbox",
+          "options": {
+            "icon": "thumbsUp",
+            "color": "greenBright"
+          }
+        },
+        {
+          "name": "Commercial/Technical Note",
+          "type": "multilineText"
+        },
+        {
+          "name": "Application ID",
+          "type": "singleLineText",
+          "description": "Join key back to Aurixa Waitlist (AX-XXXXXXXXXX). Map from payload field `applicant.applicationId`. The \"Link Stage 2 response to applicant\" automation matches on this and fills Applicant Reference — an Application ID cannot be written straight into the link field, which matches on the linked table's primary field (First Name)."
+        },
+        {
+          "name": "Applicant Email",
+          "type": "email",
+          "description": "Secondary match key, used when the Application ID is missing or mistyped. Map from payload field `applicant.workEmail`."
+        },
+        {
+          "name": "Stage 2 Access Method",
+          "type": "singleSelect",
+          "description": "How the applicant got into Stage 2. \"Application ID fallback\" is the path used when the emailed secure link has expired — track it so expiry problems are visible rather than silent.",
+          "options": {
+            "choices": [
+              {
+                "name": "Secure link (token)",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Application ID fallback",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Same-session handoff",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Manual entry",
+                "color": "grayLight2"
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "sourceTableId": "tblB1t18q6aUTNI0g",
+      "name": "BRQ Detailed Responses",
+      "primaryFieldName": "Id",
+      "primaryFieldType": "autoNumber",
+      "fields": [
+        {
+          "name": "Role (Corrected)",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Founder or Director",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Chief Executive Officer",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Chief Operating Officer",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Technology or Systems Lead",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Operations Manager",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Compliance or Risk Manager",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Buyer’s Agent",
+                "color": "redLight2"
+              },
+              {
+                "name": "Property Advisor",
+                "color": "pinkLight2"
+              },
+              {
+                "name": "Finance or Mortgage Professional",
+                "color": "purpleLight2"
+              },
+              {
+                "name": "Administration or Support",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Other",
+                "color": "blueLight1"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Role Description (if Other)",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Technology Purchase Authority",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Final decision-maker",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Part of the decision group",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Recommend to the decision-maker",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Researching",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Other",
+                "color": "yellowLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Authority Description (if Other)",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Expected User Count",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "1–3",
+                "color": "blueLight2"
+              },
+              {
+                "name": "4–10",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "11–25",
+                "color": "tealLight2"
+              },
+              {
+                "name": "26–50",
+                "color": "greenLight2"
+              },
+              {
+                "name": "51–100",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "More than 100",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Not yet known",
+                "color": "redLight2"
+              },
+              {
+                "name": "1-3",
+                "color": "blueLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Office/Entity Structure",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "One office or entity",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Multiple offices within one entity",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Multiple legal entities",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Franchise or network",
+                "color": "greenLight2"
+              },
+              {
+                "name": "National organisation",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "International or multi-jurisdiction organisation",
+                "color": "orangeLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Operating Locations",
+          "type": "multipleSelects",
+          "options": {
+            "choices": [
+              {
+                "name": "ACT",
+                "color": "blueLight2"
+              },
+              {
+                "name": "NSW",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "NT",
+                "color": "tealLight2"
+              },
+              {
+                "name": "QLD",
+                "color": "greenLight2"
+              },
+              {
+                "name": "SA",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "TAS",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "VIC",
+                "color": "redLight2"
+              },
+              {
+                "name": "WA",
+                "color": "pinkLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Current Systems Used",
+          "type": "multipleSelects",
+          "options": {
+            "choices": [
+              {
+                "name": "CRM",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Onboarding system",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Email automation",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Property data",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Document management",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Reporting",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Accounting",
+                "color": "redLight2"
+              },
+              {
+                "name": "AML, KYC or identity verification",
+                "color": "pinkLight2"
+              },
+              {
+                "name": "Telephony",
+                "color": "purpleLight2"
+              },
+              {
+                "name": "Calendar",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Project or task management",
+                "color": "blueLight1"
+              },
+              {
+                "name": "No central system",
+                "color": "cyanLight1"
+              },
+              {
+                "name": "Other",
+                "color": "tealLight1"
+              }
+            ]
+          }
+        },
+        {
+          "name": "System Product Names (optional)",
+          "type": "multilineText"
+        },
+        {
+          "name": "Other System Description (if Other)",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Current Info Management Methods (if No Central System)",
+          "type": "multipleSelects",
+          "options": {
+            "choices": [
+              {
+                "name": "Spreadsheets",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Email",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Documents",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Separate individual applications",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Other",
+                "color": "yellowLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Other Info Management Description (if Other)",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Top Operational Problems",
+          "type": "multipleSelects",
+          "options": {
+            "choices": [
+              {
+                "name": "Duplicate data entry",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Fragmented platforms",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Slow client onboarding",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Manual report preparation",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Inconsistent client communications",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Limited pipeline visibility",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Poor task accountability",
+                "color": "redLight2"
+              },
+              {
+                "name": "Finance handover delays",
+                "color": "pinkLight2"
+              },
+              {
+                "name": "Manual document handling",
+                "color": "purpleLight2"
+              },
+              {
+                "name": "Compliance administration",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Limited analytics",
+                "color": "blueLight1"
+              },
+              {
+                "name": "Difficulty scaling",
+                "color": "cyanLight1"
+              },
+              {
+                "name": "Other",
+                "color": "tealLight1"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Other Operational Problem Description (if Other)",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Weekly Admin Time",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Less than 5 hours",
+                "color": "blueLight2"
+              },
+              {
+                "name": "5–10 hours",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "11–20 hours",
+                "color": "tealLight2"
+              },
+              {
+                "name": "21–40 hours",
+                "color": "greenLight2"
+              },
+              {
+                "name": "More than 40 hours",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Not measured",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "5-10 hours",
+                "color": "blueLight2"
+              },
+              {
+                "name": "21-40 hours",
+                "color": "blueLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Workflow Causing Greatest Difficulty",
+          "type": "multilineText"
+        },
+        {
+          "name": "Aurixa Capabilities Ranked (Top 5)",
+          "type": "multipleSelects",
+          "options": {
+            "choices": [
+              {
+                "name": "CRM",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Onboarding and workflow",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Buyer’s agency workflow",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Client and partner portals",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Finance portal",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Borrowing capacity",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Cash-flow and portfolio analysis",
+                "color": "redLight2"
+              },
+              {
+                "name": "Property comparison and due diligence",
+                "color": "pinkLight2"
+              },
+              {
+                "name": "Report generation",
+                "color": "purpleLight2"
+              },
+              {
+                "name": "Suburb and market reporting",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Template builder",
+                "color": "blueLight1"
+              },
+              {
+                "name": "AI communications",
+                "color": "cyanLight1"
+              },
+              {
+                "name": "AI Voice Agents & Call Logging",
+                "color": "tealLight1"
+              },
+              {
+                "name": "Calendar and task automation",
+                "color": "greenLight1"
+              },
+              {
+                "name": "AML and compliance",
+                "color": "yellowLight1"
+              },
+              {
+                "name": "SMSF workflow",
+                "color": "orangeLight1"
+              },
+              {
+                "name": "Market intelligence",
+                "color": "redLight1"
+              },
+              {
+                "name": "API and integrations",
+                "color": "pinkLight1"
+              },
+              {
+                "name": "1. Borrowing capacity",
+                "color": "blueLight2"
+              },
+              {
+                "name": "2. AI communications",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "3. Market intelligence",
+                "color": "tealLight2"
+              },
+              {
+                "name": "4. Buyer's agency workflow",
+                "color": "greenLight2"
+              },
+              {
+                "name": "5. Property comparison and due diligence",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "1. AI Voice Agents & Call Logging",
+                "color": "blueLight2"
+              },
+              {
+                "name": "2. Client and partner portals",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "3. Borrowing capacity",
+                "color": "tealLight2"
+              },
+              {
+                "name": "4. Finance portal",
+                "color": "greenLight2"
+              },
+              {
+                "name": "5. CRM",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "1. CRM",
+                "color": "blueLight2"
+              },
+              {
+                "name": "3. Onboarding and workflow",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "5. Finance portal",
+                "color": "tealLight2"
+              },
+              {
+                "name": "1. Onboarding and workflow",
+                "color": "blueLight2"
+              },
+              {
+                "name": "2. Buyer's agency workflow",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "3. Client and partner portals",
+                "color": "tealLight2"
+              },
+              {
+                "name": "4. Report generation",
+                "color": "greenLight2"
+              },
+              {
+                "name": "5. Borrowing capacity",
+                "color": "yellowLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Systems to Integrate",
+          "type": "multipleSelects",
+          "options": {
+            "choices": [
+              {
+                "name": "Microsoft 365",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Google Workspace",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "GoHighLevel",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Xero",
+                "color": "greenLight2"
+              },
+              {
+                "name": "MYOB",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Cotality or CoreLogic",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Existing CRM",
+                "color": "redLight2"
+              },
+              {
+                "name": "Identity-verification provider",
+                "color": "pinkLight2"
+              },
+              {
+                "name": "Existing Phone or VoIP System",
+                "color": "purpleLight2"
+              },
+              {
+                "name": "Electronic signing",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Custom internal system",
+                "color": "blueLight1"
+              },
+              {
+                "name": "None initially",
+                "color": "cyanLight1"
+              },
+              {
+                "name": "Not yet known",
+                "color": "tealLight1"
+              }
+            ]
+          }
+        },
+        {
+          "name": "VoIP System Details",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Custom System Name",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Custom System API Available",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Yes",
+                "color": "blueLight2"
+              },
+              {
+                "name": "No",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Not yet known",
+                "color": "tealLight2"
+              },
+              {
+                "name": "",
+                "color": "blueLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Custom System Business Owner",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Custom Integration Workflow",
+          "type": "multilineText"
+        },
+        {
+          "name": "Data Migration Needed",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "No",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Basic contacts",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Client and pipeline data",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Documents and history",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Templates and reports",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Multiple systems or complex migration",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Not yet known",
+                "color": "redLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Data Migration Sources",
+          "type": "singleLineText"
+        },
+        {
+          "name": "Approximate Records Migrated",
+          "type": "number",
+          "options": {
+            "precision": 0
+          }
+        },
+        {
+          "name": "Records Count Not Yet Known",
+          "type": "checkbox",
+          "options": {
+            "icon": "thumbsUp",
+            "color": "greenBright"
+          }
+        },
+        {
+          "name": "Approximate Documents Migrated",
+          "type": "number",
+          "options": {
+            "precision": 0
+          }
+        },
+        {
+          "name": "Documents Count Not Yet Known",
+          "type": "checkbox",
+          "options": {
+            "icon": "thumbsUp",
+            "color": "greenBright"
+          }
+        },
+        {
+          "name": "Known Data-Quality Concerns",
+          "type": "multilineText"
+        },
+        {
+          "name": "Preferred Migration Timing",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "At go-live",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Within 30 days of go-live",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Phased over several stages",
+                "color": "tealLight2"
+              },
+              {
+                "name": "After go-live",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Not yet known",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "",
+                "color": "blueLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Implementation Start Preference",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Immediately",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Within 30 days",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "60–90 days",
+                "color": "tealLight2"
+              },
+              {
+                "name": "3–6 months",
+                "color": "greenLight2"
+              },
+              {
+                "name": "6–12 months",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Researching only",
+                "color": "orangeLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Security & Procurement Requirements",
+          "type": "multipleSelects",
+          "options": {
+            "choices": [
+              {
+                "name": "Multi-factor authentication",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Single sign-on",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Australian data residency",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Role-based access control",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Penetration testing",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Service-level agreement",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Vendor-risk assessment",
+                "color": "redLight2"
+              },
+              {
+                "name": "Cyber insurance",
+                "color": "pinkLight2"
+              },
+              {
+                "name": "Dedicated environment",
+                "color": "purpleLight2"
+              },
+              {
+                "name": "None",
+                "color": "grayLight2"
+              },
+              {
+                "name": "Not yet known",
+                "color": "blueLight1"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Security/Policy Context (if Required)",
+          "type": "multilineText"
+        },
+        {
+          "name": "Enterprise SSO Required",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Yes",
+                "color": "blueLight2"
+              },
+              {
+                "name": "No",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Not yet known",
+                "color": "tealLight2"
+              },
+              {
+                "name": "",
+                "color": "blueLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Entity-level Boundaries Required",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Yes",
+                "color": "blueLight2"
+              },
+              {
+                "name": "No",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Not yet known",
+                "color": "tealLight2"
+              },
+              {
+                "name": "",
+                "color": "blueLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Procurement Process Expected",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Yes",
+                "color": "blueLight2"
+              },
+              {
+                "name": "No",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Not yet known",
+                "color": "tealLight2"
+              },
+              {
+                "name": "",
+                "color": "blueLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Next Step Preference",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "General platform demonstration",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Workflow-specific demonstration",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Technical integration consultation",
+                "color": "tealLight2"
+              },
+              {
+                "name": "Enterprise security consultation",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Pricing discussion",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Written information only",
+                "color": "orangeLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Approved Investment Range",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Not yet",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Under A$1,000 per month",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "A$1,000–A$2,500 per month",
+                "color": "tealLight2"
+              },
+              {
+                "name": "A$2,500–A$5,000 per month",
+                "color": "greenLight2"
+              },
+              {
+                "name": "More than A$5,000 per month",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Project or enterprise budget",
+                "color": "orangeLight2"
+              },
+              {
+                "name": "Prefer a private discussion",
+                "color": "redLight2"
+              },
+              {
+                "name": "A$1,000-A$2,500 per month",
+                "color": "blueLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Internal Project Sponsor Identified",
+          "type": "singleSelect",
+          "options": {
+            "choices": [
+              {
+                "name": "Yes",
+                "color": "blueLight2"
+              },
+              {
+                "name": "No",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Not yet known",
+                "color": "tealLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Application ID",
+          "type": "singleLineText",
+          "description": "Join key back to Aurixa Waitlist (AX-XXXXXXXXXX). Map from payload field `applicant.applicationId` (also sent as the X-Application-Id header). This is the field the \"Link Stage 2 detailed response to applicant\" automation matches on — the Applicant link field cannot be written directly with an Application ID, because Airtable link fields match on the linked table's primary field (First Name)."
+        },
+        {
+          "name": "Applicant Email",
+          "type": "email",
+          "description": "Secondary match key, used when the Application ID is missing or mistyped. Map from payload field `applicant.workEmail`."
+        },
+        {
+          "name": "Stage 2 Access Method",
+          "type": "singleSelect",
+          "description": "How the applicant got into Stage 2. \"Application ID fallback\" is the path used when the emailed secure link has expired — track it so expiry problems are visible rather than silent.",
+          "options": {
+            "choices": [
+              {
+                "name": "Secure link (token)",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Application ID fallback",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Same-session handoff",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Manual entry",
+                "color": "grayLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Submitted At",
+          "type": "dateTime",
+          "description": "When this detailed response reached Airtable. Map from payload field `submittedAt`. Rolled up onto Aurixa Waitlist so Stage 1 knows when the applicant progressed.",
+          "options": {
+            "dateFormat": {
+              "name": "iso",
+              "format": "YYYY-MM-DD"
+            },
+            "timeFormat": {
+              "name": "24hour",
+              "format": "HH:mm"
+            },
+            "timeZone": "Australia/Sydney"
+          }
+        }
+      ]
+    },
+    {
+      "sourceTableId": "tbljj5XQbC2a4ON1U",
+      "name": "Strategic Review Bookings",
+      "primaryFieldName": "Booking Reference",
+      "primaryFieldType": "singleLineText",
+      "fields": [
+        {
+          "name": "Booking Reference",
+          "type": "singleLineText",
+          "description": "Human-readable label for the booking, written by the Stage 3 Make scenario as \"<Application ID> · <Aurixa local time>\". Display only — the join key is Application ID."
+        },
+        {
+          "name": "Application ID",
+          "type": "singleLineText",
+          "description": "Join key back to Aurixa Waitlist (AX-XXXXXXXXXX). Map from payload field `applicationReference`. This is the field the \"Link Stage 3 booking to applicant\" automation matches on — the Applicant link field cannot be written directly with an Application ID, because Airtable link fields match on the linked table's primary field (First Name). Blank when someone booked without ever holding a reference."
+        },
+        {
+          "name": "Applicant Email",
+          "type": "email",
+          "description": "Where the confirmation goes, and the secondary match key when the Application ID is missing or mistyped. Map from payload field `email`."
+        },
+        {
+          "name": "Full Name",
+          "type": "singleLineText",
+          "description": "Name the review should be booked under. Map from payload field `name`."
+        },
+        {
+          "name": "Organisation",
+          "type": "singleLineText",
+          "description": "Map from payload field `company`."
+        },
+        {
+          "name": "Phone",
+          "type": "phoneNumber",
+          "description": "Map from payload field `phone`."
+        },
+        {
+          "name": "Requested Start (UTC)",
+          "type": "dateTime",
+          "description": "The instant the applicant selected, in UTC. Map from payload field `requestedStartUtc`. Stored in UTC so the session time can never be misread from a screenshot.",
+          "options": {
+            "dateFormat": {
+              "name": "iso",
+              "format": "YYYY-MM-DD"
+            },
+            "timeFormat": {
+              "name": "24hour",
+              "format": "HH:mm"
+            },
+            "timeZone": "utc"
+          }
+        },
+        {
+          "name": "Requested End (UTC)",
+          "type": "dateTime",
+          "description": "Map from payload field `requestedEndUtc`.",
+          "options": {
+            "dateFormat": {
+              "name": "iso",
+              "format": "YYYY-MM-DD"
+            },
+            "timeFormat": {
+              "name": "24hour",
+              "format": "HH:mm"
+            },
+            "timeZone": "utc"
+          }
+        },
+        {
+          "name": "Duration (Minutes)",
+          "type": "number",
+          "description": "Map from payload field `durationMinutes`.",
+          "options": {
+            "precision": 0
+          }
+        },
+        {
+          "name": "Applicant Time Zone",
+          "type": "singleLineText",
+          "description": "IANA zone detected in the applicant's browser. Map from payload field `applicantTimeZone`."
+        },
+        {
+          "name": "Applicant Offset",
+          "type": "singleLineText",
+          "description": "UTC offset in effect for the applicant at the requested time. Map from payload field `applicantOffset`."
+        },
+        {
+          "name": "Applicant Local Time",
+          "type": "singleLineText",
+          "description": "The session as the applicant saw it on screen. Map from payload field `applicantLocalTime`."
+        },
+        {
+          "name": "Aurixa Local Time",
+          "type": "singleLineText",
+          "description": "The same session in Australia/Sydney, for the team's diary. Map from payload field `hostLocalTime`."
+        },
+        {
+          "name": "Context Notes",
+          "type": "multilineText",
+          "description": "Optional context the applicant supplied with the request. Map from payload field `notes`."
+        },
+        {
+          "name": "Summary",
+          "type": "multilineText",
+          "description": "Plain-text summary of the request as submitted. Map from payload field `summaryText`."
+        },
+        {
+          "name": "Booking Status",
+          "type": "singleSelect",
+          "description": "Lifecycle of the session. The Stage 3 scenario writes Requested; the gate holds the confirmation email for Cancelled.",
+          "options": {
+            "choices": [
+              {
+                "name": "Requested",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Confirmed",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Rescheduled",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Cancelled",
+                "color": "redLight2"
+              },
+              {
+                "name": "Completed",
+                "color": "purpleLight2"
+              },
+              {
+                "name": "No Show",
+                "color": "grayLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Stage 3 Access Method",
+          "type": "singleSelect",
+          "description": "How the applicant reached the scheduler. \"Application ID fallback\" is the path used when the emailed link had expired and they continued with their reference — track it so expiry problems stay visible rather than silent.",
+          "options": {
+            "choices": [
+              {
+                "name": "Secure link (token)",
+                "color": "greenLight2"
+              },
+              {
+                "name": "Application ID fallback",
+                "color": "yellowLight2"
+              },
+              {
+                "name": "Same-session handoff",
+                "color": "blueLight2"
+              },
+              {
+                "name": "Direct visit",
+                "color": "cyanLight2"
+              },
+              {
+                "name": "Manual entry",
+                "color": "grayLight2"
+              }
+            ]
+          }
+        },
+        {
+          "name": "Submitted At",
+          "type": "dateTime",
+          "description": "When the booking request reached Airtable. Map from payload field `submittedAt`. Rolled up onto Aurixa Waitlist so Stage 2 knows when the applicant progressed to Stage 3.",
+          "options": {
+            "dateFormat": {
+              "name": "iso",
+              "format": "YYYY-MM-DD"
+            },
+            "timeFormat": {
+              "name": "24hour",
+              "format": "HH:mm"
+            },
+            "timeZone": "utc"
+          }
+        },
+        {
+          "name": "Confirmation Message ID",
+          "type": "singleLineText",
+          "description": "Graph message id of the confirmation that was sent, written back by the Stage 3 Make scenario. Present means the applicant was emailed."
+        },
+        {
+          "name": "Confirmation Sent At",
+          "type": "dateTime",
+          "description": "When the booking confirmation was sent. Written by the Stage 3 Make scenario in the same module that stores Confirmation Message ID.",
+          "options": {
+            "dateFormat": {
+              "name": "iso",
+              "format": "YYYY-MM-DD"
+            },
+            "timeFormat": {
+              "name": "24hour",
+              "format": "HH:mm"
+            },
+            "timeZone": "utc"
+          }
+        }
+      ]
+    }
+  ],
+  "phaseB_linkFields": [
+    {
+      "table": "Aurixa Waitlist",
+      "fields": [
+        {
+          "name": "Business Readiness Responses",
+          "type": "multipleRecordLinks",
+          "options": {
+            "linkedTableName": "Business Readiness Responses",
+            "prefersSingleRecordLink": false
+          }
+        },
+        {
+          "name": "BRQ Detailed Responses",
+          "type": "multipleRecordLinks",
+          "options": {
+            "linkedTableName": "BRQ Detailed Responses",
+            "prefersSingleRecordLink": false
+          }
+        },
+        {
+          "name": "Strategic Review Bookings",
+          "type": "multipleRecordLinks",
+          "options": {
+            "linkedTableName": "Strategic Review Bookings",
+            "prefersSingleRecordLink": false
+          }
+        }
+      ]
+    },
+    {
+      "table": "Business Readiness Responses",
+      "fields": [
+        {
+          "name": "Applicant Reference",
+          "type": "multipleRecordLinks",
+          "options": {
+            "linkedTableName": "Aurixa Waitlist",
+            "prefersSingleRecordLink": true
+          }
+        }
+      ]
+    },
+    {
+      "table": "BRQ Detailed Responses",
+      "fields": [
+        {
+          "name": "Applicant",
+          "type": "multipleRecordLinks",
+          "options": {
+            "linkedTableName": "Aurixa Waitlist",
+            "prefersSingleRecordLink": true
+          }
+        }
+      ]
+    },
+    {
+      "table": "Strategic Review Bookings",
+      "fields": [
+        {
+          "name": "Applicant",
+          "type": "multipleRecordLinks",
+          "options": {
+            "linkedTableName": "Aurixa Waitlist",
+            "prefersSingleRecordLink": false
+          }
+        }
+      ]
+    }
+  ],
+  "phaseC_computedFields": [
+    {
+      "table": "Emails",
+      "fields": [
+        {
+          "name": "Attachment Summary",
+          "type": "aiText",
+          "description": "An AI generated summary of the Attachments field. Upload files to Attachments to generate a summary.",
+          "options": {
+            "referencedFieldIds": [
+              "fldznjrJkiCmlSb0a"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "table": "Properties",
+      "fields": [
+        {
+          "name": "Created",
+          "type": "createdTime",
+          "options": {
+            "result": {
+              "type": "dateTime",
+              "options": {
+                "dateFormat": {
+                  "name": "local",
+                  "format": "l"
+                },
+                "timeFormat": {
+                  "name": "12hour",
+                  "format": "h:mma"
+                },
+                "timeZone": "utc"
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "table": "Lead Data Test",
+      "fields": [
+        {
+          "name": "Created at",
+          "type": "createdTime",
+          "options": {
+            "result": {
+              "type": "dateTime",
+              "options": {
+                "dateFormat": {
+                  "name": "local",
+                  "format": "l"
+                },
+                "timeFormat": {
+                  "name": "12hour",
+                  "format": "h:mma"
+                },
+                "timeZone": "client"
+              }
+            }
+          }
+        },
+        {
+          "name": "Attachment Summary",
+          "type": "aiText",
+          "description": "An AI generated summary of the Attachments field. Upload files to Attachments to generate a summary.",
+          "options": {
+            "referencedFieldIds": [
+              "fldiM4UL2ueGeYPEO"
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "table": "Property Intake Master",
+      "fields": [
+        {
+          "name": "Property Record Name",
+          "type": "formula",
+          "options": {
+            "formula": "IF(\n  {Address},\n    {Address} & IF({Suburb}, \", \" & {Suburb}, \"\") & IF({Postcode}, \" \" & {Postcode}, \"\"),\n    IF(\n      {Project Name},\n        {Project Name} & IF({Lot}, \" - Lot \" & {Lot}, \"\"),\n        IF(\n          {Email Subject},\n            \"Email: \" & {Email Subject},\n            \"Unknown Property Intake Record\"\n        )\n    )\n)",
+            "originalFormula": "IF(\n  {fldlW8xSbifH1OGxg},\n    {fldlW8xSbifH1OGxg} & IF({fldjjq8ESyEoWoXbl}, \", \" & {fldjjq8ESyEoWoXbl}, \"\") & IF({fldX5jSbzuiIK9y4x}, \" \" & {fldX5jSbzuiIK9y4x}, \"\"),\n    IF(\n      {fldgs0rw9zkOJ4pSE},\n        {fldgs0rw9zkOJ4pSE} & IF({fld2fKUblWJtcu1h7}, \" - Lot \" & {fld2fKUblWJtcu1h7}, \"\"),\n        IF(\n          {fldyma7AM6cKO2rm7},\n            \"Email: \" & {fldyma7AM6cKO2rm7},\n            \"Unknown Property Intake Record\"\n        )\n    )\n)"
+          }
+        },
+        {
+          "name": "Created Time",
+          "type": "createdTime",
+          "options": {
+            "result": {
+              "type": "dateTime",
+              "options": {
+                "dateFormat": {
+                  "name": "us",
+                  "format": "M/D/YYYY"
+                },
+                "timeFormat": {
+                  "name": "12hour",
+                  "format": "h:mma"
+                },
+                "timeZone": "utc"
+              }
+            }
+          }
+        },
+        {
+          "name": "Sender Domain",
+          "type": "formula",
+          "options": {
+            "formula": "IF(\n  AND({Sender Email}, FIND(\"@\", {Sender Email})),\n    LOWER(RIGHT({Sender Email}, LEN({Sender Email}) - FIND(\"@\", {Sender Email}))),\n    BLANK()\n)",
+            "originalFormula": "IF(\n  AND({fld4IPtcoGDjj6uml}, FIND(\"@\", {fld4IPtcoGDjj6uml})),\n    LOWER(RIGHT({fld4IPtcoGDjj6uml}, LEN({fld4IPtcoGDjj6uml}) - FIND(\"@\", {fld4IPtcoGDjj6uml}))),\n    BLANK()\n)"
+          }
+        },
+        {
+          "name": "Property Unique Key",
+          "type": "formula",
+          "options": {
+            "formula": "LOWER(\n  REGEX_REPLACE(\n    IF({Lot}, {Lot}, \"\") & \"|\" &\n    IF({Address}, {Address}, \"\") & \"|\" &\n    IF({Suburb}, {Suburb}, \"\") & \"|\" &\n    IF({Postcode}, {Postcode}, \"\"),\n    \"[^a-zA-Z0-9|]\", \"\"\n  )\n)",
+            "originalFormula": "LOWER(\n  REGEX_REPLACE(\n    IF({fld2fKUblWJtcu1h7}, {fld2fKUblWJtcu1h7}, \"\") & \"|\" &\n    IF({fldlW8xSbifH1OGxg}, {fldlW8xSbifH1OGxg}, \"\") & \"|\" &\n    IF({fldjjq8ESyEoWoXbl}, {fldjjq8ESyEoWoXbl}, \"\") & \"|\" &\n    IF({fldX5jSbzuiIK9y4x}, {fldX5jSbzuiIK9y4x}, \"\"),\n    \"[^a-zA-Z0-9|]\", \"\"\n  )\n)"
+          }
+        },
+        {
+          "name": "Last Modified Time",
+          "type": "lastModifiedTime",
+          "options": {
+            "isValid": true,
+            "referencedFieldIds": [],
+            "result": {
+              "type": "date",
+              "options": {
+                "dateFormat": {
+                  "name": "us",
+                  "format": "M/D/YYYY"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Address Match Key",
+          "type": "formula",
+          "options": {
+            "formula": "\"Unable to generate formula\"",
+            "originalFormula": "\"Unable to generate formula\""
+          }
+        },
+        {
+          "name": "Project Match Key",
+          "type": "formula",
+          "options": {
+            "formula": "\"Unable to generate formula\"",
+            "originalFormula": "\"Unable to generate formula\""
+          }
+        }
+      ]
+    },
+    {
+      "table": "Aurixa Waitlist",
+      "fields": [
+        {
+          "name": "Bypass URL Summary (Bypass URL)",
+          "type": "aiText",
+          "options": {
+            "referencedFieldIds": [
+              "fldx6YHHBqspMfiot"
+            ]
+          }
+        },
+        {
+          "name": "Bypass URL Title (Bypass URL)",
+          "type": "aiText",
+          "options": {
+            "referencedFieldIds": [
+              "fldx6YHHBqspMfiot"
+            ]
+          }
+        },
+        {
+          "name": "Bypass URL Headline (Bypass URL)",
+          "type": "aiText",
+          "options": {
+            "referencedFieldIds": [
+              "fldx6YHHBqspMfiot"
+            ]
+          }
+        },
+        {
+          "name": "Application ID Key",
+          "type": "formula",
+          "description": "Normalised Application ID (upper case, trimmed). Match on this rather than the raw field so a reference the applicant typed by hand — the fallback when their secure link has expired — still resolves regardless of case or stray spaces.",
+          "options": {
+            "formula": "UPPER(TRIM({Application ID}))",
+            "originalFormula": "UPPER(TRIM({fldU6Ny4Ck482jpGg}))"
+          }
+        },
+        {
+          "name": "Stage 2 Response Count",
+          "type": "count",
+          "description": "How many Business Readiness Responses are linked to this applicant. Non-zero means the applicant reached Stage 2.",
+          "options": {
+            "isValid": true,
+            "recordLinkFieldId": "fld6o2raVanGj6rp5"
+          }
+        },
+        {
+          "name": "Stage 2 Detailed Count",
+          "type": "count",
+          "description": "How many BRQ Detailed Responses are linked to this applicant. Counted separately because the questionnaire writes the detailed table first.",
+          "options": {
+            "isValid": true,
+            "recordLinkFieldId": "fldoc77Gh5nZDBCcg"
+          }
+        },
+        {
+          "name": "Stage 2 Completion Status",
+          "type": "rollup",
+          "description": "Completion Status pulled through from the linked Business Readiness Responses (Draft / Submitted / Reviewed).",
+          "options": {
+            "isValid": true,
+            "recordLinkFieldId": "fld6o2raVanGj6rp5",
+            "fieldIdInLinkedTable": "fld9SkEsd1VFETN1z",
+            "referencedFieldIds": [],
+            "result": {
+              "type": "singleLineText"
+            }
+          }
+        },
+        {
+          "name": "Stage 2 Started At",
+          "type": "rollup",
+          "description": "Earliest Submitted At across the linked BRQ Detailed Responses — the moment this applicant actually moved to Stage 2 on the front end.",
+          "options": {
+            "isValid": true,
+            "recordLinkFieldId": "fldoc77Gh5nZDBCcg",
+            "fieldIdInLinkedTable": "fldx7n55HTzh93g3D",
+            "referencedFieldIds": [],
+            "result": {
+              "type": "date",
+              "options": {
+                "dateFormat": {
+                  "name": "us",
+                  "format": "M/D/YYYY"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Stage 2 Reached",
+          "type": "formula",
+          "description": "1 when a Stage 2 response of either kind is linked to this applicant. This is the progression signal the Stage 1 reminder must respect — it only becomes 1 once a response is actually linked, so an unlinked response will not suppress the email.",
+          "options": {
+            "formula": "IF(OR({Stage 2 Response Count} > 0, {Stage 2 Detailed Count} > 0), 1, 0)",
+            "originalFormula": "IF(OR({fldW5JPpfo3NhGrqY} > 0, {fldIfSFxluMqIG1OG} > 0), 1, 0)"
+          }
+        },
+        {
+          "name": "Token Expires At",
+          "type": "formula",
+          "description": "Expiry of the secure Stage 2 link, read straight out of the `expires` parameter on Bypass URL (URL-decoded). Derived rather than stored so it can never drift from the link that was actually emailed. If the link format ever changes, replace this formula with a written dateTime field.",
+          "options": {
+            "formula": "IF(\n  FIND(\"expires=\", {Bypass URL}),\n  DATETIME_PARSE(\n    LEFT(\n      SUBSTITUTE(SUBSTITUTE(MID({Bypass URL}, FIND(\"expires=\", {Bypass URL}) + 8, 40), \"%3A\", \":\"), \"%3a\", \":\"),\n      24\n    ),\n    \"YYYY-MM-DDTHH:mm:ss.SSSZ\"\n  )\n)",
+            "originalFormula": "IF(\n  FIND(\"expires=\", {fldx6YHHBqspMfiot}),\n  DATETIME_PARSE(\n    LEFT(\n      SUBSTITUTE(SUBSTITUTE(MID({fldx6YHHBqspMfiot}, FIND(\"expires=\", {fldx6YHHBqspMfiot}) + 8, 40), \"%3A\", \":\"), \"%3a\", \":\"),\n      24\n    ),\n    \"YYYY-MM-DDTHH:mm:ss.SSSZ\"\n  )\n)"
+          }
+        },
+        {
+          "name": "Token Status",
+          "type": "formula",
+          "description": "Live state of the emailed Stage 2 link. Once this reads Expired the applicant can no longer use the link and must enter their Application ID instead — which is why the reference is shown to them at Stage 1 and stored here.",
+          "options": {
+            "formula": "IF(\n  {Bypass URL} = BLANK(),\n  \"No link issued\",\n  IF(IS_AFTER({Token Expires At}, NOW()), \"Active\", \"Expired\")\n)",
+            "originalFormula": "IF(\n  {fldx6YHHBqspMfiot} = BLANK(),\n  \"No link issued\",\n  IF(IS_AFTER({fldwJSa1M5a09T5bn}, NOW()), \"Active\", \"Expired\")\n)"
+          }
+        },
+        {
+          "name": "Send Stage 2 Invite",
+          "type": "formula",
+          "description": "THE GATE. Reads SEND or HOLD. Filter the Stage 1 reminder on this field (text equals SEND) between the \"Get a record\" and \"Create a message\" modules, so the value is re-read after the delay and an applicant who has since completed Stage 2 is skipped. See Stage 2 Invite Hold Reason for why a record is held.",
+          "options": {
+            "formula": "IF(\n  OR(\n    {Stage 2 Reached} = 1,\n    {Status} = \"Declined\",\n    {Application ID} = BLANK(),\n    {Corporate Email} = BLANK()\n  ),\n  \"HOLD\",\n  \"SEND\"\n)",
+            "originalFormula": "IF(\n  OR(\n    {fldrn1evbYmFjoPyA} = 1,\n    {fldFAjPdUqraeUCoP} = \"Declined\",\n    {fldU6Ny4Ck482jpGg} = BLANK(),\n    {fldvcq6GjkuBTREON} = BLANK()\n  ),\n  \"HOLD\",\n  \"SEND\"\n)"
+          }
+        },
+        {
+          "name": "Stage 2 Invite Hold Reason",
+          "type": "formula",
+          "description": "Plain-English reason the gate reads HOLD, so a suppressed reminder is explainable without opening the scenario history.",
+          "options": {
+            "formula": "IF(\n  {Stage 2 Reached} = 1,\n  \"Applicant already reached Stage 2\",\n  IF(\n    {Status} = \"Declined\",\n    \"Application declined\",\n    IF(\n      {Application ID} = BLANK(),\n      \"No Application ID on the record\",\n      IF({Corporate Email} = BLANK(), \"No corporate email to send to\", \"\")\n    )\n  )\n)",
+            "originalFormula": "IF(\n  {fldrn1evbYmFjoPyA} = 1,\n  \"Applicant already reached Stage 2\",\n  IF(\n    {fldFAjPdUqraeUCoP} = \"Declined\",\n    \"Application declined\",\n    IF(\n      {fldU6Ny4Ck482jpGg} = BLANK(),\n      \"No Application ID on the record\",\n      IF({fldvcq6GjkuBTREON} = BLANK(), \"No corporate email to send to\", \"\")\n    )\n  )\n)"
+          }
+        },
+        {
+          "name": "Stage 3 Booking Count",
+          "type": "count",
+          "description": "How many Strategic Review Bookings are linked to this applicant. Non-zero means the applicant reached Stage 3.",
+          "options": {
+            "isValid": true,
+            "recordLinkFieldId": "fldmbPcIai0pr0kxq"
+          }
+        },
+        {
+          "name": "Stage 3 Booked At",
+          "type": "rollup",
+          "description": "Earliest Submitted At across the linked Strategic Review Bookings — the moment this applicant actually moved to Stage 3 on the front end.",
+          "options": {
+            "isValid": true,
+            "recordLinkFieldId": "fldmbPcIai0pr0kxq",
+            "fieldIdInLinkedTable": "fld4zIaduIVHKxOqQ",
+            "referencedFieldIds": [],
+            "result": {
+              "type": "date",
+              "options": {
+                "dateFormat": {
+                  "name": "us",
+                  "format": "M/D/YYYY"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Stage 3 Session Start",
+          "type": "rollup",
+          "description": "Latest requested session start across the linked bookings — the time that currently stands, so a reschedule supersedes the original.",
+          "options": {
+            "isValid": true,
+            "recordLinkFieldId": "fldmbPcIai0pr0kxq",
+            "fieldIdInLinkedTable": "fldkOI6dHXcLOixYC",
+            "referencedFieldIds": [],
+            "result": {
+              "type": "date",
+              "options": {
+                "dateFormat": {
+                  "name": "us",
+                  "format": "M/D/YYYY"
+                }
+              }
+            }
+          }
+        },
+        {
+          "name": "Stage 3 Booking Status",
+          "type": "rollup",
+          "description": "Booking Status pulled through from the linked Strategic Review Bookings (Requested / Confirmed / Rescheduled / Cancelled / Completed / No Show).",
+          "options": {
+            "isValid": true,
+            "recordLinkFieldId": "fldmbPcIai0pr0kxq",
+            "fieldIdInLinkedTable": "fldxCJAc92PSNuklb",
+            "referencedFieldIds": [],
+            "result": {
+              "type": "singleLineText"
+            }
+          }
+        },
+        {
+          "name": "Stage 3 Active Bookings",
+          "type": "rollup",
+          "description": "How many linked bookings still stand — cancellations and no-shows are excluded. This, not the raw count, is what the Stage 3 gate reads.",
+          "options": {
+            "isValid": true,
+            "recordLinkFieldId": "fldmbPcIai0pr0kxq",
+            "fieldIdInLinkedTable": "fldZl5HgMMqcxpDCu",
+            "referencedFieldIds": [],
+            "result": {
+              "type": "number",
+              "options": {
+                "precision": 0
+              }
+            }
+          }
+        },
+        {
+          "name": "Stage 3 Reached",
+          "type": "formula",
+          "description": "1 when a booking that still stands is linked to this applicant. This is the progression signal the Stage 3 reminder must respect — it only becomes 1 once a booking is actually linked, so an unlinked booking will not suppress the email, and it falls back to 0 if the session is cancelled.",
+          "options": {
+            "formula": "IF({Stage 3 Active Bookings} > 0, 1, 0)",
+            "originalFormula": "IF({fldBZYe8s6dAqhPKD} > 0, 1, 0)"
+          }
+        },
+        {
+          "name": "Stage 3 Booking URL",
+          "type": "formula",
+          "description": "The Stage 3 equivalent of Bypass URL, and deliberately not a token link: the scheduler is reached with the Application ID itself, so there is nothing to expire and nothing to reissue. Built from Application ID Key so it is always the normalised reference. This is the link the Stage 2 completion email and any Stage 3 reminder should use.",
+          "options": {
+            "formula": "IF(\n  {Application ID Key} = BLANK(),\n  \"\",\n  \"https://aurixasystems.com.au/schedule-strategic-review?ref=\" & {Application ID Key}\n)",
+            "originalFormula": "IF(\n  {fldpThwtKAXHfQNut} = BLANK(),\n  \"\",\n  \"https://aurixasystems.com.au/schedule-strategic-review?ref=\" & {fldpThwtKAXHfQNut}\n)"
+          }
+        },
+        {
+          "name": "Send Stage 3 Invite",
+          "type": "formula",
+          "description": "THE GATE, Stage 3. Reads SEND or HOLD. Filter the \"book your strategic review\" reminder on this field (text equals SEND) between the \"Get a record\" and \"Create a message\" modules, so the value is re-read after the delay and an applicant who has since booked is skipped. It is deliberately the mirror of Send Stage 2 Invite, with two differences: it also holds until the applicant has actually reached Stage 2 (before that, the Stage 2 invite is the one that should be going out), and it caps at three invitations. See Stage 3 Invite Hold Reason for why a record is held.",
+          "options": {
+            "formula": "IF(\n  OR(\n    {Stage 3 Reached} = 1,\n    {Stage 2 Reached} != 1,\n    {Status} = \"Declined\",\n    {Application ID} = BLANK(),\n    {Corporate Email} = BLANK(),\n    {Stage 3 Invite Count} >= 3\n  ),\n  \"HOLD\",\n  \"SEND\"\n)",
+            "originalFormula": "IF(\n  OR(\n    {fldtNFwOfeTaaELKI} = 1,\n    {fldrn1evbYmFjoPyA} != 1,\n    {fldFAjPdUqraeUCoP} = \"Declined\",\n    {fldU6Ny4Ck482jpGg} = BLANK(),\n    {fldvcq6GjkuBTREON} = BLANK(),\n    {fldJyjTTa8kzfA2lD} >= 3\n  ),\n  \"HOLD\",\n  \"SEND\"\n)"
+          }
+        },
+        {
+          "name": "Stage 3 Invite Hold Reason",
+          "type": "formula",
+          "description": "Plain-English reason the Stage 3 gate reads HOLD, so a suppressed reminder is explainable without opening the scenario history. Blank when the gate reads SEND.",
+          "options": {
+            "formula": "IF(\n  {Stage 3 Reached} = 1,\n  \"Applicant already booked a strategic review\",\n  IF(\n    {Stage 2 Reached} != 1,\n    \"Applicant has not reached Stage 2 yet\",\n    IF(\n      {Status} = \"Declined\",\n      \"Application declined\",\n      IF(\n        {Application ID} = BLANK(),\n        \"No Application ID on the record\",\n        IF(\n          {Corporate Email} = BLANK(),\n          \"No corporate email to send to\",\n          IF({Stage 3 Invite Count} >= 3, \"Invitation limit reached\", \"\")\n        )\n      )\n    )\n  )\n)",
+            "originalFormula": "IF(\n  {fldtNFwOfeTaaELKI} = 1,\n  \"Applicant already booked a strategic review\",\n  IF(\n    {fldrn1evbYmFjoPyA} != 1,\n    \"Applicant has not reached Stage 2 yet\",\n    IF(\n      {fldFAjPdUqraeUCoP} = \"Declined\",\n      \"Application declined\",\n      IF(\n        {fldU6Ny4Ck482jpGg} = BLANK(),\n        \"No Application ID on the record\",\n        IF(\n          {fldvcq6GjkuBTREON} = BLANK(),\n          \"No corporate email to send to\",\n          IF({fldJyjTTa8kzfA2lD} >= 3, \"Invitation limit reached\", \"\")\n        )\n      )\n    )\n  )\n)"
+          }
+        },
+        {
+          "name": "Stage 3 Access (Application)",
+          "type": "formula",
+          "description": "HALF OF THE ADMISSION POLICY for the Stage 3 scheduling page: the half that is a property of THIS record. Reads GRANT or DENY, and denies an application with no Application ID or one that has been declined.\n\nThe other half — the applicant must have completed Stage 2 — is deliberately NOT here. It is checked by the \"Aurixa Stage 3 Access\" scenario directly against BRQ Detailed Responses, by Application ID. That row is written by the Stage 2 scenario at the moment the questionnaire is submitted, so admission depends on nothing asynchronous. Reading Stage 2 Reached instead would have made page access depend on the \"Link Stage 2 detailed response to applicant\" automation having already run — and on nobody ever switching it off — which is not a safe thing for a gate to rest on.\n\nBoth halves must pass. A reference that fails either is answered identically, so the page can never reveal whether a particular application exists.",
+          "options": {
+            "formula": "IF(\n  OR(\n    {Application ID} = BLANK(),\n    {Status} = \"Declined\"\n  ),\n  \"DENY\",\n  \"GRANT\"\n)",
+            "originalFormula": "IF(\n  OR(\n    {fldU6Ny4Ck482jpGg} = BLANK(),\n    {fldFAjPdUqraeUCoP} = \"Declined\"\n  ),\n  \"DENY\",\n  \"GRANT\"\n)"
+          }
+        },
+        {
+          "name": "Stage 3 Access Denied Reason (Application)",
+          "type": "formula",
+          "description": "Plain-English reason this record fails the application half of the Stage 3 admission policy. Blank when that half passes — which does not by itself mean the applicant can book, because Stage 3 also requires a Stage 2 response, checked against BRQ Detailed Responses rather than against this table. For that half, Stage 2 Detailed Count is the field to look at.\n\nNever sent to the browser: the website is told only that it could not verify the reference.",
+          "options": {
+            "formula": "IF(\n  {Application ID} = BLANK(),\n  \"No Application ID on the record\",\n  IF({Status} = \"Declined\", \"Application declined\", \"\")\n)",
+            "originalFormula": "IF(\n  {fldU6Ny4Ck482jpGg} = BLANK(),\n  \"No Application ID on the record\",\n  IF({fldFAjPdUqraeUCoP} = \"Declined\", \"Application declined\", \"\")\n)"
+          }
+        }
+      ]
+    },
+    {
+      "table": "Business Readiness Responses",
+      "fields": [
+        {
+          "name": "Record ID",
+          "type": "autoNumber"
+        },
+        {
+          "name": "Applicant Link Status",
+          "type": "formula",
+          "description": "Monitoring only. \"Unlinked\" means this response never resolved to an Aurixa Waitlist record, so Stage 1 will still think the applicant stalled and the reminder email will keep going out.",
+          "options": {
+            "formula": "IF({Applicant Reference}, \"Linked\", IF({Application ID}, \"Unlinked - no matching applicant\", \"Unlinked - no Application ID\"))",
+            "originalFormula": "IF({fldV4WV5a0fexdItk}, \"Linked\", IF({fldIplSF8qLS3ncql}, \"Unlinked - no matching applicant\", \"Unlinked - no Application ID\"))"
+          }
+        }
+      ]
+    },
+    {
+      "table": "BRQ Detailed Responses",
+      "fields": [
+        {
+          "name": "Id",
+          "type": "autoNumber"
+        },
+        {
+          "name": "Applicant Link Status",
+          "type": "formula",
+          "description": "Monitoring only. \"Unlinked\" means this response never resolved to an Aurixa Waitlist record, so Stage 1 will still think the applicant stalled and the reminder email will keep going out.",
+          "options": {
+            "formula": "IF({Applicant}, \"Linked\", IF({Application ID}, \"Unlinked - no matching applicant\", \"Unlinked - no Application ID\"))",
+            "originalFormula": "IF({fld0VFB3UfSf4gCkp}, \"Linked\", IF({fldQxBIDhmdbCj9Tn}, \"Unlinked - no matching applicant\", \"Unlinked - no Application ID\"))"
+          }
+        }
+      ]
+    },
+    {
+      "table": "Strategic Review Bookings",
+      "fields": [
+        {
+          "name": "Applicant Link Status",
+          "type": "formula",
+          "description": "Monitoring only. \"Unlinked\" means this booking never resolved to an Aurixa Waitlist record, so Stage 2 will still think the applicant stalled and the Stage 3 reminder will keep going out. Mirrors the same field on the Stage 2 tables.",
+          "options": {
+            "formula": "IF({Applicant}, \"Linked\", IF({Application ID}, \"Unlinked - no matching applicant\", \"Unlinked - no Application ID\"))",
+            "originalFormula": "IF({fldnpJNgmzOP2NOkt}, \"Linked\", IF({fldIc6c8nE8DMdUPW}, \"Unlinked - no matching applicant\", \"Unlinked - no Application ID\"))"
+          }
+        },
+        {
+          "name": "Send Booking Confirmation",
+          "type": "formula",
+          "description": "THE GATE. Reads SEND or HOLD. Filter the Stage 3 confirmation on this field (text equals SEND) between the \"Get a record\" and \"Create a message\" modules, so it is re-read after the delay and a booking that was cancelled, or already confirmed, is skipped. Holding on Confirmation Message ID is what makes a re-run of the scenario safe: the second pass sees the id written by the first and sends nothing. See Booking Confirmation Hold Reason for why a record is held.",
+          "options": {
+            "formula": "IF(\n  OR(\n    {Confirmation Message ID} != BLANK(),\n    {Booking Status} = \"Cancelled\",\n    {Applicant Email} = BLANK(),\n    {Requested Start (UTC)} = BLANK()\n  ),\n  \"HOLD\",\n  \"SEND\"\n)",
+            "originalFormula": "IF(\n  OR(\n    {fldDFVGZ3sAorP4oG} != BLANK(),\n    {fldxCJAc92PSNuklb} = \"Cancelled\",\n    {fldDoTAilNHPKk8Vf} = BLANK(),\n    {fldkOI6dHXcLOixYC} = BLANK()\n  ),\n  \"HOLD\",\n  \"SEND\"\n)"
+          }
+        },
+        {
+          "name": "Booking Confirmation Hold Reason",
+          "type": "formula",
+          "description": "Plain-English reason the gate reads HOLD, so a suppressed confirmation is explainable without opening the scenario history. Blank when the gate reads SEND.",
+          "options": {
+            "formula": "IF(\n  {Confirmation Message ID} != BLANK(),\n  \"Confirmation already sent\",\n  IF(\n    {Booking Status} = \"Cancelled\",\n    \"Booking cancelled\",\n    IF(\n      {Applicant Email} = BLANK(),\n      \"No applicant email to send to\",\n      IF({Requested Start (UTC)} = BLANK(), \"No requested time on the booking\", \"\")\n    )\n  )\n)",
+            "originalFormula": "IF(\n  {fldDFVGZ3sAorP4oG} != BLANK(),\n  \"Confirmation already sent\",\n  IF(\n    {fldxCJAc92PSNuklb} = \"Cancelled\",\n    \"Booking cancelled\",\n    IF(\n      {fldDoTAilNHPKk8Vf} = BLANK(),\n      \"No applicant email to send to\",\n      IF({fldkOI6dHXcLOixYC} = BLANK(), \"No requested time on the booking\", \"\")\n    )\n  )\n)"
+          }
+        },
+        {
+          "name": "Counts As Booked",
+          "type": "formula",
+          "description": "1 when this booking should count as the applicant having reached Stage 3. Cancellations and no-shows read 0 so the Stage 3 reminder starts going out again — summing this on Aurixa Waitlist is what makes the gate self-correcting.",
+          "options": {
+            "formula": "IF(OR({Booking Status} = \"Cancelled\", {Booking Status} = \"No Show\", {Requested Start (UTC)} = BLANK()), 0, 1)",
+            "originalFormula": "IF(OR({fldxCJAc92PSNuklb} = \"Cancelled\", {fldxCJAc92PSNuklb} = \"No Show\", {fldkOI6dHXcLOixYC} = BLANK()), 0, 1)"
+          }
+        }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,24 @@
+# The render engine, pinned exactly.
+#
+# `PINNED_ENGINE` in `supabase/functions/_shared/reportDesign/engineSupport.pure.ts`
+# mirrors the WeasyPrint line, and `engineSupport.spec.ts` reads this file and
+# fails if the two drift. That is not bookkeeping: the stylesheet is verified on
+# a developer machine and printed by this container, and while those were 69 and
+# 62.3 the cover's fixed-width masthead row was dropped as an invalid value —
+# printing the classification and the reference as one word in every copy, with
+# nothing red anywhere.
+#
+# Upgrade both lines together, or the spec stops you.
+weasyprint==69.0
+
+# WeasyPrint's PDF writer. Pinned because the pair is the engine: 69 against an
+# older pydyf is not a combination anybody tests.
+pydyf==0.12.1
+
+flask==3.1.3
+
+# 23.0.0 is the floor: 22.x is affected by CVE-2024-6827 (Transfer-Encoding
+# request smuggling). Held at 23 rather than the newest major because this is
+# the only path a client report can take, and a worker-model change is not
+# something to discover in production.
+gunicorn==23.0.0

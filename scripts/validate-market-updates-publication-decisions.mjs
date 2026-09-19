@@ -1,0 +1,13 @@
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+const read = (path) => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
+const migration = read('supabase/migrations/20260726180000_market_updates_publication_decisions.sql');
+const ingest = read('supabase/functions/market-updates-ingest/index.ts');
+const classification = read('supabase/functions/market-updates-ingest/classification.ts');
+const status = read('supabase/functions/market-updates-status/index.ts');
+for (const token of ['publication_reason','candidate_reason','ai_status','ai_failure_code','validation_failures','items_rejected','items_failed']) assert.match(migration, new RegExp(token));
+for (const token of ['validateClassification','SOURCE_CONCURRENCY','ITEM_CONCURRENCY','PROVIDER_CIRCUIT_FAILURES','checkedMutation','database_insert_failed','relevance_below_threshold','runDeadlineAt']) assert.match(ingest, new RegExp(token));
+for (const token of ['unsupported_segment_removed','unsupported_audience_removed','unsupported_geography_removed','unsupported_impact_replaced']) assert.match(classification, new RegExp(token));
+assert.match(status, /status !== 'published'/);
+assert.match(status, /requireAdmin/);
+console.log('Market Updates Phase 5 publication-decision contract validated.');

@@ -1,0 +1,24 @@
+{
+  "extends": "./tsconfig.app.json",
+  "compilerOptions": {
+    "strict": true,
+    "noImplicitAny": true,
+    "noEmit": true,
+    "incremental": false
+  },
+  "include": [
+    "src/pages/solicitor/**/*.ts",
+    "src/pages/solicitor/**/*.tsx",
+    "src/components/solicitor-portal/**/*.ts",
+    "src/components/solicitor-portal/**/*.tsx",
+    "src/lib/solicitor*.ts",
+    "src/lib/legal*.ts",
+    "src/lib/clientLegalWorkspace.ts",
+    "src/pages/portal/PortalLegal.tsx",
+    "src/pages/portal/PortalLegalDetail.tsx",
+    "src/components/finance-portal/FinanceLegalCoordinationPanel.tsx",
+    "src/components/admin/solicitor-portal/CollaborationHealthPanel.tsx",
+    "src/components/admin/solicitor-portal/TransactionCasesPanel.tsx",
+    "src/domains/cross-portal/**/*.ts"
+  ]
+}

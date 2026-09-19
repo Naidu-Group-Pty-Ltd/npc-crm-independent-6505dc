@@ -1,0 +1,17 @@
+{
+  "bucket": "files",
+  "bytes": "18567",
+  "createdAt": "2025-12-10T05:32:19.972Z",
+  "id": "9fff4149-3aec-48f0-9378-d56760390216",
+  "mimetype": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+  "name": "Npc Services Information Document (1).do",
+  "object": "file",
+  "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+  "parsedTextBytes": "6135",
+  "parsedTextUrl": "https://jtuyprjjgxbgmtjiykoa.supabase.co/storage/v1/object/public/files/parsed/9fff4149-3aec-48f0-9378-d56760390216.txt",
+  "path": "1765344739634-9c1eb9ad-5900-47b3-bb36-2cf9c85b17af.docx",
+  "purpose": "assistant",
+  "status": "done",
+  "updatedAt": "2025-12-10T05:32:21.927Z",
+  "url": "https://jtuyprjjgxbgmtjiykoa.supabase.co/storage/v1/object/public/files/1765344739634-9c1eb9ad-5900-47b3-bb36-2cf9c85b17af.docx"
+}

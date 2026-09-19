@@ -1,0 +1,101 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://npcservices.com.au/schemas/pdf-import-monitoring-event.schema.json",
+  "title": "PdfImportMonitoringEvent",
+  "description": "Phase 11C durable PDF import monitoring alert event. Metadata only — never raw PDF/OCR text, screenshots, signed URLs, or private content.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "id",
+    "version",
+    "eventKey",
+    "ruleId",
+    "domain",
+    "severity",
+    "status",
+    "owner",
+    "releaseBlocking",
+    "title",
+    "summary",
+    "occurrenceCount",
+    "firstSeenAt",
+    "lastSeenAt",
+    "runbookAnchor",
+    "context",
+    "createdAt",
+    "updatedAt"
+  ],
+  "properties": {
+    "id": { "type": "string" },
+    "version": { "type": "string", "const": "pdf-import-monitoring-event-v1" },
+    "eventKey": {
+      "type": "string",
+      "description": "Deterministic dedupe key: `${ruleId}:${scope}` (default scope 'global')."
+    },
+    "ruleId": { "type": "string" },
+    "domain": {
+      "type": "string",
+      "enum": [
+        "import_pipeline",
+        "sidecar_diagnostics",
+        "artifact_integrity",
+        "visual_quality",
+        "repair",
+        "reconciliation",
+        "export_parity",
+        "golden_regression",
+        "release_gates",
+        "backend_contract",
+        "security_privacy",
+        "permissions",
+        "performance",
+        "quality_gates",
+        "operator_controls",
+        "monitoring_self"
+      ]
+    },
+    "severity": { "type": "string", "enum": ["info", "warning", "high", "critical"] },
+    "status": {
+      "type": "string",
+      "enum": ["open", "acknowledged", "resolved", "suppressed", "false_positive"]
+    },
+    "owner": {
+      "type": "string",
+      "enum": [
+        "operator",
+        "qa",
+        "manual_review",
+        "developer_frontend",
+        "developer_backend",
+        "developer_sidecar",
+        "developer_fullstack",
+        "security",
+        "unknown"
+      ]
+    },
+    "releaseBlocking": { "type": "boolean" },
+    "title": { "type": "string" },
+    "summary": { "type": "string" },
+    "metricValue": { "type": ["number", "boolean", "null"] },
+    "threshold": { "type": ["number", "boolean", "null"] },
+    "occurrenceCount": { "type": "integer", "minimum": 1 },
+    "firstSeenAt": { "type": "string", "format": "date-time" },
+    "lastSeenAt": { "type": "string", "format": "date-time" },
+    "acknowledgedAt": { "type": ["string", "null"], "format": "date-time" },
+    "acknowledgedBy": { "type": ["string", "null"] },
+    "resolvedAt": { "type": ["string", "null"], "format": "date-time" },
+    "resolvedBy": { "type": ["string", "null"] },
+    "suppressedUntil": { "type": ["string", "null"], "format": "date-time" },
+    "note": { "type": ["string", "null"] },
+    "runbookAnchor": { "type": "string" },
+    "context": {
+      "type": "object",
+      "description": "Safe scalar correlation values ONLY. Nested objects/arrays are forbidden — they risk leaking raw content.",
+      "additionalProperties": {
+        "type": ["string", "number", "boolean", "null"]
+      }
+    },
+    "createdAt": { "type": "string", "format": "date-time" },
+    "updatedAt": { "type": "string", "format": "date-time" }
+  }
+}

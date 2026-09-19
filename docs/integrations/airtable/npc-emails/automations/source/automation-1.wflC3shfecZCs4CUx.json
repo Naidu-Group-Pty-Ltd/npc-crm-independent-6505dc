@@ -1,0 +1,15 @@
+{
+  "id": "wflC3shfecZCs4CUx",
+  "name": "Automation 1",
+  "description": null,
+  "deploymentStatus": "undeployed",
+  "deploymentError": null,
+  "trigger": {
+    "type": "genericWebhookReceived",
+    "inputs": {},
+    "webhookUrl": "https://hooks.airtable.com/workflows/v1/genericWebhook/apptyShYE0yzL4IGB/wflC3shfecZCs4CUx/wtrtjcEOPDxTBnk3D",
+    "webhookSchemaIsSet": false
+  },
+  "nodes": [],
+  "configurationStatus": "valid"
+}

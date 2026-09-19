@@ -1,0 +1,10 @@
+{
+  "createdAt": "2026-01-07T16:35:57.696Z",
+  "id": "fc7b93e2-19e1-40c9-adbb-1fdad8a8f884",
+  "name": "Test Suite for Assistant",
+  "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+  "targetPlan": {
+    "assistantId": "c0bc54fd-a9fb-4970-822b-b471c198e43b"
+  },
+  "updatedAt": "2026-01-07T16:35:57.696Z"
+}

@@ -1,0 +1,2093 @@
+{
+ "FAMILIES": [
+  {
+   "code": "pb",
+   "no": "01",
+   "name": "Private Banking",
+   "note": "Gold on obsidian, editorial ledger, restrained accent",
+   "faces": "Cinzel · Playfair · Inter · Plex Mono",
+   "face": "'Playfair Display',Georgia,serif",
+   "nameWeight": 500,
+   "mode": "light",
+   "pal": {
+    "paper": "#FAF7EF",
+    "ink": "#251F18",
+    "accent": "#8E6C15",
+    "faint": "#DDD1C0",
+    "mid": "#6E6253"
+   },
+   "base": {
+    "design_family": "private_banking",
+    "typography_preset": "cinzel_playfair_inter",
+    "numeric_typography": "playfair_lining_tabular",
+    "cover_overlay": "obsidian_full",
+    "section_header_style": "eyebrow_rule_display",
+    "kpi_layout": "four_column_ruled",
+    "callout_style": "tinted_gold_bar",
+    "table_style": "ledger_hairline",
+    "chart_style": "line_editorial",
+    "navigation_style": "print_only",
+    "risk_display": "rated_table",
+    "recommendation_style": "obsidian_card",
+    "radius": "0",
+    "border_treatment": "hairline",
+    "spacing_scale": "generous",
+    "page_margin_preset": "20mm",
+    "toc_style": "none",
+    "footer_style": "rule_page_number",
+    "density": "balanced",
+    "print_density": "standard"
+   },
+   "variants": [
+    [
+     "Chancery",
+     "pb-01",
+     "light",
+     "balanced",
+     "band",
+     "Client-facing flagship for private clients",
+     "The reference expression: obsidian cover, four ruled KPI columns, gold used once per page.",
+     {}
+    ],
+    [
+     "Chancery Compact",
+     "pb-02",
+     "light",
+     "compact",
+     "grid",
+     "Portfolio reviews covering several properties",
+     "Six KPI columns and tight ledger rules fit two properties per spread without losing the hierarchy.",
+     {
+      "density": "compact",
+      "page_margin_preset": "16mm",
+      "kpi_layout": "six_column_ruled",
+      "spacing_scale": "tight",
+      "table_style": "ledger_tight",
+      "print_density": "dense"
+     }
+    ],
+    [
+     "Sovereign Folio",
+     "pb-03",
+     "light",
+     "spacious",
+     "bleed",
+     "Single-asset pitch and presentation",
+     "Full-bleed portrait cover, oversized section numerals, KPIs paired two by two at display size.",
+     {
+      "density": "spacious",
+      "cover_overlay": "obsidian_bleed_portrait",
+      "section_header_style": "full_bleed_numeral",
+      "kpi_layout": "two_by_two_display",
+      "spacing_scale": "luxurious",
+      "page_margin_preset": "26mm"
+     }
+    ],
+    [
+     "Bullion Rail",
+     "pb-04",
+     "light",
+     "balanced",
+     "rail",
+     "Long reports where orientation matters",
+     "A gold rail carries part number and section name down every page; KPIs stack against it.",
+     {
+      "navigation_style": "vertical_rail",
+      "section_header_style": "rail_marker",
+      "kpi_layout": "stacked_rail",
+      "footer_style": "rail_number",
+      "cover_overlay": "obsidian_rail"
+     }
+    ],
+    [
+     "Discretion Ledger",
+     "pb-05",
+     "light",
+     "balanced",
+     "stack",
+     "Clients who read the numbers first",
+     "Statement rules with double-rule totals, severity bars for risk, and recommendations set as a ruled statement.",
+     {
+      "table_style": "double_rule_statement",
+      "kpi_layout": "ledger_rows",
+      "risk_display": "severity_bars",
+      "callout_style": "margin_note",
+      "chart_style": "stepped_area",
+      "recommendation_style": "ruled_statement"
+     }
+    ]
+   ]
+  },
+  {
+   "code": "ir",
+   "no": "02",
+   "name": "Institutional Research",
+   "note": "Numbered exhibits, masthead, coverage-note discipline",
+   "faces": "Noto Serif · IBM Plex Mono",
+   "face": "'Noto Serif',Georgia,serif",
+   "nameWeight": 600,
+   "mode": "light",
+   "pal": {
+    "paper": "#FFFDFA",
+    "ink": "#24211C",
+    "accent": "#0270A7",
+    "faint": "#DDD1C0",
+    "mid": "#6E6253"
+   },
+   "base": {
+    "design_family": "institutional_research",
+    "typography_preset": "noto_serif_plex",
+    "numeric_typography": "plex_tabular",
+    "cover_overlay": "masthead_rule",
+    "section_header_style": "numbered_exhibit",
+    "kpi_layout": "exhibit_strip",
+    "callout_style": "boxed_note",
+    "table_style": "exhibit_ruled",
+    "chart_style": "panel_multiples",
+    "navigation_style": "masthead",
+    "risk_display": "rating_table",
+    "recommendation_style": "boxed_verdict",
+    "radius": "0",
+    "border_treatment": "rule_2px",
+    "spacing_scale": "regular",
+    "page_margin_preset": "18mm",
+    "toc_style": "numbered_list",
+    "footer_style": "rule_page_number",
+    "density": "balanced",
+    "print_density": "standard"
+   },
+   "variants": [
+    [
+     "Exhibit",
+     "ir-01",
+     "light",
+     "balanced",
+     "band",
+     "Research-grade reports for professional readers",
+     "Every figure is a numbered exhibit with its own note. Masthead on each page, blue used only for exhibit numbers.",
+     {}
+    ],
+    [
+     "Exhibit Dense",
+     "ir-02",
+     "light",
+     "compact",
+     "grid",
+     "Data-heavy coverage where space is scarce",
+     "Exhibit panels tighten to three per page with running heads and no decorative space.",
+     {
+      "density": "compact",
+      "page_margin_preset": "15mm",
+      "spacing_scale": "tight",
+      "chart_style": "panel_multiples_dense",
+      "table_style": "exhibit_tight",
+      "print_density": "dense"
+     }
+    ],
+    [
+     "Coverage Note",
+     "ir-03",
+     "light",
+     "compact",
+     "stack",
+     "Two-page updates between full reports",
+     "Front-page verdict and thesis, one exhibit page. Deep analysis moves to the appendix.",
+     {
+      "density": "compact",
+      "cover_overlay": "note_header",
+      "section_header_style": "inline_heading",
+      "kpi_layout": "inline_strip",
+      "toc_style": "none",
+      "chart_style": "single_panel"
+     }
+    ],
+    [
+     "Analyst Folio",
+     "ir-04",
+     "light",
+     "spacious",
+     "bleed",
+     "Annual or thematic research with room to breathe",
+     "Exhibit plates run full width with generous margins and a numbered plate list at the front.",
+     {
+      "density": "spacious",
+      "page_margin_preset": "24mm",
+      "spacing_scale": "generous",
+      "chart_style": "full_width_plate",
+      "toc_style": "plate_list",
+      "section_header_style": "plate_number"
+     }
+    ],
+    [
+     "Committee Brief",
+     "ir-05",
+     "light",
+     "balanced",
+     "split",
+     "Investment committee papers",
+     "A decision box leads page one; every section closes with a stated finding rather than a chart.",
+     {
+      "cover_overlay": "decision_box",
+      "recommendation_style": "decision_box",
+      "risk_display": "finding_rows",
+      "chart_style": "minimal_line",
+      "callout_style": "finding_note",
+      "kpi_layout": "decision_strip"
+     }
+    ]
+   ]
+  },
+  {
+   "code": "le",
+   "no": "03",
+   "name": "Luxury Editorial",
+   "note": "Serif throughout, photographic plates, justified columns",
+   "faces": "Noto Serif",
+   "face": "'Noto Serif',Georgia,serif",
+   "nameWeight": 400,
+   "mode": "light",
+   "pal": {
+    "paper": "#FAF7EF",
+    "ink": "#312A21",
+    "accent": "#8E6C15",
+    "faint": "#DDD1C0",
+    "mid": "#6E6253"
+   },
+   "base": {
+    "design_family": "luxury_editorial",
+    "typography_preset": "noto_serif_only",
+    "numeric_typography": "serif_lining_tabular",
+    "cover_overlay": "photographic_scrim",
+    "section_header_style": "standfirst_italic",
+    "kpi_layout": "ruled_four",
+    "callout_style": "italic_aside",
+    "table_style": "ruled_rows",
+    "chart_style": "line_minimal",
+    "navigation_style": "print_only",
+    "risk_display": "rated_table",
+    "recommendation_style": "obsidian_card",
+    "radius": "0",
+    "border_treatment": "hairline",
+    "spacing_scale": "generous",
+    "page_margin_preset": "24mm",
+    "toc_style": "none",
+    "footer_style": "rule_page_number",
+    "image_slots": "four_briefed",
+    "density": "balanced",
+    "print_density": "standard"
+   },
+   "variants": [
+    [
+     "Atelier",
+     "le-01",
+     "light",
+     "balanced",
+     "plate",
+     "Premium reports where photography is available",
+     "Four briefed image slots, justified columns with a drop cap, italic standfirsts and captions.",
+     {}
+    ],
+    [
+     "Atelier Plate",
+     "le-02",
+     "light",
+     "balanced",
+     "bleed",
+     "Reports built around a strong image set",
+     "Six slots including two full-bleed plates; text yields to imagery on narrative pages.",
+     {
+      "image_slots": "six_with_bleed",
+      "cover_overlay": "photographic_bleed",
+      "section_header_style": "plate_standfirst",
+      "chart_style": "line_over_plate"
+     }
+    ],
+    [
+     "Grand Folio",
+     "le-03",
+     "light",
+     "spacious",
+     "bleed",
+     "Flagship single-asset publications",
+     "28mm margins, display-size openers, one idea per spread. The most generous template in the collection.",
+     {
+      "density": "spacious",
+      "page_margin_preset": "28mm",
+      "spacing_scale": "luxurious",
+      "kpi_layout": "two_by_two_display",
+      "section_header_style": "full_bleed_numeral"
+     }
+    ],
+    [
+     "Frontispiece",
+     "le-04",
+     "light",
+     "balanced",
+     "split",
+     "Reports that open with a statement, not a photograph",
+     "A typographic title page carries the verdict; imagery starts on the narrative pages.",
+     {
+      "cover_overlay": "typographic_frontispiece",
+      "image_slots": "three_interior",
+      "section_header_style": "drop_cap_opener",
+      "recommendation_style": "ruled_statement"
+     }
+    ],
+    [
+     "Monograph",
+     "le-05",
+     "light",
+     "balanced",
+     "stack",
+     "Text-first reports with no photography",
+     "Editorial typography without image slots. Empty plates never print as holes because there are none.",
+     {
+      "image_slots": "none",
+      "cover_overlay": "typographic_plain",
+      "table_style": "ruled_rows_tight",
+      "chart_style": "line_minimal",
+      "density": "balanced"
+     }
+    ]
+   ]
+  },
+  {
+   "code": "mf",
+   "no": "04",
+   "name": "Modern Fintech",
+   "note": "Inter, dark data ribbon, chips and tabs, violet accent",
+   "faces": "Inter",
+   "face": "'Inter',system-ui,sans-serif",
+   "nameWeight": 600,
+   "mode": "light",
+   "pal": {
+    "paper": "#FFFFFF",
+    "ink": "#17151F",
+    "accent": "#5B4BD6",
+    "faint": "#E4E2EC",
+    "mid": "#8A87A0"
+   },
+   "base": {
+    "design_family": "modern_fintech",
+    "typography_preset": "inter_only",
+    "numeric_typography": "inter_tabular",
+    "cover_overlay": "dark_data_ribbon",
+    "section_header_style": "chip_label",
+    "kpi_layout": "card_row_four",
+    "callout_style": "tinted_violet",
+    "table_style": "zebra_soft",
+    "chart_style": "bar_solid",
+    "navigation_style": "tab_strip",
+    "risk_display": "chip_matrix",
+    "recommendation_style": "panel_dark",
+    "radius": "4px",
+    "border_treatment": "soft_rule",
+    "spacing_scale": "regular",
+    "page_margin_preset": "18mm",
+    "toc_style": "chip_index",
+    "footer_style": "thin_rule",
+    "density": "balanced",
+    "print_density": "standard"
+   },
+   "variants": [
+    [
+     "Signal",
+     "mf-01",
+     "light",
+     "balanced",
+     "band",
+     "Digital-first reports read on screen",
+     "Dark data ribbon across the cover, four KPI cards, chip labels for sections and tabs for scenarios.",
+     {}
+    ],
+    [
+     "Signal Compact",
+     "mf-02",
+     "light",
+     "compact",
+     "grid",
+     "Mobile and tablet reading",
+     "Six-up KPI grid, tighter cards, tab strip becomes a scroll rail. Print stays A4-correct.",
+     {
+      "density": "compact",
+      "kpi_layout": "grid_six",
+      "page_margin_preset": "15mm",
+      "spacing_scale": "tight",
+      "navigation_style": "scroll_rail",
+      "print_density": "dense"
+     }
+    ],
+    [
+     "Console",
+     "mf-03",
+     "light",
+     "balanced",
+     "split",
+     "Dashboard-led reading where numbers come first",
+     "The dashboard is the cover. Narrative sits behind progressive disclosure.",
+     {
+      "cover_overlay": "dashboard_cover",
+      "kpi_layout": "console_twelve",
+      "navigation_style": "sticky_tabs",
+      "chart_style": "sparkline_dense",
+      "section_header_style": "chip_inline"
+     }
+    ],
+    [
+     "Ribbon",
+     "mf-04",
+     "light",
+     "balanced",
+     "stack",
+     "Sequential reading with strong section breaks",
+     "Every section opens on its own dark ribbon, so scanning finds the section not the page.",
+     {
+      "section_header_style": "dark_ribbon",
+      "cover_overlay": "ribbon_stack",
+      "callout_style": "ribbon_note",
+      "recommendation_style": "ribbon_verdict",
+      "toc_style": "ribbon_index"
+     }
+    ],
+    [
+     "Pulse",
+     "mf-05",
+     "light",
+     "balanced",
+     "grid",
+     "Reports where the charts carry the argument",
+     "Chart-led pages with sparklines in every table row and a driver tornado on the sensitivity page.",
+     {
+      "chart_style": "sparkline_plus_tornado",
+      "table_style": "sparkline_rows",
+      "kpi_layout": "card_row_with_trend",
+      "risk_display": "trend_chips",
+      "callout_style": "chart_note"
+     }
+    ]
+   ]
+  },
+  {
+   "code": "ap",
+   "no": "05",
+   "name": "Architectural Property",
+   "note": "Lato light, monochrome, measured drawings and schedules",
+   "faces": "Lato",
+   "face": "'Lato',system-ui,sans-serif",
+   "nameWeight": 300,
+   "mode": "light",
+   "pal": {
+    "paper": "#F7F6F3",
+    "ink": "#2B2B2B",
+    "accent": "#2B2B2B",
+    "faint": "#DCDAD4",
+    "mid": "#8B8983"
+   },
+   "base": {
+    "design_family": "architectural_property",
+    "typography_preset": "lato_light",
+    "numeric_typography": "lato_tabular",
+    "cover_overlay": "hairline_frame_plan",
+    "section_header_style": "schedule_number",
+    "kpi_layout": "schedule_rows",
+    "callout_style": "caption_rail",
+    "table_style": "schedule_rules",
+    "chart_style": "measured_line",
+    "navigation_style": "caption_rail",
+    "risk_display": "rated_schedule",
+    "recommendation_style": "ruled_note",
+    "radius": "0",
+    "border_treatment": "hairline",
+    "spacing_scale": "generous",
+    "page_margin_preset": "22mm",
+    "toc_style": "figure_list",
+    "footer_style": "figure_number",
+    "density": "balanced",
+    "print_density": "standard"
+   },
+   "variants": [
+    [
+     "Drawing Set",
+     "ap-01",
+     "light",
+     "balanced",
+     "frame",
+     "Property-led reports for design-literate readers",
+     "Hairline frame, dimensioned allotment plan, numbered schedules and a caption rail for figure notes.",
+     {}
+    ],
+    [
+     "Schedule",
+     "ap-02",
+     "light",
+     "compact",
+     "grid",
+     "Reports dominated by measured data",
+     "Nine schedules per page at 16mm margins. The caption rail narrows to 22mm.",
+     {
+      "density": "compact",
+      "page_margin_preset": "16mm",
+      "spacing_scale": "tight",
+      "table_style": "schedule_tight",
+      "navigation_style": "narrow_rail",
+      "print_density": "dense"
+     }
+    ],
+    [
+     "Elevation",
+     "ap-03",
+     "light",
+     "spacious",
+     "bleed",
+     "Presentation-grade property reports",
+     "Full-width plates with measured captions and one schedule per page.",
+     {
+      "density": "spacious",
+      "page_margin_preset": "26mm",
+      "spacing_scale": "luxurious",
+      "image_slots": "four_measured",
+      "chart_style": "plate_line"
+     }
+    ],
+    [
+     "Site Plan",
+     "ap-04",
+     "light",
+     "balanced",
+     "split",
+     "Reports where location does the arguing",
+     "A dimensioned site and context plan leads, with amenity distances drawn rather than tabulated.",
+     {
+      "cover_overlay": "site_plan_cover",
+      "chart_style": "distance_diagram",
+      "kpi_layout": "plan_callouts",
+      "section_header_style": "plan_reference"
+     }
+    ],
+    [
+     "Datum",
+     "ap-05",
+     "light",
+     "balanced",
+     "stack",
+     "Numeric readers who want the drawing discipline",
+     "Figures set at display size against hairline rules; captions reduced to source references.",
+     {
+      "numeric_typography": "lato_display_tabular",
+      "kpi_layout": "datum_rows",
+      "callout_style": "source_reference",
+      "chart_style": "measured_line_bare",
+      "table_style": "datum_rules"
+     }
+    ]
+   ]
+  },
+  {
+   "code": "sm",
+   "no": "06",
+   "name": "Swiss Minimal",
+   "note": "Strict grid, flat blocks, single red accent, no ornament",
+   "faces": "Inter",
+   "face": "'Inter',system-ui,sans-serif",
+   "nameWeight": 500,
+   "mode": "light",
+   "pal": {
+    "paper": "#F4F4F4",
+    "ink": "#111111",
+    "accent": "#D31212",
+    "faint": "#DCDCDC",
+    "mid": "#8A8A8A"
+   },
+   "base": {
+    "design_family": "swiss_minimal",
+    "typography_preset": "inter_grotesk",
+    "numeric_typography": "inter_tabular",
+    "cover_overlay": "flat_grid",
+    "section_header_style": "grid_number",
+    "kpi_layout": "grid_cells_four",
+    "callout_style": "flat_block",
+    "table_style": "grid_lines_light",
+    "chart_style": "bar_flat",
+    "navigation_style": "grid_index",
+    "risk_display": "flat_matrix",
+    "recommendation_style": "flat_block",
+    "radius": "0",
+    "border_treatment": "thin_grid",
+    "spacing_scale": "strict",
+    "page_margin_preset": "18mm",
+    "toc_style": "grid_index",
+    "footer_style": "grid_number",
+    "density": "balanced",
+    "print_density": "standard"
+   },
+   "variants": [
+    [
+     "Grid",
+     "sm-01",
+     "light",
+     "balanced",
+     "grid",
+     "Readers who want structure and nothing else",
+     "Twelve-column grid, flat blocks, red reserved for negative figures and nothing decorative.",
+     {}
+    ],
+    [
+     "Grid Tight",
+     "sm-02",
+     "light",
+     "compact",
+     "grid",
+     "Maximum information at strict alignment",
+     "The same grid at 15mm margins with every module one step smaller.",
+     {
+      "density": "compact",
+      "page_margin_preset": "15mm",
+      "spacing_scale": "compressed",
+      "kpi_layout": "grid_cells_six",
+      "table_style": "grid_lines_tight",
+      "print_density": "dense"
+     }
+    ],
+    [
+     "Objective",
+     "sm-03",
+     "light",
+     "spacious",
+     "stack",
+     "Short, high-clarity summaries",
+     "Three modules per page at most. What is left out is the design decision.",
+     {
+      "density": "spacious",
+      "page_margin_preset": "24mm",
+      "spacing_scale": "open",
+      "kpi_layout": "grid_cells_two",
+      "chart_style": "bar_flat_large"
+     }
+    ],
+    [
+     "Raster",
+     "sm-04",
+     "light",
+     "balanced",
+     "frame",
+     "Reports where the grid should be visible",
+     "Module boundaries print as light rules, so the reader can see the system.",
+     {
+      "border_treatment": "visible_module_grid",
+      "cover_overlay": "raster_cover",
+      "section_header_style": "module_marker",
+      "table_style": "module_cells",
+      "callout_style": "module_block"
+     }
+    ],
+    [
+     "Hairline",
+     "sm-05",
+     "light",
+     "balanced",
+     "stack",
+     "Print-first reports with no filled areas",
+     "Rules only, no blocks and no tints. Emphasis comes from rule weight and position.",
+     {
+      "border_treatment": "hairline_only",
+      "callout_style": "rule_note",
+      "kpi_layout": "hairline_rows",
+      "table_style": "hairline_rows",
+      "recommendation_style": "rule_statement",
+      "chart_style": "line_hairline"
+     }
+    ]
+   ]
+  },
+  {
+   "code": "ca",
+   "no": "07",
+   "name": "Corporate Advisory",
+   "note": "Decimal numbering, letterhead band, signed notes",
+   "faces": "Lato",
+   "face": "'Lato',system-ui,sans-serif",
+   "nameWeight": 700,
+   "mode": "light",
+   "pal": {
+    "paper": "#FBFAF7",
+    "ink": "#2A2A28",
+    "accent": "#2F4858",
+    "faint": "#DEDCD5",
+    "mid": "#87857E"
+   },
+   "base": {
+    "design_family": "corporate_advisory",
+    "typography_preset": "lato_sans",
+    "numeric_typography": "lato_tabular",
+    "cover_overlay": "letterhead_band",
+    "section_header_style": "decimal_numbered",
+    "kpi_layout": "summary_table",
+    "callout_style": "indented_note",
+    "table_style": "board_ruled",
+    "chart_style": "line_plain",
+    "navigation_style": "decimal_toc",
+    "risk_display": "numbered_register",
+    "recommendation_style": "signed_note",
+    "radius": "0",
+    "border_treatment": "rule",
+    "spacing_scale": "regular",
+    "page_margin_preset": "20mm",
+    "toc_style": "decimal_toc",
+    "footer_style": "reference_page",
+    "density": "balanced",
+    "print_density": "standard"
+   },
+   "variants": [
+    [
+     "Board Pack",
+     "ca-01",
+     "light",
+     "balanced",
+     "band",
+     "Papers going to a board or trustee meeting",
+     "Decimal section numbering, cross-references, a summary table instead of KPI cards, and a signed recommendation.",
+     {}
+    ],
+    [
+     "Board Pack Brief",
+     "ca-02",
+     "light",
+     "compact",
+     "grid",
+     "Consent agendas and short papers",
+     "Two-level numbering only, condensed tables, appendices carry everything else.",
+     {
+      "density": "compact",
+      "page_margin_preset": "16mm",
+      "spacing_scale": "tight",
+      "section_header_style": "two_level_decimal",
+      "table_style": "board_tight",
+      "print_density": "dense"
+     }
+    ],
+    [
+     "Engagement Note",
+     "ca-03",
+     "light",
+     "balanced",
+     "stack",
+     "Scope, assumptions and reliance up front",
+     "Opens with the engagement basis and reliance statement, then the analysis.",
+     {
+      "cover_overlay": "engagement_letterhead",
+      "section_header_style": "clause_numbered",
+      "callout_style": "reliance_block",
+      "recommendation_style": "engagement_terms",
+      "toc_style": "clause_index"
+     }
+    ],
+    [
+     "Committee Memo",
+     "ca-04",
+     "light",
+     "compact",
+     "split",
+     "Single-decision memoranda",
+     "A memo header carries to, from, date and decision required. One page of analysis, one of evidence.",
+     {
+      "density": "compact",
+      "cover_overlay": "memo_header",
+      "kpi_layout": "decision_summary",
+      "recommendation_style": "decision_required",
+      "chart_style": "single_line",
+      "toc_style": "none"
+     }
+    ],
+    [
+     "Advisory Letter",
+     "ca-05",
+     "light",
+     "spacious",
+     "stack",
+     "Client-addressed advice on letterhead",
+     "Set as a letter with the analysis as numbered schedules behind the signature.",
+     {
+      "density": "spacious",
+      "cover_overlay": "letter_first_page",
+      "section_header_style": "schedule_letter",
+      "page_margin_preset": "24mm",
+      "table_style": "schedule_ruled",
+      "recommendation_style": "letter_close"
+     }
+    ]
+   ]
+  },
+  {
+   "code": "wm",
+   "no": "08",
+   "name": "Wealth Management",
+   "note": "Roboto, obsidian bands, statement rules, capital framing",
+   "faces": "Roboto",
+   "face": "'Roboto',system-ui,sans-serif",
+   "nameWeight": 500,
+   "mode": "light",
+   "pal": {
+    "paper": "#FAF9F6",
+    "ink": "#1E1B16",
+    "accent": "#1E1B16",
+    "faint": "#DFDCD4",
+    "mid": "#8A857B"
+   },
+   "base": {
+    "design_family": "wealth_management",
+    "typography_preset": "roboto_only",
+    "numeric_typography": "roboto_tabular",
+    "cover_overlay": "obsidian_band",
+    "section_header_style": "band_header",
+    "kpi_layout": "statement_rows",
+    "callout_style": "band_note",
+    "table_style": "statement_rules",
+    "chart_style": "bar_stacked",
+    "navigation_style": "band_index",
+    "risk_display": "rated_rows",
+    "recommendation_style": "band_card",
+    "radius": "0",
+    "border_treatment": "rule",
+    "spacing_scale": "regular",
+    "page_margin_preset": "20mm",
+    "toc_style": "band_index",
+    "footer_style": "rule_page_number",
+    "capital_framing": "total_committed",
+    "density": "balanced",
+    "print_density": "standard"
+   },
+   "variants": [
+    [
+     "Statement",
+     "wm-01",
+     "light",
+     "balanced",
+     "band",
+     "Client packs where total capital is the point",
+     "Every page opens on an obsidian band. Statement rules with single subtotals and double totals.",
+     {}
+    ],
+    [
+     "Statement Compact",
+     "wm-02",
+     "light",
+     "compact",
+     "grid",
+     "Quarterly reviews across a portfolio",
+     "Bands reduce to headers, statements tighten, and the capital summary fits one page.",
+     {
+      "density": "compact",
+      "section_header_style": "band_strip",
+      "page_margin_preset": "16mm",
+      "spacing_scale": "tight",
+      "table_style": "statement_tight",
+      "print_density": "dense"
+     }
+    ],
+    [
+     "Portfolio Review",
+     "wm-03",
+     "light",
+     "balanced",
+     "split",
+     "Multi-asset reviews where this property is one holding",
+     "A holdings statement leads, with the property analysis as a section rather than the whole document.",
+     {
+      "cover_overlay": "holdings_band",
+      "kpi_layout": "holdings_rows",
+      "chart_style": "allocation_bars",
+      "section_header_style": "holding_header",
+      "toc_style": "holdings_index"
+     }
+    ],
+    [
+     "Client Pack",
+     "wm-04",
+     "light",
+     "spacious",
+     "stack",
+     "Advice packs sent to the client to keep",
+     "Opens with a cover letter, closes with a review schedule and the adviser signature block.",
+     {
+      "density": "spacious",
+      "cover_overlay": "letter_then_band",
+      "page_margin_preset": "24mm",
+      "recommendation_style": "signed_band",
+      "toc_style": "contents_page",
+      "footer_style": "client_reference"
+     }
+    ],
+    [
+     "Fiduciary",
+     "wm-05",
+     "light",
+     "balanced",
+     "stack",
+     "Advice requiring full disclosure on the page",
+     "Suitability, exclusions, conflicts and assumptions print in full rather than in an appendix.",
+     {
+      "risk_display": "disclosure_blocks",
+      "recommendation_style": "suitability_statement",
+      "callout_style": "disclosure_note",
+      "toc_style": "disclosure_index",
+      "print_density": "standard"
+     }
+    ]
+   ]
+  },
+  {
+   "code": "da",
+   "no": "09",
+   "name": "Data / Analyst",
+   "note": "Mono figures on cell gridlines, field keys printed beside values",
+   "faces": "IBM Plex Mono · Inter",
+   "face": "'IBM Plex Mono',monospace",
+   "nameWeight": 600,
+   "mode": "light",
+   "pal": {
+    "paper": "#FFFDFA",
+    "ink": "#312A21",
+    "accent": "#312A21",
+    "faint": "#D8CDBC",
+    "mid": "#6E6253"
+   },
+   "base": {
+    "design_family": "data_analyst",
+    "typography_preset": "plex_mono_inter",
+    "numeric_typography": "plex_mono_tabular",
+    "cover_overlay": "model_header_bar",
+    "section_header_style": "sheet_number",
+    "kpi_layout": "field_cells_four",
+    "callout_style": "mono_caption",
+    "table_style": "full_gridlines",
+    "chart_style": "small_multiples",
+    "navigation_style": "sheet_tabs",
+    "risk_display": "validation_suite",
+    "recommendation_style": "model_read",
+    "radius": "0",
+    "border_treatment": "cell_grid",
+    "spacing_scale": "tight",
+    "page_margin_preset": "15mm",
+    "toc_style": "field_index",
+    "footer_style": "sheet_number",
+    "field_keys": "printed",
+    "density": "compact",
+    "print_density": "dense"
+   },
+   "variants": [
+    [
+     "Model",
+     "da-01",
+     "light",
+     "compact",
+     "grid",
+     "Analysts and accountants who audit the numbers",
+     "Field keys print beside every value, cell gridlines throughout, and risk is a 13-check validation suite.",
+     {}
+    ],
+    [
+     "Model Dense",
+     "da-02",
+     "light",
+     "compact",
+     "grid",
+     "Full ten-year grids for every scenario",
+     "All three scenario grids on one sheet at 12mm margins. The densest template in the collection.",
+     {
+      "page_margin_preset": "12mm",
+      "spacing_scale": "compressed",
+      "table_style": "gridlines_micro",
+      "chart_style": "sparklines_only",
+      "print_density": "maximum"
+     }
+    ],
+    [
+     "Worksheet",
+     "da-03",
+     "light",
+     "compact",
+     "frame",
+     "Reports handed to a client with the workings shown",
+     "Every derivation prints as arithmetic beside its result, in the order the model computes it.",
+     {
+      "section_header_style": "step_number",
+      "callout_style": "derivation_note",
+      "kpi_layout": "derivation_rows",
+      "table_style": "worksheet_grid",
+      "chart_style": "single_multiple"
+     }
+    ],
+    [
+     "Dictionary",
+     "da-04",
+     "light",
+     "balanced",
+     "stack",
+     "Handover to an internal data or engineering team",
+     "The field contract leads: name, type, value, derivation and provenance for every canonical field.",
+     {
+      "density": "balanced",
+      "cover_overlay": "contract_header",
+      "toc_style": "field_contract",
+      "kpi_layout": "field_table",
+      "risk_display": "validation_plus_schema",
+      "footer_style": "field_reference"
+     }
+    ],
+    [
+     "Terminal",
+     "da-05",
+     "dark",
+     "compact",
+     "grid",
+     "Screen reading in a dark working environment",
+     "The same grid inverted, mono throughout, with amber reserved for the base case.",
+     {
+      "cover_overlay": "dark_model_bar",
+      "border_treatment": "dark_cell_grid",
+      "callout_style": "amber_caption",
+      "chart_style": "small_multiples_dark",
+      "recommendation_style": "terminal_read"
+     }
+    ]
+   ]
+  },
+  {
+   "code": "de",
+   "no": "10",
+   "name": "Dark Executive",
+   "note": "Mono on obsidian, vertical rail, amber for the base case",
+   "faces": "IBM Plex Mono · Inter",
+   "face": "'IBM Plex Mono',monospace",
+   "nameWeight": 600,
+   "mode": "dark",
+   "pal": {
+    "paper": "#1A1611",
+    "ink": "#F2EBDE",
+    "accent": "#D9A520",
+    "faint": "#3A332A",
+    "mid": "#A2957F"
+   },
+   "base": {
+    "design_family": "dark_executive",
+    "typography_preset": "plex_mono_only",
+    "numeric_typography": "plex_mono_tabular",
+    "cover_overlay": "obsidian_verdict_box",
+    "section_header_style": "vertical_rail",
+    "kpi_layout": "position_strip_five",
+    "callout_style": "amber_bar",
+    "table_style": "dark_rules",
+    "chart_style": "line_amber",
+    "navigation_style": "vertical_rail",
+    "risk_display": "rating_map",
+    "recommendation_style": "verdict_box",
+    "radius": "0",
+    "border_treatment": "dark_hairline",
+    "spacing_scale": "regular",
+    "page_margin_preset": "18mm",
+    "toc_style": "rail_index",
+    "footer_style": "rail_number",
+    "density": "balanced",
+    "print_density": "standard"
+   },
+   "variants": [
+    [
+     "Obsidian",
+     "de-01",
+     "dark",
+     "balanced",
+     "rail",
+     "Executive readers who want one sheet per decision",
+     "Obsidian on all seven sheets, verdict box on the cover, four scored tests on the dashboard.",
+     {}
+    ],
+    [
+     "Obsidian Brief",
+     "de-02",
+     "dark",
+     "compact",
+     "grid",
+     "Board-level summaries of three pages or fewer",
+     "Position strip, tests and recommendation on one sheet. Everything else is an appendix.",
+     {
+      "density": "compact",
+      "page_margin_preset": "15mm",
+      "spacing_scale": "tight",
+      "kpi_layout": "position_strip_eight",
+      "toc_style": "none",
+      "print_density": "dense"
+     }
+    ],
+    [
+     "Night Desk",
+     "de-03",
+     "dark",
+     "spacious",
+     "stack",
+     "Screen reading at length",
+     "Wider measure, larger figures and one argument per sheet.",
+     {
+      "density": "spacious",
+      "page_margin_preset": "24mm",
+      "spacing_scale": "open",
+      "kpi_layout": "position_pairs",
+      "chart_style": "line_amber_large"
+     }
+    ],
+    [
+     "Signal Dark",
+     "de-04",
+     "dark",
+     "balanced",
+     "split",
+     "Reports where the charts carry the argument",
+     "Six small multiples on the analysis sheet with amber reserved for the base series.",
+     {
+      "chart_style": "small_multiples_amber",
+      "kpi_layout": "chart_led_strip",
+      "table_style": "dark_rules_tight",
+      "risk_display": "rating_map_plus_bars"
+     }
+    ],
+    [
+     "Executive Rail",
+     "de-05",
+     "dark",
+     "balanced",
+     "rail",
+     "Long dark reports that must stay navigable",
+     "The rail carries part number, section name and progress on every sheet, including the cover.",
+     {
+      "navigation_style": "rail_with_progress",
+      "cover_overlay": "rail_cover",
+      "section_header_style": "rail_marker_numbered",
+      "footer_style": "rail_progress",
+      "toc_style": "rail_index_detailed"
+     }
+    ]
+   ]
+  }
+ ],
+ "COLOURWAYS": {
+  "pb": [
+   [
+    "Gold on Obsidian",
+    "#FAF7EF",
+    "#251F18",
+    "#8E6C15",
+    "#DDD1C0",
+    "#6E6253",
+    "light"
+   ],
+   [
+    "Oxblood",
+    "#FAF7EF",
+    "#241819",
+    "#7B2230",
+    "#DED0CE",
+    "#6E5A5C",
+    "light"
+   ],
+   [
+    "Verde",
+    "#F7F6EF",
+    "#1C241D",
+    "#2F5D45",
+    "#D5DCD3",
+    "#64705F",
+    "light"
+   ],
+   [
+    "Navy Signet",
+    "#F8F8F4",
+    "#1B2130",
+    "#22406E",
+    "#D8DCE2",
+    "#636A76",
+    "light"
+   ],
+   [
+    "Slate Bronze",
+    "#F6F5F2",
+    "#23211E",
+    "#8A6A3A",
+    "#DBD8D1",
+    "#6B675F",
+    "light"
+   ],
+   [
+    "Platinum",
+    "#F7F7F5",
+    "#1E1E1C",
+    "#4A4A46",
+    "#DCDCD8",
+    "#6A6A66",
+    "light"
+   ],
+   [
+    "Obsidian Reverse",
+    "#1E1A15",
+    "#F2EBDE",
+    "#D9A520",
+    "#3A332A",
+    "#A2957F",
+    "dark"
+   ],
+   [
+    "Oxblood Night",
+    "#1C1416",
+    "#F0E6E4",
+    "#C0565F",
+    "#332628",
+    "#A2908E",
+    "dark"
+   ],
+   [
+    "Deep Verde",
+    "#141A16",
+    "#E8EFE8",
+    "#6FA98A",
+    "#26302A",
+    "#92A196",
+    "dark"
+   ],
+   [
+    "Midnight Navy",
+    "#131720",
+    "#E9EDF4",
+    "#7FA3D8",
+    "#262C38",
+    "#93A0B2",
+    "dark"
+   ]
+  ],
+  "ir": [
+   [
+    "Research Blue",
+    "#FFFDFA",
+    "#24211C",
+    "#0270A7",
+    "#DDD1C0",
+    "#6E6253",
+    "light"
+   ],
+   [
+    "Graphite",
+    "#FCFCFB",
+    "#1F2225",
+    "#3F4A52",
+    "#DCDDDE",
+    "#666E74",
+    "light"
+   ],
+   [
+    "Ink and Rust",
+    "#FFFDF8",
+    "#221F1B",
+    "#A34A19",
+    "#E0D6C8",
+    "#6F6357",
+    "light"
+   ],
+   [
+    "Bureau Green",
+    "#FBFCFA",
+    "#1D231E",
+    "#2C6E49",
+    "#D9DFD9",
+    "#646E66",
+    "light"
+   ],
+   [
+    "Oxford",
+    "#FAFAFC",
+    "#1A1D2A",
+    "#2A3A7C",
+    "#D9DBE4",
+    "#656977",
+    "light"
+   ],
+   [
+    "Neutral Press",
+    "#FCFCFC",
+    "#202020",
+    "#202020",
+    "#DCDCDC",
+    "#6C6C6C",
+    "light"
+   ],
+   [
+    "Terminal Blue",
+    "#12161A",
+    "#EAEFF3",
+    "#4FA8DA",
+    "#2A323A",
+    "#93A2AE",
+    "dark"
+   ],
+   [
+    "Slate Console",
+    "#16181A",
+    "#ECEDEE",
+    "#9AA7B0",
+    "#2C3033",
+    "#8F9599",
+    "dark"
+   ],
+   [
+    "Rust Console",
+    "#191512",
+    "#F0E9E3",
+    "#D0703C",
+    "#302823",
+    "#A2938A",
+    "dark"
+   ],
+   [
+    "Oxford Night",
+    "#12141C",
+    "#E9EAF2",
+    "#7C8FE0",
+    "#262936",
+    "#9094A8",
+    "dark"
+   ]
+  ],
+  "le": [
+   [
+    "Ivory and Gold",
+    "#FAF7EF",
+    "#312A21",
+    "#8E6C15",
+    "#DDD1C0",
+    "#6E6253",
+    "light"
+   ],
+   [
+    "Bone and Ink",
+    "#F6F4EE",
+    "#1A1A18",
+    "#1A1A18",
+    "#DCD9D0",
+    "#6B6862",
+    "light"
+   ],
+   [
+    "Blush Stone",
+    "#F7F1EC",
+    "#2B211D",
+    "#9A5B4C",
+    "#E2D5CD",
+    "#74615A",
+    "light"
+   ],
+   [
+    "Sage Vellum",
+    "#F5F5EE",
+    "#23271F",
+    "#5A6E4A",
+    "#D8DCD0",
+    "#6A7060",
+    "light"
+   ],
+   [
+    "Cerulean Rag",
+    "#F5F7F8",
+    "#1F262B",
+    "#3A6E86",
+    "#D6DDE1",
+    "#66717A",
+    "light"
+   ],
+   [
+    "Plum Ash",
+    "#F7F3F5",
+    "#241D24",
+    "#6E3A5C",
+    "#E0D5DB",
+    "#6E6069",
+    "light"
+   ],
+   [
+    "Midnight Editorial",
+    "#14141A",
+    "#F1EEE8",
+    "#C9A227",
+    "#2E2E38",
+    "#9C99A4",
+    "dark"
+   ],
+   [
+    "Ink Plate",
+    "#171614",
+    "#F2EFE8",
+    "#E4DED2",
+    "#2E2C28",
+    "#A09B92",
+    "dark"
+   ],
+   [
+    "Rose Noir",
+    "#1A1416",
+    "#F3E9EA",
+    "#C77F8C",
+    "#322629",
+    "#A6939A",
+    "dark"
+   ],
+   [
+    "Sage Noir",
+    "#14170F",
+    "#EDF0E4",
+    "#9BB57C",
+    "#2A2E22",
+    "#979E8A",
+    "dark"
+   ]
+  ],
+  "mf": [
+   [
+    "Violet Signal",
+    "#FFFFFF",
+    "#17151F",
+    "#5B4BD6",
+    "#E4E2EC",
+    "#6C6980",
+    "light"
+   ],
+   [
+    "Teal Signal",
+    "#FFFFFF",
+    "#10201F",
+    "#0F857A",
+    "#DCE7E5",
+    "#5E7472",
+    "light"
+   ],
+   [
+    "Amber Signal",
+    "#FFFDFA",
+    "#1E1A14",
+    "#B87308",
+    "#E8DFD0",
+    "#7A6E5C",
+    "light"
+   ],
+   [
+    "Indigo Signal",
+    "#FFFFFF",
+    "#141A26",
+    "#2B4ED8",
+    "#DEE3EE",
+    "#67707F",
+    "light"
+   ],
+   [
+    "Coral Signal",
+    "#FFFDFC",
+    "#201618",
+    "#D2405A",
+    "#EDDEE1",
+    "#7A6A6E",
+    "light"
+   ],
+   [
+    "Mint Signal",
+    "#FCFFFD",
+    "#101E18",
+    "#0E8A57",
+    "#DAE8E1",
+    "#5F736A",
+    "light"
+   ],
+   [
+    "Night Console",
+    "#101116",
+    "#F0F1F5",
+    "#7C6CF0",
+    "#262833",
+    "#9A9BAA",
+    "dark"
+   ],
+   [
+    "Teal Console",
+    "#0E1615",
+    "#E9F2F0",
+    "#2BB3A3",
+    "#232E2C",
+    "#8FA09D",
+    "dark"
+   ],
+   [
+    "Amber Console",
+    "#16130E",
+    "#F2ECE1",
+    "#E0A030",
+    "#2C2721",
+    "#A69A88",
+    "dark"
+   ],
+   [
+    "Coral Console",
+    "#16100F",
+    "#F4E9E8",
+    "#F0665F",
+    "#2E2422",
+    "#A8938F",
+    "dark"
+   ]
+  ],
+  "ap": [
+   [
+    "Concrete",
+    "#F7F6F3",
+    "#2B2B2B",
+    "#2B2B2B",
+    "#DCDAD4",
+    "#6D6C67",
+    "light"
+   ],
+   [
+    "Blueprint",
+    "#F4F6F8",
+    "#1F2A33",
+    "#2E5C8A",
+    "#D6DDE4",
+    "#62707C",
+    "light"
+   ],
+   [
+    "Terracotta",
+    "#F8F5F1",
+    "#2A2320",
+    "#A75A3A",
+    "#E0D6CD",
+    "#756860",
+    "light"
+   ],
+   [
+    "Limewash",
+    "#F7F6F0",
+    "#262620",
+    "#7A7A5E",
+    "#DCDACD",
+    "#6E6E60",
+    "light"
+   ],
+   [
+    "Zinc",
+    "#F5F6F7",
+    "#23262A",
+    "#4E5A64",
+    "#D9DCDF",
+    "#686F76",
+    "light"
+   ],
+   [
+    "Ochre Board",
+    "#F8F6EE",
+    "#262117",
+    "#96751B",
+    "#DED7C4",
+    "#6F6857",
+    "light"
+   ],
+   [
+    "Charcoal Set",
+    "#1C1C1B",
+    "#EFEEEA",
+    "#C9C5BC",
+    "#333331",
+    "#97948C",
+    "dark"
+   ],
+   [
+    "Blueprint Night",
+    "#121820",
+    "#E8EEF4",
+    "#6C9CC8",
+    "#252D36",
+    "#8E99A4",
+    "dark"
+   ],
+   [
+    "Terracotta Night",
+    "#1A1412",
+    "#F1E7E1",
+    "#C87A55",
+    "#302623",
+    "#A4938B",
+    "dark"
+   ],
+   [
+    "Bronze Set",
+    "#17150F",
+    "#EFEBDF",
+    "#B99A55",
+    "#2D2A20",
+    "#9E9787",
+    "dark"
+   ]
+  ],
+  "sm": [
+   [
+    "Red Accent",
+    "#F4F4F4",
+    "#111111",
+    "#D31212",
+    "#DCDCDC",
+    "#6B6B6B",
+    "light"
+   ],
+   [
+    "Ultramarine",
+    "#F4F5F7",
+    "#101114",
+    "#1B3FD8",
+    "#DADCE0",
+    "#686A70",
+    "light"
+   ],
+   [
+    "Black Only",
+    "#F2F2F2",
+    "#0D0D0D",
+    "#0D0D0D",
+    "#DADADA",
+    "#6A6A6A",
+    "light"
+   ],
+   [
+    "Signal Orange",
+    "#F5F4F2",
+    "#131211",
+    "#E2560D",
+    "#DEDBD6",
+    "#6D6A65",
+    "light"
+   ],
+   [
+    "Swiss Green",
+    "#F3F5F3",
+    "#0F1310",
+    "#12764A",
+    "#D8DDD9",
+    "#676D69",
+    "light"
+   ],
+   [
+    "Cobalt Grey",
+    "#F3F4F6",
+    "#14161A",
+    "#3A63B8",
+    "#D9DBE0",
+    "#676A72",
+    "light"
+   ],
+   [
+    "Inverse",
+    "#121212",
+    "#F5F5F5",
+    "#FF4A3D",
+    "#2C2C2C",
+    "#9A9A9A",
+    "dark"
+   ],
+   [
+    "Ultramarine Inverse",
+    "#101218",
+    "#F0F2F7",
+    "#6E8CF5",
+    "#262A33",
+    "#93979F",
+    "dark"
+   ],
+   [
+    "Green Inverse",
+    "#0F1311",
+    "#EFF4F0",
+    "#3FBF83",
+    "#242A26",
+    "#939A95",
+    "dark"
+   ],
+   [
+    "Mono Inverse",
+    "#121212",
+    "#F5F5F5",
+    "#F5F5F5",
+    "#2C2C2C",
+    "#9A9A9A",
+    "dark"
+   ]
+  ],
+  "ca": [
+   [
+    "Slate Teal",
+    "#FBFAF7",
+    "#2A2A28",
+    "#2F4858",
+    "#DEDCD5",
+    "#6C6A64",
+    "light"
+   ],
+   [
+    "Navy Letterhead",
+    "#FBFBF9",
+    "#1F2430",
+    "#1E3A6B",
+    "#DBDDE3",
+    "#656B78",
+    "light"
+   ],
+   [
+    "Forest",
+    "#FAFAF6",
+    "#22261F",
+    "#2E4B32",
+    "#DADED6",
+    "#666B62",
+    "light"
+   ],
+   [
+    "Claret",
+    "#FBF9F8",
+    "#2A2124",
+    "#7A2A3A",
+    "#E0D7D9",
+    "#6E6467",
+    "light"
+   ],
+   [
+    "Warm Stone",
+    "#FBF9F4",
+    "#2A2620",
+    "#7C6A45",
+    "#E0DACB",
+    "#6D685C",
+    "light"
+   ],
+   [
+    "Steel",
+    "#FAFBFB",
+    "#212528",
+    "#40525C",
+    "#D9DDDF",
+    "#676D71",
+    "light"
+   ],
+   [
+    "Board Dark",
+    "#1A1D1C",
+    "#EDEFEC",
+    "#7FA8A0",
+    "#303433",
+    "#949996",
+    "dark"
+   ],
+   [
+    "Navy Board",
+    "#14171F",
+    "#E9ECF2",
+    "#7C93C4",
+    "#282C35",
+    "#9096A2",
+    "dark"
+   ],
+   [
+    "Forest Board",
+    "#14170F",
+    "#E9EEE4",
+    "#7FA478",
+    "#272B22",
+    "#949A8E",
+    "dark"
+   ],
+   [
+    "Claret Board",
+    "#1A1416",
+    "#F0E7E9",
+    "#B76B7A",
+    "#2F2629",
+    "#A0939A",
+    "dark"
+   ]
+  ],
+  "wm": [
+   [
+    "Obsidian Band",
+    "#FAF9F6",
+    "#1E1B16",
+    "#1E1B16",
+    "#DFDCD4",
+    "#6B675F",
+    "light"
+   ],
+   [
+    "Bronze",
+    "#FAF8F3",
+    "#201B14",
+    "#8A5A22",
+    "#E1D8C9",
+    "#6F6659",
+    "light"
+   ],
+   [
+    "Sea Slate",
+    "#F8F9F8",
+    "#171C1E",
+    "#2C5560",
+    "#D9DEDF",
+    "#616A6D",
+    "light"
+   ],
+   [
+    "Heritage Green",
+    "#F9FAF6",
+    "#1A2018",
+    "#2B5138",
+    "#DADFD6",
+    "#646B62",
+    "light"
+   ],
+   [
+    "Aubergine",
+    "#FAF7F8",
+    "#201A20",
+    "#5C2F52",
+    "#DED4DA",
+    "#6B6167",
+    "light"
+   ],
+   [
+    "Sandstone",
+    "#FBF8F2",
+    "#241E16",
+    "#9A7538",
+    "#E2D9C7",
+    "#6F675A",
+    "light"
+   ],
+   [
+    "Private Night",
+    "#16150F",
+    "#F1EDE2",
+    "#C9A227",
+    "#2C2A22",
+    "#9E9887",
+    "dark"
+   ],
+   [
+    "Sea Night",
+    "#101618",
+    "#E7EEF0",
+    "#61A0AE",
+    "#232B2D",
+    "#8C979A",
+    "dark"
+   ],
+   [
+    "Heritage Night",
+    "#121710",
+    "#E8EEE6",
+    "#77A583",
+    "#242A23",
+    "#929A91",
+    "dark"
+   ],
+   [
+    "Aubergine Night",
+    "#171218",
+    "#EFE8F0",
+    "#A87BA0",
+    "#2C242E",
+    "#9C929F",
+    "dark"
+   ]
+  ],
+  "da": [
+   [
+    "Paper Grid",
+    "#FFFDFA",
+    "#312A21",
+    "#312A21",
+    "#D8CDBC",
+    "#6E6253",
+    "light"
+   ],
+   [
+    "Cyan Model",
+    "#FCFDFE",
+    "#16202A",
+    "#0B7285",
+    "#D5E0E6",
+    "#5E6F79",
+    "light"
+   ],
+   [
+    "Magenta Model",
+    "#FFFCFD",
+    "#241A22",
+    "#A31D6B",
+    "#E3D3DC",
+    "#6F5E68",
+    "light"
+   ],
+   [
+    "Lime Model",
+    "#FCFDFA",
+    "#1C2118",
+    "#4C7A16",
+    "#DBE0D3",
+    "#666D5E",
+    "light"
+   ],
+   [
+    "Violet Model",
+    "#FDFCFE",
+    "#1E1A26",
+    "#5B3FC4",
+    "#DEDAE8",
+    "#676277",
+    "light"
+   ],
+   [
+    "Slate Model",
+    "#FBFCFC",
+    "#1D2225",
+    "#47565E",
+    "#D9DDDF",
+    "#666D71",
+    "light"
+   ],
+   [
+    "Terminal",
+    "#12100D",
+    "#EDE7DC",
+    "#D9A520",
+    "#2A2620",
+    "#9A9081",
+    "dark"
+   ],
+   [
+    "Cyan Terminal",
+    "#0D1417",
+    "#E4EFF2",
+    "#35B0C4",
+    "#212C30",
+    "#8B9A9E",
+    "dark"
+   ],
+   [
+    "Magenta Terminal",
+    "#150F13",
+    "#F1E5EC",
+    "#D556A0",
+    "#2A2028",
+    "#9E8F98",
+    "dark"
+   ],
+   [
+    "Lime Terminal",
+    "#101408",
+    "#E9EFDF",
+    "#9CC93C",
+    "#262B1C",
+    "#949A85",
+    "dark"
+   ]
+  ],
+  "de": [
+   [
+    "Amber Obsidian",
+    "#1A1611",
+    "#F2EBDE",
+    "#D9A520",
+    "#3A332A",
+    "#A2957F",
+    "dark"
+   ],
+   [
+    "Ice Obsidian",
+    "#14171A",
+    "#ECF1F5",
+    "#6FB6E8",
+    "#2A3037",
+    "#93A0AB",
+    "dark"
+   ],
+   [
+    "Ember",
+    "#191212",
+    "#F3E9E6",
+    "#C4553A",
+    "#362826",
+    "#A6918B",
+    "dark"
+   ],
+   [
+    "Jade Obsidian",
+    "#111713",
+    "#E9F1EB",
+    "#5CB98A",
+    "#26302A",
+    "#8FA096",
+    "dark"
+   ],
+   [
+    "Violet Obsidian",
+    "#14121C",
+    "#EDEAF4",
+    "#9182F0",
+    "#2A2736",
+    "#9A96A8",
+    "dark"
+   ],
+   [
+    "Steel Obsidian",
+    "#15181A",
+    "#EAEFF2",
+    "#A9B7C0",
+    "#2B3134",
+    "#929A9F",
+    "dark"
+   ],
+   [
+    "Executive Light",
+    "#F6F4F0",
+    "#1A1611",
+    "#8A6A12",
+    "#DCD7CD",
+    "#6E685D",
+    "light"
+   ],
+   [
+    "Ice Light",
+    "#F4F7F9",
+    "#14171A",
+    "#1E6E9C",
+    "#D6DDE2",
+    "#646E75",
+    "light"
+   ],
+   [
+    "Ember Light",
+    "#F9F5F3",
+    "#1C1614",
+    "#A8452C",
+    "#E0D5D0",
+    "#6E635F",
+    "light"
+   ],
+   [
+    "Jade Light",
+    "#F4F8F5",
+    "#111713",
+    "#1F7A52",
+    "#D7DFD9",
+    "#656D68",
+    "light"
+   ]
+  ]
+ }
+}

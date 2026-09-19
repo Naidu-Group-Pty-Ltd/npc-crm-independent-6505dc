@@ -1,0 +1,109 @@
+# Docling vNext CANDIDATE sidecar (PDF Extraction V3 · E2). ISOLATED from prod.
+#
+# The production image is built from `Dockerfile` (docling==2.14.0, entrypoint
+# app:app, runtime profile legacy). This file NEVER changes that. It builds the
+# vNext candidate (docling==2.113.0, entrypoint app_vnext:app, runtime profile
+# vnext) from the deterministic `vnext/uv.lock`, with NO runtime dependency
+# resolution and explicit model download at build time.
+#
+# Build targets:
+#   docker build -f Dockerfile.vnext --target vnext-cpu-standard -t pdf-parse-vnext:cpu   .
+#   docker build -f Dockerfile.vnext --target vnext-cpu-threaded -t pdf-parse-vnext:thr   .
+#   docker build -f Dockerfile.vnext --target vnext-vlm          -t pdf-parse-vnext:vlm   .
+# (Do NOT push or deploy in E2 — for a later zero-traffic Google Cloud canary.)
+
+# ── Base: pinned Python + uv + system libs (deterministic) ──────────────────
+FROM python:3.11-slim AS base
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1 \
+    UV_NO_CACHE=1 \
+    DOCLING_ARTIFACTS_PATH=/app/.docling-models \
+    HF_HOME=/app/.hf-cache \
+    OMP_NUM_THREADS=4 \
+    PORT=8080
+
+WORKDIR /app
+
+# System deps Docling / pdfium / Pillow / PyMuPDF need at runtime.
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        build-essential libgl1 libglib2.0-0 libjpeg62-turbo zlib1g curl ca-certificates \
+    && rm -rf /var/lib/apt/lists/*
+
+# Pinned uv for reproducible, lock-driven sync (no runtime resolver).
+COPY --from=ghcr.io/astral-sh/uv:0.8.17 /uv /usr/local/bin/uv
+
+# ── CPU standard runtime (default candidate) ────────────────────────────────
+FROM base AS vnext-cpu-standard
+
+ENV DOCLING_RUNTIME_PROFILE=vnext \
+    DOCLING_VNEXT_BUILD_PROFILE=vnext-cpu-standard
+
+# Deterministic dependency sync from the committed lock. `--no-dev` excludes the
+# dev/test group; `--extra standard` selects the CPU-standard graph (EasyOCR).
+COPY vnext/pyproject.toml vnext/uv.lock ./vnext/
+RUN cd vnext && uv sync --locked --no-dev --extra standard --python /usr/local/bin/python
+
+# Download + VERIFY required models at build time so the container runs offline.
+# FAIL-CLOSED: download_models.py exits nonzero when a required model is missing —
+# no exit-0 / "verify later" fallback. artifacts_path must point to this populated
+# dir at runtime (docling rejects an empty DOCLING_ARTIFACTS_PATH).
+COPY vnext/model-manifest.json vnext/download_models.py ./vnext/
+RUN vnext/.venv/bin/python vnext/download_models.py \
+        --profile vnext-cpu-standard --out /app/.docling-models
+
+# Explicit runtime module list (never a broad COPY *.py) so a new runtime module
+# is a deliberate, reviewable packaging change.
+COPY app.py app_vnext.py lane_policy.py operational_metrics.py source_scene_graph.py \
+     docling_runtime_protocol.py docling_runtime_legacy.py docling_runtime_vnext.py \
+     docling_vnext_profiles.py docling_vnext_adapter.py docling_capabilities.py ./
+
+# Fail the build on missing runtime modules / syntax errors, and prove the pure
+# vNext modules import WITHOUT initialising docling models.
+RUN cd vnext && .venv/bin/python -m py_compile \
+        ../app.py ../app_vnext.py ../lane_policy.py ../operational_metrics.py ../source_scene_graph.py \
+        ../docling_runtime_protocol.py ../docling_runtime_legacy.py ../docling_runtime_vnext.py \
+        ../docling_vnext_profiles.py ../docling_vnext_adapter.py ../docling_capabilities.py \
+    && cd .. && vnext/.venv/bin/python -c "import source_scene_graph, docling_runtime_vnext, docling_vnext_adapter, docling_capabilities, docling_vnext_profiles" \
+    && vnext/.venv/bin/python -c "import docling; from importlib.metadata import version; print('docling', version('docling'))"
+
+# Non-root runtime user with writable model/cache/temp paths.
+RUN useradd --create-home --uid 10001 appuser \
+    && mkdir -p /app/.docling-models /app/.hf-cache /tmp/pdf-parse \
+    && chown -R appuser:appuser /app /tmp/pdf-parse
+USER appuser
+
+LABEL org.opencontainers.image.title="pdf-parse-service-vnext" \
+      org.opencontainers.image.description="Docling vNext candidate (E2) — do not deploy without E10 routing/cache work" \
+      pdf-parse.runtime_profile="vnext" \
+      pdf-parse.build_profile="vnext-cpu-standard" \
+      pdf-parse.docling_version="2.113.0"
+
+EXPOSE 8080
+# 1 worker — Docling holds large models in memory; scale horizontally.
+CMD ["sh", "-c", "vnext/.venv/bin/uvicorn app_vnext:app --host 0.0.0.0 --port ${PORT} --workers 1 --timeout-keep-alive 75"]
+
+# ── CPU threaded-standard runtime (candidate, opt-in) ───────────────────────
+FROM vnext-cpu-standard AS vnext-cpu-threaded
+ENV DOCLING_VNEXT_BUILD_PROFILE=vnext-cpu-threaded \
+    DOCLING_VNEXT_ALLOW_THREADED=true
+
+# ── Local VLM-capable target (optional; NOT default; no remote, no vLLM here) ─
+FROM base AS vnext-vlm
+ENV DOCLING_RUNTIME_PROFILE=vnext \
+    DOCLING_VNEXT_BUILD_PROFILE=vnext-vlm \
+    DOCLING_VNEXT_ALLOW_VLM=true
+COPY vnext/pyproject.toml vnext/uv.lock ./vnext/
+RUN cd vnext && uv sync --locked --no-dev --extra vlm --python /usr/local/bin/python
+COPY vnext/model-manifest.json ./vnext/
+COPY vnext/download_models.py ./vnext/
+RUN vnext/.venv/bin/python vnext/download_models.py --profile vnext-vlm --out /app/.docling-models
+COPY app.py app_vnext.py lane_policy.py operational_metrics.py source_scene_graph.py \
+     docling_runtime_protocol.py docling_runtime_legacy.py docling_runtime_vnext.py \
+     docling_vnext_profiles.py docling_vnext_adapter.py docling_capabilities.py ./
+RUN vnext/.venv/bin/python -c "import docling_runtime_vnext, docling_vnext_adapter"
+RUN useradd --create-home --uid 10001 appuser && mkdir -p /app/.docling-models /app/.hf-cache && chown -R appuser:appuser /app
+USER appuser
+EXPOSE 8080
+CMD ["sh", "-c", "vnext/.venv/bin/uvicorn app_vnext:app --host 0.0.0.0 --port ${PORT} --workers 1 --timeout-keep-alive 75"]

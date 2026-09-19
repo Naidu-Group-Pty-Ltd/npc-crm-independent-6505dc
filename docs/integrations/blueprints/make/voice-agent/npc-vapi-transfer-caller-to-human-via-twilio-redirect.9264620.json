@@ -1,0 +1,1651 @@
+{
+  "flow": [
+    {
+      "id": 1,
+      "mapper": {},
+      "module": "gateway:CustomWebHook",
+      "version": 1,
+      "metadata": {
+        "restore": {
+          "parameters": {
+            "hook": {
+              "data": {
+                "editable": "true"
+              },
+              "label": "Vapi to Twilio Tunnel"
+            }
+          }
+        },
+        "designer": {
+          "x": 0,
+          "y": 150,
+          "name": "Vapi Transfer to Human Webhook"
+        },
+        "parameters": [
+          {
+            "name": "hook",
+            "type": "hook:gateway-webhook",
+            "label": "Webhook",
+            "required": true
+          },
+          {
+            "name": "maxResults",
+            "type": "number",
+            "label": "Maximum number of results"
+          }
+        ]
+      },
+      "parameters": {
+        "hook": 4141547,
+        "maxResults": 1
+      }
+    },
+    {
+      "id": 2,
+      "mapper": {
+        "key": "{{1.message.toolCallList[].function.arguments.callerPhone}}",
+        "returnWrapped": false
+      },
+      "module": "datastore:GetRecord",
+      "version": 1,
+      "metadata": {
+        "expect": [
+          {
+            "name": "key",
+            "type": "text",
+            "label": "Key",
+            "required": true
+          },
+          {
+            "name": "returnWrapped",
+            "type": "boolean",
+            "label": "Return Wrapped Output",
+            "required": true
+          }
+        ],
+        "restore": {
+          "parameters": {
+            "datastore": {
+              "label": "Vapi Calls Human Transfer"
+            }
+          }
+        },
+        "advanced": true,
+        "designer": {
+          "x": 300,
+          "y": 150,
+          "name": "Data Store - Get Active Twilio Call by Caller Phone"
+        },
+        "interface": [
+          {
+            "help": "",
+            "name": "callerPhone",
+            "type": "text",
+            "label": "Caller phone",
+            "default": null,
+            "required": false,
+            "multiline": false
+          },
+          {
+            "help": "",
+            "name": "twilioParentCallSid",
+            "type": "text",
+            "label": "Twilio parent call sid",
+            "default": null,
+            "required": false,
+            "multiline": false
+          },
+          {
+            "help": "",
+            "name": "twilioSipChildCallSid",
+            "type": "text",
+            "label": "Twilio sip child call sid",
+            "default": null,
+            "required": false,
+            "multiline": false
+          },
+          {
+            "help": "",
+            "name": "twilioFrom",
+            "type": "text",
+            "label": "Twilio from",
+            "default": null,
+            "required": false,
+            "multiline": false
+          },
+          {
+            "help": "",
+            "name": "twilioTo",
+            "type": "text",
+            "label": "Twilio to",
+            "default": null,
+            "required": false,
+            "multiline": false
+          },
+          {
+            "help": "",
+            "name": "vapiSipTarget",
+            "type": "text",
+            "label": "Vapi sip target",
+            "default": null,
+            "required": false,
+            "multiline": false
+          },
+          {
+            "help": "",
+            "name": "vapiCallId",
+            "type": "text",
+            "label": "Vapi call ID",
+            "default": null,
+            "required": false,
+            "multiline": false
+          },
+          {
+            "help": "",
+            "name": "status",
+            "type": "text",
+            "label": "Status",
+            "default": null,
+            "required": false,
+            "multiline": false
+          },
+          {
+            "help": "",
+            "name": "transferDestination",
+            "type": "text",
+            "label": "Transfer destination",
+            "default": null,
+            "required": false,
+            "multiline": false
+          },
+          {
+            "help": "",
+            "name": "transferRequestedAt",
+            "type": "text",
+            "label": "Transfer requested at",
+            "default": null,
+            "required": false,
+            "multiline": false
+          },
+          {
+            "help": "",
+            "name": "createdAt",
+            "type": "text",
+            "label": "Created at",
+            "default": null,
+            "required": false,
+            "multiline": false
+          },
+          {
+            "help": "",
+            "name": "updatedAt",
+            "type": "text",
+            "label": "Updated at",
+            "default": null,
+            "required": false,
+            "multiline": false
+          },
+          {
+            "help": "",
+            "name": "expiresAt",
+            "type": "text",
+            "label": "Expires at",
+            "default": null,
+            "required": false,
+            "multiline": false
+          },
+          {
+            "help": "",
+            "name": "lastError",
+            "type": "text",
+            "label": "Last error",
+            "default": null,
+            "required": false,
+            "multiline": false
+          },
+          {
+            "help": "",
+            "name": "notes",
+            "type": "text",
+            "label": "Notes",
+            "default": null,
+            "required": false,
+            "multiline": false
+          }
+        ],
+        "parameters": [
+          {
+            "name": "datastore",
+            "type": "datastore",
+            "label": "Data store",
+            "required": true
+          }
+        ]
+      },
+      "parameters": {
+        "datastore": 163613
+      }
+    },
+    {
+      "id": 3,
+      "mapper": null,
+      "module": "builtin:BasicRouter",
+      "routes": [
+        {
+          "flow": [
+            {
+              "id": 9,
+              "filter": {
+                "name": "",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{2.twilioParentCallSid}}",
+                      "o": "exist"
+                    }
+                  ]
+                ]
+              },
+              "mapper": {
+                "url": "/2010-04-01/Accounts/{{SECRET:TWILIO_ACCOUNT_SID}}/Calls/{{2.twilioParentCallSid}}",
+                "body": "Twiml=%3CResponse%3E%3CSay%3EOne%20moment%20while%20I%20connect%20you%20to%20the%20team.%3C%2FSay%3E%3CDial%20callerId%3D%22%2B61286093299%22%20timeout%3D%2220%22%20answerOnBridge%3D%22true%22%3E%3CNumber%3E%2B61433005110%3C%2FNumber%3E%3C%2FDial%3E%3CSay%3ESorry%2C%20I%20could%20not%20reach%20the%20team%20right%20now.%20Please%20call%20back%20on%20this%20number%20and%20the%20team%20will%20help%20you%20directly.%3C%2FSay%3E%3CHangup%2F%3E%3C%2FResponse%3E",
+                "type": "text",
+                "domain": "api.twilio.com",
+                "method": "POST",
+                "headers": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/x-www-form-urlencoded"
+                  }
+                ]
+              },
+              "module": "twilio:MakeAPICall",
+              "version": 2,
+              "metadata": {
+                "expect": [
+                  {
+                    "name": "url",
+                    "type": "text",
+                    "label": "URL",
+                    "required": true
+                  },
+                  {
+                    "name": "method",
+                    "type": "select",
+                    "label": "Method",
+                    "required": true,
+                    "validate": {
+                      "enum": [
+                        "GET",
+                        "POST",
+                        "PUT",
+                        "PATCH",
+                        "DELETE"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "headers",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key"
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Headers"
+                  },
+                  {
+                    "name": "qs",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key"
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Query String"
+                  },
+                  {
+                    "name": "body",
+                    "type": "any",
+                    "label": "Body"
+                  },
+                  {
+                    "name": "domain",
+                    "type": "select",
+                    "label": "Domain",
+                    "validate": {
+                      "enum": [
+                        "api.twilio.com",
+                        "studio.twilio.com"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "type",
+                    "type": "select",
+                    "label": "Type",
+                    "validate": {
+                      "enum": [
+                        "text",
+                        "application/x-www-form-urlencoded"
+                      ]
+                    }
+                  }
+                ],
+                "restore": {
+                  "expect": {
+                    "qs": {
+                      "mode": "chose"
+                    },
+                    "type": {
+                      "mode": "chose",
+                      "label": "text (json)"
+                    },
+                    "domain": {
+                      "mode": "chose",
+                      "label": "api.twilio.com"
+                    },
+                    "method": {
+                      "mode": "chose",
+                      "label": "POST"
+                    },
+                    "headers": {
+                      "mode": "chose",
+                      "items": [
+                        null
+                      ]
+                    }
+                  },
+                  "parameters": {
+                    "__IMTCONN__": {
+                      "data": {
+                        "scoped": "true",
+                        "connection": "twilio"
+                      },
+                      "label": "NPC Twilio"
+                    }
+                  }
+                },
+                "designer": {
+                  "x": 900,
+                  "y": 0
+                },
+                "parameters": [
+                  {
+                    "name": "__IMTCONN__",
+                    "type": "account:twilio",
+                    "label": "Connection",
+                    "required": true
+                  }
+                ]
+              },
+              "parameters": {
+                "__IMTCONN__": 13284122
+              }
+            },
+            {
+              "id": 5,
+              "mapper": {
+                "key": "{{2.callerPhone}}",
+                "data": {
+                  "notes": "{{2.notes}}",
+                  "status": "{{2.status}}",
+                  "twilioTo": "{{2.twilioTo}}",
+                  "createdAt": "{{2.createdAt}}",
+                  "expiresAt": "{{2.expiresAt}}",
+                  "lastError": "{{2.lastError}}",
+                  "updatedAt": "{{2.updatedAt}}",
+                  "twilioFrom": "{{2.twilioFrom}}",
+                  "vapiCallId": "{{2.vapiCallId}}",
+                  "callerPhone": "{{2.callerPhone}}",
+                  "vapiSipTarget": "{{2.vapiSipTarget}}",
+                  "transferDestination": "{{2.transferDestination}}",
+                  "transferRequestedAt": "{{2.transferRequestedAt}}",
+                  "twilioParentCallSid": "{{2.twilioParentCallSid}}",
+                  "twilioSipChildCallSid": "{{2.twilioSipChildCallSid}}"
+                },
+                "overwrite": true
+              },
+              "module": "datastore:AddRecord",
+              "version": 1,
+              "metadata": {
+                "expect": [
+                  {
+                    "name": "key",
+                    "type": "text",
+                    "label": "Key"
+                  },
+                  {
+                    "name": "overwrite",
+                    "type": "boolean",
+                    "label": "Overwrite an existing record",
+                    "required": true
+                  },
+                  {
+                    "name": "data",
+                    "spec": [
+                      {
+                        "name": "callerPhone",
+                        "type": "text",
+                        "label": "Caller phone"
+                      },
+                      {
+                        "name": "twilioParentCallSid",
+                        "type": "text",
+                        "label": "Twilio parent call sid"
+                      },
+                      {
+                        "name": "twilioSipChildCallSid",
+                        "type": "text",
+                        "label": "Twilio sip child call sid"
+                      },
+                      {
+                        "name": "twilioFrom",
+                        "type": "text",
+                        "label": "Twilio from"
+                      },
+                      {
+                        "name": "twilioTo",
+                        "type": "text",
+                        "label": "Twilio to"
+                      },
+                      {
+                        "name": "vapiSipTarget",
+                        "type": "text",
+                        "label": "Vapi sip target"
+                      },
+                      {
+                        "name": "vapiCallId",
+                        "type": "text",
+                        "label": "Vapi call ID"
+                      },
+                      {
+                        "name": "status",
+                        "type": "text",
+                        "label": "Status"
+                      },
+                      {
+                        "name": "transferDestination",
+                        "type": "text",
+                        "label": "Transfer destination"
+                      },
+                      {
+                        "name": "transferRequestedAt",
+                        "type": "text",
+                        "label": "Transfer requested at"
+                      },
+                      {
+                        "name": "createdAt",
+                        "type": "text",
+                        "label": "Created at"
+                      },
+                      {
+                        "name": "updatedAt",
+                        "type": "text",
+                        "label": "Updated at"
+                      },
+                      {
+                        "name": "expiresAt",
+                        "type": "text",
+                        "label": "Expires at"
+                      },
+                      {
+                        "name": "lastError",
+                        "type": "text",
+                        "label": "Last error"
+                      },
+                      {
+                        "name": "notes",
+                        "type": "text",
+                        "label": "Notes"
+                      }
+                    ],
+                    "type": "collection",
+                    "label": "Record"
+                  }
+                ],
+                "restore": {
+                  "expect": {
+                    "overwrite": {
+                      "mode": "chose"
+                    }
+                  },
+                  "parameters": {
+                    "datastore": {
+                      "label": "Vapi Calls Human Transfer"
+                    }
+                  }
+                },
+                "designer": {
+                  "x": 1200,
+                  "y": 0,
+                  "name": "Data Store - Mark Transfer Requested"
+                },
+                "parameters": [
+                  {
+                    "name": "datastore",
+                    "type": "datastore",
+                    "label": "Data store",
+                    "required": true
+                  }
+                ]
+              },
+              "parameters": {
+                "datastore": 163613
+              }
+            },
+            {
+              "id": 6,
+              "mapper": {
+                "body": "{\n  \"results\": [\n    {\n      \"toolCallId\": \"{{ifempty(get(1.message.toolCallList; 1) + .id; \"manual-test\")}}\",\n      \"result\": {\n        \"success\": true,\n        \"transfer_initiated\": true,\n        \"message\": \"The caller is being connected to a human team member. Do not continue speaking unless the transfer fails.\",\n        \"callerPhone\": \"{{2.callerPhone}}\",\n        \"twilioParentCallSid\": \"{{2.twilioParentCallSid}}\",\n        \"transferDestination\": \"{{ifempty(get(1.message.toolCallList; 1) + .arguments.transferDestination; ifempty(1.transferDestination; ifempty(2.transferDestination; 61433005110)))}}\",\n        \"vapiCallId\": \"{{ifempty(get(1.message.toolCallList; 1) + .arguments.vapiCallId; ifempty(get(1.message.toolCallList; 1) + .arguments.vapi_call_id; ifempty(1.vapiCallId; ifempty(1.vapi_call_id; 1.message.call.id))))}}\"\n      }\n    }\n  ]\n}",
+                "status": "200",
+                "headers": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "module": "gateway:WebhookRespond",
+              "version": 1,
+              "metadata": {
+                "expect": [
+                  {
+                    "name": "status",
+                    "type": "uinteger",
+                    "label": "Status",
+                    "required": true,
+                    "validate": {
+                      "min": 100
+                    }
+                  },
+                  {
+                    "name": "body",
+                    "type": "any",
+                    "label": "Body"
+                  },
+                  {
+                    "name": "headers",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key",
+                        "required": true,
+                        "validate": {
+                          "max": 256
+                        }
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value",
+                        "required": true,
+                        "validate": {
+                          "max": 4096
+                        }
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Custom headers",
+                    "validate": {
+                      "maxItems": 16
+                    }
+                  }
+                ],
+                "restore": {
+                  "expect": {
+                    "headers": {
+                      "mode": "chose",
+                      "items": [
+                        null
+                      ]
+                    }
+                  }
+                },
+                "designer": {
+                  "x": 1500,
+                  "y": 0,
+                  "name": "Return Transfer Initiated to Vapi"
+                }
+              },
+              "parameters": {}
+            }
+          ]
+        },
+        {
+          "flow": [
+            {
+              "id": 7,
+              "filter": {
+                "name": "No active Twilio parent CallSid found",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{2.twilioParentCallSid}}",
+                      "o": "notexist"
+                    }
+                  ]
+                ]
+              },
+              "mapper": {
+                "body": "{\n  \"results\": [\n    {\n      \"toolCallId\": \"{{ifempty(get(1.message.toolCallList; 1).id; \"manual-test\")}}\",\n      \"result\": {\n        \"success\": false,\n        \"transfer_initiated\": false,\n        \"message\": \"I could not find the active Twilio call context needed to transfer this caller. Tell the caller the transfer could not be completed right now.\",\n        \"callerPhone\": \"{{ifempty(get(1.message.toolCallList; 1).arguments.callerPhone; ifempty(get(1.message.toolCallList; 1).arguments.customer_number; ifempty(get(1.message.toolCallList; 1).arguments.phone; ifempty(1.callerPhone; ifempty(1.phone; 1.message.call.customer.number)))))}}\",\n        \"transferDestination\": \"+61433005110\",\n        \"error\": \"active_call_context_not_found\"\n      }\n    }\n  ]\n}",
+                "status": "200",
+                "headers": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "module": "gateway:WebhookRespond",
+              "version": 1,
+              "metadata": {
+                "expect": [
+                  {
+                    "name": "status",
+                    "type": "uinteger",
+                    "label": "Status",
+                    "required": true,
+                    "validate": {
+                      "min": 100
+                    }
+                  },
+                  {
+                    "name": "body",
+                    "type": "any",
+                    "label": "Body"
+                  },
+                  {
+                    "name": "headers",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key",
+                        "required": true
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value",
+                        "required": true
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Custom headers"
+                  }
+                ],
+                "restore": {
+                  "expect": {
+                    "headers": {
+                      "mode": "chose",
+                      "items": [
+                        null
+                      ]
+                    }
+                  }
+                },
+                "designer": {
+                  "x": 900,
+                  "y": 300,
+                  "name": "Return Transfer Failed - No Active Call"
+                }
+              },
+              "parameters": {}
+            }
+          ]
+        }
+      ],
+      "version": 1,
+      "metadata": {
+        "designer": {
+          "x": 600,
+          "y": 150,
+          "name": "Route by Active Call Record"
+        }
+      },
+      "parameters": {}
+    }
+  ],
+  "name": "NPC Vapi - Transfer Caller to Human via Twilio Redirect",
+  "metadata": {
+    "instant": true,
+    "version": 1,
+    "designer": {
+      "orphans": [
+        [
+          {
+            "id": 8,
+            "module": "http:MakeRequest",
+            "version": 4,
+            "metadata": {
+              "designer": {
+                "x": 0,
+                "y": 600,
+                "messages": [
+                  {
+                    "message": "Authentication type: Value must not be empty.",
+                    "category": "setup",
+                    "severity": "error"
+                  },
+                  {
+                    "message": "URL: Value must not be empty.",
+                    "category": "setup",
+                    "severity": "error"
+                  },
+                  {
+                    "message": "This module is not connected to the flow. This module and everything after it will be skipped during execution. <autoconnect>Link it to your scenario to include them.</autoconnect>",
+                    "category": "link",
+                    "severity": "warning"
+                  }
+                ]
+              }
+            }
+          }
+        ],
+        [
+          {
+            "id": 4,
+            "filter": {
+              "name": "Active Twilio parent CallSid exists",
+              "conditions": [
+                [
+                  {
+                    "a": "{{2.twilioParentCallSid}}",
+                    "o": "exist"
+                  }
+                ]
+              ]
+            },
+            "mapper": {
+              "ca": "",
+              "qs": [],
+              "url": "https://api.twilio.com/2010-04-01/Accounts/{{SECRET:TWILIO_ACCOUNT_SID}}/Calls/{{2.twilioParentCallSid}}.json",
+              "data": "Twiml=%3CResponse%3E%3CSay%3EOne%20moment%20while%20I%20connect%20you%20to%20the%20team.%3C%2FSay%3E%3CDial%20callerId%3D%22%2B61286093299%22%20timeout%3D%2220%22%20answerOnBridge%3D%22true%22%3E%3CNumber%3E%2B61433005110%3C%2FNumber%3E%3C%2FDial%3E%3CSay%3ESorry%2C%20I%20could%20not%20reach%20the%20team%20right%20now.%20Please%20call%20back%20on%20this%20number%20and%20the%20team%20will%20help%20you%20directly.%3C%2FSay%3E%3CHangup%2F%3E%3C%2FResponse%3E",
+              "gzip": true,
+              "method": "post",
+              "headers": [
+                {
+                  "name": "Content-Type",
+                  "value": "application/x-www-form-urlencoded"
+                }
+              ],
+              "timeout": "30",
+              "useMtls": false,
+              "authPass": "YOUR_TWILIO_AUTH_TOKEN",
+              "authUser": "YOUR_TWILIO_ACCOUNT_SID",
+              "bodyType": "raw",
+              "contentType": "",
+              "serializeUrl": false,
+              "shareCookies": false,
+              "parseResponse": true,
+              "followRedirect": true,
+              "useQuerystring": false,
+              "followAllRedirects": false,
+              "rejectUnauthorized": true
+            },
+            "module": "http:ActionSendData",
+            "version": 3,
+            "metadata": {
+              "expect": [
+                {
+                  "name": "url",
+                  "type": "url",
+                  "label": "URL",
+                  "required": true
+                },
+                {
+                  "name": "serializeUrl",
+                  "type": "boolean",
+                  "label": "Serialize URL",
+                  "required": true
+                },
+                {
+                  "name": "method",
+                  "type": "select",
+                  "label": "Method",
+                  "required": true,
+                  "validate": {
+                    "enum": [
+                      "get",
+                      "head",
+                      "post",
+                      "put",
+                      "patch",
+                      "delete",
+                      "options"
+                    ]
+                  }
+                },
+                {
+                  "name": "headers",
+                  "spec": [
+                    {
+                      "name": "name",
+                      "type": "text",
+                      "label": "Name",
+                      "required": true
+                    },
+                    {
+                      "name": "value",
+                      "type": "text",
+                      "label": "Value"
+                    }
+                  ],
+                  "type": "array",
+                  "label": "Headers"
+                },
+                {
+                  "name": "qs",
+                  "spec": [
+                    {
+                      "name": "name",
+                      "type": "text",
+                      "label": "Name",
+                      "required": true
+                    },
+                    {
+                      "name": "value",
+                      "type": "text",
+                      "label": "Value"
+                    }
+                  ],
+                  "type": "array",
+                  "label": "Query String"
+                },
+                {
+                  "name": "bodyType",
+                  "type": "select",
+                  "label": "Body type",
+                  "validate": {
+                    "enum": [
+                      "raw",
+                      "x_www_form_urlencoded",
+                      "multipart_form_data"
+                    ]
+                  }
+                },
+                {
+                  "name": "parseResponse",
+                  "type": "boolean",
+                  "label": "Parse response",
+                  "required": true
+                },
+                {
+                  "name": "authUser",
+                  "type": "text",
+                  "label": "User name"
+                },
+                {
+                  "name": "authPass",
+                  "type": "password",
+                  "label": "Password"
+                },
+                {
+                  "name": "timeout",
+                  "type": "uinteger",
+                  "label": "Timeout",
+                  "validate": {
+                    "max": 300,
+                    "min": 1
+                  }
+                },
+                {
+                  "name": "shareCookies",
+                  "type": "boolean",
+                  "label": "Share cookies with other HTTP modules",
+                  "required": true
+                },
+                {
+                  "name": "ca",
+                  "type": "cert",
+                  "label": "Self-signed certificate"
+                },
+                {
+                  "name": "rejectUnauthorized",
+                  "type": "boolean",
+                  "label": "Reject connections that are using unverified (self-signed) certificates",
+                  "required": true
+                },
+                {
+                  "name": "followRedirect",
+                  "type": "boolean",
+                  "label": "Follow redirect",
+                  "required": true
+                },
+                {
+                  "name": "useQuerystring",
+                  "type": "boolean",
+                  "label": "Disable serialization of multiple same query string keys as arrays",
+                  "required": true
+                },
+                {
+                  "name": "gzip",
+                  "type": "boolean",
+                  "label": "Request compressed content",
+                  "required": true
+                },
+                {
+                  "name": "useMtls",
+                  "type": "boolean",
+                  "label": "Use Mutual TLS",
+                  "required": true
+                },
+                {
+                  "name": "contentType",
+                  "type": "select",
+                  "label": "Content type",
+                  "validate": {
+                    "enum": [
+                      "text/plain",
+                      "application/json",
+                      "application/xml",
+                      "text/xml",
+                      "text/html",
+                      "custom"
+                    ]
+                  }
+                },
+                {
+                  "name": "data",
+                  "type": "buffer",
+                  "label": "Request content"
+                },
+                {
+                  "name": "followAllRedirects",
+                  "type": "boolean",
+                  "label": "Follow all redirect",
+                  "required": true
+                }
+              ],
+              "restore": {
+                "expect": {
+                  "qs": {
+                    "mode": "chose"
+                  },
+                  "method": {
+                    "mode": "chose",
+                    "label": "POST"
+                  },
+                  "headers": {
+                    "mode": "chose",
+                    "items": [
+                      null
+                    ]
+                  },
+                  "bodyType": {
+                    "label": "Raw"
+                  }
+                }
+              },
+              "designer": {
+                "x": 0,
+                "y": 900,
+                "name": "Twilio - Redirect Parent Call to Human Number",
+                "messages": [
+                  {
+                    "message": "'HTTP (legacy) - Make a request' [module ID 4] references inaccessible module 'Data store - Get a record' [module ID 2].",
+                    "category": "reference",
+                    "severity": "error"
+                  },
+                  {
+                    "message": "This module is not connected to the flow. This module and everything after it will be skipped during execution. <autoconnect>Link it to your scenario to include them.</autoconnect>",
+                    "category": "link",
+                    "severity": "warning"
+                  }
+                ]
+              },
+              "parameters": [
+                {
+                  "name": "handleErrors",
+                  "type": "boolean",
+                  "label": "Evaluate all states as errors (except for 2xx and 3xx )",
+                  "required": true
+                },
+                {
+                  "name": "useNewZLibDeCompress",
+                  "type": "hidden"
+                }
+              ]
+            },
+            "parameters": {
+              "handleErrors": false,
+              "useNewZLibDeCompress": true
+            }
+          }
+        ]
+      ],
+      "samples": {
+        "1": {
+          "message": {
+            "call": {
+              "id": "019e4534-ba6d-7777-9efb-5ae6755f7208",
+              "cost": 0,
+              "type": "inboundPhoneCall",
+              "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+              "status": "ringing",
+              "monitor": {
+                "listenUrl": "wss://phone-call-websocket.aws-us-west-2-backend-production1.vapi.ai/019e4534-ba6d-7777-9efb-5ae6755...",
+                "controlUrl": "https://phone-call-websocket.aws-us-west-2-backend-production1.vapi.ai/019e4534-ba6d-7777-9efb-5ae67..."
+              },
+              "squadId": "a9656ea1-3575-4ac6-b985-fd138be06cc5",
+              "customer": {
+                "name": "+61480845459",
+                "number": "+61480845459",
+                "sipUri": "sip:+61480845459@44.238.177.138:5060"
+              },
+              "createdAt": "2026-05-20T11:45:44.045Z",
+              "transport": {
+                "callSid": "b3e14075-589e-4994-9358-d226d893caff",
+                "provider": "vapi.sip",
+                "sbcCallSid": "cd3b02c22279bbac65eb4eb6323f76b9@0.0.0.0",
+                "conversationType": "voice"
+              },
+              "updatedAt": "2026-05-20T11:45:44.045Z",
+              "phoneNumberId": "ae35b1f3-25c4-4620-ac13-525a58da96c9",
+              "phoneCallProvider": "vapi",
+              "assistantOverrides": {
+                "variableValues": {
+                  "cid": "cd3b02c22279bbac65eb4eb6323f76b9@0.0.0.0",
+                  "account-sid": "c033b672-5b99-42ae-9ce2-b231e9a522fb",
+                  "forwarded-for": "54.172.60.2",
+                  "twilio-callsid": "CAac461988e4f7e67f72815b4335af8db4",
+                  "application-sid": "79d078c8-76b2-452a-99e0-ddd5abbf6269",
+                  "voip-carrier-sid": "bdf16bcf-a774-46b0-873d-9105dcda3ce9",
+                  "twilio-accountsid": "{{SECRET:TWILIO_ACCOUNT_SID}}",
+                  "originating-carrier": "Twilio"
+                }
+              },
+              "phoneCallTransport": "sip",
+              "phoneCallProviderId": "b3e14075-589e-4994-9358-d226d893caff",
+              "phoneCallProviderDetails": {
+                "sip": {
+                  "raw": "INVITE sip:naidupropertyconsultingservices@sip.vapi.ai SIP/2.0\r\nVia: SIP/2.0/UDP 44.238.177.138;rpor...",
+                  "uri": "sip:naidupropertyconsultingservices@sip.vapi.ai",
+                  "body": "v=0\r\no=root 434056487 434056487 IN IP4 172.30.0.83\r\ns=Twilio Media Gateway\r\nc=IN IP4 172.30.0.83\r\nt=...",
+                  "method": "INVITE",
+                  "headers": {
+                    "to": "<sip:naidupropertyconsultingservices@sip.vapi.ai>",
+                    "via": "SIP/2.0/UDP 44.238.177.138;rport=5060;branch=z9hG4bKBm6F6aa37m7gN;received=172.31.9.106",
+                    "cseq": "115084979 INVITE",
+                    "from": "\"+61480845459\" <sip:+61480845459@44.238.177.138:5060>;tag=89gt79aN15NmS",
+                    "X-CID": "cd3b02c22279bbac65eb4eb6323f76b9@0.0.0.0",
+                    "allow": "INVITE, ACK, CANCEL, OPTIONS, BYE, REFER, NOTIFY",
+                    "min-se": "120",
+                    "call-id": "4684c273-cee4-123f-ac95-0a6b2821a33f",
+                    "contact": "<sip:172.31.9.106:5060>",
+                    "user-agent": "Twilio Gateway",
+                    "content-type": "application/sdp",
+                    "max-forwards": "70",
+                    "X-Account-Sid": "c033b672-5b99-42ae-9ce2-b231e9a522fb",
+                    "content-length": "285",
+                    "X-Forwarded-For": "54.172.60.2",
+                    "X-Twilio-CallSid": "CAac461988e4f7e67f72815b4335af8db4",
+                    "X-Application-Sid": "79d078c8-76b2-452a-99e0-ddd5abbf6269",
+                    "X-Voip-Carrier-Sid": "bdf16bcf-a774-46b0-873d-9105dcda3ce9",
+                    "X-Twilio-AccountSid": "{{SECRET:TWILIO_ACCOUNT_SID}}",
+                    "p-asserted-identity": "<sip:+61480845459@sip.twilio.com>",
+                    "X-Originating-Carrier": "Twilio"
+                  },
+                  "payload": [
+                    {
+                      "type": "application/sdp",
+                      "content": "v=0\r\no=root 434056487 434056487 IN IP4 172.30.0.83\r\ns=Twilio Media Gateway\r\nc=IN IP4 172.30.0.83\r\nt=..."
+                    }
+                  ],
+                  "version": "2.0"
+                },
+                "sbcCallId": "cd3b02c22279bbac65eb4eb6323f76b9@0.0.0.0"
+              }
+            },
+            "type": "tool-calls",
+            "artifact": {
+              "messages": [
+                {
+                  "name": "get_call_context",
+                  "role": "tool_calls",
+                  "time": 1779277577589,
+                  "result": "No result returned. If this is unexpected, see troubleshooting tips at https://docs.vapi.ai/tools/cu...",
+                  "source": null,
+                  "endTime": 1779277575681,
+                  "message": "Yeah. Just make the transfer, please.",
+                  "duration": 1603,
+                  "metadata": {
+                    "wordLevelConfidence": [
+                      {
+                        "end": 1779277575681,
+                        "word": "please.",
+                        "start": 1779277575413.8333,
+                        "language": null,
+                        "confidence": 1,
+                        "punctuated_word": "please."
+                      }
+                    ]
+                  },
+                  "toolCalls": [
+                    {
+                      "id": "call_uThqYlPGVzPvFhlgGkFMcPhK",
+                      "type": "function",
+                      "function": {
+                        "name": "transfer_to_human",
+                        "arguments": "{\n  \"callerContext\": \"Caller requested to speak to a real person immediately.\",\n  \"transferReason\": ..."
+                      }
+                    }
+                  ],
+                  "toolCallId": "call_7ZPYoi9nRmIeWpcccoB2BOJ6",
+                  "secondsFromStart": 33.192
+                }
+              ],
+              "variables": {
+                "cid": "cd3b02c22279bbac65eb4eb6323f76b9@0.0.0.0",
+                "day": "20",
+                "now": "May 20, 2026, 11:45 AM UTC",
+                "call": {
+                  "id": "019e4534-ba6d-7777-9efb-5ae6755f7208",
+                  "type": "inboundPhoneCall",
+                  "status": "ringing",
+                  "createdAt": "2026-05-20T11:45:44.045Z",
+                  "transport": {
+                    "callSid": "b3e14075-589e-4994-9358-d226d893caff",
+                    "provider": "vapi.sip",
+                    "sbcCallSid": "cd3b02c22279bbac65eb4eb6323f76b9@0.0.0.0",
+                    "conversationType": "voice"
+                  },
+                  "phoneCallProvider": "vapi"
+                },
+                "date": "May 20, 2026 UTC",
+                "time": "11:45 AM UTC",
+                "year": "2026",
+                "month": "May",
+                "phone": "+61480845459",
+                "customer": {
+                  "name": "+61480845459",
+                  "number": "+61480845459",
+                  "sipUri": "sip:+61480845459@44.238.177.138:5060"
+                },
+                "fullName": "lazarus ",
+                "contactId": "iH04pC64TJ3roKnCnyvx",
+                "firstName": "lazarus",
+                "transport": {
+                  "callSid": "b3e14075-589e-4994-9358-d226d893caff",
+                  "provider": "vapi.sip",
+                  "sbcCallSid": "cd3b02c22279bbac65eb4eb6323f76b9@0.0.0.0",
+                  "conversationType": "voice"
+                },
+                "account-sid": "c033b672-5b99-42ae-9ce2-b231e9a522fb",
+                "ghlFullName": "lazarus ",
+                "phoneNumber": {
+                  "id": "ae35b1f3-25c4-4620-ac13-525a58da96c9",
+                  "name": "NPC Services",
+                  "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+                  "server": {
+                    "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+                    "timeoutSeconds": 20
+                  },
+                  "sipUri": "sip:naidupropertyconsultingservices@sip.vapi.ai",
+                  "status": "active",
+                  "squadId": "a9656ea1-3575-4ac6-b985-fd138be06cc5",
+                  "provider": "vapi",
+                  "createdAt": "2026-01-31T08:01:39.887Z",
+                  "updatedAt": "2026-01-31T08:02:57.530Z"
+                },
+                "contactFound": true,
+                "contactState": "RESOLVED",
+                "ghlContactId": "iH04pC64TJ3roKnCnyvx",
+                "ghlFirstName": "lazarus",
+                "requiresName": false,
+                "forwarded-for": "54.172.60.2",
+                "requiresPhone": false,
+                "contactCreated": false,
+                "twilio-callsid": "CAac461988e4f7e67f72815b4335af8db4",
+                "application-sid": "79d078c8-76b2-452a-99e0-ddd5abbf6269",
+                "currentDateTime": "Wednesday, May 20, 2026 at 11:45 AM UTC",
+                "ghlContactPhone": "+61480845459",
+                "ghlContactState": "RESOLVED",
+                "voip-carrier-sid": "bdf16bcf-a774-46b0-873d-9105dcda3ce9",
+                "twilio-accountsid": "{{SECRET:TWILIO_ACCOUNT_SID}}",
+                "originating-carrier": "Twilio"
+              },
+              "variableValues": {
+                "cid": "cd3b02c22279bbac65eb4eb6323f76b9@0.0.0.0",
+                "day": "20",
+                "now": "May 20, 2026, 11:45 AM UTC",
+                "call": {
+                  "id": "019e4534-ba6d-7777-9efb-5ae6755f7208",
+                  "type": "inboundPhoneCall",
+                  "status": "ringing",
+                  "createdAt": "2026-05-20T11:45:44.045Z",
+                  "transport": {
+                    "callSid": "b3e14075-589e-4994-9358-d226d893caff",
+                    "provider": "vapi.sip",
+                    "sbcCallSid": "cd3b02c22279bbac65eb4eb6323f76b9@0.0.0.0",
+                    "conversationType": "voice"
+                  },
+                  "phoneCallProvider": "vapi"
+                },
+                "date": "May 20, 2026 UTC",
+                "time": "11:45 AM UTC",
+                "year": "2026",
+                "month": "May",
+                "phone": "+61480845459",
+                "customer": {
+                  "name": "+61480845459",
+                  "number": "+61480845459",
+                  "sipUri": "sip:+61480845459@44.238.177.138:5060"
+                },
+                "fullName": "lazarus ",
+                "contactId": "iH04pC64TJ3roKnCnyvx",
+                "firstName": "lazarus",
+                "transport": {
+                  "callSid": "b3e14075-589e-4994-9358-d226d893caff",
+                  "provider": "vapi.sip",
+                  "sbcCallSid": "cd3b02c22279bbac65eb4eb6323f76b9@0.0.0.0",
+                  "conversationType": "voice"
+                },
+                "account-sid": "c033b672-5b99-42ae-9ce2-b231e9a522fb",
+                "ghlFullName": "lazarus ",
+                "phoneNumber": {
+                  "id": "ae35b1f3-25c4-4620-ac13-525a58da96c9",
+                  "name": "NPC Services",
+                  "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+                  "server": {
+                    "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+                    "timeoutSeconds": 20
+                  },
+                  "sipUri": "sip:naidupropertyconsultingservices@sip.vapi.ai",
+                  "status": "active",
+                  "squadId": "a9656ea1-3575-4ac6-b985-fd138be06cc5",
+                  "provider": "vapi",
+                  "createdAt": "2026-01-31T08:01:39.887Z",
+                  "updatedAt": "2026-01-31T08:02:57.530Z"
+                },
+                "contactFound": true,
+                "contactState": "RESOLVED",
+                "ghlContactId": "iH04pC64TJ3roKnCnyvx",
+                "ghlFirstName": "lazarus",
+                "requiresName": false,
+                "forwarded-for": "54.172.60.2",
+                "requiresPhone": false,
+                "contactCreated": false,
+                "twilio-callsid": "CAac461988e4f7e67f72815b4335af8db4",
+                "application-sid": "79d078c8-76b2-452a-99e0-ddd5abbf6269",
+                "currentDateTime": "Wednesday, May 20, 2026 at 11:45 AM UTC",
+                "ghlContactPhone": "+61480845459",
+                "ghlContactState": "RESOLVED",
+                "voip-carrier-sid": "bdf16bcf-a774-46b0-873d-9105dcda3ce9",
+                "twilio-accountsid": "{{SECRET:TWILIO_ACCOUNT_SID}}",
+                "originating-carrier": "Twilio"
+              },
+              "messagesOpenAIFormatted": [
+                {
+                  "role": "tool",
+                  "content": "Tool Result Still Pending But Proceed Further If Possible.",
+                  "tool_calls": [
+                    {
+                      "id": "call_uThqYlPGVzPvFhlgGkFMcPhK",
+                      "type": "function",
+                      "function": {
+                        "name": "transfer_to_human",
+                        "arguments": "{\n  \"callerContext\": \"Caller requested to speak to a real person immediately.\",\n  \"transferReason\": ..."
+                      }
+                    }
+                  ],
+                  "tool_call_id": "call_uThqYlPGVzPvFhlgGkFMcPhK"
+                }
+              ]
+            },
+            "customer": {
+              "name": "+61480845459",
+              "number": "+61480845459",
+              "sipUri": "sip:+61480845459@44.238.177.138:5060"
+            },
+            "assistant": {
+              "id": "bfff143e-03f7-4bc2-afbb-5734987f672f",
+              "name": "NPC Inbound Agent",
+              "model": {
+                "model": "gpt-5.2-chat-latest",
+                "tools": [
+                  {
+                    "id": "5c0c334c-6bbf-4399-b748-a3c50207e754",
+                    "type": "handoff",
+                    "async": null,
+                    "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+                    "server": {
+                      "url": "https://hook.eu2.make.com/jb85m14jchgktf09sfxt4jmf8yggaw32",
+                      "timeoutSeconds": 20,
+                      "staticIpAddressesEnabled": null
+                    },
+                    "function": {
+                      "name": "handoff_to_assistant",
+                      "parameters": {
+                        "type": "object",
+                        "required": [
+                          "transferReason"
+                        ],
+                        "properties": {
+                          "full_name": {
+                            "type": "string",
+                            "description": "The caller's full name, only after the caller provides it or it is already known from context."
+                          },
+                          "last_name": {
+                            "type": "string",
+                            "description": "The caller's last name, only if known."
+                          },
+                          "first_name": {
+                            "type": "string",
+                            "description": "The caller's first name, only if known."
+                          },
+                          "{{fullName}}": {
+                            "type": "string",
+                            "default": null,
+                            "description": null
+                          },
+                          "callerContext": {
+                            "type": "string",
+                            "description": "Brief context about the call so far, such as whether the caller wanted a discovery call, strategy se..."
+                          },
+                          "{{contactId}}": {
+                            "type": "string",
+                            "default": null,
+                            "description": null
+                          },
+                          "{{firstName}}": {
+                            "type": "string",
+                            "default": null,
+                            "description": null
+                          },
+                          "transferReason": {
+                            "type": "string",
+                            "description": "Short reason for the transfer request. Example: Caller asked to speak with a human team member."
+                          }
+                        }
+                      },
+                      "description": "Trigger this tool only when the caller clearly asks to speak to a human, real person, team member, m..."
+                    },
+                    "messages": [
+                      {
+                        "type": "request-start",
+                        "content": "Please hold on while I hand you over to the relevant agent to book your call",
+                        "blocking": true,
+                        "endCallAfterSpokenEnabled": null
+                      }
+                    ],
+                    "createdAt": {},
+                    "updatedAt": {},
+                    "parameters": [
+                      {
+                        "key": "callType",
+                        "value": "{{ call.type }}"
+                      }
+                    ],
+                    "destinations": [
+                      {
+                        "type": "assistant",
+                        "assistantId": "7770a48b-68d1-48df-a03a-9cc5b9e91ad8",
+                        "description": "When user asks to book or reschedule an initital finance consult a.k.a IFC",
+                        "assistantName": "NPC IFC Inbound",
+                        "variableExtractionPlan": {
+                          "schema": {
+                            "type": "object",
+                            "required": [],
+                            "properties": {
+                              "firstName": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ],
+                    "variableExtractionPlan": {
+                      "schema": {
+                        "type": "object",
+                        "required": [],
+                        "properties": {}
+                      },
+                      "aliases": [
+                        {
+                          "key": "vapiCallId",
+                          "value": "{{ $.vapiCallId }}"
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "toolIds": [
+                  "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+                ],
+                "messages": [
+                  {
+                    "role": "system",
+                    "content": "# **NPC Services – “Angela” Inbound Voice Agent System Prompt**\n\n*(General Enquiries, Knowledge-Base..."
+                  }
+                ],
+                "provider": "openai",
+                "maxTokens": 10000,
+                "temperature": 0.9,
+                "knowledgeBase": {
+                  "fileIds": [
+                    "9fff4149-3aec-48f0-9378-d56760390216"
+                  ],
+                  "provider": "google"
+                }
+              },
+              "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+              "voice": {
+                "model": "eleven_flash_v2_5",
+                "voiceId": "M7ya1YbaeFaPXljg9BpK",
+                "provider": "11labs",
+                "stability": 0.5,
+                "similarityBoost": 0.75
+              },
+              "server": {
+                "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+                "timeoutSeconds": 20,
+                "staticIpAddressesEnabled": false
+              },
+              "metadata": {
+                "position": {
+                  "x": 237.34521448871288,
+                  "y": 427.4425751045537
+                }
+              },
+              "createdAt": "2025-12-09T15:00:39.199Z",
+              "updatedAt": "2026-05-20T11:16:07.001Z",
+              "transcriber": {
+                "model": "flux-general-en",
+                "language": "en",
+                "provider": "deepgram"
+              },
+              "firstMessage": "Hi there. Angela from Naidu Property Consulting Services speaking. How can I help you today?",
+              "compliancePlan": {
+                "pciEnabled": false,
+                "zdrEnabled": false,
+                "hipaaEnabled": false
+              },
+              "endCallMessage": "Goodbye.",
+              "variableValues": {
+                "cid": "cd3b02c22279bbac65eb4eb6323f76b9@0.0.0.0",
+                "account-sid": "c033b672-5b99-42ae-9ce2-b231e9a522fb",
+                "forwarded-for": "54.172.60.2",
+                "twilio-callsid": "CAac461988e4f7e67f72815b4335af8db4",
+                "application-sid": "79d078c8-76b2-452a-99e0-ddd5abbf6269",
+                "voip-carrier-sid": "bdf16bcf-a774-46b0-873d-9105dcda3ce9",
+                "twilio-accountsid": "{{SECRET:TWILIO_ACCOUNT_SID}}",
+                "originating-carrier": "Twilio"
+              },
+              "voicemailMessage": "Please call back when you're available.",
+              "startSpeakingPlan": {
+                "waitSeconds": 4
+              },
+              "maxDurationSeconds": 16562
+            },
+            "timestamp": 1779277577598,
+            "toolCalls": [
+              {
+                "id": "call_uThqYlPGVzPvFhlgGkFMcPhK",
+                "type": "function",
+                "function": {
+                  "name": "transfer_to_human",
+                  "arguments": {
+                    "callType": "inboundPhoneCall",
+                    "vapiCallId": "019e4534-ba6d-7777-9efb-5ae6755f7208",
+                    "callerPhone": "+61480845459",
+                    "calledNumber": "{{ phoneNumber.number }}",
+                    "callerContext": "Caller requested to speak to a real person immediately.",
+                    "transferReason": "Caller explicitly asked to be transferred to a human team member.",
+                    "customer_number": "+61480845459"
+                  }
+                }
+              }
+            ],
+            "phoneNumber": {
+              "id": "ae35b1f3-25c4-4620-ac13-525a58da96c9",
+              "name": "NPC Services",
+              "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+              "server": {
+                "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+                "timeoutSeconds": 20
+              },
+              "sipUri": "sip:naidupropertyconsultingservices@sip.vapi.ai",
+              "status": "active",
+              "squadId": "a9656ea1-3575-4ac6-b985-fd138be06cc5",
+              "provider": "vapi",
+              "createdAt": "2026-01-31T08:01:39.887Z",
+              "updatedAt": "2026-01-31T08:02:57.530Z"
+            },
+            "toolCallList": [
+              {
+                "id": "call_uThqYlPGVzPvFhlgGkFMcPhK",
+                "type": "function",
+                "function": {
+                  "name": "transfer_to_human",
+                  "arguments": {
+                    "callType": "inboundPhoneCall",
+                    "vapiCallId": "019e4534-ba6d-7777-9efb-5ae6755f7208",
+                    "callerPhone": "+61480845459",
+                    "calledNumber": "{{ phoneNumber.number }}",
+                    "callerContext": "Caller requested to speak to a real person immediately.",
+                    "transferReason": "Caller explicitly asked to be transferred to a human team member.",
+                    "customer_number": "+61480845459"
+                  }
+                }
+              }
+            ],
+            "toolWithToolCallList": [
+              {
+                "type": "function",
+                "async": false,
+                "server": {
+                  "url": "https://hook.eu2.make.com/jb85m14jchgktf09sfxt4jmf8yggaw32",
+                  "timeoutSeconds": 20,
+                  "staticIpAddressesEnabled": false
+                },
+                "function": {
+                  "name": "transfer_to_human",
+                  "parameters": {
+                    "type": "object",
+                    "required": [
+                      "transferReason"
+                    ],
+                    "properties": {
+                      "callerContext": {
+                        "type": "string",
+                        "description": "Brief context about the call so far, such as whether the caller wanted a discovery call, strategy se..."
+                      },
+                      "transferReason": {
+                        "type": "string",
+                        "description": "Short reason for the transfer request. Example: Caller asked to speak with a human team member."
+                      }
+                    }
+                  },
+                  "description": "Trigger this tool only when the caller clearly asks to speak to a human, real person, team member, m..."
+                },
+                "messages": [
+                  {
+                    "type": "request-failed",
+                    "content": "Sorry, I couldn’t connect you through right now. The team will still be able to help if you call bac...",
+                    "blocking": null,
+                    "contents": [],
+                    "conditions": [],
+                    "endCallAfterSpokenEnabled": false
+                  }
+                ],
+                "toolCall": {
+                  "id": "call_uThqYlPGVzPvFhlgGkFMcPhK",
+                  "type": "function",
+                  "function": {
+                    "name": "transfer_to_human",
+                    "arguments": {
+                      "callType": "inboundPhoneCall",
+                      "vapiCallId": "019e4534-ba6d-7777-9efb-5ae6755f7208",
+                      "callerPhone": "+61480845459",
+                      "calledNumber": "{{ phoneNumber.number }}",
+                      "callerContext": "Caller requested to speak to a real person immediately.",
+                      "transferReason": "Caller explicitly asked to be transferred to a human team member.",
+                      "customer_number": "+61480845459"
+                    }
+                  }
+                },
+                "parameters": [
+                  {
+                    "key": "callType",
+                    "value": "{{ call.type }}"
+                  }
+                ]
+              }
+            ]
+          }
+        },
+        "2": {
+          "notes": "Active Twilio call context stored before routing caller to Angela/Vapi.",
+          "status": "active",
+          "twilioTo": "+61286093299",
+          "createdAt": "2026-05-20T11:45:38.638Z",
+          "expiresAt": "2026-05-20T12:45:38.638Z",
+          "updatedAt": "2026-05-20T11:45:38.639Z",
+          "twilioFrom": "+61480845459",
+          "callerPhone": "+61480845459",
+          "vapiSipTarget": "sip:naidupropertyconsultingservices@sip.vapi.ai",
+          "transferDestination": "+61433005110",
+          "twilioParentCallSid": "CAf92791da050899c341eb80dae4921017"
+        }
+      }
+    },
+    "scenario": {
+      "dlq": false,
+      "slots": null,
+      "dataloss": false,
+      "maxErrors": 3,
+      "autoCommit": true,
+      "roundtrips": 1,
+      "sequential": false,
+      "confidential": false,
+      "freshVariables": false,
+      "autoCommitTriggerLast": true
+    }
+  },
+  "scheduling": {
+    "type": "immediately",
+    "maximum_runs_per_minute": null
+  },
+  "interface": {
+    "input": [],
+    "output": []
+  }
+}

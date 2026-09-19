@@ -1,0 +1,55 @@
+# Cron bodies that write a deployment identity as a literal — FROZEN, not approved.
+#
+# Each line is `<jobname>\t<kind>` for the LAST `cron.schedule` /
+# `cron.alter_job(command := …)` of that job across the migrations, in the
+# order they apply. `check-cron-caller-names.mjs` fails on anything not listed
+# here, and also fails when a line here no longer matches anything — a
+# baseline that outlives what it froze stops being a ratchet and starts hiding
+# the next one.
+#
+# WHY THESE ARE FROZEN RATHER THAN FIXED
+#
+# Seventeen migration files carry one, all naming the prime
+# (`dduzbchuswwbefdunfct`). They are settled history: rewriting them would
+# re-run scheduling statements against every deployment in the fleet to change
+# something that, measured 14 Sep 2026, did not reach any of them —
+# `cron.job` on the NPC Client Dashboard holds ZERO commands carrying the
+# prime's ref or a JWT literal, and the prime's own three literal-host jobs
+# name the host they actually run on. Provisioning rewrites these bodies.
+#
+# WHAT THE RULE IS, FOR ANYTHING NEW
+#
+# An anon key is safe to PUBLISH and is not safe to AUTHENTICATE with, and a
+# project host is one deployment's address. Neither may be a literal in a body
+# every clone replays: use `cron_invoke_signed_function`, which signs per
+# deployment, or read the value from `vault.decrypted_secrets`.
+#
+# `sync-ghl-marketing-assets-6h` was on this list and is not any more. Its
+# function compared the presented bearer against the prime's literal anon key,
+# so on a clone — which sends its own — every run answered 401, and on the
+# prime too once the live job moved onto the signed invoker. That is the defect
+# this check exists to catch.
+
+agent-planner-run-scheduled	project-host:dduzbchuswwbefdunfct
+agent-task-runner-5min	jwt-literal
+agent-task-runner-5min	project-host:dduzbchuswwbefdunfct
+cleanup-stale-calls-hourly	jwt-literal
+cleanup-stale-calls-hourly	project-host:dduzbchuswwbefdunfct
+enrich-lead-attributions-30min	jwt-literal
+enrich-lead-attributions-30min	project-host:dduzbchuswwbefdunfct
+finance-portal-automations-hourly	jwt-literal
+finance-portal-automations-hourly	project-host:dduzbchuswwbefdunfct
+finance-portal-reminders-hourly	project-host:dduzbchuswwbefdunfct
+finance-portal-snooze-runner	jwt-literal
+finance-portal-snooze-runner	project-host:dduzbchuswwbefdunfct
+ghl-marketing-backfill-once	jwt-literal
+ghl-marketing-backfill-once	project-host:dduzbchuswwbefdunfct
+market-qa-subscriptions-run-due	project-host:dduzbchuswwbefdunfct
+migration-dispatcher-5s	jwt-literal
+migration-dispatcher-5s	project-host:dduzbchuswwbefdunfct
+outlook-webhook-renewal	jwt-literal
+outlook-webhook-renewal	project-host:dduzbchuswwbefdunfct
+process-scheduled-emails-every-minute	jwt-literal
+process-scheduled-emails-every-minute	project-host:dduzbchuswwbefdunfct
+renew-outlook-webhook-subscription	jwt-literal
+renew-outlook-webhook-subscription	project-host:dduzbchuswwbefdunfct

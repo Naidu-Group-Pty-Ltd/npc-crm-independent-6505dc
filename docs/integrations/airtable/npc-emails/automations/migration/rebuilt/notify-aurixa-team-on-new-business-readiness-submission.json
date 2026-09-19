@@ -1,0 +1,267 @@
+{
+ "baseId": "appFNPL7iYiuQyHAO",
+ "name": "Notify Aurixa Team on New Business Readiness Submission",
+ "description": null,
+ "trigger": {
+  "type": "recordCreated",
+  "inputs": {
+   "tableId": "tbl3VGRV7xBvSSGlq"
+  }
+ },
+ "nodes": [
+  {
+   "key": "wacQqFKqkZG6H2Ss5",
+   "type": "findRecords",
+   "inputs": {
+    "limit": 1,
+    "tableId": "tblaSuqLKa00rqdtu",
+    "queryType": "filtersObj",
+    "filtersObj": {
+     "obj": {
+      "operator": "and",
+      "operands": {
+       "tuple": [
+        {
+         "obj": {
+          "operator": "hasAnyOf",
+          "operands": {
+           "tuple": [
+            "fldUuGfjWiOFdjNed",
+            [
+             {
+              "$ref": "trigger",
+              "path": [
+               "id"
+              ]
+             }
+            ]
+           ]
+          }
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "key": "wacbcPQdxgR2XpqME",
+   "type": "sendEmail",
+   "inputs": {
+    "to": [
+     {
+      "template": [
+       "admin@aurixasystems.com.au"
+      ]
+     },
+     {
+      "template": [
+       "rugesh@aurixasystems.com.au"
+      ]
+     },
+     {
+      "template": [
+       "lavan@aurixasystems.com.au"
+      ]
+     },
+     {
+      "template": [
+       "arvinraj@aurixasystems.com.au"
+      ]
+     },
+     {
+      "template": [
+       "mithrubanbupathy@aurixasystems.com.au"
+      ]
+     }
+    ],
+    "subject": {
+     "template": [
+      "New Business Readiness Questionnaire Submitted"
+     ]
+    },
+    "message": {
+     "template": [
+      "A new Business Readiness Questionnaire has been submitted. Below are the key details:\n\n- **Applicant Name**: ",
+      {
+       "fn": "map",
+       "args": [
+        {
+         "fn": "map",
+         "args": [
+          {
+           "$ref": "wacQqFKqkZG6H2Ss5",
+           "path": [
+            "records"
+           ]
+          },
+          {
+           "fn": "propertyGetter",
+           "args": [
+            "cellValuesByFieldId"
+           ]
+          }
+         ]
+        },
+        {
+         "fn": "propertyGetter",
+         "args": [
+          "fldS2gIUFfhvUP0cP"
+         ]
+        }
+       ]
+      },
+      " ",
+      {
+       "fn": "map",
+       "args": [
+        {
+         "fn": "map",
+         "args": [
+          {
+           "$ref": "wacQqFKqkZG6H2Ss5",
+           "path": [
+            "records"
+           ]
+          },
+          {
+           "fn": "propertyGetter",
+           "args": [
+            "cellValuesByFieldId"
+           ]
+          }
+         ]
+        },
+        {
+         "fn": "propertyGetter",
+         "args": [
+          "fldvnsCjE8lW1bDG9"
+         ]
+        }
+       ]
+      },
+      "\n- **Organization**: ",
+      {
+       "fn": "map",
+       "args": [
+        {
+         "fn": "map",
+         "args": [
+          {
+           "$ref": "wacQqFKqkZG6H2Ss5",
+           "path": [
+            "records"
+           ]
+          },
+          {
+           "fn": "propertyGetter",
+           "args": [
+            "cellValuesByFieldId"
+           ]
+          }
+         ]
+        },
+        {
+         "fn": "propertyGetter",
+         "args": [
+          "fldJPpOlQ7v2EDKF4"
+         ]
+        }
+       ]
+      },
+      "\n- **Role**: ",
+      {
+       "$ref": "trigger",
+       "path": [
+        "cellValuesByFieldId",
+        "fldZAgr3wSdbGZn6E"
+       ]
+      },
+      "\n- **Decision Authority**: ",
+      {
+       "$ref": "trigger",
+       "path": [
+        "cellValuesByFieldId",
+        "fldlVZhfL8TczINmn",
+        "name"
+       ]
+      },
+      "\n- **Implementation Timeline**: ",
+      {
+       "$ref": "trigger",
+       "path": [
+        "cellValuesByFieldId",
+        "fldNMseKImzaJpnBD",
+        "name"
+       ]
+      },
+      "\n- **User Count**: ",
+      {
+       "$ref": "trigger",
+       "path": [
+        "cellValuesByFieldId",
+        "fldE7kw66WLvEUMYk",
+        "name"
+       ]
+      },
+      "\n- **Top Operational Problems**: ",
+      {
+       "fn": "map",
+       "args": [
+        {
+         "$ref": "trigger",
+         "path": [
+          "cellValuesByFieldId",
+          "fldz9G94r85lrNukk"
+         ]
+        },
+        {
+         "fn": "propertyGetter",
+         "args": [
+          "name"
+         ]
+        }
+       ]
+      },
+      "\n- **Required Capabilities**: ",
+      {
+       "fn": "map",
+       "args": [
+        {
+         "$ref": "trigger",
+         "path": [
+          "cellValuesByFieldId",
+          "fldjgACxdzxu4RjjN"
+         ]
+        },
+        {
+         "fn": "propertyGetter",
+         "args": [
+          "name"
+         ]
+        }
+       ]
+      },
+      "\n- **Preferred Next Step**: ",
+      {
+       "$ref": "trigger",
+       "path": [
+        "cellValuesByFieldId",
+        "fldjRJUbSRvk6wQv4",
+        "name"
+       ]
+      },
+      "\n\n",
+      {
+       "$ref": "trigger",
+       "path": [
+        "url"
+       ]
+      }
+     ]
+    }
+   }
+  }
+ ]
+}

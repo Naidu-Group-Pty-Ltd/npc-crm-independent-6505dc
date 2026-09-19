@@ -1,0 +1,2154 @@
+{
+  "assistant": "NPC Discovery Call Follow Up Test 2",
+  "assistantId": "c0bc54fd-a9fb-4970-822b-b471c198e43b",
+  "note": "System prompts are replaced by promptRef; the text is in ../prompts/<ref>.md. Everything else is the API response verbatim.",
+  "versionCount": 34,
+  "versions": [
+    {
+      "createdAt": "2026-03-04T08:07:50.324Z",
+      "data": {
+        "analysisPlan": {
+          "successEvaluationPlan": {
+            "enabled": false
+          },
+          "summaryPlan": {
+            "enabled": false
+          }
+        },
+        "createdAt": "2026-01-07T10:35:52.632Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "c0bc54fd-a9fb-4970-822b-b471c198e43b",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 29264,
+              "promptRef": "2b3a5be47da3473f",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "5934c762-0223-4112-bfb7-88931da17652"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up Test 2",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-03-04T08:07:50.298Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "3cd93f42-17a1-11f1-89dd-45996ff5b027"
+    },
+    {
+      "createdAt": "2026-03-04T07:55:23.232Z",
+      "data": {
+        "analysisPlan": {
+          "successEvaluationPlan": {
+            "enabled": false
+          },
+          "summaryPlan": {
+            "enabled": false
+          }
+        },
+        "createdAt": "2026-01-07T10:35:52.632Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "c0bc54fd-a9fb-4970-822b-b471c198e43b",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 28144,
+              "promptRef": "427370b73ad6e42f",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "5934c762-0223-4112-bfb7-88931da17652"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up Test 2",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-03-04T07:55:23.208Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "7f8be6f2-179f-11f1-8180-3fa8b207ca5a"
+    },
+    {
+      "createdAt": "2026-02-03T06:04:49.523Z",
+      "data": {
+        "analysisPlan": {
+          "successEvaluationPlan": {
+            "enabled": false
+          },
+          "summaryPlan": {
+            "enabled": false
+          }
+        },
+        "createdAt": "2026-01-07T10:35:52.632Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "c0bc54fd-a9fb-4970-822b-b471c198e43b",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 27421,
+              "promptRef": "e4bf6e431656858d",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "5934c762-0223-4112-bfb7-88931da17652"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up Test 2",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-02-03T06:04:49.509Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "3f91a432-00c6-11f1-a556-c32167726966"
+    },
+    {
+      "createdAt": "2026-02-03T05:56:33.640Z",
+      "data": {
+        "analysisPlan": {
+          "successEvaluationPlan": {
+            "enabled": false
+          },
+          "summaryPlan": {
+            "enabled": false
+          }
+        },
+        "backgroundDenoisingEnabled": true,
+        "createdAt": "2026-01-07T10:35:52.632Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "c0bc54fd-a9fb-4970-822b-b471c198e43b",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 27421,
+              "promptRef": "e4bf6e431656858d",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "5934c762-0223-4112-bfb7-88931da17652"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up Test 2",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-02-03T05:56:33.594Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "17ffbf72-00c5-11f1-bbc2-335845c0cb4b"
+    },
+    {
+      "createdAt": "2026-01-29T01:11:21.090Z",
+      "data": {
+        "analysisPlan": {
+          "successEvaluationPlan": {
+            "enabled": false
+          },
+          "summaryPlan": {
+            "enabled": false
+          }
+        },
+        "backgroundDenoisingEnabled": true,
+        "createdAt": "2026-01-07T10:35:52.632Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "c0bc54fd-a9fb-4970-822b-b471c198e43b",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 26712,
+              "promptRef": "2cdbb8a028e6275f",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "5934c762-0223-4112-bfb7-88931da17652"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up Test 2",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-29T01:11:21.060Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "6c0f1712-fcaf-11f0-bafc-f9bcb4ca5f55"
+    },
+    {
+      "createdAt": "2026-01-29T01:00:43.227Z",
+      "data": {
+        "analysisPlan": {
+          "successEvaluationPlan": {
+            "enabled": false
+          },
+          "summaryPlan": {
+            "enabled": false
+          }
+        },
+        "backgroundDenoisingEnabled": true,
+        "createdAt": "2026-01-07T10:35:52.632Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "c0bc54fd-a9fb-4970-822b-b471c198e43b",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 26712,
+              "promptRef": "2cdbb8a028e6275f",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4o-mini",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "5934c762-0223-4112-bfb7-88931da17652"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up Test 2",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-29T01:00:43.207Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "efdd12b2-fcad-11f0-9248-b348a48a8c8c"
+    },
+    {
+      "createdAt": "2026-01-12T09:14:03.283Z",
+      "data": {
+        "analysisPlan": {
+          "successEvaluationPlan": {
+            "enabled": false
+          },
+          "summaryPlan": {
+            "enabled": false
+          }
+        },
+        "backgroundDenoisingEnabled": true,
+        "createdAt": "2026-01-07T10:35:52.632Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "c0bc54fd-a9fb-4970-822b-b471c198e43b",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 26712,
+              "promptRef": "2cdbb8a028e6275f",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "5934c762-0223-4112-bfb7-88931da17652"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up Test 2",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-12T09:14:03.232Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "09d94722-ef97-11f0-a192-f316c8337246"
+    },
+    {
+      "createdAt": "2026-01-12T08:46:49.298Z",
+      "data": {
+        "analysisPlan": {
+          "successEvaluationPlan": {
+            "enabled": false
+          },
+          "summaryPlan": {
+            "enabled": false
+          }
+        },
+        "backgroundDenoisingEnabled": true,
+        "createdAt": "2026-01-07T10:35:52.632Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "c0bc54fd-a9fb-4970-822b-b471c198e43b",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 26735,
+              "promptRef": "a139dfa326eab749",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "5934c762-0223-4112-bfb7-88931da17652"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up Test 2",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-12T08:46:49.285Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "3beb1b21-ef93-11f0-9ccc-3581bdbdcb53"
+    },
+    {
+      "createdAt": "2026-01-12T08:34:07.207Z",
+      "data": {
+        "analysisPlan": {
+          "successEvaluationPlan": {
+            "enabled": false
+          },
+          "summaryPlan": {
+            "enabled": false
+          }
+        },
+        "backgroundDenoisingEnabled": true,
+        "createdAt": "2026-01-07T10:35:52.632Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "c0bc54fd-a9fb-4970-822b-b471c198e43b",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 26666,
+              "promptRef": "261bdec467e5031f",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "5934c762-0223-4112-bfb7-88931da17652"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up Test 2",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-12T08:34:07.178Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "75ad3f72-ef91-11f0-8fee-d311d8be4d40"
+    },
+    {
+      "createdAt": "2026-01-12T08:19:04.997Z",
+      "data": {
+        "analysisPlan": {
+          "successEvaluationPlan": {
+            "enabled": false
+          },
+          "summaryPlan": {
+            "enabled": false
+          }
+        },
+        "backgroundDenoisingEnabled": true,
+        "createdAt": "2026-01-07T10:35:52.632Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "c0bc54fd-a9fb-4970-822b-b471c198e43b",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 26047,
+              "promptRef": "bfcd908ea350c7d4",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "5934c762-0223-4112-bfb7-88931da17652"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up Test 2",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-12T08:19:04.954Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "5beac642-ef8f-11f0-9d77-e159c56efe17"
+    },
+    {
+      "createdAt": "2026-01-12T08:14:35.560Z",
+      "data": {
+        "analysisPlan": {
+          "successEvaluationPlan": {
+            "enabled": false
+          },
+          "summaryPlan": {
+            "enabled": false
+          }
+        },
+        "backgroundDenoisingEnabled": true,
+        "createdAt": "2026-01-07T10:35:52.632Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "c0bc54fd-a9fb-4970-822b-b471c198e43b",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 25985,
+              "promptRef": "e419981b9b3660e4",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "5934c762-0223-4112-bfb7-88931da17652"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up Test 2",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-12T08:14:35.532Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "bb51f372-ef8e-11f0-95cc-57fceca22853"
+    },
+    {
+      "createdAt": "2026-01-12T08:03:15.383Z",
+      "data": {
+        "analysisPlan": {
+          "successEvaluationPlan": {
+            "enabled": false
+          },
+          "summaryPlan": {
+            "enabled": false
+          }
+        },
+        "backgroundDenoisingEnabled": true,
+        "createdAt": "2026-01-07T10:35:52.632Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "c0bc54fd-a9fb-4970-822b-b471c198e43b",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 27584,
+              "promptRef": "b0bdabf1a7c8bcb3",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "5934c762-0223-4112-bfb7-88931da17652"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up Test 2",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-12T08:03:15.364Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "25e75472-ef8d-11f0-a79e-6130afea8bb4"
+    },
+    {
+      "createdAt": "2026-01-12T07:55:22.120Z",
+      "data": {
+        "analysisPlan": {
+          "successEvaluationPlan": {
+            "enabled": false
+          },
+          "summaryPlan": {
+            "enabled": false
+          }
+        },
+        "backgroundDenoisingEnabled": true,
+        "createdAt": "2026-01-07T10:35:52.632Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "c0bc54fd-a9fb-4970-822b-b471c198e43b",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 27111,
+              "promptRef": "10dbbedfb76aa724",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "5934c762-0223-4112-bfb7-88931da17652"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up Test 2",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-12T07:55:22.081Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "0bd0f972-ef8c-11f0-8b60-dbcdbbf2d942"
+    },
+    {
+      "createdAt": "2026-01-12T07:54:04.207Z",
+      "data": {
+        "analysisPlan": {
+          "successEvaluationPlan": {
+            "enabled": false
+          },
+          "summaryPlan": {
+            "enabled": false
+          }
+        },
+        "backgroundDenoisingEnabled": true,
+        "createdAt": "2026-01-07T10:35:52.632Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "c0bc54fd-a9fb-4970-822b-b471c198e43b",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 27128,
+              "promptRef": "908aa06692bda18d",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "5934c762-0223-4112-bfb7-88931da17652"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up Test 2",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-12T07:54:04.184Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "dd608bf1-ef8b-11f0-9cef-c3544f66ea95"
+    },
+    {
+      "createdAt": "2026-01-12T07:45:04.457Z",
+      "data": {
+        "analysisPlan": {
+          "successEvaluationPlan": {
+            "enabled": false
+          },
+          "summaryPlan": {
+            "enabled": false
+          }
+        },
+        "backgroundDenoisingEnabled": true,
+        "createdAt": "2026-01-07T10:35:52.632Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "c0bc54fd-a9fb-4970-822b-b471c198e43b",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 27138,
+              "promptRef": "4636f0de0a6a1dd9",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "5934c762-0223-4112-bfb7-88931da17652"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up Test 2",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-12T07:45:04.441Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "9ba93b92-ef8a-11f0-80ac-2fb149a68c84"
+    },
+    {
+      "createdAt": "2026-01-12T06:48:37.535Z",
+      "data": {
+        "analysisPlan": {
+          "successEvaluationPlan": {
+            "enabled": false
+          },
+          "summaryPlan": {
+            "enabled": false
+          }
+        },
+        "backgroundDenoisingEnabled": true,
+        "createdAt": "2026-01-07T10:35:52.632Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "c0bc54fd-a9fb-4970-822b-b471c198e43b",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 25593,
+              "promptRef": "51b8768619947132",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "5934c762-0223-4112-bfb7-88931da17652"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up Test 2",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-12T06:48:37.521Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "b8e5f2f2-ef82-11f0-adc8-cb6bf5824ead"
+    },
+    {
+      "createdAt": "2026-01-12T06:41:15.184Z",
+      "data": {
+        "analysisPlan": {
+          "successEvaluationPlan": {
+            "enabled": false
+          },
+          "summaryPlan": {
+            "enabled": false
+          }
+        },
+        "backgroundDenoisingEnabled": true,
+        "createdAt": "2026-01-07T10:35:52.632Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "c0bc54fd-a9fb-4970-822b-b471c198e43b",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 25977,
+              "promptRef": "7d017bbba9e0f1ee",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "5934c762-0223-4112-bfb7-88931da17652"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up Test 2",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-12T06:41:15.149Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "b13c63f2-ef81-11f0-9ce7-2b34291921a3"
+    },
+    {
+      "createdAt": "2026-01-12T06:40:41.534Z",
+      "data": {
+        "analysisPlan": {
+          "successEvaluationPlan": {
+            "enabled": false
+          },
+          "summaryPlan": {
+            "enabled": false
+          }
+        },
+        "backgroundDenoisingEnabled": true,
+        "createdAt": "2026-01-07T10:35:52.632Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "c0bc54fd-a9fb-4970-822b-b471c198e43b",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 25977,
+              "promptRef": "7d017bbba9e0f1ee",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "5934c762-0223-4112-bfb7-88931da17652"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up Test 2",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-12T06:40:41.500Z",
+        "voice": {
+          "model": "eleven_multilingual_v2",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "9d2df5e2-ef81-11f0-b3ca-af62b0ec87c7"
+    },
+    {
+      "createdAt": "2026-01-12T06:26:53.689Z",
+      "data": {
+        "analysisPlan": {
+          "successEvaluationPlan": {
+            "enabled": false
+          },
+          "summaryPlan": {
+            "enabled": false
+          }
+        },
+        "backgroundDenoisingEnabled": true,
+        "createdAt": "2026-01-07T10:35:52.632Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "c0bc54fd-a9fb-4970-822b-b471c198e43b",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 25977,
+              "promptRef": "7d017bbba9e0f1ee",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "5934c762-0223-4112-bfb7-88931da17652"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up Test 2",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-12T06:26:53.658Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "afbed691-ef7f-11f0-b7cc-ed061d1e3808"
+    },
+    {
+      "createdAt": "2026-01-12T06:21:21.152Z",
+      "data": {
+        "analysisPlan": {
+          "successEvaluationPlan": {
+            "enabled": false
+          },
+          "summaryPlan": {
+            "enabled": false
+          }
+        },
+        "backgroundDenoisingEnabled": true,
+        "createdAt": "2026-01-07T10:35:52.632Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "c0bc54fd-a9fb-4970-822b-b471c198e43b",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 25452,
+              "promptRef": "7809b550566c5aa2",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "5934c762-0223-4112-bfb7-88931da17652"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up Test 2",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-12T06:21:21.123Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "e989b802-ef7e-11f0-8ec2-6140b8584502"
+    },
+    {
+      "createdAt": "2026-01-12T05:53:58.532Z",
+      "data": {
+        "analysisPlan": {
+          "successEvaluationPlan": {
+            "enabled": false
+          },
+          "summaryPlan": {
+            "enabled": false
+          }
+        },
+        "backgroundDenoisingEnabled": true,
+        "createdAt": "2026-01-07T10:35:52.632Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "c0bc54fd-a9fb-4970-822b-b471c198e43b",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 24929,
+              "promptRef": "9d9567109dcd39da",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "5934c762-0223-4112-bfb7-88931da17652"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up Test 2",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-12T05:53:58.500Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "1675cc42-ef7b-11f0-af0e-81055b77b2ea"
+    },
+    {
+      "createdAt": "2026-01-12T05:39:39.319Z",
+      "data": {
+        "analysisPlan": {
+          "successEvaluationPlan": {
+            "enabled": false
+          },
+          "summaryPlan": {
+            "enabled": false
+          }
+        },
+        "backgroundDenoisingEnabled": true,
+        "createdAt": "2026-01-07T10:35:52.632Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "c0bc54fd-a9fb-4970-822b-b471c198e43b",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 23105,
+              "promptRef": "e54eebcb2635dceb",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "5934c762-0223-4112-bfb7-88931da17652"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up Test 2",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-12T05:39:39.300Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "16544c72-ef79-11f0-b346-6352a3191c06"
+    },
+    {
+      "createdAt": "2026-01-12T05:21:43.643Z",
+      "data": {
+        "analysisPlan": {
+          "successEvaluationPlan": {
+            "enabled": false
+          },
+          "summaryPlan": {
+            "enabled": false
+          }
+        },
+        "backgroundDenoisingEnabled": true,
+        "createdAt": "2026-01-07T10:35:52.632Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "c0bc54fd-a9fb-4970-822b-b471c198e43b",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 23096,
+              "promptRef": "e2f2d6a0bfade4d7",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "5934c762-0223-4112-bfb7-88931da17652"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up Test 2",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-12T05:21:43.617Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "952d2ab2-ef76-11f0-a68f-83975bbe90df"
+    },
+    {
+      "createdAt": "2026-01-12T04:53:22.293Z",
+      "data": {
+        "analysisPlan": {
+          "successEvaluationPlan": {
+            "enabled": false
+          },
+          "summaryPlan": {
+            "enabled": false
+          }
+        },
+        "backgroundDenoisingEnabled": true,
+        "createdAt": "2026-01-07T10:35:52.632Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "c0bc54fd-a9fb-4970-822b-b471c198e43b",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 19430,
+              "promptRef": "92107a6dfe8c8287",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "5934c762-0223-4112-bfb7-88931da17652"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up Test 2",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-12T04:53:22.262Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "9f179b42-ef72-11f0-96b2-73f095420500"
+    },
+    {
+      "createdAt": "2026-01-12T04:47:25.472Z",
+      "data": {
+        "analysisPlan": {
+          "successEvaluationPlan": {
+            "enabled": false
+          },
+          "summaryPlan": {
+            "enabled": false
+          }
+        },
+        "backgroundDenoisingEnabled": true,
+        "createdAt": "2026-01-07T10:35:52.632Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "c0bc54fd-a9fb-4970-822b-b471c198e43b",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 15497,
+              "promptRef": "0fb16bcfe191111f",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "5934c762-0223-4112-bfb7-88931da17652"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up Test 2",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-12T04:47:25.459Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "ca693201-ef71-11f0-a304-b364ff85b8d1"
+    },
+    {
+      "createdAt": "2026-01-12T04:36:40.565Z",
+      "data": {
+        "analysisPlan": {
+          "successEvaluationPlan": {
+            "enabled": false
+          },
+          "summaryPlan": {
+            "enabled": false
+          }
+        },
+        "backgroundDenoisingEnabled": true,
+        "createdAt": "2026-01-07T10:35:52.632Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "c0bc54fd-a9fb-4970-822b-b471c198e43b",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 15368,
+              "promptRef": "4f3252c05e7b11b2",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "5934c762-0223-4112-bfb7-88931da17652"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up Test 2",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-12T04:36:40.539Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "4a043252-ef70-11f0-91a5-67df8222e8fa"
+    },
+    {
+      "createdAt": "2026-01-12T04:36:19.026Z",
+      "data": {
+        "analysisPlan": {
+          "successEvaluationPlan": {
+            "enabled": false
+          },
+          "summaryPlan": {
+            "enabled": false
+          }
+        },
+        "backgroundDenoisingEnabled": true,
+        "createdAt": "2026-01-07T10:35:52.632Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "c0bc54fd-a9fb-4970-822b-b471c198e43b",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 15368,
+              "promptRef": "4f3252c05e7b11b2",
+              "role": "system"
+            }
+          ],
+          "model": "anthropic/claude-haiku-4.5",
+          "provider": "openrouter",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "5934c762-0223-4112-bfb7-88931da17652"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up Test 2",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-12T04:36:19.009Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "3d2d9b22-ef70-11f0-9f1b-af5eee70524a"
+    },
+    {
+      "createdAt": "2026-01-12T04:35:38.344Z",
+      "data": {
+        "analysisPlan": {
+          "successEvaluationPlan": {
+            "enabled": false
+          },
+          "summaryPlan": {
+            "enabled": false
+          }
+        },
+        "backgroundDenoisingEnabled": true,
+        "createdAt": "2026-01-07T10:35:52.632Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "c0bc54fd-a9fb-4970-822b-b471c198e43b",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 15368,
+              "promptRef": "4f3252c05e7b11b2",
+              "role": "system"
+            }
+          ],
+          "model": "anthropic/claude-haiku-4.5",
+          "provider": "openrouter",
+          "temperature": 0.9,
+          "toolIds": [
+            "32549379-811e-415b-8f8d-d1c481cd4aed",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "5934c762-0223-4112-bfb7-88931da17652"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up Test 2",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-12T04:35:38.332Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "24ee0682-ef70-11f0-b76a-65db4cde61dd"
+    },
+    {
+      "createdAt": "2026-01-12T04:35:04.227Z",
+      "data": {
+        "analysisPlan": {
+          "successEvaluationPlan": {
+            "enabled": false
+          },
+          "summaryPlan": {
+            "enabled": false
+          }
+        },
+        "backgroundDenoisingEnabled": true,
+        "createdAt": "2026-01-07T10:35:52.632Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "c0bc54fd-a9fb-4970-822b-b471c198e43b",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 15368,
+              "promptRef": "4f3252c05e7b11b2",
+              "role": "system"
+            }
+          ],
+          "model": "anthropic/claude-haiku-4.5",
+          "provider": "openrouter",
+          "temperature": 0.9,
+          "toolIds": [
+            "32549379-811e-415b-8f8d-d1c481cd4aed",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "5934c762-0223-4112-bfb7-88931da17652"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up Test 2",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-12T04:35:04.206Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "10980822-ef70-11f0-a5c6-f75bcd52b7cf"
+    },
+    {
+      "createdAt": "2026-01-12T04:33:37.391Z",
+      "data": {
+        "analysisPlan": {
+          "successEvaluationPlan": {
+            "enabled": false
+          },
+          "summaryPlan": {
+            "enabled": false
+          }
+        },
+        "backgroundDenoisingEnabled": true,
+        "createdAt": "2026-01-07T10:35:52.632Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "c0bc54fd-a9fb-4970-822b-b471c198e43b",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 12775,
+              "promptRef": "4eaa28e0696c1fbc",
+              "role": "system"
+            }
+          ],
+          "model": "anthropic/claude-haiku-4.5",
+          "provider": "openrouter",
+          "temperature": 0.9,
+          "toolIds": [
+            "32549379-811e-415b-8f8d-d1c481cd4aed",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "5934c762-0223-4112-bfb7-88931da17652"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up Test 2",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-12T04:33:37.373Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "dcd60ff2-ef6f-11f0-af8a-05dc3bcc72a3"
+    },
+    {
+      "createdAt": "2026-01-08T11:00:00.653Z",
+      "data": {
+        "analysisPlan": {
+          "successEvaluationPlan": {
+            "enabled": false
+          },
+          "summaryPlan": {
+            "enabled": false
+          }
+        },
+        "backgroundDenoisingEnabled": true,
+        "createdAt": "2026-01-07T10:35:52.632Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "c0bc54fd-a9fb-4970-822b-b471c198e43b",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 41750,
+              "promptRef": "f16d37a77b6d6cef",
+              "role": "system"
+            }
+          ],
+          "model": "anthropic/claude-haiku-4.5",
+          "provider": "openrouter",
+          "temperature": 0.9,
+          "toolIds": [
+            "32549379-811e-415b-8f8d-d1c481cd4aed",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "5934c762-0223-4112-bfb7-88931da17652"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up Test 2",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-08T11:00:00.456Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "2d7c1bd2-ec81-11f0-bd95-d7f3ef7f7602"
+    },
+    {
+      "createdAt": "2026-01-08T10:27:52.846Z",
+      "data": {
+        "analysisPlan": {
+          "successEvaluationPlan": {
+            "enabled": false
+          },
+          "summaryPlan": {
+            "enabled": false
+          }
+        },
+        "backgroundDenoisingEnabled": true,
+        "createdAt": "2026-01-07T10:35:52.632Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "c0bc54fd-a9fb-4970-822b-b471c198e43b",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 40917,
+              "promptRef": "e524b534b13e5c1b",
+              "role": "system"
+            }
+          ],
+          "model": "anthropic/claude-haiku-4.5",
+          "provider": "openrouter",
+          "temperature": 0.9,
+          "toolIds": [
+            "32549379-811e-415b-8f8d-d1c481cd4aed",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "5934c762-0223-4112-bfb7-88931da17652"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up Test 2",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-08T10:27:52.654Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "b06bf3d2-ec7c-11f0-af0e-81055b77b2ea"
+    },
+    {
+      "createdAt": "2026-01-08T10:23:43.298Z",
+      "data": {
+        "analysisPlan": {
+          "successEvaluationPlan": {
+            "enabled": false
+          },
+          "summaryPlan": {
+            "enabled": false
+          }
+        },
+        "backgroundDenoisingEnabled": true,
+        "createdAt": "2026-01-07T10:35:52.632Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "c0bc54fd-a9fb-4970-822b-b471c198e43b",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 40878,
+              "promptRef": "e6e9cacf26edb0c3",
+              "role": "system"
+            }
+          ],
+          "model": "anthropic/claude-haiku-4.5",
+          "provider": "openrouter",
+          "temperature": 0.9,
+          "toolIds": [
+            "32549379-811e-415b-8f8d-d1c481cd4aed",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "5934c762-0223-4112-bfb7-88931da17652"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up Test 2",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-08T10:23:43.113Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "1badf312-ec7c-11f0-8365-73a487fdac0a"
+    },
+    {
+      "createdAt": "2026-01-08T10:20:48.354Z",
+      "data": {
+        "analysisPlan": {
+          "successEvaluationPlan": {
+            "enabled": false
+          },
+          "summaryPlan": {
+            "enabled": false
+          }
+        },
+        "backgroundDenoisingEnabled": true,
+        "createdAt": "2026-01-07T10:35:52.632Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "c0bc54fd-a9fb-4970-822b-b471c198e43b",
+        "maxDurationSeconds": 929,
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 40874,
+              "promptRef": "87de0cc743d7f020",
+              "role": "system"
+            }
+          ],
+          "model": "anthropic/claude-haiku-4.5",
+          "provider": "openrouter",
+          "temperature": 0.9,
+          "toolIds": [
+            "32549379-811e-415b-8f8d-d1c481cd4aed",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "5934c762-0223-4112-bfb7-88931da17652"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up Test 2",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-08T10:20:48.179Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "b367c422-ec7b-11f0-82de-8f8836925c1c"
+    }
+  ]
+}

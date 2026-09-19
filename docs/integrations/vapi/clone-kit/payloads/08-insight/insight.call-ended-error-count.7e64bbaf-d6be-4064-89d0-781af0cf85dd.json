@@ -1,0 +1,22 @@
+{
+  "name": "Call Ended (Error) Count",
+  "queries": [
+    {
+      "filters": [
+        {
+          "column": "status",
+          "operator": "=",
+          "value": "fail"
+        }
+      ],
+      "on": "call.ended",
+      "operation": "count",
+      "table": "events",
+      "type": "vapiql-json"
+    }
+  ],
+  "timeRange": {
+    "start": "-1h"
+  },
+  "type": "text"
+}

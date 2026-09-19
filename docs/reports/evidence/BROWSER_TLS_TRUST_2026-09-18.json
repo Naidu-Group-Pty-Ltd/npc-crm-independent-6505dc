@@ -1,0 +1,21 @@
+{
+  "purpose": "S5/S6 §5 — establish the approved TLS configuration for authenticated journey testing, by measurement. The earlier probe's ignoreHTTPSErrors context BYPASSED certificate validation; it isolated the failing layer and established no trust.",
+  "measuredAt": "2026-09-18T07:2xZ (two runs, minutes apart, this session)",
+  "probe": "scripts/verify/probe-browser-tls.mjs — Playwright, executablePath /opt/pw-browsers/chromium-1194/chrome-linux/chrome, DEFAULT context, certificate validation ON, no credential sent",
+  "finding": "/root/.ccr/README.md states the browser NSS store is 'already set up'; certutil listed ~/.pki/nssdb EMPTY. That empty store is why every default-context navigation failed ERR_CERT_AUTHORITY_INVALID while curl (which trusts the bundle via CA env vars) answered normally.",
+  "configuration": "All 154 certificates of /root/.ccr/ca-bundle.crt split and imported into sql:$HOME/.pki/nssdb with certutil -A -t 'C,,' (152 distinct anchors after de-duplication) — the browser now trusts exactly the bundle every other tool in this environment trusts, and nothing else. No validation setting was weakened anywhere.",
+  "before_import": {
+    "validationOn": true,
+    "https://example.com/": "net::ERR_CERT_AUTHORITY_INVALID",
+    "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/": "net::ERR_CERT_AUTHORITY_INVALID"
+  },
+  "after_import": {
+    "launched": true,
+    "version": "141.0.7390.37",
+    "validationOn": true,
+    "https://example.com/": { "status": 200 },
+    "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/": { "status": 404 }
+  },
+  "reading": "With validation ON the control host answers 200 and the Supabase functions root answers 404 — the correct answer for an unauthenticated GET to a bare functions root. The browser journey (R1–R11) can therefore run with certificate validation enforced end to end; ignoreHTTPSErrors is retired from the route and survives only as a labelled layer-isolation diagnostic in probe-browser.mjs.",
+  "caveat": "The NSS import lives in this container and does not survive a fresh session; a new session re-runs the two commands recorded in probe-browser-tls.mjs. Reachability is not authorisation: what the journey points AT still needs the authorised isolated environment."
+}

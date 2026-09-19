@@ -1,0 +1,18 @@
+{
+  "createdAt": "2026-01-31T08:01:39.887Z",
+  "id": "ae35b1f3-25c4-4620-ac13-525a58da96c9",
+  "name": "NPC Services",
+  "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+  "provider": "vapi",
+  "server": {
+    "headers": {
+      "x-vapi-webhook-secret": "{{REDACTED:VAPI_WEBHOOK_SECRET}}"
+    },
+    "timeoutSeconds": 20,
+    "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+  },
+  "sipUri": "sip:naidupropertyconsultingservices@sip.vapi.ai",
+  "squadId": "a9656ea1-3575-4ac6-b985-fd138be06cc5",
+  "status": "active",
+  "updatedAt": "2026-07-22T05:43:35.622Z"
+}

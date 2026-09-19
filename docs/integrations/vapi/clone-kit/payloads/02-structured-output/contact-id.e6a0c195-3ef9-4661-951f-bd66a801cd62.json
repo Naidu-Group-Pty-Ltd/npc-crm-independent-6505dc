@@ -1,0 +1,9 @@
+{
+  "description": "GHL contact id",
+  "name": "contact_id",
+  "schema": {
+    "type": "string"
+  },
+  "type": "ai",
+  "workflowIds": []
+}

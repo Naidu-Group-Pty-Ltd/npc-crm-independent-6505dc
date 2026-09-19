@@ -1,0 +1,132 @@
+{
+  "id": 580749,
+  "name": "GHL Contact Details",
+  "teamId": 528268,
+  "spec": [
+    {
+      "name": "vapiCallId",
+      "label": "Vapi call ID",
+      "help": "",
+      "type": "text",
+      "default": null,
+      "required": false,
+      "multiline": false
+    },
+    {
+      "name": "callerPhone",
+      "label": "Caller phone",
+      "help": "",
+      "type": "text",
+      "default": null,
+      "required": false,
+      "multiline": false
+    },
+    {
+      "name": "contactId",
+      "label": "Contact ID",
+      "help": "",
+      "type": "text",
+      "default": null,
+      "required": false,
+      "multiline": false
+    },
+    {
+      "name": "firstName",
+      "label": "First name",
+      "help": "",
+      "type": "text",
+      "default": null,
+      "required": false,
+      "multiline": false
+    },
+    {
+      "name": "fullName",
+      "label": "Full name",
+      "help": "",
+      "type": "text",
+      "default": null,
+      "required": false,
+      "multiline": false
+    },
+    {
+      "name": "phone",
+      "label": "Phone",
+      "help": "",
+      "type": "text",
+      "default": null,
+      "required": false,
+      "multiline": false
+    },
+    {
+      "name": "contactState",
+      "label": "Contact state",
+      "help": "",
+      "type": "text",
+      "default": null,
+      "required": false,
+      "multiline": false
+    },
+    {
+      "name": "contactFound",
+      "label": "Contact found",
+      "help": "",
+      "type": "boolean",
+      "required": false
+    },
+    {
+      "name": "contactCreated",
+      "label": "Contact created",
+      "help": "",
+      "type": "boolean",
+      "required": false
+    },
+    {
+      "name": "confirmedIntent",
+      "label": "Confirmed intent",
+      "help": "",
+      "type": "text",
+      "default": null,
+      "required": false,
+      "multiline": false
+    },
+    {
+      "name": "callerReason",
+      "label": "Caller reason",
+      "help": "",
+      "type": "text",
+      "default": null,
+      "required": false,
+      "multiline": false
+    },
+    {
+      "name": "handoffReady",
+      "label": "Handoff ready",
+      "help": "",
+      "type": "boolean",
+      "required": false
+    },
+    {
+      "name": "source",
+      "label": "Source",
+      "help": "",
+      "type": "text",
+      "default": null,
+      "required": false,
+      "multiline": false
+    },
+    {
+      "name": "createdAt",
+      "label": "Created at",
+      "help": "",
+      "type": "date",
+      "required": false
+    },
+    {
+      "name": "updatedAt",
+      "label": "Updated at",
+      "help": "",
+      "type": "date",
+      "required": false
+    }
+  ]
+}

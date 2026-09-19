@@ -1,0 +1,184 @@
+name: Apply a migration
+
+# Applies ONE named migration file to the Supabase project, on request.
+#
+# ## Why this is not `supabase db push`
+#
+# `supabase_migrations.schema_migrations` in this project does not record what
+# has actually been applied. Measured on 2026-08-13: the ledger called 133
+# migrations pending, and of the 93 tables and 183 functions those files
+# declare, all but one family already existed. Migrations here have been applied
+# through routes that record nothing, so the ledger under-reports by roughly two
+# orders of magnitude.
+#
+# `db push` trusts that ledger. Running it would replay ~130 already-applied
+# migrations, including data mutations — `listing_image_chrome_purge`,
+# `aml_record_classification_correction` — where a second application is not a
+# no-op. So this workflow applies exactly the one file it is given, and nothing
+# else. Deciding *which* file is a human judgement made before dispatch, not a
+# thing this workflow infers.
+#
+# ## Why it chunks
+#
+# The seeded template catalogue is a single ~19 MB INSERT carrying 393 rows of
+# schema JSON. That is too large for one Management API request, so a statement
+# of that shape is split on tuple boundaries and sent as several statements that
+# each carry the file's own ON CONFLICT clause. The split is verified by
+# reassembly before anything is sent: if the rebuilt tuple region is not
+# byte-identical to the original, the job fails without touching the database.
+#
+# Anything smaller is sent whole, unmodified.
+#
+# ## Two routes, and the narrower one wins
+#
+# Given `SUPABASE_DB_URL` — a session-pooler connection string for this
+# deployment's own database — the file is applied with `psql` in one piece and
+# nothing above is used: there is no request-size ceiling to chunk around.
+# Given only `SUPABASE_ACCESS_TOKEN`, the Management API route runs as before.
+#
+# That preference is a security decision, not a convenience. A Supabase
+# personal access token cannot be minted through any API — it is created by
+# hand in the dashboard — and a classic one carries the whole account: every
+# organization and project the account can reach, including ones created after
+# the token was issued. It belongs in the prime and in Mission Control, and
+# never in a tenant's repository. A database URL reaches one database, is minted
+# per project at creation, and can be rotated for one clone without touching
+# any other.
+#
+# ## Idempotence is the file's job, not this workflow's
+#
+# Chunks are separate statements, so a failure part-way leaves earlier chunks
+# applied. That is safe for the catalogue seed because it upserts on
+# (slug, version). Do not point this at a file that is not idempotent without
+# reading it first.
+
+on:
+  workflow_dispatch:
+    inputs:
+      file:
+        description: 'Migration file path, relative to the repo root'
+        required: true
+        type: string
+        default: supabase/migrations/20260812090000_seed_template_library_v5_borrowing_capacity_portfolio.sql
+      record_version:
+        description: 'Record the file version in schema_migrations when it succeeds'
+        required: false
+        type: boolean
+        default: true
+      tuples_per_chunk:
+        description: 'Rows per statement when a large INSERT has to be split'
+        required: false
+        type: string
+        # 10 puts the catalogue seed's largest statement at ~1.1 MB. The rows
+        # vary by an order of magnitude in size, so this is set from the
+        # measured worst case rather than from the average.
+        default: '10'
+
+permissions:
+  contents: read
+
+# One writer at a time, and never cancel a run mid-way: a half-applied set of
+# chunks is worse than a late one.
+concurrency:
+  group: apply-migration
+  cancel-in-progress: false
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 20
+
+      - name: Require an explicit target project
+        env:
+          # The default is scoped to the repository it is a default FOR. Written
+          # bare it is a landmine in every mirror of this repo: a clone with no
+          # variable set would apply ITS migrations to the prime's production
+          # database. Anywhere else, an unset variable fails the run.
+          PROJECT_REF: ${{ vars.SUPABASE_PROJECT_REF || (github.repository == 'Naidu-Group-Pty-Ltd/npc-property-dashbord' && 'dduzbchuswwbefdunfct' || '') }}
+        run: |
+          if [ -z "${PROJECT_REF:-}" ]; then
+            echo '::error title=No target project::Repository variable SUPABASE_PROJECT_REF is not set. Set it to THIS deployment'"'"'s own project ref before applying a migration.'
+            exit 1
+          fi
+          echo "Target project: $PROJECT_REF"
+
+      - name: Choose a route to the database
+        id: route
+        env:
+          DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          # Two ways in, and the narrower one wins.
+          #
+          # SUPABASE_DB_URL is a Postgres session-pooler connection string for
+          # THIS deployment's own database. It reaches one database and nothing
+          # else — not another project, not billing, not the project's own
+          # deletion — and Supabase mints it per project at creation, so
+          # Mission Control can distribute it to every clone without a human
+          # minting anything. It also has no request-size ceiling, which is why
+          # a 39 MB seed goes in as one file instead of 55 chunked calls.
+          #
+          # SUPABASE_ACCESS_TOKEN is a Management API personal access token.
+          # A classic one carries the whole account — every organization, every
+          # project, including ones created after it was issued — so it belongs
+          # in the prime and in Mission Control, never in a tenant repository.
+          if [ -n "${DB_URL:-}" ]; then
+            echo 'route=psql' >> "$GITHUB_OUTPUT"
+          elif [ -n "${TOKEN:-}" ]; then
+            echo 'route=api' >> "$GITHUB_OUTPUT"
+          else
+            echo '::error title=No credential::Neither SUPABASE_DB_URL nor SUPABASE_ACCESS_TOKEN is set. Mission Control distributes the first to every provisioned clone; add it in Settings → Secrets → Actions if this repository has neither.'
+            exit 1
+          fi
+
+      - name: Apply over psql
+        if: steps.route.outputs.route == 'psql'
+        env:
+          PGCONN: ${{ secrets.SUPABASE_DB_URL }}
+          FILE: ${{ inputs.file }}
+          RECORD_VERSION: ${{ inputs.record_version }}
+        run: |
+          set -euo pipefail
+          psql --version
+          test -f "$FILE" || { echo "::error title=No such file::$FILE"; exit 1; }
+          # ON_ERROR_STOP and no --single-transaction, matching what the API
+          # route does: statements are applied in order and the run stops at the
+          # first error, leaving what came before it applied. Idempotence is the
+          # file's job either way, and a migration that uses CREATE INDEX
+          # CONCURRENTLY cannot be wrapped in a transaction at all.
+          psql "$PGCONN" -v ON_ERROR_STOP=1 -f "$FILE"
+          if [ "${RECORD_VERSION}" = 'true' ]; then
+            base="$(basename "$FILE" .sql)"
+            version="${base%%_*}"
+            name="${base#*_}"
+            case "$version" in
+              [0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9][0-9]) ;;
+              *) echo "::notice title=Version not recorded::$base does not start with a 14-digit version"; version='' ;;
+            esac
+            if [ -n "$version" ]; then
+              psql "$PGCONN" -v ON_ERROR_STOP=1 \
+                -v version="$version" -v name="$name" \
+                -c "insert into supabase_migrations.schema_migrations (version, name) select :'version', :'name' where not exists (select 1 from supabase_migrations.schema_migrations where version = :'version');"
+              echo "Recorded $version in schema_migrations."
+            fi
+          fi
+          {
+            echo "### Applied \`$FILE\`"
+            echo
+            echo "- over psql, in one file"
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Apply over the Management API
+        if: steps.route.outputs.route == 'api'
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          PROJECT_REF: ${{ vars.SUPABASE_PROJECT_REF || (github.repository == 'Naidu-Group-Pty-Ltd/npc-property-dashbord' && 'dduzbchuswwbefdunfct' || '') }}
+          FILE: ${{ inputs.file }}
+          RECORD_VERSION: ${{ inputs.record_version }}
+          TUPLES_PER_CHUNK: ${{ inputs.tuples_per_chunk }}
+        run: node .github/scripts/apply-migration.mjs

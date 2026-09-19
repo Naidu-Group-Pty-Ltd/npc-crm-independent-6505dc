@@ -1,0 +1,16 @@
+{
+  "name": "Tool Failed Count",
+  "queries": [
+    {
+      "filters": [],
+      "on": "assistant.tool.failed",
+      "operation": "count",
+      "table": "events",
+      "type": "vapiql-json"
+    }
+  ],
+  "timeRange": {
+    "start": "-1h"
+  },
+  "type": "text"
+}

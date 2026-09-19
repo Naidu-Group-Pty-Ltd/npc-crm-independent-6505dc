@@ -1,0 +1,11 @@
+{
+  "description": "Capturing the exact appointment time is essential for scheduling.",
+  "name": "Appt Time Selected",
+  "schema": {
+    "description": "ISO 8601 format for the selected appointment time",
+    "maxLength": 25,
+    "type": "string"
+  },
+  "type": "ai",
+  "workflowIds": []
+}

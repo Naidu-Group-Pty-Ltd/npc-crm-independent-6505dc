@@ -1,0 +1,2 @@
+ALTER TABLE public.pdf_import_jobs ADD COLUMN IF NOT EXISTS idempotency_key text;
+CREATE INDEX IF NOT EXISTS pdf_import_jobs_idempotency_key_idx ON public.pdf_import_jobs (idempotency_key) WHERE idempotency_key IS NOT NULL;

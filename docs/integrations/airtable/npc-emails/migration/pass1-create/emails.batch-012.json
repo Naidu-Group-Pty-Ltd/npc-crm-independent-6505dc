@@ -1,0 +1,432 @@
+{
+  "table": "Emails",
+  "batch": 12,
+  "of": 107,
+  "recordCount": 50,
+  "records": [
+    {
+      "sourceRecordId": "rec6KirrHicbgl5s6",
+      "sourceCreatedTime": "2025-08-18T03:58:41.000Z",
+      "fields": {
+        "Name": "Microsoft 365 Message center",
+        "Subject": "Weekly digest: Microsoft service updates",
+        "Email": "o365mc@microsoft.com",
+        "Body": "View a summary of the updates.Microsoft [https://images.ecomm.microsoft.com/cdn/mediahandler/azure-emails-templates/production/shared/images/templates/shared/microsoft-2x.png] [https://images.ecomm.microsoft.com/cdn/mediahandler/azure-emails-templates/production/shared/images/templates/shared/images/icons/status-info-gray.png] As a new admin to the Microsoft 365 admin center, you’ll get weekly emails from the message center about upcoming changes to your services until September 6, 2025. Update your preferences to continue getting emails like this one. Go to preferences [https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal%2Fhome%23%2FMessageCenter%2F%3A%2Fmcpreferences&p=bT0xOWM3ODkxOS0wM2JiLTQzNTgtOTA0Mi0zYzc3NjU0NGFkZWUmdT1hZW8mbD1ob21l]\n\nMESSAGE CENTER ANNOUNCEMENTS\nAUGUST 11, 2025 - AUGUST 17, 2025\nNPCSERVICES.COM.AU\n\nMAJOR UPDATES\n[https://static2.sharepointonline.com/files/fabric-cdn-prod_20200821.001/assets/brand-icons/product-monoline/png/admin_96x1.png] Streamlined file preview experience in Microsoft 365 Copilot app for iOS\n\nMC1136042 | August 15 - Microsoft 365 Copilot iOS app will offer file previews and Copilot Chat for Word, Excel, and PowerPoint files starting September 15, 2025, on iPhone, with editing moved to standalone apps. Similar updates will follow for iPad. Users will see prompts to install or open standalone apps for editing.\nView more [https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal%2Fhome%23%2FMessageCenter%2F%3A%2Fmessages%2FMC1136042%3FMCLinkSource%3DDigestMail&p=bT0xOWM3ODkxOS0wM2JiLTQzNTgtOTA0Mi0zYzc3NjU0NGFkZWUmdT1hZW8mbD1ob21lXzI%3D]\n\n[https://static2.sharepointonline.com/files/fabric-cdn-prod_20200821.001/assets/brand-icons/product-monoline/png/admin_96x1.png] Streamlined file preview experience in Microsoft 365 Copilot app for iOS \n\nMC1136042 | August 15 - Microsoft 365 Copilot iOS app will offer file previews and Copilot Chat for Word, Excel, and PowerPoint files starting September 15, 2025, on iPhone, with editing moved to standalone apps. Similar updates will follow for iPad. Users will see prompts to install or open standalone apps for editing.\nView more [https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal%2Fhome%23%2FMessageCenter%2F%3A%2Fmessages%2FMC1136042%3FMCLinkSource%3DDigestMail&p=bT0xOWM3ODkxOS0wM2JiLTQzNTgtOTA0Mi0zYzc3NjU0NGFkZWUmdT1hZW8mbD1ob21lXzM%3D]\n\nADDITIONAL UPDATES\n[https://static2.sharepointonline.com/files/fabric-cdn-prod_20200821.001/assets/brand-icons/product-monoline/png/admin_96x1.png] Microsoft 365 admin center: New usage intensity and host apps metrics available in Copilot Chat usage report\n\nMC1136041 | August 15 - New Microsoft 365 admin center metrics track Copilot Chat usage intensity and app-specific engagement for users without Copilot licenses across Word, Excel, PowerPoint, and OneNote. Available worldwide from mid-August 2025, these daily-updated metrics enhance adoption reporting and impact existing custom reports.\nView more [https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal%2Fhome%23%2FMessageCenter%2F%3A%2Fmessages%2FMC1136041%3FMCLinkSource%3DDigestMail&p=bT0xOWM3ODkxOS0wM2JiLTQzNTgtOTA0Mi0zYzc3NjU0NGFkZWUmdT1hZW8mbD1ob21lXzQ%3D]\n\n[https://static2.sharepointonline.com/files/fabric-cdn-prod_20200821.001/assets/brand-icons/product-monoline/png/admin_96x1.png] Microsoft 365 admin center: New usage intensity and host apps metrics available in Copilot Chat usage report \n\nMC1136041 | August 15 - New Microsoft 365 admin center metrics track Copilot Chat usage intensity and app-specific engagement for users without Copilot licenses across Word, Excel, PowerPoint, and OneNote. Available worldwide from mid-August 2025, these daily-updated metrics enhance adoption reporting and impact existing custom reports.\nView more [https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal%2Fhome%23%2FMessageCenter%2F%3A%2Fmessages%2FMC1136041%3FMCLinkSource%3DDigestMail&p=bT0xOWM3ODkxOS0wM2JiLTQzNTgtOTA0Mi0zYzc3NjU0NGFkZWUmdT1hZW8mbD1ob21lXzU%3D]\n\n[https://static2.sharepointonline.com/files/fabric-cdn-prod_20200821.001/assets/brand-icons/product-monoline/png/admin_96x1.png] Gen AI capabilities in the Create module of Microsoft 365 Copilot app coming to all Copilot Chat users\n\nMC1136035 | August 15 - Microsoft 365 Copilot's Create module now offers generative AI image and visual content creation to all Copilot Chat users without a license, with standard access and existing admin controls applying. Video, survey, and brand kit features remain restricted. Rollout began mid-August for desktop, with mobile following in October 2025.\nView more [https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal%2Fhome%23%2FMessageCenter%2F%3A%2Fmessages%2FMC1136035%3FMCLinkSource%3DDigestMail&p=bT0xOWM3ODkxOS0wM2JiLTQzNTgtOTA0Mi0zYzc3NjU0NGFkZWUmdT1hZW8mbD1ob21lXzY%3D]\n\n[https://static2.sharepointonline.com/files/fabric-cdn-prod_20200821.001/assets/brand-icons/product-monoline/png/admin_96x1.png] Gen AI capabilities in the Create module of Microsoft 365 Copilot app coming to all Copilot Chat users \n\nMC1136035 | August 15 - Microsoft 365 Copilot's Create module now offers generative AI image and visual content creation to all Copilot Chat users without a license, with standard access and existing admin controls applying. Video, survey, and brand kit features remain restricted. Rollout began mid-August for desktop, with mobile following in October 2025.\nView more [https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal%2Fhome%23%2FMessageCenter%2F%3A%2Fmessages%2FMC1136035%3FMCLinkSource%3DDigestMail&p=bT0xOWM3ODkxOS0wM2JiLTQzNTgtOTA0Mi0zYzc3NjU0NGFkZWUmdT1hZW8mbD1ob21lXzc%3D]\n\n[https://static2.sharepointonline.com/files/fabric-cdn-prod_20200821.001/assets/brand-icons/product-monoline/png/admin_96x1.png] (Updated) Microsoft Copilot: filter chat history for easier context recall\n\nMC1134741 | August 14 - Microsoft Copilot will add a chat history filtering feature starting late August 2025, enabling users to quickly find relevant past conversations. The feature is on by default, requires no admin setup, and aims to improve navigation and context recall in Copilot chats.\nView more [https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal%2Fhome%23%2FMessageCenter%2F%3A%2Fmessages%2FMC1134741%3FMCLinkSource%3DDigestMail&p=bT0xOWM3ODkxOS0wM2JiLTQzNTgtOTA0Mi0zYzc3NjU0NGFkZWUmdT1hZW8mbD1ob21lXzg%3D]\n\n[https://static2.sharepointonline.com/files/fabric-cdn-prod_20200821.001/assets/brand-icons/product-monoline/png/admin_96x1.png] (Updated) Microsoft Copilot: filter chat history for easier context recall \n\nMC1134741 | August 14 - Microsoft Copilot will add a chat history filtering feature starting late August 2025, enabling users to quickly find relevant past conversations. The feature is on by default, requires no admin setup, and aims to improve navigation and context recall in Copilot chats.\nView more [https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal%2Fhome%23%2FMessageCenter%2F%3A%2Fmessages%2FMC1134741%3FMCLinkSource%3DDigestMail&p=bT0xOWM3ODkxOS0wM2JiLTQzNTgtOTA0Mi0zYzc3NjU0NGFkZWUmdT1hZW8mbD1ob21lXzk%3D]\n\n[https://static2.sharepointonline.com/files/fabric-cdn-prod_20200821.001/assets/brand-icons/product-monoline/png/admin_96x1.png] (Updated) Microsoft 365 admin center: New Multi-admin notifications for Microsoft 365 Backup\n\nMC1102791 | August 14 - Microsoft 365 Backup will introduce Multi-admin notifications starting late August 2025, allowing centralized email alerts for key backup events to designated admins. Users can configure notification lists by admin roles or custom groups. No action is needed before rollout, but configuration is required to activate notifications.\nView more [https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal%2Fhome%23%2FMessageCenter%2F%3A%2Fmessages%2FMC1102791%3FMCLinkSource%3DDigestMail&p=bT0xOWM3ODkxOS0wM2JiLTQzNTgtOTA0Mi0zYzc3NjU0NGFkZWUmdT1hZW8mbD1ob21lXzEw]\n\n[https://static2.sharepointonline.com/files/fabric-cdn-prod_20200821.001/assets/brand-icons/product-monoline/png/admin_96x1.png] (Updated) Microsoft 365 admin center: New Multi-admin notifications for Microsoft 365 Backup \n\nMC1102791 | August 14 - Microsoft 365 Backup will introduce Multi-admin notifications starting late August 2025, allowing centralized email alerts for key backup events to designated admins. Users can configure notification lists by admin roles or custom groups. No action is needed before rollout, but configuration is required to activate notifications.\nView more [https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal%2Fhome%23%2FMessageCenter%2F%3A%2Fmessages%2FMC1102791%3FMCLinkSource%3DDigestMail&p=bT0xOWM3ODkxOS0wM2JiLTQzNTgtOTA0Mi0zYzc3NjU0NGFkZWUmdT1hZW8mbD1ob21lXzEx]\n\n[https://static2.sharepointonline.com/files/fabric-cdn-prod_20200713.001/assets/brand-icons/product-monoline/png/exchange_96x1.png] Quarantine experience update in Microsoft Defender and Exchange Online: Restore temporarily deleted items\n\nMC1134736 | August 13 - Microsoft Defender and Exchange Online will allow users to view and restore temporarily deleted quarantine messages starting mid-August 2025 (worldwide). This feature is on by default, requires no configuration, and helps improve message recovery without affecting permanently deleted items.\nView more [https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal%2Fhome%23%2FMessageCenter%2F%3A%2Fmessages%2FMC1134736%3FMCLinkSource%3DDigestMail&p=bT0xOWM3ODkxOS0wM2JiLTQzNTgtOTA0Mi0zYzc3NjU0NGFkZWUmdT1hZW8mbD1ob21lXzEy]\n\n[https://static2.sharepointonline.com/files/fabric-cdn-prod_20200713.001/assets/brand-icons/product-monoline/png/exchange_96x1.png] Quarantine experience update in Microsoft Defender and Exchange Online: Restore temporarily deleted items \n\nMC1134736 | August 13 - Microsoft Defender and Exchange Online will allow users to view and restore temporarily deleted quarantine messages starting mid-August 2025 (worldwide). This feature is on by default, requires no configuration, and helps improve message recovery without affecting permanently deleted items.\nView more [https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal%2Fhome%23%2FMessageCenter%2F%3A%2Fmessages%2FMC1134736%3FMCLinkSource%3DDigestMail&p=bT0xOWM3ODkxOS0wM2JiLTQzNTgtOTA0Mi0zYzc3NjU0NGFkZWUmdT1hZW8mbD1ob21lXzEz]\n\n[https://static2.sharepointonline.com/files/fabric-cdn-prod_20200713.001/assets/brand-icons/product-monoline/png/exchange_96x1.png] Outlook for iOS and Android: Send button relocated to reduce accidental sends\n\nMC1134176 | August 12 - The Send button in Outlook mobile (iOS and Android) will move from the bottom toolbar to the top header in the compose view to reduce accidental sends. This change, rolling out from September 2025 to March 2026, is enabled by default and does not affect desktop or web clients.\nView more [https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal%2Fhome%23%2FMessageCenter%2F%3A%2Fmessages%2FMC1134176%3FMCLinkSource%3DDigestMail&p=bT0xOWM3ODkxOS0wM2JiLTQzNTgtOTA0Mi0zYzc3NjU0NGFkZWUmdT1hZW8mbD1ob21lXzE0]\n\n[https://static2.sharepointonline.com/files/fabric-cdn-prod_20200713.001/assets/brand-icons/product-monoline/png/exchange_96x1.png] Outlook for iOS and Android: Send button relocated to reduce accidental sends \n\nMC1134176 | August 12 - The Send button in Outlook mobile (iOS and Android) will move from the bottom toolbar to the top header in the compose view to reduce accidental sends. This change, rolling out from September 2025 to March 2026, is enabled by default and does not affect desktop or web clients.\nView more [https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal%2Fhome%23%2FMessageCenter%2F%3A%2Fmessages%2FMC1134176%3FMCLinkSource%3DDigestMail&p=bT0xOWM3ODkxOS0wM2JiLTQzNTgtOTA0Mi0zYzc3NjU0NGFkZWUmdT1hZW8mbD1ob21lXzE1]\n\n[https://static2.sharepointonline.com/files/fabric-cdn-prod_20200821.001/assets/brand-icons/product-monoline/png/admin_96x1.png] [Copilot Extensibility] Admins can manage ownerless Copilot agents with new lifecycle controls\n\nMC1134170 | August 12 - Admins will gain lifecycle controls to identify, review, delete, or block ownerless Copilot agents created by departed users, improving security and governance. The feature rolls out globally from late August to mid-September 2025, with owner assignment for agents coming in October. No prior configuration is needed.\nView more [https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal%2Fhome%23%2FMessageCenter%2F%3A%2Fmessages%2FMC1134170%3FMCLinkSource%3DDigestMail&p=bT0xOWM3ODkxOS0wM2JiLTQzNTgtOTA0Mi0zYzc3NjU0NGFkZWUmdT1hZW8mbD1ob21lXzE2]\n\n[https://static2.sharepointonline.com/files/fabric-cdn-prod_20200821.001/assets/brand-icons/product-monoline/png/admin_96x1.png] [Copilot Extensibility] Admins can manage ownerless Copilot agents with new lifecycle controls \n\nMC1134170 | August 12 - Admins will gain lifecycle controls to identify, review, delete, or block ownerless Copilot agents created by departed users, improving security and governance. The feature rolls out globally from late August to mid-September 2025, with owner assignment for agents coming in October. No prior configuration is needed.\nView more [https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal%2Fhome%23%2FMessageCenter%2F%3A%2Fmessages%2FMC1134170%3FMCLinkSource%3DDigestMail&p=bT0xOWM3ODkxOS0wM2JiLTQzNTgtOTA0Mi0zYzc3NjU0NGFkZWUmdT1hZW8mbD1ob21lXzE3]\n\n[https://static2.sharepointonline.com/files/fabric-cdn-prod_20200821.001/assets/brand-icons/product-monoline/png/admin_96x1.png] Teams app versions 1.12 and earlier will no longer appear in Microsoft 365 admin center\n\nMC1134169 | August 12 - Teams apps version 1.12 and earlier will be removed from the Microsoft 365 admin center's Integrated apps view starting late August 2025 but remain fully manageable in the Teams admin center. No action is required, and user experience remains unchanged.\nView more [https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal%2Fhome%23%2FMessageCenter%2F%3A%2Fmessages%2FMC1134169%3FMCLinkSource%3DDigestMail&p=bT0xOWM3ODkxOS0wM2JiLTQzNTgtOTA0Mi0zYzc3NjU0NGFkZWUmdT1hZW8mbD1ob21lXzE4]\n\n[https://static2.sharepointonline.com/files/fabric-cdn-prod_20200821.001/assets/brand-icons/product-monoline/png/admin_96x1.png] Teams app versions 1.12 and earlier will no longer appear in Microsoft 365 admin center \n\nMC1134169 | August 12 - Teams apps version 1.12 and earlier will be removed from the Microsoft 365 admin center's Integrated apps view starting late August 2025 but remain fully manageable in the Teams admin center. No action is required, and user experience remains unchanged.\nView more [https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal%2Fhome%23%2FMessageCenter%2F%3A%2Fmessages%2FMC1134169%3FMCLinkSource%3DDigestMail&p=bT0xOWM3ODkxOS0wM2JiLTQzNTgtOTA0Mi0zYzc3NjU0NGFkZWUmdT1hZW8mbD1ob21lXzE5]\n\n[https://static2.sharepointonline.com/files/fabric-cdn-prod_20200713.001/assets/brand-icons/product-monoline/png/exchange_96x1.png] (Updated) Microsoft Outlook: Copilot chat now available to summarize emails for more users\n\nMC1124564 | August 12 - Microsoft Outlook will roll out a Copilot chat feature to summarize email threads with one click, available to users with Copilot chat pinned, even without a Copilot license. Deployment starts late August 2025, is on by default, and admins can manage access via policies and Entra ID groups.\nView more [https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal%2Fhome%23%2FMessageCenter%2F%3A%2Fmessages%2FMC1124564%3FMCLinkSource%3DDigestMail&p=bT0xOWM3ODkxOS0wM2JiLTQzNTgtOTA0Mi0zYzc3NjU0NGFkZWUmdT1hZW8mbD1ob21lXzIw]\n\n[https://static2.sharepointonline.com/files/fabric-cdn-prod_20200713.001/assets/brand-icons/product-monoline/png/exchange_96x1.png] (Updated) Microsoft Outlook: Copilot chat now available to summarize emails for more users \n\nMC1124564 | August 12 - Microsoft Outlook will roll out a Copilot chat feature to summarize email threads with one click, available to users with Copilot chat pinned, even without a Copilot license. Deployment starts late August 2025, is on by default, and admins can manage access via policies and Entra ID groups.\nView more [https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal%2Fhome%23%2FMessageCenter%2F%3A%2Fmessages%2FMC1124564%3FMCLinkSource%3DDigestMail&p=bT0xOWM3ODkxOS0wM2JiLTQzNTgtOTA0Mi0zYzc3NjU0NGFkZWUmdT1hZW8mbD1ob21lXzIx]\n\n[https://static2.sharepointonline.com/files/fabric-cdn-prod_20200713.001/assets/brand-icons/product-monoline/png/exchange_96x1.png] (Updated) Microsoft Outlook for Android: Updated conversation actions\n\nMC1068902 | August 12 - Microsoft Outlook for Android will move conversation actions from the top right to a customizable toolbar at the bottom of the reading pane, rolling out from July to early September 2025. This change improves consistency and requires no admin action, but user notification is recommended.\nView more [https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal%2Fhome%23%2FMessageCenter%2F%3A%2Fmessages%2FMC1068902%3FMCLinkSource%3DDigestMail&p=bT0xOWM3ODkxOS0wM2JiLTQzNTgtOTA0Mi0zYzc3NjU0NGFkZWUmdT1hZW8mbD1ob21lXzIy]\n\n[https://static2.sharepointonline.com/files/fabric-cdn-prod_20200713.001/assets/brand-icons/product-monoline/png/exchange_96x1.png] (Updated) Microsoft Outlook for Android: Updated conversation actions \n\nMC1068902 | August 12 - Microsoft Outlook for Android will move conversation actions from the top right to a customizable toolbar at the bottom of the reading pane, rolling out from July to early September 2025. This change improves consistency and requires no admin action, but user notification is recommended.\nView more [https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal%2Fhome%23%2FMessageCenter%2F%3A%2Fmessages%2FMC1068902%3FMCLinkSource%3DDigestMail&p=bT0xOWM3ODkxOS0wM2JiLTQzNTgtOTA0Mi0zYzc3NjU0NGFkZWUmdT1hZW8mbD1ob21lXzIz]\n\n[https://static2.sharepointonline.com/files/fabric-cdn-prod_20200821.001/assets/brand-icons/product-monoline/png/admin_96x1.png] (Updated) Updates to user and group assignment views on the Microsoft Admin Center\n\nMC1102762 | August 11 - Microsoft Admin Center will update product licensing pages by late September 2025, separating direct license assignments (User tab) from group-based assignments (Groups tab) to improve clarity and performance. Admins should update documentation and training to reflect this new layout.\nView more [https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal%2Fhome%23%2FMessageCenter%2F%3A%2Fmessages%2FMC1102762%3FMCLinkSource%3DDigestMail&p=bT0xOWM3ODkxOS0wM2JiLTQzNTgtOTA0Mi0zYzc3NjU0NGFkZWUmdT1hZW8mbD1ob21lXzI0]\n\n[https://static2.sharepointonline.com/files/fabric-cdn-prod_20200821.001/assets/brand-icons/product-monoline/png/admin_96x1.png] (Updated) Updates to user and group assignment views on the Microsoft Admin Center \n\nMC1102762 | August 11 - Microsoft Admin Center will update product licensing pages by late September 2025, separating direct license assignments (User tab) from group-based assignments (Groups tab) to improve clarity and performance. Admins should update documentation and training to reflect this new layout.\nView more [https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal%2Fhome%23%2FMessageCenter%2F%3A%2Fmessages%2FMC1102762%3FMCLinkSource%3DDigestMail&p=bT0xOWM3ODkxOS0wM2JiLTQzNTgtOTA0Mi0zYzc3NjU0NGFkZWUmdT1hZW8mbD1ob21lXzI1]\n\n[https://static2.sharepointonline.com/files/fabric-cdn-prod_20200713.001/assets/brand-icons/product-monoline/png/exchange_96x1.png] (Updated) New Feature: Account Manager in Outlook for Windows\n\nMC1129718 | August 11 - Outlook for Windows will introduce a new Account Manager in October 2025, displaying profile pictures, enabling account management and switching (if allowed), and providing quick access to Microsoft account details. The feature is on by default and requires no admin action.\nView more [https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal%2Fhome%23%2FMessageCenter%2F%3A%2Fmessages%2FMC1129718%3FMCLinkSource%3DDigestMail&p=bT0xOWM3ODkxOS0wM2JiLTQzNTgtOTA0Mi0zYzc3NjU0NGFkZWUmdT1hZW8mbD1ob21lXzI2]\n\n[https://static2.sharepointonline.com/files/fabric-cdn-prod_20200713.001/assets/brand-icons/product-monoline/png/exchange_96x1.png] (Updated) New Feature: Account Manager in Outlook for Windows \n\nMC1129718 | August 11 - Outlook for Windows will introduce a new Account Manager in October 2025, displaying profile pictures, enabling account management and switching (if allowed), and providing quick access to Microsoft account details. The feature is on by default and requires no admin action.\nView more [https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal%2Fhome%23%2FMessageCenter%2F%3A%2Fmessages%2FMC1129718%3FMCLinkSource%3DDigestMail&p=bT0xOWM3ODkxOS0wM2JiLTQzNTgtOTA0Mi0zYzc3NjU0NGFkZWUmdT1hZW8mbD1ob21lXzI3]\n\n[https://static2.sharepointonline.com/files/fabric-cdn-prod_20200821.001/assets/brand-icons/product-monoline/png/admin_96x1.png] (Updated) Microsoft Edge: AI-powered History search now available\n\nMC1130387 | August 11 - Microsoft Edge will roll out AI-powered History search from late August to late September 2025, enabling semantic search of browsing history using an on-device AI model. The feature is on by default, controlled by a toggle and admin policy, available on Windows desktop only, with no data sent to Microsoft.\nView more [https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal%2Fhome%23%2FMessageCenter%2F%3A%2Fmessages%2FMC1130387%3FMCLinkSource%3DDigestMail&p=bT0xOWM3ODkxOS0wM2JiLTQzNTgtOTA0Mi0zYzc3NjU0NGFkZWUmdT1hZW8mbD1ob21lXzI4]\n\n[https://static2.sharepointonline.com/files/fabric-cdn-prod_20200821.001/assets/brand-icons/product-monoline/png/admin_96x1.png] (Updated) Microsoft Edge: AI-powered History search now available \n\nMC1130387 | August 11 - Microsoft Edge will roll out AI-powered History search from late August to late September 2025, enabling semantic search of browsing history using an on-device AI model. The feature is on by default, controlled by a toggle and admin policy, available on Windows desktop only, with no data sent to Microsoft.\nView more [https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal%2Fhome%23%2FMessageCenter%2F%3A%2Fmessages%2FMC1130387%3FMCLinkSource%3DDigestMail&p=bT0xOWM3ODkxOS0wM2JiLTQzNTgtOTA0Mi0zYzc3NjU0NGFkZWUmdT1hZW8mbD1ob21lXzI5]\n\nTo view all announcements, sign in to Microsoft 365 message center [https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal%2Fhome%23%2FMessageCenter&p=bT0xOWM3ODkxOS0wM2JiLTQzNTgtOTA0Mi0zYzc3NjU0NGFkZWUmdT1hZW8mbD1ob21lXzMw]\n\nDid you find this email helpful? Yes [https://nam.safelink.emails.azure.net/trackingfeedback/?p=bT0xOWM3ODkxOS0wM2JiLTQzNTgtOTA0Mi0zYzc3NjU0NGFkZWUmZj1Qb3NpdGl2ZSZiPWVuLXVzJmE9OC8xOC8yMDI1IDM6MzA6MjcgQU0mdT1hZW8%3D] No [https://nam.safelink.emails.azure.net/trackingfeedback/?p=bT0xOWM3ODkxOS0wM2JiLTQzNTgtOTA0Mi0zYzc3NjU0NGFkZWUmZj1OZWdhdGl2ZSZiPWVuLXVzJmE9OC8xOC8yMDI1IDM6MzA6MjcgQU0mdT1hZW8%3D] \n\n\n\nYou're subscribed to this email using property@npcservices.com.au. If you're an IT admin, you're subscribed by default, but you can unsubscribe at any time [https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal%2Fhome%23%2FMessageCenter%2F%3A%2Fmcpreferences&p=bT0xOWM3ODkxOS0wM2JiLTQzNTgtOTA0Mi0zYzc3NjU0NGFkZWUmdT1hZW8mbD1ob21lXzMx]. If you're not an IT admin, ask your admin to remove your email address from Microsoft 365 message center preferences.\n\n\n\nThis email might not include all Microsoft service updates from the past week. The content you see is based on the Microsoft services available to your organization, and the custom view and email options you (or your admin) select in Microsoft 365 message center preferences [https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fadmin.microsoft.com%2FAdminPortal%2Fhome%23%2FMessageCenter%2F%3A%2Fmcpreferences&p=bT0xOWM3ODkxOS0wM2JiLTQzNTgtOTA0Mi0zYzc3NjU0NGFkZWUmdT1hZW8mbD1ob21lXzMy].\n\n\n\nHow to view translated messages [https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fdocs.microsoft.com%2Fen-us%2Fmicrosoft-365%2Fadmin%2Fmanage%2Flanguage-translation-for-message-center-posts%3Fview%3Do365-worldwide&p=bT0xOWM3ODkxOS0wM2JiLTQzNTgtOTA0Mi0zYzc3NjU0NGFkZWUmdT1hZW8mbD1sYW5ndWFnZS10cmFuc2xhdGlvbi1mb3ItbWVzc2FnZS1jZW50ZXItcG9zdHM%3D]\nSend us feedback about this email [https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fforms.office.com%2FPages%2FResponsePage.aspx%3Fid%3Dv4j5cvGGr0GRqy180BHbR-rMMzjkh-5MjuvzignA2eJUQURBR1k1MkRBUEY5MFRBSDNBWldWQlM4NC4u&p=bT0xOWM3ODkxOS0wM2JiLTQzNTgtOTA0Mi0zYzc3NjU0NGFkZWUmdT1hZW8mbD1SZXNwb25zZVBhZ2UuYXNweA%3D%3D]\n\n\n\nPrivacy Statement [https://nam.safelink.emails.azure.net/redirect/?destination=https%3A%2F%2Fgo.microsoft.com%2Ffwlink%2F%3FLinkId%3D521839&p=bT0xOWM3ODkxOS0wM2JiLTQzNTgtOTA0Mi0zYzc3NjU0NGFkZWUmdT1hZW8mbD1wcml2YWN5LXN0YXRlbWVudA%3D%3D] \n\nMicrosoft Corporation, One Microsoft Way, ​Redmond, WA 98052​\n\nMicrosoft [https://images.ecomm.microsoft.com/cdn/mediahandler/azure-emails-templates/production/shared/images/templates/shared/images/logos/microsoft-logo-2x.png] [https://nam.safelink.emails.azure.net/trackingpixel/?p=bT0xOWM3ODkxOS0wM2JiLTQzNTgtOTA0Mi0zYzc3NjU0NGFkZWUmdT1hZW8%3D]"
+      }
+    },
+    {
+      "sourceRecordId": "rec6KpvaBZ7lQA1Wy",
+      "sourceCreatedTime": "2025-09-22T19:50:02.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec6LHBIi93phxsRZ",
+      "sourceCreatedTime": "2025-11-04T10:05:46.000Z",
+      "fields": {
+        "Name": "McGrath",
+        "Subject": "McGrath Property Alert",
+        "Email": "concierge@mcgrath.com.au",
+        "Body": "PROPERTY ALERT\r\n\r\n9/15 Hampden Road, Artarmon\r\n\r\n\r\n\r\n\r\n\r\n2\r\n\r\n\r\n\r\n1\r\n\r\n\r\n\r\n1\r\n\r\n\r\n\r\nAUCTION\r\n\r\nOn Site - Saturday 22 Nov 12:00pm\r\n\r\n\r\n\r\nVIEW\r\n\r\nWednesday 5 Nov 11:30am - 12:00pm\r\n\r\n\r\n\r\nAGENTS\r\n\r\nHamish Gibbs: 0448 593 201\r\n\r\nMun-Nee Morgan: 0408 208 120",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec6M97mHwn4WFaMT",
+      "sourceCreatedTime": "2026-01-08T05:52:28.000Z",
+      "fields": {
+        "Name": "Brodie Richmond",
+        "Subject": "Update Alert: Matched Properties",
+        "Email": "brodie@schmith.com.au",
+        "Body": "Hi Rugesh ,\r\n\r\nSee below, some properties that may be of interest to you.\r\nPlease reach out if you would like any further information, or simply just have a chat.\r\n\r\nBest wishes,\r\nBrodie Richmond\r\n+61493572251\r\nbrodie@schmith.com.au\r\n\r\n\r\n\r\nOpen for "
+      }
+    },
+    {
+      "sourceRecordId": "rec6MFSJxejA7sq6C",
+      "sourceCreatedTime": "2026-06-04T00:48:04.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec6NCPyJsTdytUAc",
+      "sourceCreatedTime": "2025-11-12T07:17:51.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec6PObAf1krjQL6n",
+      "sourceCreatedTime": "2026-03-25T00:13:40.000Z",
+      "fields": {
+        "Name": "Kaikura Land Sales",
+        "Subject": "Eucara Lynbrook",
+        "Email": "sales@kaikura.com.au",
+        "Body": "View this email in your browser\r\n\r\n\r\nGood afternoon,\r\n\r\n\r\nFollowing on from our previous email, we’re currently aiming to bring the first stage of Eucara — “First Bloom” — to market towards the end of this month.\r\n\r\nAs mentioned, this initial release is p",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec6PeJbpRO5qdGLk",
+      "sourceCreatedTime": "2026-03-23T00:10:21.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec6R2sMxZUVGhzcu",
+      "sourceCreatedTime": "2025-11-07T04:15:09.000Z",
+      "fields": {
+        "Name": "Marty Maher",
+        "Subject": "Great Ocean Properties Weekly Update",
+        "Email": "marty@greatoceanproperties.com.au",
+        "Body": "Welcome\r\n\r\n\r\nGreat Ocean Properties Weekly Update\r\n\r\n\r\n\r\nDear Rugesh\r\n\r\nHello and welcome to your weekly update direct from the coast.\r\n\r\nIn real estate news this week, 18 Robyn Road Moggs Creek was marked \"Under offer\" and will shortly be marke",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec6RI6etTH3PEsUd",
+      "sourceCreatedTime": "2026-06-05T04:20:10.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec6RItNhPJQAdeEi",
+      "sourceCreatedTime": "2025-10-16T10:08:12.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec6S9KcoTGhAysXI",
+      "sourceCreatedTime": "2026-02-27T00:52:14.000Z",
+      "fields": {
+        "Name": "Hinternoosa .",
+        "Subject": "Featured Listings and Open Homes",
+        "Email": "sold@hinternoosa.com.au",
+        "Body": "Hinternoosa .\r\n\r\n\r\n07 5447 7000\r\n\r\nEmail me\r\n\r\n\r\nHi NPC Services\r\n\r\nExplore what's new at Hinternoosa this week!\r\n\r\nDiscover our latest Featured Listings, Rental of the Week, and all the homes open for inspection across the beautiful Noosa Hin",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec6SOdGpQkTpSRPJ",
+      "sourceCreatedTime": "2025-11-27T06:57:32.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec6UJqYufNbG1mLW",
+      "sourceCreatedTime": "2025-12-17T21:49:02.000Z",
+      "fields": {
+        "Name": "Mick Lay",
+        "Subject": "Deal of the Week: Ready to Build Your Dream Home Steps from the Train Station?",
+        "Email": "michael@lay2.com.au",
+        "Body": "Bayswater – Deal of the Week | Build Your Future Here. Easy Walk to Train Station!\r\n\r\nThis week’s Deal of the Week features a prime vacant land opportunity in the heart of Bayswater, offering elevation, accessibility, and outstanding future potential."
+      }
+    },
+    {
+      "sourceRecordId": "rec6UNb7C63SZ5WYr",
+      "sourceCreatedTime": "2026-01-30T02:43:40.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec6UeWtI918dPCQt",
+      "sourceCreatedTime": "2025-10-16T04:25:03.000Z",
+      "fields": {
+        "Name": "Ian Naylor",
+        "Subject": "Open home this Saturday, New Price!",
+        "Email": "ian@rjrproperty.com.au",
+        "Body": "View this email in your browser\r\n\r\nHi Rugesh\r\n\r\nI have a fantastic open home this Saturday if you would like to come along:\r\n\r\n9:30-10:30am: 44 Bella Creek Road, Bella Creek.\r\n\r\nFull details via the link below.\r\n\r\n\r\n\r\nKind regards, Ian.",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec6V132P7dlLpAxe",
+      "sourceCreatedTime": "2026-03-18T13:31:10.000Z",
+      "fields": {
+        "Name": "Belle Property Australasia",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "noreply@belleproperty.com",
+        "Body": "Dear Rugesh,\r\n\r\nWe have found the following properties that match your property search requirements. Click here to update your preferences or click here to find a property on belleproperty.com.\r\nCurrent listings.\r\n\r\nFrankston\r\n3/15-17 Deane Street\r\nFor Sa",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec6XRVlVeYSi5ctC",
+      "sourceCreatedTime": "2026-06-11T06:09:35.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec6XTlo88pVmQNPF",
+      "sourceCreatedTime": "2025-12-17T06:36:07.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec6ZHDhwYmrS9aUF",
+      "sourceCreatedTime": "2025-10-17T03:44:46.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec6c0EovAWY0soT7",
+      "sourceCreatedTime": "2025-12-11T02:52:50.000Z",
+      "fields": {
+        "Name": "Abby Holmes-Brown",
+        "Subject": "This Week's Hottest Listings!!!",
+        "Email": "sales@fnlifestyle.com.au",
+        "Body": "Current Listings\r\n\r\n\r\n\r\n\r\nHi Rugesh,\r\n\r\nCheck Out What's Hot Right Now!\r\n\r\nExplore our top-featured properties and find the one that ticks all your boxes. Whether you're after space, sophistication, or a smart investment, we've got the perfect m"
+      }
+    },
+    {
+      "sourceRecordId": "rec6c8Mj10qEQEvHY",
+      "sourceCreatedTime": "2025-09-24T06:24:42.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec6dWYMQkTPOzYHH",
+      "sourceCreatedTime": "2026-06-15T08:45:17.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec6e4FM5kSYBYNxe",
+      "sourceCreatedTime": "2026-01-29T05:41:49.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec6eV2RHnTxqL5ps",
+      "sourceCreatedTime": "2025-11-05T07:19:39.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec6gjmrkKmpxKwMw",
+      "sourceCreatedTime": "2025-12-19T04:37:07.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec6hkJoA46M8Ppww",
+      "sourceCreatedTime": "2026-01-22T03:44:45.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec6j7u5HmPuMQoCV",
+      "sourceCreatedTime": "2025-10-17T04:24:29.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec6k4UEGWvAuGBYo",
+      "sourceCreatedTime": "2025-11-13T07:18:23.000Z",
+      "fields": {
+        "Name": "Keyline Realty",
+        "Subject": "Keyline Realty Property Update",
+        "Email": "keylinerealty@keylinerealty.com",
+        "Body": "Keyline Property Update\r\nHello Rugesh,\r\n\r\n\r\n\"What you do makes a difference, and you have to decide what kind of difference you want to make.\" - Jane Goodall\r\n\r\nCheck out our 5-Star Google Reviews!\r\n\r\n356 REVIEWS AND COUNTING!\r\n\r\n\r\n\r\n\r\nSee what our custom",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec6lQuOewPtm0YZx",
+      "sourceCreatedTime": "2025-10-17T02:33:32.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec6meJRPdLvZ77Fz",
+      "sourceCreatedTime": "2026-02-01T23:39:33.000Z",
+      "fields": {
+        "Name": "Sharon Golding",
+        "Subject": "Your Property Update [New Listing Alert]",
+        "Email": "sharon@justusrealty.com.au",
+        "Body": "(07) 4196 0933\r\nhttps://justusrealty.au\r\nNew Listings\r\n\r\nHi NPC Services,\r\n\r\nWe've listed some new properties that I think you might be interested in. Give me a call if you have any questions or would like to take a look through any of these.\r\n\r\n\r\n10 Camp",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec6mvewgOfBfqaTC",
+      "sourceCreatedTime": "2025-10-13T01:53:49.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec6nSEnA04gG6CGe",
+      "sourceCreatedTime": "2026-03-18T06:15:56.000Z",
+      "fields": {
+        "Name": "Joe Morrow",
+        "Subject": "JUST LISTED - CLARKSON",
+        "Email": "joe@c21goldkey.com.au",
+        "Body": "Just Listed! 5 Crouch Vista, Clarkson – The complete package with modern upgrades, pool and family living. Home Opens Sat & Sun 11:00–11:30am\r\n ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌"
+      }
+    },
+    {
+      "sourceRecordId": "rec6nmNx0kPkzkJXW",
+      "sourceCreatedTime": "2025-12-06T15:34:39.000Z",
+      "fields": {
+        "Name": "ACTIVE AGENTS (QLD) PTY LTD",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "info@activeagents.com.au",
+        "Body": "Edit my requirements\r\nVisit our Website\r\nProperty Alert\r\nSunday, 7th December 2025\r\nHello Rugesh,\r\n\r\nThe following listings matched your Property Alert search requirements.\r\n\r\nUrangan\r\n15 Whipbird Court\r\n\r\nOwner wants it sold! $779,000\r\n\r\n        4       ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec6qLLtmccvZxmMR",
+      "sourceCreatedTime": "2025-12-12T02:43:22.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec6qZericApts759",
+      "sourceCreatedTime": "2025-09-10T16:45:47.000Z",
+      "fields": {
+        "Name": "Thomas Bettison",
+        "Subject": "For Sale | 11 Pindi Court, South Guildford",
+        "Email": "thomas.bettison@housesmart.com.au",
+        "Body": "For Sale - 11 Pindi Court\r\n\r\nHi Rugesh,\r\n\r\nPlease enjoy the below property in preparation for the next home open!\r\n\r\nFollow us on Instagram to get a sneak-peek at upcoming listings!\r\n\r\nUpdate my criteria\r\nSay hello on Instagram\r\n\r\n11 Pindi Court, South Gu",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec6qd2ZN7NLmwaOQ",
+      "sourceCreatedTime": "2025-11-24T03:26:16.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec6rZV81o9Gs43ww",
+      "sourceCreatedTime": "2025-09-22T12:26:11.000Z",
+      "fields": {
+        "Status": "No URL"
+      }
+    },
+    {
+      "sourceRecordId": "rec6tU4MZIyfAkBEP",
+      "sourceCreatedTime": "2025-12-10T07:41:09.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec6ugdydjbFpFMUI",
+      "sourceCreatedTime": "2025-10-07T03:00:41.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec6uqCzGAojhbtkl",
+      "sourceCreatedTime": "2025-12-08T05:21:21.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec6vi1fyoOCmidae",
+      "sourceCreatedTime": "2025-11-28T04:49:51.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec6wC9Q2dAhWSP6a",
+      "sourceCreatedTime": "2026-01-13T23:05:34.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec6wDbwhm4yjMmXo",
+      "sourceCreatedTime": "2026-06-11T05:37:52.000Z",
+      "fields": {
+        "Name": "Professionals Caboolture/Morayfield Chippendale",
+        "Subject": "Weekly Listings Update",
+        "Email": "j.chippendale@professionalscaboolture.propertyemail.com.au",
+        "Body": "Dear ,\r\n\r\nOn behalf of Professionals Caboolture/Morayfield, I am pleased to present some of our latest listings. I hope there's something that takes your fancy and I'm happy to take your call if that's the case!\r\n\r\nTo ensure that you receive the most accu"
+      }
+    },
+    {
+      "sourceRecordId": "rec6xEkNzH28qcjDE",
+      "sourceCreatedTime": "2026-06-04T05:54:42.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec6xXaeNOEJW827p",
+      "sourceCreatedTime": "2025-11-07T04:16:29.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec6yGYuCRfx1qHsS",
+      "sourceCreatedTime": "2026-02-27T23:07:54.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec6yn3HpqRDqLd8I",
+      "sourceCreatedTime": "2025-09-22T11:19:45.000Z",
+      "fields": {
+        "Name": "Rugesh Naidu",
+        "Subject": "Re: Hermitage Building Group Intro",
+        "Email": "rugesh@npcservices.com.au",
+        "Body": "Hi Peter,\r\nIt was such a pleasure speaking with you today, thank you again for your time and for sharing your insights. I’m excited about the opportunity for us to work together and explore how our businesses can collaborate in a way that creates real val",
+        "Status": "Error 500",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/WTO9vmb4x_Bgj4FKBuO7lA/U0k4cSGsUJzzTHAVJzpx36Du3x99zakpjBe2SJ6pSK_vUinN1Hcv8W302zhYlmHNXRdSTAaMBxV_iQ6y-DuuKEAOs9wQ_VvyhI9J_pg8XKb1r9Bh7yx4gudz-vLIZ9llZAn1Dbh1XHYCymsmszcLrWwRDaAXSb8wFMECUy9laRf23jEUIAG2ADfdf81vTKLE/FGNcWppiwlOCH7_vk6BaKPXBrOgwNtaN_G7tgde2bdE",
+            "filename": "outlook_email_attachment.png",
+            "type": "image/png",
+            "size": 425
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "rec6z66hHszBYe05h",
+      "sourceCreatedTime": "2026-04-08T06:25:22.000Z",
+      "fields": {
+        "Name": "Matt / MaveriX PM",
+        "Subject": "Sold! More Aura Properties Upcoming!",
+        "Email": "matt@maverixpropertymarketing.com",
+        "Body": "Everything Touched Turns To Sold! | More Brand-New Homes Available In Aura! Which Property Goes To Contract Next? | View Homes‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec70Yz9K0Yb3Yjir",
+      "sourceCreatedTime": "2025-10-17T13:19:58.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    }
+  ]
+}

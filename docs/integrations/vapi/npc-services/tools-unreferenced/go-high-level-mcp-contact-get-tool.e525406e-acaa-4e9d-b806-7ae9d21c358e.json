@@ -1,0 +1,25 @@
+{
+  "createdAt": "2025-11-12T07:43:12.766Z",
+  "function": {
+    "description": "Extract lead metadata such as full name, phone number, discovery call time.",
+    "name": "go_high_level_mcp_contact_get_tool",
+    "parameters": {
+      "properties": {},
+      "required": [],
+      "type": "object"
+    }
+  },
+  "id": "e525406e-acaa-4e9d-b806-7ae9d21c358e",
+  "messages": [
+    {
+      "blocking": false,
+      "type": "request-start"
+    }
+  ],
+  "metadata": {
+    "customerPhoneEnabled": true
+  },
+  "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+  "type": "gohighlevel.contact.get",
+  "updatedAt": "2025-11-12T07:43:43.216Z"
+}

@@ -1,0 +1,69 @@
+{
+  "version": "docling-model-manifest-v1",
+  "note": "Model identities/revisions are resolved + pinned at image build time by the vNext model-download step (see Dockerfile.vnext). repo_id/revision/sha are populated by running `docling-tools models download` (or the current official downloader) against the pinned docling==2.113.0 and writing the resolved snapshot here. Never commit model binaries or credentials to Git.",
+  "docling_version": "2.113.0",
+  "python_version": "3.11",
+  "build_profiles": {
+    "vnext-cpu-standard": {
+      "device": "cpu",
+      "required_models": ["layout", "tableformer"],
+      "optional_models": ["easyocr-en"],
+      "excluded": ["chart-extraction", "picture-description", "vlm"]
+    },
+    "vnext-cpu-threaded": {
+      "device": "cpu",
+      "required_models": ["layout", "tableformer"],
+      "optional_models": ["easyocr-en"],
+      "excluded": ["chart-extraction", "picture-description", "vlm"]
+    },
+    "vnext-vlm": {
+      "device": "cpu-or-gpu",
+      "required_models": ["layout", "tableformer", "granite-docling-vlm"],
+      "optional_models": ["easyocr-en"],
+      "excluded": ["remote-serving"]
+    }
+  },
+  "models": [
+    {
+      "purpose": "layout",
+      "repo_id": "ds4sd/docling-layout-heron",
+      "revision": "RESOLVED_AT_BUILD",
+      "local_path": ".docling-models/layout",
+      "sha256_or_snapshot": "RESOLVED_AT_BUILD",
+      "licence": "see model card (verify at build)",
+      "required": true,
+      "approx_size_mb": null
+    },
+    {
+      "purpose": "table_structure",
+      "repo_id": "ds4sd/docling-models",
+      "revision": "RESOLVED_AT_BUILD",
+      "local_path": ".docling-models/tableformer",
+      "sha256_or_snapshot": "RESOLVED_AT_BUILD",
+      "licence": "see model card (verify at build)",
+      "required": true,
+      "approx_size_mb": null
+    },
+    {
+      "purpose": "ocr_easyocr",
+      "repo_id": "easyocr (JaidedAI)",
+      "revision": "1.7.2",
+      "local_path": ".EasyOCR/model",
+      "sha256_or_snapshot": "RESOLVED_AT_BUILD",
+      "licence": "Apache-2.0",
+      "required": false,
+      "approx_size_mb": null
+    },
+    {
+      "purpose": "vlm_granite_docling",
+      "repo_id": "ibm-granite/granite-docling (verify exact preset)",
+      "revision": "RESOLVED_AT_BUILD",
+      "local_path": ".docling-models/vlm",
+      "sha256_or_snapshot": "RESOLVED_AT_BUILD",
+      "licence": "verify (Apache-2.0 expected) before enabling",
+      "required": false,
+      "approx_size_mb": null,
+      "build_profiles": ["vnext-vlm"]
+    }
+  ]
+}

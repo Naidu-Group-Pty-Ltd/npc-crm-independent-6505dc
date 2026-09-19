@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=5.0, user-scalable=yes" />
+    
+    <!-- PWA Meta Tags (hydrated dynamically by BrandProvider) -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Dashboard" />
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="application-name" content="Dashboard" />
+    <meta name="format-detection" content="telephone=no" />
+    <meta name="msapplication-TileColor" content="#0a0a0a" />
+    <meta name="msapplication-tap-highlight" content="no" />
+    
+    <!-- Theme Colors -->
+    <meta name="theme-color" content="#0a0a0a" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#fafaf8" media="(prefers-color-scheme: light)" />
+    
+    <!-- PWA Manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    <!-- Declared explicitly so the browser never falls back to the scaffold's
+         stock /favicon.ico. BrandProvider overwrites this href with the
+         tenant's white-label mark when one is configured. -->
+    <link rel="icon" type="image/png" sizes="192x192" href="/brand/aurixa-favicon-192.png" />
+    <!-- iOS only delivers Web Push to an INSTALLED PWA, and it uses this icon
+         for the home-screen tile. A .ico is not honoured here. -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/brand/aurixa-notification-512.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-title" content="Command Centre" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    
+    <title>Dashboard</title>
+    <meta name="description" content="Property investment management dashboard" />
+    <meta name="author" content="Dashboard" />
+
+    <meta property="og:title" content="Dashboard" />
+    <meta property="og:description" content="Property investment management dashboard" />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/brand/aurixa-notification-512.png" />
+
+    <meta name="twitter:card" content="summary" />
+    <meta name="twitter:title" content="Dashboard" />
+    <meta name="twitter:image" content="/brand/aurixa-notification-512.png" />
+  </head>
+
+  <body>
+    <div id="root"></div>
+    <script>
+      // Clear deployment-pinning cookie to always serve latest version
+      (function(){try{document.cookie='__dpl=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;';document.cookie='__dpl=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain='+location.hostname;document.cookie='__dpl=;expires=Thu, 01 Jan 1970 00:00:00 GMT;path=/;domain=.'+location.hostname.split('.').slice(-2).join('.');}catch(e){}})();
+    </script>
+    <script type="module" src="/src/main.tsx"></script>
+  </body>
+</html>

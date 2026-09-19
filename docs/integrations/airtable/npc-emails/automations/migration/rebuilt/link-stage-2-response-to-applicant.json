@@ -1,0 +1,165 @@
+{
+ "baseId": "appFNPL7iYiuQyHAO",
+ "name": "Link Stage 2 response to applicant",
+ "description": "Same job as \"Link Stage 2 detailed response to applicant\", for the Business Readiness Responses summary table: resolves the Application ID into Applicant Reference so Stage 1 can see the applicant progressed. Fires when a response has an Application ID but no Applicant Reference. Matching is on Application ID Key (upper-cased and trimmed) so a hand-typed reference still resolves. When nothing matches, the response is left alone and Applicant Link Status reads \"Unlinked - no matching applicant\".",
+ "trigger": {
+  "type": "recordMatchesConditions",
+  "inputs": {
+   "filtersObj": {
+    "obj": {
+     "operands": {
+      "tuple": [
+       {
+        "obj": {
+         "operands": {
+          "tuple": [
+           "fldg9ngsauRLHkkGn"
+          ]
+         },
+         "operator": "isNotEmpty"
+        }
+       },
+       {
+        "obj": {
+         "operands": {
+          "tuple": [
+           "fldNhuTj5LhntkfKU"
+          ]
+         },
+         "operator": "isEmpty"
+        }
+       }
+      ]
+     },
+     "operator": "and"
+    }
+   },
+   "tableId": "tbl3VGRV7xBvSSGlq"
+  }
+ },
+ "nodes": [
+  {
+   "key": "wac7viSDnS3Y3Wkiq",
+   "type": "findRecords",
+   "description": "Find the Aurixa Waitlist record whose normalised Application ID matches the one on this response.",
+   "inputs": {
+    "limit": 1,
+    "filtersObj": {
+     "obj": {
+      "operands": {
+       "tuple": [
+        {
+         "obj": {
+          "operands": {
+           "tuple": [
+            "fld9WBUrHa3svTpbB",
+            {
+             "fn": "uppercase",
+             "args": [
+              {
+               "fn": "trim",
+               "args": [
+                {
+                 "$ref": "trigger",
+                 "path": [
+                  "cellValuesByFieldId",
+                  "fldg9ngsauRLHkkGn"
+                 ]
+                }
+               ]
+              }
+             ]
+            }
+           ]
+          },
+          "operator": "="
+         }
+        }
+       ]
+      },
+      "operator": "and"
+     }
+    },
+    "queryType": "filtersObj",
+    "tableId": "tblaSuqLKa00rqdtu"
+   }
+  },
+  {
+   "key": "wdeE6vy7xfsut7EmU",
+   "type": "conditionalGroup",
+   "branches": [
+    {
+     "name": "Applicant found",
+     "description": "Link the response to the applicant. If no applicant matched, nothing runs and the response stays unlinked for review.",
+     "condition": {
+      "conjunction": "and",
+      "conditions": [
+       {
+        "left": {
+         "fn": "length",
+         "args": [
+          {
+           "$ref": "wac7viSDnS3Y3Wkiq",
+           "path": [
+            "records"
+           ]
+          }
+         ]
+        },
+        "operator": ">",
+        "right": 0,
+        "valueType": "number",
+        "dataType": "literal"
+       }
+      ]
+     },
+     "nodes": [
+      {
+       "key": "wacadLWUH88Etwl4p",
+       "type": "updateRecord",
+       "inputs": {
+        "updateRecordMethod": "customFields",
+        "fields": {
+         "obj": {
+          "fldNhuTj5LhntkfKU": {
+           "template": [
+            {
+             "fn": "map",
+             "args": [
+              {
+               "$ref": "wac7viSDnS3Y3Wkiq",
+               "path": [
+                "records"
+               ]
+              },
+              {
+               "fn": "propertyGetter",
+               "args": [
+                "id"
+               ]
+              }
+             ]
+            }
+           ]
+          }
+         }
+        },
+        "rowId": {
+         "template": [
+          {
+           "$ref": "trigger",
+           "path": [
+            "id"
+           ]
+          }
+         ]
+        },
+        "tableId": "tbl3VGRV7xBvSSGlq"
+       }
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

@@ -1,0 +1,65 @@
+{
+  "note": "Replay order matters: a reference cannot be created before its target. Ids are minted by the target account, so every step records the OLD id and expects a NEW one to be mapped back.",
+  "steps": [
+    {
+      "n": 1,
+      "resource": "file",
+      "count": 2,
+      "endpoint": "POST /file (multipart)",
+      "detail": "Upload the two documents in files/. Vapi mints new file ids; keep an old->new map \u2014 assistants reference them in model.knowledgeBase.fileIds."
+    },
+    {
+      "n": 2,
+      "resource": "tool",
+      "count": "12 managed",
+      "endpoint": "POST /tool",
+      "detail": "Create the 12 managed tools first: assistants reference them by id in model.toolIds. Re-point each server.url at the new us2 webhook before creating (webhook-repoint.json). THREE MORE tools are inline rather than managed and are created with their parent \u2014 see tools-audit.json: a handoff tool inside the squad override, and transferCall + endCall nodes inside the workflow."
+    },
+    {
+      "n": 3,
+      "resource": "assistant",
+      "count": 15,
+      "endpoint": "POST /assistant",
+      "detail": "Substitute the new tool ids and file ids. Strip id/orgId/createdAt/updatedAt/latestVersion and isServerUrlSecretSet \u2014 all are server-assigned. Also re-point assistant-level server URLs: 1 of 15 still targets the old eu2 Make account (NPC Discovery Call Follow Up), 2 already target us2, 11 target the Supabase edge function and need no change. See assistant-server-urls.json."
+    },
+    {
+      "n": 4,
+      "resource": "squad",
+      "count": 1,
+      "endpoint": "POST /squad",
+      "detail": "NPC Sales Force, referencing the 4 new inbound assistant ids. Its member[0] override carries an INLINE handoff tool whose three destination assistantIds must also be remapped \u2014 unremapped they point at the old org and the handoff silently fails."
+    },
+    {
+      "n": 5,
+      "resource": "workflow",
+      "count": 1,
+      "endpoint": "POST /workflow",
+      "detail": "NPC Follow Up."
+    },
+    {
+      "n": 6,
+      "resource": "phone-number",
+      "count": 4,
+      "endpoint": "POST /phone-number",
+      "detail": "The two Twilio numbers need the Twilio Account SID + auth token supplied again (redacted here). The two vapi-provider numbers are re-provisioned and get NEW SIP URIs."
+    },
+    {
+      "n": 7,
+      "resource": "verify",
+      "count": null,
+      "endpoint": "\u2014",
+      "detail": "Re-run the tools audit against the NEW org: every assistant's toolIds must resolve, the squad handoff destinations must name the new assistant ids, and no server.url may contain 'eu2.make.com'."
+    }
+  ],
+  "notPortable": [
+    "phone numbers themselves \u2014 a Twilio number is owned by the Twilio account, not by Vapi; re-point it at the new Vapi org rather than expecting the clone to carry it",
+    "vapi-provider numbers get new sipUri values on creation",
+    "call history and analytics do not migrate",
+    "server URL secrets (isServerUrlSecretSet) are write-only and cannot be read back \u2014 none of the 15 NPC assistants sets one, so nothing is lost here"
+  ],
+  "alsoRemap": [
+    "squad member[0] assistantOverrides['tools:append'].destinations[].assistantId (3 of them)",
+    "assistant model.knowledgeBase.fileIds (2 files)",
+    "assistant-level server.url where it points at eu2 (1 assistant)"
+  ]
+}

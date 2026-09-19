@@ -1,0 +1,17 @@
+{
+  "assistantIds": [
+    "38e71746-75f8-4a7f-b527-f0b7528d76f0"
+  ],
+  "createdAt": "2025-11-24T03:10:13.831Z",
+  "description": "Monitors appointment cancellations during calls",
+  "id": "00d9c6e4-6383-4b59-97be-b7dba41f0ace",
+  "name": "Appointment Cancelled",
+  "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+  "schema": {
+    "description": "Mark true when customer cancels an existing appointment",
+    "type": "boolean"
+  },
+  "type": "ai",
+  "updatedAt": "2025-11-24T03:10:13.831Z",
+  "workflowIds": []
+}

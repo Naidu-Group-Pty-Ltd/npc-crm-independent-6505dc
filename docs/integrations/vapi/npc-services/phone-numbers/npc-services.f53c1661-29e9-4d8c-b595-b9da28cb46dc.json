@@ -1,0 +1,15 @@
+{
+  "createdAt": "2025-11-12T07:14:18.288Z",
+  "fallbackDestination": {
+    "number": "+61433005110",
+    "type": "number"
+  },
+  "id": "f53c1661-29e9-4d8c-b595-b9da28cb46dc",
+  "name": "NPC Services",
+  "number": "+61281056305",
+  "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+  "provider": "twilio",
+  "status": "active",
+  "twilioAccountSid": "{{REDACTED:TWILIO_ACCOUNT_SID}}",
+  "updatedAt": "2026-05-07T09:31:27.655Z"
+}

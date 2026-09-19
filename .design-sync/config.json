@@ -1,0 +1,32 @@
+{
+  "projectId": "1a22a8b2-f3be-43e1-8011-67ce30ab472b",
+  "shape": "package",
+  "pkg": "npc-property-dashboard-ui",
+  "globalName": "NPCUI",
+  "buildCmd": "node .design-sync/build-ds-pkg.mjs",
+  "entry": ".design-sync/.cache/ds-pkg/entry.mjs",
+  "srcDir": "src/components/ui",
+  "tsconfig": "tsconfig.json",
+  "cssEntry": "styles.css",
+  "docsDir": "docs",
+  "guidelinesGlob": "guidelines/*.md",
+  "readmeHeader": ".design-sync/conventions.md",
+  "overrides": {
+    "StatusBadge": { "cardMode": "column" },
+    "Progress": { "cardMode": "column" },
+    "Skeleton": { "cardMode": "column" },
+    "Input": { "cardMode": "column" },
+    "Switch": { "cardMode": "column" },
+    "Textarea": { "cardMode": "column" },
+    "Card": { "cardMode": "column" },
+    "Accordion": { "cardMode": "column" },
+    "Pagination": { "cardMode": "column" },
+    "SidebarTrigger": { "cardMode": "column" },
+    "Tabs": { "cardMode": "column" },
+    "Dialog": { "cardMode": "single", "primaryStory": "Open" },
+    "DropdownMenu": { "cardMode": "single", "primaryStory": "Open" },
+    "Popover": { "cardMode": "single", "primaryStory": "Open" },
+    "Sheet": { "cardMode": "single", "primaryStory": "Open" },
+    "Tooltip": { "cardMode": "single", "primaryStory": "Open" }
+  }
+}

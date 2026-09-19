@@ -1,0 +1,21 @@
+{
+  "createdAt": "2026-05-14T09:17:51.843Z",
+  "function": {
+    "description": "GHL MCP toolset for accessing GoHighLevel contacts, calendars, opportunities, conversations, custom fields, and related sub-account data. Use this only when direct GHL data access is required. Do not use this as the call memory layer; use get_call_context for live call context.",
+    "name": "ghl_mcp"
+  },
+  "id": "32c907eb-ff8c-4a9e-868d-67eb1144ee42",
+  "metadata": {
+    "protocol": "shttp"
+  },
+  "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+  "server": {
+    "headers": {
+      "Authorization": "{{REDACTED:GHL_PIT_TOKEN}}",
+      "locationId": "H7NNnJKSofGaRJHTkAd3"
+    },
+    "url": "https://services.leadconnectorhq.com/mcp/"
+  },
+  "type": "mcp",
+  "updatedAt": "2026-05-14T09:17:51.843Z"
+}

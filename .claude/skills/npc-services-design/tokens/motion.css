@@ -1,0 +1,30 @@
+/* ─────────────────────────────────────────────────────────────────
+   NPC Services — motion.
+
+   SHORT and RESTRAINED. 120–320ms, ease-out. Hovers lift 2px, presses
+   shrink to 0.98–0.99. Nothing bounces, nothing springs, nothing slides
+   in from off-screen except the mobile nav sheet.
+
+   Irrelevant to the report/PDF layer — print has no motion.
+   ───────────────────────────────────────────────────────────────── */
+
+:root {
+  --motion-fast: 120ms;    /* micro: pin hover, icon scale */
+  --motion-base: 200ms;    /* default: hover lift, colour, shadow */
+  --motion-slow: 320ms;    /* panels, theme cross-fade */
+  --motion-theme: 300ms;
+
+  --motion-ease-out: cubic-bezier(0.22, 1, 0.36, 1);
+  --motion-ease-emphasized: cubic-bezier(0.2, 0, 0, 1);
+
+  --lift-hover: -2px;
+  --press-scale: 0.98;
+  --icon-hover-scale: 1.1;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --motion-fast: 1ms; --motion-base: 1ms; --motion-slow: 1ms; --motion-theme: 1ms;
+    --lift-hover: 0px; --press-scale: 1; --icon-hover-scale: 1;
+  }
+}

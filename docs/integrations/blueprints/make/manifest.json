@@ -1,0 +1,814 @@
+{
+  "source": {
+    "platform": "make.com",
+    "zone": "eu2.make.com",
+    "organizationId": 1620547,
+    "teamId": 528268
+  },
+  "exportedScenarios": 36,
+  "scenarios": [
+    {
+      "id": 8167556,
+      "name": "NPC Delete Booking Test",
+      "file": "call-booking/npc-delete-booking-test.8167556.json",
+      "category": "call-booking",
+      "active": true,
+      "folder": "NPC Services",
+      "modules": 3,
+      "packages": [
+        "gateway",
+        "microsoft-email",
+        "openai-gpt-3"
+      ],
+      "scheduling": "immediately",
+      "hookId": 3633969,
+      "lastEdit": "2025-11-26T05:59:07.737Z",
+      "created": "2025-11-26T03:28:28.656Z",
+      "redactedSecrets": [
+        "TWILIO_ACCOUNT_SID"
+      ]
+    },
+    {
+      "id": 8253996,
+      "name": "NPC Delete IFC Session",
+      "file": "call-booking/npc-delete-ifc-session.8253996.json",
+      "category": "call-booking",
+      "active": true,
+      "folder": "NPC Services",
+      "modules": 3,
+      "packages": [
+        "gateway",
+        "microsoft-email",
+        "openai-gpt-3"
+      ],
+      "scheduling": "immediately",
+      "hookId": 3675049,
+      "lastEdit": "2025-12-07T15:10:41.814Z",
+      "created": "2025-12-07T15:10:41.814Z",
+      "redactedSecrets": [
+        "TWILIO_ACCOUNT_SID"
+      ]
+    },
+    {
+      "id": 8253983,
+      "name": "NPC Delete IFC Session (Zoom)",
+      "file": "call-booking/npc-delete-ifc-session-zoom.8253983.json",
+      "category": "call-booking",
+      "active": true,
+      "folder": "NPC Services",
+      "modules": 3,
+      "packages": [
+        "gateway",
+        "microsoft-email",
+        "openai-gpt-3"
+      ],
+      "scheduling": "immediately",
+      "hookId": 3675034,
+      "lastEdit": "2025-12-07T15:08:33.887Z",
+      "created": "2025-12-07T15:07:02.262Z",
+      "redactedSecrets": [
+        "TWILIO_ACCOUNT_SID"
+      ]
+    },
+    {
+      "id": 8431843,
+      "name": "NPC Delete Opt In Call",
+      "file": "call-booking/npc-delete-opt-in-call.8431843.json",
+      "category": "call-booking",
+      "active": true,
+      "folder": "NPC Services",
+      "modules": 4,
+      "packages": [
+        "airtable",
+        "gateway",
+        "http"
+      ],
+      "scheduling": "immediately",
+      "hookId": 3758148,
+      "lastEdit": "2026-03-05T04:24:26.825Z",
+      "created": "2026-01-07T17:20:29.296Z",
+      "redactedSecrets": [
+        "VAPI_API_KEY"
+      ]
+    },
+    {
+      "id": 8431904,
+      "name": "NPC Delete Quiz Sub Call",
+      "file": "call-booking/npc-delete-quiz-sub-call.8431904.json",
+      "category": "call-booking",
+      "active": true,
+      "folder": "NPC Services",
+      "modules": 4,
+      "packages": [
+        "airtable",
+        "gateway",
+        "http"
+      ],
+      "scheduling": "immediately",
+      "hookId": 3758195,
+      "lastEdit": "2026-03-05T04:32:41.261Z",
+      "created": "2026-01-07T17:32:55.472Z",
+      "redactedSecrets": [
+        "VAPI_API_KEY"
+      ]
+    },
+    {
+      "id": 8190549,
+      "name": "NPC Delete Strategy Session",
+      "file": "call-booking/npc-delete-strategy-session.8190549.json",
+      "category": "call-booking",
+      "active": true,
+      "folder": "NPC Services",
+      "modules": 3,
+      "packages": [
+        "gateway",
+        "microsoft-email",
+        "openai-gpt-3"
+      ],
+      "scheduling": "immediately",
+      "hookId": 3645048,
+      "lastEdit": "2025-11-28T14:21:28.090Z",
+      "created": "2025-11-28T14:11:17.503Z",
+      "redactedSecrets": [
+        "TWILIO_ACCOUNT_SID"
+      ]
+    },
+    {
+      "id": 8204241,
+      "name": "NPC Delete Strategy Session (Zoom)",
+      "file": "call-booking/npc-delete-strategy-session-zoom.8204241.json",
+      "category": "call-booking",
+      "active": true,
+      "folder": "NPC Services",
+      "modules": 3,
+      "packages": [
+        "gateway",
+        "microsoft-email",
+        "openai-gpt-3"
+      ],
+      "scheduling": "immediately",
+      "hookId": 3651136,
+      "lastEdit": "2025-12-01T05:15:29.579Z",
+      "created": "2025-12-01T05:15:29.579Z",
+      "redactedSecrets": [
+        "TWILIO_ACCOUNT_SID"
+      ]
+    },
+    {
+      "id": 6720116,
+      "name": "NPC Email 1",
+      "file": "intake/npc-email-1.6720116.json",
+      "category": "intake",
+      "active": false,
+      "folder": "NPC Services",
+      "modules": 6,
+      "packages": [
+        "ai-tools",
+        "airtable",
+        "builtin",
+        "firecrawl",
+        "google-drive",
+        "google-maps",
+        "http",
+        "json",
+        "make-ai-extractors",
+        "microsoft-email",
+        "openai-gpt-3",
+        "regexp"
+      ],
+      "scheduling": "indefinitely",
+      "hookId": null,
+      "lastEdit": "2026-07-23T14:52:11.727Z",
+      "created": "2025-08-11T09:35:44.937Z",
+      "redactedSecrets": []
+    },
+    {
+      "id": 9618493,
+      "name": "NPC Email 1 New",
+      "file": "intake/npc-email-1-new.9618493.json",
+      "category": "intake",
+      "active": false,
+      "folder": null,
+      "modules": 6,
+      "packages": [
+        "ai-tools",
+        "airtable",
+        "builtin",
+        "firecrawl",
+        "google-drive",
+        "google-maps",
+        "http",
+        "json",
+        "make-ai-extractors",
+        "microsoft-email",
+        "openai-gpt-3",
+        "regexp"
+      ],
+      "scheduling": "indefinitely",
+      "hookId": null,
+      "lastEdit": "2026-08-04T22:30:37.226Z",
+      "created": "2026-08-04T22:29:58.747Z",
+      "redactedSecrets": []
+    },
+    {
+      "id": 9624368,
+      "name": "NPC Email 2",
+      "file": "intake/npc-email-2.9624368.json",
+      "category": "intake",
+      "active": true,
+      "folder": null,
+      "modules": 7,
+      "packages": [
+        "ai-tools",
+        "airtable",
+        "builtin",
+        "firecrawl",
+        "google-drive",
+        "google-maps",
+        "http",
+        "json",
+        "make-ai-extractors",
+        "microsoft-email",
+        "openai-gpt-3",
+        "regexp"
+      ],
+      "scheduling": "indefinitely",
+      "hookId": null,
+      "lastEdit": "2026-08-06T08:02:27.697Z",
+      "created": "2026-08-06T08:02:27.697Z",
+      "redactedSecrets": []
+    },
+    {
+      "id": 8269892,
+      "name": "NPC Active Nurturing",
+      "file": "outreach/npc-active-nurturing.8269892.json",
+      "category": "outreach",
+      "active": false,
+      "folder": "NPC Services",
+      "modules": 4,
+      "packages": [
+        "gateway",
+        "http",
+        "json",
+        "openai-gpt-3"
+      ],
+      "scheduling": "immediately",
+      "hookId": 3682471,
+      "lastEdit": "2026-05-07T02:49:41.038Z",
+      "created": "2025-12-09T14:35:51.338Z",
+      "redactedSecrets": [
+        "VAPI_API_KEY"
+      ]
+    },
+    {
+      "id": 8268220,
+      "name": "NPC Active Nurturing Call Report",
+      "file": "outreach/npc-active-nurturing-call-report.8268220.json",
+      "category": "outreach",
+      "active": false,
+      "folder": "NPC Services",
+      "modules": 4,
+      "packages": [
+        "builtin",
+        "highlevel",
+        "json",
+        "openai-gpt-3",
+        "twilio",
+        "vapi"
+      ],
+      "scheduling": "immediately",
+      "hookId": 3681629,
+      "lastEdit": "2025-12-11T11:19:44.368Z",
+      "created": "2025-12-09T11:58:50.609Z",
+      "redactedSecrets": [
+        "TWILIO_ACCOUNT_SID"
+      ]
+    },
+    {
+      "id": 6226586,
+      "name": "NPC Discovery Call Live",
+      "file": "outreach/npc-discovery-call-live.6226586.json",
+      "category": "outreach",
+      "active": true,
+      "folder": "NPC Services",
+      "modules": 5,
+      "packages": [
+        "gateway",
+        "http",
+        "json",
+        "microsoft-email",
+        "openai-gpt-3"
+      ],
+      "scheduling": "immediately",
+      "hookId": 3507577,
+      "lastEdit": "2026-01-07T10:40:49.567Z",
+      "created": "2025-07-11T08:21:44.256Z",
+      "redactedSecrets": [
+        "VAPI_API_KEY"
+      ]
+    },
+    {
+      "id": 8168400,
+      "name": "NPC Discovery Call No Show Live",
+      "file": "outreach/npc-discovery-call-no-show-live.8168400.json",
+      "category": "outreach",
+      "active": true,
+      "folder": "NPC Services",
+      "modules": 7,
+      "packages": [
+        "gateway",
+        "http",
+        "json",
+        "microsoft-email",
+        "openai-gpt-3"
+      ],
+      "scheduling": "immediately",
+      "hookId": 3634367,
+      "lastEdit": "2026-05-07T02:27:02.319Z",
+      "created": "2025-11-26T07:34:36.551Z",
+      "redactedSecrets": [
+        "VAPI_API_KEY"
+      ]
+    },
+    {
+      "id": 7893240,
+      "name": "NPC Discovery Call Summary",
+      "file": "outreach/npc-discovery-call-summary.7893240.json",
+      "category": "outreach",
+      "active": false,
+      "folder": "NPC Services",
+      "modules": 2,
+      "packages": [
+        "airtable",
+        "vapi"
+      ],
+      "scheduling": "immediately",
+      "hookId": 3507622,
+      "lastEdit": "2025-10-31T15:10:38.765Z",
+      "created": "2025-10-31T15:10:38.765Z",
+      "redactedSecrets": []
+    },
+    {
+      "id": 8147807,
+      "name": "NPC Discovery Call Test",
+      "file": "outreach/npc-discovery-call-test.8147807.json",
+      "category": "outreach",
+      "active": false,
+      "folder": "NPC Services",
+      "modules": 7,
+      "packages": [
+        "gateway",
+        "http",
+        "json",
+        "microsoft-email",
+        "openai-gpt-3"
+      ],
+      "scheduling": "immediately",
+      "hookId": 3624540,
+      "lastEdit": "2026-02-02T02:28:48.068Z",
+      "created": "2025-11-24T03:59:02.107Z",
+      "redactedSecrets": [
+        "VAPI_API_KEY"
+      ]
+    },
+    {
+      "id": 8253885,
+      "name": "NPC IFC Follow Up Test",
+      "file": "outreach/npc-ifc-follow-up-test.8253885.json",
+      "category": "outreach",
+      "active": true,
+      "folder": "NPC Services",
+      "modules": 5,
+      "packages": [
+        "builtin",
+        "gateway",
+        "http",
+        "json",
+        "microsoft-email",
+        "openai-gpt-3"
+      ],
+      "scheduling": "immediately",
+      "hookId": 3674999,
+      "lastEdit": "2026-02-02T02:30:34.243Z",
+      "created": "2025-12-07T14:50:10.597Z",
+      "redactedSecrets": [
+        "VAPI_API_KEY"
+      ]
+    },
+    {
+      "id": 8257213,
+      "name": "NPC IFC No Show",
+      "file": "outreach/npc-ifc-no-show.8257213.json",
+      "category": "outreach",
+      "active": true,
+      "folder": "NPC Services",
+      "modules": 5,
+      "packages": [
+        "builtin",
+        "gateway",
+        "http",
+        "json",
+        "microsoft-email",
+        "openai-gpt-3"
+      ],
+      "scheduling": "immediately",
+      "hookId": 3676343,
+      "lastEdit": "2026-02-02T02:35:37.837Z",
+      "created": "2025-12-08T07:54:46.486Z",
+      "redactedSecrets": [
+        "VAPI_API_KEY"
+      ]
+    },
+    {
+      "id": 8088302,
+      "name": "NPC Opt-In Follow Up Test",
+      "file": "outreach/npc-opt-in-follow-up-test.8088302.json",
+      "category": "outreach",
+      "active": true,
+      "folder": "NPC Services",
+      "modules": 7,
+      "packages": [
+        "airtable",
+        "gateway",
+        "http",
+        "json",
+        "openai-gpt-3"
+      ],
+      "scheduling": "immediately",
+      "hookId": 3595901,
+      "lastEdit": "2026-05-21T06:39:43.190Z",
+      "created": "2025-11-17T09:12:52.147Z",
+      "redactedSecrets": [
+        "VAPI_API_KEY"
+      ]
+    },
+    {
+      "id": 8097639,
+      "name": "NPC Quiz Submission Follow Up Test",
+      "file": "outreach/npc-quiz-submission-follow-up-test.8097639.json",
+      "category": "outreach",
+      "active": true,
+      "folder": "NPC Services",
+      "modules": 7,
+      "packages": [
+        "airtable",
+        "gateway",
+        "http",
+        "json",
+        "openai-gpt-3"
+      ],
+      "scheduling": "immediately",
+      "hookId": 3595956,
+      "lastEdit": "2026-05-07T02:23:48.765Z",
+      "created": "2025-11-18T04:58:06.264Z",
+      "redactedSecrets": [
+        "VAPI_API_KEY"
+      ]
+    },
+    {
+      "id": 8190416,
+      "name": "NPC Strategy Session Follow Up Test",
+      "file": "outreach/npc-strategy-session-follow-up-test.8190416.json",
+      "category": "outreach",
+      "active": true,
+      "folder": "NPC Services",
+      "modules": 5,
+      "packages": [
+        "builtin",
+        "gateway",
+        "http",
+        "json",
+        "microsoft-email",
+        "openai-gpt-3"
+      ],
+      "scheduling": "immediately",
+      "hookId": 3644985,
+      "lastEdit": "2026-02-02T02:34:00.866Z",
+      "created": "2025-11-28T13:59:11.911Z",
+      "redactedSecrets": [
+        "VAPI_API_KEY"
+      ]
+    },
+    {
+      "id": 8204271,
+      "name": "NPC Strategy Session Follow Up Zoom",
+      "file": "outreach/npc-strategy-session-follow-up-zoom.8204271.json",
+      "category": "outreach",
+      "active": true,
+      "folder": "NPC Services",
+      "modules": 7,
+      "packages": [
+        "gateway",
+        "http",
+        "json",
+        "microsoft-email",
+        "openai-gpt-3"
+      ],
+      "scheduling": "immediately",
+      "hookId": 3651149,
+      "lastEdit": "2025-12-08T08:54:39.549Z",
+      "created": "2025-12-01T05:29:08.928Z",
+      "redactedSecrets": [
+        "VAPI_API_KEY"
+      ]
+    },
+    {
+      "id": 8190705,
+      "name": "NPC Strategy Session No Show",
+      "file": "outreach/npc-strategy-session-no-show.8190705.json",
+      "category": "outreach",
+      "active": true,
+      "folder": "NPC Services",
+      "modules": 5,
+      "packages": [
+        "builtin",
+        "gateway",
+        "http",
+        "json",
+        "microsoft-email",
+        "openai-gpt-3"
+      ],
+      "scheduling": "immediately",
+      "hookId": 3645099,
+      "lastEdit": "2026-02-02T02:31:47.954Z",
+      "created": "2025-11-28T14:27:06.269Z",
+      "redactedSecrets": [
+        "VAPI_API_KEY"
+      ]
+    },
+    {
+      "id": 6965830,
+      "name": "Integration Webhooks, PDFMonkey",
+      "file": "reports/integration-webhooks-pdfmonkey.6965830.json",
+      "category": "reports",
+      "active": false,
+      "folder": null,
+      "modules": 2,
+      "packages": [
+        "gateway",
+        "pdfmonkey"
+      ],
+      "scheduling": "immediately",
+      "hookId": 3089277,
+      "lastEdit": "2025-08-27T17:18:22.082Z",
+      "created": "2025-08-27T17:18:22.082Z",
+      "redactedSecrets": []
+    },
+    {
+      "id": 8306842,
+      "name": "Discovery Call Handoff",
+      "file": "voice-agent/discovery-call-handoff.8306842.json",
+      "category": "voice-agent",
+      "active": true,
+      "folder": "NPC Services",
+      "modules": 6,
+      "packages": [
+        "builtin",
+        "datastore",
+        "gateway",
+        "json",
+        "openai-gpt-3",
+        "util",
+        "vapi"
+      ],
+      "scheduling": "immediately",
+      "hookId": 3700051,
+      "lastEdit": "2026-05-14T07:41:29.290Z",
+      "created": "2025-12-15T08:52:18.962Z",
+      "redactedSecrets": [
+        "TWILIO_ACCOUNT_SID"
+      ]
+    },
+    {
+      "id": 9232675,
+      "name": "GHL MCP - Get Contact By Phone via HTTP",
+      "file": "voice-agent/ghl-mcp-get-contact-by-phone-via-http.9232675.json",
+      "category": "voice-agent",
+      "active": false,
+      "folder": null,
+      "modules": 6,
+      "packages": [
+        "gateway",
+        "http"
+      ],
+      "scheduling": "immediately",
+      "hookId": 4126817,
+      "lastEdit": "2026-05-14T09:42:50.771Z",
+      "created": "2026-05-14T09:39:04.270Z",
+      "redactedSecrets": [
+        "GHL_PIT_TOKEN_CONTACTS"
+      ]
+    },
+    {
+      "id": 9263976,
+      "name": "NPC Twilio - Store Active Call Context",
+      "file": "voice-agent/npc-twilio-store-active-call-context.9263976.json",
+      "category": "voice-agent",
+      "active": true,
+      "folder": null,
+      "modules": 3,
+      "packages": [
+        "datastore",
+        "gateway"
+      ],
+      "scheduling": "immediately",
+      "hookId": 4141282,
+      "lastEdit": "2026-05-20T11:44:59.640Z",
+      "created": "2026-05-20T09:02:30.822Z",
+      "redactedSecrets": [
+        "TWILIO_ACCOUNT_SID"
+      ]
+    },
+    {
+      "id": 9232935,
+      "name": "NPC Vapi - get_call_context v1",
+      "file": "voice-agent/npc-vapi-get-call-context-v1.9232935.json",
+      "category": "voice-agent",
+      "active": true,
+      "folder": null,
+      "modules": 3,
+      "packages": [
+        "builtin",
+        "datastore",
+        "gateway"
+      ],
+      "scheduling": "immediately",
+      "hookId": 4126904,
+      "lastEdit": "2026-05-14T12:05:27.104Z",
+      "created": "2026-05-14T10:10:14.970Z",
+      "redactedSecrets": [
+        "TWILIO_ACCOUNT_SID"
+      ]
+    },
+    {
+      "id": 9264620,
+      "name": "NPC Vapi - Transfer Caller to Human via Twilio Redirect",
+      "file": "voice-agent/npc-vapi-transfer-caller-to-human-via-twilio-redirect.9264620.json",
+      "category": "voice-agent",
+      "active": true,
+      "folder": null,
+      "modules": 3,
+      "packages": [
+        "builtin",
+        "datastore",
+        "gateway",
+        "twilio"
+      ],
+      "scheduling": "immediately",
+      "hookId": 4141547,
+      "lastEdit": "2026-05-20T11:47:50.689Z",
+      "created": "2026-05-20T10:11:13.480Z",
+      "redactedSecrets": [
+        "TWILIO_ACCOUNT_SID"
+      ]
+    },
+    {
+      "id": 8041133,
+      "name": "NPC Vapi Outbound Sandbox",
+      "file": "voice-agent/npc-vapi-outbound-sandbox.8041133.json",
+      "category": "voice-agent",
+      "active": false,
+      "folder": "NPC Services",
+      "modules": 4,
+      "packages": [
+        "airtable",
+        "http",
+        "json",
+        "openai-gpt-3"
+      ],
+      "scheduling": "indefinitely",
+      "hookId": null,
+      "lastEdit": "2025-11-12T09:02:51.753Z",
+      "created": "2025-11-12T08:34:11.844Z",
+      "redactedSecrets": [
+        "VAPI_API_KEY"
+      ]
+    },
+    {
+      "id": 9216756,
+      "name": "Vapi - GHL Availability Intent Router - Native HighLevel Universal API - Cascaded FINAL",
+      "file": "voice-agent/vapi-ghl-availability-intent-router-native-highlevel-universal-api-cascaded-fina.9216756.json",
+      "category": "voice-agent",
+      "active": true,
+      "folder": null,
+      "modules": 3,
+      "packages": [
+        "builtin",
+        "gateway",
+        "highlevel",
+        "openai-gpt-3"
+      ],
+      "scheduling": "immediately",
+      "hookId": 4117850,
+      "lastEdit": "2026-05-19T08:25:31.249Z",
+      "created": "2026-05-11T21:46:31.726Z",
+      "redactedSecrets": [
+        "TWILIO_ACCOUNT_SID"
+      ]
+    },
+    {
+      "id": 9219325,
+      "name": "Vapi - GHL Booking Appointment Intent Router - Generic HTTP PIT - IMPORT SAFE",
+      "file": "voice-agent/vapi-ghl-booking-appointment-intent-router-generic-http-pit-import-safe.9219325.json",
+      "category": "voice-agent",
+      "active": true,
+      "folder": null,
+      "modules": 3,
+      "packages": [
+        "builtin",
+        "gateway",
+        "http",
+        "openai-gpt-3"
+      ],
+      "scheduling": "immediately",
+      "hookId": 4118865,
+      "lastEdit": "2026-05-15T08:08:44.903Z",
+      "created": "2026-05-12T09:56:12.815Z",
+      "redactedSecrets": [
+        "GHL_PIT_TOKEN_BOOKING"
+      ]
+    },
+    {
+      "id": 9218037,
+      "name": "Vapi - GHL Booking Appointment Intent Router - Native HighLevel Universal API - Cascaded FINAL",
+      "file": "voice-agent/vapi-ghl-booking-appointment-intent-router-native-highlevel-universal-api-cascad.9218037.json",
+      "category": "voice-agent",
+      "active": false,
+      "folder": null,
+      "modules": 3,
+      "packages": [
+        "builtin",
+        "gateway",
+        "highlevel",
+        "openai-gpt-3"
+      ],
+      "scheduling": "immediately",
+      "hookId": 4118360,
+      "lastEdit": "2026-05-12T08:59:09.361Z",
+      "created": "2026-05-12T07:38:49.960Z",
+      "redactedSecrets": []
+    },
+    {
+      "id": 9216526,
+      "name": "Vapi - GHL Contact Resolver v3 PRODUCTION (Search First, Create Only If Needed)",
+      "file": "voice-agent/vapi-ghl-contact-resolver-v3-production-search-first-create-only-if-needed.9216526.json",
+      "category": "voice-agent",
+      "active": true,
+      "folder": null,
+      "modules": 3,
+      "packages": [
+        "builtin",
+        "gateway",
+        "highlevel"
+      ],
+      "scheduling": "immediately",
+      "hookId": 4118006,
+      "lastEdit": "2026-05-13T15:17:56.139Z",
+      "created": "2026-05-11T20:33:49.252Z",
+      "redactedSecrets": [
+        "GHL_PIT_TOKEN_CONTACTS",
+        "TWILIO_ACCOUNT_SID"
+      ]
+    },
+    {
+      "id": 9231443,
+      "name": "Vapi - GHL Contact Resolver v4 CANONICAL VARIABLES (Search First, Create Only If Needed)",
+      "file": "voice-agent/vapi-ghl-contact-resolver-v4-canonical-variables-search-first-create-only-if-nee.9231443.json",
+      "category": "voice-agent",
+      "active": true,
+      "folder": null,
+      "modules": 3,
+      "packages": [
+        "builtin",
+        "datastore",
+        "gateway",
+        "highlevel"
+      ],
+      "scheduling": "immediately",
+      "hookId": 4126221,
+      "lastEdit": "2026-05-19T08:14:44.085Z",
+      "created": "2026-05-14T06:04:46.217Z",
+      "redactedSecrets": [
+        "GHL_PIT_TOKEN_CONTACTS",
+        "TWILIO_ACCOUNT_SID"
+      ]
+    },
+    {
+      "id": 9231549,
+      "name": "Vapi - phoneNumber_inject v2 Canonical Context Bridge",
+      "file": "voice-agent/vapi-phonenumber-inject-v2-canonical-context-bridge.9231549.json",
+      "category": "voice-agent",
+      "active": true,
+      "folder": null,
+      "modules": 2,
+      "packages": [
+        "gateway"
+      ],
+      "scheduling": "immediately",
+      "hookId": 4126247,
+      "lastEdit": "2026-05-14T06:39:38.614Z",
+      "created": "2026-05-14T06:39:38.614Z",
+      "redactedSecrets": []
+    }
+  ]
+}

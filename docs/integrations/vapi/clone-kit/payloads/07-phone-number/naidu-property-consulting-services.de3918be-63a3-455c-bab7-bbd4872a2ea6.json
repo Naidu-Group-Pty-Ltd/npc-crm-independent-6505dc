@@ -1,0 +1,10 @@
+{
+  "name": "Naidu Property Consulting Services",
+  "number": "+61286093299",
+  "provider": "twilio",
+  "server": {
+    "timeoutSeconds": 20,
+    "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+  },
+  "twilioAccountSid": "{{REDACTED:TWILIO_ACCOUNT_SID}}"
+}

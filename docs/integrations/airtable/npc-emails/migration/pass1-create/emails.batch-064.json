@@ -1,0 +1,484 @@
+{
+  "table": "Emails",
+  "batch": 64,
+  "of": 107,
+  "recordCount": 50,
+  "records": [
+    {
+      "sourceRecordId": "recaOSKsM5BBrOeoW",
+      "sourceCreatedTime": "2026-04-08T01:06:24.000Z",
+      "fields": {
+        "Name": "Abby Holmes-Brown",
+        "Subject": "3 Fresh Listings in Sippy Downs!!",
+        "Email": "sales@fnlifestyle.com.au",
+        "Body": "Just Listed\r\n\r\n\r\n\r\n\r\nHi Rugesh,\r\n\r\nDreaming of a new home?\r\n\r\nExplore our diverse range of homes for sale and find the perfect fit for your lifestyle-your next chapter starts here!\r\n\r\nKind Regards,\r\nAbby Holmes-Brown\r\n\r\nsales@fnlifestyle.com.au"
+      }
+    },
+    {
+      "sourceRecordId": "recaOkEabz8WU97UA",
+      "sourceCreatedTime": "2025-11-05T07:24:08.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recaPJwCc0SI9GeR7",
+      "sourceCreatedTime": "2025-08-12T10:34:38.000Z",
+      "fields": {
+        "Name": "Lavanethan Ravichandran",
+        "Subject": "Test Email",
+        "Email": "lavan@ehsanjv.com",
+        "Body": "Testing https://xenochrome.tech"
+      }
+    },
+    {
+      "sourceRecordId": "recaQyAYxrdm65J99",
+      "sourceCreatedTime": "2025-12-27T02:09:43.000Z",
+      "fields": {
+        "Name": "Professionals Caboolture/Morayfield Chippendale",
+        "Subject": "How does your property compare to these?",
+        "Email": "j.chippendale@professionalscaboolture.propertyemail.com.au",
+        "Body": "Dear ,\r\n\r\nWhat is happening to real estate in your area?\r\n\r\nWhether you have a current interest in selling or not, everybody likes to keep track of how their local market is performing. Here are the results of our latest property sales in the area. If you",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recaRf5eYnMgsgRYP",
+      "sourceCreatedTime": "2026-04-22T04:11:12.000Z",
+      "fields": {
+        "Name": "Kelsi - Peter Lawton Property",
+        "Subject": "NEW PROPERTY LISTING ALERT! 🏡",
+        "Email": "kelsi@peterlawton.com.au",
+        "Body": "View this email in your browser\r\n\r\nG'day Rugesh\r\n\r\nThe Complete Package – Dual Blocks, Big Shed & Room to Move\r\n\r\n\r\n\r\n\r\n\r\nThis one’s got the lot— Spacious, high set home with four bedrooms, two bathrooms and air-conditioning throughout, all set on a gener",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recaRvNcutyRXDwkX",
+      "sourceCreatedTime": "2025-09-07T00:44:14.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recaSyIDSJ1861mNi",
+      "sourceCreatedTime": "2025-11-06T07:12:53.000Z",
+      "fields": {
+        "Name": "Keyline Realty",
+        "Subject": "Keyline Realty Property Update",
+        "Email": "keylinerealty@keylinerealty.com",
+        "Body": "Keyline Property Update\r\nHello Rugesh,\r\n\r\n\r\n\"A sense of freedom is something that, happily, comes with age and life experience.\"\r\n\r\n-Diane Keaton\r\n\r\nCheck out our 5-Star Google Reviews!\r\n\r\n355 REVIEWS AND COUNTING!\r\n\r\n\r\n\r\n\r\nSee what our customers have to ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recaTO8WEF8K3nIps",
+      "sourceCreatedTime": "2025-10-31T14:26:40.000Z",
+      "fields": {
+        "Name": "Robyn Faa",
+        "Subject": "Just Listed | 7 Perry Street, West Mackay",
+        "Email": "robyn@robynfaa.com.au",
+        "Body": "Just Listed\r\n\r\nHi Rugesh\r\n\r\nWe are pleased to announce that 7 Perry Street, West Mackay has just been listed for sale!\r\n\r\nIf you would like additional information on this property, click the \"View Online\" tab below to find all Mapping, Rental Estimations ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recaTdotXnF5OrdHs",
+      "sourceCreatedTime": "2026-06-04T03:03:04.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recaULVT7ldpDduxq",
+      "sourceCreatedTime": "2026-06-04T08:10:38.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recaVl8V0K1iPKfI2",
+      "sourceCreatedTime": "2025-10-17T13:06:42.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recaWSRUbkR01Pgcj",
+      "sourceCreatedTime": "2026-02-20T03:34:46.000Z",
+      "fields": {
+        "Name": "Wellmanprop",
+        "Subject": "Unit 2 Special Promotion❗ 115-119 Clayton Rd, Oakleigh East",
+        "Email": "projects@wellmanpropgroup.com",
+        "Body": "Walking Distance to Monash Uni Clayton Campus\r\n ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌  ‌ ‌  ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌  ‌ ‌   ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌  ‌ ‌   ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌  ‌ ‌  ‌ ‌ ‌  ‌ ‌  ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌  ‌ ‌   ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌  ‌ ‌   ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌  ‌ ‌ ‌ ‌ ‌ ‌ ‌ "
+      }
+    },
+    {
+      "sourceRecordId": "recaWYoXpDI4QqhvU",
+      "sourceCreatedTime": "2025-11-06T03:37:12.000Z",
+      "fields": {
+        "Name": "Amelia Andrews",
+        "Subject": "PRE MARKET OPPORTUNITY | House-like apartment with Federation charm",
+        "Email": "ameliaandrews@mcgrath.com.au",
+        "Body": "PREVIEW INSPECTION THIS SAT 8 NOV 11-11:30AM\r\n\r\n\r\n1/28 Lower Wycombe Road, Neutral Bay\r\n\r\n\r\n\r\n\r\n\r\n2\r\n\r\n\r\n\r\n2\r\n\r\n\r\n\r\n1\r\n\r\n\r\n\r\nContact Agent\r\n\r\n\r\n\r\nEmbracing a private ground floor setting in an exclusive block of ten, this meticulously maintained residence",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recaYBgAGg1FFtG53",
+      "sourceCreatedTime": "2026-02-25T15:22:06.000Z",
+      "fields": {
+        "Name": "ACTIVE AGENTS (QLD) PTY LTD",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "info@activeagents.com.au",
+        "Body": "Edit my requirements\r\nVisit our Website\r\nProperty Alert\r\nThursday, 26th February 2026\r\nHello Rugesh,\r\n\r\nThe following listings matched your Property Alert search requirements.\r\n\r\nBooral\r\n95 Sea Eagles Road\r\n\r\nOffers over $799,000\r\n\r\n        3             ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recaYNQ09IygqU8bt",
+      "sourceCreatedTime": "2025-10-20T23:25:41.000Z",
+      "fields": {
+        "Name": "Lyn Deasy",
+        "Subject": "Your Property Update [Price Reduction Alert]",
+        "Email": "lyn.deasy@podre.com.au",
+        "Body": "0749272122\r\nwww.podre.com.au\r\nPrice Update\r\n\r\nHi Rugesh,\r\n\r\nWe've had some price reductions recently on some properties you might be interested in. Give me a call if you have any questions or would like to take a look through any of these.\r\n\r\n\r\n61 Forbes ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recaYNkqCFHX71FzJ",
+      "sourceCreatedTime": "2025-11-05T06:20:55.000Z",
+      "fields": {
+        "Name": "Brad Hinton",
+        "Subject": "OFF MARKET OPPORTUNITY IN CALIFORNIA GULLY",
+        "Email": "brad@phproperty.com.au",
+        "Body": "Hello Rugesh,\r\n\r\n\r\nI hope you’re well.\r\n\r\n\r\n\r\nI wanted to let you know about an off-market opportunity at 45 Dowding Street, California Gully that may be of interest to your clients. The property offers great potential and just needs a little bit of work ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recaYhVC5r3nvcBiq",
+      "sourceCreatedTime": "2026-04-22T05:41:10.000Z",
+      "fields": {
+        "Name": "Karine Wright",
+        "Subject": "Off Market - 31 Beachway Pde, Marcoola",
+        "Email": "karine@wrightplace.com.au",
+        "Body": "Hi Rugesh,\r\n\r\nWe have the above property off market and I was wondering if you would have a buyer looking for something like that?\r\n\r\nIt’s a 3 bed 2 bath 2 garages, and there is a one bedroom unit above the garage (unit tenanted at $500/w until Feb 2027),"
+      }
+    },
+    {
+      "sourceRecordId": "recaaEUKhI59JJnd8",
+      "sourceCreatedTime": "2026-03-18T08:02:19.000Z",
+      "fields": {
+        "Name": "John Hadley",
+        "Subject": "New Property Alert Match: 3 Audrey Street HOPETOUN",
+        "Email": "noreply@phoenixsoftware.io",
+        "Body": "Hi Rugesh,\r\n\r\nGreat news! A property matching your preferences has just become available.\r\n\r\n\r\n\r\n\r\nFor Sale\r\n3 Audrey Street, HOPETOUN VIC 3396\r\n$440,000\r\n4 bed | 1 bath | 3 car\r\nQUALITY BUILT HOME\r\n\r\nNot very often a home like this comes up for sale in H"
+      }
+    },
+    {
+      "sourceRecordId": "recaaPZfjrcMsvFzZ",
+      "sourceCreatedTime": "2026-06-11T06:10:37.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recacxQe6XhrdxBR6",
+      "sourceCreatedTime": "2025-11-13T06:05:47.000Z",
+      "fields": {
+        "Name": "Zevesto Property Group",
+        "Subject": "Just Listed - Modern Comfort in a Prime Location",
+        "Email": "admin@zevesto.propertyemail.com.au",
+        "Body": "View in browser\r\n\r\nJust Listed - Modern Comfort in a Prime Location\r\n\r\nDear ,\r\nBe among the first to explore this well-kept townhouse offering incredible potential to upgrade, personalise, and add long-term value.\r\n\r\nFOR SALE\r\n16/125 Overland Drive, Edens"
+      }
+    },
+    {
+      "sourceRecordId": "recadFTJWdC12dlx5",
+      "sourceCreatedTime": "2026-06-04T05:36:04.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recadaJWoR0EGg72s",
+      "sourceCreatedTime": "2026-01-15T03:25:09.000Z",
+      "fields": {
+        "Name": "Geoff Sellars",
+        "Subject": "Weekly Listings Update",
+        "Email": "geoff.sellars@raywhite.com",
+        "Body": "View this email in your browser\r\nDear NPC Services,\r\n\r\nPlease find below a collection of our latest property listings on the market! For further details on any of these properties, simply click on the property image.\r\n\r\nIt’s an exciting time for property ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recae5kTorqXRnbtL",
+      "sourceCreatedTime": "2026-06-09T08:42:16.000Z",
+      "fields": {
+        "Name": "Navdeep Singh",
+        "Subject": "Monthly Market Update for June 2026",
+        "Email": "NavdeepSingh@realcrats.com",
+        "Body": " ‌ ‌ ‌ ‌ ‌ ‌ ‌  ‌ ‌ ‌ ‌ ‌ ‌\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\nUnsubscribe\r\nView in Browser"
+      }
+    },
+    {
+      "sourceRecordId": "recafOdU0jwWsGGoV",
+      "sourceCreatedTime": "2025-11-11T02:51:44.000Z",
+      "fields": {
+        "Name": "Adam Bettison",
+        "Subject": "Just Listed | 15B Elettra Close, Morley",
+        "Email": "adam.bettison@housesmart.com.au",
+        "Body": "Just Listed - 15B Elettra Close\r\n\r\nHi Rugesh,\r\n\r\nAs a valued client of HouseSmart - we are pleased to present you with the latest listing that matches your criteria.\r\n\r\nLet us know if you'd like to come to the next home open, if you have any questions, or",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recafvqhxFtKbN0pl",
+      "sourceCreatedTime": "2026-01-22T16:54:12.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recaigb6cct6oUG7X",
+      "sourceCreatedTime": "2026-02-27T07:22:03.000Z",
+      "fields": {
+        "Name": "Brian Sellars",
+        "Subject": "Update Alert: Matched Properties",
+        "Email": "mail@bowenrealestate.com.au",
+        "Body": "Dear Rugesh,\r\n\r\nThe following is a selection of our new properties and those open for inspection this weekend as you have previously requested.  You will also find those for which the property price has been reduced.  If you require any further ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recakQvzi9RKSJNHF",
+      "sourceCreatedTime": "2026-01-13T07:34:14.000Z",
+      "fields": {
+        "Name": "Jools Munro",
+        "Subject": "Explore Property Munro & Co - Townsville Property",
+        "Email": "jmunro@exploreproperty.com.au",
+        "Body": "Hi Rugesh Naidu,\r\n\r\nReady to dive into the world of property investment? Explore Property Munro & Co is here to make it happen!\r\n\r\nAs your dedicated Townsville property experts, we're committed to making your investment journey seamless and exciting",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recal0tTWG7oNNqD9",
+      "sourceCreatedTime": "2025-10-23T00:33:34.000Z",
+      "fields": {
+        "Name": "Scott Thomas",
+        "Subject": "Landlords' First - Investment Opportunities",
+        "Email": "scott.thomas@belleproperty.com",
+        "Body": "with Scott Thomas\r\nLandlord's First - Sale Opportunities\r\n\r\nWoolloongabba\r\n58 Salisbury Street\r\n3               1               3\r\nBuyers in the $1.2Ms\r\nInspection: Sat 25 Oct, 11:00am - 11:30am\r\nVIEW MORE\r\n\r\nWoolloongabba\r\n1 Arne Street\r\n5               ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recalmITDKj1tIkCk",
+      "sourceCreatedTime": "2025-11-17T03:58:13.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recalnIfI6ZKvkBu8",
+      "sourceCreatedTime": "2025-09-06T22:35:45.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recamDY6TywynkLqL",
+      "sourceCreatedTime": "2025-11-20T05:36:31.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recamYNpcb1jC5cRS",
+      "sourceCreatedTime": "2026-01-12T21:34:12.000Z",
+      "fields": {
+        "Name": "Rick Holloway",
+        "Subject": "FW:  HIGH YIELD TWO PART STOCK  ",
+        "Email": "rick@thebobtraskgroup.com.au",
+        "Body": "Registered Stock\r\nHIGH  YIELD $1,110 PER WEEK\r\nLimited stock All Offers Considered\r\nSecondary Dwelling Stock\r\nMORAYFIELD\r\nTWO PART INVESTMENT’S\r\nGOING QUICK\r\nMoreton Bay (50km north of Brisbane)\r\n\r\n\r\n\r\n\r\n\r\nRegards\r\n\r\n“Whatever you need, if we don’t have i",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recamnrbrFUZD95x1",
+      "sourceCreatedTime": "2026-01-02T23:30:53.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recanxAbjoldNMqov",
+      "sourceCreatedTime": "2026-03-05T04:07:34.000Z",
+      "fields": {
+        "Name": "Robyn Faa",
+        "Subject": "Just Listed | 3 Salmon Avenue, Eimeo",
+        "Email": "robyn@robynfaa.com.au",
+        "Body": "Just Listed\r\n\r\nHi Rugesh\r\n\r\nWe are pleased to announce that 3 Salmon Avenue, Eimeo has just been listed for sale!\r\n\r\nIf you would like additional information on this property, click the \"View Online\" tab below to find all Mapping, Rental Estimations & Rat"
+      }
+    },
+    {
+      "sourceRecordId": "recaoJ8kEM9hhsqPZ",
+      "sourceCreatedTime": "2025-10-17T13:32:23.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recaofv5bJSQKzBXO",
+      "sourceCreatedTime": "2025-10-22T04:06:47.000Z",
+      "fields": {
+        "Name": "Divest Merge Acquire",
+        "Subject": "Latest M&A Opportunities + Recent Transactions",
+        "Email": "ask@divestma.com",
+        "Body": "Latest M&A Opportunities + Recent Transactions\r\n ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ‌ ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recaok9rtKMzgsAyl",
+      "sourceCreatedTime": "2025-12-22T06:06:47.000Z",
+      "fields": {
+        "Name": "Adam Young",
+        "Subject": "Hobby Farm - West Woombye",
+        "Email": "adam@youngpropertygroup.com.au",
+        "Body": "NEW LISTING - WEST WOOMBYE\r\n\r\n\r\n\r\n\r\nHi Rugesh,\r\n\r\nThis exceptional farm has been thoughtfully developed and meticulously maintained by the current owners over many years. Offering one of the coast's most desirable rural locations, the property com"
+      }
+    },
+    {
+      "sourceRecordId": "recaqGR112rQsUkdS",
+      "sourceCreatedTime": "2025-10-10T10:37:17.000Z",
+      "fields": {
+        "Name": "Rick Holloway",
+        "Subject": "FW: SMSF SALE DINMORE",
+        "Email": "rick@thebobtraskgroup.com.au",
+        "Body": "PRICED TO SELL\r\nSMSF SALE OF THE WEEK\r\nBIG BLOCK\r\nRegistered in January\r\nSecondary Dwelling Stock\r\nDINMORE\r\nUnique Property\r\nGreat Location\r\nInvesting in Dinmore, the median property price for a house is currently $530,000 with annual capital growth of ",
+        "Status": "Error 500",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/0iqAEN_IdWRNMwl2KILt_w/s0zJgBCAhRUTKz87SMN1RUgXLwc7T7elka046fMGBkRcaPVm-Wo2hR34GGkVU-vgxEEVthV1Aqb4kFq6tAAnGAud-ebmW2kjFEZQ-kSSV4Xzm-c8M7t5JSyyXqgSY4ASuAiTT1eDvPa5W1_1Wz2TVUrRLOBFn7gD4ysju18_hdHFRH97AhjbQMgOuDFRMkOT/8Kd6abrJi-5BmnoSaohZ0Ra9w2VI7Y9gBO5BbshP9po",
+            "filename": "outlook_email_attachment.png",
+            "type": "image/png",
+            "size": 147127
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "recaqfbFjkBhXS6Of",
+      "sourceCreatedTime": "2025-12-12T04:29:54.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recaqiPDgEhTyVYQS",
+      "sourceCreatedTime": "2025-10-21T08:53:17.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recatH6v6FtKw0Myu",
+      "sourceCreatedTime": "2025-08-29T07:12:05.000Z",
+      "fields": {
+        "Name": "Rugesh Naidu",
+        "Subject": "NPC Services | Naidu Property Consulting Services | Introduction & Mailing List Allocation",
+        "Email": "rugesh@npcservices.com.au",
+        "Body": "Good afternoon,I hope this message finds you well.\nI’d like to take a moment to introduce NPC Services also known as Naidu Property Consulting Services, a dedicated buyer’s agency and property consulting business specialising in guiding clients through every stage of their property purchase journey.We currently have qualified clients actively ready to purchase across a range of budgets, and we’re looking to build strong relationships with agencies like yours. To streamline the process, it would be greatly appreciated if you could please add our acquisitions team to your weekly property mailing list below:Property@npcservices.com.au [Property@npcservices.com.au]This ensures our research division receives your latest on and off-market listings, promptly for reviewal and assessment, allowing us to respond quickly and match opportunities with ready buyers.I’m confident this collaboration will lead to excellent results for both your agency and our clients.Please feel free to contact me if you have any questions\n\nKind Regards[cid:921b57b8-a816-4ed0-89f3-37c2515adce2]Mobile: 0433 005 110 | Email: rugesh@npcservices.com.au | Website: www.npcservices.com.au [http://www.npcservices.com.au/]\n[cid:ca348791-1621-403e-a2da-16f0a5176318] [http://www.linkedin.com/in/rugesh-naidu-1b0003123][cid:0ea43148-0d04-4568-8d14-116e90606d0c] [https://www.instagram.com/npc.services]A blue circle with a white letter f in it AI-generated content may be incorrect. [cid:519fc5a9-83fe-4f57-87d0-da1bd63ef5ce] [https://www.facebook.com/profile.php?id=61577033127001]\nAddress: Level 5 Nexus Norwest, 4 Columbia Ct, Norwest NSW 2153\nNaidu Group Pty Ltd trading as Naidu Property Consulting ServicesACN: 684 555 771 | ABN: 50 684 555 771\nDisclaimer:\nAs a Professional Property Consultant & Buyers Agent, we provide information and advice based on our expertise and experience in the real estate market. Please be aware that the advice and insights offered are for general informational purposes only and should not be considered financial advice. While we strive to ensure the accuracy and relevance of the information provided, real estate markets are dynamic and subject to change and cannot guarantee the future performance or outcomes of any property investment. It is important to understand that real estate investments carry risks, including market fluctuations, changes in property values, and potential financial losses. Our services include assisting you in identifying and evaluating potential opportunities, negotiating purchase terms, and navigating the transaction process. Any decisions to purchase, sell, or invest in real estate should be made after careful consideration and consultation with appropriate financial, legal, and tax advisors. By engaging our services, you acknowledge that you have read and understood this disclaimer and agree to take full responsibility for your property-related decisions. Always conduct your own research and due diligence to ensure that any property transaction aligns with your financial objectives and risk profile.",
+        "Status": "Error 500",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/mQ2_OnWRDXhaNM7IZNH9TQ/4b9ttn4RdOBBWBl4gyUUizw8rNcAp8n59UEMPPAtB9IHZ6oxfaT05sKHMCkvhb1ctmB7GS8hO8h1WnY_7rod_FP7T0Je89xwSFOvyoHw3H22F_Nmx5u2ISK5D86eZNg3Cm-Z8veBaNO1VGp1wjBCkhUzqsRxpz98e2RHnHqoWOCVqQJ4wd7zWJZqiy-Ys0rG/L317qiZLimQ2uPvFnWFoYO8EmjupThAn0lFKMY5wJlE",
+            "filename": "outlook_email_attachment.png",
+            "type": "image/png",
+            "size": 3465
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "recau9UW3z4i17s5d",
+      "sourceCreatedTime": "2025-10-16T05:33:36.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recav9i97Vt64yZgr",
+      "sourceCreatedTime": "2025-10-22T02:51:47.000Z",
+      "fields": {
+        "Name": "Morgan Business Sales",
+        "Subject": "Morgan Business Sales - Latest Business Opportunities",
+        "Email": "jade@morganbusinesssales.com",
+        "Body": "Hi Rugesh,\r\n\r\nWe have some fantastic new listings to share with you.  Please click the links below to view more details and initiate your enquiry on any of these opportunities.\r\n\r\n\r\n\r\nFor more opportunities\r\n\r\nYou can view all of our current business oppo",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recavLJwVvrTopLrL",
+      "sourceCreatedTime": "2025-10-22T05:08:11.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recaw3IYgXMwGIjyR",
+      "sourceCreatedTime": "2026-01-28T07:59:31.000Z",
+      "fields": {
+        "Name": "Team Pennisi",
+        "Subject": "A trip down memory lane + listings worth a look-see",
+        "Email": "sales@pennisi.com.au",
+        "Body": "Scroll 👇🏽 for this week's 🏠\r\n\r\nHi Rugesh,\r\n\r\nOn January 22nd we celebrated 53 incredible years of helping our community navigate the property journey with care, honesty and a commitment to excellence. What began in January 1973, with Sam Pennisi starti",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recay9YYCRA5hKMmP",
+      "sourceCreatedTime": "2026-02-20T03:35:46.000Z",
+      "fields": {
+        "Name": "Robyn Faa",
+        "Subject": "Just Listed | 5 Mogford Street, West Mackay",
+        "Email": "robyn@robynfaa.com.au",
+        "Body": "Just Listed\r\n\r\nHi Rugesh\r\n\r\nWe are pleased to announce that 5 Mogford Street, West Mackay has just been listed for sale!\r\n\r\nIf you would like additional information on this property, click the \"View Online\" tab below to find all Mapping, Rental Estimation"
+      }
+    },
+    {
+      "sourceRecordId": "recayZqlJIuPGBNT4",
+      "sourceCreatedTime": "2025-12-17T16:33:59.000Z",
+      "fields": {
+        "Name": "Belle Property Australasia",
+        "Subject": "Your First to See Listings Alert",
+        "Email": "noreply@belleproperty.com",
+        "Body": "Dear Rugesh,\r\n\r\nWe have found the following properties that match your property search requirements. Click here to update your preferences or click here to find a property on belleproperty.com.\r\nCurrent listings.\r\n\r\nMornington\r\n5 Alfred Street\r\nAuction $1",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recayvLN5oNap1ePB",
+      "sourceCreatedTime": "2026-06-23T15:06:03.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recazBJ5aGxwcn6ce",
+      "sourceCreatedTime": "2025-09-22T12:33:29.000Z",
+      "fields": {
+        "Status": "No URL"
+      }
+    },
+    {
+      "sourceRecordId": "recb0ptYSjlZYoJ5O",
+      "sourceCreatedTime": "2025-10-16T05:57:14.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    }
+  ]
+}

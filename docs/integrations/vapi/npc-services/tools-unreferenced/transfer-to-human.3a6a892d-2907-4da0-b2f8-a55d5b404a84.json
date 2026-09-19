@@ -1,0 +1,33 @@
+{
+  "async": false,
+  "createdAt": "2026-05-07T09:10:01.056Z",
+  "destinations": [
+    {
+      "callerId": "+61286093299",
+      "message": "Got it \u2014 I\u2019ll connect you with a team member now.",
+      "number": "+61433005110",
+      "numberE164CheckEnabled": true,
+      "transferPlan": {
+        "mode": "warm-transfer-twiml",
+        "sipVerb": "refer",
+        "twiml": "<Say>Hi, this is NPC Services. A caller has asked to speak with a team member. You will be connected now.</Say>"
+      },
+      "type": "number"
+    }
+  ],
+  "function": {
+    "description": "Trigger this tool when a caller asks to speak to a human/real person",
+    "name": "transfer_to_human"
+  },
+  "id": "3a6a892d-2907-4da0-b2f8-a55d5b404a84",
+  "messages": [
+    {
+      "blocking": false,
+      "content": "",
+      "type": "request-start"
+    }
+  ],
+  "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+  "type": "transferCall",
+  "updatedAt": "2026-05-19T09:49:58.158Z"
+}

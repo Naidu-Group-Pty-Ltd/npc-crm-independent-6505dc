@@ -1,0 +1,43 @@
+[
+  {
+    "table": "Aurixa Waitlist",
+    "sourceRecordId": "recS5OzCXyvIc7Kl9",
+    "fieldName": "BRQ Detailed Responses",
+    "linkedSourceRecordIds": [
+      "recW0FM1q9Lyqi2VF",
+      "rectszlHImnpCHOEL"
+    ]
+  },
+  {
+    "table": "Aurixa Waitlist",
+    "sourceRecordId": "recnC8j6YucPUCX4L",
+    "fieldName": "BRQ Detailed Responses",
+    "linkedSourceRecordIds": [
+      "recaLOzCdW6u1kTX3"
+    ]
+  },
+  {
+    "table": "BRQ Detailed Responses",
+    "sourceRecordId": "recW0FM1q9Lyqi2VF",
+    "fieldName": "Applicant",
+    "linkedSourceRecordIds": [
+      "recS5OzCXyvIc7Kl9"
+    ]
+  },
+  {
+    "table": "BRQ Detailed Responses",
+    "sourceRecordId": "recaLOzCdW6u1kTX3",
+    "fieldName": "Applicant",
+    "linkedSourceRecordIds": [
+      "recnC8j6YucPUCX4L"
+    ]
+  },
+  {
+    "table": "BRQ Detailed Responses",
+    "sourceRecordId": "rectszlHImnpCHOEL",
+    "fieldName": "Applicant",
+    "linkedSourceRecordIds": [
+      "recS5OzCXyvIc7Kl9"
+    ]
+  }
+]

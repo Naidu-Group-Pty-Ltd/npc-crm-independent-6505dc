@@ -1,0 +1,1 @@
+UPDATE public.client_portal_notifications SET action_url = '/client/messages' WHERE action_url = '/portal/messages';

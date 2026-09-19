@@ -1,0 +1,26 @@
+{
+  "async": false,
+  "createdAt": "2024-07-18T14:06:24.643Z",
+  "function": {
+    "async": false,
+    "description": "Check the availability on the business calendar for a requested time by the customer. If all the slots are available, respond by saying we're available all day. If there are busy slots, make sure the requested time slot is available. If not, suggest alternative slots.",
+    "name": "checkAvailability",
+    "parameters": {
+      "properties": {
+        "times": {
+          "description": "Requested time for appointment booking",
+          "type": "string"
+        }
+      },
+      "type": "object"
+    }
+  },
+  "id": "326c7c81-e4c2-4bcb-bcf3-134a1af73f49",
+  "latestVersion": "v1",
+  "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+  "server": {
+    "url": "https://hook.eu2.make.com/9hr5vgh78dqq4sl19lpgsfji716rtu1o"
+  },
+  "type": "function",
+  "updatedAt": "2024-07-18T14:46:42.071Z"
+}

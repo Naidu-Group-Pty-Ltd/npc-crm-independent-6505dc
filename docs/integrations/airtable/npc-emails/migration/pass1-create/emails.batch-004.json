@@ -1,0 +1,463 @@
+{
+  "table": "Emails",
+  "batch": 4,
+  "of": 107,
+  "recordCount": 50,
+  "records": [
+    {
+      "sourceRecordId": "rec1yuKAM4V95NYzO",
+      "sourceCreatedTime": "2025-10-08T08:39:37.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec1z3A3IiCYCs1rK",
+      "sourceCreatedTime": "2025-12-16T17:23:21.000Z",
+      "fields": {
+        "Name": "Belle Property Australasia",
+        "Subject": "Your First to See Listings Alert",
+        "Email": "noreply@belleproperty.com",
+        "Body": "Dear Rugesh,\r\n\r\nWe have found the following properties that match your property search requirements. Click here to update your preferences or click here to find a property on belleproperty.com.\r\nCurrent listings.\r\n\r\nDromana\r\n14 Carrigg Street\r\nAuction $1,",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec1z3NdfdKFdKPr5",
+      "sourceCreatedTime": "2025-11-21T00:29:41.000Z",
+      "fields": {
+        "Name": "Peter Coomer",
+        "Subject": "🏡 Hermitage Stocklist // Final One-Part Contract Available $730K // Geelong Rooming Houses from $766K - up to 10% yield - 21/11/2025",
+        "Email": "pcoomer@hermitagehomes.com.au",
+        "Body": "🏡 Hermitage Stocklist // Final One-Part Contract Available $730K // Geelong Rooming Houses from $766K - up to 10% yield - 21/11/2025\r\n\r\nHi ,\r\n\r\n\r\n\r\nGeelong is set to be the next BOOMING suburb. Check out this link below from\r\nThe Greater City of Geelong'",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec1zFhsTYeqC8NOM",
+      "sourceCreatedTime": "2026-04-02T18:21:06.000Z",
+      "fields": {
+        "Name": "Tom Offermann Real Estate",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "sales@offermann.com.au",
+        "Body": "Edit my requirements\r\nVisit our Website\r\nProperty Alert\r\nFriday, 3rd April 2026\r\nHello Rugesh,\r\n\r\nThe following listings matched your Property Alert search requirements.\r\n\r\nDoonan\r\n259 Duke Road\r\nArt of Class: Visually Arresting Sparkling Gem with Heart &",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec205DYH9fNtUGMl",
+      "sourceCreatedTime": "2025-11-21T02:37:45.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec206n01B5FbrQ0V",
+      "sourceCreatedTime": "2025-12-19T05:04:14.000Z",
+      "fields": {
+        "Name": "LJ Hooker Greater Springfield",
+        "Subject": "Your Market Update",
+        "Email": "reception@ljhspringfield.com.au",
+        "Body": "Here's a quick update on what’s happening in our local real estate market.  ‌ ‌ ‌ ‌ ‌ ‌ ‌  ‌ ‌ ‌ ‌ ‌ ‌\r\n        Greater Springfield\r\nLocal Market Update | Sales\r\nHi\r\n\r\n\r\nI wanted to share a quick update on what's happening in our local real estate market.",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec20gIg5seYycuTI",
+      "sourceCreatedTime": "2025-11-09T02:06:45.000Z",
+      "fields": {
+        "Name": "Mick Lay",
+        "Subject": "Newsletter - What Does $1,056,000 Buy You in Bayswater?",
+        "Email": "michael@lay2.com.au",
+        "Body": "What Does $1,056,000 Buy You in Bayswater?\r\n\r\n\r\nHi Rugesh\r\n\r\nSold for $1,056,000, this Bayswater home proved just how much buyers value space, style, and modern design close to the river.\r\n\r\nTake a closer look inside to see why this was such a great prope"
+      }
+    },
+    {
+      "sourceRecordId": "rec21nLGZBCluy9ow",
+      "sourceCreatedTime": "2026-04-07T01:21:04.000Z",
+      "fields": {
+        "Name": "Thomas Bettison",
+        "Subject": "COMING SOON TO MARKET | 9 Highman St, South Guildford",
+        "Email": "thomas.bettison@housesmart.com.au",
+        "Body": "MARKET PREVIEW - 9 Highman St\r\n\r\nHi Rugesh,\r\n\r\nPlease see the following property, launching to market in the near future.\r\n\r\nIf you are interested in securing this before the property goes live to all buyers, let me know.\r\n\r\nUpdate my criteria\r\nSay hello ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec222TS7cKeBsvlH",
+      "sourceCreatedTime": "2026-02-01T03:03:41.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec229P6rGFBKnpni",
+      "sourceCreatedTime": "2026-03-11T03:39:17.000Z",
+      "fields": {
+        "Name": "Adam Bettison",
+        "Subject": "Just Listed | 56 Lockeport Approach, Madeley",
+        "Email": "adam.bettison@housesmart.com.au",
+        "Body": "Just Listed - 56 Lockeport Approach\r\n\r\nHi Rugesh,\r\n\r\nAs a valued client of HouseSmart - we are pleased to present you with the latest listing that matches your criteria.\r\n\r\nLet us know if you'd like to come to the next home open, if you have any questions",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec237n6tn83VLZjd",
+      "sourceCreatedTime": "2025-11-14T04:42:55.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec23UWN5PRQGZZT5",
+      "sourceCreatedTime": "2025-11-04T09:14:46.000Z",
+      "fields": {
+        "Name": "Rugesh Naidu",
+        "Subject": "Fw: Still Available!  27 Adam Street, Beachmere",
+        "Email": "rugesh@npcservices.com.au",
+        "Body": "Kind Regards\r\nMobile: 0433 005 110 | Email: rugesh@npcservices.com.au | Website: www.npcservices.com.au\r\n\r\n\r\n\r\nAddress: Level 5 Nexus Norwest, 4 Columbia Ct, Norwest NSW 2153\r\n\r\nNaidu Group Pty Ltd trading as Naidu Property Consulting Services\r\nACN: 6",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec24Fba9eZRNesMt",
+      "sourceCreatedTime": "2026-02-16T04:10:48.000Z",
+      "fields": {
+        "Name": "First National Real Estate Atherton",
+        "Subject": "1 new property that match your criteria",
+        "Email": "mail@athertonfn.com.au",
+        "Body": "Dear Rugesh, Here are the results for your email alerts from First National Real Estate Atherton as at 10/02/2026\r\n\r\n\r\n        3               1\r\n$500,000 - $550,000\r\n58 Weaver Street, Atherton\r\n\r\nLocation, Location, Location\r\n\r\nSet on a generous "
+      }
+    },
+    {
+      "sourceRecordId": "rec24GNEkf4QMNlOC",
+      "sourceCreatedTime": "2026-04-21T23:11:09.000Z",
+      "fields": {
+        "Name": "McFall Real Estate",
+        "Subject": "Builders and Developers Land Update",
+        "Email": "joe@mcfallrealestate.com.au",
+        "Body": "View this email in your browser\r\n\r\n\r\n\r\nAVAILABLE LAND\r\n\r\n\r\n\r\n19 Urquhart Street, Gordon\r\n\r\n $370,000\r\n1744m2\r\n\r\n\r\n\r\n\r\n164 Keerins Lane, Ballan\r\n\r\n\r\n\r\n\r\nEXPRESSIONS OF INTEREST\r\nINDUSTRIAL DEVELOPMENT\r\nPLANNING PERMIT APPROVED\r\n  34 LOTS\r\n\r\n\r\n31-33 (Lot 13"
+      }
+    },
+    {
+      "sourceRecordId": "rec25Y7Pee4WkpTEH",
+      "sourceCreatedTime": "2025-10-10T21:15:21.000Z",
+      "fields": {
+        "Name": "Hermitage Homes",
+        "Subject": "Support our HBG Melbourne Marathon Runners",
+        "Email": "sphilippe@hermitagehomes.com.au",
+        "Body": "Running in support of the Victorian Homeless Fund.\r\n\r\n\r\nMelbourne Marathon: Running for the Victorian Homeless Fund\r\n\r\nThe Victorian Homeless Fund is our Charity Partner for this year’s Melbourne Marathon, backing our team and the vital work they do acros",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec269NFNvRl29OGC",
+      "sourceCreatedTime": "2026-03-03T23:22:03.000Z",
+      "fields": {
+        "Name": "Morgan Business Sales",
+        "Subject": "Morgan Business Sales - Latest Business Opportunities",
+        "Email": "jade@morganbusinesssales.com",
+        "Body": "Hi Rugesh,\r\n\r\nWe have some fantastic new listings to share with you.  Please click the links below to view more details and initiate your enquiry on any of these opportunities.\r\n\r\n\r\n\r\nFor more opportunities\r\n\r\nYou can view all of our current business oppo",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec26SfeqGVrOISfL",
+      "sourceCreatedTime": "2025-10-31T15:39:33.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec26jkOjpBgDhouE",
+      "sourceCreatedTime": "2025-09-22T18:01:28.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec26rm1t9hDo2uBd",
+      "sourceCreatedTime": "2025-10-07T02:47:57.000Z",
+      "fields": {
+        "Name": "Professionals Caboolture/Morayfield Chippendale",
+        "Subject": "Book a FREE property evaluation",
+        "Email": "j.chippendale@professionalscaboolture.propertyemail.com.au",
+        "Body": "Dear ,\r\n\r\nOne of the first steps in making your decision to move is obtaining an appraisal from a property expert.\r\n\r\nHere at Professionals we know the markets where we operate back-to-front! If you'd like a free appraisal on your property (whether you ar",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec2AJPHT4Kc9ZujE",
+      "sourceCreatedTime": "2025-12-19T04:52:24.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec2AzrwJgbamgF9A",
+      "sourceCreatedTime": "2025-11-06T02:55:38.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec2BjBcoJBPuiOCk",
+      "sourceCreatedTime": "2026-02-20T04:45:26.000Z",
+      "fields": {
+        "Name": "Belle Property Australasia",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "noreply@belleproperty.com",
+        "Body": "Dear Rugesh,\r\n\r\nWe have found the following properties that match your property search requirements. Click here to update your preferences or click here to find a property on belleproperty.com.\r\nCurrent listings.\r\n\r\nMount Eliza\r\n30 Watts Parade\r\nFor Sale ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec2BsLXopPcbanHm",
+      "sourceCreatedTime": "2025-12-07T22:19:41.000Z",
+      "fields": {
+        "Name": "Rick Holloway",
+        "Subject": "FW: Registered duplex sale from $749,990",
+        "Email": "rick@thebobtraskgroup.com.au",
+        "Body": "Rentals Needed Urgent\r\nDETACHED DUPLEX SALE\r\nSTARTING FROM $799,990\r\nHIGH  YIELD $870 PER WEEK RETURN\r\nREGISTERED READY TO BUILD\r\nFOUR BEDDERS WITH DOUBLE GARAGES\r\nALL BLOCKS OVER 400 SQM PER DWELLING\r\nSelling Quick\r\nBig Blocks\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\nRegards"
+      }
+    },
+    {
+      "sourceRecordId": "rec2DSLxykL4JkUyz",
+      "sourceCreatedTime": "2026-06-04T08:10:40.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec2ECfUQNRDtq12L",
+      "sourceCreatedTime": "2025-12-03T04:39:36.000Z",
+      "fields": {
+        "Name": "Catherine Tidy",
+        "Subject": "Fletcher Riley's Newsletter - This Week in Luxury: Just Listed, Just Sold and Exclusive Open Homes",
+        "Email": "admin@fletcherriley.com.au",
+        "Body": "Welcome to our weekly update and hello, December.\r\n\r\nSomehow we’ve reached the final month of the year, and the Sunshine Coast market continues to move with strength and confidence.\r\n\r\n\r\n\r\nEach week, we aim to provide clear, concise insights into upcoming"
+      }
+    },
+    {
+      "sourceRecordId": "rec2EjKkLgmgICbow",
+      "sourceCreatedTime": "2026-02-06T02:32:58.000Z",
+      "fields": {
+        "Name": "McGrath NSW & QLD CO",
+        "Subject": "McGrath Property Alert",
+        "Email": "concierge@mcgrath.com.au",
+        "Body": "PROPERTY ALERT\r\n\r\n6/21-23 Myrtle Street, Botany\r\n\r\n\r\n\r\n\r\n\r\n3\r\n\r\n\r\n\r\n2\r\n\r\n\r\n\r\n2\r\n\r\n\r\n\r\nAUCTION\r\n\r\nOn Site - Saturday 28 Feb 2:15pm\r\n\r\n\r\n\r\nVIEW\r\n\r\nSaturday 7 Feb 12:00pm - 12:30pm\r\n\r\n\r\n\r\nAGENTS\r\n\r\nPatrick Byron: 0415 768 686\r\n\r\nVIEW MORE\r\nVIEW MORE\r\n12 Sunn",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec2FkEci1jojKz3X",
+      "sourceCreatedTime": "2025-12-05T04:21:56.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec2Gbjxna0NToxGN",
+      "sourceCreatedTime": "2026-03-03T05:07:07.000Z",
+      "fields": {
+        "Name": "Michael Enever",
+        "Subject": "NEW Price Property - OMEO VALLEY - Harcourts",
+        "Email": "michael.enever@harcourts.com.au",
+        "Body": "Hi Rugesh,\r\n\r\nPlease see the below property in OMEO VALLEY featuring a new price that may interest you or someone that you know.\r\nIf you would like further information about the property shown, or to discuss your property requirements, please don't "
+      }
+    },
+    {
+      "sourceRecordId": "rec2H2mTosBjKdhRv",
+      "sourceCreatedTime": "2025-10-16T01:59:29.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec2H6zAiu5YFnjqL",
+      "sourceCreatedTime": "2026-04-16T00:21:00.000Z",
+      "fields": {
+        "Name": "Rossana Winters - Realty One Real Estate",
+        "Subject": "3 Don Street, Wowan.  -House & Caravan Park ",
+        "Email": "rossana@realtyonerealestate.com.au",
+        "Body": "Hi,\r\n\r\nJust a quick note to let you know we’ve just listed a new opportunity that may suit some of your investors.\r\n\r\n3 Don Street, Wowan\r\nPrice $775,000\r\n\r\nCaravan Park, House & Business Opportunity – Wowan, QLD 🌿\r\nLooking for a project with strong upsi"
+      }
+    },
+    {
+      "sourceRecordId": "rec2HHs8P3zw1xmYY",
+      "sourceCreatedTime": "2026-01-08T07:08:24.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec2HdbDljUzHWexZ",
+      "sourceCreatedTime": "2025-12-08T08:34:39.000Z",
+      "fields": {
+        "Name": "Adam Bettison",
+        "Subject": "Just Listed | 74 Ferguson St, Midland",
+        "Email": "adam.bettison@housesmart.com.au",
+        "Body": "Just Listed - 74 Ferguson St\r\n\r\nHi Rugesh,\r\n\r\nAs a valued client of HouseSmart - we are pleased to present you with the latest listing that matches your criteria.\r\n\r\nLet us know if you'd like to come to the next home open, if you have any questions, or wo"
+      }
+    },
+    {
+      "sourceRecordId": "rec2ICGmzWt3m1qEB",
+      "sourceCreatedTime": "2025-09-10T16:44:57.000Z",
+      "fields": {
+        "Status": "No URL"
+      }
+    },
+    {
+      "sourceRecordId": "rec2IGzT02ZR0Y5q3",
+      "sourceCreatedTime": "2026-02-05T15:43:19.000Z",
+      "fields": {
+        "Name": "LJ Hooker Greater Springfield",
+        "Subject": "Open For Inspection",
+        "Email": "reception@ljhspringfield.com.au",
+        "Body": "Check out our upcoming open homes! Could one of these be your new home?  ‌ ‌ ‌ ‌ ‌ ‌ ‌  ‌ ‌ ‌ ‌ ‌ ‌\r\n        Greater Springfield\r\nOpen For Inspection\r\nHi Rugesh\r\n\r\nWhile browsing online gives you a good sense of a property, there's truly no substitute for",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec2IzXgXrlCJZbHc",
+      "sourceCreatedTime": "2025-12-10T00:09:30.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec2KcETm4WDX0VYa",
+      "sourceCreatedTime": "2026-01-15T03:32:41.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec2Ll5I6tippIex3",
+      "sourceCreatedTime": "2025-11-27T01:23:15.000Z",
+      "fields": {
+        "Name": "Lyn Deasy",
+        "Subject": "Your Property Update [New Listing Alert]",
+        "Email": "lyn.deasy@podre.com.au",
+        "Body": "0749272122\r\nwww.podre.com.au\r\nNew Listings\r\n\r\nHi Rugesh,\r\n\r\nWe've listed some new properties that I think you might be interested in. Give me a call if you have any questions or would like to take a look through any of these.\r\n\r\n\r\n275 Lakes Creek Road, Ko",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec2M29FiChxUxsep",
+      "sourceCreatedTime": "2026-01-28T16:50:48.000Z",
+      "fields": {
+        "Name": "Tom Offermann Real Estate",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "sales@offermann.com.au",
+        "Body": "Edit my requirements\r\nVisit our Website\r\nProperty Alert\r\nThursday, 29th January 2026\r\nHello Rugesh,\r\n\r\nThe following listings matched your Property Alert search requirements.\r\n\r\nNoosa Heads\r\n3/8 Quamby Place\r\nGround-Floor Riverside Bliss - Everyday is a b",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec2M7mDTW0kkwD7t",
+      "sourceCreatedTime": "2025-10-15T01:15:24.000Z",
+      "fields": {
+        "Name": "Brad Hinton",
+        "Subject": "COMING SOON IN CALIFORNIA GULLY",
+        "Email": "brad@phproperty.com.au",
+        "Body": "Hello Rugesh,\r\n\r\n\r\nJust giving you an early heads up that we have a new property coming on the market tomorrow at 13A Evans Street, California Gully. The vendors have requested we proceed with the listing to market, but I wanted to share this with you fir"
+      }
+    },
+    {
+      "sourceRecordId": "rec2O8oti1rTcfn42",
+      "sourceCreatedTime": "2026-02-26T14:22:01.000Z",
+      "fields": {
+        "Name": "Jalin Realty Australia Pty Ltd",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "adrian.chen@jalinrealty.com",
+        "Body": "Edit my requirements\r\nVisit our Website\r\nProperty Alert\r\nFriday, 27th February 2026\r\nHello Naidu Group Pty Ltd,\r\n\r\nThe following listings matched your Property Alert search requirements.\r\n\r\nMelbourne\r\n        5101/138 Spencer Street\r\nHigh-Level CBD Invest",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec2OgVP8IH5jZf0y",
+      "sourceCreatedTime": "2026-06-15T08:41:58.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec2Q2lgVTNeEPzFT",
+      "sourceCreatedTime": "2026-06-05T04:11:14.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec2QtDJuu3gaYVKa",
+      "sourceCreatedTime": "2025-10-08T08:40:33.000Z",
+      "fields": {
+        "Name": "Horsham Real Estate",
+        "Subject": "Exciting News !  Another New Industry to Horsham",
+        "Email": "mail@horshamre.com",
+        "Body": "View in browser\r\n\r\nAnother New Industry to Horsham.\r\n\r\nExciting Property Growth is predicted in Horsham.\r\n\r\nNow is definately the Perfect Time to Invest.\r\n\r\n\r\n\r\nIt has been announced a new $425 million potatoe processing plant is planned for Dooen, only 5",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec2RYqC4Y1Iaam5E",
+      "sourceCreatedTime": "2026-06-11T05:51:25.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec2SHYViYK0vB3RU",
+      "sourceCreatedTime": "2026-01-28T07:27:05.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec2T6NlUfqX5b4ss",
+      "sourceCreatedTime": "2025-11-07T04:16:27.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec2T8QirhoDFZYut",
+      "sourceCreatedTime": "2025-10-07T02:54:22.000Z",
+      "fields": {
+        "Name": "Clare Dawson",
+        "Subject": "Top performing sales this month from Clare Estate Agents",
+        "Email": "Clare@clareestateagents.propertyemail.com.au",
+        "Body": "View in browser\r\n\r\nHi NPC\r\n\r\nI am delighted to provide you with the results of some of our recently sold properties.\r\n\r\nThese owners benefited from our extensive expertise and experience selling property in the local area.\r\n\r\nIf you are thinking of sellin"
+      }
+    },
+    {
+      "sourceRecordId": "rec2Tjw8JLXCnaPg2",
+      "sourceCreatedTime": "2026-01-09T02:21:54.000Z",
+      "fields": {
+        "Name": "Scott Swingler",
+        "Subject": "Pre-Register Now For Our Exciting New February Campaigns Within!",
+        "Email": "scott@shore-property.com.au",
+        "Body": "Want to change how you receive these emails?\r\nYou can click to unsubscribe from this list.\r\n \r\nDiscover\r\n \r\n\r\nThe early bird catches the worm!\r\n\r\nPre-register now to be first in line to view our exciting range of upcoming February campaigns.\r\n\r\n\r\n\r\nIf you"
+      }
+    },
+    {
+      "sourceRecordId": "rec2ToWHCXmhhLraa",
+      "sourceCreatedTime": "2025-09-07T00:07:56.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "rec2UrL2qB3dVtNmi",
+      "sourceCreatedTime": "2025-11-24T23:09:42.000Z",
+      "fields": {
+        "Name": "Morgan Business Sales",
+        "Subject": "Morgan Business Sales - Latest Business Opportunities",
+        "Email": "jade@morganbusinesssales.com",
+        "Body": "Hi Rugesh,\r\n\r\n\r\n\r\nWe have some fantastic new listings to share with you.  Please click the links below to view more details and initiate your enquiry on any of these opportunities.\r\n\r\n\r\n\r\nFor more opportunities\r\n\r\nYou can view all of our current business ",
+        "Status": "Error 500"
+      }
+    }
+  ]
+}

@@ -1,0 +1,187 @@
+# Manual inspection of candidate open-data sources for market evidence.
+#
+# The Supabase egress can fetch these files but `pg_net` stores a response
+# as text, so a workbook comes back as five bytes ("PK\x03\x04\x14" and a
+# NUL); the development container cannot reach the hosts at all. A GitHub
+# runner can do both, so this workflow downloads each candidate, records the
+# HTTP answer, and prints every workbook's sheet names, dimensions and first
+# rows into the job log. It writes nothing anywhere and holds no secret.
+name: Evidence source inspection (manual)
+
+on:
+  workflow_dispatch:
+    inputs:
+      note:
+        description: Why this inspection is being run
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+jobs:
+  inspect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: pip install --quiet openpyxl
+      - name: Fetch and describe each candidate
+        shell: bash
+        run: |
+          mkdir -p out
+          python3 - <<'PY'
+          import io, json, re, sys, urllib.request, urllib.error
+          from openpyxl import load_workbook
+
+          UA = 'Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0 Safari/537.36'
+          QGSO = 'https://www.qgso.qld.gov.au/issues/2856/residential-land-development-activity-spreadsheet-all-monitored-regions-20260910.xlsx'
+          DCJ_SALES = 'https://dcj.nsw.gov.au/content/dam/dcj/dcj-website/documents/about-us/families-and-communities-statistics/housing-and-rent-sales/sales-tables-march-2026-quarter.xlsx'
+          DCJ_PAGE = 'https://dcj.nsw.gov.au/about-us/families-and-communities-statistics/housing-rent-and-sales/rent-and-sales-report.html'
+
+          def fetch(url):
+            req = urllib.request.Request(url, headers={'User-Agent': UA, 'Accept': '*/*'})
+            try:
+              with urllib.request.urlopen(req, timeout=60) as r:
+                return r.status, dict(r.headers), r.read()
+            except urllib.error.HTTPError as e:
+              return e.code, dict(e.headers), e.read()[:2000]
+            except Exception as e:
+              return None, {}, repr(e).encode()
+
+          def cell(v, n=16):
+            s = '' if v is None else str(v)
+            return s[:n]
+
+          def rows_of(ws):
+            return [list(r) for r in ws.iter_rows(values_only=True)]
+
+          def show(label, rows, limit_cols=None, width=16):
+            print(f'  -- {label}')
+            for r in rows:
+              cells = r if limit_cols is None else r[:limit_cols]
+              print('    ' + ' | '.join(cell(v, width) for v in cells))
+
+          def find_rows(rows, pattern, col=0, limit=4):
+            out = []
+            for r in rows:
+              v = r[col] if col < len(r) else None
+              if v is not None and re.search(pattern, str(v), re.I):
+                out.append(r)
+                if len(out) >= limit: break
+            return out
+
+          # ---- QGSO residential land development activity, all monitored regions
+          status, headers, data = fetch(QGSO)
+          print(f'\n=== QGSO status={status} bytes={len(data)}')
+          open('out/qgso_rlda_all_regions.xlsx', 'wb').write(data)
+          wb = load_workbook(io.BytesIO(data), read_only=True, data_only=True)
+          print('  sheets:', wb.sheetnames)
+          contents = rows_of(wb['Contents'])
+          print(f'  Contents rows={len(contents)}')
+          show('Contents (first 45 rows, 6 cols)', contents[:45], 6, 60)
+          for sn in ['SalesDetached_Price', 'SalesDetached_Number', 'SalesAttached_Price', 'SalesAttached_Number']:
+            rows = rows_of(wb[sn])
+            ncols = max(len(r) for r in rows) if rows else 0
+            print(f'\n  sheet {sn}: rows={len(rows)} cols={ncols}')
+            show('first 8 rows, first 12 cols', rows[:8], 12)
+            # the header row's tail: the most recent periods
+            hdr = next((r for r in rows[:12] if sum(1 for v in r if v is not None) > 20), None)
+            if hdr:
+              nz = [v for v in hdr if v is not None]
+              print('    header non-empty count:', len(nz), 'first:', [cell(v) for v in nz[:6]], 'last:', [cell(v) for v in nz[-6:]])
+            samples = []
+            for col in (2, 1, 3):
+              samples = find_rows(rows, r'^(Brisbane|Moreton Bay|Gold Coast|Isaac|Logan|Ipswich|Townsville|Queensland)\b', col, 8)
+              if samples:
+                print('    labels found in column', col); break
+            for r in samples:
+              nz = [(i, v) for i, v in enumerate(r) if v is not None]
+              print('    sample:', cell(r[0], 30), '| non-empty', len(nz), '| first', [(i, cell(v)) for i, v in nz[:5]], '| last', [(i, cell(v)) for i, v in nz[-5:]])
+            # first column values (the region labels)
+            labels = [cell(r[2], 40) for r in rows if len(r) > 2 and r[2] is not None]
+            print('    label-column values (all):', labels)
+            print('    label count:', len(labels))
+          # a compact JSON extract for a parser fixture: header rows + samples for the two price sheets and the detached number sheet
+          fixture = {}
+          for sn in ['SalesDetached_Price', 'SalesAttached_Price', 'SalesDetached_Number']:
+            rows = rows_of(wb[sn])
+            keep = rows[:8] + find_rows(rows, r'^(Brisbane \(C\)|Moreton Bay|Isaac|Gold Coast|Queensland)\b', 2, 6)
+            fixture[sn] = [[('' if v is None else (v if isinstance(v, (int, float)) else str(v))) for v in r] for r in keep]
+          print('\n  FIXTURE_JSON_QGSO_BEGIN')
+          print(json.dumps(fixture, separators=(',', ':')))
+          print('  FIXTURE_JSON_QGSO_END')
+
+          # ---- NSW DCJ sales tables
+          status, headers, data = fetch(DCJ_SALES)
+          print(f'\n=== DCJ sales status={status} bytes={len(data)}')
+          open('out/nsw_dcj_sales_tables.xlsx', 'wb').write(data)
+          wb = load_workbook(io.BytesIO(data), read_only=True, data_only=True)
+          print('  sheets:', wb.sheetnames)
+          notes = rows_of(wb['Explanatory Notes'])
+          show('Explanatory Notes (all rows, 3 cols)', notes[:80], 3, 200)
+          for sn in ['LGA', 'Postcode']:
+            rows = rows_of(wb[sn])
+            ncols = max(len(r) for r in rows) if rows else 0
+            print(f'\n  sheet {sn}: rows={len(rows)} cols={ncols}')
+            show('first 12 rows, first 14 cols', rows[:12], 14)
+            hdr = next((r for r in rows[:12] if sum(1 for v in r if v is not None) > 12), None)
+            if hdr:
+              nz = [v for v in hdr if v is not None]
+              print('    header non-empty count:', len(nz), 'first:', [cell(v) for v in nz[:8]], 'last:', [cell(v) for v in nz[-8:]])
+            pat = r'^(2155|2000|2570|4000)$' if sn == 'Postcode' else r'^(The Hills|Sydney|Blacktown|Parramatta)\b'
+            for col in range(0, 3):
+              samples = find_rows(rows, pat, col, 6)
+              if samples:
+                print(f'    matched on column {col}')
+                for r in samples:
+                  nz = [(i, v) for i, v in enumerate(r) if v is not None]
+                  print('    sample:', [cell(v, 24) for v in r[:4]], '| non-empty', len(nz), '| last', [(i, cell(v)) for i, v in nz[-6:]])
+                break
+          fixture = {}
+          for sn in ['LGA', 'Postcode']:
+            rows = rows_of(wb[sn])
+            pat = r'^(2155|2000)$' if sn == 'Postcode' else r'^(The Hills|Blacktown)\b'
+            keep = rows[:12]
+            for col in range(0, 3):
+              got = find_rows(rows, pat, col, 30)
+              if got:
+                keep = keep + got[:30]; break
+            fixture[sn] = [[('' if v is None else (v if isinstance(v, (int, float)) else str(v))) for v in r] for r in keep]
+          print('\n  FIXTURE_JSON_DCJ_BEGIN')
+          print(json.dumps(fixture, separators=(',', ':')))
+          print('  FIXTURE_JSON_DCJ_END')
+
+          # ---- DCJ previous reports: the historical sales tables a series needs
+          st, hd, body = fetch('https://dcj.nsw.gov.au/content/dcj/dcj-website/dcj/about-us/families-and-communities-statistics/housing-rent-and-sales/previous-rent-and-sales-reports.html')
+          html = body.decode('utf-8', 'replace')
+          sales_links = sorted(set(re.findall(r'href="([^"]*sales[^"]*\.xlsx)"', html, re.I)))
+          print(f'\n=== DCJ previous reports status={st} sales-table links={len(sales_links)}')
+          for l in sales_links[:80]:
+            print('   ', l)
+          other = sorted(set(re.findall(r'href="([^"]*\.(?:xlsx|xls|zip|csv))"', html, re.I)) - set(sales_links))
+          print('  other file links:', other[:40])
+
+          # ---- DCJ licence: follow the page's own copyright link
+          status, headers, data = fetch(DCJ_PAGE)
+          text = data.decode('utf-8', 'replace')
+          links = sorted(set(re.findall(r'href="([^"]*(?:copyright|licen[cs]|terms)[^"]*)"', text, re.I)))
+          print('\n=== DCJ page copyright/terms links:', links[:10])
+          for l in links[:3]:
+            url = l if l.startswith('http') else 'https://dcj.nsw.gov.au' + l
+            st, hd, body = fetch(url)
+            plain = re.sub(r'<[^>]+>', ' ', body.decode('utf-8', 'replace'))
+            hits = re.findall(r'.{0,220}(?:Creative Commons|creativecommons|CC BY).{0,220}', plain)
+            print(f'  {url} status={st} cc-mentions={len(hits)}')
+            for h in hits[:4]:
+              print('   >', re.sub(r'\s+', ' ', h).strip())
+          PY
+      - uses: actions/upload-artifact@v4
+        if: always()
+        with:
+          name: evidence-source-files
+          path: out/
+          retention-days: 3
+          if-no-files-found: ignore

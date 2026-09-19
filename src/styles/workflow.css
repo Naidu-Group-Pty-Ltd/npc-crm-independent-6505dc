@@ -1,0 +1,374 @@
+/* ---------------------------------------------------------------------------
+   Workflow Playground — canvas surface.
+
+   Everything here is expressed against the semantic tokens in tokens.css. The
+   canvas needs a per-category accent in several places at once (node icon, node
+   ring, outgoing edge, palette chip), so the category sets one custom property
+   and each part reads it. That keeps the accent in one place per node and keeps
+   colour out of inline styles, which the style ratchet counts.
+
+   The only inline styles the canvas uses are geometry — transform, width,
+   height, and SVG path data — which carry no colour.
+--------------------------------------------------------------------------- */
+
+/* Category accents. Each maps to a chart token so the canvas re-themes with the
+   rest of the dashboard and stays legible in both light and dark. */
+.wf-accent-platform { --wf-accent: var(--primary); }
+.wf-accent-logic { --wf-accent: var(--muted-foreground); }
+.wf-accent-ai { --wf-accent: var(--chart-1); }
+.wf-accent-property_data { --wf-accent: var(--chart-2); }
+.wf-accent-crm_marketing { --wf-accent: var(--chart-3); }
+.wf-accent-communications { --wf-accent: var(--chart-4); }
+.wf-accent-documents { --wf-accent: var(--chart-5); }
+.wf-accent-compliance { --wf-accent: var(--chart-6); }
+.wf-accent-payments { --wf-accent: var(--chart-7); }
+.wf-accent-analytics { --wf-accent: var(--chart-8); }
+.wf-accent-productivity { --wf-accent: var(--chart-9); }
+.wf-accent-storage { --wf-accent: var(--chart-10); }
+.wf-accent-media { --wf-accent: var(--chart-3); }
+.wf-accent-automation { --wf-accent: var(--chart-5); }
+.wf-accent-infrastructure { --wf-accent: var(--chart-8); }
+
+/* The plotting surface. The grid is the only thing that reads as "canvas", so it
+   stays faint — it should register as texture, not as content. */
+.wf-canvas {
+  position: relative;
+  overflow: hidden;
+  background-color: hsl(var(--surface-2));
+  background-image: radial-gradient(circle at 1px 1px, hsl(var(--foreground) / 0.09) 1px, transparent 0);
+  background-repeat: repeat;
+  touch-action: none;
+  /* Every gesture here is a drag, so text selection only ever produces stray
+     highlighted labels. Inputs opt back in below. */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.wf-canvas input,
+.wf-canvas textarea,
+.wf-canvas [contenteditable='true'] {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+.wf-canvas[data-panning='true'] { cursor: grabbing; }
+.wf-canvas[data-connecting='true'] { cursor: crosshair; }
+.wf-canvas[data-marquee='true'] { cursor: crosshair; }
+
+/* The layer that pans and zooms. Children are positioned in canvas space. */
+.wf-viewport {
+  position: absolute;
+  inset: 0;
+  transform-origin: 0 0;
+  will-change: transform;
+}
+
+/* --- Nodes ---------------------------------------------------------------- */
+
+/* `transform` positions the node and must never be transitioned or animated:
+   a transition makes a drag lag behind the cursor, and a keyframe animation
+   overrides the inline transform outright and collapses every node onto the
+   same spot. The entrance animation therefore lives on .wf-node-body. */
+.wf-node {
+  position: absolute;
+  width: 14rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--card));
+  box-shadow: var(--elevation-1);
+  transition: box-shadow 160ms var(--motion-ease-out), border-color 160ms var(--motion-ease-out);
+}
+
+.wf-node:hover { border-color: hsl(var(--wf-accent) / 0.55); box-shadow: var(--elevation-2); }
+
+.wf-node[data-selected='true'] {
+  border-color: hsl(var(--wf-accent));
+  box-shadow: var(--elevation-3), 0 0 0 1px hsl(var(--wf-accent) / 0.45);
+}
+
+.wf-node:focus-visible {
+  outline: 2px solid hsl(var(--ring));
+  outline-offset: 3px;
+}
+
+.wf-node[data-dragging='true'] { box-shadow: var(--elevation-4); }
+
+/* A step whose integration has no saved credential. The dashed edge is the
+   canvas telling you this will not run, before you try to run it. */
+.wf-node[data-unconfigured='true'] {
+  border-style: dashed;
+  border-color: hsl(var(--warning) / 0.75);
+}
+
+/* The primary of a multi-step selection reads slightly stronger, so it is clear
+   which step the inspector on the right is actually editing. */
+.wf-node[data-primary='true'] { box-shadow: var(--elevation-3), 0 0 0 2px hsl(var(--wf-accent) / 0.55); }
+
+/* Hovering a step traces what it can reach; everything else recedes rather than
+   disappearing, so the shape of the flow stays legible. */
+.wf-node[data-dimmed='true'] { opacity: 0.38; }
+
+.wf-node[data-disabled='true'] { opacity: 0.55; }
+.wf-node[data-disabled='true'] .wf-node-body { filter: grayscale(1); }
+
+/* Marks the step a readiness issue points at. */
+.wf-node[data-flagged='true'] {
+  border-color: hsl(var(--destructive) / 0.8);
+  box-shadow: var(--elevation-2), 0 0 0 3px hsl(var(--destructive) / 0.16);
+}
+
+.wf-node-icon {
+  display: grid;
+  place-items: center;
+  width: 2rem;
+  height: 2rem;
+  border-radius: var(--radius-md);
+  color: hsl(var(--wf-accent));
+  background: hsl(var(--wf-accent) / 0.12);
+  border: 1px solid hsl(var(--wf-accent) / 0.22);
+}
+
+/* Triggers are where a run begins, so they read as a distinct *shape* rather
+   than relying on colour alone — the rounded left edge says "nothing connects
+   into this" without a legend, and survives both themes and colour-blindness. */
+.wf-node[data-kind='trigger'] {
+  border-radius: 1.75rem var(--radius-lg) var(--radius-lg) 1.75rem;
+  border-left-color: hsl(var(--wf-accent) / 0.6);
+}
+
+.wf-node[data-kind='trigger'] .wf-node-body { padding-left: 0.6rem; }
+
+/* Corner marks: credential, skip and last-run state.
+   Absolutely positioned so a node that fails is exactly the size of one that
+   does not. Inline chips grew the card and reflowed the canvas at the moment
+   somebody was reading it to work out what went wrong. */
+.wf-node-marks {
+  position: absolute;
+  top: -0.45rem;
+  right: 0.55rem;
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  pointer-events: auto;
+}
+
+.wf-node-mark {
+  display: grid;
+  place-items: center;
+  width: 1.15rem;
+  height: 1.15rem;
+  border-radius: 9999px;
+  border: 1px solid hsl(var(--border));
+  background: hsl(var(--card));
+  color: hsl(var(--muted-foreground));
+  box-shadow: var(--elevation-1);
+}
+
+.wf-node-mark-warning {
+  border-color: hsl(var(--warning) / 0.55);
+  color: hsl(var(--warning));
+}
+
+/* The step menu, floated over the card so it costs no layout width. */
+.wf-node-menu {
+  position: absolute;
+  top: 0.35rem;
+  right: 0.35rem;
+  display: grid;
+  place-items: center;
+  width: 1.35rem;
+  height: 1.35rem;
+  border-radius: var(--radius-sm);
+  color: hsl(var(--muted-foreground));
+  background: hsl(var(--card) / 0.9);
+}
+
+.wf-node-menu:hover { background: hsl(var(--muted)); color: hsl(var(--foreground)); }
+
+/* --- Ports and edges ------------------------------------------------------ */
+
+.wf-port {
+  width: 0.875rem;
+  height: 0.875rem;
+  border-radius: 9999px;
+  border: 2px solid hsl(var(--card));
+  background: hsl(var(--wf-accent));
+  transition: transform 140ms var(--motion-ease-out), box-shadow 140ms var(--motion-ease-out);
+}
+
+.wf-port:hover,
+.wf-port:focus-visible { transform: scale(1.35); box-shadow: 0 0 0 4px hsl(var(--wf-accent) / 0.22); }
+.wf-port:focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: 2px; }
+
+.wf-port-target { background: hsl(var(--muted-foreground)); }
+.wf-canvas[data-connecting='true'] .wf-port-target { transform: scale(1.3); box-shadow: 0 0 0 5px hsl(var(--primary) / 0.2); }
+
+.wf-edges { position: absolute; inset: 0; overflow: visible; pointer-events: none; }
+
+.wf-edge-path {
+  fill: none;
+  stroke: hsl(var(--border-strong));
+  stroke-width: 2;
+  transition: stroke 150ms var(--motion-ease-out), stroke-width 150ms var(--motion-ease-out);
+}
+
+/* A generous transparent stroke under each edge so it can be clicked without
+   demanding pixel accuracy. */
+.wf-edge-hit { fill: none; stroke: transparent; stroke-width: 18; pointer-events: stroke; cursor: pointer; }
+.wf-edge-group:hover .wf-edge-path { stroke: hsl(var(--primary)); stroke-width: 2.5; }
+.wf-edge-group[data-selected='true'] .wf-edge-path { stroke: hsl(var(--primary)); stroke-width: 3; }
+.wf-edge-pending { stroke: hsl(var(--primary)); stroke-width: 2; stroke-dasharray: 6 6; fill: none; }
+
+/* The connection a dragged step will splice into. Deliberately loud — it is a
+   structural change, not a reposition, and it should be obvious before release. */
+.wf-edge-group[data-splice='true'] .wf-edge-path {
+  stroke: hsl(var(--success));
+  stroke-width: 3.5;
+  stroke-dasharray: 7 5;
+}
+
+.wf-edge-group[data-traced='true'] .wf-edge-path { stroke: hsl(var(--primary)); }
+
+/* Delete affordance at an edge's midpoint, revealed on hover. */
+/* Direction, at the target end of every connection. */
+.wf-edge-arrow { fill: hsl(var(--border-strong)); stroke: none; }
+.wf-edge-group[data-traced='true'] .wf-edge-arrow,
+.wf-edge-group[data-selected='true'] .wf-edge-arrow { fill: hsl(var(--primary)); }
+
+.wf-edge-action { cursor: pointer; }
+.wf-edge-action circle {
+  fill: hsl(var(--card));
+  stroke: hsl(var(--destructive) / 0.6);
+  stroke-width: 1;
+}
+.wf-edge-action path { stroke: hsl(var(--destructive)); stroke-width: 1.6; stroke-linecap: round; }
+.wf-edge-action:hover circle { fill: hsl(var(--destructive) / 0.12); stroke: hsl(var(--destructive)); }
+
+/* Insert reads as an ordinary action, not a destructive one — it is the button
+   people are meant to reach for, and painting it in the delete colour would
+   make the common case look dangerous. */
+.wf-edge-action-add path { stroke: hsl(var(--primary)); }
+.wf-edge-action-add:hover circle { fill: hsl(var(--primary) / 0.14); stroke: hsl(var(--primary)); }
+
+/* Branch path names, sitting outside the step's right edge. The edge carries the
+   same name at its midpoint once connected; this one is what tells you which
+   port is which *before* anything is wired to it. */
+.wf-branch-label {
+  white-space: nowrap;
+  border-radius: var(--radius-sm);
+  padding: 0 0.25rem;
+  font-size: 0.625rem;
+  font-weight: 500;
+  color: hsl(var(--muted-foreground));
+  background: hsl(var(--surface-2) / 0.9);
+}
+
+/* --- Guides, marquee and minimap ----------------------------------------- */
+
+.wf-guides { position: absolute; inset: 0; overflow: visible; pointer-events: none; }
+
+.wf-guide {
+  stroke: hsl(var(--primary));
+  stroke-width: 1;
+  stroke-dasharray: 3 3;
+  shape-rendering: crispEdges;
+}
+
+.wf-marquee {
+  position: absolute;
+  top: 0;
+  left: 0;
+  border: 1px solid hsl(var(--primary) / 0.7);
+  background: hsl(var(--primary) / 0.08);
+  border-radius: var(--radius-sm);
+  pointer-events: none;
+}
+
+.wf-minimap {
+  border-radius: var(--radius-md);
+  border: 1px solid hsl(var(--border) / 0.7);
+  background: hsl(var(--card) / 0.9);
+  box-shadow: var(--elevation-1);
+  cursor: pointer;
+  -webkit-backdrop-filter: blur(4px);
+  backdrop-filter: blur(4px);
+}
+
+.wf-minimap-edge { stroke: hsl(var(--border-strong)); stroke-width: 1; }
+.wf-minimap-node { fill: hsl(var(--muted-foreground) / 0.55); }
+.wf-minimap-node[data-trigger='true'] { fill: hsl(var(--primary) / 0.8); }
+.wf-minimap-node[data-selected='true'] { fill: hsl(var(--primary)); }
+.wf-minimap-view {
+  fill: hsl(var(--primary) / 0.1);
+  stroke: hsl(var(--primary) / 0.8);
+  stroke-width: 1;
+}
+
+.wf-edge-label {
+  fill: hsl(var(--muted-foreground));
+  font-size: 0.625rem;
+  text-anchor: middle;
+  paint-order: stroke;
+  stroke: hsl(var(--surface-2));
+  stroke-width: 4;
+}
+
+/* --- Palette and inspector ----------------------------------------------- */
+
+/* Radix wraps scroll-area content in a `display: table` element, which sizes to
+   its content — so `min-width: 0` cannot shrink it and a long step name pushes
+   the row past the panel instead of truncating. Block layout restores normal
+   flex shrinking. Scoped to the workflow panels rather than patched into the
+   shared ScrollArea, which the rest of the app relies on as-is. */
+.wf-scroll [data-radix-scroll-area-viewport] > div {
+  display: block !important;
+}
+
+.wf-palette-item {
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  transition: background-color 140ms var(--motion-ease-out), border-color 140ms var(--motion-ease-out);
+}
+
+.wf-palette-item:hover { background: hsl(var(--wf-accent) / 0.08); border-color: hsl(var(--wf-accent) / 0.3); }
+.wf-palette-item:focus-visible { outline: 2px solid hsl(var(--ring)); outline-offset: 2px; }
+.wf-palette-item[data-dragging='true'] { opacity: 0.5; }
+
+.wf-chip {
+  color: hsl(var(--wf-accent));
+  background: hsl(var(--wf-accent) / 0.12);
+  border: 1px solid hsl(var(--wf-accent) / 0.25);
+}
+
+/* Data references are machine-addressable, so they are set in the mono face —
+   the type itself says "this is a key, not prose". */
+.wf-token {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  border-radius: var(--radius-sm);
+  padding: 0.05rem 0.3rem;
+  color: hsl(var(--primary));
+  background: hsl(var(--primary) / 0.1);
+  border: 1px solid hsl(var(--primary) / 0.2);
+}
+
+/* --- Motion --------------------------------------------------------------- */
+
+/* Applied to the node's inner body, never the positioned root — see .wf-node. */
+@keyframes wf-node-enter {
+  from { opacity: 0; transform: translateY(6px) scale(0.97); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.wf-node-enter { animation: wf-node-enter 220ms var(--motion-ease-emphasized) both; }
+
+@media (prefers-reduced-motion: reduce) {
+  .wf-node,
+  .wf-port,
+  .wf-edge-path,
+  .wf-palette-item { transition: none; }
+  .wf-node-enter { animation: none; }
+  /* Guides and the splice marker are state, not decoration, so they stay —
+     only their movement is removed. */
+  .wf-edge-group[data-splice='true'] .wf-edge-path { stroke-dasharray: none; }
+}

@@ -1,0 +1,1 @@
+ALTER TABLE public.email_copilot_emails ADD COLUMN IF NOT EXISTS body_html text;

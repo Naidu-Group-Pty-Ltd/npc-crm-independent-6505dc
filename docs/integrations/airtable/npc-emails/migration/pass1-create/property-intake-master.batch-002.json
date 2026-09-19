@@ -1,0 +1,294 @@
+{
+  "table": "Property Intake Master",
+  "batch": 2,
+  "of": 3,
+  "recordCount": 50,
+  "records": [
+    {
+      "sourceRecordId": "recJPPcTyzwRgLzFC",
+      "sourceCreatedTime": "2026-08-04T22:34:31.000Z",
+      "fields": {
+        "Extraction Batch ID": "973814efe7fd42dc9f9f9867593e77a0"
+      }
+    },
+    {
+      "sourceRecordId": "recJSlIW9TXz29OdE",
+      "sourceCreatedTime": "2026-07-24T05:59:18.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "recJgdp2mRVrl82kk",
+      "sourceCreatedTime": "2026-07-24T06:08:35.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "recKJCjz6jF0XbzD3",
+      "sourceCreatedTime": "2026-07-24T06:08:24.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "recKRBc8H4q3SAtcT",
+      "sourceCreatedTime": "2026-07-24T06:13:46.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "recKzlJHdKdnPZ8NR",
+      "sourceCreatedTime": "2026-08-04T22:41:23.000Z",
+      "fields": {
+        "Extraction Batch ID": "973814efe7fd42dc9f9f9867593e77a0"
+      }
+    },
+    {
+      "sourceRecordId": "recLGv0yKKCH5L96F",
+      "sourceCreatedTime": "2026-07-23T15:08:03.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "recLY2KJvk4aNbUig",
+      "sourceCreatedTime": "2026-07-23T15:22:53.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "recLdHqhOKyJMYDA1",
+      "sourceCreatedTime": "2026-07-23T15:27:57.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "recM5BGnlncbRy7Vw",
+      "sourceCreatedTime": "2026-08-04T22:41:12.000Z",
+      "fields": {
+        "Extraction Batch ID": "973814efe7fd42dc9f9f9867593e77a0"
+      }
+    },
+    {
+      "sourceRecordId": "recMxcGm2rbDzooex",
+      "sourceCreatedTime": "2026-08-04T22:41:09.000Z",
+      "fields": {
+        "Extraction Batch ID": "973814efe7fd42dc9f9f9867593e77a0"
+      }
+    },
+    {
+      "sourceRecordId": "recN7CbAaSUvkCjrM",
+      "sourceCreatedTime": "2026-08-04T22:34:28.000Z",
+      "fields": {
+        "Extraction Batch ID": "973814efe7fd42dc9f9f9867593e77a0"
+      }
+    },
+    {
+      "sourceRecordId": "recN7hrOVvzyK9eSL",
+      "sourceCreatedTime": "2026-07-23T15:10:31.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "recO0Z9J7iClHCC3J",
+      "sourceCreatedTime": "2026-07-24T05:43:56.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "recO6W0tSn0NnFVdm",
+      "sourceCreatedTime": "2026-08-04T22:41:28.000Z",
+      "fields": {
+        "Extraction Batch ID": "973814efe7fd42dc9f9f9867593e77a0"
+      }
+    },
+    {
+      "sourceRecordId": "recOGjdSh59HfnqnP",
+      "sourceCreatedTime": "2026-07-23T15:08:00.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "recP6Wct600SFCtW6",
+      "sourceCreatedTime": "2026-08-04T22:34:36.000Z",
+      "fields": {
+        "Extraction Batch ID": "973814efe7fd42dc9f9f9867593e77a0"
+      }
+    },
+    {
+      "sourceRecordId": "recQYP6CwRAzMhEaV",
+      "sourceCreatedTime": "2026-08-04T22:41:59.000Z",
+      "fields": {
+        "Extraction Batch ID": "973814efe7fd42dc9f9f9867593e77a0"
+      }
+    },
+    {
+      "sourceRecordId": "recRVHyEA0e4G08j4",
+      "sourceCreatedTime": "2026-07-24T06:08:40.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "recRdNMcXfAEk9HnE",
+      "sourceCreatedTime": "2026-08-04T22:34:44.000Z",
+      "fields": {
+        "Extraction Batch ID": "973814efe7fd42dc9f9f9867593e77a0"
+      }
+    },
+    {
+      "sourceRecordId": "recS4NyNWUut8q9Wl",
+      "sourceCreatedTime": "2026-07-24T06:13:36.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "recSFXrGqP3pC8aSI",
+      "sourceCreatedTime": "2026-08-04T22:41:21.000Z",
+      "fields": {
+        "Extraction Batch ID": "973814efe7fd42dc9f9f9867593e77a0"
+      }
+    },
+    {
+      "sourceRecordId": "recSHpjztzdgkdxgD",
+      "sourceCreatedTime": "2026-07-24T05:43:54.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "recSstqhKrLZdEEhO",
+      "sourceCreatedTime": "2026-07-23T15:10:22.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "recTI5tb2wf4DIquv",
+      "sourceCreatedTime": "2026-07-24T06:13:45.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "recTXXxepZbpmdNt2",
+      "sourceCreatedTime": "2026-08-04T22:37:35.000Z",
+      "fields": {
+        "Extraction Batch ID": "973814efe7fd42dc9f9f9867593e77a0"
+      }
+    },
+    {
+      "sourceRecordId": "recUaCUsRn4zuL3Xv",
+      "sourceCreatedTime": "2026-07-23T15:29:49.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "recUgX798CMqIoTr7",
+      "sourceCreatedTime": "2026-07-24T06:13:34.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "recUhatYWjLWzcrP5",
+      "sourceCreatedTime": "2026-07-24T05:50:45.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "recUqSnKHueMFNP7e",
+      "sourceCreatedTime": "2026-08-04T22:41:07.000Z",
+      "fields": {
+        "Extraction Batch ID": "973814efe7fd42dc9f9f9867593e77a0"
+      }
+    },
+    {
+      "sourceRecordId": "recVoyUvpA6bVILjb",
+      "sourceCreatedTime": "2026-07-24T05:59:21.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "recW1GYg1YpqVaVBU",
+      "sourceCreatedTime": "2026-07-23T15:26:19.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "recWGDefkaEhzFlyv",
+      "sourceCreatedTime": "2026-08-04T22:44:51.000Z",
+      "fields": {
+        "Extraction Batch ID": "973814efe7fd42dc9f9f9867593e77a0"
+      }
+    },
+    {
+      "sourceRecordId": "recWbcYzzwf6MkguW",
+      "sourceCreatedTime": "2026-07-24T05:59:07.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "recYKbQqMrmnW9IF7",
+      "sourceCreatedTime": "2026-07-24T06:18:53.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "recZ1SbsJC2a9VVPL",
+      "sourceCreatedTime": "2026-08-04T22:34:42.000Z",
+      "fields": {
+        "Extraction Batch ID": "973814efe7fd42dc9f9f9867593e77a0"
+      }
+    },
+    {
+      "sourceRecordId": "recZbbPQBYkNdtYMM",
+      "sourceCreatedTime": "2026-08-04T22:41:29.000Z",
+      "fields": {
+        "Extraction Batch ID": "973814efe7fd42dc9f9f9867593e77a0"
+      }
+    },
+    {
+      "sourceRecordId": "recZcFVCtI7Wlcc7W",
+      "sourceCreatedTime": "2026-07-23T15:25:49.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "recaSdSL4vsbfFvS0",
+      "sourceCreatedTime": "2026-07-23T15:27:56.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "recabdGE1PC9sVtyA",
+      "sourceCreatedTime": "2026-07-24T06:13:47.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "recamNBZ92aaiAl8c",
+      "sourceCreatedTime": "2026-08-04T22:41:14.000Z",
+      "fields": {
+        "Extraction Batch ID": "973814efe7fd42dc9f9f9867593e77a0"
+      }
+    },
+    {
+      "sourceRecordId": "recbd0pmPx5k14vcP",
+      "sourceCreatedTime": "2026-07-24T06:08:27.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "reccIfF8TeNmnNyCt",
+      "sourceCreatedTime": "2026-07-24T06:13:39.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "recdJcxcPnG6KApsC",
+      "sourceCreatedTime": "2026-07-23T15:10:23.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "recfH2Qb41DzSVVDM",
+      "sourceCreatedTime": "2026-07-24T06:19:42.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "recfXiaauMQiYHtlQ",
+      "sourceCreatedTime": "2026-07-23T15:28:37.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "recfhNXm4R7XIUsCo",
+      "sourceCreatedTime": "2026-07-24T05:59:08.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "recgGJGNnnVzVd9ns",
+      "sourceCreatedTime": "2026-08-04T22:34:25.000Z",
+      "fields": {
+        "Extraction Batch ID": "973814efe7fd42dc9f9f9867593e77a0"
+      }
+    },
+    {
+      "sourceRecordId": "recge5OqcSzioCsrc",
+      "sourceCreatedTime": "2026-08-04T22:34:27.000Z",
+      "fields": {
+        "Extraction Batch ID": "973814efe7fd42dc9f9f9867593e77a0"
+      }
+    },
+    {
+      "sourceRecordId": "recgnbwJPKfMtS2eh",
+      "sourceCreatedTime": "2026-07-24T05:59:20.000Z",
+      "fields": {}
+    }
+  ]
+}

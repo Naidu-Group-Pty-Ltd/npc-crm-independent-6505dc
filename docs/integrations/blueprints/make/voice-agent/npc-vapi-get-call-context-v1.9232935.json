@@ -1,0 +1,1032 @@
+{
+  "flow": [
+    {
+      "id": 1,
+      "mapper": {},
+      "module": "gateway:CustomWebHook",
+      "version": 1,
+      "metadata": {
+        "restore": {
+          "parameters": {
+            "hook": {
+              "data": {
+                "editable": "true"
+              },
+              "label": "NPC GHL Contact Retriever"
+            }
+          }
+        },
+        "designer": {
+          "x": 0,
+          "y": 300,
+          "name": "Vapi Tool Call Webhook - get_call_context"
+        },
+        "parameters": [
+          {
+            "name": "hook",
+            "type": "hook:gateway-webhook",
+            "label": "Webhook",
+            "required": true
+          },
+          {
+            "name": "maxResults",
+            "type": "number",
+            "label": "Maximum number of results"
+          }
+        ]
+      },
+      "parameters": {
+        "hook": 4126904,
+        "maxResults": 1
+      }
+    },
+    {
+      "id": 2,
+      "mapper": {
+        "key": "{{1.message.customer.number}}",
+        "returnWrapped": true
+      },
+      "module": "datastore:GetRecord",
+      "version": 1,
+      "metadata": {
+        "expect": [
+          {
+            "name": "key",
+            "type": "text",
+            "label": "Key",
+            "required": true
+          },
+          {
+            "name": "returnWrapped",
+            "type": "boolean",
+            "label": "Return Wrapped Output",
+            "required": true
+          }
+        ],
+        "restore": {
+          "parameters": {
+            "datastore": {
+              "label": "GHL Contact IDs"
+            }
+          }
+        },
+        "advanced": true,
+        "designer": {
+          "x": 300,
+          "y": 300,
+          "name": "Get Call Context by vapiCallId"
+        },
+        "interface": [
+          {
+            "name": "key",
+            "type": "text",
+            "label": "Key"
+          },
+          {
+            "name": "data",
+            "spec": [
+              {
+                "help": "",
+                "name": "vapiCallId",
+                "type": "text",
+                "label": "Vapi call ID",
+                "default": null,
+                "required": false,
+                "multiline": false
+              },
+              {
+                "help": "",
+                "name": "callerPhone",
+                "type": "text",
+                "label": "Caller phone",
+                "default": null,
+                "required": false,
+                "multiline": false
+              },
+              {
+                "help": "",
+                "name": "contactId",
+                "type": "text",
+                "label": "Contact ID",
+                "default": null,
+                "required": false,
+                "multiline": false
+              },
+              {
+                "help": "",
+                "name": "firstName",
+                "type": "text",
+                "label": "First name",
+                "default": null,
+                "required": false,
+                "multiline": false
+              },
+              {
+                "help": "",
+                "name": "fullName",
+                "type": "text",
+                "label": "Full name",
+                "default": null,
+                "required": false,
+                "multiline": false
+              },
+              {
+                "help": "",
+                "name": "phone",
+                "type": "text",
+                "label": "Phone",
+                "default": null,
+                "required": false,
+                "multiline": false
+              },
+              {
+                "help": "",
+                "name": "contactState",
+                "type": "text",
+                "label": "Contact state",
+                "default": null,
+                "required": false,
+                "multiline": false
+              },
+              {
+                "help": "",
+                "name": "contactFound",
+                "type": "boolean",
+                "label": "Contact found",
+                "required": false
+              },
+              {
+                "help": "",
+                "name": "contactCreated",
+                "type": "boolean",
+                "label": "Contact created",
+                "required": false
+              },
+              {
+                "help": "",
+                "name": "confirmedIntent",
+                "type": "text",
+                "label": "Confirmed intent",
+                "default": null,
+                "required": false,
+                "multiline": false
+              },
+              {
+                "help": "",
+                "name": "callerReason",
+                "type": "text",
+                "label": "Caller reason",
+                "default": null,
+                "required": false,
+                "multiline": false
+              },
+              {
+                "help": "",
+                "name": "handoffReady",
+                "type": "boolean",
+                "label": "Handoff ready",
+                "required": false
+              },
+              {
+                "help": "",
+                "name": "source",
+                "type": "text",
+                "label": "Source",
+                "default": null,
+                "required": false,
+                "multiline": false
+              },
+              {
+                "help": "",
+                "name": "createdAt",
+                "type": "date",
+                "label": "Created at",
+                "required": false
+              },
+              {
+                "help": "",
+                "name": "updatedAt",
+                "type": "date",
+                "label": "Updated at",
+                "required": false
+              }
+            ],
+            "type": "collection",
+            "label": "Record"
+          }
+        ],
+        "parameters": [
+          {
+            "name": "datastore",
+            "type": "datastore",
+            "label": "Data store",
+            "required": true
+          }
+        ]
+      },
+      "parameters": {
+        "datastore": 162851
+      }
+    },
+    {
+      "id": 3,
+      "mapper": null,
+      "module": "builtin:BasicRouter",
+      "routes": [
+        {
+          "flow": [
+            {
+              "id": 4,
+              "filter": {
+                "name": "Context record found",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{2.data.contactId}}",
+                      "o": "exist"
+                    }
+                  ]
+                ]
+              },
+              "mapper": {
+                "body": "{\r\n  \"success\": true,\r\n  \"contextFound\": true,\r\n  \"vapiCallId\": \"{{2.data.vapiCallId}}\",\r\n  \"callerPhone\": \"{{2.data.callerPhone}}\",\r\n  \"contactId\": \"{{2.data.contactId}}\",\r\n  \"firstName\": \"{{2.data.firstName}}\",\r\n  \"fullName\": \"{{2.data.fullName}}\",\r\n  \"phone\": \"{{2.data.phone}}{{2.data.callerPhone}}\",\r\n  \"contactState\": \"{{2.data.contactState}}\",\r\n  \"contactFound\": {{2.data.contactFound}},\r\n  \"contactCreated\":{{2.data.contactCreated}},\r\n  \"confirmedIntent\": \"{{2.data.confirmedIntent}}\",\r\n  \"callerReason\": \"{{2.data.callerReason}}\",\r\n  \"handoffReady\": {{2.data.handoffReady}},\r\n  \"source\": \"get_call_context\",\r\n  \"results\": [\r\n    {\r\n      \"toolCallId\": \"{{1.message.toolCalls[].id}}\",\r\n      \"result\": \"{\\\"success\\\":true,\\\"contextFound\\\":true,\\\"vapiCallId\\\":\\\"{{2.data.vapiCallId}}\\\",\\\"callerPhone\\\":\\\"{{2.data.callerPhone}}\\\",\\\"contactId\\\":\\\"{{2.data.contactId}}\\\",\\\"firstName\\\":\\\"{{2.data.firstName}}\\\",\\\"fullName\\\":\\\"{{2.data.fullName}}\\\",\\\"phone\\\":\\\"{{2.data.phone}}\\\",\\\"contactState\\\":\\\"{{2.data.contactState}}\\\",\\\"contactFound\\\":{{2.data.contactFound}},\\\"contactCreated\\\":{{2.data.contactCreated}},\\\"confirmedIntent\\\":\\\"{{2.data.confirmedIntent}}\\\",\\\"callerReason\\\":\\\"{{2.data.callerReason}}\\\",\\\"handoffReady\\\":{{2.data.handoffReady}},\\\"nextAction\\\":\\\"continueConversation\\\",\\\"message\\\":\\\"Stored caller context found. The caller's first name is {{2.data.firstName}}. Use this first name naturally in the next spoken response.\\\"}\"\r\n    }\r\n  ]\r\n}",
+                "status": "200",
+                "headers": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "module": "gateway:WebhookRespond",
+              "version": 1,
+              "metadata": {
+                "expect": [
+                  {
+                    "name": "status",
+                    "type": "uinteger",
+                    "label": "Status",
+                    "required": true,
+                    "validate": {
+                      "min": 100
+                    }
+                  },
+                  {
+                    "name": "body",
+                    "type": "any",
+                    "label": "Body"
+                  },
+                  {
+                    "name": "headers",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key",
+                        "required": true,
+                        "validate": {
+                          "max": 256
+                        }
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value",
+                        "required": true,
+                        "validate": {
+                          "max": 4096
+                        }
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Custom headers",
+                    "validate": {
+                      "maxItems": 16
+                    }
+                  }
+                ],
+                "restore": {
+                  "expect": {
+                    "headers": {
+                      "mode": "chose",
+                      "items": [
+                        null
+                      ]
+                    }
+                  }
+                },
+                "advanced": true,
+                "designer": {
+                  "x": 900,
+                  "y": 150,
+                  "name": "Return Stored Call Context"
+                }
+              },
+              "parameters": {}
+            }
+          ]
+        },
+        {
+          "flow": [
+            {
+              "id": 5,
+              "filter": {
+                "name": "Context record missing or unresolved",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{2.data.contactId}}",
+                      "o": "notexist"
+                    }
+                  ]
+                ]
+              },
+              "mapper": {
+                "body": "{\n  \"success\": true,\n  \"contextFound\": false,\n  \"vapiCallId\": \"{{ifempty(get(1.message.toolCallList; 1).function.arguments.vapiCallId; ifempty(get(1.message.toolCallList; 1).function.arguments.vapi_call_id; ifempty(1.vapiCallId; 1.message.call.id)))}}\",\n  \"callerPhone\": \"{{ifempty(get(1.message.toolCallList; 1).function.arguments.callerPhone; ifempty(get(1.message.toolCallList; 1).function.arguments.customer_number; ifempty(get(1.message.toolCallList; 1).function.arguments.phone; ifempty(1.callerPhone; ifempty(1.phone; 1.message.call.customer.number)))))}}\",\n  \"contactId\": \"\",\n  \"firstName\": \"\",\n  \"fullName\": \"\",\n  \"phone\": \"{{ifempty(get(1.message.toolCallList; 1).function.arguments.callerPhone; ifempty(get(1.message.toolCallList; 1).function.arguments.customer_number; ifempty(get(1.message.toolCallList; 1).function.arguments.phone; ifempty(1.callerPhone; ifempty(1.phone; 1.message.call.customer.number)))))}}\",\n  \"contactState\": \"UNRESOLVED\",\n  \"contactFound\": false,\n  \"contactCreated\": false,\n  \"confirmedIntent\": \"\",\n  \"callerReason\": \"\",\n  \"handoffReady\": false,\n  \"source\": \"get_call_context_missing\",\n  \"results\": [\n    {\n      \"toolCallId\": \"{{ifempty(get(1.message.toolCallList; 1).id; \"manual-test\")}}\",\n      \"result\": {\n        \"success\": true,\n        \"contextFound\": false,\n        \"vapiCallId\": \"{{ifempty(get(1.message.toolCallList; 1).function.arguments.vapiCallId; ifempty(get(1.message.toolCallList; 1).function.arguments.vapi_call_id; ifempty(1.vapiCallId; 1.message.call.id)))}}\",\n        \"callerPhone\": \"{{ifempty(get(1.message.toolCallList; 1).function.arguments.callerPhone; ifempty(get(1.message.toolCallList; 1).function.arguments.customer_number; ifempty(get(1.message.toolCallList; 1).function.arguments.phone; ifempty(1.callerPhone; ifempty(1.phone; 1.message.call.customer.number)))))}}\",\n        \"contactId\": \"\",\n        \"firstName\": \"\",\n        \"fullName\": \"\",\n        \"phone\": \"{{ifempty(get(1.message.toolCallList; 1).function.arguments.callerPhone; ifempty(get(1.message.toolCallList; 1).function.arguments.customer_number; ifempty(get(1.message.toolCallList; 1).function.arguments.phone; ifempty(1.callerPhone; ifempty(1.phone; 1.message.call.customer.number)))))}}\",\n        \"contactState\": \"UNRESOLVED\",\n        \"contactFound\": false,\n        \"contactCreated\": false,\n        \"handoffReady\": false,\n        \"nextAction\": \"continueWithoutStoredContext\"\n      }\n    }\n  ]\n}",
+                "status": "200",
+                "headers": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "module": "gateway:WebhookRespond",
+              "version": 1,
+              "metadata": {
+                "expect": [
+                  {
+                    "name": "status",
+                    "type": "uinteger",
+                    "label": "Status",
+                    "required": true,
+                    "validate": {
+                      "min": 100
+                    }
+                  },
+                  {
+                    "name": "body",
+                    "type": "any",
+                    "label": "Body"
+                  },
+                  {
+                    "name": "headers",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key",
+                        "required": true,
+                        "validate": {
+                          "max": 256
+                        }
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value",
+                        "required": true,
+                        "validate": {
+                          "max": 4096
+                        }
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Custom headers",
+                    "validate": {
+                      "maxItems": 16
+                    }
+                  }
+                ],
+                "restore": {
+                  "expect": {
+                    "headers": {
+                      "mode": "chose",
+                      "items": [
+                        null
+                      ]
+                    }
+                  }
+                },
+                "advanced": true,
+                "designer": {
+                  "x": 900,
+                  "y": 450,
+                  "name": "Return No Stored Context"
+                }
+              },
+              "parameters": {}
+            }
+          ]
+        }
+      ],
+      "version": 1,
+      "metadata": {
+        "designer": {
+          "x": 600,
+          "y": 300,
+          "name": "Route by Data Store Result"
+        }
+      },
+      "parameters": {}
+    }
+  ],
+  "name": "NPC Vapi - get_call_context v1",
+  "metadata": {
+    "instant": true,
+    "version": 1,
+    "designer": {
+      "orphans": [],
+      "samples": {
+        "1": {
+          "message": {
+            "call": {
+              "id": "019e264b-84de-7000-91f6-d1bd0aefb405",
+              "cost": 0,
+              "type": "inboundPhoneCall",
+              "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+              "status": "ringing",
+              "monitor": {
+                "listenUrl": "wss://phone-call-websocket.aws-us-west-2-backend-production1.vapi.ai/019e264b-84de-7000-91f6-d1bd0ae...",
+                "controlUrl": "https://phone-call-websocket.aws-us-west-2-backend-production1.vapi.ai/019e264b-84de-7000-91f6-d1bd0..."
+              },
+              "squadId": "a9656ea1-3575-4ac6-b985-fd138be06cc5",
+              "customer": {
+                "name": "+61480845459",
+                "number": "+61480845459",
+                "sipUri": "sip:+61480845459@44.238.177.138:5060"
+              },
+              "createdAt": "2026-05-14T11:42:23.966Z",
+              "transport": {
+                "callSid": "ee515e65-a307-4da1-a0b3-58080b271002",
+                "provider": "vapi.sip",
+                "sbcCallSid": "9b03b90bfcd52282cf6ac52a6c6e5824@0.0.0.0",
+                "conversationType": "voice"
+              },
+              "updatedAt": "2026-05-14T11:42:23.966Z",
+              "phoneNumberId": "ae35b1f3-25c4-4620-ac13-525a58da96c9",
+              "phoneCallProvider": "vapi",
+              "assistantOverrides": {
+                "variableValues": {
+                  "cid": "9b03b90bfcd52282cf6ac52a6c6e5824@0.0.0.0",
+                  "account-sid": "c033b672-5b99-42ae-9ce2-b231e9a522fb",
+                  "forwarded-for": "54.172.60.3",
+                  "twilio-callsid": "CA277319d1c459eac61c2196ca3a662116",
+                  "application-sid": "79d078c8-76b2-452a-99e0-ddd5abbf6269",
+                  "voip-carrier-sid": "bdf16bcf-a774-46b0-873d-9105dcda3ce9",
+                  "twilio-accountsid": "{{SECRET:TWILIO_ACCOUNT_SID}}",
+                  "originating-carrier": "Twilio"
+                }
+              },
+              "phoneCallTransport": "sip",
+              "phoneCallProviderId": "ee515e65-a307-4da1-a0b3-58080b271002",
+              "phoneCallProviderDetails": {
+                "sip": {
+                  "raw": "INVITE sip:naidupropertyconsultingservices@sip.vapi.ai SIP/2.0\r\nVia: SIP/2.0/UDP 44.238.177.138;rpor...",
+                  "uri": "sip:naidupropertyconsultingservices@sip.vapi.ai",
+                  "body": "v=0\r\no=root 318799387 318799387 IN IP4 172.30.31.14\r\ns=Twilio Media Gateway\r\nc=IN IP4 172.30.31.14\r\n...",
+                  "method": "INVITE",
+                  "headers": {
+                    "to": "<sip:naidupropertyconsultingservices@sip.vapi.ai>",
+                    "via": "SIP/2.0/UDP 44.238.177.138;rport=5060;branch=z9hG4bKaQym5HU3N2Ntp;received=172.31.9.106",
+                    "cseq": "114825679 INVITE",
+                    "from": "\"+61480845459\" <sip:+61480845459@44.238.177.138:5060>;tag=gZ7r8cj90p18H",
+                    "X-CID": "9b03b90bfcd52282cf6ac52a6c6e5824@0.0.0.0",
+                    "allow": "INVITE, ACK, CANCEL, OPTIONS, BYE, REFER, NOTIFY",
+                    "min-se": "120",
+                    "call-id": "d0ce5335-ca2c-123f-f19b-0a6b2821a33f",
+                    "contact": "<sip:172.31.9.106:5060>",
+                    "user-agent": "Twilio Gateway",
+                    "content-type": "application/sdp",
+                    "max-forwards": "70",
+                    "X-Account-Sid": "c033b672-5b99-42ae-9ce2-b231e9a522fb",
+                    "content-length": "287",
+                    "X-Forwarded-For": "54.172.60.3",
+                    "X-Twilio-CallSid": "CA277319d1c459eac61c2196ca3a662116",
+                    "X-Application-Sid": "79d078c8-76b2-452a-99e0-ddd5abbf6269",
+                    "X-Voip-Carrier-Sid": "bdf16bcf-a774-46b0-873d-9105dcda3ce9",
+                    "X-Twilio-AccountSid": "{{SECRET:TWILIO_ACCOUNT_SID}}",
+                    "p-asserted-identity": "<sip:+61480845459@sip.twilio.com>",
+                    "X-Originating-Carrier": "Twilio"
+                  },
+                  "payload": [
+                    {
+                      "type": "application/sdp",
+                      "content": "v=0\r\no=root 318799387 318799387 IN IP4 172.30.31.14\r\ns=Twilio Media Gateway\r\nc=IN IP4 172.30.31.14\r\n..."
+                    }
+                  ],
+                  "version": "2.0"
+                },
+                "sbcCallId": "9b03b90bfcd52282cf6ac52a6c6e5824@0.0.0.0"
+              }
+            },
+            "type": "tool-calls",
+            "artifact": {
+              "messages": [
+                {
+                  "name": "ghl_resolve_contact",
+                  "role": "tool_calls",
+                  "time": 1778758958128,
+                  "result": "No result returned. If this is unexpected, see troubleshooting tips at https://docs.vapi.ai/tools/cu...",
+                  "source": null,
+                  "endTime": 1778758952856,
+                  "message": "Hello?",
+                  "duration": 296,
+                  "metadata": {
+                    "wordLevelConfidence": [
+                      {
+                        "end": 1778758952856,
+                        "word": "Hello?",
+                        "start": 1778758952560,
+                        "language": null,
+                        "confidence": 1,
+                        "punctuated_word": "Hello?"
+                      }
+                    ]
+                  },
+                  "toolCalls": [
+                    {
+                      "id": "call_0g1qAjqfNkLxE8ofxCzmiCxb",
+                      "type": "function",
+                      "function": {
+                        "name": "get_call_context",
+                        "arguments": "{}"
+                      }
+                    }
+                  ],
+                  "toolCallId": "call_UEHYkSwswHC6NoEcIlzxM1GQ",
+                  "secondsFromStart": 13.853
+                }
+              ],
+              "variables": {
+                "cid": "9b03b90bfcd52282cf6ac52a6c6e5824@0.0.0.0",
+                "day": "14",
+                "now": "May 14, 2026, 11:42 AM UTC",
+                "call": {
+                  "id": "019e264b-84de-7000-91f6-d1bd0aefb405",
+                  "type": "inboundPhoneCall",
+                  "status": "ringing",
+                  "createdAt": "2026-05-14T11:42:23.966Z",
+                  "transport": {
+                    "callSid": "ee515e65-a307-4da1-a0b3-58080b271002",
+                    "provider": "vapi.sip",
+                    "sbcCallSid": "9b03b90bfcd52282cf6ac52a6c6e5824@0.0.0.0",
+                    "conversationType": "voice"
+                  },
+                  "phoneCallProvider": "vapi"
+                },
+                "date": "May 14, 2026 UTC",
+                "time": "11:42 AM UTC",
+                "year": "2026",
+                "month": "May",
+                "customer": {
+                  "name": "+61480845459",
+                  "number": "+61480845459",
+                  "sipUri": "sip:+61480845459@44.238.177.138:5060"
+                },
+                "transport": {
+                  "callSid": "ee515e65-a307-4da1-a0b3-58080b271002",
+                  "provider": "vapi.sip",
+                  "sbcCallSid": "9b03b90bfcd52282cf6ac52a6c6e5824@0.0.0.0",
+                  "conversationType": "voice"
+                },
+                "account-sid": "c033b672-5b99-42ae-9ce2-b231e9a522fb",
+                "phoneNumber": {
+                  "id": "ae35b1f3-25c4-4620-ac13-525a58da96c9",
+                  "name": "NPC Services",
+                  "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+                  "server": {
+                    "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+                    "timeoutSeconds": 20
+                  },
+                  "sipUri": "sip:naidupropertyconsultingservices@sip.vapi.ai",
+                  "status": "active",
+                  "squadId": "a9656ea1-3575-4ac6-b985-fd138be06cc5",
+                  "provider": "vapi",
+                  "createdAt": "2026-01-31T08:01:39.887Z",
+                  "updatedAt": "2026-01-31T08:02:57.530Z"
+                },
+                "forwarded-for": "54.172.60.3",
+                "twilio-callsid": "CA277319d1c459eac61c2196ca3a662116",
+                "application-sid": "79d078c8-76b2-452a-99e0-ddd5abbf6269",
+                "currentDateTime": "Thursday, May 14, 2026 at 11:42 AM UTC",
+                "voip-carrier-sid": "bdf16bcf-a774-46b0-873d-9105dcda3ce9",
+                "twilio-accountsid": "{{SECRET:TWILIO_ACCOUNT_SID}}",
+                "originating-carrier": "Twilio"
+              },
+              "variableValues": {
+                "cid": "9b03b90bfcd52282cf6ac52a6c6e5824@0.0.0.0",
+                "day": "14",
+                "now": "May 14, 2026, 11:42 AM UTC",
+                "call": {
+                  "id": "019e264b-84de-7000-91f6-d1bd0aefb405",
+                  "type": "inboundPhoneCall",
+                  "status": "ringing",
+                  "createdAt": "2026-05-14T11:42:23.966Z",
+                  "transport": {
+                    "callSid": "ee515e65-a307-4da1-a0b3-58080b271002",
+                    "provider": "vapi.sip",
+                    "sbcCallSid": "9b03b90bfcd52282cf6ac52a6c6e5824@0.0.0.0",
+                    "conversationType": "voice"
+                  },
+                  "phoneCallProvider": "vapi"
+                },
+                "date": "May 14, 2026 UTC",
+                "time": "11:42 AM UTC",
+                "year": "2026",
+                "month": "May",
+                "customer": {
+                  "name": "+61480845459",
+                  "number": "+61480845459",
+                  "sipUri": "sip:+61480845459@44.238.177.138:5060"
+                },
+                "transport": {
+                  "callSid": "ee515e65-a307-4da1-a0b3-58080b271002",
+                  "provider": "vapi.sip",
+                  "sbcCallSid": "9b03b90bfcd52282cf6ac52a6c6e5824@0.0.0.0",
+                  "conversationType": "voice"
+                },
+                "account-sid": "c033b672-5b99-42ae-9ce2-b231e9a522fb",
+                "phoneNumber": {
+                  "id": "ae35b1f3-25c4-4620-ac13-525a58da96c9",
+                  "name": "NPC Services",
+                  "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+                  "server": {
+                    "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+                    "timeoutSeconds": 20
+                  },
+                  "sipUri": "sip:naidupropertyconsultingservices@sip.vapi.ai",
+                  "status": "active",
+                  "squadId": "a9656ea1-3575-4ac6-b985-fd138be06cc5",
+                  "provider": "vapi",
+                  "createdAt": "2026-01-31T08:01:39.887Z",
+                  "updatedAt": "2026-01-31T08:02:57.530Z"
+                },
+                "forwarded-for": "54.172.60.3",
+                "twilio-callsid": "CA277319d1c459eac61c2196ca3a662116",
+                "application-sid": "79d078c8-76b2-452a-99e0-ddd5abbf6269",
+                "currentDateTime": "Thursday, May 14, 2026 at 11:42 AM UTC",
+                "voip-carrier-sid": "bdf16bcf-a774-46b0-873d-9105dcda3ce9",
+                "twilio-accountsid": "{{SECRET:TWILIO_ACCOUNT_SID}}",
+                "originating-carrier": "Twilio"
+              },
+              "messagesOpenAIFormatted": [
+                {
+                  "role": "tool",
+                  "content": "Tool Result Still Pending But Proceed Further If Possible.",
+                  "tool_calls": [
+                    {
+                      "id": "call_0g1qAjqfNkLxE8ofxCzmiCxb",
+                      "type": "function",
+                      "function": {
+                        "name": "get_call_context",
+                        "arguments": "{}"
+                      }
+                    }
+                  ],
+                  "tool_call_id": "call_0g1qAjqfNkLxE8ofxCzmiCxb"
+                }
+              ]
+            },
+            "customer": {
+              "name": "+61480845459",
+              "number": "+61480845459",
+              "sipUri": "sip:+61480845459@44.238.177.138:5060"
+            },
+            "assistant": {
+              "id": "bfff143e-03f7-4bc2-afbb-5734987f672f",
+              "name": "NPC Inbound Agent",
+              "model": {
+                "model": "gpt-5.2-chat-latest",
+                "tools": [
+                  {
+                    "id": "0bd36de8-6d3a-43e5-9c3f-25ca6de97662",
+                    "type": "handoff",
+                    "async": null,
+                    "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+                    "server": {
+                      "url": "https://hook.eu2.make.com/o51u3jb5g1nn1lxiluziezpr7gh5vvt8",
+                      "timeoutSeconds": 20,
+                      "staticIpAddressesEnabled": null
+                    },
+                    "function": {
+                      "name": "handoff_to_assistant",
+                      "parameters": {
+                        "type": "object",
+                        "required": [
+                          "{{firstName}}"
+                        ],
+                        "properties": {
+                          "full_name": {
+                            "type": "string",
+                            "description": "The caller's full name, only after the caller provides it or it is already known from context."
+                          },
+                          "last_name": {
+                            "type": "string",
+                            "description": "The caller's last name, only if known."
+                          },
+                          "first_name": {
+                            "type": "string",
+                            "description": "The caller's first name, only if known."
+                          },
+                          "{{fullName}}": {
+                            "type": "string",
+                            "default": null,
+                            "description": null
+                          },
+                          "{{contactId}}": {
+                            "type": "string",
+                            "default": null,
+                            "description": null
+                          },
+                          "{{firstName}}": {
+                            "type": "string",
+                            "default": null,
+                            "description": null
+                          }
+                        }
+                      },
+                      "description": "Retrieves the stored live call context for the current Vapi call from the external session store. Us..."
+                    },
+                    "messages": [
+                      {
+                        "type": "request-start",
+                        "content": "Please hold on while I hand you over to the relevant agent to book your call",
+                        "blocking": true,
+                        "endCallAfterSpokenEnabled": null
+                      }
+                    ],
+                    "createdAt": {},
+                    "updatedAt": {},
+                    "parameters": [
+                      {
+                        "key": "phone",
+                        "value": "{{ customer.number }}"
+                      }
+                    ],
+                    "destinations": [
+                      {
+                        "type": "assistant",
+                        "number": "+61433005110",
+                        "message": "Got it — I’ll connect you with a team member now.",
+                        "callerId": "+61433005110",
+                        "assistantId": "7770a48b-68d1-48df-a03a-9cc5b9e91ad8",
+                        "description": "When user asks to book or reschedule an initital finance consult a.k.a IFC",
+                        "transferPlan": {
+                          "mode": "warm-transfer-experimental",
+                          "message": null,
+                          "sipVerb": "refer",
+                          "summaryPlan": {
+                            "enabled": true,
+                            "messages": [
+                              {
+                                "role": "user",
+                                "content": "Here is the transcript:\n\n{{transcript}}\n\n"
+                              }
+                            ],
+                            "timeoutSeconds": 5,
+                            "useAssistantLlm": null
+                          },
+                          "fallbackPlan": {
+                            "message": "Could not transfer your call, goodbye.",
+                            "endCallEnabled": true
+                          }
+                        },
+                        "assistantName": "NPC IFC Inbound",
+                        "numberE164CheckEnabled": null,
+                        "variableExtractionPlan": {
+                          "schema": {
+                            "type": "object",
+                            "required": [],
+                            "properties": {
+                              "firstName": {
+                                "type": "string"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ],
+                    "variableExtractionPlan": {
+                      "schema": {
+                        "type": "object",
+                        "required": [],
+                        "properties": {}
+                      },
+                      "aliases": [
+                        {
+                          "key": "vapiCallId",
+                          "value": "{{ $.vapiCallId }}"
+                        }
+                      ]
+                    }
+                  }
+                ],
+                "toolIds": [
+                  "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+                ],
+                "messages": [
+                  {
+                    "role": "system",
+                    "content": "# **NPC Services – “Angela” Inbound Voice Agent System Prompt**\n\n*(General Enquiries, Knowledge-Base..."
+                  }
+                ],
+                "provider": "openai",
+                "maxTokens": 10000,
+                "temperature": 0.9,
+                "knowledgeBase": {
+                  "fileIds": [
+                    "9fff4149-3aec-48f0-9378-d56760390216"
+                  ],
+                  "provider": "google"
+                }
+              },
+              "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+              "voice": {
+                "model": "eleven_flash_v2_5",
+                "voiceId": "M7ya1YbaeFaPXljg9BpK",
+                "provider": "11labs",
+                "stability": 0.5,
+                "similarityBoost": 0.75
+              },
+              "server": {
+                "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+                "timeoutSeconds": 20,
+                "staticIpAddressesEnabled": false
+              },
+              "metadata": {
+                "position": {
+                  "x": 237.34521448871288,
+                  "y": 427.4425751045537
+                }
+              },
+              "createdAt": "2025-12-09T15:00:39.199Z",
+              "updatedAt": "2026-05-14T10:36:25.042Z",
+              "transcriber": {
+                "model": "flux-general-en",
+                "language": "en",
+                "provider": "deepgram"
+              },
+              "firstMessage": "Hi there. Angela from Naidu Property Consulting Services speaking. How can I help you today?",
+              "compliancePlan": {
+                "pciEnabled": false,
+                "zdrEnabled": false,
+                "hipaaEnabled": false
+              },
+              "endCallMessage": "Goodbye.",
+              "variableValues": {
+                "cid": "9b03b90bfcd52282cf6ac52a6c6e5824@0.0.0.0",
+                "account-sid": "c033b672-5b99-42ae-9ce2-b231e9a522fb",
+                "forwarded-for": "54.172.60.3",
+                "twilio-callsid": "CA277319d1c459eac61c2196ca3a662116",
+                "application-sid": "79d078c8-76b2-452a-99e0-ddd5abbf6269",
+                "voip-carrier-sid": "bdf16bcf-a774-46b0-873d-9105dcda3ce9",
+                "twilio-accountsid": "{{SECRET:TWILIO_ACCOUNT_SID}}",
+                "originating-carrier": "Twilio"
+              },
+              "voicemailMessage": "Please call back when you're available.",
+              "startSpeakingPlan": {
+                "waitSeconds": 4
+              },
+              "maxDurationSeconds": 1444
+            },
+            "timestamp": 1778758958139,
+            "toolCalls": [
+              {
+                "id": "call_0g1qAjqfNkLxE8ofxCzmiCxb",
+                "type": "function",
+                "function": {
+                  "name": "get_call_context",
+                  "arguments": {
+                    "phone": "+61480845459",
+                    "vapiCallId": "019e264b-84de-7000-91f6-d1bd0aefb405",
+                    "callerPhone": "+61480845459"
+                  }
+                }
+              }
+            ],
+            "phoneNumber": {
+              "id": "ae35b1f3-25c4-4620-ac13-525a58da96c9",
+              "name": "NPC Services",
+              "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+              "server": {
+                "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook",
+                "timeoutSeconds": 20
+              },
+              "sipUri": "sip:naidupropertyconsultingservices@sip.vapi.ai",
+              "status": "active",
+              "squadId": "a9656ea1-3575-4ac6-b985-fd138be06cc5",
+              "provider": "vapi",
+              "createdAt": "2026-01-31T08:01:39.887Z",
+              "updatedAt": "2026-01-31T08:02:57.530Z"
+            },
+            "toolCallList": [
+              {
+                "id": "call_0g1qAjqfNkLxE8ofxCzmiCxb",
+                "type": "function",
+                "function": {
+                  "name": "get_call_context",
+                  "arguments": {
+                    "phone": "+61480845459",
+                    "vapiCallId": "019e264b-84de-7000-91f6-d1bd0aefb405",
+                    "callerPhone": "+61480845459"
+                  }
+                }
+              }
+            ],
+            "toolWithToolCallList": [
+              {
+                "type": "function",
+                "async": false,
+                "server": {
+                  "url": "https://hook.eu2.make.com/o51u3jb5g1nn1lxiluziezpr7gh5vvt8",
+                  "timeoutSeconds": 20
+                },
+                "function": {
+                  "name": "get_call_context",
+                  "parameters": {
+                    "type": "object",
+                    "required": [],
+                    "properties": {}
+                  },
+                  "description": "Retrieves the stored live call context for the current Vapi call from the external session store. Us..."
+                },
+                "messages": [
+                  {
+                    "type": "request-start",
+                    "content": "",
+                    "blocking": false,
+                    "contents": [],
+                    "conditions": []
+                  }
+                ],
+                "toolCall": {
+                  "id": "call_0g1qAjqfNkLxE8ofxCzmiCxb",
+                  "type": "function",
+                  "function": {
+                    "name": "get_call_context",
+                    "arguments": {
+                      "phone": "+61480845459",
+                      "vapiCallId": "019e264b-84de-7000-91f6-d1bd0aefb405",
+                      "callerPhone": "+61480845459"
+                    }
+                  }
+                },
+                "parameters": [
+                  {
+                    "key": "phone",
+                    "value": "{{ customer.number }}"
+                  }
+                ],
+                "variableExtractionPlan": {
+                  "aliases": [
+                    {
+                      "key": "vapiCallId",
+                      "value": "{{ $.vapiCallId }}"
+                    }
+                  ]
+                }
+              }
+            ]
+          }
+        },
+        "2": {
+          "key": "019e264b-84de-7000-91f6-d1bd0aefb405",
+          "data": {
+            "phone": "+61480845459",
+            "fullName": "lazarus ",
+            "contactId": "iH04pC64TJ3roKnCnyvx",
+            "createdAt": "2026-05-14T11:42:23.966Z",
+            "firstName": "lazarus",
+            "updatedAt": "2026-05-14T11:42:23.966Z",
+            "vapiCallId": "019e264b-84de-7000-91f6-d1bd0aefb405",
+            "callerPhone": "+61480845459",
+            "contactFound": true,
+            "contactState": "RESOLVED",
+            "contactCreated": false
+          }
+        }
+      }
+    },
+    "scenario": {
+      "dlq": false,
+      "slots": null,
+      "dataloss": false,
+      "maxErrors": 3,
+      "autoCommit": true,
+      "roundtrips": 1,
+      "sequential": false,
+      "confidential": false,
+      "freshVariables": false,
+      "autoCommitTriggerLast": true
+    }
+  },
+  "scheduling": {
+    "type": "immediately",
+    "maximum_runs_per_minute": null
+  },
+  "interface": {
+    "input": [],
+    "output": []
+  }
+}

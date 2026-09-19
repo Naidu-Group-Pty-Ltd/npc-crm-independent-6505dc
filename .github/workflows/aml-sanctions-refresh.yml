@@ -1,0 +1,130 @@
+name: AML sanctions refresh
+
+# Keeps aml.sanctions_entries current from the official primary sources
+# (DFAT / UN / OFAC). A stale sanctions list is a live compliance failure, not
+# a warning — the loader exits non-zero if any list fails, which fails this
+# workflow, which is the alert.
+#
+# Required repository secrets:
+#   SUPABASE_SERVICE_ROLE_KEY     service role key (writes aml.sanctions_entries)
+#
+# The project URL is NOT a secret and is read from supabase/config.toml.
+#
+# Missing credentials FAIL the job. The scheduled run is the production
+# refresh: silently downgrading it to a dry run is how a list goes stale
+# while the schedule stays green — and the screening provider now fails
+# closed on stale DFAT data, so every screening would start erroring with
+# nothing on this side ever having turned red. A deliberate dry run remains
+# available via workflow_dispatch with dry_run=true (no credentials needed).
+
+on:
+  schedule:
+    # 18:10 UTC daily ≈ 04:10 next-day Australia/Sydney (AEST/AEDT), i.e.
+    # overnight local time, after the publishers' usual update windows.
+    - cron: '10 18 * * *'
+  workflow_dispatch:
+    inputs:
+      lists:
+        description: 'Comma-separated lists to load'
+        required: false
+        default: 'un,ofac,dfat'
+      dry_run:
+        description: 'Parse and report without writing'
+        type: boolean
+        required: false
+        default: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: aml-sanctions-refresh
+  cancel-in-progress: false
+
+jobs:
+  refresh:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      # Node 22, deliberately, while every other workflow here pins 20.
+      #
+      # `@supabase/supabase-js` constructs a `RealtimeClient` inside
+      # `createClient` and that constructor demands a NATIVE WebSocket, which
+      # arrived in Node 22. On 20 the loader dies before it has read a single
+      # byte of any list:
+      #
+      #     Error: Node.js detected but native WebSocket not found.
+      #       at createClient (@supabase/supabase-js)
+      #       at main (scripts/aml/load-sanctions-lists.mjs:201)
+      #
+      # This never surfaced because the job died one step earlier, at the
+      # missing-credential check, on every run this workflow has ever had. The
+      # secret was added on 2026-08-19 and the very next run failed here, in
+      # zero seconds — the third independent fault in a refresh that has never
+      # once completed.
+      #
+      # The loader uses no realtime feature whatsoever; the requirement comes
+      # from the client constructor, so it cannot be avoided by not
+      # subscribing to anything.
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      # The parsers are what stand between an official file and a screening
+      # list that silently matches nothing. Run their tests before writing.
+      - name: Test sanctions parsers
+        run: npm run test:aml-sanctions
+
+      # The project URL is not a secret and never was: it is the project's
+      # public hostname, it appears verbatim in `cron.job` commands, and it is
+      # checked in as `project_id` in supabase/config.toml. Reading it from
+      # there removes a dependency on a repository secret that is NOT
+      # configured — the same absent `SUPABASE_URL` that stopped the internal
+      # secret rotation dead on its first run. A refresh that cannot run
+      # because of a missing non-secret is a list going stale for no reason.
+      - name: Resolve the project URL from the checked-in config
+        id: project
+        run: |
+          set -euo pipefail
+          REF="$(sed -n 's/^[[:space:]]*project_id[[:space:]]*=[[:space:]]*"\([^"]*\)".*/\1/p' supabase/config.toml | head -1)"
+          if [ -z "$REF" ]; then
+            echo '::error title=No project ref::supabase/config.toml has no project_id.'
+            exit 1
+          fi
+          echo "url=https://${REF}.supabase.co" >> "$GITHUB_OUTPUT"
+
+      - name: Check credentials
+        id: creds
+        if: github.event.inputs.dry_run != 'true'
+        env:
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: |
+          # A refresh run without write credentials is an operational fault,
+          # not a reason to quietly do nothing. Fail loudly (never echoing the
+          # value); an intentional dry run is requested explicitly via
+          # workflow_dispatch dry_run=true and skips this check entirely.
+          if [ -z "$SUPABASE_SERVICE_ROLE_KEY" ]; then
+            echo "::error::SUPABASE_SERVICE_ROLE_KEY is not configured — the scheduled sanctions refresh cannot write, so the list WILL go stale and screening will fail closed. Add the repository secret, or run workflow_dispatch with dry_run=true for a deliberate dry run."
+            exit 1
+          fi
+          echo "configured=true" >> "$GITHUB_OUTPUT"
+
+      - name: Load sanctions lists
+        if: github.event.inputs.dry_run != 'true'
+        env:
+          SUPABASE_URL: ${{ steps.project.outputs.url }}
+          SUPABASE_SERVICE_ROLE_KEY: ${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+        run: node scripts/aml/load-sanctions-lists.mjs --list "${{ github.event.inputs.lists || 'un,ofac,dfat' }}"
+
+      - name: Dry run (explicitly requested)
+        if: github.event.inputs.dry_run == 'true'
+        run: node scripts/aml/load-sanctions-lists.mjs --dry-run --list "${{ github.event.inputs.lists || 'un,ofac' }}"

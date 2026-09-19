@@ -1,0 +1,73 @@
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
+
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+# Local-only PDF import testing artifacts (Phase 7 baselines, private PDFs/screenshots)
+audit-output/
+
+# Phase 11D release gate generated reports (local-only).
+# ANCHORED with a leading slash: an unanchored `reports/` matches EVERY directory
+# of that name at any depth — it was silently untracking new files added under
+# src/components/reports/, src/lib/reports/ and docs/reports/.
+/reports/
+
+# C10 — Playwright (Tier 2) artifacts + the live-corpus (Tier 3) directory.
+# Client PDFs are NEVER committed; the live corpus lives in a local dir only.
+test-results/
+playwright-report/
+.pdf-import-golden-corpus/
+
+# Security Remediation Phase 10 (SECR-001): local environment files must not
+# be tracked. Publishable values live in .env.example; secrets live only in
+# the platform secret stores. This also covers local MCP tooling secrets such
+# as MAGIC_API_KEY (referenced by .mcp.json) — keep the real value in a local
+# .env / .env.local, never in a committed file.
+.env
+.env.*
+!.env.example
+
+# Python bytecode from the verification service
+__pycache__/
+*.py[cod]
+
+# Deno lockfile written when the CLI is invoked at the repo root.
+# The Builder Edge Function type check keeps its own scoped lock next to its config.
+/deno.lock
+.ds-sync/
+ds-bundle/
+.design-sync/.cache/
+.design-sync/learnings/
+.design-sync/node_modules
+
+# Design System pane cards generated from scripts/template-library/designSystem.ts
+# by `npm run templates:library:cards`. Build output, regenerated on demand and
+# pushed to claude.ai/design with the DesignSync tool — never edited by hand.
+.design-system/
+tests-e2e/manual-screening-dialog/harness/dist/
+scripts/security/deno.lock
+
+# Supabase CLI version-check cache. Written whenever the CLI runs; carries no
+# information. `supabase/.temp/linked-project.json` beside it IS checked in.
+supabase/.temp/cli-latest
+.verify/

@@ -1,0 +1,44 @@
+/* ─────────────────────────────────────────────────────────────────
+   NPC Services — spacing + radius.
+
+   4px base with generous 1rem/1.5rem panel padding. Radii are LARGE —
+   this is a "soft luxury" interface: nothing sharp, nothing fully round
+   except pills and avatars.
+
+   PRECEDENCE: --radius* exists in src/styles/tokens.css (authoritative).
+   The --space-* scale and the layout rails below do NOT yet exist there;
+   spacing in the app is still Tailwind's default scale.
+   ───────────────────────────────────────────────────────────────── */
+
+:root {
+  --space-0: 0;
+  --space-1: 0.25rem;   /* 4px  — icon/label gap */
+  --space-2: 0.5rem;    /* 8px  — chip padding, tight stacks */
+  --space-3: 0.75rem;   /* 12px — control padding, grid gap (cozy) */
+  --space-4: 1rem;      /* 16px — default gap, panel padding (mobile) */
+  --space-5: 1.25rem;   /* 20px — card padding (GlassCard) */
+  --space-6: 1.5rem;    /* 24px — card padding (Card), section gap */
+  --space-8: 2rem;      /* 32px — page section rhythm */
+  --space-10: 2.5rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+
+  /* Base radius token — everything else derives from it. */
+  --radius: 0.75rem;
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;    /* Card, Button (default) */
+  --radius-xl: 1.25rem;    /* GlassCard, hero tiles */
+  --radius-2xl: 1.5rem;    /* section frames */
+  --radius-3xl: 2rem;      /* page frame, deal-pipeline shell */
+  --radius-pill: 9999px;   /* badges, trend chips, map pins */
+  --radius-button: 0.85rem;
+
+  /* Layout rails */
+  --content-max: 1600px;
+  --sidebar-width: 18rem;
+  --sidebar-width-icon: 3rem;
+  --topbar-height: 72px;
+  --control-height: 2.5rem;
+  --control-height-touch: 2.75rem; /* 44px — never smaller */
+}

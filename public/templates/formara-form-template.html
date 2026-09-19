@@ -1,0 +1,497 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Client Portfolio Form</title>
+  <style>
+    @page {
+      size: A4 portrait;
+      margin: 10mm;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: Arial, sans-serif;
+      font-size: 9pt;
+      line-height: 1.3;
+      color: #000;
+      background: #fff;
+    }
+    
+    .page {
+      width: 210mm;
+      min-height: 297mm;
+      padding: 8mm;
+      background: #fff;
+      page-break-after: always;
+    }
+    
+    .page:last-child {
+      page-break-after: auto;
+    }
+    
+    /* Header Styles */
+    .header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 6mm;
+      padding-bottom: 3mm;
+      border-bottom: 1px solid #ddd;
+    }
+    
+    .header-title {
+      font-size: 14pt;
+      font-weight: bold;
+      color: #1a365d;
+    }
+    
+    .header-date {
+      font-size: 9pt;
+      color: #666;
+    }
+    
+    /* Two Column Layout */
+    .two-columns {
+      display: flex;
+      gap: 6mm;
+    }
+    
+    .column {
+      flex: 1;
+    }
+    
+    .column-left {
+      flex: 0.9;
+    }
+    
+    .column-right {
+      flex: 1.1;
+    }
+    
+    /* Section Styles */
+    .section {
+      margin-bottom: 5mm;
+    }
+    
+    .section-header {
+      background: #2d3748;
+      color: #fff;
+      padding: 2mm 3mm;
+      font-size: 9pt;
+      font-weight: bold;
+      margin-bottom: 0;
+    }
+    
+    .section-header.blue {
+      background: #3182ce;
+    }
+    
+    .section-header.green {
+      background: #38a169;
+    }
+    
+    .section-header.purple {
+      background: #805ad5;
+    }
+    
+    .section-header.orange {
+      background: #dd6b20;
+    }
+    
+    .section-header.teal {
+      background: #319795;
+    }
+    
+    .subsection-header {
+      background: #e2e8f0;
+      color: #2d3748;
+      padding: 1.5mm 3mm;
+      font-size: 8pt;
+      font-weight: bold;
+      margin-bottom: 0;
+    }
+    
+    /* Table Styles */
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 8pt;
+    }
+    
+    .data-table th {
+      background: #f7fafc;
+      border: 0.5px solid #cbd5e0;
+      padding: 1.5mm 2mm;
+      text-align: left;
+      font-weight: 600;
+      color: #4a5568;
+    }
+    
+    .data-table td {
+      border: 0.5px solid #cbd5e0;
+      padding: 1.5mm 2mm;
+    }
+    
+    .data-table .label {
+      background: #f7fafc;
+      font-weight: 500;
+      width: 45%;
+      color: #4a5568;
+    }
+    
+    .data-table .value {
+      background: #fff;
+      color: #1a202c;
+    }
+    
+    .data-table .currency {
+      text-align: right;
+    }
+    
+    .data-table .percent {
+      text-align: right;
+    }
+    
+    /* Property Card */
+    .property-card {
+      border: 1px solid #cbd5e0;
+      margin-bottom: 4mm;
+    }
+    
+    .property-header {
+      background: #edf2f7;
+      padding: 2mm 3mm;
+      font-weight: bold;
+      font-size: 9pt;
+      border-bottom: 1px solid #cbd5e0;
+    }
+    
+    .property-address {
+      color: #2b6cb0;
+      font-size: 8pt;
+      margin-top: 1mm;
+    }
+    
+    /* Summary Box */
+    .summary-box {
+      border: 2px solid #3182ce;
+      background: #ebf8ff;
+      padding: 3mm;
+      margin-top: 4mm;
+    }
+    
+    .summary-title {
+      font-weight: bold;
+      color: #2b6cb0;
+      margin-bottom: 2mm;
+      font-size: 10pt;
+    }
+    
+    .summary-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2mm;
+    }
+    
+    .summary-item {
+      display: flex;
+      justify-content: space-between;
+      font-size: 8pt;
+    }
+    
+    .summary-item .label {
+      color: #4a5568;
+    }
+    
+    .summary-item .value {
+      font-weight: bold;
+      color: #1a202c;
+    }
+    
+    .summary-item.highlight .value {
+      color: #38a169;
+    }
+    
+    .summary-item.negative .value {
+      color: #e53e3e;
+    }
+    
+    /* Income/Expense Table */
+    .financial-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 8pt;
+    }
+    
+    .financial-table th {
+      background: #2d3748;
+      color: #fff;
+      padding: 2mm;
+      text-align: left;
+    }
+    
+    .financial-table td {
+      border: 0.5px solid #cbd5e0;
+      padding: 1.5mm 2mm;
+    }
+    
+    .financial-table .total-row {
+      background: #edf2f7;
+      font-weight: bold;
+    }
+    
+    .financial-table .total-row td {
+      border-top: 2px solid #2d3748;
+    }
+    
+    /* Footer */
+    .page-footer {
+      position: absolute;
+      bottom: 8mm;
+      left: 8mm;
+      right: 8mm;
+      border-top: 1px solid #ddd;
+      padding-top: 2mm;
+      font-size: 7pt;
+      color: #666;
+      display: flex;
+      justify-content: space-between;
+    }
+    
+    /* Utility Classes */
+    .text-right { text-align: right; }
+    .text-center { text-align: center; }
+    .font-bold { font-weight: bold; }
+    .text-green { color: #38a169; }
+    .text-red { color: #e53e3e; }
+    .mt-2 { margin-top: 2mm; }
+    .mb-2 { margin-bottom: 2mm; }
+    
+    /* Print Specific */
+    @media print {
+      body {
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+      
+      .page {
+        margin: 0;
+        padding: 8mm;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page" id="page-1">
+    <div class="header">
+      <div>
+        <div class="header-title">Personal Details (All Applicants)</div>
+      </div>
+      <div class="header-date">{{REPORT_DATE}}</div>
+    </div>
+    
+    <div class="two-columns">
+      <!-- Left Column: Personal Details -->
+      <div class="column column-left">
+        <!-- Primary Contact -->
+        <div class="section">
+          <div class="section-header">Primary Contact</div>
+          <table class="data-table">
+            <tr><td class="label">First name</td><td class="value">{{PRIMARY_FIRST_NAME}}</td></tr>
+            <tr><td class="label">Middle name</td><td class="value">{{PRIMARY_MIDDLE_NAME}}</td></tr>
+            <tr><td class="label">Surname</td><td class="value">{{PRIMARY_SURNAME}}</td></tr>
+            <tr><td class="label">Mobile</td><td class="value">{{PRIMARY_MOBILE}}</td></tr>
+            <tr><td class="label">Email</td><td class="value">{{PRIMARY_EMAIL}}</td></tr>
+            <tr><td class="label">Gender</td><td class="value">{{PRIMARY_GENDER}}</td></tr>
+            <tr><td class="label">Date of Birth</td><td class="value">{{PRIMARY_DOB}}</td></tr>
+          </table>
+        </div>
+        
+        <!-- Secondary Contact -->
+        <div class="section">
+          <div class="section-header blue">Secondary Contact</div>
+          <table class="data-table">
+            <tr><td class="label">First name</td><td class="value">{{SECONDARY_FIRST_NAME}}</td></tr>
+            <tr><td class="label">Middle name</td><td class="value">{{SECONDARY_MIDDLE_NAME}}</td></tr>
+            <tr><td class="label">Surname</td><td class="value">{{SECONDARY_SURNAME}}</td></tr>
+            <tr><td class="label">Mobile</td><td class="value">{{SECONDARY_MOBILE}}</td></tr>
+            <tr><td class="label">Email</td><td class="value">{{SECONDARY_EMAIL}}</td></tr>
+            <tr><td class="label">Gender</td><td class="value">{{SECONDARY_GENDER}}</td></tr>
+            <tr><td class="label">Date of Birth</td><td class="value">{{SECONDARY_DOB}}</td></tr>
+          </table>
+        </div>
+        
+        <!-- Address -->
+        <div class="section">
+          <div class="section-header green">Address</div>
+          <table class="data-table">
+            <tr><td class="label">Current address</td><td class="value">{{CURRENT_ADDRESS}}</td></tr>
+            <tr><td class="label">Country</td><td class="value">{{COUNTRY}}</td></tr>
+            <tr><td class="label">Living Situation</td><td class="value">{{LIVING_SITUATION}}</td></tr>
+          </table>
+        </div>
+        
+        <!-- ID -->
+        <div class="section">
+          <div class="section-header purple">ID</div>
+          <table class="data-table">
+            <tr><td class="label">Residential status</td><td class="value">{{RESIDENTIAL_STATUS}}</td></tr>
+          </table>
+        </div>
+        
+        <!-- Family Relations -->
+        <div class="section">
+          <div class="section-header orange">Family Relations</div>
+          <table class="data-table">
+            <tr><td class="label">Marital status</td><td class="value">{{MARITAL_STATUS}}</td></tr>
+            <tr><td class="label">Number of dependents</td><td class="value">{{DEPENDENTS_COUNT}}</td></tr>
+          </table>
+        </div>
+      </div>
+      
+      <!-- Right Column: Properties -->
+      <div class="column column-right">
+        <!-- Owner Occupied Property -->
+        <div class="section">
+          <div class="section-header teal">Property (Owner Occupied)</div>
+          <table class="data-table">
+            <tr><td class="label">Address</td><td class="value">{{OO_ADDRESS}}</td></tr>
+            <tr><td class="label">Value</td><td class="value currency">{{OO_VALUE}}</td></tr>
+            <tr><td class="label">Loan Remaining ($)</td><td class="value currency">{{OO_LOAN_REMAINING}}</td></tr>
+            <tr><td class="label">Interest Rate (%)</td><td class="value percent">{{OO_INTEREST_RATE}}</td></tr>
+            <tr><td class="label">Ownership (%)</td><td class="value percent">{{OO_OWNERSHIP}}</td></tr>
+            <tr><td class="label">Monthly Interest Repayment ($)</td><td class="value currency">{{OO_MONTHLY_INTEREST}}</td></tr>
+            <tr><td class="label">Net Monthly Cashflow ($)</td><td class="value currency">{{OO_NET_CASHFLOW}}</td></tr>
+          </table>
+        </div>
+        
+        <!-- Investment Properties will be injected here -->
+        {{INVESTMENT_PROPERTIES}}
+      </div>
+    </div>
+  </div>
+  
+  <!-- Page 2: Employment & Income -->
+  <div class="page" id="page-2">
+    <div class="header">
+      <div>
+        <div class="header-title">Employment & Income Details</div>
+      </div>
+      <div class="header-date">{{REPORT_DATE}}</div>
+    </div>
+    
+    <div class="two-columns">
+      <!-- Left Column: Employment -->
+      <div class="column">
+        <div class="section">
+          <div class="section-header">Primary Contact - Employment</div>
+          {{PRIMARY_EMPLOYMENT}}
+        </div>
+        
+        <div class="section">
+          <div class="section-header blue">Secondary Contact - Employment</div>
+          {{SECONDARY_EMPLOYMENT}}
+        </div>
+      </div>
+      
+      <!-- Right Column: Income -->
+      <div class="column">
+        <div class="section">
+          <div class="section-header green">Primary Contact - Income</div>
+          {{PRIMARY_INCOME}}
+        </div>
+        
+        <div class="section">
+          <div class="section-header purple">Secondary Contact - Income</div>
+          {{SECONDARY_INCOME}}
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Page 3: Assets & Liabilities -->
+  <div class="page" id="page-3">
+    <div class="header">
+      <div>
+        <div class="header-title">Assets & Liabilities</div>
+      </div>
+      <div class="header-date">{{REPORT_DATE}}</div>
+    </div>
+    
+    <div class="two-columns">
+      <!-- Left Column: Assets -->
+      <div class="column">
+        <div class="section">
+          <div class="section-header">Assets</div>
+          {{ASSETS_TABLE}}
+        </div>
+      </div>
+      
+      <!-- Right Column: Liabilities -->
+      <div class="column">
+        <div class="section">
+          <div class="section-header orange">Liabilities</div>
+          {{LIABILITIES_TABLE}}
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Page 4: Portfolio Summary -->
+  <div class="page" id="page-4">
+    <div class="header">
+      <div>
+        <div class="header-title">Portfolio Cashflow Analysis</div>
+      </div>
+      <div class="header-date">{{REPORT_DATE}}</div>
+    </div>
+    
+    <div class="summary-box">
+      <div class="summary-title">Portfolio Summary</div>
+      <table class="data-table">
+        <tr><td class="label">Total Portfolio Value</td><td class="value currency">{{TOTAL_PORTFOLIO_VALUE}}</td></tr>
+        <tr><td class="label">Total Debt</td><td class="value currency">{{TOTAL_DEBT}}</td></tr>
+        <tr><td class="label">Total Monthly Expenditure</td><td class="value currency">{{TOTAL_MONTHLY_EXPENDITURE}}</td></tr>
+        <tr><td class="label">Total Monthly Income</td><td class="value currency">{{TOTAL_MONTHLY_INCOME}}</td></tr>
+        <tr><td class="label">Total Monthly Rental Income</td><td class="value currency">{{TOTAL_MONTHLY_RENTAL}}</td></tr>
+        <tr><td class="label font-bold">Net Monthly Cash Flow</td><td class="value currency font-bold {{NET_CASHFLOW_CLASS}}">{{NET_MONTHLY_CASHFLOW}}</td></tr>
+      </table>
+    </div>
+    
+    <!-- Properties Summary -->
+    <div class="section mt-2">
+      <div class="section-header teal">Properties Overview</div>
+      <table class="financial-table">
+        <thead>
+          <tr>
+            <th>Property</th>
+            <th class="text-right">Value</th>
+            <th class="text-right">Loan</th>
+            <th class="text-right">Rental</th>
+            <th class="text-right">Net CF</th>
+          </tr>
+        </thead>
+        <tbody>
+          {{PROPERTIES_SUMMARY_ROWS}}
+        </tbody>
+        <tfoot>
+          <tr class="total-row">
+            <td>TOTAL</td>
+            <td class="text-right">{{TOTAL_VALUE}}</td>
+            <td class="text-right">{{TOTAL_LOANS}}</td>
+            <td class="text-right">{{TOTAL_RENTAL}}</td>
+            <td class="text-right {{TOTAL_NET_CF_CLASS}}">{{TOTAL_NET_CF}}</td>
+          </tr>
+        </tfoot>
+      </table>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,255 @@
+{
+  "table": "Aurixa Waitlist",
+  "batch": 1,
+  "of": 1,
+  "recordCount": 10,
+  "records": [
+    {
+      "sourceRecordId": "rec6X7YlTYARFEtL3",
+      "sourceCreatedTime": "2026-08-15T14:12:39.000Z",
+      "fields": {
+        "First Name": "Karrupu"
+      }
+    },
+    {
+      "sourceRecordId": "recDbhPfIsRza1s2G",
+      "sourceCreatedTime": "2026-08-15T14:12:39.000Z",
+      "fields": {
+        "Current Bottlenecks": "sddsds gdg",
+        "Landing Page": "/contact",
+        "Form Version": "stage-1-priority-access-v3",
+        "Annual Transactional Value": "10_to_25",
+        "Additional Notes": "sdhs g",
+        "Privacy Notice Version": "collection-notice-2026-07-v1",
+        "Token": "UHpUSHlsVHNSUDJkUVQxbQ",
+        "Last Name": "Naidu",
+        "Entity Name": "Naidu Property Consulting Services",
+        "Your Role": "Chief Executive Officer",
+        "Entity Classification": "property_advisory",
+        "Primary Areas to Improve": [
+          "Disconnected systems and duplicate data entry",
+          "Manual report preparation",
+          "Document collection and management"
+        ],
+        "Application ID": "AX-B3E8EB102E",
+        "UTM Source": "AURIXA Contact Waitlist Page",
+        "Source": "AURIXA Contact Waitlist Page",
+        "Phone": "+61433005110",
+        "Date Added": "2026-08-15T14:12:38.259Z",
+        "Marketing Consent": true,
+        "Privacy Acknowledged": true,
+        "Corporate Email": "rugesh@npcservices.com.au",
+        "Bypass URL": "https://aurixasystems.com.au/questionnaire?token=UHpUSHlsVHNSUDJkUVQxbQ&expires=2026-08-16T14%3A12%3A54.437Z",
+        "First Name": "Rugesh"
+      }
+    },
+    {
+      "sourceRecordId": "recLkSfiVW6qvTsGL",
+      "sourceCreatedTime": "2026-07-29T20:27:15.000Z",
+      "fields": {
+        "Current Bottlenecks": "grr",
+        "Landing Page": "/contact",
+        "Form Version": "stage-1-priority-access-v3",
+        "Annual Transactional Value": "pre_launch_under_10",
+        "Privacy Notice Version": "collection-notice-2026-07-v1",
+        "Token": "SjRTbmxOS3Z6S2tMY2xLMA",
+        "Last Name": "Ravachandran",
+        "Entity Name": "Xenochrome Technologies",
+        "Your Role": "Founder or Director",
+        "Entity Classification": "buyers_agent",
+        "Primary Areas to Improve": [
+          "Disconnected systems and duplicate data entry",
+          "Manual report preparation",
+          "Finance or broker coordination"
+        ],
+        "Application ID": "AX-C239DA5FF2",
+        "UTM Source": "AURIXA Contact Waitlist Page",
+        "Source": "AURIXA Contact Waitlist Page",
+        "Phone": "+60182548567",
+        "Date Added": "2026-07-29T20:27:14.711Z",
+        "Marketing Consent": true,
+        "Privacy Acknowledged": true,
+        "Corporate Email": "lavankenobi@gmail.com",
+        "Bypass URL": "https://aurixasystems.com.au/questionnaire?token=SjRTbmxOS3Z6S2tMY2xLMA&expires=2026-07-30T20%3A27%3A19.482Z",
+        "First Name": "Lavanethaan"
+      }
+    },
+    {
+      "sourceRecordId": "recN3HKhh7tfCRqbf",
+      "sourceCreatedTime": "2026-07-29T20:47:12.000Z",
+      "fields": {
+        "Current Bottlenecks": "grr",
+        "Landing Page": "/contact",
+        "Form Version": "stage-1-priority-access-v3",
+        "Annual Transactional Value": "pre_launch_under_10",
+        "Privacy Notice Version": "collection-notice-2026-07-v1",
+        "Email Message ID": "AAMkADBlYzM0YTlkLWZiOTEtNDQ2YS05MjVjLTZhYzA0NWIyMGExMQBGAAAAAAAUu593InGqS43UqSZY2JKNBwBv-aPQVWqHSItTdfEGS9CDAAAAAAEPAABv-aPQVWqHSItTdfEGS9CDAAAqq1lJAAA=",
+        "Token": "TFJ2SWVIdjVzaWhwWGUwSw",
+        "Last Name": "Ravachandran",
+        "Entity Name": "Xenochrome Technologies",
+        "Your Role": "Founder or Director",
+        "Entity Classification": "buyers_agent",
+        "Primary Areas to Improve": [
+          "Disconnected systems and duplicate data entry",
+          "Manual report preparation",
+          "Finance or broker coordination"
+        ],
+        "Application ID": "AX-2321D1BBBE",
+        "UTM Source": "AURIXA Contact Waitlist Page",
+        "Source": "AURIXA Contact Waitlist Page",
+        "Phone": "+60182548567",
+        "Date Added": "2026-07-29T20:47:11.180Z",
+        "Marketing Consent": true,
+        "Privacy Acknowledged": true,
+        "Corporate Email": "lavankenobi@gmail.com",
+        "Bypass URL": "https://aurixasystems.com.au/questionnaire?token=TFJ2SWVIdjVzaWhwWGUwSw&expires=2026-07-30T20%3A47%3A20.093Z",
+        "First Name": "Lavanethaan"
+      }
+    },
+    {
+      "sourceRecordId": "recS5OzCXyvIc7Kl9",
+      "sourceCreatedTime": "2026-08-05T05:31:52.000Z",
+      "fields": {
+        "Current Bottlenecks": "My firm's pipeline is clogged due to high volume usage. Please make it flow smoothly",
+        "Landing Page": "/contact",
+        "Form Version": "stage-1-priority-access-v3",
+        "Annual Transactional Value": "26_to_75",
+        "Additional Notes": "Sometimes I feel excited and sometimes I'm confused. Sometimes I'm forgetful. Please help me.",
+        "Privacy Notice Version": "collection-notice-2026-07-v1",
+        "Token": "TVh2bTR6eUJNVXlBMEdpQg",
+        "Last Name": "Joseph",
+        "Entity Name": "Kothavalli & CO",
+        "Your Role": "Other",
+        "Entity Classification": "mortgage_finance",
+        "Primary Areas to Improve": [
+          "Client onboarding delays",
+          "Client communication and follow-up",
+          "Workflow visibility and accountability"
+        ],
+        "Application ID": "AX-84EFE0685A",
+        "UTM Source": "AURIXA Contact Waitlist Page",
+        "Source": "AURIXA Contact Waitlist Page",
+        "Phone": "+61420500544",
+        "Date Added": "2026-08-05T05:31:51.347Z",
+        "Marketing Consent": true,
+        "Privacy Acknowledged": true,
+        "Corporate Email": "reena128@hotmail.com",
+        "Bypass URL": "https://aurixasystems.com.au/questionnaire?token=TVh2bTR6eUJNVXlBMEdpQg&expires=2026-08-06T05%3A31%3A57.142Z",
+        "First Name": "Reena"
+      }
+    },
+    {
+      "sourceRecordId": "recVY5eHYraex8AEf",
+      "sourceCreatedTime": "2026-07-29T20:25:30.000Z",
+      "fields": {
+        "Current Bottlenecks": "grr",
+        "Landing Page": "/contact",
+        "Form Version": "stage-1-priority-access-v3",
+        "Annual Transactional Value": "pre_launch_under_10",
+        "Privacy Notice Version": "collection-notice-2026-07-v1",
+        "Token": "Z3N6czhmZmdydWNXd1p1dA",
+        "Last Name": "Ravachandran",
+        "Entity Name": "Xenochrome Technologies",
+        "Your Role": "Founder or Director",
+        "Entity Classification": "buyers_agent",
+        "Primary Areas to Improve": [
+          "Disconnected systems and duplicate data entry",
+          "Manual report preparation",
+          "Finance or broker coordination"
+        ],
+        "Application ID": "AX-5908BBFB3C",
+        "UTM Source": "AURIXA Contact Waitlist Page",
+        "Source": "AURIXA Contact Waitlist Page",
+        "Phone": "+60182548567",
+        "Date Added": "2026-07-29T20:25:29.711Z",
+        "Marketing Consent": true,
+        "Privacy Acknowledged": true,
+        "Corporate Email": "lavankenobi@gmail.com",
+        "Bypass URL": "https://aurixasystems.com.au/questionnaire?token=Z3N6czhmZmdydWNXd1p1dA&expires=2026-07-30T20%3A25%3A34.908Z",
+        "First Name": "Lavanethaan"
+      }
+    },
+    {
+      "sourceRecordId": "rechxkPmAYfFHVhid",
+      "sourceCreatedTime": "2026-08-15T14:12:39.000Z",
+      "fields": {
+        "Current Bottlenecks": "My firm's pipeline is clogged due to high volume usage. Please make it flow smoothly",
+        "Landing Page": "/contact",
+        "Form Version": "stage-1-priority-access-v3",
+        "Annual Transactional Value": "26_to_75",
+        "Additional Notes": "Sometimes I feel excited and sometimes I'm confused. Sometimes I'm forgetful. Please help me.",
+        "Privacy Notice Version": "collection-notice-2026-07-v1",
+        "Token": "N2dESHdFZmhWOG1Sb3hPaA",
+        "Last Name": "Joseph",
+        "Entity Name": "Kothavalli & CO",
+        "Your Role": "Other",
+        "Entity Classification": "mortgage_finance",
+        "Primary Areas to Improve": [
+          "Client onboarding delays",
+          "Client communication and follow-up",
+          "Workflow visibility and accountability"
+        ],
+        "Application ID": "AX-84EFE0685A",
+        "UTM Source": "AURIXA Contact Waitlist Page",
+        "Source": "AURIXA Contact Waitlist Page",
+        "Phone": "+61420500544",
+        "Date Added": "2026-08-15T14:12:38.187Z",
+        "Marketing Consent": true,
+        "Privacy Acknowledged": true,
+        "Corporate Email": "reena128@hotmail.com",
+        "Bypass URL": "https://aurixasystems.com.au/questionnaire?token=N2dESHdFZmhWOG1Sb3hPaA&expires=2026-08-16T14%3A12%3A56.086Z",
+        "First Name": "Reena"
+      }
+    },
+    {
+      "sourceRecordId": "recjjJozJjnpBvQfG",
+      "sourceCreatedTime": "2026-08-15T14:12:39.000Z",
+      "fields": {
+        "Token": "WnRUVlBlRFZQaVFjNnFGbQ",
+        "Date Added": "2026-08-15T14:12:38.167Z",
+        "Bypass URL": "https://aurixasystems.com.au/questionnaire?token=WnRUVlBlRFZQaVFjNnFGbQ&expires=2026-08-16T14%3A12%3A51.842Z"
+      }
+    },
+    {
+      "sourceRecordId": "recmxSC7BpDyW6xik",
+      "sourceCreatedTime": "2026-08-15T14:12:39.000Z",
+      "fields": {
+        "Token": "VnZRYnZQT2t5cXRKNGdmSA",
+        "Date Added": "2026-08-15T14:12:38.217Z",
+        "Bypass URL": "https://aurixasystems.com.au/questionnaire?token=VnZRYnZQT2t5cXRKNGdmSA&expires=2026-08-16T14%3A12%3A50.506Z"
+      }
+    },
+    {
+      "sourceRecordId": "recnC8j6YucPUCX4L",
+      "sourceCreatedTime": "2026-07-31T10:10:19.000Z",
+      "fields": {
+        "Current Bottlenecks": "bbb",
+        "Landing Page": "/contact",
+        "Form Version": "stage-1-priority-access-v3",
+        "Annual Transactional Value": "26_to_75",
+        "Privacy Notice Version": "collection-notice-2026-07-v1",
+        "Email Message ID": "AAMkADBlYzM0YTlkLWZiOTEtNDQ2YS05MjVjLTZhYzA0NWIyMGExMQBGAAAAAAAUu593InGqS43UqSZY2JKNBwBv-aPQVWqHSItTdfEGS9CDAAAAAAEPAABv-aPQVWqHSItTdfEGS9CDAAArLfNjAAA=",
+        "Token": "V2J1bHdIcnFjVmx1QjVFZg",
+        "Last Name": "Naidu",
+        "Entity Name": "Naidu Property Consulting Services",
+        "Your Role": "Chief Executive Officer",
+        "Entity Classification": "property_advisory",
+        "Primary Areas to Improve": [
+          "Disconnected systems and duplicate data entry",
+          "Document collection and management",
+          "Compliance and AML administration"
+        ],
+        "Application ID": "AX-C94B1D8EC9",
+        "UTM Source": "AURIXA Contact Waitlist Page",
+        "Source": "AURIXA Contact Waitlist Page",
+        "Phone": "+61433005110",
+        "Date Added": "2026-07-31T10:10:18.868Z",
+        "Marketing Consent": true,
+        "Privacy Acknowledged": true,
+        "Corporate Email": "rugesh@npcservices.com.au",
+        "Bypass URL": "https://aurixasystems.com.au/questionnaire?token=V2J1bHdIcnFjVmx1QjVFZg&expires=2026-08-01T10%3A10%3A29.130Z",
+        "First Name": "Rugesh"
+      }
+    }
+  ]
+}

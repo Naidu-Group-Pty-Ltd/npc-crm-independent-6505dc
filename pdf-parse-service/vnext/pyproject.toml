@@ -1,0 +1,72 @@
+# docling-vnext-compat-v1 — PDF Extraction V3 · Package E2.
+#
+# ISOLATED candidate dependency profile for the Docling vNext sidecar. This does
+# NOT replace the production `pdf-parse-service/requirements.txt` (docling==2.14.0),
+# which remains reproducible. Nothing here is installed into the production image.
+#
+# Version selection (verified against official PyPI on task execution):
+#   - docling 2.113.0 is the latest STABLE release (requires-python >=3.10,<4.0).
+#   - 2.113.0 is a thin meta-package delegating to docling-slim[standard]==2.113.0,
+#     which pins docling-core>=2.86.0,<3, docling-parse>=7.0.0,<8 (a MAJOR bump from
+#     the 2.14 baseline's docling-parse 3.4.0), docling-ibm-models>=3.13.0,<4,
+#     pypdfium2>=4.30.0 (!=4.30.1), torch>=2.2.2,<3, transformers>=4.42.0,<6.
+#   - We let the package metadata resolve its own compatible graph and lock it with
+#     `uv lock` — we do NOT manually re-pin the old docling-core/parse/model versions.
+#
+# Build the lock deterministically:
+#   cd pdf-parse-service/vnext && uv lock
+# Sync an isolated CPU-standard runtime:
+#   uv sync --locked --extra standard
+# The container never resolves dependencies at runtime (see Dockerfile.vnext).
+
+[project]
+name = "pdf-parse-service-vnext"
+version = "0.1.0"
+description = "Docling vNext compatibility candidate sidecar (E2). Isolated from production."
+requires-python = ">=3.11,<3.13"
+license = { text = "MIT" }
+
+# Standard CPU runtime — the default candidate. `docling[easyocr]` pulls
+# docling-slim[standard] + the EasyOCR backend (matching the current production OCR
+# engine) so the candidate stays deterministic and CPU-only. No remote-serving, no
+# VLM, no vLLM in this default set.
+dependencies = [
+    "docling[easyocr]==2.113.0",
+    "PyMuPDF==1.24.14",        # FITZ vector/typography enrichment (unchanged from prod)
+    "fastapi>=0.115,<1",
+    "uvicorn[standard]>=0.30,<1",
+    "httpx>=0.28,<1",
+    "pydantic>=2.7,<3",
+    "python-multipart>=0.0.9,<1",
+]
+
+[project.optional-dependencies]
+# Explicit standard marker (kept identical to `dependencies` so `--extra standard`
+# and the default install resolve the same CPU-standard graph).
+standard = [
+    "docling[easyocr]==2.113.0",
+]
+# Alternate CPU OCR backend candidate (ONNX RapidOCR). Never installed in the
+# CPU-standard image by default — evaluated in an isolated profile only.
+rapidocr = [
+    "docling[rapidocr]==2.113.0",
+]
+# Optional LOCAL VLM-capable target (GraniteDocling / Transformers). Heavy; NOT the
+# default runtime. Never installs vLLM in the CPU image. Remote serving stays off.
+vlm = [
+    "docling[vlm]==2.113.0",
+    "accelerate>=1.2.1,<2",
+    "transformers>=4.42.0,<6",
+]
+
+[dependency-groups]
+# Dev/test tools only — never shipped in any runtime image.
+dev = [
+    "pytest>=8,<10",
+    "ruff>=0.6,<1",
+]
+
+[tool.uv]
+# Reproducibility: no floating latest, resolution fully captured in uv.lock.
+# torch/torchvision resolve from PyPI for linux/x86_64 CPU wheels.
+package = false

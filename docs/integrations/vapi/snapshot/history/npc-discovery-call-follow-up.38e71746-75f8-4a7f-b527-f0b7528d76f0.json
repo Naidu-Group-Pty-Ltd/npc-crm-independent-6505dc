@@ -1,0 +1,3305 @@
+{
+  "assistant": "NPC Discovery Call Follow Up",
+  "assistantId": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+  "note": "System prompts are replaced by promptRef; the text is in ../prompts/<ref>.md. Everything else is the API response verbatim.",
+  "versionCount": 40,
+  "versions": [
+    {
+      "createdAt": "2025-11-26T06:56:48.158Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "00d9c6e4-6383-4b59-97be-b7dba41f0ace"
+          ]
+        },
+        "backgroundDenoisingEnabled": false,
+        "backgroundSound": "office",
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started"
+        ],
+        "createdAt": "2025-07-10T12:00:14.553Z",
+        "endCallFunctionEnabled": true,
+        "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+        "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "hipaaEnabled": false,
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "model": {
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 16648,
+              "promptRef": "7fc47f617c0a7eda",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "5934c762-0223-4112-bfb7-88931da17652"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg"
+        },
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "user-interrupted"
+        ],
+        "startSpeakingPlan": {
+          "transcriptionEndpointingPlan": {
+            "onNoPunctuationSeconds": 1.5,
+            "onNumberSeconds": 0.5,
+            "onPunctuationSeconds": 0.1
+          },
+          "waitSeconds": 0.4
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "endpointing": 300,
+          "language": "en",
+          "model": "nova-2",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-11-26T06:56:48.029Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+      },
+      "versionId": "13ead3e2-ca95-11f0-968b-e7d1437aea28"
+    },
+    {
+      "createdAt": "2025-11-26T06:53:03.940Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "00d9c6e4-6383-4b59-97be-b7dba41f0ace"
+          ]
+        },
+        "backgroundDenoisingEnabled": false,
+        "backgroundSound": "office",
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started"
+        ],
+        "createdAt": "2025-07-10T12:00:14.553Z",
+        "endCallFunctionEnabled": true,
+        "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+        "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "hipaaEnabled": false,
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "model": {
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 17100,
+              "promptRef": "867d4786a78ae143",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "5934c762-0223-4112-bfb7-88931da17652"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg"
+        },
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "user-interrupted"
+        ],
+        "startSpeakingPlan": {
+          "transcriptionEndpointingPlan": {
+            "onNoPunctuationSeconds": 1.5,
+            "onNumberSeconds": 0.5,
+            "onPunctuationSeconds": 0.1
+          },
+          "waitSeconds": 0.4
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "endpointing": 300,
+          "language": "en",
+          "model": "nova-2",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-11-26T06:53:03.737Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+      },
+      "versionId": "8e45b932-ca94-11f0-a4dd-9f90ca1ef09d"
+    },
+    {
+      "createdAt": "2025-11-26T03:56:25.817Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "00d9c6e4-6383-4b59-97be-b7dba41f0ace"
+          ]
+        },
+        "backgroundDenoisingEnabled": false,
+        "backgroundSound": "office",
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started"
+        ],
+        "createdAt": "2025-07-10T12:00:14.553Z",
+        "endCallFunctionEnabled": true,
+        "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+        "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "hipaaEnabled": false,
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "model": {
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 6281,
+              "promptRef": "4ae844d94db0b93e",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "5934c762-0223-4112-bfb7-88931da17652"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg"
+        },
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "user-interrupted"
+        ],
+        "startSpeakingPlan": {
+          "transcriptionEndpointingPlan": {
+            "onNoPunctuationSeconds": 1.5,
+            "onNumberSeconds": 0.5,
+            "onPunctuationSeconds": 0.1
+          },
+          "waitSeconds": 0.4
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "endpointing": 300,
+          "language": "en",
+          "model": "nova-2",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-11-26T03:56:25.726Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+      },
+      "versionId": "e14ca492-ca7b-11f0-918c-d57245984fc3"
+    },
+    {
+      "createdAt": "2025-11-24T07:46:46.975Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "00d9c6e4-6383-4b59-97be-b7dba41f0ace"
+          ]
+        },
+        "backgroundDenoisingEnabled": false,
+        "backgroundSound": "office",
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started"
+        ],
+        "createdAt": "2025-07-10T12:00:14.553Z",
+        "endCallFunctionEnabled": true,
+        "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+        "firstMessage": "Hi there. I'm Rita, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "hipaaEnabled": false,
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "model": {
+          "messages": [
+            {
+              "chars": 6281,
+              "promptRef": "4ae844d94db0b93e",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg"
+        },
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "user-interrupted"
+        ],
+        "startSpeakingPlan": {
+          "transcriptionEndpointingPlan": {
+            "onNoPunctuationSeconds": 1.5,
+            "onNumberSeconds": 0.5,
+            "onPunctuationSeconds": 0.1
+          },
+          "waitSeconds": 0.4
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "endpointing": 300,
+          "language": "en",
+          "model": "nova-2",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-11-24T07:46:46.965Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+      },
+      "versionId": "ba867cf2-c909-11f0-9f7b-7ffd4d3d714b"
+    },
+    {
+      "createdAt": "2025-11-24T04:26:03.327Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "00d9c6e4-6383-4b59-97be-b7dba41f0ace"
+          ]
+        },
+        "backgroundDenoisingEnabled": false,
+        "backgroundSound": "office",
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started"
+        ],
+        "createdAt": "2025-07-10T12:00:14.553Z",
+        "endCallFunctionEnabled": true,
+        "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+        "firstMessage": "Hi there. I'm Rita, calling from NPC Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "hipaaEnabled": false,
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "model": {
+          "messages": [
+            {
+              "chars": 6281,
+              "promptRef": "4ae844d94db0b93e",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg"
+        },
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "user-interrupted"
+        ],
+        "startSpeakingPlan": {
+          "transcriptionEndpointingPlan": {
+            "onNoPunctuationSeconds": 1.5,
+            "onNumberSeconds": 0.5,
+            "onPunctuationSeconds": 0.1
+          },
+          "waitSeconds": 0.4
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "endpointing": 300,
+          "language": "en",
+          "model": "nova-2",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-11-24T04:26:03.310Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+      },
+      "versionId": "aff3a4f2-c8ed-11f0-b400-b151b1c13200"
+    },
+    {
+      "createdAt": "2025-11-24T04:08:37.919Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "00d9c6e4-6383-4b59-97be-b7dba41f0ace"
+          ]
+        },
+        "backgroundDenoisingEnabled": false,
+        "backgroundSound": "office",
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started"
+        ],
+        "createdAt": "2025-07-10T12:00:14.553Z",
+        "endCallFunctionEnabled": true,
+        "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+        "firstMessage": "Hi there. I'm Rita, calling from NPC Services. Am I speaking to {{fullName}} ?",
+        "hipaaEnabled": false,
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "model": {
+          "messages": [
+            {
+              "chars": 6281,
+              "promptRef": "4ae844d94db0b93e",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg"
+        },
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "user-interrupted"
+        ],
+        "startSpeakingPlan": {
+          "transcriptionEndpointingPlan": {
+            "onNoPunctuationSeconds": 1.5,
+            "onNumberSeconds": 0.5,
+            "onPunctuationSeconds": 0.1
+          },
+          "waitSeconds": 0.4
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "endpointing": 300,
+          "language": "en",
+          "model": "nova-2",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-11-24T04:08:37.900Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+      },
+      "versionId": "40d70af2-c8eb-11f0-b3f3-3753c0c35d51"
+    },
+    {
+      "createdAt": "2025-11-24T03:10:42.264Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "94648165-f08f-4d2e-ad13-91ec7f41d443",
+            "00d9c6e4-6383-4b59-97be-b7dba41f0ace"
+          ]
+        },
+        "backgroundDenoisingEnabled": false,
+        "backgroundSound": "office",
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started"
+        ],
+        "createdAt": "2025-07-10T12:00:14.553Z",
+        "endCallFunctionEnabled": true,
+        "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+        "firstMessage": "Hi there. I'm Rita, calling from NPC Services. Am I speaking to {{fullName}} ?",
+        "hipaaEnabled": false,
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "model": {
+          "messages": [
+            {
+              "chars": 6281,
+              "promptRef": "4ae844d94db0b93e",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4o-mini",
+          "provider": "openai",
+          "temperature": 0.8,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg"
+        },
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "user-interrupted"
+        ],
+        "startSpeakingPlan": {
+          "transcriptionEndpointingPlan": {
+            "onNoPunctuationSeconds": 1.5,
+            "onNumberSeconds": 0.5,
+            "onPunctuationSeconds": 0.1
+          },
+          "waitSeconds": 0.4
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "endpointing": 300,
+          "language": "en",
+          "model": "nova-2",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-11-24T03:10:42.248Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+      },
+      "versionId": "29302d82-c8e3-11f0-8b43-270aa2189877"
+    },
+    {
+      "createdAt": "2025-11-20T04:37:48.293Z",
+      "data": {
+        "backgroundDenoisingEnabled": false,
+        "backgroundSound": "office",
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started"
+        ],
+        "createdAt": "2025-07-10T12:00:14.553Z",
+        "endCallFunctionEnabled": true,
+        "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+        "firstMessage": "Hi there. I'm Rita, calling from NPC Services. Am I speaking to {{fullName}} ?",
+        "hipaaEnabled": false,
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "model": {
+          "messages": [
+            {
+              "chars": 6086,
+              "promptRef": "334bd4faa9386853",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4o-mini",
+          "provider": "openai",
+          "temperature": 0.8,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg"
+        },
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "user-interrupted"
+        ],
+        "startSpeakingPlan": {
+          "transcriptionEndpointingPlan": {
+            "onNoPunctuationSeconds": 1.5,
+            "onNumberSeconds": 0.5,
+            "onPunctuationSeconds": 0.1
+          },
+          "waitSeconds": 0.4
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "endpointing": 300,
+          "language": "en",
+          "model": "nova-2",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-11-20T04:37:48.284Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+      },
+      "versionId": "aa7deb51-c5ca-11f0-89ee-1951c462ab86"
+    },
+    {
+      "createdAt": "2025-11-18T05:52:30.702Z",
+      "data": {
+        "backgroundDenoisingEnabled": false,
+        "backgroundSound": "office",
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started"
+        ],
+        "createdAt": "2025-07-10T12:00:14.553Z",
+        "endCallFunctionEnabled": true,
+        "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+        "firstMessage": "Hi there. I'm Rita, calling from NPC Services. Am I speaking to {{ full_name }} ?",
+        "hipaaEnabled": false,
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "model": {
+          "messages": [
+            {
+              "chars": 6086,
+              "promptRef": "334bd4faa9386853",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4o",
+          "provider": "openai",
+          "temperature": 0.8,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg"
+        },
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "user-interrupted"
+        ],
+        "startSpeakingPlan": {
+          "transcriptionEndpointingPlan": {
+            "onNoPunctuationSeconds": 1.5,
+            "onNumberSeconds": 0.5,
+            "onPunctuationSeconds": 0.1
+          },
+          "waitSeconds": 0.4
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "endpointing": 300,
+          "language": "en",
+          "model": "nova-2",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-11-18T05:52:30.689Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+      },
+      "versionId": "c563c0e2-c442-11f0-b712-63a92ff55711"
+    },
+    {
+      "createdAt": "2025-11-18T04:44:14.235Z",
+      "data": {
+        "backgroundDenoisingEnabled": false,
+        "backgroundSound": "office",
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started"
+        ],
+        "createdAt": "2025-07-10T12:00:14.553Z",
+        "endCallFunctionEnabled": true,
+        "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+        "firstMessage": "Hi there. I'm Rita, calling from NPC Services. Am I speaking to {{ full_name }} ?",
+        "hipaaEnabled": false,
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "model": {
+          "messages": [
+            {
+              "chars": 6086,
+              "promptRef": "334bd4faa9386853",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4o",
+          "provider": "openai",
+          "temperature": 0.8,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg"
+        },
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "user-interrupted"
+        ],
+        "startSpeakingPlan": {
+          "transcriptionEndpointingPlan": {
+            "onNoPunctuationSeconds": 1.5,
+            "onNumberSeconds": 0.5,
+            "onPunctuationSeconds": 0.1
+          },
+          "waitSeconds": 0.4
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "endpointing": 300,
+          "language": "en",
+          "model": "nova-2",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-11-18T04:44:14.205Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "jBzLvP03992lMFEkj2kJ"
+        },
+        "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+      },
+      "versionId": "3bb47eb2-c439-11f0-bef0-abeecf4662c3"
+    },
+    {
+      "createdAt": "2025-11-18T04:43:18.108Z",
+      "data": {
+        "backgroundDenoisingEnabled": false,
+        "backgroundSound": "office",
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started"
+        ],
+        "createdAt": "2025-07-10T12:00:14.553Z",
+        "endCallFunctionEnabled": true,
+        "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+        "firstMessage": "Hi there. I'm Rita, calling from NPC Services. Am I speaking to {{ full_name }} ?",
+        "hipaaEnabled": false,
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "model": {
+          "messages": [
+            {
+              "chars": 6086,
+              "promptRef": "334bd4faa9386853",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4o",
+          "provider": "openai",
+          "temperature": 0.8,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg"
+        },
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "user-interrupted"
+        ],
+        "startSpeakingPlan": {
+          "transcriptionEndpointingPlan": {
+            "onNoPunctuationSeconds": 1.5,
+            "onNumberSeconds": 0.5,
+            "onPunctuationSeconds": 0.1
+          },
+          "waitSeconds": 0.4
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "endpointing": 300,
+          "language": "en",
+          "model": "nova-2",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-11-18T04:43:18.097Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "25bLwNw4T14AIILU3SLV"
+        },
+        "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+      },
+      "versionId": "1a4031c2-c439-11f0-869f-77b2956c6656"
+    },
+    {
+      "createdAt": "2025-11-18T04:21:21.216Z",
+      "data": {
+        "backgroundDenoisingEnabled": false,
+        "backgroundSound": "office",
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started"
+        ],
+        "createdAt": "2025-07-10T12:00:14.553Z",
+        "endCallFunctionEnabled": true,
+        "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+        "firstMessage": "Hi there. I'm Rita, calling from NPC Services. Am I speaking to {{ full_name }} ?",
+        "hipaaEnabled": false,
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "model": {
+          "messages": [
+            {
+              "chars": 6086,
+              "promptRef": "334bd4faa9386853",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4o",
+          "provider": "openai",
+          "temperature": 0.8,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg"
+        },
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "user-interrupted"
+        ],
+        "startSpeakingPlan": {
+          "transcriptionEndpointingPlan": {
+            "onNoPunctuationSeconds": 1.5,
+            "onNumberSeconds": 0.5,
+            "onPunctuationSeconds": 0.1
+          },
+          "waitSeconds": 0.4
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "endpointing": 300,
+          "language": "en",
+          "model": "nova-2",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-11-18T04:21:21.206Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "7SG1YzJ0DRGq9iGmANwb"
+        },
+        "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+      },
+      "versionId": "09526c02-c436-11f0-b7f4-e34efc7bb886"
+    },
+    {
+      "createdAt": "2025-11-18T04:03:43.605Z",
+      "data": {
+        "backgroundDenoisingEnabled": false,
+        "backgroundSound": "office",
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started"
+        ],
+        "createdAt": "2025-07-10T12:00:14.553Z",
+        "endCallFunctionEnabled": true,
+        "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+        "firstMessage": "Hi there. I'm Rita, calling from NPC Services. Am I speaking to {{ full_name }} ?",
+        "hipaaEnabled": false,
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "model": {
+          "messages": [
+            {
+              "chars": 4044,
+              "promptRef": "d6231e0ed70645a5",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4o",
+          "provider": "openai",
+          "temperature": 0.8,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg"
+        },
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "user-interrupted"
+        ],
+        "startSpeakingPlan": {
+          "transcriptionEndpointingPlan": {
+            "onNoPunctuationSeconds": 1.5,
+            "onNumberSeconds": 0.5,
+            "onPunctuationSeconds": 0.1
+          },
+          "waitSeconds": 0.4
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "endpointing": 300,
+          "language": "en",
+          "model": "nova-2",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-11-18T04:03:43.584Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "7SG1YzJ0DRGq9iGmANwb"
+        },
+        "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+      },
+      "versionId": "92efca52-c433-11f0-b0cb-5d75956ad5dc"
+    },
+    {
+      "createdAt": "2025-11-18T04:01:58.518Z",
+      "data": {
+        "backgroundDenoisingEnabled": false,
+        "backgroundSound": "office",
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started"
+        ],
+        "createdAt": "2025-07-10T12:00:14.553Z",
+        "endCallFunctionEnabled": true,
+        "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+        "firstMessage": "Hi there. I'm Rita, calling from NPC Services. Am I speaking to {{ full_name }} ?",
+        "hipaaEnabled": false,
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "model": {
+          "messages": [
+            {
+              "chars": 4044,
+              "promptRef": "d6231e0ed70645a5",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4o-mini",
+          "provider": "openai",
+          "temperature": 0.8,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg"
+        },
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "user-interrupted"
+        ],
+        "startSpeakingPlan": {
+          "transcriptionEndpointingPlan": {
+            "onNoPunctuationSeconds": 1.5,
+            "onNumberSeconds": 0.5,
+            "onPunctuationSeconds": 0.1
+          },
+          "waitSeconds": 0.4
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "endpointing": 300,
+          "language": "en",
+          "model": "nova-2",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-11-18T04:01:58.471Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "7SG1YzJ0DRGq9iGmANwb"
+        },
+        "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+      },
+      "versionId": "544cc962-c433-11f0-904e-fb99ef5eea00"
+    },
+    {
+      "createdAt": "2025-11-18T03:50:06.107Z",
+      "data": {
+        "backgroundDenoisingEnabled": false,
+        "backgroundSound": "office",
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started"
+        ],
+        "createdAt": "2025-07-10T12:00:14.553Z",
+        "endCallFunctionEnabled": true,
+        "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+        "firstMessage": "Hi there. I'm Rita, calling from NPC Services. Am I speaking to {{ full_name }} ?",
+        "hipaaEnabled": false,
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "model": {
+          "messages": [
+            {
+              "chars": 4044,
+              "promptRef": "d6231e0ed70645a5",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4o-mini",
+          "provider": "openai",
+          "temperature": 0.8,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg"
+        },
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "user-interrupted"
+        ],
+        "startSpeakingPlan": {
+          "transcriptionEndpointingPlan": {
+            "onNoPunctuationSeconds": 1.5,
+            "onNumberSeconds": 0.5,
+            "onPunctuationSeconds": 0.1
+          },
+          "waitSeconds": 0.4
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "endpointing": 300,
+          "language": "en",
+          "model": "nova-2",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-11-18T03:50:06.086Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "25bLwNw4T14AIILU3SLV"
+        },
+        "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+      },
+      "versionId": "abab7eb2-c431-11f0-bb0a-1b7ef535da24"
+    },
+    {
+      "createdAt": "2025-11-18T03:37:40.895Z",
+      "data": {
+        "backgroundDenoisingEnabled": false,
+        "backgroundSound": "office",
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started"
+        ],
+        "createdAt": "2025-07-10T12:00:14.553Z",
+        "endCallFunctionEnabled": true,
+        "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+        "firstMessage": "Hi there. I'm Monica, calling from NPC Services. Am I speaking to {{ full_name }} ?",
+        "hipaaEnabled": false,
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "model": {
+          "messages": [
+            {
+              "chars": 4046,
+              "promptRef": "4f68bb2a5a57ef09",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4o-mini",
+          "provider": "openai",
+          "temperature": 0.8,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00"
+          ]
+        },
+        "name": "NPC Discovery Call Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg"
+        },
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "user-interrupted"
+        ],
+        "startSpeakingPlan": {
+          "transcriptionEndpointingPlan": {
+            "onNoPunctuationSeconds": 1.5,
+            "onNumberSeconds": 0.5,
+            "onPunctuationSeconds": 0.1
+          },
+          "waitSeconds": 0.4
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "endpointing": 300,
+          "language": "en",
+          "model": "nova-2",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-11-18T03:37:40.869Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "25bLwNw4T14AIILU3SLV"
+        },
+        "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+      },
+      "versionId": "ef7d2af2-c42f-11f0-b2ea-6f677e900d19"
+    },
+    {
+      "createdAt": "2025-11-17T08:53:56.108Z",
+      "data": {
+        "backgroundDenoisingEnabled": false,
+        "backgroundSound": "office",
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started"
+        ],
+        "createdAt": "2025-07-10T12:00:14.553Z",
+        "endCallFunctionEnabled": true,
+        "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+        "firstMessage": "Hi there. I'm Monica, calling from NPC Services. Am I speaking to {{ full_name }} ?",
+        "hipaaEnabled": false,
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "model": {
+          "messages": [
+            {
+              "chars": 4046,
+              "promptRef": "4f68bb2a5a57ef09",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4o-mini",
+          "provider": "openai",
+          "temperature": 0.8,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00"
+          ]
+        },
+        "name": "NPC Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg"
+        },
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "user-interrupted"
+        ],
+        "startSpeakingPlan": {
+          "transcriptionEndpointingPlan": {
+            "onNoPunctuationSeconds": 1.5,
+            "onNumberSeconds": 0.5,
+            "onPunctuationSeconds": 0.1
+          },
+          "waitSeconds": 0.4
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "endpointing": 300,
+          "language": "en",
+          "model": "nova-2",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-11-17T08:53:56.101Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "25bLwNw4T14AIILU3SLV"
+        },
+        "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+      },
+      "versionId": "f32f24c2-c392-11f0-bc95-3353f5c88e8d"
+    },
+    {
+      "createdAt": "2025-11-17T08:51:32.842Z",
+      "data": {
+        "backgroundDenoisingEnabled": false,
+        "backgroundSound": "office",
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started"
+        ],
+        "createdAt": "2025-07-10T12:00:14.553Z",
+        "endCallFunctionEnabled": true,
+        "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+        "firstMessage": "Hi there. I'm Nora, calling from NPC Services. Am I speaking to {{ full_name }} ?",
+        "hipaaEnabled": false,
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "model": {
+          "messages": [
+            {
+              "chars": 4044,
+              "promptRef": "4eb34b0b5a0a2cac",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4o-mini",
+          "provider": "openai",
+          "temperature": 0.8,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00"
+          ]
+        },
+        "name": "NPC Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg"
+        },
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "user-interrupted"
+        ],
+        "startSpeakingPlan": {
+          "transcriptionEndpointingPlan": {
+            "onNoPunctuationSeconds": 1.5,
+            "onNumberSeconds": 0.5,
+            "onPunctuationSeconds": 0.1
+          },
+          "waitSeconds": 0.4
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "endpointing": 300,
+          "language": "en",
+          "model": "nova-2",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-11-17T08:51:32.828Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "25bLwNw4T14AIILU3SLV"
+        },
+        "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+      },
+      "versionId": "9dca7ca2-c392-11f0-a735-ad02ffd4ad8a"
+    },
+    {
+      "createdAt": "2025-11-17T02:26:39.791Z",
+      "data": {
+        "backgroundDenoisingEnabled": false,
+        "backgroundSound": "office",
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started"
+        ],
+        "createdAt": "2025-07-10T12:00:14.553Z",
+        "endCallFunctionEnabled": true,
+        "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+        "firstMessage": "Hi there. I'm Nora, calling from NPC Services. Am I speaking to {{ full_name }} ?",
+        "hipaaEnabled": false,
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "model": {
+          "messages": [
+            {
+              "chars": 4044,
+              "promptRef": "4eb34b0b5a0a2cac",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4o-mini",
+          "provider": "openai",
+          "temperature": 0.8,
+          "toolIds": [
+            "11317eb2-1b44-4e9e-ae7f-e6baaee0d77b"
+          ]
+        },
+        "name": "NPC Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg"
+        },
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "user-interrupted"
+        ],
+        "startSpeakingPlan": {
+          "transcriptionEndpointingPlan": {
+            "onNoPunctuationSeconds": 1.5,
+            "onNumberSeconds": 0.5,
+            "onPunctuationSeconds": 0.1
+          },
+          "waitSeconds": 0.4
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "endpointing": 300,
+          "language": "en",
+          "model": "nova-2",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-11-17T02:26:39.767Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "25bLwNw4T14AIILU3SLV"
+        },
+        "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+      },
+      "versionId": "d9428bf2-c35c-11f0-a648-c3742603456e"
+    },
+    {
+      "createdAt": "2025-11-12T07:32:59.071Z",
+      "data": {
+        "backgroundDenoisingEnabled": false,
+        "backgroundSound": "office",
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started"
+        ],
+        "createdAt": "2025-07-10T12:00:14.553Z",
+        "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+        "firstMessage": "Hi there. I'm Nora, calling from NPC Services. Am I speaking to {{ full_name }} ?",
+        "hipaaEnabled": false,
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "model": {
+          "messages": [
+            {
+              "chars": 4044,
+              "promptRef": "4eb34b0b5a0a2cac",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4o-mini",
+          "provider": "openai",
+          "temperature": 0.8
+        },
+        "name": "NPC Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg"
+        },
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "user-interrupted"
+        ],
+        "startSpeakingPlan": {
+          "transcriptionEndpointingPlan": {
+            "onNoPunctuationSeconds": 1.5,
+            "onNumberSeconds": 0.5,
+            "onPunctuationSeconds": 0.1
+          },
+          "waitSeconds": 0.4
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "endpointing": 300,
+          "language": "en",
+          "model": "nova-2",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-11-12T07:32:59.059Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "25bLwNw4T14AIILU3SLV"
+        },
+        "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+      },
+      "versionId": "d0195cf2-bf99-11f0-8d1c-8bbde57f9a75"
+    },
+    {
+      "createdAt": "2025-10-31T15:08:25.458Z",
+      "data": {
+        "backgroundDenoisingEnabled": false,
+        "backgroundSound": "office",
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started"
+        ],
+        "createdAt": "2025-07-10T12:00:14.553Z",
+        "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+        "firstMessage": "Hi there. I'm Nora, calling from NPC Services",
+        "hipaaEnabled": false,
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "model": {
+          "messages": [
+            {
+              "chars": 3947,
+              "promptRef": "78f77e38eeda409b",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5-nano",
+          "provider": "openai",
+          "temperature": 0.8
+        },
+        "name": "NPC Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "url": "https://hook.eu2.make.com/xoktvkk0wxyj8weopjeiqrqd914ad1jg"
+        },
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "user-interrupted"
+        ],
+        "startSpeakingPlan": {
+          "transcriptionEndpointingPlan": {
+            "onNoPunctuationSeconds": 1.5,
+            "onNumberSeconds": 0.5,
+            "onPunctuationSeconds": 0.1
+          },
+          "waitSeconds": 0.4
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "endpointing": 300,
+          "language": "en",
+          "model": "nova-2",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-10-31T15:08:25.441Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "25bLwNw4T14AIILU3SLV"
+        },
+        "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+      },
+      "versionId": "72f01d22-b66b-11f0-97b4-2fc8a1a6f3a0"
+    },
+    {
+      "createdAt": "2025-10-14T07:52:46.894Z",
+      "data": {
+        "backgroundDenoisingEnabled": false,
+        "backgroundSound": "office",
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started"
+        ],
+        "createdAt": "2025-07-10T12:00:14.553Z",
+        "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+        "firstMessage": "Hi there. I'm Nora, calling from NPC Services",
+        "hipaaEnabled": false,
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "model": {
+          "messages": [
+            {
+              "chars": 3947,
+              "promptRef": "78f77e38eeda409b",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5-nano",
+          "provider": "openai",
+          "temperature": 0.8
+        },
+        "name": "NPC Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "user-interrupted"
+        ],
+        "startSpeakingPlan": {
+          "transcriptionEndpointingPlan": {
+            "onNoPunctuationSeconds": 1.5,
+            "onNumberSeconds": 0.5,
+            "onPunctuationSeconds": 0.1
+          },
+          "waitSeconds": 0.4
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "endpointing": 300,
+          "language": "en",
+          "model": "nova-2",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-10-14T07:52:46.876Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "25bLwNw4T14AIILU3SLV"
+        },
+        "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+      },
+      "versionId": "c61dddd2-a8d2-11f0-ac2a-f5be76f177d7"
+    },
+    {
+      "createdAt": "2025-10-14T07:50:59.945Z",
+      "data": {
+        "backgroundDenoisingEnabled": false,
+        "backgroundSound": "office",
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started"
+        ],
+        "createdAt": "2025-07-10T12:00:14.553Z",
+        "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+        "firstMessage": "Hi there. I'm Nora, calling from NPC Services",
+        "hipaaEnabled": false,
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "model": {
+          "messages": [
+            {
+              "chars": 3947,
+              "promptRef": "78f77e38eeda409b",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5-nano",
+          "provider": "openai",
+          "temperature": 0.6
+        },
+        "name": "NPC Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "user-interrupted"
+        ],
+        "startSpeakingPlan": {
+          "transcriptionEndpointingPlan": {
+            "onNoPunctuationSeconds": 1.5,
+            "onNumberSeconds": 0.5,
+            "onPunctuationSeconds": 0.1
+          },
+          "waitSeconds": 0.4
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "endpointing": 300,
+          "language": "en",
+          "model": "nova-2",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-10-14T07:50:59.930Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "25bLwNw4T14AIILU3SLV"
+        },
+        "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+      },
+      "versionId": "865ee592-a8d2-11f0-8443-abd5dbbf9582"
+    },
+    {
+      "createdAt": "2025-10-14T07:48:34.172Z",
+      "data": {
+        "backgroundDenoisingEnabled": false,
+        "backgroundSound": "office",
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started"
+        ],
+        "createdAt": "2025-07-10T12:00:14.553Z",
+        "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+        "firstMessage": "Hi there. I'm Nora, calling from NPC Services",
+        "hipaaEnabled": false,
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "model": {
+          "messages": [
+            {
+              "chars": 3914,
+              "promptRef": "1dfa45b9c4660a5f",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5-nano",
+          "provider": "openai",
+          "temperature": 0.6
+        },
+        "name": "NPC Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "user-interrupted"
+        ],
+        "startSpeakingPlan": {
+          "transcriptionEndpointingPlan": {
+            "onNoPunctuationSeconds": 1.5,
+            "onNumberSeconds": 0.5,
+            "onPunctuationSeconds": 0.1
+          },
+          "waitSeconds": 0.4
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "endpointing": 300,
+          "language": "en",
+          "model": "nova-2",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-10-14T07:48:34.139Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "FGY2WhTYpPnrIDTdsKH5"
+        },
+        "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+      },
+      "versionId": "2f7bb3c2-a8d2-11f0-a882-951cc186e59a"
+    },
+    {
+      "createdAt": "2025-07-12T05:56:56.475Z",
+      "data": {
+        "backgroundDenoisingEnabled": false,
+        "backgroundSound": "office",
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started"
+        ],
+        "createdAt": "2025-07-10T12:00:14.553Z",
+        "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+        "firstMessage": "Hi there. I'm Nora, calling from NPC Services",
+        "hipaaEnabled": false,
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "model": {
+          "messages": [
+            {
+              "chars": 3914,
+              "promptRef": "1dfa45b9c4660a5f",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4o-mini",
+          "provider": "openai",
+          "temperature": 0.6
+        },
+        "name": "NPC Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "user-interrupted"
+        ],
+        "startSpeakingPlan": {
+          "transcriptionEndpointingPlan": {
+            "onNoPunctuationSeconds": 1.5,
+            "onNumberSeconds": 0.5,
+            "onPunctuationSeconds": 0.1
+          },
+          "waitSeconds": 0.4
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "endpointing": 300,
+          "language": "en",
+          "model": "nova-2",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-07-12T05:56:56.448Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "FGY2WhTYpPnrIDTdsKH5"
+        },
+        "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+      },
+      "versionId": "0483beb2-5ee5-11f0-8e4e-198b7c999edb"
+    },
+    {
+      "createdAt": "2025-07-12T05:54:53.458Z",
+      "data": {
+        "backgroundDenoisingEnabled": false,
+        "backgroundSound": "office",
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started"
+        ],
+        "createdAt": "2025-07-10T12:00:14.553Z",
+        "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+        "firstMessage": "Hi there. I'm Nora, calling from NPC Services",
+        "hipaaEnabled": false,
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "model": {
+          "messages": [
+            {
+              "chars": 3914,
+              "promptRef": "1dfa45b9c4660a5f",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4.1-nano",
+          "provider": "openai",
+          "temperature": 0.6
+        },
+        "name": "NPC Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "user-interrupted"
+        ],
+        "startSpeakingPlan": {
+          "transcriptionEndpointingPlan": {
+            "onNoPunctuationSeconds": 1.5,
+            "onNumberSeconds": 0.5,
+            "onPunctuationSeconds": 0.1
+          },
+          "waitSeconds": 0.4
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "endpointing": 300,
+          "language": "en",
+          "model": "nova-2",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-07-12T05:54:53.430Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "FGY2WhTYpPnrIDTdsKH5"
+        },
+        "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+      },
+      "versionId": "bb30d722-5ee4-11f0-93f8-63686f344ff5"
+    },
+    {
+      "createdAt": "2025-07-12T05:54:18.801Z",
+      "data": {
+        "backgroundDenoisingEnabled": false,
+        "backgroundSound": "office",
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started"
+        ],
+        "createdAt": "2025-07-10T12:00:14.553Z",
+        "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+        "firstMessage": "Hi there. I'm Nora, calling from NPC Services",
+        "hipaaEnabled": false,
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "model": {
+          "messages": [
+            {
+              "chars": 3914,
+              "promptRef": "1dfa45b9c4660a5f",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4.1-nano",
+          "provider": "openai",
+          "temperature": 0.6
+        },
+        "name": "NPC Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "user-interrupted"
+        ],
+        "startSpeakingPlan": {
+          "transcriptionEndpointingPlan": {
+            "onNoPunctuationSeconds": 1.5,
+            "onNumberSeconds": 0.5,
+            "onPunctuationSeconds": 0.1
+          },
+          "waitSeconds": 0.4
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "endpointing": 300,
+          "language": "en",
+          "model": "nova-2",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-07-12T05:54:18.794Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "FGY2WhTYpPnrIDTdsKH5"
+        },
+        "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+      },
+      "versionId": "a6889a12-5ee4-11f0-9769-a743f7d901f1"
+    },
+    {
+      "createdAt": "2025-07-12T05:52:14.445Z",
+      "data": {
+        "backgroundDenoisingEnabled": false,
+        "backgroundSound": "office",
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started"
+        ],
+        "createdAt": "2025-07-10T12:00:14.553Z",
+        "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+        "firstMessage": "Hi there. I'm Nora, calling from NPC Services",
+        "hipaaEnabled": false,
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "model": {
+          "messages": [
+            {
+              "chars": 3914,
+              "promptRef": "1dfa45b9c4660a5f",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4o-mini",
+          "provider": "openai",
+          "temperature": 0.6
+        },
+        "name": "NPC Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "user-interrupted"
+        ],
+        "startSpeakingPlan": {
+          "transcriptionEndpointingPlan": {
+            "onNoPunctuationSeconds": 1.5,
+            "onNumberSeconds": 0.5,
+            "onPunctuationSeconds": 0.1
+          },
+          "waitSeconds": 0.4
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "endpointing": 300,
+          "language": "en",
+          "model": "nova-2",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-07-12T05:52:14.434Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "FGY2WhTYpPnrIDTdsKH5"
+        },
+        "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+      },
+      "versionId": "5c6961d2-5ee4-11f0-b45e-ef014c29e775"
+    },
+    {
+      "createdAt": "2025-07-12T05:51:36.602Z",
+      "data": {
+        "backgroundDenoisingEnabled": false,
+        "backgroundSound": "office",
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started"
+        ],
+        "createdAt": "2025-07-10T12:00:14.553Z",
+        "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+        "firstMessage": "Hi there. I'm Nora, calling from NPC Services",
+        "hipaaEnabled": false,
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "model": {
+          "messages": [
+            {
+              "chars": 3914,
+              "promptRef": "1dfa45b9c4660a5f",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4o-mini",
+          "provider": "openai",
+          "temperature": 0.6
+        },
+        "name": "NPC Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "user-interrupted"
+        ],
+        "startSpeakingPlan": {
+          "transcriptionEndpointingPlan": {
+            "onNoPunctuationSeconds": 1.5,
+            "onNumberSeconds": 0.5,
+            "onPunctuationSeconds": 0.1
+          },
+          "waitSeconds": 0.4
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "endpointing": 300,
+          "language": "en",
+          "model": "nova-2",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-07-12T05:51:36.589Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cgSgspJ2msm6clMCkdW9"
+        },
+        "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+      },
+      "versionId": "45daffa2-5ee4-11f0-890e-fbba0f15af29"
+    },
+    {
+      "createdAt": "2025-07-12T05:51:03.784Z",
+      "data": {
+        "backgroundDenoisingEnabled": false,
+        "backgroundSound": "office",
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started"
+        ],
+        "createdAt": "2025-07-10T12:00:14.553Z",
+        "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+        "firstMessage": "Hi there. I'm Nora, calling from NPC Services",
+        "hipaaEnabled": false,
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "model": {
+          "messages": [
+            {
+              "chars": 3914,
+              "promptRef": "1dfa45b9c4660a5f",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4o-mini",
+          "provider": "openai",
+          "temperature": 0.6
+        },
+        "name": "NPC Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "user-interrupted"
+        ],
+        "startSpeakingPlan": {
+          "transcriptionEndpointingPlan": {
+            "onNoPunctuationSeconds": 1.5,
+            "onNumberSeconds": 0.5,
+            "onPunctuationSeconds": 0.1
+          },
+          "waitSeconds": 0.4
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "endpointing": 300,
+          "language": "en",
+          "model": "nova-2",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-07-12T05:51:03.776Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "cgSgspJ2msm6clMCkdW9"
+        },
+        "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+      },
+      "versionId": "324b5e82-5ee4-11f0-bf28-d5af6e64b2c7"
+    },
+    {
+      "createdAt": "2025-07-10T12:23:10.979Z",
+      "data": {
+        "backgroundDenoisingEnabled": false,
+        "backgroundSound": "office",
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started"
+        ],
+        "createdAt": "2025-07-10T12:00:14.553Z",
+        "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+        "firstMessage": "Hi there. I'm Nora, calling from NPC Services",
+        "hipaaEnabled": false,
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "model": {
+          "messages": [
+            {
+              "chars": 3914,
+              "promptRef": "1dfa45b9c4660a5f",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4.1-nano",
+          "provider": "openai",
+          "temperature": 0.6
+        },
+        "name": "NPC Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "user-interrupted"
+        ],
+        "startSpeakingPlan": {
+          "transcriptionEndpointingPlan": {
+            "onNoPunctuationSeconds": 1.5,
+            "onNumberSeconds": 0.5,
+            "onPunctuationSeconds": 0.1
+          },
+          "waitSeconds": 0.4
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "endpointing": 300,
+          "language": "en",
+          "model": "nova-2",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-07-10T12:23:10.971Z",
+        "voice": {
+          "model": "tts-1",
+          "provider": "openai",
+          "voiceId": "nova"
+        },
+        "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+      },
+      "versionId": "a4c4ed32-5d88-11f0-96b1-c542b577884c"
+    },
+    {
+      "createdAt": "2025-07-10T12:22:48.916Z",
+      "data": {
+        "backgroundDenoisingEnabled": false,
+        "backgroundSound": "office",
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started"
+        ],
+        "createdAt": "2025-07-10T12:00:14.553Z",
+        "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+        "firstMessage": "Hi there. I'm Nora, calling from NPC Services",
+        "hipaaEnabled": false,
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "model": {
+          "messages": [
+            {
+              "chars": 3914,
+              "promptRef": "1dfa45b9c4660a5f",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4.1-nano",
+          "provider": "openai",
+          "temperature": 0.6
+        },
+        "name": "NPC Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "user-interrupted"
+        ],
+        "startSpeakingPlan": {
+          "transcriptionEndpointingPlan": {
+            "onNoPunctuationSeconds": 1.5,
+            "onNumberSeconds": 0.5,
+            "onPunctuationSeconds": 0.1
+          },
+          "waitSeconds": 0.4
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "endpointing": 300,
+          "language": "en",
+          "model": "nova-2",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-07-10T12:22:48.895Z",
+        "voice": {
+          "model": "tts-1",
+          "provider": "openai",
+          "voiceId": "shimmer"
+        },
+        "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+      },
+      "versionId": "979e6142-5d88-11f0-9d37-47ed96a80d27"
+    },
+    {
+      "createdAt": "2025-07-10T12:22:23.542Z",
+      "data": {
+        "backgroundDenoisingEnabled": false,
+        "backgroundSound": "office",
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started"
+        ],
+        "createdAt": "2025-07-10T12:00:14.553Z",
+        "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+        "firstMessage": "Hi there. I'm Nora, calling from NPC Services",
+        "hipaaEnabled": false,
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "model": {
+          "messages": [
+            {
+              "chars": 3914,
+              "promptRef": "1dfa45b9c4660a5f",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4.1-nano",
+          "provider": "openai",
+          "temperature": 0.6
+        },
+        "name": "NPC Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "user-interrupted"
+        ],
+        "startSpeakingPlan": {
+          "transcriptionEndpointingPlan": {
+            "onNoPunctuationSeconds": 1.5,
+            "onNumberSeconds": 0.5,
+            "onPunctuationSeconds": 0.1
+          },
+          "waitSeconds": 0.4
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "endpointing": 300,
+          "language": "en",
+          "model": "nova-2",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-07-10T12:22:23.535Z",
+        "voice": {
+          "model": "tts-1",
+          "provider": "openai",
+          "voiceId": "fable"
+        },
+        "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+      },
+      "versionId": "887e9d62-5d88-11f0-91ec-7bc84e671ccf"
+    },
+    {
+      "createdAt": "2025-07-10T12:21:36.930Z",
+      "data": {
+        "backgroundDenoisingEnabled": false,
+        "backgroundSound": "office",
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started"
+        ],
+        "createdAt": "2025-07-10T12:00:14.553Z",
+        "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+        "firstMessage": "Hi there. I'm Nora, calling from NPC Services",
+        "hipaaEnabled": false,
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "model": {
+          "messages": [
+            {
+              "chars": 3914,
+              "promptRef": "1dfa45b9c4660a5f",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4.1-nano",
+          "provider": "openai",
+          "temperature": 0.6
+        },
+        "name": "NPC Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "user-interrupted"
+        ],
+        "startSpeakingPlan": {
+          "transcriptionEndpointingPlan": {
+            "onNoPunctuationSeconds": 1.5,
+            "onNumberSeconds": 0.5,
+            "onPunctuationSeconds": 0.1
+          },
+          "waitSeconds": 0.4
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "endpointing": 300,
+          "language": "en",
+          "model": "nova-2",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-07-10T12:21:36.904Z",
+        "voice": {
+          "experimentalControls": {
+            "speed": "normal"
+          },
+          "model": "sonic-2",
+          "provider": "cartesia",
+          "voiceId": "248be419-c632-4f23-adf1-5324ed7dbf1d"
+        },
+        "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+      },
+      "versionId": "6cb63022-5d88-11f0-b7b5-df4b165bb8bd"
+    },
+    {
+      "createdAt": "2025-07-10T12:18:42.646Z",
+      "data": {
+        "backgroundDenoisingEnabled": false,
+        "backgroundSound": "office",
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started"
+        ],
+        "createdAt": "2025-07-10T12:00:14.553Z",
+        "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+        "firstMessage": "Hi there. I'm Nora, calling from NPC Services",
+        "hipaaEnabled": false,
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "model": {
+          "messages": [
+            {
+              "chars": 3914,
+              "promptRef": "1dfa45b9c4660a5f",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4.1-nano",
+          "provider": "openai",
+          "temperature": 0.6
+        },
+        "name": "NPC Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "user-interrupted"
+        ],
+        "startSpeakingPlan": {
+          "transcriptionEndpointingPlan": {
+            "onNoPunctuationSeconds": 1.5,
+            "onNumberSeconds": 0.5,
+            "onPunctuationSeconds": 0.1
+          },
+          "waitSeconds": 0.4
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "endpointing": 300,
+          "language": "en",
+          "model": "nova-2",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-07-10T12:18:42.639Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "5GZaeOOG7yqLdoTRsaa6"
+        },
+        "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+      },
+      "versionId": "04d48f62-5d88-11f0-a6dc-473dd7f1a56d"
+    },
+    {
+      "createdAt": "2025-07-10T12:17:27.500Z",
+      "data": {
+        "backgroundDenoisingEnabled": false,
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started"
+        ],
+        "createdAt": "2025-07-10T12:00:14.553Z",
+        "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+        "firstMessage": "Hi there. I'm Nora, calling from NPC Services",
+        "hipaaEnabled": false,
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "model": {
+          "messages": [
+            {
+              "chars": 3914,
+              "promptRef": "1dfa45b9c4660a5f",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4.1-nano",
+          "provider": "openai",
+          "temperature": 0.5
+        },
+        "name": "NPC Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "user-interrupted"
+        ],
+        "startSpeakingPlan": {
+          "transcriptionEndpointingPlan": {
+            "onNoPunctuationSeconds": 1.5,
+            "onNumberSeconds": 0.5,
+            "onPunctuationSeconds": 0.1
+          },
+          "waitSeconds": 0.4
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "endpointing": 300,
+          "language": "en",
+          "model": "nova-2",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-07-10T12:17:27.491Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "5GZaeOOG7yqLdoTRsaa6"
+        },
+        "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+      },
+      "versionId": "d80a30c2-5d87-11f0-b12c-7f85e3cf54ca"
+    },
+    {
+      "createdAt": "2025-07-10T12:09:19.812Z",
+      "data": {
+        "backgroundDenoisingEnabled": false,
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started"
+        ],
+        "createdAt": "2025-07-10T12:00:14.553Z",
+        "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+        "firstMessage": "Hi there. I'm Nora, calling from NPC Services",
+        "hipaaEnabled": false,
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "model": {
+          "messages": [
+            {
+              "chars": 3914,
+              "promptRef": "1dfa45b9c4660a5f",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4.1-nano",
+          "provider": "openai",
+          "temperature": 0.5
+        },
+        "name": "NPC Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "user-interrupted"
+        ],
+        "startSpeakingPlan": {
+          "transcriptionEndpointingPlan": {
+            "onNoPunctuationSeconds": 1.5,
+            "onNumberSeconds": 0.5,
+            "onPunctuationSeconds": 0.1
+          },
+          "waitSeconds": 0.4
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "endpointing": 300,
+          "language": "en",
+          "model": "nova-2",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-07-10T12:09:19.800Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "MiueK1FXuZTCItgbQwPu"
+        },
+        "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+      },
+      "versionId": "b55ae842-5d86-11f0-aa85-cb3d4db87714"
+    },
+    {
+      "createdAt": "2025-07-10T12:08:00.051Z",
+      "data": {
+        "backgroundDenoisingEnabled": false,
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started"
+        ],
+        "createdAt": "2025-07-10T12:00:14.553Z",
+        "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+        "firstMessage": "Hi there. I'm Nora, calling from NPC Services",
+        "hipaaEnabled": false,
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "model": {
+          "messages": [
+            {
+              "chars": 3897,
+              "promptRef": "6ba6ec7e43b587ff",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4.1-nano",
+          "provider": "openai",
+          "temperature": 0.5
+        },
+        "name": "NPC Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "user-interrupted"
+        ],
+        "startSpeakingPlan": {
+          "transcriptionEndpointingPlan": {
+            "onNoPunctuationSeconds": 1.5,
+            "onNumberSeconds": 0.5,
+            "onPunctuationSeconds": 0.1
+          },
+          "waitSeconds": 0.4
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "endpointing": 300,
+          "language": "en",
+          "model": "nova-2",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-07-10T12:08:00.042Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "MiueK1FXuZTCItgbQwPu"
+        },
+        "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+      },
+      "versionId": "85d05832-5d86-11f0-b8d4-c54bebda7697"
+    },
+    {
+      "createdAt": "2025-07-10T12:07:03.310Z",
+      "data": {
+        "backgroundDenoisingEnabled": false,
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started"
+        ],
+        "createdAt": "2025-07-10T12:00:14.553Z",
+        "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+        "firstMessage": "Hi there. I'm Nora, calling from NPC Services",
+        "hipaaEnabled": false,
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "model": {
+          "messages": [
+            {
+              "chars": 3897,
+              "promptRef": "6ba6ec7e43b587ff",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4.1-nano",
+          "provider": "openai",
+          "temperature": 0.5
+        },
+        "name": "NPC Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "user-interrupted"
+        ],
+        "startSpeakingPlan": {
+          "transcriptionEndpointingPlan": {
+            "onNoPunctuationSeconds": 1.5,
+            "onNumberSeconds": 0.5,
+            "onPunctuationSeconds": 0.1
+          },
+          "waitSeconds": 0.4
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "endpointing": 300,
+          "language": "en",
+          "model": "nova-2",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-07-10T12:07:03.298Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "Kq9pDHHIMmJsG9PEqOtv"
+        },
+        "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+      },
+      "versionId": "63fe5ae2-5d86-11f0-a937-df31004c1e30"
+    },
+    {
+      "createdAt": "2025-07-10T12:00:14.564Z",
+      "data": {
+        "backgroundDenoisingEnabled": false,
+        "clientMessages": [
+          "conversation-update",
+          "function-call",
+          "hang",
+          "model-output",
+          "speech-update",
+          "status-update",
+          "transfer-update",
+          "transcript",
+          "tool-calls",
+          "user-interrupted",
+          "voice-input",
+          "workflow.node.started"
+        ],
+        "createdAt": "2025-07-10T12:00:14.553Z",
+        "endCallMessage": "Perfect! Your appointment has been scheduled. You'll receive a confirmation email shortly. Have a great day!",
+        "firstMessage": "Thank you for calling Wellness Partners. This is Riley, your scheduling assistant. How may I help you today?",
+        "hipaaEnabled": false,
+        "id": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+        "model": {
+          "messages": [
+            {
+              "chars": 9304,
+              "promptRef": "c10a7d7f8b333599",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4o",
+          "provider": "openai",
+          "temperature": 0.5
+        },
+        "name": "NPC Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "serverMessages": [
+          "conversation-update",
+          "end-of-call-report",
+          "function-call",
+          "hang",
+          "speech-update",
+          "status-update",
+          "tool-calls",
+          "transfer-destination-request",
+          "user-interrupted"
+        ],
+        "startSpeakingPlan": {
+          "transcriptionEndpointingPlan": {
+            "onNoPunctuationSeconds": 1.5,
+            "onNumberSeconds": 0.5,
+            "onPunctuationSeconds": 0.1
+          },
+          "waitSeconds": 0.4
+        },
+        "transcriber": {
+          "confidenceThreshold": 0.4,
+          "endpointing": 300,
+          "language": "en",
+          "model": "nova-2",
+          "numerals": false,
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-07-10T12:00:14.553Z",
+        "voice": {
+          "provider": "vapi",
+          "voiceId": "Elliot"
+        },
+        "voicemailMessage": "Hello, this is Riley from Wellness Partners. I'm calling about your appointment. Please call us back at your earliest convenience so we can confirm your scheduling details."
+      },
+      "versionId": "705caa42-5d85-11f0-9cc4-7726379b20cf"
+    }
+  ]
+}

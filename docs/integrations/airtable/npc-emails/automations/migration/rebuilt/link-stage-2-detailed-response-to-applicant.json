@@ -1,0 +1,165 @@
+{
+ "baseId": "appFNPL7iYiuQyHAO",
+ "name": "Link Stage 2 detailed response to applicant",
+ "description": "Turns the Application ID carried on a BRQ Detailed Response into a real link to the Aurixa Waitlist applicant. This is what makes Stage 1 aware that the applicant progressed: once the link exists, Stage 2 Reached flips to 1 on the waitlist record and Send Stage 2 Invite reads HOLD, so the scheduled Stage 1 reminder skips them. Fires when a response has an Application ID but no Applicant link, which covers both new submissions and records back-filled later. Matching is on Application ID Key (upper-cased and trimmed), so a reference typed by hand \u2014 the fallback path when the emailed link has expired \u2014 still resolves. When nothing matches, the response is left alone and Applicant Link Status reads \"Unlinked - no matching applicant\".",
+ "trigger": {
+  "type": "recordMatchesConditions",
+  "inputs": {
+   "filtersObj": {
+    "obj": {
+     "operands": {
+      "tuple": [
+       {
+        "obj": {
+         "operands": {
+          "tuple": [
+           "fldldzsCfkQcnBdYD"
+          ]
+         },
+         "operator": "isNotEmpty"
+        }
+       },
+       {
+        "obj": {
+         "operands": {
+          "tuple": [
+           "fldpMrP4eVFudoL6z"
+          ]
+         },
+         "operator": "isEmpty"
+        }
+       }
+      ]
+     },
+     "operator": "and"
+    }
+   },
+   "tableId": "tblLn0n6v6ubGrTbA"
+  }
+ },
+ "nodes": [
+  {
+   "key": "wacDUVC1ra3w27Vwp",
+   "type": "findRecords",
+   "description": "Find the Aurixa Waitlist record whose normalised Application ID matches the one on this response.",
+   "inputs": {
+    "limit": 1,
+    "filtersObj": {
+     "obj": {
+      "operands": {
+       "tuple": [
+        {
+         "obj": {
+          "operands": {
+           "tuple": [
+            "fld9WBUrHa3svTpbB",
+            {
+             "fn": "uppercase",
+             "args": [
+              {
+               "fn": "trim",
+               "args": [
+                {
+                 "$ref": "trigger",
+                 "path": [
+                  "cellValuesByFieldId",
+                  "fldldzsCfkQcnBdYD"
+                 ]
+                }
+               ]
+              }
+             ]
+            }
+           ]
+          },
+          "operator": "="
+         }
+        }
+       ]
+      },
+      "operator": "and"
+     }
+    },
+    "queryType": "filtersObj",
+    "tableId": "tblaSuqLKa00rqdtu"
+   }
+  },
+  {
+   "key": "wde3n7wa5MZbs5Tsl",
+   "type": "conditionalGroup",
+   "branches": [
+    {
+     "name": "Applicant found",
+     "description": "Link the response to the applicant. If no applicant matched, nothing runs and the response stays unlinked for review.",
+     "condition": {
+      "conjunction": "and",
+      "conditions": [
+       {
+        "left": {
+         "fn": "length",
+         "args": [
+          {
+           "$ref": "wacDUVC1ra3w27Vwp",
+           "path": [
+            "records"
+           ]
+          }
+         ]
+        },
+        "operator": ">",
+        "right": 0,
+        "valueType": "number",
+        "dataType": "literal"
+       }
+      ]
+     },
+     "nodes": [
+      {
+       "key": "wacKgl4S1atRb5Gqj",
+       "type": "updateRecord",
+       "inputs": {
+        "updateRecordMethod": "customFields",
+        "fields": {
+         "obj": {
+          "fldpMrP4eVFudoL6z": {
+           "template": [
+            {
+             "fn": "map",
+             "args": [
+              {
+               "$ref": "wacDUVC1ra3w27Vwp",
+               "path": [
+                "records"
+               ]
+              },
+              {
+               "fn": "propertyGetter",
+               "args": [
+                "id"
+               ]
+              }
+             ]
+            }
+           ]
+          }
+         }
+        },
+        "rowId": {
+         "template": [
+          {
+           "$ref": "trigger",
+           "path": [
+            "id"
+           ]
+          }
+         ]
+        },
+        "tableId": "tblLn0n6v6ubGrTbA"
+       }
+      }
+     ]
+    }
+   ]
+  }
+ ]
+}

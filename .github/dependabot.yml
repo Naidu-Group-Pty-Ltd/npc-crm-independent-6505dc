@@ -1,0 +1,130 @@
+# WP-21: give the dependency gate a remediation path.
+#
+# `scripts/security/dependency-audit.mjs` has blocked unaccepted high/critical
+# advisories since SUPPLY-001, and `codex-security-scan.yml` runs osv-scanner on
+# top. Detection was never the gap. Nothing opened upgrade PRs, so every
+# remediation was somebody noticing — which is how `xlsx` sat on a version npm
+# had stopped publishing patches for, with two advisories reachable from the
+# client-upload parsers, behind an allowlist entry that said out loud the real
+# fix was to drop it.
+#
+# Grouped on purpose. Ungrouped npm updates on a dependency tree this size open
+# dozens of PRs a week, and a review queue nobody can keep up with is the same
+# outcome as no PRs at all — it just looks busier.
+version: 2
+
+updates:
+  # ── Application dependencies ─────────────────────────────────────────────
+  - package-ecosystem: npm
+    directory: /
+    schedule:
+      interval: weekly
+      day: monday
+      time: "07:00"
+      timezone: Australia/Sydney
+    open-pull-requests-limit: 5
+    labels: [dependencies, security]
+    commit-message:
+      prefix: deps
+      include: scope
+    groups:
+      # Security fixes travel alone and first — the point of the whole file.
+      # Dependabot raises these regardless of the `ignore` rules below.
+      security-patches:
+        applies-to: security-updates
+        patterns: ["*"]
+      # Everything else batches, so the queue stays reviewable.
+      minor-and-patch:
+        applies-to: version-updates
+        update-types: [minor, patch]
+        patterns: ["*"]
+    ignore:
+      # Major bumps of the build toolchain and the render path are their own
+      # changes with their own regression surface, and this repo has the
+      # evidence: the golden-render guard exists because renderer output is
+      # byte-compared, and the vite advisories are accepted precisely because
+      # the fix is a major bump. A Dependabot PR cannot make that judgement, so
+      # it should not raise it — the audit gate will keep saying so instead.
+      - dependency-name: vite
+        update-types: [version-update:semver-major]
+      - dependency-name: typescript
+        update-types: [version-update:semver-major]
+      - dependency-name: react
+        update-types: [version-update:semver-major]
+      - dependency-name: react-dom
+        update-types: [version-update:semver-major]
+      - dependency-name: "@supabase/supabase-js"
+        update-types: [version-update:semver-major]
+      - dependency-name: jspdf
+        update-types: [version-update:semver-major]
+      - dependency-name: pptxgenjs
+        update-types: [version-update:semver-major]
+      # Added after both this repository and its client-facing mirror had `main`
+      # broken by exactly this: a Dependabot major merged while the lockfile did
+      # not follow, so nothing could `npm ci` and nothing had ever compiled
+      # against the new version. Measured, one bump at a time:
+      #
+      #   react-leaflet     5.0.0  peer-requires React 19; this project is on 18,
+      #                            so the tree is unresolvable -- `npm ci` fails
+      #                            outright rather than merely typechecking badly
+      #   react-day-picker  10.0.1 v8 -> v10 rewrote the DayPicker props; 26 type
+      #                            errors across `ui/calendar.tsx` and every
+      #                            surface that opens a date picker
+      #   zod               4.x    every schema module and every `zodResolver`
+      #                            form (measured on the mirror: 1 -> 247 errors)
+      #   react-resizable-  4.x    `ui/resizable.tsx` (same measurement)
+      #     panels
+      #
+      # None of these is a build tool or a render-path dependency, so none was
+      # covered by the rules above. Same judgement, same reason: a Dependabot PR
+      # cannot make it.
+      - dependency-name: react-leaflet
+        update-types: [version-update:semver-major]
+      - dependency-name: react-day-picker
+        update-types: [version-update:semver-major]
+      - dependency-name: zod
+        update-types: [version-update:semver-major]
+      - dependency-name: react-resizable-panels
+        update-types: [version-update:semver-major]
+      # Both merged on 2026-08-26, both measured on this repository:
+      #
+      #   tailwindcss              4.3.3  v4 removed the PostCSS plugin from the
+      #                                   core package; postcss.config.js and
+      #                                   tailwind.config.ts are v3, so
+      #                                   `npm run build` failed OUTRIGHT on
+      #                                   main until the pin back to 3.4.17.
+      #                                   The whole token/glass system is a v3
+      #                                   config — Tailwind 4 is a migration
+      #                                   project, not a dependency bump.
+      #   eslint-plugin-react-     7.1.1  v7's new rules flag long-standing
+      #     hooks                         patterns repo-wide: main's lint went
+      #                                   from 45 errors to ~906 in one merge,
+      #                                   which makes the enforced "no new
+      #                                   errors" baseline meaningless — a real
+      #                                   new error hides among 906. Adopting
+      #                                   v7 is a repo-wide cleanup with its
+      #                                   own PR, not a side effect.
+      - dependency-name: tailwindcss
+        update-types: [version-update:semver-major]
+      - dependency-name: eslint-plugin-react-hooks
+        update-types: [version-update:semver-major]
+      # `xlsx` is pinned to a vendor CDN tarball because SheetJS stopped
+      # publishing to npm after 0.18. Dependabot cannot resolve a URL
+      # dependency, and a "helpful" rewrite back to the registry would silently
+      # reintroduce two advisories with no upgrade path. See WP-21.
+      - dependency-name: xlsx
+
+  # ── The workflows themselves ─────────────────────────────────────────────
+  # A pinned action is a supply-chain dependency like any other, and this repo
+  # has 10 workflows' worth of them.
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: monthly
+    open-pull-requests-limit: 3
+    labels: [dependencies, ci]
+    commit-message:
+      prefix: ci
+    groups:
+      actions:
+        patterns: ["*"]

@@ -1,0 +1,42 @@
+/* ────────────────────────────────────────────────────────────────
+   Global stylesheet manifest.
+
+   The design system is split into focused partials under src/styles/.
+   Import order is significant: tokens first (they carry the @tailwind
+   directives + :root/.dark design tokens), then base resets, then the
+   component / utility / feature layers.
+
+   Rule of thumb for where new CSS belongs:
+     tokens.css         → design tokens only (:root / .dark). Colour,
+                          typography, radius, density. Nothing else.
+     base.css           → element resets, body defaults, transitions.
+     primitives …       → reusable semantic component classes.
+     report-qa.css      → Report Q&A / ci-foundation feature styling.
+     utilities.css      → mobile safe-area, scroll, touch, motion prefs.
+     finance-portal.css → finance partner theme variants + density.
+     components.css      → remaining feature component polish.
+     glass.css          → the glassmorphism surface language. Imported
+                          LAST so it re-skins the surface taxonomy the
+                          earlier partials define. Read its header
+                          before adding a frosted surface anywhere.
+
+   Do NOT add raw HEX colours or per-component font-family here — route
+   everything through the tokens in tokens.css. See
+   docs/STYLE_CONSISTENCY_AND_THEMING_PLAN.md.
+
+   Surfaces are glassmorphic. The material is defined once in glass.css
+   and driven by the glass scale in tokens.css; a component should reach
+   for a `.glass-*` class rather than composing its own frosted surface.
+   ──────────────────────────────────────────────────────────────── */
+
+@import "./styles/tokens.css";
+@import "./styles/base.css";
+@import "./styles/primitives.css";
+@import "./styles/report-qa.css";
+@import "./styles/ci-assessment.css";
+@import "./styles/utilities.css";
+@import "./styles/finance-portal.css";
+@import "./styles/workflow.css";
+@import "./styles/components.css";
+@import "./styles/glass.css";
+@import "./styles/passport-tokens.css";

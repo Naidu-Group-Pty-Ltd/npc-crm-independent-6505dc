@@ -1,0 +1,69 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://npcservices.com.au/schemas/pdf-import-client-report.schema.json",
+  "title": "PdfImportClientReport",
+  "description": "Phase 11G client-safe PDF import report payload. Sanitized content only - never raw PDF/OCR text, screenshots, signed URLs, storage paths, raw metadata JSON, or logs.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version", "reportType", "audience", "safetyLevel", "status",
+    "importId", "templateId", "title", "summary", "sections", "redactions", "generatedAt"
+  ],
+  "properties": {
+    "version": { "type": "string", "const": "pdf-import-client-report-v1" },
+    "reportType": {
+      "type": "string",
+      "enum": [
+        "import_status_summary", "template_quality_summary", "manual_review_summary",
+        "accepted_with_warnings_summary", "rejected_import_summary", "production_audit_summary", "release_readiness_summary"
+      ]
+    },
+    "audience": { "type": "string", "enum": ["internal_operator", "internal_business", "external_client"] },
+    "safetyLevel": { "type": "string", "enum": ["safe", "safe_with_warnings", "internal_only", "blocked"] },
+    "status": { "type": "string", "enum": ["draft", "pending_review", "approved", "exported", "rejected", "superseded"] },
+    "importId": { "type": ["string", "null"] },
+    "templateId": { "type": ["string", "null"] },
+    "title": { "type": "string" },
+    "summary": { "type": "string" },
+    "sections": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "title", "body", "status", "items"],
+        "properties": {
+          "id": { "type": "string" },
+          "title": { "type": "string" },
+          "body": { "type": "string" },
+          "status": { "type": "string", "enum": ["pass", "warning", "fail", "info", "not_applicable"] },
+          "items": { "type": "array", "items": { "type": "string" } }
+        }
+      }
+    },
+    "redactions": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["code", "field", "reason"],
+        "properties": {
+          "code": { "type": "string" },
+          "field": { "type": "string" },
+          "reason": { "type": "string" }
+        }
+      }
+    },
+    "sourceSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "operatorDecision": { "type": ["string", "null"] },
+        "qualityGateStatus": { "type": ["string", "null"] },
+        "exportParityStatus": { "type": ["string", "null"] },
+        "manualReviewRequired": { "type": ["boolean", "null"] },
+        "generatedFrom": { "type": "array", "items": { "type": "string" } }
+      }
+    },
+    "generatedAt": { "type": "string", "format": "date-time" }
+  }
+}

@@ -1,0 +1,467 @@
+{
+  "table": "Emails",
+  "batch": 39,
+  "of": 107,
+  "recordCount": 50,
+  "records": [
+    {
+      "sourceRecordId": "recLpyNSfSPuH7R4X",
+      "sourceCreatedTime": "2025-11-13T00:21:55.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recLqH1NTl1e1rTUA",
+      "sourceCreatedTime": "2025-11-10T06:10:06.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recLrEio0HnCyKLtO",
+      "sourceCreatedTime": "2026-02-20T04:02:18.000Z",
+      "fields": {
+        "Name": "Jasmine Dawson",
+        "Subject": "Kingsfield Builder Update - 14/02/2026 | STAGE 22B NEW RELEASE",
+        "Email": "Jasmine@alc.land",
+        "Body": "Dear Builder Partners,\r\n\r\n\r\nHappy Valentines Day! Hope you’re all having a great weekend.\r\n\r\nNEW LAND RELEASE FOR STAGE 22B with Premium blocks ranging from 375m2 up to 588m2 facing or near the conservation reserve and future wetlands.\r\nTitles expecte",
+        "Status": "Error 500",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/P6J8FltV-PfNvQ_8gRZW3g/SKDnw5zd9Li9LWeP9kY2mvnpZDSL8xiWgPXr_zEwg-aN8_QoC85RTVSXubD765YaOnAx2HYhHXMbDwu6DF4zAj1i1jxyZEvOJJ8Dtrhj1m3ju_yUEpaX4H6usy3dieGn8Hzi_jnE9K1fo137Lfmn3xq6P6H2E_1RIwWPES0bZiGsOGRW0bOkwbPjZjsv5gYP/ChtiaWRif54RQ_srFcaSVMZRtLSjUCGoLQMLqpLWHxs",
+            "filename": "outlook_email_attachment.docx",
+            "type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "size": 1194244
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "recLsdUZPxG0jNaKv",
+      "sourceCreatedTime": "2026-01-16T04:39:11.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recLtDwll1BkOhIfx",
+      "sourceCreatedTime": "2026-06-09T01:27:12.000Z",
+      "fields": {
+        "Name": "Ooranya Estate - Land Sale",
+        "Subject": "Ooranya Estate - H&L One Part Contracts",
+        "Email": "sales@bevanprojects.com.au",
+        "Body": "View this email in your browser\r\n\r\n\r\n\r\nDear ,\r\n\r\nAt Ooranya Estate, we have\r\ncollaborated with a variety of builders\r\nto offer you, our valued partners\r\n\r\n\r\n\r\nph: 0427 664 855\r\nemail: sales@bevanprojects.com.au\r\npostal address: PO Box 482\r\nPort Melb"
+      }
+    },
+    {
+      "sourceRecordId": "recLtVtUnK20QaMAy",
+      "sourceCreatedTime": "2026-03-14T16:09:22.000Z",
+      "fields": {
+        "Name": "Tom Offermann Real Estate",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "sales@offermann.com.au",
+        "Body": "Edit my requirements\r\nVisit our Website\r\nProperty Alert\r\nSunday, 15th March 2026\r\nHello Rugesh,\r\n\r\nThe following listings matched your Property Alert search requirements.\r\n\r\nNoosaville\r\n13 Wandoo Court\r\nModern Elegance: Ultra-Private Entertainer in Lush, ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recLui1n3EeFcqbAX",
+      "sourceCreatedTime": "2026-03-02T21:37:06.000Z",
+      "fields": {
+        "Name": "Rick Holloway",
+        "Subject": "SMSF DUPLEX SALE.",
+        "Email": "rick@thebobtraskgroup.com.au",
+        "Body": "DUPLEX SALE ONE OF A KIND\r\nHOLMVIEW RARE FIND\r\nGREAT RETURNS $900 PER WEEK\r\nSMSF INVESTMENT’S\r\nBIG BLOCK BIG RETURNS\r\nRegistered\r\nDOUBLE STORY\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\nRegards\r\n\r\n“Whatever you need, if we don’t have it, we can find it and we can build it!”"
+      }
+    },
+    {
+      "sourceRecordId": "recLus77QdfTRPCI8",
+      "sourceCreatedTime": "2026-01-23T15:22:14.000Z",
+      "fields": {
+        "Name": "ACTIVE AGENTS (QLD) PTY LTD",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "info@activeagents.com.au",
+        "Body": "Edit my requirements\r\nVisit our Website\r\nProperty Alert\r\nSaturday, 24th January 2026\r\nHello Rugesh,\r\n\r\nThe following listings matched your Property Alert search requirements.\r\n\r\nBooral\r\n35 Oslove Drive\r\n\r\nOffers above $1,399,000\r\n\r\n        6              ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recLvZyz8hHtpZrlb",
+      "sourceCreatedTime": "2025-11-05T07:22:45.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recLvhGOhDM8rNTrL",
+      "sourceCreatedTime": "2026-01-01T00:22:15.000Z",
+      "fields": {
+        "Name": "Karen Bagenal",
+        "Subject": "The latest property listings from RealWay Ipswich",
+        "Email": "karenbagenal@realwayipswich.propertyemail.com.au",
+        "Body": "View in browser\r\n\r\nHi Rugesh\r\n\r\nPlease find below the latest listings from our office that are on the market.\r\n\r\nYou can quickly receive more information about any of the properties by clicking on them to reveal their full details.\r\n\r\nIf your property nee",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recLw1adKpj9Se9cc",
+      "sourceCreatedTime": "2026-06-05T06:51:06.000Z",
+      "fields": {
+        "Name": "Leanne Pearman",
+        "Subject": "Discover Jellis Craig's Recently Listed Properties",
+        "Email": "leannepearman@property.jelliscraig.com.au",
+        "Body": "View in browser\r\n\r\n\r\n\r\n\r\n\r\n\r\n10 Fern Road, Little Hampton\r\n\r\n3               Bed             1               Bath            4               Car\r\nDear Rugesh\r\n\r\nOur feature property this week is located at 10 Fern Road, Little Hampton, a gorgeous weatherb"
+      }
+    },
+    {
+      "sourceRecordId": "recLwsQGuYaLP4PzV",
+      "sourceCreatedTime": "2026-03-19T06:24:41.000Z",
+      "fields": {
+        "Name": "Teena Lee",
+        "Subject": "OPEN HOME - 989 Yabba Creek Road, Imbil",
+        "Email": "Teena@RJRproperty.com.au",
+        "Body": "View this email in your browser\r\n\r\n\r\nRugesh\r\nOPEN HOME SATURDAY 21ST MARCH 2026\r\n989 Yabba Creek Rd, Imbil\r\nFrom 10:45am to 11:45am\r\nWe are writing to you today to let you know that we have 989 Yabba Creek Road, Imbil open for inspection on Saturday morni"
+      }
+    },
+    {
+      "sourceRecordId": "recLxCrmDysy4zYlS",
+      "sourceCreatedTime": "2026-06-04T08:10:40.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recLy2YASU4ITg07A",
+      "sourceCreatedTime": "2025-08-17T09:03:40.000Z",
+      "fields": {
+        "Name": "Rugesh Naidu",
+        "Subject": "Fwd: 2025 August Sales Update Newsletter",
+        "Email": "naidu.rugesh@gmail.com",
+        "Body": "\n\n---------- Forwarded message ---------\nFrom: Rugesh Naidu <naidu.rugesh@gmail.com [naidu.rugesh@gmail.com]>\nDate: Sun, Aug 17, 2025 at 6:53 PM\nSubject: Fwd: 2025 August Sales Update Newsletter\nTo: <property@npcservices.com.au [property@npcservices.com.au]>\n\n\n\n\n---------- Forwarded message ---------\nFrom: Rugesh Naidu <naidu.rugesh@gmail.com [naidu.rugesh@gmail.com]>\nDate: Sun, Aug 17, 2025 at 6:50 PM\nSubject: Fwd: 2025 August Sales Update Newsletter\nTo: <property@npcservices.com.au [property@npcservices.com.au]>\n\n\n\n\n---------- Forwarded message ---------\nFrom: Rugesh Naidu <naidu.rugesh@gmail.com [naidu.rugesh@gmail.com]>\nDate: Sun, Aug 17, 2025 at 6:44 PM\nSubject: Fwd: 2025 August Sales Update Newsletter\nTo: <property@npcservices.com.au [property@npcservices.com.au]>\n\n\n\n\n---------- Forwarded message ---------\nFrom: Rugesh Naidu <naidu.rugesh@gmail.com [naidu.rugesh@gmail.com]>\nDate: Sun, Aug 17, 2025 at 6:40 PM\nSubject: Fwd: 2025 August Sales Update Newsletter\nTo: <property@npcservices.com.au [property@npcservices.com.au]>\n\n\n\n\n---------- Forwarded message ---------\nFrom: First National Real Estate Waters & Carpenter <sales@waterscarpenter.com.au [sales@waterscarpenter.com.au]>\nDate: Mon, Aug 11, 2025 at 4:13 PM\nSubject: 2025 August Sales Update Newsletter\nTo: <naidu.rugesh@gmail.com [naidu.rugesh@gmail.com]>\n\n\nView this email Online [https://www.fnre.co/_r/v.cfm?b=12498306&c=5177077&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]\n\n\nDear Rugesh,\n\n\n\nAustralia's housing market is showing early signs of stabilisation, with Cotality's August 2025 Housing Value Index reporting a modest 0.6% national increase in dwelling values through July.\n\n\n\nRead on for our wrap up of the latest property news.\n\nSigns of stability as housing market levels out\n\n\n\nAustralia's housing market is showing early signs of stabilisation, with Cotality's August 2025 Housing Value Index reporting a modest 0.6% national increase in dwelling values through July. While this marks the sixth consecutive monthly rise, the pace remains measured and uneven, offering mixed signals for both homeowners and first-homebuyers.\n\n\n\nAt a national level, housing values have now risen 3.7% over the past year, reflecting improved sentiment, stronger migration trends, and a continued mismatch between supply and demand. However, affordability constraints remain front of mind for many would-be buyers, particularly in cities where prices have already surged well beyond median household incomes.\n\n\n\nFor those already in the market, the latest figures may offer a sense of renewed confidence. Homeowners in Perth, Adelaide and Brisbane saw the strongest monthly gains - 0.9% 0.7% and 0.7% respectively-while Sydney and Melbourne recorded more subdued increases of 0.6% and 0.4%. Regional markets also ticked higher, particularly in Queensland and Western Australia.\n\n \n\nHowever, Cotality's data shows the market is far from uniform. Several areas are still seeing values fall or flatten, notably parts of regional Victoria and New South Wales. This reflects the complexity of today's market, where lending conditions, interest rate expectations and local supply constraints are all pulling in different directions.\n\n\n\nFor first-home buyers, the outlook remains challenging. Despite some easing in growth rates, property values remain historically high in most capitals. At the same time, tight rental markets and rising rents are placing pressure on households trying to save for a deposit. Core fundamentals-such as low housing supply, population growth and a relatively resilient labour market-continue to support values in many areas, making meaningful price corrections unlikely in the near term.\n\n\n\nThat said, the current environment is not without opportunity. Buyers able to act with finance pre-approval and realistic expectations may find some negotiating power in pockets of slower market activity. Cotality also notes that new listing volumes are gradually increasing, which may ease some competition and broaden choice through the spring selling season.\n\n\n\nFrom a policy and planning perspective, the report reinforces the need for long-term housing supply strategies. With building approvals still below pre-COVID levels and construction costs elevated, supply challenges are expected to persist-a factor that continues to underpin national housing values.\n\n\n\nOverall, while Australia's housing market is moving gradually upwards, conditions vary widely depending on location and property type. For those looking to enter the market, seeking expert guidance and understanding local dynamics remains essential.\n\n\n\nThe market is neither booming nor busting-and for many, that may be a welcome shift.\n\n\n\nIf you're in need of property advice, find your nearest First National Real Estate member at www.firstnational.com.au [http://www.firstnational.com.au]\n\n\n\nMonthly change in capital city home values\n\n\n\nMONTHLY\n\nANNUAL\n\nSydney\n\n↑ 0.6%\n\n↑ 1.6%\n\nMelbourne\n\n↑ 0.4%\n\n↑ 0.5%\n\nBrisbane\n\n↑ 0.7%\n\n↑ 7.3%\n\nAdelaide\n\n↑ 0.7%\n\n↑ 7.0%\n\nPerth\n\n↑ 0.9%\n\n↑ 6.5%\n\nHobart\n\n↑ 0.1%\n\n↑ 1.9%\n\nDarwin\n\n↑ 2.2%\n\n↑ 8.5%\n\nCanberra\n\n↑ 0.5%\n\n↑ 0.5%\n\nNational\n\n↑ 0.6%\n\n↑ 3.7%\n\nCHECK OUT OUR\n\nRECENT LISTINGS\n\n3/27 Dartbrook Road [https://www.fnre.co/_r/c.cfm?l=2249955&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2249955&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]Ground Floor Beauty - Fully Renovated & Priced to Sell!3/27 Dartbrook Road, AuburnContact AgentBed: 2 Bath: 1 Car: 1Sat 16 Aug 10:30AM to 11:00AMPerfectly positioned in the heart of Auburn CBD, this tastefully renovated 2-bedroom unit offers unbeatable convenience and style. The owners have spared no expense, creating a home you can move strai...10/82-84 Beaconsfield Street [https://www.fnre.co/_r/c.cfm?l=2250029&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2250029&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]Modern & Spacious 2-Bedroom Apartment in a Prime Location10/82-84 Beaconsfield Street, SilverwaterContact AgentBed: 2 Bath: 2 Car: 1Sat 16 Aug 01:00PM to 01:30PM(Corner Beaconsfield & Stubbs - Entry from Stubbs) Perfectly positioned in a convenient location with modern inclusions, this spacious 2-bedroom unit offers comfortable living in a highly sought-after...6/35-37 Harrow Road [https://www.fnre.co/_r/c.cfm?l=2249956&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2249956&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]Prime Location - With Size that Matters6/35-37 Harrow Road, AuburnContact AgentBed: 2 Bath: 2 Car: 1Sat 16 Aug 11:30AM to 12:00PMOpposite public schools * Walk to shops, station & Auburn CBD Located in one of Auburn's most sought-after addresses, this spacious and beautifully presented apartment combines comfort, convenience, a...5057/57-59 Queen Street [https://www.fnre.co/_r/c.cfm?l=2249705&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2249705&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]Prime Investment Opportunity - Level 6, Central Auburn5057/57-59 Queen Street, AuburnCONTACT AGENTBed: 3 Bath: 2Sat 16 Aug 12:30PM to 01:00PMIdeally located in the heart of Auburn CBD, this spacious three-bedroom apartment offers unmatched convenience just moments from Auburn Central Shopping Centre, train station, restaurants, and local s...702/2 Main Lane [https://www.fnre.co/_r/c.cfm?l=2246657&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2246657&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]STYLE & CONVENIENCE702/2 Main Lane, MerrylandsContact AgentBed: 2 Bath: 2 Car: 1Sat 16 Aug 10:15AM to 10:45AMPositioned at the heart of Merrylands and moments from shops, café and transport this chic apartment will steal your soul. Embracing sunlit dining and living area leading to spacious balcony, 2 spaci...18/9 Nurmi Avenue [https://www.fnre.co/_r/c.cfm?l=2245105&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2245105&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]Sun drenched Apartment With Water Views18/9 Nurmi Avenue, NewingtonContact AgentBed: 3 Bath: 2 Car: 2A rare offering and without a doubt one of the largest three-bedroom floorplans in Newington, this immaculately presented apartment delivers style, space, and a superb lifestyle address. Designed for ...1406/93 Auburn Road [https://www.fnre.co/_r/c.cfm?l=2243746&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2243746&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]North East Facing ... Breathtaking Views1406/93 Auburn Road , Auburn$500,000 - $550,000Bed: 2 Bath: 2 Car: 1Sat 16 Aug 10:30AM to 11:00AMExciting and fresh with expansive skyline views, near new North-east facing very bright apartment located within walking distance to shops, station and schools. Modern and fashionable in its outlook,...314/351E Hume Highway [https://www.fnre.co/_r/c.cfm?l=2243527&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2243527&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]THE HIGHWAY TO YOUR NEW HOME314/351E Hume Highway, BankstownPRICE RANGE $520,000 - $550,000Bed: 2 Bath: 2 Car: 1Sat 16 Aug 12:00PM to 12:30PMStylish outlook, light filled apartment featuring chic kitchen with gas cooking, two modern bathrooms, spacious dining and living area leading to sunny balcony, secure car space plus storage cage. Ex...27 Hay Street [https://www.fnre.co/_r/c.cfm?l=2241653&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2241653&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]UNDER INSTRUCTIONS TO SELL27 Hay Street, LeichhardtContact AgentBed: 3 Bath: 1 Car: 2 335sqmThis brick veneer home, offered as part of a Deceased Estate, presents an exciting opportunity in one of Leichhardt's most sought-after locations. Situated on a 335.3sqm block, the property provides t...405A/12 Nancarrow Avenue [https://www.fnre.co/_r/c.cfm?l=2240802&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2240802&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]Bright & Breezy - Oversized Apartment with Water View405A/12 Nancarrow Avenue, Ryde$550,000-$600,000Bed: 1 Bath: 1 Car: 1Sat 16 Aug 12:00PM to 12:30PMLuxury Riverside Retreat with Water Views Ready to move in or rent out, this well-presented one-bedroom apartment in Meadowbank's premier Shepherds Bay community offers luxury riverside living. Prop...37 Normanby Road [https://www.fnre.co/_r/c.cfm?l=2225398&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2225398&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]Brick, Bold, and Beautiful: Your Family's Dream Home Awaits!37 Normanby Road, AuburnCONTACT AGENTBed: 6 Bath: 3 Car: 2Sat 16 Aug 02:00PM to 02:15PMDiscover the perfect family haven with this stunning double-storey masterpiece, tailor-made for a growing family. Nestled in a prime, central location, this double-brick home offers unparalleled conve...8/9 Marion Street [https://www.fnre.co/_r/c.cfm?l=2223318&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2223318&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]STYLISH SUNDRENCHED APARTMENT8/9 Marion Street, AuburnPrice Guide: $620,000 - $650,000Bed: 3 Bath: 2 Car: 1Sat 16 Aug 02:30PM to 02:45PMExclusively located within one of Auburn's premier positions this property exudes style & presence. Enjoy lifestyle advantages in a convenient walk to everything location. Boasting an abundance of n...802/19 Goulburn Street [https://www.fnre.co/_r/c.cfm?l=2222639&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2222639&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]BETTER THAN CHOCOLATE !802/19 Goulburn Street, LiverpoolCONTACT AGENTBed: 2 Bath: 2 Car: 1 108sqmSat 16 Aug 02:00PM to 02:30PMWell maybe .... This gorgeous apartment is like a box of chocolate because of its endless possibilities with its stylish presentation, inviting layout, top level setting with sweeping views, sunny outlo...106/93 Auburn Road [https://www.fnre.co/_r/c.cfm?l=2202746&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2202746&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]Bright and Sunny Modern apartment & Walk To Station & Shops106/93 Auburn Road, Auburn$555,000Bed: 2 Bath: 2 Car: 1 119sqmSat 16 Aug 10:30AM to 11:00AMExciting and fresh. 4 years new North-east facing very bright apartment located within walking distance to shops, station and schools. Modern and fashionable in its outlook, this stunning apartment w...414/314 Canterbury Road [https://www.fnre.co/_r/c.cfm?l=2203338&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2203338&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]Cosy Comfort and Convenient414/314 Canterbury Road, Canterbury$485,000Bed: 1 Bath: 1 Car: 1This is a perfect starter home. Near new cosy 1 bedroom located in a very convenient and popular location. Offering contemporary style living and comfort with quality finishes. Door steps to Woolworth...216/314 Canterbury Road [https://www.fnre.co/_r/c.cfm?l=2202744&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2202744&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]Bright & Sunny North Facing 1 Bedroom Apartment216/314 Canterbury Road, Canterbury$485,000Bed: 1 Bath: 1 Car: 1This is a perfect starter home. Near new cosy 1 bedroom located in a very convenient and popular location. Offering contemporary style living and comfort with quality finishes. Door steps to Woolworth...129 Woodville Road [https://www.fnre.co/_r/c.cfm?l=2164253&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2164253&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]TWO HOMES - ONE TITLE129 Woodville Road, Granville$1,800,000-$1,850,000Bed: 6 Bath: 5 Car: 2 588sqmEntry from Elizabeth St - Two Homes one Title Exciting prospect where possibilities are endless. Two modern homes on one title set on a corner block close to TAFE, Granville Park, Shops & Station. F...CHECK OUT OUR\n\nRECENT SOLD\n\n7 New Street [https://www.fnre.co/_r/c.cfm?l=2248706&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2248706&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]SOLD IN ONE WEEK7 New Street, Auburn1798000Bed: 6 Bath: 3 Car: 1 841sqmSOLD BY WATERS & CARPENTER FIRST NATIONAL AUBURN Positioned directly across from St Joseph the Worker Primary School, this standout property sits on a large 841sqm block with R2 Low Density Residenti...14 Yillowra Street [https://www.fnre.co/_r/c.cfm?l=2250548&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2250548&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]Listed One Day, Sold the Next14 Yillowra Street, Auburn1380000Bed: 3 Bath: 1 Car: 2 492sqmSOLD BY WATERS & CARPENTER FIRST NATIONAL AUBURN Key Features: * 493sqm block on 2 lots * Four bedrooms, one bathroom * Garage + 2 car spaces * Zoned R2 - potential to rebuild or redevelop (STCA) * C...15 Dixmude Street [https://www.fnre.co/_r/c.cfm?l=2184892&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]View Property [https://www.fnre.co/_r/c.cfm?l=2184892&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]READY TO BUILD SEMI DETACHED DUPLEX15 Dixmude Street, Granville1670000Bed: 3 Bath: 1 Car: 1 720sqmSOLD BY WATERS & CARPENTER FIRST NATIONAL AUBURN Unveiling an exceptional and highly-lucrative development opportunity, this original family home spans a sprawling 720.8sqm parcel with 18.2m frontage...Smart moves when downsizing\n\n\n\nDownsizing your home can be a smart and rewarding step-whether you're seeking a simpler lifestyle, cutting costs, or unlocking equity. But timing and planning are everything. \n\nStart by considering your long-term needs. Think beyond floorplan: proximity to healthcare, public transport, and family matters just as much. Assess what you truly need from your next property. Two spare bedrooms might be more than you'll actually use.\n\n\n\nFinancial clarity is key. Understand the cost of selling, buying, moving and, if relevant, aged care. Speak to your accountant or financial adviser about the federal downsizer contribution scheme, which allows eligible homeowners to contribute up to $300,000 from the sale of their home into superannuation.\n\n\n\nDecluttering early can ease the process. Downsizing isn't just physical-it's emotional too. Take your time letting go of items that won't fit the next chapter.\n\n\n\nFinally, don't rush. Explore the market and work with an experienced local agent who understands the lifestyle you're after. Downsizing doesn't mean compromising-it means realigning your home with the way you want to live today. Done right, it can be a liberating and financially sensible move.\n\nEnergy-efficient homes attract buyers\n\nEnergy efficiency is no longer just a buzzword-it's increasingly a key driver of residential property value across Australia. For homeowners, investing in energy-efficient upgrades isn't just good for the environment; it can also add meaningful value when it comes time to sell.\n\n\n\nAs power prices remain high and sustainability gains traction with buyers, energy-efficient homes are commanding stronger buyer interest and, in many cases, premium sale prices. Features such as solar panels, double glazing, insulation, and energy-efficient appliances are no longer niche. They are fast becoming buyer expectations, particularly among younger and environmentally conscious purchasers.\n\n\n\nA 2023 Domain Sustainability in Property report found that homes with energy-saving features consistently sold faster and, in some cases, for up to17% more than comparable homes without them. While premiums vary by location and market cycle, the trend is clear: buyers are actively factoring energy costs and performance into their decision-making.\n\n\n\nFor homeowners, this presents both an opportunity and a responsibility. Simple improvements-such as LED lighting, window seals, or solar hot water systems-can reduce energy bills and improve comfort while strengthening market appeal. Larger upgrades, including rooftop solar, battery storage, or reverse-cycle heating and cooling, often deliver a return through both savings and increased property value.\n\n\n\nMandatory disclosure laws are also evolving. In the ACT, homes are already required to display an Energy Efficiency Rating (EER) at sale. Other states are actively exploring similar schemes. As this becomes the norm, properties with low ratings may face longer time on market or lower offers.\n\n \n\nLenders are responding, too. Some banks now offer green home loans or discounted mortgage rates for energy-efficient properties. This can further increase buyer interest in sustainable homes, particularly at a time when borrowing power is under pressure.\n\n\n\nImportantly, energy efficiency can also provide greater resilience. Homes with quality insulation and passive design features remain more comfortable during heatwaves or cold snaps-reducing reliance on heating and cooling systems. That's increasingly relevant as extreme weather events become more frequent.\n\n\n\nFrom a resale perspective, making your home more energy efficient is now as important as updating kitchens or bathrooms. Buyers want to know that the home they're purchasing won't cost a fortune to run or require expensive retrofits in the years ahead.\n\n\n\nFor those considering selling in the next few years, now is the time to plan upgrades. Even modest improvements can differentiate your property in a competitive market. Be sure to retain documentation-such as energy performance certificates, appliance ratings, or solar installation details-as buyers and their agents will increasingly ask for these.\n\n\n\nUltimately, a more energy-efficient home benefits everyone. It lowers ongoing costs, reduces carbon emissions, and supports healthier, more comfortable living. And in today's housing market, that's a value proposition buyers are increasingly prepared to pay for.\n\nCHECK OUT OTHER\n\nFEATURED ARTICLES\n\nHow to buy your first home or investment property sooner\n\nLearn More [https://www.fnre.co/_r/c.cfm?l=2250549&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]Your step-by-step home organisation guide\n\nLearn More [https://www.fnre.co/_r/c.cfm?l=2250550&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]Powered by science: how tech innovations are shaping our lives!\n\nLearn More [https://www.fnre.co/_r/c.cfm?l=2250551&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]First National Real Estate Waters & Carpenter\n\nwww.waterscarpenter.com.au [https://www.fnre.co/_r/c.cfm?l=127090&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]\n\nsales@waterscarpenter.com.au [sales@waterscarpenter.com.au]\n\nPh: 02 9649 0238\n\n\n112 South Parade, Auburn, NSW 2144\n\n\n [https://www.fnre.co/_r/c.cfm?l=1681215&c=5177077&m=1138426&b=12498306&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056] \n\nUpdate Details & Preferences [https://www.fnre.co/_m/WATAUZ/u.cfm?s=5177077&e=naidu%2Erugesh%40gmail%2Ecom&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056]\n\nUnsubscribe [https://www.fnre.co/_m/WATAUZ/u.cfm?s=5177077&e=naidu%2Erugesh%40gmail%2Ecom&cd=6C5D6630-81A2-41E1-B3FA-5FCB5505F056&stp=un]"
+      }
+    },
+    {
+      "sourceRecordId": "recLyCtDhajDT9xnu",
+      "sourceCreatedTime": "2025-08-21T06:49:36.000Z",
+      "fields": {
+        "Name": "Rugesh Naidu",
+        "Subject": "NPC Services | Naidu Property Consulting Services | Introduction & Mailing List Allocation",
+        "Email": "rugesh@npcservices.com.au",
+        "Body": "Good afternoon,\n\nI hope this message finds you well.\n\n\n\n\nI’d like to take a moment to introduce NPC Services also known as Naidu Property Consulting Services, a dedicated buyer’s agency and property consulting business specialising in guiding clients through every stage of their property purchase journey.\n\nWe currently have qualified clients actively ready to purchase across a range of budgets, and we’re looking to build strong relationships with agencies like yours. To streamline the process, it would be greatly appreciated if you could please add our acquisitions team to your weekly property mailing list below:\n\nProperty@npcservices.com.au [Property@npcservices.com.au]\n\nThis ensures our research division receives your latest on and off-market listings, promptly for reviewal and assessment, allowing us to respond quickly and match opportunities with ready buyers.\n\nI’m confident this collaboration will lead to excellent results for both your agency and our clients.\n\nPlease feel free to contact me if you have any questions.\n\n\n\n\nKind Regards[cid:cfb45a64-2a1e-4748-b324-d52b1de705c5]Mobile: 0433 005 110 | Email: rugesh@npcservices.com.au | Website: www.npcservices.com.au [http://www.npcservices.com.au/]\n[cid:f73ae2ad-0563-4307-b2ba-e4e0d9bd6f27] [http://www.linkedin.com/in/rugesh-naidu-1b0003123][cid:b10e19fd-bbe5-4555-933a-12d49bc02cda] [https://www.instagram.com/npc.services]A blue circle with a white letter f in it AI-generated content may be incorrect. [cid:547ebc20-04c2-4837-87bf-f35bde8ab6aa] [https://www.facebook.com/profile.php?id=61577033127001]\nAddress: Level 5 Nexus Norwest, 4 Columbia Ct, Norwest NSW 2153\nNaidu Group Pty Ltd trading as Naidu Property Consulting ServicesACN: 684 555 771 | ABN: 50 684 555 771\nDisclaimer:\nAs a Professional Property Consultant & Buyers Agent, we provide information and advice based on our expertise and experience in the real estate market. Please be aware that the advice and insights offered are for general informational purposes only and should not be considered financial advice. While we strive to ensure the accuracy and relevance of the information provided, real estate markets are dynamic and subject to change and cannot guarantee the future performance or outcomes of any property investment. It is important to understand that real estate investments carry risks, including market fluctuations, changes in property values, and potential financial losses. Our services include assisting you in identifying and evaluating potential opportunities, negotiating purchase terms, and navigating the transaction process. Any decisions to purchase, sell, or invest in real estate should be made after careful consideration and consultation with appropriate financial, legal, and tax advisors. By engaging our services, you acknowledge that you have read and understood this disclaimer and agree to take full responsibility for your property-related decisions. Always conduct your own research and due diligence to ensure that any property transaction aligns with your financial objectives and risk profile.",
+        "Status": "Error 500",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/evG1StQsPZTcJNr8lVL4hQ/qgbVBGwpONt0v9jy5WT2RhY2SD0XXaow4ymOst7PWAj9F7AvAoiMCxvbzB4hYzAL-bdL1OclbihhkDJ4HAbLUwlWSkBunzerMNmJpQMa_mRYRW3YOuOLwbsQ7-0e4cneJjDRlXu5curPPMYn-6p4FvhoUUb5UGW_Zx9hlrLJW_PBEvc5cNSIqe6SqwnS0brO/CfC53ZDjNcg_ZlloSPzIfp2ca746fzJyLeykxyBVljo",
+            "filename": "outlook_email_attachment.png",
+            "type": "image/png",
+            "size": 3465
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "recM0dmY1RtOf5vIF",
+      "sourceCreatedTime": "2026-06-05T02:45:22.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recM1vrqUT2BvaHWv",
+      "sourceCreatedTime": "2025-12-02T06:35:52.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recM2i9CAXV23FfNx",
+      "sourceCreatedTime": "2026-06-23T15:48:49.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recM3D9qF8bdGTHua",
+      "sourceCreatedTime": "2026-01-20T04:15:29.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recM3KomWnT1YMN67",
+      "sourceCreatedTime": "2025-10-10T11:03:46.000Z",
+      "fields": {
+        "Name": "Adam Bettison",
+        "Subject": "HouseSmart Real Estate Pty Ltd Weekend Home Open Property Update",
+        "Email": "adam.bettison@housesmart.com.au",
+        "Body": "Weekend Home Opens & Property Update\r\n\r\nHi Rugesh\r\n\r\nEach week at HouseSmart brings significant buying, selling and leasing activity. Our team is active across the entire Perth market.\r\n\r\nFor any property related assistance, reach out to us by replying to",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recM5koUykh4TwfSv",
+      "sourceCreatedTime": "2025-11-06T02:55:50.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recM5sdi8Q8N6tbGF",
+      "sourceCreatedTime": "2026-06-08T23:36:05.000Z",
+      "fields": {
+        "Name": "Brodie Richmond",
+        "Subject": "Update Alert: Matched Properties",
+        "Email": "brodie@schmith.com.au",
+        "Body": "Hi Rugesh ,\r\n\r\nSee below, some properties that may be of interest to you.\r\nPlease reach out if you would like any further information, or simply just have a chat.\r\n\r\nBest wishes,\r\nBrodie Richmond\r\n+61493572251\r\nbrodie@schmith.com.au\r\n\r\n\r\n\r\nPrice Red"
+      }
+    },
+    {
+      "sourceRecordId": "recM8unmgdWZdiMwe",
+      "sourceCreatedTime": "2026-06-04T00:32:31.000Z",
+      "fields": {
+        "Name": "Abby Holmes-Brown",
+        "Subject": "Your Dream Home Could Be Just One Click Away",
+        "Email": "sales@fnlifestyle.com.au",
+        "Body": "Current Listings\r\n\r\n\r\n\r\n\r\nHi Rugesh,\r\n\r\nFrom stunning lakeside living to high-performing investment properties, we have something for everyone.\r\n\r\nSearching for your next home or investment? Discover our wide selection of properties currently av"
+      }
+    },
+    {
+      "sourceRecordId": "recM9PdAJIZFkaUaG",
+      "sourceCreatedTime": "2026-01-28T07:32:09.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recM9cLdfJKrxzIRa",
+      "sourceCreatedTime": "2026-06-10T04:12:13.000Z",
+      "fields": {
+        "Name": "Robyn Faa",
+        "Subject": "Just Listed | 35 Tolcher Street, Mount Pleasant",
+        "Email": "robyn@robynfaa.com.au",
+        "Body": "Just Listed\r\n\r\nHi Rugesh\r\n\r\nWe are pleased to announce that 35 Tolcher Street, Mount Pleasant has just been listed for sale!\r\n\r\nIf you would like additional information on this property, click the \"View Online\" tab below to find all Mapping, Rental Estima"
+      }
+    },
+    {
+      "sourceRecordId": "recM9e6kBji8MHKum",
+      "sourceCreatedTime": "2025-09-27T07:15:06.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recM9hFsndOAyPCL2",
+      "sourceCreatedTime": "2025-11-13T00:22:50.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recMAECql8N4JE11C",
+      "sourceCreatedTime": "2025-10-29T09:37:32.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recMAUjCVEcyGDLjY",
+      "sourceCreatedTime": "2025-10-29T08:26:51.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recMAiBgtb2IM43hP",
+      "sourceCreatedTime": "2026-06-10T04:13:39.000Z",
+      "fields": {
+        "Name": "Robyn Faa",
+        "Subject": "Just Listed | 3 Wilga Court, Beaconsfield",
+        "Email": "robyn@robynfaa.com.au",
+        "Body": "Just Listed\r\n\r\nHi Rugesh\r\n\r\nWe are pleased to announce that 3 Wilga Court, Beaconsfield has just been listed for sale!\r\n\r\nIf you would like additional information on this property, click the \"View Online\" tab below to find all Mapping, Rental Estimations "
+      }
+    },
+    {
+      "sourceRecordId": "recMBHjedaEpz1bv9",
+      "sourceCreatedTime": "2026-03-06T04:39:07.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recMBHmeTPYRev8U8",
+      "sourceCreatedTime": "2025-08-22T03:57:01.000Z",
+      "fields": {
+        "Name": "Rugesh Naidu",
+        "Subject": "NPC Services | Naidu Property Consulting Services | Introduction & Mailing List Allocation ",
+        "Email": "rugesh@npcservices.com.au",
+        "Body": "Good afternoon,\n\nI hope this message finds you well.\n\n\n\n\nI’d like to take a moment to introduce NPC Services also known as Naidu Property Consulting Services, a dedicated buyer’s agency and property consulting business specialising in guiding clients through every stage of their property purchase journey.\n\nWe currently have qualified clients actively ready to purchase across a range of budgets, and we’re looking to build strong relationships with agencies like yours. To streamline the process, it would be greatly appreciated if you could please add our acquisitions team to your weekly property mailing list below:\n\nProperty@npcservices.com.au [Property@npcservices.com.au]\n\nThis ensures our research division receives your latest on and off-market listings, promptly for reviewal and assessment, allowing us to respond quickly and match opportunities with ready buyers.\n\nI’m confident this collaboration will lead to excellent results for both your agency and our clients.\n\nPlease feel free to contact me if you have any questions\n\n\n\nKind Regards[cid:29260ec1-845e-401a-bff1-3e1ad98bf0a2]Mobile: 0433 005 110 | Email: rugesh@npcservices.com.au | Website: www.npcservices.com.au [http://www.npcservices.com.au/]\n[cid:f5c05609-495a-4c79-ade9-37683cf58bf8] [http://www.linkedin.com/in/rugesh-naidu-1b0003123][cid:62cb3986-c6fb-444c-b17b-8b313d7baa01] [https://www.instagram.com/npc.services]A blue circle with a white letter f in it AI-generated content may be incorrect. [cid:0f3fc285-b9e2-4305-8d7c-18b38261a9d8] [https://www.facebook.com/profile.php?id=61577033127001]\nAddress: Level 5 Nexus Norwest, 4 Columbia Ct, Norwest NSW 2153\nNaidu Group Pty Ltd trading as Naidu Property Consulting ServicesACN: 684 555 771 | ABN: 50 684 555 771\nDisclaimer:\nAs a Professional Property Consultant & Buyers Agent, we provide information and advice based on our expertise and experience in the real estate market. Please be aware that the advice and insights offered are for general informational purposes only and should not be considered financial advice. While we strive to ensure the accuracy and relevance of the information provided, real estate markets are dynamic and subject to change and cannot guarantee the future performance or outcomes of any property investment. It is important to understand that real estate investments carry risks, including market fluctuations, changes in property values, and potential financial losses. Our services include assisting you in identifying and evaluating potential opportunities, negotiating purchase terms, and navigating the transaction process. Any decisions to purchase, sell, or invest in real estate should be made after careful consideration and consultation with appropriate financial, legal, and tax advisors. By engaging our services, you acknowledge that you have read and understood this disclaimer and agree to take full responsibility for your property-related decisions. Always conduct your own research and due diligence to ensure that any property transaction aligns with your financial objectives and risk profile.",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recMC3GkZfoU35gqJ",
+      "sourceCreatedTime": "2025-11-24T03:26:15.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recMCaIqKS99Z5GmE",
+      "sourceCreatedTime": "2026-06-11T03:27:33.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recMCgkPDhVnpaobd",
+      "sourceCreatedTime": "2026-04-07T16:36:04.000Z",
+      "fields": {
+        "Name": "Tom Offermann Real Estate",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "sales@offermann.com.au",
+        "Body": "Edit my requirements\r\nVisit our Website\r\nProperty Alert\r\nWednesday, 8th April 2026\r\nHello Rugesh,\r\n\r\nThe following listings matched your Property Alert search requirements.\r\n\r\nNoosa Heads\r\n10 Kareela Avenue\r\nLittle Cove, Metres to the beach & stroll to Ha",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recMD3EDCXjvXHEVf",
+      "sourceCreatedTime": "2026-03-06T05:07:11.000Z",
+      "fields": {
+        "Name": "Leanne Pearman",
+        "Subject": "Discover Jellis Craig's Recently Listed Properties",
+        "Email": "leannepearman@property.jelliscraig.com.au",
+        "Body": "View in browser\r\n\r\nDear Rugesh,\r\n\r\nWith the arrival of autumn we are seeing a wave of new listings hit the market. Our beautiful feature property at 136 Keaths Lane, is set high within the rolling hills of Metcalfe. This private and energy-efficient retre",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recMDGBkQh3sjR0Pf",
+      "sourceCreatedTime": "2025-11-13T21:48:30.000Z",
+      "fields": {
+        "Name": "Rick Holloway",
+        "Subject": "DINMORE 4X2X2 SECONDARY SMSF",
+        "Email": "rick@thebobtraskgroup.com.au",
+        "Body": "SMSF OF THE  WEEK\r\nBIG BLOCK BIG RETURNS\r\nRegistered in January\r\nSecondary Dwelling Four by Two-by-Two\r\nDINMORE\r\nGreat Location\r\n\r\n\r\n\r\n\r\n\r\nRegards\r\n\r\n“Whatever you need, if we don’t have it, we can find it and we can build it!”",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recMDLHjFY9QlO3WU",
+      "sourceCreatedTime": "2025-10-19T23:56:13.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recMEUGXUEpazBoEM",
+      "sourceCreatedTime": "2025-12-17T07:21:02.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recMFAk6ShMrqZ6Wv",
+      "sourceCreatedTime": "2026-04-16T04:44:03.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recMFMd2atxZHUcRs",
+      "sourceCreatedTime": "2026-01-22T07:16:15.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recMFYp8f8bZBmfwr",
+      "sourceCreatedTime": "2026-01-30T23:16:21.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recMFwbwv13WljpC3",
+      "sourceCreatedTime": "2026-06-05T04:10:00.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recMGvxaXJ7Vn91BX",
+      "sourceCreatedTime": "2025-11-25T15:39:43.000Z",
+      "fields": {
+        "Name": "ACTIVE AGENTS (QLD) PTY LTD",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "info@activeagents.com.au",
+        "Body": "Edit my requirements\r\nVisit our Website\r\nProperty Alert\r\nWednesday, 26th November 2025\r\nHello Rugesh,\r\n\r\nThe following listings matched your Property Alert search requirements.\r\n\r\nNikenbah\r\n14 Mia Court\r\n\r\nUNDER OFFER\r\n\r\n        4               2         ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recMI1a0H952OLDw5",
+      "sourceCreatedTime": "2026-02-20T04:36:43.000Z",
+      "fields": {
+        "Name": "Scott Swingler",
+        "Subject": "UPDATED THURSDAY TWILIGHT HOME OPENS",
+        "Email": "scott@shore-property.com.au",
+        "Body": "Want to change how you receive these emails?\r\nYou can click to unsubscribe from this list.\r\n \r\n \r\n\r\n4 Twilight Opens\r\n\r\nThursday 19 February.\r\n\r\n \r\n\r\n18 Alkoomie Terrace,\r\n\r\nOcean Mia, City Beach\r\n\r\nOpen House 5:00 - 5:30PM\r\n\r\n\r\n\r\nShore | Countdown All Of",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recMIyh0ffD3KPpmN",
+      "sourceCreatedTime": "2026-01-07T07:02:40.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recMJs2LqgdxvPWwM",
+      "sourceCreatedTime": "2025-12-05T07:45:51.000Z",
+      "fields": {
+        "Name": "Nicole Frew",
+        "Subject": "NEW Listing x 2 - BUILD YOUR DREAM LIFESTYLE ON THIS PREMIUM 4103M² CORNER BLOCK",
+        "Email": "nicole@gattonrealestate.com.au",
+        "Body": "Good afternoon Rugesh\r\n\r\nYour dream lifestyle starts here in the highly sought-after Park Lake Estate – where space, serenity, and convenience combine to offer an exceptional place to build your forever home. 🌄\r\n\r\n✨🌿 PREMIUM ACREAGE LIVING - LOTS 16 & 1"
+      }
+    },
+    {
+      "sourceRecordId": "recMKMgVtxZkxOzRJ",
+      "sourceCreatedTime": "2025-12-18T00:19:03.000Z",
+      "fields": {
+        "Name": "Sam Shaw",
+        "Subject": "Off Market Listing - 3/40 Avondale Road, Morwell",
+        "Email": "samshaw@wprci.com.au",
+        "Body": "Good morning,\r\n\r\nJust a quick email to advise that we have a new off market listing at 3/40 Avondale Road, Morwell that may be of interest to you. Please find attached a copy of the section 32 for this property for your perusal.\r\n\r\nPlease see the below li",
+        "Status": "Error 500",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/yo5wWzw9p2neXYJQV0sq4Q/M8Rua2reoWvg2tl4QhNbJt-2ZdAmySxxZfO4U8mCSRhReRBPdatHQQk6i3n5BdvnhCq865_AvpVdiSysKB_ElWI7f4GwF8u1vDnMRQJczQNQo6UEoGVI0DZHaQl70QgXLG-B9L1banZj2E85_2Uf_6hfoZAk0ZvJ18QhcpHFv_LSj0eLtpLnmBTblhgD5K59/r0HikVSY3e838yhyHUyvzXu8WzUW28l1Fy_Tg6fUpo4",
+            "filename": "outlook_email_attachment.pdf",
+            "type": "application/pdf",
+            "size": 5171545
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "recMKnXSuQvQTXCf3",
+      "sourceCreatedTime": "2026-04-18T00:51:03.000Z",
+      "fields": {
+        "Name": "Paul Farrelly",
+        "Subject": "Prime Fitzroy Corner Retail Investment | 54 Brunswick St, Fitzroy",
+        "Email": "pfarrelly@sutherlandfarrelly.com.au",
+        "Body": "AUCTION / 54 Brunswick St, Fitzroy      No Images? Click here\r\n\r\n​\r\n​\r\n\r\nAuction\r\nFRIDAY 1 MAY AT 1:00 PM ON SITE\r\n54 BRUNSWICK STREET, FITZROY\r\n​\r\n​\r\n\r\n\r\nSutherland Farrelly is pleased to offer this Prime Fitzroy Corner Retail Investment for Public Auc"
+      }
+    },
+    {
+      "sourceRecordId": "recML8OXjGtbSGdOw",
+      "sourceCreatedTime": "2025-12-02T06:37:27.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    }
+  ]
+}

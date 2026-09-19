@@ -1,0 +1,16 @@
+import assert from 'node:assert/strict';
+import { readFileSync } from 'node:fs';
+const read = path => readFileSync(new URL(`../${path}`, import.meta.url), 'utf8');
+const migration = read('supabase/migrations/20260726190000_market_source_refresh_cadence_minutes.sql');
+const admin = read('supabase/functions/market-updates-source-admin/index.ts');
+const ingest = read('supabase/functions/market-updates-ingest/index.ts');
+const service = read('src/services/marketUpdatesService.ts');
+const dialog = read('src/components/market-updates/MarketSourcesAdminDialog.tsx');
+for (const token of ['refresh_frequency_minutes between 15 and 10080','sync_market_source_legacy_refresh_hours','refresh_frequency_minutes = 60','refresh_frequency_hours * 60']) assert.ok(migration.includes(token), token);
+assert.match(admin, /refresh_frequency_hours is deprecated/);
+assert.match(admin, /next_eligible_fetch_at/);
+assert.doesNotMatch(ingest, /refresh_frequency_hours/);
+assert.match(service, /'refresh_frequency_minutes'/);
+assert.doesNotMatch(service, /'refresh_frequency_hours' \|/);
+for (const token of ['Refresh cadence (minutes)','Next eligible fetch','finally','frequencyDraft !== source.refresh_frequency_minutes','role="status"']) assert.ok(dialog.includes(token), token);
+console.log('Market Updates Phase 6 minute-cadence contract validated.');

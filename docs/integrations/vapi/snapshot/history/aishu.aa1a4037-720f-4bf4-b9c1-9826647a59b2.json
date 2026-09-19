@@ -1,0 +1,159 @@
+{
+  "assistant": "Aishu",
+  "assistantId": "aa1a4037-720f-4bf4-b9c1-9826647a59b2",
+  "note": "System prompts are replaced by promptRef; the text is in ../prompts/<ref>.md. Everything else is the API response verbatim.",
+  "versionCount": 1,
+  "versions": [
+    {
+      "createdAt": "2025-06-20T16:26:19.945Z",
+      "data": {
+        "backchannelingEnabled": true,
+        "backgroundDenoisingEnabled": true,
+        "backgroundSound": "office",
+        "clientMessages": [
+          "transcript",
+          "hang",
+          "function-call",
+          "speech-update",
+          "metadata",
+          "conversation-update"
+        ],
+        "createdAt": "2024-05-03T14:16:21.371Z",
+        "dialKeypadFunctionEnabled": false,
+        "endCallFunctionEnabled": true,
+        "endCallMessage": "Thank you for contacting Sham's Dental. Have a great day!",
+        "firstMessage": "Hello, this is Aishu from Sham's Dental Clinic. How can I assist you today?",
+        "hipaaEnabled": false,
+        "id": "aa1a4037-720f-4bf4-b9c1-9826647a59b2",
+        "model": {
+          "emotionRecognitionEnabled": true,
+          "functions": [
+            {
+              "async": false,
+              "description": "This function is used to check the clinic's availability",
+              "name": "check_availabilty",
+              "parameters": {
+                "properties": {
+                  "times": {
+                    "description": "The user's requested appointment time",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "serverUrl": "https://hook.eu2.make.com/swc0eae35kv9jg8ujalk3cea8lxg3men"
+            },
+            {
+              "async": false,
+              "description": "Use this function to book the appointment, after checking having checked for the slot's availability",
+              "name": "book_appointment",
+              "parameters": {
+                "properties": {
+                  "Contact": {
+                    "description": "",
+                    "type": "string"
+                  },
+                  "Description": {
+                    "description": "Purpose of the appointment",
+                    "type": "string"
+                  },
+                  "Email": {
+                    "description": "",
+                    "type": "string"
+                  },
+                  "Name": {
+                    "description": "",
+                    "type": "string"
+                  },
+                  "end_time": {
+                    "description": "This is end of the appointment. Save this as 30 minutes from the start time.",
+                    "type": "string"
+                  },
+                  "start_time": {
+                    "description": "Start time of the slot user wants to book. The date and time must be formated like this example:2024-04-18T12:00:00.000000+03:00",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "serverUrl": "https://hook.eu2.make.com/zev0o0v2ka0oqh9bcy5yytdnsjfc5akq"
+            },
+            {
+              "async": false,
+              "description": "Use this function to cancel an appointment, after matching the name, contact number and date/time of the appointment given by the user.",
+              "name": "Cancel_appointment",
+              "parameters": {
+                "properties": {
+                  "Email": {
+                    "description": "",
+                    "type": "string"
+                  },
+                  "Name": {
+                    "description": "Name of the customer",
+                    "type": "string"
+                  },
+                  "end_time": {
+                    "description": "This is end of the appointment. Save this as 1 hour from the start time. Make sure it is ISO format as well",
+                    "type": "string"
+                  },
+                  "start_time": {
+                    "description": "Start time of the slot to booked. Please convert the user input into ISO time format. Make sure the date is in the future relative to the current date/time",
+                    "type": "string"
+                  }
+                },
+                "type": "object"
+              },
+              "serverUrl": "https://hook.eu2.make.com/8cy4j2jsrfn9k3iz6e3ksu4m5jb3huav"
+            }
+          ],
+          "maxTokens": 500,
+          "messages": [
+            {
+              "chars": 4576,
+              "promptRef": "45f0c848af754408",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4.1",
+          "provider": "openai",
+          "temperature": 1
+        },
+        "name": "Aishu",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "recordingEnabled": true,
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://na-runtime.voiceglow.org/v2/agents/r0x0zyb31z7qsimc/vapi-event"
+        },
+        "serverMessages": [
+          "end-of-call-report",
+          "status-update",
+          "hang",
+          "function-call",
+          "conversation-update"
+        ],
+        "serverUrl": "https://na-runtime.voiceglow.org/v2/agents/r0x0zyb31z7qsimc/vapi-event",
+        "serverUrlSecret": "{{REDACTED:VAPI_SERVER_URL_SECRET}}",
+        "silenceTimeoutSeconds": 16,
+        "transcriber": {
+          "language": "en",
+          "model": "nova-2",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-06-20T16:26:19.538Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "optimizeStreamingLatency": 1,
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.6,
+          "style": 0.2,
+          "voiceId": "2zRM7PkgwBPiau2jvVXc"
+        },
+        "voicemailDetectionEnabled": false,
+        "voicemailMessage": "You've reached Mary's Dental voicemail. Please leave a message after the beep, and we'll get back to you as soon as possible."
+      },
+      "versionId": "4c357992-4df3-11f0-9578-21721433b5cc"
+    }
+  ]
+}

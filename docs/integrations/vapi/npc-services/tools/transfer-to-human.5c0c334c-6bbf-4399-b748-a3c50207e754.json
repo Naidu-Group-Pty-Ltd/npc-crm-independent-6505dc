@@ -1,0 +1,67 @@
+{
+  "async": false,
+  "createdAt": "2026-05-20T11:15:24.350Z",
+  "function": {
+    "description": "Trigger this tool only when the caller clearly asks to speak to a human, real person, team member, manager, or live representative. This tool does not perform a native Vapi transfer. It calls Make.com, which redirects the active Twilio parent call to the human team member.",
+    "name": "transfer_to_human",
+    "parameters": {
+      "properties": {
+        "callerContext": {
+          "description": "Brief context about the call so far, such as whether the caller wanted a discovery call, strategy session, initial finance consult, or had a support issue.",
+          "type": "string"
+        },
+        "transferReason": {
+          "description": "Short reason for the transfer request. Example: Caller asked to speak with a human team member.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "transferReason"
+      ],
+      "type": "object"
+    }
+  },
+  "id": "5c0c334c-6bbf-4399-b748-a3c50207e754",
+  "messages": [
+    {
+      "blocking": false,
+      "content": "",
+      "type": "request-start"
+    },
+    {
+      "content": "Sorry, I couldn’t connect you through right now. The team will still be able to help if you call back on this number.",
+      "endCallAfterSpokenEnabled": false,
+      "type": "request-failed"
+    }
+  ],
+  "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+  "parameters": [
+    {
+      "key": "callerPhone",
+      "value": "{{ customer.number }}"
+    },
+    {
+      "key": "customer_number",
+      "value": "{{ customer.number }}"
+    },
+    {
+      "key": "vapiCallId",
+      "value": "{{ call.id }}"
+    },
+    {
+      "key": "calledNumber",
+      "value": "{{ phoneNumber.number }}"
+    },
+    {
+      "key": "callType",
+      "value": "{{ call.type }}"
+    }
+  ],
+  "server": {
+    "staticIpAddressesEnabled": false,
+    "timeoutSeconds": 20,
+    "url": "https://hook.eu2.make.com/jb85m14jchgktf09sfxt4jmf8yggaw32"
+  },
+  "type": "function",
+  "updatedAt": "2026-05-20T11:15:24.350Z"
+}

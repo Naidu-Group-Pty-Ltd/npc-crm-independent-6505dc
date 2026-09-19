@@ -1,0 +1,82 @@
+name: Security — live negative tests (WP-15)
+
+# Every other security check in this repo reads source. This one is the only
+# thing that asks the DEPLOYED system whether the controls are actually there.
+#
+# It matters because the tracker is honest about the gap:
+# docs/security/CODEX_SECURITY_REMEDIATION_TRACKER.md records
+# `live_negative_test: false` on 21 of 22 findings. The source is fixed and CI
+# proves the source stays fixed; nothing has ever confirmed that the deployed
+# functions behave the way the source says. A function that was never redeployed
+# passes every static gate in this repository.
+#
+# Manual dispatch only, deliberately. It fires real requests at production, and
+# a scheduled run against a live system is a thing people learn to ignore.
+on:
+  workflow_dispatch:
+    inputs:
+      cron_target:
+        description: "Cron-worker function to probe (NT-06/07)"
+        required: false
+        default: market-updates-digest
+      internal_target:
+        description: "Internal-service function to probe (NT-09)"
+        required: false
+        default: agent-task-runner
+      run_quota_test:
+        description: >-
+          NT-29: exhaust the Google Places IP quota to prove the 429.
+          COSTS MONEY — the quota is consumed before the vendor call, so
+          reaching the limit means ~30 billable Places requests, and this
+          deployment may be spending the prime's credential. Off by default.
+        required: false
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  negative-tests:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # A named environment so the secrets below can carry a required reviewer.
+    # These reach production; approving each run is the point, not friction.
+    environment: production-verification
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 20
+
+      # No `npm ci`: the harness is dependency-free by design, so a compromised
+      # or merely broken dependency cannot ride along on a job that holds
+      # production credentials.
+      - name: Run the negative-test matrix against the deployed project
+        env:
+          SUPABASE_URL: ${{ secrets.SUPABASE_URL }}
+          SUPABASE_ANON_KEY: ${{ secrets.SUPABASE_ANON_KEY }}
+          NON_SUPERADMIN_JWT: ${{ secrets.NON_SUPERADMIN_JWT }}
+          CRON_TARGET: ${{ inputs.cron_target }}
+          INTERNAL_TARGET: ${{ inputs.internal_target }}
+          # Optional, and each unlocks one row that cannot run without it.
+          # Absent, the row records itself as `skipped` with the reason — which
+          # lands in the evidence rather than the row silently not existing.
+          OUTLOOK_WEBHOOK_CLIENT_STATE: ${{ secrets.OUTLOOK_WEBHOOK_CLIENT_STATE }}
+          RUN_QUOTA_TEST: ${{ inputs.run_quota_test }}
+        run: node scripts/security/wp15-negative-tests.mjs
+
+      # Uploaded even when the step above fails — a failing run is the evidence
+      # worth keeping, and `if: always()` is what makes that true.
+      - name: Keep the evidence
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: wp15-negative-tests
+          path: docs/security/wp15-evidence/
+          if-no-files-found: error
+          retention-days: 90

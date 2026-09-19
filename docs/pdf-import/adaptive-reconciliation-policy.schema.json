@@ -1,0 +1,118 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://npcservices.com.au/schemas/pdf-import/adaptive-reconciliation-policy.schema.json",
+  "title": "PDF Import Adaptive Reconciliation Policy",
+  "description": "Deterministic governance decision for AI reconciliation. Metadata only — never calls AI, never applies reconciliation, never stores raw PDF/OCR text.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "importId",
+    "templateId",
+    "sourceFilename",
+    "decision",
+    "severity",
+    "confidence",
+    "recommendedAction",
+    "reasons",
+    "evidence",
+    "flags",
+    "sourceSummary",
+    "warnings",
+    "blockers",
+    "generatedAt"
+  ],
+  "definitions": {
+    "evidenceItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "label", "value", "weight", "message"],
+      "properties": {
+        "code": { "type": "string" },
+        "label": { "type": "string" },
+        "value": { "type": ["string", "number", "boolean", "null"] },
+        "weight": { "type": "number" },
+        "message": { "type": "string" }
+      }
+    }
+  },
+  "properties": {
+    "version": { "type": "string", "const": "pdf-import-adaptive-reconciliation-policy-v1" },
+    "importId": { "type": ["string", "null"] },
+    "templateId": { "type": ["string", "null"] },
+    "sourceFilename": { "type": ["string", "null"] },
+    "decision": { "type": "string", "enum": ["not_needed", "optional", "recommended", "manual_review", "blocked"] },
+    "severity": { "type": "string", "enum": ["info", "low", "medium", "high", "critical"] },
+    "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "recommendedAction": {
+      "type": "string",
+      "enum": [
+        "no_action",
+        "allow_operator_choice",
+        "run_ai_reconciliation",
+        "run_ai_reconciliation_with_review",
+        "require_manual_review",
+        "block_ai_reconciliation",
+        "rerun_visual_qa_first",
+        "rerun_repair_first",
+        "rerun_export_parity_first",
+        "inspect_template_editor",
+        "inspect_repair_patterns",
+        "inspect_import_profile"
+      ]
+    },
+    "reasons": { "type": "array", "items": { "type": "string" } },
+    "evidence": { "type": "array", "items": { "$ref": "#/definitions/evidenceItem" } },
+    "flags": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "requiresOperatorConfirmation",
+        "requiresManualReview",
+        "requiresVisualQaAfterReconciliation",
+        "requiresExportParityAfterReconciliation",
+        "shouldRerunRepairBeforeReconciliation",
+        "aiAllowed",
+        "aiBlocked",
+        "canProceedWithoutAi"
+      ],
+      "properties": {
+        "requiresOperatorConfirmation": { "type": "boolean" },
+        "requiresManualReview": { "type": "boolean" },
+        "requiresVisualQaAfterReconciliation": { "type": "boolean" },
+        "requiresExportParityAfterReconciliation": { "type": "boolean" },
+        "shouldRerunRepairBeforeReconciliation": { "type": "boolean" },
+        "aiAllowed": { "type": "boolean" },
+        "aiBlocked": { "type": "boolean" },
+        "canProceedWithoutAi": { "type": "boolean" }
+      }
+    },
+    "sourceSummary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "profileCategory",
+        "importRiskLevel",
+        "primaryRepairPatternId",
+        "repairPatternSeverity",
+        "visualQaScore",
+        "repairStatus",
+        "exportParityStatus",
+        "goldenQualityGateStatus"
+      ],
+      "properties": {
+        "profileCategory": { "type": ["string", "null"] },
+        "importRiskLevel": { "type": ["string", "null"] },
+        "primaryRepairPatternId": { "type": ["string", "null"] },
+        "repairPatternSeverity": { "type": ["string", "null"] },
+        "visualQaScore": { "type": ["number", "null"] },
+        "repairStatus": { "type": ["string", "null"] },
+        "exportParityStatus": { "type": ["string", "null"] },
+        "goldenQualityGateStatus": { "type": ["string", "null"] }
+      }
+    },
+    "warnings": { "type": "array", "items": { "type": "string" } },
+    "blockers": { "type": "array", "items": { "type": "string" } },
+    "generatedAt": { "type": "string" }
+  }
+}

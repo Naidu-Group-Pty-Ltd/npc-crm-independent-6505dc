@@ -1,0 +1,15 @@
+{
+  "assistantId": "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+  "createdAt": "2025-07-11T14:26:43.290Z",
+  "fallbackDestination": {
+    "number": "+60182548567",
+    "type": "number"
+  },
+  "id": "61e6c684-6f5a-4567-aeeb-50c1552fb223",
+  "name": "NPC Services",
+  "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+  "provider": "vapi",
+  "sipUri": "sip:npc-services@sip.vapi.ai",
+  "status": "active",
+  "updatedAt": "2025-07-11T14:27:51.195Z"
+}

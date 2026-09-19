@@ -1,0 +1,142 @@
+{
+  "id": 583111,
+  "name": "My data structure",
+  "teamId": 528268,
+  "spec": [
+    {
+      "name": "callerPhone",
+      "label": "Caller phone",
+      "help": "",
+      "type": "text",
+      "default": null,
+      "required": false,
+      "multiline": false
+    },
+    {
+      "name": "twilioParentCallSid",
+      "label": "Twilio parent call sid",
+      "help": "",
+      "type": "text",
+      "default": null,
+      "required": false,
+      "multiline": false
+    },
+    {
+      "name": "twilioSipChildCallSid",
+      "label": "Twilio sip child call sid",
+      "help": "",
+      "type": "text",
+      "default": null,
+      "required": false,
+      "multiline": false
+    },
+    {
+      "name": "twilioFrom",
+      "label": "Twilio from",
+      "help": "",
+      "type": "text",
+      "default": null,
+      "required": false,
+      "multiline": false
+    },
+    {
+      "name": "twilioTo",
+      "label": "Twilio to",
+      "help": "",
+      "type": "text",
+      "default": null,
+      "required": false,
+      "multiline": false
+    },
+    {
+      "name": "vapiSipTarget",
+      "label": "Vapi sip target",
+      "help": "",
+      "type": "text",
+      "default": null,
+      "required": false,
+      "multiline": false
+    },
+    {
+      "name": "vapiCallId",
+      "label": "Vapi call ID",
+      "help": "",
+      "type": "text",
+      "default": null,
+      "required": false,
+      "multiline": false
+    },
+    {
+      "name": "status",
+      "label": "Status",
+      "help": "",
+      "type": "text",
+      "default": null,
+      "required": false,
+      "multiline": false
+    },
+    {
+      "name": "transferDestination",
+      "label": "Transfer destination",
+      "help": "",
+      "type": "text",
+      "default": null,
+      "required": false,
+      "multiline": false
+    },
+    {
+      "name": "transferRequestedAt",
+      "label": "Transfer requested at",
+      "help": "",
+      "type": "text",
+      "default": null,
+      "required": false,
+      "multiline": false
+    },
+    {
+      "name": "createdAt",
+      "label": "Created at",
+      "help": "",
+      "type": "text",
+      "default": null,
+      "required": false,
+      "multiline": false
+    },
+    {
+      "name": "updatedAt",
+      "label": "Updated at",
+      "help": "",
+      "type": "text",
+      "default": null,
+      "required": false,
+      "multiline": false
+    },
+    {
+      "name": "expiresAt",
+      "label": "Expires at",
+      "help": "",
+      "type": "text",
+      "default": null,
+      "required": false,
+      "multiline": false
+    },
+    {
+      "name": "lastError",
+      "label": "Last error",
+      "help": "",
+      "type": "text",
+      "default": null,
+      "required": false,
+      "multiline": false
+    },
+    {
+      "name": "notes",
+      "label": "Notes",
+      "help": "",
+      "type": "text",
+      "default": null,
+      "required": false,
+      "multiline": false
+    }
+  ]
+}

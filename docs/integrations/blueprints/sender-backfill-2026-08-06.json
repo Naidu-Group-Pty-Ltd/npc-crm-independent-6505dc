@@ -1,0 +1,769 @@
+{
+ "baseId": "apptyShYE0yzL4IGB",
+ "tableId": "tblWIg5cs85O30pcY",
+ "table": "Property Intake Master",
+ "appliedAt": "2026-08-06",
+ "note": "Pre-change values for the one-off backfill described in docs/integrations/FORWARDED_SENDER.md. `before` is what the record held when it was read; `after` is what was written. A null in `after` means the column was cleared. Only these three columns were written.",
+ "records": {
+  "rec0oJphBzA56XC03": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "rec13OFeA8GW4Xal9": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "rec1ZRVM0b3GNr4R0": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "rec1qB0XJOP3rPCHW": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "rec27UYosFg1wyzZm": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "rec3Ue1RPPSsdzGkl": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "rec4uOzHc2BQnIqyO": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "rec7BLXuOPaqus34v": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "rec7RagGnJJXQo8qQ": {
+   "before": {
+    "Agent Email": "feedback@raywhite.com"
+   },
+   "after": {
+    "Agent Email": null
+   }
+  },
+  "rec7vrQci3pUmYQ7n": {
+   "before": {
+    "Agent Email": "info@horshamrealestate.com.au"
+   },
+   "after": {
+    "Agent Email": null
+   }
+  },
+  "rec8rDYuNQSk2jMng": {
+   "before": {
+    "Sender Email": "lavankenobi@gmail.com",
+    "Sender Name": "Lavan Kenobi"
+   },
+   "after": {
+    "Sender Email": "email@campaign.realcommercial.com.au",
+    "Sender Name": "realcommercial.com.au"
+   }
+  },
+  "rec8tRGQRAto3tJOE": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "recAl4obbESnRkKhU": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "recD5IYuuGz7u5fT8": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "recDLrRFpQ7GkkLyv": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "recDz6EwpmFMidopA": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "recEJXW2H9zWNexVz": {
+   "before": {
+    "Sender Email": "lavankenobi@gmail.com",
+    "Sender Name": "Lavan Kenobi"
+   },
+   "after": {
+    "Sender Email": "email@campaign.realcommercial.com.au",
+    "Sender Name": "realcommercial.com.au"
+   }
+  },
+  "recEl69keFid4N6YY": {
+   "before": {
+    "Sender Email": "lavankenobi@gmail.com",
+    "Sender Name": "Lavan Kenobi"
+   },
+   "after": {
+    "Sender Email": "email@campaign.realcommercial.com.au",
+    "Sender Name": "realcommercial.com.au"
+   }
+  },
+  "recH5kpdG1DRc3GOW": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "recHOf8w4jvpTKbYn": {
+   "before": {
+    "Sender Email": "lavankenobi@gmail.com",
+    "Sender Name": "Lavan Kenobi"
+   },
+   "after": {
+    "Sender Email": "email@campaign.realcommercial.com.au",
+    "Sender Name": "realcommercial.com.au"
+   }
+  },
+  "recJPPcTyzwRgLzFC": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "recKzlJHdKdnPZ8NR": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "recM5BGnlncbRy7Vw": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "recMxcGm2rbDzooex": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "recN7CbAaSUvkCjrM": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "recNsr9TmNOyTelMa": {
+   "before": {
+    "Agent Email": "feedback@raywhite.com"
+   },
+   "after": {
+    "Agent Email": null
+   }
+  },
+  "recO6W0tSn0NnFVdm": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "recP6Wct600SFCtW6": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "recQYP6CwRAzMhEaV": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter"
+   }
+  },
+  "recRdNMcXfAEk9HnE": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "recS1LT1ZLHk5OqMd": {
+   "before": {
+    "Agent Email": "sales@offermann.com.au"
+   },
+   "after": {
+    "Agent Email": null
+   }
+  },
+  "recSFXrGqP3pC8aSI": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "recTXXxepZbpmdNt2": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "recUqSnKHueMFNP7e": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "recWGDefkaEhzFlyv": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "recWUZxmIghfYlGsJ": {
+   "before": {
+    "Agent Email": "sales@offermann.com.au"
+   },
+   "after": {
+    "Agent Email": null
+   }
+  },
+  "recWgaxs3oeRzCRhn": {
+   "before": {
+    "Agent Email": "feedback@raywhite.com"
+   },
+   "after": {
+    "Agent Email": null
+   }
+  },
+  "recWo1JMsPoST2BJI": {
+   "before": {
+    "Agent Email": "feedback@raywhite.com"
+   },
+   "after": {
+    "Agent Email": null
+   }
+  },
+  "recZ1SbsJC2a9VVPL": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "recZbbPQBYkNdtYMM": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "recamNBZ92aaiAl8c": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "receikEjamcbPmpSb": {
+   "before": {
+    "Agent Email": "feedback@raywhite.com"
+   },
+   "after": {
+    "Agent Email": null
+   }
+  },
+  "recgGJGNnnVzVd9ns": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "recge5OqcSzioCsrc": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "rechAp4vBOVkR3X0g": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "reciglDAXhUJv5AEt": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "recjeaILEz52gTTh5": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "recjkRoKGMBbz3YVi": {
+   "before": {
+    "Agent Email": "info@horshamrealestate.com.au"
+   },
+   "after": {
+    "Agent Email": null
+   }
+  },
+  "reckuARPwfZQocum6": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "recm1jpFdrf6PZwVL": {
+   "before": {
+    "Agent Email": "feedback@raywhite.com"
+   },
+   "after": {
+    "Agent Email": null
+   }
+  },
+  "reco6BD9qN6plpIMi": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "recoGusTkjuk949BC": {
+   "before": {
+    "Agent Email": "sales@offermann.com.au"
+   },
+   "after": {
+    "Agent Email": null
+   }
+  },
+  "recpIgJkPGoZs8X68": {
+   "before": {
+    "Agent Email": "mail@athertonfn.com.au"
+   },
+   "after": {
+    "Agent Email": null
+   }
+  },
+  "recppfZxSSQk4Z9zw": {
+   "before": {
+    "Agent Email": "info@raspa.com.au"
+   },
+   "after": {
+    "Agent Email": null
+   }
+  },
+  "recpzKkBvsigELUpd": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "recqsOWJHG660IieS": {
+   "before": {
+    "Sender Email": "lavankenobi@gmail.com",
+    "Sender Name": "Lavan Kenobi"
+   },
+   "after": {
+    "Sender Email": "email@campaign.realcommercial.com.au",
+    "Sender Name": "realcommercial.com.au"
+   }
+  },
+  "recrC0C9oTXI2BqSa": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "recrzN7VmDyG5R6S2": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "recsLsK6Ei5k1uPra": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "recuCtaaL4cIX9klu": {
+   "before": {
+    "Agent Email": "mail@bowenrealestate.com.au"
+   },
+   "after": {
+    "Agent Email": null
+   }
+  },
+  "recuHseEi66TvrRXV": {
+   "before": {
+    "Agent Email": "mail@bowenrealestate.com.au"
+   },
+   "after": {
+    "Agent Email": null
+   }
+  },
+  "recuS4XTkTesB2fAB": {
+   "before": {
+    "Agent Email": "mail@crebrokers.com"
+   },
+   "after": {
+    "Agent Email": null
+   }
+  },
+  "recuccgH31awDgy89": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "recuuzacQ4bATlIIo": {
+   "before": {
+    "Agent Email": "sales@offermann.com.au"
+   },
+   "after": {
+    "Agent Email": null
+   }
+  },
+  "recvcucRhBmIWYNTx": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "recxs3pS4cf418fce": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "recySODZVKy74YS1u": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "recyj7bv1sgVFQLWf": {
+   "before": {
+    "Agent Email": "info@horshamrealestate.com.au"
+   },
+   "after": {
+    "Agent Email": null
+   }
+  },
+  "recyy6WHrNBXrEvsq": {
+   "before": {
+    "Agent Email": "sales@fnlifestyle.com.au"
+   },
+   "after": {
+    "Agent Email": null
+   }
+  },
+  "recz2JPSmAGYRl0lr": {
+   "before": {
+    "Sender Email": "naidu.rugesh@gmail.com",
+    "Sender Name": "Rugesh Naidu",
+    "Agent Email": "sales@waterscarpenter.com.au"
+   },
+   "after": {
+    "Sender Email": "sales@waterscarpenter.com.au",
+    "Sender Name": "First National Real Estate Waters & Carpenter",
+    "Agent Email": null
+   }
+  },
+  "reczrnlErNBtfhvez": {
+   "before": {
+    "Agent Email": "hello@tomoro.com.au"
+   },
+   "after": {
+    "Agent Email": null
+   }
+  }
+ }
+}

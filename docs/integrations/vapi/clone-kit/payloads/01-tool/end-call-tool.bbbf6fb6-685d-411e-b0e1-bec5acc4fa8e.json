@@ -1,0 +1,20 @@
+{
+  "async": false,
+  "function": {
+    "description": "This tool should be called only after the agent has completed the closing sequence \nand said goodbye to the caller.",
+    "name": "end_call_tool",
+    "parameters": {
+      "properties": {},
+      "required": [],
+      "type": "object"
+    }
+  },
+  "messages": [
+    {
+      "blocking": true,
+      "content": "",
+      "type": "request-start"
+    }
+  ],
+  "type": "endCall"
+}

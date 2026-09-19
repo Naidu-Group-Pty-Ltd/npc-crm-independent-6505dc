@@ -1,0 +1,2009 @@
+{
+  "flow": [
+    {
+      "id": 1,
+      "mapper": {},
+      "module": "vapi:watchEndCallReport",
+      "version": 2,
+      "metadata": {
+        "restore": {
+          "parameters": {
+            "__IMTHOOK__": {
+              "data": {
+                "editable": "false"
+              },
+              "label": "NPC Active Nurturing Call Report"
+            }
+          }
+        },
+        "designer": {
+          "x": 0,
+          "y": 150
+        },
+        "parameters": [
+          {
+            "name": "__IMTHOOK__",
+            "type": "hook:vapi2",
+            "label": "Webhook",
+            "required": true
+          }
+        ]
+      },
+      "parameters": {
+        "__IMTHOOK__": 3681629
+      }
+    },
+    {
+      "id": 2,
+      "mapper": {
+        "model": "gpt-5.1-chat-latest",
+        "top_p": "1",
+        "select": "chat",
+        "messages": [
+          {
+            "role": "system",
+            "content": "Analyze this call report to see if the user was interested in performing a quiz submission: {{`1`}}\n\nOutput as structured JSON format as boolean with the key as: lead_intent"
+          }
+        ],
+        "max_tokens": "2048",
+        "temperature": "1",
+        "n_completions": "1",
+        "response_format": "text"
+      },
+      "module": "openai-gpt-3:CreateCompletion",
+      "version": 1,
+      "metadata": {
+        "expect": [
+          {
+            "name": "select",
+            "type": "select",
+            "label": "Select Method",
+            "required": true,
+            "validate": {
+              "enum": [
+                "chat",
+                "prompt"
+              ]
+            }
+          },
+          {
+            "name": "temperature",
+            "type": "number",
+            "label": "Temperature",
+            "validate": {
+              "max": 2,
+              "min": 0
+            }
+          },
+          {
+            "name": "top_p",
+            "type": "number",
+            "label": "Top P",
+            "validate": {
+              "max": 1,
+              "min": 0
+            }
+          },
+          {
+            "name": "n_completions",
+            "type": "number",
+            "label": "Number"
+          },
+          {
+            "name": "frequency_penalty",
+            "type": "number",
+            "label": "Frequency Penalty",
+            "validate": {
+              "max": 2,
+              "min": -2
+            }
+          },
+          {
+            "name": "presence_penalty",
+            "type": "number",
+            "label": "Presence Penalty",
+            "validate": {
+              "max": 2,
+              "min": -2
+            }
+          },
+          {
+            "name": "logit_bias",
+            "spec": {
+              "name": "value",
+              "spec": [
+                {
+                  "name": "token",
+                  "type": "text",
+                  "label": "Token ID",
+                  "required": true
+                },
+                {
+                  "name": "probability",
+                  "type": "number",
+                  "label": "Probability",
+                  "required": true,
+                  "validate": {
+                    "max": 100,
+                    "min": -100
+                  }
+                }
+              ],
+              "type": "collection",
+              "label": "Token Probability"
+            },
+            "type": "array",
+            "label": "Token Probability"
+          },
+          {
+            "name": "seed",
+            "type": "integer",
+            "label": "Seed"
+          },
+          {
+            "name": "tool_choice",
+            "type": "select",
+            "label": "Tool Choice",
+            "validate": {
+              "enum": [
+                "none",
+                "auto",
+                "required"
+              ]
+            }
+          },
+          {
+            "name": "stop",
+            "spec": {
+              "name": "value",
+              "type": "text",
+              "label": "Stop Sequence"
+            },
+            "type": "array",
+            "label": "Stop Sequences",
+            "validate": {
+              "maxItems": 4
+            }
+          },
+          {
+            "name": "additionalParameters",
+            "spec": {
+              "name": "value",
+              "spec": [
+                {
+                  "name": "key",
+                  "type": "text",
+                  "label": "Parameter Name",
+                  "required": true
+                },
+                {
+                  "name": "type",
+                  "type": "select",
+                  "label": "Input Type",
+                  "options": [
+                    {
+                      "label": "Text",
+                      "value": "text",
+                      "nested": [
+                        {
+                          "name": "value",
+                          "type": "text",
+                          "label": "Parameter Value"
+                        }
+                      ],
+                      "default": true
+                    },
+                    {
+                      "label": "Number",
+                      "value": "number",
+                      "nested": [
+                        {
+                          "name": "value",
+                          "type": "number",
+                          "label": "Parameter Value"
+                        }
+                      ]
+                    },
+                    {
+                      "label": "Boolean",
+                      "value": "boolean",
+                      "nested": [
+                        {
+                          "name": "value",
+                          "type": "boolean",
+                          "label": "Parameter Value"
+                        }
+                      ]
+                    },
+                    {
+                      "label": "Date",
+                      "value": "date",
+                      "nested": [
+                        {
+                          "name": "value",
+                          "type": "date",
+                          "label": "Parameter Value"
+                        }
+                      ]
+                    },
+                    {
+                      "label": "Any",
+                      "value": "any",
+                      "nested": [
+                        {
+                          "name": "value",
+                          "type": "any",
+                          "label": "Parameter Value"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "type": "collection",
+              "label": "Input Parameter"
+            },
+            "type": "array",
+            "label": "Other Input Parameters"
+          },
+          {
+            "name": "model",
+            "type": "select",
+            "label": "Model",
+            "required": true
+          },
+          {
+            "name": "max_tokens",
+            "type": "uinteger",
+            "label": "Max Output Tokens"
+          },
+          {
+            "name": "messages",
+            "spec": {
+              "name": "value",
+              "spec": [
+                {
+                  "name": "role",
+                  "type": "select",
+                  "label": "Role",
+                  "options": {
+                    "store": [
+                      {
+                        "label": "User",
+                        "value": "user",
+                        "nested": [
+                          {
+                            "help": "Text content of the message on behalf of the selected __Role__.",
+                            "name": "content",
+                            "type": "text",
+                            "label": "Text Content"
+                          }
+                        ],
+                        "default": true
+                      },
+                      {
+                        "label": "Assistant",
+                        "value": "assistant",
+                        "nested": [
+                          {
+                            "help": "Text content of the message on behalf of the selected __Role__.",
+                            "name": "content",
+                            "type": "text",
+                            "label": "Text Content"
+                          },
+                          {
+                            "mode": "edit",
+                            "name": "tool_calls",
+                            "spec": {
+                              "spec": [
+                                {
+                                  "name": "type",
+                                  "type": "hidden",
+                                  "default": "function"
+                                },
+                                {
+                                  "help": "Map this directly from the output of a previous **Create a Completion** module. Look for `Choices[]: Message.Tool Calls[]: ID`.",
+                                  "name": "id",
+                                  "type": "text",
+                                  "label": "Tool call ID"
+                                },
+                                {
+                                  "name": "function",
+                                  "spec": [
+                                    {
+                                      "help": "The name of the function previously called.",
+                                      "name": "name",
+                                      "type": "text",
+                                      "label": "Name",
+                                      "required": true
+                                    },
+                                    {
+                                      "help": "The arguments previously output by the AI.",
+                                      "name": "arguments",
+                                      "type": "text",
+                                      "label": "Arguments",
+                                      "required": true
+                                    }
+                                  ],
+                                  "type": "collection",
+                                  "label": "Function"
+                                }
+                              ],
+                              "type": "collection",
+                              "label": "Tool Call"
+                            },
+                            "type": "array",
+                            "label": "Tool Calls",
+                            "labels": {
+                              "add": "Add tool call"
+                            },
+                            "mappable": {
+                              "help": "You can map the entire `Choices[]: Message.Tool Calls` array from a previous Create a Completion module here."
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "label": "Developer / System",
+                        "value": "system",
+                        "nested": [
+                          {
+                            "help": "Text content of the message on behalf of the selected __Role__.",
+                            "name": "content",
+                            "type": "text",
+                            "label": "Text Content"
+                          }
+                        ]
+                      },
+                      {
+                        "label": "Tool",
+                        "value": "tool",
+                        "nested": [
+                          {
+                            "help": "The return of the function. This role should only be used when you have processed a previous function call and want to send the output of the function execution back to the AI.",
+                            "name": "content",
+                            "type": "text",
+                            "label": "Text Content",
+                            "required": true
+                          },
+                          {
+                            "help": "Map this directly from the output of a previous **Create a Completion** module. Look for `Choices[]: Message.Tool Calls[]: ID`.",
+                            "name": "tool_call_id",
+                            "type": "text",
+                            "label": "Tool Call ID.",
+                            "required": true
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "required": true
+                }
+              ],
+              "type": "collection",
+              "label": "Message"
+            },
+            "type": "array",
+            "label": "Messages",
+            "required": true
+          },
+          {
+            "name": "response_format",
+            "type": "select",
+            "label": "Response Format",
+            "validate": {
+              "enum": [
+                "text",
+                "json_object"
+              ]
+            }
+          },
+          {
+            "name": "reasoning_effort",
+            "type": "select",
+            "label": "Reasoning Effort",
+            "validate": {
+              "enum": [
+                "minimal",
+                "low",
+                "medium",
+                "high"
+              ]
+            }
+          }
+        ],
+        "restore": {
+          "expect": {
+            "stop": {
+              "mode": "chose"
+            },
+            "model": {
+              "mode": "chose",
+              "label": "gpt-5.1-chat-latest (system)GPT-5.1 model used in ChatGPT"
+            },
+            "select": {
+              "label": "Create a Chat Completion (GPT and o1 models)"
+            },
+            "messages": {
+              "mode": "chose",
+              "items": [
+                {
+                  "role": {
+                    "mode": "chose",
+                    "label": "Developer / System"
+                  }
+                }
+              ]
+            },
+            "logit_bias": {
+              "mode": "chose"
+            },
+            "tool_choice": {
+              "mode": "chose",
+              "label": "Empty"
+            },
+            "response_format": {
+              "mode": "chose",
+              "label": "Text"
+            },
+            "reasoning_effort": {
+              "mode": "chose",
+              "label": "Empty"
+            },
+            "additionalParameters": {
+              "mode": "chose"
+            }
+          },
+          "parameters": {
+            "__IMTCONN__": {
+              "data": {
+                "scoped": "true",
+                "connection": "openai-gpt-3"
+              },
+              "label": "Lavan OpenAI"
+            }
+          }
+        },
+        "designer": {
+          "x": 300,
+          "y": 150
+        },
+        "interface": [
+          {
+            "name": "result",
+            "type": "any",
+            "label": "Result"
+          },
+          {
+            "name": "id",
+            "type": "text",
+            "label": "ID"
+          },
+          {
+            "name": "object",
+            "type": "text",
+            "label": "Object"
+          },
+          {
+            "name": "created",
+            "type": "date",
+            "label": "Created"
+          },
+          {
+            "name": "model",
+            "type": "text",
+            "label": "Model"
+          },
+          {
+            "name": "choices",
+            "spec": [
+              {
+                "name": "text",
+                "type": "text",
+                "label": "Text"
+              },
+              {
+                "name": "index",
+                "type": "number",
+                "label": "Index"
+              },
+              {
+                "name": "logprobs",
+                "type": "text",
+                "label": "Log Probs"
+              },
+              {
+                "name": "finish_reason",
+                "type": "text",
+                "label": "Finish Reason"
+              },
+              {
+                "name": "message",
+                "spec": [
+                  {
+                    "name": "role",
+                    "type": "text",
+                    "label": "Role"
+                  },
+                  {
+                    "name": "content",
+                    "type": "text",
+                    "label": "Content"
+                  },
+                  {
+                    "name": "tool_calls",
+                    "spec": [
+                      {
+                        "name": "id",
+                        "type": "text",
+                        "label": "ID"
+                      },
+                      {
+                        "name": "type",
+                        "type": "text",
+                        "label": "Type"
+                      },
+                      {
+                        "name": "function",
+                        "spec": [
+                          {
+                            "name": "name",
+                            "type": "text",
+                            "label": "Name"
+                          },
+                          {
+                            "name": "arguments",
+                            "type": "text",
+                            "label": "Arguments"
+                          }
+                        ],
+                        "type": "collection",
+                        "label": "Function"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Tool Calls"
+                  },
+                  {
+                    "name": "refusal",
+                    "type": "text",
+                    "label": "Refusal"
+                  },
+                  {
+                    "name": "annotations",
+                    "spec": [
+                      {
+                        "name": "type",
+                        "type": "text",
+                        "label": "Type"
+                      },
+                      {
+                        "name": "url_citation",
+                        "spec": [
+                          {
+                            "name": "end_index",
+                            "type": "number",
+                            "label": "End Index"
+                          },
+                          {
+                            "name": "start_index",
+                            "type": "number",
+                            "label": "Start Index"
+                          },
+                          {
+                            "name": "title",
+                            "type": "text",
+                            "label": "Title"
+                          },
+                          {
+                            "name": "url",
+                            "type": "text",
+                            "label": "URL"
+                          }
+                        ],
+                        "type": "collection",
+                        "label": "URL Citation"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Annotations"
+                  }
+                ],
+                "type": "collection",
+                "label": "Message"
+              }
+            ],
+            "type": "array",
+            "label": "Choices"
+          },
+          {
+            "name": "usage",
+            "spec": [
+              {
+                "name": "prompt_tokens",
+                "type": "number",
+                "label": "Prompt Tokens"
+              },
+              {
+                "name": "completion_tokens",
+                "type": "text",
+                "label": "Completion Tokens"
+              },
+              {
+                "name": "total_tokens",
+                "type": "number",
+                "label": "Total Tokens"
+              },
+              {
+                "name": "prompt_tokens_details",
+                "spec": [
+                  {
+                    "name": "cached_tokens",
+                    "type": "uinteger",
+                    "label": "Cached Tokens"
+                  },
+                  {
+                    "name": "text_tokens",
+                    "type": "uinteger",
+                    "label": "Text Tokens"
+                  },
+                  {
+                    "name": "image_tokens",
+                    "type": "uinteger",
+                    "label": "Image Tokens"
+                  },
+                  {
+                    "name": "audio_tokens",
+                    "type": "uinteger",
+                    "label": "Audio Tokens"
+                  }
+                ],
+                "type": "collection",
+                "label": "Prompt Tokens Details"
+              },
+              {
+                "name": "completion_tokens_details",
+                "spec": [
+                  {
+                    "name": "reasoning_tokens",
+                    "type": "uinteger",
+                    "label": "Reasoning Tokens"
+                  },
+                  {
+                    "name": "text_tokens",
+                    "type": "uinteger",
+                    "label": "Text Tokens"
+                  },
+                  {
+                    "name": "audio_tokens",
+                    "type": "uinteger",
+                    "label": "Audio Tokens"
+                  },
+                  {
+                    "name": "accepted_prediction_tokens",
+                    "type": "uinteger",
+                    "label": "Accepted Prediction Tokens"
+                  },
+                  {
+                    "name": "rejected_prediction_tokens",
+                    "type": "uinteger",
+                    "label": "Rejected Prediction Tokens"
+                  }
+                ],
+                "type": "collection",
+                "label": "Completion Tokens Details"
+              }
+            ],
+            "type": "collection",
+            "label": "Usage"
+          },
+          {
+            "name": "service_tier",
+            "type": "text",
+            "label": "Service Tier"
+          },
+          {
+            "name": "system_fingerprint",
+            "type": "text",
+            "label": "System Fingerprint"
+          }
+        ],
+        "parameters": [
+          {
+            "name": "__IMTCONN__",
+            "type": "account:openai-gpt-3",
+            "label": "Connection",
+            "required": true
+          }
+        ]
+      },
+      "parameters": {
+        "__IMTCONN__": 1965569
+      }
+    },
+    {
+      "id": 8,
+      "mapper": {
+        "json": "{{2.result}}"
+      },
+      "module": "json:ParseJSON",
+      "version": 1,
+      "metadata": {
+        "expect": [
+          {
+            "name": "json",
+            "type": "text",
+            "label": "JSON string",
+            "required": true
+          }
+        ],
+        "restore": {
+          "parameters": {
+            "type": {
+              "label": "Choose a data structure"
+            }
+          }
+        },
+        "designer": {
+          "x": 600,
+          "y": 150
+        },
+        "parameters": [
+          {
+            "name": "type",
+            "type": "udt",
+            "label": "Data structure"
+          }
+        ]
+      },
+      "parameters": {
+        "type": ""
+      }
+    },
+    {
+      "id": 3,
+      "mapper": null,
+      "module": "builtin:BasicRouter",
+      "routes": [
+        {
+          "flow": [
+            {
+              "id": 9,
+              "mapper": {
+                "limit": "10",
+                "search": "{{1.message.call.assistantOverrides.variableValues.phone}}"
+              },
+              "module": "highlevel:searchContacts",
+              "version": 1,
+              "metadata": {
+                "expect": [
+                  {
+                    "name": "search",
+                    "type": "text",
+                    "label": "Query"
+                  },
+                  {
+                    "name": "limit",
+                    "type": "uinteger",
+                    "label": "Limit"
+                  }
+                ],
+                "restore": {
+                  "parameters": {
+                    "__IMTCONN__": {
+                      "data": {
+                        "scoped": "true",
+                        "connection": "highlevel3"
+                      },
+                      "label": "My GoHighlevel Location OAuth 2.0 connection (Location: Naidu Property Consulting Services)"
+                    }
+                  }
+                },
+                "designer": {
+                  "x": 1200,
+                  "y": 0
+                },
+                "interface": [
+                  {
+                    "name": "__IMTLENGTH__",
+                    "type": "uinteger",
+                    "label": "Total number of bundles"
+                  },
+                  {
+                    "name": "__IMTINDEX__",
+                    "type": "uinteger",
+                    "label": "Bundle order position"
+                  },
+                  {
+                    "name": "id",
+                    "type": "text",
+                    "label": "Contact ID"
+                  },
+                  {
+                    "name": "locationId",
+                    "type": "text",
+                    "label": "Location ID"
+                  },
+                  {
+                    "name": "contactName",
+                    "type": "text",
+                    "label": "Contact Name"
+                  },
+                  {
+                    "name": "firstName",
+                    "type": "text",
+                    "label": "First Name"
+                  },
+                  {
+                    "name": "lastName",
+                    "type": "text",
+                    "label": "Last Name"
+                  },
+                  {
+                    "name": "companyName",
+                    "type": "text",
+                    "label": "Company Name"
+                  },
+                  {
+                    "name": "email",
+                    "type": "text",
+                    "label": "Email"
+                  },
+                  {
+                    "name": "phone",
+                    "type": "text",
+                    "label": "Phone"
+                  },
+                  {
+                    "name": "dnd",
+                    "type": "boolean",
+                    "label": "Dnd"
+                  },
+                  {
+                    "name": "type",
+                    "type": "text",
+                    "label": "Type"
+                  },
+                  {
+                    "name": "source",
+                    "type": "text",
+                    "label": "Source"
+                  },
+                  {
+                    "name": "assignedTo",
+                    "type": "text",
+                    "label": "Assigned To"
+                  },
+                  {
+                    "name": "city",
+                    "type": "text",
+                    "label": "City"
+                  },
+                  {
+                    "name": "state",
+                    "type": "text",
+                    "label": "State"
+                  },
+                  {
+                    "name": "postalCode",
+                    "type": "text",
+                    "label": "Postal Code"
+                  },
+                  {
+                    "name": "address1",
+                    "type": "text",
+                    "label": "Address 1"
+                  },
+                  {
+                    "name": "dateOfBirth",
+                    "type": "text",
+                    "label": "Date Of Birth"
+                  },
+                  {
+                    "name": "lastActivity",
+                    "type": "number",
+                    "label": "Last Activity"
+                  },
+                  {
+                    "name": "lastConversationMessageType",
+                    "type": "number",
+                    "label": "Last Conversation Message Type"
+                  },
+                  {
+                    "name": "lastConversationId",
+                    "type": "text",
+                    "label": "Last Conversation ID"
+                  },
+                  {
+                    "name": "conversations",
+                    "spec": {
+                      "spec": [
+                        {
+                          "name": "id",
+                          "type": "text",
+                          "label": "ID"
+                        }
+                      ],
+                      "type": "collection"
+                    },
+                    "type": "array",
+                    "label": "Conversations"
+                  },
+                  {
+                    "name": "dateAdded",
+                    "type": "date",
+                    "label": "Date Added"
+                  },
+                  {
+                    "name": "dateUpdated",
+                    "type": "date",
+                    "label": "Date Updated"
+                  },
+                  {
+                    "name": "tags",
+                    "spec": {
+                      "type": "text"
+                    },
+                    "type": "array",
+                    "label": "Tags"
+                  },
+                  {
+                    "name": "followers",
+                    "type": "array",
+                    "label": "Followers"
+                  },
+                  {
+                    "name": "country",
+                    "type": "text",
+                    "label": "Country"
+                  },
+                  {
+                    "name": "timezone",
+                    "type": "text",
+                    "label": "Timezone"
+                  },
+                  {
+                    "name": "additionalEmails",
+                    "type": "array",
+                    "label": "Additional Emails"
+                  },
+                  {
+                    "name": "attributions",
+                    "spec": {
+                      "spec": [
+                        {
+                          "name": "utmSessionSource",
+                          "type": "text",
+                          "label": "Utm Session Source"
+                        },
+                        {
+                          "name": "isFirst",
+                          "type": "boolean",
+                          "label": "Is First"
+                        },
+                        {
+                          "name": "medium",
+                          "type": "text",
+                          "label": "Medium"
+                        }
+                      ],
+                      "type": "collection"
+                    },
+                    "type": "array",
+                    "label": "Attributions"
+                  },
+                  {
+                    "name": "customField",
+                    "spec": [
+                      {
+                        "name": "0LLcffxQcHxVkac2CWWQ",
+                        "type": "text",
+                        "label": "Do you currently have the capacity for an extra 5 jobs per month?"
+                      },
+                      {
+                        "name": "0MzPl9DhYnUTBTFvGOPv",
+                        "type": "text",
+                        "label": "What’s your website address? (If you have one)"
+                      },
+                      {
+                        "name": "0RIJ4WrEFEMIMjwuQm2I",
+                        "type": "text",
+                        "label": "What product or service do you sell?"
+                      },
+                      {
+                        "name": "1H0Z40LZYegh7lfsCcJE",
+                        "type": "array",
+                        "label": "When you speak to leads, are they people you want to be working with?"
+                      },
+                      {
+                        "name": "2f9wWv3iD7ij85oy5oHU",
+                        "type": "array",
+                        "label": "How soon are you looking to streamline your lead generation and marketing systems for your business?"
+                      },
+                      {
+                        "name": "2rNGYCn28Uxd65UalMyQ",
+                        "type": "text",
+                        "label": "What state do you provide your services in?"
+                      },
+                      {
+                        "name": "2tsPNMthi9dGMXpCOhYT",
+                        "type": "text",
+                        "label": "How soon would you like to start building or growing your property portfolio?"
+                      },
+                      {
+                        "name": "3xaYRPwoTVALtDPDJKv6",
+                        "type": "text",
+                        "label": "Do you have a marketing funnel?"
+                      },
+                      {
+                        "name": "4UXUa93RQlVHkpV694oj",
+                        "type": "text",
+                        "label": "Have your finances been pre-approved?"
+                      },
+                      {
+                        "name": "5fBnCN8PwsqBDPBvTmiP",
+                        "type": "text",
+                        "label": "Is your e-commerce business ready to maximise sales through social media?"
+                      },
+                      {
+                        "name": "5g4Jp9gq70dT3fE1pAGe",
+                        "type": "array",
+                        "label": "How long have your been in business?"
+                      },
+                      {
+                        "name": "6JMxuGC0qN39kzRdna7z",
+                        "type": "array",
+                        "label": "Can you keep a secret?"
+                      },
+                      {
+                        "name": "9846lu4rHFvFZqdpkNHZ",
+                        "type": "text",
+                        "label": "Do you have personal debt?"
+                      },
+                      {
+                        "name": "BHp8OttW88AUSqJIxzDX",
+                        "type": "text",
+                        "label": "In one sentence, what trade and home improvement services do you provide?",
+                        "multiline": true
+                      },
+                      {
+                        "name": "BWpvJwDicnDYohxzmOHO",
+                        "type": "text",
+                        "label": "Thank you for sharing. What’s your first name?"
+                      },
+                      {
+                        "name": "CgQkvd4ePrgAZFuCI6l2",
+                        "type": "text",
+                        "label": "What are you looking to do? "
+                      },
+                      {
+                        "name": "CwJPSt9i5HlpJzgaqSQ0",
+                        "type": "text",
+                        "label": "Do you currently own any property?"
+                      },
+                      {
+                        "name": "Dr7aIFN3NsHRX11xvLn5",
+                        "type": "text",
+                        "label": "What is your best email address?"
+                      },
+                      {
+                        "name": "F14oSCSBoVddjWlbU6QB",
+                        "type": "text",
+                        "label": "What do you feel you need the most help with in your business right now to reach your goals?"
+                      },
+                      {
+                        "name": "GjeJJJtckCaSaUL0zSPh",
+                        "type": "text",
+                        "label": "What is your main goal for refinancing?"
+                      },
+                      {
+                        "name": "HFG7jP3D6jRGlSLWi1JT",
+                        "type": "array",
+                        "label": "Are you currently running paid ads?"
+                      },
+                      {
+                        "name": "I4PKpTb355jxta4psfli",
+                        "type": "array",
+                        "label": "Who is currently responsible for your lead generation?"
+                      },
+                      {
+                        "name": "Kvo93bIKQO9pxnVjn0Xi",
+                        "type": "text",
+                        "label": "How long have you been in business?"
+                      },
+                      {
+                        "name": "LENE3oRPPNOarrCXL53P",
+                        "type": "text",
+                        "label": " What is your current residential status?"
+                      },
+                      {
+                        "name": "MLjznipIDn8JmfrdIIn6",
+                        "type": "array",
+                        "label": "Which of the following best describes you?"
+                      },
+                      {
+                        "name": "OyC30eDuhduX7fWjGOYz",
+                        "type": "text",
+                        "label": "Are you a renter, owner-occupier, or investor?"
+                      },
+                      {
+                        "name": "P93jL57c6t9igWatCRMr",
+                        "type": "text",
+                        "label": "How soon are you looking to work with us if we’re a good fit?"
+                      },
+                      {
+                        "name": "QAH7EtDOu1akTxXCYtk8",
+                        "type": "text",
+                        "label": "What is your best contact number?"
+                      },
+                      {
+                        "name": "SZTGWoY25u2bF09yUuUB",
+                        "type": "array",
+                        "label": "Last month my sales were"
+                      },
+                      {
+                        "name": "SndeaRacsPTFAP0Di0HB",
+                        "type": "text",
+                        "label": "How long have you been actively searching for a property?"
+                      },
+                      {
+                        "name": "SsUP4M5QYsQEZiUQa5CF",
+                        "type": "array",
+                        "label": "How do you currently get leads to find work? (Check all that apply) "
+                      },
+                      {
+                        "name": "VGPzIABr64g71WNbFBOC",
+                        "type": "text",
+                        "label": "Who is responsile for your lead gen?"
+                      },
+                      {
+                        "name": "XrBqOh5pobB1Tir7OlWt",
+                        "type": "text",
+                        "label": "When do you need to start getting new business leads through the door?"
+                      },
+                      {
+                        "name": "Xxz2DmGvUuBwmUzrSSC8",
+                        "type": "text",
+                        "label": "Do you have a website?"
+                      },
+                      {
+                        "name": "fiAHPeV9LZf1at4B4FYs",
+                        "type": "text",
+                        "label": "Are you a business owner?"
+                      },
+                      {
+                        "name": "kD2rJRcZpiJMFRbkgQTt",
+                        "type": "text",
+                        "label": "How many people work with you to deliver your services? (Counting your employees or subs)"
+                      },
+                      {
+                        "name": "lbktuLaniq30Fk5892Mi",
+                        "type": "text",
+                        "label": "What is your first name?"
+                      },
+                      {
+                        "name": "lcfZdyMgQQO6bmIgKUC1",
+                        "type": "text",
+                        "label": "What’s your current monthly marketing budget?"
+                      },
+                      {
+                        "name": "lepMq5SksnHjowv3LNkl",
+                        "type": "text",
+                        "label": "Are you currently doing any online marketing?"
+                      },
+                      {
+                        "name": "pVIhSoSc7lwwsmYQKWD2",
+                        "type": "text",
+                        "label": "Do you understand this is not an employment opportunity?"
+                      },
+                      {
+                        "name": "qDTVjmFwY7tBRKnAie3P",
+                        "type": "text",
+                        "label": "I understand that in order for my application to proceed or to be considered, I must book a time to speak with the team on the next page"
+                      },
+                      {
+                        "name": "rKbMmKJhycDnUxKyCNIQ",
+                        "type": "array",
+                        "label": "What is the current growth stage of your business?"
+                      },
+                      {
+                        "name": "sjEAnwBrpdwNE2hABIxV",
+                        "type": "text",
+                        "label": "What area do you provide your services in?"
+                      },
+                      {
+                        "name": "szKn2RzG0xbzN9gscKY7",
+                        "type": "array",
+                        "label": "Do you currently have a website?"
+                      },
+                      {
+                        "name": "vxlPmsUYEijfhRPNluLB",
+                        "type": "text",
+                        "label": "How much deposit (savings or equity) can you access, if required?"
+                      },
+                      {
+                        "name": "wL87rrb9tGJhR78cWSOL",
+                        "type": "array",
+                        "label": "Who is responsible for your marketing?"
+                      },
+                      {
+                        "name": "y5A3UppkxBS94Q6R0GgK",
+                        "type": "array",
+                        "label": "How many leads do you generate per week?"
+                      },
+                      {
+                        "name": "zpaOyBPgRT3SjZASased",
+                        "type": "text",
+                        "label": "How much income do you earn per year (combined, if buying with a partner)?"
+                      }
+                    ],
+                    "type": "collection",
+                    "label": "Custom Fields"
+                  }
+                ],
+                "parameters": [
+                  {
+                    "name": "__IMTCONN__",
+                    "type": "account:highlevel,highlevel3",
+                    "label": "Connection",
+                    "required": true
+                  }
+                ]
+              },
+              "parameters": {
+                "__IMTCONN__": 13061139
+              }
+            },
+            {
+              "id": 6,
+              "filter": {
+                "name": "",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{8.lead_intent}}",
+                      "b": "false",
+                      "o": "text:equal"
+                    }
+                  ]
+                ]
+              },
+              "mapper": {
+                "limit": "10",
+                "pipeline": "R7KnKoZftTi0cwnV0URN"
+              },
+              "module": "highlevel:listOpportunities",
+              "version": 1,
+              "metadata": {
+                "expect": [
+                  {
+                    "name": "pipeline",
+                    "type": "select",
+                    "label": "Pipeline ID"
+                  },
+                  {
+                    "name": "limit",
+                    "type": "uinteger",
+                    "label": "Limit"
+                  }
+                ],
+                "restore": {
+                  "expect": {
+                    "pipeline": {
+                      "mode": "chose",
+                      "label": "Voice Agent Test Pipeline"
+                    }
+                  },
+                  "parameters": {
+                    "__IMTCONN__": {
+                      "data": {
+                        "scoped": "true",
+                        "connection": "highlevel3"
+                      },
+                      "label": "My GoHighlevel Location OAuth 2.0 connection (Location: Naidu Property Consulting Services)"
+                    }
+                  }
+                },
+                "designer": {
+                  "x": 1500,
+                  "y": 0
+                },
+                "parameters": [
+                  {
+                    "name": "__IMTCONN__",
+                    "type": "account:highlevel,highlevel3",
+                    "label": "Connection",
+                    "required": true
+                  }
+                ]
+              },
+              "parameters": {
+                "__IMTCONN__": 13061139
+              }
+            },
+            {
+              "id": 5,
+              "module": "highlevel:getAnOpportunity",
+              "version": 1,
+              "metadata": {
+                "designer": {
+                  "x": 1800,
+                  "y": 0
+                }
+              }
+            },
+            {
+              "id": 4,
+              "mapper": {
+                "select": "existing",
+                "stageId": "9d3a54bc-6f16-4354-80d0-ea956e756e21",
+                "pipeline": "R7KnKoZftTi0cwnV0URN",
+                "opportunity": "hvUUFd9KA525SZzLfITi"
+              },
+              "module": "highlevel:updateAnOpportunity",
+              "version": 1,
+              "metadata": {
+                "expect": [
+                  {
+                    "mode": "edit",
+                    "name": "pipeline",
+                    "type": "select",
+                    "label": "Pipeline ID",
+                    "required": true
+                  },
+                  {
+                    "name": "title",
+                    "type": "text",
+                    "label": "Name"
+                  },
+                  {
+                    "name": "status",
+                    "type": "select",
+                    "label": "Status",
+                    "validate": {
+                      "enum": [
+                        "open",
+                        "won",
+                        "lost",
+                        "abandoned"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "assignedTo",
+                    "type": "select",
+                    "label": "Assigned To"
+                  },
+                  {
+                    "name": "monetaryValue",
+                    "type": "number",
+                    "label": "Monetary Value"
+                  },
+                  {
+                    "name": "select",
+                    "type": "select",
+                    "label": "Select a Method (Deprecated)",
+                    "required": true,
+                    "validate": {
+                      "enum": [
+                        "existing",
+                        "create"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "source",
+                    "type": "text",
+                    "label": "Source (Deprecated)"
+                  },
+                  {
+                    "name": "tags",
+                    "type": "select",
+                    "label": "Tags (Deprecated)",
+                    "multiple": true
+                  },
+                  {
+                    "name": "opportunity",
+                    "type": "select",
+                    "label": "Opportunity ID",
+                    "required": true
+                  },
+                  {
+                    "name": "stageId",
+                    "type": "select",
+                    "label": "Stage ID",
+                    "validate": {
+                      "enum": [
+                        "8e45ea9e-282d-4d7b-a8ad-92d56807f7cf",
+                        "c44a529a-34f5-44f9-96aa-938cecba0d83",
+                        "5961a718-f594-475f-b37d-e7d557629142",
+                        "cd545099-3041-41d0-8a89-2df336040360",
+                        "8bdbe13c-ac8c-45ed-80d4-bf4c275b77b9",
+                        "65e11033-5066-44df-a230-316e798b787a",
+                        "5a442801-8816-477f-9ccc-95343067f3fe",
+                        "cd2d00c5-b7e5-4bdb-999d-04c326fbc215",
+                        "8567338c-cce8-4feb-bc4b-388819d962cb",
+                        "9d3a54bc-6f16-4354-80d0-ea956e756e21"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "contact",
+                    "type": "select",
+                    "label": "Contact ID (Deprecated)"
+                  }
+                ],
+                "restore": {
+                  "expect": {
+                    "tags": {
+                      "mode": "chose"
+                    },
+                    "select": {
+                      "label": "Use an existing contact"
+                    },
+                    "status": {
+                      "mode": "chose",
+                      "label": "Empty"
+                    },
+                    "contact": {
+                      "mode": "chose",
+                      "label": "Empty"
+                    },
+                    "stageId": {
+                      "mode": "chose",
+                      "label": "Testimonials"
+                    },
+                    "pipeline": {
+                      "mode": "chose",
+                      "label": "Voice Agent Test Pipeline"
+                    },
+                    "assignedTo": {
+                      "mode": "chose",
+                      "label": "Empty"
+                    },
+                    "opportunity": {
+                      "mode": "edit"
+                    }
+                  },
+                  "parameters": {
+                    "__IMTCONN__": {
+                      "data": {
+                        "scoped": "true",
+                        "connection": "highlevel3"
+                      },
+                      "label": "My GoHighlevel Location OAuth 2.0 connection (Location: Naidu Property Consulting Services)"
+                    }
+                  }
+                },
+                "designer": {
+                  "x": 2100,
+                  "y": 0
+                },
+                "parameters": [
+                  {
+                    "name": "__IMTCONN__",
+                    "type": "account:highlevel,highlevel3",
+                    "label": "Connection",
+                    "required": true
+                  }
+                ]
+              },
+              "parameters": {
+                "__IMTCONN__": 13061139
+              }
+            }
+          ]
+        },
+        {
+          "flow": [
+            {
+              "id": 7,
+              "filter": {
+                "name": "",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{8.lead_intent}}",
+                      "b": "true",
+                      "o": "text:equal"
+                    }
+                  ]
+                ]
+              },
+              "mapper": {
+                "to": "{{1.message.customer.number}}",
+                "body": "https://scale.npcservices.com.au/active-quiz-page",
+                "from": "+61286093299",
+                "fromType": "phone",
+                "messageBody": "body"
+              },
+              "module": "twilio:SendSMS",
+              "version": 2,
+              "metadata": {
+                "expect": [
+                  {
+                    "name": "fromType",
+                    "type": "select",
+                    "label": "Send a message from",
+                    "required": true,
+                    "validate": {
+                      "enum": [
+                        "phone",
+                        "service",
+                        "channel"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "to",
+                    "type": "text",
+                    "label": "To",
+                    "required": true
+                  },
+                  {
+                    "name": "messageBody",
+                    "type": "select",
+                    "label": "Message Body",
+                    "required": true,
+                    "validate": {
+                      "enum": [
+                        "body",
+                        "template"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "mediaUrl",
+                    "spec": {
+                      "name": "value",
+                      "type": "url"
+                    },
+                    "type": "array",
+                    "label": "Media URL"
+                  },
+                  {
+                    "name": "smartEncoded",
+                    "type": "boolean",
+                    "label": "Smart encoded"
+                  },
+                  {
+                    "name": "validityPeriod",
+                    "type": "uinteger",
+                    "label": "Validity period"
+                  },
+                  {
+                    "name": "statusCallback",
+                    "type": "url",
+                    "label": "Status callback"
+                  },
+                  {
+                    "name": "applicationSid",
+                    "type": "select",
+                    "label": "Application"
+                  },
+                  {
+                    "name": "maxPrice",
+                    "type": "number",
+                    "label": "Max price"
+                  },
+                  {
+                    "name": "provideFeedback",
+                    "type": "boolean",
+                    "label": "Provide feedback"
+                  },
+                  {
+                    "name": "from",
+                    "type": "select",
+                    "label": "Phone number",
+                    "required": true
+                  },
+                  {
+                    "name": "body",
+                    "type": "text",
+                    "label": "Body",
+                    "required": true,
+                    "validate": {
+                      "max": 1600
+                    }
+                  }
+                ],
+                "restore": {
+                  "expect": {
+                    "from": {
+                      "mode": "chose",
+                      "label": "61286093299"
+                    },
+                    "fromType": {
+                      "mode": "chose",
+                      "label": "phone number"
+                    },
+                    "mediaUrl": {
+                      "mode": "chose"
+                    },
+                    "messageBody": {
+                      "mode": "chose",
+                      "label": "Create a Body"
+                    },
+                    "smartEncoded": {
+                      "mode": "chose"
+                    },
+                    "applicationSid": {
+                      "mode": "chose"
+                    },
+                    "provideFeedback": {
+                      "mode": "chose"
+                    }
+                  },
+                  "parameters": {
+                    "__IMTCONN__": {
+                      "data": {
+                        "scoped": "true",
+                        "connection": "twilio"
+                      },
+                      "label": "NPC Twilio"
+                    }
+                  }
+                },
+                "advanced": true,
+                "designer": {
+                  "x": 1200,
+                  "y": 300
+                },
+                "parameters": [
+                  {
+                    "name": "__IMTCONN__",
+                    "type": "account:twilio",
+                    "label": "Connection",
+                    "required": true
+                  }
+                ]
+              },
+              "parameters": {
+                "__IMTCONN__": 13284122
+              }
+            }
+          ]
+        }
+      ],
+      "version": 1,
+      "metadata": {
+        "designer": {
+          "x": 900,
+          "y": 150
+        }
+      }
+    }
+  ],
+  "name": "NPC Active Nurturing Call Report",
+  "metadata": {
+    "instant": true,
+    "version": 1,
+    "designer": {
+      "orphans": [],
+      "samples": {
+        "1": {
+          "message": {
+            "call": {
+              "id": "019b066a-a5fe-7887-98b2-aa9ce77b5dd7",
+              "cost": 0,
+              "type": "outboundPhoneCall",
+              "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+              "status": "scheduled",
+              "monitor": {
+                "listenUrl": "wss://phone-call-websocket.oci-us-sanjose-1-backend-production2.vapi.ai/019b066a-a5fe-7887-98b2-aa9c...",
+                "controlUrl": "https://phone-call-websocket.oci-us-sanjose-1-backend-production2.vapi.ai/019b066a-a5fe-7887-98b2-aa..."
+              },
+              "customer": {
+                "number": "+61433005110"
+              },
+              "createdAt": "2025-12-10T04:00:11.262Z",
+              "transport": {
+                "callSid": "CA7441e3ee5b5b9e69107b16d87e8122fa",
+                "provider": "twilio",
+                "accountSid": "{{SECRET:TWILIO_ACCOUNT_SID}}",
+                "conversationType": "voice"
+              },
+              "updatedAt": "2025-12-10T04:00:11.262Z",
+              "assistantId": "cc46d882-55c0-454c-82e2-ef00ae000aec",
+              "schedulePlan": {
+                "earliestAt": "2025-12-10T04:02:07.128Z"
+              },
+              "phoneNumberId": "e8d1169c-43f2-447d-9c7c-a7670b1f8f5a",
+              "phoneCallProvider": "twilio",
+              "assistantOverrides": {
+                "variableValues": {
+                  "phone": "+61433005110",
+                  "fullName": "Rugesh Testing VA 2 Naidu VA Testing",
+                  "callTitle": "Discovery Call with Rugesh from NPC Services | Rugesh Testing VA 2 Naidu VA Testing",
+                  "contactId": "QaCqIe8JFklQV9T4BNW4",
+                  "firstName": "Rugesh Testing VA 2",
+                  "currentDate": "2025-12-10T04:00:10.999Z",
+                  "currentDateUnix": "1765339210"
+                }
+              },
+              "phoneCallTransport": "pstn",
+              "phoneCallProviderId": "CA7441e3ee5b5b9e69107b16d87e8122fa"
+            },
+            "type": "status-update",
+            "status": "in-progress",
+            "artifact": {
+              "messages": [
+                {
+                  "role": "system",
+                  "time": 1765339459166,
+                  "message": "# NPC Services – “Mary” Voice Agent System Prompt\n\n*(Active Nurturing Agent – Cold Lead Reactivation...",
+                  "secondsFromStart": 0
+                }
+              ],
+              "messagesOpenAIFormatted": [
+                {
+                  "role": "system",
+                  "content": "# NPC Services – “Mary” Voice Agent System Prompt\n\n*(Active Nurturing Agent – Cold Lead Reactivation..."
+                }
+              ]
+            },
+            "customer": {
+              "number": "+61433005110"
+            },
+            "assistant": {
+              "id": "cc46d882-55c0-454c-82e2-ef00ae000aec",
+              "name": "NPC Active Nurturing",
+              "model": {
+                "model": "gpt-5.1-chat-latest",
+                "messages": [
+                  {
+                    "role": "system",
+                    "content": "# NPC Services – “Mary” Voice Agent System Prompt\n\n*(Active Nurturing Agent – Cold Lead Reactivation..."
+                  }
+                ],
+                "provider": "openai",
+                "maxTokens": 450,
+                "temperature": 0.9,
+                "knowledgeBase": {
+                  "fileIds": [
+                    "b3b1fdd2-8784-48af-aa1a-cc20740b72ff"
+                  ],
+                  "provider": "google"
+                }
+              },
+              "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+              "voice": {
+                "model": "eleven_turbo_v2_5",
+                "voiceId": "nDJIICjR9zfJExIFeSCN",
+                "provider": "11labs",
+                "stability": 0.5,
+                "similarityBoost": 0.75
+              },
+              "server": {
+                "url": "https://hook.eu2.make.com/wzvaxu6ye39jxx2w6l6jac9ab7rf4175",
+                "timeoutSeconds": 20
+              },
+              "createdAt": "2025-12-09T11:41:22.750Z",
+              "updatedAt": "2025-12-09T14:52:59.529Z",
+              "transcriber": {
+                "model": "flux-general-en",
+                "language": "en",
+                "provider": "deepgram"
+              },
+              "artifactPlan": {
+                "structuredOutputIds": [
+                  "e6a0c195-3ef9-4661-951f-bd66a801cd62"
+                ]
+              },
+              "firstMessage": "Hi there. I'm Mary, calling from Naidu Property Consulting Services. Am I speaking to Rugesh Testing...",
+              "clientMessages": [
+                "conversation-update"
+              ],
+              "endCallMessage": "Goodbye.",
+              "serverMessages": [
+                "conversation-update"
+              ],
+              "variableValues": {
+                "phone": "+61433005110",
+                "fullName": "Rugesh Testing VA 2 Naidu VA Testing",
+                "callTitle": "Discovery Call with Rugesh from NPC Services | Rugesh Testing VA 2 Naidu VA Testing",
+                "contactId": "QaCqIe8JFklQV9T4BNW4",
+                "firstName": "Rugesh Testing VA 2",
+                "currentDate": "2025-12-10T04:00:10.999Z",
+                "currentDateUnix": "1765339210"
+              },
+              "firstMessageMode": "assistant-waits-for-user",
+              "voicemailMessage": "Hi, this is Mary calling from Naidu Property Consulting Services. I was just reaching out to check i..."
+            },
+            "timestamp": 1765339459390,
+            "phoneNumber": {
+              "id": "e8d1169c-43f2-447d-9c7c-a7670b1f8f5a",
+              "name": "NPC Services",
+              "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+              "number": "+61286093299",
+              "status": "active",
+              "provider": "twilio",
+              "createdAt": "2025-12-08T08:30:32.700Z",
+              "updatedAt": "2025-12-09T15:06:51.599Z",
+              "assistantId": "bfff143e-03f7-4bc2-afbb-5734987f672f",
+              "twilioAccountSid": "{{SECRET:TWILIO_ACCOUNT_SID}}"
+            }
+          }
+        },
+        "2": {
+          "id": "chatcmpl-Cl5tEB3QZKc45CqxPdtlXfyDSAAci",
+          "model": "gpt-5.1-chat-latest",
+          "usage": {
+            "total_tokens": 4233,
+            "prompt_tokens": 4217,
+            "completion_tokens": 16,
+            "prompt_tokens_details": {
+              "audio_tokens": 0,
+              "cached_tokens": 0
+            },
+            "completion_tokens_details": {
+              "audio_tokens": 0,
+              "reasoning_tokens": 0,
+              "accepted_prediction_tokens": 0,
+              "rejected_prediction_tokens": 0
+            }
+          },
+          "object": "chat.completion",
+          "result": "{\"lead_intent\": false}",
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "{\"lead_intent\": false}",
+                "refusal": null,
+                "annotations": []
+              },
+              "finish_reason": "stop"
+            }
+          ],
+          "created": "2025-12-10T04:14:52.000Z",
+          "service_tier": "default",
+          "system_fingerprint": null
+        },
+        "6": {
+          "id": "J2FXmdS5kcZO1q6ZSwn1",
+          "name": "Rugesh Testing Va Naidu Va Testing",
+          "sort": [
+            1763948586493
+          ],
+          "source": "Facebook",
+          "status": "open",
+          "contact": {
+            "id": "QaCqIe8JFklQV9T4BNW4",
+            "name": "Rugesh Testing VA 2 Naidu VA Testing",
+            "tags": [
+              "facebook ads"
+            ],
+            "email": "naidu.rugesh@gmail.com",
+            "phone": "+61433005110",
+            "score": [],
+            "companyName": null
+          },
+          "contactId": "QaCqIe8JFklQV9T4BNW4",
+          "createdAt": "2025-11-24T01:43:06.493Z",
+          "followers": [],
+          "relations": [
+            {
+              "tags": [
+                "facebook ads"
+              ],
+              "email": "naidu.rugesh@gmail.com",
+              "phone": "+61433005110",
+              "primary": true,
+              "fullName": "Rugesh Testing VA 2 Naidu VA Testing",
+              "recordId": "QaCqIe8JFklQV9T4BNW4",
+              "objectKey": "contact",
+              "attributed": true,
+              "relationId": "J2FXmdS5kcZO1q6ZSwn1",
+              "companyName": null,
+              "contactName": "Rugesh Testing VA 2 Naidu VA Testing",
+              "associationId": "OPPORTUNITIES_CONTACTS_ASSOCIATION"
+            }
+          ],
+          "updatedAt": "2025-12-10T04:00:05.813Z",
+          "assignedTo": "AF4CAy8BZjE4WoaiSCEZ",
+          "locationId": "8guFPPbpJXYFsw5HDG28",
+          "pipelineId": "R7KnKoZftTi0cwnV0URN",
+          "__IMTINDEX__": 1,
+          "attributions": [
+            {
+              "ip": "2001:e68:5ea0:c800:b020:6260:ac72:b716",
+              "fbp": "fb.2.1763701098968.386172557989309824",
+              "url": "https://scale.npcservices.com.au/active-quiz-page",
+              "isLast": true,
+              "medium": "survey",
+              "isFirst": true,
+              "pageUrl": "https://scale.npcservices.com.au/active-quiz-page",
+              "mediumId": "i9x4gYKo6tbj3d07jjDb",
+              "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Sa...",
+              "utmSessionSource": "Direct traffic"
+            }
+          ],
+          "customFields": [],
+          "indexVersion": 2,
+          "lostReasonId": null,
+          "__IMTLENGTH__": 3,
+          "monetaryValue": 0,
+          "pipelineStageId": "8567338c-cce8-4feb-bc4b-388819d962cb",
+          "pipelineStageUId": "8567338c-cce8-4feb-bc4b-388819d962cb",
+          "lastStageChangeAt": "2025-12-10T04:00:05.798Z",
+          "lastStatusChangeAt": "2025-11-24T01:43:06.493Z"
+        },
+        "8": {
+          "lead_intent": false
+        },
+        "9": {
+          "id": "QaCqIe8JFklQV9T4BNW4",
+          "dnd": false,
+          "tags": [
+            "facebook ads"
+          ],
+          "type": "lead",
+          "email": "naidu.rugesh@gmail.com",
+          "phone": "+61433005110",
+          "source": "Facebook",
+          "country": "AU",
+          "lastName": "naidu va testing",
+          "timezone": "Australia/Sydney",
+          "dateAdded": "2025-07-09T04:01:39.457Z",
+          "firstName": "rugesh testing va 2",
+          "followers": [],
+          "assignedTo": "AF4CAy8BZjE4WoaiSCEZ",
+          "locationId": "8guFPPbpJXYFsw5HDG28",
+          "contactName": "rugesh testing va 2 naidu va testing",
+          "customField": {
+            "2tsPNMthi9dGMXpCOhYT": "As soon as possible",
+            "4UXUa93RQlVHkpV694oj": "No",
+            "CgQkvd4ePrgAZFuCI6l2": "Pay off mortgage sooner",
+            "LENE3oRPPNOarrCXL53P": "Special Category Visa",
+            "OyC30eDuhduX7fWjGOYz": "Owner-occupier",
+            "SndeaRacsPTFAP0Di0HB": "6+ Months",
+            "vxlPmsUYEijfhRPNluLB": "$60-80k",
+            "zpaOyBPgRT3SjZASased": "$85-150k"
+          },
+          "dateUpdated": "2025-12-04T03:11:38.872Z",
+          "dndSettings": {},
+          "lastNameRaw": "Naidu VA Testing",
+          "__IMTINDEX__": 1,
+          "attributions": [
+            {
+              "ip": "2001:e68:5ea0:c800:b020:6260:ac72:b716",
+              "fbp": "fb.2.1763701098968.386172557989309824",
+              "url": "https://scale.npcservices.com.au/active-quiz-page",
+              "isLast": true,
+              "medium": "survey",
+              "isFirst": true,
+              "pageUrl": "https://scale.npcservices.com.au/active-quiz-page",
+              "mediumId": "i9x4gYKo6tbj3d07jjDb",
+              "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Sa...",
+              "utmSessionSource": "Direct traffic"
+            }
+          ],
+          "firstNameRaw": "Rugesh Testing VA 2",
+          "__IMTLENGTH__": 1,
+          "additionalEmails": []
+        }
+      }
+    },
+    "scenario": {
+      "dlq": false,
+      "slots": null,
+      "dataloss": false,
+      "maxErrors": 3,
+      "autoCommit": true,
+      "roundtrips": 1,
+      "sequential": false,
+      "confidential": false,
+      "freshVariables": false,
+      "autoCommitTriggerLast": true
+    }
+  },
+  "scheduling": {
+    "type": "immediately"
+  },
+  "interface": {
+    "input": [],
+    "output": []
+  }
+}

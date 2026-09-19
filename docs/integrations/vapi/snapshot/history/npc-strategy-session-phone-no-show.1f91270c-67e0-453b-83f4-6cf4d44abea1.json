@@ -1,0 +1,1135 @@
+{
+  "assistant": "NPC Strategy Session (Phone) No Show",
+  "assistantId": "1f91270c-67e0-453b-83f4-6cf4d44abea1",
+  "note": "System prompts are replaced by promptRef; the text is in ../prompts/<ref>.md. Everything else is the API response verbatim.",
+  "versionCount": 21,
+  "versions": [
+    {
+      "createdAt": "2026-07-22T05:52:57.524Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-11-28T14:28:15.693Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Sandra, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "1f91270c-67e0-453b-83f4-6cf4d44abea1",
+        "model": {
+          "messages": [
+            {
+              "chars": 40504,
+              "promptRef": "12c2a817c04c2bc7",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "toolIds": [
+            "5c0c334c-6bbf-4399-b748-a3c50207e754",
+            "f195a817-8346-475d-ad0e-8033f1d2e283",
+            "6587bc7d-7382-4e33-a38d-95f5740df52a",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Strategy Session (Phone) No Show",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "headers": {
+            "x-vapi-webhook-secret": "{{REDACTED:VAPI_WEBHOOK_SECRET}}"
+          },
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "nova-2",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-07-22T05:52:57.494Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "02y4x5i9YrzYlFvGo1pp"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Sandra from Naidu Property Consulting Services; we weren’t able to reach you for your strategy session earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "96fed032-8591-11f1-b45a-a96105f7edbe"
+    },
+    {
+      "createdAt": "2026-05-21T07:51:14.889Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-11-28T14:28:15.693Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Sandra, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "1f91270c-67e0-453b-83f4-6cf4d44abea1",
+        "model": {
+          "messages": [
+            {
+              "chars": 40504,
+              "promptRef": "12c2a817c04c2bc7",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "toolIds": [
+            "5c0c334c-6bbf-4399-b748-a3c50207e754",
+            "f195a817-8346-475d-ad0e-8033f1d2e283",
+            "6587bc7d-7382-4e33-a38d-95f5740df52a",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Strategy Session (Phone) No Show",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "nova-2",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-05-21T07:51:14.864Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "02y4x5i9YrzYlFvGo1pp"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Sandra from Naidu Property Consulting Services; we weren’t able to reach you for your strategy session earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "d7be6b91-54e9-11f1-94f6-d97bf248a0f0"
+    },
+    {
+      "createdAt": "2026-05-21T07:42:25.745Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-11-28T14:28:15.693Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Sandra, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "1f91270c-67e0-453b-83f4-6cf4d44abea1",
+        "model": {
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 40504,
+              "promptRef": "12c2a817c04c2bc7",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "5c0c334c-6bbf-4399-b748-a3c50207e754",
+            "f195a817-8346-475d-ad0e-8033f1d2e283",
+            "6587bc7d-7382-4e33-a38d-95f5740df52a",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Strategy Session (Phone) No Show",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "nova-2",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-05-21T07:42:25.725Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "02y4x5i9YrzYlFvGo1pp"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Sandra from Naidu Property Consulting Services; we weren’t able to reach you for your strategy session earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "9c597412-54e8-11f1-8991-972e34b1ad8d"
+    },
+    {
+      "createdAt": "2026-05-21T07:41:42.693Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-11-28T14:28:15.693Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Sandra, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "1f91270c-67e0-453b-83f4-6cf4d44abea1",
+        "model": {
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 40504,
+              "promptRef": "12c2a817c04c2bc7",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "5c0c334c-6bbf-4399-b748-a3c50207e754",
+            "f195a817-8346-475d-ad0e-8033f1d2e283",
+            "6587bc7d-7382-4e33-a38d-95f5740df52a",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "a34b05ef-5218-4771-bf2b-4b171ad8f9c9"
+          ]
+        },
+        "name": "NPC Strategy Session (Phone) No Show",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "nova-2",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-05-21T07:41:42.676Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "02y4x5i9YrzYlFvGo1pp"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Sandra from Naidu Property Consulting Services; we weren’t able to reach you for your strategy session earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "82b03d52-54e8-11f1-a2d0-291d50f6029f"
+    },
+    {
+      "createdAt": "2026-03-04T08:26:18.645Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-28T14:28:15.693Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Sandra, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "1f91270c-67e0-453b-83f4-6cf4d44abea1",
+        "model": {
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 29226,
+              "promptRef": "f621662ef6cca28a",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "ed5f32e0-4c6c-4ce3-b57c-e5aae3d6427e",
+            "14577b29-19a0-4e51-86ca-3ee0886aeba2",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "6e9491be-e57b-4652-8bdf-518f90dd0de4",
+            "cfdecb25-cba0-4edc-b3cd-ecd723ae0480"
+          ]
+        },
+        "name": "NPC Strategy Session (Phone) No Show",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "nova-2",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-03-04T08:26:18.631Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "02y4x5i9YrzYlFvGo1pp"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Sandra from Naidu Property Consulting Services; we weren’t able to reach you for your strategy session earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "d1759c52-17a3-11f1-91a1-7383b2c2fa2f"
+    },
+    {
+      "createdAt": "2026-03-04T08:05:47.809Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-28T14:28:15.693Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Sandra, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "1f91270c-67e0-453b-83f4-6cf4d44abea1",
+        "model": {
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 29220,
+              "promptRef": "9c8f2ce16b20c9e4",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "ed5f32e0-4c6c-4ce3-b57c-e5aae3d6427e",
+            "14577b29-19a0-4e51-86ca-3ee0886aeba2",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "6e9491be-e57b-4652-8bdf-518f90dd0de4",
+            "cfdecb25-cba0-4edc-b3cd-ecd723ae0480"
+          ]
+        },
+        "name": "NPC Strategy Session (Phone) No Show",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "nova-2",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-03-04T08:05:47.789Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "02y4x5i9YrzYlFvGo1pp"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Sandra from Naidu Property Consulting Services; we weren’t able to reach you for your strategy session earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "f3d2ca02-17a0-11f1-b2c0-87410763c08d"
+    },
+    {
+      "createdAt": "2026-03-04T07:57:39.949Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-28T14:28:15.693Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Sandra, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "1f91270c-67e0-453b-83f4-6cf4d44abea1",
+        "model": {
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 28099,
+              "promptRef": "ab401838b68e707b",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "ed5f32e0-4c6c-4ce3-b57c-e5aae3d6427e",
+            "14577b29-19a0-4e51-86ca-3ee0886aeba2",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "6e9491be-e57b-4652-8bdf-518f90dd0de4",
+            "cfdecb25-cba0-4edc-b3cd-ecd723ae0480"
+          ]
+        },
+        "name": "NPC Strategy Session (Phone) No Show",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "nova-2",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-03-04T07:57:39.913Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "02y4x5i9YrzYlFvGo1pp"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Sandra from Naidu Property Consulting Services; we weren’t able to reach you for your strategy session earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "d10969d2-179f-11f1-a410-ed3ff67a1cff"
+    },
+    {
+      "createdAt": "2026-01-01T10:27:12.271Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-28T14:28:15.693Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Sandra, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "1f91270c-67e0-453b-83f4-6cf4d44abea1",
+        "model": {
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 27376,
+              "promptRef": "edf74b7333124a44",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "ed5f32e0-4c6c-4ce3-b57c-e5aae3d6427e",
+            "14577b29-19a0-4e51-86ca-3ee0886aeba2",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "6e9491be-e57b-4652-8bdf-518f90dd0de4",
+            "cfdecb25-cba0-4edc-b3cd-ecd723ae0480"
+          ]
+        },
+        "name": "NPC Strategy Session (Phone) No Show",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "nova-2",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-01T10:27:12.145Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "02y4x5i9YrzYlFvGo1pp"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Sandra from Naidu Property Consulting Services; we weren’t able to reach you for your strategy session earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "6f5899f1-e6fc-11f0-9bab-ffa80777a1ba"
+    },
+    {
+      "createdAt": "2025-12-13T10:18:55.896Z",
+      "data": {
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-28T14:28:15.693Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Sandra, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "1f91270c-67e0-453b-83f4-6cf4d44abea1",
+        "model": {
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 27315,
+              "promptRef": "33d878ce7823d280",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "ed5f32e0-4c6c-4ce3-b57c-e5aae3d6427e",
+            "14577b29-19a0-4e51-86ca-3ee0886aeba2",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "6e9491be-e57b-4652-8bdf-518f90dd0de4",
+            "cfdecb25-cba0-4edc-b3cd-ecd723ae0480"
+          ]
+        },
+        "name": "NPC Strategy Session (Phone) No Show",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "language": "en",
+          "model": "nova-2",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-13T10:18:55.775Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "02y4x5i9YrzYlFvGo1pp"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Sandra from Naidu Property Consulting Services; we weren’t able to reach you for your strategy session earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "21a26272-d80d-11f0-8564-c5c9402f19e6"
+    },
+    {
+      "createdAt": "2025-12-08T09:51:41.829Z",
+      "data": {
+        "compliancePlan": {
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-28T14:28:15.693Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Sandra, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "1f91270c-67e0-453b-83f4-6cf4d44abea1",
+        "model": {
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 27315,
+              "promptRef": "33d878ce7823d280",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "ed5f32e0-4c6c-4ce3-b57c-e5aae3d6427e",
+            "14577b29-19a0-4e51-86ca-3ee0886aeba2",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "6e9491be-e57b-4652-8bdf-518f90dd0de4",
+            "cfdecb25-cba0-4edc-b3cd-ecd723ae0480"
+          ]
+        },
+        "name": "NPC Strategy Session (Phone) No Show",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "nova-2",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-08T09:51:40.739Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "02y4x5i9YrzYlFvGo1pp"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Sandra from Naidu Property Consulting Services; we weren’t able to reach you for your strategy session earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "7f96f352-d41b-11f0-8b84-bf4fdddda3f8"
+    },
+    {
+      "createdAt": "2025-12-08T09:21:05.405Z",
+      "data": {
+        "createdAt": "2025-11-28T14:28:15.693Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Sandra, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "1f91270c-67e0-453b-83f4-6cf4d44abea1",
+        "model": {
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 27315,
+              "promptRef": "33d878ce7823d280",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "ed5f32e0-4c6c-4ce3-b57c-e5aae3d6427e",
+            "14577b29-19a0-4e51-86ca-3ee0886aeba2",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "6e9491be-e57b-4652-8bdf-518f90dd0de4",
+            "cfdecb25-cba0-4edc-b3cd-ecd723ae0480"
+          ]
+        },
+        "name": "NPC Strategy Session (Phone) No Show",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "nova-2",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-08T09:21:05.275Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "02y4x5i9YrzYlFvGo1pp"
+        },
+        "voicemailMessage": "Hi, this is Sandra from NPC Services; we weren’t able to reach you for your strategy session earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "38fee2d2-d417-11f0-8453-77158f573580"
+    },
+    {
+      "createdAt": "2025-12-08T05:45:11.616Z",
+      "data": {
+        "createdAt": "2025-11-28T14:28:15.693Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Sandra, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "1f91270c-67e0-453b-83f4-6cf4d44abea1",
+        "model": {
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 27315,
+              "promptRef": "33d878ce7823d280",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "ed5f32e0-4c6c-4ce3-b57c-e5aae3d6427e",
+            "14577b29-19a0-4e51-86ca-3ee0886aeba2",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "6e9491be-e57b-4652-8bdf-518f90dd0de4",
+            "cfdecb25-cba0-4edc-b3cd-ecd723ae0480"
+          ]
+        },
+        "name": "NPC Strategy Session (Phone) No Show",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "nova-2",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-08T05:45:11.483Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "02y4x5i9YrzYlFvGo1pp"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "0fef8c02-d3f9-11f0-bac0-8d6511c63205"
+    },
+    {
+      "createdAt": "2025-12-08T05:44:19.414Z",
+      "data": {
+        "createdAt": "2025-11-28T14:28:15.693Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Sandra, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "1f91270c-67e0-453b-83f4-6cf4d44abea1",
+        "model": {
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 27574,
+              "promptRef": "2d2f57dbb5e5eaeb",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "ed5f32e0-4c6c-4ce3-b57c-e5aae3d6427e",
+            "14577b29-19a0-4e51-86ca-3ee0886aeba2",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "6e9491be-e57b-4652-8bdf-518f90dd0de4",
+            "cfdecb25-cba0-4edc-b3cd-ecd723ae0480"
+          ]
+        },
+        "name": "NPC Strategy Session (Phone) No Show",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "nova-2",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-08T05:44:19.303Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "02y4x5i9YrzYlFvGo1pp"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "f0d22762-d3f8-11f0-a64f-e9868da9f11c"
+    },
+    {
+      "createdAt": "2025-12-05T07:20:46.457Z",
+      "data": {
+        "createdAt": "2025-11-28T14:28:15.693Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Sandra, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "1f91270c-67e0-453b-83f4-6cf4d44abea1",
+        "model": {
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 28179,
+              "promptRef": "c623d4abcf0d8895",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "ed5f32e0-4c6c-4ce3-b57c-e5aae3d6427e",
+            "14577b29-19a0-4e51-86ca-3ee0886aeba2",
+            "87fb4ce8-b696-4925-bfbf-8bd9678d4e36",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "6e9491be-e57b-4652-8bdf-518f90dd0de4",
+            "cfdecb25-cba0-4edc-b3cd-ecd723ae0480",
+            "a34b05ef-5218-4771-bf2b-4b171ad8f9c9"
+          ]
+        },
+        "name": "NPC Strategy Session (Phone) No Show",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "nova-2",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-05T07:20:46.336Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "02y4x5i9YrzYlFvGo1pp"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "eaed6f82-d1aa-11f0-bd64-59914a20061a"
+    },
+    {
+      "createdAt": "2025-12-05T05:47:05.102Z",
+      "data": {
+        "createdAt": "2025-11-28T14:28:15.693Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Sandra, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "1f91270c-67e0-453b-83f4-6cf4d44abea1",
+        "model": {
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 26268,
+              "promptRef": "49a0c688df29f490",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "ed5f32e0-4c6c-4ce3-b57c-e5aae3d6427e",
+            "14577b29-19a0-4e51-86ca-3ee0886aeba2",
+            "87fb4ce8-b696-4925-bfbf-8bd9678d4e36",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "6e9491be-e57b-4652-8bdf-518f90dd0de4",
+            "cfdecb25-cba0-4edc-b3cd-ecd723ae0480",
+            "a34b05ef-5218-4771-bf2b-4b171ad8f9c9"
+          ]
+        },
+        "name": "NPC Strategy Session (Phone) No Show",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "nova-2",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-05T05:47:04.990Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "02y4x5i9YrzYlFvGo1pp"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "d456e2e2-d19d-11f0-9899-8fd4568ef0d3"
+    },
+    {
+      "createdAt": "2025-12-01T05:15:01.910Z",
+      "data": {
+        "createdAt": "2025-11-28T14:28:15.693Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Sandra, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "1f91270c-67e0-453b-83f4-6cf4d44abea1",
+        "model": {
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 20724,
+              "promptRef": "3ca62c61eb5c17aa",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "ed5f32e0-4c6c-4ce3-b57c-e5aae3d6427e",
+            "14577b29-19a0-4e51-86ca-3ee0886aeba2",
+            "87fb4ce8-b696-4925-bfbf-8bd9678d4e36",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "6e9491be-e57b-4652-8bdf-518f90dd0de4",
+            "cfdecb25-cba0-4edc-b3cd-ecd723ae0480",
+            "a34b05ef-5218-4771-bf2b-4b171ad8f9c9"
+          ]
+        },
+        "name": "NPC Strategy Session (Phone) No Show",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "nova-2",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-01T05:15:01.796Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "02y4x5i9YrzYlFvGo1pp"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "b0601362-ce74-11f0-a62a-8fea6e2f657d"
+    },
+    {
+      "createdAt": "2025-12-01T05:14:02.707Z",
+      "data": {
+        "createdAt": "2025-11-28T14:28:15.693Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Sandra, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "1f91270c-67e0-453b-83f4-6cf4d44abea1",
+        "model": {
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 20724,
+              "promptRef": "3ca62c61eb5c17aa",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "ed5f32e0-4c6c-4ce3-b57c-e5aae3d6427e",
+            "14577b29-19a0-4e51-86ca-3ee0886aeba2",
+            "87fb4ce8-b696-4925-bfbf-8bd9678d4e36",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00"
+          ]
+        },
+        "name": "NPC Strategy Session (Phone) No Show",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "nova-2",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-12-01T05:14:02.584Z",
+        "voice": {
+          "model": "eleven_turbo_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "02y4x5i9YrzYlFvGo1pp"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "8d164322-ce74-11f0-8453-77158f573580"
+    },
+    {
+      "createdAt": "2025-11-28T14:40:25.522Z",
+      "data": {
+        "createdAt": "2025-11-28T14:28:15.693Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Sandra, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "1f91270c-67e0-453b-83f4-6cf4d44abea1",
+        "model": {
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 20724,
+              "promptRef": "3ca62c61eb5c17aa",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "ed5f32e0-4c6c-4ce3-b57c-e5aae3d6427e",
+            "14577b29-19a0-4e51-86ca-3ee0886aeba2",
+            "87fb4ce8-b696-4925-bfbf-8bd9678d4e36",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00"
+          ]
+        },
+        "name": "NPC Strategy Session (Phone) No Show",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "nova-2",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-11-28T14:40:25.375Z",
+        "voice": {
+          "provider": "vapi",
+          "voiceId": "Elliot"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "2d2f3922-cc68-11f0-9be0-43c1c4efc51b"
+    },
+    {
+      "createdAt": "2025-11-28T14:30:24.793Z",
+      "data": {
+        "createdAt": "2025-11-28T14:28:15.693Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Sandra, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "1f91270c-67e0-453b-83f4-6cf4d44abea1",
+        "model": {
+          "maxTokens": 450,
+          "messages": [
+            {
+              "chars": 100,
+              "promptRef": "d60105898b40b8d2",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.1-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "ed5f32e0-4c6c-4ce3-b57c-e5aae3d6427e",
+            "14577b29-19a0-4e51-86ca-3ee0886aeba2",
+            "87fb4ce8-b696-4925-bfbf-8bd9678d4e36",
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00"
+          ]
+        },
+        "name": "NPC Strategy Session (Phone) No Show",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "nova-2",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-11-28T14:30:24.741Z",
+        "voice": {
+          "provider": "vapi",
+          "voiceId": "Elliot"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "c71f4092-cc66-11f0-8308-b561b480254a"
+    },
+    {
+      "createdAt": "2025-11-28T14:28:36.387Z",
+      "data": {
+        "createdAt": "2025-11-28T14:28:15.693Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hello.",
+        "id": "1f91270c-67e0-453b-83f4-6cf4d44abea1",
+        "model": {
+          "messages": [
+            {
+              "chars": 100,
+              "promptRef": "d60105898b40b8d2",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4o",
+          "provider": "openai"
+        },
+        "name": "NPC Strategy Session (Phone) No Show",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "nova-2",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-11-28T14:28:36.321Z",
+        "voice": {
+          "provider": "vapi",
+          "voiceId": "Elliot"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "8681cf32-cc66-11f0-b559-03dbdbc66a69"
+    },
+    {
+      "createdAt": "2025-11-28T14:28:15.774Z",
+      "data": {
+        "createdAt": "2025-11-28T14:28:15.693Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hello.",
+        "id": "1f91270c-67e0-453b-83f4-6cf4d44abea1",
+        "model": {
+          "messages": [
+            {
+              "chars": 100,
+              "promptRef": "d60105898b40b8d2",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-4o",
+          "provider": "openai"
+        },
+        "name": "NPC Strategy Session No Show (Phone)",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "transcriber": {
+          "language": "en",
+          "model": "nova-2",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2025-11-28T14:28:15.693Z",
+        "voice": {
+          "provider": "vapi",
+          "voiceId": "Elliot"
+        },
+        "voicemailMessage": "Please call back when you're available."
+      },
+      "versionId": "7a3883e3-cc66-11f0-934c-110bb00ead3b"
+    }
+  ]
+}

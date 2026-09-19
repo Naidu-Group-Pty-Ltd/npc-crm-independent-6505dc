@@ -1,0 +1,2174 @@
+{
+  "assistant": "NPC Discovery Call No Show Follow Up",
+  "assistantId": "e1b76e7c-b9a2-461b-a951-e6b253a4d0d7",
+  "note": "System prompts are replaced by promptRef; the text is in ../prompts/<ref>.md. Everything else is the API response verbatim.",
+  "versionCount": 28,
+  "versions": [
+    {
+      "createdAt": "2026-07-22T05:50:56.256Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-11-26T07:06:57.790Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Tina, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "e1b76e7c-b9a2-461b-a951-e6b253a4d0d7",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 34436,
+              "promptRef": "d588dd1d13b78bc5",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "5c0c334c-6bbf-4399-b748-a3c50207e754",
+            "f195a817-8346-475d-ad0e-8033f1d2e283",
+            "6587bc7d-7382-4e33-a38d-95f5740df52a",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6"
+          ]
+        },
+        "name": "NPC Discovery Call No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "headers": {
+            "x-vapi-webhook-secret": "{{REDACTED:VAPI_WEBHOOK_SECRET}}"
+          },
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-07-22T05:50:56.237Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "xgnMn9p1V1XVuxuyuuMC"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Tina from Naidu Property Consulting Services; we weren’t able to reach you for your discovery call earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "4eb6f002-8591-11f1-9541-3d29e709b558"
+    },
+    {
+      "createdAt": "2026-05-20T21:45:23.882Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-11-26T07:06:57.790Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Tina, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "e1b76e7c-b9a2-461b-a951-e6b253a4d0d7",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 34436,
+              "promptRef": "d588dd1d13b78bc5",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "5c0c334c-6bbf-4399-b748-a3c50207e754",
+            "f195a817-8346-475d-ad0e-8033f1d2e283",
+            "6587bc7d-7382-4e33-a38d-95f5740df52a",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6"
+          ]
+        },
+        "name": "NPC Discovery Call No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-05-20T21:45:23.869Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "xgnMn9p1V1XVuxuyuuMC"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Tina from Naidu Property Consulting Services; we weren’t able to reach you for your discovery call earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "34dac992-5495-11f1-9be9-ff97ba252b96"
+    },
+    {
+      "createdAt": "2026-05-20T21:38:19.718Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-11-26T07:06:57.790Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Tina, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "e1b76e7c-b9a2-461b-a951-e6b253a4d0d7",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 34400,
+              "promptRef": "9211b6dca895787f",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e",
+            "5c0c334c-6bbf-4399-b748-a3c50207e754",
+            "f195a817-8346-475d-ad0e-8033f1d2e283",
+            "6587bc7d-7382-4e33-a38d-95f5740df52a",
+            "3e116e74-0dda-4277-ae38-468bdd3464e6"
+          ]
+        },
+        "name": "NPC Discovery Call No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-05-20T21:38:19.678Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "xgnMn9p1V1XVuxuyuuMC"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Tina from Naidu Property Consulting Services; we weren’t able to reach you for your discovery call earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "3808a662-5494-11f1-b444-9557bde9d1dc"
+    },
+    {
+      "createdAt": "2026-05-20T21:37:29.467Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false,
+          "zdrEnabled": false
+        },
+        "createdAt": "2025-11-26T07:06:57.790Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Tina, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "e1b76e7c-b9a2-461b-a951-e6b253a4d0d7",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 34400,
+              "promptRef": "9211b6dca895787f",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Discovery Call No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-05-20T21:37:29.439Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "xgnMn9p1V1XVuxuyuuMC"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Tina from Naidu Property Consulting Services; we weren’t able to reach you for your discovery call earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "1a14f4b2-5494-11f1-8cf3-15540fa9d611"
+    },
+    {
+      "createdAt": "2026-03-04T08:06:25.978Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-26T07:06:57.790Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Tina, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "e1b76e7c-b9a2-461b-a951-e6b253a4d0d7",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 33224,
+              "promptRef": "892cca7e4056e77c",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Discovery Call No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-03-04T08:06:25.964Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "xgnMn9p1V1XVuxuyuuMC"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Tina from Naidu Property Consulting Services; we weren’t able to reach you for your discovery call earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "0a9311a2-17a1-11f1-8175-bf10a41e1df7"
+    },
+    {
+      "createdAt": "2026-03-04T07:56:03.870Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-26T07:06:57.790Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Tina, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "e1b76e7c-b9a2-461b-a951-e6b253a4d0d7",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 32103,
+              "promptRef": "ca632a4939512328",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Discovery Call No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-03-04T07:56:03.856Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "xgnMn9p1V1XVuxuyuuMC"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Tina from Naidu Property Consulting Services; we weren’t able to reach you for your discovery call earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "97c4c4d2-179f-11f1-b6b7-7369f887aeec"
+    },
+    {
+      "createdAt": "2026-02-03T06:07:56.855Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-26T07:06:57.790Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Tina, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "e1b76e7c-b9a2-461b-a951-e6b253a4d0d7",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 31380,
+              "promptRef": "b1550ca0171874e2",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Discovery Call No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-02-03T06:07:56.835Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "xgnMn9p1V1XVuxuyuuMC"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Tina from Naidu Property Consulting Services; we weren’t able to reach you for your discovery call earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "af3a3c72-00c6-11f1-9627-2b921537f161"
+    },
+    {
+      "createdAt": "2026-02-03T06:01:31.924Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-26T07:06:57.790Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Tina, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "e1b76e7c-b9a2-461b-a951-e6b253a4d0d7",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 31367,
+              "promptRef": "9fd110f47ffd13b0",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Discovery Call No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-02-03T06:01:31.886Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "xgnMn9p1V1XVuxuyuuMC"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Tina from Naidu Property Consulting Services; we weren’t able to reach you for your discovery call earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "c9ca4632-00c5-11f1-9754-f7e5fb979681"
+    },
+    {
+      "createdAt": "2026-01-16T06:59:04.680Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-26T07:06:57.790Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Tina, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "e1b76e7c-b9a2-461b-a951-e6b253a4d0d7",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 31351,
+              "promptRef": "e936ea39ce3d5aa4",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Discovery Call No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-16T06:59:04.650Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "xgnMn9p1V1XVuxuyuuMC"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Tina from Naidu Property Consulting Services; we weren’t able to reach you for your discovery call earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "d85bae81-f2a8-11f0-aab3-b71a4a5953bf"
+    },
+    {
+      "createdAt": "2026-01-16T04:08:34.852Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-26T07:06:57.790Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Tina, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "e1b76e7c-b9a2-461b-a951-e6b253a4d0d7",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 31352,
+              "promptRef": "c2ca946d0e0e092c",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Discovery Call No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-16T04:08:34.822Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "xgnMn9p1V1XVuxuyuuMC"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Tina from Naidu Property Consulting Services; we weren’t able to reach you for your discovery call earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "06e7ce41-f291-11f0-ae59-a1da6ca70266"
+    },
+    {
+      "createdAt": "2026-01-16T03:52:27.751Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-26T07:06:57.790Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Tina, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "e1b76e7c-b9a2-461b-a951-e6b253a4d0d7",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 31355,
+              "promptRef": "995e98e844d28dbf",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Discovery Call No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-16T03:52:27.714Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "xgnMn9p1V1XVuxuyuuMC"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Tina from Naidu Property Consulting Services; we weren’t able to reach you for your discovery call earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "c677e772-f28e-11f0-9ce7-2b34291921a3"
+    },
+    {
+      "createdAt": "2026-01-16T03:43:02.047Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-26T07:06:57.790Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Tina, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "e1b76e7c-b9a2-461b-a951-e6b253a4d0d7",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 31347,
+              "promptRef": "4c8352a93bbca5cc",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Discovery Call No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-16T03:43:02.028Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "xgnMn9p1V1XVuxuyuuMC"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Tina from Naidu Property Consulting Services; we weren’t able to reach you for your discovery call earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "754852f2-f28d-11f0-971c-1b938fee5f91"
+    },
+    {
+      "createdAt": "2026-01-16T03:32:04.273Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-26T07:06:57.790Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Tina, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "e1b76e7c-b9a2-461b-a951-e6b253a4d0d7",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 31491,
+              "promptRef": "cf23c2c47ffcba9b",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Discovery Call No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-16T03:32:04.250Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "xgnMn9p1V1XVuxuyuuMC"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Tina from Naidu Property Consulting Services; we weren’t able to reach you for your discovery call earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "ed37fa12-f28b-11f0-b9e5-472034bf2988"
+    },
+    {
+      "createdAt": "2026-01-16T03:31:06.235Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-26T07:06:57.790Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Tina, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "e1b76e7c-b9a2-461b-a951-e6b253a4d0d7",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 31491,
+              "promptRef": "cf23c2c47ffcba9b",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Discovery Call No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-16T03:31:06.204Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "tvWD4i07Hg5L4uEvbxYV"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Tina from Naidu Property Consulting Services; we weren’t able to reach you for your discovery call earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "caa014b2-f28b-11f0-816a-fb98f5cc6d57"
+    },
+    {
+      "createdAt": "2026-01-16T03:29:29.546Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-26T07:06:57.790Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Tina, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "e1b76e7c-b9a2-461b-a951-e6b253a4d0d7",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 31491,
+              "promptRef": "cf23c2c47ffcba9b",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Discovery Call No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-16T03:29:29.521Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "roYauZ4bOLAKvVZTPLre"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Tina from Naidu Property Consulting Services; we weren’t able to reach you for your discovery call earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "90fe5b94-f28b-11f0-b215-d3349460d6e0"
+    },
+    {
+      "createdAt": "2026-01-16T03:28:42.809Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-26T07:06:57.790Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Tina, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "e1b76e7c-b9a2-461b-a951-e6b253a4d0d7",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 31491,
+              "promptRef": "cf23c2c47ffcba9b",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Discovery Call No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-16T03:28:42.790Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "9EU0h6CVtEDS6vriwwq5"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Tina from Naidu Property Consulting Services; we weren’t able to reach you for your discovery call earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "7522db82-f28b-11f0-b7a8-7d2dd67af761"
+    },
+    {
+      "createdAt": "2026-01-16T03:27:44.304Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-26T07:06:57.790Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Tina, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "e1b76e7c-b9a2-461b-a951-e6b253a4d0d7",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 31491,
+              "promptRef": "cf23c2c47ffcba9b",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Discovery Call No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-16T03:27:44.262Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "uFA9UGUhpwqGjVhz3lA2"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Tina from Naidu Property Consulting Services; we weren’t able to reach you for your discovery call earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "5243db02-f28b-11f0-b2c3-af918986ad27"
+    },
+    {
+      "createdAt": "2026-01-16T03:27:06.608Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-26T07:06:57.790Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Tina, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "e1b76e7c-b9a2-461b-a951-e6b253a4d0d7",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 31491,
+              "promptRef": "cf23c2c47ffcba9b",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Discovery Call No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-16T03:27:06.582Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "7SG1YzJ0DRGq9iGmANwb"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Tina from Naidu Property Consulting Services; we weren’t able to reach you for your discovery call earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "3bcbbff2-f28b-11f0-b5c4-170419c11656"
+    },
+    {
+      "createdAt": "2026-01-16T03:06:34.418Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-26T07:06:57.790Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Tina, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "e1b76e7c-b9a2-461b-a951-e6b253a4d0d7",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 31486,
+              "promptRef": "da6e438e10ab4517",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Discovery Call No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-16T03:06:34.400Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "7SG1YzJ0DRGq9iGmANwb"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Tina from Naidu Property Consulting Services; we weren’t able to reach you for your discovery call earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "5d5aa122-f288-11f0-a893-3151d61341f7"
+    },
+    {
+      "createdAt": "2026-01-16T03:03:48.776Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-26T07:06:57.790Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Tina, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "e1b76e7c-b9a2-461b-a951-e6b253a4d0d7",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 31507,
+              "promptRef": "b12e9e2cde453af0",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Discovery Call No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-16T03:03:48.761Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "7SG1YzJ0DRGq9iGmANwb"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Tina from Naidu Property Consulting Services; we weren’t able to reach you for your discovery call earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "fa9faa82-f287-11f0-8a6d-dfacf20f2123"
+    },
+    {
+      "createdAt": "2026-01-16T02:48:43.557Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-26T07:06:57.790Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Tina, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "e1b76e7c-b9a2-461b-a951-e6b253a4d0d7",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 31584,
+              "promptRef": "f8ba6401c0e97864",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Discovery Call No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-16T02:48:43.534Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "7SG1YzJ0DRGq9iGmANwb"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Tina from Naidu Property Consulting Services; we weren’t able to reach you for your discovery call earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "df120e42-f285-11f0-8c55-07f6ac11d36d"
+    },
+    {
+      "createdAt": "2026-01-16T02:36:17.070Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-26T07:06:57.790Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Tina, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "e1b76e7c-b9a2-461b-a951-e6b253a4d0d7",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 31127,
+              "promptRef": "5e4b8d89cd03b7ee",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Discovery Call No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-16T02:36:17.044Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "7SG1YzJ0DRGq9iGmANwb"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Tina from Naidu Property Consulting Services; we weren’t able to reach you for your discovery call earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "22212dd2-f284-11f0-8818-236f0eba9f7f"
+    },
+    {
+      "createdAt": "2026-01-16T02:02:23.507Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-26T07:06:57.790Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Tina, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "e1b76e7c-b9a2-461b-a951-e6b253a4d0d7",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 30674,
+              "promptRef": "4706c608f1870d53",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Discovery Call No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-16T02:02:23.480Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "7SG1YzJ0DRGq9iGmANwb"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Tina from Naidu Property Consulting Services; we weren’t able to reach you for your discovery call earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "66083e32-f27f-11f0-b27c-1b3dce1ec10a"
+    },
+    {
+      "createdAt": "2026-01-16T01:56:55.554Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-26T07:06:57.790Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Tina, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "e1b76e7c-b9a2-461b-a951-e6b253a4d0d7",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 30567,
+              "promptRef": "2e344e41d2f90f4c",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Discovery Call No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-16T01:56:55.531Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "7SG1YzJ0DRGq9iGmANwb"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Tina from Naidu Property Consulting Services; we weren’t able to reach you for your discovery call earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "a28e9622-f27e-11f0-82de-8f8836925c1c"
+    },
+    {
+      "createdAt": "2026-01-16T01:44:08.983Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-26T07:06:57.790Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Tina, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "e1b76e7c-b9a2-461b-a951-e6b253a4d0d7",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 30496,
+              "promptRef": "31ce04f07e8b2d37",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Discovery Call No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-16T01:44:08.929Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "7SG1YzJ0DRGq9iGmANwb"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Tina from Naidu Property Consulting Services; we weren’t able to reach you for your discovery call earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "d9a52272-f27c-11f0-8a6d-dfacf20f2123"
+    },
+    {
+      "createdAt": "2026-01-16T01:25:51.032Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-26T07:06:57.790Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Tina, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "e1b76e7c-b9a2-461b-a951-e6b253a4d0d7",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 30034,
+              "promptRef": "eae7fb8eec43824d",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Discovery Call No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-16T01:25:51.010Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "7SG1YzJ0DRGq9iGmANwb"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Tina from Naidu Property Consulting Services; we weren’t able to reach you for your discovery call earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "4b371b82-f27a-11f0-bbd8-6b495cea3326"
+    },
+    {
+      "createdAt": "2026-01-15T10:44:23.419Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-26T07:06:57.790Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Tina, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "e1b76e7c-b9a2-461b-a951-e6b253a4d0d7",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 30016,
+              "promptRef": "fe9639f275795e56",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Discovery Call No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-15T10:44:23.382Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "7SG1YzJ0DRGq9iGmANwb"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Tina from Naidu Property Consulting Services; we weren’t able to reach you for your discovery call earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "27bda5a2-f1ff-11f0-ab46-2b70331378b3"
+    },
+    {
+      "createdAt": "2026-01-15T10:03:49.491Z",
+      "data": {
+        "artifactPlan": {
+          "structuredOutputIds": [
+            "e783bfd6-fd93-4462-b5a4-abd97aac60e1",
+            "94648165-f08f-4d2e-ad13-91ec7f41d443"
+          ]
+        },
+        "compliancePlan": {
+          "hipaaEnabled": false,
+          "pciEnabled": false
+        },
+        "createdAt": "2025-11-26T07:06:57.790Z",
+        "endCallMessage": "Goodbye.",
+        "firstMessage": "Hi there. I'm Tina, calling from Naidu Property Consulting Services. Am I speaking to {{fullName}} ?",
+        "firstMessageMode": "assistant-waits-for-user",
+        "id": "e1b76e7c-b9a2-461b-a951-e6b253a4d0d7",
+        "model": {
+          "knowledgeBase": {
+            "fileIds": [
+              "9fff4149-3aec-48f0-9378-d56760390216"
+            ],
+            "provider": "google"
+          },
+          "maxTokens": 10000,
+          "messages": [
+            {
+              "chars": 30012,
+              "promptRef": "91144b8963a2fac8",
+              "role": "system"
+            }
+          ],
+          "model": "gpt-5.2-chat-latest",
+          "provider": "openai",
+          "temperature": 0.9,
+          "toolIds": [
+            "4d3ab4a4-2662-4b5a-9089-068faf7a2b00",
+            "199be122-72f1-4bbb-ada3-aedba74b59b1",
+            "4aa1a306-b057-4b0a-bcc0-f38749637ee0",
+            "bbbf6fb6-685d-411e-b0e1-bec5acc4fa8e"
+          ]
+        },
+        "name": "NPC Discovery Call No Show Follow Up",
+        "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+        "server": {
+          "timeoutSeconds": 20,
+          "url": "https://dduzbchuswwbefdunfct.supabase.co/functions/v1/vapi-call-webhook"
+        },
+        "transcriber": {
+          "eotThreshold": 0.7,
+          "eotTimeoutMs": 5000,
+          "language": "en",
+          "model": "flux-general-en",
+          "provider": "deepgram"
+        },
+        "updatedAt": "2026-01-15T10:03:49.478Z",
+        "voice": {
+          "model": "eleven_flash_v2_5",
+          "provider": "11labs",
+          "similarityBoost": 0.75,
+          "stability": 0.5,
+          "voiceId": "7SG1YzJ0DRGq9iGmANwb"
+        },
+        "voicemailDetection": {
+          "backoffPlan": {
+            "frequencySeconds": 5,
+            "maxRetries": 6,
+            "startAtSeconds": 5
+          },
+          "beepMaxAwaitSeconds": 12,
+          "provider": "vapi"
+        },
+        "voicemailMessage": "Hi, this is Tina from Naidu Property Consulting Services; we weren’t able to reach you for your discovery call earlier. If you'd like to book a new slot, feel free to call us back on this number and we'll find one that works for you."
+      },
+      "versionId": "7d01dc31-f1f9-11f0-b98d-2d878f319e12"
+    }
+  ]
+}

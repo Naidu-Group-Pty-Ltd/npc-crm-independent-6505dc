@@ -1,0 +1,147 @@
+{
+  "flow": [
+    {
+      "id": 1,
+      "mapper": {},
+      "module": "gateway:CustomWebHook",
+      "version": 1,
+      "metadata": {
+        "restore": {
+          "parameters": {
+            "hook": {
+              "data": {
+                "editable": "true"
+              },
+              "label": "NPC Property Reports"
+            }
+          }
+        },
+        "designer": {
+          "x": 0,
+          "y": 0
+        },
+        "parameters": [
+          {
+            "name": "hook",
+            "type": "hook:gateway-webhook",
+            "label": "Webhook",
+            "required": true
+          },
+          {
+            "name": "maxResults",
+            "type": "number",
+            "label": "Maximum number of results"
+          }
+        ]
+      },
+      "parameters": {
+        "hook": 3089277,
+        "maxResults": 1
+      }
+    },
+    {
+      "id": 2,
+      "mapper": {
+        "app_id": "4325ea67-077c-4f67-9417-5c545e521d2b",
+        "payload": "{\r\n  \"report\": {\r\n    \"config\": {\r\n      \"title\": \"Property Listings Report\",\r\n      \"description\": \"Weekly snapshot\",\r\n      \"author_name\": \"Your Name\",\r\n      \"company_name\": \"Your Org\",\r\n      \"generation_date\": \"2025-08-27 10:00\",\r\n      \"custom_notes\": \"Notes…\",\r\n      \"include_kpis\": true,\r\n      \"include_suburb_chart\": true,\r\n      \"include_property_type_chart\": true,\r\n      \"include_price_range_chart\": true,\r\n      \"include_bedroom_chart\": true\r\n    },\r\n    \"kpis\": { \"total_listings\": 42, \"avg_price\": 712000, \"recent_30d\": 18, \"unique_suburbs\": 12 },\r\n    \"analytics\": {\r\n      \"velocity\": {\"label\": \"Uptrend\", \"delta\": 12.5},\r\n      \"price\": {\"median\": 690000, \"q1\": 580000, \"q3\": 820000, \"iqr\": 240000},\r\n      \"quality\": {\"avg_confidence\": 0.72, \"completeness\": 93},\r\n      \"coverage\": {\"suburbs\": 28, \"saturation\": \"Medium\"}\r\n    },\r\n    \"insights\": [\r\n      {\"category\":\"positive\",\"priority\":\"high\",\"severity\":\"low\",\"text\":\"Strong buyer interest in WA coastal suburbs.\"},\r\n      {\"category\":\"warning\",\"priority\":\"medium\",\"severity\":\"medium\",\"text\":\"Rents rising faster than sales in inner-city pockets.\"}\r\n    ],\r\n    \"charts\": {\r\n      \"daily_activity_url\": \"https://…/daily.png\",\r\n      \"avg_price_url\": \"https://…/avg.png\",\r\n      \"confidence_url\": \"https://…/conf.png\",\r\n      \"suburb_matrix_url\": \"https://…/matrix.png\",\r\n      \"suburb_volume_url\": \"https://…/suburbs.png\",\r\n      \"price_volume_scatter_url\": \"https://…/scatter.png\",\r\n      \"agency_size_url\": \"https://…/agency.png\",\r\n      \"agent_volume_url\": \"https://…/agent.png\",\r\n      \"suburb_bar_url\": \"https://…/suburb-bar.png\",\r\n      \"property_type_pie_url\": \"https://…/type-pie.png\",\r\n      \"price_range_bar_url\": \"https://…/price-bar.png\",\r\n      \"bedroom_bar_url\": \"https://…/beds-bar.png\"\r\n    },\r\n    \"listings\": [\r\n      {\r\n        \"address\":\"15 Smith Street\",\r\n        \"suburb\":\"Boulder\",\r\n        \"state\":\"WA\",\r\n        \"postcode\":\"6430\",\r\n        \"property_type\":\"House\",\r\n        \"price\":359000,\r\n        \"beds\":3,\"baths\":1,\"car\":2,\r\n        \"confidence\":0.82\r\n      }\r\n    ],\r\n    \"generated_at\":\"2025-08-27T10:00:00Z\"\r\n  }\r\n}\r\n​",
+        "document_template_id": "7aec76ff-8f2d-4ee2-b6b4-b964a452c9f3"
+      },
+      "module": "pdfmonkey:GenerateDocument",
+      "version": 1,
+      "metadata": {
+        "expect": [
+          {
+            "name": "app_id",
+            "type": "select",
+            "label": "App",
+            "required": true
+          },
+          {
+            "name": "payload",
+            "type": "text",
+            "label": "Dynamic Data (JSON Payload)"
+          },
+          {
+            "name": "meta",
+            "type": "text",
+            "label": "Meta Data (JSON)"
+          },
+          {
+            "name": "document_template_id",
+            "type": "select",
+            "label": "Template",
+            "required": true
+          }
+        ],
+        "restore": {
+          "expect": {
+            "app_id": {
+              "mode": "chose",
+              "label": "Lavan Kenobi"
+            },
+            "document_template_id": {
+              "mode": "chose",
+              "label": "NPC Property Report"
+            }
+          },
+          "parameters": {
+            "__IMTCONN__": {
+              "data": {
+                "scoped": "true",
+                "connection": "pdfmonkey"
+              },
+              "label": "My PDFMonkey connection"
+            }
+          }
+        },
+        "designer": {
+          "x": 300,
+          "y": 0
+        },
+        "parameters": [
+          {
+            "name": "__IMTCONN__",
+            "type": "account:pdfmonkey",
+            "label": "Connection",
+            "required": true
+          },
+          {
+            "name": "status",
+            "type": "hidden"
+          }
+        ]
+      },
+      "parameters": {
+        "status": "pending",
+        "__IMTCONN__": 11136891
+      }
+    }
+  ],
+  "name": "Integration Webhooks, PDFMonkey",
+  "metadata": {
+    "instant": true,
+    "version": 1,
+    "designer": {
+      "orphans": []
+    },
+    "scenario": {
+      "dlq": false,
+      "slots": null,
+      "dataloss": false,
+      "maxErrors": 3,
+      "autoCommit": true,
+      "roundtrips": 1,
+      "sequential": false,
+      "confidential": false,
+      "freshVariables": false,
+      "autoCommitTriggerLast": true
+    }
+  },
+  "scheduling": {
+    "type": "immediately"
+  },
+  "interface": {
+    "input": [],
+    "output": []
+  }
+}

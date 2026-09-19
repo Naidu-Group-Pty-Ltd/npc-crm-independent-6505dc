@@ -1,0 +1,20 @@
+{
+  "createdAt": "2026-05-07T03:06:47.284Z",
+  "id": "f9126d1f-a913-4481-8f3a-a051324fb476",
+  "name": "Tool Failed Count",
+  "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+  "queries": [
+    {
+      "filters": [],
+      "on": "assistant.tool.failed",
+      "operation": "count",
+      "table": "events",
+      "type": "vapiql-json"
+    }
+  ],
+  "timeRange": {
+    "start": "-1h"
+  },
+  "type": "text",
+  "updatedAt": "2026-05-07T03:06:47.284Z"
+}

@@ -1,0 +1,12 @@
+GRANT SELECT ON public.market_sources TO authenticated;
+GRANT ALL ON public.market_sources TO service_role;
+GRANT SELECT ON public.market_updates TO authenticated;
+GRANT ALL ON public.market_updates TO service_role;
+GRANT SELECT ON public.market_digests TO authenticated;
+GRANT ALL ON public.market_digests TO service_role;
+GRANT SELECT ON public.market_ingestion_runs TO authenticated;
+GRANT ALL ON public.market_ingestion_runs TO service_role;
+GRANT SELECT ON public.market_source_fetch_runs TO authenticated;
+GRANT ALL ON public.market_source_fetch_runs TO service_role;
+GRANT SELECT ON public.market_update_questions TO authenticated;
+GRANT ALL ON public.market_update_questions TO service_role;

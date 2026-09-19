@@ -1,0 +1,99 @@
+{
+ "baseId": "appFNPL7iYiuQyHAO",
+ "name": "Send Confirmation Email on New Business Readiness Response",
+ "description": null,
+ "trigger": {
+  "type": "recordCreated",
+  "inputs": {
+   "tableId": "tbl3VGRV7xBvSSGlq"
+  }
+ },
+ "nodes": [
+  {
+   "key": "wacAxR2BPuOFW5qqg",
+   "type": "findRecords",
+   "inputs": {
+    "limit": 1,
+    "tableId": "tblaSuqLKa00rqdtu",
+    "queryType": "filtersObj",
+    "filtersObj": {
+     "obj": {
+      "operator": "and",
+      "operands": {
+       "tuple": [
+        {
+         "obj": {
+          "operator": "hasAnyOf",
+          "operands": {
+           "tuple": [
+            "fldUuGfjWiOFdjNed",
+            [
+             {
+              "$ref": "trigger",
+              "path": [
+               "id"
+              ]
+             }
+            ]
+           ]
+          }
+         }
+        }
+       ]
+      }
+     }
+    }
+   }
+  },
+  {
+   "key": "wacEm1dVhPHCFb45T",
+   "type": "sendEmail",
+   "inputs": {
+    "to": [
+     {
+      "template": [
+       {
+        "fn": "map",
+        "args": [
+         {
+          "fn": "map",
+          "args": [
+           {
+            "$ref": "wacAxR2BPuOFW5qqg",
+            "path": [
+             "records"
+            ]
+           },
+           {
+            "fn": "propertyGetter",
+            "args": [
+             "cellValuesByFieldId"
+            ]
+           }
+          ]
+         },
+         {
+          "fn": "propertyGetter",
+          "args": [
+           "fldZAPWsWXVyqHMdR"
+          ]
+         }
+        ]
+       }
+      ]
+     }
+    ],
+    "subject": {
+     "template": [
+      "Your Aurixa Readiness Profile Has Been Received"
+     ]
+    },
+    "message": {
+     "template": [
+      "Thank you for completing the Business Readiness Questionnaire. Our team will review your information against your organisation's operational, technical and implementation requirements. We aim to complete the initial review within two business days and will contact you at this email address with next steps."
+     ]
+    }
+   }
+  }
+ ]
+}

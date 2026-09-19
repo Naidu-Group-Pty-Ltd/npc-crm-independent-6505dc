@@ -1,0 +1,493 @@
+{
+  "table": "Emails",
+  "batch": 50,
+  "of": 107,
+  "recordCount": 50,
+  "records": [
+    {
+      "sourceRecordId": "recS3okOJJIYfPUD4",
+      "sourceCreatedTime": "2025-10-17T04:34:18.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recS6GTtYO9TXy0io",
+      "sourceCreatedTime": "2025-10-07T03:41:24.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recS6etnO9GUarRg1",
+      "sourceCreatedTime": "2026-03-31T01:20:39.000Z",
+      "fields": {
+        "Name": "Sam Shaw",
+        "Subject": "Off Market Opportunity - 7 Wilkerson Way, Traralgon",
+        "Email": "samshaw@wprci.com.au",
+        "Body": "﻿Good afternoon,\r\n\r\nJust a quick email to advise that we have a new off market listing at 7 Wilkerson Way, Traralgon that may be of interest to you. Please find attached a copy of the section 32 for this property for your perusal.\r\n\r\nPlease see the below ",
+        "Status": "Error 500",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/l6TFQqO8IoG2zHGCnFHgRA/0vT_7KFXxKaiXDv0oLBBNaH779DYYp28iwMLUkPfQgeepkOgCoUTudUFUmqKSWpBk77TY3TfqgSfnPa51ijXhb2B6AJ_BGqPwIQIWMKY_QHwBPPmhBuFvDP3vm5B50zVO7rxEdf-ZrL9NcisgwuS7G8jTLveeC3_EP6ETomICbXwV1Uuie9fLdqVC6SifNzm/1k2YArJSrOAtPkj8aw_7DpsO5gcahPn7CQ92TtRgnWI",
+            "filename": "outlook_email_attachment.pdf",
+            "type": "application/pdf",
+            "size": 3797650
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "recS7VtFJnqw0cdhD",
+      "sourceCreatedTime": "2025-09-22T19:52:24.000Z",
+      "fields": {
+        "Name": "Scott Swingler",
+        "Subject": "Pre-Register Now For Our Exciting Array Of New Season Listings… Coming Soon!",
+        "Email": "scott@shore-property.com.au",
+        "Body": "Want to change how you receive these emails?\r\nYou can click to unsubscribe from this list.\r\n \r\nDiscover\r\n \r\n\r\nSold in 10 Days!\r\n\r\n\r\n\r\n$19,995,000.\r\n\r\n(Nearly Sold Out!)\r\n\r\n\r\n\r\nBuyers Missed Out!\r\n\r\n\r\n\r\nConsidering Selling?\r\n\r\n\r\n\r\nWe are predicting the mos"
+      }
+    },
+    {
+      "sourceRecordId": "recS7W9DsvDmzX8OA",
+      "sourceCreatedTime": "2025-10-10T11:22:57.000Z",
+      "fields": {
+        "Name": "Jon Mordue",
+        "Subject": "BUILT Apartments Available for Sale from $520,000",
+        "Email": "jon@projectpropertysales.com.au",
+        "Body": "BUILT STOCKLIST\r\n\r\n__________________________________________________________________________________________________________\r\n\r\n\r\n\r\n\r\n\r\nHighgate Hill, The Hills Apartments – Completion end of September 2025\r\n\r\n  *   2 x 2 bedroom priced at $1,350,000\r\n  "
+      }
+    },
+    {
+      "sourceRecordId": "recS7rxXyXPmWoMhv",
+      "sourceCreatedTime": "2026-06-10T04:27:45.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recS8EAryzflk274l",
+      "sourceCreatedTime": "2025-11-20T10:16:17.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recS8h3fUtn9M8Bnw",
+      "sourceCreatedTime": "2026-02-20T03:35:24.000Z",
+      "fields": {
+        "Name": "Rohan Banning",
+        "Subject": "Your Property Update [New Listing Alert]",
+        "Email": "rohanbanning@remax.com.au",
+        "Body": "07 3157 5836\r\nremaxcentralres.com.au\r\nNew Listings\r\n\r\nHi Rugesh,\r\n\r\nWe've listed some new properties that I think you might be interested in.\r\n\r\n**Please click on the photo to find a price guide within the property fact sheet.\r\n\r\nGive me a call if you hav",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSA406OmaAmIKQl",
+      "sourceCreatedTime": "2026-03-06T05:22:44.000Z",
+      "fields": {
+        "Name": "Marty Maher",
+        "Subject": "Great Ocean Properties Weekly Update",
+        "Email": "marty@greatoceanproperties.com.au",
+        "Body": "Welcome\r\n\r\n\r\nGreat Ocean Properties Weekly Update\r\n\r\n\r\n\r\nDear Rugesh\r\n\r\nHello and welcome to your weekly update direct from the coast.\r\n\r\nSome beautiful surf on the coast the last two days resulting in us having to call several board meetings in",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSAMz1Culw2f0Sj",
+      "sourceCreatedTime": "2026-01-20T00:59:59.000Z",
+      "fields": {
+        "Name": "Michael Enever",
+        "Subject": "NEW Price Property - EASTWOOD - Harcourts",
+        "Email": "michael.enever@harcourts.com.au",
+        "Body": "Hi Rugesh,\r\n\r\nPlease see the below property in EASTWOOD a suburb of Bairnsdale featuring a new price that may interest you or someone that you know.\r\nIf you would like further information about the property shown, or to discuss your property require"
+      }
+    },
+    {
+      "sourceRecordId": "recSCobf4Tyh2z8s6",
+      "sourceCreatedTime": "2025-12-01T21:40:21.000Z",
+      "fields": {
+        "Name": "Rick Holloway",
+        "Subject": "FW: Two part stock Registered.",
+        "Email": "rick@thebobtraskgroup.com.au",
+        "Body": "HIGH  YIELD $1,110 PER WEEK\r\nLimited stock All Offers Considered\r\nSecondary Dwelling Stock\r\nMORAYFIELD\r\nTWO PART INVESTMENT’S\r\nGOING QUICK\r\nMoreton Bay (50km north of Brisbane)\r\n\r\nRegards\r\n\r\n“Whatever you need, if we don’t have it, we can find it and we c",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSCx3C4F7DEUnh5",
+      "sourceCreatedTime": "2026-01-30T00:22:15.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSD3t5RoOdx8UGF",
+      "sourceCreatedTime": "2026-02-27T22:37:00.000Z",
+      "fields": {
+        "Name": "Robyn Faa",
+        "Subject": "Rugesh - Let's update your details 📝",
+        "Email": "robyn@robynfaa.com.au",
+        "Body": "Let's update your details\r\n\r\nTo help us provide you with the most relevant information possible, please take a moment to answer a few questions to help us better understand your real estate needs. Click the link below to update and confirm your details to",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSDWLlVRyJb1rt3",
+      "sourceCreatedTime": "2025-12-03T22:54:40.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSE6B9RHv9JlYUX",
+      "sourceCreatedTime": "2025-12-18T03:26:53.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSEYaO7rLdfT3pH",
+      "sourceCreatedTime": "2026-03-23T06:40:23.000Z",
+      "fields": {
+        "Name": "Patti Stanley",
+        "Subject": "44 Kiandra Way, High Wycombe New Off Market Listing Launch!!",
+        "Email": "pattistanley@centurionrealestate.net.au",
+        "Body": "44 Kiandra Way, High Wycombe\r\nOffers from $799,000\r\n3\r\nBed     1\r\nBath    1\r\nCar\r\nPositioned in a quiet, established pocket of High Wycombe, this well-presented home at 44 Kiandra Way offers a reliable investment opportunity with excellent long-term growt",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSFOWcQhi96uS1d",
+      "sourceCreatedTime": "2025-09-03T00:11:06.000Z",
+      "fields": {
+        "Name": "Adam Bettison",
+        "Subject": "Just Listed | 11 Pindi Court, South Guildford",
+        "Email": "adam.bettison@housesmart.com.au",
+        "Body": "[https://resize.lockedoncloud.com/w:300-lovii/13/ac/9c/16/33/08/47/45/a8/4c/db/31/1d/e7/52/af.jpg] Just Listed - 11 Pindi Court Hi Rugesh,\n\nAs a valued client of HouseSmart - we are pleased to present you with the latest listing that matches your criteria.\n\nLet us know if you'd like to come to the next home open, if you have any questions, or would like to make an offer!\n\nIf this property does not match what you are after, please take a moment to update your buying preferences by clicking the button below.\n\nFollow us on Instagram to get a sneak-peek at upcoming listings!\n\nUpdate my criteria [https://open.lockedoncloud.com/ls/click?upn=u001.grSFijfx9QwcGN69aE-2BVAoEPfuAfSy5Ks6c-2Bn1nEvSLX2ObFNPWd4CyiIqokNNeZLSBImWEDTb0UhFJS-2FWXbTuz4k-2Fj0O43QBrxBJ4zlzwiX3B2Z1Ohs171j-2Fwq9HNnYspDbjlmYjIitDx4qPK0e2zCcJDy1J5fcZdowvA1EKHQj2L4u8nQJEKyNKc-2F231HkGdXr71d4feuBMFCZ7jPhYxL1ehwjCzkTEymnpmUVNGkwIdAcSvGfrDniGcKoRV5oDA-2BHYl-2Ft6j4OVTv8Ol6iwpw6PNHfICkBVuexXyPYiIE-3Dvm3t_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNP9FTRpZW8lvJFo1xdNKy4iaNfvSn6C0mGVmK9YMkTDGmo6ISpAw4Hc2EHSc6HEngn442BzeIAaTSrevMrbqzgAIfVJ2m18uVsdyZs2P9-2FAJJ0DBRW9nkh5x8VX2o22-2BGuHHZW2pU8gLPWCDksO27W1y-2F2Y5FDnIE9CuwO3MEUYQRHRuUCfKSCT0DhJfM-2B7-2FqAYdqc1rr-2F6Bdz38xtasc3TPeQ8KP750VaJdqUFvFnp3ttrBySG238yZ-2F2mPgCjyka78NMRipDE1Hso-2F4yY-2FsptA-3D-3D]Say hello on Instagram [https://open.lockedoncloud.com/ls/click?upn=u001.UoJk9c7Fu9zG2Voz7TGO0Bo5wV6v9fbUhHa8GotdxWz0qj5RBp-2FLQxmF-2B2FAlLTPIop-2F0BYQCZwYHg4pu5WV1A-3D-3DCqm1_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNP9FTRpZW8lvJFo1xdNKy4iaNfvSn6C0mGVmK9YMkTDGmo6ISpAw4Hc2EHSc6HEngn442BzeIAaTSrevMrbqzgAIfVJ2m18uVsdyZs2P9-2FAJJ0DBRW9nkh5x8VX2o22-2BGuAFCur-2FYlN-2Bma2mF3h98ymfmnlGoxAy-2FNKweC9ThL7QOBUawxxLogT7k7m1JSsfUEDzKxgUyMBSxJvl0qebSnZfcmC2jSmtBwNaQxyRKnWvWIGKgWukLrb5k2PhY9oQZgZa1zeW7z2I2meMeEv5mZPg-3D-3D][https://resize.lockedoncloud.com/w:1300-lovii/25/57/d9/24/e4/34/42/8d/82/d3/15/0f/02/09/65/01.jpg] [https://open.lockedoncloud.com/ls/click?upn=u001.tWMArd79sd2M8kyJfTWHQUbqamgFHfZiYbIMUJWBDlxti3LzHY1hbRNAwXDeBnIFaIFlQ-2F-2BtWepHOk9TQkmgTCczWU6HPQ-2F4Wp6yzRcYiEnmAQYHboh0OXx5O13MxQ3Sp0HfljR6wgEq9SPvDEt0GU0XOoRRkasBhwnG4nYudWSN6rGGSa0mASwDzw9z3g63TO903k-2BbVjrHKXjoB1A-2F8sTKy44jDaBr8geg2yPNDPo5nNc7fL4gZiDAeeXHmOff0iicsnQFfZ26-2F-2BViuRsj2iJKaCq4dMV95sKj-2Fsb0wr4QTOcPBEC72chibA84OQGbAq7i-2BPfQNZ-2BhR53RicW37Em6yMvbYFsrTTERdBYJcFZVRTqHQ9QYEPs7WxbHtkuTViwSMQu9-2Bggyu6jhpxICBOVqotHXhGijBeQRWqd8s6h9L2ofnJuGo7grhT6iVIixTPw6huHYS9ts4x3yRJtJQhU74xYhCBvSAxIaP-2Bh3uNWZHeSRz-2FX9Tg-2FaQ5-2FwZ66kMtNDjakrB6R-2FnqTVKZFRvdiwJjlImKxK3QOpt58mrvQy7sw3lZQzc5sevrEHA4sbTMSVlvhUIG4asQ-2BtetQTYhU-2BuqAJ2lTqOnzgvc9PhAAuxZhw3ezNIVScWjKKfU3JsRfA-2FfuFfhi6PjNeEoYAELMcMUvReRsjIFQy5sxwTARk13kT0BRCrcQCvbqBBLU5y4cTCY2UM5V1R-2BVoYLJFC7fszhNvM0twWjrTSGixbVOZ0MA6dXjHNGpVSS8Tagyvf3kgNqQjsHmDxt63nhBFbA-3D-3DUJ-M_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNP9FTRpZW8lvJFo1xdNKy4iaNfvSn6C0mGVmK9YMkTDGmo6ISpAw4Hc2EHSc6HEngn442BzeIAaTSrevMrbqzgAIfVJ2m18uVsdyZs2P9-2FAJJ0DBRW9nkh5x8VX2o22-2BGuHRBXflDhus9aEIXYEytlqcNK-2FwUp3CWWewZDoX-2BVufD2eecjaAK0rqUK1RQqsTwtDvL5tYHKJmOSGiamjcoZ07pBC-2BA3ZKLrMUYjBI-2FBrn9a4ucVhT4gNQeaUumIoGbUR0Fgcvp3AO8dfxDF2HwdHw-3D-3D]11 Pindi Court, South Guildford \nFrom $789,000 4\nBed 2\nBath 2 \nCar Large Family Home with Family Room, Outdoor Patio & Huge Backyard!Welcome to this absolutely refreshing four-bedroom, two-bathroom property tucked away in a secluded position within South Guildford. Featuring a huge block size of approximately 534 square metres, this property has more than enough room for the growing family. With around 140 square metres of internal floorspace - including a large living area, separate family room, and spacious bedroom sizes - this property is the perfect next home. Don't miss out!\n\nProperty Highlights:\n• Four-bedroom, two-bathroom property\n• Built approximately 2002\n• Total lot area of approximately 534 square metres\n• Internal floorspace of approximately 140 square metres\n• Secluded position to the back of Pindi Court\n• Double carport, with pedestrian access to rear backyard\n• Welcoming entry zone leading to large family room to the front of the home\n• Built-in cabinetry to the family room\n• Main bedroom to the front of the house, with air conditioning, private ensuite and large walk-in robe\n• Minor bedrooms to the rear of the property, featuring built-in robes\n• Main living and dining area next to central kitchen\n• Air conditioning unit covering main living/dining area\n• Large windows for lots of natural light\n• Kitchen features overhead rangehood, gas hotplates, lots of cabinetry\n• Sliding door access to outdoor area\n• Patio with raised roof, perfect for outdoor entertainment\n• Built-in bar area\n• Backyard with lawn area, plus garden shed for storage View [https://open.lockedoncloud.com/ls/click?upn=u001.tWMArd79sd2M8kyJfTWHQUbqamgFHfZiYbIMUJWBDlxti3LzHY1hbRNAwXDeBnIFaIFlQ-2F-2BtWepHOk9TQkmgTCczWU6HPQ-2F4Wp6yzRcYiEnmAQYHboh0OXx5O13MxQ3Sp0HfljR6wgEq9SPvDEt0GU0XOoRRkasBhwnG4nYudWSN6rGGSa0mASwDzw9z3g63TO903k-2BbVjrHKXjoB1A-2F8sTKy44jDaBr8geg2yPNDPo5nNc7fL4gZiDAeeXHmOff0iicsnQFfZ26-2F-2BViuRsj2iJKaCq4dMV95sKj-2Fsb0wr4QTOcPBEC72chibA84OQGbAq7i-2BPfQNZ-2BhR53RicW37Em6yMvbYFsrTTERdBYJcFZVRTqHQ9QYEPs7WxbHtkuTViwSMQu9-2Bggyu6jhpxICBOVqotHXhGijBeQRWqd8s6h9L2ofnJuGo7grhT6iVIixTPw6huHYS9ts4x3yRJtJQhU74xYhCBvSAxIaP-2Bh3uNXpxXoFOC0OmkEPQjd2wdYXTkin6U6b5n2JDxooZlukHcx1RnqyGOeJ6Ovkgehh74M5HRthoF3ZCKrTGzzCLdY1qE2SV7-2FP2YxXpzymRez13t9Smgwtg8vJtWn62oc4pT2mq8ItUKbs7coHhGyF6bNrqxZ3MPFMLARiWXAJCXKve1ApPIoPifOGQtnnEGMgd3moY0FjCU07vUD5qHslhXZ42zN2riRKqhd2h9XzC2aOP0tx2pEhYzULKHzgBVllbkhgEAr-2B7TnkWkh2s8MfFm8Zszlk_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNP9FTRpZW8lvJFo1xdNKy4iaNfvSn6C0mGVmK9YMkTDGmo6ISpAw4Hc2EHSc6HEngn442BzeIAaTSrevMrbqzgAIfVJ2m18uVsdyZs2P9-2FAJJ0DBRW9nkh5x8VX2o22-2BGuTZRZJL1UB-2B1ijGBrKQL3rc0-2F2SGdjCGgKq2hEJcLzMPO65JiSofVHUme10w6HzsfioKaEyjENzZaIqk6JEs-2BJZMsfEisvttCkEdgmvdHLH-2FxynQvGMuJMYWynaNh6-2F-2Bbu5vaH3KHO0jEPCXo-2Bmr40Q-3D-3D]\nWatch Video [https://open.lockedoncloud.com/ls/click?upn=u001.tWMArd79sd2M8kyJfTWHQUbqamgFHfZiYbIMUJWBDlxti3LzHY1hbRNAwXDeBnIFaIFlQ-2F-2BtWepHOk9TQkmgTCczWU6HPQ-2F4Wp6yzRcYiEnmAQYHboh0OXx5O13MxQ3Sp0HfljR6wgEq9SPvDEt0GU0XOoRRkasBhwnG4nYudWSN6rGGSa0mASwDzw9z3g63TO903k-2BbVjrHKXjoB1A-2F8sTKy44jDaBr8geg2yPNDPo5nNc7fL4gZiDAeeXHmOff0iicsnQFfZ26-2F-2BViuRsj2iJKaCq4dMV95sKj-2Fsb0wr4QTOcPBEC72chibA84OQGbAq7i-2BPfQNZ-2BhR53RicW37Em6yMvbYFsrTTERdBYJcFZVRTqHQ9QYEPs7WxbHtkuTViwSMQu9-2Bggyu6jhpxICBOVqotHXhGijBeQRWqd8s6h9L2ofnJuGo7grhT6iVIixTPw6huHYS9ts4x3yRJtJQhU74xYhCBvSAxIaP-2Bh3uNXpxXoFOC0OmkEPQjd2wdYX-2FSawvcr1p6IgRV4PNW-2Fw-2FLK1FCIkN2bzrNQETScUvHrsFuTYZDQkfESulizG2Bqt746C-2F9gYsqBKsYMJF19A6-2BD0wR3npTwM4uhAmpWK0NIpWJsbm6hHBB70vxH7wtSAAUAMmu1JieDgz8PeImKAPTiZ-2FbGIzWBImdnEkcS1smVOJ2rldzIzXdZQThHKlpEfZIl2tSyp1BckWcLvnGz9GA-3D-3DEkpk_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNP9FTRpZW8lvJFo1xdNKy4iaNfvSn6C0mGVmK9YMkTDGmo6ISpAw4Hc2EHSc6HEngn442BzeIAaTSrevMrbqzgAIfVJ2m18uVsdyZs2P9-2FAJJ0DBRW9nkh5x8VX2o22-2BGuVkNGnomO4LcViWJ-2BT0CVg5L0z19Pmw6s0q7j7u30qXC0-2Fk1uX-2Fm5upz7PpSMOGbvwvuYv8WcPzql-2BPioKncgMPAJBczEneR2kQa-2FldWS6DQAVFbAr8jCgjWvKonzj1n51E62j8hRHVCJZe1gkG2qfA-3D-3D]INSPECT\nBy appointment only KEY DETAILS \nLand size: 534 sqm\nWater rates: $1,200 per annum\n[https://resize.lockedoncloud.com/w:300-lovii/f7/b2/e4/0f/84/3d/48/75/81/1a/5b/5a/59/40/6f/b7.jpg] Adam Bettison\nEmail [adam.bettison@housesmart.com.au] | 0409 929 128 Kind Regards,\n\nAdam Bettison \nManaging Director \nShop 18 & 19, 222 - 226 Belmont Avenue, Cloverdale WA 6105 \n\nM: 0409 929 128\nE: adam.bettison@housesmart.com.au\nwww.housesmart.com.au\n\n\n[https://resize.lockedoncloud.com/w:490-lovii/8f/16/d8/17/a3/09/4d/47/b4/f9/c5/e3/7c/13/3f/92.jpg] Attention:\nThe information contained in this message and or attachments is intended only for the person or entity to which it is addressed and may contain confidential and/or privileged material. Any review, retransmission, dissemination or other use of, or taking of any action in reliance upon, this information by persons or entities other than the intended recipient is prohibited. If you received this in error, please contact the sender and delete the material from any system and destroy any copies. \n\n\n\nThis email was sent to property@npcservices.com.au from Adam Bettison at HouseSmart Real Estate Pty Ltd\nShop 18 & 19/222-226 Belmont Avenue, Cloverdale\n- www.housesmart.com.au \n\nUpdate your preferences [https://open.lockedoncloud.com/ls/click?upn=u001.grSFijfx9QwcGN69aE-2BVAoEPfuAfSy5Ks6c-2Bn1nEvSJn5qfrQ4RvIFRcxfkZ35c9nG7Rc1Rbq21MOp3KeAX10CIPbYMO280vTrEhHzTBquGvgB5TxitxuEIKjZzTsNRqfUGTvdE5JL2SieJHkTWnuo-2FRshGsVWrDD-2BcH47zEYCBkr0QDaxCUXUVjIEtvl3LN-2Fe87QRhjM3FAamZ-2FaBmiUr7k3wiezXNOx6YjviXv58UAKQZw8hsp0kXQM9ZA6eN9ZJcUkbUBZ5-2BaTjG2IQ9vqS4WKF6vCG-2FMyzhRplkrQaM-3DtMKs_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNP9FTRpZW8lvJFo1xdNKy4iaNfvSn6C0mGVmK9YMkTDGmo6ISpAw4Hc2EHSc6HEngn442BzeIAaTSrevMrbqzgAIfVJ2m18uVsdyZs2P9-2FAJJ0DBRW9nkh5x8VX2o22-2BGuVsdKzbMm0AhPMrNZZxAF9D-2FAlIKpp6mXeu1MlSGhdULq40JVQkG-2B5hNLZnC7EmNx7vkWl8HaCJEW-2FO48uV7MWb05xE4y-2BZYaPdGrmXcn1RT3fyJJkp5-2F1zz01IVQ7dh3930A-2Bd2AIMIltx-2Bh-2BzvutQ-3D-3D] | Unsubscribe [https://open.lockedoncloud.com/ls/click?upn=u001.grSFijfx9QwcGN69aE-2BVAoEPfuAfSy5Ks6c-2Bn1nEvSJn5qfrQ4RvIFRcxfkZ35c9nG7Rc1Rbq21MOp3KeAX10CIPbYMO280vTrEhHzTBquGvgB5TxitxuEIKjZzTsNRqfUGTvdE5JL2SieJHkTWnuo-2FRshGsVWrDD-2BcH47zEYCBkr0QDaxCUXUVjIEtvl3LN-2Fe87QRhjM3FAamZ-2FaBmiUr7k3wiezXNOx6YjviXv58UAKQZw8hsp0kXQM9ZA6eN9ZJcUkbUBZ5-2BaTjG2IQ9vqS4WKF6vCG-2FMyzhRplkrQaM-3DRBOe_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNP9FTRpZW8lvJFo1xdNKy4iaNfvSn6C0mGVmK9YMkTDGmo6ISpAw4Hc2EHSc6HEngn442BzeIAaTSrevMrbqzgAIfVJ2m18uVsdyZs2P9-2FAJJ0DBRW9nkh5x8VX2o22-2BGu0Lnr68vAxDT-2BaEBziVuMxPREnWtR3M3CkxzVa0Qzqk8AfWmjZ8U70Lv3-2B4u7YQzOzmdT0FSnTRzV6cICfLGzeX68SOcgr1yysug-2FzDSFZmBfjyZajxhmAFefZbvm2DDSMBAZRBPPCIWrXcoUfJyNQA-3D-3D] \n\nPowered by LockedOn [https://open.lockedoncloud.com/ls/click?upn=u001.z9OfLo0WsjRLa1-2FMRE80hdSH4WkrlzjGvST-2B-2Ffjb6dQ-3DCTxc_o9OphbTDuGKQRZelrKhVrw1ROC-2Fe9eIoWQn9yQAdZKEochLgc-2F-2F6wNEENNDz3sNP9FTRpZW8lvJFo1xdNKy4iaNfvSn6C0mGVmK9YMkTDGmo6ISpAw4Hc2EHSc6HEngn442BzeIAaTSrevMrbqzgAIfVJ2m18uVsdyZs2P9-2FAJJ0DBRW9nkh5x8VX2o22-2BGuV-2FmGCn-2BuNfzgJoVI-2FrmbaGl-2FgVC-2Fb8ge3iFMUBWVlaNpwdr9EqKt4Rkbq19Cab6ptrG3X1Bn8DKrf-2FbWl6VhdF4dgTNzU-2FogthjIWcj-2BCPNNykk2AXLkXEDGnHnLOx0aFdGFF3a2Fs9CbeHHbpKQMg-3D-3D]\n\n[https://open.lockedoncloud.com/wf/open?upn=u001.WxS38R8iW630GnyWkMljOV-2BXDH84R4rTo3FDBLxDkF0LL5NA8ACs1TV2hAElxX97ZNgwlpUgM4oHJ3ryyRpWRjTDWM3ENZ8OfMnZgV8SwiKfO4KxB-2BtiuvbGyAJxZE0mZLhzNZZ2q2Kax-2B0dGgPrP26te55yybxELr324cMyKlUWyVTOOP0PxQBnE9-2Fu-2F0DvTtIGNgO8FX-2BbpFHThorzv-2FImyHzaiEpx6OvQhICJ2uIhQ-2BofCvKwPNEbDZqrIO-2BWGSIsJOWSm2Kupmc-2BIwkhJDhR9DqewDfTS-2BMRPyiYpCjjnf1XB3voJ-2BTqZgdqcl7zOnMW48QV8ZLEvoAcukQi-2FA-3D-3D]"
+      }
+    },
+    {
+      "sourceRecordId": "recSG04WIvW2rEqKG",
+      "sourceCreatedTime": "2025-11-25T08:29:31.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSGIvXdOyEs8YnP",
+      "sourceCreatedTime": "2026-04-02T02:06:04.000Z",
+      "fields": {
+        "Name": "Josie Caruso",
+        "Subject": "Off Market Opportunity: 43 Soldatos Drive, Golden Square",
+        "Email": "josie@phproperty.com.au",
+        "Body": "Off Market Opportunity: 43 Soldatos Drive, Golden Square\r\nHello Rugesh,\r\n\r\n\r\nWe have a new off market opportunity for a property that may match yours or your client's requirements.\r\n\r\n\r\n\r\n43 Soldatos Drive, Golden Square is being offered between $630,000 ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSGhVl1hdxYJfuT",
+      "sourceCreatedTime": "2026-04-17T00:21:02.000Z",
+      "fields": {
+        "Name": "Rick Holloway",
+        "Subject": "DUPLEX SALE ",
+        "Email": "rick@thebobtraskgroup.com.au",
+        "Body": "DUPLEX SALE ONE OF A KIND\r\nMORAYFIELD\r\nGREAT RETURNS $900 PER WEEK\r\nSMSF INVESTMENT’S\r\nFOUR BEDROOMS DOUBLE GARAGE\r\nRegistered\r\n\r\n\r\n\r\n\r\nRegards\r\n\r\n“Whatever you need, if we don’t have it, we can find it and we can build it!”"
+      }
+    },
+    {
+      "sourceRecordId": "recSGnrsmdncHhl0t",
+      "sourceCreatedTime": "2026-03-23T03:54:48.000Z",
+      "fields": {
+        "Name": "Kelsi",
+        "Subject": "👀 NEW PROPERTY SNEAK PEEK",
+        "Email": "Kelsi@peterlawton.com.au",
+        "Body": "Could this be home? 🏡\r\n͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌     ͏ ‌    "
+      }
+    },
+    {
+      "sourceRecordId": "recSIF2JsgTA8YfFh",
+      "sourceCreatedTime": "2026-04-16T05:21:52.000Z",
+      "fields": {
+        "Name": "Nav Hena",
+        "Subject": "Property List -  Team Jim Cross",
+        "Email": "navhena@mcgrath.com.au",
+        "Body": "Hello Npc Services (naidu Property Consulting Services),\r\n\r\n\r\n\r\nGood afternoon,\r\n\r\nI hope you are doing well.\r\n\r\nPlease see attached e-newsletter with our current listings which may be of interest to you.\r\n\r\nAdditionally, we do have the following property"
+      }
+    },
+    {
+      "sourceRecordId": "recSISAkd0kKUXaq1",
+      "sourceCreatedTime": "2026-04-07T04:21:02.000Z",
+      "fields": {
+        "Name": "Jasmine Dawson",
+        "Subject": "Kingsfield Builder Update - 7/04/2026",
+        "Email": "Jasmine@alc.land",
+        "Body": "Dear Builder Partners,\r\n\r\n\r\nHope you all had a wonderful Easter weekend!\r\n\r\n\r\nPlease see attached our price list with available lots. We would love to display and advertise your House and Land packages.\r\n\r\nKingsfield Town Centre, East Sunbury Village,",
+        "Status": "Error 500",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/AyBBNSHcYfu1_ItK6ZWmog/Y1J3g6MiWj0ttBEfHjtAy9yARpeKzb4CnOf4UfvBqMZlmpt5Ym9mdC1mLBnqVwrx1R9y-g6BwCHku1nxKLZS7kI5YXC5MARA_QShMfUZ1N6hXzS1n2n4SpYcFSyNiHso7Kn42e01sIniz0hv23cwT41ES50EGKa40l60l7aC4vZtdo84Kv4zDcgpwPYOOb_f/8Ak1rtHQcHC-5r-tPDQH9Ts1VPDQ_WDdSm6YOm601D4",
+            "filename": "outlook_email_attachment.docx",
+            "type": "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "size": 1194244
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "recSIaZJtYrlHeP9b",
+      "sourceCreatedTime": "2026-01-28T08:00:57.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSKF1k4Mz13AxaR",
+      "sourceCreatedTime": "2026-06-05T06:54:38.000Z",
+      "fields": {
+        "Name": "Rohan Banning and Lyn Griffiths",
+        "Subject": "Latest Brisbane apartment sale prices.",
+        "Email": "hellocentralres@remax.com.au",
+        "Body": "Your Inner Brisbane real estate specialists!\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\nYour monthly update on what SOLD last month in Brisbane..\r\n\r\n\r\n\r\n\r\n\r\n\r\nBelow, you’ll find details of all apartments SOLD last month in the suburbs we monitor regularly.\r\n\r\nAnd remember, if "
+      }
+    },
+    {
+      "sourceRecordId": "recSLARmLSyu0y9xX",
+      "sourceCreatedTime": "2026-01-29T07:31:18.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSMHXqyjIphyeJn",
+      "sourceCreatedTime": "2026-06-05T06:54:11.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSNBuduUF9QDhHL",
+      "sourceCreatedTime": "2026-03-04T04:37:14.000Z",
+      "fields": {
+        "Name": "Ooranya Estate - Land Sale",
+        "Subject": "Ooranya Estate - H&L One Part Contracts",
+        "Email": "sales@bevanprojects.com.au",
+        "Body": "View this email in your browser\r\n\r\n\r\n\r\nDear ,\r\n\r\nAt Ooranya Estate, we have\r\ncollaborated with a variety of builders\r\nto offer you, our valued partners\r\n\r\n\r\n\r\nph: 0427 664 855\r\nemail: sales@bevanprojects.com.au\r\npostal address: PO Box 482\r\nPort Melb",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSOWEkVEQlm2CoM",
+      "sourceCreatedTime": "2026-03-24T21:43:45.000Z",
+      "fields": {
+        "Name": "McFall Real Estate",
+        "Subject": "Builders and Developers Land Update",
+        "Email": "joe@mcfallrealestate.com.au",
+        "Body": "View this email in your browser\r\n\r\n\r\n\r\nAVAILABLE LAND\r\n\r\n19 Urquhart Street, Gordon\r\n\r\n $370,000\r\n1744m2\r\n\r\n\r\n31-33 (Lot 13) Brougham Street, Gordon\r\n\r\n\r\n10 Acres\r\nTitled\r\n$799,000\r\n\r\n\r\n18 Lyndhurst Street, Gordon\r\n\r\n\r\n\r\n3 LOT SUBDIVISION\r\nLOT 1  955m2   "
+      }
+    },
+    {
+      "sourceRecordId": "recSOb7ZGyd2GYRwi",
+      "sourceCreatedTime": "2026-04-16T22:36:00.000Z",
+      "fields": {
+        "Name": "McGrath NSW & QLD CO",
+        "Subject": "McGrath Property Alert",
+        "Email": "concierge@mcgrath.com.au",
+        "Body": "PROPERTY ALERT\r\n\r\n2413/55 Wilson Street, Botany\r\n\r\n\r\n\r\n\r\n\r\n1\r\n\r\n\r\n\r\n1\r\n\r\n\r\n\r\n1\r\n\r\n\r\n\r\nFOR SALE\r\n\r\nGuide $675,000\r\n\r\n\r\n\r\nVIEW\r\n\r\nSaturday 18 Apr 9:00am - 9:30am\r\n\r\n\r\n\r\nAGENTS\r\n\r\nPatrick Byron: 0415 768 686\r\n\r\nStuart Beckingham: 0405544368\r\n\r\nVIEW MORE\r\nVIE",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSOqNz6YwZ1qFJ5",
+      "sourceCreatedTime": "2026-04-16T03:23:33.000Z",
+      "fields": {
+        "Name": "Karen Bagenal",
+        "Subject": "Your Property Update [New Listing Alert]",
+        "Email": "karenbagenal@realwayipswich.com.au",
+        "Body": "0732940099\r\nwww.ipswich.realway.com.au\r\nNew Listings\r\n\r\nHi Rugesh,\r\n\r\nWe've listed some new properties that I think you might be interested in. Give me a call if you have any questions or would like to take a look through any of these.\r\n\r\n\r\n2a Orchard Str",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSOzcsLM8Zsevex",
+      "sourceCreatedTime": "2025-10-17T14:21:52.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSQZoV7NG7vaJNt",
+      "sourceCreatedTime": "2025-12-05T04:20:51.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSSE7I85PDOvhHO",
+      "sourceCreatedTime": "2025-11-25T06:24:43.000Z",
+      "fields": {
+        "Name": "Sam Shaw",
+        "Subject": "Off Market Opportunity - 11 Webb Street, Traralgon",
+        "Email": "samshaw@wprci.com.au",
+        "Body": "Good afternoon,\r\n\r\nJust a quick email to advise that we have a new off market listing at 11 Webb Street, Traralgon that may be of interest to you. Please find attached a copy of the section 32 for this property for your perusal.\r\n\r\nPlease follow the below",
+        "Status": "Error 500",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/uLYL8Qy9g-CqhyUcpIJslg/p6k_IunQT9o26ZOXUzwSVXKqH-80kzGNTKdNu5E-AKq574rsS0C0_yTpdHpwSwscsbqS1GE3fjQqiUjA54faP189bMGkcTo3OZocfNz_g4H6f3Na4WRpigOHS2APfTFes-IiQdG5wc9WHzJCuE1yhrzv4RxqMJF2fVEssUtSRpFRQw91Xv29oJ6xqDNEj0Eb/bkg2y5Hw7M8FF70xMzpnNTRcoDbNHgAtrcqkgNdXGiw",
+            "filename": "outlook_email_attachment.pdf",
+            "type": "application/pdf",
+            "size": 1546366
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "recSSNHhYndFUe88Y",
+      "sourceCreatedTime": "2026-04-17T00:51:55.000Z",
+      "fields": {
+        "Name": "Westgarth Realty",
+        "Subject": "What's new on the market this week",
+        "Email": "admin@westgarths.com.au",
+        "Body": "Good morning Rugesh,\r\n\r\nWe hope your week is going well and your property search is progressing nicely.\r\n\r\nWe just wanted to share a quick update on some of our latest listings that may be of interest. If anything catches your eye or you’d like more infor",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSSsh4RbYMwJcOd",
+      "sourceCreatedTime": "2025-12-11T00:24:30.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSTbnqnTzjxlwmr",
+      "sourceCreatedTime": "2026-06-10T04:57:16.000Z",
+      "fields": {
+        "Name": "Olivia Boyle",
+        "Subject": "Fletcher Riley's Newsletter - This Week in Luxury: Just Listed, Just Sold and Exclusive Open Homes",
+        "Email": "admin@fletcherriley.com.au",
+        "Body": "Welcome to our weekly newsletter!\r\n\r\nWelcome to this week’s Fletcher Riley property update, bringing you the latest insights, listings and local highlights from across the Sunshine Coast.\r\n\r\nMomentum in the local property market remains strong, with quali"
+      }
+    },
+    {
+      "sourceRecordId": "recSVW9MhLjjjCtPD",
+      "sourceCreatedTime": "2026-01-29T02:20:51.000Z",
+      "fields": {
+        "Name": "Navod Henakankanamage",
+        "Subject": "New Property Opportunity",
+        "Email": "navhena@mcgrath.com.au",
+        "Body": "Dear #CONTACT_FN#,\r\n\r\nI hope you and the team are doing well.\r\n\r\nWe just listed a property at 1/46 Sydenham Avenue, Manifold Heights for sale by Private Treaty with Team Jim Cross. Please follow the following link for more details about the property:\r\n\r\nh"
+      }
+    },
+    {
+      "sourceRecordId": "recSVnl0Tci7Vv6kA",
+      "sourceCreatedTime": "2025-10-21T02:28:39.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSWeG6CFG0PtVF9",
+      "sourceCreatedTime": "2025-12-12T23:08:25.000Z",
+      "fields": {
+        "Name": "CRE Brokers",
+        "Subject": "CRE Brokers - Properties of the Week",
+        "Email": "mail@crebrokers.com",
+        "Body": "Each week, our team at CRE Brokers hand-picks standout properties across the tourism and hospitality sectors—ready for you to explore.\r\n\r\nScroll down to view our Properties.\r\n\r\nProperties to Explore\r\n\r\nBroken Hill\r\n16 Blende Street\r\n42 Unit Permanent Rent",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSWmeKzTL83F6Zq",
+      "sourceCreatedTime": "2026-02-28T22:37:03.000Z",
+      "fields": {
+        "Name": "Brodie Richmond",
+        "Subject": "Update Alert: Matched Properties",
+        "Email": "brodie@schmith.com.au",
+        "Body": "Hi Rugesh ,\r\n\r\nSee below, some properties that may be of interest to you.\r\nPlease reach out if you would like any further information, or simply just have a chat.\r\n\r\nBest wishes,\r\nBrodie Richmond\r\n+61493572251\r\nbrodie@schmith.com.au\r\n\r\n\r\n\r\nOpen for ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSYbGYiWQHUKYI0",
+      "sourceCreatedTime": "2026-01-02T04:07:28.000Z",
+      "fields": {
+        "Name": "Clare Dawson",
+        "Subject": "The latest property listings from Clare Estate Agents",
+        "Email": "Clare@clareestateagents.propertyemail.com.au",
+        "Body": "View in browser\r\n\r\nHi NPC\r\n\r\nPlease find below the latest listings from our office that are on the market.\r\n\r\nYou can quickly receive more information about any of the properties by clicking on them to reveal their full details.\r\n\r\nIf your property needs "
+      }
+    },
+    {
+      "sourceRecordId": "recSZWbCkyUVUnlSl",
+      "sourceCreatedTime": "2026-06-05T02:43:49.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSb3IJkZP4uhxAB",
+      "sourceCreatedTime": "2026-01-07T21:52:27.000Z",
+      "fields": {
+        "Name": "Chevez Evans",
+        "Subject": "Off Market Opportunity: 9 Wortha St, Bendigo",
+        "Email": "chevez@phproperty.com.au",
+        "Body": "Off Market Opportunity: 9 Wortha St, Bendigo\r\nHello Rugesh,\r\n\r\n\r\nWe have a new off market opportunity available for a property that may match your clients requirements!\r\n\r\n\r\n\r\n9 Wortha St, Bendigo is being offered for $675,000 - $695,000.\r\n\r\n\r\n\r\nTo see th",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSd4OLwxgS7EZLV",
+      "sourceCreatedTime": "2025-11-08T23:06:42.000Z",
+      "fields": {
+        "Name": "McGrath",
+        "Subject": "McGrath Property Alert",
+        "Email": "concierge@mcgrath.com.au",
+        "Body": "PROPERTY ALERT\r\n\r\n19 Hambly Street, Botany\r\n\r\n\r\n\r\n\r\n\r\n5\r\n\r\n\r\n\r\n4\r\n\r\n\r\n\r\n2\r\n\r\n\r\n\r\nAUCTION\r\n\r\nOn Site - Saturday 15 Nov 9:45am\r\n\r\n\r\n\r\nVIEW\r\n\r\nThursday 13 Nov 4:30pm - 5:00pm\r\n\r\n\r\n\r\nAGENTS\r\n\r\nMarnie Seinor: 0425 255 200\r\n\r\nDanielle Leemhuis: 0402 642 718",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSdFF8dylEZxIta",
+      "sourceCreatedTime": "2026-01-08T06:37:52.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSeSJkc9iE6iHB0",
+      "sourceCreatedTime": "2025-12-20T03:25:35.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSf1O7fgT8m1JET",
+      "sourceCreatedTime": "2026-01-20T04:00:01.000Z",
+      "fields": {
+        "Name": "Michael Enever",
+        "Subject": "NEW Property Listing - WISELEIGH - Harcourts",
+        "Email": "michael.enever@harcourts.com.au",
+        "Body": "Hi Rugesh,\r\n\r\nPlease find below a new property listing located at WISELEIGH near BRUTHEN in East Gippsland that may be of interest to you or someone that you know.\r\nIf you would like further information about the property shown, or to discuss your p"
+      }
+    },
+    {
+      "sourceRecordId": "recSgMGXBGDv0iYEY",
+      "sourceCreatedTime": "2025-11-17T03:52:09.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recSjM0x8urlBI0LU",
+      "sourceCreatedTime": "2026-01-30T00:20:49.000Z",
+      "fields": {
+        "Name": "Karen Bagenal",
+        "Subject": "Top performing sales this month from RealWay Ipswich",
+        "Email": "karenbagenal@realwayipswich.propertyemail.com.au",
+        "Body": "View in browser\r\n\r\nHi Rugesh\r\n\r\nI am delighted to provide you with the results of some of our recently sold properties.\r\n\r\nThese owners benefited from our extensive expertise and experience selling property in the local area.\r\n\r\nIf you are thinking of sel",
+        "Status": "Error 500"
+      }
+    }
+  ]
+}

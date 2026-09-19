@@ -1,0 +1,20 @@
+{
+  "assistantIds": [
+    "b3acdd28-558a-4893-9cfe-c3abacdbe6bd",
+    "72cebdc8-8ea2-4ed3-8ae5-bbbeb5fa782f",
+    "38e71746-75f8-4a7f-b527-f0b7528d76f0",
+    "e1b76e7c-b9a2-461b-a951-e6b253a4d0d7"
+  ],
+  "createdAt": "2025-11-18T08:29:13.822Z",
+  "description": "Tracks successful appointment bookings from customer calls",
+  "id": "94648165-f08f-4d2e-ad13-91ec7f41d443",
+  "name": "Appointment Booked",
+  "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+  "schema": {
+    "description": "Mark true when customer confirms booking and appointment is scheduled",
+    "type": "boolean"
+  },
+  "type": "ai",
+  "updatedAt": "2025-11-27T08:06:48.700Z",
+  "workflowIds": []
+}

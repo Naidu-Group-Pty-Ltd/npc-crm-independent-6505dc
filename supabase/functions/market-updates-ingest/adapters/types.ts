@@ -1,0 +1,6 @@
+export type AdapterType = 'rss'|'atom'|'official_api'|'html_listing'|'licensed_partner_feed'|'manual'|'feed_with_html_fallback'|'rss_with_html_fallback'|'rss_multi'|'html_listing_or_licensed_feed';
+export interface SourceConfig { id:string; source_key:string; name:string; adapter_type:AdapterType; primary_url?:string|null; feed_urls:string[]; listing_urls:string[]; adapter_config:Record<string,unknown>; source_authority?:string|null; perspective?:string|null; copyright_mode?:string|null; next_cursor?:string|null; }
+export interface NormalisedSourceItem { externalId:string; title:string; canonicalUrl:string; originalUrl:string; publishedAt:string|null; excerpt:string|null; author:string|null; category:string|null; payloadHash?:string; metadata?:Record<string,unknown>; }
+export interface SourceValidationResult { valid:boolean; format:string; itemCount:number; endpoint?:string; fallbackUsed?:boolean; safeError?:string; httpStatus?:number; latencyMs?:number; }
+export interface NormalisedSourceBatch { items:NormalisedSourceItem[]; cursor?:string|null; validation:SourceValidationResult; }
+export interface MarketSourceAdapter { validate(source:SourceConfig):Promise<SourceValidationResult>; fetch(source:SourceConfig,cursor?:string|null):Promise<NormalisedSourceBatch>; }

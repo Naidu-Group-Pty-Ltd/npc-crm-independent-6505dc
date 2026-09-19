@@ -1,0 +1,405 @@
+/**
+ * Commercial & Industrial finance assessment workspace.
+ *
+ * The design brief for this surface was "reduce decorative space, raise
+ * information density, keep the premium dark language" — so this file leans on
+ * flat token-backed surfaces and tight spacing rather than the layered
+ * gradients and nested cards the old landing page used.
+ *
+ * Semantic tokens only. Status colour always travels with a text label or an
+ * icon so nothing is conveyed by hue alone.
+ */
+
+/* Arrival cue for the error summary's scroll-to-field. Kept outside the layer
+   because `@keyframes` is not a rule the component layer can hold.
+
+   Deliberately animates the tint and not the ring: the ring is the cue, so it
+   has to be solid from the first frame rather than arriving after a pulse. */
+@keyframes ci-field-flash-in {
+  from { background-color: hsl(var(--destructive) / 0.32); }
+  to { background-color: hsl(var(--destructive) / 0.1); }
+}
+
+@layer components {
+  /* -------------------------------------------------------------------------
+   * Landing shell
+   * ---------------------------------------------------------------------- */
+  .ci-shell { @apply mx-auto w-full max-w-[1600px] px-4 py-6 sm:px-6 lg:px-8; }
+
+  /* Compact header: one row on desktop, no hero panel, no gradient slab. */
+  .ci-page-header { @apply flex flex-col gap-3 border-b border-border/60 pb-4 lg:flex-row lg:items-center lg:justify-between; }
+  .ci-page-title { @apply flex items-center gap-2.5 text-xl font-semibold tracking-tight text-foreground sm:text-2xl; }
+  .ci-page-title-icon { @apply flex h-9 w-9 shrink-0 items-center justify-center rounded-lg border border-border bg-muted/40 text-primary; }
+  .ci-page-subtitle { @apply mt-1 max-w-2xl text-sm leading-6 text-muted-foreground; }
+  .ci-page-actions { @apply flex shrink-0 flex-wrap items-center gap-2; }
+
+  /* Metric strip. Four to five compact tiles, no card chrome per tile. */
+  .ci-metric-strip { @apply grid grid-cols-2 gap-px overflow-hidden rounded-xl border border-border bg-border sm:grid-cols-3 xl:grid-cols-5; }
+  .ci-metric-tile { @apply flex flex-col gap-1 bg-card px-4 py-3; }
+  .ci-metric-label { @apply text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground; }
+  .ci-metric-value { @apply text-xl font-semibold tabular-nums tracking-tight text-foreground; }
+  .ci-metric-note { @apply text-xs leading-4 text-muted-foreground; }
+  .ci-metric-tile-alert .ci-metric-value { @apply text-warning; }
+
+  .ci-toolbar { @apply flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between; }
+  .ci-toolbar-filters { @apply flex flex-wrap items-center gap-2; }
+
+  .ci-tabs-list { @apply flex h-auto w-full justify-start gap-1 overflow-x-auto rounded-lg border border-border bg-card p-1; }
+  .ci-tab { @apply shrink-0 rounded-md px-3 py-1.5 text-sm font-medium text-muted-foreground transition-colors data-[state=active]:bg-primary data-[state=active]:text-primary-foreground; }
+
+  /* Compact empty state — a prompt, not a panel that owns the viewport. */
+  .ci-inline-empty { @apply flex flex-col items-start gap-3 rounded-lg border border-dashed border-border bg-card/60 px-5 py-6 sm:flex-row sm:items-center sm:justify-between; }
+  .ci-inline-empty-copy { @apply min-w-0; }
+  .ci-inline-empty-title { @apply text-sm font-semibold text-foreground; }
+  .ci-inline-empty-body { @apply mt-1 text-sm leading-6 text-muted-foreground; }
+
+  /* Data table */
+  .ci-table-wrap { @apply w-full overflow-x-auto rounded-lg border border-border bg-card focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2; }
+  .ci-table-wrap thead { @apply bg-muted/50 text-[0.7rem] uppercase tracking-[0.12em] text-muted-foreground; }
+  .ci-table-wrap th { @apply h-10 whitespace-nowrap px-4 font-semibold; }
+  .ci-table-wrap td { @apply whitespace-nowrap px-4 py-3; }
+  .ci-table-wrap th:first-child,
+  .ci-table-wrap td:first-child { @apply whitespace-normal; }
+  .ci-table-wrap tbody tr { @apply border-t border-border/60 transition-colors hover:bg-muted/40; }
+
+  .ci-status-badge { @apply inline-flex items-center gap-1.5 rounded-full border px-2.5 py-0.5 text-xs font-semibold; }
+  .ci-status-neutral { @apply border-border bg-muted/50 text-muted-foreground; }
+  .ci-status-progress { @apply border-info/40 bg-info/10 text-info; }
+  .ci-status-good { @apply border-success/40 bg-success/10 text-success; }
+  .ci-status-warn { @apply border-warning/45 bg-warning/10 text-warning; }
+  .ci-status-bad { @apply border-destructive/40 bg-destructive/10 text-destructive; }
+
+  .ci-segment-tag { @apply inline-flex items-center gap-1.5 rounded-md border border-border bg-muted/40 px-2 py-0.5 text-xs font-medium text-muted-foreground; }
+
+  /* -------------------------------------------------------------------------
+   * Assessment workspace
+   * ---------------------------------------------------------------------- */
+  .ci-workspace { @apply flex min-h-[calc(100vh-4rem)] flex-col; }
+  .ci-workspace-header { @apply sticky top-0 z-20 border-b border-border bg-background/95 backdrop-blur; }
+  .ci-workspace-header-inner { @apply mx-auto flex w-full max-w-[1600px] flex-col gap-3 px-4 py-3 sm:px-6 lg:flex-row lg:items-center lg:justify-between lg:px-8; }
+  .ci-workspace-body { @apply mx-auto grid w-full max-w-[1600px] flex-1 gap-6 px-4 py-6 sm:px-6 lg:grid-cols-[minmax(0,1fr)_20rem] lg:px-8; }
+  .ci-workspace-main { @apply min-w-0 space-y-5; }
+
+  /* Results rail. Sticky on desktop so key totals never scroll away; a plain
+     block on tablet and below, where a sticky column would eat the viewport. */
+  .ci-workspace-rail { @apply space-y-4 lg:sticky lg:top-24 lg:self-start; }
+
+  /* Step navigation */
+  .ci-steps { @apply flex gap-1 overflow-x-auto pb-1; }
+  .ci-step-chip {
+    @apply flex shrink-0 items-center gap-2 rounded-md border border-border bg-card px-3 py-1.5 text-xs font-medium
+           text-muted-foreground transition-colors hover:border-primary/50 hover:text-foreground
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2;
+  }
+  .ci-step-chip-active { @apply border-primary bg-primary text-primary-foreground hover:text-primary-foreground; }
+  .ci-step-chip-complete { @apply border-success/40 text-success; }
+  /* A step carrying blocking errors. Ordered after -active so the marker
+     survives on the step the user is standing on. */
+  .ci-step-chip-error { @apply border-destructive/60 text-destructive hover:text-destructive; }
+  .ci-step-chip-active.ci-step-chip-error { @apply border-destructive bg-destructive text-destructive-foreground hover:text-destructive-foreground; }
+  .ci-step-index { @apply flex h-5 w-5 items-center justify-center rounded-full border border-current text-[0.65rem] font-bold; }
+  .ci-step-error-count {
+    @apply flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1
+           text-[0.6rem] font-bold leading-none text-destructive-foreground;
+  }
+  .ci-step-chip-active.ci-step-chip-error .ci-step-error-count { @apply bg-destructive-foreground text-destructive; }
+
+  /* Error summary rows. Each one navigates to a field, so it reads and behaves
+     as a link rather than as a sentence that happens to be clickable. */
+  .ci-issue-link {
+    @apply flex w-full items-start gap-1.5 rounded text-left text-destructive underline-offset-2
+           hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring;
+  }
+  .ci-issue-link > svg { @apply mt-1; }
+  .ci-issue-step { @apply shrink-0 font-semibold; }
+  .ci-issue-step::after { content: '·'; @apply mx-1 font-normal opacity-60; }
+
+  .ci-step-panel { @apply rounded-xl border border-border bg-card p-5 sm:p-6; }
+  .ci-step-heading { @apply mb-1 text-lg font-semibold tracking-tight text-foreground; }
+  .ci-step-description { @apply mb-5 max-w-3xl text-sm leading-6 text-muted-foreground; }
+
+  .ci-save-indicator { @apply inline-flex items-center gap-1.5 text-xs font-medium text-muted-foreground; }
+  .ci-save-indicator-error { @apply text-destructive; }
+  .ci-save-indicator-saved { @apply text-success; }
+
+  /* -------------------------------------------------------------------------
+   * Fields
+   * ---------------------------------------------------------------------- */
+  .ci-field-group { @apply space-y-3 border-t border-border/60 pt-5 first:border-t-0 first:pt-0; }
+  .ci-field-group-header { @apply max-w-3xl; }
+  .ci-field-grid { @apply grid grid-cols-1 gap-x-4 gap-y-4; }
+  .ci-field { @apply min-w-0 space-y-1.5; }
+  .ci-field-label { @apply text-xs font-semibold uppercase tracking-[0.1em] text-muted-foreground; }
+  .ci-field-help { @apply flex items-start gap-1.5 text-xs leading-5 text-muted-foreground; }
+  .ci-field-error { @apply flex items-start gap-1.5 text-xs font-medium leading-5 text-destructive; }
+
+  /* Landing marker for the error summary.
+   *
+   * Applied by `fieldFocus.ts` for a couple of seconds after a jump. It rings
+   * and tints rather than moving anything, because a field that shifts as you
+   * arrive at it is a field you then have to find again. Padding and a negative
+   * margin keep the ring off the control itself while leaving the grid intact. */
+  .ci-field-flash {
+    @apply -mx-2 -my-1.5 rounded-lg bg-destructive/10 px-2 py-1.5
+           ring-2 ring-destructive ring-offset-2 ring-offset-background;
+    animation: ci-field-flash-in 220ms ease-out;
+  }
+  /* The ring is a duplicate cue — the field also carries `aria-invalid` and its
+     own error text — so removing the motion loses nothing. */
+  @media (prefers-reduced-motion: reduce) {
+    .ci-field-flash { animation: none; }
+  }
+  .ci-provenance-tag { @apply shrink-0 rounded border border-info/40 bg-info/10 px-1.5 py-0.5 text-[0.65rem] font-semibold uppercase tracking-wide text-info; }
+
+  .ci-money-input { @apply relative flex items-center; }
+  .ci-money-input input { @apply pl-7 font-mono tabular-nums; }
+  .ci-money-prefix { @apply pointer-events-none absolute left-3 text-sm text-muted-foreground; }
+  .ci-money-input:has(.ci-money-suffix) input { @apply pl-3 pr-8; }
+  .ci-money-suffix { @apply pointer-events-none absolute right-3 text-sm text-muted-foreground; }
+
+  .ci-switch-field { @apply flex items-start gap-3 rounded-lg border border-border bg-muted/25 px-3 py-2.5; }
+
+  .ci-tristate { @apply inline-flex overflow-hidden rounded-md border border-border; }
+  .ci-tristate-option {
+    @apply border-r border-border bg-card px-3 py-1.5 text-xs font-medium text-muted-foreground transition-colors
+           last:border-r-0 hover:bg-muted focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring;
+  }
+  .ci-tristate-option-active { @apply bg-primary text-primary-foreground hover:bg-primary; }
+
+  .ci-advanced { @apply rounded-lg border border-border bg-muted/20; }
+  .ci-advanced-trigger {
+    @apply flex w-full items-center justify-between gap-2 px-4 py-2.5 text-sm font-semibold text-foreground
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring;
+  }
+  .ci-advanced-content { @apply border-t border-border px-4 py-4; }
+
+  .ci-derived { @apply rounded-lg border px-3 py-2.5; }
+  .ci-derived-label { @apply text-[0.7rem] font-semibold uppercase tracking-[0.1em] text-muted-foreground; }
+  .ci-derived-value { @apply mt-0.5 text-base font-semibold tabular-nums text-foreground; }
+  .ci-derived-note { @apply mt-1 text-xs leading-4 text-muted-foreground; }
+  .ci-derived-neutral { @apply border-border bg-muted/25; }
+  .ci-derived-good { @apply border-success/35 bg-success/10; }
+  .ci-derived-warn { @apply border-warning/40 bg-warning/10; }
+  .ci-derived-bad { @apply border-destructive/35 bg-destructive/10; }
+
+  /* -------------------------------------------------------------------------
+   * Repeatable rows (portfolio, liabilities, tenancies, entities)
+   * ---------------------------------------------------------------------- */
+  .ci-repeater { @apply space-y-3; }
+  .ci-repeater-item { @apply rounded-lg border border-border bg-muted/20 p-4; }
+  .ci-repeater-header { @apply mb-3 flex items-center justify-between gap-2 border-b border-border/60 pb-2; }
+  .ci-repeater-title { @apply truncate text-sm font-semibold text-foreground; }
+
+  /* -------------------------------------------------------------------------
+   * Results
+   * ---------------------------------------------------------------------- */
+  .ci-outcome { @apply rounded-xl border p-4; }
+  .ci-outcome-good { @apply border-success/40 bg-success/10; }
+  .ci-outcome-warn { @apply border-warning/45 bg-warning/10; }
+  .ci-outcome-bad { @apply border-destructive/40 bg-destructive/10; }
+  .ci-outcome-neutral { @apply border-border bg-muted/30; }
+  .ci-outcome-label { @apply text-lg font-semibold tracking-tight text-foreground; }
+  .ci-outcome-reason { @apply mt-1 text-sm leading-6 text-muted-foreground; }
+
+  .ci-result-grid { @apply grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-border bg-border lg:grid-cols-4; }
+  .ci-result-cell { @apply bg-card px-3 py-2.5; }
+  .ci-result-cell-label { @apply text-[0.7rem] font-semibold uppercase tracking-[0.1em] text-muted-foreground; }
+  .ci-result-cell-value { @apply mt-0.5 text-lg font-semibold tabular-nums tracking-tight text-foreground; }
+
+  .ci-explain-row { @apply border-t border-border/60 py-2.5 first:border-t-0 first:pt-0; }
+  .ci-explain-label { @apply text-sm font-semibold text-foreground; }
+  .ci-explain-formula { @apply mt-0.5 font-mono text-xs leading-5 text-muted-foreground; }
+  .ci-explain-value { @apply shrink-0 font-mono text-sm font-semibold tabular-nums text-foreground; }
+  .ci-explain-binding { @apply border-l-2 border-primary pl-3; }
+
+  .ci-warning-row { @apply flex items-start gap-2.5 rounded-lg border px-3 py-2.5 text-sm leading-6; }
+  .ci-warning-critical { @apply border-destructive/40 bg-destructive/10 text-foreground; }
+  .ci-warning-warning { @apply border-warning/40 bg-warning/10 text-foreground; }
+  .ci-warning-info { @apply border-border bg-muted/30 text-muted-foreground; }
+
+  .ci-scenario-table { @apply w-full min-w-[52rem] text-sm; }
+  .ci-scenario-table th { @apply whitespace-nowrap px-3 py-2 text-left text-[0.7rem] font-semibold uppercase tracking-[0.1em] text-muted-foreground; }
+  .ci-scenario-table td { @apply whitespace-nowrap border-t border-border/60 px-3 py-2.5 tabular-nums; }
+  .ci-scenario-base td { @apply bg-muted/30 font-medium; }
+  .ci-delta-up { @apply text-success; }
+  .ci-delta-down { @apply text-destructive; }
+
+  /* -------------------------------------------------------------------------
+   * Reconciliation
+   * ---------------------------------------------------------------------- */
+  .ci-reconcile-item { @apply rounded-lg border border-border bg-card p-3.5; }
+  .ci-reconcile-compare { @apply mt-2.5 grid gap-2 sm:grid-cols-2; }
+  .ci-reconcile-side { @apply rounded-md border border-border bg-muted/25 px-3 py-2; }
+  .ci-reconcile-side-label { @apply text-[0.65rem] font-semibold uppercase tracking-[0.1em] text-muted-foreground; }
+  .ci-reconcile-side-value { @apply mt-0.5 break-words font-mono text-sm text-foreground; }
+
+  .ci-client-option {
+    @apply flex w-full items-start justify-between gap-3 rounded-lg border border-border bg-card px-3.5 py-3 text-left
+           transition-colors hover:border-primary/60 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring;
+  }
+  .ci-client-option-active { @apply border-primary bg-primary/5; }
+
+  .ci-disclaimer { @apply rounded-lg border border-border bg-muted/25 px-4 py-3 text-xs leading-5 text-muted-foreground; }
+
+  /* -------------------------------------------------------------------------
+   * Worked example
+   *
+   * A reading surface, not a form: wider measure, generous leading, and the
+   * example answer given more weight than the question that produced it —
+   * the reader already knows what was asked, they came for the answer.
+   * ---------------------------------------------------------------------- */
+  /* -------------------------------------------------------------------------
+   * Document viewer
+   *
+   * A reading surface for the real .xlsx and .docx. The stage scrolls, never
+   * the frame — see PackDocumentViewer for why that matters.
+   * ---------------------------------------------------------------------- */
+  .ci-pack-dialog {
+    @apply flex flex-col gap-0 overflow-hidden p-0;
+  }
+  .ci-pack-dialog-expanded { @apply p-0; }
+
+  .ci-pack-header {
+    @apply flex shrink-0 flex-wrap items-start justify-between gap-3 border-b border-border px-4 py-2.5 sm:px-5;
+  }
+
+  .ci-pack-toolbar { @apply flex shrink-0 flex-wrap items-center gap-2; }
+  .ci-pack-readonly {
+    @apply border-info/40 bg-info/10 text-[0.65rem] font-semibold uppercase tracking-wide text-info;
+  }
+  .ci-pack-pager { @apply flex items-center gap-0.5 rounded-md border border-border bg-card px-1 py-0.5; }
+
+  /* Worksheet strip.
+   *
+   * `pb-3` is load-bearing, not taste. This scrolls horizontally, so the
+   * scrollbar is laid inside the content box and eats the bottom padding —
+   * with the `py-1.5` this had, the 6px bar consumed all 6px of it and clipped
+   * the descenders off every tab label. The bottom padding now clears the bar
+   * with room to spare, and `scrollbar-gutter` keeps the strip from shifting
+   * when the bar appears and disappears at different dialog widths. */
+  .ci-pack-tabs {
+    @apply flex shrink-0 items-center gap-1.5 overflow-x-auto overflow-y-hidden
+           border-b border-border bg-card/40 px-3 pb-3 pt-2;
+    scrollbar-gutter: stable;
+  }
+
+  /* Same chip language as the assessment's own step navigation, so the two
+     read as one system rather than as a dialog with its own ideas. */
+  .ci-pack-tab {
+    @apply flex shrink-0 items-center gap-1.5 whitespace-nowrap rounded-md border border-border
+           bg-card px-3 py-1.5 text-xs font-medium leading-5 text-muted-foreground
+           transition-colors hover:border-primary/50 hover:text-foreground
+           focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
+           focus-visible:ring-offset-1 focus-visible:ring-offset-background;
+  }
+
+  /* Solid, not a tint. At a dozen tabs a 10%-opacity fill is easy to lose,
+     and the whole complaint was that you could not tell where you were. */
+  .ci-pack-tab-active {
+    @apply border-primary bg-primary text-primary-foreground shadow-sm
+           hover:border-primary hover:text-primary-foreground;
+  }
+
+  /* Neutral, light surround: these documents are white pages and a dark stage
+     around them would misrepresent how they print. */
+  .ci-pack-stage {
+    @apply relative min-h-0 flex-1 overflow-auto bg-muted/40 p-4 focus-visible:outline-none
+           focus-visible:ring-2 focus-visible:ring-inset focus-visible:ring-ring;
+    /* Firefox and the modern standard. Chromium needs the vendor rules below. */
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--primary) / 0.48) hsl(var(--muted) / 0.54);
+  }
+
+  /* The platform default here is a chunky light scrollbar with stepper arrows,
+     which reads as a browser chrome bolted onto a dark dialog. This follows the
+     same treatment as the other scrolling dialogs in the app. */
+  .ci-pack-stage::-webkit-scrollbar { width: 10px; height: 10px; }
+  .ci-pack-stage::-webkit-scrollbar-track { background: hsl(var(--muted) / 0.54); }
+  .ci-pack-stage::-webkit-scrollbar-thumb {
+    border: 2px solid hsl(var(--muted) / 0.54);
+    border-radius: 999px;
+    background: hsl(var(--primary) / 0.48);
+  }
+  .ci-pack-stage::-webkit-scrollbar-thumb:hover { background: hsl(var(--primary) / 0.66); }
+  .ci-pack-stage::-webkit-scrollbar-corner { background: hsl(var(--muted) / 0.54); }
+
+  .dark .ci-pack-stage { scrollbar-color: hsl(var(--primary) / 0.52) hsl(0 0% 9%); }
+  .dark .ci-pack-stage::-webkit-scrollbar-track,
+  .dark .ci-pack-stage::-webkit-scrollbar-corner { background: hsl(0 0% 9%); }
+  .dark .ci-pack-stage::-webkit-scrollbar-thumb {
+    border-color: hsl(0 0% 9%);
+    background: hsl(var(--primary) / 0.52);
+  }
+
+  /* The sheet strip scrolls too when a workbook has a dozen tabs. */
+  .ci-pack-tabs { scrollbar-width: thin; scrollbar-color: hsl(var(--primary) / 0.4) transparent; }
+  .ci-pack-tabs::-webkit-scrollbar { height: 6px; }
+  /* Keep the label baseline clear of the bar even where `scrollbar-gutter`
+     is unsupported and the browser overlays it. */
+  .ci-pack-tabs::-webkit-scrollbar-button { width: 0; height: 0; }
+  .ci-pack-tabs::-webkit-scrollbar-track { background: transparent; }
+  .ci-pack-tabs::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: hsl(var(--primary) / 0.4);
+  }
+  /* The wrapper carries the scaled size; the frame inside it is unscaled and
+     never scrolls, so the stage is the only scroller in the dialog.
+     `overflow-visible` is deliberate: this box used to clip, which meant any
+     under-measurement silently ate the bottom of the document instead of
+     showing it. It is the only child of the stage, so there is nothing for an
+     overhang to collide with. */
+  .ci-pack-frame-box { @apply relative mx-auto block overflow-visible; }
+  .ci-pack-frame { @apply block border-0 bg-background; }
+  .ci-pack-state { @apply flex flex-col items-center justify-center gap-2 px-6 py-16 text-center; }
+
+  .ci-example-callout {
+    @apply flex flex-wrap items-start gap-3 rounded-lg border border-primary/30 bg-primary/5 p-4 sm:flex-nowrap;
+  }
+  .ci-example-dialog {
+    @apply flex max-h-[88vh] w-[min(64rem,95vw)] max-w-none flex-col gap-3 overflow-hidden;
+  }
+  .ci-example-fiction {
+    @apply border-warning/50 bg-warning/10 text-[0.65rem] font-semibold uppercase tracking-wide text-warning;
+  }
+
+  /* Nav across the top on narrow screens, down the side once there is room. */
+  .ci-example-body { @apply grid min-h-0 flex-1 gap-4 md:grid-cols-[13rem_minmax(0,1fr)]; }
+  .ci-example-nav {
+    @apply flex gap-1 overflow-x-auto pb-1 md:flex-col md:overflow-x-visible md:overflow-y-auto md:pb-0;
+  }
+  .ci-example-nav-item {
+    @apply flex shrink-0 items-center justify-between gap-2 rounded-md border border-transparent px-2.5 py-1.5
+           text-left text-xs font-medium text-muted-foreground transition-colors hover:bg-muted/50
+           hover:text-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring
+           md:w-full md:shrink;
+  }
+  .ci-example-nav-item-active { @apply border-primary/40 bg-primary/10 text-foreground; }
+  .ci-example-nav-count {
+    @apply shrink-0 rounded-full bg-muted px-1.5 text-[0.65rem] font-semibold tabular-nums text-muted-foreground;
+  }
+
+  .ci-example-scroll { @apply min-h-0 rounded-lg border border-border bg-card; }
+  .ci-example-content { @apply space-y-5 p-4 sm:p-5; }
+
+  .ci-example-entry-label {
+    @apply mb-2 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-primary;
+  }
+  .ci-example-answers { @apply space-y-px overflow-hidden rounded-lg border border-border bg-border; }
+  .ci-example-answer { @apply grid gap-1 bg-card px-3 py-2.5 sm:grid-cols-[16rem_minmax(0,1fr)] sm:gap-4; }
+  .ci-example-question { @apply text-xs leading-5 text-muted-foreground; }
+  .ci-example-required { @apply font-semibold text-primary; }
+  .ci-example-value { @apply break-words text-sm leading-6 text-foreground; }
+  .ci-example-blank { @apply text-sm italic leading-6 text-muted-foreground; }
+  .ci-example-note {
+    @apply mt-1.5 flex items-start gap-1.5 rounded-md border border-info/30 bg-info/5 px-2 py-1.5
+           text-xs leading-5 text-muted-foreground;
+  }
+
+  .ci-example-outcome { @apply rounded-lg border border-primary/30 bg-primary/5 p-4; }
+  .ci-example-figures { @apply mt-3 grid grid-cols-2 gap-2 sm:grid-cols-3; }
+  .ci-example-figures > div { @apply rounded-md border border-border bg-card px-2.5 py-2; }
+  .ci-example-figures dt {
+    @apply text-[0.65rem] font-semibold uppercase tracking-wide text-muted-foreground;
+  }
+  .ci-example-figures dd { @apply mt-0.5 text-sm font-semibold tabular-nums text-foreground; }
+}

@@ -1,0 +1,2495 @@
+{
+  "flow": [
+    {
+      "id": 1,
+      "mapper": {},
+      "module": "gateway:CustomWebHook",
+      "version": 1,
+      "metadata": {
+        "restore": {
+          "parameters": {
+            "hook": {
+              "data": {
+                "editable": "true"
+              },
+              "label": "NPC GHL Appointment Booker"
+            }
+          }
+        },
+        "designer": {
+          "x": 0,
+          "y": 750,
+          "name": "Vapi Availability Tool Webhook"
+        },
+        "interface": [
+          {
+            "name": "message",
+            "spec": [
+              {
+                "name": "type",
+                "type": "text"
+              },
+              {
+                "name": "timestamp",
+                "type": "number"
+              },
+              {
+                "name": "toolCallList",
+                "spec": {
+                  "spec": [
+                    {
+                      "name": "id",
+                      "type": "text"
+                    },
+                    {
+                      "name": "name",
+                      "type": "text"
+                    },
+                    {
+                      "name": "arguments",
+                      "spec": [
+                        {
+                          "name": "booking_intent_text",
+                          "type": "text"
+                        },
+                        {
+                          "name": "preferred_date_text",
+                          "type": "text"
+                        },
+                        {
+                          "name": "search_reason",
+                          "type": "text"
+                        },
+                        {
+                          "name": "caller_context",
+                          "type": "text"
+                        },
+                        {
+                          "name": "locationId",
+                          "type": "text"
+                        },
+                        {
+                          "name": "contactId",
+                          "type": "text"
+                        },
+                        {
+                          "name": "startTime",
+                          "type": "text"
+                        },
+                        {
+                          "name": "endTime",
+                          "type": "text"
+                        },
+                        {
+                          "name": "title",
+                          "type": "text"
+                        },
+                        {
+                          "name": "notes",
+                          "type": "text"
+                        }
+                      ],
+                      "type": "collection"
+                    }
+                  ],
+                  "type": "collection"
+                },
+                "type": "array"
+              }
+            ],
+            "type": "collection"
+          }
+        ],
+        "parameters": [
+          {
+            "name": "hook",
+            "type": "hook:gateway-webhook",
+            "label": "Webhook",
+            "required": true
+          },
+          {
+            "name": "maxResults",
+            "type": "number",
+            "label": "Maximum number of results"
+          }
+        ]
+      },
+      "parameters": {
+        "hook": 4118360,
+        "maxResults": 1
+      }
+    },
+    {
+      "id": 2,
+      "mapper": {
+        "model": "gpt-5.5",
+        "top_p": "1",
+        "select": "chat",
+        "messages": [
+          {
+            "role": "system",
+            "content": "You are an intent classification module inside a Make.com automation for a Vapi AI voice agent booking flow for NPC Services.\n\nYour job is to determine which GoHighLevel calendar availability branch should be used for the caller's requested appointment type.\n\nYou must output ONLY valid JSON. Do not include markdown, code fences, commentary, explanations, or natural language outside the JSON object.\n\nAllowed intent_index values:\n- \"root\" = Discovery Call\n- \"2\" = Strategy Session (Phone)\n- \"2_1\" = Strategy Session (Zoom)\n- \"3\" = Initial Finance Consult (Phone)\n- \"3_1\" = Initial Finance Consult (Zoom)\n- \"clarification_needed\" = the appointment type or delivery mode cannot be determined confidently\n\nClassification rules:\n1. If the caller asks for a discovery call, intro call, first chat, initial discussion, general call to learn more, or early qualification call, classify as \"root\".\n2. If the caller asks for a strategy session and clearly wants a phone call, classify as \"2\".\n3. If the caller asks for a strategy session and clearly wants Zoom, video call, online meeting, virtual meeting, or remote meeting, classify as \"2_1\".\n4. If the caller asks for an initial finance consult, finance consultation, initial finance consultation, IFC, or finance consult and clearly wants a phone call, classify as \"3\".\n5. If the caller asks for an initial finance consult, finance consultation, initial finance consultation, IFC, or finance consult and clearly wants Zoom, video call, online meeting, virtual meeting, or remote meeting, classify as \"3_1\".\n6. If the caller says strategy session but does not specify phone or Zoom, choose \"clarification_needed\".\n7. If the caller says initial finance consult, finance consultation, finance consult, or IFC but does not specify phone or Zoom, choose \"clarification_needed\".\n8. If the caller only says they want to book an appointment but does not specify the appointment type, choose \"clarification_needed\".\n9. If there is conflict between labels, prioritize the most specific explicit phrase from the caller's latest request.\n10. Do not infer finance consult from discovery call unless finance consultation, IFC, or finance consult is clearly stated.\n11. Do not infer Zoom unless the caller mentions Zoom, video, online, virtual, remote, or web meeting.\n12. Do not infer phone unless the caller mentions phone, call me, telephone, mobile, cell, speaking by phone, or a normal phone call.\n13. If the user asks for a call and the appointment type is Discovery Call, the mode does not need clarification; classify as \"root\".\n14. If preferred_date_text only contains date/time information, do not use it to infer appointment type.\n15. If caller_context contains historical context but booking_intent_text contains a clearer latest request, prioritize booking_intent_text.\n\nConfidence rules:\n- Use confidence 0.90 to 1.00 when the appointment type and mode are explicit.\n- Use confidence 0.70 to 0.89 when the appointment type is clear but wording is indirect.\n- Use confidence below 0.70 when clarification is needed.\n\nReturn exactly one JSON object using this schema:\n{\n  \"intent_index\": \"\",\n  \"intent_label\": \"\",\n  \"confidence\": 0.0,\n  \"needs_clarification\": false,\n  \"clarification_question\": \"\",\n  \"routing_reason\": \"\"\n}\n\nThe intent_index value must be exactly one of:\n\"root\", \"2\", \"2_1\", \"3\", \"3_1\", \"clarification_needed\".\n\nThe intent_label value must be exactly one of:\n\"Discovery Call\", \"Strategy Session (Phone)\", \"Strategy Session (Zoom)\", \"Initial Finance Consult (Phone)\", \"Initial Finance Consult (Zoom)\", \"Clarification Needed\".\n\nIf confidence is below 0.70, set intent_index to \"clarification_needed\" and needs_clarification to true.\nIf needs_clarification is true, intent_index must be \"clarification_needed\" and intent_label must be \"Clarification Needed\".\nIf intent_index is not \"clarification_needed\", needs_clarification must be false and clarification_question must be an empty string.\n\nFor clarification_needed, write a short clarification_question the voice agent can ask naturally. Examples:\n- \"Would you prefer the strategy session by phone or Zoom?\"\n- \"Would you like the initial finance consult by phone or Zoom?\"\n- \"Are you looking to book a discovery call, a strategy session, or an initial finance consult?\"\n\nFor non-clarification intents, set needs_clarification to false and clarification_question to an empty string. Never return a non-clarification intent when needs_clarification is true.\n"
+          },
+          {
+            "role": "user",
+            "content": "Classify this Vapi booking availability request.\n\nCurrent time in Make:\n{{now}}\nDefault timezone:\nAustralia/Sydney\n\nbooking_intent_text:\n{{ifempty(get(1.message.toolCallList; 1) + .arguments.booking_intent_text; ifempty(1.booking_intent_text; \"\"))}}\n\npreferred_date_text:\n{{ifempty(get(1.message.toolCallList; 1) + .arguments.preferred_date_text; ifempty(1.preferred_date_text; \"\"))}}\n\nsearch_reason:\n{{ifempty(get(1.message.toolCallList; 1) + .arguments.search_reason; ifempty(1.search_reason; \"\"))}}\n\ncaller_context:\n{{ifempty(get(1.message.toolCallList; 1) + .arguments.caller_context; ifempty(1.caller_context; \"\"))}}\n\nReturn only the strict JSON object requested in the system instructions."
+          }
+        ],
+        "max_tokens": "350",
+        "temperature": "1",
+        "n_completions": "1",
+        "response_format": "json_object",
+        "reasoning_effort": "low",
+        "parseJSONResponse": true
+      },
+      "module": "openai-gpt-3:CreateCompletion",
+      "version": 1,
+      "metadata": {
+        "expect": [
+          {
+            "name": "select",
+            "type": "select",
+            "label": "Select Method",
+            "required": true,
+            "validate": {
+              "enum": [
+                "chat",
+                "prompt"
+              ]
+            }
+          },
+          {
+            "name": "temperature",
+            "type": "number",
+            "label": "Temperature",
+            "validate": {
+              "max": 2,
+              "min": 0
+            }
+          },
+          {
+            "name": "top_p",
+            "type": "number",
+            "label": "Top P",
+            "validate": {
+              "max": 1,
+              "min": 0
+            }
+          },
+          {
+            "name": "n_completions",
+            "type": "number",
+            "label": "Number"
+          },
+          {
+            "name": "frequency_penalty",
+            "type": "number",
+            "label": "Frequency Penalty",
+            "validate": {
+              "max": 2,
+              "min": -2
+            }
+          },
+          {
+            "name": "presence_penalty",
+            "type": "number",
+            "label": "Presence Penalty",
+            "validate": {
+              "max": 2,
+              "min": -2
+            }
+          },
+          {
+            "name": "logit_bias",
+            "spec": {
+              "name": "value",
+              "spec": [
+                {
+                  "name": "token",
+                  "type": "text",
+                  "label": "Token ID",
+                  "required": true
+                },
+                {
+                  "name": "probability",
+                  "type": "number",
+                  "label": "Probability",
+                  "required": true,
+                  "validate": {
+                    "max": 100,
+                    "min": -100
+                  }
+                }
+              ],
+              "type": "collection",
+              "label": "Token Probability"
+            },
+            "type": "array",
+            "label": "Token Probability"
+          },
+          {
+            "name": "seed",
+            "type": "integer",
+            "label": "Seed"
+          },
+          {
+            "name": "tool_choice",
+            "type": "select",
+            "label": "Tool Choice",
+            "validate": {
+              "enum": [
+                "none",
+                "auto",
+                "required"
+              ]
+            }
+          },
+          {
+            "name": "stop",
+            "spec": {
+              "name": "value",
+              "type": "text",
+              "label": "Stop Sequence"
+            },
+            "type": "array",
+            "label": "Stop Sequences",
+            "validate": {
+              "maxItems": 4
+            }
+          },
+          {
+            "name": "additionalParameters",
+            "spec": {
+              "name": "value",
+              "spec": [
+                {
+                  "name": "key",
+                  "type": "text",
+                  "label": "Parameter Name",
+                  "required": true
+                },
+                {
+                  "name": "type",
+                  "type": "select",
+                  "label": "Input Type",
+                  "options": [
+                    {
+                      "label": "Text",
+                      "value": "text",
+                      "nested": [
+                        {
+                          "name": "value",
+                          "type": "text",
+                          "label": "Parameter Value"
+                        }
+                      ],
+                      "default": true
+                    },
+                    {
+                      "label": "Number",
+                      "value": "number",
+                      "nested": [
+                        {
+                          "name": "value",
+                          "type": "number",
+                          "label": "Parameter Value"
+                        }
+                      ]
+                    },
+                    {
+                      "label": "Boolean",
+                      "value": "boolean",
+                      "nested": [
+                        {
+                          "name": "value",
+                          "type": "boolean",
+                          "label": "Parameter Value"
+                        }
+                      ]
+                    },
+                    {
+                      "label": "Date",
+                      "value": "date",
+                      "nested": [
+                        {
+                          "name": "value",
+                          "type": "date",
+                          "label": "Parameter Value"
+                        }
+                      ]
+                    },
+                    {
+                      "label": "Any",
+                      "value": "any",
+                      "nested": [
+                        {
+                          "name": "value",
+                          "type": "any",
+                          "label": "Parameter Value"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "type": "collection",
+              "label": "Input Parameter"
+            },
+            "type": "array",
+            "label": "Other Input Parameters"
+          },
+          {
+            "name": "model",
+            "type": "select",
+            "label": "Model",
+            "required": true
+          },
+          {
+            "name": "max_tokens",
+            "type": "uinteger",
+            "label": "Max Output Tokens"
+          },
+          {
+            "name": "messages",
+            "spec": {
+              "name": "value",
+              "spec": [
+                {
+                  "name": "role",
+                  "type": "select",
+                  "label": "Role",
+                  "options": {
+                    "store": [
+                      {
+                        "label": "User",
+                        "value": "user",
+                        "nested": [
+                          {
+                            "help": "Text content of the message on behalf of the selected __Role__.",
+                            "name": "content",
+                            "type": "text",
+                            "label": "Text Content"
+                          }
+                        ],
+                        "default": true
+                      },
+                      {
+                        "label": "Assistant",
+                        "value": "assistant",
+                        "nested": [
+                          {
+                            "help": "Text content of the message on behalf of the selected __Role__.",
+                            "name": "content",
+                            "type": "text",
+                            "label": "Text Content"
+                          },
+                          {
+                            "mode": "edit",
+                            "name": "tool_calls",
+                            "spec": {
+                              "spec": [
+                                {
+                                  "name": "type",
+                                  "type": "hidden",
+                                  "default": "function"
+                                },
+                                {
+                                  "help": "Map this directly from the output of a previous **Create a Completion** module. Look for `Choices[]: Message.Tool Calls[]: ID`.",
+                                  "name": "id",
+                                  "type": "text",
+                                  "label": "Tool call ID"
+                                },
+                                {
+                                  "name": "function",
+                                  "spec": [
+                                    {
+                                      "help": "The name of the function previously called.",
+                                      "name": "name",
+                                      "type": "text",
+                                      "label": "Name",
+                                      "required": true
+                                    },
+                                    {
+                                      "help": "The arguments previously output by the AI.",
+                                      "name": "arguments",
+                                      "type": "text",
+                                      "label": "Arguments",
+                                      "required": true
+                                    }
+                                  ],
+                                  "type": "collection",
+                                  "label": "Function"
+                                }
+                              ],
+                              "type": "collection",
+                              "label": "Tool Call"
+                            },
+                            "type": "array",
+                            "label": "Tool Calls",
+                            "labels": {
+                              "add": "Add tool call"
+                            },
+                            "mappable": {
+                              "help": "You can map the entire `Choices[]: Message.Tool Calls` array from a previous Create a Completion module here."
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "label": "Developer / System",
+                        "value": "system",
+                        "nested": [
+                          {
+                            "help": "Text content of the message on behalf of the selected __Role__.",
+                            "name": "content",
+                            "type": "text",
+                            "label": "Text Content"
+                          }
+                        ]
+                      },
+                      {
+                        "label": "Tool",
+                        "value": "tool",
+                        "nested": [
+                          {
+                            "help": "The return of the function. This role should only be used when you have processed a previous function call and want to send the output of the function execution back to the AI.",
+                            "name": "content",
+                            "type": "text",
+                            "label": "Text Content",
+                            "required": true
+                          },
+                          {
+                            "help": "Map this directly from the output of a previous **Create a Completion** module. Look for `Choices[]: Message.Tool Calls[]: ID`.",
+                            "name": "tool_call_id",
+                            "type": "text",
+                            "label": "Tool Call ID.",
+                            "required": true
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "required": true
+                }
+              ],
+              "type": "collection",
+              "label": "Message"
+            },
+            "type": "array",
+            "label": "Messages",
+            "required": true
+          },
+          {
+            "name": "response_format",
+            "type": "select",
+            "label": "Response Format",
+            "validate": {
+              "enum": [
+                "text",
+                "json_object"
+              ]
+            }
+          },
+          {
+            "name": "reasoning_effort",
+            "type": "select",
+            "label": "Reasoning Effort",
+            "validate": {
+              "enum": [
+                "minimal",
+                "low",
+                "medium",
+                "high"
+              ]
+            }
+          },
+          {
+            "name": "parseJSONResponse",
+            "type": "boolean",
+            "label": "Parse JSON Response",
+            "required": true
+          }
+        ],
+        "restore": {
+          "expect": {
+            "stop": {
+              "mode": "chose"
+            },
+            "model": {
+              "mode": "chose",
+              "label": "gpt-5.5"
+            },
+            "select": {
+              "label": "Create a Chat Completion (GPT and o1 models)"
+            },
+            "messages": {
+              "mode": "chose",
+              "items": [
+                {
+                  "role": {
+                    "mode": "chose",
+                    "label": "Developer / System"
+                  }
+                },
+                {
+                  "role": {
+                    "mode": "chose",
+                    "label": "User"
+                  }
+                }
+              ]
+            },
+            "logit_bias": {
+              "mode": "chose"
+            },
+            "tool_choice": {
+              "mode": "chose",
+              "label": "Empty"
+            },
+            "response_format": {
+              "mode": "chose",
+              "label": "JSON Object"
+            },
+            "reasoning_effort": {
+              "mode": "chose",
+              "label": "Low"
+            },
+            "parseJSONResponse": {
+              "mode": "chose"
+            },
+            "additionalParameters": {
+              "mode": "chose"
+            }
+          },
+          "parameters": {
+            "__IMTCONN__": {
+              "data": {
+                "scoped": "true",
+                "connection": "openai-gpt-3"
+              },
+              "label": "My OpenAI connection"
+            }
+          }
+        },
+        "advanced": true,
+        "designer": {
+          "x": 300,
+          "y": 750,
+          "name": "OpenAI Native - Booking Intent Determiner"
+        },
+        "interface": [
+          {
+            "name": "result",
+            "type": "any",
+            "label": "Result"
+          },
+          {
+            "name": "id",
+            "type": "text",
+            "label": "ID"
+          },
+          {
+            "name": "object",
+            "type": "text",
+            "label": "Object"
+          },
+          {
+            "name": "created",
+            "type": "date",
+            "label": "Created"
+          },
+          {
+            "name": "model",
+            "type": "text",
+            "label": "Model"
+          },
+          {
+            "name": "choices",
+            "spec": [
+              {
+                "name": "text",
+                "type": "text",
+                "label": "Text"
+              },
+              {
+                "name": "index",
+                "type": "number",
+                "label": "Index"
+              },
+              {
+                "name": "logprobs",
+                "type": "text",
+                "label": "Log Probs"
+              },
+              {
+                "name": "finish_reason",
+                "type": "text",
+                "label": "Finish Reason"
+              },
+              {
+                "name": "message",
+                "spec": [
+                  {
+                    "name": "role",
+                    "type": "text",
+                    "label": "Role"
+                  },
+                  {
+                    "name": "content",
+                    "type": "text",
+                    "label": "Content"
+                  },
+                  {
+                    "name": "tool_calls",
+                    "spec": [
+                      {
+                        "name": "id",
+                        "type": "text",
+                        "label": "ID"
+                      },
+                      {
+                        "name": "type",
+                        "type": "text",
+                        "label": "Type"
+                      },
+                      {
+                        "name": "function",
+                        "spec": [
+                          {
+                            "name": "name",
+                            "type": "text",
+                            "label": "Name"
+                          },
+                          {
+                            "name": "arguments",
+                            "type": "text",
+                            "label": "Arguments"
+                          }
+                        ],
+                        "type": "collection",
+                        "label": "Function"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Tool Calls"
+                  },
+                  {
+                    "name": "refusal",
+                    "type": "text",
+                    "label": "Refusal"
+                  },
+                  {
+                    "name": "annotations",
+                    "spec": [
+                      {
+                        "name": "type",
+                        "type": "text",
+                        "label": "Type"
+                      },
+                      {
+                        "name": "url_citation",
+                        "spec": [
+                          {
+                            "name": "end_index",
+                            "type": "number",
+                            "label": "End Index"
+                          },
+                          {
+                            "name": "start_index",
+                            "type": "number",
+                            "label": "Start Index"
+                          },
+                          {
+                            "name": "title",
+                            "type": "text",
+                            "label": "Title"
+                          },
+                          {
+                            "name": "url",
+                            "type": "text",
+                            "label": "URL"
+                          }
+                        ],
+                        "type": "collection",
+                        "label": "URL Citation"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Annotations"
+                  }
+                ],
+                "type": "collection",
+                "label": "Message"
+              }
+            ],
+            "type": "array",
+            "label": "Choices"
+          },
+          {
+            "name": "usage",
+            "spec": [
+              {
+                "name": "prompt_tokens",
+                "type": "number",
+                "label": "Prompt Tokens"
+              },
+              {
+                "name": "completion_tokens",
+                "type": "text",
+                "label": "Completion Tokens"
+              },
+              {
+                "name": "total_tokens",
+                "type": "number",
+                "label": "Total Tokens"
+              },
+              {
+                "name": "prompt_tokens_details",
+                "spec": [
+                  {
+                    "name": "cached_tokens",
+                    "type": "uinteger",
+                    "label": "Cached Tokens"
+                  },
+                  {
+                    "name": "text_tokens",
+                    "type": "uinteger",
+                    "label": "Text Tokens"
+                  },
+                  {
+                    "name": "image_tokens",
+                    "type": "uinteger",
+                    "label": "Image Tokens"
+                  },
+                  {
+                    "name": "audio_tokens",
+                    "type": "uinteger",
+                    "label": "Audio Tokens"
+                  }
+                ],
+                "type": "collection",
+                "label": "Prompt Tokens Details"
+              },
+              {
+                "name": "completion_tokens_details",
+                "spec": [
+                  {
+                    "name": "reasoning_tokens",
+                    "type": "uinteger",
+                    "label": "Reasoning Tokens"
+                  },
+                  {
+                    "name": "text_tokens",
+                    "type": "uinteger",
+                    "label": "Text Tokens"
+                  },
+                  {
+                    "name": "audio_tokens",
+                    "type": "uinteger",
+                    "label": "Audio Tokens"
+                  },
+                  {
+                    "name": "accepted_prediction_tokens",
+                    "type": "uinteger",
+                    "label": "Accepted Prediction Tokens"
+                  },
+                  {
+                    "name": "rejected_prediction_tokens",
+                    "type": "uinteger",
+                    "label": "Rejected Prediction Tokens"
+                  }
+                ],
+                "type": "collection",
+                "label": "Completion Tokens Details"
+              }
+            ],
+            "type": "collection",
+            "label": "Usage"
+          },
+          {
+            "name": "service_tier",
+            "type": "text",
+            "label": "Service Tier"
+          },
+          {
+            "name": "system_fingerprint",
+            "type": "text",
+            "label": "System Fingerprint"
+          }
+        ],
+        "parameters": [
+          {
+            "name": "__IMTCONN__",
+            "type": "account:openai-gpt-3",
+            "label": "Connection",
+            "required": true
+          }
+        ]
+      },
+      "parameters": {
+        "__IMTCONN__": 1868931
+      }
+    },
+    {
+      "id": 3,
+      "mapper": null,
+      "module": "builtin:BasicRouter",
+      "routes": [
+        {
+          "flow": [
+            {
+              "id": 4,
+              "filter": {
+                "name": "Intent is root - Discovery Call",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{2.result.intent_index}}",
+                      "b": "root",
+                      "o": "text:equal"
+                    },
+                    {
+                      "a": "{{2.result.needs_clarification}}",
+                      "b": "false",
+                      "o": "text:equal"
+                    }
+                  ]
+                ]
+              },
+              "mapper": {
+                "url": "/calendars/events/appointments",
+                "body": "{\r\n  \"calendarId\": \"5M1rPVCdLebDqDEfuF3I\",\r\n  \"locationId\": \"{{get(1.message.toolCallList; 1)}}{{.arguments.locationId}}\",\r\n  \"contactId\": \"{{get(1.message.toolCallList; 1)}}{{.arguments.contactId}}\",\r\n  \"startTime\": \"{{get(1.message.toolCallList; 1)}}{{.arguments.startTime}}\",\r\n  \"endTime\": \"{{get(1.message.toolCallList; 1)}}{{.arguments.endTime}}\",\r\n  \"title\": \"{{get(1.message.toolCallList; 1)}}{{.arguments.title}}\",\r\n  \"appointmentStatus\": \"confirmed\",\r\n  \"notes\": \"{{get(1.message.toolCallList; 1)}}{{.arguments.notes}}\",\r\n  \"source\": \"vapi_make_booking\"\r\n}",
+                "method": "POST",
+                "headers": [
+                  {
+                    "key": "Version",
+                    "value": "2021-07-28"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "module": "highlevel:universal",
+              "version": 1,
+              "metadata": {
+                "expect": [
+                  {
+                    "name": "url",
+                    "type": "text",
+                    "label": "URL",
+                    "required": true
+                  },
+                  {
+                    "name": "method",
+                    "type": "select",
+                    "label": "Method",
+                    "required": true,
+                    "validate": {
+                      "enum": [
+                        "GET",
+                        "POST",
+                        "PUT",
+                        "PATCH",
+                        "DELETE"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "headers",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key"
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Headers"
+                  },
+                  {
+                    "name": "qs",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key"
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Query String"
+                  },
+                  {
+                    "name": "body",
+                    "type": "any",
+                    "label": "Body"
+                  },
+                  {
+                    "name": "url",
+                    "type": "text",
+                    "label": "URL",
+                    "required": true
+                  },
+                  {
+                    "name": "method",
+                    "type": "select",
+                    "label": "Method",
+                    "required": true,
+                    "validate": {
+                      "enum": [
+                        "GET",
+                        "POST",
+                        "PUT",
+                        "PATCH",
+                        "DELETE"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "headers",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key"
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Headers"
+                  },
+                  {
+                    "name": "qs",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key"
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Query String"
+                  },
+                  {
+                    "name": "body",
+                    "type": "any",
+                    "label": "Body"
+                  }
+                ],
+                "restore": {
+                  "expect": {
+                    "qs": {
+                      "mode": "chose"
+                    },
+                    "method": {
+                      "mode": "chose",
+                      "label": "POST"
+                    },
+                    "headers": {
+                      "mode": "chose",
+                      "items": [
+                        null,
+                        null,
+                        null
+                      ]
+                    }
+                  },
+                  "parameters": {
+                    "__IMTCONN__": {
+                      "data": {
+                        "scoped": "true",
+                        "connection": "highlevel3"
+                      },
+                      "label": "NPC GHL Rebirth (Location: Naidu Property Consulting Services)"
+                    }
+                  }
+                },
+                "designer": {
+                  "x": 900,
+                  "y": 0,
+                  "name": "HighLevel Native API - Create Appointment - Discovery Call"
+                },
+                "parameters": [
+                  {
+                    "name": "__IMTCONN__",
+                    "type": "account:highlevel3,highlevel4",
+                    "label": "Connection",
+                    "required": true
+                  }
+                ]
+              },
+              "parameters": {
+                "__IMTCONN__": 14192394
+              }
+            },
+            {
+              "id": 5,
+              "mapper": {
+                "body": "{\n  \"results\": [\n    {\n      \"toolCallId\": \"{{get(1.message.toolCallList; 1).id}}\",\n      \"result\": {\n        \"success\": true,\n        \"appointment_created\": true,\n        \"intent_index\": \"root\",\n        \"booking_type\": \"Discovery Call\",\n        \"calendarId\": \"5M1rPVCdLebDqDEfuF3I\",\n        \"locationId\": \"{{get(1.message.toolCallList; 1).arguments.locationId}}\",\n        \"contactId\": \"{{get(1.message.toolCallList; 1).arguments.contactId}}\",\n        \"startTime\": \"{{get(1.message.toolCallList; 1).arguments.startTime}}\",\n        \"endTime\": \"{{get(1.message.toolCallList; 1).arguments.endTime}}\",\n        \"timezone\": \"{{get(1.message.toolCallList; 1).arguments.timezone}}\",\n        \"duration_minutes\": \"{{get(1.message.toolCallList; 1).arguments.duration_minutes}}\",\n        \"message\": \"Appointment created in GoHighLevel. Treat this booking as confirmed only if the appointment object contains a valid event or appointment ID.\",\n        \"classifier_intent_index\": \"{{2.result.intent_index}}\",\n        \"classifier_intent_label\": \"{{2.result.intent_label}}\",\n        \"classifier_confidence\": \"{{2.result.confidence}}\",\n        \"classifier_needs_clarification\": \"{{2.result.needs_clarification}}\",\n        \"classifier_clarification_question\": \"{{2.result.clarification_question}}\",\n        \"classifier_routing_reason\": \"{{2.result.routing_reason}}\",\n        \"appointment\": {{4.body}}\n      }\n    }\n  ]\n}",
+                "status": "200",
+                "headers": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "module": "gateway:WebhookRespond",
+              "version": 1,
+              "metadata": {
+                "expect": [
+                  {
+                    "name": "status",
+                    "type": "uinteger",
+                    "label": "Status",
+                    "required": true,
+                    "validate": {
+                      "min": 100
+                    }
+                  },
+                  {
+                    "name": "body",
+                    "type": "any",
+                    "label": "Body"
+                  },
+                  {
+                    "name": "headers",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key",
+                        "required": true,
+                        "validate": {
+                          "max": 256
+                        }
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value",
+                        "required": true,
+                        "validate": {
+                          "max": 4096
+                        }
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Custom headers",
+                    "validate": {
+                      "maxItems": 16
+                    }
+                  }
+                ],
+                "restore": {
+                  "expect": {
+                    "headers": {
+                      "mode": "chose",
+                      "items": [
+                        null
+                      ]
+                    }
+                  }
+                },
+                "designer": {
+                  "x": 1200,
+                  "y": 0,
+                  "name": "Return Discovery Call Booking to Vapi"
+                }
+              },
+              "parameters": {}
+            }
+          ]
+        },
+        {
+          "flow": [
+            {
+              "id": 6,
+              "filter": {
+                "name": "Intent is 2 - Strategy Session (Phone)",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{2.result.intent_index}}",
+                      "b": "2",
+                      "o": "text:equal"
+                    },
+                    {
+                      "a": "{{2.result.needs_clarification}}",
+                      "b": "false",
+                      "o": "text:equal"
+                    }
+                  ]
+                ]
+              },
+              "mapper": {
+                "url": "/calendars/events/appointments",
+                "body": "{\n  \"calendarId\": \"Mr7wzgIMyBoYVReSeWBA\",\n  \"locationId\": \"{{get(1.message.toolCallList; 1)}}{{.arguments.locationId}}\",\n  \"contactId\": \"{{get(1.message.toolCallList; 1)}}{{.arguments.contactId}}\",\n  \"startTime\": \"{{get(1.message.toolCallList; 1)}}{{.arguments.startTime}}\",\n  \"endTime\": \"{{get(1.message.toolCallList; 1)}}{{.arguments.endTime}}\",\n  \"title\": \"{{get(1.message.toolCallList; 1)}}{{.arguments.title}}\",\n  \"appointmentStatus\": \"confirmed\",\n  \"notes\": \"{{get(1.message.toolCallList; 1)}}{{.arguments.notes}}\"\n}",
+                "method": "POST",
+                "headers": [
+                  {
+                    "key": "Version",
+                    "value": "2021-07-28"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "module": "highlevel:universal",
+              "version": 1,
+              "metadata": {
+                "expect": [
+                  {
+                    "name": "url",
+                    "type": "text",
+                    "label": "URL",
+                    "required": true
+                  },
+                  {
+                    "name": "method",
+                    "type": "select",
+                    "label": "Method",
+                    "required": true,
+                    "validate": {
+                      "enum": [
+                        "GET",
+                        "POST",
+                        "PUT",
+                        "PATCH",
+                        "DELETE"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "headers",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key"
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Headers"
+                  },
+                  {
+                    "name": "qs",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key"
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Query String"
+                  },
+                  {
+                    "name": "body",
+                    "type": "any",
+                    "label": "Body"
+                  },
+                  {
+                    "name": "url",
+                    "type": "text",
+                    "label": "URL",
+                    "required": true
+                  },
+                  {
+                    "name": "method",
+                    "type": "select",
+                    "label": "Method",
+                    "required": true,
+                    "validate": {
+                      "enum": [
+                        "GET",
+                        "POST",
+                        "PUT",
+                        "PATCH",
+                        "DELETE"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "headers",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key"
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Headers"
+                  },
+                  {
+                    "name": "qs",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key"
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Query String"
+                  },
+                  {
+                    "name": "body",
+                    "type": "any",
+                    "label": "Body"
+                  }
+                ],
+                "restore": {
+                  "expect": {
+                    "qs": {
+                      "mode": "chose"
+                    },
+                    "method": {
+                      "mode": "chose",
+                      "label": "POST"
+                    },
+                    "headers": {
+                      "mode": "chose",
+                      "items": [
+                        null,
+                        null,
+                        null
+                      ]
+                    }
+                  },
+                  "parameters": {
+                    "__IMTCONN__": {
+                      "data": {
+                        "scoped": "true",
+                        "connection": "highlevel3"
+                      },
+                      "label": "NPC GHL Rebirth (Location: Naidu Property Consulting Services)"
+                    }
+                  }
+                },
+                "designer": {
+                  "x": 900,
+                  "y": 300,
+                  "name": "HighLevel Native API - Create Appointment - Strategy Session Phone"
+                },
+                "parameters": [
+                  {
+                    "name": "__IMTCONN__",
+                    "type": "account:highlevel3,highlevel4",
+                    "label": "Connection",
+                    "required": true
+                  }
+                ]
+              },
+              "parameters": {
+                "__IMTCONN__": 14192394
+              }
+            },
+            {
+              "id": 7,
+              "mapper": {
+                "body": "{\n  \"results\": [\n    {\n      \"toolCallId\": \"{{get(1.message.toolCallList; 1).id}}\",\n      \"result\": {\n        \"success\": true,\n        \"appointment_created\": true,\n        \"intent_index\": \"2\",\n        \"booking_type\": \"Strategy Session (Phone)\",\n        \"calendarId\": \"Mr7wzgIMyBoYVReSeWBA\",\n        \"locationId\": \"{{get(1.message.toolCallList; 1).arguments.locationId}}\",\n        \"contactId\": \"{{get(1.message.toolCallList; 1).arguments.contactId}}\",\n        \"startTime\": \"{{get(1.message.toolCallList; 1).arguments.startTime}}\",\n        \"endTime\": \"{{get(1.message.toolCallList; 1).arguments.endTime}}\",\n        \"timezone\": \"{{get(1.message.toolCallList; 1).arguments.timezone}}\",\n        \"duration_minutes\": \"{{get(1.message.toolCallList; 1).arguments.duration_minutes}}\",\n        \"message\": \"Appointment created in GoHighLevel. Treat this booking as confirmed only if the appointment object contains a valid event or appointment ID.\",\n        \"classifier_intent_index\": \"{{2.result.intent_index}}\",\n        \"classifier_intent_label\": \"{{2.result.intent_label}}\",\n        \"classifier_confidence\": \"{{2.result.confidence}}\",\n        \"classifier_needs_clarification\": \"{{2.result.needs_clarification}}\",\n        \"classifier_clarification_question\": \"{{2.result.clarification_question}}\",\n        \"classifier_routing_reason\": \"{{2.result.routing_reason}}\",\n        \"appointment\": {{6.body}}\n      }\n    }\n  ]\n}",
+                "status": "200",
+                "headers": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "module": "gateway:WebhookRespond",
+              "version": 1,
+              "metadata": {
+                "expect": [
+                  {
+                    "name": "status",
+                    "type": "uinteger",
+                    "label": "Status",
+                    "required": true,
+                    "validate": {
+                      "min": 100
+                    }
+                  },
+                  {
+                    "name": "body",
+                    "type": "any",
+                    "label": "Body"
+                  },
+                  {
+                    "name": "headers",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key",
+                        "required": true,
+                        "validate": {
+                          "max": 256
+                        }
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value",
+                        "required": true,
+                        "validate": {
+                          "max": 4096
+                        }
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Custom headers",
+                    "validate": {
+                      "maxItems": 16
+                    }
+                  }
+                ],
+                "restore": {
+                  "expect": {
+                    "headers": {
+                      "mode": "chose",
+                      "items": [
+                        null
+                      ]
+                    }
+                  }
+                },
+                "designer": {
+                  "x": 1200,
+                  "y": 300,
+                  "name": "Return Strategy Session (Phone) Booking to Vapi"
+                }
+              },
+              "parameters": {}
+            }
+          ]
+        },
+        {
+          "flow": [
+            {
+              "id": 8,
+              "filter": {
+                "name": "Intent is 2_1 - Strategy Session (Zoom)",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{2.result.intent_index}}",
+                      "b": "2_1",
+                      "o": "text:equal"
+                    },
+                    {
+                      "a": "{{2.result.needs_clarification}}",
+                      "b": "false",
+                      "o": "text:equal"
+                    }
+                  ]
+                ]
+              },
+              "mapper": {
+                "url": "/calendars/events/appointments",
+                "body": "{\n  \"calendarId\": \"SWDeCPXczWmwl6DdEGT\",\n  \"locationId\": \"{{get(1.message.toolCallList; 1)}}{{.arguments.locationId}}\",\n  \"contactId\": \"{{get(1.message.toolCallList; 1)}}{{.arguments.contactId}}\",\n  \"startTime\": \"{{get(1.message.toolCallList; 1)}}{{.arguments.startTime}}\",\n  \"endTime\": \"{{get(1.message.toolCallList; 1)}}{{.arguments.endTime}}\",\n  \"title\": \"{{get(1.message.toolCallList; 1)}}{{.arguments.title}}\",\n  \"appointmentStatus\": \"confirmed\",\n  \"notes\": \"{{get(1.message.toolCallList; 1)}}{{.arguments.notes}}\"\n}",
+                "method": "POST",
+                "headers": [
+                  {
+                    "key": "Version",
+                    "value": "2021-07-28"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "module": "highlevel:universal",
+              "version": 1,
+              "metadata": {
+                "expect": [
+                  {
+                    "name": "url",
+                    "type": "text",
+                    "label": "URL",
+                    "required": true
+                  },
+                  {
+                    "name": "method",
+                    "type": "select",
+                    "label": "Method",
+                    "required": true,
+                    "validate": {
+                      "enum": [
+                        "GET",
+                        "POST",
+                        "PUT",
+                        "PATCH",
+                        "DELETE"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "headers",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key"
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Headers"
+                  },
+                  {
+                    "name": "qs",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key"
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Query String"
+                  },
+                  {
+                    "name": "body",
+                    "type": "any",
+                    "label": "Body"
+                  },
+                  {
+                    "name": "url",
+                    "type": "text",
+                    "label": "URL",
+                    "required": true
+                  },
+                  {
+                    "name": "method",
+                    "type": "select",
+                    "label": "Method",
+                    "required": true,
+                    "validate": {
+                      "enum": [
+                        "GET",
+                        "POST",
+                        "PUT",
+                        "PATCH",
+                        "DELETE"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "headers",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key"
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Headers"
+                  },
+                  {
+                    "name": "qs",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key"
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Query String"
+                  },
+                  {
+                    "name": "body",
+                    "type": "any",
+                    "label": "Body"
+                  }
+                ],
+                "restore": {
+                  "expect": {
+                    "qs": {
+                      "mode": "chose"
+                    },
+                    "method": {
+                      "mode": "chose",
+                      "label": "POST"
+                    },
+                    "headers": {
+                      "mode": "chose",
+                      "items": [
+                        null,
+                        null,
+                        null
+                      ]
+                    }
+                  },
+                  "parameters": {
+                    "__IMTCONN__": {
+                      "data": {
+                        "scoped": "true",
+                        "connection": "highlevel3"
+                      },
+                      "label": "NPC GHL Rebirth (Location: Naidu Property Consulting Services)"
+                    }
+                  }
+                },
+                "designer": {
+                  "x": 900,
+                  "y": 600,
+                  "name": "HighLevel Native API - Create Appointment - Strategy Session Zoom"
+                },
+                "parameters": [
+                  {
+                    "name": "__IMTCONN__",
+                    "type": "account:highlevel3,highlevel4",
+                    "label": "Connection",
+                    "required": true
+                  }
+                ]
+              },
+              "parameters": {
+                "__IMTCONN__": 14192394
+              }
+            },
+            {
+              "id": 9,
+              "mapper": {
+                "body": "{\n  \"results\": [\n    {\n      \"toolCallId\": \"{{get(1.message.toolCallList; 1).id}}\",\n      \"result\": {\n        \"success\": true,\n        \"appointment_created\": true,\n        \"intent_index\": \"2_1\",\n        \"booking_type\": \"Strategy Session (Zoom)\",\n        \"calendarId\": \"SWDeCPXczWmwl6DdEGT\",\n        \"locationId\": \"{{get(1.message.toolCallList; 1).arguments.locationId}}\",\n        \"contactId\": \"{{get(1.message.toolCallList; 1).arguments.contactId}}\",\n        \"startTime\": \"{{get(1.message.toolCallList; 1).arguments.startTime}}\",\n        \"endTime\": \"{{get(1.message.toolCallList; 1).arguments.endTime}}\",\n        \"timezone\": \"{{get(1.message.toolCallList; 1).arguments.timezone}}\",\n        \"duration_minutes\": \"{{get(1.message.toolCallList; 1).arguments.duration_minutes}}\",\n        \"message\": \"Appointment created in GoHighLevel. Treat this booking as confirmed only if the appointment object contains a valid event or appointment ID.\",\n        \"classifier_intent_index\": \"{{2.result.intent_index}}\",\n        \"classifier_intent_label\": \"{{2.result.intent_label}}\",\n        \"classifier_confidence\": \"{{2.result.confidence}}\",\n        \"classifier_needs_clarification\": \"{{2.result.needs_clarification}}\",\n        \"classifier_clarification_question\": \"{{2.result.clarification_question}}\",\n        \"classifier_routing_reason\": \"{{2.result.routing_reason}}\",\n        \"appointment\": {{8.body}}\n      }\n    }\n  ]\n}",
+                "status": "200",
+                "headers": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "module": "gateway:WebhookRespond",
+              "version": 1,
+              "metadata": {
+                "expect": [
+                  {
+                    "name": "status",
+                    "type": "uinteger",
+                    "label": "Status",
+                    "required": true,
+                    "validate": {
+                      "min": 100
+                    }
+                  },
+                  {
+                    "name": "body",
+                    "type": "any",
+                    "label": "Body"
+                  },
+                  {
+                    "name": "headers",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key",
+                        "required": true,
+                        "validate": {
+                          "max": 256
+                        }
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value",
+                        "required": true,
+                        "validate": {
+                          "max": 4096
+                        }
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Custom headers",
+                    "validate": {
+                      "maxItems": 16
+                    }
+                  }
+                ],
+                "restore": {
+                  "expect": {
+                    "headers": {
+                      "mode": "chose",
+                      "items": [
+                        null
+                      ]
+                    }
+                  }
+                },
+                "designer": {
+                  "x": 1200,
+                  "y": 600,
+                  "name": "Return Strategy Session (Zoom) Booking to Vapi"
+                }
+              },
+              "parameters": {}
+            }
+          ]
+        },
+        {
+          "flow": [
+            {
+              "id": 10,
+              "filter": {
+                "name": "Intent is 3 - Initial Finance Consult (Phone)",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{2.result.intent_index}}",
+                      "b": "3",
+                      "o": "text:equal"
+                    },
+                    {
+                      "a": "{{2.result.needs_clarification}}",
+                      "b": "false",
+                      "o": "text:equal"
+                    }
+                  ]
+                ]
+              },
+              "mapper": {
+                "url": "/calendars/events/appointments",
+                "body": "{\n  \"calendarId\": \"SYn3BWdOefiNHOC4KPVw\",\n  \"locationId\": \"{{get(1.message.toolCallList; 1)}}{{.arguments.locationId}}\",\n  \"contactId\": \"{{get(1.message.toolCallList; 1)}}{{.arguments.contactId}}\",\n  \"startTime\": \"{{get(1.message.toolCallList; 1)}}{{.arguments.startTime}}\",\n  \"endTime\": \"{{get(1.message.toolCallList; 1)}}{{.arguments.endTime}}\",\n  \"title\": \"{{get(1.message.toolCallList; 1)}}{{.arguments.title}}\",\n  \"appointmentStatus\": \"confirmed\",\n  \"notes\": \"{{get(1.message.toolCallList; 1)}}{{.arguments.notes}}\"\n}",
+                "method": "POST",
+                "headers": [
+                  {
+                    "key": "Version",
+                    "value": "2021-07-28"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "module": "highlevel:universal",
+              "version": 1,
+              "metadata": {
+                "expect": [
+                  {
+                    "name": "url",
+                    "type": "text",
+                    "label": "URL",
+                    "required": true
+                  },
+                  {
+                    "name": "method",
+                    "type": "select",
+                    "label": "Method",
+                    "required": true,
+                    "validate": {
+                      "enum": [
+                        "GET",
+                        "POST",
+                        "PUT",
+                        "PATCH",
+                        "DELETE"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "headers",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key"
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Headers"
+                  },
+                  {
+                    "name": "qs",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key"
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Query String"
+                  },
+                  {
+                    "name": "body",
+                    "type": "any",
+                    "label": "Body"
+                  },
+                  {
+                    "name": "url",
+                    "type": "text",
+                    "label": "URL",
+                    "required": true
+                  },
+                  {
+                    "name": "method",
+                    "type": "select",
+                    "label": "Method",
+                    "required": true,
+                    "validate": {
+                      "enum": [
+                        "GET",
+                        "POST",
+                        "PUT",
+                        "PATCH",
+                        "DELETE"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "headers",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key"
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Headers"
+                  },
+                  {
+                    "name": "qs",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key"
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Query String"
+                  },
+                  {
+                    "name": "body",
+                    "type": "any",
+                    "label": "Body"
+                  }
+                ],
+                "restore": {
+                  "expect": {
+                    "qs": {
+                      "mode": "chose"
+                    },
+                    "method": {
+                      "mode": "chose",
+                      "label": "POST"
+                    },
+                    "headers": {
+                      "mode": "chose",
+                      "items": [
+                        null,
+                        null,
+                        null
+                      ]
+                    }
+                  },
+                  "parameters": {
+                    "__IMTCONN__": {
+                      "data": {
+                        "scoped": "true",
+                        "connection": "highlevel3"
+                      },
+                      "label": "NPC GHL Rebirth (Location: Naidu Property Consulting Services)"
+                    }
+                  }
+                },
+                "designer": {
+                  "x": 900,
+                  "y": 900,
+                  "name": "HighLevel Native API - Create Appointment - IFC Phone"
+                },
+                "parameters": [
+                  {
+                    "name": "__IMTCONN__",
+                    "type": "account:highlevel3,highlevel4",
+                    "label": "Connection",
+                    "required": true
+                  }
+                ]
+              },
+              "parameters": {
+                "__IMTCONN__": 14192394
+              }
+            },
+            {
+              "id": 11,
+              "mapper": {
+                "body": "{\n  \"results\": [\n    {\n      \"toolCallId\": \"{{get(1.message.toolCallList; 1).id}}\",\n      \"result\": {\n        \"success\": true,\n        \"appointment_created\": true,\n        \"intent_index\": \"3\",\n        \"booking_type\": \"Initial Finance Consult (Phone)\",\n        \"calendarId\": \"SYn3BWdOefiNHOC4KPVw\",\n        \"locationId\": \"{{get(1.message.toolCallList; 1).arguments.locationId}}\",\n        \"contactId\": \"{{get(1.message.toolCallList; 1).arguments.contactId}}\",\n        \"startTime\": \"{{get(1.message.toolCallList; 1).arguments.startTime}}\",\n        \"endTime\": \"{{get(1.message.toolCallList; 1).arguments.endTime}}\",\n        \"timezone\": \"{{get(1.message.toolCallList; 1).arguments.timezone}}\",\n        \"duration_minutes\": \"{{get(1.message.toolCallList; 1).arguments.duration_minutes}}\",\n        \"message\": \"Appointment created in GoHighLevel. Treat this booking as confirmed only if the appointment object contains a valid event or appointment ID.\",\n        \"classifier_intent_index\": \"{{2.result.intent_index}}\",\n        \"classifier_intent_label\": \"{{2.result.intent_label}}\",\n        \"classifier_confidence\": \"{{2.result.confidence}}\",\n        \"classifier_needs_clarification\": \"{{2.result.needs_clarification}}\",\n        \"classifier_clarification_question\": \"{{2.result.clarification_question}}\",\n        \"classifier_routing_reason\": \"{{2.result.routing_reason}}\",\n        \"appointment\": {{10.body}}\n      }\n    }\n  ]\n}",
+                "status": "200",
+                "headers": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "module": "gateway:WebhookRespond",
+              "version": 1,
+              "metadata": {
+                "expect": [
+                  {
+                    "name": "status",
+                    "type": "uinteger",
+                    "label": "Status",
+                    "required": true,
+                    "validate": {
+                      "min": 100
+                    }
+                  },
+                  {
+                    "name": "body",
+                    "type": "any",
+                    "label": "Body"
+                  },
+                  {
+                    "name": "headers",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key",
+                        "required": true,
+                        "validate": {
+                          "max": 256
+                        }
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value",
+                        "required": true,
+                        "validate": {
+                          "max": 4096
+                        }
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Custom headers",
+                    "validate": {
+                      "maxItems": 16
+                    }
+                  }
+                ],
+                "restore": {
+                  "expect": {
+                    "headers": {
+                      "mode": "chose",
+                      "items": [
+                        null
+                      ]
+                    }
+                  }
+                },
+                "designer": {
+                  "x": 1200,
+                  "y": 900,
+                  "name": "Return Initial Finance Consult (Phone) Booking to Vapi"
+                }
+              },
+              "parameters": {}
+            }
+          ]
+        },
+        {
+          "flow": [
+            {
+              "id": 12,
+              "filter": {
+                "name": "Intent is 3_1 - Initial Finance Consult (Zoom)",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{2.result.intent_index}}",
+                      "b": "3_1",
+                      "o": "text:equal"
+                    },
+                    {
+                      "a": "{{2.result.needs_clarification}}",
+                      "b": "false",
+                      "o": "text:equal"
+                    }
+                  ]
+                ]
+              },
+              "mapper": {
+                "url": "/calendars/events/appointments",
+                "body": "{\n  \"calendarId\": \"cyb8qKO11DgUMMHHK4ZJI\",\n  \"locationId\": \"{{get(1.message.toolCallList; 1)}}{{.arguments.locationId}}\",\n  \"contactId\": \"{{get(1.message.toolCallList; 1)}}{{.arguments.contactId}}\",\n  \"startTime\": \"{{get(1.message.toolCallList; 1)}}{{.arguments.startTime}}\",\n  \"endTime\": \"{{get(1.message.toolCallList; 1)}}{{.arguments.endTime}}\",\n  \"title\": \"{{get(1.message.toolCallList; 1)}}{{.arguments.title}}\",\n  \"appointmentStatus\": \"confirmed\",\n  \"notes\": \"{{get(1.message.toolCallList; 1)}}{{.arguments.notes}}\"\n}",
+                "method": "POST",
+                "headers": [
+                  {
+                    "key": "Version",
+                    "value": "2021-07-28"
+                  },
+                  {
+                    "key": "Accept",
+                    "value": "application/json"
+                  },
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "module": "highlevel:universal",
+              "version": 1,
+              "metadata": {
+                "expect": [
+                  {
+                    "name": "url",
+                    "type": "text",
+                    "label": "URL",
+                    "required": true
+                  },
+                  {
+                    "name": "method",
+                    "type": "select",
+                    "label": "Method",
+                    "required": true,
+                    "validate": {
+                      "enum": [
+                        "GET",
+                        "POST",
+                        "PUT",
+                        "PATCH",
+                        "DELETE"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "headers",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key"
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Headers"
+                  },
+                  {
+                    "name": "qs",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key"
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Query String"
+                  },
+                  {
+                    "name": "body",
+                    "type": "any",
+                    "label": "Body"
+                  },
+                  {
+                    "name": "url",
+                    "type": "text",
+                    "label": "URL",
+                    "required": true
+                  },
+                  {
+                    "name": "method",
+                    "type": "select",
+                    "label": "Method",
+                    "required": true,
+                    "validate": {
+                      "enum": [
+                        "GET",
+                        "POST",
+                        "PUT",
+                        "PATCH",
+                        "DELETE"
+                      ]
+                    }
+                  },
+                  {
+                    "name": "headers",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key"
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Headers"
+                  },
+                  {
+                    "name": "qs",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key"
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Query String"
+                  },
+                  {
+                    "name": "body",
+                    "type": "any",
+                    "label": "Body"
+                  }
+                ],
+                "restore": {
+                  "expect": {
+                    "qs": {
+                      "mode": "chose"
+                    },
+                    "method": {
+                      "mode": "chose",
+                      "label": "POST"
+                    },
+                    "headers": {
+                      "mode": "chose",
+                      "items": [
+                        null,
+                        null,
+                        null
+                      ]
+                    }
+                  },
+                  "parameters": {
+                    "__IMTCONN__": {
+                      "data": {
+                        "scoped": "true",
+                        "connection": "highlevel3"
+                      },
+                      "label": "NPC GHL Rebirth (Location: Naidu Property Consulting Services)"
+                    }
+                  }
+                },
+                "designer": {
+                  "x": 900,
+                  "y": 1200,
+                  "name": "HighLevel Native API - Create Appointment - IFC Zoom"
+                },
+                "parameters": [
+                  {
+                    "name": "__IMTCONN__",
+                    "type": "account:highlevel3,highlevel4",
+                    "label": "Connection",
+                    "required": true
+                  }
+                ]
+              },
+              "parameters": {
+                "__IMTCONN__": 14192394
+              }
+            },
+            {
+              "id": 13,
+              "mapper": {
+                "body": "{\n  \"results\": [\n    {\n      \"toolCallId\": \"{{get(1.message.toolCallList; 1).id}}\",\n      \"result\": {\n        \"success\": true,\n        \"appointment_created\": true,\n        \"intent_index\": \"3_1\",\n        \"booking_type\": \"Initial Finance Consult (Zoom)\",\n        \"calendarId\": \"cyb8qKO11DgUMMHHK4ZJI\",\n        \"locationId\": \"{{get(1.message.toolCallList; 1).arguments.locationId}}\",\n        \"contactId\": \"{{get(1.message.toolCallList; 1).arguments.contactId}}\",\n        \"startTime\": \"{{get(1.message.toolCallList; 1).arguments.startTime}}\",\n        \"endTime\": \"{{get(1.message.toolCallList; 1).arguments.endTime}}\",\n        \"timezone\": \"{{get(1.message.toolCallList; 1).arguments.timezone}}\",\n        \"duration_minutes\": \"{{get(1.message.toolCallList; 1).arguments.duration_minutes}}\",\n        \"message\": \"Appointment created in GoHighLevel. Treat this booking as confirmed only if the appointment object contains a valid event or appointment ID.\",\n        \"classifier_intent_index\": \"{{2.result.intent_index}}\",\n        \"classifier_intent_label\": \"{{2.result.intent_label}}\",\n        \"classifier_confidence\": \"{{2.result.confidence}}\",\n        \"classifier_needs_clarification\": \"{{2.result.needs_clarification}}\",\n        \"classifier_clarification_question\": \"{{2.result.clarification_question}}\",\n        \"classifier_routing_reason\": \"{{2.result.routing_reason}}\",\n        \"appointment\": {{12.body}}\n      }\n    }\n  ]\n}",
+                "status": "200",
+                "headers": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "module": "gateway:WebhookRespond",
+              "version": 1,
+              "metadata": {
+                "expect": [
+                  {
+                    "name": "status",
+                    "type": "uinteger",
+                    "label": "Status",
+                    "required": true,
+                    "validate": {
+                      "min": 100
+                    }
+                  },
+                  {
+                    "name": "body",
+                    "type": "any",
+                    "label": "Body"
+                  },
+                  {
+                    "name": "headers",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key",
+                        "required": true,
+                        "validate": {
+                          "max": 256
+                        }
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value",
+                        "required": true,
+                        "validate": {
+                          "max": 4096
+                        }
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Custom headers",
+                    "validate": {
+                      "maxItems": 16
+                    }
+                  }
+                ],
+                "restore": {
+                  "expect": {
+                    "headers": {
+                      "mode": "chose",
+                      "items": [
+                        null
+                      ]
+                    }
+                  }
+                },
+                "designer": {
+                  "x": 1200,
+                  "y": 1200,
+                  "name": "Return Initial Finance Consult (Zoom) Booking to Vapi"
+                }
+              },
+              "parameters": {}
+            }
+          ]
+        },
+        {
+          "flow": [
+            {
+              "id": 14,
+              "filter": {
+                "name": "Intent needs clarification or classifier requests clarification",
+                "conditions": [
+                  [
+                    {
+                      "a": "{{2.result.intent_index}}",
+                      "b": "clarification_needed",
+                      "o": "text:equal"
+                    }
+                  ],
+                  [
+                    {
+                      "a": "{{2.result.needs_clarification}}",
+                      "b": "true",
+                      "o": "text:equal"
+                    }
+                  ]
+                ]
+              },
+              "mapper": {
+                "body": "{\n  \"results\": [\n    {\n      \"toolCallId\": \"{{get(1.message.toolCallList; 1).id}}\",\n      \"result\": {\n        \"success\": false,\n        \"needs_clarification\": true,\n        \"message\": \"The booking type or call mode is unclear. Ask the caller a short clarification question before booking the appointment.\",\n        \"clarification_question\": \"{{2.result.clarification_question}}\",\n        \"allowed_booking_types\": [\n          \"Discovery Call\",\n          \"Strategy Session (Phone)\",\n          \"Strategy Session (Zoom)\",\n          \"Initial Finance Consult (Phone)\",\n          \"Initial Finance Consult (Zoom)\"\n        ],\n        \"classifier_intent_index\": \"{{2.result.intent_index}}\",\n        \"classifier_intent_label\": \"{{2.result.intent_label}}\",\n        \"classifier_confidence\": \"{{2.result.confidence}}\",\n        \"classifier_needs_clarification\": \"{{2.result.needs_clarification}}\",\n        \"classifier_clarification_question\": \"{{2.result.clarification_question}}\",\n        \"classifier_routing_reason\": \"{{2.result.routing_reason}}\"\n      }\n    }\n  ]\n}",
+                "status": "200",
+                "headers": [
+                  {
+                    "key": "Content-Type",
+                    "value": "application/json"
+                  }
+                ]
+              },
+              "module": "gateway:WebhookRespond",
+              "version": 1,
+              "metadata": {
+                "expect": [
+                  {
+                    "name": "status",
+                    "type": "uinteger",
+                    "label": "Status",
+                    "required": true,
+                    "validate": {
+                      "min": 100
+                    }
+                  },
+                  {
+                    "name": "body",
+                    "type": "any",
+                    "label": "Body"
+                  },
+                  {
+                    "name": "headers",
+                    "spec": [
+                      {
+                        "name": "key",
+                        "type": "text",
+                        "label": "Key",
+                        "required": true,
+                        "validate": {
+                          "max": 256
+                        }
+                      },
+                      {
+                        "name": "value",
+                        "type": "text",
+                        "label": "Value",
+                        "required": true,
+                        "validate": {
+                          "max": 4096
+                        }
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Custom headers",
+                    "validate": {
+                      "maxItems": 16
+                    }
+                  }
+                ],
+                "restore": {
+                  "expect": {
+                    "headers": {
+                      "mode": "chose",
+                      "items": [
+                        null
+                      ]
+                    }
+                  }
+                },
+                "designer": {
+                  "x": 900,
+                  "y": 1500,
+                  "name": "Return Clarification Needed to Vapi"
+                }
+              },
+              "parameters": {}
+            }
+          ]
+        }
+      ],
+      "version": 1,
+      "metadata": {
+        "designer": {
+          "x": 561,
+          "y": 750,
+          "name": "Route by OpenAI intent_index"
+        }
+      },
+      "parameters": {}
+    }
+  ],
+  "name": "Vapi - GHL Booking Appointment Intent Router - Native HighLevel Universal API - Cascaded FINAL",
+  "metadata": {
+    "instant": true,
+    "version": 1,
+    "designer": {
+      "orphans": [],
+      "samples": {
+        "1": {
+          "message": {
+            "type": "tool-calls",
+            "timestamp": 1779231600000,
+            "toolCallList": [
+              {
+                "id": "test-booking-clarification-001",
+                "name": "ghl_create_booking",
+                "arguments": {
+                  "notes": "This should not create an appointment if routing works correctly.",
+                  "endTime": "2026-05-15T11:30:00+10:00",
+                  "contactId": "rI4e9UeaVZsEMBotiIWh",
+                  "startTime": "2026-05-15T11:00:00+10:00",
+                  "locationId": "H7NNnJKSofGaRJHTkAd3",
+                  "search_reason": "Testing clarification route for incomplete booking intent",
+                  "caller_context": "Discovery call",
+                  "booking_intent_text": "The caller wants to book a discovery call.",
+                  "preferred_date_text": "20 May 2026 at 10:00 AM"
+                }
+              }
+            ]
+          }
+        },
+        "2": {
+          "id": "chatcmpl-Decv3RhNHwF7jquZ8q8qceMzoJpjG",
+          "model": "gpt-5.5-2026-04-23",
+          "usage": {
+            "total_tokens": 1762,
+            "prompt_tokens": 1670,
+            "completion_tokens": 92,
+            "prompt_tokens_details": {
+              "audio_tokens": 0,
+              "cached_tokens": 0
+            },
+            "completion_tokens_details": {
+              "audio_tokens": 0,
+              "reasoning_tokens": 17,
+              "accepted_prediction_tokens": 0,
+              "rejected_prediction_tokens": 0
+            }
+          },
+          "object": "chat.completion",
+          "result": {
+            "confidence": 0.98,
+            "intent_index": "root",
+            "intent_label": "Discovery Call",
+            "routing_reason": "The latest booking intent explicitly states the caller wants to book a discovery call, which maps to...",
+            "needs_clarification": false,
+            "clarification_question": ""
+          },
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "{\"intent_index\":\"root\",\"intent_label\":\"Discovery Call\",\"confidence\":0.98,\"needs_clarification\":false...",
+                "refusal": null,
+                "annotations": []
+              },
+              "finish_reason": "stop"
+            }
+          ],
+          "created": "2026-05-12T08:38:17.000Z",
+          "service_tier": "default",
+          "system_fingerprint": null
+        }
+      }
+    },
+    "scenario": {
+      "dlq": false,
+      "slots": null,
+      "dataloss": false,
+      "maxErrors": 3,
+      "autoCommit": true,
+      "roundtrips": 1,
+      "sequential": false,
+      "confidential": false,
+      "freshVariables": false,
+      "autoCommitTriggerLast": true
+    }
+  },
+  "scheduling": {
+    "type": "immediately"
+  },
+  "interface": {
+    "input": [],
+    "output": []
+  }
+}

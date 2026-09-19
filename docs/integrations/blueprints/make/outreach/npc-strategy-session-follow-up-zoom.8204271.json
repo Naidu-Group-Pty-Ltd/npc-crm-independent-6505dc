@@ -1,0 +1,2156 @@
+{
+  "flow": [
+    {
+      "id": 1,
+      "mapper": {},
+      "module": "gateway:CustomWebHook",
+      "version": 1,
+      "metadata": {
+        "restore": {
+          "parameters": {
+            "hook": {
+              "data": {
+                "editable": "true"
+              },
+              "label": "GHL Strategy Session"
+            }
+          }
+        },
+        "designer": {
+          "x": -864,
+          "y": 111
+        },
+        "parameters": [
+          {
+            "name": "hook",
+            "type": "hook:gateway-webhook",
+            "label": "Webhook",
+            "required": true
+          },
+          {
+            "name": "maxResults",
+            "type": "number",
+            "label": "Maximum number of results"
+          }
+        ]
+      },
+      "parameters": {
+        "hook": 3651149,
+        "maxResults": 1
+      }
+    },
+    {
+      "id": 2,
+      "mapper": {
+        "limit": "1",
+        "folder": "/AQMkAGZjZjQ2ZTFiLTU4ZjgtNGU1YS1iOTkAMi02YjI1YTZlYzUwNzMALgAAAxaddFxvhqFMlxsympttqAABANXSuuEhdPNLpedpm0AqBxIAAAIBDAAAAA==/AAMkAGZjZjQ2ZTFiLTU4ZjgtNGU1YS1iOTkyLTZiMjVhNmVjNTA3MwAuAAAAAAAWnXRcb4ahTJcbMpqbbagAAQDV0rrhIXTzS6XnaZtAKgcSAABcDPDMAAA=",
+        "search": "From:noreply@mail.npcservices.com.au AND Subject:Appointment confirmation of {{1.full_name}}"
+      },
+      "module": "microsoft-email:listMessages",
+      "version": 2,
+      "metadata": {
+        "expect": [
+          {
+            "name": "folder",
+            "type": "folder",
+            "label": "Mail Folder"
+          },
+          {
+            "name": "search",
+            "type": "text",
+            "label": "Search"
+          },
+          {
+            "name": "orderby",
+            "type": "select",
+            "label": "Order by",
+            "validate": {
+              "enum": [
+                "subject asc",
+                "subject desc",
+                "createdDateTime asc",
+                "createdDateTime desc",
+                "lastModifiedDateTime asc",
+                "lastModifiedDateTime desc",
+                "receivedDateTime asc",
+                "receivedDateTime desc"
+              ]
+            }
+          },
+          {
+            "name": "limit",
+            "type": "uinteger",
+            "label": "Limit"
+          }
+        ],
+        "restore": {
+          "expect": {
+            "folder": {
+              "mode": "chose",
+              "path": [
+                "Inbox",
+                "Marketing"
+              ]
+            },
+            "orderby": {
+              "mode": "chose",
+              "label": "Empty"
+            }
+          },
+          "parameters": {
+            "__IMTCONN__": {
+              "data": {
+                "scoped": "true",
+                "connection": "azure"
+              },
+              "label": "Admin NPC Email (Naidu Property Consulting Services <admin@npcservices.com.au>)"
+            }
+          }
+        },
+        "designer": {
+          "x": -564,
+          "y": 111
+        },
+        "parameters": [
+          {
+            "name": "__IMTCONN__",
+            "type": "account:azure",
+            "label": "Connection",
+            "required": true
+          }
+        ]
+      },
+      "parameters": {
+        "__IMTCONN__": 13160708
+      }
+    },
+    {
+      "id": 3,
+      "mapper": {
+        "model": "gpt-5",
+        "top_p": "1",
+        "select": "chat",
+        "messages": [
+          {
+            "role": "system",
+            "content": "Convert the following time into ISO 8601 format : {{now}}\n\nAdd 2 minutes to the final output.\n\nOutput only the timestamp and nothing else in structured JSON format.\n\nSet the key name as: timestamp_call_trigger\n\n"
+          }
+        ],
+        "max_tokens": "2048",
+        "temperature": "1",
+        "n_completions": "1",
+        "response_format": "json_object",
+        "parseJSONResponse": true
+      },
+      "module": "openai-gpt-3:CreateCompletion",
+      "version": 1,
+      "metadata": {
+        "expect": [
+          {
+            "name": "select",
+            "type": "select",
+            "label": "Select Method",
+            "required": true,
+            "validate": {
+              "enum": [
+                "chat",
+                "prompt"
+              ]
+            }
+          },
+          {
+            "name": "temperature",
+            "type": "number",
+            "label": "Temperature",
+            "validate": {
+              "max": 2,
+              "min": 0
+            }
+          },
+          {
+            "name": "top_p",
+            "type": "number",
+            "label": "Top P",
+            "validate": {
+              "max": 1,
+              "min": 0
+            }
+          },
+          {
+            "name": "n_completions",
+            "type": "number",
+            "label": "Number"
+          },
+          {
+            "name": "frequency_penalty",
+            "type": "number",
+            "label": "Frequency Penalty",
+            "validate": {
+              "max": 2,
+              "min": -2
+            }
+          },
+          {
+            "name": "presence_penalty",
+            "type": "number",
+            "label": "Presence Penalty",
+            "validate": {
+              "max": 2,
+              "min": -2
+            }
+          },
+          {
+            "name": "logit_bias",
+            "spec": {
+              "name": "value",
+              "spec": [
+                {
+                  "name": "token",
+                  "type": "text",
+                  "label": "Token ID",
+                  "required": true
+                },
+                {
+                  "name": "probability",
+                  "type": "number",
+                  "label": "Probability",
+                  "required": true,
+                  "validate": {
+                    "max": 100,
+                    "min": -100
+                  }
+                }
+              ],
+              "type": "collection",
+              "label": "Token Probability"
+            },
+            "type": "array",
+            "label": "Token Probability"
+          },
+          {
+            "name": "seed",
+            "type": "integer",
+            "label": "Seed"
+          },
+          {
+            "name": "tool_choice",
+            "type": "select",
+            "label": "Tool Choice",
+            "validate": {
+              "enum": [
+                "none",
+                "auto",
+                "required"
+              ]
+            }
+          },
+          {
+            "name": "stop",
+            "spec": {
+              "name": "value",
+              "type": "text",
+              "label": "Stop Sequence"
+            },
+            "type": "array",
+            "label": "Stop Sequences",
+            "validate": {
+              "maxItems": 4
+            }
+          },
+          {
+            "name": "additionalParameters",
+            "spec": {
+              "name": "value",
+              "spec": [
+                {
+                  "name": "key",
+                  "type": "text",
+                  "label": "Parameter Name",
+                  "required": true
+                },
+                {
+                  "name": "type",
+                  "type": "select",
+                  "label": "Input Type",
+                  "options": [
+                    {
+                      "label": "Text",
+                      "value": "text",
+                      "nested": [
+                        {
+                          "name": "value",
+                          "type": "text",
+                          "label": "Parameter Value"
+                        }
+                      ],
+                      "default": true
+                    },
+                    {
+                      "label": "Number",
+                      "value": "number",
+                      "nested": [
+                        {
+                          "name": "value",
+                          "type": "number",
+                          "label": "Parameter Value"
+                        }
+                      ]
+                    },
+                    {
+                      "label": "Boolean",
+                      "value": "boolean",
+                      "nested": [
+                        {
+                          "name": "value",
+                          "type": "boolean",
+                          "label": "Parameter Value"
+                        }
+                      ]
+                    },
+                    {
+                      "label": "Date",
+                      "value": "date",
+                      "nested": [
+                        {
+                          "name": "value",
+                          "type": "date",
+                          "label": "Parameter Value"
+                        }
+                      ]
+                    },
+                    {
+                      "label": "Any",
+                      "value": "any",
+                      "nested": [
+                        {
+                          "name": "value",
+                          "type": "any",
+                          "label": "Parameter Value"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "type": "collection",
+              "label": "Input Parameter"
+            },
+            "type": "array",
+            "label": "Other Input Parameters"
+          },
+          {
+            "name": "model",
+            "type": "select",
+            "label": "Model",
+            "required": true
+          },
+          {
+            "name": "max_tokens",
+            "type": "uinteger",
+            "label": "Max Output Tokens"
+          },
+          {
+            "name": "messages",
+            "spec": {
+              "name": "value",
+              "spec": [
+                {
+                  "name": "role",
+                  "type": "select",
+                  "label": "Role",
+                  "options": {
+                    "store": [
+                      {
+                        "label": "User",
+                        "value": "user",
+                        "nested": [
+                          {
+                            "help": "Text content of the message on behalf of the selected __Role__.",
+                            "name": "content",
+                            "type": "text",
+                            "label": "Text Content"
+                          }
+                        ],
+                        "default": true
+                      },
+                      {
+                        "label": "Assistant",
+                        "value": "assistant",
+                        "nested": [
+                          {
+                            "help": "Text content of the message on behalf of the selected __Role__.",
+                            "name": "content",
+                            "type": "text",
+                            "label": "Text Content"
+                          },
+                          {
+                            "mode": "edit",
+                            "name": "tool_calls",
+                            "spec": {
+                              "spec": [
+                                {
+                                  "name": "type",
+                                  "type": "hidden",
+                                  "default": "function"
+                                },
+                                {
+                                  "help": "Map this directly from the output of a previous **Create a Completion** module. Look for `Choices[]: Message.Tool Calls[]: ID`.",
+                                  "name": "id",
+                                  "type": "text",
+                                  "label": "Tool call ID"
+                                },
+                                {
+                                  "name": "function",
+                                  "spec": [
+                                    {
+                                      "help": "The name of the function previously called.",
+                                      "name": "name",
+                                      "type": "text",
+                                      "label": "Name",
+                                      "required": true
+                                    },
+                                    {
+                                      "help": "The arguments previously output by the AI.",
+                                      "name": "arguments",
+                                      "type": "text",
+                                      "label": "Arguments",
+                                      "required": true
+                                    }
+                                  ],
+                                  "type": "collection",
+                                  "label": "Function"
+                                }
+                              ],
+                              "type": "collection",
+                              "label": "Tool Call"
+                            },
+                            "type": "array",
+                            "label": "Tool Calls",
+                            "labels": {
+                              "add": "Add tool call"
+                            },
+                            "mappable": {
+                              "help": "You can map the entire `Choices[]: Message.Tool Calls` array from a previous Create a Completion module here."
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "label": "Developer / System",
+                        "value": "system",
+                        "nested": [
+                          {
+                            "help": "Text content of the message on behalf of the selected __Role__.",
+                            "name": "content",
+                            "type": "text",
+                            "label": "Text Content"
+                          }
+                        ]
+                      },
+                      {
+                        "label": "Tool",
+                        "value": "tool",
+                        "nested": [
+                          {
+                            "help": "The return of the function. This role should only be used when you have processed a previous function call and want to send the output of the function execution back to the AI.",
+                            "name": "content",
+                            "type": "text",
+                            "label": "Text Content",
+                            "required": true
+                          },
+                          {
+                            "help": "Map this directly from the output of a previous **Create a Completion** module. Look for `Choices[]: Message.Tool Calls[]: ID`.",
+                            "name": "tool_call_id",
+                            "type": "text",
+                            "label": "Tool Call ID.",
+                            "required": true
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "required": true
+                }
+              ],
+              "type": "collection",
+              "label": "Message"
+            },
+            "type": "array",
+            "label": "Messages",
+            "required": true
+          },
+          {
+            "name": "response_format",
+            "type": "select",
+            "label": "Response Format",
+            "validate": {
+              "enum": [
+                "text",
+                "json_object"
+              ]
+            }
+          },
+          {
+            "name": "reasoning_effort",
+            "type": "select",
+            "label": "Reasoning Effort",
+            "validate": {
+              "enum": [
+                "minimal",
+                "low",
+                "medium",
+                "high"
+              ]
+            }
+          },
+          {
+            "name": "parseJSONResponse",
+            "type": "boolean",
+            "label": "Parse JSON Response",
+            "required": true
+          }
+        ],
+        "restore": {
+          "expect": {
+            "stop": {
+              "mode": "chose"
+            },
+            "model": {
+              "mode": "chose",
+              "label": "gpt-5 (system)The best model for coding and agentic tasks across domains"
+            },
+            "select": {
+              "label": "Create a Chat Completion (GPT and o1 models)"
+            },
+            "messages": {
+              "mode": "chose",
+              "items": [
+                {
+                  "role": {
+                    "mode": "chose",
+                    "label": "Developer / System"
+                  }
+                }
+              ]
+            },
+            "logit_bias": {
+              "mode": "chose"
+            },
+            "tool_choice": {
+              "mode": "chose",
+              "label": "Empty"
+            },
+            "response_format": {
+              "mode": "chose",
+              "label": "JSON Object"
+            },
+            "reasoning_effort": {
+              "mode": "chose",
+              "label": "Empty"
+            },
+            "parseJSONResponse": {
+              "mode": "chose"
+            },
+            "additionalParameters": {
+              "mode": "chose"
+            }
+          },
+          "parameters": {
+            "__IMTCONN__": {
+              "data": {
+                "scoped": "true",
+                "connection": "openai-gpt-3"
+              },
+              "label": "Lavan OpenAI"
+            }
+          }
+        },
+        "advanced": true,
+        "designer": {
+          "x": -264,
+          "y": 111
+        },
+        "interface": [
+          {
+            "name": "result",
+            "type": "any",
+            "label": "Result"
+          },
+          {
+            "name": "id",
+            "type": "text",
+            "label": "ID"
+          },
+          {
+            "name": "object",
+            "type": "text",
+            "label": "Object"
+          },
+          {
+            "name": "created",
+            "type": "date",
+            "label": "Created"
+          },
+          {
+            "name": "model",
+            "type": "text",
+            "label": "Model"
+          },
+          {
+            "name": "choices",
+            "spec": [
+              {
+                "name": "text",
+                "type": "text",
+                "label": "Text"
+              },
+              {
+                "name": "index",
+                "type": "number",
+                "label": "Index"
+              },
+              {
+                "name": "logprobs",
+                "type": "text",
+                "label": "Log Probs"
+              },
+              {
+                "name": "finish_reason",
+                "type": "text",
+                "label": "Finish Reason"
+              },
+              {
+                "name": "message",
+                "spec": [
+                  {
+                    "name": "role",
+                    "type": "text",
+                    "label": "Role"
+                  },
+                  {
+                    "name": "content",
+                    "type": "text",
+                    "label": "Content"
+                  },
+                  {
+                    "name": "tool_calls",
+                    "spec": [
+                      {
+                        "name": "id",
+                        "type": "text",
+                        "label": "ID"
+                      },
+                      {
+                        "name": "type",
+                        "type": "text",
+                        "label": "Type"
+                      },
+                      {
+                        "name": "function",
+                        "spec": [
+                          {
+                            "name": "name",
+                            "type": "text",
+                            "label": "Name"
+                          },
+                          {
+                            "name": "arguments",
+                            "type": "text",
+                            "label": "Arguments"
+                          }
+                        ],
+                        "type": "collection",
+                        "label": "Function"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Tool Calls"
+                  },
+                  {
+                    "name": "refusal",
+                    "type": "text",
+                    "label": "Refusal"
+                  },
+                  {
+                    "name": "annotations",
+                    "spec": [
+                      {
+                        "name": "type",
+                        "type": "text",
+                        "label": "Type"
+                      },
+                      {
+                        "name": "url_citation",
+                        "spec": [
+                          {
+                            "name": "end_index",
+                            "type": "number",
+                            "label": "End Index"
+                          },
+                          {
+                            "name": "start_index",
+                            "type": "number",
+                            "label": "Start Index"
+                          },
+                          {
+                            "name": "title",
+                            "type": "text",
+                            "label": "Title"
+                          },
+                          {
+                            "name": "url",
+                            "type": "text",
+                            "label": "URL"
+                          }
+                        ],
+                        "type": "collection",
+                        "label": "URL Citation"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Annotations"
+                  }
+                ],
+                "type": "collection",
+                "label": "Message"
+              }
+            ],
+            "type": "array",
+            "label": "Choices"
+          },
+          {
+            "name": "usage",
+            "spec": [
+              {
+                "name": "prompt_tokens",
+                "type": "number",
+                "label": "Prompt Tokens"
+              },
+              {
+                "name": "completion_tokens",
+                "type": "text",
+                "label": "Completion Tokens"
+              },
+              {
+                "name": "total_tokens",
+                "type": "number",
+                "label": "Total Tokens"
+              },
+              {
+                "name": "prompt_tokens_details",
+                "spec": [
+                  {
+                    "name": "cached_tokens",
+                    "type": "uinteger",
+                    "label": "Cached Tokens"
+                  },
+                  {
+                    "name": "text_tokens",
+                    "type": "uinteger",
+                    "label": "Text Tokens"
+                  },
+                  {
+                    "name": "image_tokens",
+                    "type": "uinteger",
+                    "label": "Image Tokens"
+                  },
+                  {
+                    "name": "audio_tokens",
+                    "type": "uinteger",
+                    "label": "Audio Tokens"
+                  }
+                ],
+                "type": "collection",
+                "label": "Prompt Tokens Details"
+              },
+              {
+                "name": "completion_tokens_details",
+                "spec": [
+                  {
+                    "name": "reasoning_tokens",
+                    "type": "uinteger",
+                    "label": "Reasoning Tokens"
+                  },
+                  {
+                    "name": "text_tokens",
+                    "type": "uinteger",
+                    "label": "Text Tokens"
+                  },
+                  {
+                    "name": "audio_tokens",
+                    "type": "uinteger",
+                    "label": "Audio Tokens"
+                  },
+                  {
+                    "name": "accepted_prediction_tokens",
+                    "type": "uinteger",
+                    "label": "Accepted Prediction Tokens"
+                  },
+                  {
+                    "name": "rejected_prediction_tokens",
+                    "type": "uinteger",
+                    "label": "Rejected Prediction Tokens"
+                  }
+                ],
+                "type": "collection",
+                "label": "Completion Tokens Details"
+              }
+            ],
+            "type": "collection",
+            "label": "Usage"
+          },
+          {
+            "name": "service_tier",
+            "type": "text",
+            "label": "Service Tier"
+          },
+          {
+            "name": "system_fingerprint",
+            "type": "text",
+            "label": "System Fingerprint"
+          }
+        ],
+        "parameters": [
+          {
+            "name": "__IMTCONN__",
+            "type": "account:openai-gpt-3",
+            "label": "Connection",
+            "required": true
+          }
+        ]
+      },
+      "parameters": {
+        "__IMTCONN__": 1965569
+      }
+    },
+    {
+      "id": 4,
+      "mapper": {
+        "model": "gpt-5.1",
+        "top_p": "1",
+        "select": "chat",
+        "messages": [
+          {
+            "role": "system",
+            "content": "Extract the meeting data and time from this email body: {{2.body.content}}\n\nTimezone is GMT+11.\n\nConvert the following time into ISO 8601 format\n\nOutput only the timestamp and nothing else in structured JSON format.\n\nSet the key name as: timestamp_true_call\n\n"
+          }
+        ],
+        "max_tokens": "2048",
+        "temperature": "1",
+        "n_completions": "1",
+        "response_format": "json_object",
+        "parseJSONResponse": true
+      },
+      "module": "openai-gpt-3:CreateCompletion",
+      "version": 1,
+      "metadata": {
+        "expect": [
+          {
+            "name": "select",
+            "type": "select",
+            "label": "Select Method",
+            "required": true,
+            "validate": {
+              "enum": [
+                "chat",
+                "prompt"
+              ]
+            }
+          },
+          {
+            "name": "temperature",
+            "type": "number",
+            "label": "Temperature",
+            "validate": {
+              "max": 2,
+              "min": 0
+            }
+          },
+          {
+            "name": "top_p",
+            "type": "number",
+            "label": "Top P",
+            "validate": {
+              "max": 1,
+              "min": 0
+            }
+          },
+          {
+            "name": "n_completions",
+            "type": "number",
+            "label": "Number"
+          },
+          {
+            "name": "frequency_penalty",
+            "type": "number",
+            "label": "Frequency Penalty",
+            "validate": {
+              "max": 2,
+              "min": -2
+            }
+          },
+          {
+            "name": "presence_penalty",
+            "type": "number",
+            "label": "Presence Penalty",
+            "validate": {
+              "max": 2,
+              "min": -2
+            }
+          },
+          {
+            "name": "logit_bias",
+            "spec": {
+              "name": "value",
+              "spec": [
+                {
+                  "name": "token",
+                  "type": "text",
+                  "label": "Token ID",
+                  "required": true
+                },
+                {
+                  "name": "probability",
+                  "type": "number",
+                  "label": "Probability",
+                  "required": true,
+                  "validate": {
+                    "max": 100,
+                    "min": -100
+                  }
+                }
+              ],
+              "type": "collection",
+              "label": "Token Probability"
+            },
+            "type": "array",
+            "label": "Token Probability"
+          },
+          {
+            "name": "seed",
+            "type": "integer",
+            "label": "Seed"
+          },
+          {
+            "name": "tool_choice",
+            "type": "select",
+            "label": "Tool Choice",
+            "validate": {
+              "enum": [
+                "none",
+                "auto",
+                "required"
+              ]
+            }
+          },
+          {
+            "name": "stop",
+            "spec": {
+              "name": "value",
+              "type": "text",
+              "label": "Stop Sequence"
+            },
+            "type": "array",
+            "label": "Stop Sequences",
+            "validate": {
+              "maxItems": 4
+            }
+          },
+          {
+            "name": "additionalParameters",
+            "spec": {
+              "name": "value",
+              "spec": [
+                {
+                  "name": "key",
+                  "type": "text",
+                  "label": "Parameter Name",
+                  "required": true
+                },
+                {
+                  "name": "type",
+                  "type": "select",
+                  "label": "Input Type",
+                  "options": [
+                    {
+                      "label": "Text",
+                      "value": "text",
+                      "nested": [
+                        {
+                          "name": "value",
+                          "type": "text",
+                          "label": "Parameter Value"
+                        }
+                      ],
+                      "default": true
+                    },
+                    {
+                      "label": "Number",
+                      "value": "number",
+                      "nested": [
+                        {
+                          "name": "value",
+                          "type": "number",
+                          "label": "Parameter Value"
+                        }
+                      ]
+                    },
+                    {
+                      "label": "Boolean",
+                      "value": "boolean",
+                      "nested": [
+                        {
+                          "name": "value",
+                          "type": "boolean",
+                          "label": "Parameter Value"
+                        }
+                      ]
+                    },
+                    {
+                      "label": "Date",
+                      "value": "date",
+                      "nested": [
+                        {
+                          "name": "value",
+                          "type": "date",
+                          "label": "Parameter Value"
+                        }
+                      ]
+                    },
+                    {
+                      "label": "Any",
+                      "value": "any",
+                      "nested": [
+                        {
+                          "name": "value",
+                          "type": "any",
+                          "label": "Parameter Value"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ],
+              "type": "collection",
+              "label": "Input Parameter"
+            },
+            "type": "array",
+            "label": "Other Input Parameters"
+          },
+          {
+            "name": "model",
+            "type": "select",
+            "label": "Model",
+            "required": true
+          },
+          {
+            "name": "max_tokens",
+            "type": "uinteger",
+            "label": "Max Output Tokens"
+          },
+          {
+            "name": "messages",
+            "spec": {
+              "name": "value",
+              "spec": [
+                {
+                  "name": "role",
+                  "type": "select",
+                  "label": "Role",
+                  "options": {
+                    "store": [
+                      {
+                        "label": "User",
+                        "value": "user",
+                        "nested": [
+                          {
+                            "help": "Text content of the message on behalf of the selected __Role__.",
+                            "name": "content",
+                            "type": "text",
+                            "label": "Text Content"
+                          }
+                        ],
+                        "default": true
+                      },
+                      {
+                        "label": "Assistant",
+                        "value": "assistant",
+                        "nested": [
+                          {
+                            "help": "Text content of the message on behalf of the selected __Role__.",
+                            "name": "content",
+                            "type": "text",
+                            "label": "Text Content"
+                          },
+                          {
+                            "mode": "edit",
+                            "name": "tool_calls",
+                            "spec": {
+                              "spec": [
+                                {
+                                  "name": "type",
+                                  "type": "hidden",
+                                  "default": "function"
+                                },
+                                {
+                                  "help": "Map this directly from the output of a previous **Create a Completion** module. Look for `Choices[]: Message.Tool Calls[]: ID`.",
+                                  "name": "id",
+                                  "type": "text",
+                                  "label": "Tool call ID"
+                                },
+                                {
+                                  "name": "function",
+                                  "spec": [
+                                    {
+                                      "help": "The name of the function previously called.",
+                                      "name": "name",
+                                      "type": "text",
+                                      "label": "Name",
+                                      "required": true
+                                    },
+                                    {
+                                      "help": "The arguments previously output by the AI.",
+                                      "name": "arguments",
+                                      "type": "text",
+                                      "label": "Arguments",
+                                      "required": true
+                                    }
+                                  ],
+                                  "type": "collection",
+                                  "label": "Function"
+                                }
+                              ],
+                              "type": "collection",
+                              "label": "Tool Call"
+                            },
+                            "type": "array",
+                            "label": "Tool Calls",
+                            "labels": {
+                              "add": "Add tool call"
+                            },
+                            "mappable": {
+                              "help": "You can map the entire `Choices[]: Message.Tool Calls` array from a previous Create a Completion module here."
+                            }
+                          }
+                        ]
+                      },
+                      {
+                        "label": "Developer / System",
+                        "value": "system",
+                        "nested": [
+                          {
+                            "help": "Text content of the message on behalf of the selected __Role__.",
+                            "name": "content",
+                            "type": "text",
+                            "label": "Text Content"
+                          }
+                        ]
+                      },
+                      {
+                        "label": "Tool",
+                        "value": "tool",
+                        "nested": [
+                          {
+                            "help": "The return of the function. This role should only be used when you have processed a previous function call and want to send the output of the function execution back to the AI.",
+                            "name": "content",
+                            "type": "text",
+                            "label": "Text Content",
+                            "required": true
+                          },
+                          {
+                            "help": "Map this directly from the output of a previous **Create a Completion** module. Look for `Choices[]: Message.Tool Calls[]: ID`.",
+                            "name": "tool_call_id",
+                            "type": "text",
+                            "label": "Tool Call ID.",
+                            "required": true
+                          }
+                        ]
+                      }
+                    ]
+                  },
+                  "required": true
+                }
+              ],
+              "type": "collection",
+              "label": "Message"
+            },
+            "type": "array",
+            "label": "Messages",
+            "required": true
+          },
+          {
+            "name": "response_format",
+            "type": "select",
+            "label": "Response Format",
+            "validate": {
+              "enum": [
+                "text",
+                "json_object"
+              ]
+            }
+          },
+          {
+            "name": "reasoning_effort",
+            "type": "select",
+            "label": "Reasoning Effort",
+            "validate": {
+              "enum": [
+                "minimal",
+                "low",
+                "medium",
+                "high"
+              ]
+            }
+          },
+          {
+            "name": "parseJSONResponse",
+            "type": "boolean",
+            "label": "Parse JSON Response",
+            "required": true
+          }
+        ],
+        "restore": {
+          "expect": {
+            "stop": {
+              "mode": "chose"
+            },
+            "model": {
+              "mode": "chose",
+              "label": "gpt-5.1 (system)Upgraded GPT-5 with steadier reasoning and improved context handling"
+            },
+            "select": {
+              "label": "Create a Chat Completion (GPT and o1 models)"
+            },
+            "messages": {
+              "mode": "chose",
+              "items": [
+                {
+                  "role": {
+                    "mode": "chose",
+                    "label": "Developer / System"
+                  }
+                }
+              ]
+            },
+            "logit_bias": {
+              "mode": "chose"
+            },
+            "tool_choice": {
+              "mode": "chose",
+              "label": "Empty"
+            },
+            "response_format": {
+              "mode": "chose",
+              "label": "JSON Object"
+            },
+            "reasoning_effort": {
+              "mode": "chose",
+              "label": "Empty"
+            },
+            "parseJSONResponse": {
+              "mode": "chose"
+            },
+            "additionalParameters": {
+              "mode": "chose"
+            }
+          },
+          "parameters": {
+            "__IMTCONN__": {
+              "data": {
+                "scoped": "true",
+                "connection": "openai-gpt-3"
+              },
+              "label": "Lavan OpenAI"
+            }
+          }
+        },
+        "advanced": true,
+        "designer": {
+          "x": 36,
+          "y": 111
+        },
+        "interface": [
+          {
+            "name": "result",
+            "type": "any",
+            "label": "Result"
+          },
+          {
+            "name": "id",
+            "type": "text",
+            "label": "ID"
+          },
+          {
+            "name": "object",
+            "type": "text",
+            "label": "Object"
+          },
+          {
+            "name": "created",
+            "type": "date",
+            "label": "Created"
+          },
+          {
+            "name": "model",
+            "type": "text",
+            "label": "Model"
+          },
+          {
+            "name": "choices",
+            "spec": [
+              {
+                "name": "text",
+                "type": "text",
+                "label": "Text"
+              },
+              {
+                "name": "index",
+                "type": "number",
+                "label": "Index"
+              },
+              {
+                "name": "logprobs",
+                "type": "text",
+                "label": "Log Probs"
+              },
+              {
+                "name": "finish_reason",
+                "type": "text",
+                "label": "Finish Reason"
+              },
+              {
+                "name": "message",
+                "spec": [
+                  {
+                    "name": "role",
+                    "type": "text",
+                    "label": "Role"
+                  },
+                  {
+                    "name": "content",
+                    "type": "text",
+                    "label": "Content"
+                  },
+                  {
+                    "name": "tool_calls",
+                    "spec": [
+                      {
+                        "name": "id",
+                        "type": "text",
+                        "label": "ID"
+                      },
+                      {
+                        "name": "type",
+                        "type": "text",
+                        "label": "Type"
+                      },
+                      {
+                        "name": "function",
+                        "spec": [
+                          {
+                            "name": "name",
+                            "type": "text",
+                            "label": "Name"
+                          },
+                          {
+                            "name": "arguments",
+                            "type": "text",
+                            "label": "Arguments"
+                          }
+                        ],
+                        "type": "collection",
+                        "label": "Function"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Tool Calls"
+                  },
+                  {
+                    "name": "refusal",
+                    "type": "text",
+                    "label": "Refusal"
+                  },
+                  {
+                    "name": "annotations",
+                    "spec": [
+                      {
+                        "name": "type",
+                        "type": "text",
+                        "label": "Type"
+                      },
+                      {
+                        "name": "url_citation",
+                        "spec": [
+                          {
+                            "name": "end_index",
+                            "type": "number",
+                            "label": "End Index"
+                          },
+                          {
+                            "name": "start_index",
+                            "type": "number",
+                            "label": "Start Index"
+                          },
+                          {
+                            "name": "title",
+                            "type": "text",
+                            "label": "Title"
+                          },
+                          {
+                            "name": "url",
+                            "type": "text",
+                            "label": "URL"
+                          }
+                        ],
+                        "type": "collection",
+                        "label": "URL Citation"
+                      }
+                    ],
+                    "type": "array",
+                    "label": "Annotations"
+                  }
+                ],
+                "type": "collection",
+                "label": "Message"
+              }
+            ],
+            "type": "array",
+            "label": "Choices"
+          },
+          {
+            "name": "usage",
+            "spec": [
+              {
+                "name": "prompt_tokens",
+                "type": "number",
+                "label": "Prompt Tokens"
+              },
+              {
+                "name": "completion_tokens",
+                "type": "text",
+                "label": "Completion Tokens"
+              },
+              {
+                "name": "total_tokens",
+                "type": "number",
+                "label": "Total Tokens"
+              },
+              {
+                "name": "prompt_tokens_details",
+                "spec": [
+                  {
+                    "name": "cached_tokens",
+                    "type": "uinteger",
+                    "label": "Cached Tokens"
+                  },
+                  {
+                    "name": "text_tokens",
+                    "type": "uinteger",
+                    "label": "Text Tokens"
+                  },
+                  {
+                    "name": "image_tokens",
+                    "type": "uinteger",
+                    "label": "Image Tokens"
+                  },
+                  {
+                    "name": "audio_tokens",
+                    "type": "uinteger",
+                    "label": "Audio Tokens"
+                  }
+                ],
+                "type": "collection",
+                "label": "Prompt Tokens Details"
+              },
+              {
+                "name": "completion_tokens_details",
+                "spec": [
+                  {
+                    "name": "reasoning_tokens",
+                    "type": "uinteger",
+                    "label": "Reasoning Tokens"
+                  },
+                  {
+                    "name": "text_tokens",
+                    "type": "uinteger",
+                    "label": "Text Tokens"
+                  },
+                  {
+                    "name": "audio_tokens",
+                    "type": "uinteger",
+                    "label": "Audio Tokens"
+                  },
+                  {
+                    "name": "accepted_prediction_tokens",
+                    "type": "uinteger",
+                    "label": "Accepted Prediction Tokens"
+                  },
+                  {
+                    "name": "rejected_prediction_tokens",
+                    "type": "uinteger",
+                    "label": "Rejected Prediction Tokens"
+                  }
+                ],
+                "type": "collection",
+                "label": "Completion Tokens Details"
+              }
+            ],
+            "type": "collection",
+            "label": "Usage"
+          },
+          {
+            "name": "service_tier",
+            "type": "text",
+            "label": "Service Tier"
+          },
+          {
+            "name": "system_fingerprint",
+            "type": "text",
+            "label": "System Fingerprint"
+          }
+        ],
+        "parameters": [
+          {
+            "name": "__IMTCONN__",
+            "type": "account:openai-gpt-3",
+            "label": "Connection",
+            "required": true
+          }
+        ]
+      },
+      "parameters": {
+        "__IMTCONN__": 1965569
+      }
+    },
+    {
+      "id": 5,
+      "mapper": {
+        "json": "{{3.result}}"
+      },
+      "module": "json:ParseJSON",
+      "version": 1,
+      "metadata": {
+        "expect": [
+          {
+            "name": "json",
+            "type": "text",
+            "label": "JSON string",
+            "required": true
+          }
+        ],
+        "restore": {
+          "parameters": {
+            "type": {
+              "label": "Choose a data structure"
+            }
+          }
+        },
+        "designer": {
+          "x": 336,
+          "y": 111
+        },
+        "parameters": [
+          {
+            "name": "type",
+            "type": "udt",
+            "label": "Data structure"
+          }
+        ]
+      },
+      "parameters": {
+        "type": ""
+      }
+    },
+    {
+      "id": 6,
+      "mapper": {
+        "json": "{{4.result}}"
+      },
+      "module": "json:ParseJSON",
+      "version": 1,
+      "metadata": {
+        "expect": [
+          {
+            "name": "json",
+            "type": "text",
+            "label": "JSON string",
+            "required": true
+          }
+        ],
+        "restore": {
+          "parameters": {
+            "type": {
+              "label": "Choose a data structure"
+            }
+          }
+        },
+        "designer": {
+          "x": 636,
+          "y": 111
+        },
+        "parameters": [
+          {
+            "name": "type",
+            "type": "udt",
+            "label": "Data structure"
+          }
+        ]
+      },
+      "parameters": {
+        "type": ""
+      }
+    },
+    {
+      "id": 7,
+      "mapper": {
+        "ca": "",
+        "qs": [],
+        "url": "https://api.vapi.ai/call",
+        "data": "{\n  \"assistantId\": \"dcc0d0c4-1e01-4455-b895-7b268b1b96f0\",\n  \"phoneNumberId\": \"e8d1169c-43f2-447d-9c7c-a7670b1f8f5a\",\n  \"customer\": {\n    \"number\": \"{{1.phone}}\"\n  },\n  \"schedulePlan\": {\n    \"earliestAt\": \"{{5.timestamp_call_trigger}}\"\n  },\n  \"assistantOverrides\": {\n    \"variableValues\": {\n      \"fullName\": \"{{1.full_name}}\",\r\n      \"firstName\": \"{{1.first_name}}\",\r\n      \"phone\": \"{{1.phone}}\",\n\"contactId\": \"{{1.contact_id}}\",\n\"currentDate\": \"{{now}}\",\n\"currentDateUnix\": \"{{timestamp}}\",\n\"callTitle\": \"Strategy Session with Rugesh || {{1.full_name}}\",\n\"discoveryCallTime\": \"{{6.timestamp_true_call}}\"\n    }\n  }\n}",
+        "gzip": true,
+        "method": "post",
+        "headers": [
+          {
+            "name": "Authorization",
+            "value": "Bearer {{SECRET:VAPI_API_KEY}}"
+          }
+        ],
+        "timeout": "",
+        "useMtls": false,
+        "authPass": "",
+        "authUser": "",
+        "bodyType": "raw",
+        "contentType": "application/json",
+        "serializeUrl": false,
+        "shareCookies": false,
+        "parseResponse": false,
+        "followRedirect": true,
+        "useQuerystring": false,
+        "followAllRedirects": false,
+        "rejectUnauthorized": true
+      },
+      "module": "http:ActionSendData",
+      "version": 3,
+      "metadata": {
+        "expect": [
+          {
+            "name": "url",
+            "type": "url",
+            "label": "URL",
+            "required": true
+          },
+          {
+            "name": "serializeUrl",
+            "type": "boolean",
+            "label": "Serialize URL",
+            "required": true
+          },
+          {
+            "name": "method",
+            "type": "select",
+            "label": "Method",
+            "required": true,
+            "validate": {
+              "enum": [
+                "get",
+                "head",
+                "post",
+                "put",
+                "patch",
+                "delete",
+                "options"
+              ]
+            }
+          },
+          {
+            "name": "headers",
+            "spec": [
+              {
+                "name": "name",
+                "type": "text",
+                "label": "Name",
+                "required": true
+              },
+              {
+                "name": "value",
+                "type": "text",
+                "label": "Value"
+              }
+            ],
+            "type": "array",
+            "label": "Headers"
+          },
+          {
+            "name": "qs",
+            "spec": [
+              {
+                "name": "name",
+                "type": "text",
+                "label": "Name",
+                "required": true
+              },
+              {
+                "name": "value",
+                "type": "text",
+                "label": "Value"
+              }
+            ],
+            "type": "array",
+            "label": "Query String"
+          },
+          {
+            "name": "bodyType",
+            "type": "select",
+            "label": "Body type",
+            "validate": {
+              "enum": [
+                "raw",
+                "x_www_form_urlencoded",
+                "multipart_form_data"
+              ]
+            }
+          },
+          {
+            "name": "parseResponse",
+            "type": "boolean",
+            "label": "Parse response",
+            "required": true
+          },
+          {
+            "name": "authUser",
+            "type": "text",
+            "label": "User name"
+          },
+          {
+            "name": "authPass",
+            "type": "password",
+            "label": "Password"
+          },
+          {
+            "name": "timeout",
+            "type": "uinteger",
+            "label": "Timeout",
+            "validate": {
+              "max": 300,
+              "min": 1
+            }
+          },
+          {
+            "name": "shareCookies",
+            "type": "boolean",
+            "label": "Share cookies with other HTTP modules",
+            "required": true
+          },
+          {
+            "name": "ca",
+            "type": "cert",
+            "label": "Self-signed certificate"
+          },
+          {
+            "name": "rejectUnauthorized",
+            "type": "boolean",
+            "label": "Reject connections that are using unverified (self-signed) certificates",
+            "required": true
+          },
+          {
+            "name": "followRedirect",
+            "type": "boolean",
+            "label": "Follow redirect",
+            "required": true
+          },
+          {
+            "name": "useQuerystring",
+            "type": "boolean",
+            "label": "Disable serialization of multiple same query string keys as arrays",
+            "required": true
+          },
+          {
+            "name": "gzip",
+            "type": "boolean",
+            "label": "Request compressed content",
+            "required": true
+          },
+          {
+            "name": "useMtls",
+            "type": "boolean",
+            "label": "Use Mutual TLS",
+            "required": true
+          },
+          {
+            "name": "contentType",
+            "type": "select",
+            "label": "Content type",
+            "validate": {
+              "enum": [
+                "text/plain",
+                "application/json",
+                "application/xml",
+                "text/xml",
+                "text/html",
+                "custom"
+              ]
+            }
+          },
+          {
+            "name": "data",
+            "type": "buffer",
+            "label": "Request content"
+          },
+          {
+            "name": "followAllRedirects",
+            "type": "boolean",
+            "label": "Follow all redirect",
+            "required": true
+          }
+        ],
+        "restore": {
+          "expect": {
+            "qs": {
+              "mode": "chose"
+            },
+            "method": {
+              "mode": "chose",
+              "label": "POST"
+            },
+            "headers": {
+              "mode": "chose",
+              "items": [
+                null
+              ]
+            },
+            "bodyType": {
+              "label": "Raw"
+            },
+            "contentType": {
+              "label": "JSON (application/json)"
+            }
+          }
+        },
+        "designer": {
+          "x": 936,
+          "y": 111
+        },
+        "parameters": [
+          {
+            "name": "handleErrors",
+            "type": "boolean",
+            "label": "Evaluate all states as errors (except for 2xx and 3xx )",
+            "required": true
+          },
+          {
+            "name": "useNewZLibDeCompress",
+            "type": "hidden"
+          }
+        ]
+      },
+      "parameters": {
+        "handleErrors": true,
+        "useNewZLibDeCompress": true
+      }
+    }
+  ],
+  "name": "NPC Strategy Session Follow Up Zoom",
+  "metadata": {
+    "instant": true,
+    "version": 1,
+    "designer": {
+      "orphans": [],
+      "samples": {
+        "1": {
+          "id": "J2FXmdS5kcZO1q6ZSwn1",
+          "tags": "facebook ads,opt-in,quiz funnel,lean agency,dc booked,quiz submitted",
+          "user": {
+            "email": "admin@npcservices.com.au",
+            "phone": "+61433005110",
+            "lastName": "Naidu",
+            "firstName": "Rugesh"
+          },
+          "email": "naidu.rugesh@gmail.com",
+          "owner": "Rugesh Naidu",
+          "phone": "+61433005110",
+          "source": "Facebook",
+          "status": "open",
+          "contact": {
+            "attributionSource": {
+              "medium": "manual",
+              "mediumId": null,
+              "sessionSource": "CRM UI"
+            },
+            "lastAttributionSource": {
+              "ip": "2001:e68:5ea0:c800:b020:6260:ac72:b716",
+              "fbp": "fb.2.1763701098968.386172557989309824",
+              "url": "https://scale.npcservices.com.au/active-quiz-page",
+              "adId": null,
+              "gclid": null,
+              "adName": null,
+              "gbraid": null,
+              "medium": "survey",
+              "wbraid": null,
+              "utmTerm": null,
+              "mediumId": "i9x4gYKo6tbj3d07jjDb",
+              "referrer": null,
+              "adGroupId": null,
+              "userAgent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/142.0.0.0 Sa...",
+              "utmMedium": null,
+              "utmSource": null,
+              "gaClientId": null,
+              "utmContent": null,
+              "utmKeyword": null,
+              "gaSessionId": null,
+              "utmMatchtype": null,
+              "sessionSource": "Direct traffic"
+            }
+          },
+          "country": "AU",
+          "location": {
+            "id": "8guFPPbpJXYFsw5HDG28",
+            "city": "Kellyville",
+            "name": "Naidu Property Consulting Services",
+            "state": "NSW",
+            "address": "42 Seymour Way",
+            "country": "AU",
+            "postalCode": "2155",
+            "fullAddress": "42 Seymour Way, Kellyville NSW 2155"
+          },
+          "timezone": "Australia/Sydney",
+          "workflow": {
+            "id": "38fbb450-ee04-47a9-83c6-123fe129d0ac",
+            "name": "Strategy Session Follow Up Test"
+          },
+          "full_name": "Rugesh Testing VA 2 Naidu VA Testing",
+          "last_name": "Naidu VA Testing",
+          "contact_id": "QaCqIe8JFklQV9T4BNW4",
+          "customData": {
+            "discovery_call_time": ""
+          },
+          "first_name": "Rugesh Testing VA 2",
+          "pipeline_id": "R7KnKoZftTi0cwnV0URN",
+          "triggerData": {},
+          "contact_type": "lead",
+          "date_created": "2025-07-09T04:01:39.457Z",
+          "full_address": "",
+          "pipeline_name": "Voice Agent Test Pipeline",
+          "contact_source": "Facebook",
+          "pipleline_stage": "Strategy Session Confirmed",
+          "opportunity_name": "Rugesh Testing Va Naidu Va Testing",
+          "attributionSource": {},
+          "opportunity_source": "Facebook",
+          "Can you keep a secret?": "",
+          "Do you have a website?": "",
+          "Last month my sales were": "",
+          "What is your first name?": "",
+          "Are you a business owner?": "",
+          "Do you have personal debt?": "",
+          "What are you looking to do? ": "Pay off mortgage sooner",
+          "Do you have a marketing funnel?": "",
+          "Do you currently have a website?": "",
+          "What is your best email address?": "",
+          "What is your best contact number?": "",
+          "Do you currently own any property?": "",
+          "Are you currently running paid ads?": "",
+          "How long have you been in business?": "",
+          "How long have your been in business?": "",
+          "What product or service do you sell?": "",
+          "Who is responsile for your lead gen?": "",
+          "Have your finances been pre-approved?": "No",
+          "Who is responsible for your marketing?": "",
+          "What is your main goal for refinancing?": "",
+          "How many leads do you generate per week?": "",
+          " What is your current residential status?": "Special Category Visa",
+          "What area do you provide your services in?": "",
+          "Which of the following best describes you?": "",
+          "What state do you provide your services in?": "",
+          "Are you currently doing any online marketing?": "",
+          "Are you a renter, owner-occupier, or investor?": "Owner-occupier",
+          "What’s your current monthly marketing budget?": "",
+          "Thank you for sharing. What’s your first name?": "",
+          "What’s your website address? (If you have one)": "",
+          "What is the current growth stage of your business?": "",
+          "Who is currently responsible for your lead generation?": "",
+          "Do you understand this is not an employment opportunity?": "",
+          "How long have you been actively searching for a property?": "6+ Months",
+          "How soon are you looking to work with us if we’re a good fit?": "",
+          "Do you currently have the capacity for an extra 5 jobs per month?": "",
+          "How much deposit (savings or equity) can you access, if required?": "$60-80k",
+          "How do you currently get leads to find work? (Check all that apply) ": "",
+          "When you speak to leads, are they people you want to be working with?": "",
+          "When do you need to start getting new business leads through the door?": "",
+          "In one sentence, what trade and home improvement services do you provide?": "",
+          "Is your e-commerce business ready to maximise sales through social media?": "",
+          "How much income do you earn per year (combined, if buying with a partner)?": "$85-150k",
+          "How soon would you like to start building or growing your property portfolio?": "As soon as possible",
+          "How many people work with you to deliver your services? (Counting your employees or subs)": "",
+          "What do you feel you need the most help with in your business right now to reach your goals?": "",
+          "How soon are you looking to streamline your lead generation and marketing systems for your business?": "",
+          "I understand that in order for my application to proceed or to be considered, I must book a time to speak with the team on the next page": ""
+        },
+        "2": {
+          "id": "AAMkAGZjZjQ2ZTFiLTU4ZjgtNGU1YS1iOTkyLTZiMjVhNmVjNTA3MwBGAAAAAAAWnXRcb4ahTJcbMpqbbagABwDV0rrhIXTzS6Xn...",
+          "body": {
+            "content": "<html><head>\r\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=utf-8\"></head><body>Hi, <b...",
+            "contentType": "html"
+          },
+          "flag": {
+            "flagStatus": "notFlagged"
+          },
+          "from": {
+            "emailAddress": {
+              "name": "noreply@mail.npcservices.com.au",
+              "address": "noreply@mail.npcservices.com.au"
+            }
+          },
+          "isRead": true,
+          "sender": {
+            "emailAddress": {
+              "name": "noreply@mail.npcservices.com.au",
+              "address": "noreply@mail.npcservices.com.au"
+            }
+          },
+          "isDraft": false,
+          "replyTo": [
+            {
+              "emailAddress": {
+                "name": "noreply@mail.npcservices.com.au",
+                "address": "noreply@mail.npcservices.com.au"
+              }
+            }
+          ],
+          "subject": "Appointment Confirmation of Rugesh Testing VA 2 Naidu VA Testing on Tuesday, December 2, 2025 6:00 P...",
+          "webLink": "https://outlook.office365.com/owa/?ItemID=AAMkAGZjZjQ2ZTFiLTU4ZjgtNGU1YS1iOTkyLTZiMjVhNmVjNTA3MwBGAA...",
+          "changeKey": "CQAAABYAAADV0rrhIXTzS6XnaZtAKgcSAADHBCtm",
+          "categories": [],
+          "importance": "normal",
+          "@odata.etag": "W/\"CQAAABYAAADV0rrhIXTzS6XnaZtAKgcSAADHBCtm\"",
+          "bodyPreview": "Hi,\r\n\r\nYour appointment has been scheduled with Rugesh Testing VA 2 Naidu VA Testing. Here are the d...",
+          "smimeSigned": false,
+          "__IMTINDEX__": 1,
+          "ccRecipients": [],
+          "sentDateTime": "2025-11-26T07:53:31.000Z",
+          "toRecipients": [
+            {
+              "emailAddress": {
+                "name": "Naidu Property Consulting Services",
+                "address": "admin@npcservices.com.au"
+              }
+            }
+          ],
+          "__IMTLENGTH__": 1,
+          "bccRecipients": [],
+          "conversationId": "AAQkAGZjZjQ2ZTFiLTU4ZjgtNGU1YS1iOTkyLTZiMjVhNmVjNTA3MwAQAKGX0re9k6RIkT4HX2bDkg8=",
+          "hasAttachments": false,
+          "parentFolderId": "AAMkAGZjZjQ2ZTFiLTU4ZjgtNGU1YS1iOTkyLTZiMjVhNmVjNTA3MwAuAAAAAAAWnXRcb4ahTJcbMpqbbagAAQDV0rrhIXTzS6Xn...",
+          "smimeEncrypted": false,
+          "createdDateTime": "2025-11-26T07:53:39.000Z",
+          "receivedDateTime": "2025-11-26T07:53:39.000Z",
+          "sensitivityLabel": "0",
+          "conversationIndex": "AQHcXqnGoZfSt72TpEiRPgdfZsOSDw==",
+          "internetMessageId": "<20251126075331.967823b30e63fffa@mail.npcservices.com.au>",
+          "lastModifiedDateTime": "2025-11-26T08:26:39.000Z",
+          "isReadReceiptRequested": false,
+          "inferenceClassification": "focused"
+        },
+        "3": {
+          "id": "chatcmpl-CgtIQ6ylxFrclOJoilFzuwmzGV3tZ",
+          "model": "gpt-5-2025-08-07",
+          "usage": {
+            "total_tokens": 287,
+            "prompt_tokens": 65,
+            "completion_tokens": 222,
+            "prompt_tokens_details": {
+              "audio_tokens": 0,
+              "cached_tokens": 0
+            },
+            "completion_tokens_details": {
+              "audio_tokens": 0,
+              "reasoning_tokens": 192,
+              "accepted_prediction_tokens": 0,
+              "rejected_prediction_tokens": 0
+            }
+          },
+          "object": "chat.completion",
+          "result": {
+            "timestamp_call_trigger": "2025-11-28T14:01:29.659Z"
+          },
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "{\"timestamp_call_trigger\":\"2025-11-28T14:01:29.659Z\"}",
+                "refusal": null,
+                "annotations": []
+              },
+              "finish_reason": "stop"
+            }
+          ],
+          "created": "2025-11-28T13:59:30.000Z",
+          "service_tier": "default",
+          "system_fingerprint": null
+        },
+        "4": {
+          "id": "chatcmpl-CgtIVsFHkvInxsDCb8UdPy0yYXa4W",
+          "model": "gpt-5.1-2025-11-13",
+          "usage": {
+            "total_tokens": 969,
+            "prompt_tokens": 938,
+            "completion_tokens": 31,
+            "prompt_tokens_details": {
+              "audio_tokens": 0,
+              "cached_tokens": 0
+            },
+            "completion_tokens_details": {
+              "audio_tokens": 0,
+              "reasoning_tokens": 0,
+              "accepted_prediction_tokens": 0,
+              "rejected_prediction_tokens": 0
+            }
+          },
+          "object": "chat.completion",
+          "result": {
+            "timestamp_true_call": "2025-12-02T18:00:00+11:00"
+          },
+          "choices": [
+            {
+              "index": 0,
+              "message": {
+                "role": "assistant",
+                "content": "{\"timestamp_true_call\":\"2025-12-02T18:00:00+11:00\"}",
+                "refusal": null,
+                "annotations": []
+              },
+              "finish_reason": "stop"
+            }
+          ],
+          "created": "2025-11-28T13:59:35.000Z",
+          "service_tier": "default",
+          "system_fingerprint": null
+        },
+        "5": {
+          "timestamp_call_trigger": "2025-11-28T14:01:29.659Z"
+        },
+        "6": {
+          "timestamp_true_call": "2025-12-02T18:00:00+11:00"
+        }
+      }
+    },
+    "scenario": {
+      "dlq": false,
+      "slots": null,
+      "dataloss": false,
+      "maxErrors": 3,
+      "autoCommit": true,
+      "roundtrips": 1,
+      "sequential": false,
+      "confidential": false,
+      "freshVariables": false,
+      "autoCommitTriggerLast": true
+    }
+  },
+  "scheduling": {
+    "type": "immediately"
+  },
+  "interface": {
+    "input": [],
+    "output": []
+  }
+}

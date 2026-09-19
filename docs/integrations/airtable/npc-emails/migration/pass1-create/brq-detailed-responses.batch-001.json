@@ -1,0 +1,369 @@
+{
+  "table": "BRQ Detailed Responses",
+  "batch": 1,
+  "of": 1,
+  "recordCount": 12,
+  "records": [
+    {
+      "sourceRecordId": "rec2hdWjZ2U498yDF",
+      "sourceCreatedTime": "2026-08-15T14:06:37.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "rec2wVVyKwkHxZbWf",
+      "sourceCreatedTime": "2026-08-05T05:44:12.000Z",
+      "fields": {
+        "Security & Procurement Requirements": [
+          "Not yet known"
+        ],
+        "System Product Names (optional)": "[\n    \"Email automation\",\n    \"Document management\",\n    \"Project or task management\",\n    \"AML, KYC or identity verification\"\n]",
+        "Entity-level Boundaries Required": "Yes",
+        "Operating Locations": [
+          "NSW"
+        ],
+        "Enterprise SSO Required": "Yes",
+        "Approved Investment Range": "More than A$5,000 per month",
+        "Applicant Email": "mithrubanbupathy3@gmail.com",
+        "Stage 2 Access Method": "Same-session handoff",
+        "Application ID": "AX-B2DE678C70",
+        "Aurixa Capabilities Ranked (Top 5)": [
+          "1. CRM",
+          "2. Client and partner portals",
+          "3. Onboarding and workflow",
+          "4. Buyer's agency workflow",
+          "5. Finance portal"
+        ],
+        "Procurement Process Expected": "Yes",
+        "Office/Entity Structure": "Franchise or network",
+        "Implementation Start Preference": "Immediately",
+        "Internal Project Sponsor Identified": "Not yet known",
+        "Weekly Admin Time": "More than 40 hours",
+        "Technology Purchase Authority": "Recommend to the decision-maker",
+        "Current Systems Used": [
+          "Email automation",
+          "Document management",
+          "Project or task management",
+          "AML, KYC or identity verification"
+        ],
+        "Expected User Count": "More than 100",
+        "Role (Corrected)": "Founder or Director",
+        "Next Step Preference": "General platform demonstration",
+        "Systems to Integrate": [
+          "Google Workspace",
+          "Identity-verification provider",
+          "Existing CRM"
+        ],
+        "Top Operational Problems": [
+          "Slow client onboarding",
+          "Limited pipeline visibility",
+          "Manual document handling"
+        ],
+        "Data Migration Needed": "Not yet known",
+        "Submitted At": "2026-08-05T05:44:10.766Z"
+      }
+    },
+    {
+      "sourceRecordId": "recFqe6cUv6zhvquR",
+      "sourceCreatedTime": "2026-08-05T05:44:02.000Z",
+      "fields": {
+        "Security & Procurement Requirements": [
+          "Not yet known"
+        ],
+        "System Product Names (optional)": "[\n    \"Email automation\",\n    \"Document management\",\n    \"Project or task management\",\n    \"AML, KYC or identity verification\"\n]",
+        "Entity-level Boundaries Required": "Yes",
+        "Operating Locations": [
+          "NSW"
+        ],
+        "Enterprise SSO Required": "Yes",
+        "Approved Investment Range": "More than A$5,000 per month",
+        "Applicant Email": "mithrubanbupathy3@gmail.com",
+        "Stage 2 Access Method": "Same-session handoff",
+        "Application ID": "AX-B2DE678C70",
+        "Aurixa Capabilities Ranked (Top 5)": [
+          "1. CRM",
+          "2. Client and partner portals",
+          "3. Onboarding and workflow",
+          "4. Buyer's agency workflow",
+          "5. Finance portal"
+        ],
+        "Procurement Process Expected": "Yes",
+        "Office/Entity Structure": "Franchise or network",
+        "Implementation Start Preference": "Immediately",
+        "Internal Project Sponsor Identified": "Not yet known",
+        "Weekly Admin Time": "More than 40 hours",
+        "Technology Purchase Authority": "Recommend to the decision-maker",
+        "Current Systems Used": [
+          "Email automation",
+          "Document management",
+          "Project or task management",
+          "AML, KYC or identity verification"
+        ],
+        "Expected User Count": "More than 100",
+        "Role (Corrected)": "Founder or Director",
+        "Next Step Preference": "General platform demonstration",
+        "Systems to Integrate": [
+          "Google Workspace",
+          "Identity-verification provider",
+          "Existing CRM"
+        ],
+        "Top Operational Problems": [
+          "Slow client onboarding",
+          "Limited pipeline visibility",
+          "Manual document handling"
+        ],
+        "Data Migration Needed": "Not yet known",
+        "Submitted At": "2026-08-05T05:43:59.974Z"
+      }
+    },
+    {
+      "sourceRecordId": "recJjndYpSXX6HNGy",
+      "sourceCreatedTime": "2026-07-29T15:07:10.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "recPzE2OyY8ukNryo",
+      "sourceCreatedTime": "2026-07-29T12:48:34.000Z",
+      "fields": {
+        "Security & Procurement Requirements": [
+          "Dedicated environment",
+          "None"
+        ],
+        "Entity-level Boundaries Required": "Not yet known",
+        "Operating Locations": [
+          "VIC",
+          "WA"
+        ],
+        "Enterprise SSO Required": "Not yet known",
+        "Approved Investment Range": "Project or enterprise budget",
+        "Records Count Not Yet Known": true,
+        "Aurixa Capabilities Ranked (Top 5)": [
+          "AML and compliance",
+          "Market intelligence"
+        ],
+        "Current Info Management Methods (if No Central System)": [
+          "Separate individual applications",
+          "Other"
+        ],
+        "Procurement Process Expected": "Not yet known",
+        "Office/Entity Structure": "National organisation",
+        "Implementation Start Preference": "6–12 months",
+        "Internal Project Sponsor Identified": "Not yet known",
+        "Preferred Migration Timing": "After go-live",
+        "Custom System API Available": "Not yet known",
+        "Weekly Admin Time": "More than 40 hours",
+        "Documents Count Not Yet Known": true,
+        "Technology Purchase Authority": "Researching",
+        "Current Systems Used": [
+          "Project or task management",
+          "No central system"
+        ],
+        "Expected User Count": "More than 100",
+        "Role (Corrected)": "Finance or Mortgage Professional",
+        "Next Step Preference": "Pricing discussion",
+        "Systems to Integrate": [
+          "Custom internal system",
+          "None initially"
+        ],
+        "Top Operational Problems": [
+          "Limited analytics",
+          "Difficulty scaling"
+        ],
+        "Data Migration Needed": "Multiple systems or complex migration"
+      }
+    },
+    {
+      "sourceRecordId": "recVImc9527a8v2Xv",
+      "sourceCreatedTime": "2026-07-29T15:07:10.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "recW0FM1q9Lyqi2VF",
+      "sourceCreatedTime": "2026-08-05T05:39:19.000Z",
+      "fields": {
+        "Security & Procurement Requirements": [
+          "Single sign-on"
+        ],
+        "System Product Names (optional)": "[\n    \"Telephony\"\n]",
+        "Operating Locations": [
+          "WA"
+        ],
+        "Approximate Records Migrated": 50,
+        "Approved Investment Range": "A$1,000-A$2,500 per month",
+        "Applicant Email": "reena128@hotmail.com",
+        "Stage 2 Access Method": "Same-session handoff",
+        "Data Migration Sources": "Curry sauce",
+        "Known Data-Quality Concerns": "All looking old. Need more young clients. ",
+        "Application ID": "AX-84EFE0685A",
+        "Aurixa Capabilities Ranked (Top 5)": [
+          "1. AI Voice Agents & Call Logging",
+          "2. Client and partner portals",
+          "3. Borrowing capacity",
+          "4. Finance portal",
+          "5. CRM"
+        ],
+        "Approximate Documents Migrated": 1000,
+        "Office/Entity Structure": "One office or entity",
+        "Implementation Start Preference": "Immediately",
+        "Internal Project Sponsor Identified": "Yes",
+        "Preferred Migration Timing": "Within 30 days of go-live",
+        "Weekly Admin Time": "Less than 5 hours",
+        "Technology Purchase Authority": "Other",
+        "Current Systems Used": [
+          "Telephony"
+        ],
+        "Expected User Count": "1-3",
+        "Role (Corrected)": "Other",
+        "Authority Description (if Other)": " Arrange meet between clients",
+        "Next Step Preference": "General platform demonstration",
+        "Security/Policy Context (if Required)": "All waste piece. Need fresh faces. ",
+        "Systems to Integrate": [
+          "MYOB"
+        ],
+        "Top Operational Problems": [
+          "Limited pipeline visibility",
+          "Slow client onboarding",
+          "Difficulty scaling"
+        ],
+        "Data Migration Needed": "Templates and reports",
+        "Workflow Causing Greatest Difficulty": "Please ready 4 clients nacchunu. ",
+        "Submitted At": "2026-08-05T05:39:17.906Z"
+      }
+    },
+    {
+      "sourceRecordId": "recaLOzCdW6u1kTX3",
+      "sourceCreatedTime": "2026-07-31T14:03:25.000Z",
+      "fields": {
+        "Security & Procurement Requirements": [
+          "Multi-factor authentication",
+          "Role-based access control",
+          "Vendor-risk assessment"
+        ],
+        "System Product Names (optional)": "[\n    \"Email automation\",\n    \"CRM\",\n    \"Reporting\"\n]",
+        "Operating Locations": [
+          "NSW"
+        ],
+        "Approximate Records Migrated": 566666,
+        "Approved Investment Range": "More than A$5,000 per month",
+        "Applicant Email": "rugesh@npcservices.com.au",
+        "Data Migration Sources": "salesfore",
+        "Known Data-Quality Concerns": "dgdgsgsd",
+        "Application ID": "AX-C94B1D8EC9",
+        "Aurixa Capabilities Ranked (Top 5)": [
+          "1. Borrowing capacity",
+          "2. AI communications",
+          "3. Market intelligence",
+          "4. Buyer's agency workflow",
+          "5. Property comparison and due diligence"
+        ],
+        "Custom System Business Owner": "dbnfdnfdnf",
+        "Office/Entity Structure": "One office or entity",
+        "Implementation Start Preference": "Immediately",
+        "Internal Project Sponsor Identified": "No",
+        "Preferred Migration Timing": "At go-live",
+        "Custom System API Available": "Yes",
+        "Custom System Name": "hsgsdhsdhs",
+        "Weekly Admin Time": "5-10 hours",
+        "Technology Purchase Authority": "Final decision-maker",
+        "Current Systems Used": [
+          "Email automation",
+          "CRM",
+          "Reporting"
+        ],
+        "Expected User Count": "1-3",
+        "Role (Corrected)": "Chief Executive Officer",
+        "Next Step Preference": "General platform demonstration",
+        "Systems to Integrate": [
+          "Existing CRM",
+          "MYOB",
+          "Xero",
+          "Electronic signing",
+          "Cotality or CoreLogic",
+          "Identity-verification provider",
+          "GoHighLevel",
+          "Microsoft 365",
+          "Existing Phone or VoIP System",
+          "Custom internal system",
+          "Google Workspace"
+        ],
+        "Custom Integration Workflow": "fbfdbfdnfdndsnndnsn",
+        "VoIP System Details": "everything",
+        "Top Operational Problems": [
+          "Duplicate data entry",
+          "Slow client onboarding",
+          "Inconsistent client communications"
+        ],
+        "Data Migration Needed": "Basic contacts",
+        "Workflow Causing Greatest Difficulty": "dbdgdsds",
+        "Submitted At": "2026-07-31T10:15:10.675Z"
+      }
+    },
+    {
+      "sourceRecordId": "recd4ouSQK6Ys3EbF",
+      "sourceCreatedTime": "2026-07-29T18:49:02.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "rece11cH1IFyM1J0T",
+      "sourceCreatedTime": "2026-07-29T18:49:02.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "recgDSshuhdpzn06P",
+      "sourceCreatedTime": "2026-07-29T12:54:09.000Z",
+      "fields": {}
+    },
+    {
+      "sourceRecordId": "rectszlHImnpCHOEL",
+      "sourceCreatedTime": "2026-08-05T05:39:39.000Z",
+      "fields": {
+        "Security & Procurement Requirements": [
+          "Single sign-on"
+        ],
+        "System Product Names (optional)": "[\n    \"Telephony\"\n]",
+        "Operating Locations": [
+          "WA"
+        ],
+        "Approximate Records Migrated": 50,
+        "Approved Investment Range": "A$1,000-A$2,500 per month",
+        "Applicant Email": "reena128@hotmail.com",
+        "Stage 2 Access Method": "Same-session handoff",
+        "Data Migration Sources": "Curry sauce",
+        "Known Data-Quality Concerns": "All looking old. Need more young clients. ",
+        "Application ID": "AX-84EFE0685A",
+        "Aurixa Capabilities Ranked (Top 5)": [
+          "1. AI Voice Agents & Call Logging",
+          "2. Client and partner portals",
+          "3. Borrowing capacity",
+          "4. Finance portal",
+          "5. CRM"
+        ],
+        "Approximate Documents Migrated": 1000,
+        "Office/Entity Structure": "One office or entity",
+        "Implementation Start Preference": "Immediately",
+        "Internal Project Sponsor Identified": "Yes",
+        "Preferred Migration Timing": "Within 30 days of go-live",
+        "Weekly Admin Time": "Less than 5 hours",
+        "Technology Purchase Authority": "Other",
+        "Current Systems Used": [
+          "Telephony"
+        ],
+        "Expected User Count": "1-3",
+        "Role (Corrected)": "Other",
+        "Authority Description (if Other)": " Arrange meet between clients",
+        "Next Step Preference": "General platform demonstration",
+        "Security/Policy Context (if Required)": "All waste piece. Need fresh faces. ",
+        "Systems to Integrate": [
+          "MYOB"
+        ],
+        "Top Operational Problems": [
+          "Limited pipeline visibility",
+          "Slow client onboarding",
+          "Difficulty scaling"
+        ],
+        "Data Migration Needed": "Templates and reports",
+        "Workflow Causing Greatest Difficulty": "Please ready 4 clients nacchunu. ",
+        "Submitted At": "2026-08-05T05:39:38.153Z"
+      }
+    }
+  ]
+}

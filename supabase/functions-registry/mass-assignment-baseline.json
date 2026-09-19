@@ -1,0 +1,5 @@
+{
+  "$comment": "WP-20: per-file count of writes fed by an unallowlisted request body. Frozen so new mass-assignment cannot land while the existing backlog is worked down. Regenerate with `node scripts/security/check-mass-assignment.mjs --update`. Numbers may only go down.",
+  "generated_total": 0,
+  "files": {}
+}

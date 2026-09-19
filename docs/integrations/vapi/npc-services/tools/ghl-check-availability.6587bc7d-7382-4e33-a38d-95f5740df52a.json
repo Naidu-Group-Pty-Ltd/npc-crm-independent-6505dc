@@ -1,0 +1,74 @@
+{
+  "createdAt": "2026-05-11T22:57:43.778Z",
+  "function": {
+    "description": "Use this tool to check GoHighLevel calendar availability for NPC Services appointment bookings. This tool sends the caller's booking intent to Make, where the appointment type is classified and routed to the correct hardcoded GoHighLevel calendar. Use this tool only to check available appointment slots. Do not use this tool to create a booking. The tool requires the booking intent, a start and end search window in Unix milliseconds, the timezone, and the intended appointment duration.",
+    "name": "ghl_check_availability",
+    "parameters": {
+      "properties": {
+        "booking_intent_text": {
+          "description": "The caller's requested appointment type in natural language. Include whether they want a Discovery Call, Strategy Session, Initial Finance Consult, and whether the mode is Phone or Zoom if known. Example: 'The caller wants to book a strategy session over the phone.'",
+          "type": "string"
+        },
+        "caller_context": {
+          "description": "Relevant call context that may help classify the correct booking intent. Include whether the caller is a new lead, existing contact, or requested a specific appointment type.",
+          "type": "string"
+        },
+        "duration_minutes": {
+          "description": "The requested appointment duration in minutes. Use 30 unless the system prompt or booking type specifies a different duration.",
+          "type": "number"
+        },
+        "endDateMs": {
+          "description": "The end of the availability search window as a Unix timestamp in milliseconds. Must be after startDateMs. Example: '1779260400000'.",
+          "type": "string"
+        },
+        "preferred_date_text": {
+          "description": "The caller's preferred date or time window in natural language, if mentioned. Example: 'next Tuesday morning' or 'any time next week'.",
+          "type": "string"
+        },
+        "search_reason": {
+          "description": "Short internal reason for the availability search. Example: 'Caller requested strategy session phone availability.'",
+          "type": "string"
+        },
+        "startDateMs": {
+          "description": "The start of the availability search window as a Unix timestamp in milliseconds. Must be a future timestamp. Example: '1778626800000'.",
+          "type": "string"
+        },
+        "timezone": {
+          "description": "The timezone for the availability search. Always use 'Australia/Sydney' unless the system explicitly instructs otherwise.",
+          "type": "string"
+        }
+      },
+      "required": [
+        "booking_intent_text",
+        "startDateMs",
+        "endDateMs",
+        "timezone",
+        "duration_minutes"
+      ],
+      "type": "object"
+    }
+  },
+  "id": "6587bc7d-7382-4e33-a38d-95f5740df52a",
+  "messages": [
+    {
+      "blocking": false,
+      "content": "Let me check the available times for you.",
+      "type": "request-start"
+    }
+  ],
+  "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+  "server": {
+    "staticIpAddressesEnabled": false,
+    "timeoutSeconds": 20,
+    "url": "https://hook.eu2.make.com/3xslmou0jpbwxbutg8we362f9jsh96q0"
+  },
+  "type": "function",
+  "updatedAt": "2026-05-14T16:50:42.125Z",
+  "variableExtractionPlan": {
+    "schema": {
+      "properties": {},
+      "required": [],
+      "type": "object"
+    }
+  }
+}

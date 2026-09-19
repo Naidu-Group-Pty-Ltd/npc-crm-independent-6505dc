@@ -1,0 +1,28 @@
+import { chromium } from 'playwright';
+import { readFileSync } from 'node:fs';
+import { renderTemplateToHtml } from '../../src/lib/reportTemplate/htmlRenderer';
+import { evalConditional } from '../../src/lib/reportTemplate/bindingResolver';
+import { buildCapacitySnapshot } from '../../supabase/functions/_shared/reports/commercialCapacity/normalise.pure';
+import { applyCommercialCapacityProjection } from '../../supabase/functions/_shared/commercialCapacityProjection.pure';
+import { applyOrganisationProjection } from '../../supabase/functions/_shared/organisationProjection.pure';
+import { COMMERCIAL_CAPACITY_TEMPLATES } from './investmentCompass/commercialCapacity';
+const R=JSON.parse(readFileSync('/tmp/claude-0/-home-user/2d1fcc99-8bfb-51aa-8aa3-79bd8050091a/scratchpad/format-rows2.json','utf8')).commercial_capacity;
+const ORG={company_name:'NPC',email_signature_phone:'1',email_signature_email:'a@b.c',email_signature_website:'w',email_signature_address:'x'};
+const snap=buildCapacitySnapshot({assessment:R.assessment,outputs:R.run?.outputs,inputs:R.run?.inputs_snapshot,clientName:'A Client Pty Ltd',analysis:(R.run?.analysis??null) as never} as any);
+const data:any={report:{},brand:{}}; applyCommercialCapacityProjection(data,snap as any); applyOrganisationProjection(data,ORG as any);
+const t:any=(COMMERCIAL_CAPACITY_TEMPLATES as any[]).find(x=>x.slug==='commercial-capacity-le-03-grand-folio');
+const visible=(t.schema.pages as any[]).filter(p=>!p.conditional||evalConditional(String(p.conditional),{data,tokens:{}} as any));
+const idx=visible.findIndex(p=>p.name==='What could change it');
+console.log('page index',idx,'of',visible.length);
+const declared=visible[idx].blocks.map((b:any)=>({type:b.type,y:b.props.y,h:b.props.height}));
+console.log('declared:',JSON.stringify(declared));
+const b=await chromium.launch({executablePath:'/opt/pw-browsers/chromium-1194/chrome-linux/chrome'});
+const {html}=renderTemplateToHtml(t.schema,{data});
+const pg=await b.newPage({viewport:{width:794,height:1123}});
+await pg.setContent(html,{waitUntil:'load'});
+const boxes=await pg.locator('.tpl-page').nth(idx).evaluate((el:any)=>{
+  const pr=el.getBoundingClientRect();
+  return (Array.from(el.children) as any[]).map(c=>{const r=c.getBoundingClientRect();
+    return {cls:(c.className||c.tagName).toString().slice(0,18),top:+((r.top-pr.top)*0.75).toFixed(0),h:+(r.height*0.75).toFixed(0),bottom:+((r.bottom-pr.top)*0.75).toFixed(0),txt:(c.textContent||'').replace(/\s+/g,' ').slice(0,45)};});});
+for(const x of boxes) console.log('  ',JSON.stringify(x));
+await b.close();

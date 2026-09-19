@@ -1,0 +1,8 @@
+import { readFileSync } from 'node:fs'; import { describe,expect,it } from 'vitest';
+const edge=readFileSync('supabase/functions/create-advanced-client/index.ts','utf8'); const sql=readFileSync('supabase/migrations/20260801120000_create_client_fact_finds.sql','utf8');
+describe('Advanced creation security boundary',()=>{
+ it('rejects unauthorized access and enforces CSRF and create permission',()=>{expect(edge).toContain('enforceCsrf(req)');expect(edge).toContain('verifyAuth(');expect(edge).toContain("checkPermission(supabase,auth.userId!,'clients','create'");expect(edge).toContain('createUnauthorizedResponse')});
+ it('uses one transactional RPC and never invokes GHL',()=>{expect(edge).toContain("supabase.rpc('create_advanced_client_fact_find'");expect(edge).not.toContain("invokeSecureFunction('sync-client-to-ghl'");expect(sql).toContain('CREATE OR REPLACE FUNCTION public.create_advanced_client_fact_find')});
+ it('rolls back partial writes by raising inside one PostgreSQL function',()=>{expect(sql).toContain("RAISE EXCEPTION 'client totals do not match server calculations'");expect(sql).toContain("RAISE EXCEPTION 'workbook row counts are invalid'");expect(sql).not.toMatch(/EXCEPTION\s+WHEN[\s\S]*RETURN/)});
+ it('prevents cross-client reads and browser writes',()=>{expect(sql).toContain('c.created_by=auth.uid() OR c.assigned_team_user_id=auth.uid()');expect(sql).toContain("public.has_role(auth.uid(),'superadmin')");expect(sql).toContain('REVOKE ALL ON FUNCTION public.create_advanced_client_fact_find(uuid,jsonb,jsonb) FROM PUBLIC,anon,authenticated');expect(sql).toContain('GRANT SELECT ON public.client_fact_finds')});
+});

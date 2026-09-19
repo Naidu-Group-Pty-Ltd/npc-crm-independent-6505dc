@@ -1,0 +1,20 @@
+{
+  "createdAt": "2026-05-07T03:06:47.270Z",
+  "id": "88789258-e2d4-44a4-96a0-468ee2b66b8a",
+  "name": "Transfer Failed Count",
+  "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+  "queries": [
+    {
+      "filters": [],
+      "on": "call.transferFailed",
+      "operation": "count",
+      "table": "events",
+      "type": "vapiql-json"
+    }
+  ],
+  "timeRange": {
+    "start": "-1h"
+  },
+  "type": "text",
+  "updatedAt": "2026-05-07T03:06:47.270Z"
+}

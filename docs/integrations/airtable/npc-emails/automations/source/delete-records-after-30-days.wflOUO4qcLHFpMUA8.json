@@ -1,0 +1,119 @@
+{
+  "id": "wflOUO4qcLHFpMUA8",
+  "name": "Delete Records After 30 Days",
+  "description": null,
+  "deploymentStatus": "deployed",
+  "deploymentError": null,
+  "trigger": {
+    "type": "cron",
+    "inputs": {
+      "type": "daily",
+      "start": "2025-12-03T08:00:00.000Z",
+      "config": {
+        "obj": {
+          "localTriggerTimes": [
+            {
+              "obj": {
+                "hour": 0,
+                "minute": 0,
+                "second": 0
+              }
+            }
+          ],
+          "width": 1,
+          "tz": "Asia/Kuala_Lumpur",
+          "dateModified": "2025-12-04T10:01:02.675Z"
+        }
+      }
+    }
+  },
+  "nodes": [
+    {
+      "key": "wacHzaPvcsczfIStL",
+      "type": "findRecords",
+      "inputs": {
+        "limit": 1000,
+        "tableId": "tblH9cW4EhVs6D5H1",
+        "queryType": "filtersObj",
+        "filtersObj": {
+          "obj": {
+            "operator": "and",
+            "operands": {
+              "tuple": [
+                {
+                  "obj": {
+                    "operator": "<",
+                    "operands": {
+                      "tuple": [
+                        "fldtKYX4KlL42xkVf",
+                        {
+                          "obj": {
+                            "mode": "daysAgo",
+                            "numberOfDays": 30,
+                            "timeZone": "Asia/Kuala_Lumpur"
+                          }
+                        }
+                      ]
+                    }
+                  }
+                }
+              ]
+            }
+          }
+        }
+      }
+    },
+    {
+      "key": "wdeC9l3bV5siGsBgq",
+      "type": "repeatingGroup",
+      "inputs": {
+        "items": {
+          "$ref": "wacHzaPvcsczfIStL",
+          "path": [
+            "records"
+          ]
+        }
+      },
+      "nodes": [
+        {
+          "key": "wacVt0l4TPWwuWYNx",
+          "type": "customScript",
+          "inputs": {
+            "inputObj": {
+              "obj": {
+                "recordId": {
+                  "fn": "readProperty",
+                  "args": [
+                    {
+                      "fn": "pickBranchData",
+                      "args": [
+                        {
+                          "$ref": "wdeC9l3bV5siGsBgq",
+                          "path": [
+                            "selectedNextNodes"
+                          ]
+                        }
+                      ]
+                    },
+                    "id"
+                  ]
+                },
+                "tableId": {
+                  "fn": "getBaseMetadata",
+                  "args": [
+                    "tblH9cW4EhVs6D5H1",
+                    "id"
+                  ]
+                }
+              }
+            },
+            "script": "let { recordId, tableId } = input.config();\n\nawait base.getTable(tableId).deleteRecordAsync(recordId);\n\nconsole.log(`Deleted record: ${recordId}`);\n"
+          },
+          "outputSchema": []
+        }
+      ]
+    }
+  ],
+  "deployedVersion": null,
+  "configurationStatus": "valid"
+}

@@ -1,0 +1,462 @@
+{
+  "table": "Emails",
+  "batch": 103,
+  "of": 107,
+  "recordCount": 50,
+  "records": [
+    {
+      "sourceRecordId": "recxFmm583WPJevBu",
+      "sourceCreatedTime": "2026-07-13T18:26:21.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recxFqKWZa4EaRlSA",
+      "sourceCreatedTime": "2026-06-11T07:18:32.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recxGV2RGRZEC6Qtn",
+      "sourceCreatedTime": "2025-10-07T02:55:42.000Z",
+      "fields": {
+        "Name": "McGrath Bayside Cleveland",
+        "Subject": "The Weekly Update | 30th September, 2025",
+        "Email": "fombaysidecleveland@mcgrath.com.au",
+        "Body": "The Weekly Update\r\n\r\n\r\n\r\nMcGrath Bayside Cleveland\r\n\r\nRenovation advice for home owners as demand continues\r\n\r\nThinking of renovating? With costs rising and demand for updated homes strong, the right strategy is key. Learn more with John McGrath in this w"
+      }
+    },
+    {
+      "sourceRecordId": "recxH9GHIsudq4a39",
+      "sourceCreatedTime": "2026-03-26T05:13:56.000Z",
+      "fields": {
+        "Name": "Chevez Evans",
+        "Subject": "OFF MARKET OPPORTUNITY in California Gully",
+        "Email": "chevez@phproperty.com.au",
+        "Body": "OFF MARKET OPPORTUNITY IN CALIFORNIA GULLY\r\nHello Rugesh,\r\n\r\n\r\nWe have a new off market opportunity available for a property that may match your requirements!\r\n\r\n\r\n\r\n13 Sandhurst Rd, California Gully is being offered for $540,000 - $565,000.\r\n\r\n\r\n\r\nTo see",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recxIZRZ6HhaF5BQl",
+      "sourceCreatedTime": "2026-06-04T03:47:29.000Z",
+      "fields": {
+        "Name": "Paul Farrelly",
+        "Subject": "Just Listed | High Profile Corner Super Site Opportunity",
+        "Email": "pfarrelly@sutherlandfarrelly.com.au",
+        "Body": "Sutherland Farrelly Pty Ltd\r\n43 Agnes Street East Melbourne VIC 3002\r\n+61 3 9650 3531 sutherlandfarrelly.com.au\r\n\r\nDisclaimer: Please note that the information provided in this publication is general in nature and should not be considered pr"
+      }
+    },
+    {
+      "sourceRecordId": "recxJgkSwj5l5hNDs",
+      "sourceCreatedTime": "2026-06-08T09:21:08.000Z",
+      "fields": {
+        "Name": "Navdeep Singh",
+        "Subject": "Come and Join us at Auction at 48 Colebrook Cres, Doolandella!",
+        "Email": "NavdeepSingh@realcrats.com",
+        "Body": " ‌ ‌ ‌ ‌ ‌ ‌ ‌  ‌ ‌ ‌ ‌ ‌ ‌\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\nUnsubscribe\r\nView in Browser"
+      }
+    },
+    {
+      "sourceRecordId": "recxKGOodh7k4KMF5",
+      "sourceCreatedTime": "2026-02-20T03:04:49.000Z",
+      "fields": {
+        "Name": "Ooranya Estate - Land Sale",
+        "Subject": "Ooranya Estate - H&L One Part Contracts",
+        "Email": "sales@bevanprojects.com.au",
+        "Body": "View this email in your browser\r\n\r\n\r\n\r\nDear ,\r\n\r\nAt Ooranya Estate, we have\r\ncollaborated with a variety of builders\r\nto offer you, our valued partners\r\n\r\n\r\n\r\nph: 0427 664 855\r\nemail: sales@bevanprojects.com.au\r\npostal address: PO Box 482\r\nPort Melb",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recxL5N2sQJoMKLxV",
+      "sourceCreatedTime": "2026-04-17T03:51:05.000Z",
+      "fields": {
+        "Name": "Hinternoosa .",
+        "Subject": "New Listings and Open Homes",
+        "Email": "sold@hinternoosa.com.au",
+        "Body": "Hinternoosa .\r\n\r\n\r\n07 5447 7000\r\n\r\nEmail me\r\n\r\n\r\nHi NPC Services\r\n\r\nExplore what's new at Hinternoosa this week!\r\n\r\nDiscover our latest new listings, auctions, Rental of the Week, and all the properties open for inspection across the beautiful",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recxNGGQapp9RNvgR",
+      "sourceCreatedTime": "2026-06-23T15:38:22.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recxR8nksAZNAO6eo",
+      "sourceCreatedTime": "2026-04-18T05:36:18.000Z",
+      "fields": {
+        "Name": "Westgarth Realty",
+        "Subject": "1 new property that match your criteria",
+        "Email": "admin@westgarths.com.au",
+        "Body": "Dear Rugesh, Here are the results for your email alerts from Westgarth Realty as at 18/04/2026\r\n\r\n\r\n        5               2               4               1550 sqm\r\nOffers over $795,000\r\n45 Lorrimer Street, Oakey\r\n\r\nBig, Bold & Packed With Space "
+      }
+    },
+    {
+      "sourceRecordId": "recxR9t0su39cXFPX",
+      "sourceCreatedTime": "2025-10-07T02:44:40.000Z",
+      "fields": {
+        "Name": "Kaikura Land Sales",
+        "Subject": "Verve Builder Update",
+        "Email": "sales@kaikura.com.au",
+        "Body": "Hi Guys.\r\nHope everyone had an amazing weekend and is enjoying today's sun.\r\n\r\nPlease find below this weeks update.\r\n\r\nPlease see below links to the price list and all relevant stages at Verve:\r\nPRICE LIST\r\nBROCHURE\r\nDESIGN GUIDELINES\r\nHOUSE & LAND TEMPLA",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recxVPXfHZWTSj7fM",
+      "sourceCreatedTime": "2026-06-05T06:11:39.000Z",
+      "fields": {
+        "Name": "Hermitage Homes",
+        "Subject": "🏡 Hermitage Stocklist // Society 1056 Townhouses – Selling Fast - 3 Left! // Wallan One Part Contracts – Almost Gone// Homepay Accredited Builder – 05/06/2026",
+        "Email": "houseandland@hermitagehomes.com.au",
+        "Body": "🏡 Hermitage Stocklist // Society 1056 Townhouses – Selling Fast - 3 Left! // Wallan One Part Contracts – Almost Gone// Homepay Accredited Builder – 05/06/2026  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏  ͏"
+      }
+    },
+    {
+      "sourceRecordId": "recxVgVQKZw5tYO6o",
+      "sourceCreatedTime": "2025-09-23T21:18:13.000Z",
+      "fields": {
+        "Name": "Balazs Varga",
+        "Subject": "RE: NPC Services | Naidu Property Consulting Services | Introduction & Mailing List Allocation",
+        "Email": "b.varga@seeksta.com",
+        "Body": "Hey Mate,\r\n\r\nI think you spammed the wrong person.\r\n\r\nI’m a BA in QLD.\r\n\r\nCheers\r\n\r\nBalazs Varga\r\nPrincipal Buyers’ Agent\r\n\r\nFrom: Rugesh Naidu <rugesh@npcservices.com.au>\r\nSent: Monday, 22 September 2025 12:24 PM\r\nCc: Naidu Property Consulting Services ("
+      }
+    },
+    {
+      "sourceRecordId": "recxWBrgJ4sGiz8oS",
+      "sourceCreatedTime": "2025-11-25T02:41:07.000Z",
+      "fields": {
+        "Name": "Abby Holmes-Brown",
+        "Subject": "Impressive Palmview Living on a Corner Block Opposite Peaceful Bushland!!",
+        "Email": "sales@fnlifestyle.com.au",
+        "Body": "Just Listed\r\n\r\n\r\n\r\n\r\nHi Rugesh,\r\n\r\nNew listing!!!\r\n\r\nDiscover this stunning, modern home in Palmview, perfectly positioned on a corner block opposite peaceful bushland. Stylish, spacious and ready to impress - this is one you don't want to miss!"
+      }
+    },
+    {
+      "sourceRecordId": "recxY75Uv2ft3o0pT",
+      "sourceCreatedTime": "2025-12-02T23:42:48.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recxYZVoERWkL6a29",
+      "sourceCreatedTime": "2025-11-05T07:19:39.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recxZ0cadVlJNL6S9",
+      "sourceCreatedTime": "2025-12-18T05:29:59.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recxZ1xmBUFXfmnun",
+      "sourceCreatedTime": "2025-11-07T04:46:21.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recxZbmOgGwrHwryt",
+      "sourceCreatedTime": "2026-03-19T23:09:42.000Z",
+      "fields": {
+        "Name": "Westgarth Realty",
+        "Subject": "1 new property that match your criteria",
+        "Email": "admin@westgarths.com.au",
+        "Body": "Dear Rugesh, Here are the results for your email alerts from Westgarth Realty as at 20/03/2026\r\n\r\n\r\n        4               2               3               642 sqm\r\n$760,000\r\n36 Milligan Street, Oakey\r\n\r\nCOMING VERY SOON\r\n\r\nCOMING VERY SOON\r\n4 bed"
+      }
+    },
+    {
+      "sourceRecordId": "recxa9k3v3QLCZNji",
+      "sourceCreatedTime": "2026-06-04T03:22:14.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recxaAXpOctOqh4gb",
+      "sourceCreatedTime": "2026-01-21T01:44:57.000Z",
+      "fields": {
+        "Name": "Abby Holmes-Brown",
+        "Subject": "The Renovator - Big Home, Big Block, Big Opportunity",
+        "Email": "sales@fnlifestyle.com.au",
+        "Body": "Just Listed\r\n\r\n\r\n\r\n\r\nHi Rugesh,\r\n\r\nWe are excited to share a new listing with you that's just hit the market in Sippy Downs - and it's one that offers incredible value and potential.\r\n\r\nThis is your chance to break into the Sippy Downs market wi"
+      }
+    },
+    {
+      "sourceRecordId": "recxax75Eu4o3Dr1I",
+      "sourceCreatedTime": "2025-09-22T12:50:51.000Z",
+      "fields": {
+        "Name": "Mick Lay",
+        "Subject": "Newsletter - What Does $930,000 Buy You in Bayswater?",
+        "Email": "michael@lay2.com.au",
+        "Body": "What Does $930,000 Buy You in Bayswater?\r\n\r\n\r\nHi Rugesh\r\n\r\nA Bayswater property just sold off-market, and it’s unlike anything you’d expect for $930,000.\r\nFrom clever design to Swan River glimpses, there’s a lot to discover.\r\n\r\n\r\nWhat Does $930,000 Buy Yo"
+      }
+    },
+    {
+      "sourceRecordId": "recxay8yeXMS3tK9W",
+      "sourceCreatedTime": "2025-12-09T03:23:11.000Z",
+      "fields": {
+        "Name": "Karen Bagenal",
+        "Subject": "Your Property Update [New Listing Alert]",
+        "Email": "karenbagenal@realwayipswich.com.au",
+        "Body": "0732940099\r\nwww.ipswich.realway.com.au\r\nNew Listings\r\n\r\nHi Rugesh,\r\n\r\nWe've listed some new properties that I think you might be interested in. Give me a call if you have any questions or would like to take a look through any of these.\r\n\r\n\r\n30 Keppel Stre",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recxbX6iEwJ4B2xPI",
+      "sourceCreatedTime": "2026-01-02T06:00:58.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recxbhVS0TEwgZd6k",
+      "sourceCreatedTime": "2025-11-04T15:35:56.000Z",
+      "fields": {
+        "Name": "ACTIVE AGENTS (QLD) PTY LTD",
+        "Subject": "Your Matched Properties Alert",
+        "Email": "info@activeagents.com.au",
+        "Body": "Edit my requirements\r\nVisit our Website\r\nProperty Alert\r\nWednesday, 5th November 2025\r\nHello Rugesh,\r\n\r\nThe following listings matched your Property Alert search requirements.\r\n\r\nMooloolaba\r\n42/17-19 Brisbane Road\r\n\r\nOffers above $750,000\r\n\r\n        2    ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recxcQSpvg7sxDiXG",
+      "sourceCreatedTime": "2025-11-07T04:41:05.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recxccVdJXo93zybn",
+      "sourceCreatedTime": "2025-11-25T21:54:39.000Z",
+      "fields": {
+        "Name": "Mick Lay",
+        "Subject": "Newsletter - What Does $1,025,000 Buy You in Bedford?",
+        "Email": "michael@lay2.com.au",
+        "Body": "What Does $1,025,000 Buy You in Bedford?\r\n\r\n\r\nHi Rugesh\r\n\r\nIt’s SOLD!\r\n\r\nBuyers were drawn to the stylish stone kitchen and light-filled living spaces — step inside virtually and find out what $1,025,000 buys you in Bedford!\r\n\r\n\r\nWhat Does $1,025,000 Buy "
+      }
+    },
+    {
+      "sourceRecordId": "recxce9qEHzZEIHhb",
+      "sourceCreatedTime": "2025-10-17T13:25:39.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recxdBW5d0JkUs4LK",
+      "sourceCreatedTime": "2026-06-10T11:36:32.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recxdUFlweGb3hWTa",
+      "sourceCreatedTime": "2025-10-16T10:15:09.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recxeEchALtThQiMh",
+      "sourceCreatedTime": "2026-03-07T00:22:18.000Z",
+      "fields": {
+        "Name": "McGrath NSW & QLD CO",
+        "Subject": "McGrath Property Alert",
+        "Email": "concierge@mcgrath.com.au",
+        "Body": "PROPERTY ALERT\r\n\r\n32 The Parapet, Castlecrag\r\n\r\n\r\n\r\n\r\n\r\n4\r\n\r\n\r\n\r\n2\r\n\r\n\r\n\r\n2\r\n\r\n\r\n\r\nAUCTION\r\n\r\nOn Site - Saturday 14 Mar 2:15pm\r\n\r\n\r\n\r\nVIEW\r\n\r\nSaturday 7 Mar 11:30am - 12:00pm\r\n\r\n\r\n\r\nAGENTS\r\n\r\nHarriet Halmarick: 0415 739 009\r\n\r\nElly Paterson: 0452 239 070",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recxeMYH5PxexaqXJ",
+      "sourceCreatedTime": "2025-10-17T02:33:33.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recxeWFv93dAWAAdc",
+      "sourceCreatedTime": "2026-06-23T15:50:21.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recxevRWWeTe91cpv",
+      "sourceCreatedTime": "2026-06-11T05:26:28.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recxfJgSNGMeZ90sY",
+      "sourceCreatedTime": "2026-06-10T23:35:25.000Z",
+      "fields": {
+        "Name": "Shelter Real Estate",
+        "Subject": "Off Market Opportunities & Upcoming Listings",
+        "Email": "hello@shelterrealestate.com.au",
+        "Body": "Dear Rugesh,\r\n\r\nPlease see below a list of off market opportunities and upcoming listings going live in the next few weeks.\r\n\r\nOFF MARKET & PRE MARKET OPPORTUNITIES\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\n\r\nAddress\r\n\r\nType    B/B/C   Land (approx.)  Price guide     "
+      }
+    },
+    {
+      "sourceRecordId": "recxfXaTcEnnoqlkm",
+      "sourceCreatedTime": "2026-04-02T05:21:05.000Z",
+      "fields": {
+        "Name": "Professionals Caboolture/Morayfield Chippendale",
+        "Subject": "Weekly Listings Update",
+        "Email": "j.chippendale@professionalscaboolture.propertyemail.com.au",
+        "Body": "Dear ,\r\n\r\nOn behalf of Professionals Caboolture/Morayfield, I am pleased to present some of our latest listings. I hope there's something that takes your fancy and I'm happy to take your call if that's the case!\r\n\r\nTo ensure that you receive the most accu",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recxgQ0cdEQvKnx0b",
+      "sourceCreatedTime": "2026-06-10T03:12:14.000Z",
+      "fields": {
+        "Name": "Michael Enever",
+        "Subject": "Recently SOLD - BENAMBRA - Harcourts",
+        "Email": "michael.enever@harcourts.com.au",
+        "Body": "Hi Rugesh,\r\n\r\nTo keep up to date with the market please see the property below that has recently SOLD in BENAMBRA.\r\nIf you would like further information about the property shown, or to discuss your property requirements, please don't hesitate to co"
+      }
+    },
+    {
+      "sourceRecordId": "recxi1JuRik9tglZZ",
+      "sourceCreatedTime": "2026-03-26T15:28:53.000Z",
+      "fields": {
+        "Name": "Belle Property Australasia",
+        "Subject": "Your First to See Listings Alert",
+        "Email": "noreply@belleproperty.com",
+        "Body": "Dear Rugesh,\r\n\r\nWe have found the following properties that match your property search requirements. Click here to update your preferences or click here to find a property on belleproperty.com.\r\nCurrent listings.\r\n\r\nMount Eliza\r\n150 Wimbledon Avenue\r\nFor ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recxinoZVTBgAdc0Z",
+      "sourceCreatedTime": "2026-03-20T06:39:45.000Z",
+      "fields": {
+        "Name": "Brian Sellars",
+        "Subject": "Update Alert: Matched Properties",
+        "Email": "mail@bowenrealestate.com.au",
+        "Body": "Dear Rugesh,\r\n\r\nThe following is a selection of our new properties and those open for inspection this weekend as you have previously requested.  You will also find those for which the property price has been reduced.  If you require any further ",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recxjCYGAHCiNviTU",
+      "sourceCreatedTime": "2025-12-11T05:25:48.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recxk2KxyqMK3lKKO",
+      "sourceCreatedTime": "2025-12-11T15:54:09.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recxkPpmxL4E1PWzR",
+      "sourceCreatedTime": "2025-12-19T04:45:44.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recxkv4yEpqOV0Uwz",
+      "sourceCreatedTime": "2026-03-04T02:52:19.000Z",
+      "fields": {
+        "Name": "Sam Shaw",
+        "Subject": "Off Market Opportunity - 30/91 Liddiard Road, Traralgon ",
+        "Email": "samshaw@wprci.com.au",
+        "Body": "Good afternoon,\r\n\r\nJust a quick email to advise that we have a new off market listing at 30/91 Liddiard Road, Traralgon that may be of interest to you. Please find attached a copy of the section 32 for this property for your perusal.\r\n\r\nPlease follow the ",
+        "Status": "Error 500",
+        "Attachments": [
+          {
+            "url": "https://v5.airtableusercontent.com/v3/u/56/56/1787054400000/ewqoZfU-VLmDtROFgI_-oA/jFTmckI7_4zdjunaQzs3HNYwCx_IZ4Iv70uWvXIqBtDeEVkeEbmC6HrTLtpw_nvzMn5bPONbp1ErpYuhCZKQlTPAnCH9bAVU9GzOZj381fx9S93A4gidEMRdgQg7cOZaq2Nm4FMxEAEcw2PWzTseGPm4s0aM87OU8bvMg8kEn9Js_1MwScZF_iVxjtgNCaaC/qU5OZIJrs5K9pTRS3Mqn0dOm9G_jXyVOycOPukgU0Os",
+            "filename": "outlook_email_attachment.pdf",
+            "type": "application/pdf",
+            "size": 9155439
+          }
+        ]
+      }
+    },
+    {
+      "sourceRecordId": "recxmTT9As4wdnAAy",
+      "sourceCreatedTime": "2026-02-20T05:48:51.000Z",
+      "fields": {
+        "Name": "Gagan Sidhu",
+        "Subject": "New Property Alert Match: 6 Gardenia Street HORSHAM",
+        "Email": "gagan@horshamrealestate.com.au",
+        "Body": "Hi Rugesh,\r\n\r\nGreat news! A property matching your preferences has just become available.\r\n\r\n\r\n\r\n\r\nFor Sale\r\n6 Gardenia Street, HORSHAM VIC 3400\r\n$469,000\r\n4 bed | 2 bath | 2 car\r\nPrime Location – Move-In Ready with Subdivision Potential (STCA)\r\n\r\nPerfect"
+      }
+    },
+    {
+      "sourceRecordId": "recxnwFcrfnTxPIey",
+      "sourceCreatedTime": "2025-09-22T13:46:31.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recxqWgx7cATHFvHe",
+      "sourceCreatedTime": "2026-03-05T00:22:11.000Z",
+      "fields": {
+        "Name": "Karen Bagenal",
+        "Subject": "The latest property listings from RealWay Ipswich",
+        "Email": "karenbagenal@realwayipswich.propertyemail.com.au",
+        "Body": "View in browser\r\n\r\nHi Rugesh\r\n\r\nPlease find below the latest listings from our office that are on the market.\r\n\r\nYou can quickly receive more information about any of the properties by clicking on them to reveal their full details.\r\n\r\nIf your property nee",
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recxqZsI4wNJqa0PK",
+      "sourceCreatedTime": "2025-10-21T02:25:41.000Z",
+      "fields": {
+        "Name": "Gemma Coady",
+        "Subject": "🏠 Still looking for your next home or investment?",
+        "Email": "gemma.coady@freedomproperty.com.au",
+        "Body": "Hi there,\r\n\r\nAre you still searching for your next home or investment property?\r\nIf you’ve already purchased — congratulations! Please let us know so we can update our records.\r\n\r\nOtherwise, take a look at the fantastic opportunities below and get in touc"
+      }
+    },
+    {
+      "sourceRecordId": "recxrvDpPLQJmnftv",
+      "sourceCreatedTime": "2026-07-13T18:26:21.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recxub9bb6z9yPSAx",
+      "sourceCreatedTime": "2025-12-04T08:02:26.000Z",
+      "fields": {
+        "Status": "Error 500"
+      }
+    },
+    {
+      "sourceRecordId": "recxumlXcJaNLkAkz",
+      "sourceCreatedTime": "2025-09-07T00:37:49.000Z",
+      "fields": {
+        "Name": "Marty Maher",
+        "Subject": "Great Ocean Properties Weekly Update",
+        "Email": "marty@greatoceanproperties.com.au",
+        "Body": "Welcome\r\n\r\n\r\nGreat Ocean Properties Weekly Update\r\n\r\n\r\n\r\nDear Rugesh\r\n\r\nOur first update for Spring today and its a beautiful day on the coast.\r\n\r\nIn real estate news this week, we have a new listing at 2/78 Great Ocean Road Aireys Inlet. This c"
+      }
+    }
+  ]
+}

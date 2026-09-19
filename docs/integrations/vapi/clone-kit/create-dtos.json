@@ -1,0 +1,770 @@
+{
+  "source": {
+    "spec": "https://api.vapi.ai/api-json",
+    "openapi": "3.0.0",
+    "note": "Top-level Create DTO shapes only; regenerate with distill_spec.py."
+  },
+  "resources": {
+    "file": {
+      "endpoint": "POST /file",
+      "contentType": "multipart/form-data",
+      "dtos": {}
+    },
+    "tool": {
+      "endpoint": "POST /tool",
+      "dtos": {
+        "CreateApiRequestToolDTO": {
+          "properties": [
+            "backoffPlan",
+            "body",
+            "credentialId",
+            "description",
+            "encryptedPaths",
+            "headers",
+            "messages",
+            "method",
+            "name",
+            "parameters",
+            "rejectionPlan",
+            "timeoutSeconds",
+            "type",
+            "url",
+            "variableExtractionPlan"
+          ],
+          "required": [
+            "method",
+            "type",
+            "url"
+          ],
+          "discriminatorKey": "type",
+          "discriminatorValues": [
+            "apiRequest"
+          ]
+        },
+        "CreateCodeToolDTO": {
+          "properties": [
+            "async",
+            "code",
+            "credentialId",
+            "environmentVariables",
+            "function",
+            "messages",
+            "rejectionPlan",
+            "server",
+            "timeoutSeconds",
+            "type",
+            "variableExtractionPlan"
+          ],
+          "required": [
+            "code",
+            "type"
+          ],
+          "discriminatorKey": "type",
+          "discriminatorValues": [
+            "code"
+          ]
+        },
+        "CreateDtmfToolDTO": {
+          "properties": [
+            "messages",
+            "rejectionPlan",
+            "sipInfoDtmfEnabled",
+            "type"
+          ],
+          "required": [
+            "type"
+          ],
+          "discriminatorKey": "type",
+          "discriminatorValues": [
+            "dtmf"
+          ]
+        },
+        "CreateEndCallToolDTO": {
+          "properties": [
+            "messages",
+            "rejectionPlan",
+            "type"
+          ],
+          "required": [
+            "type"
+          ],
+          "discriminatorKey": "type",
+          "discriminatorValues": [
+            "endCall"
+          ]
+        },
+        "CreateFunctionToolDTO": {
+          "properties": [
+            "async",
+            "function",
+            "messages",
+            "parameters",
+            "rejectionPlan",
+            "server",
+            "type",
+            "variableExtractionPlan"
+          ],
+          "required": [
+            "type"
+          ],
+          "discriminatorKey": "type",
+          "discriminatorValues": [
+            "function"
+          ]
+        },
+        "CreateTransferCallToolDTO": {
+          "properties": [
+            "destinations",
+            "messages",
+            "rejectionPlan",
+            "type"
+          ],
+          "required": [
+            "type"
+          ],
+          "discriminatorKey": "type",
+          "discriminatorValues": [
+            "transferCall"
+          ]
+        },
+        "CreateHandoffToolDTO": {
+          "properties": [
+            "defaultResult",
+            "destinations",
+            "function",
+            "messages",
+            "rejectionPlan",
+            "type"
+          ],
+          "required": [
+            "type"
+          ],
+          "discriminatorKey": "type",
+          "discriminatorValues": [
+            "handoff"
+          ]
+        },
+        "CreateBashToolDTO": {
+          "properties": [
+            "messages",
+            "name",
+            "rejectionPlan",
+            "server",
+            "subType",
+            "type"
+          ],
+          "required": [
+            "name",
+            "subType",
+            "type"
+          ],
+          "discriminatorKey": "type",
+          "discriminatorValues": [
+            "bash"
+          ]
+        },
+        "CreateComputerToolDTO": {
+          "properties": [
+            "displayHeightPx",
+            "displayNumber",
+            "displayWidthPx",
+            "messages",
+            "name",
+            "rejectionPlan",
+            "server",
+            "subType",
+            "type"
+          ],
+          "required": [
+            "displayHeightPx",
+            "displayWidthPx",
+            "name",
+            "subType",
+            "type"
+          ],
+          "discriminatorKey": "type",
+          "discriminatorValues": [
+            "computer"
+          ]
+        },
+        "CreateTextEditorToolDTO": {
+          "properties": [
+            "messages",
+            "name",
+            "rejectionPlan",
+            "server",
+            "subType",
+            "type"
+          ],
+          "required": [
+            "name",
+            "subType",
+            "type"
+          ],
+          "discriminatorKey": "type",
+          "discriminatorValues": [
+            "textEditor"
+          ]
+        },
+        "CreateQueryToolDTO": {
+          "properties": [
+            "knowledgeBases",
+            "messages",
+            "rejectionPlan",
+            "type"
+          ],
+          "required": [
+            "type"
+          ],
+          "discriminatorKey": "type",
+          "discriminatorValues": [
+            "query"
+          ]
+        },
+        "CreateGoogleCalendarCreateEventToolDTO": {
+          "properties": [
+            "messages",
+            "rejectionPlan",
+            "type"
+          ],
+          "required": [
+            "type"
+          ],
+          "discriminatorKey": "type",
+          "discriminatorValues": [
+            "google.calendar.event.create"
+          ]
+        },
+        "CreateGoogleSheetsRowAppendToolDTO": {
+          "properties": [
+            "messages",
+            "rejectionPlan",
+            "type"
+          ],
+          "required": [
+            "type"
+          ],
+          "discriminatorKey": "type",
+          "discriminatorValues": [
+            "google.sheets.row.append"
+          ]
+        },
+        "CreateGoogleCalendarCheckAvailabilityToolDTO": {
+          "properties": [
+            "messages",
+            "rejectionPlan",
+            "type"
+          ],
+          "required": [
+            "type"
+          ],
+          "discriminatorKey": "type",
+          "discriminatorValues": [
+            "google.calendar.availability.check"
+          ]
+        },
+        "CreateSlackSendMessageToolDTO": {
+          "properties": [
+            "messages",
+            "rejectionPlan",
+            "type"
+          ],
+          "required": [
+            "type"
+          ],
+          "discriminatorKey": "type",
+          "discriminatorValues": [
+            "slack.message.send"
+          ]
+        },
+        "CreateSmsToolDTO": {
+          "properties": [
+            "messages",
+            "rejectionPlan",
+            "type"
+          ],
+          "required": [
+            "type"
+          ],
+          "discriminatorKey": "type",
+          "discriminatorValues": [
+            "sms"
+          ]
+        },
+        "CreateMcpToolDTO": {
+          "properties": [
+            "messages",
+            "metadata",
+            "rejectionPlan",
+            "server",
+            "toolMessages",
+            "type"
+          ],
+          "required": [
+            "type"
+          ],
+          "discriminatorKey": "type",
+          "discriminatorValues": [
+            "mcp"
+          ]
+        },
+        "CreateGoHighLevelCalendarAvailabilityToolDTO": {
+          "properties": [
+            "messages",
+            "rejectionPlan",
+            "type"
+          ],
+          "required": [
+            "type"
+          ],
+          "discriminatorKey": "type",
+          "discriminatorValues": [
+            "gohighlevel.calendar.availability.check"
+          ]
+        },
+        "CreateGoHighLevelCalendarEventCreateToolDTO": {
+          "properties": [
+            "messages",
+            "rejectionPlan",
+            "type"
+          ],
+          "required": [
+            "type"
+          ],
+          "discriminatorKey": "type",
+          "discriminatorValues": [
+            "gohighlevel.calendar.event.create"
+          ]
+        },
+        "CreateGoHighLevelContactCreateToolDTO": {
+          "properties": [
+            "messages",
+            "rejectionPlan",
+            "type"
+          ],
+          "required": [
+            "type"
+          ],
+          "discriminatorKey": "type",
+          "discriminatorValues": [
+            "gohighlevel.contact.create"
+          ]
+        },
+        "CreateGoHighLevelContactGetToolDTO": {
+          "properties": [
+            "messages",
+            "rejectionPlan",
+            "type"
+          ],
+          "required": [
+            "type"
+          ],
+          "discriminatorKey": "type",
+          "discriminatorValues": [
+            "gohighlevel.contact.get"
+          ]
+        },
+        "CreateSipRequestToolDTO": {
+          "properties": [
+            "body",
+            "headers",
+            "messages",
+            "rejectionPlan",
+            "type",
+            "verb"
+          ],
+          "required": [
+            "type",
+            "verb"
+          ],
+          "discriminatorKey": "type",
+          "discriminatorValues": [
+            "sipRequest"
+          ]
+        },
+        "CreateVoicemailToolDTO": {
+          "properties": [
+            "beepDetectionEnabled",
+            "messages",
+            "rejectionPlan",
+            "type"
+          ],
+          "required": [
+            "type"
+          ],
+          "discriminatorKey": "type",
+          "discriminatorValues": [
+            "voicemail"
+          ]
+        }
+      }
+    },
+    "structured-output": {
+      "endpoint": "POST /structured-output",
+      "dtos": {
+        "CreateStructuredOutputDTO": {
+          "properties": [
+            "assistantIds",
+            "compliancePlan",
+            "conditions",
+            "description",
+            "model",
+            "name",
+            "regex",
+            "schema",
+            "type",
+            "workflowIds"
+          ],
+          "required": [
+            "name",
+            "schema"
+          ],
+          "discriminatorKey": "type",
+          "discriminatorValues": [
+            "ai",
+            "regex"
+          ]
+        }
+      }
+    },
+    "scorecard": {
+      "endpoint": "POST /observability/scorecard",
+      "dtos": {
+        "CreateScorecardDTO": {
+          "properties": [
+            "assistantIds",
+            "description",
+            "metrics",
+            "name"
+          ],
+          "required": [
+            "metrics"
+          ],
+          "discriminatorKey": null,
+          "discriminatorValues": null
+        }
+      }
+    },
+    "assistant": {
+      "endpoint": "POST /assistant",
+      "dtos": {
+        "CreateAssistantDTO": {
+          "properties": [
+            "analysisPlan",
+            "artifactPlan",
+            "backgroundSound",
+            "backgroundSpeechDenoisingPlan",
+            "clientMessages",
+            "compliancePlan",
+            "credentialIds",
+            "credentials",
+            "endCallMessage",
+            "endCallPhrases",
+            "firstMessage",
+            "firstMessageInterruptionsEnabled",
+            "firstMessageMode",
+            "hooks",
+            "keypadInputPlan",
+            "maxDurationSeconds",
+            "metadata",
+            "model",
+            "modelOutputInMessagesEnabled",
+            "monitorPlan",
+            "name",
+            "observabilityPlan",
+            "server",
+            "serverMessages",
+            "startSpeakingPlan",
+            "stopSpeakingPlan",
+            "transcriber",
+            "transportConfigurations",
+            "voice",
+            "voicemailDetection",
+            "voicemailMessage"
+          ],
+          "required": [],
+          "discriminatorKey": null,
+          "discriminatorValues": null
+        }
+      }
+    },
+    "squad": {
+      "endpoint": "POST /squad",
+      "dtos": {
+        "CreateSquadDTO": {
+          "properties": [
+            "members",
+            "membersOverrides",
+            "name"
+          ],
+          "required": [
+            "members"
+          ],
+          "discriminatorKey": null,
+          "discriminatorValues": null
+        }
+      }
+    },
+    "workflow": {
+      "endpoint": "POST /workflow",
+      "dtos": {
+        "CreateWorkflowDTO": {
+          "properties": [
+            "analysisPlan",
+            "artifactPlan",
+            "backgroundSound",
+            "backgroundSpeechDenoisingPlan",
+            "compliancePlan",
+            "credentialIds",
+            "credentials",
+            "edges",
+            "globalPrompt",
+            "hooks",
+            "keypadInputPlan",
+            "maxDurationSeconds",
+            "model",
+            "monitorPlan",
+            "name",
+            "nodes",
+            "observabilityPlan",
+            "server",
+            "startSpeakingPlan",
+            "stopSpeakingPlan",
+            "transcriber",
+            "voice",
+            "voicemailDetection",
+            "voicemailMessage"
+          ],
+          "required": [
+            "edges",
+            "name",
+            "nodes"
+          ],
+          "discriminatorKey": null,
+          "discriminatorValues": null
+        }
+      },
+      "note": "Path absent from the spec; live API serves GET /workflow. DTO taken from components."
+    },
+    "phone-number": {
+      "endpoint": "POST /phone-number",
+      "dtos": {
+        "CreateByoPhoneNumberDTO": {
+          "properties": [
+            "assistantId",
+            "credentialId",
+            "fallbackDestination",
+            "hooks",
+            "name",
+            "number",
+            "numberE164CheckEnabled",
+            "provider",
+            "server",
+            "squadId",
+            "workflowId"
+          ],
+          "required": [
+            "credentialId",
+            "provider"
+          ],
+          "discriminatorKey": "provider",
+          "discriminatorValues": [
+            "byo-phone-number"
+          ]
+        },
+        "CreateTwilioPhoneNumberDTO": {
+          "properties": [
+            "assistantId",
+            "fallbackDestination",
+            "hooks",
+            "name",
+            "number",
+            "provider",
+            "server",
+            "smsEnabled",
+            "squadId",
+            "twilioAccountSid",
+            "twilioApiKey",
+            "twilioApiSecret",
+            "twilioAuthToken",
+            "workflowId"
+          ],
+          "required": [
+            "number",
+            "provider",
+            "twilioAccountSid"
+          ],
+          "discriminatorKey": "provider",
+          "discriminatorValues": [
+            "twilio"
+          ]
+        },
+        "CreateVonagePhoneNumberDTO": {
+          "properties": [
+            "assistantId",
+            "credentialId",
+            "fallbackDestination",
+            "hooks",
+            "name",
+            "number",
+            "provider",
+            "server",
+            "squadId",
+            "workflowId"
+          ],
+          "required": [
+            "credentialId",
+            "number",
+            "provider"
+          ],
+          "discriminatorKey": "provider",
+          "discriminatorValues": [
+            "vonage"
+          ]
+        },
+        "CreateVapiPhoneNumberDTO": {
+          "properties": [
+            "assistantId",
+            "authentication",
+            "fallbackDestination",
+            "hooks",
+            "name",
+            "numberDesiredAreaCode",
+            "provider",
+            "server",
+            "sipUri",
+            "squadId",
+            "workflowId"
+          ],
+          "required": [
+            "provider"
+          ],
+          "discriminatorKey": "provider",
+          "discriminatorValues": [
+            "vapi"
+          ]
+        },
+        "CreateTelnyxPhoneNumberDTO": {
+          "properties": [
+            "assistantId",
+            "credentialId",
+            "fallbackDestination",
+            "hooks",
+            "name",
+            "number",
+            "provider",
+            "server",
+            "squadId",
+            "workflowId"
+          ],
+          "required": [
+            "credentialId",
+            "number",
+            "provider"
+          ],
+          "discriminatorKey": "provider",
+          "discriminatorValues": [
+            "telnyx"
+          ]
+        }
+      }
+    },
+    "insight": {
+      "endpoint": "POST /reporting/insight",
+      "dtos": {
+        "CreateBarInsightFromCallTableDTO": {
+          "properties": [
+            "formulas",
+            "groupBy",
+            "metadata",
+            "name",
+            "queries",
+            "timeRange",
+            "type"
+          ],
+          "required": [
+            "queries",
+            "type"
+          ],
+          "discriminatorKey": "type",
+          "discriminatorValues": [
+            "bar"
+          ]
+        },
+        "CreatePieInsightFromCallTableDTO": {
+          "properties": [
+            "formulas",
+            "groupBy",
+            "name",
+            "queries",
+            "timeRange",
+            "type"
+          ],
+          "required": [
+            "queries",
+            "type"
+          ],
+          "discriminatorKey": "type",
+          "discriminatorValues": [
+            "pie"
+          ]
+        },
+        "CreateLineInsightFromCallTableDTO": {
+          "properties": [
+            "formulas",
+            "groupBy",
+            "metadata",
+            "name",
+            "queries",
+            "timeRange",
+            "type"
+          ],
+          "required": [
+            "queries",
+            "type"
+          ],
+          "discriminatorKey": "type",
+          "discriminatorValues": [
+            "line"
+          ]
+        },
+        "CreateTextInsightFromCallTableDTO": {
+          "properties": [
+            "formula",
+            "name",
+            "queries",
+            "timeRange",
+            "type"
+          ],
+          "required": [
+            "queries",
+            "type"
+          ],
+          "discriminatorKey": "type",
+          "discriminatorValues": [
+            "text"
+          ]
+        }
+      }
+    },
+    "board": {
+      "endpoint": "POST /reporting/board",
+      "dtos": {
+        "CreateBoardDTO": {
+          "properties": [
+            "items",
+            "layout",
+            "name",
+            "timeRangeOverride"
+          ],
+          "required": [
+            "layout",
+            "name"
+          ],
+          "discriminatorKey": null,
+          "discriminatorValues": null
+        }
+      }
+    }
+  }
+}

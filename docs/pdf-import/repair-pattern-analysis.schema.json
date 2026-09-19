@@ -1,0 +1,113 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://npcservices.com.au/schemas/pdf-import/repair-pattern-analysis.schema.json",
+  "title": "PDF Import Repair Pattern Analysis",
+  "description": "Deterministic, advisory classification of repair issues into known patterns. Metadata only — never stores raw PDF/OCR text, and never applies repairs.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "importId",
+    "templateId",
+    "sourceFilename",
+    "profileCategory",
+    "importRiskLevel",
+    "matchedPatterns",
+    "primaryPatternId",
+    "overallSeverity",
+    "overallConfidence",
+    "deterministicRepairStrategy",
+    "aiReconciliationUsefulness",
+    "exportParityRequirement",
+    "operatorReviewRequirement",
+    "evidence",
+    "warnings",
+    "blockers",
+    "generatedAt"
+  ],
+  "definitions": {
+    "patternId": {
+      "type": "string",
+      "enum": [
+        "page_margin_drift",
+        "background_block_shift",
+        "font_scale_mismatch",
+        "table_grid_drift",
+        "image_crop_mismatch",
+        "layer_order_conflict",
+        "ocr_text_fragments",
+        "header_footer_alignment",
+        "multi_page_spacing_drift",
+        "missing_major_visual_element",
+        "export_renderer_mismatch",
+        "manual_review_only",
+        "unknown"
+      ]
+    },
+    "category": {
+      "type": "string",
+      "enum": ["geometry", "typography", "table", "image", "layering", "ocr", "multipage", "export", "missing_content", "manual_review", "unknown"]
+    },
+    "severity": { "type": "string", "enum": ["info", "low", "medium", "high", "critical"] },
+    "aiUsefulness": { "type": "string", "enum": ["not_needed", "low", "medium", "high", "manual_review_only", "blocked"] },
+    "exportRequirement": { "type": "string", "enum": ["not_required", "recommended", "required", "rerun_required", "manual_required"] },
+    "operatorReview": { "type": "string", "enum": ["not_required", "recommended", "required", "block_until_review"] },
+    "evidenceItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "label", "value", "weight", "message"],
+      "properties": {
+        "code": { "type": "string" },
+        "label": { "type": "string" },
+        "value": { "type": ["string", "number", "boolean", "null"] },
+        "weight": { "type": "number" },
+        "message": { "type": "string" }
+      }
+    }
+  },
+  "properties": {
+    "version": { "type": "string", "const": "pdf-import-repair-pattern-analysis-v1" },
+    "importId": { "type": ["string", "null"] },
+    "templateId": { "type": ["string", "null"] },
+    "sourceFilename": { "type": ["string", "null"] },
+    "profileCategory": { "type": ["string", "null"] },
+    "importRiskLevel": { "type": ["string", "null"] },
+    "matchedPatterns": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["patternId", "category", "severity", "confidence", "score", "matched", "evidence", "recommendedAction", "manualFallback", "aiReconciliationUsefulness", "exportParityRequirement", "operatorReviewRequirement", "message"],
+        "properties": {
+          "patternId": { "$ref": "#/definitions/patternId" },
+          "category": { "$ref": "#/definitions/category" },
+          "severity": { "$ref": "#/definitions/severity" },
+          "confidence": { "type": "number", "minimum": 0, "maximum": 1 },
+          "score": { "type": "number", "minimum": 0, "maximum": 1 },
+          "matched": { "type": "boolean" },
+          "evidence": { "type": "array", "items": { "$ref": "#/definitions/evidenceItem" } },
+          "recommendedAction": { "type": "string" },
+          "manualFallback": { "type": "string" },
+          "aiReconciliationUsefulness": { "$ref": "#/definitions/aiUsefulness" },
+          "exportParityRequirement": { "$ref": "#/definitions/exportRequirement" },
+          "operatorReviewRequirement": { "$ref": "#/definitions/operatorReview" },
+          "message": { "type": "string" }
+        }
+      }
+    },
+    "primaryPatternId": { "oneOf": [{ "$ref": "#/definitions/patternId" }, { "type": "null" }] },
+    "overallSeverity": { "$ref": "#/definitions/severity" },
+    "overallConfidence": { "type": "number", "minimum": 0, "maximum": 1 },
+    "deterministicRepairStrategy": {
+      "type": "string",
+      "enum": ["safe", "safe_with_review", "constrained", "manual_only", "blocked", "unknown"]
+    },
+    "aiReconciliationUsefulness": { "$ref": "#/definitions/aiUsefulness" },
+    "exportParityRequirement": { "$ref": "#/definitions/exportRequirement" },
+    "operatorReviewRequirement": { "$ref": "#/definitions/operatorReview" },
+    "evidence": { "type": "array", "items": { "$ref": "#/definitions/evidenceItem" } },
+    "warnings": { "type": "array", "items": { "type": "string" } },
+    "blockers": { "type": "array", "items": { "type": "string" } },
+    "generatedAt": { "type": "string" }
+  }
+}

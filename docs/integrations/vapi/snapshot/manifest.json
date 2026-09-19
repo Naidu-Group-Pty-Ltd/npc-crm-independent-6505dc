@@ -1,0 +1,82 @@
+{
+  "completeness": {
+    "listVsSingleGet": "verified identical \u2014 list payloads are not truncated",
+    "rawVersionHistory": "11.9 MB, not committed; history-index.json summarises it and it is reproducible with GET /assistant/{id}/version?limit=100",
+    "toolVersionHistory": "not available: GET /tool/{id}/version returns 404 for all 20 tools",
+    "assistantFetchExhaustiveness": {
+      "listEndpoint": "GET /assistant is a bare array of 28, no pagination wrapper. limit works; unknown query params are rejected with 400. createdAtGe/updatedAtGe are the only extra filters.",
+      "assistantScopedSweep": "22 candidate sub-paths probed; only /version and /versions exist. analytics, call, calls, metrics, log, logs, tool, tools, file, files, squad, test, eval, transcript, usage, cost, export, clone and duplicate all 404.",
+      "versionQueryParam": "GET /assistant/{id}?version=vN IGNORES the parameter \u2014 v1, v2, v99 and 'bogus' all return the current record, byte-identical to a plain GET. It is not a way to retrieve historical config; /version and /versions are.",
+      "inlineFunctions": "assistant.model.functions[] carries LEGACY inline function definitions with their own serverUrl, separate from model.toolIds and absent from /tool. 16 across 6 assistants, all non-NPC, all pointing at hook.eu2.make.com.",
+      "unfetchedReferences": "artifactPlan.structuredOutputIds (5 distinct) and scorecardIds (1) reference resource types not yet retrieved."
+    },
+    "artifactPlanReferences": {
+      "structuredOutputs": "GET /structured-output \u2014 6 records, captured. 5 referenced, 1 orphan duplicate.",
+      "scorecards": "RESOLVED at GET /observability/scorecard/{id}. The earlier 'dangling reference' conclusion was wrong - the path prefix was /observability/, which none of the 13 guessed paths used. The record exists, is org-owned and names both referencing assistants, but its metrics array is EMPTY.",
+      "reverseReferenceWarning": "structuredOutput.assistantIds disagrees with the assistants on 3 of 6 records and is stale. The forward reference on the assistant is authoritative."
+    },
+    "specVsLiveApi": {
+      "source": "https://api.vapi.ai/api-json \u2014 OpenAPI 3.0.0, 64 paths, 57 GET operations",
+      "inSpecNotFoundByProbing": [
+        "/observability/scorecard",
+        "/reporting/insight",
+        "/reporting/board",
+        "/eval/simulation/*",
+        "/v2/phone-number",
+        "/provider/{provider}/{resourceName}"
+      ],
+      "liveButAbsentFromSpec": [
+        "/workflow",
+        "/test-suite",
+        "/credential",
+        "/knowledge-base",
+        "/template",
+        "/logs",
+        "/assistant/{id}/version",
+        "/assistant/{id}/versions",
+        "/tool/{id}/versions"
+      ],
+      "conclusion": "The published spec is a subset of what the API serves, and probing is a subset of what the spec documents. Neither alone is sufficient; this capture used both."
+    }
+  },
+  "counts": {
+    "assistantVersionsIndexed": 443,
+    "assistants": 28,
+    "filesInOrg": 90,
+    "knowledgeFilesDownloaded": 12,
+    "phoneNumbers": 6,
+    "squads": 3,
+    "testSuites": 2,
+    "tools": 20,
+    "workflows": 1,
+    "structuredOutputs": 6,
+    "scorecards": 1,
+    "insights": 6,
+    "boards": 1,
+    "simulationPersonalities": "7 (Vapi platform defaults, not org content)"
+  },
+  "npcSplit": {
+    "note": "Vapi has no folder concept; the split is by name prefix and corroborated by squad membership and phone-number naming. Only the NPC set is in scope for migration \u2014 see ../npc-services/clone-plan.json.",
+    "npc": 15,
+    "other": 13
+  },
+  "redactions": {
+    "kinds": [
+      "VAPI_WEBHOOK_SECRET",
+      "VAPI_SERVER_URL_SECRET",
+      "TWILIO_ACCOUNT_SID",
+      "AIRTABLE_PAT",
+      "GHL_PIT_TOKEN",
+      "CREDENTIAL"
+    ],
+    "rule": "Exact match on the lowercased key against a fixed set, so maxTokens, promptCacheKey, isServerUrlSecretSet and the static-body-field 'key' are NOT caught while every credential key is. Backed by a value-based sweep over the whole tree as a second line of defence.",
+    "incident": "An earlier anchored regex (^secret$ etc.) failed to match the header key 'x-vapi-webhook-secret' and the field 'serverUrlSecret'. Both were committed. See SECURITY-INCIDENT.md."
+  },
+  "source": {
+    "apiBase": "https://api.vapi.ai",
+    "capturedAt": "2026-08-18T17:3x UTC",
+    "method": "GET only \u2014 nothing in this org was modified to produce it",
+    "orgId": "c9015cd5-3701-4ac5-aa9c-be6cdcaaecdd",
+    "platform": "vapi"
+  }
+}

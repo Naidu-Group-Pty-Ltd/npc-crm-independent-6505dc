@@ -1,0 +1,71 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://npcservices.com.au/schemas/pdf-import-release-gate-report.schema.json",
+  "title": "PdfImportReleaseGateReport",
+  "description": "Phase 11D PDF import release gate report. Machine-readable output of the static/live gate. Contains no secrets.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["version", "mode", "decision", "score", "checks", "summary", "generatedAt"],
+  "properties": {
+    "version": { "type": "string", "const": "pdf-import-release-gate-v1" },
+    "mode": { "type": "string", "enum": ["static", "live", "full"] },
+    "decision": { "type": "string", "enum": ["pass", "pass_with_warnings", "fail", "skipped"] },
+    "score": { "type": "number", "minimum": 0, "maximum": 100 },
+    "generatedAt": { "type": "string", "format": "date-time" },
+    "branch": { "type": ["string", "null"] },
+    "commit": { "type": ["string", "null"] },
+    "checks": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "domain", "severity", "status", "message"],
+        "properties": {
+          "id": { "type": "string" },
+          "domain": {
+            "type": "string",
+            "enum": [
+              "source_integrity",
+              "documentation",
+              "schemas",
+              "sql",
+              "tests",
+              "build",
+              "private_artifacts",
+              "security_safety",
+              "permissions",
+              "monitoring",
+              "golden_regression",
+              "export_parity",
+              "phase10_intelligence",
+              "rollout_readiness",
+              "ci_configuration",
+              "live_environment"
+            ]
+          },
+          "severity": { "type": "string", "enum": ["critical", "high", "medium", "low", "info"] },
+          "status": { "type": "string", "enum": ["pass", "warning", "fail", "skipped", "unknown"] },
+          "title": { "type": "string" },
+          "message": { "type": "string" },
+          "evidence": { "type": "array", "items": { "type": "string" } },
+          "remediation": { "type": "string" }
+        }
+      }
+    },
+    "summary": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["total", "pass", "warning", "fail", "skipped", "criticalFailures", "highFailures"],
+      "properties": {
+        "total": { "type": "integer", "minimum": 0 },
+        "pass": { "type": "integer", "minimum": 0 },
+        "warning": { "type": "integer", "minimum": 0 },
+        "fail": { "type": "integer", "minimum": 0 },
+        "skipped": { "type": "integer", "minimum": 0 },
+        "unknown": { "type": "integer", "minimum": 0 },
+        "criticalFailures": { "type": "integer", "minimum": 0 },
+        "highFailures": { "type": "integer", "minimum": 0 }
+      }
+    }
+  }
+}

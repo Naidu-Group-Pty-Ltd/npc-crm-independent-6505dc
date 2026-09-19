@@ -1,0 +1,19 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { invokePortalEdge } from '@/hooks/usePortalData';
+
+export const clientLegalWorkspaceEnabled = import.meta.env.VITE_CLIENT_LEGAL_WORKSPACE === 'true';
+export const clientLegalKeys = { all:['client-legal'] as const, list:()=>['client-legal','cases'] as const, detail:(caseId:string)=>['client-legal','case',caseId] as const };
+
+export type ClientLegalCase = { case_id:string;matter_reference:string|null;friendly_status:string;shared_summary:string|null;property_address:string|null;settlement_date:string|null;next_client_action:string|null;practice_name:string|null;practice_email?:string|null;practice_phone?:string|null;solicitor_name:string|null;solicitor_email?:string|null;source_version:number;updated_at:string };
+export type ClientLegalDocument = {id:string;case_id:string;category:string;title:string;description:string|null;owner:string;due_date:string|null;status:string;row_version:number;current_version:{id:string;version_number:number;filename:string;mime_type:string;byte_size:number;sha256:string;lifecycle_status:string;reviewed_at:string|null}|null;updated_at:string};
+export type ClientLegalWorkspace = {case:ClientLegalCase;milestones:Array<Record<string,any>>;actions:Array<Record<string,any>>;documents:ClientLegalDocument[];upload_requests:Array<{id:string;case_id:string;title:string;description:string|null;category:string;due_date:string|null;row_version:number;status:string}>;document_acknowledgements:Array<{document_version_id:string;acknowledgement_type:string;acknowledged_at:string}>;conversations:Array<{id:string;subject:string;unread_count:number;messages:Array<{id:string;sender_type:string;sender_name:string|null;body:string;created_at:string}>}>;activity:Array<{id:string;activity_type:string;title:string;summary:string|null;occurred_at:string}>};
+
+const invoke=(body:Record<string,any>)=>invokePortalEdge('client-legal-workspace',body);
+export function useClientLegalCases(){return useQuery({queryKey:clientLegalKeys.list(),queryFn:async()=>((await invoke({operation:'list_cases'})).cases||[]) as ClientLegalCase[],enabled:clientLegalWorkspaceEnabled});}
+export function useClientLegalWorkspace(caseId:string){return useQuery({queryKey:clientLegalKeys.detail(caseId),queryFn:async()=>((await invoke({operation:'get_workspace',case_id:caseId})).workspace) as ClientLegalWorkspace,enabled:clientLegalWorkspaceEnabled&&!!caseId});}
+export function useClientLegalActions(caseId:string){const qc=useQueryClient();const invalidate=()=>qc.invalidateQueries({queryKey:clientLegalKeys.detail(caseId)});return {
+ reply:useMutation({mutationFn:(p:{conversation_id:string;message:string})=>invoke({operation:'reply',case_id:caseId,...p,idempotency_key:crypto.randomUUID()}),onSuccess:invalidate}),
+ acknowledge:useMutation({mutationFn:(p:{document_record_id:string;document_version_id:string})=>invoke({operation:'acknowledge_document',case_id:caseId,...p,acknowledgement_type:'received'}),onSuccess:invalidate}),
+ download:async(document_record_id:string,document_version_id:string)=>invoke({operation:'download_document',case_id:caseId,document_record_id,document_version_id}),
+ upload:useMutation({mutationFn:async(p:{request:{id:string;row_version:number};file:File})=>{const created=await invoke({operation:'request_upload',case_id:caseId,document_record_id:p.request.id,expected_version:p.request.row_version,filename:p.file.name,mime_type:p.file.type||'application/octet-stream',byte_size:p.file.size});const put=await fetch(created.upload.signed_url,{method:'PUT',headers:{'Content-Type':p.file.type||'application/octet-stream'},body:p.file});if(!put.ok)throw new Error('The file could not be uploaded');return invoke({operation:'complete_upload',case_id:caseId,document_record_id:p.request.id,version_id:created.upload.version_id});},onSuccess:invalidate}),
+};}

@@ -1,0 +1,105 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "https://npcservices.com.au/schemas/pdf-import/production-operator-control-audit.schema.json",
+  "title": "PDF Import Production Operator Control Audit",
+  "description": "Explicit, audited, policy-aware operator control surface. Metadata only — controls never call AI, mutate templates, apply repair/reconciliation, or rerun imports automatically, and never store raw PDF/OCR text or rasters.",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "version",
+    "importId",
+    "templateId",
+    "sourceFilename",
+    "operatorState",
+    "controls",
+    "executedActions",
+    "notes",
+    "warnings",
+    "blockers",
+    "generatedAt",
+    "persistedAt"
+  ],
+  "definitions": {
+    "decision": {
+      "type": "string",
+      "enum": ["not_reviewed", "accepted", "accepted_with_warnings", "rejected", "needs_rerun", "manual_review_required", "blocked"]
+    },
+    "safetyLevel": {
+      "type": "string",
+      "enum": ["read_only", "metadata_write", "orchestrator_safe", "manual_workflow", "blocked"]
+    },
+    "state": {
+      "type": "string",
+      "enum": ["available", "recommended", "requires_confirmation", "manual_only", "blocked", "disabled", "completed", "failed"]
+    },
+    "evidenceItem": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["code", "label", "value", "weight", "message"],
+      "properties": {
+        "code": { "type": "string" },
+        "label": { "type": "string" },
+        "value": { "type": ["string", "number", "boolean", "null"] },
+        "weight": { "type": "number" },
+        "message": { "type": "string" }
+      }
+    },
+    "control": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["controlId", "label", "state", "safetyLevel", "recommended", "requiresConfirmation", "reason", "blockedReason"],
+      "properties": {
+        "controlId": { "type": "string" },
+        "label": { "type": "string" },
+        "description": { "type": "string" },
+        "state": { "$ref": "#/definitions/state" },
+        "safetyLevel": { "$ref": "#/definitions/safetyLevel" },
+        "recommended": { "type": "boolean" },
+        "requiresConfirmation": { "type": "boolean" },
+        "reason": { "type": "string" },
+        "blockedReason": { "type": ["string", "null"] },
+        "evidence": { "type": "array", "items": { "$ref": "#/definitions/evidenceItem" } }
+      }
+    },
+    "executedAction": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["controlId", "status", "message", "executedAt"],
+      "properties": {
+        "actionId": { "type": "string" },
+        "controlId": { "type": "string" },
+        "status": { "type": "string", "enum": ["completed", "failed", "blocked", "manual_required", "not_supported"] },
+        "message": { "type": "string" },
+        "executedAt": { "type": "string" },
+        "metadataPatch": { "type": ["object", "null"] }
+      }
+    }
+  },
+  "properties": {
+    "version": { "type": "string", "const": "pdf-import-production-operator-control-audit-v1" },
+    "importId": { "type": ["string", "null"] },
+    "templateId": { "type": ["string", "null"] },
+    "sourceFilename": { "type": ["string", "null"] },
+    "operatorState": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["decision", "manualReviewRequired", "blocked", "acceptedAt", "rejectedAt", "lastActionId", "lastActionAt"],
+      "properties": {
+        "decision": { "$ref": "#/definitions/decision" },
+        "manualReviewRequired": { "type": "boolean" },
+        "blocked": { "type": "boolean" },
+        "acceptedAt": { "type": ["string", "null"] },
+        "rejectedAt": { "type": ["string", "null"] },
+        "lastActionId": { "type": ["string", "null"] },
+        "lastActionAt": { "type": ["string", "null"] }
+      }
+    },
+    "controls": { "type": "array", "items": { "$ref": "#/definitions/control" } },
+    "executedActions": { "type": "array", "items": { "$ref": "#/definitions/executedAction" } },
+    "notes": { "type": "array", "items": { "type": "string" } },
+    "warnings": { "type": "array", "items": { "type": "string" } },
+    "blockers": { "type": "array", "items": { "type": "string" } },
+    "generatedAt": { "type": "string" },
+    "persistedAt": { "type": ["string", "null"] }
+  }
+}
