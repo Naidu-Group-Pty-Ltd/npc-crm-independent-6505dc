@@ -50,10 +50,98 @@ function walk(dir: string, out: string[] = []): string[] {
   return out;
 }
 
+/** Index just past the closing quote of the string starting at `at`. */
+function skipQuoted(src: string, at: number): number {
+  const quote = src[at];
+  let i = at + 1;
+  while (i < src.length) {
+    if (src[i] === '\\') {
+      i += 2;
+      continue;
+    }
+    if (src[i] === quote) return i + 1;
+    i++;
+  }
+  return i;
+}
+
+/** Index just past the closing backtick of the template starting at `at`. */
+function skipTemplate(src: string, at: number): number {
+  let i = at + 1;
+  while (i < src.length) {
+    if (src[i] === '\\') {
+      i += 2;
+      continue;
+    }
+    if (src[i] === '`') return i + 1;
+    if (src[i] === '$' && src[i + 1] === '{') {
+      i = skipBraced(src, i + 1);
+      continue;
+    }
+    i++;
+  }
+  return i;
+}
+
+/**
+ * Index just past the `}` matching the `{` at `at`.
+ *
+ * Braces inside a string, a template or a comment are not delimiters, so each
+ * is skipped whole — otherwise `${dict['}']}` ends the expression early and
+ * everything after it is read as literal text.
+ */
+function skipBraced(src: string, at: number): number {
+  let depth = 0;
+  let i = at;
+  while (i < src.length) {
+    const c = src[i];
+    if (c === '`') {
+      i = skipTemplate(src, i);
+      continue;
+    }
+    if (c === '"' || c === "'") {
+      i = skipQuoted(src, i);
+      continue;
+    }
+    if (src.slice(i, i + 2) === '//') {
+      while (i < src.length && src[i] !== '\n') i++;
+      continue;
+    }
+    if (src.slice(i, i + 2) === '/*') {
+      i += 2;
+      while (i < src.length && src.slice(i, i + 2) !== '*/') i++;
+      i += 2;
+      continue;
+    }
+    if (c === '{') depth++;
+    else if (c === '}') {
+      depth--;
+      if (depth === 0) return i + 1;
+    }
+    i++;
+  }
+  return i;
+}
+
 /**
  * Comments are where this rule is EXPLAINED, so a scan that reads them finds
  * the prose describing the trap and reports it as the trap. Strings are
  * stripped for the same reason — a message may quote the broken form.
+ *
+ * A template literal is NOT a string for this purpose. Its `${…}` holds CODE,
+ * and three of the four places this repository reads `VITE_SUPABASE_URL` raw
+ * read it there:
+ *
+ *   `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/market-updates-qa`
+ *
+ * Treating the backtick as an ordinary quote discarded everything through the
+ * closing backtick, expression included — so the gate that exists to prevent
+ * this whole defect class was blind at the majority of the call sites it
+ * protects. Measured: the exact form that shipped, `import.meta?.env?.[…]`,
+ * planted inside one of those interpolations, and every assertion here still
+ * passed. The literal text is still replaced; the expressions are kept and
+ * stripped in their own right, which is what makes a nested template or a
+ * quoted brace inside one safe.
  */
 export function stripCommentsAndStrings(source: string): string {
   let out = '';
@@ -72,15 +160,32 @@ export function stripCommentsAndStrings(source: string): string {
       continue;
     }
     const ch = source[i];
-    if (ch === '"' || ch === "'" || ch === '`') {
-      const quote = ch;
-      i++;
-      while (i < n && source[i] !== quote) {
-        if (source[i] === '\\') i++;
-        i++;
-      }
-      i++;
+    if (ch === '"' || ch === "'") {
+      i = skipQuoted(source, i);
       out += '""';
+      continue;
+    }
+    if (ch === '`') {
+      out += '""';
+      let j = i + 1;
+      while (j < n) {
+        if (source[j] === '\\') {
+          j += 2;
+          continue;
+        }
+        if (source[j] === '`') {
+          j++;
+          break;
+        }
+        if (source[j] === '$' && source[j + 1] === '{') {
+          const end = skipBraced(source, j + 1);
+          out += ` ${stripCommentsAndStrings(source.slice(j + 2, end - 1))} `;
+          j = end;
+          continue;
+        }
+        j++;
+      }
+      i = j;
       continue;
     }
     out += ch;
@@ -192,6 +297,36 @@ describe('build-time environment reads', () => {
     // read is refused.
     const broken = '(import.meta as { env?: Record<string, string> })?.env?.[key]';
     expect(importMetaUses(broken).map((t) => offendingTail(t)).filter(Boolean)).toHaveLength(1);
+  });
+
+  it('reads the CODE inside a template interpolation, not just around it', () => {
+    // Three of the four raw reads in this tree live inside a `${…}`, so a
+    // stripper that treats the backtick as an ordinary quote is blind exactly
+    // where this rule matters most. Each of these was planted into a real
+    // module and confirmed to pass before the stripper was widened.
+    const broken = 'const u = `${import.meta?.env?.[k]}/functions/v1/x`;';
+    expect(importMetaUses(stripCommentsAndStrings(broken)).map(offendingTail).filter(Boolean))
+      .toHaveLength(1);
+
+    // A brace inside a string in the expression must not end it early, or
+    // everything after it is read as literal text and dropped.
+    const quotedBrace = "const u = `${dict['}'] + import.meta?.env?.[k]}`;";
+    expect(importMetaUses(stripCommentsAndStrings(quotedBrace)).map(offendingTail).filter(Boolean))
+      .toHaveLength(1);
+
+    // And a template nested inside the expression.
+    const nested = 'const u = `${f(`${import.meta?.env?.[k]}`)}`;';
+    expect(importMetaUses(stripCommentsAndStrings(nested)).map(offendingTail).filter(Boolean))
+      .toHaveLength(1);
+
+    // The literal TEXT is still discarded — only the expressions survive, so
+    // prose quoting the broken form inside a template is still not code.
+    expect(stripCommentsAndStrings('const u = `import.meta?.env?.[k]`;')).not.toContain('import');
+
+    // A permitted read there is still permitted.
+    const fine = 'const u = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/x`;';
+    expect(importMetaUses(stripCommentsAndStrings(fine)).map(offendingTail).filter(Boolean))
+      .toHaveLength(0);
   });
 
   it('does not read its own prose as code', () => {
