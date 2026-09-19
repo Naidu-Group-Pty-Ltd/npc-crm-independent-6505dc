@@ -63,17 +63,35 @@ const CLIENT_FACING_ALLOWANCES = parseDeploymentAllowances(
  * client calls — rather than by reading `process.env` and deciding here. Two
  * implementations of "which project is this" is how a manifest and a client
  * come to disagree, and a manifest that disagrees is worse than none.
+ *
+ * And the environment it resolves from is VITE'S, never `process.env`. Vite
+ * loads `.env`, `.env.local` and `.env.[mode]` into `import.meta.env` and does
+ * NOT copy them into `process.env` — so a build configured by a dotenv file
+ * rather than by real shell variables put the CLONE's project into the bundle
+ * and the PRIME's into this manifest. That is the exact inversion the manifest
+ * exists to catch, reported as a clean declaration. `loadEnv(mode, cwd,
+ * ["VITE_"])` is the same resolution the client gets — dotenv files first,
+ * real process variables overriding them — so the two cannot disagree about
+ * the VALUES either, not just about the rule applied to them.
+ *
+ * A `--mode staging` build is the one case this still cannot describe:
+ * `stagingTargetPlugin` retargets by substituting the production literals in
+ * source, which no environment read can see. That is deliberate and safe
+ * rather than unhandled — such a build is never deployed (the plugin says so,
+ * prints a warning, and stamps a fixed banner plus `window.__SUPABASE_TARGET__`
+ * into the page), and this manifest is only ever read back from a deployed
+ * clone's own URL, where a staging bundle cannot be.
  */
-function buildVersionManifest(): Plugin {
+function buildVersionManifest(env: Record<string, string>): Plugin {
   return {
     name: "npc-build-version-manifest",
     apply: "build",
     generateBundle() {
       const target = resolveSupabaseTarget({
-        url: process.env.VITE_SUPABASE_URL?.trim() || undefined,
+        url: env.VITE_SUPABASE_URL?.trim() || undefined,
         anonKey:
-          process.env.VITE_SUPABASE_PUBLISHABLE_KEY?.trim() ||
-          process.env.VITE_SUPABASE_ANON_KEY?.trim() ||
+          env.VITE_SUPABASE_PUBLISHABLE_KEY?.trim() ||
+          env.VITE_SUPABASE_ANON_KEY?.trim() ||
           undefined,
       });
       this.emitFile({
@@ -117,7 +135,9 @@ export default defineConfig(({ mode }) => ({
     inlineXlsxPlugin(),
     react(),
     mcpPlugin(),
-    buildVersionManifest(),
+    // The client's own environment, resolved by Vite — see the function's
+    // header. `process.env` alone would miss every dotenv-configured build.
+    buildVersionManifest(loadEnv(mode, process.cwd(), ["VITE_"])),
   ],
   assetsInclude: ["**/*.xlsx", "**/*.docx"],
   resolve: {

@@ -56,6 +56,25 @@ describe('the build declares its backend', () => {
     expect(CONFIG).toMatch(/source:\s*target\.source/);
   });
 
+  it("resolves from VITE's environment, never from process.env", () => {
+    // Vite loads `.env`, `.env.local` and `.env.[mode]` into `import.meta.env`
+    // and never copies them into `process.env`. A manifest resolved from
+    // `process.env` therefore declares the PRIME on a clone whose variables
+    // came from a dotenv file rather than from real shell variables — which is
+    // the exact inversion this manifest exists to catch, served as a clean
+    // declaration. `loadEnv` is Vite's own resolution, so the manifest and the
+    // client read the same values under the same precedence.
+    expect(CONFIG).toMatch(/buildVersionManifest\(\s*loadEnv\(/);
+    expect(CONFIG).toMatch(/loadEnv\(mode, process\.cwd\(\), \["VITE_"\]\)/);
+
+    const start = CONFIG.indexOf('function buildVersionManifest');
+    const end = CONFIG.indexOf('export default defineConfig');
+    expect(start).toBeGreaterThan(-1);
+    expect(end).toBeGreaterThan(start);
+    // The plugin is handed an environment; it must not reach for another one.
+    expect(CONFIG.slice(start, end)).not.toContain('process.env');
+  });
+
   it('through the SAME resolver the running client uses, not a second copy', () => {
     // Two implementations of "which project is this" is how a manifest and a
     // client come to disagree, and a manifest that disagrees is worse than
