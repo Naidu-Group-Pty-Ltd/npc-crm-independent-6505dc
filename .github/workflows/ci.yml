@@ -49,6 +49,24 @@ jobs:
       - name: Install dependencies
         run: npm ci --no-audit --no-fund
 
+      # Which Supabase project this deployment SHIPS against — the embed under
+      # public/, the fallback pair the app falls back to, and .env.example.
+      #
+      # Named by exact path rather than by directory, because that is the whole
+      # reason this step exists. `src/lib/__tests__/` is reached by exactly one
+      # test path in this workflow, `src/lib/__tests__/builderStock`, so a guard
+      # added beside it is never asked anything: this one was written, reviewed,
+      # merged and deployed to three clones while no step in any workflow ran
+      # it. A test nothing invokes cannot fail, which is the same defect as an
+      # exported component nothing renders.
+      #
+      # Ordered here, ahead of every suite below, for the reason the next step
+      # already records: steps stop at the first failure, so a step placed after
+      # a red one never runs at all. This one reads three files and needs no
+      # network, so it costs nothing to ask first.
+      - name: This deployment ships its own backend identity
+        run: npx vitest run src/lib/__tests__/shippedBackendIdentity.spec.ts
+
       # The edge-function secret allowlist and status map are generated from
       # src/lib/integrations/registry.ts. Both live under supabase/functions/, which
       # none of the test paths below reach, so without this step the generated module

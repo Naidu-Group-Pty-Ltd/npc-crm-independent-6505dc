@@ -29,7 +29,23 @@ import {
 import { parseTemplate } from '../templateSchema';
 import { assertSafeRenderResources } from '../../../../supabase/functions/_shared/renderResourcePolicy.pure';
 
-const PROJECT = 'https://dduzbchuswwbefdunfct.supabase.co';
+// THIS deployment's project, read from the same place the code under test
+// reads it. `compileTemplateHtmlForPdf` admits `SUPABASE_URL` as the one
+// fetchable origin and nothing else, so a literal here is an assertion about
+// WHICH deployment is running the suite — and it was the prime's.
+//
+// `clone_sync_exclusions` has named this file since 26 Aug 2026 for exactly
+// that reason: "the assertion fails on any clone with its own backend". It
+// passed here only because this clone had not got its own backend yet; the
+// moment the fallback named this project, the fixture's signed URL became
+// foreign and `droppedAssets` correctly reported it. The test was right and
+// the fixture was wrong.
+//
+// Deriving it means one file is correct on every deployment, which is also
+// what lets it stop being a manual reconcile.
+import { SUPABASE_URL } from '@/integrations/supabase/env';
+
+const PROJECT = SUPABASE_URL;
 
 const templateWith = (blocks: unknown[]) => parseTemplate({
   version: 1,
