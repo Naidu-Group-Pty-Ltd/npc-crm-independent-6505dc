@@ -121,14 +121,28 @@ describe('a chart already drawn is not drawn again', () => {
     expect(markdown).toContain('Some prose about the mix.');
   });
 
-  it('normalises only case, space, dashes and thousands separators', () => {
+  it('normalises case, space, dashes, thousands separators — and the caption', () => {
     expect(directiveKey('{{bars: A 3,120, B 1—450}}'))
       .toBe(directiveKey('{{bars: A 3120, B 1-450}}'));
     expect(directiveKey('{{Bars: A 10}}')).toBe(directiveKey('{{bars:A  10}}'));
-    // Anything that changes a value, a label or a title is a different chart.
+    // Anything that changes a value or a label is a different chart.
     expect(directiveKey('{{bars: A 10}}')).not.toBe(directiveKey('{{bars: A 11}}'));
     expect(directiveKey('{{bars: A 10}}')).not.toBe(directiveKey('{{bars: B 10}}'));
-    expect(directiveKey('{{bars: A 10 | title=X}}')).not.toBe(directiveKey('{{bars: A 10 | title=Y}}'));
+    /*
+     * The title WAS in the key, and the 97 Poole Road Compass of 20 Sep 2026
+     * is what that cost: the identical three bars `Other offences 22 | Robbery
+     * 16 | Arson 9` drawn on pages 20, 23, 24 and 25 under four different
+     * titles, and one price chart on pages 21, 29 and 31 under three more.
+     * Eight drawings, two datasets, and this pass — which exists to stop
+     * exactly that — saw seven distinct charts.
+     *
+     * The data is the chart. A caption is what a section calls it.
+     */
+    expect(directiveKey('{{bars: A 10 | title=X}}')).toBe(directiveKey('{{bars: A 10 | title=Y}}'));
+    expect(directiveKey('{{bars: A 10 | caption=X}}')).toBe(directiveKey('{{bars: A 10}}'));
+    // Everything else about the drawing still counts.
+    expect(directiveKey('{{bars: A 10 | unit=%}}')).not.toBe(directiveKey('{{bars: A 10 | unit=$}}'));
+    expect(directiveKey('{{bars: A 10 | max=20}}')).not.toBe(directiveKey('{{bars: A 10 | max=50}}'));
   });
 
   it('leaves a document with no repeats byte-identical', () => {

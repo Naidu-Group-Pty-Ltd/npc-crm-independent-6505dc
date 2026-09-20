@@ -51,10 +51,12 @@
  * Pure: no imports beyond sibling `.pure` modules, no I/O.
  */
 import { isProseLine } from './scoreClaims.pure.ts';
+import { amortisingPayment } from './loanLedger.pure.ts';
 
 export type ConsistencyRule =
   | 'weekly-cash-position-disagrees'
-  | 'interest-only-repayment-is-amortising'
+  | 'weekly-cash-direction-disagrees'
+  | 'interest-only-repayment-does-not-reconcile'
   | 'overall-assessment-disagrees'
   | 'attribute-asserted-and-withheld';
 
@@ -207,6 +209,42 @@ const BASIS_LABEL =
 /** Two weekly cash figures within a dollar of one another are one figure. */
 const WEEKLY_TOLERANCE = 1;
 
+/**
+ * Which way the money moves, read from the WORDS as well as the sign.
+ *
+ * `+$467` and `−$467` are materially different: one is a property that funds
+ * itself and the other is one the investor tops up by $467 a week, every week,
+ * for as long as they hold it. An earlier version of this module took the
+ * magnitude of both and so reported that pair as CONSISTENT — the single worst
+ * reading it could give, because a sign flip between two sections is a graver
+ * defect than a disagreement about how much.
+ *
+ * The sign is not always in the digits. A table cell writes `-$467` or
+ * `($467)`; prose writes "a weekly shortfall of $450", where the direction is
+ * carried entirely by the noun. Both are read, and an explicit numeric sign
+ * wins over a noun, because a writer who signed the figure meant the sign.
+ */
+type CashDirection = 'outflow' | 'inflow' | 'unstated';
+
+const OUTFLOW_NOUN =
+  /\b(?:shortfall|deficit|out\s+of\s+pocket|top[-\s]?up|contribut\w*|fund(?:ing|ed)?\s+(?:requirement|cost)|negative(?:ly)?\s+geared|holding\s+cost)\b/i;
+const INFLOW_NOUN =
+  /\b(?:surplus|positive(?:ly)?\s+geared|net\s+income|cash\s+positive|in\s+(?:your|the\s+investor'?s)\s+pocket)\b/i;
+
+function directionFrom(signed: number | undefined, text: string): CashDirection {
+  if (signed !== undefined && signed < 0) return 'outflow';
+  if (signed !== undefined && signed > 0 && /[+]/.test(text)) return 'inflow';
+  if (OUTFLOW_NOUN.test(text)) return 'outflow';
+  if (INFLOW_NOUN.test(text)) return 'inflow';
+  return 'unstated';
+}
+
+const DIRECTION_WORD: Record<CashDirection, string> = {
+  outflow: 'money the investor puts in',
+  inflow: 'money the property returns',
+  unstated: 'direction not stated',
+};
+
 const splitCells = (line: string): string[] | null => {
   const t = line.trim();
   if (!t.startsWith('|') || !t.endsWith('|') || t.length < 2) return null;
@@ -214,14 +252,23 @@ const splitCells = (line: string): string[] | null => {
 };
 
 /** The weekly cash figure a line states, or undefined. */
-function weeklyCashFigureIn(line: string): number | undefined {
+interface WeeklyCashReading { magnitude: number; direction: CashDirection }
+
+function weeklyCashFigureIn(line: string): WeeklyCashReading | undefined {
   const cells = splitCells(line);
   if (cells) {
     const at = cells.findIndex((c) => WEEKLY_CASH_CELL.test(c));
     if (at < 0) return undefined;
     for (const cell of cells.slice(at + 1)) {
       const hits = moneyHitsIn(cell);
-      if (hits.length) return Math.abs(hits[0].value);
+      if (!hits.length) continue;
+      const signed = hits[0].value;
+      // The label cell carries the noun (`Weekly shortfall`), the value cell
+      // carries the sign, and either may be the only one that says which way.
+      return {
+        magnitude: Math.abs(signed),
+        direction: directionFrom(signed, `${cells[at]} ${cell}`),
+      };
     }
     return undefined;
   }
@@ -233,29 +280,61 @@ function weeklyCashFigureIn(line: string): number | undefined {
       const span = line.slice(Math.max(0, m.index - 18), m.index + m[0].length + SPAN_TAIL_CHARS);
       if (NOT_THE_CASH_POSITION.test(span)) continue;
       const v = Number(m[1].replace(/,/g, ''));
-      if (Number.isFinite(v)) return Math.abs(v);
+      if (!Number.isFinite(v)) continue;
+      const negated = /[-−]\s*\$?\s*$|\(\s*\$?\s*$/.test(line.slice(0, m.index + 1))
+        || /^\(?[-−]/.test(m[0].trim());
+      return { magnitude: Math.abs(v), direction: directionFrom(negated ? -v : undefined, line) };
     }
   }
   return undefined;
 }
 
 export function findWeeklyCashDisagreements(markdown: string): ConsistencyFinding[] {
-  const seen: Array<{ value: number; line: string; labelled: boolean }> = [];
+  const seen: Array<WeeklyCashReading & { line: string; labelled: boolean }> = [];
   for (const line of statementLines(markdown)) {
-    const value = weeklyCashFigureIn(line);
-    if (value === undefined) continue;
-    seen.push({ value, line: trim(line), labelled: BASIS_LABEL.test(line) });
+    const reading = weeklyCashFigureIn(line);
+    if (reading === undefined) continue;
+    seen.push({ ...reading, line: trim(line), labelled: BASIS_LABEL.test(line) });
   }
   if (seen.length < 2) return [];
 
+  const out: ConsistencyFinding[] = [];
+
+  /*
+   * Direction first, and on its own, because it is the graver reading.
+   *
+   * Two sections that state the same magnitude in opposite directions are not
+   * "within tolerance" — they disagree about whether the investor is paid or
+   * pays. Collapsed onto a magnitude they look identical, which is how a
+   * detector can report a contradiction as agreement.
+   */
+  const stated = seen.filter((s) => s.direction !== 'unstated');
+  const outflows = stated.filter((s) => s.direction === 'outflow');
+  const inflows = stated.filter((s) => s.direction === 'inflow');
+  if (outflows.length && inflows.length) {
+    out.push({
+      rule: 'weekly-cash-direction-disagrees',
+      severity: 'error',
+      message:
+        'The document states the weekly cash position in BOTH directions — '
+        + `${outflows.map((d) => money(-d.magnitude)).join(', ')} (${DIRECTION_WORD.outflow}) and `
+        + `${inflows.map((d) => money(d.magnitude)).join(', ')} (${DIRECTION_WORD.inflow}). `
+        + 'These are not two roundings of one answer. One says the property funds itself and the '
+        + 'other says the investor tops it up every week for as long as they hold it, and a reader '
+        + 'has no way to tell which section to act on. Resolve it at the producer that publishes the '
+        + 'cash position; do not reconcile it by dropping a sign.',
+      statements: [...outflows, ...inflows].map((d) => clip(d.line)),
+    });
+  }
+
   const distinct: typeof seen = [];
   for (const s of seen) {
-    if (!distinct.some((d) => Math.abs(d.value - s.value) <= WEEKLY_TOLERANCE)) distinct.push(s);
+    if (!distinct.some((d) => Math.abs(d.magnitude - s.magnitude) <= WEEKLY_TOLERANCE)) distinct.push(s);
   }
-  if (distinct.length < 2) return [];
+  if (distinct.length < 2) return out;
 
   const unlabelled = distinct.filter((d) => !d.labelled);
-  return [{
+  out.push({
     rule: 'weekly-cash-position-disagrees',
     // Two unlabelled figures is a contradiction; a labelled pair is a
     // distinction a reader can follow, and reporting it as an error is the
@@ -263,14 +342,15 @@ export function findWeeklyCashDisagreements(markdown: string): ConsistencyFindin
     severity: unlabelled.length >= 2 ? 'error' : 'warning',
     message:
       `The document states ${distinct.length} different weekly cash positions `
-      + `(${distinct.map((d) => money(d.value)).join(', ')}). `
+      + `(${distinct.map((d) => (d.direction === 'inflow' ? money(d.magnitude) : money(-d.magnitude))).join(', ')}). `
       + 'A weekly figure is the annual cash position divided by 52; two of them means two annual '
       + 'positions, which the engine publishes as one. Bind each section to the same approved '
       + 'financial output, or — where the bases genuinely differ (contractual rent against the '
       + 'occupancy assumption, pre-tax against post-tax, year one against a later year) — say so in '
       + 'the label, because a reader cannot tell a second basis from a second answer.',
     statements: distinct.map((d) => clip(d.line)),
-  }];
+  });
+  return out;
 }
 
 // ── 2. the loan the document describes ────────────────────────────────────
@@ -326,6 +406,31 @@ export function findLoanBasisContradiction(markdown: string): ConsistencyFinding
   const interestOnlyAnnual = principal * (rate / 100);
   const tolerance = interestOnlyAnnual * (REPAYMENT_TOLERANCE_PCT / 100);
 
+  /*
+   * A payment above a year's interest does not, on its own, mean amortisation.
+   *
+   * An earlier version of this rule said it did, and that was an inference the
+   * evidence does not carry. A first-year repayment can exceed the interest on
+   * the stated balance because the loan amortises — or because the figure
+   * includes lender fees, mortgage insurance or establishment costs, because
+   * the balance the schedule ran on is not the one this line labels, or
+   * because the rate moved during the year. The detector sees two numbers that
+   * do not reconcile; it cannot see why.
+   *
+   * So the excess is MEASURED against both definitions rather than attributed
+   * to one. `amortisingPayment` is the canonical annuity — the same function
+   * `buildLoanLedger` runs — and where the printed figure matches it the
+   * finding states that as a computed fact with the arithmetic shown. Where it
+   * matches neither, the finding says exactly that and names the candidates,
+   * which is what an operator needs in order to establish it at the producer.
+   *
+   * Measured on 48 Redfern Street: principal $444,000 at 6.5% gives interest
+   * of $28,860 and a 30-year annuity of $33,676. The document prints $33,677.
+   */
+  const piAnnual = (years: number) =>
+    amortisingPayment(principal!, rate! / 100 / 12, years * 12) * 12;
+  const PLAUSIBLE_TERMS = [30, 25] as const;
+
   for (const line of lines) {
     if (!ANNUAL_REPAYMENT_LABEL.test(line)) continue;
     if (/\bmonth/i.test(line)) continue;
@@ -333,17 +438,35 @@ export function findLoanBasisContradiction(markdown: string): ConsistencyFinding
     if (!values.length) continue;
     const stated = Math.max(...values);
     const excess = stated - interestOnlyAnnual;
+
+    const matchedTerm = PLAUSIBLE_TERMS.find(
+      (y) => Math.abs(stated - piAnnual(y)) <= piAnnual(y) * (REPAYMENT_TOLERANCE_PCT / 100),
+    );
+
+    const preamble =
+      `The document describes an interest-only loan of ${money(principal)} at ${rate}% and prints a `
+      + `first-year repayment of ${money(stated)}. A year's interest on that balance at that rate is `
+      + `${money(interestOnlyAnnual)} — ${money(excess)} less.`;
+
+    const reading = matchedTerm
+      ? ` The printed figure matches principal-and-interest over ${matchedTerm} years on the same `
+        + `balance and rate (${money(piAnnual(matchedTerm))}) to within `
+        + `${REPAYMENT_TOLERANCE_PCT}%, so the schedule was built on the amortising basis while the `
+        + 'label says interest-only.'
+      : ' The printed figure matches neither basis: it is above a year\'s interest and does not '
+        + `agree with principal-and-interest over 30 years (${money(piAnnual(30))}) or 25 `
+        + `(${money(piAnnual(25))}). Fees, mortgage insurance, a balance other than the one this `
+        + 'line labels, or a rate that moved during the year would each explain it, and the '
+        + 'document says none of them.';
+
     return [{
-      rule: 'interest-only-repayment-is-amortising',
+      rule: 'interest-only-repayment-does-not-reconcile',
       severity: 'error',
       message:
-        `The document describes an interest-only loan of ${money(principal)} at ${rate}% and prints a `
-        + `first-year repayment of ${money(stated)}. A year's interest on that balance at that rate is `
-        + `${money(interestOnlyAnnual)}; the figure printed is ${money(excess)} higher, which is a `
-        + 'principal-and-interest repayment. One of the three is wrong — the label, the term recorded '
-        + 'against the loan, or the figure the schedule was built from — and the reader is not told '
-        + 'which. Establish it at the producer; do not change the accepted assumption to make the page '
-        + 'agree with itself.',
+        preamble + reading
+        + ' One of the three is wrong — the label, the term recorded against the loan, or the figure '
+        + 'the schedule was built from — and the reader is not told which. Establish it at the '
+        + 'producer; do not change the accepted assumption to make the page agree with itself.',
       statements: [clip(principalLine), clip(rateLine), clip(trim(line))],
     }];
   }

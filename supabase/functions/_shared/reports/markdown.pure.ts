@@ -100,12 +100,86 @@ import {
  *
  * The conversation-level budget is a different question and lives in
  * `normalise.pure.ts`, where the turns are.
+ *
+ * ## It is the DEFAULT, not the only bound — and that is new
+ *
+ * Every word above is about one chat answer, and this module is also the one
+ * renderer for an Investment Compass BODY. Those are not the same size of
+ * thing and never were: `compassSectionRegistry` declares the Compass at
+ * **8,410 words across 35 pages**, before ~107 chart directives a report and
+ * the planning and infrastructure registers appended to it verbatim.
+ *
+ * So a Compass ran into a bound sized for a 33,377-character chat turn, was
+ * cut at a line break, and told the client
+ * *"A further 25,804 characters of this answer are not shown"* — 91,340
+ * characters of report, 28% of it gone, in Report Q&A's vocabulary, on a
+ * document that is not an answer and has no Markdown export.
+ *
+ * `MarkdownOptions.maxChars` is how a caller states the bound its own document
+ * needs. Omitted, it is this, so every existing caller is byte-identical.
  */
 export const MAX_MARKDOWN_CHARS = 65_536;
 
-/** A p90 answer is 60–120 blocks. This is a runaway guard, not a budget. */
+/**
+ * The bound for a REPORT body, which is a document rather than a message.
+ *
+ * Derived from what the product declares it may produce, not guessed:
+ *
+ * | | |
+ * | --- | ---: |
+ * | `COMPASS_40_SECTIONS` declared word budget | 8,410 words |
+ * | at ~6.5 characters a word with its spaces | ~54,700 |
+ * | ~107 `{{…}}` chart directives a report, ~160 each | ~17,100 |
+ * | headings, tables, fences and the two appended registers | ~19,000 |
+ * | **the largest legitimate Compass body** | **~91,000** |
+ *
+ * 131,072 is twice `MAX_MARKDOWN_CHARS` and ~1.44× that figure, which keeps
+ * the property the original bound was chosen for: **a size no legitimate input
+ * approaches**, so hitting it is a fault to investigate rather than an ordinary
+ * day. It is a safety bound on a linear scan and not a budget — the budgets are
+ * the registry's word caps and the master's page allowance, enforced elsewhere
+ * and enforced first.
+ *
+ * It is DERIVED rather than measured against the stored corpus, which is the
+ * follow-up: the 91,340-character document above is one observation, and one
+ * observation is not a distribution.
+ */
+export const MAX_REPORT_BODY_CHARS = 131_072;
+
+/**
+ * A p90 answer is 60–120 blocks. This is a runaway guard, not a budget.
+ *
+ * And, like `MAX_MARKDOWN_CHARS` above it, an ANSWER's guard applied to a
+ * report's body. Raising the character bound alone does not free a document:
+ * a 91,340-character body renders 406 blocks and is cut here at 400 instead,
+ * which is the same loss reported one clause later. Both bounds had to move,
+ * and both are named by `REPORT_BODY_LIMITS`.
+ */
 export const MAX_BLOCKS = 400;
 export const MAX_HEADINGS = 100;
+
+/**
+ * The three runaway guards, sized for a REPORT rather than a message.
+ *
+ * Each keeps the ratio its own constant was chosen on — a guard at roughly
+ * three times the largest legitimate input, so that hitting one is a fault to
+ * investigate rather than an ordinary day:
+ *
+ * | | legitimate maximum | guard |
+ * | --- | ---: | ---: |
+ * | characters | ~91,000 (see `MAX_REPORT_BODY_CHARS`) | 131,072 |
+ * | blocks | ~530 (35 pages × ~12, plus ~107 directives) | 1,600 |
+ * | headings | ~60 (15 sections and their subheadings) | 300 |
+ *
+ * DERIVED from the registry's declared budget, not measured against the stored
+ * corpus — one 91,340-character observation is not a distribution, and that
+ * measurement is the follow-up.
+ */
+export const REPORT_BODY_LIMITS = {
+  maxChars: MAX_REPORT_BODY_CHARS,
+  maxBlocks: 1_600,
+  maxHeadings: 300,
+} as const;
 /** Per list, not per document. */
 export const MAX_LIST_ITEMS = 200;
 /**
@@ -420,6 +494,35 @@ export interface MarkdownOptions {
   codeLabel?: string;
   /** Label on the truncation callout. */
   truncationLabel?: string;
+  /**
+   * The largest source this render will read, in characters.
+   *
+   * Defaults to `MAX_MARKDOWN_CHARS`, which is sized for one chat answer. A
+   * caller drawing a DOCUMENT passes `MAX_REPORT_BODY_CHARS` — see the note on
+   * both constants for why a Compass was losing a quarter of itself to a bound
+   * written for a message.
+   */
+  maxChars?: number;
+  /** The most blocks this render will emit. Defaults to `MAX_BLOCKS`. */
+  maxBlocks?: number;
+  /** The most headings this render will index. Defaults to `MAX_HEADINGS`. */
+  maxHeadings?: number;
+  /**
+   * What the truncation notice calls the thing that was cut.
+   *
+   * Defaults to `answer`, which is Report Q&A's word and was every format's
+   * word. A report is not an answer, and a client reading "of this answer" on
+   * page 34 of their Investment Compass is being handed another product's
+   * vocabulary.
+   */
+  truncationSubject?: string;
+  /**
+   * Where the rest of it is, as a sentence.
+   *
+   * Defaults to Report Q&A's "The complete text is in the Markdown export."
+   * A format with no Markdown export must say something true instead.
+   */
+  truncationDestination?: string;
   /** Send a table wider than the portrait measure to the landscape page. */
   landscapeWideTables?: boolean;
   /** Mark a row whose first cell is exactly "Total" with the primitive's rule. */
@@ -1088,9 +1191,14 @@ export function renderMarkdown(source: string, options: MarkdownOptions = {}): M
       return `| ${cells.join(' | ')} |`;
     }).join('\n');
   }
-  if (text.length > MAX_MARKDOWN_CHARS) {
-    const cut = text.lastIndexOf('\n', MAX_MARKDOWN_CHARS);
-    const at = cut > MAX_MARKDOWN_CHARS / 2 ? cut : MAX_MARKDOWN_CHARS;
+  const positive = (v: unknown, fallback: number): number =>
+    typeof v === 'number' && v > 0 ? v : fallback;
+  const sourceLimit = positive(options.maxChars, MAX_MARKDOWN_CHARS);
+  const blockLimit = positive(options.maxBlocks, MAX_BLOCKS);
+  const headingLimit = positive(options.maxHeadings, MAX_HEADINGS);
+  if (text.length > sourceLimit) {
+    const cut = text.lastIndexOf('\n', sourceLimit);
+    const at = cut > sourceLimit / 2 ? cut : sourceLimit;
     notices.truncatedAtChars = text.length - at;
     text = text.slice(0, at);
   }
@@ -1159,7 +1267,7 @@ export function renderMarkdown(source: string, options: MarkdownOptions = {}): M
 
   const push = (kind: MarkdownBlockKind, html: string, lineCount: number, table?: MarkdownTableMeta, list?: MarkdownListMeta): boolean => {
     if (!html) return true;
-    if (blocks.length >= MAX_BLOCKS) { notices.truncatedAtBlocks = true; return false; }
+    if (blocks.length >= blockLimit) { notices.truncatedAtBlocks = true; return false; }
     const entry: MarkdownBlock = { kind, html, lines: roundCharge(lineCount) };
     if (table) entry.table = table;
     if (list) entry.list = list;
@@ -1587,15 +1695,25 @@ export function renderMarkdown(source: string, options: MarkdownOptions = {}): M
   // residue exactly, so a reader knows what they are missing and where to get
   // it — silent truncation is the failure this whole migration removes.
   if (notices.truncatedAtChars !== null || notices.truncatedAtBlocks) {
+    // The subject and the destination are the CALLER'S, because only the
+    // caller knows what kind of document this is and where the rest of it
+    // lives. The defaults are Report Q&A's, which is what every format used to
+    // get — see `MarkdownOptions.truncationSubject`.
+    const subject = options.truncationSubject ?? 'answer';
+    // An EMPTY destination is a real choice, not an omission: a format with no
+    // second copy to send the reader to says the count and stops, rather than
+    // naming somewhere they cannot go.
+    const destination = options.truncationDestination
+      ?? 'The complete text is in the Markdown export.';
     const said = notices.truncatedAtChars !== null
-      ? `A further ${notices.truncatedAtChars.toLocaleString('en-AU')} characters of this answer are not shown.`
-      : 'The remainder of this answer is not shown.';
+      ? `A further ${notices.truncatedAtChars.toLocaleString('en-AU')} characters of this ${subject} are not shown.`
+      : `The remainder of this ${subject} is not shown.`;
     blocks.push({
       kind: 'notice',
       html: renderCallout(
         'caution',
         options.truncationLabel ?? 'Not shown',
-        `<p>${escapeHtml(said)} The complete text is in the Markdown export.</p>`,
+        `<p>${escapeHtml(destination ? `${said} ${destination}` : said)}</p>`,
       ),
       lines: 3,
     });
@@ -1621,7 +1739,7 @@ export function renderMarkdown(source: string, options: MarkdownOptions = {}): M
   // ── Emitters, closed over the accumulators above ────────────────────────
 
   function emitHeading(sourceLevel: number, raw: string): boolean {
-    if (headings.length >= MAX_HEADINGS) {
+    if (headings.length >= headingLimit) {
       notices.headingsDropped++;
       return true;
     }

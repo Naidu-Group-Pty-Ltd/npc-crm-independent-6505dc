@@ -1,0 +1,51 @@
+name: Builder Stock mirror state
+
+# READ-ONLY. Measures what this marketplace would draw for its Builder Stock
+# cards, so "the clone behaves like the network" can be checked against this
+# database rather than inferred from the fact that the two repositories'
+# files match.
+#
+# The script refuses any statement that is not a SELECT, and it reads the
+# collateral-column vocabulary out of `columnDeclaration.pure.ts` rather than
+# restating it — one rule, measured by the module the product runs.
+
+on:
+  workflow_dispatch:
+    inputs:
+      note:
+        description: Why this measurement is being run
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: builder-stock-mirror-state
+  cancel-in-progress: false
+
+jobs:
+  measure:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: refuse to pretend
+        if: ${{ env.TOKEN == '' }}
+        env:
+          TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          echo '::error::SUPABASE_ACCESS_TOKEN is not configured — nothing can be read from the live project.'
+          exit 1
+
+      - name: measure the mirror
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          NOTE: ${{ inputs.note }}
+        run: |
+          set -euo pipefail
+          [ -n "${NOTE:-}" ] && echo "note: $NOTE" || true
+          node .github/scripts/builder-stock-mirror-state.mjs

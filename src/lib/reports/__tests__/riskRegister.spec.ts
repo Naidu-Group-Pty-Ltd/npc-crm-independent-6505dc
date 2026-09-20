@@ -138,14 +138,16 @@ describe('the validator discloses it', () => {
   ])}\n`;
 
   it('raises a warning, not an error - the content is right and the container is wrong', () => {
-    const report = runQAValidation(md, 'compass');
+    // A two-line fixture is not a 20–26 page Compass — assert on the tier
+    // with no page band so the document-level verdict is not the band's.
+    const report = runQAValidation(md, 'briefing');
     const f = report.findings.find((x) => x.rule === 'risk-register-cell-overlong');
     expect(f?.severity).toBe('warning');
     expect(report.passed).toBe(true);
   });
 
   it('names the risk, the column and the remedy', () => {
-    const f = runQAValidation(md, 'compass').findings
+    const f = runQAValidation(md, 'compass-40').findings
       .find((x) => x.rule === 'risk-register-cell-overlong');
     expect(f?.message).toContain('Bushfire');
     expect(f?.message).toContain('Evidence');

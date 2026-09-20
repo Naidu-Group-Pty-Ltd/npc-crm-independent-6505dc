@@ -468,7 +468,17 @@ export interface WorkingCopyRequest {
  * `scope` or `owner_user_id`. Building the row server-side removes that
  * possibility instead of relying on the client to behave.
  */
-export function buildWorkingCopyPayload(req: WorkingCopyRequest): Record<string, unknown> {
+
+/**
+ * The inserted row. `config` is typed so callers can read the lineage back
+ * without a cast; everything else stays an open record because the row is
+ * headed for a JSONB-bearing table.
+ */
+export interface WorkingCopyPayload extends Record<string, unknown> {
+  config: Record<string, unknown> & { libraryLineage: Record<string, unknown> };
+}
+
+export function buildWorkingCopyPayload(req: WorkingCopyRequest): WorkingCopyPayload {
   const { entry } = req;
 
   // Bake the colourway into the copy's own tokens rather than referencing it.

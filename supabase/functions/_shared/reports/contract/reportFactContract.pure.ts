@@ -93,6 +93,7 @@ import {
 import {
   reconcileStoredFinancials,
   type StoredFinancialsReconciliation,
+  type StoredLoanStructureBasis,
 } from '../investment/financialEngine.pure.ts';
 import {
   readPropertyFacts,
@@ -375,6 +376,12 @@ export interface Integrity {
     readonly metricsReconciled: boolean;
     readonly totalUpfrontDerived: boolean;
     readonly financeIdentityHealed: 'loan' | 'deposit' | null;
+    /**
+     * Whether the loan's structure sentence was derived for a row carrying
+     * none. `figures_contradict_label` says the stored repayments belong to a
+     * different schedule from the product the record names.
+     */
+    readonly loanStructureDerived: StoredLoanStructureBasis | null;
   };
   /** Facts the contract could not resolve, by name. */
   readonly absentFacts: readonly string[];
@@ -882,6 +889,7 @@ export function buildReportFactContract(input: ReportFactInput): ReportFactContr
         metricsReconciled: reconciliation.metricsReconciled,
         totalUpfrontDerived: reconciliation.totalUpfrontDerived,
         financeIdentityHealed: reconciliation.financeIdentityHealed,
+        loanStructureDerived: reconciliation.loanStructureDerived,
       },
       absentFacts: [],
       supersededFacts: [],

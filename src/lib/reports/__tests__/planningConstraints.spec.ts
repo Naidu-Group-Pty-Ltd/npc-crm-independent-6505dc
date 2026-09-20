@@ -370,6 +370,7 @@ describe('the ordering a reader triages by', () => {
       readings: [{
         family: 'other', kind: kind as never, label, code: null, value: null,
         instrument: null, clause: null, currencyDate: null, detail: null, source: 's', licence: 'l',
+        standingLabel: null, region: null,
       }],
     });
     const merged = mergeConstraintOutcomes([

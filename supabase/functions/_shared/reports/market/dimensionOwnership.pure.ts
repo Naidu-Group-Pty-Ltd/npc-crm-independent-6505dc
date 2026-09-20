@@ -90,6 +90,8 @@ export const DIMENSION_OWNERSHIP: ReadonlyArray<OwnershipEntry> = [
     rationale: 'The same question again, through a third lens.' },
   { input: 'salesCount', owner: 'demand', forbiddenTo: ['growth'],
     rationale: 'Turnover; meaningful only against stock advertised.' },
+  { input: 'salesVolumeSeries', owner: 'demand', forbiddenTo: ['growth', 'yield'],
+    rationale: 'How much stock changed hands, period by period — a demand measure. It is not what the stock changed hands FOR, which is Growth at every horizon.' },
   { input: 'listingActivity', owner: 'demand', forbiddenTo: ['growth'],
     rationale: 'Stock on market, the denominator of absorption.' },
   { input: 'populationGrowth', owner: 'demand', forbiddenTo: ['growth'],

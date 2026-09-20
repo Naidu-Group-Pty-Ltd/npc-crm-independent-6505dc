@@ -29,6 +29,7 @@ import {
   QTRIP_LICENCE,
   QTRIP_SOURCE,
   stageSentence,
+  type ProgrammeParse,
 } from '@/lib/reports/../../../supabase/functions/_shared/planning/investmentProgramme.pure';
 import {
   buildInfrastructureEvidence,
@@ -43,7 +44,7 @@ const answer = () => JSON.parse(
 );
 const parsed = () => {
   const out = parseQtripAnswer(answer(), CURRENT, SUBJECT, PROGRAMME_RADIUS_KM);
-  if (!out.ok) throw new Error(out.reason);
+  if (!out.ok) throw new Error((out as Extract<ProgrammeParse, { ok: false }>).reason);
   return out;
 };
 
@@ -338,9 +339,18 @@ describe('the service publishes it, and a stale cache cannot serve it', () => {
   });
 
   it('the answer version was bumped, so a c2 row is never served for this shape', () => {
+    // Pins the RULE, not the string. `c3` was the version that added the
+    // programme and it has since moved on for other widenings; what must hold
+    // is that the key is declared and that the version is past the one whose
+    // rows carry no programme at all.
     const src = read('supabase/functions/_shared/planning/planningAnswerVersion.pure.ts');
-    expect(src).toContain("PLANNING_ANSWER_VERSION = 'c3'");
     expect(src).toContain("'investmentProgramme',");
+    const version = /PLANNING_ANSWER_VERSION = '(c\d+)'/.exec(src)?.[1];
+    expect(version).toBeDefined();
+    expect(Number(version!.slice(1))).toBeGreaterThanOrEqual(3);
+    // And the row that documents it, so a bump is a decision rather than a
+    // side effect — the module's own header says exactly that.
+    expect(src).toMatch(/\|\s*`c3`\s*\|[^|]*investmentProgramme/);
   });
 
   it('needs no table and no migration — it is a live read like every other register', () => {

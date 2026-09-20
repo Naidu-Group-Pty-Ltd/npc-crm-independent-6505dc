@@ -506,6 +506,7 @@ describe('the transport block stored on a report', () => {
     countWithinRadius: 2,
     radiusMetres: 1600,
     nearest: { stopId: '215020', name: 'Parramatta Station', metres: 340, feed: 'nsw_sydney', routeType: null },
+    feedLoadedAt: null,
     feeds: ['nsw_sydney'],
     sources: ['Transport for NSW'],
     notMeasured: ['mode', 'service frequency'],

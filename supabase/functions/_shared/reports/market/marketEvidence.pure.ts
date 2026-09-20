@@ -340,6 +340,17 @@ export interface MarketEvidence {
 
   /** Transactions in the most recent comparable period. */
   salesCount?: EvidencePoint;
+  /**
+   * Transactions per period, oldest first — the volume series behind
+   * {@link MarketEvidence.salesCount}.
+   *
+   * A DEMAND measure and never a growth one: it says how much stock changed
+   * hands, not what it changed hands for. The register that publishes the
+   * median price publishes the count beside it on every row, and until this
+   * existed only the latest row's count was read — as a sample size for
+   * confidence, never as a measurement of anything.
+   */
+  salesVolumeSeries?: EvidencePoint<ReadonlyArray<{ period: string; value: number }>>;
   /** Median days on market. */
   daysOnMarket?: EvidencePoint;
   /** Rental vacancy rate, per cent. Only where genuinely published. */
@@ -377,6 +388,7 @@ export const EVIDENCE_KEYS = [
   'growth10YearCagr',
   'priceSeries',
   'salesCount',
+  'salesVolumeSeries',
   'daysOnMarket',
   'vacancyRate',
   'listingActivity',

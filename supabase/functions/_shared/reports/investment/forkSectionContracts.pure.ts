@@ -29,8 +29,30 @@ export type RiskVariant = 'financial' | 'due_diligence';
 
 /** Vocabulary that marks a risk entry as belonging to the money side. */
 const FINANCIAL_RISK = /\b(interest|rate|cash ?flow|yield|rents?|rental|vacanc|servic|lvr|leverag|loan|repay|debt|borrow|liquidit|exit|resale|valuation|price|pricing|afford|tax|deprec|fund|capital|equity|holding|expense|cost|insurance premium|market)\w*/i;
-/** Vocabulary that marks a risk entry as belonging to the property and its locality. */
-const PROPERTY_RISK = /\b(crime|safety|environment|bushfire|fire|flood|climate|planning|zoning|overlay|covenant|easement|title|strata|body corporate|building|pest|condition|structur|defect|transport|infrastructure|supply|pipeline|school|amenit|demograph|tenant demand|heritage|contaminat|noise|access|physical|estate|construction|developer)\w*/i;
+/**
+ * Vocabulary that marks a risk entry as belonging to the property and its
+ * locality.
+ *
+ * The crime words are here because the register does not write "crime" when it
+ * breaks crime down. Measured 19 Sep 2026 over every risk register in the
+ * stored Compass corpus — 3 documents, 24 distinct entry names — exactly two
+ * fell through to `both` for want of them: `Offence mix (theft, assault,
+ * property damage)` and `Drug-related offences`. `both` sends an entry to both
+ * variants, which is the right default for something nobody can classify and
+ * the wrong answer for these: the Financial Analysis then opens its risk
+ * register with a crime row, one page under a composed sentence saying
+ * "Property and locality risks (crime, environmental, planning, condition) …
+ * are not restated here". That is QA-31 surviving in the one shape the
+ * classifier could not see.
+ *
+ * Only unambiguous offence nouns are added. None of them can appear in a
+ * financial risk entry, and none collides with `FINANCIAL_RISK`, so the two
+ * crime rows are the whole blast radius — re-measured after the change, the
+ * fall-through set is `Supply and market concentration` (genuinely both),
+ * `Data gaps …` (about the record, not the money or the place) and the
+ * checklist handled below.
+ */
+const PROPERTY_RISK = /\b(crime|safety|offence|offense|theft|assault|burglar|break-?in|robber|vandal|stolen|violent|environment|bushfire|fire|flood|climate|planning|zoning|overlay|covenant|easement|title|strata|body corporate|building|pest|condition|structur|defect|transport|infrastructure|supply|pipeline|school|amenit|demograph|tenant demand|heritage|contaminat|noise|access|physical|estate|construction|developer)\w*/i;
 
 export type RiskClass = 'financial' | 'property' | 'both';
 
@@ -137,7 +159,23 @@ export interface RiskRegisterSplit {
 export function splitRiskRegister(body: string, variant: RiskVariant): RiskRegisterSplit {
   const { groups, tableHead } = parseRegister(body);
   const wanted: RiskClass = variant === 'financial' ? 'financial' : 'property';
-  const admits = (e: RiskEntry) => e.cls === wanted || e.cls === 'both';
+  /*
+   * An entry nobody can classify goes to BOTH variants rather than to
+   * neither — except where its own body says what it is. A list of things to
+   * do before contract is not an assessed risk at all, so "unclassifiable"
+   * is the wrong reading of it: measured, `Due Diligence Actions` fell
+   * through on that rule and put seven planning, flood, bushfire and title
+   * actions into the Financial Analysis, one page under the composed
+   * sentence saying property and locality risks are not restated there. A
+   * checklist whose subject IS financial still carries financial vocabulary
+   * in its name and is classified before this is reached, so only the
+   * genuinely unclassifiable one is moved.
+   */
+  const admits = (e: RiskEntry) => {
+    if (e.cls === wanted) return true;
+    if (e.cls !== 'both') return false;
+    return variant === 'due_diligence' || !readAsChecklist(e.lines.join('\n')).isChecklist;
+  };
   const kept: string[] = [];
   const dropped: string[] = [];
   const unclassified: string[] = [];
@@ -214,16 +252,28 @@ export interface DashboardContract {
 }
 
 /**
+ * Whether a body is a list of work to do rather than a statement of assessed
+ * risk: three or more bullets, most of them imperative, and nothing rated.
+ *
+ * One implementation, because two places ask it — the section contract that
+ * renames a dashboard (QA-32) and the register split below, which must decide
+ * whether an unclassifiable ENTRY is a checklist.
+ */
+function readAsChecklist(body: string): { isChecklist: boolean; imperative: number } {
+  const bullets = body.split('\n').map((l) => l.trim()).filter((l) => /^[-•*]\s+/.test(l));
+  const imperative = bullets.filter((l) => IMPERATIVE_BULLET.test(l)).length;
+  const assessed = ASSESSED_ENTRY.test(body);
+  return { isChecklist: !assessed && bullets.length >= 3 && imperative / bullets.length >= 0.6, imperative };
+}
+
+/**
  * A section is named for what it holds (QA-32): a body that lists work to do
  * is a checklist and says so, with its completion status, rather than a
  * dashboard of assessed risks. A body carrying rated entries keeps the
  * dashboard heading.
  */
 export function riskDashboardContract(body: string, dashboardHeading: string, checklistHeading: string): DashboardContract {
-  const bullets = body.split('\n').map((l) => l.trim()).filter((l) => /^[-•*]\s+/.test(l));
-  const imperative = bullets.filter((l) => IMPERATIVE_BULLET.test(l)).length;
-  const assessed = ASSESSED_ENTRY.test(body);
-  const isChecklist = !assessed && bullets.length >= 3 && imperative / bullets.length >= 0.6;
+  const { isChecklist, imperative } = readAsChecklist(body);
   if (!isChecklist) return { heading: dashboardHeading, status: null, isChecklist: false, checks: 0 };
   return {
     heading: checklistHeading,

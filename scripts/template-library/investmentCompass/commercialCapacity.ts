@@ -255,7 +255,40 @@ function buildTemplate(family: DesignFamily, variant: VariantDefinition): Compas
         table({
           headers: ['Test', 'Permits', 'Policy', 'This deal', 'Status'],
           rows: Array.from({ length: ROWS.constraints }, (_, i) => constraintRow(i)),
-          columnWidths: cols(c.contentWidth - 330, 90, 70, 70, 100),
+          /*
+           * The four value columns are sized to what they carry; the test name
+           * takes the rest.
+           *
+           * They used to take 330pt, and on the families with the deepest
+           * margins that left the name column 87pt (Elevation), 99 (Night
+           * Desk), 107 (Grand Folio) and 117 (Sovereign Folio) — narrower than
+           * the vocabulary it holds. `CONSTRAINT_LABELS` is a closed set of ten
+           * strings and three of them are 24 to 31 characters, so those rows
+           * wrapped to two lines while `table()` declared one, and the table
+           * printed 5 to 29pt over the explanation beneath it on four of the
+           * fifty masters. Two of them showed as overlapping ink in
+           * `templates:compass:qa`; the other two overlapped by box alone,
+           * which is the same defect one paragraph away from being visible.
+           *
+           * Measured 19 September 2026 in Chromium at A4, across all fifty
+           * masters, for the longest string each column can hold (the label
+           * vocabulary, the status vocabulary, an eight-figure cap) and for the
+           * column heads, which are set in the mono face with tracking and are
+           * the wider requirement in the `This deal` column:
+           *
+           * | column | widest body | widest head | allocated |
+           * | --- | ---: | ---: | ---: |
+           * | Test | 147.8 | 32.8 | the remainder, 152–262 |
+           * | Permits | 66.6 | 45.4 | 75 |
+           * | Policy | 42.0 | 41.2 | 48 |
+           * | This deal | 42.3 | 53.8 | 60 |
+           * | Status | 73.9 | 41.2 | 82 |
+           *
+           * 265pt of value columns leaves every family at least 152pt for the
+           * name against its own widest label, so no cell wraps and the
+           * one-line declaration is true rather than lucky.
+           */
+          columnWidths: cols(c.contentWidth - 265, 75, 48, 60, 82),
           numeric: [1, 2, 3],
         }),
         // The explanation the legacy sets over its table — which test permits

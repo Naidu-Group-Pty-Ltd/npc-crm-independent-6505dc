@@ -43,6 +43,7 @@ import {
 } from './family';
 import {
   callout,
+  companionNote,
   contents,
   contentTop,
   cover,
@@ -81,6 +82,7 @@ import {
   type CompassSeedTemplate,
   type ReportFormat,
 } from './master';
+import { VERDICT_HEADLINE_CHARS } from './verdictVocabulary';
 import { STANDARD_DISCLAIMER } from '../designSystem';
 
 /** Investment Compass: the format the ten families were drawn for. */
@@ -122,6 +124,22 @@ const FOOTER = '{{property.address}} · {{report.documentTitle}}';
  * that reservation was for prose those dimensions never write.
  */
 const DETAIL_CHARS = { location: 94, yield: 51, risk: 228 } as const;
+
+/**
+ * The longest companion note any tier publishes.
+ *
+ * Measured over `TIER_CONTENT` rather than estimated, because the set is closed
+ * and small: compass 140, financial 140, briefing 110, snapshot 104, strategic
+ * 85, composite none. `sectionHeading` refuses a bound standfirst without a
+ * measured length, and for good reason — it reserves the depth the sentence
+ * needs at the size and measure each of the six header kinds sets it in, and a
+ * heading that under-declares does not overflow the page, it prints over the
+ * contents list beneath it.
+ *
+ * `companionNoteChars.spec.ts` re-reads `TIER_CONTENT` and fails if a tier's
+ * sentence is ever rewritten longer than this.
+ */
+export const COMPANION_NOTE_CHARS = 140;
 
 /** The left half of the running head. */
 const DOCUMENT_LABEL = '{{report.documentTitle}} · {{property.address}}';
@@ -312,6 +330,32 @@ function buildTemplate(family: DesignFamily, variant: VariantDefinition): Compas
       ...furniture(DOCUMENT_LABEL, nextPart('Contents'), 'Contents'),
       ...flow([
         sectionHeading({ eyebrow: 'In this report', heading: 'Contents', numeral: nextNumeral() }),
+        /*
+         * Where the rest of the analysis is, above the list rather than below
+         * it.
+         *
+         * This is the one page where a reader looks for a section and does not
+         * find it. Seed v14 made the three financial pages conditional on
+         * `report.drawsFinancialModelling` and the contents block draws the
+         * pages that actually rendered — so a Compass's contents correctly stop
+         * listing "Financial position" and "Ten-year projection", and nothing
+         * then said where they had gone.
+         *
+         * Above the list, because `contents()`'s row count is a size HINT with
+         * eight rows of slack for the gap between section names and page count:
+         * a document whose real list outruns the hint draws down into the white
+         * space beneath it, and that space has to stay empty. Measured over the
+         * fifty masters, the room below the contents block runs from 122pt
+         * (Luxury Editorial's third variant) to 301pt.
+         *
+         * `put()` drops an absent value, so `composite` — the one tier that
+         * publishes no companion note — binds nothing, and the conditional
+         * stops the block being drawn at all rather than drawing an empty one.
+         */
+        {
+          ...companionNote('{{report.companionNote}}', COMPANION_NOTE_CHARS),
+          conditional: 'report && report.companionNote',
+        },
         contents([
           'The verdict and the numbers that carry it',
           'The property',
@@ -364,6 +408,10 @@ function buildTemplate(family: DesignFamily, variant: VariantDefinition): Compas
         // scores, whose dimensions are not the composite five. Absent score →
         // absent binding → no sentence, never a broken one.
         body: '{{recommendation.gradedLine}}',
+        // The heading is a binding, so it is sized from what it can RESOLVE to
+        // rather than from its own 27 characters. See `verdictVocabulary.ts`:
+        // the vocabulary is closed, so this is exact rather than estimated.
+        headingChars: VERDICT_HEADLINE_CHARS,
       }),
       kpis(dashboardKpis),
       ...(splitSnapshot ? [] : [
@@ -791,13 +839,21 @@ function buildTemplate(family: DesignFamily, variant: VariantDefinition): Compas
   const NARRATIVE_PAGES = 40;
   // The same measure the Report Q&A masters take: the first page gives up the
   // heading block, the continuations do not.
-  const narrativeHeading = sectionHeading({
-    eyebrow: 'As assessed',
-    heading: 'The report',
-    numeral: nextNumeral(),
-  });
-  const firstNarrativeHeight = remainingAfter([narrativeHeading], contentTop());
-  const contNarrativeHeight = remainingAfter([], contentTop());
+  //
+  // The body's first page carries no section heading of its own.
+  //
+  // It used to open on `As assessed / The report`, which named the document a
+  // reader was already holding and then repeated itself in the running head of
+  // every page under it. The body's real first heading is whatever the report
+  // opens with — the executive verdict — and the markdown already sets it. A
+  // heading reading "The report" over a report is the redundancy §7 names.
+  //
+  // With it gone the first page and the continuations have the same box, which
+  // is stated once rather than computed twice: two expressions that must stay
+  // equal are one line of drift away from printing a line twice or losing it.
+  const narrativeHeight = remainingAfter([], contentTop());
+  const firstNarrativeHeight = narrativeHeight;
+  const contNarrativeHeight = narrativeHeight;
 
   // One part number for the whole report body. Each continuation page used to
   // mint its own — running heads marched "Part 08 · Report" through
@@ -805,12 +861,50 @@ function buildTemplate(family: DesignFamily, variant: VariantDefinition): Compas
   // a two-inch numeral. A continuation is the same part, so it carries the
   // opener's label verbatim, and everything after the body numbers on from
   // the opener rather than from the page count.
+  //
+  // The running head names the CHAPTER the page is in, not the document.
+  //
+  // `Part 08 · Report` through `Part 33 · Report` told a reader they were in
+  // the report, which they knew, on every page of a body that moves from the
+  // executive verdict to demand drivers to planning controls to the risk
+  // register. `narrative.chapters.N` is the chapter in force when page N
+  // opens, measured by the pre-pass at this template's own geometry — so the
+  // head cannot name a chapter a different packing would have put there. A
+  // page before the first heading resolves to nothing and the binding prints
+  // the empty string, which is the right answer: an unresolved binding is
+  // never a visible `{{…}}`.
   const reportPart = nextPart('Report');
+  /**
+   * What a running-head family puts on the right of these pages: the chapter,
+   * and NOT the part.
+   *
+   * The body is one part, correctly — so `reportPart` is the same string on
+   * every page of it, and a running-head family (which draws the part and
+   * discards the section, unlike a rail) printed `Part 05 · Report` on 29 of
+   * the 36 pages of the 42 Patya Circuit report. v16 fixed the discarded half
+   * and left the repeated one, so the 97 Poole Road Compass of 20 Sep 2026
+   * carried `Part 07 · <chapter>` on TWENTY-SIX consecutive pages.
+   *
+   * A running head exists to say where the reader is. Across a single part
+   * the part number says it twenty-six times and says nothing; the chapter
+   * says it once per chapter, and it is already measured per page by the same
+   * pre-pass that decides the page breaks. The part structure is on the
+   * contents page, where it is what varies.
+   *
+   * Dropping the prefix also takes the worst case this can compose from
+   * `'Part NN · '.length + CHAPTER_MAX_CHARS` (74) down to 64, so a long
+   * chapter — `Zoning, Planning and Development Considerations` set over two
+   * ragged right-aligned lines on six pages of that report — sets on one.
+   *
+   * A RAILED family is untouched and stays right: there the part is an eyebrow
+   * ABOVE the chapter rather than a prefix beside it, so the repetition is
+   * subordinate by construction and carries the orientation for free.
+   */
+  const reportChapter = (i: number): string => `{{narrative.chapters.${i}}}`;
   pages.push({
     ...withFurniture(page('The report', [
-      ...furniture(DOCUMENT_LABEL, reportPart, 'The report'),
+      ...furniture(DOCUMENT_LABEL, reportPart, '{{narrative.chapters.0}}', reportChapter(0)),
       ...flow([
-        narrativeHeading,
         markdown('{{narrative.source}}', 0, firstNarrativeHeight, MARKDOWN_LINES_PER_PAGE),
       ], contentTop()),
     ]), FOOTER),
@@ -822,7 +916,7 @@ function buildTemplate(family: DesignFamily, variant: VariantDefinition): Compas
   for (let i = 1; i < NARRATIVE_PAGES; i += 1) {
     pages.push({
       ...withFurniture(page(`The report (${i + 1})`, [
-        ...furniture(DOCUMENT_LABEL, reportPart, 'The report'),
+        ...furniture(DOCUMENT_LABEL, reportPart, `{{narrative.chapters.${i}}}`, reportChapter(i)),
         ...flow([
           markdown('{{narrative.source}}', i, contNarrativeHeight, MARKDOWN_LINES_PER_PAGE),
         ], contentTop()),

@@ -51,8 +51,9 @@
  * | (none) | zoning, parcel, development instruments, development activity |
  * | `c2` | the constraint register — `constraints`, `constraintsAsked`, `constraintRegisters` (shipped 17 Sep 2026, between the two subject runs above) |
  * | `c3` | the forward investment programme — `investmentProgramme` (shipped 18 Sep 2026). A `c2` row was cached before any programme was read, so serving one would report a property as having no funded investment near it when the programme was never asked. Exactly the fault `c2` exists for. |
+ * | `c4` | the instrument's own land use table — `landUse` (shipped 19 Sep 2026). A `c3` row carries a zone code and nothing that says what may be built on it, and a zone code alone is what lets "E3 Productivity Support" be read as a residential property in the wrong zone when the table in fact permits a dwelling house with consent. Serving a `c3` row would withhold the reading the section is now written around. |
  */
-export const PLANNING_ANSWER_VERSION = 'c3' as const;
+export const PLANNING_ANSWER_VERSION = 'c4' as const;
 
 /** Every top-level key the answer of this version carries. */
 export const PLANNING_ANSWER_KEYS: readonly string[] = [
@@ -65,6 +66,7 @@ export const PLANNING_ANSWER_KEYS: readonly string[] = [
   'fetchedAt',
   'investmentProgramme',
   'jurisdiction',
+  'landUse',
   'parcel',
   'verification',
   'zoning',

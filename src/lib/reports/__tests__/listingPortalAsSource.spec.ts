@@ -46,10 +46,10 @@ const MEASURED = 'Properties on Redfern Street repeatedly show established detac
   + 'Street profiles, 2024–2026]';
 
 const doc = (body: string) => `# Report\n\n## Executive Verdict\n\n${body}\n`;
-const rules = (md: string) => runQAValidation(md, 'compass').findings.map((f) => f.rule);
+const rules = (md: string) => runQAValidation(md, 'compass-40').findings.map((f) => f.rule);
 
 const findingFor = (md: string, rule: string) =>
-  runQAValidation(md, 'compass').findings.find((f) => f.rule === rule);
+  runQAValidation(md, 'compass-40').findings.find((f) => f.rule === rule);
 
 describe('a hazard clearance on a listing\'s authority is an ERROR', () => {
   it('catches the sentence that shipped', () => {
@@ -88,7 +88,7 @@ describe('an ordinary portal citation is a WARNING, not a rejection', () => {
     const md = doc('The property is advertised at $555,000.[Property.com.au listing, 2026]');
     const f = findingFor(md, 'listing-portal-as-source');
     expect(f?.severity).toBe('warning');
-    expect(runQAValidation(md, 'compass').passed, 'a warning must not fail the document').toBe(true);
+    expect(runQAValidation(md, 'briefing').passed, 'a warning must not fail the document').toBe(true);
     expect(rules(md)).not.toContain('portal-sourced-hazard-clearance');
   });
 
@@ -192,11 +192,25 @@ describe('generation, fork and condensation all validate the assembled output', 
     // where the repository's own `tsc` cannot look.
     expect(src).toContain("runQAValidation(financialMarkdown, 'financial-analysis')");
     expect(src).toContain("runQAValidation(strategicMarkdown, 'strategic')");
-    expect(src).toContain('const financialMarkdown = financialClaims.markdown;');
-    expect(src).toContain('const strategicMarkdown = strategicClaims.markdown;');
+    // The markdown QA reads is the one BOTH corrections produced: the claim
+    // guard first, then the chart-evidence contract. Pinned as the chain
+    // rather than one literal assignment, because pinning the assignment is
+    // what made this test fail when a second correction was added in front of
+    // it — the rule is "validate what will be stored", not "assign it from
+    // this exact expression".
+    expect(src).toContain('enforceChartEvidence(financialClaims.markdown, forkEvidence)');
+    expect(src).toContain('enforceChartEvidence(strategicClaims.markdown, forkEvidence)');
+    expect(src).toContain('const financialMarkdown = financialEvidence.markdown;');
+    expect(src).toContain('const strategicMarkdown = strategicEvidence.markdown;');
     // …and what is stored is the corrected copy, never the composed one.
-    expect(src).toContain("'financial', 'financial', financialMarkdown, financialScore)");
-    expect(src).toContain("'due_diligence', 'strategic', strategicMarkdown, strategicScore)");
+    expect(src).toContain("'financial', 'financial', financialMarkdown, financialScore");
+    expect(src).toContain("'due_diligence', 'strategic', strategicMarkdown, strategicScore");
+    // A QA error reaches the child's own row and the caller's answer. Until
+    // this, the fork ran the validator, logged the findings and returned
+    // ok: true, so a child carrying a material error was indistinguishable
+    // from a clean one at every downstream boundary.
+    expect(src).toContain('validation_flags: qaFlagsFor(qa)');
+    expect(src).toContain('client_ready: blockingFindings.length === 0');
     // Never the parent's tier: a Compass's page band and financial exclusion
     // asserted over a Financial Analysis is the defect `condenseCompose`
     // already records, and it produced sixteen errors on a correct document.
@@ -224,7 +238,7 @@ describe('generation, fork and condensation all validate the assembled output', 
      * is what makes validating the child worth doing at all.
      */
     const routed = `# Due Diligence\n\n## Position Within the Locality\n\n${MEASURED}\n`;
-    for (const tier of ['compass', 'financial', 'strategic', 'briefing', 'snapshot']) {
+    for (const tier of ['compass-40', 'financial-analysis', 'strategic', 'briefing', 'snapshot'] as const) {
       expect(runQAValidation(routed, tier).findings.map((f) => f.rule), tier)
         .toContain('portal-sourced-hazard-clearance');
     }

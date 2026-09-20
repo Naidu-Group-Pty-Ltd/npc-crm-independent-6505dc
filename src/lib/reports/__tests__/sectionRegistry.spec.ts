@@ -287,6 +287,7 @@ const STRATEGY: StrategyRecord = {
     weightCovered: 0.7,
     notAssessed: { risk: 'Not assessed — insufficient verified property-risk evidence is available.' },
     authority: null,
+    assessment: null,
   },
 };
 

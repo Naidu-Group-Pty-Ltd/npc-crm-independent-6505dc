@@ -119,7 +119,7 @@ describe('an interest-only loan with an amortising repayment', () => {
   it('catches the loan that shipped', () => {
     const found = findLoanBasisContradiction(MEASURED);
     expect(found).toHaveLength(1);
-    expect(found[0].rule).toBe('interest-only-repayment-is-amortising');
+    expect(found[0].rule).toBe('interest-only-repayment-does-not-reconcile');
     expect(found[0].severity).toBe('error');
   });
 
@@ -280,7 +280,7 @@ describe('the reading as a whole', () => {
     ].join('\n\n');
     expect(new Set(rules(md))).toEqual(new Set([
       'weekly-cash-position-disagrees',
-      'interest-only-repayment-is-amortising',
+      'interest-only-repayment-does-not-reconcile',
       'overall-assessment-disagrees',
       'attribute-asserted-and-withheld',
     ]));
@@ -294,7 +294,7 @@ describe('the reading as a whole', () => {
   it('the QA validator carries it, at every tier', () => {
     const md = '# Report\n\n## Executive Verdict\n\n| Weekly net position | -$467 |\n\n'
       + 'The investor funds a weekly shortfall of $450.\n';
-    for (const tier of ['compass', 'financial', 'strategic', 'briefing', 'snapshot']) {
+    for (const tier of ['compass-40', 'financial-analysis', 'strategic', 'briefing', 'snapshot'] as const) {
       const report = runQAValidation(md, tier);
       expect(report.findings.map((f) => f.rule), tier).toContain('weekly-cash-position-disagrees');
       expect(report.passed, tier).toBe(false);
@@ -313,7 +313,7 @@ describe('both copies of the validator carry it', () => {
     }
     // Imported, never restated: a detector holding its own copy of a rule
     // reports one thing while the module enforces another.
-    expect(edge).not.toContain('interest-only-repayment-is-amortising:');
+    expect(edge).not.toContain('interest-only-repayment-does-not-reconcile:');
   });
 
   it('the module computes one thing only, and says which', async () => {
@@ -333,5 +333,108 @@ describe('both copies of the validator carry it', () => {
     // No exponentiation: compounding is a model, and this module has no
     // business holding one.
     expect(code).not.toMatch(/\*\*/);
+  });
+});
+
+/*
+ * The two corrections of 19 September 2026.
+ *
+ * Both were defects in this module rather than in the documents it reads, and
+ * both were named directly: "Preserve cash-flow direction; +$467 and −$467 are
+ * materially different" and "Do not infer amortisation solely from a payment
+ * exceeding annual interest."
+ */
+describe('cash-flow direction is preserved, never collapsed', () => {
+  it('reports a sign flip as its own, graver finding', () => {
+    // The first version of this module took `Math.abs` of both, so this pair —
+    // the worst contradiction a financial section can carry — was reported as
+    // CONSISTENT: two readings of 467, within tolerance, nothing to say.
+    const found = findDocumentContradictions(
+      '| Weekly net position | -$467 |\n\n'
+      + 'The property delivers a weekly surplus of $467 to the investor.\n',
+    );
+    const direction = found.find((f) => f.rule === 'weekly-cash-direction-disagrees');
+    expect(direction).toBeDefined();
+    expect(direction!.severity).toBe('error');
+    expect(direction!.message).toContain('BOTH directions');
+  });
+
+  it('two figures in the same direction are a magnitude disagreement, not a direction one', () => {
+    const found = findDocumentContradictions(
+      '| Weekly net position | -$467 |\n\n'
+      + 'The investor funds a shortfall of $450 a week.\n',
+    );
+    expect(found.map((f) => f.rule)).toContain('weekly-cash-position-disagrees');
+    expect(found.map((f) => f.rule)).not.toContain('weekly-cash-direction-disagrees');
+  });
+
+  it('prints the figures WITH their direction, so the message cannot mislead either', () => {
+    const found = findDocumentContradictions(
+      '| Weekly net position | -$467 |\n\nA weekly shortfall of $450 applies.\n',
+    );
+    const disagreement = found.find((f) => f.rule === 'weekly-cash-position-disagrees')!;
+    expect(disagreement.message).toContain('-$467');
+    expect(disagreement.message).toContain('-$450');
+  });
+
+  it('reads direction from the noun where the digits carry no sign', () => {
+    // Prose states the direction in words — "shortfall", "surplus" — and a
+    // detector that only reads signs is blind to half the corpus.
+    const found = findDocumentContradictions(
+      'The weekly shortfall is $300 a week.\n\n'
+      + 'This property returns a weekly surplus of $300 a week to its owner.\n',
+    );
+    expect(found.map((f) => f.rule)).toContain('weekly-cash-direction-disagrees');
+  });
+});
+
+describe('the loan basis is computed, never inferred from an excess', () => {
+  const COWRA = [
+    'The loan is structured as interest-only for the first five years.',
+    '',
+    '| Item | Value |',
+    '| --- | --- |',
+    '| Loan amount | $444,000 |',
+    '| Interest rate (User specified) | 6.5% |',
+    '| Annual repayments (first year) | $33,677 |',
+  ].join('\n');
+
+  it('states the amortising reading as ARITHMETIC when the figure matches it', () => {
+    // $444,000 at 6.5% over 30 years is $33,677 a year by the same annuity
+    // `buildLoanLedger` runs. The document prints $33,677. That is a computed
+    // match, not an inference from "bigger than the interest".
+    const found = findDocumentContradictions(COWRA);
+    const loan = found.find((f) => f.rule === 'interest-only-repayment-does-not-reconcile')!;
+    expect(loan).toBeDefined();
+    expect(loan.message).toContain('principal-and-interest over 30 years');
+    expect(loan.message).toContain('$33,677');
+    expect(loan.message).not.toMatch(/which is a principal-and-interest repayment/);
+  });
+
+  it('says so, and names the candidates, when the figure matches NEITHER basis', () => {
+    // An excess that no amortising term explains. Fees, insurance, a different
+    // balance or a rate that moved would each account for it, and the detector
+    // cannot tell which — so it must not pick one.
+    const found = findDocumentContradictions([
+      'Interest-only for five years.',
+      '',
+      '| Loan amount | $444,000 |',
+      '| Interest rate | 6.5% |',
+      '| Annual repayments (first year) | $30,500 |',
+    ].join('\n'));
+    const loan = found.find((f) => f.rule === 'interest-only-repayment-does-not-reconcile')!;
+    expect(loan).toBeDefined();
+    expect(loan.message).toContain('matches neither basis');
+    expect(loan.message).toContain('Fees, mortgage insurance');
+  });
+
+  it('never claims amortisation as the cause in either reading', () => {
+    for (const source of [COWRA, COWRA.replace('$33,677', '$30,500')]) {
+      for (const f of findDocumentContradictions(source)) {
+        // "matches principal-and-interest over N years" is a measurement.
+        // "which is a principal-and-interest repayment" was a conclusion.
+        expect(f.message).not.toMatch(/,\s*which is a principal-and-interest repayment/);
+      }
+    }
   });
 });

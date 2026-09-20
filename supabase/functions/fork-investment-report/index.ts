@@ -33,6 +33,7 @@ import {
 // to be 257 lines of this file, reachable only by reading its own source.
 import { composeForkDocuments, countCompositeSections } from '../_shared/reports/investment/forkSplit.pure.ts';
 import { runQAValidation } from '../_shared/compassQAValidator.ts';
+import { enforceChartEvidence, readEvidenceInventory } from '../_shared/reports/investment/chartEvidence.pure.ts';
 import { correctUnsupportedEvidenceClaims } from '../_shared/reports/investment/evidenceClaims.pure.ts';
 import { scoreFinancial, scorePropertyFundamentals } from '../_shared/investmentScoreEngine.ts';
 import { variantScoreUnderPolicy } from '../_shared/reports/market/variantScorePolicy.pure.ts';
@@ -149,6 +150,35 @@ function resolveVariantScore(variant: ForkVariant, scoreInputRaw: any, parent: a
   return variantScoreUnderPolicy({ variantScore, parentScore, now: new Date() });
 }
 
+/**
+ * QA findings, in the shape `validation_flags` already carries.
+ *
+ * The column is the platform's existing readiness mechanism: `render-template-pdf`
+ * and `get-portal-client-data` both read it through
+ * `governedAuthorityBlockFromFlags` before a document reaches a client. Until
+ * now the fork ran its QA, printed the findings to a log nobody reads,
+ * persisted the children and answered `ok: true` — so a child carrying a
+ * material error was indistinguishable, at every downstream boundary, from
+ * one that passed.
+ *
+ * A QA error is written as a blocking flag and a warning as a non-blocking
+ * one, which is exactly the distinction those readers already make. Nothing is
+ * deleted and nothing is refused: the work is persisted, the audit trail is
+ * the flag, and the decision about whether to issue belongs to the operator.
+ */
+const FORK_QA_FLAG_TYPE = 'fork_qa';
+
+function qaFlagsFor(qa: { findings: Array<{ severity: string; rule: string; message: string }> } | null) {
+  if (!qa) return [];
+  return qa.findings.map((f) => ({
+    type: FORK_QA_FLAG_TYPE,
+    severity: f.severity === 'error' ? 'critical' : 'medium',
+    field: f.rule,
+    message: f.message,
+    value: { blocking: f.severity === 'error', category: f.rule, source: 'fork-investment-report' },
+  }));
+}
+
 async function upsertFork(
   supabase: any,
   parent: any,
@@ -156,6 +186,7 @@ async function upsertFork(
   persistedVariant: PersistedVariant,
   reportContent: string,
   score: any,
+  qa: { findings: Array<{ severity: string; rule: string; message: string }> } | null = null,
 ) {
   const existingId = await findExistingFork(supabase, parent.id, persistedVariant);
   const sourcesContent = parent.sources_content || null;
@@ -178,6 +209,10 @@ async function upsertFork(
     // compass-40 parent on 2026-09-04, so nothing reading engine truth off a
     // child row could ever see the truth.
     generation_engine: parent.generation_engine ?? 'legacy',
+    // The child's own QA result, in the column the render and portal
+    // boundaries already read. A pass writes an empty array rather than
+    // leaving the previous run's flags standing on a refreshed fork.
+    validation_flags: qaFlagsFor(qa),
     status: 'completed',
   };
 
@@ -465,8 +500,33 @@ Deno.serve(async (req) => {
      */
     const financialClaims = correctUnsupportedEvidenceClaims(financialOut.markdown);
     const strategicClaims = correctUnsupportedEvidenceClaims(dueDiligenceOut.markdown);
-    const financialMarkdown = financialClaims.markdown;
-    const strategicMarkdown = strategicClaims.markdown;
+
+    /*
+     * The chart-evidence contract, on the CHILD as it is written.
+     *
+     * A fork copies the parent's prose and its directives, so an unsupported
+     * graphic in a Compass becomes an unsupported graphic in the Financial
+     * Analysis and the Due Diligence report forked from it — three documents
+     * carrying one defect. The three guards that judged figures all ran in
+     * `generate-investment-report` and nowhere else, which is why they had
+     * never once reached a child.
+     *
+     * It judges against the PARENT's record because that is the record the
+     * content was written from and the record every child inherits.
+     */
+    const forkEvidence = readEvidenceInventory(parent);
+    const financialEvidence = enforceChartEvidence(financialClaims.markdown, forkEvidence);
+    const strategicEvidence = enforceChartEvidence(strategicClaims.markdown, forkEvidence);
+    for (const [variant, judged] of [['financial', financialEvidence], ['strategic', strategicEvidence]] as const) {
+      for (const f of judged.findings) {
+        console.log(
+          `[fork-investment-report] chart evidence ${variant} [${f.verdict}] ${f.kind}: ${f.reason}`,
+        );
+      }
+    }
+
+    const financialMarkdown = financialEvidence.markdown;
+    const strategicMarkdown = strategicEvidence.markdown;
     for (const [variant, corrected] of [['financial', financialClaims], ['strategic', strategicClaims]] as const) {
       for (const r of corrected.removed) {
         console.log(
@@ -492,15 +552,45 @@ Deno.serve(async (req) => {
       for (const f of qa.findings) console.log(`   [${f.severity}] ${f.rule}: ${f.message}`);
     }
 
+    /*
+     * A logged error is not an outcome.
+     *
+     * `ok: true` says the fork ran; it has never said the children are fit to
+     * send, and a caller reading only the status could not tell a clean child
+     * from one carrying a contradiction the validator had just named. The two
+     * questions are now answered separately: `ok` is whether the operation
+     * succeeded, `client_ready` is whether anything blocking was found, and
+     * `blocking_findings` says what.
+     */
+    const blockingFindings = Object.entries(forkQa).flatMap(([variant, qa]) =>
+      (qa?.findings ?? [])
+        .filter((f) => f.severity === 'error')
+        .map((f) => ({ variant, rule: f.rule, message: f.message })));
+    if (blockingFindings.length) {
+      console.warn(
+        `[fork-investment-report] NOT client-ready: ${blockingFindings.length} blocking finding(s) `
+        + 'written to validation_flags on the affected child',
+      );
+    }
+
     const generated = await Promise.all(variants.map(async (variant) => {
-      if (variant === 'financial') return ['financial', await upsertFork(supabase, parent, 'financial', 'financial', financialMarkdown, financialScore)] as const;
-      return ['strategic', await upsertFork(supabase, parent, 'due_diligence', 'strategic', strategicMarkdown, strategicScore)] as const;
+      if (variant === 'financial') {
+        return ['financial', await upsertFork(
+          supabase, parent, 'financial', 'financial', financialMarkdown, financialScore, forkQa.financial,
+        )] as const;
+      }
+      return ['strategic', await upsertFork(
+        supabase, parent, 'due_diligence', 'strategic', strategicMarkdown, strategicScore, forkQa.strategic,
+      )] as const;
     }));
     const result = Object.fromEntries(generated);
 
     return new Response(
       JSON.stringify({
         ok: true,
+        // Whether the documents may be issued, which `ok` has never answered.
+        client_ready: blockingFindings.length === 0,
+        blocking_findings: blockingFindings,
         composite_report_id: parent.id,
         ...result,
         section_counts: {
@@ -511,6 +601,13 @@ Deno.serve(async (req) => {
         qa: forkQa,
         // What the claim guard took out of each child, so a caller can see the
         // correction rather than a document that looks like it never carried it.
+        // What the chart-evidence contract withheld from each child, so a
+        // caller sees the correction rather than a document that looks like it
+        // never carried the graphic.
+        chart_evidence: {
+          financial: variants.includes('financial') ? financialEvidence.findings : null,
+          strategic: variants.includes('strategic') ? strategicEvidence.findings : null,
+        },
         claim_corrections: {
           financial: variants.includes('financial') ? financialClaims.removed : null,
           strategic: variants.includes('strategic') ? strategicClaims.removed : null,

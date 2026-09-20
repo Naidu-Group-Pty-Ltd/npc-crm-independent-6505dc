@@ -110,7 +110,7 @@ describe('an explicit zero interest-only period means principal and interest', (
     const l = byId(PALLAS).loanDetails;
     expect(l.interestOnlyPeriod).toBe(0);
     expect(l.interestOnlyPeriodAssumed).toBe(false);
-    expect(l.structure).toBeUndefined();
+    expect('structure' in l).toBe(false);
   });
 
   it('Annabelle carries the assumed term and says so', () => {

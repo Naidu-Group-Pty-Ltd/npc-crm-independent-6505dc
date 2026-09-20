@@ -117,12 +117,41 @@ describe('the listing may not supply a physical attribute', () => {
 
   it('leaves the price instruction and the listing’s real job alone', () => {
     // A fix that stripped the listing of everything would cost the report its
-    // description, features and renovations, which nothing else supplies.
+    // description, features and renovations, which nothing else supplies. The
+    // wording moved (see the test below); the JOB is what is pinned here.
     const instructions = src.slice(src.indexOf('const sourceSpecificInstructions'), src.indexOf('const limitedDocumentContent'));
     expect(instructions).toContain('use it for financial calculations');
-    expect(instructions).toContain('features, upgrades, and selling points');
-    expect(instructions).toContain('renovations, improvements, or unique characteristics');
+    expect(instructions).toMatch(/features, upgrades and selling points/i);
+    expect(instructions).toMatch(/Renovations, improvements and unique characteristics/i);
     expect(instructions).toContain('Verify the suburb/postcode');
+  });
+
+  /*
+   * Kept, and attributed.
+   *
+   * The two instructions above used to ask for the listing's features and
+   * renovations with nothing saying where they came from, three lines under a
+   * rule declaring CONDITION governed by the record — and the record holds no
+   * condition field on any property, so the two contradicted each other in one
+   * numbered list. Measured on the Cowra Compass: "Well-presented renovated
+   * home", "a detached, renovated 3-bedroom residential home" and "given the
+   * renovated interiors", none of them sourced to anything.
+   *
+   * An advertisement is evidence of what was advertised. Carrying it is fine;
+   * carrying it as this report's own assertion is not.
+   */
+  it('asks for the listing’s claims attributed, and names the words that were asserted', () => {
+    const instructions = src.slice(src.indexOf('const sourceSpecificInstructions'), src.indexOf('const limitedDocumentContent'));
+    expect(instructions).toContain('is an ADVERTISEMENT');
+    expect(instructions).toContain('carry them ATTRIBUTED');
+    expect(instructions).toContain('never as an assertion of your own');
+    expect(instructions).toContain('has not been inspected for this report');
+    for (const word of ['renovated', 'updated', 'well presented']) {
+      expect(instructions, word).toContain(`"${word}"`);
+    }
+    // The bare forms are gone, so there is one statement of the rule.
+    expect(instructions).not.toContain('Include all relevant property features, upgrades, and selling points');
+    expect(instructions).not.toContain('Note any specific renovations, improvements, or unique characteristics');
   });
 
   it('keeps the specification table’s own prohibition', () => {

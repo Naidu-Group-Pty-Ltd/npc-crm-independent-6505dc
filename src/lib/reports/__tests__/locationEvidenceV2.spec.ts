@@ -27,6 +27,7 @@ const stopsNearby = (feeds: string[]): TransportReading => ({
   feeds,
   sources: ['A transit agency'],
   notMeasured: ['mode', 'service frequency'],
+  feedLoadedAt: null,
 });
 
 const inputs = (o: Partial<LocationEvidenceInputs>): LocationEvidenceInputs => ({

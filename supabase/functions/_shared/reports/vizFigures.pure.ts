@@ -19,10 +19,13 @@
  *
  * `glance` is the twelfth and the exception: it is a strip of symbol-prefixed
  * assertions (`✓ Strong regional rental demand | ⚠ Resources-linked economy`),
- * not a plot. It becomes a neutral callout carrying a list, because every part
- * of that is a construct the stylesheet already dresses. A new `.glance-strip`
- * rule would be a new thing to style, test and keep in print contrast for no
- * gain over a callout.
+ * not a plot. It was drawn as a neutral callout carrying a list, on the
+ * grounds that *"a new `.glance-strip` rule would be a new thing to style,
+ * test and keep in print contrast for no gain over a callout"* — a reasonable
+ * call about implementation cost and a wrong one about the page. Twelve washed,
+ * left-ruled boxes of raw dingbats reached one Compass, three of them on one
+ * page. It is a ruled key now; `glanceStrip.pure.ts` carries what was wrong
+ * with the box and what replaced it.
  *
  * ## Height is measured, not guessed
  *
@@ -32,6 +35,7 @@
  * that goes stale the first time a chart's padding changes. A caption adds one
  * line; a chart that refused to draw costs nothing.
  */
+import { glanceRows, renderGlanceStrip } from './glanceStrip.pure.ts';
 import {
   chartFigure,
   renderBars,
@@ -50,8 +54,10 @@ import {
   COMPACT_FIGURE_FRACTION,
   type ChartContext,
 } from '../reportDesign/charts.pure.ts';
-import { escapeHtml, renderCallout, renderSidenote } from '../reportDesign/primitives.pure.ts';
-import type { VizDirective } from './vizDirectives.pure.ts';
+import {
+  escapeHtml, renderDataTable, renderSidenote,
+} from '../reportDesign/primitives.pure.ts';
+import { splitRefusedItem, type VizDirective } from './vizDirectives.pure.ts';
 import {
   calloutCharge, figureCharge, sidenoteCharge, type NarrativeGeometry,
 } from './narrativeGeometry.pure.ts';
@@ -101,10 +107,6 @@ export function viewBoxRatio(svg: string): number | null {
   const h = Number(m[2]) || 0;
   return w > 0 && h > 0 ? h / w : null;
 }
-
-/** Characters of each item, for a callout charge. */
-const itemChars = (items: readonly { text: string; symbol?: string }[]): number[] =>
-  items.map((i) => `${i.symbol ?? ''} ${i.text}`.length);
 
 /** A short, bounded description for the `alt` a tagged PDF needs. */
 function describe(d: VizDirective): string {
@@ -182,8 +184,50 @@ export function renderVizDirective(
     return { html, lines };
   };
 
+  /*
+   * A chart that cannot plot everything it was handed is not a chart.
+   *
+   * `labelledValues` refuses a range (`~0.5–1.6 km`) and an item with no
+   * figure at all, and both refusals are correct — the low end of a range is
+   * not the figure and the midpoint is not in the source. What was wrong is
+   * that the survivors were then drawn as though they were the whole series.
+   * The Cowra Compass printed ONE bar under "Indicative reach from 48 Redfern
+   * Street" where the model had named five amenities, and a second directive
+   * disappeared outright because none of its three items carried a number.
+   * Nine of fifteen items and one whole chart left that document with nothing
+   * on the page to show for it.
+   *
+   * So the figure declines and the same data is set as a table: every label
+   * the reader was promised, every value verbatim, nothing computed and
+   * nothing invented. It is `vizDirectiveTables`' own rule — a promise of a
+   * figure is a figure — applied on the path that draws rather than the path
+   * that tabulates, which is what makes it reach all five formats.
+   */
+  const asTable = (
+    rows: { label: string; value: string }[],
+    valueHeading: string,
+  ): VizFigure | null => {
+    if (!rows.length) return null;
+    const html = renderDataTable(
+      [{ key: 'label', label: 'Item' }, { key: 'value', label: valueHeading, align: 'right' }],
+      rows.map((r) => ({ label: r.label, value: r.value })),
+      { caption: d.kind === 'bars' || d.kind === 'donut' ? d.title : undefined },
+    );
+    if (!html) return null;
+    // A table row is one body line plus the head and the caption.
+    return { html, lines: rows.length + (('title' in d && d.title) ? 2 : 1) };
+  };
+
   switch (d.kind) {
     case 'bars':
+      if (d.refused?.length) {
+        return asTable(
+          d.sources?.length
+            ? d.sources.map(splitRefusedItem)
+            : d.items.map((i) => ({ label: i.label, value: i.display ?? String(i.value) })),
+          d.unit ? `Value (${d.unit})` : 'Value',
+        );
+      }
       return wrap(renderBars(
         ctx,
         d.items.map((i) => ({ label: i.label, value: i.value, display: i.display })),
@@ -191,6 +235,9 @@ export function renderVizDirective(
       ));
 
     case 'donut':
+      if (d.refused?.length) {
+        return asTable((d.sources ?? []).map(splitRefusedItem), 'Share');
+      }
       return wrap(renderDonut(
         drawCtx,
         d.segments.map((s) => ({ label: s.label, value: s.value })),
@@ -203,14 +250,23 @@ export function renderVizDirective(
       return wrap(renderGauge(drawCtx, d.value, { max: d.max, label: d.label, caption: d.caption }));
 
     case 'glance': {
-      // Not a plot. See the module header.
-      const items = d.items
-        .map((i) => `<li>${escapeHtml(i.symbol)} ${escapeHtml(i.text)}</li>`)
-        .join('');
-      if (!items) return null;
-      // `marked`: each item already leads with its own glyph. See the rule.
-      const html = renderCallout('neutral', 'At a glance', `<ul class="marked">${items}</ul>`);
-      return { html, lines: geometry ? calloutCharge(geometry, itemChars(d.items)) : d.items.length + 2 };
+      // Not a plot — a section's findings, set as a ruled key. The glyph is an
+      // INPUT vocabulary: `glanceTone` reads its meaning and the page prints
+      // the word, so a model writing `▲` and one writing `⚠` produce the same
+      // key and neither reaches the paper. See `glanceStrip.pure.ts` for what
+      // the washed, dingbat-stacked callout this replaces got wrong.
+      const rows = glanceRows(d.items);
+      if (!rows.length) return null;
+      const html = renderGlanceStrip(d.items, escapeHtml);
+      if (!html) return null;
+      // Charged on what it will DRAW, not on what was parsed: a repeated or
+      // empty finding is dropped, so the rows are the rows.
+      return {
+        html,
+        lines: geometry
+          ? calloutCharge(geometry, rows.map((r) => `${r.tag}  ${r.text}`.length))
+          : rows.length + 2,
+      };
     }
 
     case 'heatmap':
@@ -221,6 +277,7 @@ export function renderVizDirective(
     case 'margin': {
       // A sidenote, not a chart: the directive's whole purpose is to push
       // secondary context out of the main column. The spark rides inside it.
+      //
       const spark = d.spark.length >= 2 ? renderMarginSpark(ctx, d.spark) : '';
       const body = (d.heading ? `<p><strong>${escapeHtml(d.heading)}</strong></p>` : '')
         + (d.note ? `<p>${escapeHtml(d.note)}</p>` : '')
@@ -253,7 +310,18 @@ export function renderVizDirective(
       ));
 
     case 'timeline':
-      return wrap(renderTimelineRibbon(ctx, d.items, { title: d.title }));
+      /*
+       * The ribbon has four fixed stops, so it can only draw a phase it
+       * recognises and at most two items per stop. It refuses otherwise, and
+       * a refusal must not delete the milestones — placing an unreadable
+       * phase at the far end of the axis is inventing a horizon, which is
+       * what §3 forbids, and the Cowra Compass printed the model's NEXT TWO
+       * YEARS under "5Y+" for exactly that reason.
+       *
+       * Tabulated, the reader gets the model's own phase words verbatim.
+       */
+      return wrap(renderTimelineRibbon(ctx, d.items, { title: d.title }))
+        ?? asTable(d.items.map((i) => ({ label: i.phase, value: i.label })), 'Milestone');
 
     case 'waterfall':
       return wrap(renderWaterfall(ctx, d.items, { mode: 'money' }));

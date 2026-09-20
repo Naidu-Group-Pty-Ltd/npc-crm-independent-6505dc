@@ -287,10 +287,43 @@ function ratingValues(kind: string, payload: string): number[] {
  * So the declaration is the tell. A genuine measured series — a renter share,
  * a median, a count — does not announce that it is scored out of a hundred,
  * and the 228 bars that declare no maximum are left alone.
+ *
+ * ## "Out of ten" is the same announcement
+ *
+ * Page 15 of the Cowra Compass draws *Relative positioning within regional
+ * residential markets* — `Subject property 7.5, Cowra housing market 8.0,
+ * Broader Central Tablelands 6.5`, `max=10 | unit=/10`. Three ratings of a
+ * property, a town and a region, on a record that issued no grade at all. §2
+ * of the acceptance standard names that chart by its numbers.
+ *
+ * It reached the client because the rule read `max=100` and nothing else, so
+ * a scorecard spelled out of TEN was a "measurement". Measured across the 89
+ * retained reports, every declared unit is one of `%` (94), `km` (87), `/10`
+ * (43), `m²` (2), and one each of `min`, `relative`, `incidents`, `score` and
+ * `$` — and all 43 of the `/10` directives are that one chart. A measured
+ * series does not announce that it is out of ten either.
+ *
+ * So the tell is widened by exactly one form: a declared unit of the shape
+ * `/N`. A bare `max=10` is NOT enough — `max` is a chart's axis and a distance
+ * chart legitimately declares `max=3` or `max=5` — which is why this reads the
+ * unit and not the maximum.
  */
-function declaresRatingScale(payload: string): boolean {
+const OUT_OF_N_UNIT = /\bunit\s*=\s*\/\s*(\d+)\b/;
+
+/**
+ * The scale a directive declares, or null where it declares none.
+ *
+ * The scale matters and not just its presence: the engine records 0–100, so a
+ * chart announcing "out of ten" is on a DIFFERENT scale and nothing the engine
+ * recorded can be one of its values. Comparing 7.5 against a recorded 8 and
+ * calling it supported would be a coincidence of digits, not a fact — and
+ * `ratingValues` rounds, so 7.5 would read as 8 exactly.
+ */
+function ratingScaleOf(payload: string): number | null {
   const options = payload.split('|').slice(1).join('|');
-  return /\bmax\s*=\s*100\b/.test(options);
+  const outOf = OUT_OF_N_UNIT.exec(options);
+  if (outOf) return Number(outOf[1]);
+  return /\bmax\s*=\s*100\b/.test(options) ? 100 : null;
 }
 
 /**
@@ -321,9 +354,13 @@ export function suppressUnrecordedVerdictVisuals(
     const kind = m[1];
     const payload = m[2];
     const alwaysRating = kind === 'gauge' || kind === 'wheel';
-    if (!alwaysRating && !declaresRatingScale(payload)) { out.push(line); continue; }
+    const scale = ratingScaleOf(payload);
+    if (!alwaysRating && scale === null) { out.push(line); continue; }
     const values = ratingValues(kind, payload);
-    const unsupported = values.filter((v) => !supported.has(v));
+    // A rating on a scale the engine does not use cannot be one of its
+    // recorded values, whatever the digits happen to be.
+    const offScale = scale !== null && scale !== 100;
+    const unsupported = offScale ? values : values.filter((v) => !supported.has(v));
     // A directive with no readable number is left alone: it is malformed
     // rather than untrue, and that is a different control's business.
     if (!values.length || !unsupported.length) { out.push(line); continue; }

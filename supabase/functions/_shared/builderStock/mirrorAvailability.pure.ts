@@ -141,22 +141,56 @@ export function readStockEmptyState(args: {
  *
  * `builder_network_stock_ranked` and the `rank_*` columns arrive with
  * migration 20261202090000. Measured 19 Sep 2026, none of the three clones has
- * it — the whole fleet's migration ledger stops at 20261123000000 — so the
- * ranked read answers PostgREST **42P01** (undefined_table) or **42703**
- * (undefined_column) and the marketplace 500s over a mirror that may be full.
+ * it — the whole fleet's migration ledger stops at 20261123000000 — and nor
+ * does the PRIME, so the ranked read fails and the marketplace 500s over a
+ * mirror that may be full.
+ *
+ * ## FOUR codes, because PostgREST answers before Postgres does
+ *
+ * This first shipped accepting **42P01** (undefined_table) and **42703**
+ * (undefined_column) — the Postgres codes — and those are not what a caller
+ * receives. PostgREST resolves a relation against its own SCHEMA CACHE and
+ * refuses before the statement is ever planned, so the wire answer is
+ * **PGRST205** for an unknown table and **PGRST204** for an unknown column.
+ * Probed against production on 19 Sep 2026:
+ *
+ * ```
+ * GET /rest/v1/builder_network_stock_ranked?select=id&limit=1
+ * HTTP 404
+ * {"code":"PGRST205","message":"Could not find the table
+ *  'public.builder_network_stock_ranked' in the schema cache"}
+ * ```
+ *
+ * `PGRST205` is neither of the two codes this accepted, so the fallback never
+ * engaged, and the Builder Stock tab answered "Builder stock could not be
+ * loaded." over 46 correctly mirrored properties. The Postgres codes are KEPT
+ * rather than replaced: a direct SQL path, a different PostgREST major, or a
+ * view that exists while a column behind it does not can still raise them, and
+ * a fallback that survives one deployment's error vocabulary and not another's
+ * is the thing being fixed.
  *
  * Narrow on purpose. This decides whether to serve a DIFFERENT query, so it
  * must not swallow a real fault: a permission error, a timeout, a broken
  * connection and a malformed filter are all failures that should still be
- * reported as failures. Only the two codes that mean "this deployment does not
- * have the ranking yet" qualify, and the message must also name the ranking —
- * a 42P01 about some other relation is somebody else's bug, not this fallback's
- * business.
+ * reported as failures. Only codes that mean "this deployment does not have
+ * the ranking yet" qualify, and the message must ALSO name the ranking — a
+ * missing-relation error about some other table is somebody else's bug, not
+ * this fallback's business, and `42501` naming the ranking is a permission
+ * fault that must still be reported.
  */
+const MISSING_RELATION_CODES = new Set([
+  // Postgres, for any path that reaches the planner.
+  '42P01', // undefined_table
+  '42703', // undefined_column
+  // PostgREST's schema cache, which is what a supabase-js caller actually gets.
+  'PGRST205', // "Could not find the table … in the schema cache"
+  'PGRST204', // "Could not find the … column of … in the schema cache"
+]);
+
 export function isMissingRankingRelation(error: unknown): boolean {
   const e = (error ?? {}) as { code?: unknown; message?: unknown };
   const code = typeof e.code === 'string' ? e.code : '';
-  if (code !== '42P01' && code !== '42703') return false;
+  if (!MISSING_RELATION_CODES.has(code)) return false;
   const message = typeof e.message === 'string' ? e.message.toLowerCase() : '';
   return message.includes('builder_network_stock_ranked')
     || message.includes('rank_placement')

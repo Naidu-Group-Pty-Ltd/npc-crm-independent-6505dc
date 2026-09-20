@@ -267,6 +267,13 @@ function buildTemplate(family: DesignFamily, variant: VariantDefinition): Compas
       verdict({
         eyebrow: 'Assessed capacity',
         heading: '{{capacity.borrowing | currency}}',
+        // A currency figure, not a sentence. `fmtCell`'s `currency` case is
+        // `en-AU` AUD at `maximumFractionDigits: 0`, so a capacity below $10m
+        // sets as `$1,234,567` (10 characters) and one below $100m as
+        // `$12,345,678` (11). Eleven is therefore the width, and it fits at
+        // every family's designed verdict size — which is the point of
+        // declaring it rather than letting `boundChars` guess.
+        headingChars: 11,
         body: 'Assessed on {{income.shaded | currency}} of shaded income against '
           + '{{expenses.annual | currency}} of living expenses and '
           + '{{liabilities.annual | currency}} of existing commitments, at an assessment '

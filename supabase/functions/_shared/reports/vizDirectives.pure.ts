@@ -102,13 +102,13 @@ export interface TileEntry { label: string; value: string; sub?: string; intensi
 export interface GlanceItem { symbol: string; text: string }
 
 export type VizDirective =
-  | { kind: 'bars'; items: LabelledValue[]; title?: string; max?: number; unit?: string }
-  | { kind: 'donut'; segments: LabelledValue[]; title?: string; center?: string; centerSub?: string }
+  | { kind: 'bars'; items: LabelledValue[]; title?: string; max?: number; unit?: string; refused?: string[]; sources?: string[]}
+  | { kind: 'donut'; segments: LabelledValue[]; title?: string; center?: string; centerSub?: string; refused?: string[]; sources?: string[]}
   | { kind: 'gauge'; value: number; max: number; label?: string; caption?: string }
   | { kind: 'glance'; items: GlanceItem[] }
   | { kind: 'heatmap'; grid: number[][]; rowLabels: string[]; colLabels: string[]; title?: string }
-  | { kind: 'margin'; label?: string; note?: string; spark: number[]; heading?: string }
-  | { kind: 'pictograph'; filled: number; total: number; icon: 'person' | 'house' | 'dollar'; label?: string; sub?: string; cols?: number }
+  | { kind: 'margin'; label?: string; note?: string; spark: number[]; heading?: string}
+  | { kind: 'pictograph'; filled: number; total: number; icon: 'person' | 'house' | 'dollar'; label?: string; sub?: string; cols?: number}
   | { kind: 'quadrant'; points: QuadrantDot[]; xLabel?: string; yLabel?: string; xMax?: number; yMax?: number; title?: string; q1?: string; q2?: string; q3?: string; q4?: string }
   | { kind: 'tiles'; tiles: TileEntry[]; title?: string; cols?: number }
   | { kind: 'timeline'; items: TimelineEntry[]; title?: string }
@@ -206,7 +206,7 @@ const THOUSANDS_TAIL = /^\d{3}(?:\D|$)/;
 
 /**
  * `Structure 75`, `Rent 45%`, `Median $1.2M`, `Tin Can Bay ~15 min` → a
- * labelled value.
+ * labelled value, PLUS the items it could not read.
  *
  * The `~` is not decoration. Travel-time bars are written `Tin Can Bay ~15 min,
  * Rainbow Beach ~35 min, Gympie ~45 min` throughout the corpus, and without it
@@ -215,18 +215,40 @@ const THOUSANDS_TAIL = /^\d{3}(?:\D|$)/;
  *
  * A *range* — `Drive to Melton Station 8–12 min` — still refuses, and should:
  * the low end is not the figure and the midpoint is not in the source.
+ *
+ * What changed is that the refusal is now REPORTED rather than skipped. On the
+ * Cowra Compass, `{{bars: Schools (primary & secondary) ~0.5–1.6 km, Cowra CBD
+ * ~1.6 km, Supermarkets & town shopping ~1.5–2.0 km, Hospital & health
+ * services ~2.0–3.0 km, Major parks & sports fields ~1.5–3.0 km | title=
+ * Indicative reach from 48 Redfern Street}}` printed **one bar of five** under
+ * that title, and told nobody: four amenities left the client's document with
+ * no mark on the page, which is why four rounds of reading the PDF never found
+ * it. Refusing the value is right; drawing the survivors as if they were the
+ * whole chart is not. `refused` is what lets the figure decline as a whole and
+ * be tabulated in full instead.
  */
-function labelledValues(payload: string): LabelledValue[] {
-  const out: LabelledValue[] = [];
+function labelledValues(payload: string): {
+  values: LabelledValue[];
+  refused: string[];
+  /** Every item in the order the model wrote it — `null` where it was refused. */
+  order: (LabelledValue | null)[];
+  sources: string[];
+} {
+  const values: LabelledValue[] = [];
+  const refused: string[] = [];
+  const order: (LabelledValue | null)[] = [];
+  const sources: string[] = [];
   for (const item of payload.split(ITEM_COMMA).map((s) => s.trim()).filter(Boolean)) {
+    sources.push(item);
     const m = /^(.+?)\s+([~≈]?\s*[\-+]?[$€£]?\s*[\d.,]+\s*[%$kKmM]?[a-zA-Z]*)$/.exec(item);
-    if (!m) continue;
-    const display = m[2].trim();
-    const n = looseNumber(display);
-    if (n === null) continue;
-    out.push({ label: m[1].trim(), value: n * magnitude(display), display });
+    const display = m ? m[2].trim() : '';
+    const n = m ? looseNumber(display) : null;
+    if (!m || n === null) { refused.push(item); order.push(null); continue; }
+    const v = { label: m[1].trim(), value: n * magnitude(display), display };
+    values.push(v);
+    order.push(v);
   }
-  return out;
+  return { values, refused, order, sources };
 }
 
 const num = (raw: string | undefined): number | undefined => {
@@ -361,6 +383,41 @@ export function splitTileLabelValue(text: string): { label: string; value: strin
  * `null` for an unknown kind or a payload that does not yield anything worth
  * drawing — the caller drops it rather than printing it.
  */
+/**
+ * A refused item, split into the label and the text that was not a figure.
+ *
+ * `Schools (primary & secondary) ~0.5–1.6 km` is a label and a RANGE. The
+ * range is printed exactly as written — `~0.5–1.6 km`, not 0.5, not 1.6 and
+ * certainly not 1.05 — because the whole reason the chart declined is that no
+ * single number is in the source. Where nothing on the tail looks like a
+ * measurement at all (`Subject dwelling · 3-bed house`) the row is the item
+ * verbatim with an empty value, which is the honest reading: the model wrote a
+ * label where a figure belonged.
+ */
+const REFUSED_TAIL =
+  /^(.+?)\s+((?:[~≈<>]\s*)?[\-+]?[$€£]?\s*[\d.,]+\s*(?:[–—-]\s*[\-+]?[$€£]?\s*[\d.,]+)?\s*[%$a-zA-Z/²]*)$/;
+
+/**
+ * `Subject dwelling · 3-bed house` is a label and a value too — the value is
+ * just not a number.
+ *
+ * The prompt's own `{{bars}}` examples separate the two with an interpunct or
+ * a dash, and three of the Cowra Compass's items are written that way. Read as
+ * a chart they hold nothing; read as a row they are exactly the comparison the
+ * section was making, which is what §5 asks for where the values are
+ * categorical rather than measured.
+ */
+const TEXT_VALUE_SEPARATOR = /^(.+?)\s+[·•]\s+(.+)$/;
+
+export function splitRefusedItem(item: string): { label: string; value: string } {
+  const trimmed = item.trim();
+  const m = REFUSED_TAIL.exec(trimmed);
+  if (m) return { label: m[1].trim(), value: m[2].trim() };
+  const t = TEXT_VALUE_SEPARATOR.exec(trimmed);
+  if (t) return { label: t[1].trim(), value: t[2].trim() };
+  return { label: trimmed, value: '' };
+}
+
 export function parseVizDirective(kind: string, body: string): VizDirective | null {
   const k = kind.toLowerCase() as VizDirectiveKind;
   if (!VIZ_DIRECTIVE_KINDS.includes(k)) return null;
@@ -371,17 +428,29 @@ export function parseVizDirective(kind: string, body: string): VizDirective | nu
 
   switch (k) {
     case 'bars': {
-      const items = labelledValues(payload);
-      if (!items.length) return null;
-      return { kind: 'bars', items, title: options.title, max: num(options.max), unit: options.unit };
+      const { values, refused, sources } = labelledValues(payload);
+      // Every item refused is still a directive the reader was promised: the
+      // title above it names a chart, so returning null here would delete the
+      // promise along with the figure. It parses, carries what it could not
+      // read, and the renderer decides — see `renderVizDirective`.
+      if (!values.length && !refused.length) return null;
+      return {
+        kind: 'bars', items: values, title: options.title,
+        max: num(options.max), unit: options.unit,
+        // `sources` is every item in the order the model wrote it. A table
+        // built from survivors-then-refusals reorders the reader's list, and
+        // on a proximity chart that order is the finding.
+        ...(refused.length ? { refused, sources } : {}),
+      };
     }
 
     case 'donut': {
-      const segs = labelledValues(payload);
-      if (!segs.length) return null;
+      const { values, refused, sources } = labelledValues(payload);
+      if (!values.length && !refused.length) return null;
       return {
-        kind: 'donut', segments: segs, title: options.title,
+        kind: 'donut', segments: values, title: options.title,
         center: options.center, centerSub: options.centersub,
+        ...(refused.length ? { refused, sources } : {}),
       };
     }
 
@@ -420,7 +489,10 @@ export function parseVizDirective(kind: string, body: string): VizDirective | nu
     case 'margin': {
       const spark = csv(options.spark).map(Number).filter((n) => Number.isFinite(n));
       if (!spark.length && !options.note) return null;
-      return { kind: 'margin', heading: payload || undefined, label: options.label, note: options.note, spark };
+      return {
+        kind: 'margin', heading: payload || undefined, label: options.label,
+        note: options.note, spark,
+      };
     }
 
     case 'pictograph': {
@@ -475,8 +547,25 @@ export function parseVizDirective(kind: string, body: string): VizDirective | nu
     }
 
     case 'timeline': {
+      /*
+       * `splitOutsideQuotes`, not a lookahead, because a milestone label
+       * routinely contains a comma.
+       *
+       * The old split was `/,(?=\s*[^,"]+\s*")/` — a comma followed by a
+       * quote-free run and then a quote. On `Existing "Highway junction · town
+       * centre, hospital, schools", 0-2y "…"` the comma INSIDE the first label
+       * satisfies that lookahead (` hospital` then `"`), so the item was torn
+       * in half and neither half parsed. Measured on the Cowra Compass: page
+       * 11 lost its "Existing" band of four, and page 16 lost both "Existing"
+       * and "0–2y" of three — an infrastructure pipeline that omits what
+       * already exists and what is next, printed under a fixed four-column
+       * axis with one cell filled.
+       *
+       * The helper beside it has known since the 262 Pallas Street render that
+       * a quoted run is one item; the timeline simply never used it.
+       */
       const items: TimelineEntry[] = [];
-      for (const seg of payload.split(/,(?=\s*[^,"]+\s*")/)) {
+      for (const seg of splitOutsideQuotes(payload)) {
         const m = /^([\s\S]+?)\s*"([^"]+)"$/.exec(seg.trim());
         if (m) items.push({ phase: m[1].trim(), label: m[2].trim() });
       }

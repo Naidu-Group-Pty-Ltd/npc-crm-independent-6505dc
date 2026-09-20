@@ -184,6 +184,123 @@ export function ledgerYear(ledger: LoanLedger, year: number): LoanLedgerYear | u
   return ledger.years[Math.min(year, ledger.years.length) - 1];
 }
 
+/**
+ * How far a stored repayment may sit from a candidate schedule and still be
+ * read as that schedule.
+ *
+ * A dollar. Stored repayments are written at full float precision or rounded
+ * to the cent, so the true agreement is to four decimal places — measured, the
+ * three independent production parents agree with their schedule by $0.0000,
+ * $0.0007 and $0.0001. The two candidate schedules, meanwhile, are $353 to
+ * $401 apart on those same records, because interest alone and an amortising
+ * repayment on the same principal are different quantities. A dollar is three
+ * orders of magnitude inside that gap and well outside any rounding, so the
+ * test cannot be decided by either.
+ */
+const STORED_REPAYMENT_TOLERANCE = 1;
+
+/** Which schedule a stored repayment was found to belong to. */
+export type StoredLoanStructureBasis = 'stated' | 'figures_contradict_label';
+
+export interface StoredLoanStructure {
+  /** The sentence the "Loan structure" row prints. */
+  structure: string;
+  basis: StoredLoanStructureBasis;
+  /** The product the stored repayment actually belongs to, whatever the label says. */
+  figuresProduct: LoanProduct;
+}
+
+/** "interest only for 2 years" — the record's stated product, in a clause. */
+function statedProductClause(ledger: LoanLedger): string {
+  if (ledger.loanType !== 'interest_only' || ledger.interestOnlyYears <= 0) {
+    return 'principal and interest';
+  }
+  if (ledger.interestOnlyYearsAssumed) {
+    return 'an interest-only loan, with no interest-only term recorded';
+  }
+  return `interest only for ${ledger.interestOnlyYears} year${ledger.interestOnlyYears === 1 ? '' : 's'}`;
+}
+
+const storedNum = (v: unknown): number | null => {
+  const n = typeof v === 'number' ? v : Number(v);
+  return Number.isFinite(n) ? n : null;
+};
+
+/**
+ * The structure sentence for a STORED loan block that carries none.
+ *
+ * `financial-calculator-service` has published `structure` since the ledger
+ * was wired into it on 15 Sep 2026, and `financialChapters` prints it in the
+ * row directly under "Loan type" precisely so that QA-04 — an interest-only
+ * label over principal-and-interest figures — reads as one reconciled fact
+ * rather than as two contradicting ones. No row written before that date
+ * carries the field, so on every one of them the row does not print and the
+ * contradiction the row exists to reconcile is exactly what a client is left
+ * with: measured 19 Sep 2026, `structure` is absent on 92 of 92 stored reports
+ * holding a loan block, across three independent parents, every one of them
+ * labelled `interest_only`.
+ *
+ * So the sentence is derived on READ, from the record's own figures rather
+ * than from its label, and the arbiter is the stored repayment itself:
+ *
+ * - it agrees with the schedule the record's product and term describe, and
+ *   the row simply predates the field; or
+ * - it agrees, to the cent, with principal and interest from month one — the
+ *   product the arithmetic actually ran, which is what QA-04 was; or
+ * - it agrees with neither, and nothing is derived.
+ *
+ * That third branch is `healFinanceIdentity`'s rule and it is the same rule:
+ * a repair that cannot say which figure is sound is just a third opinion.
+ * Where the figures contradict the label, BOTH are stated and neither is
+ * corrected — the loan offer settles which one is right, and this module has
+ * never seen it. Nothing here changes a number.
+ */
+export function describeStoredLoanStructure(loan: unknown): StoredLoanStructure | null {
+  if (typeof loan !== 'object' || loan === null || Array.isArray(loan)) return null;
+  const l = loan as Record<string, unknown>;
+
+  const loanAmount = storedNum(l.loanAmount);
+  const annualRatePercent = storedNum(l.interestRate);
+  const monthlyPayment = storedNum(l.monthlyPayment);
+  if (loanAmount === null || loanAmount <= 0) return null;
+  if (annualRatePercent === null || annualRatePercent < 0) return null;
+  if (monthlyPayment === null || monthlyPayment <= 0) return null;
+
+  const termYears = storedNum(l.loanTerm) ?? 30;
+  const interestOnlyYears = l.interestOnlyPeriod === undefined || l.interestOnlyPeriod === null
+    ? null
+    : storedNum(l.interestOnlyPeriod);
+
+  const stated = buildLoanLedger({
+    loanAmount, annualRatePercent, termYears,
+    loanType: l.loanType as LoanProduct | string | null | undefined,
+    interestOnlyYears,
+  });
+  if (Math.abs(monthlyPayment - stated.firstMonthlyPayment) <= STORED_REPAYMENT_TOLERANCE) {
+    return { structure: describeLoanStructure(stated), basis: 'stated', figuresProduct: stated.loanType };
+  }
+
+  // Only an interest-only label can be contradicted this way: a loan already
+  // recorded as principal and interest has one schedule, so a repayment that
+  // does not match it does not match anything here either.
+  if (stated.loanType !== 'interest_only') return null;
+
+  const principalAndInterest = buildLoanLedger({
+    loanAmount, annualRatePercent, termYears,
+    loanType: 'principal_interest', interestOnlyYears: 0,
+  });
+  if (Math.abs(monthlyPayment - principalAndInterest.firstMonthlyPayment) > STORED_REPAYMENT_TOLERANCE) {
+    return null;
+  }
+  return {
+    structure: `${describeLoanStructure(principalAndInterest)} — the schedule these repayments were `
+      + `calculated on. The record separately states ${statedProductClause(stated)}, which the repayment `
+      + 'figures do not reflect.',
+    basis: 'figures_contradict_label',
+    figuresProduct: 'principal_interest',
+  };
+}
+
 /** "Interest only for 5 years, then principal and interest over the remaining 25 years (30-year term)". */
 export function describeLoanStructure(ledger: LoanLedger): string {
   if (ledger.loanType === 'interest_only' && ledger.interestOnlyYears > 0) {

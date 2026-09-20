@@ -308,7 +308,7 @@ export const COMPASS_40_SECTIONS: CompassSectionDefinition[] = [
     sectionPriority: 'Medium',
     maxWordCount: 700,
     visualComponents: ['amenityMatrix', 'attributeTable'],
-    purpose: 'One section answering what is nearby and how long it takes to reach — merged from the v2.0 education, retail/healthcare/lifestyle and transport sections. Lead with a single matrix: Amenity / Distance / Current / Future. Covers schools and childcare, healthcare, shopping and dining, parks and recreation, and rail, road, bus and real commute times including honest car-reliance. Top 3–5 per category; full school and facility lists go to the appendix. Render each ONCE.',
+    purpose: 'One section answering what is nearby and how long it takes to reach — merged from the v2.0 education, retail/healthcare/lifestyle and transport sections. Lead with one table that a reader can read as a sentence: what the amenity IS, how far it is and measured how (walking, driving, straight-line), what is there NOW, and what is published as coming. Give the columns those words rather than the four bare nouns the section was specified with — "Amenity / Distance / Current / Future" is the shape of a data structure and reads as one on the page. Covers schools and childcare, healthcare, shopping and dining, parks and recreation, and rail, road, bus and real commute times including honest car-reliance. Top 3–5 per category; full school and facility lists go to the appendix. Render each ONCE.',
   },
   {
     id: 'compass.transportAccess',
@@ -335,8 +335,13 @@ export const COMPASS_40_SECTIONS: CompassSectionDefinition[] = [
   {
     id: 'compass.planningConstraints',
     ordinal: 8,
-    name: 'Planning, Zoning & What Is Mapped Over the Land',
+    name: 'Zoning, Planning and Development Considerations',
     sourceHeadings: [
+      'Zoning, Planning and Development Considerations',
+      // The name this section shipped under until v4.1. Kept so every stored
+      // report still partitions onto this section and none of them loses its
+      // planning chapter to the preamble — a heading belongs to exactly one
+      // section, and retiring a name is not the same as deleting it.
       'Planning, Zoning & What Is Mapped Over the Land',
       'Zoning & Planning Analysis',
       'Planning controls and development registers',
@@ -345,15 +350,15 @@ export const COMPASS_40_SECTIONS: CompassSectionDefinition[] = [
       'Planning Controls',
       'Overlays',
     ],
-    pageBudget: 4,
+    pageBudget: 5,
     includeInCompass: true,
     includeInFinancialReport: false,
     includeInAppendix: false,
     isInternalOnly: false,
     sectionPriority: 'Protected',
-    maxWordCount: 900,
+    maxWordCount: 1100,
     visualComponents: ['planningActionTable', 'attributeTable', 'confidenceChip'],
-    purpose: 'The section this report had no home for. Zoning and planning were sourceHeadings of the Risk Dashboard — a 500-word table whose own purpose says "the table IS the section" — so the controls retrieved for the property had nowhere to be explained and the reader got a row. Lead with the retrieved register: the zone and its instrument, the height, floor space and minimum-lot controls with the clause that creates each one, and every overlay or hazard a register returned, each with its currency date. Then explain what each control OBLIGES — not what it is called — and close with the certificate that settles it in this jurisdiction and the questions to put with it. State only what the register returned; where a register answered and found nothing, say it was checked; where none was reached, say the council scheme has not been read. An absence is never a clearance and a zone that admits a use is never approval for it. NO financial figures.',
+    purpose: 'The section this report had no home for. Zoning and planning were sourceHeadings of the Risk Dashboard — a 500-word table whose own purpose says "the table IS the section" — so the controls retrieved for the property had nowhere to be explained and the reader got a row. Lead with the retrieved register: the zone and its instrument, the height, floor space and minimum-lot controls with the clause that creates each one, and every overlay or hazard a register returned, each with its currency date. Then explain what each control OBLIGES — not what it is called — and close with the certificate that settles it in this jurisdiction and the questions to put with it. State only what the register returned; where a register answered and found nothing, say it was checked; where none was reached, say the council scheme has not been read. An absence is never a clearance and a zone that admits a use is never approval for it. NO financial figures. OPEN with the property\'s verified identity — the lot and plan, the parcel area and its basis, the local government area — because a planning finding is about a PARCEL and a reader cannot check one against an address alone. Then, for every control and every land use: what was FOUND, what it MEANS for this property, the PRACTICAL implication for a buyer or a holder, and what REMAINS to be verified and where. Four moves, in that order, in ordinary sentences — never as four labelled fields. Where the land use table was retrieved it is the authority on what may be built: do not soften a prohibition into a possibility and do not infer a secondary dwelling, a dual occupancy or a subdivision from the block size, the street or the zone code. Land size is not a permission.',
   },
   {
     id: 'compass.environmentSafety',

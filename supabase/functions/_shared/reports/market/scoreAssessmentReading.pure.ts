@@ -120,6 +120,8 @@ export interface AssessmentDimension {
   exclusionRemedy: string | null;
   /** The engine's named inputs. Technical record only — never a client column. */
   inputs: string[];
+  /** The invalid stored reading, where the row held one; null otherwise. */
+  invalidScore: number | null;
 }
 
 /**

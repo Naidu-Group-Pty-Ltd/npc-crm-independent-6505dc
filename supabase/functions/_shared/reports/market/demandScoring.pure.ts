@@ -73,14 +73,26 @@
  * with 7% vacancy is a different proposition from a 6% yield at 0.8%, and
  * collapsing them loses precisely that.
  *
- * ## The four components
+ * ## The five components
  *
- * | component | weight | measures |
- * | --- | ---: | --- |
- * | rental tightness | 0.35 | can it be let, and how quickly |
- * | sale urgency | 0.35 | how hard buyers compete for stock |
- * | absorption | 0.15 | turnover against stock on the market |
- * | population driver | 0.15 | whether the resident base is growing |
+ * | component | weight | primary | measures |
+ * | --- | ---: | :---: | --- |
+ * | rental tightness | 0.30 | yes | can it be let, and how quickly |
+ * | sale urgency | 0.30 | yes | how hard buyers compete for stock |
+ * | transaction volume | 0.15 | yes | how much stock changes hands, against this market's own rate |
+ * | absorption | 0.10 | yes | turnover against stock on the market |
+ * | population driver | 0.15 | **no** | whether the resident base is growing |
+ *
+ * Transaction volume joined at 4.0.0 and is the component this dimension
+ * needed: every other primary measure comes from a vendor feed nobody here is
+ * entitled to, while the open sales register publishes a count beside every
+ * median it publishes — and until 4.0.0 only the LATEST row's count was read,
+ * as a confidence sample size and never as a measurement. Absorption keeps its
+ * place and drops to 0.10 because it answers the same question through a
+ * denominator no Australian publisher prints.
+ *
+ * `populationDriver` is the one component that may not carry the dimension
+ * alone. See {@link DEMAND_PRIMARY} for what that cost before it was enforced.
  *
  * Sale urgency takes three readings — days on market, vendor discount, auction
  * clearance — and **blends them into one component rather than scoring three**.
@@ -104,16 +116,58 @@ import {
 import { interpolate, quartersSince, type ConfidenceBand } from './growthScoring.pure.ts';
 
 /** Bumped whenever a weight, anchor or rule changes. Persisted with the score. */
-export const DEMAND_METHODOLOGY_VERSION = '3.0.0';
+export const DEMAND_METHODOLOGY_VERSION = '4.0.0';
 
 export const DEMAND_WEIGHTS = {
-  rentalTightness: 0.35,
-  saleUrgency: 0.35,
-  absorption: 0.15,
+  rentalTightness: 0.30,
+  saleUrgency: 0.30,
+  transactionVolume: 0.15,
+  absorption: 0.10,
   populationDriver: 0.15,
 } as const;
 
 export type DemandComponentKey = keyof typeof DEMAND_WEIGHTS;
+
+/**
+ * The components that may CARRY this dimension, and the one that may not.
+ *
+ * ## What 97 Poole Road, Kellyville was scored on
+ *
+ * Demand 13 of 100. Reproduced exactly from the record on 20 Sep 2026:
+ * the ABS Estimated Resident Population for SA2 Kellyville - East moved
+ * 17,911 to 17,584 between 2020 and 2025, which is -0.368% a year, and
+ * `interpolate(-0.368, POPULATION_ANCHORS)` is 12.64. That was the ONLY
+ * component present. Nothing else in `MarketEvidence` reached this module.
+ *
+ * The score renormalises over what was measured — `c.score * (WEIGHT /
+ * weightCovered)` — so `populationDriver`'s 0.15 divided by a coverage of
+ * 0.15 is **1.00**, and a driver carried the whole dimension. This module's
+ * own header forbids that in as many words: *"It carries 0.15, so it can
+ * inform a Demand score and cannot carry one."* A rule stated in a comment
+ * that the arithmetic did not enforce.
+ *
+ * The consequence was not academic. Demand contributed 2.05 points of the
+ * property's 48, on one demographic drift reading, in a postcode the same
+ * report shows transacting 162 houses in a quarter at a $1.808m median with
+ * 6.3% annual growth. Withholding it instead gives 54 — six points and a
+ * grade band, from one defect.
+ *
+ * ## The rule
+ *
+ * **A dimension is scored only where something that measures it directly was
+ * measured.** A driver says a reason to EXPECT demand; it is not an
+ * observation of demand, and no renormalisation turns one into the other. On
+ * a record with nothing but drivers the score is `null` and `missing` names
+ * what was not reached — which is the same answer this module already gives
+ * for a record with nothing at all, and for the same reason.
+ *
+ * The driver is not discarded: it stays in `components`, it still carries its
+ * weight wherever a primary measure is present, and a report can still print
+ * it as evidence. It simply cannot be the whole of a score.
+ */
+export const DEMAND_PRIMARY: ReadonlySet<DemandComponentKey> = new Set([
+  'rentalTightness', 'saleUrgency', 'transactionVolume', 'absorption',
+]);
 
 /**
  * Evidence this module deliberately does not read, and who owns it.
@@ -173,6 +227,39 @@ export const CLEARANCE_ANCHORS: ReadonlyArray<readonly [number, number]> = [
 export const ABSORPTION_ANCHORS: ReadonlyArray<readonly [number, number]> = [
   [0, 0], [0.2, 20], [0.4, 40], [0.6, 58], [0.8, 74], [1.0, 86], [1.4, 100],
 ];
+
+/**
+ * Transactions in the latest period against this market's OWN recent normal.
+ *
+ * A ratio, not a count: 162 sales means nothing without knowing whether this
+ * postcode usually does 90 or 300. Measured against its own trailing mean the
+ * number becomes a statement — this market is turning over faster, or slower,
+ * than it has been.
+ *
+ * 1.0 scores 50 and that is a MEASUREMENT for the same reason 3.0% vacancy is:
+ * a market transacting at exactly its own recent rate is, by construction, in
+ * balance with itself. Below 0.6 buyers and sellers have stopped meeting;
+ * above 1.5 stock is clearing far faster than this market's habit.
+ *
+ * Seasonality is the known limitation and is handled by the baseline rather
+ * than argued away: the mean is taken over the whole trailing window, so a
+ * window spanning a year contains one of each quarter. A register publishing
+ * annual periods — which the NSW DCJ series does for this postcode — has no
+ * seasonality to handle.
+ */
+export const VOLUME_RATIO_ANCHORS: ReadonlyArray<readonly [number, number]> = [
+  [0.4, 5], [0.6, 20], [0.8, 38], [1.0, 50], [1.2, 66], [1.5, 82], [2.0, 95], [3.0, 100],
+];
+
+/**
+ * The fewest PRIOR periods a baseline may be built from.
+ *
+ * Three, because two is a line and one is an anecdote: a mean of fewer than
+ * three observations moves further on one unusual period than the latest
+ * reading it is meant to judge. A register with a shorter history yields no
+ * component rather than a confident ratio against noise.
+ */
+export const VOLUME_BASELINE_PERIODS = 3;
 
 /** Resident population growth, per cent per annum. The national rate is ~1.5%. */
 export const POPULATION_ANCHORS: ReadonlyArray<readonly [number, number]> = [
@@ -283,6 +370,45 @@ export function scoreAbsorption(ev: MarketEvidence): DemandComponent | null {
       `${sales.value.toLocaleString('en-AU')} sales against `
       + `${listings.value.toLocaleString('en-AU')} advertised (${(ratio * 100).toFixed(0)}% absorbed)`,
     evidence: [sales, listings],
+  };
+}
+
+/**
+ * How much stock is changing hands, against this market's own recent rate.
+ *
+ * Reads the volume series the sales register has published beside every
+ * median it publishes and which nothing had ever measured — only the latest
+ * row's count was read, as a confidence sample size. It is a PRIMARY demand
+ * measure: transaction volume is not price (Growth owns price at every
+ * horizon) and not rent (Yield owns the rent level), and it is what
+ * {@link scoreAbsorption} was reaching for without a denominator anybody
+ * publishes.
+ */
+export function scoreTransactionVolume(ev: MarketEvidence): DemandComponent | null {
+  const p = ev.salesVolumeSeries;
+  if (!p || !Array.isArray(p.value)) return null;
+  const periods = p.value.filter((r) => Number.isFinite(r?.value) && r.value >= 0);
+  if (periods.length < VOLUME_BASELINE_PERIODS + 1) return null;
+
+  const latest = periods[periods.length - 1];
+  const prior = periods.slice(0, -1);
+  const baseline = prior.reduce((sum, r) => sum + r.value, 0) / prior.length;
+  // A market that recorded no sales at all across its whole baseline has no
+  // normal to be measured against — that is a register gap, not a reading.
+  if (!(baseline > 0)) return null;
+
+  const ratio = latest.value / baseline;
+  const pct = Math.round((ratio - 1) * 100);
+  const direction = pct === 0 ? 'in line with' : pct > 0 ? `${pct}% above` : `${Math.abs(pct)}% below`;
+  return {
+    key: 'transactionVolume',
+    score: clamp(interpolate(ratio, VOLUME_RATIO_ANCHORS)),
+    input: Number(ratio.toFixed(3)),
+    unit: 'ratio',
+    detail: `${latest.value.toLocaleString('en-AU')} sales in ${p.areaName}, `
+      + `${direction} the ${prior.length}-period average of `
+      + `${Math.round(baseline).toLocaleString('en-AU')}`,
+    evidence: [p as EvidencePoint<unknown>],
   };
 }
 
@@ -440,6 +566,7 @@ export function scoreDemand(ev: MarketEvidence, now: Date = new Date()): DemandR
   const built = [
     scoreRentalTightness(ev),
     scoreSaleUrgency(ev),
+    scoreTransactionVolume(ev),
     scoreAbsorption(ev),
     scorePopulationDriver(ev),
   ].filter((c): c is DemandComponent => c !== null);
@@ -448,7 +575,16 @@ export function scoreDemand(ev: MarketEvidence, now: Date = new Date()): DemandR
   const missing = (Object.keys(DEMAND_WEIGHTS) as DemandComponentKey[]).filter((k) => !present.has(k));
 
   const weightCovered = built.reduce((s, c) => s + DEMAND_WEIGHTS[c.key], 0);
-  const score = weightCovered > 0
+  /*
+   * A driver may inform a score and may not be one.
+   *
+   * Renormalisation is what made `populationDriver`'s 0.15 into 1.00 on
+   * 97 Poole Road and published a demographic drift reading as a Demand of
+   * 13. See {@link DEMAND_PRIMARY}: without something that measures demand
+   * directly there is no score, only evidence.
+   */
+  const carried = built.some((c) => DEMAND_PRIMARY.has(c.key));
+  const score = weightCovered > 0 && carried
     ? Math.round(built.reduce((s, c) => s + c.score * (DEMAND_WEIGHTS[c.key] / weightCovered), 0))
     : null;
 

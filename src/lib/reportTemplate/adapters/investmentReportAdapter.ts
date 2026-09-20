@@ -3,6 +3,7 @@ import { invokeSecureFunction } from '@/lib/secureInvoke';
 import { extractStructureHeadings, selectStructureTemplate } from '@/lib/reportTemplate/cascadeMap';
 import { chunkReportContent } from '@/lib/reportTemplate/reportSections';
 import { presentStoredMarkdown } from '@/lib/reports/investment/derivedHygiene.pure';
+import { readEvidenceInventory } from '@/lib/reports/investment/chartEvidence.pure';
 import { investmentReportFileName } from '@/lib/reports/investment/reportFileName.pure';
 import { applyInvestmentProjection } from '../../../../supabase/functions/_shared/reportBindingProjection.pure';
 import type { BrandContext, ReportListing, ReportTemplateAdapter, RoutingContext, TemplateBindingContext } from './types';
@@ -218,7 +219,10 @@ export const investmentReportAdapter: ReportTemplateAdapter = {
     // narrative — so the row is presented once, here, for both.
     const row = {
       ...loaded,
-      report_content: presentStoredMarkdown(presentedContent === null ? loaded.report_content : presentedContent),
+      report_content: presentStoredMarkdown(
+        presentedContent === null ? loaded.report_content : presentedContent,
+        readEvidenceInventory(loaded as unknown as Record<string, unknown>),
+      ),
       ...(includeScoring ? {} : { investment_score: null }),
     };
 

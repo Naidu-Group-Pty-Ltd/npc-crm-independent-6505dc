@@ -5,6 +5,7 @@ import { fitTocEntries, splitTocColumns, tocOmittedLine } from './tocFit';
 import {
   listedSectionLevel, narrativeIndexFrom, type NarrativeIndexSection,
 } from '../narrativeIndex';
+import { scopeContentsEntries } from '../contentsScope.pure';
 
 export function renderTocHtml(block: Block, ctx: HtmlBlockContext): string {
   const p = block.props as Record<string, unknown>;
@@ -82,10 +83,29 @@ export function renderTocHtml(block: Block, ctx: HtmlBlockContext): string {
   }
   const narrativePages = new Set(index.narrativePages);
 
-  const entries = pages
+  const candidates = pages
     .map((pg, i) => ({ pg, i }))
     .filter(({ pg, i }) => (sectionsOn.has(i)
       || (!narrativePages.has(i) && (i === 0 || pg.tocContinues !== true))));
+
+  /**
+   * The front matter of a list is not an entry in it.
+   *
+   * Page 2 of the 97 Poole Road Compass opened `1. Cover / 2. Contents /
+   * 3. Executive dashboard` — the first row pointing at the sheet before this
+   * one and the second at the sheet the reader is holding. The filter above
+   * kept both by construction, and `i === 0` FORCED the cover in past even
+   * the `tocContinues` test. See `scopeContentsEntries` for the two bounds
+   * that keep it off a page which opens a section and off a list it would
+   * empty.
+   */
+  const scope = scopeContentsEntries({
+    candidates: candidates.map(({ i }) => i),
+    selfIndex: ctx.pageIndex,
+    opensSection: (i) => sectionsOn.has(i),
+  });
+  const keep = new Set(scope.listed);
+  const entries = candidates.filter(({ i }) => keep.has(i));
 
   /**
    * The list fits the page it is printed on — see `tocFit.ts`. A 41-section

@@ -156,7 +156,7 @@ function firstFeature(body: unknown):
 function ringsOf(feature: ArcgisFeature): ParcelPolygon | null {
   const rings = feature.geometry?.rings;
   if (!Array.isArray(rings) || rings.length === 0) return null;
-  return { rings: rings as ParcelPolygon['rings'] };
+  return { rings: rings as unknown as ParcelPolygon['rings'] };
 }
 
 export function parseQldParcel(body: unknown): ParcelResolution {

@@ -199,7 +199,7 @@ describe('rule 2 — an absence is coverage, never a quadrant entry', () => {
   it('names an empty quadrant as a statement about the record, never as a clearance', () => {
     const bare = base({
       market: market([]), finance: null,
-      score: { grade: null, total: null, gaps: [], dimensions: [], coverageLabel: null, weightCovered: null, notAssessed: {}, authority: null },
+      score: { grade: null, total: null, gaps: [], dimensions: [], coverageLabel: null, weightCovered: null, notAssessed: {}, authority: null, assessment: null },
       planning: { zone: null, zoneStatus: null, zoneSource: null, zoneEffectiveDate: null, council: null, verification: null, retrievedAt: null },
       transport: { source: null, verdict: null, countReading: null, nearestKm: null, nearestName: null, sources: [], feedLoadedAt: null,
  measuredAt: null, notMeasured: [] },

@@ -105,7 +105,46 @@ export function toReportProgress(row: ProgressRow, now: number): ReportProgress 
     createdAt: new Date(createdAt),
     bulkJobId: row.bulk_job_id ?? null,
     generationEngine: engine,
+    // `totalSections` above may be the registry's guess. This says whether the
+    // RECORD stated it, which is the difference between a run that is
+    // researching and a run that is hung — see `generationPhase`.
+    sectionPlanSettled: persistedTotal > 0,
   };
+}
+
+/**
+ * What the run is doing, as far as the record can say.
+ *
+ * The reported incident was a run reading `Section 1 of 15 · 0/15 · 0% · 21m 2s
+ * elapsed`. Two things were wrong with that line and only one of them was the
+ * run: it had genuinely banked nothing, and the widget had also been printing
+ * exactly that line since the first second, because `totalSections` falls back
+ * to the tier registry when the server has not stated one. So a healthy
+ * forty-second research phase and a twenty-one minute hang produced the same
+ * words, and nobody could tell them apart by looking.
+ *
+ * `investment_reports` writes `total_sections` on the first progressive save —
+ * which is also the first moment any prose exists — so its absence is a real,
+ * readable signal that the run has not yet started writing. Nothing new is
+ * stored and nothing is inferred: this reads two columns the row already has.
+ *
+ * Deliberately NOT a fifth `ActivityState`. Stall detection, the header counts
+ * and the resume decision all key on that vocabulary, and adding a member would
+ * change what those mean. A phase says what is happening; a state says whether
+ * anything is wrong.
+ */
+export type GenerationPhase = 'queued' | 'researching' | 'writing' | 'assembling';
+
+export function generationPhase(report: ReportProgress): GenerationPhase {
+  if (report.status === 'pending') return 'queued';
+  // A legacy row, or one mid-flight before the widget was updated, has no flag.
+  // Treat it as settled so it renders exactly as it did before.
+  const settled = report.sectionPlanSettled !== false;
+  if (!settled && report.sectionsCompleted === 0) return 'researching';
+  if (settled && report.totalSections > 0 && report.sectionsCompleted >= report.totalSections) {
+    return 'assembling';
+  }
+  return 'writing';
 }
 
 export type ActivityState = 'queued' | 'generating' | 'stalled' | 'failed' | 'completed';
