@@ -1,0 +1,53 @@
+name: Builder Network sync state
+
+# READ-ONLY. Traces this side of the Network → Clone stock sync so a mirror
+# that has stopped moving can be explained by rows rather than by a theory:
+# the flag, the connection, the inbox, the sweep's driver, the mirror, the
+# stamp and the refusals, printed in the order a delivery travels through
+# them.
+#
+# The script refuses any statement that is not a SELECT. It does not call the
+# apply function, does not touch the flag and delivers nothing — the broken
+# step has to be established before anything changes, because a repair
+# applied first destroys the evidence that would have named it.
+
+on:
+  workflow_dispatch:
+    inputs:
+      note:
+        description: Why this trace is being run
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: builder-network-sync-state
+  cancel-in-progress: false
+
+jobs:
+  trace:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: refuse to pretend
+        if: ${{ env.TOKEN == '' }}
+        env:
+          TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          echo '::error::SUPABASE_ACCESS_TOKEN is not configured — nothing can be read from the live project.'
+          exit 1
+
+      - name: trace the inbound path
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          NOTE: ${{ inputs.note }}
+        run: |
+          set -euo pipefail
+          [ -n "${NOTE:-}" ] && echo "note: $NOTE" || true
+          node .github/scripts/builder-network-sync-state.mjs

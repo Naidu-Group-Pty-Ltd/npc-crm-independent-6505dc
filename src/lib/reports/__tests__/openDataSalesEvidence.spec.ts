@@ -53,13 +53,24 @@ describe('the points a series becomes', () => {
   it('draws every growth key the scorer reads, from the asked dwelling type', () => {
     expect(Object.keys(result.points).sort()).toEqual([
       'benchmarkGrowth1Year', 'benchmarkGrowth3YearCagr', 'benchmarkGrowth5YearCagr', 'benchmarkMedianPrice',
-      'growth10YearCagr', 'growth1Year', 'growth3YearCagr', 'growth5YearCagr', 'medianPrice', 'priceSeries', 'salesCount',
+      'growth10YearCagr', 'growth1Year', 'growth3YearCagr', 'growth5YearCagr', 'medianPrice', 'priceSeries',
+      // The counts this register prints beside every median it prints. Until
+      // 4.0.0 only the LATEST row's count was read, as a confidence sample
+      // size — see `scoreTransactionVolume` for what it measures.
+      'salesCount', 'salesVolumeSeries',
     ]);
     expect(result.dwellingType).toBe('house');
     expect(result.dwellingTypeMatched).toBe(true);
     expect(result.latestPeriod).toBe('2026-03');
     expect(result.pricedPeriods).toBe(45);
     expect(result.points.growth5YearCagr!.value).toBeCloseTo(6, 0);
+    // The volume series is the register's own counts, oldest first, and it is
+    // a DEMAND measure: how much stock changed hands, not what it went for.
+    const volume = result.points.salesVolumeSeries!.value as Array<{ period: string; value: number }>;
+    expect(volume.length).toBe((result.points.priceSeries!.value as unknown[]).length);
+    expect(volume[volume.length - 1].period).toBe('2026-03');
+    expect(volume.every((r) => Number.isFinite(r.value) && r.value >= 0)).toBe(true);
+    expect(result.points.salesVolumeSeries!.sourceNote).toContain('sold in');
     expect(result.points.growth1Year!.value).toBeCloseTo(6, 0);
     expect(result.points.priceSeries!.value).toHaveLength(45);
     expect(result.points.priceSeries!.value[0]).toEqual({ period: '2015-03', value: 400000 });

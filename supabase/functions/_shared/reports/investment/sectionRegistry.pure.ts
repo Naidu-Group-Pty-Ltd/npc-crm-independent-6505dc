@@ -717,6 +717,8 @@ export const SECTION_REGISTRY: readonly SectionDefinition[] = [
     aliases: [
       'Planning, Zoning and Title Due Diligence', 'Zoning', 'Planning', 'Property & Zoning',
       'Zoning & Planning Analysis',
+      'Zoning, Planning and Development Considerations',
+      'Planning, Zoning & What Is Mapped Over the Land',
       'Government Policy & Regulation',
     ],
     purpose:
@@ -746,7 +748,7 @@ export const SECTION_REGISTRY: readonly SectionDefinition[] = [
       // report's planning section also needs TITLE and easements, which no
       // register here reads. Half a section declared as a whole one is the
       // failure this registry exists to stop.
-      compass: { depth: 'required', order: 10, label: 'Planning, Zoning & What Is Mapped Over the Land', producer: authored('generator.compass') },
+      compass: { depth: 'required', order: 10, label: 'Zoning, Planning and Development Considerations', producer: authored('generator.compass') },
       briefing: merged('riskDashboard'),
       strategic: { depth: 'required', order: 15, label: 'Planning, Zoning and Title Due Diligence', producer: null },
     },

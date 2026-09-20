@@ -14,6 +14,7 @@ import {
   directiveOnlyBlock,
   parseVizDirective,
   parseVizDirectives,
+  splitRefusedItem,
   splitTileLabelValue,
   type VizDirective,
 } from '../vizDirectives.pure';
@@ -146,10 +147,71 @@ describe('the details a naive split gets wrong', () => {
     ]);
   });
 
-  it('refuses a range rather than picking an end of it', () => {
+  it('refuses to PLOT a range, and reports the refusal rather than swallowing it', () => {
     // `Drive to Melton Station 8–12 min` — 8 is not the figure and 10 is not in
-    // the source. Real string; it stays prose-free and undrawn.
-    expect(parseOne('{{bars: Drive to Melton Station 8–12 min}}')).toBeNull();
+    // the source, so no bar is drawn for it. That much has always been right.
+    //
+    // What it must NOT do is vanish. The Cowra Compass printed one bar under
+    // "Indicative reach from 48 Redfern Street" where the model named five
+    // amenities: four carried ranges, all four were skipped, and the chart
+    // shortened itself with nothing on the page to show for it. The directive
+    // now parses, plots nothing, and hands the renderer every item verbatim.
+    const d = parseOne('{{bars: Drive to Melton Station 8–12 min}}') as Extract<VizDirective, { kind: 'bars' }>;
+    expect(d.items).toEqual([]);
+    expect(d.refused).toEqual(['Drive to Melton Station 8–12 min']);
+    expect(d.sources).toEqual(['Drive to Melton Station 8–12 min']);
+  });
+
+  it('keeps every item, in the model\'s own order, when only some are refused', () => {
+    // Verbatim from 48 Redfern Street. Order is the finding on a proximity
+    // chart, so a table built survivors-first would reorder the reader's list.
+    const d = parseOne(
+      '{{bars: Schools (primary & secondary) ~0.5–1.6 km, Cowra CBD ~1.6 km, '
+      + 'Supermarkets & town shopping ~1.5–2.0 km, Hospital & health services ~2.0–3.0 km, '
+      + 'Major parks & sports fields ~1.5–3.0 km | title=Indicative reach | max=5 | unit=km}}',
+    ) as Extract<VizDirective, { kind: 'bars' }>;
+    expect(d.items).toHaveLength(1);
+    expect(d.refused).toHaveLength(4);
+    expect(d.sources).toHaveLength(5);
+    expect(d.sources?.[0]).toContain('Schools');
+    expect(d.sources?.[4]).toContain('Major parks');
+  });
+
+  it('a directive whose every item is prose still parses, so the promise survives', () => {
+    // `{{bars: Subject dwelling · 3-bed house, …}}` held no numbers at all and
+    // returned null, so the whole visual left the document with no trace. The
+    // items are a label and a CATEGORICAL value; they belong in a table.
+    const d = parseOne(
+      '{{bars: Subject dwelling · 3-bed house, Suburb norm · Predominantly 3–4 bed houses '
+      + '| title=Dwelling type alignment | max=3}}',
+    ) as Extract<VizDirective, { kind: 'bars' }>;
+    expect(d).not.toBeNull();
+    expect(d.items).toEqual([]);
+    expect(d.sources).toHaveLength(2);
+  });
+
+  it('a timeline milestone may contain a comma', () => {
+    // The old split was a lookahead for a comma-free run before the next
+    // quote, which a comma INSIDE the first label satisfies — so
+    // `Existing "Highway junction · town centre, hospital, schools"` was torn
+    // in half and neither half parsed. Cowra lost its "Existing" band of four
+    // on page 11 and both "Existing" and "0–2y" of three on page 16.
+    const d = parseOne(
+      '{{timeline: Existing "Highway junction · town centre, hospital, schools", '
+      + '0-2y "Incremental health & education upgrades", '
+      + '3-5y "Further road improvements", 5y+ "Ongoing renewal" | title=Pipeline}}',
+    ) as Extract<VizDirective, { kind: 'timeline' }>;
+    expect(d.items.map((i) => i.phase)).toEqual(['Existing', '0-2y', '3-5y', '5y+']);
+    expect(d.items[0].label).toBe('Highway junction · town centre, hospital, schools');
+  });
+
+  it('splitRefusedItem keeps a range verbatim and never picks an end of it', () => {
+    expect(splitRefusedItem('Schools (primary & secondary) ~0.5–1.6 km'))
+      .toEqual({ label: 'Schools (primary & secondary)', value: '~0.5–1.6 km' });
+    expect(splitRefusedItem('Subject dwelling · 3-bed house'))
+      .toEqual({ label: 'Subject dwelling', value: '3-bed house' });
+    expect(splitRefusedItem('Something with no value at all'))
+      .toEqual({ label: 'Something with no value at all', value: '' });
   });
 
   it('keeps a thousands separator inside a bar value', () => {

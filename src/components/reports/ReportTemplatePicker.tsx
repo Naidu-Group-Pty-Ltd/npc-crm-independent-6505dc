@@ -362,7 +362,7 @@ export function ReportTemplatePicker({ reportType, formatLabel, open, onOpenChan
     if (!choice.startsWith('lib:')) return null;
     const found = entryById.get(choice.slice(4));
     if (!found) return null;
-    const reading = assessTemplateFit(found.entry.requiredBindings, normaliseReportType(reportType) ?? reportType);
+    const reading = assessTemplateFit(found.entry.compatibility.requiredBindings, normaliseReportType(reportType) ?? reportType);
     const caveat = templateFitCaveat(reading, formatLabel);
     return caveat ? { reading, caveat } : null;
   }, [choice, entryById, reportType, formatLabel]);

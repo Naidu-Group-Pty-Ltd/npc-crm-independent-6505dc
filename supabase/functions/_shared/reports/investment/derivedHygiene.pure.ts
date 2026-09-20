@@ -19,6 +19,19 @@
  *    declares; anything else the model volunteered is dropped and named.
  */
 
+import { enforceChartEvidence, type EvidenceInventory } from './chartEvidence.pure.ts';
+import { alignChartScales } from './chartScale.pure.ts';
+import { tabulateMixedUnitCharts } from './chartUnits.pure.ts';
+import { dedupeChartDirectives } from './blockHygiene.pure.ts';
+import { limitEmphasis } from './emphasisDensity.pure.ts';
+import { stripFootnoteDebris } from './footnoteDebris.pure.ts';
+import {
+  PLANNING_REGISTER_SECTION,
+  dedupeRegisterTables,
+  stripHeadingScaffolding,
+} from './registerTables.pure.ts';
+import { foldStraySections } from './sectionFolding.pure.ts';
+
 const PLACEHOLDER_CELL = /^(?:n\/?a|tbd|to be determined|not available|not provided|unknown|—|-|–)\.?$/i;
 
 const isSeparatorRow = (cells: string[]): boolean =>
@@ -370,6 +383,116 @@ export function dropEmptyTableColumns(markdown: string): EmptyColumnResult {
 }
 
 /**
+ * A wide table's column that says the same thing on every row.
+ *
+ * ## What page 34 of the 97 Poole Road Compass printed
+ *
+ * *Infrastructure and development retrieved for this property*, nine columns
+ * wide, guillotined at the right page edge: the header cut to `Deliver /
+ * timing` and every cell under it to `Not / publish / by this / registe`.
+ *
+ * Two of those nine columns held the SAME value on all five rows —
+ *
+ * ```
+ * Funding          Not stated — the figure is the applicant's own cost of development
+ * Delivery timing  Not published by this register
+ * ```
+ *
+ * — repeated down the page, carrying no information per row and costing the
+ * measure the width that then cut the table off. A column whose every cell is
+ * identical is a FOOTNOTE, not a column.
+ *
+ * ## The rule
+ *
+ * Stated once below the table, not repeated down it. The value is never
+ * discarded and never abbreviated: the note carries the header and the whole
+ * cell, verbatim, so a reader learns exactly what the register said.
+ *
+ * Three bounds, each so this cannot reach a table that was already right.
+ *
+ * **Only a WIDE table.** Under {@link CONSTANT_COLUMN_MIN_WIDTH} columns the
+ * measure is not under pressure and a repeated column may be a deliberate
+ * comparison — the author's "Status: Determined" beside three dates is a
+ * different thing from a register printing its own limitation five times.
+ *
+ * **Never the first column**, which is the row's identity, and never below
+ * two columns, which is the same floor `dropEmptyTableColumns` keeps.
+ *
+ * **Two rows is not a pattern.** A table of one or two body rows has no
+ * "every row" worth the name.
+ */
+export const CONSTANT_COLUMN_MIN_WIDTH = 6;
+/** Two rows agreeing is a coincidence; three is a column that says one thing. */
+export const CONSTANT_COLUMN_MIN_ROWS = 3;
+
+export interface ConstantColumnResult {
+  markdown: string;
+  /** `[table index, header, the one value]` for each column folded out. */
+  folded: Array<{ table: number; header: string; value: string }>;
+}
+
+export function foldConstantTableColumns(markdown: string): ConstantColumnResult {
+  const lines = markdown.split('\n');
+  const folded: ConstantColumnResult['folded'] = [];
+  const out: string[] = [];
+  let tableIndex = 0;
+  let i = 0;
+  const cellsAt = (n: number): string[] | null =>
+    (n >= 0 && n < lines.length ? splitRow(lines[n]) : null);
+
+  while (i < lines.length) {
+    const headerCells = cellsAt(i);
+    const ruleCells = cellsAt(i + 1);
+    if (!headerCells || !ruleCells || !isSeparatorRow(ruleCells)) {
+      out.push(lines[i]); i += 1; continue;
+    }
+    let end = i + 2;
+    while (cellsAt(end)) end += 1;
+    const block = lines.slice(i, end);
+    const header = headerCells;
+    const body = block.slice(2).map((l) => splitRow(l) ?? []);
+    const width = header.length;
+
+    const drop = new Set<number>();
+    const notes: Array<{ header: string; value: string }> = [];
+    if (width >= CONSTANT_COLUMN_MIN_WIDTH && body.length >= CONSTANT_COLUMN_MIN_ROWS) {
+      for (let c = 1; c < width; c++) {
+        const first = (body[0][c] ?? '').trim();
+        if (!first) continue;
+        if (!body.every((row) => (row[c] ?? '').trim() === first)) continue;
+        drop.add(c);
+        notes.push({ header: (header[c] ?? '').trim(), value: first });
+      }
+    }
+    // Never below two columns — a table needs to stay a table.
+    const ordered = [...drop].sort((a, b) => b - a);
+    while (width - drop.size < 2 && ordered.length) {
+      const back = ordered.pop()!;
+      drop.delete(back);
+      notes.pop();
+    }
+    if (drop.size === 0) {
+      out.push(...block); tableIndex += 1; i = end; continue;
+    }
+
+    for (const n of notes) folded.push({ table: tableIndex, header: n.header, value: n.value });
+    const keep = (cells: string[]) => cells.filter((_, c) => !drop.has(c));
+    out.push(`| ${keep(header).join(' | ')} |`);
+    out.push(`| ${keep(ruleCells).join(' | ')} |`);
+    for (const row of body) out.push(`| ${keep(row).join(' | ')} |`);
+    // The value, once, under the table it came out of. A run-in label, which
+    // `limitEmphasis` keeps, because it is a heading sharing a line.
+    out.push('');
+    for (const n of notes) {
+      out.push(n.header ? `**${n.header}:** ${n.value}` : n.value);
+    }
+    tableIndex += 1;
+    i = end;
+  }
+  return { markdown: out.join('\n'), folded };
+}
+
+/**
  * An inline citation with nothing in it.
  *
  * `[Source: ]`, `[ ]`, `[Source]` — a bracket the model opened and could not
@@ -387,7 +510,106 @@ export function stripEmptyCitations(markdown: string): { markdown: string; remov
   return { markdown: out, removed };
 }
 
-export function presentStoredMarkdown(markdown: string | null | undefined): string {
+/**
+ * The prompt's own scaffolding, quoted back at the reader.
+ *
+ * `generate-investment-report` pins the planning and infrastructure evidence
+ * into every section under four headings, and those headings are INSTRUCTIONS:
+ * nobody reading the document has ever seen them. The pinned block carries a
+ * rule saying so in as many words — "**never write a bracketed pointer** such
+ * as `[Zoning & Planning table]` … A bracket like that lands mid-sentence in a
+ * client document and refers to nothing they can open" — and the delivered
+ * suite carried them anyway: nine of ten documents with at least one, one
+ * Compass with nine.
+ *
+ * That is the lesson `stripEditorialBlocks` already wrote down one file over:
+ * **an instruction is a request; this is the guarantee.** The v2.0 prompt said
+ * "at most one per section" twice and production carried ninety.
+ *
+ * ## Why this substitutes rather than deletes
+ *
+ * The claim behind the pointer is SOUND. Both tables are appended verbatim to
+ * the finished document under `## Planning controls and development
+ * registers`, so there is a real section to point at. Deleting the bracket
+ * would leave the sentence unsourced, which is worse than an ugly sentence
+ * that is sourced — the pinned rule says exactly that, and it is right.
+ *
+ * So the pointer is rewritten into the reference the rule asks for: the
+ * report's own section, named in the sentence, where the reader can turn to
+ * it. Nothing else in the sentence is touched. This is punctuation, not prose:
+ * a closed set of four strings the prompt itself wrote, not a pattern over
+ * what a model might say.
+ *
+ * ## It runs on READ
+ *
+ * Every document already stored carries these. A write-path fix repairs
+ * nothing that has shipped, which is the same argument that moved the
+ * placeholder scrub and the chart-evidence contract here.
+ */
+const SCAFFOLDING_POINTERS = [
+  'Zoning & Planning table',
+  'Zoning & Planning notes',
+  'Infrastructure table',
+  'Infrastructure section',
+] as const;
+
+/**
+ * The section those tables are appended under, verbatim, by the generator.
+ *
+ * Defined in `registerTables.pure.ts` and re-exported here, because that
+ * module de-duplicates the tables and this one names the section in a
+ * sentence — one declaration, two readers.
+ */
+export { PLANNING_REGISTER_SECTION };
+
+const SCAFFOLDING_RE = new RegExp(
+  `\\[\\s*(?:${SCAFFOLDING_POINTERS.map((p) => p.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')).join('|')})\\s*\\]`,
+  'gi',
+);
+
+export function rewriteScaffoldingPointers(
+  markdown: string,
+): { markdown: string; rewritten: number } {
+  let rewritten = 0;
+  const out = (markdown || '').replace(SCAFFOLDING_RE, (_whole, offset: number, whole: string) => {
+    rewritten += 1;
+    // "See [Zoning & Planning notes]" must not become "See (see …)". Where the
+    // sentence already introduces the reference, only the section is named.
+    const before = whole.slice(Math.max(0, offset - 12), offset);
+    return /\b(?:see|in|under|per)\s*$/i.test(before)
+      ? `*${PLANNING_REGISTER_SECTION}*`
+      : ` (see *${PLANNING_REGISTER_SECTION}*)`;
+  })
+    // The pointer is usually set hard against the sentence it closes —
+    // "…resale expectations.[Infrastructure section] The recorded 680…" — so
+    // the reference is introduced with its own space and any double space the
+    // substitution leaves is closed up. A space before a full stop or comma is
+    // closed the same way, for the form that sits mid-sentence.
+    .replace(/[ 	]{2,}\(see \*/g, ' (see *')
+    .replace(/\(see \*([^*]+)\*\)([.,;:])/g, '(see *$1*)$2');
+  return { markdown: out, rewritten };
+}
+
+export function presentStoredMarkdown(
+  markdown: string | null | undefined,
+  /*
+   * The record the markdown was stored against, where the caller has it.
+   *
+   * Optional, and omitting it is byte-identical to the behaviour before the
+   * chart-evidence contract existed — which is what lets the four readers
+   * adopt it one at a time and what keeps every other caller untouched. With
+   * it, a quantitative visual the record contradicts is withheld from the
+   * DRAWING and set as a table of its own labels and values instead.
+   *
+   * This is the read path on purpose. The three guards that already judged
+   * figures all ran in `generate-investment-report` and nowhere else, so a
+   * stored document kept its unsupported graphics for ever and so did every
+   * child forked from it; `presentStoredMarkdown` is the one scrub all four
+   * renderers already apply, which is the same reason the placeholder scrub
+   * moved here.
+   */
+  evidence?: EvidenceInventory | null,
+): string {
   if (!markdown) return '';
   const r = stripPlaceholderRows(markdown);
   const scrubbed = r.removedRows + r.removedTables + r.removedLines + r.blankedCells === 0 ? markdown : r.markdown;
@@ -395,14 +617,153 @@ export function presentStoredMarkdown(markdown: string | null | undefined): stri
   // and `stripPlaceholderRows` cannot see it — it is neither a row nor a
   // bullet. Found on two issued documents in the S6 acceptance run.
   const glance = stripOwnGapCells(scrubbed);
+  /*
+   * A register is printed once, where the register is.
+   *
+   * The 97 Poole Road Compass drew the planning-controls table on pages 15,
+   * 26-27 and 32, the residential land-use table on 16, 27 and 33, and the
+   * overlay register on 17 and 33 — the generator appends each once and the
+   * model, handed the same table in its pinned context, reproduced it in the
+   * prose. The copies DISAGREED: the land-use table carried five rows in the
+   * register and thirteen on page 27.
+   *
+   * First, and deliberately: `dropEmptyTableColumns` and
+   * `foldConstantTableColumns` below both rewrite header rows, and this
+   * matches a CLOSED SET of headers `planningFacts.pure.ts` composes. Before
+   * `dropEmptySections`, too, so a heading left with nothing under it is
+   * collected by the rule that already exists for that.
+   *
+   * The scaffolding heading is the same defect one line up: page 15 was
+   * titled "Planning controls table (reproduced exactly)".
+   */
+  const headings = stripHeadingScaffolding(glance.markdown);
+  const titled = headings.stripped ? headings.markdown : glance.markdown;
+  const registers = dedupeRegisterTables(titled);
+  const printedOnce = registers.replaced.length ? registers.markdown : titled;
   // A column with a header and nothing under it, and a citation bracket with
   // nothing in it — both were on the documents supplied for acceptance, both
   // are a promise the record could not keep, and neither is prose.
-  const columns = dropEmptyTableColumns(glance.markdown);
-  const cited = stripEmptyCitations(columns.removed.length ? columns.markdown : glance.markdown);
-  const tidied = cited.removed ? cited.markdown : (columns.removed.length ? columns.markdown : glance.markdown);
+  const columns = dropEmptyTableColumns(printedOnce);
+  const narrowed = columns.removed.length ? columns.markdown : printedOnce;
+  /*
+   * And a wide table's column that says the same thing on every row.
+   *
+   * Page 34 of the 97 Poole Road Compass ran its nine-column infrastructure
+   * register off the right edge — the header cut to `Deliver / timing`, its
+   * cells to `Not / publish / by this / registe` — while two of those nine
+   * columns held one identical value on all five rows. A column whose every
+   * cell is the same is a footnote, not a column. See
+   * `foldConstantTableColumns` for the three bounds that keep it off a table
+   * that was already right.
+   */
+  const constants = foldConstantTableColumns(narrowed);
+  const unrepeated = constants.folded.length ? constants.markdown : narrowed;
+  const cited = stripEmptyCitations(unrepeated);
+  const tidied = cited.removed ? cited.markdown : unrepeated;
   const sections = dropEmptySections(tidied);
-  return sections.dropped.length === 0 ? tidied : sections.markdown;
+  const clean = sections.dropped.length === 0 ? tidied : sections.markdown;
+  // A bracketed pointer into the prompt's own scaffolding, rewritten into the
+  // report's own section. See `rewriteScaffoldingPointers`.
+  const pointed = rewriteScaffoldingPointers(clean);
+  const sourced = pointed.rewritten ? pointed.markdown : clean;
+  /*
+   * The same section, written twice.
+   *
+   * On the regenerated 262 Pallas Street Compass the Due Diligence Checklist
+   * ran on pages 24–25 and again on 25–26, and the Final Recommendation on
+   * page 25 and again on page 26 — the model wrote both inside the Risk
+   * Dashboard's own chunk and then again as their own sections. See
+   * `foldStraySections`, which carries the nested copy forward rather than
+   * dropping it, because the nested copy was the complete one.
+   *
+   * READ path only, and deliberately. `report_content` is the source of truth
+   * and `SECTION_STORAGE.md`'s rule is that a repeat is an occurrence to be
+   * walked in order — folding it into storage would make the record disagree
+   * with what the model actually produced and would re-key the section index.
+   * What a reader is shown is this module's business; what is kept is not.
+   */
+  const one = foldStraySections(sourced);
+  const onceEach = one.folded.length ? one.markdown : sourced;
+  /*
+   * The same chart, drawn five times.
+   *
+   * `dedupeChartDirectives` has existed since Stage 4 and ran on the WRITE
+   * path alone — the post-processor, the fork and the condense. So a document
+   * stored before that wiring, or one whose repeats arrive after it, keeps
+   * every copy for ever and so does every child forked from it. On the
+   * 42 Patya Circuit Compass the identical three-bar price chart was drawn on
+   * five pages and the planning controls table on four.
+   *
+   * It is the same implementation, imported rather than repeated, and it is a
+   * no-op on a document that carries each drawing once — which is what makes
+   * adopting it on the read path safe for everything already correct.
+   */
+  const deduped = dedupeChartDirectives(onceEach);
+  const single = deduped.removed ? deduped.markdown : onceEach;
+  /*
+   * A shared axis is a claim that the quantities on it are comparable.
+   *
+   * Page 13 of the 97 Poole Road Compass plotted `99.1%`, `100%` and
+   * `~2.1 km` on one track, so the kilometres drew as a 2% sliver; page 28
+   * plotted `241` new dwellings against `$163,527,942`, so the count drew as
+   * a hairline. Both are correct arithmetic and neither says anything a
+   * reader can use.
+   *
+   * Before the scale alignment below, which unifies a maximum ACROSS charts
+   * of one unit and can do nothing for two units inside one. Nothing is
+   * dropped: every label, value and their order survive as the table the
+   * data already was.
+   */
+  const mixed = tabulateMixedUnitCharts(single);
+  const commensurable = mixed.tabulated.length ? mixed.markdown : single;
+  // One scale per quantity across the whole document. Unconditional, because
+  // it needs no record to know that two charts of kilometres must agree, and
+  // it is a no-op on a document with one chart per unit.
+  const scaled = alignChartScales(commensurable);
+  const levelled = scaled.aligned.length ? scaled.markdown : commensurable;
+  /*
+   * A footnote marker in a document that has no footnotes.
+   *
+   * Five sentences of the 97 Poole Road Compass ended in a bare digit glued
+   * to the full stop — `…do not capture.12 Median house prices…` — set in the
+   * body face at body size, referring to nothing, because the Compass carries
+   * no footnote apparatus. Driven through the real write-path stripper and
+   * `renderMarkdown`, every other form a citation could take survives VISIBLY
+   * different, so the model wrote them with no markup at all and neither the
+   * stripper nor the renderer could have seen them.
+   *
+   * `stripFootnoteDebris` asks the document before it acts: a body carrying a
+   * Notes list or an `[^id]:` definition keeps every marker it has. Measured
+   * over all 38 pages of that document: 5 matches, 5 markers, 0 false
+   * positives.
+   */
+  const debris = stripFootnoteDebris(levelled);
+  const unmarked = debris.removed.length ? debris.markdown : levelled;
+  /*
+   * Emphasis is a signal, and a signal that fires on one word in five is noise.
+   *
+   * Measured off the 97 Poole Road Compass by font rather than from the
+   * source: 9,570 of 51,343 characters of body copy set bold — 18.6%, at 7.2
+   * emphasised spans a page, the five longest running 160-246 characters each,
+   * which is a complete sentence apiece. `limitEmphasis` takes that to 4.1%
+   * and 1.9 spans a page on the same document.
+   *
+   * Last, and on the read path, for the same two reasons everything above it
+   * is: an instruction in a prompt is a request and this is the guarantee, and
+   * every report already stored was written under the old habit. It is the one
+   * scrub here that touches INLINE markup rather than structure, so it runs
+   * after the structural passes have settled what the lines are.
+   *
+   * It is not the prose scrub §8 forbids — `**` is markup, not a word. Strip
+   * the markers from both sides and they are byte-identical, and
+   * `emphasisDensity.spec.ts` asserts exactly that rather than promising it.
+   */
+  const emphasised = limitEmphasis(unmarked);
+  const { clause, figure, repeat, table } = emphasised.unwrapped;
+  const calm = clause + figure + repeat + table ? emphasised.markdown : unmarked;
+  if (!evidence) return calm;
+  const judged = enforceChartEvidence(calm, evidence);
+  return judged.findings.length ? judged.markdown : calm;
 }
 
 const normalizeHeading = (h: string): string =>

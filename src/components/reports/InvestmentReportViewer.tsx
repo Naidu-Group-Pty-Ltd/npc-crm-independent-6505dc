@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { OVERALL_GRADE_UNAVAILABLE } from '@/lib/reports/market/scoringInputPolicy.pure';
 import { presentStoredMarkdown } from '@/lib/reports/investment/derivedHygiene.pure';
+import { readEvidenceInventory } from '@/lib/reports/investment/chartEvidence.pure';
 import { Separator } from '@/components/ui/separator';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Switch } from '@/components/ui/switch';
@@ -189,7 +190,10 @@ export function InvestmentReportViewer({ report, isOpen, onClose, onReportUpdate
   // derived report stored before the write-path hygiene is neither shown here
   // nor printed anywhere.
   const presentedContent = useMemo(
-    () => presentStoredMarkdown(report.report_content),
+    () => presentStoredMarkdown(
+      report.report_content,
+      readEvidenceInventory(report as unknown as Record<string, unknown>),
+    ),
     [report.report_content],
   );
 

@@ -16,6 +16,7 @@ import { COMMERCIAL_CAPACITY_TEMPLATES }
   from '../../../../scripts/template-library/investmentCompass/commercialCapacity';
 import { projectCommercialCapacity }
   from '../../../../supabase/functions/_shared/commercialCapacityProjection.pure';
+import { CONSTRAINT_LABELS } from '@/lib/ciAssessment/serviceability';
 import { SAMPLE_REPORT_DATA as SAMPLE } from '../sampleReportData';
 
 const capacity = SAMPLE.capacity as Record<string, any>;
@@ -174,6 +175,41 @@ describe('rendering the sample', () => {
     const page = html();
     expect(page).toContain('written by a language model');
     expect(page).toContain('Written by google/gemini-2.5-flash on 01 August 2026.');
+  });
+
+  /*
+   * The constraints table declares one line per row. That is a promise about
+   * the widest thing each column can hold, and on four of the fifty masters it
+   * was false: the value columns took a fixed 330pt, leaving the test name
+   * 87-117pt on the families with the deepest margins, while three of the ten
+   * labels run 24 to 31 characters. Those rows set two lines and the table
+   * printed 5 to 29pt over the explanation beneath it — two of them as
+   * overlapping ink in `templates:compass:qa`, two by box alone.
+   *
+   * So the rule, not the numbers: the name column holds the longest label the
+   * vocabulary can produce, on one line, on every master. The 0.5 advance
+   * ratio is `textHeight`'s own, and it read 0.501 against the browser on the
+   * tightest family — so this is the same arithmetic the authoring helpers
+   * declare heights with, applied to the width they depend on.
+   */
+  it('gives the test name room for the longest label the vocabulary holds', () => {
+    const longest = Math.max(...Object.values(CONSTRAINT_LABELS).map((l) => l.length));
+    expect(longest).toBeGreaterThanOrEqual(31);
+
+    let checked = 0;
+    for (const master of COMMERCIAL_CAPACITY_TEMPLATES) {
+      const page = (master.schema.pages as any[]).find((p) => p.name === 'The tests');
+      const table = page?.blocks?.find((b: any) => b.type === 'data-table');
+      if (!table) continue;
+      const props = table.props as Record<string, any>;
+      expect(props.headers?.[0], master.slug).toBe('Test');
+      const nameWidth = Number(props.columnWidths[0]) * Number(props.width);
+      const needed = longest * Number(props.fontSize) * 0.5 + 2 * Number(props.cellPadding);
+      expect(nameWidth, `${master.slug}: ${nameWidth.toFixed(1)}pt for ${needed.toFixed(1)}pt of label`)
+        .toBeGreaterThanOrEqual(needed);
+      checked += 1;
+    }
+    expect(checked).toBe(COMMERCIAL_CAPACITY_TEMPLATES.length);
   });
 
   it('drops every conditional page for a namespace that is not there', () => {

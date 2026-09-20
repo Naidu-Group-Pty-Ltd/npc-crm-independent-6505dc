@@ -50,11 +50,17 @@ describe('the figure sanitiser removes nothing from the renderer\'s own output',
       // last document it sanitised. An empty list is the whole claim.
       expect(DOMPurify.removed).toEqual([]);
       expect(clean.length).toBeGreaterThan(40);
-      // What a reader sees survives: the drawing or the callout, with its words.
+      // What a reader sees survives: the drawing or the key, with its words.
       if (kind === 'glance') {
-        expect(clean).toContain('class="callout');
-        expect(clean).toContain('<ul class="marked">');
+        // A ruled key now, not a washed callout of dingbats — see
+        // `reports/glanceStrip.pure.ts`. The glyph is an input vocabulary and
+        // the printed tag is the word, so the sanitiser sees `Strength`
+        // where it used to see a tick.
+        expect(clean).toContain('class="glance"');
+        expect(clean).toContain('<ul class="glance-rows">');
         expect(clean).toContain('Strong regional rental demand');
+        expect(clean).toContain('Strength');
+        expect(clean).not.toContain('✓');
       } else if (kind === 'margin') {
         expect(clean).toContain('class="sidenote"');
         expect(clean).toContain('Western corridor growth');

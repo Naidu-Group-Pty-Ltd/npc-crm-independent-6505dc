@@ -171,3 +171,47 @@ describe('the Markdown renderer places them', () => {
     expect(res.blocks.filter((b) => b.kind === 'figure')).toHaveLength(3);
   });
 });
+
+/*
+ * The timeline ribbon, after the Cowra render.
+ *
+ * Measured on the rendered page: the model's NEXT TWO YEARS printed under
+ * "5Y+" because the phase matcher's range separator was a plain hyphen and
+ * `0–2y` is written with an EN-DASH, and because an unrecognised phase fell
+ * through to `return '5y+'` — inventing a horizon, which §3 forbids.
+ */
+describe('the timeline ribbon places a milestone or refuses to draw', () => {
+  const drawTimeline = (src: string) => {
+    const d = parseVizDirectives(src)[0];
+    const fig = renderVizDirective(ctx, d, null);
+    if (!fig) return { kind: 'null' as const, html: '' };
+    return { kind: fig.html.includes('<table') ? 'table' as const : 'ribbon' as const, html: fig.html };
+  };
+
+  it('reads a range written with an en-dash, which is how the model writes it', () => {
+    expect(drawTimeline(
+      '{{timeline: Existing "Schools and hospital", 0–2y "Park upkeep", 3–5y "Civic upgrades" | title=T}}',
+    ).kind).toBe('ribbon');
+  });
+
+  it('reads a range written with a hyphen, as it always did', () => {
+    expect(drawTimeline(
+      '{{timeline: Existing "Town centre", 0-2y "Health upgrades", 3-5y "Roads", 5y+ "Renewal" | title=T}}',
+    ).kind).toBe('ribbon');
+  });
+
+  it('refuses rather than placing an unreadable phase at the far end of the axis', () => {
+    // `return "5y+"` as a catch-all is a fabricated horizon: it says a
+    // milestone is five years away because the renderer could not read when
+    // it is.
+    const out = drawTimeline('{{timeline: Existing "Now", "sometime" "Who knows" | title=T}}');
+    expect(out.kind).toBe('table');
+    expect(out.html).toContain('Who knows');
+  });
+
+  it('refuses rather than silently dropping a third milestone from one band', () => {
+    const out = drawTimeline('{{timeline: 0-2y "A", 0-2y "B", 0-2y "C" | title=T}}');
+    expect(out.kind).toBe('table');
+    for (const label of ['A', 'B', 'C']) expect(out.html).toContain(`>${label}<`);
+  });
+});

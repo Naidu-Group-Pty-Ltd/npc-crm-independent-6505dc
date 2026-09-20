@@ -334,6 +334,94 @@ export function textHeight(chars: number, opts?: {
 }
 
 /**
+ * The advance ratio for DISPLAY type, as a fraction of the type size.
+ *
+ * `textHeight` uses 0.5, which is the conventional figure for body copy. The
+ * heading faces in this catalogue set wider, and `sectionHeading`'s band kind
+ * has read them at 0.52 since it was measured. One constant, so the two
+ * cannot drift.
+ */
+const DISPLAY_ADVANCE = 0.52;
+
+/** A verdict heading is a two-line statement. That IS the design. */
+export const VERDICT_HEADING_LINES = 2;
+
+/**
+ * A display slot never shrinks below this, whatever the arithmetic says.
+ *
+ * Measured over all ten families at all three densities: the catalogue's
+ * smallest section `heading` is 10.25pt (`institutional_research` at compact)
+ * and its smallest `verdict` is 11.5pt. A display statement that set below the
+ * smallest ordinary heading in its own document would have stopped being the
+ * page's statement, and the answer to that is a shorter sentence rather than
+ * smaller type — so the floor refuses rather than obliging, and a vocabulary
+ * that reaches it fails `verdictHeadingFits.spec.ts` instead of shipping.
+ *
+ * Nothing in the current vocabulary comes near it: the tightest master fits
+ * the longest publishable headline at 17.75pt.
+ */
+const MIN_DISPLAY_SIZE = 10.25;
+
+/**
+ * The largest size at or below `designed` that sets `chars` in `lines` lines.
+ *
+ * The counterpart to `textHeight`, for the case where the BOX cannot grow.
+ * `textHeight` answers "how tall will this set?" and the block takes that
+ * height; this answers "how big may this be?" and the block keeps its height.
+ *
+ * Both are needed because the two situations are genuinely different. A
+ * paragraph in a flowing column may run on and the page absorbs it. A display
+ * statement on a page whose own slack is 15pt may not: growing it pushes
+ * everything below it through the footer, and leaving it to overflow prints it
+ * over the block beneath — which is what the verdict heading did.
+ *
+ * It never enlarges. A heading whose vocabulary fits at the designed size gets
+ * the designed size exactly, so the 23 of 50 masters that were already right
+ * are byte-identical.
+ *
+ * Quarter-point steps, matching `family.ts`'s `step()` — finer than any
+ * renderer resolves, and coarse enough that the value is stable.
+ */
+export function fitToLines(
+  chars: number,
+  designed: number,
+  width: number,
+  lines: number,
+): number {
+  if (chars <= 0 || lines <= 0) return designed;
+  if (displayLines(chars, designed, width) <= lines) return designed;
+  // The closed-form answer, then STEPPED DOWN until `displayLines` — the one
+  // implementation the spec also checks against — agrees that it fits.
+  //
+  // Not belt and braces. At 481pt of measure and 50 characters a line, the
+  // arithmetic is exact: `481 / (50 × 0.52) = 18.5`. In binary,
+  // `18.5 × 0.52` is 9.620000000000001, `481 / 9.620000000000001` is
+  // 49.999999999999993, and `Math.floor` takes it to 49 — so the size the
+  // closed form calls a perfect fit is one character short, on five of the
+  // fifty masters. Deriving a size and then not checking it is the same
+  // mistake as declaring a height and not measuring it.
+  let size = Math.floor((width / (Math.ceil(chars / lines) * DISPLAY_ADVANCE)) * 4) / 4;
+  while (size > MIN_DISPLAY_SIZE && displayLines(chars, size, width) > lines) {
+    size -= 0.25;
+  }
+  return Math.min(designed, Math.max(MIN_DISPLAY_SIZE, size));
+}
+
+/**
+ * How many lines `chars` sets in, at `size`, across `width`, in display type.
+ *
+ * The ONE line-count for display slots: `fitToLines` steps down until this
+ * agrees, and `verdictHeadingFits.spec.ts` re-measures every seeded master
+ * with it. A second copy of this arithmetic is how a block and its guard come
+ * to agree with each other and disagree with the page.
+ */
+export function displayLines(chars: number, size: number, width: number): number {
+  const perLine = Math.max(1, Math.floor(width / (size * DISPLAY_ADVANCE)));
+  return Math.max(1, Math.ceil(chars / perLine));
+}
+
+
+/**
  * Keep a trailing block only on the variants that have room for it.
  *
  * The ten families are the same page size and do not have the same measure: a
@@ -508,9 +596,56 @@ export function navigationRail(part: string, section: string): BlockDef[] {
   ];
 }
 
-/** The furniture a content page needs, per the manifest. */
-export function furniture(documentLabel: string, part: string, section: string): BlockDef[] {
-  return ctx().railed ? navigationRail(part, section) : runningHead(documentLabel, part);
+/**
+ * The advance width of the mono face, as a fraction of the type size.
+ *
+ * A monospaced face has ONE advance by definition, and the catalogue's three
+ * (`token:mono` resolves per family) are all in the conventional 0.6em band.
+ * The running head's part marker is the only place a bound value is set in
+ * mono against a fixed measure, and `runningHeadMarkerLines` is what keeps it
+ * inside the two lines the rule reserves.
+ */
+export const MONO_ADVANCE = 0.6;
+
+/**
+ * How many lines the running head's right-hand marker sets in.
+ *
+ * `runningHead` positions the divider at `runningHeadBottom()`, which reserves
+ * exactly two lines. A marker that sets in three strikes the rule.
+ */
+export function runningHeadMarkerLines(chars: number): number {
+  const c = ctx();
+  const width = c.contentWidth - Math.floor(c.contentWidth * 0.66);
+  const perLine = Math.max(1, Math.floor(width / (c.scale.runningHead * MONO_ADVANCE)));
+  return Math.max(1, Math.ceil(chars / perLine));
+}
+
+/**
+ * The furniture a content page needs, per the manifest.
+ *
+ * ## `headMarker`, and the twenty-nine pages that said the same thing
+ *
+ * A railed family draws the part AND the section — the part as an eyebrow, the
+ * section beneath it. A running-head family draws the part alone and DISCARDS
+ * the section, which is why v15's chapter work reached only the railed half of
+ * the catalogue. On 42 Patya Circuit, 29 of 36 pages carried the identical
+ * running head `Part 05 · Report`: the body IS one part, correctly, and the
+ * chapter that would have told a reader where they were never had anywhere to
+ * be drawn.
+ *
+ * `headMarker` is what a running-head family puts on the right instead, and it
+ * is optional so the nine other formats — 450 masters that pass a static
+ * section equal to their part label — are byte-identical.
+ */
+export function furniture(
+  documentLabel: string,
+  part: string,
+  section: string,
+  headMarker?: string,
+): BlockDef[] {
+  return ctx().railed
+    ? navigationRail(part, section)
+    : runningHead(documentLabel, headMarker ?? part);
 }
 
 /** First usable y below the running head or rail marker. */
@@ -923,11 +1058,16 @@ export function cover(opts: CoverOptions): PageDef {
  * are 115 openers in the catalogue and only a handful bind their text, so this
  * is a cheap invariant to hold.
  */
-function boundChars(value: string, declared: number | undefined, field: string): number {
+function boundChars(
+  value: string,
+  declared: number | undefined,
+  field: string,
+  block = 'sectionHeading',
+): number {
   if (declared != null) return declared;
   if (!value.includes('{{')) return value.length;
   throw new Error(
-    `sectionHeading: \`${field}\` is bound (${value}), so its own length is not what sets on `
+    `${block}: \`${field}\` is bound (${value}), so its own length is not what sets on `
     + `the page. Pass \`${field}Chars\` with the length measured against production.`,
   );
 }
@@ -1028,9 +1168,10 @@ export function sectionHeading(opts: {
     const HERO_EYEBROW = 8; // hero.html.ts:55 — `eyebrowSize` default
     const HERO_SUBTITLE = 14; // hero.html.ts:53 — `subtitleSize` default
     const inner = Math.max(1, c.contentWidth - HERO_PADDING * 2);
-    const headingLines = Math.max(1, Math.ceil(
-      headingChars / Math.max(1, Math.floor(inner / (c.scale.heading * 0.52))),
-    ));
+    // `displayLines` is the same arithmetic this line always used; the 0.52 it
+    // spelled out is now `DISPLAY_ADVANCE`, so the band and the verdict cannot
+    // measure the same faces differently.
+    const headingLines = displayLines(headingChars, c.scale.heading, inner);
     const measured = Math.ceil(
       HERO_PADDING
       // The eyebrow and its 6pt margin-bottom.
@@ -1104,10 +1245,57 @@ export function sectionHeading(opts: {
   };
 }
 
-/** The verdict heading — the dashboard's oversized statement. */
-export function verdict(opts: { eyebrow: string; heading: string; body: string }): FlowItem {
+/**
+ * The verdict heading — the dashboard's oversized statement.
+ *
+ * ## The two lines are the design, and the type is fitted to them
+ *
+ * The declared height reserves `verdict * 2.2` at a leading of 1.1, which is
+ * exactly TWO lines of heading, and the reservation was never measured against
+ * the sentence that fills it. Measured across all fifty Compass masters on
+ * 19 September 2026, at this file's own 0.52 advance ratio:
+ *
+ * | what the heading resolves to | masters where it sets past 2 lines |
+ * | --- | ---: |
+ * | `RECOMMENDATION_BY_GRADE`, unqualified (59-89 chars) | **27 of 50** |
+ * | the same with `qualifyRecommendation`'s coverage sentence (142-181) | **50 of 50** |
+ *
+ * So this has been wrong since the masters shipped, and the appended sentence
+ * only made it universal. On 42 Patya Circuit it printed the heading's last
+ * two lines THROUGH the KPI band below — `$1,975,000` and `$850` struck
+ * out — because `flow()` fixes the next block's `y` from the declared height
+ * and the renderer positions absolutely: an overlong block does not push the
+ * page down and does not overflow it, it lays over what comes next.
+ *
+ * ## Why the type moves and the box does not
+ *
+ * The dashboard page has **15pt of slack above the footer on 49 of the 50
+ * masters** — it is full. Growing the block to fit four lines would push the
+ * KPI band, the callout and the footer off the page on every one of them. So
+ * the block keeps its footprint exactly, the page geometry is unchanged, and
+ * the heading is set at the largest size that fits `headingChars` into the two
+ * lines the block declares. Where the designed size already fits — 23 of the
+ * 50 — nothing changes at all.
+ *
+ * `headingChars` is required when the heading is a binding, for the reason
+ * `boundChars` gives: a guessed default is the silent mis-size this exists to
+ * stop.
+ */
+export function verdict(opts: {
+  eyebrow: string;
+  heading: string;
+  body: string;
+  /** Production-measured length of `heading`, required when it is a binding. */
+  headingChars?: number;
+}): FlowItem {
   const c = ctx();
   const height = Math.round(c.scale.verdict * 2.2 + c.scale.body * 4.6) + 18;
+  const headingSize = fitToLines(
+    boundChars(opts.heading, opts.headingChars, 'heading', 'verdict'),
+    c.scale.verdict,
+    c.contentWidth,
+    VERDICT_HEADING_LINES,
+  );
   return {
     height,
     block: (y) => block('text-block', {
@@ -1117,7 +1305,7 @@ export function verdict(opts: { eyebrow: string; heading: string; body: string }
       eyebrowTracking: TRACKING.eyebrow,
       eyebrowColor: 'token:accentInk',
       heading: opts.heading,
-      headingSize: c.scale.verdict,
+      headingSize,
       headingFont: 'token:heading',
       headingWeight: 400,
       headingLineHeight: 1.1,
@@ -1129,6 +1317,60 @@ export function verdict(opts: { eyebrow: string; heading: string; body: string }
       color: 'token:ink',
       x: c.contentLeft, y, width: c.contentWidth,
     }, 'Verdict'),
+  };
+}
+
+/**
+ * The companion note — where the rest of the analysis is.
+ *
+ * ## What it is
+ *
+ * `TIER_CONTENT.companionNote` is the sentence each tier uses to send a reader
+ * to its companion document: "Purchase costs, yield, loan structure, cash flow
+ * and the ten-year projection are set out in the Financial Analysis Report for
+ * this property" on the Compass, and its mirror on the Financial Analysis.
+ * `reportBindingProjection` has published it as `report.companionNote` since
+ * the tier split and `render-investment-report-pdf` draws it — but the
+ * delivered document comes through the TEMPLATE route, and no master bound it:
+ * zero occurrences across `scripts/template-library/`, zero in the seeded
+ * catalogue. The tier that is told to point elsewhere never did, on any page of
+ * any document a client opened.
+ *
+ * ## Why it is not the section heading's standfirst
+ *
+ * That was the first attempt, and building the fifty masters counted it: 32 of
+ * 50 Contents pages carried the binding and 18 did not. `sectionHeading` says
+ * why, in the module itself — "only the `standfirst` kind draws one; `bare`,
+ * `decimal` and `eyebrow` drop it". That is right for a section opener's
+ * subtitle, which is styling. It is wrong here. `hasContents` records the same
+ * rule one level up, from the same cause: a family's `toc_style: none` was a
+ * statement about the decorative index it draws and it silenced the contents
+ * page outright, so ten masters shipped client documents with no way to
+ * navigate them. **A family's styling decides how a thing is drawn, never
+ * whether the document carries it.**
+ *
+ * So the note is its own block, drawn by every master, in exactly the treatment
+ * the `standfirst` kind would have given it — italic, muted, at body size and
+ * 1.5 leading — and its height is `standfirstDepth`'s own arithmetic rather
+ * than a second opinion about the same sentence.
+ *
+ * `chars` is the longest note any tier publishes, measured over `TIER_CONTENT`
+ * rather than estimated: a block that under-declares does not overflow the
+ * page, it prints over whatever `flow()` puts next.
+ */
+export function companionNote(binding: string, chars: number): FlowItem {
+  const c = ctx();
+  return {
+    height: textHeight(chars, { size: c.scale.body, lineHeight: 1.5 }),
+    block: (y) => block('text-block', {
+      body: binding,
+      bodySize: c.scale.body,
+      bodyFont: 'token:body',
+      bodyStyle: 'italic',
+      bodyLineHeight: 1.5,
+      color: 'token:mutedInk',
+      x: c.contentLeft, y, width: c.contentWidth,
+    }),
   };
 }
 

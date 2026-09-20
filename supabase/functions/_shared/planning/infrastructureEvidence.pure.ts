@@ -143,6 +143,7 @@ import {
   stageSentence,
 } from './investmentProgramme.pure.ts';
 import { ABSENCE_GUIDE, guidesForKinds } from './infrastructureGuide.pure.ts';
+import { auDate } from './auDate.pure.ts';
 
 const isRecord = (v: unknown): v is Record<string, unknown> =>
   typeof v === 'object' && v !== null && !Array.isArray(v);
@@ -1001,14 +1002,6 @@ export function buildInfrastructureEvidence(input: InfrastructureEvidenceInput):
 // ---------------------------------------------------------------------------
 // Rendering
 
-/** `1 Jan 2026` from an ISO date, or the string back if it is not one. */
-function auDate(iso: string | null): string | null {
-  if (!iso) return null;
-  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso);
-  if (!m) return iso;
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  return `${Number(m[3])} ${months[Number(m[2]) - 1]} ${m[1]}`;
-}
 
 const money = (v: number): string => `$${Math.round(v).toLocaleString('en-AU')}`;
 

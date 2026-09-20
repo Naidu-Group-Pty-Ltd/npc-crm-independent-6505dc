@@ -111,8 +111,19 @@ describe('the two drivers of one report can see each other', () => {
   it('a start in this tab is announced rather than waited for', () => {
     // Polling is still the only discovery for another tab and the bulk
     // runner, but a start in THIS tab need not wait out the idle backoff.
-    expect(REGEN_HOOK).toMatch(/dispatchEvent\(new Event\(REPORT_GENERATION_STARTED_EVENT/);
+    expect(REGEN_HOOK).toMatch(/dispatchEvent\(\s*new CustomEvent<ReportGenerationStartedDetail>\(\s*REPORT_GENERATION_STARTED_EVENT/);
     expect(WIDGET).toMatch(/addEventListener\(REPORT_GENERATION_STARTED_EVENT/);
+  });
+
+  it('the announcement carries when the RUN began, not just that one did', () => {
+    // The widget timed runs from `investment_reports.created_at`, which on a
+    // regeneration is the report's birthday rather than this run's start — a
+    // two-minute run printed `3h 30m elapsed`. The row cannot say (it is
+    // reused), so the instant travels with the signal, and a run this tab did
+    // not start is shown no elapsed at all rather than the report's age.
+    expect(REGEN_HOOK).toMatch(/detail:\s*\{\s*reportId,\s*startedAt:\s*Date\.now\(\)/);
+    expect(WIDGET).toContain('runStartedAtRef');
+    expect(WIDGET).toMatch(/runStartedAt=\{runStartedAtRef\.current\.get\(report\.id\)\s*\?\?\s*null\}/);
   });
 
   it("Stop reaches the hook's pump, which is what makes it a control", () => {

@@ -271,6 +271,37 @@ describe('a rating you invented may not be drawn, in any primitive', () => {
     expect(suppressUnrecordedVerdictVisuals(md, { recorded }).removed).toHaveLength(1);
   });
 
+  /*
+   * Page 15 of the Cowra Compass drew "Relative positioning within regional
+   * residential markets" — 7.5, 8.0 and 6.5 out of ten, for a property, a
+   * town and a region, on a record that issued no grade. §2 of the acceptance
+   * standard names that chart by its numbers. It survived because the rule
+   * read `max=100` and nothing else, so a scorecard spelled out of TEN was a
+   * "measurement".
+   */
+  it('removes a scorecard spelled out of ten, not only out of a hundred', () => {
+    const md = '{{bars: Subject property – central Cowra-style block 988 m² 7.5, '
+      + 'Cowra housing market – established houses on similar lots 8.0, '
+      + 'Broader Central Tablelands regional towns – mixed housing stock 6.5 '
+      + '| title=Relative positioning within regional residential markets | max=10 | unit=/10}}';
+    const r = suppressUnrecordedVerdictVisuals(md, { recorded });
+    expect(r.removed).toHaveLength(1);
+    // `ratingValues` rounds, which is why the scale is what decides: on a
+    // 0-10 scale nothing the engine recorded can be one of these values, so a
+    // recorded 8 must not "support" a 7.5 by a coincidence of digits.
+    expect(r.removed[0].values).toEqual([8, 8, 7]);
+    expect(suppressUnrecordedVerdictVisuals(md, { recorded: [8, 7] }).removed).toHaveLength(1);
+    expect(r.markdown).not.toContain('Relative positioning');
+  });
+
+  it('reads the UNIT and not the maximum, so a short distance axis is left alone', () => {
+    // `max` is a chart's axis. A proximity chart legitimately declares max=3
+    // or max=5, and condemning it for that would take a real measurement off
+    // the page for the shape of its axis.
+    const md = '{{bars: Core CBD 1.6 km, School 0.7 km, Hospital 2.0 km | title=Proximity | max=3 | unit=km}}';
+    expect(suppressUnrecordedVerdictVisuals(md, { recorded }).removed).toEqual([]);
+  });
+
   it('leaves a measured series alone, because it declares no rating scale', () => {
     /*
      * Measured over the 611 bars the generator produced in the 60 days to

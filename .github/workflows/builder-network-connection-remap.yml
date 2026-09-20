@@ -1,0 +1,69 @@
+name: Builder Network connection re-point
+
+# Moves THIS side's Builder Network connection to the builder organisation
+# whose stock it is meant to carry, and does nothing else. One column of one
+# row, guarded by the value it replaces; no secret moves, no event is touched,
+# no mirrored stock row is written or deleted.
+#
+# THIS SIDE GOES FIRST, and that is not a preference. The apply sweep refuses
+# a payload whose organisation is not this connection's — as
+# `organisation_mismatch`, severity critical — and a refusal CONSUMES the
+# event rather than retrying it, so re-pointing the network first would burn
+# its whole backfill against a clone that still disagreed. The network's half
+# reads this row and refuses to run until it names the target.
+#
+# DRY RUN unless `apply` is true.
+
+on:
+  workflow_dispatch:
+    inputs:
+      organisation_id:
+        description: The builder organisation id this connection should serve (uuid)
+        required: true
+      apply:
+        description: 'false is a dry run that writes nothing'
+        type: boolean
+        default: false
+      note:
+        description: Why this is being run
+        required: false
+        default: ''
+
+permissions:
+  contents: read
+
+concurrency:
+  group: builder-network-connection-remap
+  cancel-in-progress: false
+
+jobs:
+  remap:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: refuse to pretend
+        if: ${{ env.TOKEN == '' }}
+        env:
+          TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+        run: |
+          echo '::error::SUPABASE_ACCESS_TOKEN is not configured — nothing can be read or written.'
+          exit 1
+
+      - name: re-point the connection
+        env:
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          # Through the ENVIRONMENT, never interpolated into the script body:
+          # a dispatch input in a `run:` is shell injection, and this one is a
+          # value a person types. The script validates it as a uuid before it
+          # reaches a statement, which is the second half of the same rule.
+          TARGET_ORGANISATION_ID: ${{ inputs.organisation_id }}
+          APPLY: ${{ inputs.apply }}
+          NOTE: ${{ inputs.note }}
+        run: |
+          set -euo pipefail
+          [ -n "${NOTE:-}" ] && echo "note: $NOTE" || true
+          node .github/scripts/builder-network-connection-remap.mjs

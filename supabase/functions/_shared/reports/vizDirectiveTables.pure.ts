@@ -19,10 +19,12 @@
  *
  * Deno-compatible: imports a sibling only.
  */
+import { glanceRows } from './glanceStrip.pure.ts';
 import {
   parseVizDirective,
   VIZ_DIRECTIVE_KINDS,
   VIZ_DIRECTIVE_RE_G,
+  splitRefusedItem,
   type VizDirective,
 } from './vizDirectives.pure.ts';
 
@@ -45,19 +47,32 @@ export function directiveAsMarkdown(d: VizDirective): string | null {
   let lines: string[] = [];
   switch (d.kind) {
     case 'bars':
+      // `sources` is present only where the parser refused an item, and it is
+      // every item in the model's own order — so the table carries the labels
+      // the figure could not plot rather than silently shortening the list.
       lines = [...caption(d.title), ...table(['Item', d.unit ? `Value (${d.unit})` : 'Value'],
-        d.items.map((i) => [i.label, i.display ?? fmt(i.value)]))];
+        d.refused?.length
+          ? (d.sources ?? []).map((src) => { const r = splitRefusedItem(src); return [r.label, r.value]; })
+          : d.items.map((i) => [i.label, i.display ?? fmt(i.value)]))];
       break;
     case 'donut':
       lines = [...caption(d.title), ...table(['Segment', 'Share'],
-        d.segments.map((s) => [s.label, s.display ?? fmt(s.value)]))];
-      if (d.center) lines.push('', `_${cell(d.center)}${d.centerSub ? ` — ${cell(d.centerSub)}` : ''}_`);
+        d.refused?.length
+          ? (d.sources ?? []).map((src) => { const r = splitRefusedItem(src); return [r.label, r.value]; })
+          : d.segments.map((s) => [s.label, s.display ?? fmt(s.value)]))];
+      if (d.center && !d.refused?.length) {
+        lines.push('', `_${cell(d.center)}${d.centerSub ? ` — ${cell(d.centerSub)}` : ''}_`);
+      }
       break;
     case 'gauge':
       lines = [`**${cell(d.label ?? 'Reading')}:** ${fmt(d.value)} / ${fmt(d.max)}${d.caption ? ` — ${cell(d.caption)}` : ''}`];
       break;
     case 'glance':
-      lines = d.items.map((i) => `- ${cell(i.symbol)} ${cell(i.text)}`.trim());
+      // The glyph is an INPUT vocabulary. This presentation used to print it
+      // raw, so the same finding read `- ✓ Metro access` here and
+      // `Strength  Metro access` in the design-system render. One mapping,
+      // imported rather than repeated.
+      lines = glanceRows(d.items).map((r) => `- ${cell(r.tag)} — ${cell(r.text)}`);
       break;
     case 'heatmap': {
       const cols = d.colLabels.length ? d.colLabels : d.grid[0]?.map((_, i) => `Column ${i + 1}`) ?? [];

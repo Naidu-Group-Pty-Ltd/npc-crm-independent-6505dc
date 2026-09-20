@@ -135,9 +135,10 @@ Deno.serve(async (req) => {
       }
 
       const byId = new Map(calendars.map((c) => [c.id, c]));
-      const events = (appointmentRows ?? []).map((row) =>
-        projectAppointment(row as CrmAppointmentRow, byId.get((row as CrmAppointmentRow).calendar_id)),
-      );
+      const events = (appointmentRows ?? []).map((row) => {
+        const appointment = row as unknown as CrmAppointmentRow;
+        return projectAppointment(appointment, byId.get(appointment.calendar_id));
+      });
 
       return ok(
         {
@@ -178,9 +179,10 @@ Deno.serve(async (req) => {
 
       return ok(
         {
-          events: (data ?? []).map((row) =>
-            projectAppointment(row as CrmAppointmentRow, byId.get((row as CrmAppointmentRow).calendar_id)),
-          ),
+          events: (data ?? []).map((row) => {
+            const appointment = row as unknown as CrmAppointmentRow;
+            return projectAppointment(appointment, byId.get(appointment.calendar_id));
+          }),
           failedCalendars: [],
           dateRange: { start, end },
         },
@@ -225,8 +227,9 @@ Deno.serve(async (req) => {
         );
       }
 
+      const created = data as unknown as CrmAppointmentRow;
       return ok(
-        { event: projectAppointment(data as CrmAppointmentRow), location: data?.address ?? null },
+        { event: projectAppointment(created), location: created?.address ?? null },
         corsHeaders,
       );
     }
@@ -258,7 +261,7 @@ Deno.serve(async (req) => {
       // paid for — twelve handlers reported "not found" about a live record.
       if (!data) return fail('Appointment not found', 404, corsHeaders);
 
-      return ok({ event: projectAppointment(data as CrmAppointmentRow) }, corsHeaders);
+      return ok({ event: projectAppointment(data as unknown as CrmAppointmentRow) }, corsHeaders);
     }
 
     // ── delete ─────────────────────────────────────────────────────────────
@@ -402,7 +405,7 @@ Deno.serve(async (req) => {
       // a PostgREST `or()` string. `SCREENING_EXECUTION.md` records what an
       // interpolated filter cost: a claim predicate that never once parsed, and
       // a test double whose regex agreed with it while only the server did not.
-      const safe = query.replace(/[\\%_,()]/g, (c) => `\\${c}`);
+      const safe = query.replace(/[\\%_,()]/g, (c: string) => `\\${c}`);
       const pattern = `%${safe}%`;
 
       const { data, error } = await supabase

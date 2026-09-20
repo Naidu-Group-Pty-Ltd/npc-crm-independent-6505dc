@@ -25,7 +25,7 @@ import {
   comparePrimaryEvidence, isPrimaryRole, readStoredEvidenceLevel, readStoredRole,
 } from '../../supabase/functions/_shared/builderStock/sourceImageRole.pure';
 import {
-  isMarketplaceEligible,
+  isMarketplaceEligible, servableStoredImage,
 } from '../../supabase/functions/_shared/builderStock/marketplaceEligibility.pure';
 import {
   servableClearanceFor,
@@ -126,10 +126,11 @@ export interface BuilderStockImage {
  * because an unranked property is a real, ordinary state rather than a fault.
  */
 export interface BuilderStockRank {
-  rank_item_score?: number | null;
-  rank_item_confidence?: number | null;
-  rank_builder_score?: number | null;
-  rank_builder_confidence?: number | null;
+  // Postgres numerics arrive over PostgREST as either numbers or strings.
+  rank_item_score?: number | string | null;
+  rank_item_confidence?: number | string | null;
+  rank_builder_score?: number | string | null;
+  rank_builder_confidence?: number | string | null;
   rank_builder_band?: number | null;
   rank_placement_kind?: 'organic' | 'promoted' | 'pinned' | 'suppressed' | null;
   rank_placement_position?: number | null;
@@ -730,21 +731,17 @@ export function isDisplayableSourceImage(image: BuilderStockImage): boolean {
     && image.processing_status === 'ready'
     && !!(image.storage_path || image.external_url)
     && isPrimaryRole(readStoredRole(image.source_detail))
-    // The stored verdict, read — never re-measured. Deciding this per card
-    // would mean decoding every image on every render.
-    //
-    // Or the same photograph with the laid-over graphic taken off. That is a
-    // derivative of THESE bytes, named by id and by SHA-256 and re-measured by
-    // the same classifier, not a substitute picture. Mirrors the server's
-    // `primaryImage.ts`, and both read the one rule.
-    //
-    // Or the same photograph with nothing wrong with it: a clearance, which is
-    // the precise inspection's finding that the classifier convicted this
-    // picture for a feature of the house rather than for a badge. That serves
-    // the ORIGINAL — nothing was made and nothing was changed.
-    && (isMarketplaceEligible(image.source_detail)
-      || !!servableDerivativeFor(image.source_detail)
-      || !!servableClearanceFor(image.source_detail));
+    /*
+     * AND WHETHER A CARD WOULD ACTUALLY DRAW IT — the stored verdict, a
+     * servable derivative, a clearance, and the column the builder filed it
+     * under. Four questions, ONE call, out of the same module the server's
+     * `isDisplayableSourceImage` reads: three separate spellings of this is
+     * what let the column rule reach only one of them.
+     *
+     * The verdict is READ here, never re-measured. Deciding it per card would
+     * mean decoding every image on every render.
+     */
+    && servableStoredImage(image);
 }
 
 /**

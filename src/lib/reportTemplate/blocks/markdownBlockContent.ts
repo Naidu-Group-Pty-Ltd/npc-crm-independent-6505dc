@@ -16,7 +16,7 @@
 import type { Block } from '../templateSchema';
 import { resolveBindable, resolveBindableColor, type ResolveContext } from '../bindingResolver';
 import {
-  renderMarkdown, type MarkdownBlock,
+  REPORT_BODY_LIMITS, renderMarkdown, type MarkdownBlock,
 } from '../../../../supabase/functions/_shared/reports/markdown.pure';
 import {
   packMarkdownPages, packNarrativeGeometry, packNarrativePages, resolveNarrativeProfile, geometryAwareFormat,
@@ -201,6 +201,25 @@ const BUCKET_MEMO = new Map<string, MarkdownBlock[][]>();
 const BUCKET_MEMO_LIMIT = 8;
 
 /** The buckets of one source at one geometry, drawn in one palette — memoised. */
+/**
+ * What a template block reads, and what it calls a cut.
+ *
+ * Every document drawn through a master is a REPORT, so the bound is the
+ * report one and the notice says "report". The defaults in `markdown.pure.ts`
+ * are Report Q&A's ("answer", "the Markdown export") and stay there for its
+ * own render path, which is not this one.
+ *
+ * The destination is deliberately EMPTY. With `MAX_REPORT_BODY_CHARS` this
+ * notice should never draw at all — it is a fault signal now rather than
+ * routine copy — and a client document may not name a dashboard or an export
+ * the reader has no access to. The count alone is complete and true.
+ */
+export const REPORT_BODY_RENDER = {
+  ...REPORT_BODY_LIMITS,
+  truncationSubject: 'report',
+  truncationDestination: '',
+} as const;
+
 export function narrativeBuckets(
   cleanSource: string,
   geometry: NarrativeGeometry,
@@ -211,6 +230,7 @@ export function narrativeBuckets(
   const hit = BUCKET_MEMO.get(key);
   if (hit) return hit;
   const blocks = renderMarkdown(cleanSource, {
+    ...REPORT_BODY_RENDER,
     /**
      * A template page has no long edge to turn to.
      *
@@ -294,6 +314,7 @@ export function resolveMarkdownBlockContent(
   }
 
   const result = renderMarkdown(cleanSource, {
+    ...REPORT_BODY_RENDER,
     // Same rule, the non-geometry path: see the note above.
     landscapeWideTables: false,
     charging: profile?.charging,

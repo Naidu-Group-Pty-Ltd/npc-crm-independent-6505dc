@@ -302,6 +302,32 @@ export function openDataSalesPoints(input: OpenDataSalesInput): OpenDataSalesRes
       `${input.source.label}; ${dwellingWords(chosen)} sold in ${areaName}, ${label(latest.period)}${archived}`, sample);
   }
 
+  /*
+   * The volume series — the counts this register prints beside every median
+   * it prints, and which only the LATEST row of was ever read.
+   *
+   * It went into `point(…, sample)` as a sample size, which is a statement
+   * about how much to trust the price, and nowhere else. How much stock is
+   * changing hands, and whether that is more or less than this market's own
+   * recent normal, is a measurement of demand — see `scoreTransactionVolume`.
+   *
+   * Two periods is the floor for a series to exist at all; the scorer sets
+   * its own, higher floor for a baseline it will believe.
+   */
+  const volume = series
+    .filter((r) => typeof r.salesCount === 'number' && (r.salesCount as number) >= 0)
+    .map((r) => ({ period: r.period, value: r.salesCount as number }));
+  if (volume.length >= 2) {
+    points.salesVolumeSeries = point(
+      volume,
+      'observed',
+      `${input.source.label}; ${dwellingWords(chosen)} sold in ${areaName} by `
+      + `${span === 'year' ? 'calendar year' : 'quarter'}, ${label(volume[0].period)} to `
+      + `${label(volume[volume.length - 1].period)}${archived}`,
+      sample,
+    );
+  }
+
   // ---- Benchmarks: the wider market, coarser by construction. A state-level
   // reading is benchmarked against the nation; everything else against the
   // state (the publisher's own total where it has one, else the ABS series).

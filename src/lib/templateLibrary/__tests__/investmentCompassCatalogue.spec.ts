@@ -27,8 +27,9 @@ import {
 } from '../../../../supabase/functions/_shared/templateLibraryCore.pure';
 import { PRODUCTION_SAFE_BLOCK_TYPES } from '../../../../supabase/functions/_shared/productionBlockTypes';
 import {
-  INVESTMENT_COMPASS_TEMPLATES, PRIVATE_BANKING_TEMPLATES,
+  COMPANION_NOTE_CHARS, INVESTMENT_COMPASS_TEMPLATES, PRIVATE_BANKING_TEMPLATES,
 } from '../../../../scripts/template-library/investmentCompass/templates';
+import { TIER_CONTENT } from '../../../../supabase/functions/_shared/reports/investment/tierContent.pure';
 import {
   DESIGN_FAMILIES, familyByKey, resolveManifest,
 } from '../../../../scripts/template-library/investmentCompass/family';
@@ -128,6 +129,37 @@ describe('the catalogue', () => {
       expect(references[0].designMeta.templateCode).toBe(family.variants[0].code);
       expect(references[0].designMeta.archetypeCoverage).toBe('built');
     }
+  });
+
+  it('binds a companion note on every one of the fifty', () => {
+    /*
+     * The count is the assertion. The first attempt hung the note on
+     * `sectionHeading`'s optional standfirst and 32 of 50 carried it — `bare`,
+     * `decimal` and `eyebrow` openers drop a standfirst, which is right for
+     * styling and wrong for a cross-reference. `hasContents` records the same
+     * rule one level up: a family decides HOW a thing is drawn, never whether
+     * the document carries it.
+     */
+    const bound = INVESTMENT_COMPASS_TEMPLATES.filter((t) => {
+      const page = (t.schema as any).pages.find((p: any) => p.name === 'Contents');
+      return page?.blocks.some(
+        (b: any) => JSON.stringify(b).includes('{{report.companionNote}}'),
+      );
+    });
+    expect(bound.length).toBe(INVESTMENT_COMPASS_TEMPLATES.length);
+  });
+
+  it('reserves the longest companion note any tier publishes', () => {
+    /*
+     * `companionNote()` declares a height from this count, and a block that
+     * under-declares does not overflow the page — it prints over the contents
+     * list beneath it. The set is closed and small, so the number is the exact
+     * longest rather than an estimate, and this fails the day a tier's
+     * sentence is rewritten longer than the masters reserve for it.
+     */
+    const lengths = Object.values(TIER_CONTENT).map((t) => t.companionNote?.length ?? 0);
+    expect(Math.max(...lengths)).toBe(COMPANION_NOTE_CHARS);
+    expect(lengths.filter((n) => n > 0).length, 'five of six tiers carry one').toBe(5);
   });
 
   it('covers all seven report archetypes on every master', () => {
@@ -342,6 +374,47 @@ describe.each(INVESTMENT_COMPASS_TEMPLATES.map((t) => [
     // And the drop is clean: no labelled empty rows survive where the tables were.
     expect(textOf(asCompass)).not.toContain('Total upfront cash');
     expect(textOf(asCompass)).not.toContain('Loan repayments');
+  });
+
+  it('points the reader at its companion document, above the contents list', () => {
+    /*
+     * The other end of the tier split. A Compass deliberately carries no
+     * financial modelling and a Financial Analysis carries no location case,
+     * so each publishes a sentence saying where the other half is —
+     * `TIER_CONTENT.companionNote`, on the projection as
+     * `report.companionNote` since the split. `render-investment-report-pdf`
+     * drew it; the TEMPLATE route is what a client's document comes through,
+     * and NO master bound it. The tier that is told to point elsewhere never
+     * did, on any page of any document anyone opened.
+     *
+     * Above the list, never below it: `contents()`'s row count is a size hint
+     * with eight rows of slack, so a document whose real list outruns the hint
+     * draws DOWN into the space beneath — which has to stay empty.
+     */
+    const page = (template.schema as any).pages.find((p: any) => p.name === 'Contents');
+    expect(page, 'every master emits a Contents page').toBeTruthy();
+    const note = page.blocks.find(
+      (b: any) => JSON.stringify(b).includes('{{report.companionNote}}'),
+    );
+    expect(note, 'no companion note is bound on the Contents page').toBeTruthy();
+    const toc = page.blocks.find((b: any) => b.type === 'toc');
+    expect(Number(note.props.y)).toBeLessThan(Number(toc.props.y));
+  });
+
+  it('draws the companion sentence, and nothing at all without one', () => {
+    const note = (SAMPLE.report as any).companionNote as string;
+    const withoutNote = {
+      ...SAMPLE,
+      report: Object.fromEntries(
+        Object.entries(SAMPLE.report as object).filter(([k]) => k !== 'companionNote'),
+      ),
+    };
+    expect(textOf(renderTemplateToHtml(template.schema, { data: SAMPLE }).html)).toContain(note);
+    // `composite` is the one tier that publishes none. An unresolved binding
+    // renders as the empty string, never as a visible `{{…}}`.
+    const bare = renderTemplateToHtml(template.schema, { data: withoutNote }).html;
+    expect(textOf(bare)).not.toContain(note);
+    expect(bare).not.toContain('{{');
   });
 
   it('makes every narrative page conditional on the projection having it', () => {

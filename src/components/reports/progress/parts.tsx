@@ -69,7 +69,7 @@ import type { GenerationHistoryEntry } from '@/hooks/useGenerationHistory';
 import { Calendar } from '@/components/ui/calendar';
 import { Popover, PopoverTrigger, PopoverContent } from '@/components/ui/popover';
 import { SearchInput } from '@/components/ui/search-input';
-import { activityState, isResumable, formatEta, formatElapsed } from './selectors.pure';
+import { activityState, generationPhase, isResumable, formatEta, formatElapsed } from './selectors.pure';
 
 /* ---------- Types shared with parent ---------- */
 
@@ -86,6 +86,19 @@ export interface ReportProgress {
   createdAt: Date;
   bulkJobId?: string | null;
   generationEngine?: 'legacy' | 'compass-40' | null;
+  /**
+   * Whether the SERVER has stated how many sections this report has.
+   *
+   * `totalSections` always carries a number so the arithmetic never divides by
+   * zero, but until the first progressive save it is the tier registry's guess,
+   * not the record's. Printing a guessed denominator is what made a run that
+   * had been researching for twenty seconds indistinguishable from one that had
+   * been hung for twenty minutes: both read `Section 1 of 15 · 0/15 · 0%` from
+   * the first second.
+   *
+   * Optional so a caller that has not been updated renders exactly as before.
+   */
+  sectionPlanSettled?: boolean;
 }
 
 export interface AutoContinueSettings {
@@ -421,6 +434,17 @@ interface ItemProps {
   retryState?: { attempts: number; lastAttempt: number; retryAt?: number };
   autoContinueSettings: AutoContinueSettings;
   sectionTimeline: number[]; // epoch ms of each section completion
+  /**
+   * When THIS run began, or null when nothing can say.
+   *
+   * Never `report.createdAt`: the row is reused across regenerations, so its
+   * creation is the report's birthday, not the run's start — which is how a
+   * two-minute run came to print `3h 30m elapsed`. A run this tab did not
+   * start (cron resume, bulk job, reload mid-flight) has no knowable origin and
+   * gets no elapsed readout, because the report's age is not an answer to the
+   * question the line asks.
+   */
+  runStartedAt: number | null;
   /** Clock from the container's tick, so elapsed readouts advance predictably. */
   now: number;
   /** Whether polling/auto-continue is paused, so the row can tell the truth. */
@@ -437,6 +461,7 @@ export function GenerationProgressItem({
   retryState,
   autoContinueSettings,
   sectionTimeline,
+  runStartedAt,
   now,
   paused,
   onContinue,
@@ -455,11 +480,14 @@ export function GenerationProgressItem({
   // here made the render impure and — worse — froze every elapsed readout
   // whenever polling stopped, because nothing re-rendered to advance it.
   const timeSinceUpdate = now - report.lastUpdated.getTime();
-  const timeSinceCreation = now - report.createdAt.getTime();
+  // Null where the run's start is unknown — see `runStartedAt`. Stall detection
+  // below still uses `lastUpdated`, which is a fact about the row either way.
+  const runElapsedMs = runStartedAt === null ? null : Math.max(0, now - runStartedAt);
 
   // One shared definition of state, so the row can never say "Processing" while
   // the header chip above it says "Stalled".
   const state = activityState(report, now);
+  const phase = generationPhase(report);
   const isStuck = state === 'stalled';
   const isIncomplete = report.sectionsCompleted < report.totalSections;
 
@@ -522,12 +550,22 @@ export function GenerationProgressItem({
                   className="h-3 w-3 text-info motion-safe:animate-spin"
                   aria-hidden="true"
                 />
+                {/* A phase, not a guessed section number. Until the server
+                    states `total_sections` there is no section count to print,
+                    and printing the registry's guess is what made a healthy
+                    research phase read identically to a hang. */}
                 <span className="text-xs font-medium text-foreground">
-                  Section {currentSection} of {report.totalSections}
+                  {phase === 'researching'
+                    ? 'Researching the property'
+                    : phase === 'assembling'
+                      ? 'Assembling the document'
+                      : `Section ${currentSection} of ${report.totalSections}`}
                 </span>
-                <span className="text-xs text-muted-foreground">
-                  • {formatElapsed(timeSinceCreation)} elapsed
-                </span>
+                {runElapsedMs !== null && (
+                  <span className="text-xs text-muted-foreground">
+                    • {formatElapsed(runElapsedMs)} elapsed
+                  </span>
+                )}
                 {etaMs !== null && (
                   <span className="text-xs text-muted-foreground">• ~{formatEta(etaMs)} left</span>
                 )}
@@ -537,7 +575,7 @@ export function GenerationProgressItem({
               <>
                 <CheckCircle2 className="h-3 w-3 text-success" aria-hidden="true" />
                 <span className="text-xs font-medium text-foreground">
-                  Finished in {formatElapsed(timeSinceCreation)}
+                  {runElapsedMs === null ? 'Finished' : `Finished in ${formatElapsed(runElapsedMs)}`}
                 </span>
               </>
             )}
@@ -684,7 +722,10 @@ export function GenerationProgressItem({
           report body — it would read 0.0 KB for every row. */}
       <div className="mt-1.5 flex justify-between text-xs text-muted-foreground">
         <span>
-          {report.sectionsCompleted}/{report.totalSections} sections
+          {/* The denominator is the record's only where the record stated it. */}
+          {phase === 'researching'
+            ? 'No sections written yet'
+            : `${report.sectionsCompleted}/${report.totalSections} sections`}
           {sectionTimeline.length >= 2 && report.sectionsCompleted > 0 && (
             <>
               {' · '}

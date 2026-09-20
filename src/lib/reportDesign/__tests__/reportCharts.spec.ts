@@ -436,12 +436,16 @@ describe('a label never runs past the drawing it belongs to', () => {
     const svg = renderTimelineRibbon(ctx, items, { title: 'Infrastructure pipeline' });
     const texts = textsOf(svg).filter((t) => t !== 'Infrastructure pipeline' && !/^(EXISTING|0-2Y|3-5Y|5Y\+)$/.test(t));
     // The old renderer cut every label at 26 characters and set it on one line;
-    // a 46-character label now wraps whole, and only the one that cannot be
-    // held on two lines of the measure is cut, with the cut shown.
+    // a 46-character label now wraps whole.
     expect(texts).toContain('Further road and transport');
     expect(texts).toContain('corridor investment');
     expect(texts).toContain('Ongoing renewal of');
-    expect(texts.filter((t) => t.endsWith('…'))).toHaveLength(1);
+    // And NOTHING is cut here. A stop carrying one item is given four lines
+    // and a stop carrying two is given two each, so the 51-character label
+    // alone at `5y+` sets whole where it used to lose its last three words.
+    // A cut is a last resort, not the normal state of a long label.
+    expect(texts.filter((t) => t.endsWith('…'))).toHaveLength(0);
+    expect(texts.join(' ')).toContain('facilities and services');
     // Each stop's measure is 172 units; at micro size that is about 27 characters.
     for (const t of texts) expect(t.length).toBeLessThanOrEqual(28);
     // The end labels are anchored to the edges and the interior ones centred
@@ -493,5 +497,101 @@ describe('a label never runs past the drawing it belongs to', () => {
     const firstTile = Number(/<g transform="translate\(12 ([\d.]+)\)"/.exec(long)![1]);
     const titleYs = [...long.matchAll(/<text x="12\.0" y="([\d.]+)"[^>]*font-weight="700"/g)].map((m) => Number(m[1]));
     expect(firstTile).toBeGreaterThan(Math.max(...titleYs));
+  });
+});
+
+/**
+ * A waterfall's category label is wrapped into its slot, not guillotined.
+ *
+ * The renderer read `b.label.length > 16 ? b.label.slice(0, 14) + '…'` — a
+ * hard cut that never wrapped and never asked how wide the bar's slot is.
+ * Measured 19 Sep 2026: the slot is 133 units and holds 19 characters a line,
+ * so four of the five labels on an acquisition build-up were cut to fourteen
+ * while `fitLines` sets every one of them whole in two lines.
+ *
+ * The case that settles it is the directive's own documentation. The worked
+ * example in `vizDirectives.pure.ts` is `{{waterfall: Gross rent +$50,000,
+ * Non-mortgage outgoings -$13,101, Room =+$36,899}}`, and this renderer drew
+ * that example's own label as `Non-mortgage o…`.
+ */
+describe('a waterfall label fits the bar it belongs to', () => {
+  const drawnText = (svg: string): string[] =>
+    [...svg.matchAll(/>([^<>]+)<\/text>/g)].map((m) => m[1]).filter((t) => /[A-Za-z]{3}/.test(t));
+  const heightOf = (svg: string): number => Number(/viewBox="0 0 [0-9.]+ ([0-9.]+)"/.exec(svg)?.[1]);
+
+  /** The directive documentation's own worked example, verbatim. */
+  const DOCUMENTED = [
+    { label: 'Gross rent', value: 50000 },
+    { label: 'Non-mortgage outgoings', value: -13101 },
+    { label: 'Room', value: 36899, total: true },
+  ];
+
+  /** The five-step shape a Compass acquisition build-up draws. */
+  const BUILD_UP = [
+    { label: 'Purchase price', value: 700000 },
+    { label: 'Stamp duty and transfer', value: 27000 },
+    { label: 'Legal and conveyancing', value: 2200 },
+    { label: 'Building and pest inspection', value: 900 },
+    { label: 'Total acquisition cost', value: 730100, total: true },
+  ];
+
+  it("draws the directive documentation's own example label whole", () => {
+    const drawn = drawnText(renderWaterfall(ctx, DOCUMENTED));
+    expect(drawn).toContain('Non-mortgage outgoings');
+    expect(drawn.some((t) => t.includes('…'))).toBe(false);
+  });
+
+  it('wraps rather than truncating, on every label of a build-up', () => {
+    const svg = renderWaterfall(ctx, BUILD_UP);
+    const drawn = drawnText(svg);
+    expect(drawn.some((t) => t.includes('…'))).toBe(false);
+    // Every word of every label survives, in order, across its own lines.
+    for (const item of BUILD_UP) {
+      const words = item.label.split(' ');
+      const joined = drawn.join(' ');
+      for (const word of words) expect(joined).toContain(word);
+    }
+  });
+
+  /*
+   * The regression guard, stated as the defect rather than as the fix: no
+   * label may come out at exactly the length the old cut produced.
+   */
+  it('never cuts a label at fourteen characters', () => {
+    for (const items of [DOCUMENTED, BUILD_UP]) {
+      for (const t of drawnText(renderWaterfall(ctx, items))) {
+        expect(t.endsWith('…') && t.length === 15).toBe(false);
+      }
+    }
+  });
+
+  it('grows the drawing for a second line and leaves a one-line chart alone', () => {
+    const short = renderWaterfall(ctx, [
+      { label: 'Rent', value: 50000 },
+      { label: 'Costs', value: -13101 },
+      { label: 'Room', value: 36899, total: true },
+    ]);
+    // A chart whose labels already fit is byte-identical in its geometry.
+    expect(heightOf(short)).toBe(360);
+    expect(heightOf(renderWaterfall(ctx, DOCUMENTED))).toBe(360);
+    // One extra line of labels costs one line-step of ground, and no more.
+    expect(heightOf(renderWaterfall(ctx, BUILD_UP))).toBe(373);
+  });
+
+  /*
+   * The ellipsis is not removed, only demoted. A label no two lines of the
+   * slot can hold still says it was cut — silently dropping the tail would be
+   * worse than the truncation this replaces.
+   */
+  it('still ends with an ellipsis where two lines genuinely cannot hold the label', () => {
+    const drawn = drawnText(renderWaterfall(ctx, [
+      { label: 'Purchase price', value: 700000 },
+      {
+        label: 'Lenders mortgage insurance premium capitalised into the loan balance at settlement',
+        value: 14500,
+      },
+      { label: 'Total', value: 714500, total: true },
+    ]));
+    expect(drawn.some((t) => t.endsWith('…'))).toBe(true);
   });
 });

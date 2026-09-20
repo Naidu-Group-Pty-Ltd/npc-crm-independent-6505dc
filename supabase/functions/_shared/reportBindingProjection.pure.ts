@@ -113,7 +113,7 @@
  * table cannot drift.
  */
 import { assessmentReadings } from './reports/investment/assessmentReadings.pure.ts';
-import { renderMarkdown } from './reports/markdown.pure.ts';
+import { REPORT_BODY_LIMITS, renderMarkdown } from './reports/markdown.pure.ts';
 import {
   DEFAULT_LINES_PER_PAGE,
   packMarkdownPages,
@@ -121,6 +121,7 @@ import {
   resolveNarrativeProfile,
 } from './reports/markdownPaging.pure.ts';
 import { stripBakedCover } from './reports/investment/narrativeClean.pure.ts';
+import { NARRATIVE_CHAPTER_SLOTS, runningChapters } from './reports/runningChapters.pure.ts';
 import { planningChartContext, vizDirectiveRenderer } from './reports/vizFigures.pure.ts';
 import { reconcileStoredFinancials } from './reports/investment/financialEngine.pure.ts';
 import { readAnnualRent } from './reports/investment/rentBasis.pure.ts';
@@ -238,14 +239,54 @@ function configuration(spec: (...keys: string[]) => unknown): string | undefined
  * The longest action is eight characters. A string that does not match the
  * pattern is returned whole — the caller gets the same thing `headline` would
  * have given it, which is what it printed before this existed.
- *
- * `headline` is untouched, and the page-3 verdict block still sets the whole
- * sentence, where there is a full measure to set it in.
  */
 function recommendationAction(headline: string | undefined): string | undefined {
   if (!headline) return undefined;
   const match = /^([A-Z][A-Za-z/ ]{1,20}?)\s+-\s+\S/.exec(headline);
   return match ? match[1].trim() : headline;
+}
+
+/**
+ * The verdict CLAIM, separated from the coverage sentence appended after it.
+ *
+ * This paragraph used to end "`headline` is untouched, and the page-3 verdict
+ * block still sets the whole sentence, where there is a full measure to set it
+ * in." That was true when it was written and measured — the vocabulary in
+ * `RECOMMENDATION_BY_GRADE` runs 59 to **89** characters, which sets in two
+ * lines at the verdict page's 27pt.
+ *
+ * `qualifyRecommendation` then began appending a second sentence whenever the
+ * run measured fewer than all five dimensions:
+ *
+ *     HOLD - Average investment with mixed indicators, monitor market
+ *     conditions. Assessed on 4 of 5 dimensions: capital growth, location,
+ *     rental yield and demand.
+ *
+ * **156 characters**, measured on the 42 Patya Circuit report of 19 Sep 2026.
+ * That needs five lines where the block declares two, and the masters position
+ * every block at an absolute `y` — so it did not overflow the page, it printed
+ * ON TOP of the KPI band beneath it. `$1,975,000` and `$850` were struck
+ * through by the heading's last two lines, and the strapline under them was
+ * unreadable. `callout(…, 72)` and `decision(…, 104)` are the declared heights
+ * it broke.
+ *
+ * Nothing is dropped and nothing is truncated. The appended sentence is split
+ * off at the boundary `qualifyRecommendation` itself creates and published as
+ * `scopeNote`, so a master may set it at body size where it belongs — and the
+ * report already says it twice anyway, because `gradedLine` names the same
+ * dimensions one line below.
+ *
+ * The split is exact rather than a guess: it matches only the sentence that
+ * appender writes, anchored at the end. Anything else is returned whole, which
+ * is what every caller had before this existed.
+ */
+export function splitVerdictScope(
+  headline: string | undefined,
+): { claim: string | undefined; scope: string | undefined } {
+  if (!headline) return { claim: undefined, scope: undefined };
+  const match = /^(.*?)\.\s+(Assessed on \d+ of \d+ dimensions:[^.]*\.)\s*$/s.exec(headline.trim());
+  if (!match) return { claim: headline, scope: undefined };
+  return { claim: `${match[1].trim()}.`, scope: match[2].trim() };
 }
 
 /**
@@ -373,6 +414,8 @@ export interface ProjectedNamespaces {
 export function projectReportNarrative(
   content: unknown,
   linesPerPage: number = DEFAULT_LINES_PER_PAGE,
+  /** What a running head says on a page whose chapter cannot be determined. */
+  fallbackChapter = '',
 ): Record<string, unknown> {
   const out: Record<string, unknown> = {};
   const raw = typeof content === 'string' ? content.trim() : '';
@@ -403,13 +446,32 @@ export function projectReportNarrative(
   // with. Without this the count ignored every figure while the block drew
   // them, which is exactly the one-line drift this module's header forbids.
   const blocks = renderMarkdown(source, {
+    // The SAME limits the block reads. `markdown.pure.ts` defaults all three
+    // to bounds sized for one chat answer, and this side estimating pages from
+    // a 65,536-character, 400-block prefix while the block draws 131,072 and
+    // 1,600 is exactly the one-line drift this module's header forbids.
+    ...REPORT_BODY_LIMITS,
     charging: profile?.charging,
     renderDirective: vizDirectiveRenderer(planningChartContext()),
   }).blocks;
-  const pages = (profile
+  const packed = profile
     ? packNarrativePages(blocks, profile, linesPerPage)
-    : packMarkdownPages(blocks, linesPerPage)).length;
-  put(out, 'pages', pages || undefined);
+    : packMarkdownPages(blocks, linesPerPage);
+  put(out, 'pages', packed.length || undefined);
+  // The chapter each body page is in, for its running head.
+  //
+  // An ESTIMATE, exactly like `pages` beside it: this side has no template in
+  // hand, so the page breaks — and therefore which chapter a page opens in —
+  // are the calibrated profile's rather than the chosen master's.
+  // `planNarrative` overwrites both from the real geometry in one pass, and
+  // they travel together for that reason.
+  // Padded to the masters' declared allowance so every `narrative.chapters.N`
+  // the catalogue binds has a source. The pad is the fallback a running head
+  // takes when the chapter cannot be determined, and the pages it covers never
+  // draw — their conditional is `narrative.pages > n`.
+  if (packed.length) {
+    put(out, 'chapters', runningChapters(packed, fallbackChapter, NARRATIVE_CHAPTER_SLOTS));
+  }
   return out;
 }
 
@@ -649,8 +711,14 @@ export function projectInvestmentReport(
   // was withheld and why — that surface is not the document.
   const storedRecommendation = str(score.recommendation);
   const ungradedStatement = storedRecommendation?.trim() === OVERALL_GRADE_UNAVAILABLE.explanation;
-  const headline = ungradedStatement ? undefined : storedRecommendation;
+  const storedHeadline = ungradedStatement ? undefined : storedRecommendation;
+  // The coverage sentence leaves the display slot and keeps its own name. See
+  // `splitVerdictScope`: this is the page-3 overlap, and it is fixed here
+  // rather than in a master because every selectable master binds `headline`.
+  const verdict = splitVerdictScope(storedHeadline);
+  const headline = verdict.claim;
   put(recommendation, 'headline', headline);
+  put(recommendation, 'scopeNote', verdict.scope);
   put(recommendation, 'action', recommendationAction(headline));
   // The grade and its score go through the ONE rule that decides whether this
   // record may state a grade at all. This used to be `str(score.grade)`, which
@@ -1001,7 +1069,10 @@ export function projectInvestmentReport(
     // axis with no series on it.
     equitySeries: policy.financialModelling ? equitySeries : [],
     report,
-    narrative: projectReportNarrative(row.report_content),
+    // The document's own name is what a running head says on a page whose
+    // chapter cannot be determined — before the first heading, and on the
+    // pages a master declares that this body does not reach.
+    narrative: projectReportNarrative(row.report_content, undefined, identity.title),
   };
 }
 

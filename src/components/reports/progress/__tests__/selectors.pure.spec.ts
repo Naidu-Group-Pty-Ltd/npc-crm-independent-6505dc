@@ -3,6 +3,7 @@ import {
   parseTimestamp,
   toReportProgress,
   activityState,
+  generationPhase,
   isResumable,
   estimateRemainingMs,
   aggregateProgress,
@@ -304,5 +305,74 @@ describe('formatting', () => {
     expect(formatElapsed(-5)).toBe('—');
     expect(formatElapsed(45_000)).toBe('45s');
     expect(formatElapsed(125_000)).toBe('2m 5s');
+  });
+});
+
+
+describe('generationPhase — a research phase and a hang must not read alike', () => {
+  /**
+   * The reported incident read `Section 1 of 15 · 0/15 · 0% · 21m 2s elapsed`.
+   * The run had genuinely banked nothing — but the widget had been printing
+   * that exact line since the first second, because `totalSections` falls back
+   * to the tier registry when the server has not stated one. So forty seconds
+   * of legitimate research and twenty-one minutes of hang produced the same
+   * words.
+   */
+  it('says the run is researching while the server has stated no section count', () => {
+    const p = generationPhase(progress({ sectionsCompleted: 0, sectionPlanSettled: false }));
+    expect(p).toBe('researching');
+  });
+
+  it('switches to writing the moment the record states a count', () => {
+    // `total_sections` is written by the first progressive save, which is also
+    // the first moment any prose exists — so this is a real milestone and not
+    // a second guess at one.
+    expect(generationPhase(progress({ sectionsCompleted: 1, sectionPlanSettled: true }))).toBe(
+      'writing',
+    );
+  });
+
+  it('treats a row with no flag as settled, so nothing already mid-flight changes', () => {
+    const legacy = progress({ sectionsCompleted: 0 });
+    delete (legacy as { sectionPlanSettled?: boolean }).sectionPlanSettled;
+    expect(generationPhase(legacy)).toBe('writing');
+  });
+
+  it('never calls a queued report researching', () => {
+    expect(
+      generationPhase(progress({ status: 'pending', sectionsCompleted: 0, sectionPlanSettled: false })),
+    ).toBe('queued');
+  });
+
+  it('says assembling once every section is written', () => {
+    expect(
+      generationPhase(progress({ sectionsCompleted: 17, totalSections: 17, sectionPlanSettled: true })),
+    ).toBe('assembling');
+  });
+
+  it('is not a fifth activity state — stall detection is untouched by it', () => {
+    // A phase says what is happening; a state says whether anything is wrong.
+    // A run that has been researching for four minutes is still stalled.
+    const hung = progress({
+      sectionsCompleted: 0,
+      sectionPlanSettled: false,
+      lastUpdated: new Date(NOW - 4 * 60_000),
+    });
+    expect(generationPhase(hung)).toBe('researching');
+    expect(activityState(hung, NOW)).toBe('stalled');
+  });
+});
+
+describe('toReportProgress carries whether the count is the record\'s', () => {
+  it('is settled when the row states a total', () => {
+    expect(toReportProgress(row({ total_sections: 15 }), NOW).sectionPlanSettled).toBe(true);
+  });
+
+  it('is unsettled when the total is absent, even though a denominator is supplied', () => {
+    const p = toReportProgress(row({ total_sections: null, last_completed_section: 0 }), NOW);
+    expect(p.sectionPlanSettled).toBe(false);
+    // The arithmetic still has a denominator — the flag is what stops it being
+    // PRINTED as though the record had stated it.
+    expect(p.totalSections).toBeGreaterThan(0);
   });
 });

@@ -6,6 +6,7 @@ import {
 import { packMarkdownPages } from '../../../../supabase/functions/_shared/reports/markdownPaging.pure';
 import { MARKDOWN_TYPE } from '../../../../supabase/functions/_shared/reports/narrativeGeometry.pure';
 import { resolveMarkdownBlockContent, DEFAULT_LINES_PER_PAGE } from './markdownBlockContent';
+import { listedSectionLevel, narrativeIndexFrom } from '../narrativeIndex';
 
 export { packMarkdownPages, DEFAULT_LINES_PER_PAGE };
 
@@ -164,10 +165,46 @@ export function renderMarkdownBlockHtml(block: Block, ctx: HtmlBlockContext): st
   const label = `display:block;font-size:${(bodySize * T.callout.labelScale).toFixed(1)}pt;font-weight:700;`
     + `letter-spacing:0.06em;text-transform:uppercase;color:${headingColor};margin:0 0 ${pt(T.callout.labelGapPt)};`;
 
+  /*
+   * The PDF outline names the report's own sections, because the contents
+   * page already does.
+   *
+   * Measured 19 September 2026 on a Chancery Compass carrying a real
+   * narrative: the contents listed nine rows including "Location Overview"
+   * and "Zoning, Planning and Development Considerations", while the outline
+   * held seven — Cover, Contents, Executive dashboard, The assessment, Risk
+   * and recommendation, Sources and methodology, Important information. Every
+   * one is furniture. Not one section of the report appeared in it.
+   *
+   * `narrativeIndex.ts` says the two surfaces "cannot describe the document
+   * differently", and the half that keeps that promise is the page's entry
+   * standing down on a sheet the narrative drew on. Nothing was replacing it,
+   * so the outline LOST the row rather than gaining the section — a reader
+   * opening the bookmark panel of a 31-page report was offered the furniture
+   * and a single row for the whole body.
+   *
+   * The tier is `listedSectionLevel`, the same rule and the same index the
+   * contents reads, for the reason that rule exists: `renderMarkdown`
+   * normalises a run's shallowest heading to `h2`, so on the Investment
+   * Report shape `h2` is `# NAIDU PROPERTY CONSULTING SERVICES` and
+   * `# Investment Report: <address>` — masthead, not parts of a document.
+   * Styling `h2` unconditionally would put the company's name in the outline,
+   * which is the defect `textBlock` already fixed on the other side.
+   *
+   * The entry is level 2, which is what a page's own name uses, so the
+   * outline is one flat list in document order and reads exactly as the
+   * contents does. `includeBookmarks: false` opts out of this one too.
+   */
+  const sections = narrativeIndexFrom(ctx.data).sections;
+  const outlineLevel = sections.length ? listedSectionLevel(sections) : 0;
+  const outlineTag = (ctx as { _includeBookmarks?: boolean })._includeBookmarks === false
+    ? '' : (outlineLevel >= 2 && outlineLevel <= 4 ? `h${outlineLevel}` : '');
+  const outline = (tag: string) => (tag === outlineTag ? 'bookmark-level:2;' : '');
+
   const html = styleTags(page.map((b) => b.html).join(''), [
-    { tag: 'h2', style: `${headingFont}color:${headingColor};${heading(2)}font-weight:600;` },
-    { tag: 'h3', style: `${headingFont}color:${headingColor};${heading(3)}font-weight:600;` },
-    { tag: 'h4', style: `${headingFont}color:${color};${heading(4)}font-weight:700;` },
+    { tag: 'h2', style: `${headingFont}color:${headingColor};${heading(2)}font-weight:600;${outline('h2')}` },
+    { tag: 'h3', style: `${headingFont}color:${headingColor};${heading(3)}font-weight:600;${outline('h3')}` },
+    { tag: 'h4', style: `${headingFont}color:${color};${heading(4)}font-weight:700;${outline('h4')}` },
     { tag: 'p', style: `margin:0 0 ${pt(T.paragraph.marginBottomPt)};` },
     { tag: 'ul', cls: 'marked', style: `margin:0;padding-left:${pt(T.list.indentPt)};list-style:none;` },
     { tag: 'ul', style: `margin:0 0 ${pt(T.list.marginBottomPt)};padding-left:${pt(T.list.indentPt)};` },

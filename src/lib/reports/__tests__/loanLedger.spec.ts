@@ -172,3 +172,81 @@ describe('the one path the calculator service actually uses', () => {
     expect(pi.interestOnlyYearsAssumed).toBe(false);
   });
 });
+
+/**
+ * A stored loan block that carries no structure sentence.
+ *
+ * `financial-calculator-service` has published `loanDetails.structure` since
+ * the ledger was wired into it on 15 Sep 2026, and `financialChapters` prints
+ * it in the row under "Loan type" so that QA-04 — an interest-only label over
+ * principal-and-interest figures — reads as one reconciled fact. Measured on
+ * 19 Sep 2026, the field is absent on 92 of 92 stored reports holding a loan
+ * block, so on every one of them that row does not print at all and a client
+ * is left with the contradiction the row exists to reconcile.
+ */
+describe('describeStoredLoanStructure', () => {
+  const cowra = {
+    loanAmount: 444_000,
+    interestRate: 6.5,
+    loanTerm: 30,
+    loanType: 'interest_only',
+    interestOnlyPeriod: 2,
+    monthlyPayment: 2_806.382024308766,
+  };
+
+  it('names the principal-and-interest schedule the figures were built on, and the label it contradicts', async () => {
+    const { describeStoredLoanStructure } = await import('@/lib/reports/investment/loanLedger.pure');
+    const read = describeStoredLoanStructure(cowra)!;
+    expect(read.basis).toBe('figures_contradict_label');
+    expect(read.figuresProduct).toBe('principal_interest');
+    // BOTH halves are stated. Neither is corrected: the loan offer settles
+    // which one is right and this module has never seen it.
+    expect(read.structure).toContain('Principal and interest over 30 years');
+    expect(read.structure).toContain('interest only for 2 years');
+    expect(read.structure).toContain('do not reflect');
+  });
+
+  it('is decided by the figures, not by the label — the arbiter is the stored repayment', async () => {
+    const { describeStoredLoanStructure, buildLoanLedger } = await import('@/lib/reports/investment/loanLedger.pure');
+    // The stored repayment agrees with the P&I schedule to the cent, and is
+    // $401 away from what the record's own stated product would repay.
+    const stated = buildLoanLedger({ loanAmount: 444_000, annualRatePercent: 6.5, termYears: 30, loanType: 'interest_only', interestOnlyYears: 2 });
+    const pi = buildLoanLedger({ loanAmount: 444_000, annualRatePercent: 6.5, termYears: 30 });
+    expect(Math.abs(cowra.monthlyPayment - pi.firstMonthlyPayment)).toBeLessThan(0.01);
+    expect(Math.abs(cowra.monthlyPayment - stated.firstMonthlyPayment)).toBeGreaterThan(400);
+
+    // Give the same record an interest-only repayment and the same function
+    // reports the label as sound, with no contradiction sentence.
+    const consistent = describeStoredLoanStructure({ ...cowra, monthlyPayment: stated.firstMonthlyPayment })!;
+    expect(consistent.basis).toBe('stated');
+    expect(consistent.structure).toBe(describeLoanStructure(stated));
+    expect(consistent.structure).not.toContain('do not reflect');
+  });
+
+  it('says an assumed interest-only term was assumed, on either branch', async () => {
+    const { describeStoredLoanStructure } = await import('@/lib/reports/investment/loanLedger.pure');
+    const noTerm = { ...cowra, interestOnlyPeriod: undefined, monthlyPayment: 2_781.10, loanAmount: 440_000 };
+    const read = describeStoredLoanStructure(noTerm)!;
+    expect(read.basis).toBe('figures_contradict_label');
+    expect(read.structure).toContain('no interest-only term recorded');
+    expect(read.structure).not.toMatch(/interest only for \d/);
+  });
+
+  it('derives nothing where the repayment matches neither schedule', async () => {
+    const { describeStoredLoanStructure } = await import('@/lib/reports/investment/loanLedger.pure');
+    // `healFinanceIdentity`'s rule: a repair that cannot say which figure is
+    // sound is just a third opinion.
+    expect(describeStoredLoanStructure({ ...cowra, monthlyPayment: 3_500 })).toBeNull();
+    // And a loan already recorded as principal and interest has one schedule,
+    // so a repayment that does not match it does not match anything here.
+    expect(describeStoredLoanStructure({ ...cowra, loanType: 'principal_interest', monthlyPayment: 2_405 })).toBeNull();
+  });
+
+  it('derives nothing without the terms to run a schedule on', async () => {
+    const { describeStoredLoanStructure } = await import('@/lib/reports/investment/loanLedger.pure');
+    expect(describeStoredLoanStructure(null)).toBeNull();
+    expect(describeStoredLoanStructure({ ...cowra, loanAmount: undefined })).toBeNull();
+    expect(describeStoredLoanStructure({ ...cowra, interestRate: undefined })).toBeNull();
+    expect(describeStoredLoanStructure({ ...cowra, monthlyPayment: 0 })).toBeNull();
+  });
+});

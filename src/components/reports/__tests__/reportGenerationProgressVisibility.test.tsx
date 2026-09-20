@@ -176,3 +176,79 @@ describe('Stop reaches the other driver', () => {
     }
   });
 });
+
+
+describe('a research phase and a hang must not read alike', () => {
+  /**
+   * The reported line was `Section 1 of 15 · 0/15 · 0% · 21m 2s elapsed`. The
+   * run had genuinely banked nothing — but the widget had been drawing those
+   * exact words since the first second, because `totalSections` falls back to
+   * the tier registry when the server has stated none. `total_sections` is
+   * written by the first progressive save, which is also the first moment any
+   * prose exists, so its absence is a real signal and not a second guess.
+   *
+   * This renders the real component, because the fault is in what it DRAWS.
+   */
+  const RESEARCHING_ID = '99999999-8888-4777-8666-555555555555';
+
+  function researchingRow() {
+    const now = Date.now();
+    return {
+      id: RESEARCHING_ID,
+      property_address: '18 Annabelle Crescent, Kellyville NSW 2155',
+      status: 'processing',
+      error_message: null,
+      created_at: new Date(now - 40_000).toISOString(),
+      updated_at: new Date(now - 5_000).toISOString(),
+      // What the record holds during acquisition: no plan, no prose.
+      last_completed_section: 0,
+      total_sections: null,
+      bulk_job_id: null,
+      report_tier: 'compass',
+      generation_engine: 'compass-40',
+    };
+  }
+
+  function serveResearchingRow() {
+    invokeSecureFunction.mockImplementation(async (fn: string, payload: any) => {
+      if (fn === 'get-investment-reports' && payload?.listMode) {
+        return { data: { reports: [researchingRow()] }, error: null };
+      }
+      return { data: { success: true }, error: null };
+    });
+  }
+
+  it('says what the run is doing instead of inventing a section count', async () => {
+    serveResearchingRow();
+    render(<ReportGenerationProgress />);
+    await screen.findByText('18 Annabelle Crescent, Kellyville NSW 2155');
+
+    expect(await screen.findByText('Researching the property')).toBeInTheDocument();
+    // The count the server has not stated is not printed as though it had.
+    expect(screen.queryByText(/Section 1 of/)).not.toBeInTheDocument();
+    // Exact, because the aggregate header above legitimately draws a bar and
+    // needs a denominator to draw an arc with — this is about the ROW's own
+    // counts line, which is what a reader reads as the report's own progress.
+    expect(screen.queryByText('0/15 sections')).not.toBeInTheDocument();
+    expect(screen.getByText(/No sections written yet/)).toBeInTheDocument();
+  });
+
+  it('prints the section count the moment the record states one', async () => {
+    invokeSecureFunction.mockImplementation(async (fn: string, payload: any) => {
+      if (fn === 'get-investment-reports' && payload?.listMode) {
+        return {
+          data: {
+            reports: [{ ...researchingRow(), last_completed_section: 1, total_sections: 15 }],
+          },
+          error: null,
+        };
+      }
+      return { data: { success: true }, error: null };
+    });
+    render(<ReportGenerationProgress />);
+    await screen.findByText('18 Annabelle Crescent, Kellyville NSW 2155');
+
+    expect(await screen.findByText('Section 2 of 15')).toBeInTheDocument();
+    expect(screen.queryByText('Researching the property')).not.toBeInTheDocument();
+  });
+});

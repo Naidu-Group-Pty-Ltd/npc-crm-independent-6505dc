@@ -113,7 +113,7 @@ describe('the validator discloses it without failing the document', () => {
   const md = doc('{{donut: Owner-occupier 62, Renter 34, Other 4 | title=Occupier mix}}');
 
   it('raises a warning, at every tier', () => {
-    for (const tier of ['compass', 'financial', 'strategic', 'briefing', 'snapshot']) {
+    for (const tier of ['compass-40', 'financial-analysis', 'strategic', 'briefing', 'snapshot'] as const) {
       const report = runQAValidation(md, tier);
       const f = report.findings.find((x) => x.rule === 'figure-without-a-stated-basis');
       expect(f?.severity, tier).toBe('warning');
@@ -125,7 +125,7 @@ describe('the validator discloses it without failing the document', () => {
   });
 
   it('names the caption as the remedy, and the four things it must carry', () => {
-    const f = runQAValidation(md, 'compass').findings
+    const f = runQAValidation(md, 'compass-40').findings
       .find((x) => x.rule === 'figure-without-a-stated-basis');
     expect(f?.message).toContain('caption');
     for (const part of ['units', 'period', 'geography', 'model basis']) {

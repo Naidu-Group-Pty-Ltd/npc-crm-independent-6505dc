@@ -1,4 +1,5 @@
 import { buildRecordedFactsBlock } from '../_shared/reports/investment/condenseFacts.pure.ts';
+import { claimSupportRules, readEvidenceInventory } from '../_shared/reports/investment/chartEvidence.pure.ts';
 import { composeCondensedDocument } from '../_shared/reports/investment/condenseCompose.pure.ts';
 import { projectInvestmentReport, type InvestmentReportRowLike } from '../_shared/reportBindingProjection.pure.ts';
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.55.0";
@@ -547,6 +548,23 @@ Deno.serve(async (req) => {
     // inside it. So the source is named as pipeline input, the reader's
     // single-document position is stated, and the permitted form — omit the
     // line — is given.
+    /*
+     * The claim rules, built from the PARENT'S evidence.
+     *
+     * A condensation may not introduce a claim its parent did not make, and
+     * the evidence available to the child is exactly the evidence available to
+     * the parent — a Briefing is drawn from a Compass's row, not from a second
+     * acquisition. This path carried its own hand-written prohibitions and had
+     * zero occurrences of `claimSupportRules`, so a rule tightened for the
+     * generator reached the parent and not the child: two statements of one
+     * standard, which is how one of them comes to be wrong. The corpus holds
+     * two condensed documents, from one parent, both predating the current
+     * prompt, so the hazard could not be measured after the fact — the fix is
+     * to stop there being two standards rather than to wait for a case.
+     *
+     * `readEvidenceInventory` reads the parent's `data_sources`, which is
+     * already selected above, so nothing new is fetched.
+     */
     const userPrompt = `Please condense the following comprehensive investment report into a ${tierConfig.name} format (~${tierConfig.targetPages} pages).
 
 Use the structure template from the system prompt and extract the relevant data from this report:
@@ -556,6 +574,8 @@ SOURCE MATERIAL (pipeline input — the reader has never seen this document):
 ${parentReport.report_content}
 ---
 ${factsBlock ? `\n${factsBlock}\n` : ''}
+${claimSupportRules(readEvidenceInventory(parentReport as Record<string, unknown>))}
+
 IMPORTANT:
 - Copy all numerical values, percentages, and scores EXACTLY — from the RECORDED FIGURES block first, then from the source material
 - Include a metric's table row ONLY when its value is known from those sources; NEVER write "N/A", "TBD" or any placeholder — omit the row entirely

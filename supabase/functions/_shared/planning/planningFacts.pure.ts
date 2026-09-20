@@ -62,6 +62,8 @@
  * reading.
  */
 
+import { auDate } from './auDate.pure.ts';
+
 import {
   VERIFICATION_INSTRUMENT,
   type PlanningJurisdiction,
@@ -77,6 +79,14 @@ import {
   NO_STATE_LAYER_NOTE,
   VERIFICATION_DOCUMENT,
 } from './planningControlGuide.pure.ts';
+import {
+  emptyLandUseTable,
+  readResidentialStanding,
+  residentialSentence,
+  EXISTING_DWELLING_CAVEAT,
+  type LandUseTable,
+  type ResidentialReading,
+} from './landUsePermissibility.pure.ts';
 
 // ---------------------------------------------------------------------------
 // Vocabulary
@@ -138,6 +148,18 @@ export interface PlanningFacts {
   parcelAreaBasis: 'surveyed' | 'computed' | null;
   zoning: PlanningCell;
   zoneFamily: string | null;
+  /**
+   * What the instrument's own land use table permits and prohibits here.
+   *
+   * A zone CODE is not advice. The table is what turns `E3` into "a dwelling
+   * house is permitted with consent, and every other residential form is
+   * prohibited" — two readings neither of which the code carries, and the
+   * second of which forecloses the granny-flat inference a large block
+   * otherwise invites.
+   */
+  landUse: LandUseTable;
+  /** The residential reading, where a table was retrieved. */
+  residential: ResidentialReading | null;
   overlays: PlanningCell;
   /** Minimum lot size, height and floor space ratio, in that order. */
   controls: PlanningCell[];
@@ -561,6 +583,24 @@ export function buildPlanningFacts(input: PlanningFactsInput): PlanningFacts {
   const parcelStated = statusOf(parcelRaw?.status) === 'stated';
   const council = parcelStated ? str(parcelRaw?.lga) : (zoning.status === 'stated' ? str(zoningRaw?.lga) : null);
 
+  /*
+   * The land use table travels through the enrichment where it is there, and
+   * is a NAMED absence where it is not. Every row stored before
+   * `planning-data-service` fetched one has no `landUse` key at all, and
+   * "this enrichment predates the table" is a different statement from "the
+   * jurisdiction publishes none" — so the two get different notes.
+   */
+  const landUseRaw = isRecord(data?.landUse) ? (data!.landUse as unknown as LandUseTable) : null;
+  const landUseTable: LandUseTable = landUseRaw && typeof landUseRaw.status === 'string'
+    ? landUseRaw
+    : emptyLandUseTable(
+      'not_served',
+      data
+        ? 'This planning enrichment was acquired before the land use table was retrieved for any property.'
+        : 'No planning enrichment was acquired for this report.',
+      zoning.status === 'stated' ? zoning.value : null,
+    );
+
   const cells = [zoning, overlays, ...controls, instruments, developmentActivity];
   return {
     jurisdiction,
@@ -577,6 +617,8 @@ export function buildPlanningFacts(input: PlanningFactsInput): PlanningFacts {
       : null,
     zoning,
     zoneFamily: zoning.status === 'stated' ? str(zoningRaw?.zoneFamily) : null,
+    landUse: landUseTable,
+    residential: readResidentialStanding(landUseTable),
     overlays,
     constraints,
     constraintsAsked,
@@ -641,14 +683,6 @@ const INSTRUMENT_LABEL: Record<string, string> = {
   infrastructure_designation: 'Infrastructure designation',
 };
 
-/** `1 Jan 2026` from an ISO date, or the string back if it is not one. */
-function auDate(iso: string | null): string | null {
-  if (!iso) return null;
-  const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso);
-  if (!m) return iso;
-  const months = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
-  return `${Number(m[3])} ${months[Number(m[2]) - 1]} ${m[1]}`;
-}
 
 /** The evidence reference a row carries: publisher, currency, retrieval. */
 function evidenceRef(cell: PlanningCell): string {
@@ -818,6 +852,92 @@ const capitalise = (s: string): string => (s ? s[0].toUpperCase() + s.slice(1) :
  * either retrieved or absent and neither is a writing task. The prose the
  * model does write is constrained by `planningFactBlocks` below.
  */
+/**
+ * The land use table, and the one reading it supports.
+ *
+ * Renders the RESIDENTIAL standing in full and the non-residential uses as a
+ * bounded list, because the two answer different questions: the first is what
+ * the buyer may do, the second is what a neighbour may do — which is amenity
+ * information a residential buyer on employment-zoned land is entitled to and
+ * would otherwise never see.
+ *
+ * Every list is the instrument's own wording. Nothing here is summarised into
+ * a judgement: "permitted with consent" is a fact about the table, and whether
+ * consent would be granted is a merit question this product does not answer.
+ */
+export function renderLandUseTable(facts: PlanningFacts): string {
+  const t = facts.landUse;
+  const lines: string[] = ['**What may be built on this land**', ''];
+
+  if (t.status !== 'retrieved') {
+    lines.push(
+      t.note
+        ?? 'The instrument\'s land use table was not retrieved for this property.',
+      '',
+      'What a zone permits and prohibits is settled by the land use table in the '
+      + 'planning instrument itself, and by the planning certificate for this lot.',
+    );
+    return lines.join('\n');
+  }
+
+  const r = facts.residential;
+  if (r) {
+    // The sentence carries its instrument and its retrieval date, and the
+    // caveat keeps the USE CLASS apart from this building's own approval —
+    // "a dwelling house is permitted with consent" is not a record that the
+    // house standing there holds one.
+    lines.push(residentialSentence(r, facts.landUse), '');
+    lines.push(EXISTING_DWELLING_CAVEAT, '');
+    if (r.otherResidential.length) {
+      lines.push('| Residential use | Standing under the instrument |');
+      lines.push('|---|---|');
+      lines.push(`| Dwelling house | ${STANDING_LABEL[r.dwellingHouse]} |`);
+      for (const o of r.otherResidential) {
+        lines.push(`| ${titleCase(o.use)} | ${STANDING_LABEL[o.standing]} |`);
+      }
+      lines.push('');
+    }
+    if (r.neighbouringUsesWithConsent.length) {
+      // Bounded rather than exhaustive: a 46-item list is a schedule, not a
+      // reading, and the point is the CHARACTER of what may arrive next door.
+      const shown = r.neighbouringUsesWithConsent.slice(0, 14);
+      lines.push(
+        `**What a neighbouring site may become.** The same zone permits, with consent: `
+        + `${shown.join('; ')}`
+        + (r.neighbouringUsesWithConsent.length > shown.length
+          ? ` — and ${r.neighbouringUsesWithConsent.length - shown.length} further uses named in the table.`
+          : '.'),
+        '',
+      );
+    }
+  }
+
+  if (t.objectives) {
+    lines.push(`**The zone's objectives, in the instrument's words.** ${t.objectives.trim()}`, '');
+  }
+
+  lines.push(
+    `Source: ${t.source ?? 'the planning instrument'}`
+    + (t.instrument ? `, reading ${t.instrument}` : '')
+    + (t.licence ? ` (${t.licence})` : '')
+    + (t.retrievedAt ? `, retrieved ${auDate(t.retrievedAt) ?? t.retrievedAt}` : '')
+    + '. A land use table states what is permissible; it does not establish that '
+    + 'an existing building was lawfully erected, and it is not consent for anything.',
+  );
+  return lines.join('\n');
+}
+
+const STANDING_LABEL: Readonly<Record<string, string>> = {
+  permitted_with_consent: 'Permitted with development consent',
+  permitted_without_consent: 'Permitted without development consent',
+  prohibited: 'Prohibited',
+  not_stated: 'Not named in the table',
+};
+
+function titleCase(s: string): string {
+  return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
 export function renderPlanningControls(facts: PlanningFacts): string {
   const lines: string[] = [];
 
@@ -844,6 +964,15 @@ export function renderPlanningControls(facts: PlanningFacts): string {
     lines.push(`| ${cell.label} | ${reading} | ${standing} | ${evidenceRef(cell)} |`);
   }
   lines.push('');
+
+  // What may be built here.
+  //
+  // Placed directly under the control table and above the constraint register
+  // because it is the question a buyer actually has, and because reading the
+  // zone code without it is how "E3 Productivity Support" becomes a sentence
+  // about a house that is in fact permitted with consent.
+  const landUseBlock = renderLandUseTable(facts);
+  if (landUseBlock.trim()) lines.push(landUseBlock, '');
 
   // The constraint register, and what each control it found actually means.
   // It sits directly under the summary table because a reader who has just
@@ -904,6 +1033,53 @@ export function renderPlanningControls(facts: PlanningFacts): string {
  * setbacks and "typically 450m²" with nothing to fill them from, and a model
  * asked for a control it has not been given supplies a plausible one.
  */
+/**
+ * What the prose may say about what can be built, given what was retrieved.
+ *
+ * Three states, three different rules, because the failure is asymmetric: a
+ * permission invented from block size reaches a client as a development
+ * prospect, while a permission correctly withheld costs a sentence.
+ */
+function landUseRule(facts: PlanningFacts): string {
+  const r = facts.residential;
+  if (facts.landUse.status !== 'retrieved' || !r) {
+    return '5a. The instrument\'s land use table was NOT retrieved for this property, so what may be built here '
+      + 'is unknown. Do not state that a secondary dwelling, granny flat, dual occupancy, duplex, subdivision, '
+      + 'additional dwelling or any other development is possible, likely, permissible or worth exploring — and '
+      + 'do not infer it from the land size, the block shape, the street or the zone code. Land size is not a '
+      + 'permission. Where the subject comes up, the sentence is that the land use table and the planning '
+      + 'certificate settle it and neither has been read.';
+  }
+  const parts: string[] = [
+    '5a. The land use table above IS the authority on what may be built here, and it is supplied complete. '
+    + 'Do not contradict it, do not extend it, and do not soften it into a possibility.',
+  ];
+  if (r.residentialGroupProhibited) {
+    parts.push(
+      'The instrument prohibits Residential accommodation as a class at this location. So there is NO secondary '
+      + 'dwelling, granny flat, dual occupancy, duplex, multi dwelling housing or additional dwelling on this land, '
+      + 'at any block size, and you must not present any of them as potential, upside, optionality or a value-add. '
+      + 'If the block is large, that is a fact about the block and not about what may be put on it.',
+    );
+  }
+  if (r.dwellingHouse === 'prohibited') {
+    parts.push(
+      'A dwelling house is PROHIBITED here under the instrument in force. That is a material finding and must be '
+      + 'stated plainly, together with the fact that an existing dwelling may still be lawful — whether it is turns '
+      + 'on its approval history and on existing use rights, which only the council and the certificate can settle. '
+      + 'Do not assert that it is lawful and do not assert that it is not.',
+    );
+  }
+  if (r.neighbouringUsesWithConsent.length > 12) {
+    parts.push(
+      'The same zone permits a wide range of non-residential uses on neighbouring land with consent. Treat that as '
+      + 'an amenity and resale consideration to state factually, not as a criticism of the area and not as a '
+      + 'prediction that any particular use will arrive.',
+    );
+  }
+  return parts.join(' ');
+}
+
 export function planningFactBlocks(facts: PlanningFacts): string {
   if (facts.enrichmentMissing) {
     return 'PLANNING RULES FOR THE WHOLE REPORT — no planning enrichment ran. State in one sentence that '
@@ -977,6 +1153,19 @@ export function planningFactBlocks(facts: PlanningFacts): string {
     clearLayerRule,
     '5. A zone that admits a use is not approval for it. Describe any development potential as conditional and subject '
     + 'to assessment, and never quantify an uplift.',
+    /*
+     * Rule 5a — the inference a large block invites, and the one thing that
+     * actually settles it.
+     *
+     * "988 m² in a regional town" reads to a model as subdivision or a granny
+     * flat, and nothing in the zone code contradicts it. The land use table
+     * often does, flatly: at Cowra the instrument permits a dwelling house
+     * with consent and prohibits Residential accommodation as a group, so
+     * there is no second dwelling on that lot at any size. The rule is
+     * therefore not "be cautious about potential" — it is "the table decides,
+     * and where there is no table you do not know".
+     */
+    landUseRule(facts),
     '6. Say plainly that this is desktop research and that the verification instrument is what settles it.',
     /*
      * Rule 4 closes the STATEMENT; this closes the RATING.

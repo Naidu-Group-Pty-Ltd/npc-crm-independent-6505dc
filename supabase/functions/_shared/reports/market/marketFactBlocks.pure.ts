@@ -86,6 +86,7 @@ const MEASURE: Readonly<Record<EvidenceKey, { label: string; unit: 'money' | 'pe
   growth5YearCagr: { label: 'Price growth, 5 years (compound annual)', unit: 'percent' },
   growth10YearCagr: { label: 'Price growth, 10 years (compound annual)', unit: 'percent' },
   priceSeries: { label: 'Median price series', unit: 'series' },
+  salesVolumeSeries: { label: 'Sales volume series', unit: 'series' },
   salesCount: { label: 'Sales in the period', unit: 'count' },
   daysOnMarket: { label: 'Median days on market', unit: 'days' },
   vacancyRate: { label: 'Rental vacancy rate', unit: 'percent' },
@@ -241,7 +242,11 @@ const NOT_HELD_LABELS = (facts: MarketFacts): string[] => {
   const have = new Set(facts.rows.map((r) => r.key));
   const withheldLabels = new Set(facts.withheld.map((w) => w.label));
   return EVIDENCE_KEYS
-    .filter((k) => !have.has(k) && !IS_BENCHMARK(k) && k !== 'priceSeries' && k !== 'populationGrowth')
+    // A SERIES is not a figure a client reads off a table — it is what the
+    // figures above were computed from — so neither series is listed as a
+    // measure nothing published.
+    .filter((k) => !have.has(k) && !IS_BENCHMARK(k)
+      && k !== 'priceSeries' && k !== 'salesVolumeSeries' && k !== 'populationGrowth')
     .map((k) => MEASURE[k].label)
     .filter((l) => !withheldLabels.has(l));
 };
@@ -370,6 +375,85 @@ const CHART_IS_A_CLAIM =
   + 'just written unless the table states it too.';
 
 /** The rules the prose beside the table must obey. */
+/**
+ * A retrieved growth reading that disagrees with the accepted capital growth
+ * rate the projections are built on.
+ *
+ * ## Why this had no rule until now
+ *
+ * The programme named this and deliberately did not make it one, because the
+ * corpus held no case to test against: on the reported Cowra document page 8
+ * said "annual capital growth readings around the low-to-mid single digits"
+ * while `assumptions.capitalGrowth` is 0.1, and `marketFactRules` rule 1
+ * already forbade the sentence OUTRIGHT — nothing had been retrieved, so the
+ * document was closed by a rule that never had to compare anything. What was
+ * open is the case where a series IS retrieved and differs from the modelled
+ * rate, which no stored row has.
+ *
+ * `market_sales_medians` now loads for every state, so that case is arriving
+ * rather than hypothetical, and the rule is written with a labelled fixture
+ * rather than waiting for a production example. A fixture is not a property
+ * acceptance and is not offered as one; it is how a rule gets a positive and a
+ * negative case before the first real document needs it.
+ *
+ * ## The rule
+ *
+ * The two numbers are different quantities and BOTH are legitimate. The
+ * accepted rate is an input a person agreed to and the projections, the
+ * equity series and the ten-year position are built on it; the retrieved
+ * reading is what a publisher's series did over a past window. Replacing one
+ * with the other would silently change a client's financial model, which is
+ * the thing the standard forbids in terms. Reconciling them is not this
+ * product's call either — the adviser's.
+ *
+ * So neither is changed and neither is hidden: where they diverge materially
+ * the document must state both, name which one the projections use, and not
+ * present the retrieved reading as a forecast. Where they agree, or where
+ * either is absent, there is nothing to disclose and no rule is emitted —
+ * because a rule that fires on every document is one people learn to skip.
+ *
+ * The threshold is in PERCENTAGE POINTS, absolute, for `DERIVED_FIGURES`'
+ * reason: a relative band on a small rate rejects ordinary rounding, and
+ * 0.1% against 3% is not a rounding disagreement at all.
+ */
+export const CGR_DIVERGENCE_POINTS = 0.5;
+
+export interface GrowthDivergence {
+  /** The rate the projections are built on, as a percentage. */
+  acceptedPercent: number | null;
+  /** What a publisher's series measured, as a percentage. */
+  retrievedPercent: number | null;
+  /** Who published the retrieved reading, and over what. */
+  retrievedLabel?: string | null;
+}
+
+/** Whether the two readings are far enough apart to be worth a reader's attention. */
+export function growthReadingsDiverge(d: GrowthDivergence): boolean {
+  if (typeof d.acceptedPercent !== 'number' || !Number.isFinite(d.acceptedPercent)) return false;
+  if (typeof d.retrievedPercent !== 'number' || !Number.isFinite(d.retrievedPercent)) return false;
+  return Math.abs(d.retrievedPercent - d.acceptedPercent) >= CGR_DIVERGENCE_POINTS;
+}
+
+/**
+ * The rule the model is handed when they diverge, or null when there is
+ * nothing to say.
+ */
+export function growthDivergenceRule(d: GrowthDivergence): string | null {
+  if (!growthReadingsDiverge(d)) return null;
+  const accepted = `${d.acceptedPercent}%`;
+  const retrieved = `${d.retrievedPercent}%`;
+  const who = d.retrievedLabel?.trim() ? d.retrievedLabel.trim() : 'the retrieved series';
+  return 'CAPITAL GROWTH — TWO READINGS, AND THEY DISAGREE. The projections, the equity series and '
+    + `every ten-year figure in this report are built on an accepted rate of ${accepted}. `
+    + `${who} measures ${retrieved} over its own past window. Both are real and they are different `
+    + 'quantities: one is an input a person agreed to, the other is what a publisher recorded. '
+    + 'You may not replace one with the other, you may not average them, you may not present the '
+    + 'retrieved reading as a forecast or as what this property will do, and you may not quietly '
+    + `use ${retrieved} in a sentence about the modelled outcome. Where you mention growth at all, `
+    + `state both, say that the modelling uses ${accepted}, and attribute ${retrieved} to its `
+    + 'publisher and its period. Reconciling them is the adviser\'s judgement, not this report\'s.';
+}
+
 export function marketFactRules(facts: MarketFacts): string {
   const head = 'MARKET FIGURE RULES FOR THE WHOLE REPORT — they apply in every section, including the executive '
     + 'verdict, risk registers, SWOT tables, checklists and summaries, and they override any example elsewhere '

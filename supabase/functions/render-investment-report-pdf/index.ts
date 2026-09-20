@@ -16,6 +16,7 @@ import { statCardHasValue } from "../_shared/reports/investment/blockHygiene.pur
 import { dimensionWasScored } from "../_shared/reports/investment/scoreSections.pure.ts";
 import { publishableGrade } from "../_shared/reports/investment/scoreSections.pure.ts";
 import { presentStoredMarkdown } from "../_shared/reports/investment/derivedHygiene.pure.ts";
+import { readEvidenceInventory } from "../_shared/reports/investment/chartEvidence.pure.ts";
 import { PLATFORM_ISSUER_NAME, resolveReportDisclaimer, resolveReportIssuer } from "../_shared/reports/issuerIdentity.pure.ts";
 import { governedAuthorityBlockFromFlags } from "../_shared/reports/contract/governedNarrativeAuthority.pure.ts";
 // Both are called by `wrapInsightSections` below and neither was imported, so
@@ -3038,7 +3039,13 @@ export async function buildHtml(
   // Through the read-path placeholder scrub every renderer applies
   // (`presentStoredMarkdown`): a stored "N/A" cell is never drawn.
   const mdRaw = escapeRawHtmlInMarkdown(
-    cleanReportMarkdown(presentStoredMarkdown(String(report.report_content || "")), address),
+    cleanReportMarkdown(
+      presentStoredMarkdown(
+        String(report.report_content || ""),
+        readEvidenceInventory(report as Record<string, unknown>),
+      ),
+      address,
+    ),
   );
   const mdWithVisuals = autoInjectVisualShortcodes(mdRaw);
   console.log("[visuals] shortcodes injected:", {

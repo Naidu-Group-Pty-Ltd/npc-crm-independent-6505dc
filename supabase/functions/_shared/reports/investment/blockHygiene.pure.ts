@@ -100,14 +100,45 @@ const CHART_KINDS = ['bars', 'line', 'donut', 'gauge', 'pie', 'area', 'columns',
 const DIRECTIVE = new RegExp(`\\{\\{(?:${CHART_KINDS.join('|')})[ \\t]*:[^}]*\\}\\}`, 'g');
 
 /**
+ * Segments of a directive body that CAPTION the drawing rather than describe
+ * it. Everything else — the payload, `max`, `unit` — changes what a reader
+ * takes from the chart and stays in the key.
+ */
+const CAPTION_OPTION = /^(?:title|caption)\s*=/i;
+
+/**
  * The comparison key for "the same chart".
  *
- * Case, whitespace, dash variants and thousands separators only. A directive
- * differing in any digit, label or title is a different chart and is kept —
- * this is a de-duplicator, never a summariser.
+ * Case, whitespace, dash variants and thousands separators — and NOT the
+ * title. A directive differing in any digit, label, unit or maximum is a
+ * different chart and is kept; this is a de-duplicator, never a summariser.
+ *
+ * ## Why the title leaves the key
+ *
+ * It was in it, and the 97 Poole Road Compass of 20 Sep 2026 is what that
+ * cost. The identical three bars `Other offences 22 | Robbery 16 | Arson 9`
+ * were drawn on pages 20, 23, 24 AND 25 under four different titles:
+ *
+ *   Recorded offence counts in the latest period (selected categories)
+ *   Latest recorded counts by offence category
+ *   Recorded offence counts, The Hills Shire
+ *   Recorded offence counts · The Hills Shire crime data reference period
+ *
+ * and `$1,650,000 | $1,808,000 | $1,110,000` on pages 21, 29 and 31 under
+ * three more. Eight drawings, two datasets. Normalising the whole directive
+ * meant a caption was enough to make a repeat look new, so the pass that
+ * exists to stop exactly this saw seven distinct charts.
+ *
+ * **The data is the chart.** A caption is what a section calls it, and a
+ * reader meeting the same three bars four times in six pages does not read
+ * four findings — they read a broken document.
  */
 export function directiveKey(directive: string): string {
-  return (directive || '')
+  const body = /^\{\{[a-zA-Z_]+[ \t]*:([\s\S]*)\}\}$/.exec((directive || '').trim());
+  const source = body
+    ? body[1].split('|').filter((seg) => !CAPTION_OPTION.test(seg.trim())).join('|')
+    : (directive || '');
+  return source
     .toLowerCase()
     .replace(/\s+/g, '')
     .replace(/[‐-―−]/g, '-')

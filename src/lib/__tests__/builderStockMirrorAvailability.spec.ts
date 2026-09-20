@@ -102,17 +102,54 @@ describe('readStockEmptyState', () => {
 });
 
 describe('isMissingRankingRelation', () => {
-  it('recognises the ranking view being absent', () => {
-    // Measured 19 Sep 2026: none of the three clones has migration
-    // 20261202090000, so the ranked read answers 42P01 and the marketplace
-    // 500s over a mirror that may be perfectly full.
+  /*
+   * THE SHAPE PRODUCTION ACTUALLY SENDS, MEASURED RATHER THAN IMAGINED.
+   *
+   * The two cases below it were written first and both invent their error.
+   * PostgREST resolves a relation against its schema cache and refuses before
+   * the statement is planned, so a supabase-js caller never sees 42P01 here —
+   * it sees PGRST205. Probed against the live project on 19 Sep 2026:
+   *
+   *   GET /rest/v1/builder_network_stock_ranked?select=id&limit=1
+   *   HTTP 404
+   *   {"code":"PGRST205","message":"Could not find the table
+   *    'public.builder_network_stock_ranked' in the schema cache"}
+   *
+   * The detector accepted neither PostgREST code, so the fallback never ran
+   * and the Builder Stock tab answered "Builder stock could not be loaded."
+   * over 46 correctly mirrored properties. This test is the regression, and it
+   * is quoted from the wire because the reason the defect survived is that the
+   * two tests below agreed with the code while only the server disagreed.
+   */
+  it('recognises the ranking view being absent — the real PostgREST answer', () => {
+    expect(isMissingRankingRelation({
+      code: 'PGRST205',
+      message: "Could not find the table 'public.builder_network_stock_ranked' in the schema cache",
+      details: null,
+      hint: null,
+    })).toBe(true);
+  });
+
+  it('recognises a rank column being absent — the real PostgREST answer', () => {
+    expect(isMissingRankingRelation({
+      code: 'PGRST204',
+      message:
+        "Could not find the 'rank_item_score' column of 'builder_network_stock_ranked' "
+        + 'in the schema cache',
+    })).toBe(true);
+  });
+
+  it('still recognises the ranking view being absent over a planner path', () => {
+    // Kept rather than replaced: a direct SQL path or a different PostgREST
+    // major can still raise the Postgres code, and a fallback that survives
+    // one deployment's error vocabulary and not another's is the defect.
     expect(isMissingRankingRelation({
       code: '42P01',
       message: 'relation "public.builder_network_stock_ranked" does not exist',
     })).toBe(true);
   });
 
-  it('recognises a rank column being absent', () => {
+  it('recognises a rank column being absent over a planner path', () => {
     expect(isMissingRankingRelation({
       code: '42703',
       message: 'column "rank_placement_kind" does not exist',
@@ -128,6 +165,16 @@ describe('isMissingRankingRelation', () => {
       { code: 'PGRST116', message: 'no rows' },
       { code: '42P01', message: 'relation "public.some_other_table" does not exist' },
       { code: '42703', message: 'column "typo_column" does not exist' },
+      // The widened codes must narrow on the message exactly as the old two
+      // did — a missing table that is not the ranking is somebody else's bug.
+      {
+        code: 'PGRST205',
+        message: "Could not find the table 'public.some_other_table' in the schema cache",
+      },
+      {
+        code: 'PGRST204',
+        message: "Could not find the 'typo_column' column of 'listings_cache' in the schema cache",
+      },
       { message: 'network error' },
       null,
       undefined,

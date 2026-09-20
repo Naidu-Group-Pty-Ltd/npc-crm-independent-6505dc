@@ -25,7 +25,7 @@ function point(value: number, level: EvidencePoint['level'], areaName: string, p
 function candidate(partial: Partial<CgrCandidate> & Pick<CgrCandidate, 'level' | 'areaName' | 'horizons'>): CgrCandidate {
   return {
     provider: 'vic_vpsr_suburb', sourceLabel: 'Victorian Valuer-General', licence: 'CC BY 3.0 AU', measure: 'median',
-    dwellingType: 'house', dwellingTypeMatched: true, latestPeriod: '2025-12', capturedAt: null, periodsAvailable: 11,
+    dwellingType: 'house', dwellingTypeMatched: true, latestPeriod: '2025-12', latestPeriodLabel: null, capturedAt: null, loadedAt: null, periodsAvailable: 11,
     ...partial,
   };
 }

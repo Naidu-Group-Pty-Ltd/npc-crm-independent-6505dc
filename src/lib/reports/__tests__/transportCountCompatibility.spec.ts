@@ -27,6 +27,7 @@ const reading = (count: number) => ({
   feeds: ['nsw_sydney'],
   sources: ['Transport for NSW Open Data (CC BY 4.0)'],
   notMeasured: [],
+  feedLoadedAt: null,
 });
 
 describe('the stored key stays compatible', () => {

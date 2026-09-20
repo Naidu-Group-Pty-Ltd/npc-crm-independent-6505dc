@@ -1196,6 +1196,71 @@ ${(Object.entries(GRID_SPANS) as Array<[string, number]>)
   .callout.tone-informative .callout-label { color: ${palette.informative}; }
   .callout.tone-neutral .callout-label { color: ${palette.mutedInk}; }
 
+  /* ── The glance key ──────────────────────────────────────────────────
+     A section's findings, set as a ruled key rather than a box of dingbats.
+
+     What this replaces drew twelve washed, left-ruled boxes on one Compass,
+     three of them on page 28, each a stack of raw glyphs. Three things were
+     wrong and none was the content: a dingbat is not a category (it survives
+     neither greyscale nor a screen reader nor a reader who has not been told
+     the key); a wash plus a rule says "separate object", and spending both on
+     a summary of the prose directly beneath it turns a page into a stack of
+     boxes; and every finding started where the previous glyph ended, so four
+     findings sat on four left edges inside one box.
+
+     Hairlines top and bottom, no ground, no left bar. The meaning is a word in
+     a fixed column, so every finding hangs on one axis and the tag reads in
+     greyscale; the tone colour rides on top of the word rather than instead of
+     it. See reports/glanceStrip.pure.ts for the vocabulary. */
+  .glance {
+    border-top: 0.6pt solid ${palette.rule};
+    border-bottom: 0.6pt solid ${palette.rule};
+    padding: ${pt(d.cellPadPt + 3)} 0 ${pt(d.cellPadPt + 4)};
+    margin: ${pt(d.blockGapPt + 2)} 0;
+    page-break-inside: avoid;
+  }
+  .glance .glance-label {
+    display: block;
+    font-family: ${PRINT_STACK.mono};
+    font-size: ${pt(type.micro)};
+    letter-spacing: ${PRINT_TRACKING.eyebrow};
+    text-transform: uppercase;
+    color: ${palette.mutedInk};
+    margin-bottom: ${pt(d.cellPadPt + 1)};
+  }
+  /* The sheet's own marker is removed and none is added: the tag column IS the
+     marker. list-style:none on a <ul> keeps the tagged PDF announcing a
+     list while the bullet goes. */
+  .glance ul.glance-rows { list-style: none; padding-left: 0; margin: 0; }
+  /* A hanging indent, so a finding that wraps aligns under itself rather than
+     under its tag. The tag column is sized from the longest word the
+     vocabulary can print. */
+  .glance .glance-row {
+    position: relative;
+    padding-left: ${pt(d.cellPadPt * 4 + 24)};
+    margin: 0 0 ${pt(d.paragraphGapPt / 2)};
+    font-size: ${pt(type.caption + 1)};
+    line-height: 1.45;
+    color: ${palette.bodyInk};
+  }
+  .glance .glance-row:last-child { margin-bottom: 0; }
+  .glance .glance-tag {
+    position: absolute;
+    left: 0;
+    top: 0.1em;
+    font-family: ${PRINT_STACK.mono};
+    font-size: ${pt(type.micro)};
+    letter-spacing: ${PRINT_TRACKING.eyebrow};
+    text-transform: uppercase;
+    color: ${palette.mutedInk};
+  }
+  /* Category B colours — the tone must read the same in a tenant's report as
+     in ours, so never the brand. "context" keeps the muted ink: a neutral fact
+     is the one reading that should not pull the eye. */
+  .glance .glance-strength .glance-tag { color: ${palette.positive}; }
+  .glance .glance-watch .glance-tag { color: ${palette.caution}; }
+  .glance .glance-verdict .glance-tag { color: ${palette.accentOnPaper}; }
+
   /* Decision box — "What this means". One per section, by the compass rules. */
   .decision-box {
     border: 0.6pt solid ${palette.accentFill};

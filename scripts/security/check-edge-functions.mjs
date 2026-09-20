@@ -250,6 +250,35 @@ const LOAD_FATAL = new Map([
    */
   ['TS2304', 'name does not exist — ReferenceError the moment that line runs'],
   ['TS2552', 'name does not exist — ReferenceError the moment that line runs'],
+  /*
+   * The SHORTHAND form of the same fault, and the one this list missed.
+   *
+   * `{ propertySpecs }` where nothing named `propertySpecs` is in scope is not
+   * TS2304 — TypeScript reports it as TS18004, "No value exists in scope for
+   * the shorthand property". Identical at runtime: a ReferenceError the moment
+   * that line runs. But a different code, so it was absorbed by the COUNT
+   * baseline, and `generate-investment-report` shipped with two of them in the
+   * middle of the Compass path.
+   *
+   * It cost a day of total outage: from 2026-09-19 12:00 every POST to that
+   * function answered 500 after ~30s, having finished acquisition and written
+   * no section. Shorthand is how this repository passes almost everything
+   * around, so of the two ways to spell "this name does not exist", the one
+   * that was not fatal was the commoner one.
+   *
+   * Measured across all 425 entry points when this was added: two occurrences,
+   * both the outage, both fixed in the same change. Nothing was frozen for it.
+   */
+  ['TS18004', 'shorthand property names nothing — ReferenceError the moment that line runs'],
+  /*
+   * And the third spelling: the name EXISTS in this scope but the line runs
+   * before its `const`/`let` is initialised. A temporal-dead-zone throw is the
+   * same outage as an absent name, so it is judged the same way. Zero across
+   * the fleet when added — declared so the class cannot come back by a route
+   * the first two do not cover.
+   */
+  ['TS2448', 'used before its declaration — ReferenceError the moment that line runs'],
+  ['TS2454', 'used before being assigned — throws the moment that line runs'],
 ]);
 
 /**
@@ -289,7 +318,16 @@ for (const block of plain.split(/(?=^TS\d+ \[ERROR\])/m)) {
     // Keyed by FILE and IDENTIFIER, never by line: a line number moves with
     // every edit above it, so a positional key would either churn constantly
     // or, worse, silently start covering a different defect.
-    const name = message.match(/Cannot find name '([^']+)'/)?.[1] ?? null;
+    // Each fatal code spells the identifier differently; the freeze key is the
+    // identifier, so every spelling has to be read. A code whose message this
+    // cannot parse yields no key, which means it can never match the freeze
+    // list and is always reported — the safe direction.
+    const name = (
+      message.match(/Cannot find name '([^']+)'/)
+      ?? message.match(/shorthand property '([^']+)'/)
+      ?? message.match(/'([^']+)' is used before/)
+      ?? message.match(/Variable '([^']+)' is used before being assigned/)
+    )?.[1] ?? null;
     const key = name ? `${file}::${name}` : null;
     if (key && KNOWN_MISSING_NAMES.has(key)) continue;
     fatal.push({

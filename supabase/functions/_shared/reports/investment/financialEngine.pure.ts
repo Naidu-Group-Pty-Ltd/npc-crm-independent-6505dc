@@ -30,8 +30,10 @@ import {
   describeLoanStructure,
   ledgerYear,
   normaliseLoanProduct,
+  describeStoredLoanStructure,
   type LoanLedger,
   type LoanProduct,
+  type StoredLoanStructureBasis,
 } from './loanLedger.pure.ts';
 
 export interface LoanCalculationInput {
@@ -155,7 +157,8 @@ export function occupancyWeeksOf(input: { occupancyWeeks?: number | null }): num
   return Number.isFinite(w) && w > 0 && w <= 52 ? w : 52;
 }
 
-export { describeLoanStructure, normaliseLoanProduct };
+export { describeLoanStructure, describeStoredLoanStructure, normaliseLoanProduct };
+export type { StoredLoanStructureBasis };
 
 export interface InterestRateInfo {
   rate: number;
@@ -699,6 +702,13 @@ export interface StoredFinancialsReconciliation {
    * figure was sound. See `healFinanceIdentity`.
    */
   financeIdentityHealed: 'loan' | 'deposit' | null;
+  /**
+   * Whether the "Loan structure" sentence was derived for a row that carries
+   * none, and on what basis. `figures_contradict_label` says the stored
+   * repayments are a different schedule from the product the record names —
+   * disclosed, never corrected. See `describeStoredLoanStructure`.
+   */
+  loanStructureDerived: StoredLoanStructureBasis | null;
 }
 
 const isRecord = (v: unknown): v is Record<string, any> =>
@@ -788,7 +798,7 @@ export function healFinanceIdentity(
 export function reconcileStoredFinancials(raw: unknown): StoredFinancialsReconciliation {
   const none = (fin: any): StoredFinancialsReconciliation => ({
     fin, healedScenarios: [], sensitivityHealed: false, metricsReconciled: false,
-    totalUpfrontDerived: false, financeIdentityHealed: null,
+    totalUpfrontDerived: false, financeIdentityHealed: null, loanStructureDerived: null,
   });
   if (!isRecord(raw)) return none(raw);
 
@@ -929,6 +939,19 @@ export function reconcileStoredFinancials(raw: unknown): StoredFinancialsReconci
       }
       fin.sensitivityAnalysis = healedSens;
       result.sensitivityHealed = true;
+    }
+  }
+
+  // ── the loan structure sentence ───────────────────────────────────────────
+  // Derived only where the row carries none, and never over a stored one: the
+  // writer has published it since 15 Sep 2026 and a row that has it is the
+  // authority on itself. Reads `raw.loanDetails` alone, so its position among
+  // the heals is free; it is here because it is about the loan.
+  if (isRecord(raw.loanDetails) && typeof raw.loanDetails.structure !== 'string') {
+    const derived = describeStoredLoanStructure(raw.loanDetails);
+    if (derived) {
+      fin.loanDetails = { ...(isRecord(fin.loanDetails) ? fin.loanDetails : loan), structure: derived.structure };
+      result.loanStructureDerived = derived.basis;
     }
   }
 

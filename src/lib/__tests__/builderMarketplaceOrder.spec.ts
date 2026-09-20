@@ -20,7 +20,7 @@ import {
   splicePinsIntoPage,
   type RankedRow,
 } from '../../../supabase/functions/_shared/builderStock/marketplaceOrder.pure';
-import { stockPlacementLabel } from '../builderStock';
+import { stockPlacementLabel, type BuilderStockRank } from '../builderStock';
 
 const REPO_ROOT = join(__dirname, '..', '..', '..');
 const MIGRATIONS = join(REPO_ROOT, 'supabase', 'migrations');
@@ -144,7 +144,10 @@ describe('a placement is disclosed, and disclosure is not a style choice', () =>
       row('e', 'x'),
     ];
     for (const entry of cases) {
-      expect(stockPlacementLabel(entry)).toBe(placementLabel(entry));
+      // RankedRow carries the wire vocabulary as `string`; the frontend type
+      // narrows it to the placement union. The cast is the test's, not the
+      // module's — production rows arrive already narrowed by the view.
+      expect(stockPlacementLabel(entry as BuilderStockRank)).toBe(placementLabel(entry));
     }
   });
 
