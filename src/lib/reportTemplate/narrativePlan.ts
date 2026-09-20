@@ -38,6 +38,7 @@ import {
   NARRATIVE_GEOMETRY_KEY, NARRATIVE_NOTES_KEY, continuationNotice, narrativeBindingKey, narrativeBuckets,
   narrativeChartContext, type ContinuationNote,
 } from './blocks/markdownBlockContent';
+import { runningChapters } from '@/lib/reports/runningChapters.pure';
 
 export interface NarrativePlan {
   /** Geometry per source binding, as the blocks are written (`{{narrative.source}}`). */
@@ -240,6 +241,23 @@ export function planNarrative(template: ReportTemplate, ctxBase: ResolveContext)
     }
     pages[pagesPath] = count;
     writes[pagesPath] = count;
+    // The running head's chapter per page, measured at the SAME geometry that
+    // decided the breaks. Written beside the count rather than derived
+    // downstream, because a head computed against a different packing names
+    // the chapter the page would have been in under another template — which
+    // is this pre-pass's whole reason for existing, applied to a second
+    // property of one packing.
+    if (nsPath) {
+      const finalPages = notes[key]
+        ? narrativeBuckets(clean, g, chart, {
+          pageIndex: notes[key].allowance - 1,
+          lines: continuationNotice(g, notes[key].label, notes[key].text).lines,
+        })
+        : narrativeBuckets(clean, g, chart);
+      // Padded to the allowance this run's own master declares, which the
+      // pre-pass knows and the projection can only assume.
+      writes[`${nsPath}.chapters`] = runningChapters(finalPages, '', allowance);
+    }
   }
   return { geometry, pages, notes, writes };
 }

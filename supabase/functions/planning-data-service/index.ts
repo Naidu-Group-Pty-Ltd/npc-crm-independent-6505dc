@@ -48,6 +48,13 @@ import {
   type ProgrammeInvestment,
 } from '../_shared/planning/investmentProgramme.pure.ts';
 import { planningCacheKey } from '../_shared/planning/planningAnswerVersion.pure.ts';
+import {
+  buildNswPermissibilityRequest,
+  emptyLandUseTable,
+  parseNswPermissibility,
+  PERMISSIBILITY_SERVED,
+  type LandUseTable,
+} from '../_shared/planning/landUsePermissibility.pure.ts';
 
 /**
  * Property planning data — zoning, parcel and development intelligence from
@@ -223,6 +230,49 @@ Deno.serve(async (req) => {
         note: 'No integrated planning layer covers this point (integrated: NSW, VIC, QLD cadastre, TAS, ACT). Verify with the local planning authority.',
       };
     }
+
+    /*
+     * What may be built here — the instrument's own land use table.
+     *
+     * Asked only where the zone and the instrument are both KNOWN, because the
+     * service is keyed on the EPI name and the zone code and there is no
+     * useful question to put to it otherwise. A jurisdiction that publishes no
+     * structured table is named as not served rather than left blank: a zone
+     * code with nothing beside it reads as land with no rules over it.
+     */
+    let landUse: LandUseTable;
+    if (zoningCell.status === 'ok' && jurisdiction === 'NSW' && zoningCell.instrument && zoningCell.zoneCode) {
+      const req = buildNswPermissibilityRequest(zoningCell.instrument, zoningCell.zoneCode);
+      const answer = await fetchJson(req.url, req.headers);
+      landUse = answer.ok
+        ? parseNswPermissibility(answer.body, zoningCell.zoneCode, new Date().toISOString())
+        : emptyLandUseTable('unavailable', answer.message, zoningCell.zoneCode, zoningCell.instrument);
+      if (landUse.status === 'unavailable') anyTransportFailure = true;
+    } else if (zoningCell.status !== 'ok') {
+      landUse = emptyLandUseTable(
+        'not_served',
+        'No zone was retrieved for this coordinate, so the instrument\'s land use table could not be asked for.',
+      );
+    } else if (jurisdiction && !PERMISSIBILITY_SERVED[jurisdiction]) {
+      landUse = emptyLandUseTable(
+        'not_served',
+        `${jurisdiction} publishes no structured land use table; what a zone permits is read from the planning scheme itself.`,
+        zoningCell.zoneCode ?? null,
+        zoningCell.instrument ?? null,
+      );
+    } else {
+      landUse = emptyLandUseTable(
+        'not_served',
+        'The zone was retrieved without the instrument that names it, so the land use table could not be asked for.',
+        zoningCell.zoneCode ?? null,
+      );
+    }
+    console.log('[planning-data-service] land use table', {
+      status: landUse.status,
+      zone: landUse.zoneCode,
+      withConsent: landUse.permittedWithConsent.length,
+      prohibited: landUse.prohibited.length,
+    });
 
     if (parcelHit) {
       parcelCell = { status: 'ok', ...parcelHit };
@@ -515,6 +565,7 @@ Deno.serve(async (req) => {
       jurisdiction,
       coordinate: { latitude: lat, longitude: lng },
       zoning: zoningCell,
+      landUse,
       parcel: parcelCell,
       constraints: merged.readings,
       constraintsAsked: merged.askedFamilies,

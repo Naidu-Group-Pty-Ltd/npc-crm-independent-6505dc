@@ -485,6 +485,25 @@ verify_jwt = true
 [functions.ghl-calendar]
 verify_jwt = false
 
+# `verify_jwt = false` matches `ghl-calendar` above and is not an absence of
+# authentication: each function calls `verifyAuth` itself, because this product
+# authenticates with its own session cookie as well as a Supabase JWT and the
+# gateway can only check the latter. An OMITTED block would be read by the CLI
+# as `true` — asserting a gateway check that is not there — which is the defect
+# `docs/security/VERIFY_JWT.md` records as wrong for 91 of 425 functions.
+[functions.crm-calendar]
+verify_jwt = false
+
+[functions.crm-send-message]
+verify_jwt = false
+
+# A webhook: Twilio holds no Supabase JWT, so the gateway cannot check one.
+# `X-Twilio-Signature` is the whole authentication, verified in the handler
+# against TWILIO_AUTH_TOKEN, and a deployment without that token refuses
+# every request rather than accepting what it cannot verify.
+[functions.crm-inbound-message]
+verify_jwt = false
+
 [functions.admin-password-reset]
 verify_jwt = true
 
