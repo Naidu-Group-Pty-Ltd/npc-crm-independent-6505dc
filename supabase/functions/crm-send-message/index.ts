@@ -101,9 +101,27 @@ Deno.serve(async (req) => {
       );
     }
 
-    const minute = rateLimit(`crm-send-message:${userId}`, 60, 60_000);
+    /*
+     * WP-08 — the per-user send quota, and the sentence that describes it.
+     *
+     * The window is a MINUTE. This refusal read "Hourly message quota
+     * exceeded", inherited verbatim from `send-ghl-message`, which still
+     * carries it beside its own comment saying "sustained 100/min". A person
+     * told to wait an hour waits an hour, so the wording was not a cosmetic
+     * defect: it was the only thing the caller was given to act on.
+     *
+     * The sentence is composed from the SAME two values the gate is handed,
+     * so it can never again describe a window this code does not implement —
+     * the rule a literal at each end always breaks. The precise wait stays in
+     * `Retry-After`; the body states the rule, the header states the delay.
+     */
+    const SEND_LIMIT = 60;
+    const SEND_WINDOW_MS = 60_000;
+    const minute = rateLimit(`crm-send-message:${userId}`, SEND_LIMIT, SEND_WINDOW_MS);
     if (!minute.allowed) {
-      return new Response(JSON.stringify({ error: 'Hourly message quota exceeded.' }), {
+      return new Response(JSON.stringify({
+        error: `Message limit reached — ${SEND_LIMIT} messages per ${SEND_WINDOW_MS / 1000} seconds. Please try again shortly.`,
+      }), {
         status: 429,
         headers: {
           ...corsHeaders,

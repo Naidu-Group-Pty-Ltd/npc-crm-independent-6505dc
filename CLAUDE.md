@@ -336,6 +336,94 @@ comment naming a catcher Mission Control never wrote. So before concluding a
 deployment is missing something, check whether the thing is present anywhere:
 a feature absent on every deployment is unbuilt, not unprovisioned.
 
+## What a cascade brings, and what it leaves behind
+An Aurixa **cascade** is an automated import of files from the prime
+(`npc-property-dashbord`) into this clone — `7ca563c` brought 161 of them from
+`prime@54c1ade`. It copies the files it was told to copy and knows nothing
+about what depends on them, so it fails in exactly two ways and **both report
+as a healthy import**. PR #9 carried seven instances between them, three of
+which were live defects rather than test bookkeeping.
+
+**It brings the half that makes a claim and leaves behind the half the claim
+is about.** Six pairs, and the shape is always the same: a spec arrives whose
+subject did not, or a module arrives whose spec did not, and the red check
+names the half that is present. `src/lib/reportTemplate/__tests__/`,
+`sectionOwnershipMatrix`, `planning-data-service`'s `landUse`, the four
+`reportDesign` charts specs — and the one that reaches a client's page,
+`src/lib/builderStock.ts`. All four `_shared/builderStock/` edge modules came
+across byte-identically while the CLIENT MIRROR stayed on the older form: the
+edge side asks one question, `servableStoredImage(image)`, which folds in the
+column the builder filed the picture under, and the client still asked three
+that between them never consulted it. Measured on the network, 13 of 46 live
+cards led with an estate-level picture (8 `Siting / Masterplan URL`, 4 `Estate
+Brochure / Location Map URL`, 1 `Stage Plan / PlanOfSub URL`), and this
+marketplace reads the `builder_network_stock_*` mirror, whose seed copies every
+image row with its whole `source_detail` — so those rows carry
+`marketplace_display_eligible: true` HERE. A card whose primary was refused
+would have ranked down onto one and drawn a subdivision plan where the network
+draws nothing.
+
+**And it silently reverts what this clone decided.** Seven files went back to
+the prime's copy, undoing PR #7: `Conversations.tsx`, `ClientTracker.tsx`,
+`useGHLCalendar.tsx` and `ClientConversationsTab.tsx` lost their `crmProvider`
+imports, hard-coded `send-ghl-message` and `sync-ghl-conversations` back in,
+and dropped the `ghlAffordancesAvailable()` guard. Nothing failed. Replies
+would simply have gone back out through GoHighLevel on a deployment built not
+to do that.
+
+**Two sweeps find both, and they are cheap enough to run on every cascade.**
+Neither is a judgement call, and neither can be done by reading the diff:
+
+```sh
+# 1. What the cascade overwrote that this clone had decided. Intersect its
+#    file list with the files carrying clone history since the mirror.
+#    Anchored on the cascade's own PARENT, so it stays correct after the
+#    merge — against `origin/main` it would later intersect with itself.
+comm -12 <(git show --name-only --format= "$CASCADE" | sort) \
+         <(git log --name-only --format= "$MIRROR".."$CASCADE"^ | sort -u)
+
+# 2. What it left behind. Every file differing from the prime — or absent —
+#    where this clone has NO history of its own to explain the difference.
+git ls-files 'src/**' 'supabase/functions/**' | while read -r f; do
+  p="$PRIME/$f"; [ -f "$p" ] || continue
+  cmp -s "$f" "$p" && continue
+  [ "$(git log --oneline "$MIRROR"..origin/main -- "$f" | wc -l)" -eq 0 ] && echo "$f"
+done
+```
+
+Sweep 2 is the one with a **closing condition**, which is what makes it worth
+running: over all 4,927 files under `src/` and `supabase/functions/`, thirteen
+differ from the prime and every one has clone history explaining it — the CRM
+set, the `import.meta.env` set, and the 416-declaration count in
+`auditRemediation.spec.ts`. One prime file is absent on purpose. An
+unexplained entry in that list is a cascade omission; there is no third
+category.
+
+Four rules carry it. **A spec and its subject travel together or neither
+does** — a spec brought alone fails loudly and is the cheap case; a module
+brought alone is silent and is the expensive one, which is why sweep 2 exists
+at all. **A clone-owned file is one with history since the mirror**, and that
+is a fact in the log rather than an opinion, so restoring it is mechanical.
+**Never fork a shared module to fix a defect the prime also has** — the fix
+belongs at the prime and travels on the next cascade, because a clone-side
+edit to a file the prime also holds is precisely what the next cascade
+reverts, silently, exactly as those seven files were. `crm-send-message`'s
+429 wording was fixed here and `send-ghl-message`'s identical one was
+deliberately left, because that file is byte-identical to the prime's.
+And **a red check after a cascade is evidence about the CASCADE, not about
+the branch** — every one of PR #9's failures named a real omission, and the
+`security` job passing on `02e7509` was the FIRST time it had ever passed on
+this repository, which is what surfaced the third live defect: the
+`crm-send-message` rate limiter was `await rateLimit(supabase, key, 60,
+60_000)` against a three-argument synchronous function, so the guard read a
+truthy Promise and sixty-a-minute was enforced on nobody.
+
+A spec about machinery this clone does not run is **not** an omission.
+`builderNetworkRemapGuard.spec.ts` reads
+`.github/scripts/builder-network-connection-remap.mjs` to extract that lane's
+own allow-list, and neither the script nor its workflow exists here; it is
+excluded rather than satisfied by importing a lane nobody asked for.
+
 ## What the API gateway checks (`verify_jwt`)
 Read [`docs/security/VERIFY_JWT.md`](./docs/security/VERIFY_JWT.md) before
 changing a `verify_jwt` line in `supabase/config.toml`, the deploy workflow's
