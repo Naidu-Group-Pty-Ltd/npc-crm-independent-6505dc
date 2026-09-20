@@ -14,10 +14,24 @@
  * disagree about what this build resolved.
  */
 
-/** The project this repository has always shipped against. */
-export const FALLBACK_URL = 'https://dduzbchuswwbefdunfct.supabase.co';
+/**
+ * THIS deployment's own project.
+ *
+ * It used to be the PRIME's, `dduzbchuswwbefdunfct`, under the comment "the
+ * project this repository has always shipped against" — a sentence that is
+ * true in the repository it was written in and became false the moment it was
+ * cascaded here. This module's own header, and `env.ts`'s above it, already
+ * describe what that cost: a clone whose `VITE_*` variables never arrived
+ * resolved to the fallback and authenticated against the prime, and looked
+ * exactly like a healthy prime while doing it.
+ *
+ * The fallback is the path a deployment takes when nobody has configured it,
+ * which is the ordinary state of a new one. It has to be the deployment's own.
+ * `src/lib/__tests__/shippedBackendIdentity.spec.ts` is what keeps it so.
+ */
+export const FALLBACK_URL = 'https://qvuwrvwzjyigptmnijyb.supabase.co';
 export const FALLBACK_ANON_KEY =
-  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkdXpiY2h1c3d3YmVmZHVuZmN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0NDM4NzksImV4cCI6MjA3MTAxOTg3OX0.eSYU6fxIc3tBQuGLsdBRff0alBMkNfvv7OpW0efNjxk';
+  'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF2dXdydnd6anlpZ3B0bW5panliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk3OTQzMTgsImV4cCI6MjEwNTM3MDMxOH0.PxEpbu_uTJRjL4mdzfmW98SQEYFJB-IKP5vMLqG9BB0';
 
 /** The `ref` sub-domain of a Supabase project URL, or null if it is not one. */
 export function projectRefFromUrl(url: string): string | null {

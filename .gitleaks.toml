@@ -30,8 +30,19 @@
 # vault lookup and therefore the opposite of a secret: it is the reason the
 # secret is not in the file.
 #
-# Every Supabase key was decoded. All 39 are `role=anon` for THIS project,
-# `dduzbchuswwbefdunfct`. None is `service_role`.
+# Every Supabase key was decoded. None is `service_role`.
+#
+# They are TWO projects, which is the thing this file originally got wrong. It
+# said "all 39 are `role=anon` for THIS project, `dduzbchuswwbefdunfct`" — a
+# sentence that is true in the repository it was written in, the prime's own,
+# and that arrived here verbatim with the mirror. `dduzbchuswwbefdunfct` is the
+# PRIME. This deployment is `qvuwrvwzjyigptmnijyb`, which `supabase/config.toml`
+# has said all along.
+#
+# So the allowance that was here permitted the prime's key and REFUSED this
+# deployment's: a commit replacing a foreign credential with our own failed
+# the secret scan while the foreign one passed. Both are allowed below, as two
+# separate literals with two separate reasons.
 #
 # ## A Supabase anon key is publishable
 #
@@ -62,7 +73,13 @@
 useDefault = true
 
 [[allowlists]]
-description = "This project's own Supabase anon (publishable) key — see the header. One literal: another project's key, a rotated key, or a service_role key all still fail."
+description = "This deployment's own Supabase anon (publishable) key, for project qvuwrvwzjyigptmnijyb. One literal: another project's key, a rotated key, or a service_role key all still fail."
+regexes = [
+  '''eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InF2dXdydnd6anlpZ3B0bW5panliIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk3OTQzMTgsImV4cCI6MjEwNTM3MDMxOH0\.PxEpbu_uTJRjL4mdzfmW98SQEYFJB-IKP5vMLqG9BB0''',
+]
+
+[[allowlists]]
+description = "The PRIME's Supabase anon (publishable) key. It appears in the applied migrations this repository inherits, which cannot be edited without breaking replay. Being an anon key it exposes nothing — what it signals is that this clone's history carries the prime's project identity, a correctness fact rather than a secret one. Allowed as ONE literal, exactly like this deployment's own key above. An allowlist entry is permission for a string to APPEAR, never a reason to ship it: src/lib/__tests__/shippedBackendIdentity.spec.ts is what keeps it out of every shipped file."
 regexes = [
   '''eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9\.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRkdXpiY2h1c3d3YmVmZHVuZmN0Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU0NDM4NzksImV4cCI6MjA3MTAxOTg3OX0\.eSYU6fxIc3tBQuGLsdBRff0alBMkNfvv7OpW0efNjxk''',
 ]
