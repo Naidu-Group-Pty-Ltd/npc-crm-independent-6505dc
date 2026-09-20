@@ -97,8 +97,18 @@ describe('what the contents page actually prints', () => {
     const { html } = renderTemplateToHtml(t.schema, { data: {} });
     // The run-on blob, verbatim from the defect.
     expect(html).not.toContain('The verdict Executive summary');
-    // Real rows, numbered by the renderer.
-    expect(html).toContain('1. Cover');
-    expect(html).toContain('2. Contents');
+    // Real rows, numbered by the renderer, starting at the first page a
+    // reader would turn TO.
+    //
+    // Renegotiated: this asserted `1. Cover` and `2. Contents`, which is what
+    // page 2 of the 97 Poole Road Compass shipped — the first row pointing at
+    // the sheet before the contents and the second at the sheet the reader is
+    // holding. The front matter of a list is not an entry in it. The test's
+    // own subject, that the rows are REAL PAGES numbered by the renderer
+    // rather than authored section names, is what is asserted now. See
+    // `scopeContentsEntries`.
+    expect(html).toMatch(/>1\. (?!Cover|Contents)[A-Z]/);
+    expect(html).not.toContain('>1. Cover<');
+    expect(html).not.toContain('>2. Contents<');
   });
 });
