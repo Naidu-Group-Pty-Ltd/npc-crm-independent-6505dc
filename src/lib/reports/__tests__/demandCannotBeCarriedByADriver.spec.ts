@@ -36,6 +36,7 @@
 import { describe, expect, it } from 'vitest';
 import {
   DEMAND_PRIMARY,
+  DEMAND_PRIMARY_MASS,
   DEMAND_WEIGHTS,
   POPULATION_ANCHORS,
   VOLUME_BASELINE_PERIODS,
@@ -51,7 +52,7 @@ const point = <T>(value: T, areaName: string): EvidencePoint<T> => ({
   areaName,
   dwellingType: 'house',
   dwellingTypeMatched: true,
-  provider: 'nsw_dcj',
+  provider: 'nsw_dcj_rent_sales',
   asOf: '2026-03-31',
   sampleSize: 162,
   periodsAvailable: 4,
@@ -105,15 +106,55 @@ describe('a driver may inform a score and may not be one', () => {
   });
 
   it('lets the driver carry its own weight once a primary measure is present', () => {
+    /*
+     * RENEGOTIATED 20 September 2026 — the title was the rule and the body
+     * was the defect.
+     *
+     * This test has always been named for the rule the module states: the
+     * driver carries ITS OWN weight, which `DEMAND_WEIGHTS` puts at 0.15. The
+     * arithmetic it asserted renormalised over the measured mass — `(80 *
+     * 0.30 + 13 * 0.15) / 0.45` — which hands the driver 0.15/0.45 = **one
+     * third** of the dimension, more than double the weight it is declared to
+     * hold. So the test passed while the thing it is named for was untrue,
+     * and 97 Poole Road shipped a Demand score half of which was a
+     * demographic drift reading.
+     *
+     * The intent is kept whole and is now CHECKABLE rather than aspirational:
+     * the driver's share of the dimension is asserted to be exactly its
+     * nominal weight, by solving for it, rather than restated as a constant.
+     */
     const ev = evidence({
       populationGrowth: point(KELLYVILLE_POPULATION, 'Kellyville - East'),
       vacancyRate: point(1.5, 'Kellyville'),
     });
     const out = scoreDemand(ev);
     expect(out.score).not.toBeNull();
-    // 80 at 1.5% vacancy and 13 on population, renormalised over 0.30 + 0.15.
-    const expected = Math.round((80 * 0.30 + 13 * 0.15) / 0.45);
+
+    const vacancy = out.components.find((c) => c.key === 'rentalTightness')!;
+    const driver = out.components.find((c) => c.key === 'populationDriver')!;
+    // The one primary present fills the primary share; the driver is added at
+    // the 0.15 it holds.
+    const expected = Math.round(vacancy.score * DEMAND_PRIMARY_MASS + driver.score * DEMAND_WEIGHTS.populationDriver);
     expect(out.score).toBe(expected);
+
+    /*
+     * And the rule the title names, solved for rather than assumed: moving
+     * the driver's reading by one point moves the dimension by its own
+     * weight, whichever direction it moves in.
+     */
+    const withHigherDriver = scoreDemand(evidence({
+      populationGrowth: point(2.5, 'Kellyville - East'),
+      vacancyRate: point(1.5, 'Kellyville'),
+    }));
+    const higher = withHigherDriver.components.find((c) => c.key === 'populationDriver')!;
+    const share = ((withHigherDriver.score as number) - (out.score as number))
+      / (higher.score - driver.score);
+    // One decimal, because a DIMENSION rounds and a component does not: the
+    // slope is read off two rounded scores, so it carries up to a point of
+    // quantisation over a 62-point move in the driver. What it rules out is
+    // the defect — a driver at a third of the dimension would read 0.33.
+    expect(share, 'the driver moves the dimension by its nominal weight and no more')
+      .toBeCloseTo(DEMAND_WEIGHTS.populationDriver, 1);
   });
 
   it('still returns null when nothing at all was measured', () => {

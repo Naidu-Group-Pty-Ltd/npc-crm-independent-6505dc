@@ -2,7 +2,6 @@ import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { invokeSecureFunction } from '@/lib/secureInvoke';
-import { vendorReconciliationFunction } from '@/lib/crm/crmProvider';
 import { useModulePermissions } from '@/hooks/useModulePermissions';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -515,16 +514,9 @@ export default function ClientTracker() {
       
       if (error || !data?.success) throw new Error(data?.error || error?.message);
 
-      // Push the stage change to GoHighLevel if a stage is set.
-      //
-      // The local write above has ALREADY succeeded — that is why the branch
-      // below logs rather than throws. On a CRM-independent deployment there
-      // is no second system to tell, so the act is finished here and
-      // `pushStage` is null; re-performing it against a native function would
-      // be two writes to one row.
-      const pushStage = vendorReconciliationFunction('opportunityStage');
-      if (pushStage && client.current_stage_id) {
-        const { data: ghlData, error: ghlError } = await invokeSecureFunction(pushStage, {
+      // Sync stage change to GHL if a stage is set
+      if (client.current_stage_id) {
+        const { data: ghlData, error: ghlError } = await invokeSecureFunction('update-ghl-opportunity-stage', {
           clientId: client.id,
           newStageId: client.current_stage_id
         });
@@ -571,11 +563,9 @@ export default function ClientTracker() {
       
       if (localError || !updateData?.success) throw new Error(updateData?.error || localError?.message);
 
-      // Then push to GoHighLevel. Null on a CRM-independent deployment, where
-      // the local write above is the whole act — see the other call site.
-      const pushStage = vendorReconciliationFunction('opportunityStage');
-      if (pushStage && stageId) {
-        const { data, error } = await invokeSecureFunction(pushStage, {
+      // Then sync to GHL (non-blocking, but show toast on result)
+      if (stageId) {
+        const { data, error } = await invokeSecureFunction('update-ghl-opportunity-stage', {
           clientId, newStageId: stageId
         });
 

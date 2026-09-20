@@ -234,6 +234,17 @@ function productionInputFrom(rawInput: any, now: Date): ProductionScoringInput {
       walkScore: locationIntelligence.walkScore ?? null,
       commuteTimeCBD: locationIntelligence.commute?.durationMinutes ?? null,
       schoolsNearby: locationIntelligence.schools?.schoolsWithin3km ?? null,
+      /*
+       * The per-category counts and distances the enrichment already
+       * publishes. `scoreLocation` prefers these over `walkScore`, because
+       * the composite is five capped terms over lookups that cap at ten
+       * results and 62.8% of the corpus lands at 90 or above, while distance
+       * saturates nowhere. `?? null` rather than `|| null`, and no `[]`
+       * floor: an empty array would be read as "measured, nothing found".
+       */
+      amenities: Array.isArray(locationIntelligence.amenities)
+        ? locationIntelligence.amenities
+        : null,
     },
     // DERIVED from the enrichment's RF-7.2B acquisition stamp, never read
     // from the request: the stamp must name the same subject the caller is

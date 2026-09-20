@@ -1,6 +1,6 @@
 import { buildRecordedFactsBlock } from '../_shared/reports/investment/condenseFacts.pure.ts';
 import { claimSupportRules, readEvidenceInventory } from '../_shared/reports/investment/chartEvidence.pure.ts';
-import { composeCondensedDocument } from '../_shared/reports/investment/condenseCompose.pure.ts';
+import { composeCondensedDocument, CONDENSED_PAGE_CEILING } from '../_shared/reports/investment/condenseCompose.pure.ts';
 import { projectInvestmentReport, type InvestmentReportRowLike } from '../_shared/reportBindingProjection.pure.ts';
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.55.0";
 import { verifyAuth, createCorsHeaders, createUnauthorizedResponse } from '../_shared/auth.ts';
@@ -41,7 +41,7 @@ const corsHeaders = {
 const TIER_CONFIG = {
   briefing: {
     name: 'Executive Briefing',
-    targetPages: 12,
+    targetPages: CONDENSED_PAGE_CEILING.briefing,
     structureGuide: `
 EXECUTIVE BRIEFING STRUCTURE (~7 pages of prose — the score breakdown and the
 SWOT are attached programmatically from the recorded calculation AFTER your
@@ -112,7 +112,7 @@ headings after them — anything outside this structure is discarded.
   },
   snapshot: {
     name: 'Snapshot',
-    targetPages: 5,
+    targetPages: CONDENSED_PAGE_CEILING.snapshot,
     structureGuide: `
 REPORT STRUCTURE (~5 PAGES):
 

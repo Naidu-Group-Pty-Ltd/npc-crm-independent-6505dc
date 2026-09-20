@@ -211,6 +211,21 @@ export interface ProductionLocationInput {
   walkScore?: number | null;
   commuteTimeCBD?: number | null;
   schoolsNearby?: number | null;
+  /**
+   * Per-category amenity readings (`locationIntelligence.amenities`): the
+   * count and the distance to the nearest of each kind.
+   *
+   * Preferred over `walkScore` by `scoreLocation`, because the composite
+   * saturates and distance does not. Admitted on the SAME declaration as
+   * `walkScore` — it is the same enrichment, acquired in the same pass under
+   * the same RF-7.2B stamp, so admitting one and refusing the other would
+   * score a repaired reading beside an unrepaired one.
+   */
+  amenities?: ReadonlyArray<{
+    category: string;
+    count?: number | null;
+    distance?: number | null;
+  }> | null;
 }
 
 /** The market evidence a caller assembled from its adapters. */
@@ -520,6 +535,9 @@ export function assembleEngineInput(input: ProductionScoringInput): ShadowScoreI
       walkScore: admittedLocation.has('walkScore') ? loc.walkScore : null,
       commuteTimeCBD: admittedLocation.has('commuteTimeCBD') ? loc.commuteTimeCBD : null,
       schoolsNearby: admittedLocation.has('schoolsNearby') ? loc.schoolsNearby : null,
+      // Same enrichment, same acquisition stamp, same admission as the walk
+      // score it replaces. See `ProductionLocationInput.amenities`.
+      amenities: admittedLocation.has('walkScore') ? (loc.amenities ?? null) : null,
     },
     propertyRisk: {
       propertyType: input.property.propertyType,
@@ -795,6 +813,10 @@ export function scoreForProduction(input: ProductionScoringInput): ProductionSco
         scored: dim?.available === true,
         score: dim?.performance,
         reason: dim?.available ? null : (dim?.reason ?? null),
+        // How much of the dimension's own methodology ran. The policy divides
+        // by the same evidence weight the engine does, so the two arithmetics
+        // are one arithmetic (`proportionalWeighting.pure.ts`).
+        coverage: dim?.coverage,
       }];
     }),
   ));

@@ -132,7 +132,17 @@ describe('the methodology document agrees with the code', () => {
 
   it('is versioned without the shadow suffix, and the document records the activation', () => {
     expect(SHADOW_METHODOLOGY_VERSION.endsWith('-shadow')).toBe(false);
-    expect(SHADOW_METHODOLOGY_VERSION).toBe('2.1.0');
+    /*
+     * RENEGOTIATED 20 September 2026. This pinned the literal `2.1.0`, in a
+     * test whose subject is the SUFFIX and the activation record — so every
+     * legitimate bump failed a test that is not about the number. The
+     * property it exists for is asserted instead: the version carries no
+     * shadow suffix, it is a semver, and the document states the same one the
+     * code does (which is what "the document records the activation" means).
+     */
+    expect(SHADOW_METHODOLOGY_VERSION).toMatch(/^\d+\.\d+\.\d+$/);
+    expect(DOC, 'the document states the version the code is at')
+      .toContain(`\`${SHADOW_METHODOLOGY_VERSION}\``);
     expect(DOC).toMatch(/production grade engine/i);
     expect(DOC).toMatch(/ME-8/);
     expect(DOC).toContain(`\`${SCORING_V2_ACTIVATION.approvedOn}\``);

@@ -1,15 +1,15 @@
 {
   "schema_version": 1,
   "source": "repository-static-analysis",
-  "edge_function_count": 416,
-  "config_declared_function_count": 416,
-  "registry_function_count": 416,
-  "verify_jwt_false_count": 325,
+  "edge_function_count": 413,
+  "config_declared_function_count": 413,
+  "registry_function_count": 413,
+  "verify_jwt_false_count": 322,
   "exposure_class_counts": {
     "authenticated-or-service": 1,
     "authenticated-staff": 6,
     "cron-worker": 42,
-    "human-authenticated": 211,
+    "human-authenticated": 209,
     "internal-service": 26,
     "module-gated": 22,
     "portal-authenticated": 59,
@@ -18,7 +18,7 @@
     "superadmin-only": 1,
     "webhook": 2,
     "webhook-clientstate": 1,
-    "webhook-secret": 8
+    "webhook-secret": 7
   },
   "needs_review_count": 0,
   "functions_importing_shared_auth_modules": {
@@ -95,8 +95,6 @@
       "convert-template-document/index.ts",
       "cotality-service/index.ts",
       "create-advanced-client/index.ts",
-      "crm-calendar/index.ts",
-      "crm-send-message/index.ts",
       "cross-portal-outbox-worker/index.ts",
       "data-conflict-resolver/index.ts",
       "dispatch-marketing-reports/index.ts",

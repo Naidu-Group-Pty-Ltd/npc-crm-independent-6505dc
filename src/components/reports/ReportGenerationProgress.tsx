@@ -317,7 +317,7 @@ function ReportGenerationProgressInner() {
            tab, or a second Continue. See `generationDriver.ts`. */
         driver = newDriverIdentity(isAutoRetry ? 'auto-continue' : 'continue');
         const claim = claimGenerationDriver(reportId, driver);
-        if (!claim.ok) {
+        if (claim.ok === false) {
           // A refusal is not an error — the work is happening, just not here.
           // Said out loud only where a person pressed something; an automatic
           // retry standing down is ordinary operation. `finally` clears the

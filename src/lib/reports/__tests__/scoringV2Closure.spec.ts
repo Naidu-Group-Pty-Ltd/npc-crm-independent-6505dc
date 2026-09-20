@@ -145,10 +145,35 @@ const assertIntegrity = (name: string, r: ShadowScoreResult, evidence: MarketEvi
     expect(Math.abs(effSum - 1), `${name} effective weights sum to 1`).toBeLessThan(0.01);
     // The printed grade is never better than the score's own grade.
     expect(idx(r.grade), `${name} printed vs uncapped`).toBeLessThanOrEqual(idx(r.uncappedGrade));
-    // The composite can never sit BELOW the delivered points: renormalising
-    // divides by at most 1 (missing evidence never punishes the score).
+    /*
+     * The composite can never sit BELOW the points the evidence delivered,
+     * because renormalising divides by at most 1 — missing evidence never
+     * punishes the score.
+     *
+     * RENEGOTIATED 20 September 2026 (methodology 2.2.0). The theorem is
+     * unchanged; it is stated at the weights the composite is actually
+     * computed with. `nominalMeasuredScore` is nominal-weighted and its own
+     * declaration calls it diagnostic — "it must never become a cap again" —
+     * so comparing the composite against it was only ever an identity while
+     * the composite used nominal weights.
+     */
+    const deliveredAtEvidenceWeights = r.dimensions.reduce(
+      (s, d) => s + (d.score === null ? 0 : d.score * d.nominalWeight * d.coverage), 0,
+    );
     expect(r.compositeScore + 0.51, `${name} composite >= delivered`)
-      .toBeGreaterThanOrEqual(r.nominalMeasuredScore);
+      .toBeGreaterThanOrEqual(deliveredAtEvidenceWeights);
+    /*
+     * And the safeguard that theorem exists for, asserted directly: the
+     * composite is a weighted mean of the measured scores, so it can never
+     * fall outside them however thin any one dimension's evidence is. An
+     * unmeasured dimension carries no weight (asserted above) and therefore
+     * moves it neither way.
+     */
+    const scores = r.dimensions.map((d) => d.score).filter((v): v is number => v !== null);
+    expect(r.compositeScore + 0.51, `${name} composite >= weakest measured`)
+      .toBeGreaterThanOrEqual(Math.min(...scores));
+    expect(r.compositeScore - 0.51, `${name} composite <= strongest measured`)
+      .toBeLessThanOrEqual(Math.max(...scores));
   } else {
     expect(r.grade, `${name} no composite means no grade`).toBeNull();
     expect(r.unavailableReason, `${name} states why`).toBeTruthy();
@@ -303,20 +328,33 @@ describe('closure: the missing-evidence matrix', () => {
   });
 
   it('weights every valid dimension proportionally, including the worst one', () => {
-    // §7, checked against the formula rather than against the engine: the
-    // composite is Σ(score × original weight) / Σ(original weights of valid),
-    // rounded once. A dropped weak dimension would break this identity.
+    /*
+     * §7, checked against the formula rather than against the engine.
+     *
+     * RENEGOTIATED 20 September 2026 (methodology 2.2.0). The intent is
+     * unchanged and is the whole point of the test: **a weak dimension is
+     * never dropped**, and the composite is the proportional mean of what was
+     * measured. What changed is the weight each measured dimension carries —
+     * its original weight discounted by how much of its own methodology ran,
+     * so a dimension scored on a third of its components no longer speaks
+     * with a whole dimension's authority. The formula is written out here
+     * rather than imported, so this still checks the engine rather than
+     * agreeing with it.
+     */
     const weak = run({ ...COMPLETE, evidence: ev({ ...growthBlock(9), ...demandBlock('weak') }) });
     const measured = weak.dimensions.filter((d) => weak.measured.includes(d.key));
-    const wSum = measured.reduce((s, d) => s + d.nominalWeight, 0);
+    const wSum = measured.reduce((s, d) => s + d.nominalWeight * d.coverage, 0);
     const expected = Math.round(
-      measured.reduce((s, d) => s + (d.score as number) * d.nominalWeight, 0) / wSum,
+      measured.reduce((s, d) => s + (d.score as number) * d.nominalWeight * d.coverage, 0) / wSum,
     );
     expect(weak.compositeScore).toBe(expected);
-    // The weak dimension is genuinely in there, at its own original weight.
+    // The weak dimension is genuinely in there — at its own original weight,
+    // and carrying real weight in the composite rather than merely appearing.
     const demand = measured.find((d) => d.key === 'demand')!;
     expect(demand.nominalWeight).toBe(0.15);
     expect(demand.score).not.toBeNull();
+    expect(demand.effectiveWeight, 'the weak dimension was not silently dropped')
+      .toBeGreaterThan(0);
   });
 
   it('a removal changes the score only by renormalisation, and the removal is disclosed', () => {
@@ -452,7 +490,22 @@ describe('closure: a measured zero and an unavailable reading are different resu
 
     const zeroYield = measuredZero.dimensions.find((d) => d.key === 'yield')!;
     const absentYield = unavailable.dimensions.find((d) => d.key === 'yield')!;
-    expect(zeroYield.score).toBe(0);
+    /*
+     * RENEGOTIATED 20 September 2026 (methodology 3.0.0). The subject is the
+     * DIFFERENCE between a measured disaster and an unmeasured one, and it is
+     * asserted in full below: the measured one participates, carries weight
+     * and drags the composite, and the absent one leaves it entirely.
+     *
+     * The literal `0` was a fact about the absolute gross-yield anchors. The
+     * dimension now scores the income against what this asset's own market
+     * pays, so $100/week on $2,000,000 — 0.26% against a market paying 2.80%
+     * — is 2.54 points of yield short and scores in the single figures rather
+     * than at exactly zero. The scale still REACHES zero (four points short
+     * of the market does), which is asserted separately so the measured-zero
+     * rule keeps a test of its own.
+     */
+    expect(zeroYield.score).not.toBeNull();
+    expect(zeroYield.score!).toBeLessThan(10);
     expect(absentYield.score).toBeNull();
 
     // The measured zero PARTICIPATES: it carries weight and drags the

@@ -116,7 +116,7 @@ import {
 import { interpolate, quartersSince, type ConfidenceBand } from './growthScoring.pure.ts';
 
 /** Bumped whenever a weight, anchor or rule changes. Persisted with the score. */
-export const DEMAND_METHODOLOGY_VERSION = '4.0.0';
+export const DEMAND_METHODOLOGY_VERSION = '4.1.0';
 
 export const DEMAND_WEIGHTS = {
   rentalTightness: 0.30,
@@ -562,6 +562,68 @@ export interface DemandResult {
  * the whole point of the module: 999 reports say `50` today, and not one of
  * them was ever entitled to say anything.
  */
+/** Σ of the nominal weights of every PRIMARY component, measured or not. */
+export const DEMAND_PRIMARY_MASS = (Object.keys(DEMAND_WEIGHTS) as DemandComponentKey[])
+  .filter((k) => DEMAND_PRIMARY.has(k))
+  .reduce((s, k) => s + DEMAND_WEIGHTS[k], 0);
+
+/**
+ * Blend the measured components, with the driver held to its nominal weight.
+ *
+ * ## The half of the driver rule the arithmetic did not carry
+ *
+ * 4.0.0 stopped a driver from being the WHOLE of a Demand score
+ * ({@link DEMAND_PRIMARY}). It did not stop it being most of one. Renormalising
+ * over everything measured divides each component's weight by the measured
+ * mass, so on a record carrying one primary and the driver —
+ * `transactionVolume` 0.15 and `populationDriver` 0.15 — the driver's share of
+ * the dimension was **0.50**, three and a third times the 0.15 this module
+ * states it carries.
+ *
+ * That is not a hypothetical either. On the 97 Poole Road Compass issued
+ * 20 September 2026 those were exactly the two components present: a
+ * transaction volume of 162 sales against a 3-period average of 228 scoring
+ * 29.9, and a population reading of −0.4% a year scoring 12.6. Demand was
+ * published as 21 — half of it a demographic drift reading, in a dimension
+ * whose own header says that reading *"can inform a Demand score and cannot
+ * carry one"*.
+ *
+ * ## The rule
+ *
+ * **A non-primary component carries its nominal weight and never more.** The
+ * primaries renormalise among themselves over the primary mass — which is the
+ * same renormalisation as before, restricted to the question they answer —
+ * and the driver is added at the 0.15 it is declared to hold.
+ *
+ * Three properties worth checking rather than trusting, and
+ * `demandDriverWeighting.spec.ts` checks them:
+ *
+ * * **It is symmetric.** A driver reading ABOVE the primaries loses exactly
+ *   the influence one below them loses. Nothing here reads the value.
+ * * **It is a no-op where every component is present**, and where no driver is
+ *   present at all: the primary mass is then the measured mass and the
+ *   arithmetic is the old one exactly.
+ * * **It cannot invent a score.** With no primary the dimension is still
+ *   `null`, by the gate above, which this does not touch.
+ */
+function blendDemand(built: readonly DemandComponent[]): number {
+  const primaries = built.filter((c) => DEMAND_PRIMARY.has(c.key));
+  const drivers = built.filter((c) => !DEMAND_PRIMARY.has(c.key));
+  const primaryMeasured = primaries.reduce((s, c) => s + DEMAND_WEIGHTS[c.key], 0);
+  if (primaryMeasured <= 0) return 0;
+
+  // The primaries fill the primary share of the dimension between them.
+  const primaryPoints = primaries.reduce(
+    (s, c) => s + c.score * (DEMAND_WEIGHTS[c.key] / primaryMeasured) * DEMAND_PRIMARY_MASS,
+    0,
+  );
+  // Each driver contributes at its own nominal weight — never renormalised up.
+  const driverPoints = drivers.reduce((s, c) => s + c.score * DEMAND_WEIGHTS[c.key], 0);
+  const driverWeight = drivers.reduce((s, c) => s + DEMAND_WEIGHTS[c.key], 0);
+
+  return (primaryPoints + driverPoints) / (DEMAND_PRIMARY_MASS + driverWeight);
+}
+
 export function scoreDemand(ev: MarketEvidence, now: Date = new Date()): DemandResult {
   const built = [
     scoreRentalTightness(ev),
@@ -584,9 +646,7 @@ export function scoreDemand(ev: MarketEvidence, now: Date = new Date()): DemandR
    * directly there is no score, only evidence.
    */
   const carried = built.some((c) => DEMAND_PRIMARY.has(c.key));
-  const score = weightCovered > 0 && carried
-    ? Math.round(built.reduce((s, c) => s + c.score * (DEMAND_WEIGHTS[c.key] / weightCovered), 0))
-    : null;
+  const score = weightCovered > 0 && carried ? Math.round(blendDemand(built)) : null;
 
   const points = built.flatMap((c) => c.evidence);
   const renderRestricted = points.length > 0
