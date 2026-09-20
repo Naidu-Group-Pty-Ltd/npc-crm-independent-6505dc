@@ -9,6 +9,12 @@ import {
   parseDeploymentAllowances,
   resolveClientFacingFlag,
 } from "./src/lib/clientFacing";
+// The pure half of the Supabase target rule — no `import.meta` in it, which is
+// what makes it loadable from a Vite config at all.
+import {
+  projectRefFromUrl,
+  resolveSupabaseTarget,
+} from "./src/integrations/supabase/supabaseTarget.pure";
 
 // Identifies the deployed build. `version.json` carries the same value, so a
 // tab can tell whether it is running the current bundle or a cached older one
@@ -40,16 +46,64 @@ const CLIENT_FACING_ALLOWANCES = parseDeploymentAllowances(
   process.env.VITE_CLIENT_FACING_ALLOW,
 );
 
-/** Writes the build id next to the bundle so the running app can compare. */
-function buildVersionManifest(): Plugin {
+/**
+ * Writes the build id next to the bundle so the running app can compare — and
+ * which Supabase project this build resolved, so anything outside the browser
+ * can ask without guessing.
+ *
+ * The backend block is not diagnostics. Reading a deployed bundle for a project
+ * name cannot settle the question: the prime's ref is compiled into every build
+ * as `FALLBACK_URL`, so a correctly-configured clone names BOTH its own project
+ * and the prime's, and no amount of text matching says which one the client
+ * uses. Measured 19 Sep 2026, three of four clones were serving a bundle
+ * pointed at the prime and every signal the provisioner held was green. This is
+ * the build stating, in one line, what it resolved.
+ *
+ * Resolved through `resolveSupabaseTarget` — the same pure function the running
+ * client calls — rather than by reading `process.env` and deciding here. Two
+ * implementations of "which project is this" is how a manifest and a client
+ * come to disagree, and a manifest that disagrees is worse than none.
+ *
+ * And the environment it resolves from is VITE'S, never `process.env`. Vite
+ * loads `.env`, `.env.local` and `.env.[mode]` into `import.meta.env` and does
+ * NOT copy them into `process.env` — so a build configured by a dotenv file
+ * rather than by real shell variables put the CLONE's project into the bundle
+ * and the PRIME's into this manifest. That is the exact inversion the manifest
+ * exists to catch, reported as a clean declaration. `loadEnv(mode, cwd,
+ * ["VITE_"])` is the same resolution the client gets — dotenv files first,
+ * real process variables overriding them — so the two cannot disagree about
+ * the VALUES either, not just about the rule applied to them.
+ *
+ * A `--mode staging` build is the one case this still cannot describe:
+ * `stagingTargetPlugin` retargets by substituting the production literals in
+ * source, which no environment read can see. That is deliberate and safe
+ * rather than unhandled — such a build is never deployed (the plugin says so,
+ * prints a warning, and stamps a fixed banner plus `window.__SUPABASE_TARGET__`
+ * into the page), and this manifest is only ever read back from a deployed
+ * clone's own URL, where a staging bundle cannot be.
+ */
+function buildVersionManifest(env: Record<string, string>): Plugin {
   return {
     name: "npc-build-version-manifest",
     apply: "build",
     generateBundle() {
+      const target = resolveSupabaseTarget({
+        url: env.VITE_SUPABASE_URL?.trim() || undefined,
+        anonKey:
+          env.VITE_SUPABASE_PUBLISHABLE_KEY?.trim() ||
+          env.VITE_SUPABASE_ANON_KEY?.trim() ||
+          undefined,
+      });
       this.emitFile({
         type: "asset",
         fileName: "version.json",
-        source: JSON.stringify({ buildId: BUILD_ID }),
+        source: JSON.stringify({
+          buildId: BUILD_ID,
+          supabase: {
+            projectRef: projectRefFromUrl(target.url),
+            source: target.source,
+          },
+        }),
       });
     },
   };
@@ -81,7 +135,9 @@ export default defineConfig(({ mode }) => ({
     inlineXlsxPlugin(),
     react(),
     mcpPlugin(),
-    buildVersionManifest(),
+    // The client's own environment, resolved by Vite — see the function's
+    // header. `process.env` alone would miss every dotenv-configured build.
+    buildVersionManifest(loadEnv(mode, process.cwd(), ["VITE_"])),
   ],
   assetsInclude: ["**/*.xlsx", "**/*.docx"],
   resolve: {
