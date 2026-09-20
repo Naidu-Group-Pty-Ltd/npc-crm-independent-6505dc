@@ -476,7 +476,8 @@ export const SECTION_REGISTRY: readonly SectionDefinition[] = [
     tiers: {
       compass: { depth: 'required', order: 5, label: 'Why This Location Matters', producer: authored('generator.compass') },
       briefing: { depth: 'required', order: 5, label: 'Location & Demand', producer: authored('condense.briefing') },
-      strategic: { depth: 'required', order: 6, label: 'Position Within the Locality', producer: routed('dueDiligence', 4) },
+      // Carries the infrastructure pipeline, as 'Why This Location Matters' does on the Compass.
+      strategic: { depth: 'required', order: 6, label: 'Position Within the Locality & Infrastructure Context', producer: routed('dueDiligence', 4) },
     },
   },
   {
@@ -492,7 +493,8 @@ export const SECTION_REGISTRY: readonly SectionDefinition[] = [
     tiers: {
       compass: merged('locationCase'),
       briefing: merged('locationCase'),
-      strategic: { depth: 'required', order: 16, label: 'Infrastructure and Growth Context', producer: routed('dueDiligence', 14) },
+      // Merged where the Compass merges it — see `propertyFit`'s strategic placement.
+      strategic: merged('locationCase'),
     },
   },
   {
@@ -504,7 +506,8 @@ export const SECTION_REGISTRY: readonly SectionDefinition[] = [
     tiers: {
       compass: merged('propertyFit'),
       briefing: merged('propertyFit'),
-      strategic: { depth: 'required', order: 7, label: 'Suburb Character, Lifestyle & Occupier Appeal', producer: routed('dueDiligence', 5) },
+      // Merged where the Compass merges it — see `propertyFit`'s strategic placement.
+      strategic: merged('propertyFit'),
     },
   },
   {
@@ -533,7 +536,12 @@ export const SECTION_REGISTRY: readonly SectionDefinition[] = [
       compass: { depth: 'required', order: 12, label: 'Market Positioning', producer: authored('generator.compass') },
       briefing: { depth: 'required', order: 7, label: 'Market Position', producer: authored('condense.briefing') },
       financial: { depth: 'required', order: 5, label: 'Price, Rent & Yield Market Positioning', producer: routed('financial', 3) },
-      strategic: merged('supplyPipeline'),
+      // The carrier, not the merged one: on the Compass `supplyPipeline` merges
+      // INTO this section, and the strategic tier had the arrow the other way
+      // round — so the Due Diligence document declared a supply-pipeline
+      // section and the routing table sent Market Positioning to the Financial
+      // report alone, leaving it empty.
+      strategic: { depth: 'required', order: 18, label: 'Market Position, Competitive Landscape & Supply Pipeline', producer: routed('dueDiligence', 16) },
     },
   },
   {
@@ -545,7 +553,8 @@ export const SECTION_REGISTRY: readonly SectionDefinition[] = [
     tiers: {
       compass: merged('marketPosition'),
       briefing: merged('marketPosition'),
-      strategic: { depth: 'required', order: 17, label: 'Competitive Landscape and Supply Pipeline', producer: routed('dueDiligence', 16) },
+      // Merged where the Compass merges it — see `propertyFit`'s strategic placement.
+      strategic: merged('marketPosition'),
     },
   },
 
@@ -569,7 +578,8 @@ export const SECTION_REGISTRY: readonly SectionDefinition[] = [
     tiers: {
       compass: { depth: 'required', order: 7, label: 'Demand Drivers', producer: authored('generator.compass') },
       briefing: merged('locationCase'),
-      strategic: { depth: 'required', order: 11, label: 'Population, Household Growth & Demographic Fit', producer: routed('dueDiligence', 9) },
+      // Carries socioeconomic, employment and tenant demand, as 'Demand Drivers' does on the Compass.
+      strategic: { depth: 'required', order: 11, label: 'Population, Socioeconomics, Employment & Tenant Demand', producer: routed('dueDiligence', 9) },
     },
   },
   {
@@ -581,7 +591,8 @@ export const SECTION_REGISTRY: readonly SectionDefinition[] = [
     tiers: {
       compass: merged('population'),
       briefing: merged('locationCase'),
-      strategic: { depth: 'required', order: 10, label: 'Socioeconomic Profile & SEIFA Interpretation', producer: routed('dueDiligence', 8) },
+      // Merged where the Compass merges it — see `propertyFit`'s strategic placement.
+      strategic: merged('population'),
     },
   },
   {
@@ -599,7 +610,8 @@ export const SECTION_REGISTRY: readonly SectionDefinition[] = [
     tiers: {
       compass: merged('population'),
       briefing: merged('locationCase'),
-      strategic: { depth: 'required', order: 12, label: 'Employment, Income & Affordability Profile', producer: routed('dueDiligence', 10) },
+      // Merged where the Compass merges it — see `propertyFit`'s strategic placement.
+      strategic: merged('population'),
     },
   },
   {
@@ -616,7 +628,8 @@ export const SECTION_REGISTRY: readonly SectionDefinition[] = [
       compass: merged('population'),
       briefing: merged('locationCase'),
       financial: { depth: 'required', order: 9, label: 'Vacancy Risk, Tenant Income & Rent Sustainability', producer: routed('financial', 7) },
-      strategic: { depth: 'required', order: 13, label: 'Tenant Demand and Occupier Personas', producer: routed('dueDiligence', 11) },
+      // Merged where the Compass merges it — see `propertyFit`'s strategic placement.
+      strategic: merged('population'),
     },
   },
 
@@ -695,7 +708,37 @@ export const SECTION_REGISTRY: readonly SectionDefinition[] = [
     tiers: {
       compass: { depth: 'required', order: 14, label: 'Property Fit Within the Suburb', producer: authored('generator.compass') },
       briefing: { depth: 'required', order: 8, label: 'Property Fit', producer: authored('condense.briefing') },
-      strategic: { depth: 'required', order: 14, label: 'Future Buyer and Resale Appeal', producer: routed('dueDiligence', 12) },
+      /*
+       * The Due Diligence document mirrors the Compass's merges, because it
+       * is MADE of the Compass.
+       *
+       * This placement is where that rule was clearest: `propertyFit` was
+       * `routed('dueDiligence', 12)` as 'Future Buyer and Resale Appeal',
+       * while the routing table sent the Compass's own 'Property Fit Within
+       * the Suburb' to PLDD 3 — so one source section was claimed by two
+       * declared sections, the route decided, and 12 stood empty for ever.
+       *
+       * Underneath that sat the real fault. The Due Diligence order still
+       * described the PRE-v3.0 composite: measured 20 Sep 2026, SEVEN of its
+       * seventeen declared sections could not be produced from a v4.0
+       * Compass at all, because v4.0 merged their sources away
+       * (`suburbCharacter` and `dwelling` into this section, `socioeconomic`,
+       * `employment` and `tenantDemand` into Demand Drivers, `infrastructure`
+       * into Why This Location Matters, `supplyPipeline` into Market
+       * Positioning). A derived document cannot carry more sections than its
+       * source offers, so each of the seven now merges exactly where the
+       * Compass merged it, and the carrier's label names what it carries —
+       * which is what the Compass did when `population` became 'Demand
+       * Drivers'.
+       *
+       * Nothing is lost and nothing is invented: the prose was always inside
+       * the carrier, and the only change is that the document stops promising
+       * a heading its source cannot fill. The LEGACY routes are kept and
+       * re-pointed rather than deleted, because a pre-v3.0 parent does still
+       * write those headings and `assembleForVariant` now joins two routes
+       * that name one slot instead of discarding one of them.
+       */
+      strategic: { depth: 'required', order: 5, label: 'Dwelling, Suburb Character & Occupier Appeal', producer: routed('dueDiligence', 3) },
     },
   },
   {
@@ -707,7 +750,8 @@ export const SECTION_REGISTRY: readonly SectionDefinition[] = [
     tiers: {
       compass: merged('propertyFit'),
       briefing: merged('propertyFit'),
-      strategic: { depth: 'required', order: 5, label: 'Dwelling Layout & Functional Fit', producer: routed('dueDiligence', 3) },
+      // Merged where the Compass merges it — see `propertyFit`'s strategic placement.
+      strategic: merged('propertyFit'),
     },
   },
   {
@@ -769,7 +813,7 @@ export const SECTION_REGISTRY: readonly SectionDefinition[] = [
       compass: { depth: 'required', order: 16, label: 'Risk Dashboard', producer: authored('generator.compass') },
       briefing: { depth: 'required', order: 9, label: 'Risk Overview', producer: authored('condense.briefing') },
       financial: { depth: 'required', order: 14, label: 'Financial Risk Dashboard', producer: routed('financial', 11) },
-      strategic: { depth: 'required', order: 18, label: 'Property & Location Risk Dashboard', producer: routed('dueDiligence', 17) },
+      strategic: { depth: 'required', order: 20, label: 'Property & Location Risk Dashboard', producer: routed('dueDiligence', 18) },
     },
   },
   {
@@ -795,7 +839,9 @@ export const SECTION_REGISTRY: readonly SectionDefinition[] = [
       // recorded crime and a climate reading are behind it now.
       compass: { depth: 'required', order: 11, label: 'Environment, Climate & Safety', producer: authored('generator.compass') },
       briefing: merged('riskDashboard'),
-      strategic: { depth: 'required', order: 19, label: 'Climate, Environmental, Insurance, Crime and Safety Risk', producer: routed('dueDiligence', 15) },
+      // 17, not 19: every strategic order is its PLDD ordinal + 2, and these
+      // two had drifted into each other's places.
+      strategic: { depth: 'required', order: 17, label: 'Climate, Environmental, Insurance, Crime and Safety Risk', producer: routed('dueDiligence', 15) },
     },
   },
   {
@@ -806,7 +852,17 @@ export const SECTION_REGISTRY: readonly SectionDefinition[] = [
     purpose: 'What must be verified before contract, as a list somebody can work through.',
     tiers: {
       compass: { depth: 'required', order: 17, label: 'Due Diligence Checklist', producer: authored('generator.compass') },
-      strategic: { depth: 'optional', order: 20, label: 'Due Diligence Checklist', producer: null },
+      /*
+       * `required`, with a producer, from 20 Sep 2026.
+       *
+       * It was `optional` with `producer: null` — an honest record of what
+       * the routing table did rather than a decision. `optional` is the one
+       * depth `PRODUCER_GAPS` does not police, so the document defined by its
+       * verification register declared that register's absence "not a
+       * defect", and nothing asked. The route now gives it its own heading
+       * and PLDD ordinal 18 instead of the risk dashboard's name.
+       */
+      strategic: { depth: 'required', order: 21, label: 'Due Diligence Checklist', producer: routed('dueDiligence', 19) },
     },
   },
 
@@ -947,6 +1003,26 @@ export const SECTION_REGISTRY: readonly SectionDefinition[] = [
     tiers: {
       compass: { depth: 'required', order: 13, label: 'Resale Liquidity & Exit Outlook', producer: composedFrom('strategyPositions.pure.ts', 'composeExitOutlook') },
       financial: { depth: 'required', order: 13, label: 'Resale Liquidity & Exit Strategy', producer: composedFrom('strategyPositions.pure.ts', 'composeExitOutlook') },
+      /*
+       * The Due Diligence document carries it too, from 20 Sep 2026 — and
+       * carries a DIFFERENT half of it.
+       *
+       * This was the last Compass section routed nowhere: the Financial
+       * report composes its own copy and the split registry matched no
+       * pattern for 'resale liquidity' or 'exit outlook', so the strategic
+       * tier had no placement at all and the document said nothing about
+       * exit. `composeExitOutlook` is built in two halves and already knows
+       * the difference — "what the market recorded" is cited register
+       * evidence, and the equity path at year five and ten is a projection.
+       * The fork composes this one from a record with `finance: null`, so
+       * the modelled half prints its own sentence saying it belongs to the
+       * Financial Analysis Report, which is the branch
+       * `carriesModelling: false` has always taken on the Compass.
+       *
+       * Same composer, one implementation, and the tier decides what it may
+       * say — rather than a second exit section written for this document.
+       */
+      strategic: { depth: 'required', order: 19, label: 'Resale Liquidity & Exit Outlook', producer: composedFrom('strategyPositions.pure.ts', 'composeExitOutlook') },
     },
   },
   {
@@ -1023,7 +1099,7 @@ export const SECTION_REGISTRY: readonly SectionDefinition[] = [
       + 'twice. It never promises that this platform watches anything.',
     tiers: {
       compass: { depth: 'required', order: 18, label: 'Monitoring & Review Plan', producer: composedFrom('strategyPositions.pure.ts', 'composeMonitoringPlan') },
-      strategic: { depth: 'required', order: 21, label: 'Monitoring & Review Plan', producer: composedFrom('strategyPositions.pure.ts', 'composeMonitoringPlan') },
+      strategic: { depth: 'required', order: 22, label: 'Monitoring & Review Plan', producer: composedFrom('strategyPositions.pure.ts', 'composeMonitoringPlan') },
     },
   },
 
@@ -1064,7 +1140,12 @@ export const SECTION_REGISTRY: readonly SectionDefinition[] = [
       briefing: { depth: 'required', order: 20, label: 'Recommendation', producer: authored('condense.briefing') },
       snapshot: { depth: 'required', order: 10, label: 'Quick Recommendation', producer: authored('condense.snapshot') },
       financial: { depth: 'required', order: 19, label: 'Financial Recommendation & Portfolio Fit', producer: routed('financial', 16) },
-      strategic: { depth: 'optional', order: 22, label: 'Final Recommendation', producer: null },
+      // `required` from 20 Sep 2026: the recommendation route is `both` now,
+      // so this document ends on the call rather than on its risk dashboard.
+      // Every other tier carried one; this tier's `optional`/null was the
+      // routing table's omission written down, not a decision about the
+      // document.
+      strategic: { depth: 'required', order: 23, label: 'Final Recommendation', producer: routed('dueDiligence', 21) },
     },
   },
 

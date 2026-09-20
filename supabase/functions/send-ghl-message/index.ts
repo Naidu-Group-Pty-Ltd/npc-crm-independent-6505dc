@@ -93,7 +93,28 @@ Deno.serve(async (req) => {
       );
     }
 
-    // WP-08 — per-user quota: burst 10/sec, sustained 100/min.
+    /*
+     * WP-08 — the per-user send quota, and the sentence that describes it.
+     *
+     * The sustained gate's window is a MINUTE, and its refusal read "Hourly
+     * message quota exceeded" — three lines beneath a comment that correctly
+     * said "sustained 100/min". `Retry-After` carried the true 60 seconds, so
+     * one response told the caller two different things and the body, which
+     * is the part a person reads, was the wrong one. Somebody told to wait an
+     * hour waits an hour.
+     *
+     * The sentence is composed from the SAME values the gate is handed, so it
+     * cannot again describe a window this code does not implement, and the
+     * numbers are no longer restated in a comment beside it — one place
+     * rather than three. The body states the RULE; `Retry-After` states the
+     * DELAY, which is the division these two already had and were not
+     * keeping.
+     *
+     * The burst refusal is unchanged: it claims no window, so it cannot
+     * misdescribe one.
+     */
+    const SUSTAINED_LIMIT = 100;
+    const SUSTAINED_WINDOW_MS = 60_000;
     const burst = rateLimit(`ghl-send:burst:${userId}`, 10, 1_000);
     if (!burst.allowed) {
       return new Response(
@@ -101,10 +122,12 @@ Deno.serve(async (req) => {
         { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json", 'Retry-After': '1' } }
       );
     }
-    const minute = rateLimit(`ghl-send:minute:${userId}`, 100, 60_000);
+    const minute = rateLimit(`ghl-send:minute:${userId}`, SUSTAINED_LIMIT, SUSTAINED_WINDOW_MS);
     if (!minute.allowed) {
       return new Response(
-        JSON.stringify({ error: 'Hourly message quota exceeded.' }),
+        JSON.stringify({
+          error: `Message limit reached — ${SUSTAINED_LIMIT} messages per ${SUSTAINED_WINDOW_MS / 1000} seconds. Please try again shortly.`,
+        }),
         { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json", 'Retry-After': String(Math.ceil((minute.retryAfterMs || 1000)/1000)) } }
       );
     }

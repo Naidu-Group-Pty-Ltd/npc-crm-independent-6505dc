@@ -56,7 +56,11 @@
 import type { MarketEvidence } from './marketEvidence.pure.ts';
 import { type GrowthResult, scoreGrowth, GROWTH_METHODOLOGY_VERSION } from './growthScoring.pure.ts';
 import { type DemandResult, scoreDemand, DEMAND_METHODOLOGY_VERSION } from './demandScoring.pure.ts';
-import { isValidDimensionScore, proportionalScore } from './proportionalWeighting.pure.ts';
+import { evidenceWeightOf, isValidDimensionScore, proportionalScore } from './proportionalWeighting.pure.ts';
+import {
+  marketGrossYield, scoreIncomeAdvantage, scoreTotalReturn, TOTAL_RETURN_METHODOLOGY_VERSION,
+  type IncomeAdvantageReading, type TotalReturnReading,
+} from './totalReturnScoring.pure.ts';
 import {
   type YieldInputs, type YieldResult, scoreYield, holdingCashFlowSignal,
   YIELD_METHODOLOGY_VERSION,
@@ -85,7 +89,7 @@ import {
  * ever carried the suffixed string because the engine was never wired while
  * it had it.
  */
-export const SHADOW_METHODOLOGY_VERSION = '2.1.0';
+export const SHADOW_METHODOLOGY_VERSION = '3.0.0';
 /** The same version under the name the production path uses. */
 export const SCORING_V2_METHODOLOGY_VERSION = SHADOW_METHODOLOGY_VERSION;
 
@@ -185,6 +189,13 @@ export interface ShadowScoreResult {
   /** Why the grade was held down, in the operator's words. Empty when it was not. */
   gradeCapReason: ReadonlyArray<string>;
 
+  /**
+   * The total return the growth dimension was scored on (3.0.0), or null
+   * where no rent is established and it fell back to capital growth alone.
+   */
+  totalReturn: TotalReturnReading | null;
+  /** What the yield dimension was scored on (3.0.0), or null on the same terms. */
+  incomeAdvantage: IncomeAdvantageReading | null;
   /** The full underlying results, for the harness and the evidence trail. */
   growth: GrowthResult;
   demand: DemandResult;
@@ -230,10 +241,70 @@ export function scoreInvestmentV2Shadow(input: ShadowScoreInput): ShadowScoreRes
   const risk = scorePropertyRisk(input.propertyRisk, 'D2_requires_a_peer');
   const financeSuitability = assessFinanceSuitability(input.finance);
 
+  /*
+   * 3.0.0 — growth and yield are the two halves of one quantity.
+   *
+   * Scored as independent virtues they correlate -0.910 across a realistic
+   * population and destroy 53% of the composite's variance, which is why a
+   * property returning 5% scored 54 and every archetype landed 66-69. See
+   * `totalReturnScoring.pure.ts` for the measurement. The growth dimension
+   * scores TOTAL RETURN; the yield dimension scores whether the income is
+   * good for an asset of that growth profile.
+   *
+   * Both fall back to the 2.2.0 scorers when no rent is established, and the
+   * dimension NAMES which basis it used — a return is a sum, and half a sum
+   * is an unknown return rather than a smaller one.
+   */
+  const capitalGrowthPct = input.evidence.growth5YearCagr?.value
+    ?? input.evidence.growth3YearCagr?.value ?? null;
+  const grossYieldPct = yieldResult.grossYield?.value ?? null;
+  const totalReturn = scoreTotalReturn(capitalGrowthPct, grossYieldPct);
+  // The subject market's own typical yield, where it publishes both halves.
+  // Measured beats declared, so this is the first rung of the ladder.
+  const marketYieldPct = marketGrossYield(
+    input.evidence.medianRent?.value ?? null,
+    input.evidence.medianPrice?.value ?? null,
+  );
+  /*
+   * The rent and the price can be at different grains — the rent is the
+   * suburb's and the price the postcode's, because that is what each
+   * publisher offers. Both derive from one resolved subject, so they are
+   * consistent; the label names them so the comparison is checkable rather
+   * than assumed identical.
+   */
+  const marketAreaLabel = marketYieldPct === null ? null : [
+    input.evidence.medianRent?.areaName,
+    input.evidence.medianPrice?.areaName,
+  ].filter(Boolean).filter((v, i, a) => a.indexOf(v) === i).join(' / ') || null;
+  const incomeAdvantage = scoreIncomeAdvantage(
+    capitalGrowthPct, grossYieldPct, marketYieldPct, marketAreaLabel,
+  );
+
   const raw: Array<{ key: DimensionKey; score: number | null; coverage: number; confidence: number | null }> = [
-    { key: 'growth', score: growth.score, coverage: growth.weightCovered, confidence: growth.confidence.score },
+    {
+      key: 'growth',
+      /*
+       * Capital growth, scored absolutely, exactly as 2.2.0 scored it.
+       *
+       * Scoring it on TOTAL RETURN was tried and rejected by measurement:
+       * total return and income advantage are nearly the same linear
+       * combination of growth and yield (g + y against y + 0.743g), so the
+       * two dimensions correlated +0.808 and the spread that bought was
+       * one signal counted twice — the r = 0.97 defect `GROWTH_WEIGHTS_V3_0`
+       * records, arrived at from the other direction. `totalReturn` is
+       * published beside the score as evidence and carries no weight.
+       */
+      score: growth.score,
+      coverage: growth.weightCovered,
+      confidence: growth.confidence.score,
+    },
     { key: 'location', score: location.score, coverage: location.weightCovered, confidence: null },
-    { key: 'yield', score: yieldResult.score, coverage: yieldResult.score === null ? 0 : 1, confidence: null },
+    {
+      key: 'yield',
+      score: incomeAdvantage ? incomeAdvantage.score : yieldResult.score,
+      coverage: yieldResult.score === null ? 0 : 1,
+      confidence: null,
+    },
     { key: 'demand', score: demand.score, coverage: demand.weightCovered, confidence: demand.confidence.score },
     {
       key: 'risk',
@@ -257,13 +328,38 @@ export function scoreInvestmentV2Shadow(input: ShadowScoreInput): ShadowScoreRes
   const measured = raw.filter((d) => isValidDimensionScore(d.score));
   const measuredWeight = measured.reduce((s, d) => s + COMPOSITE_WEIGHTS[d.key], 0);
 
+  /*
+   * 2.2.0 — the weight a dimension carries is its nominal weight discounted
+   * by how much of its own methodology ran.
+   *
+   * Renormalising over the dimensions that answered was only half of
+   * "proportional": a dimension scored on a third of its components was
+   * carrying a whole dimension's authority, and the composite then
+   * renormalised that up again. Two amplifications of one thin reading. See
+   * `WeightedScore.coverage` for the measurement that closed it, and note
+   * that this can only ever lower a weight toward its evidence — a dimension
+   * measured in full keeps its nominal weight exactly.
+   *
+   * One implementation: `evidenceWeightOf` is the same function
+   * `proportionalScore` divides by below and `scorePublicationPolicy` states
+   * the published figure with, so the engine and the policy cannot drift.
+   */
+  const entryOf = (d: typeof raw[number]) => ({
+    score: (d.score ?? 0) as number,
+    weight: COMPOSITE_WEIGHTS[d.key],
+    coverage: d.coverage,
+  });
+  const evidenceWeight = measured.reduce((s, d) => s + evidenceWeightOf(entryOf(d)), 0);
+
   const dimensions: DimensionReading[] = raw.map((d) => ({
     key: d.key,
     score: d.score,
     nominalWeight: COMPOSITE_WEIGHTS[d.key],
     effectiveWeight: !isValidDimensionScore(d.score) || measuredWeight === 0
       ? 0
-      : Number((COMPOSITE_WEIGHTS[d.key] / measuredWeight).toFixed(4)),
+      : Number(((evidenceWeight > 0
+        ? evidenceWeightOf(entryOf(d)) / evidenceWeight
+        : COMPOSITE_WEIGHTS[d.key] / measuredWeight)).toFixed(4)),
     coverage: d.coverage,
     confidence: d.confidence,
   }));
@@ -307,6 +403,7 @@ export function scoreInvestmentV2Shadow(input: ShadowScoreInput): ShadowScoreRes
       risk: RISK_MODEL_D_VERSION,
       financeSuitability: FINANCE_SUITABILITY_VERSION,
       eligibility: ELIGIBILITY_VERSION,
+      totalReturn: TOTAL_RETURN_METHODOLOGY_VERSION,
     },
     dimensions,
     measured: measured.map((d) => d.key),
@@ -314,6 +411,8 @@ export function scoreInvestmentV2Shadow(input: ShadowScoreInput): ShadowScoreRes
     evidenceCoverage,
     evidenceQualityCoverage,
     nominalMeasuredScore,
+    totalReturn,
+    incomeAdvantage,
     growth,
     demand,
     yieldResult,
@@ -346,7 +445,11 @@ export function scoreInvestmentV2Shadow(input: ShadowScoreInput): ShadowScoreRes
   // §7, from the one implementation the publication policy also states the
   // published figure with. Full precision from the leaf, rounded ONCE here.
   const compositeScore = Math.round(
-    proportionalScore(measured.map((d) => ({ score: d.score as number, weight: COMPOSITE_WEIGHTS[d.key] }))) as number,
+    proportionalScore(measured.map((d) => ({
+      score: d.score as number,
+      weight: COMPOSITE_WEIGHTS[d.key],
+      coverage: d.coverage,
+    }))) as number,
   );
 
   const eligibility = applyEligibility({ compositeScore, growth, evidenceQualityCoverage });

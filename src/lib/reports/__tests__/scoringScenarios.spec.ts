@@ -21,6 +21,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  SHADOW_METHODOLOGY_VERSION,
   scoreInvestmentV2Shadow,
   type ShadowScoreInput,
   type ShadowScoreResult,
@@ -181,7 +182,7 @@ describe('scenario matrix — bounds and shape', () => {
       inBounds(r);
       expect(r.evidenceCoverage, name).toBeGreaterThanOrEqual(0);
       expect(r.evidenceCoverage, name).toBeLessThanOrEqual(1);
-      expect(r.methodologyVersion, name).toBe('2.1.0');
+      expect(r.methodologyVersion, name).toBe(SHADOW_METHODOLOGY_VERSION);
     }
   });
 

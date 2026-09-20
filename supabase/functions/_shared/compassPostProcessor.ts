@@ -43,7 +43,62 @@ import {
 } from './compassSectionRegistry.ts';
 import { scrubBlocks } from './reports/investment/blockHygiene.pure.ts';
 
-export type PostProcessTier = 'compass-40' | 'financial-analysis';
+/**
+ * The tiers this may be asked about.
+ *
+ * `briefing`, `snapshot` and `strategic` are admitted so a caller can name the
+ * tier it is PRODUCING. They are admitted, not judged: see the two maps below.
+ */
+export type PostProcessTier =
+  | 'compass-40'
+  | 'financial-analysis'
+  | 'briefing'
+  | 'snapshot'
+  | 'strategic';
+
+/**
+ * The sections a tier declares WITH word caps. A tier absent here runs no
+ * per-section cap rather than being trimmed against another tier's list.
+ *
+ * This was `tier === 'compass-40' ? COMPASS_40_SECTIONS :
+ * FINANCIAL_ANALYSIS_SECTIONS`, so every tier that was not the Compass
+ * silently got the Financial Analysis registry — the same expression, and the
+ * same trap, that `compassQAValidator` already names and closed.
+ *
+ * `condense-investment-report` called this with a literal `'compass-40'` for
+ * the Briefing. Measured 20 Sep 2026 on a 12-section briefing: **0 of its 12
+ * headings are Compass titles**, but three alias onto Compass sections, so
+ * three were trimmed at the Compass's caps — 450 words on an "Executive
+ * Summary" the guide asks for in "4-6 sentences", 700 on "Amenity & Access",
+ * 550 on "Property Fit" — and the other nine were capped at nothing at all.
+ * A cap that lands on whichever headings happen to collide is not a control.
+ *
+ * The rule is already written in this file, on
+ * {@link stripEditorialLabelsFromMarkdown}, and it already names the Snapshot:
+ * *their own section lists are not the Compass registry's, so the full
+ * post-processor's word caps and page-pressure trims must not touch them.*
+ * The Snapshot obeyed it. The Briefing is the same kind of document and did
+ * not.
+ */
+const SECTION_REGISTRY: Partial<Record<PostProcessTier, CompassSectionDefinition[]>> = {
+  'compass-40': COMPASS_40_SECTIONS,
+  'financial-analysis': FINANCIAL_ANALYSIS_SECTIONS,
+};
+
+/**
+ * The page band a tier declares. `undefined` is a real answer and means no
+ * page-pressure trim, never a default band.
+ *
+ * The Briefing was trimmed against `COMPASS_PAGE_BAND.max` — 38 pages, on a
+ * tier `TIER_CONFIG` declares at 12 — so the trim could not fire however long
+ * the document ran. Measured: a briefing estimating 28 pages after the caps
+ * passed with `trimsApplied: []`. A threshold nobody measured for this tier is
+ * not supplied here; what is fixed is that another tier's is not borrowed.
+ */
+const PAGE_BAND: Partial<Record<PostProcessTier, { min: number; max: number }>> = {
+  'compass-40': COMPASS_PAGE_BAND,
+  'financial-analysis': { min: 18, max: 22 },
+};
 
 export interface PostProcessReport {
   tier: PostProcessTier;
@@ -638,7 +693,18 @@ function applyPagePressureTrims(
   sections: ParsedSection[],
   report: PostProcessReport,
 ): void {
-  const targetMax = report.tier === 'compass-40' ? COMPASS_PAGE_BAND.max : 22;
+  /*
+   * A tier that declares no band is not trimmed against somebody else's.
+   *
+   * Every step below either caps a list or names a Compass section id
+   * (`compass.demandDrivers`, `compass.amenityAccess`), so running the order
+   * for a tier whose sections are not those is at best a no-op and at worst
+   * an arbitrary cut. Returning here is the same answer
+   * `stripEditorialLabelsFromMarkdown` gives the fork's two documents.
+   */
+  const band = PAGE_BAND[report.tier];
+  if (!band) return;
+  const targetMax = band.max;
 
   for (const step of PAGE_PRESSURE_TRIM_ORDER) {
     const currentMd = serializeSections(preamble, sections);
@@ -704,8 +770,10 @@ export function postProcessReportMarkdown(
   markdown: string,
   tier: PostProcessTier,
 ): PostProcessResult {
-  const registry =
-    tier === 'compass-40' ? COMPASS_40_SECTIONS : FINANCIAL_ANALYSIS_SECTIONS;
+  // A tier with no declared registry runs no per-section cap: `parseSections`
+  // matches nothing, so every section carries no `def` and
+  // `applyPerSectionWordCaps` skips it by its own guard.
+  const registry = SECTION_REGISTRY[tier] ?? [];
 
   const initialWordCount = countWords(markdown);
   const initialEstimatedPages = estimatePages(markdown);

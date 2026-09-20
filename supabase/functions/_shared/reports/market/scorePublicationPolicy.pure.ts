@@ -62,7 +62,7 @@ import {
 export { isValidDimensionScore };
 
 /** Bumped whenever the publication rule or the qualification wording changes. */
-export const SCORE_PUBLICATION_POLICY_VERSION = '1.0.0';
+export const SCORE_PUBLICATION_POLICY_VERSION = '1.1.0';
 
 /**
  * The minimum number of valid dimensions before an overall score and grade
@@ -96,6 +96,16 @@ export interface DimensionClaim {
   readonly score?: unknown;
   /** Why it was not assessed, in the client's words, where it was not. */
   readonly reason?: string | null;
+  /**
+   * Share of this dimension's own methodology that ran, 0-1 (1.1.0).
+   *
+   * Passed straight to `proportionalWeighting.pure.ts`, which is the one
+   * implementation the ENGINE also composes with — so the published figure
+   * and the engine's composite stay the same number by construction rather
+   * than by a runtime check. A caller that does not know it omits it, and the
+   * arithmetic is byte-identical to 1.0.0.
+   */
+  readonly coverage?: number;
 }
 
 /** The policy's reading of one dimension. */
@@ -104,6 +114,8 @@ export interface DimensionReading {
   readonly label: string;
   /** The ORIGINAL matrix weight, unchanged by this module. */
   readonly weight: number;
+  /** Share of the dimension's own methodology that ran, where the caller knew. */
+  readonly coverage?: number;
   readonly valid: boolean;
   /** The score where it is valid. Never a substitute value. */
   readonly score: number | null;
@@ -163,6 +175,7 @@ export function decidePublication(
       dimension,
       label: DIMENSION_LABEL[dimension],
       weight: COMPOSITE_WEIGHTS[dimension],
+      coverage: typeof claim?.coverage === 'number' ? claim.coverage : undefined,
       valid,
       score: valid ? (claim!.score as number) : null,
       reason: valid ? null : invalidClaim
@@ -181,7 +194,9 @@ export function decidePublication(
   // §7 — proportional over the ORIGINAL weights of the valid dimensions, in
   // the one implementation the engine also composes with. Full precision from
   // the leaf; the single rounding step is the line after it.
-  const weighted = validDims.map((d) => ({ key: d.dimension, score: d.score as number, weight: d.weight }));
+  const weighted = validDims.map((d) => ({
+    key: d.dimension, score: d.score as number, weight: d.weight, coverage: d.coverage,
+  }));
   const overallScoreExact = publishes ? proportionalScore(weighted) : null;
   const overallScore = overallScoreExact === null ? null : Math.round(overallScoreExact);
 

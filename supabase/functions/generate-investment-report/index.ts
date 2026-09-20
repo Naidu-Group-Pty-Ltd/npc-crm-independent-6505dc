@@ -99,6 +99,7 @@ import { recordedScoreValues, suppressUnrecordedScores, suppressUnrecordedVerdic
 import { investmentScorePromptBlock, overallRecommendationLine } from '../_shared/reports/investment/scorePromptBlock.pure.ts';
 import { abbreviateState, domainCategoryFor, dwellingTypeFor } from '../_shared/reports/market/domainEvidence.pure.ts';
 import { populationGrowthPoint } from '../_shared/reports/market/populationGrowthEvidence.pure.ts';
+import { rentalMarketEvidence } from '../_shared/reports/market/rentalMarketEvidence.pure.ts';
 import { EVIDENCE_KEYS, emptyEvidence, mergeEvidence, type EvidenceSubject, type MarketEvidence } from '../_shared/reports/market/marketEvidence.pure.ts';
 import { openDataSalesPoints, salesRegisterSourcesFor } from '../_shared/reports/market/openDataSalesEvidence.pure.ts';
 import {
@@ -4348,6 +4349,92 @@ const __investmentReportHandler = async (req: Request): Promise<Response> => {
           }
         } else if (!isAreaReport) {
           providersUnavailable.push({ provider: 'abs_erp', reason: 'no SA2 population series was served for the verified coordinate' });
+        }
+
+        /*
+         * The suburb's own rent and vacancy — the MARKET's, not the subject's.
+         *
+         * `sqm-rent-service` has always answered with three figures and this
+         * generator read one of them, conditionally: the call was made only
+         * where the operator supplied no rent, and the answer stood in for the
+         * SUBJECT'S rent. `vacancyRate` was dropped on every call, and nothing
+         * anywhere assigned `evidence.medianRent`.
+         *
+         * Both cost real points. Vacancy is 0.30 of the Demand dimension — its
+         * largest component — and the suburb median rent is the denominator
+         * `scoreIncomeAdvantage` needs; without it the income dimension falls
+         * back to a declared national frontier that does not describe a Sydney
+         * market. See `rentalMarketEvidence.pure.ts` for the measurement.
+         *
+         * It is asked unconditionally, because it is evidence about the MARKET
+         * and whether the operator typed a rent has no bearing on whether the
+         * market published one. The service is cache-first
+         * (`median_rent_cache`), so a second look inside one run is a cache
+         * read rather than a second scrape.
+         *
+         * `SUPABASE_ANON_KEY` is read here rather than reused: the generator's
+         * other copies are declared inside blocks that do not contain this one,
+         * and reaching for one of those is the scoping fault that served 23
+         * consecutive 500s on 19 Sep (`INVESTMENT_REPORT_RESUME.md` §7).
+         */
+        if (marketSuburb && marketState) {
+          providersConsulted.push('sqm_research');
+          try {
+            const rentAnonKey = (Deno.env.get('SUPABASE_ANON_KEY') || '').trim();
+            const rentMarketResponse = await acquisitionFetch(
+              `${Deno.env.get('SUPABASE_URL')}/functions/v1/sqm-rent-service`,
+              {
+                method: 'POST',
+                headers: {
+                  'Content-Type': 'application/json',
+                  'Authorization': `Bearer ${rentAnonKey}`,
+                  'x-internal-edge-secret': INTERNAL_EDGE_SECRET,
+                  ...(rentAnonKey ? { 'apikey': rentAnonKey } : {}),
+                },
+                body: JSON.stringify({
+                  suburb: marketSuburb.replace(/-/g, ' '),
+                  state: marketState,
+                  postcode: marketPostcode || '',
+                  propertyType: (effectivePropertyType || 'house').toLowerCase(),
+                  bedrooms: modelledBeds,
+                }),
+              },
+              'register',
+              'sqm-rent-service',
+            );
+            if (rentMarketResponse.ok) {
+              const rentBody = await rentMarketResponse.json();
+              const rentProjected = rentalMarketEvidence(
+                rentBody?.success ? rentBody.data : null,
+                {
+                  suburb: marketSuburb,
+                  postcode: marketPostcode,
+                  state: marketState,
+                  dwellingType: dwellingTypeFor(effectivePropertyType),
+                  resolvedFrom: marketPostcode ? 'coordinate' : null,
+                },
+                new Date(),
+              );
+              for (const [rentKey, rentPoint] of Object.entries(rentProjected.points)) {
+                if (rentPoint) marketPoints[rentKey] = rentPoint;
+              }
+              if (rentProjected.missing.length) {
+                providersUnavailable.push({ provider: 'sqm_research', reason: rentProjected.missing.join('; ') });
+              }
+              console.log(
+                `✓ Rental market evidence: rent ${rentProjected.points.medianRent ? `$${rentProjected.points.medianRent.value}` : 'none'}`
+                + `, vacancy ${rentProjected.points.vacancyRate ? `${rentProjected.points.vacancyRate.value}%` : 'none'}`,
+              );
+            } else {
+              providersUnavailable.push({ provider: 'sqm_research', reason: `the rental market service answered ${rentMarketResponse.status}` });
+            }
+          } catch (error: any) {
+            // Never fails the report: the evidence is absent and says so.
+            providersUnavailable.push({
+              provider: 'sqm_research',
+              reason: `the rental market service could not be reached: ${error?.message || 'unknown error'}`,
+            });
+          }
         }
       }
 

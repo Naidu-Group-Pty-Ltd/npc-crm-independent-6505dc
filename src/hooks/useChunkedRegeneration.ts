@@ -120,7 +120,7 @@ export function useChunkedRegeneration() {
      * `failed` here would be this defect committed a third time. */
     const driver = newDriverIdentity('regenerate');
     const claim = claimGenerationDriver(reportId, driver);
-    if (!claim.ok) {
+    if (claim.ok === false) {
       settleProgressToast(
         toastId,
         'info',

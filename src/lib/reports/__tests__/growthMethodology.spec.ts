@@ -438,10 +438,13 @@ describe('Demand is measured, or it is absent', () => {
       // The volume series, so every component is present and the coverage is
       // the whole nominal weight. Added when transaction volume joined at
       // 4.0.0; without it this market measures 0.85 of the dimension.
-      salesVolumeSeries: pt([
-        { period: '2023', value: 90 }, { period: '2024', value: 95 },
-        { period: '2025', value: 100 }, { period: '2026', value: 140 },
-      ] as never),
+      salesVolumeSeries: {
+        ...pt(0),
+        value: [
+          { period: '2023', value: 90 }, { period: '2024', value: 95 },
+          { period: '2025', value: 100 }, { period: '2026', value: 140 },
+        ],
+      } as EvidencePoint<ReadonlyArray<{ period: string; value: number }>>,
     }), NOW);
     expect(r.score).toBeGreaterThanOrEqual(85);
     expect(r.weightCovered).toBe(1);

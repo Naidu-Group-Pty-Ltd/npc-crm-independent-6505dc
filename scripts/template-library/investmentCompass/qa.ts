@@ -30,6 +30,10 @@ import { chromium, type Browser, type Page } from 'playwright';
 import { renderTemplateToHtml } from '../../../src/lib/reportTemplate/htmlRenderer';
 import { evalConditional } from '../../../src/lib/reportTemplate/bindingResolver';
 import { SAMPLE_REPORT_DATA } from '../../../src/lib/templateLibrary/sampleReportData';
+import { investmentGeometryDocuments } from '../../../src/lib/templateLibrary/narrativeGeometryFixture';
+import {
+  pagesForDocument,
+} from '../../../supabase/functions/_shared/reports/investment/tierPageSequence.pure';
 import {
   colourwaysForFamily,
   colourwayTokenOverride,
@@ -272,13 +276,103 @@ function findChromium(): string | undefined {
   return candidates[0];
 }
 
+/**
+ * The documents a master has to be measured as.
+ *
+ * ## The fixture was the front matter of a 34-page report
+ *
+ * `SAMPLE_REPORT_DATA` carries no narrative and no `report.type`, and both are
+ * load-bearing here. The masters gate every body page on
+ * `narrative && narrative.pages > n`, and `planNarrative` — the pre-pass that
+ * computes the true page count from the template's own geometry — returns null
+ * for a report type it does not recognise. So with the fixture as shipped, the
+ * Investment Compass masters rendered **7 of 50 pages**: Cover, Contents,
+ * Executive dashboard, The assessment, Risk and recommendation, Sources and
+ * methodology, Important information.
+ *
+ * Measured 20 Sep 2026 on the first three masters, with a body at the
+ * registry's declared size and `report.type` set as the adapter sets it:
+ * Chancery 7 -> 25, Chancery Compact 7 -> 21, Sovereign Folio 8 -> 32. Every
+ * body page, the overflow notice and both financial-modelling pages had never
+ * been laid out by this gate on any run.
+ *
+ * That is `WHAT_THE_PAGE_ACTUALLY_DRAWS.md` §5 one level up: a fixture shorter
+ * than the product turns a real measurement into a statement about the
+ * fixture. `SAMPLE_REPORT_DATA` itself is left alone — it is the BINDING
+ * fixture the catalogue specs assert rendered output against, and its job is
+ * to resolve every bound path. The geometric measure needs a document-sized
+ * body, and composes one here.
+ *
+ * ## And four of the five documents had never been drawn
+ *
+ * The Investment masters serve five document kinds through one page sequence
+ * (`tierPageSequence.pure.ts`), and the fixture's tier is `compass` — so the
+ * Snapshot, Executive Briefing, Financial Analysis and Due Diligence reports
+ * were outside the measurement entirely, as were the two pages only a tier
+ * that draws financial modelling prints. The tier is set where the production
+ * adapter sets it: top level, which is what `pagesForDocument` reads, AND on
+ * `report`, which is what the projection publishes and the masters bind.
+ */
+interface Variant {
+  /** How this document is named in a finding. Empty for a one-document format. */
+  label: string;
+  data: Record<string, unknown>;
+}
+
+function documentVariants(reportFormat: string): Variant[] {
+  if (reportFormat !== 'investment-compass') {
+    return [{ label: '', data: SAMPLE_REPORT_DATA as unknown as Record<string, unknown> }];
+  }
+  return investmentGeometryDocuments().map((d) => ({ label: d.tier, data: d.data }));
+}
+
+/**
+ * The pages that rendered, named by the schema page each one came from.
+ *
+ * Read from the DOM rather than recomputed. The harness used to filter the
+ * schema by `evalConditional` alone and throw when its count disagreed with
+ * the renderer's — but the renderer applies two more filters
+ * (`pagesForDocument` and its own empty-page pass), so the two lists agreed
+ * only while the fixture named no derived tier. Every rendered page carries
+ * the id of the schema page that drew it, so the list is taken from the thing
+ * being measured instead of being predicted alongside it.
+ */
+async function renderedPageNames(
+  page: Page,
+  pages: ReadonlyArray<{ id?: string | null; name?: string | null }>,
+): Promise<string[]> {
+  const ids = await page.evaluate(() => Array.from(document.querySelectorAll('.tpl-page'))
+    .map((el) => el.getAttribute('data-pdf-page-id') ?? ''));
+  const byId = new Map(pages.map((p) => [String(p.id ?? ''), String(p.name ?? '')]));
+  return ids.map((id, i) => byId.get(id) ?? `Page ${i + 1}`);
+}
+
+/**
+ * `--only <substring>` limits the run to masters whose format or name matches.
+ *
+ * The sweep is 500 masters and the Investment ones are now measured as five
+ * documents each, so a full run is tens of minutes. A reviewer looking at one
+ * format should not have to wait for the other nine, and a filtered run says
+ * so in its own output rather than looking like a complete one.
+ */
+function selectedMasters(): typeof ALL_MASTERS {
+  const i = process.argv.indexOf('--only');
+  const needle = i >= 0 ? (process.argv[i + 1] ?? '').trim().toLowerCase() : '';
+  if (!needle) return ALL_MASTERS;
+  return ALL_MASTERS.filter((t) => `${t.designMeta.reportFormat} ${t.name}`.toLowerCase().includes(needle));
+}
+
 async function main(): Promise<void> {
   mkdirSync(OUT, { recursive: true });
+  const masters = selectedMasters();
+  if (masters.length !== ALL_MASTERS.length) {
+    console.log(`  --only: ${masters.length} of ${ALL_MASTERS.length} masters — this is a PARTIAL run`);
+  }
   const executablePath = findChromium();
   if (executablePath) console.log(`  using ${executablePath}`);
   const browser = await chromium.launch(executablePath ? { executablePath } : {});
   const report: Report = {
-    templates: ALL_MASTERS.length,
+    templates: masters.length,
     colourways: 10,
     combinations: INVESTMENT_COMPASS_TEMPLATES.length * 10,
     rendered: 0,
@@ -300,28 +394,7 @@ async function main(): Promise<void> {
    * The dark spot-check below is a different question — whether a reverse
    * ground still reads — and is answered by eye, one per family.
    */
-  for (const template of ALL_MASTERS) {
-    /**
-     * The pages this data actually renders, in rendered order.
-     *
-     * Every index below is used against a rendered page, and the schema's list
-     * is not that list: a conditional page that evaluates false is not drawn,
-     * so from that point on a schema index names the wrong page — the dashboard
-     * screenshot shifts and every overflow after it is mislabelled.
-     *
-     * Conditional pages are deliberate in two formats. Image plates disappear
-     * when an operator supplies no photograph, and the Comparison masters carry
-     * a second investor-fit page that only exists for a comparison of four or
-     * five properties. So the visible list is computed the same way the
-     * renderer computes it, rather than assumed to be the whole schema.
-     */
-    const visiblePages = template.schema.pages.filter(
-      (p) => evalConditional((p as { conditional?: string }).conditional, {
-        data: SAMPLE_REPORT_DATA,
-        tokens: template.schema.tokens as never,
-      }),
-    );
-    const pageNames = visiblePages.map((p) => p.name);
+  for (const template of masters) {
     // Variant codes repeat across formats — `pb-01` exists in both catalogues —
     // so an artifact named by code alone has one format silently overwrite the
     // other's. The first run of this after Borrowing Capacity landed reported 20
@@ -332,96 +405,107 @@ async function main(): Promise<void> {
     const dflt = colourways.find((c) => c.id === template.designMeta.defaultColourway)
       ?? colourways[0];
 
-    const { html } = renderTemplateToHtml(template.schema, {
-      data: SAMPLE_REPORT_DATA,
-      tokenOverrides: colourwayTokenOverride(dflt),
-    });
-    const page = await open(browser, html);
-    report.rendered += 1;
-
-    /**
-     * Every index below is a schema index used against a rendered page.
-     *
-     * Those are the same list only while nothing is filtered out, and image
-     * plates are conditional pages — so a template whose plates went unbound
-     * would silently shift the dashboard screenshot and mislabel every overflow
-     * after the first plate. `SAMPLE_REPORT_DATA` carries a photograph for
-     * every slot in the catalogue, so they should match; if they ever stop
-     * matching, that is the QA lying rather than a template failing, and it
-     * should stop rather than report.
+    /*
+     * One measurement per document this master has to draw. For every format
+     * but the Investment masters that is one; for those it is five, because
+     * one page sequence serves five document kinds. See `documentVariants`.
      */
-    const renderedPages = await page.locator('.tpl-page').count();
-    if (renderedPages !== pageNames.length) {
-      // The two disagreeing means this harness and the renderer read the same
-      // conditionals differently, which makes every index below a guess. Stop
-      // rather than report.
-      throw new Error(
-        `${template.name}: rendered ${renderedPages} pages against ${pageNames.length} `
-        + 'the conditionals say should be visible — the QA and the renderer disagree',
+    for (const variant of documentVariants(template.designMeta.reportFormat)) {
+      const name = variant.label ? `${template.name} [${variant.label}]` : template.name;
+      const { html } = renderTemplateToHtml(template.schema, {
+        data: variant.data,
+        tokenOverrides: colourwayTokenOverride(dflt),
+      });
+      const page = await open(browser, html);
+      report.rendered += 1;
+
+      /*
+       * Named from the DOM, so the list measured and the list rendered are one
+       * list. See `renderedPageNames` for what the recomputation got wrong.
+       */
+      const pageNames = await renderedPageNames(page, template.schema.pages as never);
+      // The pages the renderer kept, for the index-based screenshots below.
+      const visiblePages = pagesForDocument(
+        template.schema.pages.filter(
+          (pg) => evalConditional((pg as { conditional?: string }).conditional, {
+            data: variant.data,
+            tokens: template.schema.tokens as never,
+          }),
+        ),
+        variant.data as Parameters<typeof pagesForDocument>[1],
       );
+
+      report.overflows.push(
+        ...await measureOverflows(page, name, dflt.name, pageNames),
+      );
+      report.collisions.push(...await measureCollisions(page, name, pageNames));
+
+      /*
+       * Artefacts are drawn for the master's own document only — the tier
+       * variants are a measurement, not fifty more covers for a reviewer to
+       * page through.
+       */
+      const artefacts = !variant.label || variant.label === 'compass';
+      if (artefacts) {
+        // A cover and a dashboard for every master — the cover is what the
+        // library card shows, and the dashboard is where the KPI arrangement
+        // lives, which is the axis the five masters in a family most visibly
+        // differ on.
+        const cover = resolve(OUT, `${code}-cover.png`);
+        await page.locator('.tpl-page').first().screenshot({ path: cover });
+        report.screenshots.push(cover.replace(`${REPO}/`, ''));
+
+        // The densest page, whatever the format calls it. Hardcoding 'Executive
+        // dashboard' meant the Borrowing Capacity masters — whose equivalent is
+        // 'Capacity summary' — were screenshotted as covers only.
+        const dashboardIndex = visiblePages.findIndex(
+          (pg) => pg.name === 'Executive dashboard'
+            || pg.name === 'Capacity summary'
+            || pg.name === 'Portfolio at a glance'
+            || pg.name === 'The ranking',
+        );
+        if (dashboardIndex >= 0) {
+          const dashboard = resolve(OUT, `${code}-dashboard.png`);
+          await page.locator('.tpl-page').nth(dashboardIndex).screenshot({ path: dashboard });
+          report.screenshots.push(dashboard.replace(`${REPO}/`, ''));
+        }
+
+        // A plate, for the two families that carry photographs. It is the page
+        // a reviewer most needs to see, because it is the only one whose
+        // content an operator supplies — and the one that has to disappear
+        // cleanly when they do not. Index 0 is skipped: the cover's plate is a
+        // ground behind a composition rather than a plate page.
+        const plateIndex = visiblePages.findIndex(
+          (pg, i) => i > 0 && JSON.stringify(pg.blocks).includes('property.images'),
+        );
+        if (plateIndex >= 0) {
+          const plate = resolve(OUT, `${code}-plate.png`);
+          await page.locator('.tpl-page').nth(plateIndex).screenshot({ path: plate });
+          report.screenshots.push(plate.replace(`${REPO}/`, ''));
+        }
+
+        // One PDF per family reference — fifty is a lot of artefact for a
+        // reviewer, and the reference is the variant the Design source drew.
+        if (template.designMeta.isFamilyReference) {
+          const pdfPath = resolve(OUT, `${code}.pdf`);
+          const bytes = await page.pdf({
+            path: pdfPath,
+            format: 'A4',
+            printBackground: true,
+            // The template already carries its own page geometry; a browser
+            // margin on top would shrink every page and invalidate the measure.
+            margin: { top: '0', right: '0', bottom: '0', left: '0' },
+          });
+          report.pdf.push({
+            template: `${template.designMeta.familyName} — ${template.name}`,
+            pages: pageNames.length,
+            bytes: bytes.length,
+          });
+        }
+      }
+
+      await page.close();
     }
-
-    report.overflows.push(
-      ...await measureOverflows(page, template.name, dflt.name, pageNames),
-    );
-    report.collisions.push(...await measureCollisions(page, template.name, pageNames));
-
-    // A cover and a dashboard for every master — the cover is what the library
-    // card shows, and the dashboard is where the KPI arrangement lives, which
-    // is the axis the five masters in a family most visibly differ on.
-    const cover = resolve(OUT, `${code}-cover.png`);
-    await page.locator('.tpl-page').first().screenshot({ path: cover });
-    report.screenshots.push(cover.replace(`${REPO}/`, ''));
-
-    // The densest page, whatever the format calls it. Hardcoding 'Executive
-    // dashboard' meant the Borrowing Capacity masters — whose equivalent is
-    // 'Capacity summary' — were screenshotted as covers only.
-    const dashboardIndex = visiblePages.findIndex(
-      (p) => p.name === 'Executive dashboard'
-        || p.name === 'Capacity summary'
-        || p.name === 'Portfolio at a glance'
-        || p.name === 'The ranking',
-    );
-    if (dashboardIndex >= 0) {
-      const dashboard = resolve(OUT, `${code}-dashboard.png`);
-      await page.locator('.tpl-page').nth(dashboardIndex).screenshot({ path: dashboard });
-      report.screenshots.push(dashboard.replace(`${REPO}/`, ''));
-    }
-
-    // A plate, for the two families that carry photographs. It is the page a
-    // reviewer most needs to see, because it is the only one whose content an
-    // operator supplies — and the one that has to disappear cleanly when they
-    // do not. Index 0 is skipped: the cover's plate is a ground behind a
-    // composition rather than a plate page.
-    const plateIndex = visiblePages.findIndex(
-      (p, i) => i > 0 && JSON.stringify(p.blocks).includes('property.images'),
-    );
-    if (plateIndex >= 0) {
-      const plate = resolve(OUT, `${code}-plate.png`);
-      await page.locator('.tpl-page').nth(plateIndex).screenshot({ path: plate });
-      report.screenshots.push(plate.replace(`${REPO}/`, ''));
-    }
-
-    // One PDF per family reference — fifty is a lot of artefact for a reviewer,
-    // and the reference is the variant the Design source actually drew.
-    if (template.designMeta.isFamilyReference) {
-      const pdfPath = resolve(OUT, `${code}.pdf`);
-      const bytes = await page.pdf({
-        path: pdfPath,
-        format: 'A4',
-        printBackground: true,
-        // The template already carries its own page geometry; a browser margin
-        // on top would shrink every page and invalidate the measure.
-        margin: { top: '0', right: '0', bottom: '0', left: '0' },
-      });
-      report.pdf.push({
-        template: `${template.designMeta.familyName} — ${template.name}`,
-        pages: visiblePages.length,
-        bytes: bytes.length,
-      });
-    }
-
-    await page.close();
   }
 
   // ── Dark-ground spot check, one per family ───────────────────────────────
@@ -432,17 +516,24 @@ async function main(): Promise<void> {
     const dark = colourwaysForFamily(family.key).find((c) => c.ground === 'dark');
     if (!template || !dark) continue;
 
+    /*
+     * The same document the measure above draws, so a dark ground is spot
+     * checked on the report rather than on its front matter — and the page
+     * names come from the DOM, because mapping the whole schema onto a
+     * filtered render labelled every finding here with the wrong page.
+     */
     const { html } = renderTemplateToHtml(template.schema, {
-      data: SAMPLE_REPORT_DATA,
+      data: documentVariants(template.designMeta.reportFormat)[0].data,
       tokenOverrides: colourwayTokenOverride(dark),
     });
     const page = await open(browser, html);
     report.rendered += 1;
+    const darkNames = await renderedPageNames(page, template.schema.pages as never);
     report.overflows.push(
-      ...await measureOverflows(page, template.name, dark.name, template.schema.pages.map((p) => p.name)),
+      ...await measureOverflows(page, template.name, dark.name, darkNames),
     );
     const shot = resolve(OUT, `${template.designMeta.templateCode}-dark.png`);
-    const dashboardIndex = template.schema.pages.findIndex((p) => p.name === 'Executive dashboard');
+    const dashboardIndex = darkNames.indexOf('Executive dashboard');
     await page.locator('.tpl-page').nth(Math.max(0, dashboardIndex)).screenshot({ path: shot });
     report.screenshots.push(shot.replace(`${REPO}/`, ''));
     await page.close();
