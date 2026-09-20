@@ -79,3 +79,62 @@ describe('fetchDeployedBuildId', () => {
     await expect(fetchDeployedBuildId(fetchImpl as unknown as typeof fetch)).resolves.toBeNull();
   });
 });
+
+/**
+ * The manifest also says which backend the build resolved.
+ *
+ * Read the block in `VersionManifest` for why: the prime's project ref is
+ * compiled into every bundle as the fallback constant, so a correctly
+ * configured clone's JavaScript names BOTH its own project and the prime's,
+ * and no amount of text matching says which one the client uses. Measured on a
+ * real build, a scan of the 5,036,633-byte entry chunk can only answer
+ * "unproven"; the manifest answers in 89 bytes.
+ */
+describe('parseVersionManifest — the resolved backend', () => {
+  it('reads a whole declaration', () => {
+    const m = parseVersionManifest({
+      buildId: 'd62fb9c0aacb',
+      supabase: { projectRef: 'qvuwrvwzjyigptmnijyb', source: 'env' },
+    });
+    expect(m?.supabase).toEqual({ projectRef: 'qvuwrvwzjyigptmnijyb', source: 'env' });
+  });
+
+  it('still reads a manifest from a build that predates the field', () => {
+    // Every deployment in the fleet today. Absent must mean "not declared",
+    // never "no backend" and certainly never a pass.
+    const m = parseVersionManifest({ buildId: '5842dfcd5946' });
+    expect(m?.buildId).toBe('5842dfcd5946');
+    expect(m?.supabase).toBeUndefined();
+  });
+
+  it('drops a half-read block rather than asserting a ref it does not have', () => {
+    for (const bad of [
+      { projectRef: 'abc' },
+      { source: 'env' },
+      { projectRef: 'abc', source: 'somewhere-else' },
+      { projectRef: 42, source: 'env' },
+      'not-an-object',
+      null,
+    ]) {
+      const m = parseVersionManifest({ buildId: 'x', supabase: bad });
+      expect(m?.buildId).toBe('x');
+      expect(m?.supabase).toBeUndefined();
+    }
+  });
+
+  it('keeps a declared fallback, because which SOURCE it came from is the remedy', () => {
+    // `fallback` on a clone means its variables never reached the build — a
+    // configuration fix. `env` naming the wrong project is a different fault
+    // with a different remedy, so the field is carried rather than collapsed.
+    const m = parseVersionManifest({
+      buildId: 'x',
+      supabase: { projectRef: 'dduzbchuswwbefdunfct', source: 'fallback' },
+    });
+    expect(m?.supabase?.source).toBe('fallback');
+  });
+
+  it('accepts an explicitly null ref without inventing one', () => {
+    const m = parseVersionManifest({ buildId: 'x', supabase: { projectRef: null, source: 'env' } });
+    expect(m?.supabase).toEqual({ projectRef: null, source: 'env' });
+  });
+});

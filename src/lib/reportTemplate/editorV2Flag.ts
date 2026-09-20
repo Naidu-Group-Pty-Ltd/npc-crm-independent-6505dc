@@ -42,7 +42,8 @@ export function isTemplateEditorV2Enabled(): boolean {
     return resolveEditorV2Flag({
       searchParams: typeof window !== 'undefined' ? window.location.search : '',
       storageValue: typeof localStorage !== 'undefined' ? localStorage.getItem(STORAGE_KEY) : null,
-      envValue: (import.meta as any)?.env?.VITE_TEMPLATE_EDITOR_V2,
+      // Static read — see the header of `integrations/supabase/env.ts`.
+      envValue: import.meta.env.VITE_TEMPLATE_EDITOR_V2,
     });
   } catch {
     return false;
