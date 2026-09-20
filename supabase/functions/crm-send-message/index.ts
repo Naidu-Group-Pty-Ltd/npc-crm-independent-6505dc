@@ -101,7 +101,7 @@ Deno.serve(async (req) => {
       );
     }
 
-    const minute = await rateLimit(supabase, `crm-send-message:${userId}`, 60, 60_000);
+    const minute = rateLimit(`crm-send-message:${userId}`, 60, 60_000);
     if (!minute.allowed) {
       return new Response(JSON.stringify({ error: 'Hourly message quota exceeded.' }), {
         status: 429,
