@@ -485,6 +485,7 @@ verify_jwt = true
 [functions.ghl-calendar]
 verify_jwt = false
 
+# ── The CRM-independent provider ────────────────────────────────────────────
 # `verify_jwt = false` matches `ghl-calendar` above and is not an absence of
 # authentication: each function calls `verifyAuth` itself, because this product
 # authenticates with its own session cookie as well as a Supabase JWT and the
