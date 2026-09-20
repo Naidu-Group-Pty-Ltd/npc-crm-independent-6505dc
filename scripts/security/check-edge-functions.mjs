@@ -305,9 +305,6 @@ const KNOWN_MISSING_NAMES = new Set(readFileSync(KNOWN_MISSING_PATH, 'utf8')
 /** `at file:///…/supabase/functions/<name>/…` — the file an error was reported in. */
 const AT_FILE = /at file:\/\/(\S+?):\d+:\d+/g;
 const counts = new Map();
-// TEMPORARY (diagnostic, reverted in the next commit): keep each file's raw
-// diagnostics so a regression can be READ rather than inferred from a count.
-const blocksByFile = new Map();
 const fatal = [];
 for (const block of plain.split(/(?=^TS\d+ \[ERROR\])/m)) {
   if (!/^TS\d+ \[ERROR\]/.test(block)) continue;
@@ -315,7 +312,6 @@ for (const block of plain.split(/(?=^TS\d+ \[ERROR\])/m)) {
   if (!at) continue;
   const file = relative(root, at[1]).replace(/\\/g, '/');
   counts.set(file, (counts.get(file) ?? 0) + 1);
-  blocksByFile.set(file, [...(blocksByFile.get(file) ?? []), block.trim()]);
   const code = block.match(/^(TS\d+) \[ERROR\]/)[1];
   if (LOAD_FATAL.has(code)) {
     const message = block.split('\n')[0].replace(/^TS\d+ \[ERROR\]:\s*/, '').trim();
@@ -428,13 +424,6 @@ if (regressions.length) {
   for (const { file, count, permitted } of regressions) {
     console.error(` - ${file}: ${permitted} → ${count}`);
   }
-  // TEMPORARY (diagnostic, reverted in the next commit).
-  console.error('\n──── diagnostics for the regressed files ────');
-  for (const { file } of regressions) {
-    console.error(`\n### ${file}`);
-    for (const b of blocksByFile.get(file) ?? []) console.error(b);
-  }
-  console.error('──── end diagnostics ────');
   console.error(
     '\nFix them, or if a file was legitimately rewritten, re-run with --update and '
     + 'explain the new number in the commit.',
