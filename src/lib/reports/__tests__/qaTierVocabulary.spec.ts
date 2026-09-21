@@ -163,19 +163,22 @@ describe('the condense path names the tier it is producing', () => {
 
 describe('the two copies of the validator agree', () => {
   it('differ only in where they import the score-claim matcher from', () => {
-    // The frontend QA panel reads a mirror of the edge module. Two copies is
-    // how two answers happen, and this file changed both — so the mirror is
-    // checked rather than trusted.
-    // Strip the Deno `.ts` extensions FIRST, then map the one path that
-    // genuinely differs — the edge module sits a directory further from
-    // `scoreClaims` than the mirror does.
-    const strip = (src: string) => src.replace(/\.ts'/g, "'");
-    const edge = strip(read('supabase/functions/_shared/compassQAValidator.ts'))
-      .replace("'./reports/investment/scoreClaims.pure'", "'./investment/scoreClaims.pure'")
-      .replace("'./reports/investment/evidenceClaims.pure'", "'./investment/evidenceClaims.pure'")
-      .replace("'./reports/investment/documentConsistency.pure'", "'./investment/documentConsistency.pure'")
-      .replace(/'\.\/reports\/investment\/evidenceClaims\.pure'/g, "'./investment/evidenceClaims.pure'")
-      .replace(/'\.\/reports\/investment\/riskRegister\.pure'/g, "'./investment/riskRegister.pure'");
-    expect(strip(read('src/lib/reports/compassQAValidator.ts'))).toBe(edge);
+    /*
+     * The frontend QA panel reads a mirror of the edge module. Two copies is
+     * how two answers happen, and a change to this validator touches both —
+     * so the mirror is checked rather than trusted.
+     *
+     * The one legitimate difference is WHERE each copy sits relative to
+     * `reports/investment/`: the edge module is a directory further out, so
+     * its imports carry a `reports/` segment and the Deno `.ts` extension.
+     * Both are normalised by RULE rather than by a list of module names — the
+     * list had five entries naming four modules, and a hand-list cannot see
+     * the import it does not mention, which is how adding one made this fail.
+     */
+    const strip = (src: string) => src
+      .replace(/\.ts'/g, "'")
+      .replace(/'\.\/reports\/investment\//g, "'./investment/");
+    expect(strip(read('src/lib/reports/compassQAValidator.ts')))
+      .toBe(strip(read('supabase/functions/_shared/compassQAValidator.ts')));
   });
 });

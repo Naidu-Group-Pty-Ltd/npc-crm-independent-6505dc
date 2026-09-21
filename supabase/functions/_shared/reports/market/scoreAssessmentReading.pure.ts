@@ -92,6 +92,34 @@ const DIMENSIONS: ReadonlyArray<{ field: string; key: DimensionKey; label: strin
   { field: 'riskScore', key: 'risk', label: 'Property risk' },
 ];
 
+/**
+ * Which weighting the printed adjusted weights are.
+ *
+ * `reconstructed` — `nominalWeight ÷ Σ nominal(measured)` at full precision.
+ * Used where the record holds no weights of its own, and where the ones it
+ * holds ROUND TO this, which means it is the same weighting expressed better.
+ *
+ * `recorded` — the record's own `breakdown[].weight`, at the whole-percent
+ * precision it stores. Used where those figures do NOT round to the
+ * reconstruction: the engine discounted a dimension for how little of its
+ * method ran, and the reconstruction would describe a grade nobody issued.
+ */
+export type WeightBasis = 'recorded' | 'reconstructed';
+
+/** Whether the composite printed is the record's own figure or a reconstruction. */
+export type CompositeSource = 'recorded' | 'reconstructed';
+
+/**
+ * How far a recorded weight set may miss 100% and still be usable.
+ *
+ * The row stores whole percents, so `Math.round` over at most five rows can
+ * lose or gain two points in the hundred — 57 + 21 + 21 = 99 on 18 Annabelle
+ * Crescent. A set that misses by more than that is not a weighting worth
+ * printing, and the reading falls back rather than drawing a column that does
+ * not sum.
+ */
+export const RECORDED_WEIGHT_TOLERANCE = 0.02;
+
 export interface AssessmentDimension {
   key: DimensionKey;
   label: string;
@@ -100,12 +128,32 @@ export interface AssessmentDimension {
   /** The dimension's share of the method before any adjustment, 0–1. */
   nominalWeight: number;
   /**
-   * `nominalWeight ÷ (the nominal weight of every MEASURED dimension)`, 0–1,
-   * exact. The row stores this rounded to a whole percent; the engine used
-   * the exact fraction, and the difference is the 0.3 and 0.6 points the
-   * displayed contributions were short by.
+   * The share of the composite this dimension actually carried, 0–1.
+   *
+   * **The record's own, where the record holds one.** `breakdown[].weight` is
+   * `Math.round(effectiveWeight × 100)` — the engine's evidence-discounted
+   * weight, which is what graded the property.
+   *
+   * This field used to be `nominalWeight ÷ (the nominal weight of every
+   * MEASURED dimension)`, under a comment calling the stored value "this
+   * rounded to a whole percent". That premise was wrong: the two are
+   * different QUANTITIES, not one quantity at two precisions. The engine
+   * renormalises the EVIDENCE weights (`proportionalWeighting.effectiveWeights`
+   * — nominal × how much of the dimension's own method ran); this reconstruction
+   * renormalised the NOMINAL ones and ignored coverage. On 18 Annabelle
+   * Crescent the coverages happened to be equal and the two agreed; on
+   * 97 Poole Road the record holds 47/30/18/5 and the reconstruction produced
+   * 42/26/16/16, because Demand scored on a fraction of its method.
+   *
+   * `weightBasis` says which of the two this is.
    */
   adjustedWeight: number;
+  /**
+   * The adjusted weight the ROW stores for this dimension, 0–1, or null where
+   * it holds none. Whole-percent precision: the engine's exact
+   * `effectiveWeight` is not persisted.
+   */
+  recordedWeight: number | null;
   /** `score × adjustedWeight` — what this dimension put into the composite. */
   contribution: number | null;
   /** `score × nominalWeight` — what the evidence DELIVERED out of 100. */
@@ -171,8 +219,22 @@ export interface ScoreAssessmentReading {
   compositeExact: number | null;
   /** The engine's composite — `compositeExact` rounded ONCE. */
   compositeScore: number | null;
-  /** What the row stores as `totalScore`, for comparison. */
+  /** What the row stores as `totalScore`. This is the composite where it is usable. */
   storedTotal: number | null;
+  /**
+   * Where `compositeScore` came from. `recorded` is the row's own
+   * `totalScore`; `reconstructed` is this module's arithmetic, used only for
+   * a row that holds none. Null where the overall is withheld.
+   */
+  compositeSource: CompositeSource | null;
+  /** Where the adjusted weights came from. See `AssessmentDimension.adjustedWeight`. */
+  weightBasis: WeightBasis;
+  /**
+   * True where Σ contributions rounds to `compositeScore` — i.e. where a
+   * reader adding the printed column arrives at the printed total. False
+   * where the record's whole-percent weights make the column approximate.
+   */
+  contributionsFoot: boolean;
   /** Σ delivered points at nominal weight, unrounded. */
   deliveredPoints: number | null;
   /** The grade the composite alone gives. */
@@ -251,6 +313,20 @@ function remedyFor(gaps: unknown, key: DimensionKey): string | null {
   return null;
 }
 
+/**
+ * The adjusted weight a dimension's own breakdown entry holds, 0–1.
+ *
+ * `scoringV2Production` writes `weight: Math.round(effectiveWeight * 100)`, so
+ * the stored figure is a whole percent. Anything outside 0–100, or absent, is
+ * not a weight and answers null — the caller then uses the reconstruction for
+ * the whole table rather than mixing two bases in one column.
+ */
+function recordedWeightOf(d: Record<string, unknown> | null): number | null {
+  const w = num(d?.weight);
+  if (w === null || !Number.isFinite(w) || w < 0 || w > 100) return null;
+  return w / 100;
+}
+
 export function readScoreAssessment(storedScore: unknown): ScoreAssessmentReading {
   const s = rec(storedScore) ?? {};
   const breakdown = rec(s.breakdown) ?? {};
@@ -315,6 +391,7 @@ export function readScoreAssessment(storedScore: unknown): ScoreAssessmentReadin
       exclusionRemedy: excluded ? remedyFor(s.gradeGaps, key) : null,
       inputs: strings(d?.dataPoints),
       nominalWeight: COMPOSITE_WEIGHTS[key],
+      recordedWeight: recordedWeightOf(d),
     };
   });
 
@@ -323,10 +400,49 @@ export function readScoreAssessment(storedScore: unknown): ScoreAssessmentReadin
   const measured = raw.filter((d) => d.score !== null);
   const measuredNominalWeight = measured.reduce((t, d) => t + d.nominalWeight, 0);
 
+  /*
+   * Which of the two weightings describes THIS grade.
+   *
+   * There are two, and they are different quantities rather than one quantity
+   * at two precisions:
+   *
+   *   RECONSTRUCTED — `nominalWeight ÷ Σ nominal(measured)`, at full
+   *     precision. Coverage-blind.
+   *   RECORDED — `breakdown[].weight`, which the engine writes as
+   *     `Math.round(effectiveWeight × 100)`. Evidence-discounted: nominal
+   *     scaled by how much of each dimension's own method actually ran, then
+   *     renormalised. Whole-percent precision; the exact fraction is not
+   *     persisted.
+   *
+   * Where the record's whole percentages ROUND TO the reconstruction, the two
+   * describe one weighting and the reconstruction expresses it better — that
+   * is 18 Annabelle Crescent (57/21/21 against 57.14/21.43/21.43), where the
+   * exact fractions reproduce the stored total to the decimal and the rounded
+   * ones do not.
+   *
+   * Where they do NOT, the engine discounted a dimension for coverage and the
+   * reconstruction describes a grade nobody issued — that is 97 Poole Road,
+   * where the record holds 47/30/18/5 and the reconstruction produces
+   * 42/26/16/16, and the two composites are 54 and 51. There the record's own
+   * figures stand, whole percentages and all, and the reading says the
+   * contributions are approximate.
+   */
+  const recordedSum = measured.reduce((t, d) => t + (d.recordedWeight ?? 0), 0);
+  const haveRecordedSet = measured.length > 0
+    && measured.every((d) => d.recordedWeight !== null && d.recordedWeight > 0)
+    && Math.abs(recordedSum - 1) <= RECORDED_WEIGHT_TOLERANCE;
+  const pct = (v: number) => Math.round(v * 100);
+  const recordedConfirmsNominal = haveRecordedSet && measuredNominalWeight > 0
+    && measured.every((d) => pct(d.recordedWeight as number) === pct(d.nominalWeight / measuredNominalWeight));
+  const weightsAreRecorded = haveRecordedSet && !recordedConfirmsNominal;
+  const weightBasis: WeightBasis = weightsAreRecorded ? 'recorded' : 'reconstructed';
+
   const dimensions: AssessmentDimension[] = raw.map((d) => {
-    const adjustedWeight = d.score === null || measuredNominalWeight === 0
+    const adjustedWeight = d.score === null
       ? 0
-      : d.nominalWeight / measuredNominalWeight;
+      : weightsAreRecorded
+        ? (d.recordedWeight ?? 0)
+        : measuredNominalWeight === 0 ? 0 : d.nominalWeight / measuredNominalWeight;
     return {
       ...d,
       adjustedWeight,
@@ -391,6 +507,30 @@ export function readScoreAssessment(storedScore: unknown): ScoreAssessmentReadin
   const compositeExact = publishable
     ? dimensions.reduce((t, d) => t + (d.contribution ?? 0), 0)
     : null;
+  /*
+   * The composite is the RECORD'S, never this module's arithmetic.
+   *
+   * `compositeScore` was `Math.round(compositeExact)` — a recomputation — and
+   * on the 97 Poole Road Compass of 20 Sep 2026 it printed **51** on page 38
+   * while the cover, the verdict, the risk page and the assessment table all
+   * printed **54**, which is what `totalScore` holds. It printed it directly
+   * under the sentence "No figure in this table is re-derived by this report;
+   * the arithmetic above restates the engine's own."
+   *
+   * `storedTotal` was already computed here and read by NOTHING — the one
+   * field that would have caught it. The record's own figure now decides, and
+   * the reconstruction survives only for a row that holds none.
+   *
+   * The publication gate is untouched: a row the policy withholds an overall
+   * for gets none, whatever `totalScore` happens to hold.
+   */
+  const storedTotal = num(s.totalScore);
+  const usableStoredTotal = storedTotal !== null
+    && Number.isFinite(storedTotal) && storedTotal >= 0 && storedTotal <= 100
+    ? storedTotal : null;
+  const compositeSource: CompositeSource | null = !publishable
+    ? null
+    : usableStoredTotal !== null ? 'recorded' : 'reconstructed';
   // The delivered points and the ceiling they set are the SUPERSEDED
   // methodology's own arithmetic. They explain a grade that was issued under
   // it and are not computed for a record graded proportionally, where no such
@@ -400,7 +540,27 @@ export function readScoreAssessment(storedScore: unknown): ScoreAssessmentReadin
     : null;
   // Rounded ONCE, on the sum — which is what the engine does and what the
   // per-part rounding got wrong.
-  const compositeScore = compositeExact === null ? null : Math.round(compositeExact);
+  const compositeScore = !publishable
+    ? null
+    : compositeSource === 'recorded'
+      ? Math.round(usableStoredTotal as number)
+      : compositeExact === null ? null : Math.round(compositeExact);
+  /*
+   * Does the column a reader can add up round to the figure beside it?
+   *
+   * Not always, and pretending otherwise is the defect this module exists to
+   * avoid. The record stores its adjusted weights as WHOLE percentages, so
+   * the contributions printed from them are approximations of the service's
+   * own — 18 Annabelle Crescent's 57/21/21 total 99, and its contributions
+   * come to 39.48 against a recorded 40. 97 Poole Road's 47/30/18/5 total
+   * 100 and come to 54.01 against a recorded 54.
+   *
+   * So the sum is stated as reconciling only where it does, and named as
+   * approximate where it does not. A document that says "the contributions
+   * come to X" beside a different Y is asking a reader to distrust both.
+   */
+  const contributionsFoot = compositeExact !== null && compositeScore !== null
+    && Math.round(compositeExact) === compositeScore;
   /*
    * A stale `grade` field does not license an overall grade.
    *
@@ -479,7 +639,10 @@ export function readScoreAssessment(storedScore: unknown): ScoreAssessmentReadin
     totalDimensions: num(coverage.totalDimensions) ?? DIMENSIONS.length,
     compositeExact,
     compositeScore,
-    storedTotal: num(s.totalScore),
+    storedTotal,
+    compositeSource,
+    weightBasis,
+    contributionsFoot,
     deliveredPoints,
     uncappedGrade,
     nominalCeiling,
@@ -520,11 +683,37 @@ export interface PersistedAssessment {
   eligibilityVersion: string;
 }
 
-/** Two figures to the precision the engine itself uses. */
+/**
+ * How the printed column relates to the printed composite.
+ *
+ * It used to read "The composite is rounded once, on the sum: X → N" on every
+ * record, and it had **zero production call sites** — the scorecard wrote its
+ * own copy of the same sentence, so the one place this was stated was not the
+ * one a reader saw. `composeScorecard` calls this now.
+ *
+ * Three readings, because there are three situations and they are not alike:
+ * the contributions come from exact fractions and round to the composite; they
+ * come from the record's whole percentages and happen to reconcile; or they
+ * cannot reproduce the total and say so. Asserting a rounding that does not
+ * happen asks a reader to distrust both numbers.
+ */
 export function assessmentPrecisionNote(reading: ScoreAssessmentReading): string | null {
   if (reading.compositeExact === null || reading.compositeScore === null) return null;
-  return `The composite is rounded once, on the sum: ${reading.compositeExact.toFixed(2)} → `
-    + `${reading.compositeScore}. Rounding each contribution first and adding them gives a different answer, and `
-    + 'the adjusted weights printed as whole percentages are themselves rounded — the engine multiplies by the '
-    + 'exact fractions.';
+  const sum = reading.compositeExact.toFixed(2);
+  const composite = reading.compositeScore;
+  const recorded = reading.compositeSource === 'recorded'
+    ? ', the figure the scoring service recorded' : '';
+  if (!reading.contributionsFoot) {
+    return `The composite is ${composite}${recorded}. The contributions come to ${sum}: they are computed from `
+      + 'the adjusted weights the record stores as whole percentages, which do not carry enough precision to '
+      + 'reproduce the total exactly, so read them as the shape of the result rather than as its arithmetic.';
+  }
+  if (reading.weightBasis === 'reconstructed') {
+    return `The contributions come to ${sum}, rounded once to the composite ${composite}${recorded}. Rounding `
+      + 'each contribution first and adding them gives a different answer, and the adjusted weights printed as '
+      + 'whole percentages are themselves rounded — the arithmetic uses the exact fractions.';
+  }
+  return `The contributions come to ${sum} and the composite is ${composite}${recorded}. They are computed from `
+    + 'the adjusted weights the record holds, which it stores as whole percentages, so they reconcile to it '
+    + "rather than reproducing the service's exact arithmetic, which is not retained.";
 }

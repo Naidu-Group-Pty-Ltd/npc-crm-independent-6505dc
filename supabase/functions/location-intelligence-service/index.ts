@@ -7,6 +7,13 @@ import {
   COMMUTE_NO_ROUTE,
   resolveCbdDestination,
 } from '../_shared/reports/location/cbdDestination.pure.ts';
+import {
+  readPointBasis,
+  resolveCommuteDestination,
+  type CommuteDestination,
+  type UrbanCentre,
+} from '../_shared/reports/location/urbanCentre.pure.ts';
+import { ASGS_RELEASE } from '../_shared/geography/asgsGeography.pure.ts';
 import { projectTransportForLocationIntelligence } from '../_shared/transportReading.pure.ts';
 import {
   stampAcquisition,
@@ -408,9 +415,22 @@ async function fetchLocationIntelligence(
   // The measurement follows COMMUTE_PROVIDERS (default osrm,google): OSRM's
   // public router drives the route free, and the Distance Matrix stays
   // selectable — `calculateCommuteTime` is untouched.
-  const cbdCoordinates = resolveCbdDestination(input.state);
-  const measuredCommute = cbdCoordinates
-    ? await measureCommuteThroughChain(coordinates, cbdCoordinates, apiKey, db)
+  //
+  // …and to the property's OWN urban centre where the register names one.
+  // Golden Square is a suburb of Bendigo; measuring it to Melbourne gave 114
+  // minutes, which `COMMUTE_ANCHORS` scores 0 of 100. See
+  // `urbanCentre.pure.ts`. Both reads fail soft: an unreachable geoserver or
+  // an unloaded register leaves `ownCentre: 'unknown'`, which is exactly
+  // today's behaviour.
+  const propertySua = await resolveSuaAtPoint(coordinates.lat, coordinates.lng);
+  const centreRegister = await readUrbanCentreRegister(db, input.state);
+  const destination: CommuteDestination | null = resolveCommuteDestination({
+    state: input.state,
+    sua: propertySua,
+    register: centreRegister,
+  });
+  const measuredCommute = destination
+    ? await measureCommuteThroughChain(coordinates, destination, apiKey, db)
     : { data: COMMUTE_DESTINATION_UNKNOWN, provider: null };
   const commuteData = measuredCommute.data;
 
@@ -480,7 +500,27 @@ async function fetchLocationIntelligence(
 
   const data = {
     coordinates,
-    commute: commuteData,
+    /*
+     * The commute, and WHICH city it was measured to.
+     *
+     * The destination rides the reading it describes, because that is what
+     * every consumer already reads and because a commute whose destination is
+     * not named is a number nobody can check. `ownCentre` is what stops
+     * `scoreLocation` rating a measurement of another market as this
+     * property's access — Golden Square's 114 minutes to Melbourne scored 0 of
+     * 100. A failed measurement carries no destination: there is nothing to
+     * describe.
+     */
+    commute: (destination && commuteData !== COMMUTE_DESTINATION_UNKNOWN
+      && commuteData !== COMMUTE_NO_ROUTE && commuteData !== COMMUTE_CAP_REACHED)
+      ? {
+        ...commuteData,
+        destination: destination.label,
+        destinationBasis: destination.basis,
+        destinationOwnCentre: destination.ownCentre,
+        destinationPointBasis: destination.pointBasis,
+      }
+      : commuteData,
     walkScore,
     amenities: amenityScores,
     transport: transportInfo,
@@ -545,6 +585,18 @@ async function fetchLocationIntelligence(
       ),
       ...(Object.keys(amenityRegisterLoadedAt).length > 0 ? { amenityRegisterLoadedAt } : {}),
       ...(measuredCommute.provider ? { commuteProvider: measuredCommute.provider } : {}),
+      // WHICH city the commute was measured to, and whether it is this
+      // property's own urban centre. Stored because a commute whose
+      // destination is not named is a number no reader can check — and
+      // because `scoreLocation` must not rate a measurement of another
+      // market as this property's access.
+      ...(destination
+        ? {
+          commuteDestination: destination.label,
+          commuteDestinationBasis: destination.basis,
+          commuteDestinationOwnCentre: destination.ownCentre,
+        }
+        : {}),
     },
     matchedAddress,
   });
@@ -984,4 +1036,98 @@ function calculateAmenityScores(lookups: PlacesLookups): AmenityScore[] {
       score: count === null ? null : Math.min(100, count * perItem),
     };
   });
+}
+
+
+/**
+ * Which Significant Urban Area this coordinate is in.
+ *
+ * The same service, release, layer and query shape
+ * `resolveOneReportGeography.ts` has used in production since ME-5, asked for
+ * one layer instead of six. Fails SOFT: a geoserver that is slow, down or
+ * answering an error body leaves the destination `unknown`, which scores
+ * exactly as it did before this existed. A commute is not worth failing an
+ * enrichment over.
+ */
+async function resolveSuaAtPoint(
+  lat: number,
+  lng: number,
+): Promise<{ code: string; name: string } | null> {
+  const params = new URLSearchParams({
+    geometry: `${lng},${lat}`,
+    geometryType: 'esriGeometryPoint',
+    inSR: '4326',
+    spatialRel: 'esriSpatialRelIntersects',
+    outFields: 'sua_code_2021,sua_name_2021',
+    returnGeometry: 'false',
+    f: 'json',
+  });
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), 8_000);
+  try {
+    const res = await fetch(
+      `https://geo.abs.gov.au/arcgis/rest/services/${ASGS_RELEASE}/SUA/MapServer/0/query?${params}`,
+      { signal: controller.signal },
+    );
+    if (!res.ok) return null;
+    const body = await res.json() as {
+      error?: unknown;
+      features?: Array<{ attributes?: Record<string, unknown> }>;
+    };
+    // ArcGIS reports failures as 200 plus an error body. That is transport.
+    if (body.error) return null;
+    const attrs = body.features?.[0]?.attributes;
+    const code = attrs?.sua_code_2021;
+    const name = attrs?.sua_name_2021;
+    if (typeof code !== 'string' || !code) return null;
+    return { code, name: typeof name === 'string' && name ? name : code };
+  } catch (e) {
+    console.warn(`[location-intelligence-service] SUA lookup failed: ${e instanceof Error ? e.message : e}`);
+    return null;
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+/**
+ * The urban centres this deployment holds for a state.
+ *
+ * Empty on a deployment whose ingest has never run — which is every clone
+ * until it does, because the rows a migration INSERTs do not travel. That is
+ * handled rather than worked around: `resolveCommuteDestination` then measures
+ * to the capital and marks it as not this property's centre, and
+ * `scoreLocation` declines to rate it. `PGRST205` is what a missing table
+ * answers on the wire, and it is treated as an empty register rather than as
+ * an error.
+ */
+// deno-lint-ignore no-explicit-any
+async function readUrbanCentreRegister(db: any, state: unknown): Promise<UrbanCentre[]> {
+  const key = String(state ?? '').trim().toUpperCase();
+  if (!key || !db) return [];
+  try {
+    const { data, error } = await db
+      .from('urban_centre_register')
+      .select('sua_code,sua_name,state,lat,lng,point_basis')
+      .eq('state', key);
+    if (error) {
+      console.warn(`[location-intelligence-service] urban centre register unread (${error.code ?? '?'})`);
+      return [];
+    }
+    return (data ?? [])
+      .map((r: Record<string, unknown>) => ({
+        code: String(r.sua_code ?? ''),
+        name: String(r.sua_name ?? ''),
+        state: String(r.state ?? ''),
+        lat: Number(r.lat),
+        lng: Number(r.lng),
+        // The register's own word, never rounded to the nearest claim. A row
+        // whose basis this build does not recognise is dropped by the filter
+        // below rather than relabelled.
+        pointBasis: readPointBasis(r.point_basis),
+      }))
+      .filter((c: UrbanCentre) => c.code && c.name && c.pointBasis
+        && Number.isFinite(c.lat) && Number.isFinite(c.lng));
+  } catch {
+    return [];
+  }
 }

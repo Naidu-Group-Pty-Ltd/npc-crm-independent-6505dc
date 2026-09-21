@@ -326,19 +326,58 @@ const REPO = resolve(__dirname, '../..');
  * The version is `20261208000000`. `20261208010000` re-copies the ACTIVE
  * masters from it, for the reason above.
  *
+ * ## v18 — the assessment page said five and showed three
+ *
+ * Checked before editing, as the line below asked: `20261208000000` and
+ * `20261208010000` are both in the applied migration list (990 of them), so
+ * this change is a v18.
+ *
+ * ONE page, on the 50 Investment Compass masters, and nothing else in the
+ * catalogue moves. `The assessment` carried the heading **"Five dimensions,
+ * weighted"** over a table that drew THREE rows on the 9 Hollow Street
+ * Compass of 20 Sep 2026 and FOUR on 1 Crestview Avenue and 97 Poole Road.
+ * The projection publishes nothing bindable for a dimension the engine did
+ * not score — an absence is omitted, never worded — so the row count is the
+ * count of what was measured, and a heading promising five contradicts the
+ * table under it on every report that could not score one.
+ *
+ * Its third column was headed `Weight`, and the figure in it is the ADJUSTED
+ * weight: 97 Poole Road printed `Demand 27 · 5%` where the published method
+ * weights demand at 15%, with nothing on the page to tell the two apart. The
+ * header names it and the standfirst says what it is.
+ *
+ * And one BINDING, on two of the 43 voice masters: their Recommendation page
+ * bound `{{recommendation.rationale}}`, which the projection does not publish,
+ * so the decision body resolved to the empty string on every render. The
+ * Investment Compass master corrected exactly that in its own block and these
+ * two kept it. They bind `gradedDetailLine` now — found by a spec asserting
+ * that no master binds a `recommendation.*` path the projection does not
+ * publish, which is the general form of the `scopeNote` defect in the other
+ * direction.
+ *
+ * Three text changes inside two blocks on one page, plus two bindings. No page
+ * gains or loses one, no block moves, and the other eight formats' 400 masters
+ * are byte-identical. The standfirst is one sentence longer than the
+ * one it replaces and no more: at two extra sentences the geometry gate
+ * refused three masters, at one it refused `le-03` by 7pt, and the wording
+ * shipped is the longest that clears all 50.
+ *
+ * The version is `20261209000000`. `20261209010000` re-copies the ACTIVE
+ * masters from it, for the reason above.
+ *
  * Run the same one-query check before editing this file: if
- * `20261208000000` is already recorded, the next change needs a v18.
+ * `20261209000000` is already recorded, the next change needs a v19.
  */
 /**
  * The identifier this release records against a baseline and against a
  * refreshed master. It is the seed migration's own basename, so a row that
  * says it carries this release names the artefact that put it there.
  */
-const RELEASE_ID = '20261208000000_seed_template_library_v17_running_head_chapter_only';
+const RELEASE_ID = '20261209000000_seed_template_library_v18_assessment_share_of_grade';
 
 const MIGRATION = resolve(
   REPO,
-  'supabase/migrations/20261208000000_seed_template_library_v17_running_head_chapter_only.sql',
+  'supabase/migrations/20261209000000_seed_template_library_v18_assessment_share_of_grade.sql',
 );
 
 /** Postgres string literal, dollar-quoted so JSON never has to be escaped. */

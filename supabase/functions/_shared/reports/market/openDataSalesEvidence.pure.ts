@@ -314,17 +314,51 @@ export function openDataSalesPoints(input: OpenDataSalesInput): OpenDataSalesRes
    * Two periods is the floor for a series to exist at all; the scorer sets
    * its own, higher floor for a baseline it will believe.
    */
-  const volume = series
-    .filter((r) => typeof r.salesCount === 'number' && (r.salesCount as number) >= 0)
-    .map((r) => ({ period: r.period, value: r.salesCount as number }));
+  /*
+   * The volume series is built on the span that CARRIES counts, which is not
+   * always the span the price was chosen on.
+   *
+   * `chooseSpan` picks one span for the price and prefers more periods on a
+   * tie — correctly, because an eleven-year annual series is better evidence
+   * of growth than five quarters. In Victoria both spans report a latest
+   * period of `2025-12`, since `annualPeriodOf(2025)` produces the same string
+   * Q4 does, so the annual series wins that tie. And the Victorian annual
+   * sheet prints no `No. of Sales` column at all.
+   *
+   * Binding volume to the price's span therefore read counts off a series that
+   * has none. Measured 21 Sep 2026 on GOLDEN SQUARE: the quarterly rows carry
+   * four counts and the annual rows carry zero, so Demand stayed unscoreable
+   * after the counts had been recovered and written.
+   *
+   * Price and volume are different measurements and may legitimately come from
+   * different spans. The finer one is preferred because a count is a flow: how
+   * much stock changed hands THIS quarter against this market's recent normal
+   * is the demand question, and a calendar year blurs it.
+   */
+  const volumeRows = (['quarter', 'year'] as SalesPeriodSpan[])
+    .map((s) => pricedSeries(input.rows, chosen, s)
+      .filter((r) => typeof r.salesCount === 'number' && (r.salesCount as number) >= 0))
+    .find((rows) => rows.length >= 2) ?? [];
+  const volumeSpan: SalesPeriodSpan = volumeRows.length
+    ? periodSpanOf(volumeRows[0])
+    : span;
+  const volume = volumeRows.map((r) => ({ period: r.period, value: r.salesCount as number }));
   if (volume.length >= 2) {
     points.salesVolumeSeries = point(
       volume,
       'observed',
       `${input.source.label}; ${dwellingWords(chosen)} sold in ${areaName} by `
-      + `${span === 'year' ? 'calendar year' : 'quarter'}, ${label(volume[0].period)} to `
-      + `${label(volume[volume.length - 1].period)}${archived}`,
+      + `${volumeSpan === 'year' ? 'calendar year' : 'quarter'}, `
+      // The PERIODS are labelled on the volume's span too. Passing the price's
+      // rendered the quarterly range Mar-Dec 2025 as "calendar year 2025 to
+      // calendar year 2025" — a sentence that contradicts its own "by quarter"
+      // three words earlier and states a range the series does not cover.
+      + `${label(volume[0].period, volumeSpan)} to `
+      + `${label(volume[volume.length - 1].period, volumeSpan)}${archived}`,
       sample,
+      // …and the point is as-of the latest quarter it actually carries, not
+      // the latest period of the price series it no longer follows.
+      periodEndDate(volume[volume.length - 1].period),
     );
   }
 

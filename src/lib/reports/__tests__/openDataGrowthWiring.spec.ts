@@ -119,7 +119,35 @@ describe('the loader and its declarations', () => {
     expect(MIGRATION_2).toContain("check (period_span in ('quarter', 'year'))");
     expect(MIGRATION_2).toContain("check (state in ('NSW', 'VIC', 'QLD', 'SA', 'WA', 'TAS', 'NT', 'ACT', 'AU'))");
     expect(MIGRATION_2).toContain('add column if not exists captured_at timestamptz');
-    expect(LOADER).toContain("onConflict: 'state,area_kind,area,dwelling_type,period,period_span'");
+    // The conflict target is the full natural key including the span. It is a
+    // named constant now rather than a literal at the call site, because the
+    // upsert sends two differently-shaped batches through it.
+    expect(LOADER).toContain("'state,area_kind,area,dwelling_type,period,period_span'");
+    expect(LOADER).toMatch(/onConflict:\s*CONFLICT/);
+  });
+
+  it('never erases a sales count it cannot restate', () => {
+    /*
+     * Victoria's and South Australia's sheets print ONE `No. of Sales`
+     * column — the latest quarter's — so their parsers emit `salesCount:
+     * null` on every other row. PostgREST writes `ON CONFLICT DO UPDATE SET`
+     * for each column the payload names, so one payload for every record
+     * rewrote every historical count back to null on every daily run.
+     *
+     * `scoreTransactionVolume` needs four periods carrying a count, so those
+     * two states could never hold more than one and transaction volume — the
+     * only PRIMARY demand measure this deployment is entitled to — was
+     * structurally unmeasurable there. The 9 Hollow Street Compass of
+     * 20 Sep 2026 scored Demand on nothing; 1 Crestview Avenue and 97 Poole
+     * Road, both NSW, scored it 27 from a 3-period average.
+     *
+     * A record with no count is written WITHOUT the column, which leaves what
+     * is stored standing. The two shapes cannot share a batch.
+     */
+    expect(LOADER).toMatch(/sales_count !== null/);
+    expect(LOADER).toMatch(/sales_count: _dropped, \.\.\.rest/);
+    expect(LOADER, 'the two shapes must be sent separately')
+      .toMatch(/withCount[\s\S]{0,120}withoutCount/);
     expect(MIGRATION).toContain("check (period ~ '^[0-9]{4}-(03|06|09|12)$')");
     expect(MIGRATION).toContain('median_price numeric check (median_price is null or median_price > 0)');
     expect(MIGRATION).toContain('enable row level security');

@@ -57,7 +57,7 @@ import {
 import {
   escapeHtml, renderDataTable, renderSidenote,
 } from '../reportDesign/primitives.pure.ts';
-import { splitRefusedItem, type VizDirective } from './vizDirectives.pure.ts';
+import { isPlaceholderValue, splitRefusedItem, type VizDirective } from './vizDirectives.pure.ts';
 import {
   calloutCharge, figureCharge, sidenoteCharge, type NarrativeGeometry,
 } from './narrativeGeometry.pure.ts';
@@ -204,9 +204,20 @@ export function renderVizDirective(
    * that tabulates, which is what makes it reach all five formats.
    */
   const asTable = (
-    rows: { label: string; value: string }[],
+    all: { label: string; value: string }[],
     valueHeading: string,
   ): VizFigure | null => {
+    /*
+     * An item whose value is `n/a` promised no figure — it stated an absence,
+     * and a placeholder never reaches a client document. Page 20 of the
+     * 9 Hollow Street Compass (20 Sep 2026) printed `Victoria dwellings
+     * benchmark | (blank)` beside a subject price and a suburb median.
+     * `stripPlaceholderRows` could not see it: this table is built at render
+     * time and never exists as markdown. The rule is `isPlaceholderValue`,
+     * imported rather than restated, and where nothing survives the figure
+     * declines entirely.
+     */
+    const rows = all.filter((r) => !isPlaceholderValue(r.value));
     if (!rows.length) return null;
     const html = renderDataTable(
       [{ key: 'label', label: 'Item' }, { key: 'value', label: valueHeading, align: 'right' }],

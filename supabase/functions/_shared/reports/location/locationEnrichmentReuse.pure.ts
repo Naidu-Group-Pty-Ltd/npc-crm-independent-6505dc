@@ -238,7 +238,8 @@ export type ReuseVerdict =
   | 'missing_coordinates'
   | 'incomplete_acquisition'
   | 'partial_retry_exhausted'
-  | 'readings_missing';
+  | 'readings_missing'
+  | 'commute_destination_unrecorded';
 
 export interface ReuseDecision {
   readonly reuse: boolean;
@@ -331,6 +332,41 @@ export function assessEnrichmentReuse(
       + `they measured (${readingsMissing.map((r) => r.path).join(', ')}). It was `
       + 'persisted after the Client-Safe Gate had removed them, so it cannot be '
       + 'scored. Re-acquiring.',
+    );
+  }
+
+  // S3 — a measured commute with no destination predates the question
+  // "measured to WHERE?", and reusing it scores the answer to a question
+  // nobody asked.
+  //
+  // Until the urban-centre register existed, every commute went to the state
+  // capital and nothing recorded that, because there was nothing to choose.
+  // `scoreLocation` now reads `commute.destination.ownCentre` and RATES a
+  // reading whose destination it cannot establish — which is correct for a
+  // live measurement it has no register for, and wrong for a stored one that
+  // was measured to a capital this property does not belong to. On 9 Hollow
+  // Street that is the whole defect: a 114-minute drive to Melbourne, scored
+  // 0 of 100, carried forward for ever because every other gate passes.
+  //
+  // This is `readings_missing`'s rule one step on. That guard exists because
+  // a stamp vouches for the ACQUISITION and not for what survived it; this
+  // one because a stamp vouches for what was measured and not for what the
+  // measurement MEANT. Both refuse rather than repair, and both take effect
+  // on the next generation with no migration and no stored byte rewritten.
+  //
+  // Bounded to a commute that actually ran: an enrichment with no commute has
+  // nothing to re-measure, so it stays reusable exactly as it is today.
+  const commuteRecord = record.commute as Record<string, unknown> | undefined;
+  const commuteRan = acquisition.stages?.commute === 'measured'
+    && !!commuteRecord
+    && typeof commuteRecord.durationMinutes === 'number'
+    && Number.isFinite(commuteRecord.durationMinutes);
+  if (commuteRan && !commuteRecord?.destination) {
+    return refuse(
+      'commute_destination_unrecorded',
+      'The stored enrichment measured a commute but records no destination, so '
+      + 'it predates the urban-centre register and cannot say whether it was '
+      + "measured to this property's own centre. Re-acquiring.",
     );
   }
 

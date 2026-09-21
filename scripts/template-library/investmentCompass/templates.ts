@@ -499,17 +499,35 @@ function buildTemplate(family: DesignFamily, variant: VariantDefinition): Compas
     ...flow(ifItFits([
       sectionHeading({
         eyebrow: 'How the grade was reached',
-        heading: 'Five dimensions, weighted',
+        // Was "Five dimensions, weighted", over a table of THREE rows on
+        // 9 Hollow Street and FOUR on 1 Crestview Avenue and 97 Poole Road
+        // (20 Sep 2026). The projection publishes nothing bindable for a
+        // dimension the engine did not score — an absence is omitted, never
+        // worded — so the row count is the count of what was measured, and a
+        // heading that promises five contradicts the table under it on every
+        // report that could not score one. This one is true at three, four
+        // or five.
+        heading: 'Weighted across what was measured',
         numeral: nextNumeral(),
         // Was "A dimension the assessment had no data for is scored at the
         // midpoint", which described the placeholder rather than the report.
         // The engine withholds such a dimension and the table now says so, so
         // the sentence would contradict the page under it.
-        standfirst: 'Each dimension is scored out of 100 and weighted into the total. '
-          + 'A dimension the assessment had no data for is left unscored.',
+        //
+        // The share is explained because the column is an ADJUSTED weight and
+        // the page has no room for the nominal one beside it: the method's
+        // five weights, re-spread across the dimensions the evidence could
+        // measure, so a reader meeting "5%" against Demand can tell it from
+        // the 15% the published method gives that dimension. The full
+        // original-versus-adjusted table is in "How this grade was reached".
+        standfirst: 'Each dimension is scored out of 100. Its share is how much of the grade it '
+          + 'carried. A dimension with no data is left unscored.',
       }),
       table({
-        headers: ['Dimension', 'Score', 'Weight'],
+        // "Weight" read as the published methodology weight. It is the
+        // ADJUSTED share, and naming it as one is the difference between a
+        // reader checking the arithmetic and a reader mistrusting it.
+        headers: ['Dimension', 'Score', 'Share of grade'],
         // `scoreLabel` / `weightLabel`, not `score` / `weight`. The engine
         // leaves a placeholder 50 and a 0 weight in an excluded dimension, so
         // binding the figures printed "Growth 50 0%" — a score the assessment

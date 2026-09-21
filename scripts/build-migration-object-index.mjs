@@ -73,6 +73,39 @@ const DROP_RE = new RegExp(
 const normalise = (cls, name) =>
   `${cls.toLowerCase().replace(/\s+/g, "_")}:${name.replace(/"/g, "").toLowerCase()}`;
 
+/**
+ * The objects one migration's SQL creates, as `"<class>:<qualified name>"`.
+ *
+ * Exported because `migrationDrift.pure.mjs` asks the same question of one
+ * file that this asks of all of them, and two copies of "what does this
+ * migration create" is how the drift report comes to disagree with the index
+ * it is read beside. The regexes stay module-private; this is the rule.
+ */
+export function objectsCreatedIn(src) {
+  const out = new Set();
+  for (const m of String(src ?? "").matchAll(CREATE_RE)) out.add(normalise(m[1], m[2]));
+  return [...out].sort();
+}
+
+/**
+ * An effect probe a migration declares about itself.
+ *
+ * A migration that only INSERTs rows creates no object, so object existence
+ * cannot tell whether it ran — and that is not a corner case: the seed that
+ * renames the assessment table's heading is exactly that shape, it merged, it
+ * never landed, and nothing said so. A file may therefore state the SQL that
+ * is true once it has been applied:
+ *
+ *     -- @effect: select 1 from public.template_library_entries where version = 18
+ *
+ * One line, read-only by construction (the runner refuses anything that is not
+ * a lone SELECT), and asserted against the database rather than the ledger.
+ */
+export function effectProbeIn(src) {
+  const m = String(src ?? "").match(/^\s*--\s*@effect:\s*(.+?)\s*$/mi);
+  return m ? m[1] : null;
+}
+
 export function buildIndex(dir = MIGRATIONS_DIR) {
   const files = readdirSync(dir)
     .filter((f) => f.endsWith(".sql"))
@@ -83,7 +116,7 @@ export function buildIndex(dir = MIGRATIONS_DIR) {
 
   for (const file of files) {
     const src = readFileSync(join(dir, file), "utf8");
-    for (const m of src.matchAll(CREATE_RE)) created.add(normalise(m[1], m[2]));
+    for (const o of objectsCreatedIn(src)) created.add(o);
     for (const m of src.matchAll(DROP_RE)) dropped.add(normalise(m[1], m[2]));
   }
 

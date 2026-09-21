@@ -42,7 +42,20 @@ import {
   dwellingOfTimeSeriesName,
   parseVicQuarterly,
   parseVicTimeSeries,
+  VIC_VPSR_PAGE_URL,
 } from '../_shared/reports/market/openData/vicVpsrSuburb.pure.ts';
+import {
+  chooseNextVicQuarter,
+  chooseNextVicVolumeFile,
+  mergeVicQuarterSources,
+  quartersStillNeeded,
+} from '../_shared/reports/market/openData/vicVolumeBackfill.pure.ts';
+import {
+  VIC_CKAN_SEARCH_URL,
+  newestCatalogueQuarter,
+  parseVicCatalogue,
+  vicQuarterlyMedianResources,
+} from '../_shared/reports/market/openData/vicVpsrCatalogue.pure.ts';
 import { SA_LSG_ARCHIVE_FLOOR, SA_LSG_ARCHIVE_PATTERN, SA_LSG_FILE, SA_LSG_LICENCE, SA_LSG_SOURCE_LABEL, parseSaLsgStats, rankOfSaFileName } from '../_shared/reports/market/openData/saLsgStats.pure.ts';
 import { type RankedFile, type WaybackCapture, archivePageUrl, capturedAtIso, cdxUrl, newestByRank, originalBytesUrl, parseCdxJson, rankedCaptures, rankedFiles } from '../_shared/reports/market/openData/waybackMirror.pure.ts';
 
@@ -196,15 +209,58 @@ function toRecords(rows: ReadonlyArray<SalesMedianRow>, source: string, sourceUr
 const chunk = <T,>(arr: T[], n: number): T[][] =>
   Array.from({ length: Math.ceil(arr.length / n) }, (_, i) => arr.slice(i * n, (i + 1) * n));
 
+/**
+ * A load never ERASES a sales count it cannot restate.
+ *
+ * Victoria's and South Australia's sheets print ONE `No. of Sales` column —
+ * the latest quarter's — so their parsers emit `salesCount: null` on every
+ * other row of the series. New South Wales' and Queensland's carry a count on
+ * every row. The upsert sent `sales_count` for every record and PostgREST
+ * writes `ON CONFLICT DO UPDATE SET` for each column in the payload, so each
+ * daily run rewrote every historical Victorian and South Australian row's
+ * count back to null.
+ *
+ * `scoreTransactionVolume` needs `VOLUME_BASELINE_PERIODS + 1` — four periods
+ * carrying a count — to measure a quarter against this market's own trailing
+ * rate. Victoria and South Australia could therefore hold at most ONE at any
+ * moment, so transaction volume was structurally unmeasurable for every
+ * property in those two states: the 9 Hollow Street Compass of 20 Sep 2026
+ * scored Demand on nothing at all while 1 Crestview Avenue and 97 Poole Road,
+ * both New South Wales, scored it 27 from `162 sales … 29% below the
+ * 3-period average of 228`. That is a defect of this loader, not a fact about
+ * Bendigo.
+ *
+ * So a record carrying no count is written WITHOUT the column, which leaves
+ * whatever is stored standing. The two shapes cannot share a batch —
+ * PostgREST builds one statement per request and sets every column the
+ * payload names — so they are partitioned and sent separately.
+ *
+ * The conservative side is deliberate. A publisher that genuinely withdraws a
+ * figure is rare and a later load carrying a real value corrects it; a loader
+ * that erases a measurement it never had anything to say about is the fault
+ * `listings_cache` already paid for, where mirroring a prune put the whole
+ * marketplace on a thirty-day fuse.
+ */
 // deno-lint-ignore no-explicit-any
 async function upsertRecords(supabase: any, records: RegisterRecord[]): Promise<number> {
+  const CONFLICT = 'state,area_kind,area,dwelling_type,period,period_span';
   let written = 0;
-  for (const batch of chunk(records, 500)) {
-    const { error } = await supabase
-      .from('market_sales_medians')
-      .upsert(batch, { onConflict: 'state,area_kind,area,dwelling_type,period,period_span' });
-    if (error) throw new Error(`market_sales_medians upsert failed: ${error.message}`);
-    written += batch.length;
+  const withCount = records.filter((r) => r.sales_count !== null);
+  const withoutCount = records
+    .filter((r) => r.sales_count === null)
+    // The column is DROPPED from the payload, which is what leaves the
+    // stored value standing — PostgREST sets only the columns it is given.
+    .map(({ sales_count: _dropped, ...rest }) => rest);
+
+  for (const [rows, label] of [[withCount, 'with count'], [withoutCount, 'no count']] as const) {
+    for (const batch of chunk(rows as Record<string, unknown>[], 500)) {
+      if (!batch.length) continue;
+      const { error } = await supabase
+        .from('market_sales_medians')
+        .upsert(batch, { onConflict: CONFLICT });
+      if (error) throw new Error(`market_sales_medians upsert failed (${label}): ${error.message}`);
+      written += batch.length;
+    }
   }
   return written;
 }
@@ -319,6 +375,343 @@ Deno.serve(async (req) => {
       };
       await supabase.from('market_sales_sync').insert({ detail });
       return json({ success: true, ...detail });
+    }
+
+    /*
+     * Victoria's transaction volumes, one archived quarter per invocation.
+     *
+     * Why this exists at all is in `vicVolumeBackfill.pure.ts`: Victoria
+     * prints ONE `No. of Sales` column per workbook, so a single file yields
+     * one counted period and `scoreTransactionVolume` needs four — which is
+     * why Demand is unscoreable here and scores in NSW, QLD and SA. The
+     * publisher names a separate workbook per quarter and the archive holds
+     * them, so the counts were never lost.
+     *
+     * It ASKS by default and writes nothing. `apply: true` reads exactly one
+     * workbook, because five in one call is what hit the edge worker's
+     * compute limit on the DCJ load.
+     */
+    /*
+     * Where Victoria's CURRENT figures are, and whether they can be had live.
+     *
+     * Measured 21 Sep 2026: the register's newest Victorian period is
+     * `2025-12` on both spans while Queensland is current to 2026-09-10 and
+     * South Australia's `lsg_stats_2026_q1.xlsx` was captured 2026-09-18. The
+     * archive plainly carries 2026 files; Victoria is the only stale source,
+     * so the 2026 editions are published somewhere this pipeline is not
+     * looking.
+     *
+     * Three questions, asked rather than assumed, and NOTHING is written:
+     *
+     *  1. Does the publisher still answer a non-browser client? The archive
+     *     route exists because it did not — `zeroCostSources` records a
+     *     Cloudflare "Just a moment..." 403 — and that is a measurement with
+     *     a date on it, not a permanent property of the internet.
+     *  2. What file names does the archive actually hold under that path? The
+     *     loader only ever asked for names matching the 2025 spelling, so a
+     *     renamed 2026 edition would be invisible to it and present all along.
+     *  3. Is the same series on `data.vic.gov.au`? It is a CKAN portal with a
+     *     JSON API and its resources are served from hosts that do not sit
+     *     behind the same challenge — which is what a LIVE route would look
+     *     like.
+     */
+    if (stage === 'vic_discover') {
+      const answers: Record<string, unknown> = {};
+      const spreadsheetLinks = (html: string): string[] => [
+        ...new Set([...html.matchAll(/href="([^"]+\.xlsx?)"/gi)].map((m) => m[1])),
+      ].slice(0, 40);
+
+      // 1. The publisher itself.
+      try {
+        const res = await fetch(VIC_VPSR_PAGE_URL, { headers: { 'User-Agent': UA, Accept: 'text/html,*/*' } });
+        const text = await res.text();
+        answers.publisher_page = {
+          status: res.status,
+          bytes: text.length,
+          challenged: /just a moment|cf-browser-verification|challenge-platform/i.test(text),
+          opening: text.slice(0, 160).replace(/\s+/g, ' '),
+          spreadsheets: spreadsheetLinks(text),
+        };
+      } catch (error) {
+        answers.publisher_page = { error: error instanceof Error ? error.message : String(error) };
+      }
+
+      // 2. Every name the archive holds under that path — unfiltered, because
+      //    filtering by the old spelling is what made a rename invisible.
+      try {
+        const index = await archiveIndex(VIC_VPSR_ARCHIVE_PATTERN, String(body.from ?? '2025'));
+        const byName = new Map<string, string>();
+        for (const c of index) {
+          const name = fileNameOf(c.original);
+          const prev = byName.get(name);
+          if (!prev || c.timestamp > prev) byName.set(name, c.timestamp);
+        }
+        const names = [...byName.entries()]
+          .sort((a, b) => (a[1] < b[1] ? 1 : -1))
+          .slice(0, 60)
+          .map(([name, ts]) => ({ name, newest_capture: capturedAtIso(ts) }));
+        answers.archive = { captures: index.length, distinct_files: byName.size, newest_first: names };
+      } catch (error) {
+        answers.archive = { error: error instanceof Error ? error.message : String(error) };
+      }
+
+      // 3. The open-data portal — the candidate live route.
+      for (const [label, url] of [
+        ['ckan_search', 'https://discover.data.vic.gov.au/api/3/action/package_search?q=%22property%20sales%22&rows=10'],
+      ] as const) {
+        try {
+          const res = await fetch(url, { headers: { 'User-Agent': UA, Accept: 'application/json,*/*' } });
+          const text = await res.text();
+          let parsed: Record<string, unknown> | null = null;
+          try { parsed = JSON.parse(text) as Record<string, unknown>; } catch { /* reported by shape */ }
+          const result = (parsed?.result ?? {}) as Record<string, unknown>;
+          const packages = Array.isArray(result.results) ? result.results as Array<Record<string, unknown>> : [];
+          answers[label] = {
+            status: res.status,
+            bytes: text.length,
+            count: result.count ?? null,
+            datasets: packages.slice(0, 8).map((pkg) => ({
+              title: pkg.title,
+              name: pkg.name,
+              resources: (Array.isArray(pkg.resources) ? pkg.resources as Array<Record<string, unknown>> : [])
+                .filter((r) => /xlsx?|csv/i.test(String(r.format ?? '')))
+                .slice(0, 6)
+                .map((r) => ({ format: r.format, name: r.name, url: r.url, last_modified: r.last_modified })),
+            })),
+          };
+        } catch (error) {
+          answers[label] = { error: error instanceof Error ? error.message : String(error) };
+        }
+      }
+
+      console.log(`[market-sales-ingest] vic_discover ${JSON.stringify(answers).slice(0, 1200)}`);
+      return json({ success: true, stage, answers, wrote: false });
+    }
+
+    if (stage === 'vic_volume') {
+      const apply = body.apply === true;
+      const wantDwelling = String(body.dwelling ?? 'house') === 'unit' ? 'attached' : 'house';
+      const floor = String(body.floor ?? '2023-01');
+      const from = String(body.from ?? '2023');
+
+      // What the register already carries a Victorian count for. This drives
+      // the choice, so an interrupted backfill resumes and a finished one is
+      // a no-op — no cursor is kept anywhere.
+      const { data: countedRows, error: countedError } = await supabase
+        .from('market_sales_medians')
+        .select('period')
+        .eq('state', 'VIC')
+        .eq('dwelling_type', wantDwelling)
+        .eq('period_span', 'quarter')
+        .not('sales_count', 'is', null);
+      if (countedError) throw new Error(`reading the counted Victorian quarters failed: ${countedError.message}`);
+      const countedPeriods: string[] = [...new Set<string>(
+        ((countedRows ?? []) as Array<{ period: string }>).map((r) => String(r.period)),
+      )];
+
+      /*
+       * BOTH sources, asked together.
+       *
+       * The catalogue is the publisher's own index and answers a script; the
+       * archive holds the bytes the publisher will not serve one. Neither
+       * contains the other — the catalogue lists
+       * `Median-House-VGS-1st-Qtr-2024.xls`, a spelling the filename pattern
+       * cannot match, and the archive holds captures the catalogue never
+       * listed — so a union finds more quarters than either alone and a
+       * failure of one is not a failure of the walk.
+       *
+       * The catalogue also answers the question a regex cannot: what the
+       * NEWEST released quarter is. "No file I recognise" and "no file" are
+       * different statements, and only the publisher can make the second.
+       */
+      let catalogue: Awaited<ReturnType<typeof vicQuarterlyMedianResources>> = [];
+      let catalogueNewest: string | null = null;
+      let catalogueError: string | null = null;
+      try {
+        const res = await fetch(VIC_CKAN_SEARCH_URL, { headers: { 'User-Agent': UA, Accept: 'application/json,*/*' } });
+        if (!res.ok) throw new Error(`the Victorian data catalogue answered ${res.status}`);
+        const all = parseVicCatalogue(await res.json());
+        catalogue = vicQuarterlyMedianResources(all, wantDwelling);
+        catalogueNewest = newestCatalogueQuarter(catalogue);
+      } catch (error) {
+        // Named, never swallowed: a catalogue that could not be reached is not
+        // a publisher with nothing to publish, and the archive still answers.
+        catalogueError = error instanceof Error ? error.message : String(error);
+      }
+
+      let index: WaybackCapture[] = [];
+      let archiveError: string | null = null;
+      try {
+        index = await archiveIndex(VIC_VPSR_ARCHIVE_PATTERN, from);
+      } catch (error) {
+        archiveError = error instanceof Error ? error.message : String(error);
+      }
+      const files = rankedFiles(index, VIC_QUARTERLY_FILE,
+        (m) => (dwellingOfQuarterlyName(m[0]) === wantDwelling ? Number(m[3]) * 4 + Number(m[2]) : null));
+      if (catalogueError && archiveError) {
+        throw new Error(`neither source could be reached — catalogue: ${catalogueError}; archive: ${archiveError}`);
+      }
+      const merged = mergeVicQuarterSources(catalogue, files, floor);
+      /*
+       * `skip` steps over a quarter the parser refuses, and `period` names one
+       * outright. Both exist because selection is "newest uncounted" and a
+       * refusal leaves the quarter uncounted — so without them one unparseable
+       * workbook stalls the whole backfill for ever, re-reading the same file
+       * on every call. Measured: q3-2025 refused with "no row of quarter
+       * labels (layout drift)" on the first live load.
+       */
+      const skip = Array.isArray(body.skip) ? (body.skip as unknown[]).map(String) : [];
+      const only = body.period ? String(body.period) : null;
+      const choice = chooseNextVicVolumeFile(
+        files,
+        [...countedPeriods, ...skip, ...(only ? [] : [])],
+        floor,
+      );
+      const targeted = only
+        ? choice.remaining.find((c) => c.period === only)
+          ?? chooseNextVicVolumeFile(files, [], floor).remaining.find((c) => c.period === only)
+          ?? null
+        : choice.next;
+      const shortfall = quartersStillNeeded(countedPeriods);
+
+      const mergedChoice = chooseNextVicQuarter(merged, [...countedPeriods, ...skip]);
+      const base = {
+        stage, dwelling: wantDwelling, floor,
+        counted_quarters: countedPeriods.sort().reverse(),
+        quarters_still_needed_for_demand: shortfall,
+        // What the PUBLISHER has released, which is the only honest answer to
+        // "is this current as at today" — and is not the same question as what
+        // the register holds.
+        publisher_newest_quarter: catalogueNewest,
+        register_is_current_with_publisher: catalogueNewest
+          ? countedPeriods.includes(catalogueNewest) || countedPeriods.some((p) => p >= catalogueNewest)
+          : null,
+        sources: {
+          catalogue: catalogueError ? { error: catalogueError } : { quarters: catalogue.length },
+          archive: archiveError ? { error: archiveError } : { quarters: files.length },
+        },
+        discovered_quarters: merged.map((c) => ({ period: c.period, by: c.discoveredBy })),
+        merged_remaining: mergedChoice.remaining.map((c) => c.period),
+        archived_quarters: files.length,
+        remaining: choice.remaining.map((c) => c.period),
+        next: targeted?.period ?? null,
+        skipped: skip,
+      };
+
+      if (!apply || !targeted) {
+        return json({ success: true, ...base, wrote: false });
+      }
+
+      const file = files.find((f) => f.original === targeted.original);
+      if (!file) throw new Error(`the chosen quarter ${targeted.period} is not in the archive listing — refused`);
+      // Every capture of that file, newest first: the index can list a capture
+      // the store answers 404 for, which is why `rankedFiles` keeps them all.
+      let loaded: { capturedAt: string; bytes: number; grid: unknown[][]; sheets: string[] } | null = null;
+      let lastError = '';
+      for (const capture of file.captures.slice(0, 4)) {
+        try {
+          const { workbook, bytes } = await fetchWorkbook(originalBytesUrl(capture));
+          loaded = {
+            capturedAt: capturedAtIso(capture.timestamp), bytes,
+            grid: firstGrid(workbook) as unknown[][],
+            sheets: (workbook.SheetNames ?? []) as string[],
+          };
+          break;
+        } catch (error) {
+          lastError = error instanceof Error ? error.message : String(error);
+        }
+      }
+      if (!loaded) throw new Error(`no capture of ${fileNameOf(file.original)} could be read — ${lastError}`);
+
+      /*
+       * `inspect` describes what arrived and parses nothing. The first live
+       * load refused on layout drift, and "which sheet is first, and what is
+       * in its opening rows" is not answerable from here — web.archive.org
+       * answers 403 at this machine's CONNECT tunnel. Asserted by looking,
+       * rather than by guessing at a publisher's spreadsheet.
+       */
+      if (body.inspect === true) {
+        const head = (loaded.grid as unknown[][]).slice(0, 8)
+          .map((row) => (row ?? []).slice(0, 12).map((v) => String(v ?? '').slice(0, 24)));
+        return json({
+          success: true, ...base, wrote: false, inspected: targeted.period,
+          file: file.original, captured_at: loaded.capturedAt, bytes: loaded.bytes,
+          sheets: loaded.sheets, rows: (loaded.grid as unknown[][]).length, head,
+        });
+      }
+
+      const parsed = parseVicQuarterly(loaded.grid as never, wantDwelling, loaded.capturedAt);
+      // ONLY the counted rows are written. The medians in an archived workbook
+      // are a revision of periods the live stage already loads, and this
+      // backfill is not the authority on those — it is here for the counts
+      // the live stage cannot reach.
+      const counted = parsed.rows.filter((r) => typeof r.salesCount === 'number');
+      if (counted.length === 0) {
+        throw new Error(`${fileNameOf(file.original)} parsed ${parsed.rows.length} rows and none carries a count — refused`);
+      }
+      /*
+       * A backfill may add a count and must never regress a figure the live
+       * stage already holds.
+       *
+       * This is not hypothetical. Measured 21 Sep 2026 from the two archived
+       * workbooks: for ABBOTSFORD, quarter 2025-09, `median-house-q3-2025`
+       * reports 1,370,000 and `median-house-q4-2025` reports 1,391,500. The
+       * later file carries the publisher's own revision, the live stage
+       * already loaded it, and an unguarded upsert of the older workbook would
+       * quietly put the superseded number back — on every suburb, for every
+       * quarter this walks.
+       *
+       * So the count is added and NOTHING else is: a row that already exists
+       * is written back with its stored median, provenance and capture stamp
+       * untouched and only `sales_count` changed, and a full record is written
+       * only where no row exists at all — where there is nothing to regress
+       * and this file is the only source there is.
+       */
+      const records = toRecords(counted, VIC_VPSR_SOURCE_LABEL, archivePageUrl(file.captures[0]), VIC_VPSR_LICENCE, loadedAt);
+      const { data: liveRows, error: liveError } = await supabase
+        .from('market_sales_medians')
+        .select('area_token, median_price, sales_count, source, source_url, licence, captured_at, price_measure, loaded_at')
+        .eq('state', 'VIC')
+        .eq('dwelling_type', wantDwelling)
+        .eq('period_span', 'quarter')
+        .eq('period', parsed.latestPeriod);
+      if (liveError) throw new Error(`reading the live Victorian rows for ${parsed.latestPeriod} failed: ${liveError.message}`);
+      const live = new Map(
+        ((liveRows ?? []) as Array<Record<string, unknown>>).map((r) => [String(r.area_token), r]),
+      );
+
+      const fresh = records.filter((r) => !live.has(r.area_token));
+      const preserved = records
+        .filter((r) => live.has(r.area_token))
+        .map((r) => {
+          const held = live.get(r.area_token)!;
+          return {
+            state: r.state, area_kind: r.area_kind, area: r.area, area_token: r.area_token,
+            dwelling_type: r.dwelling_type, period: r.period, period_span: r.period_span,
+            // Everything the live stage owns, handed straight back.
+            median_price: held.median_price, source: held.source, source_url: held.source_url,
+            licence: held.licence, captured_at: held.captured_at,
+            price_measure: held.price_measure, loaded_at: held.loaded_at,
+            // The one thing this backfill is for.
+            sales_count: r.sales_count,
+          };
+        });
+
+      const written = (fresh.length ? await upsertRecords(supabase, fresh) : 0)
+        + (preserved.length ? await upsertRecords(supabase, preserved as never) : 0);
+
+      const detail = {
+        ...base,
+        file: file.original, captured_at: loaded.capturedAt, bytes: loaded.bytes,
+        source: VIC_VPSR_SOURCE_LABEL, licence: VIC_VPSR_LICENCE,
+        parsed_period: parsed.latestPeriod, localities: parsed.localities,
+        counted_rows: counted.length, rows_written: written,
+        rows_new: fresh.length, rows_count_added_without_touching_medians: preserved.length,
+        implausible_cells: parsed.implausible.length,
+        remaining: choice.remaining.filter((c) => c.period !== targeted.period).map((c) => c.period),
+      };
+      await supabase.from('market_sales_sync').insert({ detail });
+      return json({ success: true, ...detail, wrote: true });
     }
 
     if (stage === 'sa') {
@@ -467,7 +860,14 @@ Deno.serve(async (req) => {
       return json({ success: true, ...detail });
     }
 
-    return json({ success: false, error: 'stage must be "qld", "nsw", "abs", "vic", "sa" or "probe"' }, 400);
+    // The list is the branches above, and it is written out because this is
+    // what a caller sees when it names a stage that does not exist. It went
+    // stale the moment `vic_volume` was added and answered a 400 that read as
+    // a rejected argument rather than as a deployment that had not landed yet.
+    return json({
+      success: false,
+      error: 'stage must be "qld", "nsw", "abs", "vic", "vic_volume", "vic_discover", "sa" or "probe"',
+    }, 400);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);
     console.error(`[market-sales-ingest] ${stage} refused/failed:`, message);

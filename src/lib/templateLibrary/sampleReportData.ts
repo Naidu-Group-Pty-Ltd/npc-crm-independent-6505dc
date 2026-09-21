@@ -1291,7 +1291,6 @@ export const SAMPLE_REPORT_DATA: Record<string, unknown> = {
      */
     headline: 'STRONG BUY - Excellent investment opportunity with strong '
       + 'fundamentals across the metrics assessed.',
-    scopeNote: 'Assessed on 4 of 5 dimensions: capital growth, location, rental yield and demand.',
     /*
      * The two BODY slots, which the fixture had never carried at all.
      *

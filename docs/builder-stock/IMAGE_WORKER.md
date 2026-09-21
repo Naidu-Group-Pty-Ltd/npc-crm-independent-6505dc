@@ -1,5 +1,56 @@
 # The Builder Stock image worker — overlay inpainting on Cloudflare Workers AI
 
+> ## ⚠ NOT IN THIS REPOSITORY — measured 20 Sep 2026 against `main` @ `98c068a`
+>
+> **This document describes an intended design, in the present tense, and the
+> code it describes is not here.** It merged on 14 Sep inside
+> [#2653](https://github.com/Naidu-Group-Pty-Ltd/npc-property-dashbord/pull/2653),
+> a *reporting-engine audit*, which is how a document arrived without its
+> subject and nobody noticed.
+>
+> Of the paths it names:
+>
+> | path | on `main` |
+> | --- | --- |
+> | `cloudflare/builder-stock-image-worker/` | **absent** — the whole directory, 19 files |
+> | `_shared/builderStock/inpaintOverlay.ts` | **absent** |
+> | `_shared/builderStock/sanitizeOverlay.pure.ts` | **absent** |
+> | `_shared/builderStock/repairSourceImages.ts` | **absent** |
+> | `_shared/builderStock/settleImageSanitization.ts` | **absent** |
+> | `cloudflare/…/wrangler.jsonc` | **absent** |
+> | `_shared/builderStock/repairRegion.pure.ts` | present |
+> | `_shared/builderStock/sanitizedDerivative.pure.ts` | present |
+> | `_shared/apiUsageBilling.pure.ts` | present |
+> | `_shared/builderStock/sourceImageRole.pure.ts` | present |
+>
+> `inpaintOverlay`, `builder-stock-image-worker` and
+> `BUILDER_STOCK_IMAGE_WORKER` appear in **exactly one file on `main`: this
+> one.** Nothing else in the repository refers to them.
+>
+> **The type surface landed and the implementation did not.**
+> `sanitizedDerivative.pure.ts` is live — imported by `src/lib/builderStock.ts`,
+> `marketplaceEligibility.pure.ts` and `primaryImage.ts` — and its
+> `SanitizationFailureReason` union declares `background_too_detailed`,
+> `too_much_to_rebuild`, `nothing_to_remove` and `unusable_input` under the
+> comment *"The deterministic route's own gates: see `sanitizeOverlay.pure.ts`"*
+> (absent), plus `inpaint_unavailable` for *"the generative route"* (absent).
+> Of those five, only `too_much_to_rebuild` is produced by any other module on
+> `main`. **A live type names gates nothing can reach.**
+>
+> **Where the code is:** draft
+> [#2558](https://github.com/Naidu-Group-Pty-Ltd/npc-property-dashbord/pull/2558)
+> (`claude/builder-stock-production-3piqxb`) carries `cloudflare/` — 19 files —
+> and `inpaintOverlay.ts`, `inpaintOverlay.pure.ts`, `sanitizeOverlay.pure.ts`
+> and `builderStockSanitizeOverlay.test.ts`. That draft is **deliberately still
+> open**: it is the missing half of this document, not stale work.
+>
+> **So:** every "Read this before touching …" and every present-tense claim
+> below ("The route **now** calls …") is true of that branch and false of
+> `main`. Either land #2558 or move this document onto it. It is annotated
+> rather than removed, because the design reasoning outlives the gap — the same
+> rule this repository already applies to a closed hazard: keep the reason,
+> strike the claim.
+
 Read this before touching `_shared/builderStock/inpaintOverlay.ts`, anything in
 `cloudflare/builder-stock-image-worker/`, or the environment variables named
 below.

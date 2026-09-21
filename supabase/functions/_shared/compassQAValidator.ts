@@ -69,9 +69,17 @@ import {
 } from './reports/investment/evidenceClaims.pure.ts';
 import { findDocumentContradictions } from './reports/investment/documentConsistency.pure.ts';
 import { findFiguresWithoutABasis } from './reports/investment/evidenceClaims.pure.ts';
+import { promotePipedPseudoTables } from './reports/investment/pseudoTables.pure.ts';
+import {
+  SECTION_REGISTRY as CANONICAL_SECTIONS,
+  sectionIdForHeading,
+  type ReportTier,
+} from './reports/investment/sectionRegistry.pure.ts';
 import {
   RISK_REGISTER_CELL_MAX_WORDS,
+  RISK_REGISTER_COLUMNS,
   findOverlongRegisterCells,
+  hasRiskRegister,
 } from './reports/investment/riskRegister.pure.ts';
 
 /**
@@ -214,6 +222,20 @@ function splitBySections(markdown: string): { heading: string; body: string }[] 
   if (current) out.push(current);
   return out;
 }
+
+/**
+ * The QA tier vocabulary, mapped onto the section registry's.
+ *
+ * Two vocabularies exist because two registries do — `compassSectionRegistry`
+ * names a Compass `compass-40`, `sectionRegistry.pure.ts` names it `compass`.
+ * Partial on purpose: a tier with no entry runs no tier-ownership rule, which
+ * is the same treatment `compassPostProcessor`'s own `SECTION_REGISTRY` and
+ * `PAGE_BAND` maps give a tier they do not describe.
+ */
+const REGISTRY_TIER: Partial<Record<QATier, ReportTier>> = {
+  'compass-40': 'compass',
+  'financial-analysis': 'financial',
+};
 
 export interface QAContext {
   /**
@@ -367,6 +389,52 @@ export function runQAValidation(
   const sections = splitBySections(markdown);
   for (const sec of sections) {
     const def = findDef(sec.heading, registry);
+
+    /*
+     * …and a section that belongs to a DIFFERENT report.
+     *
+     * The 97 Poole Road Compass of 20 Sep 2026 carried `Suitability Profile`
+     * and `Holding Strategy` as sections of its own on pages 19-20.
+     * `sectionRegistry.pure.ts` declares both `financial:required` and for no
+     * other tier: they are the Financial Analysis Report's, and a Compass
+     * carrying them is `TIER_FRAMEWORK.md`'s defect — each report answering
+     * the other's question.
+     *
+     * The cause was `strategySectionRules`, which named five composed
+     * sections where the Compass composes three, so the model was told these
+     * two existed, was shown neither, and wrote them. That is closed; this is
+     * what says so if it happens again.
+     *
+     * Scoped by the tier map below: a tier with no entry does not run this
+     * rule, because a rule that cannot name the tier cannot name what is
+     * foreign to it.
+     */
+    const registryTier = REGISTRY_TIER[tier];
+    if (registryTier) {
+      const sectionId = sectionIdForHeading(sec.heading);
+      const entry = sectionId
+        ? CANONICAL_SECTIONS.find((e) => e.id === sectionId)
+        : undefined;
+      if (entry && !entry.tiers[registryTier]) {
+        const homes = (Object.keys(entry.tiers) as ReportTier[])
+          .filter((t) => entry.tiers[t]);
+        const belongsTo = homes.length
+          ? 'It belongs to the ' + homes.join(' and ') + ' report'
+            + (homes.length > 1 ? 's' : '') + ', where it is composed from the record.'
+          : 'No report tier declares it.';
+        findings.push({
+          rule: 'section-belongs-to-another-report',
+          severity: 'error',
+          message: `Section "${sec.heading}" is ${entry.canonicalLabel}, which this report does not `
+            + `carry. ${belongsTo} Remove it: a report that answers another report's question is `
+            + 'the defect the tier framework exists to stop.',
+        });
+      }
+    }
+
+    // Above the guard, deliberately: a section with no `def` is invisible to
+    // every per-section rule below, and a section that belongs to another
+    // report is exactly a section this tier's registry does not declare.
     if (!def) continue;
 
     // 7 — per-section word cap
@@ -377,6 +445,52 @@ export function runQAValidation(
         severity: 'warning',
         sectionId: def.id,
         message: `Section "${sec.heading}" has ${w} words, over cap ${def.maxWordCount}.`,
+      });
+    }
+
+    /*
+     * A section that did not produce its declared SHAPE.
+     *
+     * Every rule above this one measures a section's length, its heading
+     * density or what words it contains. None of them asks whether the
+     * section is the thing its registry entry declares — so two of the three
+     * Compass reports regenerated on 20 Sep 2026 shipped a Risk Dashboard
+     * with no summary register in it, under nine other warnings each, and
+     * nothing said so. The third produced one as two lines of prose carrying
+     * pipe characters, which `promotePipedPseudoTables` now repairs on the
+     * read path; this reports the case that cannot be repaired, because a
+     * register nobody wrote cannot be composed without inventing an exposure
+     * and an evidence reading for every row.
+     *
+     * Scoped by `def.id` rather than by heading text, and asked only of the
+     * one section whose declared shape IS a register.
+     */
+    if (def.id === 'compass.riskDashboard' && !hasRiskRegister(sec.body)) {
+      // Two different failures, and the three delivered documents had one
+      // each way: 9 Hollow Street wrote the register as pipe-separated PROSE
+      // (repairable, and repaired for the reader), 1 Crestview Avenue and
+      // 97 Poole Road wrote none at all (not repairable — composing one would
+      // mean inventing an exposure and an evidence reading for every row).
+      // Reporting them as the same finding would send an operator to the
+      // wrong remedy, which is the mistake `screeningConsumer` already paid
+      // for over a simulator reported as no provider.
+      const asMarkup = hasRiskRegister(promotePipedPseudoTables(sec.body).markdown);
+      findings.push(asMarkup ? {
+        rule: 'risk-register-not-marked-up',
+        severity: 'warning',
+        sectionId: def.id,
+        message: `Section "${sec.heading}" wrote its summary register as pipe-separated text `
+          + 'rather than as a markdown table. The reader\'s copy is repaired on the read path by '
+          + '`promotePipedPseudoTables`, so the delivered document carries a table; the stored '
+          + 'record carries prose. The instruction shows the markup — follow it.',
+      } : {
+        rule: 'risk-register-missing',
+        severity: 'error',
+        sectionId: def.id,
+        message: `Section "${sec.heading}" carries no summary register. It must open with a `
+          + `markdown table of ${RISK_REGISTER_COLUMNS.join(' | ')} — one row per risk — before `
+          + 'the detail blocks. Without it a reader has to read the whole section to learn what '
+          + 'the risks are, and no row states the exposure or the evidence held behind it.',
       });
     }
 

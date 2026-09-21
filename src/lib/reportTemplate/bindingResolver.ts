@@ -257,7 +257,8 @@ function referencesOnlyBoundNames(expr: string, bound: string[]): boolean {
 }
 
 /**
- * Whether every unbound name in the expression was guarded by its own author.
+ * The unbound names in the expression, where every one was guarded by its own
+ * author — or `null` when any was not.
  *
  * `explanation && explanation.steps` states, in the expression itself, that
  * `explanation` may not be there. A name that appears only as the left side of
@@ -271,9 +272,29 @@ function referencesOnlyBoundNames(expr: string, bound: string[]): boolean {
  * to nothing is caught by the catalogue specs, which resolve every bound path
  * against a production row.
  *
- * This changes reporting only. The expression is rejected either way.
+ * **This used to return a boolean and the caller rejected the expression
+ * either way**, under a comment saying the rejection "changes reporting only".
+ * It changed more than that. A rejection is `false`, so a guarded namespace
+ * that was absent made BOTH polarities false — and the second polarity is how
+ * every optional section in this catalogue renders its own absence:
+ *
+ *     { ...risks(…),   conditional: 'risks && risks[0] && risks[0].risk' }
+ *     { ...callout(…), conditional: '!(risks && risks[0] && risks[0].risk)' }
+ *
+ * The callout exists so the page is not blank, its own comment says so, and it
+ * could never draw. Measured 20 Sep 2026 on three delivered Compass reports:
+ * page 5 printed "Risk register · Manageable with verification, not without
+ * it" over nothing, then the recommendation — on all three. Three masters
+ * carry a fallback of this shape and all three were dead.
+ *
+ * So the names come back instead, and {@link evalConditional} BINDS them as
+ * `undefined` parameters. That is what the author's own `name &&` asks for,
+ * and it keeps the property this check exists for: an unbound name must never
+ * resolve against the global scope, and a parameter bound to `undefined`
+ * cannot. An unguarded unbound name is still rejected, so a bare typo is
+ * caught exactly as before.
  */
-function unboundNamesAreAllGuarded(expr: string, bound: string[]): boolean {
+function guardedUnboundNames(expr: string, bound: string[]): string[] | null {
   const withoutStrings = expr.replace(/'[^']*'|"[^"]*"/g, ' ');
   const allowed = new Set([...bound, 'tokens', '$']);
   const unbound = new Set<string>();
@@ -281,12 +302,13 @@ function unboundNamesAreAllGuarded(expr: string, bound: string[]): boolean {
     const name = match[0];
     if (!LITERAL_NAMES.has(name) && !allowed.has(name)) unbound.add(name);
   }
-  if (!unbound.size) return false;
-  return [...unbound].every((name) => {
+  if (!unbound.size) return null;
+  const guarded = [...unbound].every((name) => {
     // `name &&` — the bare name used as a presence test, not dereferenced.
     const guard = new RegExp(`(?<![.\\w$])${name}\\s*&&`);
     return guard.test(withoutStrings);
   });
+  return guarded ? [...unbound] : null;
 }
 
 function evalExpression(expr: string, ctx: ResolveContext): any {
@@ -601,27 +623,49 @@ export function evalConditional(expr: string | undefined, ctx: ResolveContext): 
     // that every conditional overlay silently failed to render, whatever the
     // data said. Parameters give the same lexical lookup and keep strict mode.
     const names = dataParameterNames(ctx);
-    if (!referencesOnlyBoundNames(expr, names)) {
-      // The rejection is unconditional and stays that way — an unbound name
-      // resolves against the global scope, which is what the allow-list above
-      // exists to stop. Only how loudly it is reported changes.
-      //
-      // `explanation && explanation.steps` is an author GUARDING an optional
-      // namespace, and on the Borrowing Capacity masters that guard is doing
-      // its job: `explanation` and `audit_trail` are columns written only by
-      // calculator runs since the keep-update, so 127 of 128 stored assessments
-      // do not have them and those pages are meant to stay dark. Reporting the
-      // designed path as a warning meant every render of every one of those
-      // masters logged three of these — which is the noise a genuine typo would
-      // hide in, and the typo is the case this check exists to catch.
-      if (unboundNamesAreAllGuarded(expr, names)) return false;
+    /*
+     * A guarded optional namespace is BOUND as `undefined` rather than
+     * failing the expression.
+     *
+     * `explanation && explanation.steps` is an author GUARDING an optional
+     * namespace, and on the Borrowing Capacity masters that guard is doing
+     * its job: `explanation` and `audit_trail` are columns written only by
+     * calculator runs since the keep-update, so 127 of 128 stored assessments
+     * do not have them and those pages are meant to stay dark.
+     *
+     * This used to `return false` for them, under a comment saying the
+     * rejection changed reporting only. It did not: a rejection is `false`,
+     * so an absent namespace made the author's POSITIVE and NEGATED
+     * conditionals both false, and the negated one is how a page renders its
+     * own absence. Three masters pair them that way and all three fallbacks
+     * were dead — measured on three delivered Compass reports, page 5 drew
+     * "Risk register" over nothing on every one.
+     *
+     * Binding to `undefined` gives the guard the meaning it is written with
+     * and keeps the allow-list's property: a parameter cannot reach the
+     * global scope, which is the whole reason unbound names are refused. An
+     * UNGUARDED unbound name is still rejected and still warns, so a typo is
+     * caught exactly as before.
+     */
+    const guarded = referencesOnlyBoundNames(expr, names)
+      ? []
+      : guardedUnboundNames(expr, names);
+    if (guarded === null) {
       console.warn('[conditional] Rejected expression referencing unbound name:', expr);
       return false;
     }
-    // eslint-disable-next-line no-new-func
-    const fn = new Function(...names, 'tokens', `"use strict"; return (${expr});`);
+    // A Function constructor, deliberately: the expression is author-written
+    // template source, and `SAFE_EXPR` plus the name allow-list above are what
+    // keep it inside its data. `no-new-func` does not fire on a spread
+    // argument list, so there is no directive to suppress here.
+    const params = [...names, ...guarded];
+    const fn = new Function(...params, 'tokens', `"use strict"; return (${expr});`);
     const data = ctx.data as Record<string, unknown>;
-    return Boolean(fn(...names.map((key) => data[key]), ctx.tokens));
+    return Boolean(fn(
+      ...names.map((key) => data[key]),
+      ...guarded.map(() => undefined),
+      ctx.tokens,
+    ));
   } catch (e) {
     console.warn('[conditional] Eval failed:', expr, e);
     return false;

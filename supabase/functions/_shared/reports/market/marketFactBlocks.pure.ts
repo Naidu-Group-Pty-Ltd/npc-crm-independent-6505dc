@@ -104,8 +104,44 @@ const MEASURE: Readonly<Record<EvidenceKey, { label: string; unit: 'money' | 'pe
 /** Rule 4 — a benchmark is drawn apart, never in the subject's block. */
 const IS_BENCHMARK = (key: EvidenceKey): boolean => key.startsWith('benchmark');
 
-/** The publisher as a reader should see it, never the enum. */
-const PROVIDER_LABEL: Readonly<Partial<Record<EvidenceProvider, string>>> = {
+/**
+ * The publisher as a reader should see it, never the enum.
+ *
+ * ## Why this is a TOTAL record, and the fallback names no key
+ *
+ * It was `Partial`, with `PROVIDER_LABEL[p] ?? p` under it — so a provider
+ * with no entry printed its own identifier, which is the one thing the line
+ * above forbids. Page 36 of the Investment Compass delivered for 9 Hollow
+ * Street on 21 Sep 2026 told the client, in the column headed *Where it is
+ * published*:
+ *
+ * ```
+ *   The market's median sale price and its growth | vic_vpsr_suburb | Quarterly…
+ *   The one-year growth rate                      | vic_vpsr_suburb | Quarterly…
+ * ```
+ *
+ * Two rows of a five-column table naming a database series key, directly
+ * beside a row that reads *"Vicmap Planning — plan_zone
+ * (opendata.maps.vic.gov.au WFS)"* and gets it right. `vic_vpsr_suburb` and
+ * `sa_lsg_suburb` were added to `EvidenceProvider` with the archived suburb
+ * series (me9.sales.2, 16 Sep 2026) and never added here — and because they
+ * are the readings that answer for Victoria and South Australia, **every VIC
+ * and SA report has printed a key where the publisher belongs.**
+ *
+ * `Readonly<Record<…>>` rather than `Partial<Record<…>>` is the structural
+ * half: the compiler now refuses a new provider that has no name for a reader,
+ * which is what a lookup with a silent fallback could never do. The names
+ * themselves are the short reader-facing forms, in the style of their
+ * siblings; the full citation each publisher gives itself lives beside its
+ * loader, as `VIC_VPSR_SOURCE_LABEL` and `SA_LSG_SOURCE_LABEL`.
+ *
+ * The runtime fallback stays, because a provider read back from the database
+ * is a string and not the union, and it **names the absence rather than the
+ * key** — the rule `stripPlaceholderRows` and `placesAvailability` already
+ * answer to. A key tells a reader nothing and looks like a mistake, which is
+ * worse than an honest blank.
+ */
+const PROVIDER_LABEL: Readonly<Record<EvidenceProvider, string>> = {
   domain: 'Domain',
   cotality: 'Cotality',
   proptrack: 'PropTrack',
@@ -119,9 +155,19 @@ const PROVIDER_LABEL: Readonly<Partial<Record<EvidenceProvider, string>>> = {
   sa_land_services: 'Land Services SA',
   qld_qgso_rlda: 'Queensland Government Statistician — Residential Land and Dwelling Activity',
   nsw_dcj_rent_sales: 'NSW Department of Communities and Justice — Rent and Sales Report',
+  vic_vpsr_suburb: 'Victorian Valuer-General — Property Sales Report, by suburb',
+  sa_lsg_suburb: 'Land Services SA — median house sales by suburb',
 };
 
-const providerName = (p: EvidenceProvider): string => PROVIDER_LABEL[p] ?? p;
+/** Anything that reads as an identifier rather than as a name. */
+const LOOKS_LIKE_A_KEY = /^[a-z0-9]+(?:_[a-z0-9]+)+$/;
+
+export function providerName(p: EvidenceProvider): string {
+  const named = PROVIDER_LABEL[p];
+  if (named) return named;
+  const raw = String(p ?? '').trim();
+  return raw && !LOOKS_LIKE_A_KEY.test(raw) ? raw : 'Publisher not recorded';
+}
 
 function writeValue(value: unknown, unit: (typeof MEASURE)[EvidenceKey]['unit']): string | null {
   if (unit === 'series') {

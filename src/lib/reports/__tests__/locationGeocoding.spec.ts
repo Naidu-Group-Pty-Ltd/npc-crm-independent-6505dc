@@ -260,9 +260,20 @@ describe('the service asks the right question and refuses to guess', () => {
     expect(table).not.toMatch(/\|\|\s*(cbdLocations|STATE_CAPITALS)\[/);
     expect(table).toContain('return null');
     // And the service asks that module rather than keeping a second copy.
+    // The property is that the state reaches the shared table and the service
+    // holds no capital of its own — NOT the spelling of the call. The service
+    // now asks `resolveCommuteDestination`, which prefers the property's own
+    // urban centre and falls back to `resolveCbdDestination` for the capital;
+    // pinning the old literal here would have made that indirection a failure.
     const s = src();
-    expect(s).toContain('resolveCbdDestination(input.state)');
     expect(s).not.toContain("cbdLocations['NSW']");
+    expect(s).not.toMatch(/lat:\s*-33\.8688/);
+    expect(s).toMatch(/resolveCommuteDestination\(\{[\s\S]{0,200}state:\s*input\.state/);
+    const centre = readFileSync(
+      resolve(REPO, 'supabase/functions/_shared/reports/location/urbanCentre.pure.ts'),
+      'utf8',
+    );
+    expect(centre).toContain('resolveCbdDestination(args.state)');
   });
 
   it('returns an unresolved state rather than falling through to sample data', () => {

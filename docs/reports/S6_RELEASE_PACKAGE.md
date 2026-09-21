@@ -488,10 +488,33 @@ Written before the merge, not after it.
 
 | | |
 | --- | --- |
-| **Release candidate** | `5688c488b79f51813a7455e0d30ca8c261c9d853` |
-| **Base at merge** | `9889ece087f4aa109428b48bf43eeabc7f4022bb` on `main` |
+| **Release candidate** | `5688c488b79f51813a7455e0d30ca8c261c9d853`, merged as `6a88c3424` |
+| **Branch point** | `9889ece087f4aa109428b48bf43eeabc7f4022bb` — the merge-BASE, i.e. what the branch was cut from |
+| **`main` at the moment of merge** | `c86c2a4d5` (PR #2698), the merge commit's **first parent** |
+| **Merge commit** | `26221e16c994ad005174676ead6b9e7ce16fd75d` |
 | **Required checks on that exact head** | CI run **6953**, six of six `success`: verify, security, supply-chain, render-container, pdf-import-regression, pdf-import-release-gate. Read on the head being merged, not on an earlier one. |
-| **Rollback** | `git revert -m 1 <merge commit>` on `main`, then re-publish the browser bundle built from `9889ece087f4aa109428b48bf43eeabc7f4022bb`. No migration to unwind. |
+| **Rollback** | `git revert -m 1 26221e16c` on `main`, then re-publish the browser bundle built from **`c86c2a4d5`**. No migration to unwind. |
+
+**The rollback record above is a correction, and the correction matters.**
+
+It previously named `9889ece08` in both the base row and the bundle
+instruction. `9889ece08` is the merge-BASE — the commit this branch was cut
+from — and `main` had moved on by four pull requests (#2695–#2698) before the
+merge landed. The merge commit's first parent is `c86c2a4d5`.
+
+`git revert -m 1` was never affected: `-m 1` reverts against parent 1, which
+IS `c86c2a4d5`, whatever the record says. What was wrong is the **browser
+bundle** half. Rebuilding the served bundle from `9889ece08` would have
+reverted this release *and* silently discarded four unrelated pull requests
+with it — a rollback that removes work nobody asked to remove is worse than no
+rollback procedure at all.
+
+**The previously deployed browser version.** The served bundle is published by
+Lovable, which is a separate deployment from the Supabase functions and is not
+driven by this repository's CI. Its last publish before this release is
+therefore a fact about the Lovable project rather than about `main`, and it is
+recorded in §10.7 below rather than inferred from a commit — inferring it from
+git is exactly the mistake this correction is about.
 | **Local gates** | full suite 1,285 files / 23,873 tests at the §3 commit; 8,297 report, design and component tests at the head; Deno type-check 413 entry points, 334 errors, baseline 334. |
 
 **Fleet-wide deployment.** `supabase/functions/_shared/**` is shared server
@@ -518,3 +541,43 @@ flag. What that means in practice:
 **Customer delivery and notifications stay out of the validation run**: nothing
 in §8's plan publishes to a portal, emails a client or writes
 `client_property_id` / `generated_by`.
+
+### 10.7 The served browser build (§10)
+
+Measured 19 September 2026 through the authorised Lovable API and by fetching
+the published origins.
+
+| | |
+| --- | --- |
+| **Lovable project** | `7976d60b-c277-4851-889b-c170285f4be2`, workspace `JqcsuFgT71nlgYSNsEMB` |
+| **`is_published`** | `true`, `publish_audience: public` |
+| **`latest_commit_sha`** | `6d2a9c9870eb55d29a8d5e63fe1058ab7493186e` — **current `main`**, which contains the merged release `26221e16c` |
+| **`last_edited_at`** | 2026-09-19T01:00:24Z |
+| **Served origin** | `https://npc-property-dashbord.lovable.app/` **302 →** `https://command-centre.npcservices.com.au/`, which answers **403** to this container's egress |
+| **Lovable origins** | `…lovableproject.com/` and `id-preview--….lovable.app/` both answer **401 Unauthorized** — the preview requires a Lovable browser session |
+
+**What this does and does not establish.** The project's working tree is at
+`6d2a9c987`, so the browser code Lovable would build from is current. It does
+**not** establish which commit the bundle *currently being served* was built
+from: `latest_commit_sha` is the project's commit, and a project can be edited
+without being published. That is precisely the gap §10 names — *"server
+deployment alone does not establish that the browser-based report compiler is
+current"* — and it cannot be closed from here, because every published origin
+refuses this egress (403 at the WAF, 401 at Lovable's own).
+
+The measurement this repository normally uses — fetch the bundle and grep for a
+marker only the new code carries — is therefore unavailable, and no substitute
+for it is sound. `latest_commit_sha` is a fact about the project, not about the
+bytes a browser receives, and reporting it as the latter would be the same
+class of error as reading a 200 from a preflight as evidence about the gateway.
+
+**One human action, named once.** Open
+`https://command-centre.npcservices.com.au/` in a browser signed in to the
+tenant, or the Lovable editor for project `7976d60b-…`, and confirm the last
+**publish** (not the last edit). If the published build predates
+`26221e16c`, the browser half of the merged release is not live and a publish
+is owed; the server half already is (functions deploy run **633**, `success`,
+verified by effect on `fork-investment-report` v378 and
+`render-investment-report-pdf` v369).
+
+Everything else in this follow-up is unblocked by that and has proceeded.

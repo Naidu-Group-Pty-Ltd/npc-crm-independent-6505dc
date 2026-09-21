@@ -35,7 +35,15 @@ describe('location-intelligence-service walks the amenity order', () => {
   });
 
   it('measures the commute through the chain, with the Distance Matrix untouched', () => {
-    expect(LIS).toContain('measureCommuteThroughChain(coordinates, cbdCoordinates, apiKey, db)');
+    // The second argument is the RESOLVED destination, not a bare capital
+    // coordinate. `resolveCommuteDestination` runs first and the chain is
+    // handed what it chose, which is what stops Golden Square being measured
+    // to Melbourne; pinning the old `cbdCoordinates` spelling would assert
+    // the defect. See `urbanCentre.pure.ts`.
+    expect(LIS).toContain('measureCommuteThroughChain(coordinates, destination, apiKey, db)');
+    expect(LIS).toMatch(/const destination: CommuteDestination \| null = resolveCommuteDestination\(/);
+    expect(LIS.indexOf('resolveCommuteDestination('))
+      .toBeLessThan(LIS.indexOf('measureCommuteThroughChain(coordinates, destination'));
     expect(LIS).toContain('commuteProviderOrder(Deno.env.get)');
     expect(LIS).toContain("consumeOsmDailyAllowance(db, 'routing')");
     expect(LIS).toContain('mode=transit'); // the Google branch is still the Google branch
