@@ -22,29 +22,29 @@ Sections: 40. Formats: Compass, Financial Analysis, Strategic / Due Diligence, E
 | Appendix, Source Notes & Disclaimer | recorded | every format (spine) | — | authored · generator.compass; composed · supabase/functions/fork-investment-report/index.ts#renderVariantMarkdown; authored · condense.briefing; authored · condense.snapshot | spine | spine | spine | spine | spine |
 | Base Assumptions | recorded | Financial Analysis | Compass; Executive Briefing | routed · split.financial#17 | summary (in provenance) | required | — | summary (in provenance) | — |
 | Why This Location Matters | measured | Strategic / Due Diligence | Compass; Executive Briefing | authored · generator.compass; routed · split.dueDiligence#4; authored · condense.briefing | required | — | required | required | — |
-| Infrastructure and Growth Context | measured | Strategic / Due Diligence | Compass; Executive Briefing | routed · split.dueDiligence#14 | summary (in locationCase) | — | required | summary (in locationCase) | — |
-| Suburb Character, Lifestyle & Occupier Appeal | measured | Strategic / Due Diligence | Compass; Executive Briefing | routed · split.dueDiligence#5 | summary (in propertyFit) | — | required | summary (in propertyFit) | — |
-| Market Positioning | measured | Financial Analysis | Compass; Strategic / Due Diligence; Executive Briefing | authored · generator.compass; routed · split.financial#3; authored · condense.briefing | required | required | summary (in supplyPipeline) | required | — |
-| Competitive Landscape and Supply Pipeline | measured | Strategic / Due Diligence | Compass; Executive Briefing | routed · split.dueDiligence#16 | summary (in marketPosition) | — | required | summary (in marketPosition) | — |
+| Infrastructure and Growth Context | measured | not carried in full by any format | Compass; Strategic / Due Diligence; Executive Briefing | nothing yet | summary (in locationCase) | — | summary (in locationCase) | summary (in locationCase) | — |
+| Suburb Character, Lifestyle & Occupier Appeal | measured | not carried in full by any format | Compass; Strategic / Due Diligence; Executive Briefing | nothing yet | summary (in propertyFit) | — | summary (in propertyFit) | summary (in propertyFit) | — |
+| Market Positioning | measured | Strategic / Due Diligence | Compass; Financial Analysis; Executive Briefing | authored · generator.compass; routed · split.financial#3; routed · split.dueDiligence#16; authored · condense.briefing | required | required | required | required | — |
+| Competitive Landscape and Supply Pipeline | measured | not carried in full by any format | Compass; Strategic / Due Diligence; Executive Briefing | nothing yet | summary (in marketPosition) | — | summary (in marketPosition) | summary (in marketPosition) | — |
 | Demand Drivers | measured | Strategic / Due Diligence | Compass; Executive Briefing | authored · generator.compass; routed · split.dueDiligence#9 | required | — | required | summary (in locationCase) | — |
-| Socioeconomic Profile & SEIFA Interpretation | measured | Strategic / Due Diligence | Compass; Executive Briefing | routed · split.dueDiligence#8 | summary (in population) | — | required | summary (in locationCase) | — |
-| Employment, Income & Affordability Profile | measured | Strategic / Due Diligence | Compass; Executive Briefing | routed · split.dueDiligence#10 | summary (in population) | — | required | summary (in locationCase) | — |
-| Tenant Demand and Occupier Personas | measured | Strategic / Due Diligence | Compass; Financial Analysis; Executive Briefing | routed · split.financial#7; routed · split.dueDiligence#11 | summary (in population) | required | required | summary (in locationCase) | — |
+| Socioeconomic Profile & SEIFA Interpretation | measured | not carried in full by any format | Compass; Strategic / Due Diligence; Executive Briefing | nothing yet | summary (in population) | — | summary (in population) | summary (in locationCase) | — |
+| Employment, Income & Affordability Profile | measured | not carried in full by any format | Compass; Strategic / Due Diligence; Executive Briefing | nothing yet | summary (in population) | — | summary (in population) | summary (in locationCase) | — |
+| Tenant Demand and Occupier Personas | measured | Financial Analysis | Compass; Strategic / Due Diligence; Executive Briefing | routed · split.financial#7 | summary (in population) | required | summary (in population) | summary (in locationCase) | — |
 | Amenity & Access | measured | Strategic / Due Diligence | Compass; Executive Briefing | authored · generator.compass; routed · split.dueDiligence#6; authored · condense.briefing | required | — | required | required | — |
 | Schools & Education | measured | not carried in full by any format | Compass; Strategic / Due Diligence; Executive Briefing | nothing yet | summary (in amenityAccess) | — | summary (in amenityAccess) | summary (in amenityAccess) | — |
 | Transport, Commute & Daily Movement | measured | Strategic / Due Diligence | Compass; Executive Briefing | authored · generator.compass; routed · split.dueDiligence#7 | required | — | required | summary (in amenityAccess) | — |
-| Property Fit Within the Suburb | authored | Strategic / Due Diligence | Compass; Executive Briefing | authored · generator.compass; routed · split.dueDiligence#12; authored · condense.briefing | required | — | required | required | — |
-| Dwelling Layout & Functional Fit | recorded | Strategic / Due Diligence | Compass; Executive Briefing | routed · split.dueDiligence#3 | summary (in propertyFit) | — | required | summary (in propertyFit) | — |
+| Property Fit Within the Suburb | authored | Strategic / Due Diligence | Compass; Executive Briefing | authored · generator.compass; routed · split.dueDiligence#3; authored · condense.briefing | required | — | required | required | — |
+| Dwelling Layout & Functional Fit | recorded | not carried in full by any format | Compass; Strategic / Due Diligence; Executive Briefing | nothing yet | summary (in propertyFit) | — | summary (in propertyFit) | summary (in propertyFit) | — |
 | Planning, Zoning and Title Due Diligence | measured | Strategic / Due Diligence | Compass; Executive Briefing | authored · generator.compass | required | — | required | summary (in riskDashboard) | — |
-| Risk Dashboard | measured | Strategic / Due Diligence | Compass; Financial Analysis; Executive Briefing | authored · generator.compass; routed · split.financial#11; routed · split.dueDiligence#17; authored · condense.briefing | required | required | required | required | — |
+| Risk Dashboard | measured | Strategic / Due Diligence | Compass; Financial Analysis; Executive Briefing | authored · generator.compass; routed · split.financial#11; routed · split.dueDiligence#18; authored · condense.briefing | required | required | required | required | — |
 | Climate, Environmental, Insurance, Crime and Safety Risk | measured | Strategic / Due Diligence | Compass; Executive Briefing | authored · generator.compass; routed · split.dueDiligence#15 | required | — | required | summary (in riskDashboard) | — |
-| Due Diligence Checklist | recorded | Compass | — | authored · generator.compass | required | — | optional | — | — |
+| Due Diligence Checklist | recorded | Strategic / Due Diligence | Compass | authored · generator.compass; routed · split.dueDiligence#19 | required | — | required | — | — |
 | Purchase Costs & Annual Holding Cost Breakdown | computed | Financial Analysis | — | composed · financialChapters.pure.ts#4 | — | required | — | — | — |
 | Rental Assessment, Gross Yield & Net Yield | computed | Financial Analysis | — | composed · financialChapters.pure.ts#5 | — | required | — | — | — |
 | Loan Structure, Repayments & Cashflow Impact | computed | Financial Analysis | — | composed · financialChapters.pure.ts#6 | — | required | — | — | — |
 | Sensitivity & Scenario Testing | computed | Financial Analysis | — | composed · financialChapters.pure.ts#8 | — | required | — | — | — |
 | 10-Year Cashflow, Equity & Growth Projection | computed | Financial Analysis | — | composed · financialChapters.pure.ts#9 | — | required | — | — | — |
-| Resale Liquidity & Exit Outlook | computed | Financial Analysis | Compass | composed · strategyPositions.pure.ts#composeExitOutlook | required | required | — | — | — |
+| Resale Liquidity & Exit Outlook | computed | Strategic / Due Diligence | Compass; Financial Analysis | composed · strategyPositions.pure.ts#composeExitOutlook | required | required | required | — | — |
 | Investment Score Breakdown | computed | Financial Analysis | Executive Briefing; Snapshot | projection · recommendation.gradedDetailLine; composed · financialChapters.pure.ts#12; composed · scoreSections.pure.ts#composeScoreBreakdownSection; composed · scoreSections.pure.ts#composeScoreDimensionsSection | optional | required | — | required | required |
 | SWOT Analysis | computed | Financial Analysis | Compass; Executive Briefing | composed · strategyPositions.pure.ts#composeSwot; composed · financialChapters.pure.ts#14; composed · scoreSections.pure.ts#composeSwotSection | required | required | — | required | — |
 | Investor Suitability Profile | computed | Financial Analysis | — | composed · strategyPositions.pure.ts#composeSuitability | — | required | — | — | — |
@@ -52,7 +52,7 @@ Sections: 40. Formats: Compass, Financial Analysis, Strategic / Due Diligence, E
 | Monitoring & Review Plan | computed | Strategic / Due Diligence | Compass | composed · strategyPositions.pure.ts#composeMonitoringPlan | required | — | required | — | — |
 | Top 3 Opportunities | authored | Executive Briefing | Snapshot | authored · condense.briefing; authored · condense.snapshot | — | — | — | required | required |
 | Top 3 Risks | authored | Executive Briefing | Snapshot | authored · condense.briefing; authored · condense.snapshot | — | — | — | required | required |
-| Final Recommendation | authored | Financial Analysis | Compass; Executive Briefing; Snapshot | authored · generator.compass; routed · split.financial#16; authored · condense.briefing; authored · condense.snapshot | required | required | optional | required | required |
+| Final Recommendation | authored | Strategic / Due Diligence | Compass; Financial Analysis; Executive Briefing; Snapshot | authored · generator.compass; routed · split.financial#16; routed · split.dueDiligence#21; authored · condense.briefing; authored · condense.snapshot | required | required | required | required | required |
 | Key Market Stats | measured | Snapshot | — | authored · condense.snapshot | — | — | — | — | required |
 | Financial Snapshot | computed | Snapshot | — | composed · financialChapters.pure.ts#composeFinancialSnapshotSection | — | — | — | — | required |
 
@@ -61,4 +61,10 @@ Sections: 40. Formats: Compass, Financial Analysis, Strategic / Due Diligence, E
 A declared topic nothing produces. Each is an honest gap rather than a bug,
 and `PRODUCER_GAPS` in the registry records why; a NEW one fails CI.
 
+- **Infrastructure and Growth Context** (`infrastructure`)
+- **Suburb Character, Lifestyle & Occupier Appeal** (`suburbCharacter`)
+- **Competitive Landscape and Supply Pipeline** (`supplyPipeline`)
+- **Socioeconomic Profile & SEIFA Interpretation** (`socioeconomic`)
+- **Employment, Income & Affordability Profile** (`employment`)
 - **Schools & Education** (`education`)
+- **Dwelling Layout & Functional Fit** (`dwelling`)
