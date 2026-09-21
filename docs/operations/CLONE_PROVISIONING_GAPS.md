@@ -211,7 +211,15 @@ why the table is empty on every deployment rather than only on the clones.
 `Apply a migration` workflow (`.github/workflows/apply-migration.yml`), which
 applies ONE named file to that repository's own project. It reads
 `vars.SUPABASE_PROJECT_REF` and `secrets.SUPABASE_DB_URL`, so it targets the
-clone and nothing else. Dispatch it once per file, **in version order**:
+clone and nothing else. Where there is no `SUPABASE_DB_URL` it takes the
+Management API route instead, on `secrets.SUPABASE_ACCESS_TOKEN` plus the same
+project ref — **which is the case on the prime**, as
+[`STAGE_C_RECORD.md`](../reports/STAGE_C_RECORD.md) records. `Migration drift`
+(`.github/workflows/migration-drift.yml`) chooses between the same two routes,
+because it reports on what that workflow applied: requiring the pooler string
+alone made it fail its credential check on the prime, four steps before it read
+anything, on the very day it was written. Dispatch it once per file, **in
+version order**:
 
 ```
 20261124000000 … 20261204010000    (17 files, `ls supabase/migrations/`)
@@ -299,3 +307,48 @@ failed for weeks: **a feature absent on every deployment is unbuilt, not
 unprovisioned.** Where a comment names another system as the owner of an act,
 read that system before believing it; two of the three owners named here
 disclaim the act in their own source.
+
+## Which deployment a clone receives from
+
+Until 20 Sep 2026 nothing recorded the clone tree. Mission Control's
+Yggdrasil view built it at render time from `tags[0]` plus `created_at` —
+clones sharing a first tag became a group and the oldest became its root — and
+`tags` is simultaneously the cascade's *targeting* field, so reshaping the
+picture silently changed which clones a tagged cascade hit. The inference also
+could not express depth: a group's root took the whole rest of the group as
+its children, so the shape it could draw was exactly two levels.
+
+`clones.parent_clone_id` is the record now. `NULL` means "receives from
+prime", which is what every clone said before the column existed and what a
+clone nobody has classified goes on saying — nothing is inferred.
+
+    npc-property-dashbord                     (prime)
+    ├── npc-client-dashboard
+    │   ├── preflight-property-group
+    │   └── npc-test-76b3b3
+    └── npc-crm-independent-6505dc
+
+Acting on it is a second, separate switch (`prime_config
+.cascade_follows_lineage`), thrown 20 Sep 2026. Recording the lineage only
+changed a drawing; acting on it changes where the engine reads bytes, and a
+whole-tree cascade from the wrong source is the most destructive thing this
+machinery does.
+
+Three things follow that are worth knowing when reading a clone's own history.
+
+**A cascade commit names the repository the bytes came from.** On a clone with
+a recorded parent the subject reads `npc-client-dashboard@<sha>` rather than
+`prime@<sha>`. That is not a mislabelled prime commit — it is the point. A
+parent may carry clone-authored divergence its children are meant to inherit,
+and copying prime instead would silently revert it on every cascade.
+
+**`last_synced_sha` still records the PRIME commit**, whatever repository the
+bytes physically came from. That is what makes "has this clone caught up with
+prime@X" one equality at every level of the tree rather than a walk.
+
+**A child is held until its parent carries the commit being delivered**, and a
+held event is `pending` with *"Waiting on lineage until …"*, re-checked every
+five minutes. It is reported as a deferral so it cannot spend the attempts
+that would fail it. Two clones that appear to stop following prime while their
+parent's cascade pull request is open are the designed reading of that state,
+not a stall — merging the parent's pull request releases them.

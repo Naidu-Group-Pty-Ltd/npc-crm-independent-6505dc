@@ -980,7 +980,11 @@ export const SECTION_REGISTRY: readonly SectionDefinition[] = [
       'Rental Income Projections', 'Cumulative Cashflow Projections',
       'Capital Appreciation Potential', 'Leveraged Equity Accumulation',
       'Leveraged Equity Accumulation Through Debt Reduction',
-      'Projection Assumptions',
+      // `Projection Assumptions` was here AND on `assumptions`, whose entry
+      // comes first — so it has always resolved there and this list silently
+      // lost it. A heading belongs to exactly one section; removing the
+      // duplicate changes no resolution (asserted over all 251 aliases) and
+      // removes the trap.
     ],
     purpose: 'Value, rent, cashflow and equity year by year under the recorded scenarios.',
     tiers: {
@@ -994,6 +998,12 @@ export const SECTION_REGISTRY: readonly SectionDefinition[] = [
     aliases: [
       'Resale Liquidity & Exit Outlook', 'Resale Liquidity & Exit Strategy', 'Equity & Exit Scenarios',
       'Resale Liquidity',
+      // Written by the model on the 97 Poole Road Compass of 20 Sep 2026 as a
+      // section of its own, fourteen pages before the composed one. An alias
+      // is how this registry says "that is this section under another name",
+      // and without it the heading resolved to NOTHING — so the fork dropped
+      // it from both children and nothing could see it was a second copy.
+      'Exit Outlook', 'Exit Strategy',
     ],
     purpose:
       'Two questions answered from two kinds of evidence: how deep the market an exit would be tested against is '
@@ -1065,7 +1075,14 @@ export const SECTION_REGISTRY: readonly SectionDefinition[] = [
     id: 'suitability',
     canonicalLabel: 'Investor Suitability Profile',
     provenance: 'computed',
-    aliases: ['Investor Suitability Profile'],
+    aliases: [
+      'Investor Suitability Profile',
+      // The 97 Poole Road Compass wrote it under the short name. It resolves
+      // now so the Financial report's fork can route it and so QA can say
+      // which document it belongs to; it stays OUT of the Compass, which is
+      // where it was written.
+      'Suitability Profile',
+    ],
     purpose:
       'What holding this asset REQUIRES — capital at settlement, weekly contribution, room for the rate to move, '
       + 'vacancy tolerance, horizon. It describes the asset and never a person: no report here is given anybody\'s '
@@ -1091,7 +1108,11 @@ export const SECTION_REGISTRY: readonly SectionDefinition[] = [
     id: 'monitoring',
     canonicalLabel: 'Monitoring & Review Plan',
     provenance: 'computed',
-    aliases: ['Monitoring & Review Plan', 'Review & Monitoring Plan', 'What to Re-check and When'],
+    aliases: [
+      'Monitoring & Review Plan', 'Review & Monitoring Plan', 'What to Re-check and When',
+      // Same document, same cause. See `exitStrategy`.
+      'Monitoring Plan',
+    ],
     purpose:
       'Every register this report was built from, how often its publisher republishes, what it said on the day, '
       + 'and what a different answer would mean. It belongs to the two EVIDENCE documents; the Financial report '

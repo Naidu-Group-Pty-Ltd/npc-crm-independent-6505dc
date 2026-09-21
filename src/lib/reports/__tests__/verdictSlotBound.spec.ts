@@ -57,6 +57,8 @@
  * somebody appends the next sentence, which is precisely what happened.
  */
 
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
   projectInvestmentReport,
@@ -203,15 +205,55 @@ describe('the projection publishes them apart', () => {
     },
   } as never).recommendation as Record<string, unknown>;
 
-  it('binds the claim to headline and the coverage to scopeNote', () => {
+  it('binds the claim alone to headline, and the coverage nowhere', () => {
+    /*
+     * RENEGOTIATED 20 September 2026. The claim half is unchanged and is the
+     * whole point of the split: the coverage sentence must not reach the
+     * heading, which is what struck `$1,975,000` and `$850` through on
+     * 42 Patya Circuit.
+     *
+     * The other half asserted the coverage was published as `scopeNote` "so a
+     * master may set it at body size". No master ever did — across
+     * `scripts/template-library/` the only `{{recommendation.*}}` paths any
+     * master binds are action, grade, gradedDetailLine, gradedLine, headline
+     * and rationale — and `gradedLine` already names the same dimensions one
+     * line below, drawn on pages 3 and 5 of every delivered Compass. A second
+     * copy for a master to draw would put the coverage on the page twice, so
+     * the binding is gone and the split still does its job.
+     */
     const r = project(qualified);
     expect(r.headline).toBe(
       'HOLD - Average investment with mixed indicators, monitor market conditions.',
     );
     expect(String(r.headline).length).toBeLessThanOrEqual(LONGEST_UNQUALIFIED);
-    expect(r.scopeNote).toBe(
-      'Assessed on 4 of 5 dimensions: capital growth, location, rental yield and demand.',
-    );
+    expect(r.scopeNote, 'a binding no master draws is not published').toBeUndefined();
+    // The coverage the split removed is still on the page, one line below:
+    // `gradedLine` names the dimensions that carried the grade. (Its "N of the
+    // 5 assessment dimensions" clause is appended only where the record states
+    // the count, so the assertion is on what it always names.)
+    expect(String(r.gradedLine)).toMatch(/weighted across .+/);
+  });
+
+  it('no master binds a recommendation path the projection does not publish', () => {
+    /*
+     * The general form of the same defect, checked rather than promised: the
+     * catalogue's masters and the projection are two halves of one contract,
+     * and an unresolved binding renders as the empty string rather than as a
+     * visible `{{…}}`.
+     */
+    const bound = new Set<string>();
+    for (const file of [
+      'scripts/template-library/templates.ts',
+      'scripts/template-library/templatesExtended.ts',
+      'scripts/template-library/investmentCompass/templates.ts',
+    ]) {
+      let text: string;
+      try { text = readFileSync(resolve(__dirname, '../../../../', file), 'utf8'); } catch { continue; }
+      for (const m of text.matchAll(/\{\{recommendation\.([a-zA-Z]+)/g)) bound.add(m[1]);
+    }
+    expect(bound.size, 'no master binds recommendation at all?').toBeGreaterThan(0);
+    const published = new Set(Object.keys(project(qualified)));
+    expect([...bound].filter((k) => !published.has(k))).toEqual([]);
   });
 
   it('keeps the action word, which is read off the claim', () => {

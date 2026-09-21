@@ -46,7 +46,9 @@
  * a no-op — which is what makes it safe on the read path, where it repairs
  * every document already stored rather than only the next one.
  */
+import { STRATEGY_SECTION_IDS } from './strategyPositions.pure.ts';
 import {
+  SECTION_REGISTRY,
   detectSectionLevel,
   isSubHeadingByNumbering,
   sectionIdForHeading,
@@ -341,4 +343,267 @@ export function foldStraySections(markdown: string): SectionFoldResult {
   }
 
   return { markdown: out.join('\n').replace(/\n{4,}/g, '\n\n\n').trimEnd(), folded };
+}
+
+/* ─── A composed section, written again by the model ──────────────────────── */
+
+/**
+ * The composed copy is the one that stands.
+ *
+ * ## What the reader got
+ *
+ * Measured on the 97 Poole Road Compass of 20 Sep 2026, read as a delivered
+ * PDF. The document carries `Exit Outlook` on page 20 and `Resale Liquidity &
+ * Exit Outlook` on page 34; `Monitoring Plan` on page 20 and `Monitoring &
+ * Review Plan` on page 38. Two subjects, each covered twice, fourteen and
+ * eighteen pages apart — and **the copies contradict each other.** The
+ * composed Resale Liquidity opens:
+ *
+ * > Neither answers *how easily this sells*. Days on market, time to sell and
+ * > buyer depth are not measured anywhere in this report, and no figure below
+ * > should be read as standing in for them.
+ *
+ * The model's Exit Outlook, fourteen pages earlier, says "the cleanest exit
+ * path is to sell into the owner-occupier market … the strongest exit result
+ * usually comes from a well-presented, well-timed launch into a buyer pool
+ * that already understands the locality." That is the claim the composed
+ * section exists to refuse.
+ *
+ * ## The rule
+ *
+ * **Where a document carries two sections that resolve to one `computed`
+ * registry entry, the copy under the entry's CANONICAL LABEL is the composed
+ * one, and the other is a reproduction.** The reproduction goes.
+ *
+ * It is the rule `dedupeRegisterTables` already states for a table — *the
+ * register's copy is the one that stands; it is the retrieval, every other
+ * copy is a reproduction* — applied to a section, and it is stated the same
+ * way for the same reason: the two disagreed, so keeping the longer or the
+ * first would keep a model's expansion over the record.
+ *
+ * ## Why it could not fire before
+ *
+ * `Exit Outlook` and `Monitoring Plan` resolved to NOTHING —
+ * `sectionIdForHeading` returned null, because neither was an alias. So the
+ * document had one section the registry knew and one it did not, and no rule
+ * anywhere could see they were the same subject. They are aliases now, which
+ * is what an alias list is for, and that also stops `fork-investment-report`
+ * dropping those headings from both children without saying so.
+ *
+ * ## Four bounds
+ *
+ * **Only a section `composeStrategySections` builds WHOLE** — the five in
+ * `STRATEGY_SECTION_IDS`, read from that module rather than restated. Every
+ * `computed` section in the registry would be too wide: `tenYear` is computed
+ * too, and its aliases carry sub-heading names (`Property Value Projections`,
+ * `Cumulative Cashflow Projections`) that a Financial report legitimately
+ * writes as sections of their own beside the canonical one, so a wider rule
+ * would delete real content. A `measured` or `authored` section has no
+ * composed copy to prefer at all, so two of them is a plain repeat and
+ * belongs to `foldStraySections` or to QA's `duplicate-h2`.
+ *
+ * **Exactly one of the copies must carry the canonical label.** If neither
+ * does, or both do, nothing here can say which is the retrieval, and a rule
+ * that cannot say that is not entitled to destroy a copy.
+ *
+ * **The canonical copy is kept wherever it sits**, first or last. Position is
+ * what `dedupeChartDirectives` keys on and it is the wrong key here: the
+ * composed section is appended after the model's prose, so "keep the first"
+ * would keep the reproduction every time.
+ *
+ * **It is a no-op on a document that carries each section once**, which is
+ * every document that was already right — byte for byte.
+ */
+const COMPOSED_WHOLE = new Set<string>(STRATEGY_SECTION_IDS);
+
+const COMPUTED_SECTIONS = new Map<SectionId, string>(
+  SECTION_REGISTRY
+    .filter((e) => e.provenance === 'computed' && COMPOSED_WHOLE.has(e.id))
+    .map((e) => [e.id, e.canonicalLabel]),
+);
+
+export interface DroppedReproduction {
+  /** The registry section the document wrote twice. */
+  readonly id: SectionId;
+  /** The heading the reproduction carried. */
+  readonly heading: string;
+  /** The canonical heading that stands. */
+  readonly kept: string;
+  /** How many blocks went with it. */
+  readonly blocks: number;
+}
+
+export interface ReproductionFoldResult {
+  readonly markdown: string;
+  readonly dropped: readonly DroppedReproduction[];
+}
+
+const headingTextOf = (line: string | null): string =>
+  (line ?? '').replace(/^#{1,6}[ \t]+/, '').trim();
+
+/** Drop every model-written copy of a section the platform composes. */
+export function dropComposedSectionReproductions(markdown: string): ReproductionFoldResult {
+  if (!markdown || !markdown.includes('#')) return { markdown: markdown ?? '', dropped: [] };
+  const level = detectSectionLevel(markdown).level;
+  const regions = toRegions(markdown, level);
+
+  const byId = new Map<SectionId, number[]>();
+  regions.forEach((r, i) => {
+    if (!r.id || !COMPUTED_SECTIONS.has(r.id)) return;
+    const at = byId.get(r.id) ?? [];
+    at.push(i);
+    byId.set(r.id, at);
+  });
+
+  const drop = new Set<number>();
+  const dropped: DroppedReproduction[] = [];
+  for (const [id, at] of byId) {
+    if (at.length < 2) continue;
+    const canonical = COMPUTED_SECTIONS.get(id)!;
+    const isCanonical = (i: number) =>
+      headingTextOf(regions[i].heading).toLowerCase() === canonical.toLowerCase();
+    const keep = at.filter(isCanonical);
+    // Neither copy is the composed one, or both claim to be: nothing here can
+    // say which is the retrieval.
+    if (keep.length !== 1) continue;
+    for (const i of at) {
+      if (i === keep[0]) continue;
+      drop.add(i);
+      dropped.push({
+        id,
+        heading: headingTextOf(regions[i].heading),
+        kept: canonical,
+        blocks: toBlocks(regions[i].lines.join('\n')).length,
+      });
+    }
+  }
+
+  if (!dropped.length) return { markdown, dropped: [] };
+
+  const out: string[] = [];
+  regions.forEach((r, i) => {
+    if (drop.has(i)) return;
+    if (r.heading) out.push(r.heading);
+    out.push(...r.lines);
+  });
+  return {
+    markdown: out.join('\n').replace(/[ \t]*\n(?:[ \t]*\n){2,}/g, '\n\n'),
+    dropped,
+  };
+}
+
+/**
+ * A heading written twice around its own content is one heading.
+ *
+ * ## What pages 24 to 27 of the 9 Hollow Street Compass printed
+ *
+ * ```
+ *   Planning controls & zoning
+ *   The key planning finding is that the property sits in the General
+ *   Residential Zone (GRZ) in the City of Greater Bendigo, with overlays
+ *   checked and none mapped at this exact coordinate …
+ *
+ *   Planning controls & zoning
+ *   • Finding: The property is in GRZ – General Residential Zone, as recorded
+ *     by Vicmap Planning's plan_zone layer for Greater Bendigo …
+ * ```
+ *
+ * The same sub-heading, twice, five lines apart, with nothing but its own
+ * summary paragraph in between. Measured over the whole 39-page document:
+ * **five sub-headings printed twice** — *Planning controls & zoning*,
+ * *Environmental overlays (flood, bushfire, contamination)*, *Crime & personal
+ * safety*, *Local supply & future development pressure* and *Transport
+ * reliance* — which is every risk in the register, each one announced, summed
+ * up, and then announced again before its detail.
+ *
+ * A reader meeting the heading a second time has to decide whether they have
+ * lost their place or whether a new section has started with the same name.
+ * Neither is true: it is one topic, written in two passes.
+ *
+ * ## The rule
+ *
+ * **Where the same heading is written twice with no other heading between
+ * them, the second is a reproduction and the content merges under the
+ * first.** That is `dedupeRegisterTables`' rule applied to a heading, and it
+ * MERGES rather than choosing, because the two bodies are different — a
+ * summary and its evidence — and keeping either alone would delete half the
+ * section. Only the duplicate heading line goes; every word under both stays,
+ * in the order it was written.
+ *
+ * ## Three bounds
+ *
+ * **Another heading between them ends it.** `lastHeading` is the most recent
+ * heading of ANY depth, so a deeper sub-heading intervening means the repeat
+ * opens something structurally new and it is left alone. This is the
+ * conservative side: a heading that should have gone stays, and nothing that
+ * organises a document is ever removed.
+ *
+ * **A distant repeat is not a reproduction.** The measured gap is one
+ * paragraph; the bound is six blocks, which admits every occurrence in the
+ * document that found this and refuses a `## Notes` recurring much later,
+ * where dropping the heading would take away a landmark the reader wanted.
+ *
+ * **A heading inside a fence is not a heading.** The `:::` and ``` regions are
+ * carried whole, for the same reason `toBlocks` carries them whole.
+ *
+ * Byte-identical on a document that announces each section once.
+ */
+export interface MergedHeadingResult {
+  readonly markdown: string;
+  /** The duplicate heading lines that were removed, as written. */
+  readonly merged: readonly string[];
+}
+
+/** The measured gap is one block; six is generous and still local. */
+const MAX_BLOCKS_BETWEEN_TWINS = 6;
+
+const headingTextKey = (line: string): string =>
+  line.replace(/^#{1,6}[ \t]+/, '').replace(/[*_`]/g, '').replace(/\s+/g, ' ').trim().toLowerCase();
+
+export function mergeAdjacentDuplicateHeadings(markdown: string): MergedHeadingResult {
+  const src = String(markdown ?? '');
+  if (!src.includes('#')) return { markdown: src, merged: [] };
+
+  const lines = src.split('\n');
+  const merged: string[] = [];
+  const drop = new Set<number>();
+  let fence: string | null = null;
+  let last: { depth: number; key: string } | null = null;
+  let blocksSince = 0;
+  let inBlock = false;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const open = /^\s*(```|:::)/.exec(line);
+    if (fence) {
+      if (new RegExp(`^\\s*${fence}\\s*$`).test(line)) fence = null;
+      continue;
+    }
+    if (open) { fence = open[1]; if (!inBlock) { inBlock = true; blocksSince++; } continue; }
+
+    if (line.trim() === '') { inBlock = false; continue; }
+
+    const depth = headingDepth(line);
+    if (!depth) {
+      if (!inBlock) { inBlock = true; blocksSince++; }
+      continue;
+    }
+
+    inBlock = false;
+    const key = headingTextKey(line);
+    if (last && last.depth === depth && last.key === key && blocksSince <= MAX_BLOCKS_BETWEEN_TWINS) {
+      drop.add(i);
+      merged.push(line.trim());
+      blocksSince = 0;
+      // `last` is deliberately not advanced: a heading written three times
+      // folds onto the first, not onto its own second copy.
+      continue;
+    }
+    last = { depth, key };
+    blocksSince = 0;
+  }
+
+  if (!drop.size) return { markdown: src, merged: [] };
+  const out = lines.filter((_, i) => !drop.has(i)).join('\n');
+  return { markdown: out.replace(/[ \t]*\n(?:[ \t]*\n){2,}/g, '\n\n'), merged };
 }

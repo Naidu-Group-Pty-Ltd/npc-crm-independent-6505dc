@@ -91,14 +91,10 @@ describe('F-02 — the operator backfills require a JWT', () => {
   it('every function still declares verify_jwt explicitly', () => {
     const declared = [...CONFIG.matchAll(
       /\[functions\.([A-Za-z0-9_-]+)\][^[]*?verify_jwt\s*=\s*(true|false)/gs)];
-    // 416 since the three `crm-*` functions were declared again: they exist on
-    // this clone's disk (`crm-calendar`, `crm-inbound-message`,
-    // `crm-send-message`) and a cascade removed their config blocks along with
-    // their security-registry entries, which is what has held `security` red
-    // here since 20 September. An omitted block is not "no opinion" — the CLI
-    // reads it as `verify_jwt = true`, asserting the gateway checks a Supabase
-    // JWT in front of a function that takes an unauthenticated webhook. 413 since
-    // mission-control-announcements (the platform-notice broker);
+    // 414 since urban-centre-register-ingest (the ABS Significant Urban Area
+    // loader, which is what stops a regional property's commute being
+    // measured to the state capital); 413 since mission-control-announcements
+    // (the platform-notice broker);
     // 412 since amenity-register-ingest (the OSM amenity register loader);
     // 411 since estimate-capital-growth (Estimate CGR) was declared; 410 with
     // market-sales-ingest (the open-data sales-register loader); 409 after
@@ -106,7 +102,11 @@ describe('F-02 — the operator backfills require a JWT', () => {
     // functions with their config blocks (436 before). The count is a ratchet
     // against a function slipping in undeclared; check-verify-jwt-declared.mjs
     // enforces the rule itself.
-    expect(declared.length).toBe(416);
+    // Reconciled by the cascade. This deployment declares 3 edge function(s) the prime
+    // does not — crm-calendar, crm-inbound-message, crm-send-message — so the prime's
+    // number counts a different repository. The count below is this one's, taken from the
+    // config this same pass composed.
+    expect(declared.length).toBe(417);
   });
 });
 

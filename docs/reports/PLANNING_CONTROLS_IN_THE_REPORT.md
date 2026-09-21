@@ -367,8 +367,19 @@ absent rather than printed as zeros.
 - **Labels are clipped in three primitives.** A tile title on page 19
   (`OUTER MARYBOROUGH POCKETS…`), the timeline's only labelled stop on page 13
   (`Manufacturing Centre of Excellence – Maryborough…`), and a gauge caption on
-  page 18. `fitLines` wraps a label into the units a drawing may use; these
-  three call sites truncate instead.
+  page 18. `fitLines` wraps a label into the units a drawing may use.
+
+  **Two corrections to this entry, 19 Sep 2026, from reading the code.** "These
+  three call sites truncate instead" is not true of the TIMELINE:
+  `renderTimeline` calls `fitLines`, gives a lone milestone four lines and
+  grows the drawing for them, and its own comment names the ellipsis as the
+  rare case where four still is not enough — so whether the page 13 stop is
+  that documented case or a different fault needs the document. And a FOURTH
+  instance of the class was found while looking for these three and is closed:
+  `renderWaterfall` cut every category label at fourteen characters with no
+  wrapping at all, in a slot measured at 133 units and 19 characters a line —
+  including the label in the `{{waterfall:}}` directive's own documented
+  example. See `WHAT_THE_PAGE_ACTUALLY_DRAWS.md` §8.
 - **The timeline draws empty horizons.** Page 13 has stops at `3-5Y` and `5Y+`
   with nothing at them, which reads as a pipeline at those horizons. A horizon
   no item reaches should not be drawn.
@@ -382,17 +393,20 @@ absent rather than printed as zeros.
   judgement handed to the writer. The chip is a candidate for the same
   treatment the gauges got: derive it from what the platform retrieved rather
   than from what the prose cites.
-- **Two sections are drawn twice** (Due Diligence Checklist on pages 24–25 and
-  25–26, Final Recommendation on pages 25 and 26), and one checklist item is
-  cut mid-sentence — *"8. Ask a local property manager"* — on page 26. The
-  registry is **not** the cause: `compass.riskDashboard` (ordinal 9),
-  `compass.dueDiligenceChecklist` (10) and `compass.finalRecommendation` (11)
-  are three distinct entries with no shared `sourceHeadings`. The model wrote
-  the latter two inside the Risk Dashboard's own chunk and again as their own
-  sections. A heading belonging to a LATER registry entry appearing inside an
-  earlier chunk is detectable — `partitionByRegistry` already knows the
-  ordinals — but handing it forward rather than dropping it is the part that
-  needs care, so it is named here rather than half-done.
+- ~~**Two sections are drawn twice**~~ — **CLOSED 19 Sep 2026.** (Due Diligence
+  Checklist on pages 24–25 and 25–26, Final Recommendation on pages 25 and 26,
+  with one checklist item cut mid-sentence — *"8. Ask a local property
+  manager"* — on page 26.) The registry was **not** the cause:
+  `compass.riskDashboard` (ordinal 9), `compass.dueDiligenceChecklist` (10) and
+  `compass.finalRecommendation` (11) are three distinct entries with no shared
+  `sourceHeadings`. The model wrote the latter two inside the Risk Dashboard's
+  own chunk and again as their own sections. `foldStraySections` carries the
+  nested copy forward rather than dropping it — the nested copy was the
+  complete one — and reads the cut-off item as the truncation it is rather than
+  as a fourth obligation. The care this entry asked for turned out to be two
+  things neither of which was the ordinals: a checklist is ONE block, so the
+  comparison had to be per list ITEM, and the two copies could not be chosen
+  between, only merged. See `WHAT_THE_PAGE_ACTUALLY_DRAWS.md` §7.
 
 ---
 

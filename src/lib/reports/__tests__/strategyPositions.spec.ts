@@ -404,3 +404,51 @@ describe('something renders them', () => {
     expect(src).toContain("heading: 'Holding Strategy'");
   });
 });
+
+describe('the monitoring plan is blocks, not a five-column table', () => {
+  /*
+   * Page 36 of the 9 Hollow Street Compass, verbatim from the PDF's own text
+   * layer — a five-column table whose fifth column is a paragraph:
+   *
+   *     What to re-Where it isHow often itAs read for this
+   *     What a different answer would mean
+   *     checkpublishedchangesreport
+   *     The market'svic_vpsr_suburbQuarterly, on$567,500 —A median that moves…
+   */
+  const plan = () => composeMonitoringPlan(base(), 'Monitoring & Review Plan');
+
+  it('draws no table at all', () => {
+    expect(plan()).not.toContain('| What to re-check |');
+    expect(plan().split('\n').filter((l) => l.trim().startsWith('|'))).toEqual([]);
+  });
+
+  it('leads every dependency with its own name', () => {
+    const rows = buildMonitorRows(base());
+    expect(rows.length).toBeGreaterThan(0);
+    for (const r of rows) expect(plan()).toContain(`**${r.what}**`);
+  });
+
+  it('prints every cell it used to — register, cadence, reading and consequence', () => {
+    const out = plan();
+    for (const r of buildMonitorRows(base())) {
+      expect(out).toContain(r.register);
+      expect(out).toContain(r.cadence);
+      expect(out).toContain(r.changesIf);
+      if (r.lastRead && r.lastRead !== '—') expect(out).toContain(r.lastRead);
+    }
+  });
+
+  it('omits the reading rather than printing a dash for it', () => {
+    // `stripPlaceholderRows`' rule: an absence is omitted, never worded.
+    const rows = buildMonitorRows(base());
+    if (rows.some((r) => r.lastRead === '—')) {
+      expect(plan()).not.toContain('As read for this report: —');
+    }
+    expect(plan()).not.toMatch(/As read for this report:\s*$/m);
+  });
+
+  it('keeps the promise it exists to make', () => {
+    expect(plan()).toContain('watches these on your behalf');
+    expect(plan()).toContain('this report does not set one');
+  });
+});

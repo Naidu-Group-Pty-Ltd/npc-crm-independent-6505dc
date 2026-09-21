@@ -167,7 +167,7 @@ One composition function: `scoreInvestmentV2Shadow`
 | dimension | nominal weight | scorer | version |
 | --- | ---: | --- | --- |
 | Growth | **0.40** | `growthScoring.pure.ts` | `3.1.0` |
-| Location | **0.25** | `locationScoring.pure.ts` | `1.0.0` |
+| Location | **0.25** | `locationScoring.pure.ts` | `1.2.0` |
 | Income vs its market | **0.15** | `totalReturnScoring.pure.ts` | `1.0.0` (figure: `yieldScoring.pure.ts` `3.0.0`) |
 | Demand | **0.15** | `demandScoring.pure.ts` | `4.1.0` |
 | Risk | **0.05** | `riskModelD.pure.ts` (Model D, variant D2) | `1.0.0` |
@@ -390,6 +390,24 @@ the composite in **opposite** directions (measured ≈ 4:1 in Growth's favour).
   removed and pinned), any market-performance measure.
 - **Missing**: no location inputs → null, never a default; the old scorer's
   32-points-for-three-absent-inputs is the recorded defect.
+
+**`1.2.0`, 20 September 2026 — the commute is measured to the property's own
+urban centre, and a commute to somewhere else is not scored.** The polycentric
+selection this section has promised since audit §58 had no implementation:
+`resolveCbdDestination` returns the STATE CAPITAL, so Golden Square — a suburb
+of Bendigo — was measured 114 minutes to Melbourne, which `COMMUTE_ANCHORS`
+(ending `[110, 0]`) scores **0 of 100** on a property twelve minutes from the
+centre it actually belongs to. Two rules close it, and the second works before
+any register exists. `resolveCommuteDestination` (`urbanCentre.pure.ts`) reads
+the property's Significant Urban Area and measures to that centre where
+`urban_centre_register` names one, falling back to the capital exactly where
+`resolveCbdDestination` does. And `ownCentre` — `yes` / `no` / `unknown` —
+rides the reading: a commute measured to a centre that is **not** this
+property's is recorded on the page and **excluded from the score**, because a
+figure that describes a journey nobody living here makes is not a measurement
+of this location. `unknown` scores as it always did, so an unreachable
+geoserver or an unloaded register leaves today's behaviour standing.
+`commuteExcluded` names which of the two it was.
 
 ### 4.3 Yield (0.15) — the rental return, measured once
 

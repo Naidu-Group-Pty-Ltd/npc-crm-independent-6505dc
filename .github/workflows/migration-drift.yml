@@ -1,0 +1,111 @@
+name: Migration drift
+
+# Which merged migrations have not reached the database.
+#
+# ## The gap this closes
+#
+# Merging to `main` deploys Edge Functions. It does not apply migrations —
+# applying is one file per dispatch of "Apply a migration", by human judgement,
+# and deliberately so: `db push` trusts a ledger that under-reports here by 832
+# of 1,008 files, and replaying that would re-run data mutations where a second
+# application is not a no-op.
+#
+# Nothing checked that a merged migration had actually landed. Measured 21 Sep
+# 2026: seed v18 renames the assessment table's heading, it merged, it never
+# ran, and every report kept printing "Five dimensions, weighted" over a table
+# of three rows with nothing anywhere saying why. This is the thing that says
+# so.
+#
+# ## Why it does not just diff the ledger
+#
+# Because that answer is 832 rows of noise. The report asserts by EFFECT — the
+# rule the retention purge, the verification self-test and the urban-centre
+# register already answer to — asking whether the objects a file creates exist,
+# and, where it creates none, whether the `@effect` probe it declares about
+# itself is satisfied. See `scripts/ops/migrationDrift.pure.mjs`.
+#
+# It reports; it never applies. Adding an apply step here would reintroduce
+# exactly the inference "Apply a migration" refuses to make.
+
+on:
+  schedule:
+    # 19:10 UTC daily — after the working day in Australia, so a drift
+    # introduced by the day's merges is named before the next one starts.
+    - cron: '10 19 * * *'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: migration-drift
+  cancel-in-progress: true
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v7
+
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 20
+
+      # The same two routes `apply-migration.yml` chooses between, for the
+      # same reason. Requiring the pooler string alone made this job fail four
+      # steps before it read anything, on the repository it was written for.
+      - name: Require a database route
+        env:
+          DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          PROJECT_REF: ${{ vars.SUPABASE_PROJECT_REF || (github.repository == 'Naidu-Group-Pty-Ltd/npc-property-dashbord' && 'dduzbchuswwbefdunfct' || '') }}
+        run: |
+          if [ -n "${DB_URL:-}" ]; then
+            echo 'Route: psql.'
+          elif [ -n "${TOKEN:-}" ] && [ -n "${PROJECT_REF:-}" ]; then
+            echo "Route: Management API ($PROJECT_REF)."
+          else
+            echo '::error title=No credential::Neither SUPABASE_DB_URL nor SUPABASE_ACCESS_TOKEN (with SUPABASE_PROJECT_REF) is set. Mission Control distributes the first to every provisioned clone; add one in Settings → Secrets → Actions.'
+            exit 1
+          fi
+
+      - name: Collect what the database holds
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+          SUPABASE_PROJECT_REF: ${{ vars.SUPABASE_PROJECT_REF || (github.repository == 'Naidu-Group-Pty-Ltd/npc-property-dashbord' && 'dduzbchuswwbefdunfct' || '') }}
+        run: node .github/scripts/migration-drift-facts.mjs > /tmp/facts.json
+
+      - name: Report drift
+        id: drift
+        run: |
+          # NOT a pipeline. `$?` after `cmd | tee` is tee's status, which is
+          # always 0, so the gate below was skipped on every run — including
+          # the one that correctly found fourteen unapplied migrations and
+          # reported success. Redirect, capture, then print.
+          set +e
+          node scripts/ops/migration-drift.mjs --facts /tmp/facts.json > /tmp/drift.txt 2>&1
+          status=$?
+          set -e
+          cat /tmp/drift.txt
+          echo "status=$status" >> "$GITHUB_OUTPUT"
+
+      - name: Summarise
+        if: always()
+        run: |
+          {
+            echo '### Migration drift'
+            echo
+            echo '```'
+            # A report that was never produced is its own finding, and saying
+            # "no such file" sends a reader to the last step instead of the
+            # one that actually failed.
+            cat /tmp/drift.txt 2>/dev/null || echo 'No report: the facts collection step did not complete. See the step log above.'
+            echo '```'
+          } >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Fail when something merged and never landed
+        if: steps.drift.outputs.status != '0'
+        run: |
+          echo '::error title=Unapplied migrations::A migration is in `main` and not in the database. Apply it with the "Apply a migration" workflow, oldest first.'
+          exit 1

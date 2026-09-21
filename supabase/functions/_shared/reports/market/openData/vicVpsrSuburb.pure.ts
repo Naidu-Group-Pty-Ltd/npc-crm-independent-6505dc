@@ -188,6 +188,24 @@ export function parseVicTimeSeries(grid: Grid, dwellingType: SalesDwellingType, 
 
 const QUARTER_LABEL_END: Record<string, string> = { 'jan-mar': '03', 'apr-jun': '06', 'jul-sep': '09', 'oct-dec': '12' };
 
+/**
+ * A quarter label, with the publisher's own spacing taken out.
+ *
+ * VPSR writes the same quarter two ways across its own workbooks — measured
+ * 21 Sep 2026 from the archive: `median-house-q4-2025.xls` writes `Oct-Dec`
+ * and `median-house-q3-2025.xls` writes `Oct - Dec`. Keying on the literal
+ * meant the second spelling matched no row at all, `labelRow` stayed -1, and
+ * the file was refused for "layout drift" when the only drift was whitespace.
+ *
+ * Stripping it is safe in both directions: a label that already matched still
+ * matches, and nothing else in the sheet can become a quarter by losing
+ * spaces.
+ */
+const SALES_HEADING = /no\.?\s*of\s*sales/i;
+function quarterEndOf(value: unknown): string | undefined {
+  return QUARTER_LABEL_END[text(value).toLowerCase().replace(/\s+/g, '')];
+}
+
 export interface VicQuarterlyParse {
   rows: SalesMedianRow[];
   periods: string[];
@@ -208,20 +226,32 @@ export function parseVicQuarterly(grid: Grid, dwellingType: SalesDwellingType, c
   let labelRow = -1;
   for (let r = 0; r < Math.min(grid.length, 8); r++) {
     const row = grid[r] ?? [];
-    if (row.some((v) => QUARTER_LABEL_END[text(v).toLowerCase()] !== undefined)) { labelRow = r; break; }
+    if (row.some((v) => quarterEndOf(v) !== undefined)) { labelRow = r; break; }
   }
   if (labelRow < 0 || labelRow + 1 >= grid.length) throw new Error('the Victorian quarterly sheet has no row of quarter labels (layout drift) — refused');
   const labels = grid[labelRow] ?? [];
   const years = grid[labelRow + 1] ?? [];
   const headings = grid[0] ?? [];
   const quarterCols: Array<{ col: number; period: string }> = [];
-  let salesCol = -1;
+  /*
+   * The count column is found from the sheet's TOP row first, because that is
+   * the one place both layouts agree it is named. In `q4-2025` its label row
+   * cell is an ordinary quarter (`Oct-Dec`) and row 0 reads `No. of Sales`; in
+   * `q3-2025` the label row itself reads `No Of Sales` and the quarter sits a
+   * row below. The original code only ever set `salesCol` from INSIDE the
+   * quarter loop, which `continue`s on a cell that is not a quarter — so on
+   * the second layout it stayed -1, every row parsed with a null count, and
+   * the file looked like one that simply reports no sales.
+   */
+  let salesCol = headings.findIndex((h) => SALES_HEADING.test(text(h)));
   for (let c = 1; c < labels.length; c++) {
-    const end = QUARTER_LABEL_END[text(labels[c]).toLowerCase()];
+    // Whatever row 0 named the count column, it is not a median series.
+    if (c === salesCol) continue;
+    const end = quarterEndOf(labels[c]);
     if (!end) continue;
     const year = parseNumberCell(years[c]);
     if (year === null || !Number.isInteger(year)) continue;
-    if (/no\.?\s*of\s*sales/i.test(text(headings[c]))) { if (salesCol < 0) salesCol = c; continue; }
+    if (SALES_HEADING.test(text(headings[c]))) { if (salesCol < 0) salesCol = c; continue; }
     quarterCols.push({ col: c, period: `${year}-${end}` });
   }
   if (quarterCols.length < 4) throw new Error(`the Victorian quarterly sheet names ${quarterCols.length} quarters, fewer than 4 — refused`);

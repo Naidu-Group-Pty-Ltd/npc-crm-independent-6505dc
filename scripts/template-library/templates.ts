@@ -241,7 +241,14 @@ function investorCompass(): SeedTemplate {
     ])), FOOTER),
     withFurniture(page('Recommendation', flow([
       heading('Recommendation'),
-      decision('{{recommendation.headline}}', '{{recommendation.rationale}}', 104),
+      // `recommendation.rationale` is bound by no projection — the Investment
+      // Compass master corrected this in its own `recommendation()` block and
+      // the 43 voice masters kept it, so this decision body resolved to the
+      // EMPTY STRING on every render. An unresolved binding is invisible: it
+      // prints nothing rather than a visible `{{…}}`, which is why two formats
+      // once shipped a cover with no title. `gradedDetailLine` is the sentence
+      // the projection composes only when the record can say it.
+      decision('{{recommendation.headline}}', '{{recommendation.gradedDetailLine}}', 104),
       checklist('Next steps', [
         { action: '{{nextSteps.0.action}}', owner: '{{nextSteps.0.owner}}', timing: '{{nextSteps.0.timing}}' },
         { action: '{{nextSteps.1.action}}', owner: '{{nextSteps.1.owner}}', timing: '{{nextSteps.1.timing}}' },
@@ -316,7 +323,8 @@ function executiveBrief(): SeedTemplate {
         [0.46, 0.27, 0.27],
       ),
       callout('Funding', '{{financials.fundingNote}}'),
-      decision('{{recommendation.headline}}', '{{recommendation.rationale}}', 96),
+      // See the note on the other `decision` above: `rationale` is unpublished.
+      decision('{{recommendation.headline}}', '{{recommendation.gradedDetailLine}}', 96),
     ])), FOOTER),
     disclaimerPage(STANDARD_DISCLAIMER),
   ];

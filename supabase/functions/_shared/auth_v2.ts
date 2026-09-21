@@ -179,10 +179,50 @@ export async function verifyHuman(
 // Verifier honours the presented key id against BOTH the current and previous
 // secret so a rotation can run with a documented overlap window.
 //
-// Replay defence: timestamp within ±90s, nonce single-use (stored in
-// internal_request_nonces when available, else per-instance memory).
+// Replay defence: a single-use nonce (stored in `internal_request_nonces` when
+// available, else per-instance memory) plus a bounded timestamp window.
+//
+// ## Why the window is ASYMMETRIC
+//
+// A signed internal request is minted by `cron_signed_internal_headers`, which
+// stamps `clock_timestamp()` — the wall clock at ENQUEUE — and then hands the
+// request to `pg_net`, which delivers it from a background queue. So the
+// window has to cover the queue wait, and the queue wait is not bounded by
+// anything this code controls.
+//
+// Measured on the prime, 19-20 Sep 2026: 19 refusals in 24 hours, sporadic
+// rather than constant, and arriving in tight clusters — FOUR denials inside
+// 27 ms at 16:32:32, three inside 47 ms at 16:26:15. Four requests landing in
+// the same 27 milliseconds, all stale, is one pg_net batch flushing after a
+// stall. A wrong secret or a wrong unit would have refused every request
+// instead of one in a few hundred, and a drifting clock would not arrive in
+// batches. The cost was real: `resume-investment-reports` is the watchdog that
+// continues a report after it hands off on its wall-clock budget, so while it
+// was being refused a Compass only finished if somebody had a browser tab
+// open. `migration-dispatcher` and `conversation-sync-cron` were refused the
+// same way.
+//
+// The two directions are not the same claim:
+//
+//   * A timestamp in the FUTURE is an anomaly — a clock ahead of ours, or a
+//     forged stamp. Nothing legitimate produces one, so it stays tight.
+//   * A timestamp in the PAST is ordinary queue latency. What stops a captured
+//     signature being reused is the NONCE, which is single-use and durable;
+//     the window only bounds how long a captured signature is worth trying
+//     against the degraded in-memory nonce store. Fifteen minutes is bounded,
+//     survives a batch stall, and is the same order as the pg_net queue's own
+//     worst observed drain.
+//
+// Widening BOTH sides would have been the wrong fix: it would have loosened
+// the one direction that carries a real signal to buy tolerance the other
+// direction needed.
 
-const INTERNAL_SKEW_SECONDS = 90;
+/** A stamp ahead of our clock. Nothing legitimate produces one. */
+const INTERNAL_SKEW_FUTURE_SECONDS = 90;
+/** A stamp behind our clock: pg_net queue latency, bounded by the nonce. */
+const INTERNAL_SKEW_PAST_SECONDS = 900;
+/** Retained for the memory-nonce sweep below, which wants the wider bound. */
+const INTERNAL_SKEW_SECONDS = INTERNAL_SKEW_PAST_SECONDS;
 const memoryNonces = new Map<string, number>();
 
 /** Ordered map of accepted key ids → secret. First entry is the current signer. */
@@ -326,7 +366,20 @@ export async function verifyInternal(
 
   const now = Math.floor(Date.now() / 1000);
   const ts = parseInt(timestamp, 10);
-  if (!Number.isFinite(ts) || Math.abs(now - ts) > INTERNAL_SKEW_SECONDS) {
+  // The delta is LOGGED, because without it this refusal cannot be diagnosed:
+  // queue latency, a drifting clock and a wrong unit all present as the same
+  // word. Every wrong conclusion in this area came from reading the code
+  // instead of the number.
+  const skew = Number.isFinite(ts) ? now - ts : null;
+  if (skew === null || skew > INTERNAL_SKEW_PAST_SECONDS || skew < -INTERNAL_SKEW_FUTURE_SECONDS) {
+    console.warn('[auth_v2] internal timestamp outside the accepted window', {
+      caller,
+      keyId,
+      skewSeconds: skew,
+      direction: skew === null ? 'unparseable' : skew > 0 ? 'late' : 'ahead',
+      acceptedPast: INTERNAL_SKEW_PAST_SECONDS,
+      acceptedFuture: INTERNAL_SKEW_FUTURE_SECONDS,
+    });
     return ctx({ errorCode: 'internal_timestamp_skew' });
   }
 

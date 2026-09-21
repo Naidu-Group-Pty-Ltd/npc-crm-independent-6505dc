@@ -10,10 +10,13 @@
  * what docs/reports/DESIGN_SYSTEM.md records as the cautionary case.
  *
  * Everything above COMPASS_FINANCIAL_HANDOFF_COPY is a verbatim copy of the
- * edge file. Below it are the two helpers only the frontend needs
- * (`normaliseReportTier`, `sectionCountForTier`); the edge file likewise keeps
- * `HEADING_ROUTING` / `routeHeading`, which the frontend does not use.
+ * edge file, except its one import, which resolves to the same pure module
+ * through the `src/` bridge. Below it are the two helpers only the frontend
+ * needs (`normaliseReportTier`, `sectionCountForTier`); the edge file likewise
+ * keeps `HEADING_ROUTING` / `routeHeading`, which the frontend does not use.
  */
+
+import { riskRegisterInstruction } from './investment/riskRegister.pure';
 
 // ─── Classification primitives ──────────────────────────────────────────────
 
@@ -428,7 +431,13 @@ export const COMPASS_40_SECTIONS: CompassSectionDefinition[] = [
     sectionPriority: 'Protected',
     maxWordCount: 550,
     visualComponents: ['riskRegister', 'confidenceChip'],
-    purpose: 'A SUMMARY REGISTER a reader can scan — Risk | Exposure | Evidence — followed by a DETAIL BLOCK for each MATERIAL risk. Every register cell is a phrase, never a sentence and never a paragraph: keep each under 12 words, because the explanation belongs in the block rather than in the grid. A detail block is a bolded risk name followed by four labelled lines — Finding, Evidence, Implication, Next check — stating what was found, which register or record it came from and when, what it means for this purchase, and what the reader should obtain or verify. Offer a block for the risks that carry a finding; a row with nothing behind it says so once in the register and gets no block. Covers crime, environmental (bushfire, flood), planning overlays and covenants, supply, transport reliance and infrastructure timing. Every risk carries an evidence chip and a required DD action. The chip states EVIDENCE HELD, never reassurance: "Verified" only where a dated, parcel-level source is cited; "Unverified" while the required check is still to be done; "Conflicting" where sources disagree (say which). A level (Low/Moderate/High/Not assessed) describes exposure and is separate from the chip. "Not assessed" is the level wherever the evidence for that row is something this report did not retrieve — a register that was asked and returned nothing has measured the SEARCH, not the area, and a register that publishes nothing for this jurisdiction was never asked at all; neither can support Low, Minimal, Limited, Negligible or Favourable, and an inference from the area’s general character is not a retrieval either. Never rate confidence High for a risk whose check is outstanding, never let a checklist of work still to do read as a clearance, and never write a chip against the LEVEL: a chip describes the RETRIEVAL behind the row and never the conclusion drawn from it, so "Verified" may vouch for a layer reading and may not vouch for the rating beside it. The register is a scan and the blocks are the reading — no prose restating a register row, and no block for a row that carries no finding.',
+    // The register's shape is stated ONCE, in `riskRegister.pure.ts`, and
+    // composed here. It was a verbatim string literal in this file and again
+    // in the frontend mirror, so `riskRegisterInstruction()` — the function
+    // whose own header calls itself "one declaration" — had zero production
+    // call sites and the three copies had already drifted. See that module
+    // for what the delivered documents did with the old wording.
+    purpose: riskRegisterInstruction(),
   },
   {
     id: 'compass.dueDiligenceChecklist',

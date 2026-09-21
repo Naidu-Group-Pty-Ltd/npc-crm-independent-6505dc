@@ -113,6 +113,11 @@ import {
   readStrategyRecord,
   strategySectionRules,
 } from '../_shared/reports/investment/strategyPositions.pure.ts';
+import {
+  headingSequence,
+  placeBlocksByDeclaredOrder,
+  type PlaceableBlock,
+} from '../_shared/reports/investment/documentPlacement.pure.ts';
 import { ENRICHMENT_STAMP } from '../_shared/reports/location/locationEnrichmentReuse.pure.ts';
 import { transportCountReading } from '../_shared/transportReading.pure.ts';
 import { readSalesRegister } from '../_shared/reports/market/salesRegisterRead.ts';
@@ -1694,6 +1699,7 @@ VISUAL-FIRST RULES (CRITICAL):
 - Any "median grew from X to Y" / trend sentence MUST include either \`~~[…]~~\` inline or a \`::: stat\` callout nearby.
 - Any "subject vs suburb vs metro/state" comparison MUST use \`{{bars: Subject X, Suburb Y, Metro Z | title=…}}\`.
 - **A RATING YOU INVENTED MAY NOT BE DRAWN, IN ANY PRIMITIVE.** A 0-100 rating is a SCORE, and the only scores that exist are the ones supplied to you above — the Investment Score and the dimensions the engine actually scored. Do NOT mint a rating for appeal, suitability, confidence, affordability, land quality, certainty, risk, "focus", "emphasis" or any other attribute, and do NOT draw one as a \`{{gauge}}\`, a \`{{wheel}}\`, a \`{{bars}}\`, a \`{{heatmap}}\`, a \`{{radar}}\` or anything else. In particular: do NOT write \`max=100\` on a chart whose numbers you chose. Where no score was supplied, state the finding in WORDS and draw no chart of it. A number on a scale is read as a measurement however it is drawn, and the reader has no way to tell one you assigned from one that was calculated.
+- **AN ABSENCE MAY NOT BE RATED, IN ANY PRIMITIVE.** Where something was not assessed, not searched, not available or not held, it gets NO position on a scale — not the top of it, not the bottom of it, and never a convention that stands in for one. Do NOT write a legend such as \`Not assessed shown as 5\`, \`n/a = 0\` or \`unknown treated as 3\`: a number on a scale is read as a measurement, so an absence drawn at 5 is a reader being told this is a high risk. Leave the unmeasured item OUT of the chart and name it in the register or the prose, where \`Not assessed\` is a level in its own right. A chart that declares such a convention is withheld from the document in full, so the whole drawing is lost — including the items that were measured.
 - Any list of 3+ ranked metrics MUST be rendered as \`{{bars: …}}\` instead of a table — where the metrics are MEASURED quantities that came from the data supplied to you (distances, counts, prices, shares, times, rates), each carrying its own real unit. A list of qualities you are ranking yourself is not a set of metrics: write it as prose or as a table with the reasons in it.
 - Any "X of Y households / dwellings / buyers" stat MUST use \`{{pictograph: …}}\`.
 - Any composition / share-of-total (tenure mix, age bands, expense split, capital
@@ -5792,13 +5798,29 @@ Produce a comprehensive statewide investment analysis following the structure ab
         ),
       },
     );
-    const compassStrategySections = composeStrategySections(compassStrategyRecord, [
+    /*
+     * ONE list, read twice.
+     *
+     * This array is what the document carries, and it is what the model is
+     * told the document carries. `strategySectionRules` used to name five
+     * sections from a literal of its own — the SWOT, the suitability profile,
+     * the holding strategy, the exit outlook and the monitoring plan — while
+     * this call composes three. `suitability` and `holdingStrategy` are
+     * `financial:required` in `sectionRegistry.pure.ts` and belong to no other
+     * tier, so a model writing a Compass was told two sections existed, was
+     * shown neither, and wrote them both.
+     */
+    const COMPASS_STRATEGY_SECTIONS = [
       { id: 'exitStrategy', heading: 'Resale Liquidity & Exit Outlook' },
       { id: 'swot', heading: 'SWOT Analysis' },
       { id: 'monitoring', heading: 'Monitoring & Review Plan' },
-    ]);
+    ] as const;
+    const compassStrategySections = composeStrategySections(
+      compassStrategyRecord,
+      COMPASS_STRATEGY_SECTIONS,
+    );
     const strategySectionsMarkdown = compassStrategySections.map((x) => x.markdown).join('\n\n');
-    const strategyRules = strategySectionRules(compassStrategyRecord);
+    const strategyRules = strategySectionRules(compassStrategyRecord, COMPASS_STRATEGY_SECTIONS);
     console.log('🧭 Strategy sections composed:', compassStrategySections.map((x) => ({
       id: x.id, chars: x.markdown.length,
     })));
@@ -7863,22 +7885,51 @@ YOUR DEDICATED PROPERTY PARTNER
      * That is the deliberate order — the alternative is letting a word cap trim
      * a row of evidence — and the block is a fixed ~3.7 KB, about one page.
      */
+    /*
+     * COMPOSED LATE, PLACED BY ORDER.
+     *
+     * These blocks used to be `reportContent += ...`, which put them after
+     * the order-90 Appendix and Disclaimer. Measured on the 21 Sep 2026
+     * Compass for 9 Hollow Street: the document closed on Final
+     * Recommendation and the Disclaimer, then ran on for four more
+     * sections. Every model-authored section was in its declared position;
+     * only the appended ones were displaced, and the append displaced them.
+     *
+     * They are still composed HERE, after the post-processor, for the
+     * reasons stated below - that is what stops a word cap trimming a row
+     * of evidence. Only the PLACEMENT changed.
+     */
+    const placeableBlocks: PlaceableBlock[] = [];
+
     if (!isAreaReport) {
-      reportContent += `\n\n---\n\n## Planning controls and development registers\n\n`
+      let registerBlock = `## Planning controls and development registers\n\n`
         + `### Planning controls retrieved for this property\n\n${planningControlsTable}\n\n`
         + `### Infrastructure and development retrieved for this property\n\n${infrastructureTable}\n`;
       // Appended verbatim for the reason the two tables above are: asking a
       // model to reproduce a table is how a table comes back paraphrased, and
       // every date and figure here is one an authority published.
       if (publishedProjectBlock) {
-        reportContent += `\n### Major public projects near this property\n\n`
+        registerBlock += `\n### Major public projects near this property\n\n`
           + `${publishedProjectBlock}\n`
           + `**What this register covers.** ${PUBLISHED_PROJECT_COVERAGE.join(' ')}\n`;
       }
       console.log(
-        `📋 Appended retrieved planning + infrastructure evidence `
+        `📋 Composed retrieved planning + infrastructure evidence `
         + `(${planningControlsTable.length + infrastructureTable.length + publishedProjectBlock.length} chars)`,
       );
+      placeableBlocks.push({
+        heading: 'Planning controls and development registers',
+        markdown: registerBlock,
+        /*
+         * The registry declares no order for this one - it is retrieved
+         * evidence under a heading of its own rather than a section the
+         * registry owns - so the order is stated here. 89 puts it last
+         * among the content, immediately before `provenance` at 90:
+         * after the recommendation that rests on it, before the
+         * disclaimer that closes the document.
+         */
+        order: 89,
+      });
     }
 
     /*
@@ -7895,10 +7946,24 @@ YOUR DEDICATED PROPERTY PARTNER
      * state a land size, a zone or a lending ratio about.
      */
     if (!isAreaReport && strategySectionsMarkdown.trim()) {
-      reportContent += `\n\n---\n\n${strategySectionsMarkdown}\n`;
+      for (const composed of compassStrategySections) {
+        if (String(composed.markdown ?? '').trim()) {
+          placeableBlocks.push({ heading: composed.heading, markdown: composed.markdown });
+        }
+      }
       console.log(
-        `🧭 Appended composed strategy sections (${strategySectionsMarkdown.length} chars, `
+        `🧭 Composed strategy sections (${strategySectionsMarkdown.length} chars, `
         + `${compassStrategySections.length} sections)`,
+      );
+    }
+
+    if (placeableBlocks.length) {
+      const before = headingSequence(reportContent).length;
+      reportContent = placeBlocksByDeclaredOrder(reportContent, placeableBlocks, 'compass');
+      const after = headingSequence(reportContent);
+      console.log(
+        `Placed ${placeableBlocks.length} composed block(s) by declared order `
+        + `(${before} -> ${after.length} sections; closes on ${after[after.length - 1] ?? 'nothing'})`,
       );
     }
 

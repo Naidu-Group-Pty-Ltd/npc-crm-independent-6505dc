@@ -24,12 +24,35 @@ import {
   parseVizDirective,
   VIZ_DIRECTIVE_KINDS,
   VIZ_DIRECTIVE_RE_G,
+  isPlaceholderValue,
   splitRefusedItem,
   type VizDirective,
 } from './vizDirectives.pure.ts';
 
 const cell = (v: unknown): string => String(v ?? '').replace(/\|/g, '/').replace(/\s+/g, ' ').trim();
 const fmt = (n: number): string => (Number.isInteger(n) ? String(n) : String(Math.round(n * 100) / 100));
+
+/**
+ * The rows a refused directive contributes, with the absences left out.
+ *
+ * A promise of a figure is a figure, which is why a refused item becomes a
+ * ROW rather than vanishing. But an item whose value is `n/a` promised no
+ * figure — it stated an absence — and the owner's rule is that a placeholder
+ * never reaches a client document. Page 20 of the 9 Hollow Street Compass
+ * (20 Sep 2026) printed `Victoria dwellings benchmark n/a` beside a subject
+ * price and a suburb median, and `stripPlaceholderRows` could not remove it:
+ * the row is built here, at render time, and never exists as markdown the
+ * scrub reads.
+ *
+ * Where nothing survives, the caller draws nothing — an absence is omitted,
+ * never worded.
+ */
+export function refusedRows(sources: readonly string[]): string[][] {
+  return sources
+    .map((src) => splitRefusedItem(src))
+    .filter((r) => !isPlaceholderValue(r.value))
+    .map((r) => [r.label, r.value]);
+}
 
 function table(headers: string[], rows: string[][]): string[] {
   if (!rows.length) return [];
@@ -52,13 +75,13 @@ export function directiveAsMarkdown(d: VizDirective): string | null {
       // the figure could not plot rather than silently shortening the list.
       lines = [...caption(d.title), ...table(['Item', d.unit ? `Value (${d.unit})` : 'Value'],
         d.refused?.length
-          ? (d.sources ?? []).map((src) => { const r = splitRefusedItem(src); return [r.label, r.value]; })
+          ? refusedRows(d.sources ?? [])
           : d.items.map((i) => [i.label, i.display ?? fmt(i.value)]))];
       break;
     case 'donut':
       lines = [...caption(d.title), ...table(['Segment', 'Share'],
         d.refused?.length
-          ? (d.sources ?? []).map((src) => { const r = splitRefusedItem(src); return [r.label, r.value]; })
+          ? refusedRows(d.sources ?? [])
           : d.segments.map((s) => [s.label, s.display ?? fmt(s.value)]))];
       if (d.center && !d.refused?.length) {
         lines.push('', `_${cell(d.center)}${d.centerSub ? ` — ${cell(d.centerSub)}` : ''}_`);

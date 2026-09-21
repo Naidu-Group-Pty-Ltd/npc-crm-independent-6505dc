@@ -296,13 +296,30 @@ describe('correction 3 — every score statement is fully qualified', () => {
   });
 
   it('states the contributions, the composite and the rounding', () => {
+    /*
+     * RENEGOTIATED 20 September 2026 — the sentence moved, the claim did not.
+     *
+     * The wording was asserted verbatim ("rounds once, on that sum") and this
+     * function wrote its own copy of it, while `assessmentPrecisionNote`
+     * existed for exactly that and had ZERO call sites. The scorecard calls it
+     * now, and it has three readings rather than one — because the composite
+     * is the RECORD'S figure rather than this module's arithmetic, so a sum
+     * drawn from the record's whole-percent weights does not always round to
+     * it, and asserting a rounding that does not happen asks a reader to
+     * distrust both numbers.
+     *
+     * Every assertion this test made is kept. What it no longer does is pin
+     * one phrasing of the rounding — it asserts the rounding is stated.
+     */
     const table = composeScoreDimensionTable(rec())!;
     expect(table).toContain('| 32.00 |');
     expect(table).toContain('| 4.93 |');
     expect(table).toContain('| 2.79 |');
     expect(table).toContain('**Composite score 40.**');
     expect(table).toContain('39.71');
-    expect(table).toContain('rounds once, on that sum');
+    expect(table).toMatch(/rounded once|rounds once/);
+    // …and it is the composite the RECORD holds, not one recomputed here.
+    expect(table).toContain('the figure the scoring service recorded');
   });
 
   /*

@@ -271,10 +271,22 @@ function recommendationAction(headline: string | undefined): string | undefined 
  * it broke.
  *
  * Nothing is dropped and nothing is truncated. The appended sentence is split
- * off at the boundary `qualifyRecommendation` itself creates and published as
- * `scopeNote`, so a master may set it at body size where it belongs — and the
- * report already says it twice anyway, because `gradedLine` names the same
- * dimensions one line below.
+ * off at the boundary `qualifyRecommendation` itself creates, and the CLAIM
+ * alone binds the heading.
+ *
+ * The scope sentence is not published. It was, as `scopeNote`, "so a master
+ * may set it at body size where it belongs" — and no master ever did: across
+ * `scripts/template-library/`, the six `{{recommendation.*}}` paths any master
+ * binds are `action`, `grade`, `gradedDetailLine`, `gradedLine`, `headline`
+ * and `rationale`. Nothing is lost by dropping it, for the reason the sentence
+ * above already gave: `gradedLine` names the same dimensions one line below,
+ * and it IS drawn — the 9 Hollow Street Compass of 20 Sep 2026 prints
+ * "Graded B+ at 65 out of 100, weighted across yield, growth and location —
+ * 3 of the 5 assessment dimensions" on pages 3 and 5. Publishing a second copy
+ * for a master to draw would put the coverage on the page twice.
+ *
+ * `splitVerdictScope` still returns the scope: the split is what keeps it out
+ * of the heading, and a caller that wants it has it.
  *
  * The split is exact rather than a guess: it matches only the sentence that
  * appender writes, anchored at the end. Anything else is returned whole, which
@@ -718,7 +730,10 @@ export function projectInvestmentReport(
   const verdict = splitVerdictScope(storedHeadline);
   const headline = verdict.claim;
   put(recommendation, 'headline', headline);
-  put(recommendation, 'scopeNote', verdict.scope);
+  // `scopeNote` is deliberately NOT published — see `splitVerdictScope`. No
+  // master binds it, and `gradedLine` below already names the same dimensions.
+  // A binding nothing draws is not a feature waiting for one; a dormant field
+  // is one line away from printing the coverage twice.
   put(recommendation, 'action', recommendationAction(headline));
   // The grade and its score go through the ONE rule that decides whether this
   // record may state a grade at all. This used to be `str(score.grade)`, which

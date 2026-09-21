@@ -603,27 +603,6 @@
       "reviewed": true,
       "wp14_auto_classified": true
     },
-    "crm-calendar": {
-      "verify_jwt": false,
-      "exposure_class": "human-authenticated",
-      "owner": "crm-independence",
-      "reviewed": true,
-      "notes": "Native CRM calendar. Calls verifyAuth itself; refuses unless CRM_PROVIDER=native."
-    },
-    "crm-inbound-message": {
-      "verify_jwt": false,
-      "exposure_class": "webhook-secret",
-      "owner": "crm-independence",
-      "reviewed": true,
-      "notes": "Native CRM inbound SMS (Twilio). HMAC-SHA1 X-Twilio-Signature over the URL plus sorted params is the entire auth boundary, verified before any lookup or write; a deployment with no TWILIO_AUTH_TOKEN refuses every request rather than accepting what it cannot verify. Every refusal answers one status and one word so the endpoint describes nothing about its own configuration. Idempotent on the provider's MessageSid; creates no client row."
-    },
-    "crm-send-message": {
-      "verify_jwt": false,
-      "exposure_class": "human-authenticated",
-      "owner": "crm-independence",
-      "reviewed": true,
-      "notes": "Native CRM outbound messaging. Calls verifyAuth itself; refuses unless CRM_PROVIDER=native."
-    },
     "cross-portal-outbox-worker": {
       "verify_jwt": false,
       "exposure_class": "cron-worker",
@@ -2827,6 +2806,13 @@
       "reviewed": true,
       "wp14_auto_classified": true
     },
+    "urban-centre-register-ingest": {
+      "verify_jwt": true,
+      "exposure_class": "internal-service",
+      "owner": "reporting-engine-program",
+      "reviewed": true,
+      "notes": "ABS Significant Urban Area ingest. Gateway JWT on; inside, verifyAuth over the internal edge secret or the service role, as the monthly pg_cron wrapper sends. Reads the public ABS ArcGIS layer; writes only urban_centre_register and its urban_centre_syncs ledger. The probe and status stages write nothing."
+    },
     "user-guide-assistant": {
       "verify_jwt": true,
       "exposure_class": "human-authenticated",
@@ -2847,6 +2833,27 @@
       "owner": "security-remediation-program",
       "reviewed": true,
       "reviewed_in": "second-round-audit-remediation"
+    },
+    "crm-calendar": {
+      "verify_jwt": false,
+      "exposure_class": "human-authenticated",
+      "owner": "crm-independence",
+      "reviewed": true,
+      "notes": "Native CRM calendar. Calls verifyAuth itself; refuses unless CRM_PROVIDER=native."
+    },
+    "crm-inbound-message": {
+      "verify_jwt": false,
+      "exposure_class": "webhook-secret",
+      "owner": "crm-independence",
+      "reviewed": true,
+      "notes": "Native CRM inbound SMS (Twilio). HMAC-SHA1 X-Twilio-Signature over the URL plus sorted params is the entire auth boundary, verified before any lookup or write; a deployment with no TWILIO_AUTH_TOKEN refuses every request rather than accepting what it cannot verify. Every refusal answers one status and one word so the endpoint describes nothing about its own configuration. Idempotent on the provider's MessageSid; creates no client row."
+    },
+    "crm-send-message": {
+      "verify_jwt": false,
+      "exposure_class": "human-authenticated",
+      "owner": "crm-independence",
+      "reviewed": true,
+      "notes": "Native CRM outbound messaging. Calls verifyAuth itself; refuses unless CRM_PROVIDER=native."
     }
   }
 }

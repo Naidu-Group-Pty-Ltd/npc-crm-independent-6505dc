@@ -58,7 +58,13 @@ const SUBJECT = { address: '1 Example Street, Sampletown NSW 2000', postcode: '2
  */
 const intactEnrichment = () => ({
   coordinates: { lat: -33.7, lng: 150.9 },
-  commute: { durationMinutes: 42, distanceKm: 31, provider: 'osrm' },
+  // S3 — production records the DESTINATION beside the duration, and a stored
+  // commute without one is re-acquired rather than reused. This fixture stands
+  // for an INTACT enrichment, so it carries one.
+  commute: {
+    durationMinutes: 42, distanceKm: 31, provider: 'osrm',
+    destination: 'Sydney', destinationOwnCentre: 'no',
+  },
   walkScore: 61,
   amenities: [{ category: 'Schools', count: 10, score: 100, nearest: 'A School', distance: 0.09 }],
   transport: { verdict: 'stops_nearby', stopsWithin1km: 7, radiusMetres: 1600, detailedStops: [] },

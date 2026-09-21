@@ -18,7 +18,13 @@
  */
 import { describe, expect, it } from 'vitest';
 import { dedupeChartDirectives, directiveKey } from '@/lib/reports/investment/blockHygiene.pure';
-import { tabulateMixedUnitCharts, unitOf } from '@/lib/reports/investment/chartUnits.pure';
+import {
+  itemUnit,
+  labelStatedUnit,
+  tabulateMixedUnitCharts,
+  tabulatedRow,
+  unitOf,
+} from '@/lib/reports/investment/chartUnits.pure';
 
 // The four titles that reached the client, verbatim.
 const CRIME = (title: string) =>
@@ -135,5 +141,99 @@ describe('a chart of more than one unit is set as a table', () => {
 
   it('handles an empty document', () => {
     expect(tabulateMixedUnitCharts('')).toEqual({ markdown: '', tabulated: [] });
+  });
+});
+
+/**
+ * …and the unit the model put in the LABEL.
+ *
+ * Page 22 of the 1 Crestview Avenue Compass (20 Sep 2026), read off the
+ * delivered PDF's own geometry — three labels right-aligned at x=210, three
+ * values right-aligned at x=486, which is `renderBars`' layout and not a
+ * table:
+ *
+ *     R3 Medium Density Residential zone       1
+ *     Minimum lot size 450 m²                450
+ *     Maximum building height 10 m            10
+ *
+ * A zone code, a land area and a height on one axis with a maximum of 450: the
+ * height drew as a 2% sliver and the zone as a hairline. This module exists
+ * for exactly that and walked past it, because `unitOf` reads the display and
+ * all three displays were bare integers.
+ */
+const CRESTVIEW = '{{bars: R3 Medium Density Residential zone 1, '
+  + 'Minimum lot size 450 m² 450, Maximum building height 10 m 10 '
+  + '| title=Key planning controls · The Hills LEP 2019}}';
+
+describe('a unit stated in the label', () => {
+  it('is read only when the label restates the item\'s own value', () => {
+    expect(labelStatedUnit('Minimum lot size 450 m²', 450)).toBe('m²');
+    expect(labelStatedUnit('Maximum building height 10 m', 10)).toBe('m');
+    // …and not when the trailing number is some other number. `Growth 5 yr`
+    // beside a value of 6.2 states a PERIOD, not this value's unit.
+    expect(labelStatedUnit('Growth 5 yr', 6.2)).toBeNull();
+    // …nor when the label states no value at all.
+    expect(labelStatedUnit('Schools', 8)).toBeNull();
+    expect(labelStatedUnit('Subject house', 700)).toBeNull();
+    // …nor when there is a number but no unit beside it.
+    expect(labelStatedUnit('Bedrooms 3', 3)).toBeNull();
+  });
+
+  it('reads a lone lowercase m as metres and keeps k/M/b as magnitudes', () => {
+    /*
+     * `unitOf`'s magnitude guard is about a DISPLAY (`$1.2M`, `45k`). Here the
+     * number has been proved equal to the item's value, which settles it: a
+     * `10 m` beside a value of 10 cannot be ten million, or the value would be
+     * 10,000,000.
+     */
+    expect(labelStatedUnit('Height 10 m', 10)).toBe('m');
+    expect(labelStatedUnit('Revenue 1.2 M', 1.2)).toBeNull();
+    expect(labelStatedUnit('Sales 45 k', 45)).toBeNull();
+  });
+
+  it('never outranks a unit the display already carries', () => {
+    expect(itemUnit({ label: 'Growth 5 yr', value: 6.2, display: '6.2%' })).toBe('percent');
+    expect(itemUnit({ label: 'Metro 2.1 km', value: 2.1, display: '2.1 km' })).toBe('km');
+    expect(itemUnit({ label: 'Schools', value: 8, display: '8' })).toBe('count');
+  });
+
+  it('tabulates the Crestview planning chart, which the old rule drew', () => {
+    const out = tabulateMixedUnitCharts(CRESTVIEW);
+    expect(out.tabulated).toHaveLength(1);
+    expect(out.tabulated[0].units).toEqual(['count', 'm²', 'm']);
+    expect(out.markdown).not.toContain('{{bars');
+  });
+
+  it('moves the unit into the value cell, where a reader looks for it', () => {
+    /*
+     * Nothing is composed: both halves are the model's own characters, moved.
+     * The alternative is a label that says 450 beside a cell that says it
+     * again with its unit stripped off.
+     */
+    expect(tabulatedRow({ label: 'Minimum lot size 450 m²', value: 450, display: '450' }))
+      .toEqual({ label: 'Minimum lot size', display: '450 m²' });
+    expect(tabulatedRow({ label: 'Maximum building height 10 m', value: 10, display: '10' }))
+      .toEqual({ label: 'Maximum building height', display: '10 m' });
+    // A label that states no value keeps every character it had.
+    expect(tabulatedRow({ label: 'R3 Medium Density Residential zone', value: 1, display: '1' }))
+      .toEqual({ label: 'R3 Medium Density Residential zone', display: '1' });
+
+    const rows = tabulateMixedUnitCharts(CRESTVIEW).markdown;
+    expect(rows).toContain('| Minimum lot size | 450 m² |');
+    expect(rows).toContain('| Maximum building height | 10 m |');
+  });
+
+  it('leaves every other chart in the three delivered documents alone', () => {
+    // Read off the same three PDFs: the only other bar charts are a growth
+    // comparison in one unit and two amenity counts in none.
+    for (const src of [
+      '{{bars: Postcode 2155 · 1-yr 6.3%, NSW houses · 1-yr 11.0%, '
+        + 'Postcode 2155 · 5-yr 6.2%, NSW houses · 5-yr 7.6% | title=House price growth}}',
+      '{{bars: Growth 1 yr 6.3, Growth 3 yr 4.4, Growth 5 yr 6.2 | title=CAGR}}',
+      '{{bars: Schools 8, Transport 4 | title=Amenity}}',
+      '{{bars: Bedrooms 3 3, Bathrooms 2 2 | title=Configuration}}',
+    ]) {
+      expect(tabulateMixedUnitCharts(src), src).toEqual({ markdown: src, tabulated: [] });
+    }
   });
 });

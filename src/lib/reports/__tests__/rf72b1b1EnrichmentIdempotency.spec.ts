@@ -66,7 +66,15 @@ const goodEnrichment = () => stampAcquisition({
   healthcare: { nearestHospital: 'Cowra Hospital', distanceToHospital: 0.85, facilitiesWithin5km: 2 },
   lifestyle: { shoppingCenters: 1, parks: 9, restaurants: 10, nearestShopping: 'x', nearestPark: 'y' },
   transport: { nearestStation: 'Cowra', distanceToStation: 1.72, stationsWithin2km: 1 },
-  commute: { mode: 'public_transit', distanceKm: 310.2, durationMinutes: 288 },
+  // S3 — production writes the DESTINATION beside the duration now, and a
+  // stored commute without one is refused (see the block at the end of this
+  // file). This fixture is "the shape production actually stores", so it
+  // carries what production actually stores.
+  commute: {
+    mode: 'driving', distanceKm: 310.2, durationMinutes: 288,
+    destination: 'Sydney', destinationBasis: 'state_capital',
+    destinationOwnCentre: 'no', destinationPointBasis: 'capital_cbd',
+  },
 }, ACQUISITION);
 
 describe('A — no stored enrichment means the provider is called', () => {
@@ -369,5 +377,68 @@ describe('the guard is wired where the cost is', () => {
     const osm = readFileSync(resolve(REPO, 'supabase/functions/_shared/geocode/osmGeocode.pure.ts'), 'utf8');
     expect(chain).toContain('formatted_address');
     expect(osm).toContain('matchedAddress: text(place.display_name)');
+  });
+});
+
+/*
+ * S3 — a measured commute with no destination predates the question
+ * "measured to WHERE?", and reusing it scores the answer to a question nobody
+ * asked.
+ *
+ * Measured on report 5f7fb137 (9 Hollow Street, Golden Square) on 20 Sep 2026:
+ * the stored enrichment records a 114-minute drive to Melbourne, subject-matched,
+ * `places: complete`, `commute: measured`, every reading present — so every
+ * other gate passes and it would be reused for ever. `scoreLocation` cannot
+ * tell that destination is not this property's own centre, so it RATES the
+ * reading at 0 of 100 and Location stays at 49 through any number of
+ * regenerations.
+ *
+ * This is `readings_missing`'s rule one step on: that guard exists because a
+ * stamp vouches for the ACQUISITION and not for what survived it; this one
+ * because a stamp vouches for what was measured and not for what the
+ * measurement MEANT.
+ */
+describe('J — a stored commute with no destination is re-acquired', () => {
+  const withCommute = (commute: unknown) => stampAcquisition({
+    coordinates: { lat: -33.8386, lng: 148.6903 },
+    ...PLACES_READINGS,
+    ...(commute === undefined ? {} : { commute }),
+  }, ACQUISITION);
+
+  it('refuses the pre-register shape, which is what production holds', () => {
+    const d = assessEnrichmentReuse(
+      withCommute({ mode: 'driving', distanceKm: 148.5, durationMinutes: 114 }),
+      SUBJECT,
+    );
+    expect(d.reuse).toBe(false);
+    expect(d.verdict).toBe('commute_destination_unrecorded');
+    expect(d.note).toMatch(/destination/i);
+  });
+
+  it('accepts one that records where it was measured to', () => {
+    const d = assessEnrichmentReuse(
+      withCommute({
+        mode: 'driving', distanceKm: 4.1, durationMinutes: 7,
+        destination: 'Bendigo', destinationOwnCentre: 'yes',
+      }),
+      SUBJECT,
+    );
+    expect(d.reuse).toBe(true);
+  });
+
+  it('is bounded to a commute that actually ran — no commute is still reusable', () => {
+    // Nothing to re-measure, so this must behave exactly as it does today.
+    const d = assessEnrichmentReuse(withCommute(undefined), SUBJECT);
+    expect(d.reuse).toBe(true);
+    expect(d.verdict).toBe('reusable');
+  });
+
+  it('does not fire where the stamp says the commute never ran', () => {
+    const stored = stampAcquisition(
+      { coordinates: { lat: -33.8386, lng: 148.6903 }, ...PLACES_READINGS,
+        commute: { mode: 'driving', distanceKm: 1, durationMinutes: 2 } },
+      { ...ACQUISITION, stages: { ...ACQUISITION.stages, commute: 'unavailable' } },
+    );
+    expect(assessEnrichmentReuse(stored, SUBJECT).reuse).toBe(true);
   });
 });

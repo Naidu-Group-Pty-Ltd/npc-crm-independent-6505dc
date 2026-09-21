@@ -233,6 +233,22 @@ function productionInputFrom(rawInput: any, now: Date): ProductionScoringInput {
     location: {
       walkScore: locationIntelligence.walkScore ?? null,
       commuteTimeCBD: locationIntelligence.commute?.durationMinutes ?? null,
+      /*
+       * Where that commute was measured TO, as `location-intelligence-service`
+       * recorded it. An enrichment written before the destination was stored
+       * carries none, and `scoreLocation` then behaves exactly as it did.
+       *
+       * `urbanCentre.pure.ts` has the reason: Golden Square's commute was
+       * measured to Melbourne at 114 minutes and scored 0 of 100 on a
+       * property five minutes from Bendigo's CBD.
+       */
+      commuteDestination: locationIntelligence.commute?.destination
+        ? {
+          label: locationIntelligence.commute.destination as string,
+          ownCentre: (locationIntelligence.commute.destinationOwnCentre ?? 'unknown') as
+            'yes' | 'no' | 'unknown',
+        }
+        : null,
       schoolsNearby: locationIntelligence.schools?.schoolsWithin3km ?? null,
       /*
        * The per-category counts and distances the enrichment already
@@ -1386,10 +1402,25 @@ function analyzeSWOT(input: InvestmentScoringInput, scores: any, permits: ClaimP
   if (permits.fromInput('populationGrowth') && input.populationGrowth && input.populationGrowth > 2) {
     opportunities.push('Strong population growth driving future demand');
   }
-  if (permits.fromInput('medianSuburbPrice')
-      && input.medianSuburbPrice && input.propertyPrice < input.medianSuburbPrice * 0.9) {
-    opportunities.push('Priced below suburb median - potential for value appreciation');
-  }
+  /*
+   * NO VALUATION OF THE SUBJECT.
+   *
+   * This pushed 'Priced below suburb median - potential for value
+   * appreciation', and it reached page 4 of the Compass delivered for
+   * 9 Hollow Street on 21 Sep 2026, printed under "Opportunities Noted".
+   *
+   * `MARKET_FIGURES_IN_THE_REPORT.md` rule 6 forbids it by name: "A median
+   * describes a market, not this property. The rule forbids 'below the
+   * median', 'above market' and 'under-priced' by name, because that
+   * comparison is what the report made." The appreciation clause is a second
+   * claim on top of the first - an inference about this property's future
+   * price drawn from one comparison against a market average.
+   *
+   * The comparison is not suppressed, it is relocated: the median is drawn as
+   * a market figure with its geography, period and publisher beside it, under
+   * the rule that a benchmark never borrows the subject's authority. What is
+   * gone is the report telling a client their property is cheap.
+   */
   if (permits.fromInput('unemploymentRate') && input.unemploymentRate && input.unemploymentRate < 3.5) {
     opportunities.push('Low unemployment supporting rental demand');
   }

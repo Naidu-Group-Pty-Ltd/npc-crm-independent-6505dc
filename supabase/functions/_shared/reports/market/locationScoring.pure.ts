@@ -50,7 +50,7 @@ import {
  * where the enrichment carries them, and falls back to the composite walk
  * score where it does not. See {@link LocationResult.walkabilityBasis}.
  */
-export const LOCATION_METHODOLOGY_VERSION = '1.1.0';
+export const LOCATION_METHODOLOGY_VERSION = '1.2.0';
 
 export const LOCATION_WEIGHTS = {
   walkability: 0.35,
@@ -103,6 +103,24 @@ export interface LocationInputs {
    * not saturate. See `amenityWalkability.pure.ts`.
    */
   amenities?: ReadonlyArray<AmenityReading> | null;
+  /**
+   * Where the commute was measured TO, and whether that is this property's own
+   * urban centre (1.2.0).
+   *
+   * Absent is byte-identical to the behaviour before this existed: the
+   * component is scored and its sentence says "the CBD", which is what every
+   * record written before the enrichment carried a destination holds.
+   *
+   * See `urbanCentre.pure.ts`. The short version: Golden Square's commute was
+   * measured to MELBOURNE at 114 minutes and `COMMUTE_ANCHORS` ends at
+   * `[110, 0]`, so a property five minutes from Bendigo's CBD scored 0 of 100
+   * on its access to anything.
+   */
+  commuteDestination?: {
+    /** The city, so the component can say which CBD it means. */
+    readonly label?: string | null;
+    readonly ownCentre?: 'yes' | 'no' | 'unknown' | null;
+  } | null;
 }
 
 export interface LocationComponent {
@@ -133,6 +151,12 @@ export interface LocationResult {
   saturationWarning: string | null;
   /** Which measurement the walkability component was scored on (1.1.0). */
   walkabilityBasis: 'amenity_distance' | 'composite_walk_score' | 'unavailable';
+  /**
+   * Why the commute was left out, where it was measured and not scored
+   * (1.2.0). Null in every other case, including a commute nobody measured —
+   * an absent component and an excluded one are different facts.
+   */
+  commuteExcluded: string | null;
 }
 
 const num = (v: unknown): number | null =>
@@ -185,12 +209,39 @@ export function scoreLocation(input: LocationInputs): LocationResult {
   }
 
   const commute = num(input.commuteTimeCBD);
-  if (commute !== null && commute > 0) {
+  const destination = input.commuteDestination ?? null;
+  const destinationLabel = String(destination?.label ?? '').trim();
+  const ownCentre = destination?.ownCentre ?? 'unknown';
+  /*
+   * A commute to somewhere that is NOT this property's urban centre is a true
+   * distance and not a reading about this property's access.
+   *
+   * 9 Hollow Street is in Golden Square, a suburb of Bendigo. Its commute was
+   * measured to Melbourne — 114 minutes — and `COMMUTE_ANCHORS` ends at
+   * `[110, 0]`, so the component scored 0 and Location came out at 49 against
+   * 69 and 74 for the two metropolitan properties beside it, while the same
+   * document's prose described the property's access to Bendigo CBD twice.
+   *
+   * Rating that 0 is `PLANNING_CONTROLS_IN_THE_REPORT.md` §9's defect: it
+   * states a conclusion about the property from a measurement of something
+   * else. The reading is kept and reported; it is excluded from the score, and
+   * the remaining components renormalise over what WAS measured here — which
+   * is what this module already does for every component it does not have.
+   *
+   * `'unknown'` is scored exactly as before: a rule that cannot tell a Bendigo
+   * property from a Sydney one must not act as though it could.
+   */
+  const commuteIsAboutThisProperty = ownCentre !== 'no';
+  if (commute !== null && commute > 0 && commuteIsAboutThisProperty) {
     built.push({
       key: 'cbdAccess',
       score: clamp(interpolate(commute, COMMUTE_ANCHORS)),
       input: commute, unit: 'minutes',
-      detail: `${Math.round(commute)} minutes to the CBD`,
+      // Every figure states its basis: a commute whose destination is not
+      // named is a number a reader cannot check.
+      detail: destinationLabel
+        ? `${Math.round(commute)} minutes to ${destinationLabel}`
+        : `${Math.round(commute)} minutes to the CBD`,
       weight: LOCATION_WEIGHTS.cbdAccess,
     });
   }
@@ -229,5 +280,11 @@ export function scoreLocation(input: LocationInputs): LocationResult {
         + 'so this reading separates the property from few others.'
       : null,
     walkabilityBasis,
+    commuteExcluded: commute !== null && commute > 0 && !commuteIsAboutThisProperty
+      ? `A ${Math.round(commute)}-minute commute to `
+        + `${destinationLabel || 'the state capital'} was measured, and it is not scored: that is not `
+        + "this property's urban centre, so the reading describes the distance between two markets "
+        + "rather than this property's access. The remaining components carry the score."
+      : null,
   };
 }

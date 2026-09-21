@@ -409,12 +409,55 @@ const REFUSED_TAIL =
  */
 const TEXT_VALUE_SEPARATOR = /^(.+?)\s+[·•]\s+(.+)$/;
 
+/**
+ * A placeholder written where a figure belonged is a VALUE, not part of the
+ * label.
+ *
+ * Page 20 of the 9 Hollow Street Compass (20 Sep 2026) printed
+ *
+ *     | Item                             | Value ($) |
+ *     | Subject                          | $387,500  |
+ *     | Golden Square house median       | $567,500  |
+ *     | Victoria dwellings benchmark n/a |           |
+ *
+ * — the `n/a` glued to the end of the label and the value cell empty, because
+ * neither rule above matches a tail with no digits in it. That is a
+ * placeholder on a client page, which the owner's rule forbids outright, and
+ * `stripPlaceholderRows` could not see it: the word was in the label column.
+ *
+ * Recognising it puts the confession in the cell it belongs to, where the
+ * scrub that exists for exactly this removes the row.
+ */
+/**
+ * The vocabulary of a value that is not one.
+ *
+ * Declared here because three modules need the same answer and had two
+ * spellings of it: `derivedHygiene`'s `PLACEHOLDER_CELL` removes such a cell
+ * from a table the MODEL wrote, and the two directive tabulators build tables
+ * of their own from items the parser refused — so a placeholder the scrub
+ * would have removed reached the page by a route the scrub cannot see.
+ * `isPlaceholderValue` is that one rule.
+ */
+export const PLACEHOLDER_VALUE_RE =
+  /^(?:n\/?a|tbd|to be determined|not available|not provided|not stated|not recorded|unknown|no data|—|-|–)\.?$/i;
+
+/** True where a value cell states an absence rather than a figure. */
+export function isPlaceholderValue(value: string | null | undefined): boolean {
+  const v = String(value ?? '').trim();
+  return v.length === 0 || PLACEHOLDER_VALUE_RE.test(v);
+}
+
+const PLACEHOLDER_TAIL =
+  /^(.+?)[\s:,–—-]+((?:n\/?a|tbd|to be determined|not available|not provided|not stated|unknown|no data)\.?)$/i;
+
 export function splitRefusedItem(item: string): { label: string; value: string } {
   const trimmed = item.trim();
   const m = REFUSED_TAIL.exec(trimmed);
   if (m) return { label: m[1].trim(), value: m[2].trim() };
   const t = TEXT_VALUE_SEPARATOR.exec(trimmed);
   if (t) return { label: t[1].trim(), value: t[2].trim() };
+  const p = PLACEHOLDER_TAIL.exec(trimmed);
+  if (p) return { label: p[1].trim(), value: p[2].trim() };
   return { label: trimmed, value: '' };
 }
 

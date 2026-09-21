@@ -20,15 +20,6 @@ verify_jwt = false
 # _shared/aml/providers/diditClient.ts) IS the authentication boundary: it is
 # checked before any service-role database access, and no unsigned or stale
 # request can change AML state.
-[functions.crm-calendar]
-verify_jwt = false
-
-[functions.crm-inbound-message]
-verify_jwt = false
-
-[functions.crm-send-message]
-verify_jwt = false
-
 [functions.didit-webhook]
 verify_jwt = false
 
@@ -318,6 +309,11 @@ verify_jwt = true
 # open sales register for the typed address. Browser-called with the user's JWT;
 # verifyAuth inside, as estimate-property-expenses.
 [functions.estimate-capital-growth]
+verify_jwt = true
+
+[functions.urban-centre-register-ingest]
+# The register load runs on a schedule and from an operator's hand, never from
+# a browser: the gateway checks a Supabase JWT in front of it.
 verify_jwt = true
 
 [functions.amenity-register-ingest]
@@ -1596,4 +1592,16 @@ verify_jwt = true
 # never a JWT — the caller is the network's outbox worker holding the
 # connection secret. Flag-gated: while builder_network_enabled is false it
 # answers 503 network_disabled, which the sender treats as retryable.
+verify_jwt = false
+
+# Declared by this clone for functions the prime does not have. An omitted
+# [functions.<name>] block is read by the CLI as verify_jwt = true.
+
+[functions.crm-calendar]
+verify_jwt = false
+
+[functions.crm-inbound-message]
+verify_jwt = false
+
+[functions.crm-send-message]
 verify_jwt = false

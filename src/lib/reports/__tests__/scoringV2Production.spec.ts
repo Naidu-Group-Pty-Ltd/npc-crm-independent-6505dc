@@ -486,9 +486,16 @@ describe('the input policy still rules on Location', () => {
      * test that never names it. `amenities` is named because it is the one
      * this is written for: it rides `walkScore`'s declaration, so refusing
      * that declaration must refuse it too.
+     *
+     * The literal key set this once carried is gone, and the case it warned
+     * about is exactly what removed it: `commuteDestination` (which centre a
+     * commute was measured to, S5/S6 §20) is refused correctly and failed a
+     * test that could not name it. What is pinned is the RULE — every input
+     * present is refused — plus the two the rule was written for.
      */
-    expect(Object.keys(refused.locationInputs).sort())
-      .toEqual(['amenities', 'commuteTimeCBD', 'schoolsNearby', 'walkScore']);
+    const refusedKeys = Object.keys(refused.locationInputs);
+    expect(refusedKeys).toContain('amenities');
+    expect(refusedKeys).toContain('commuteTimeCBD');
     for (const [key, value] of Object.entries(refused.locationInputs)) {
       expect(value, key).toBeNull();
     }

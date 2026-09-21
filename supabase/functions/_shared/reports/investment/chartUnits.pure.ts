@@ -78,6 +78,91 @@ export function unitOf(display: string | undefined): string {
   return word.toLowerCase();
 }
 
+/**
+ * …and the unit a LABEL carries, where the display carries none.
+ *
+ * Page 22 of the 1 Crestview Avenue Compass (20 Sep 2026) drew three planning
+ * controls on one axis:
+ *
+ * ```
+ * R3 Medium Density Residential zone     1
+ * Minimum lot size 450 m²              450
+ * Maximum building height 10 m          10
+ * ```
+ *
+ * A zone code, a land area and a height, on one track, with a maximum of 450 —
+ * so the height printed as a 2% sliver and the zone as a hairline. It is
+ * exactly the defect this module exists for and it walked straight past,
+ * because `unitOf` reads the DISPLAY and all three displays were bare
+ * integers. The model had put the units in the LABELS.
+ *
+ * The bound that makes reading them safe is that **the label must restate the
+ * item's own value**: `Minimum lot size 450 m²` carries the number 450, which
+ * IS this item's value, so the `m²` beside it is this value's unit and nothing
+ * is being inferred. A label that merely ends in a word — `Schools`,
+ * `Transport`, `Subject house` — states no value and contributes no unit, so a
+ * chart of ordinary labelled counts is untouched; and a label whose trailing
+ * number is a different number — `Growth 5 yr` beside a value of 6.2 — is a
+ * period, not this value's unit, and the equality test refuses it.
+ *
+ * Measured across the three delivered Compass PDFs: **one chart tabulated by
+ * this rule, and no other chart in the three affected.**
+ */
+export function labelStatedUnit(label: string, value: number): string | null {
+  const m = /([\d.,]+)\s*([a-zA-Z²³µ°%]+)\s*$/u.exec(String(label ?? '').trim());
+  if (!m) return null;
+  const stated = Number(m[1].replace(/,/gu, ''));
+  if (!Number.isFinite(stated) || stated !== value) return null;
+  /*
+   * `unitOf` reads a lone k/m/b after digits as a MAGNITUDE — the rule that
+   * keeps `$1.2M` and `45k` from becoming units — and that rule is about a
+   * DISPLAY. Here the number has already been proved equal to the item's own
+   * value, which is what settles the ambiguity: `10 m` beside a value of 10
+   * cannot be ten million, or the value would be 10,000,000. So a lowercase
+   * `m` is metres, and that is not a guess about this document — it is what
+   * both `Maximum building height 10 m` rows in the delivered pair say.
+   * Uppercase `M` and either case of `k`/`b` keep the magnitude reading,
+   * because nothing is measured in them.
+   */
+  const token = m[2];
+  if (token === 'm') return 'm';
+  const unit = unitOf(`${m[1]} ${token}`);
+  return unit === 'count' ? null : unit;
+}
+
+/**
+ * The unit an item is measured in, reading its label where its display is
+ * bare. The display always wins: what the model printed beside the bar is the
+ * value, and the label is only consulted when the value carries no unit of
+ * its own.
+ */
+export function itemUnit(item: { display?: string; label: string; value: number }): string {
+  const fromDisplay = unitOf(item.display);
+  if (fromDisplay !== 'count') return fromDisplay;
+  return labelStatedUnit(item.label, item.value) ?? 'count';
+}
+
+/**
+ * The row a tabulated item prints.
+ *
+ * Where the label restates the value, the label's own printed form IS the
+ * value — `Minimum lot size 450 m²` with a display of `450` becomes
+ * `Minimum lot size | 450 m²` rather than a label that says 450 beside a cell
+ * that says it again with its unit stripped off. Nothing is composed: both
+ * halves are the model's own characters, moved.
+ */
+export function tabulatedRow(
+  item: { display?: string; label: string; value: number },
+): { label: string; display: string } {
+  const label = String(item.label ?? '').trim();
+  const display = (item.display ?? '').trim() || String(item.value);
+  const m = /^(.*?)[\s:·•,-]*([\d.,]+\s*[a-zA-Z²³µ°%]+)\s*$/u.exec(label);
+  if (m && m[1].trim() && labelStatedUnit(label, item.value)) {
+    return { label: m[1].trim(), display: m[2].replace(/\s+/gu, ' ').trim() };
+  }
+  return { label, display };
+}
+
 export interface MixedUnitChart {
   /** The directive's kind, as written. */
   readonly kind: string;
@@ -135,18 +220,17 @@ export function tabulateMixedUnitCharts(markdown: string): MixedUnitResult {
 
     const units: string[] = [];
     for (const it of items) {
-      const u = unitOf(it.display);
+      const u = itemUnit(it);
       if (!units.includes(u)) units.push(u);
     }
     if (units.length < 2) return whole;
 
     tabulated.push({ kind: String(kind).toLowerCase(), units, title: d.title });
     // `display` is what the model printed beside the bar; falling back to the
-    // parsed number keeps a row that would otherwise print blank.
-    return tabulate(d.title, items.map((it) => ({
-      label: it.label,
-      display: it.display ?? String(it.value),
-    })));
+    // parsed number keeps a row that would otherwise print blank, and
+    // `tabulatedRow` moves a unit the label was carrying into the value cell
+    // where the reader looks for it.
+    return tabulate(d.title, items.map(tabulatedRow));
   });
 
   return { markdown: tabulated.length ? out : markdown, tabulated };

@@ -133,3 +133,135 @@ describe('total on anything', () => {
     }
   });
 });
+
+/**
+ * The Method page printed a different grade from the cover.
+ *
+ * Measured on the 97 Poole Road Compass of 20 Sep 2026, read as a delivered
+ * PDF. The cover, the verdict page, the risk page and the page-4 assessment
+ * table all print **54**. Page 38 prints:
+ *
+ *     Composite score 51. The contributions come to 50.95…
+ *
+ * directly above the line "Calculated by this platform's investment scoring
+ * service. No figure in this table is re-derived by this report; the
+ * arithmetic above restates the engine's own."
+ *
+ * It was re-derived. `compositeScore` was `Math.round(Σ contributions)` over
+ * weights this module reconstructed as `nominal ÷ Σ nominal(measured)`, while
+ * the engine renormalises the EVIDENCE weights — nominal scaled by how much of
+ * each dimension's own method ran. On this record that is 47/30/18/5 against a
+ * reconstruction of 42/26/16/16, because Demand scored on a fraction of its
+ * method.
+ *
+ * `storedTotal` was already computed on this reading and read by NOTHING — the
+ * one field that would have caught it.
+ */
+const POOLE_SCORE = {
+  totalScore: 54,
+  grade: 'C+',
+  policy: { publicationPolicyVersion: 'ME-8' },
+  breakdown: {
+    growthScore: { score: 56, weight: 47, details: 'Five-year capital growth 6.2% pa.' },
+    locationScore: { score: 74, weight: 30, details: 'Nearest public transport 1.6 km away.' },
+    yieldScore: { score: 23, weight: 18, details: '3.47% gross yield.' },
+    demandScore: { score: 27, weight: 5, details: '162 sales in postcode 2155.' },
+    riskScore: { excluded: true },
+  },
+};
+
+describe('the composite is the record\'s, never a recomputation', () => {
+  it('prints the 54 the record holds, not the 51 the reconstruction gives', () => {
+    const a = readScoreAssessment(POOLE_SCORE);
+    expect(a.storedTotal).toBe(54);
+    expect(a.compositeScore).toBe(54);
+    expect(a.compositeSource).toBe('recorded');
+    // The reconstruction, for the record: 56×.421 + 74×.263 + 23×.158 +
+    // 27×.158 = 50.95 → 51. That is the number the delivered PDF printed.
+    const reconstructed = 56 * (0.40 / 0.95) + 74 * (0.25 / 0.95)
+      + 23 * (0.15 / 0.95) + 27 * (0.15 / 0.95);
+    expect(Math.round(reconstructed)).toBe(51);
+    expect(a.compositeScore).not.toBe(Math.round(reconstructed));
+  });
+
+  it('uses the record\'s own weights where they contradict the reconstruction', () => {
+    const a = readScoreAssessment(POOLE_SCORE);
+    expect(a.weightBasis).toBe('recorded');
+    const pct = (k: string) => Math.round(
+      a.dimensions.find((d) => d.key === k)!.adjustedWeight * 100,
+    );
+    expect([pct('growth'), pct('location'), pct('yield'), pct('demand')]).toEqual([47, 30, 18, 5]);
+    // Demand's original weight is 15% and it carried 5% — the gap IS the
+    // coverage discount, and the reader is told so rather than shown two
+    // tables that disagree.
+    expect(a.dimensions.find((d) => d.key === 'demand')!.nominalWeight).toBe(0.15);
+  });
+
+  it('adds up: the printed column reaches the printed total', () => {
+    const a = readScoreAssessment(POOLE_SCORE);
+    expect(a.compositeExact).toBeCloseTo(54.01, 2);
+    expect(a.contributionsFoot).toBe(true);
+    expect(Math.round(a.compositeExact!)).toBe(a.compositeScore);
+  });
+
+  it('keeps the EXACT fractions where the record confirms them', () => {
+    /*
+     * The other half, and the reason this is not simply "read the record".
+     * 18 Annabelle Crescent stores 57/21/21, which rounds to the
+     * reconstruction's 57.14/21.43/21.43 — one weighting, and the exact
+     * fractions reproduce the stored total to the decimal where the rounded
+     * ones do not (39.71 → 40 against 39.48 → 39).
+     */
+    const a = readScoreAssessment(ANNABELLE_SCORE);
+    expect(a.weightBasis).toBe('reconstructed');
+    expect(a.compositeSource).toBe('recorded');
+    expect(a.compositeExact).toBeCloseTo(39.71, 2);
+    expect(a.compositeScore).toBe(40);
+    expect(a.contributionsFoot).toBe(true);
+  });
+
+  it('reconstructs only where the record holds no total of its own', () => {
+    const noTotal = { ...POOLE_SCORE, totalScore: null };
+    const a = readScoreAssessment(noTotal);
+    expect(a.compositeSource).toBe('reconstructed');
+    expect(a.compositeScore).toBe(Math.round(a.compositeExact!));
+  });
+
+  it('never lets a stored total override the publication policy', () => {
+    // One valid dimension and a totalScore of 90: the policy withholds an
+    // overall, and a figure in a column is not a licence to publish one.
+    const thin = {
+      totalScore: 90,
+      grade: 'A',
+      policy: { publicationPolicyVersion: 'ME-8' },
+      breakdown: {
+        growthScore: { score: 56, weight: 100 },
+        locationScore: { excluded: true },
+        yieldScore: { excluded: true },
+        demandScore: { excluded: true },
+        riskScore: { excluded: true },
+      },
+    };
+    const a = readScoreAssessment(thin);
+    expect(a.publishable).toBe(false);
+    expect(a.compositeScore).toBeNull();
+    expect(a.compositeSource).toBeNull();
+    expect(a.withheldReason).toBeTruthy();
+  });
+
+  it('says what the arithmetic is, and never asserts a rounding that does not happen', () => {
+    expect(assessmentPrecisionNote(readScoreAssessment(POOLE_SCORE)))
+      .toContain('the figure the scoring service recorded');
+    expect(assessmentPrecisionNote(readScoreAssessment(ANNABELLE_SCORE)))
+      .toContain('rounded once');
+    // A record whose stored weights cannot reproduce its total says so rather
+    // than printing a sum beside a different number as though they agreed.
+    const skewed = {
+      ...POOLE_SCORE,
+      breakdown: { ...POOLE_SCORE.breakdown, demandScore: { score: 27, weight: 14 } },
+    };
+    const a = readScoreAssessment(skewed);
+    expect(a.contributionsFoot).toBe(false);
+    expect(assessmentPrecisionNote(a)).toContain('shape of the result');
+  });
+});

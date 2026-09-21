@@ -666,6 +666,22 @@ export function renderHeatmap(
   // does not exist.
   const rowLabels = (opts.rowLabels ?? []).slice(0, rows);
   const colLabels = (opts.colLabels ?? []).slice(0, cols);
+
+  // And the converse, which is the worse one: a FIGURE with no label over it.
+  //
+  // Page 23 of the 9 Hollow Street Compass (20 Sep 2026) drew one row of
+  // SEVEN cells — `3 3 3 4 4 4 5` — under the single column label
+  // `Exposure level`, because the model wrote seven risks separated by
+  // commas where this grammar wants `/`, so the grid transposed. Six of the
+  // seven figures described something no reader could name, and the chart
+  // read as complete because it carried a label at all.
+  //
+  // A PARTIAL label set is worse than none, so this is asked of a partial
+  // set alone: a grid that names nothing on an axis is a grid whose caption
+  // has to carry it, and several in production legitimately do.
+  const rowLabelsPartial = (opts.rowLabels?.length ?? 0) > 0 && opts.rowLabels!.length < rows;
+  const colLabelsPartial = (opts.colLabels?.length ?? 0) > 0 && opts.colLabels!.length < cols;
+  if (rowLabelsPartial || colLabelsPartial) return '';
   const flat = grid.flat();
   const lo = Math.min(...flat), hi = Math.max(...flat);
   const span = (hi - lo) || 1;
@@ -705,7 +721,32 @@ export function renderHeatmap(
   const microU = ptToUnits(CHART_TEXT_PT.micro, w, ctx.widthMm);
   const titleU = ptToUnits(CHART_TEXT_PT.title, w, ctx.widthMm);
   const titleY = Math.ceil(titleU + 6);
-  const padT = Math.ceil((opts.title ? titleY + microU * 0.4 : 0) + (colLabels.length ? microU + 14 : microU + 8));
+  /*
+   * The title is FITTED to the grid's measure, and the header band grows for
+   * the lines it needs.
+   *
+   * It used to be one `<text>` at `x: padL`, never measured, while `w` is
+   * computed from the row labels, the column labels and the cell text alone —
+   * so a title wider than the grid ran off the viewBox and was clipped. Page
+   * 26 of the Investment Compass delivered for 9 Hollow Street on 21 Sep 2026
+   * printed `House price growth · Golden Square vs Victoria (Valuer‑Genera`,
+   * cut mid-word, over a 3×2 grid whose own labels are six and thirteen
+   * characters.
+   *
+   * This is §8's rule, which `renderWaterfall` already answers to: **increase
+   * the component's space before shrinking its text.** The grid keeps its
+   * geometry exactly — `padL`, `cellW` and `w` are untouched, so a chart whose
+   * title already fits is byte-identical — and only the header band grows, by
+   * one line-step per extra line. Three lines, because a title is the one
+   * label a reader needs whole, and a title that three lines cannot hold still
+   * says it was cut rather than dropping its tail silently.
+   */
+  const titleLines = opts.title
+    ? fitLines(opts.title, Math.max(40, w - padL - padR), titleU * 0.55, 3)
+    : [];
+  const titleStep = Math.ceil(titleU * 1.25);
+  const titleBlock = titleLines.length ? titleY + (titleLines.length - 1) * titleStep : 0;
+  const padT = Math.ceil((opts.title ? titleBlock + microU * 0.4 : 0) + (colLabels.length ? microU + 14 : microU + 8));
   const cellH = Math.max(38, Math.ceil(microU * 1.7));
   const h = padT + padB + rows * cellH;
 
@@ -738,9 +779,14 @@ export function renderHeatmap(
   const colL = colLabels.map((lbl, c) => text(ctx, w,
     { x: padL + c * cellW + cellW / 2, y: padT - 10, pt: 'micro', fill: ctx.palette.inkMuted, anchor: 'middle' },
     svgEscape(lbl))).join('');
-  const title = opts.title
-    ? text(ctx, w, { x: padL, y: titleY, pt: 'title', fill: ctx.palette.ink, stack: 'display', weight: 700 }, svgEscape(opts.title))
-    : '';
+  const title = titleLines
+    .map((line, i) => text(
+      ctx,
+      w,
+      { x: padL, y: titleY + i * titleStep, pt: 'title', fill: ctx.palette.ink, stack: 'display', weight: 700 },
+      svgEscape(line),
+    ))
+    .join('');
 
   return `${svgOpen(w, h)}<rect width="${w}" height="${h}" rx="6" fill="${ctx.palette.ground}"/>`
     + `${title}${colL}${rowL}${cells}</svg>`;
