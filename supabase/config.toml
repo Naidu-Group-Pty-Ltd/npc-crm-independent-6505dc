@@ -20,6 +20,15 @@ verify_jwt = false
 # _shared/aml/providers/diditClient.ts) IS the authentication boundary: it is
 # checked before any service-role database access, and no unsigned or stale
 # request can change AML state.
+[functions.crm-calendar]
+verify_jwt = false
+
+[functions.crm-inbound-message]
+verify_jwt = false
+
+[functions.crm-send-message]
+verify_jwt = false
+
 [functions.didit-webhook]
 verify_jwt = false
 

@@ -1,6 +1,6 @@
 # Scoring V2 — the methodology, in one place
 
-**Methodology version `2.1.0` · the production grade engine since `2026-09-15`
+**Methodology version `3.0.0` · the production grade engine since `2026-09-15`
 (activation ME-8, recorded in `scoringV2Production.pure.ts`).** A spec test
 (`src/lib/reports/__tests__/scoringMethodology.spec.ts`) pins every
 load-bearing number in this document to the modules that enforce it, and
@@ -168,8 +168,8 @@ One composition function: `scoreInvestmentV2Shadow`
 | --- | ---: | --- | --- |
 | Growth | **0.40** | `growthScoring.pure.ts` | `3.1.0` |
 | Location | **0.25** | `locationScoring.pure.ts` | `1.0.0` |
-| Yield | **0.15** | `yieldScoring.pure.ts` | `3.0.0` |
-| Demand | **0.15** | `demandScoring.pure.ts` | `3.0.0` |
+| Income vs its market | **0.15** | `totalReturnScoring.pure.ts` | `1.0.0` (figure: `yieldScoring.pure.ts` `3.0.0`) |
+| Demand | **0.15** | `demandScoring.pure.ts` | `4.1.0` |
 | Risk | **0.05** | `riskModelD.pure.ts` (Model D, variant D2) | `1.0.0` |
 
 Weights are the live composite's, unchanged on purpose: this release fixes
@@ -318,7 +318,7 @@ is disclosed with the result, never deducted from it.
 
 ## 3a. Publication — when a score and grade reach a client
 
-`scorePublicationPolicy.pure.ts`, version `1.0.0`
+`scorePublicationPolicy.pure.ts`, version `1.1.0`
 (`SCORE_PUBLICATION_GATE`, S5/S6 §4, §7 and §8, 18 September 2026).
 
 | valid dimensions | outcome |
@@ -485,9 +485,174 @@ a methodology decision that belongs to calibration against real evidence, and
 the field says where it will be defined instead of carrying a number nobody
 has justified.
 
+## 8b. `2.2.0` — a dimension carries the weight its evidence covers
+
+Renormalising over the dimensions that answered was only half of
+"proportional", and the other half was measurable on an issued document.
+
+The Investment Compass issued for **97 Poole Road, Kellyville NSW 2155 on
+20 September 2026** scored Demand on two of its five components —
+`transactionVolume` (162 sales against a 3-period average of 228) and the
+population driver (−0.4% a year) — which is **0.30 of that dimension's own
+methodology**. Demand then carried the full 15% of the matrix, renormalised
+up to 16% because Property Risk was unavailable. Two amplifications of one
+thin reading, stacked.
+
+The same run's own disclosure page told the reader the opposite:
+
+> Evidence coverage 85%. This is finer than the figure above: it discounts
+> each scored dimension by how much of its own method actually ran, so a
+> dimension scored on part of its inputs counts as part of a dimension rather
+> than a whole one.
+
+The engine computed that 85%, published it, and did not weight by it. `2.2.0`
+closes the gap between the disclosure and the arithmetic: a dimension's weight
+is its **original weight discounted by its own coverage**, and the measured
+dimensions renormalise over those.
+
+Four properties, each pinned by test rather than promised:
+
+* **It is symmetric.** A thinly evidenced favourable reading loses exactly the
+  influence a thinly evidenced adverse one loses. Nothing in the rule reads a
+  score.
+* **It can only lower a weight toward the evidence, never raise one.** A
+  dimension measured in full keeps its whole nominal weight, so a fully
+  evidenced record is untouched — the strong and weak control fixtures score
+  82 and 20 before and after.
+* **A measured zero is still a measurement.** Coverage is about how much of a
+  methodology ran, never about what it found.
+* **Absent coverage is 1.** A caller that does not know how much of a
+  dimension ran states nothing about it, so every existing caller is
+  byte-identical.
+
+The control that shows what it cost: a constructed record evidenced on 42% of
+the matrix scored **62 (B)** while 97 Poole Road, evidenced on 85%, scored
+**49 (C)**. After `2.2.0` they are 58 and 53.
+
+### Demand `4.1.0` — the driver carries its own weight
+
+`4.0.0` stopped a non-primary driver being the WHOLE of a Demand score
+(`DEMAND_PRIMARY`). It did not stop it being most of one: renormalising over
+the measured mass gave `populationDriver`'s 0.15 a share of **0.50** on a
+record carrying one primary — three and a third times the weight this module
+states it holds, and exactly the case 97 Poole Road presented.
+
+`4.1.0` states it in arithmetic: the primaries renormalise among themselves
+over the primary mass, and a non-primary component is added at its nominal
+weight and never renormalised up. It is a no-op where every component is
+present and where no driver is present, and it still cannot invent a score —
+with no primary the dimension is `null`, unchanged.
+
+Measured on the same frozen inputs: Demand 21 → 27 on 97 Poole Road, where
+the driver read below the primary, and 75 → 74 on a control where it read
+above. The same rule, in both directions.
+
+## 8c. `3.0.0` — growth and yield were two halves of one quantity
+
+The grade was flat, and the reason was not where anyone had looked. It was not
+that the top of the scale was unreachable; it was that the bottom was not
+reachable either.
+
+### The measurement
+
+A 4,000-property population, built to respect the one structural fact of
+Australian residential investment — premium metro buys growth with yield,
+regional buys yield with growth — scored through the live engine:
+
+```
+dimension score spreads        sd
+  growth                    16.04
+  location                  14.52
+  yield                     35.17
+  demand                    11.22
+  COMPOSITE                  6.28   <- smaller than any part of it
+```
+
+A composite whose standard deviation is less than half its smallest
+component's is not aggregating information. It is cancelling it, and the
+cancellation decomposes exactly:
+
+```
+  growth : yield      rho -0.910    variance contribution  -61.6
+  growth : location   rho  0.636                           +29.6
+  yield  : location   rho -0.603                           -23.1
+  growth : demand     rho  0.452                            +9.8
+  independent variance 85.0, cross-terms -45.3
+  => sd 6.30 predicted, 6.28 measured.   53% of the variance destroyed.
+```
+
+### What it cost
+
+On one excellent location, the engine scored:
+
+| property | growth | yield | total return | score |
+| --- | ---: | ---: | ---: | ---: |
+| premium metro | 9.0% | 2.8% | 11.8% | 69 |
+| strong metro | 7.0% | 3.8% | 10.8% | 69 |
+| middle ring | 6.0% | 4.4% | 10.4% | 69 |
+| regional yield | 3.5% | 6.5% | 10.0% | 68 |
+| mining yield | 2.0% | 8.0% | 10.0% | 66 |
+| **genuinely poor** | **2.0%** | **3.0%** | **5.0%** | **54** |
+
+Five different investment propositions three points apart, and a property
+returning five per cent scoring 54. Every property won one of the two
+anti-correlated halves and lost the other.
+
+### The change
+
+**The income dimension scores the yield against what this asset's own market
+pays**, rather than against the whole corpus. A 2.80% yield at 9% growth and
+an 8.00% yield at 2% growth are both exactly what their market pays; they are
+equally fair purchases and now score equally, where the absolute anchors
+scored them 21 and 97.
+
+A ladder, best first, and the reading names which rung it stood on:
+
+| rung | expectation | basis |
+| --- | --- | --- |
+| `market_relative` | `medianRent x 52 / medianPrice` for this market | **measured** |
+| `frontier` | the declared national growth/yield trade-off | declared |
+| — | neither available: null, and the absolute score stands | — |
+
+**Growth was NOT moved onto total return, and that is a measured decision
+rather than a preference.** It was tried: total return and income advantage
+are nearly the same linear combination (`g + y` against `y + 0.743g`), the two
+dimensions then correlated **+0.808**, and the spread that bought was one
+signal counted twice — the `r = 0.97` defect `GROWTH_WEIGHTS_V3_0` records,
+arrived at from the other direction. Total return is published beside the
+score as evidence and carries no weight.
+
+### The result
+
+```
+                      sd    p10  p50  p90  max   growth:yield
+  2.2.0              6.28    52   61   68   79        -0.910
+  3.0.0             11.51    44   61   76   87        +0.246
+```
+
+The median does not move. **This is spread, not inflation** — the tails open
+in both directions, and the two dimensions are near-orthogonal instead of
+cancelling. On the frozen fixtures: the strong control 82 -> **86 (A+)**, the
+weak control 20 -> **17 (F)**, and 97 Poole Road 53 -> **51**, because its
+3.47% yield is short of what a 6.2%-growth market pays.
+
+### What is outstanding, and it is load-bearing
+
+`YIELD_FRONTIER` is **declared, not fitted**. Its slope and intercept are a
+least-squares line through five market archetypes, and the `frontier` rung of
+the ladder rests on them wherever a market publishes no median rent — which
+is the common case today. It should be FITTED from the register this platform
+already loads: the NSW DCJ Rent and Sales Report publishes median rent and
+median sale price for the same postcode, which is both halves. Until it is,
+`frontierBasis` reads `declared` on every reading that used it, and no reader
+is told a declared line is a measured one.
+
+Nominal weights, grade thresholds, the five dimensions and every publication
+safeguard are unchanged.
+
 ## 9. Change control
 
-Every module carries its own version; the composition version (`2.1.0`)
+Every module carries its own version; the composition version (`3.0.0`)
 bumps whenever composition, weights or component versions change, and is
 persisted with every score so a stored result can be reproduced exactly. No
 silent changes: a calibration requires the demonstrated defect, the
