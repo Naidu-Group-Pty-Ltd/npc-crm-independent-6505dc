@@ -395,9 +395,47 @@ Sweep 2 is the one with a **closing condition**, which is what makes it worth
 running: over all 4,927 files under `src/` and `supabase/functions/`, thirteen
 differ from the prime and every one has clone history explaining it — the CRM
 set, the `import.meta.env` set, and the 416-declaration count in
-`auditRemediation.spec.ts`. One prime file is absent on purpose. An
-unexplained entry in that list is a cascade omission; there is no third
-category.
+`auditRemediation.spec.ts`. One prime file is absent on purpose.
+
+**There is a THIRD category, and on this repository it is the large one.** The
+sentence that used to close this paragraph — *"an unexplained entry in that list
+is a cascade omission; there is no third category"* — is true of a MIRROR and
+false here, because this is the fleet's only clone whose `clones.sync_scope` is
+`modules`; `npc-client-dashboard`, `npc-test-76b3b3` and
+`preflight-property-group` are all `mirror`. A mirror's candidate set is every
+path whose blob differs between the two trees. This one's is
+`listFilesMatchingGlobs(installedGlobs + REPOSITORY_INVARIANTS)` — the 1,117
+globs of the 134 rows in `clone_modules`, thirteen repository invariants, and an
+import-closure pass. `cascade-engine.server.ts` states the consequence in as
+many words: *a file outside them is none of the cascade's business and is never
+even a candidate.*
+
+So a file differs from the prime for three reasons, not two, and the third is
+not a defect: **it was never in scope.** Measured 22 Sep 2026 against
+`prime@2cda273` with the pending cascade applied — thirty files differ, ten have
+clone history, **twenty match no glob and no invariant, and none of them is an
+omission.** What makes that reading trustworthy is the control in the other
+direction: 92 of the 98 files that cascade DID deliver match the same scope, and
+the six that do not are its import-closure additions. A scope test that matched
+nothing would have said the same thing about both sets.
+
+Sweep 2 as written cannot tell the third category from the first, so it reports
+out-of-scope files as omissions and its closing condition does not close. Before
+calling anything here an omission, test the path against this clone's own scope:
+`clone_modules → modules.file_globs` in Mission Control plus
+`REPOSITORY_INVARIANTS`, read through `globToRegex` from `module-globs.ts` —
+the same implementation the engine uses, because two glob implementations
+answering one question differently is how this gets diagnosed wrong. Matching
+neither means out of scope and the cascade is working. Matching one and still
+differing is the omission the sweep was written to find.
+
+One consequence looks like a bug and is not. `docs/**` is a repository invariant
+and `src/lib/pricing/**` is inside no glob at all, so a price change reaches this
+clone's DOCUMENTATION and never its code or its fixtures. Measured on the 2026
+price model: `docs/billing/ACTIVATION_GATE.md` arrived stating $2,549 and $2,699
+while `paymentGate.spec.ts` beside it still asserts 86000 and 221000. The code
+and the tests agree with each other and CI is green — it is the document that is
+ahead of both, and the fixtures are not drifting from a subject that moved.
 
 Four rules carry it. **A spec and its subject travel together or neither
 does** — a spec brought alone fails loudly and is the cheap case; a module
