@@ -405,7 +405,7 @@ false here, because this is the fleet's only clone whose `clones.sync_scope` is
 `preflight-property-group` are all `mirror`. A mirror's candidate set is every
 path whose blob differs between the two trees. This one's is
 `listFilesMatchingGlobs(installedGlobs + REPOSITORY_INVARIANTS)` — the 1,117
-globs of the 134 rows in `clone_modules`, thirteen repository invariants, and an
+globs of the 134 rows in `clone_modules`, the repository invariants, and an
 import-closure pass. `cascade-engine.server.ts` states the consequence in as
 many words: *a file outside them is none of the cascade's business and is never
 even a candidate.*
