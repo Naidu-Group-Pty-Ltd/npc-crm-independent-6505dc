@@ -245,23 +245,57 @@ describe('the seven slots nothing could fill', () => {
     ['dwelling', 'propertyFit'],
   ];
 
-  it('merges each one exactly where the Compass merges it', () => {
-    /*
-     * The Due Diligence document is MADE of the Compass, so it cannot carry a
-     * section the Compass no longer writes. Each of these is asserted against
-     * the compass tier rather than against a literal, so a future Compass
-     * merge that this document does not follow fails here rather than
-     * shipping an empty heading.
-     */
+  /*
+   * Two of the seven stopped being merged on the Compass at W2.2 (22 Sep
+   * 2026), and the strategic tier deliberately did not follow.
+   *
+   * The rule this block enforces is that the Due Diligence document cannot
+   * carry a section NOTHING can fill — it is made of the Compass, so a
+   * heading the Compass never writes arrives empty. A merge never declares a
+   * heading, so a merge can never be that failure; the assertion that the two
+   * tiers merge IDENTICALLY was a stronger claim than the rule needed, and it
+   * is the claim that broke.
+   *
+   * What keeps the strategic merge honest is that its carrier is a routed
+   * heading which NAMES the thing merged into it — `Position Within the
+   * Locality & Infrastructure Context` and `Market Position, Competitive
+   * Landscape & Supply Pipeline`. That is asserted below, which is a check the
+   * equality never made: the equality would have been satisfied by merging
+   * into a carrier that says nothing about the subject.
+   */
+  const UNMERGED_ON_THE_COMPASS: Record<string, string> = {
+    infrastructure: 'Infrastructure',
+    supplyPipeline: 'Supply Pipeline',
+  };
+
+  it('merges each one where the Compass merges it, or into a heading that names it', () => {
     const compassMerges = new Map(
       mergesForTier('compass' as never).map((m) => [m.id, m.into]),
     );
     const strategicMerges = new Map(
       mergesForTier('strategic' as never).map((m) => [m.id, m.into]),
     );
+    const strategicLabels = new Map(
+      sectionsForTier('strategic' as never).map((s) => [s.id, s.label]),
+    );
+
     for (const [id, into] of MERGED_AWAY) {
+      // The strategic tier's own merge is unchanged, in every case.
+      expect(strategicMerges.get(id), `${id} is no longer merged on the strategic tier`).toBe(into);
+
+      const namedBy = UNMERGED_ON_THE_COMPASS[id];
+      if (namedBy) {
+        // The Compass writes it now. The merge stands here only because the
+        // carrier's own heading tells a reader where it went.
+        expect(compassMerges.has(id), `${id} is merged on the Compass again — follow it here`).toBe(false);
+        expect(strategicLabels.get(into), `${into} has no strategic placement`).toBeTruthy();
+        expect(
+          strategicLabels.get(into),
+          `${id} merges into "${strategicLabels.get(into)}", which does not name it`,
+        ).toContain(namedBy);
+        continue;
+      }
       expect(compassMerges.get(id), `${id} is no longer merged on the Compass`).toBe(into);
-      expect(strategicMerges.get(id), `${id} must merge where the Compass merges it`).toBe(into);
     }
   });
 

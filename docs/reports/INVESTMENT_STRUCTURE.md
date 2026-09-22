@@ -319,6 +319,34 @@ a page carrying a table or a figure holds. The ceiling is what the retrieved
 evidence can carry honestly, not a target: a section still writes what it has
 and stops.
 
+### The v4.1 list (22 Sep 2026, W2.2)
+
+Two more sections, for the same reason and against the same test — is there a
+register behind it?
+
+| # | Section | Words | Was |
+|---|---|---|---|
+| 4 | Why This Location Matters | **650** | 900 (also held the pipeline) |
+| 5 | **Infrastructure and Growth Context** | 500 | merged into 4 |
+| 11 | Market Positioning | **450** | 600 (also held competing supply) |
+| 12 | **Competitive Landscape and Supply Pipeline** | 500 | merged into 11 |
+
+Everything else keeps its budget and shifts ordinal by one or two.
+**9,010 words across a 37-page budget** — 244 a page, the same density, inside
+the declared 30–38 band. The net is +600 words rather than +1,000, because the
+two carriers gave back what they had been writing for the merged sections.
+
+The registers: `infrastructureEvidence.pure.ts` and `nationalPipeline.pure.ts`
+for the first, and `market_building_approvals` — the ABS's own monthly count
+of approved dwellings, at this property's SA2 — for the second. Both are
+PINNED into every section call (`pinnedPlanningContext`), so the evidence
+cannot be trimmed out from under the section that explains it.
+
+Supply's prior existence in this product was one line of the statewide prompt:
+`**Supply Pipeline Risk:** [New housing supply vs demand balance]`. That is
+the bracketed-slot shape that put `450 m²` and `8.5 m` into a client's
+document under the wrong jurisdiction's instrument names.
+
 ### Why the merges were right and are now wrong
 
 v3.0 merged those sections because they repeated each other, and that was the

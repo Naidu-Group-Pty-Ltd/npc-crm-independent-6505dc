@@ -28,6 +28,7 @@
  */
 import { describe, it, expect } from 'vitest';
 import {
+  COMPASS_40_SECTIONS,
   sectionCountForTier,
   compassSections,
   financialSections,
@@ -62,7 +63,14 @@ describe('a section the Compass excludes is not counted', () => {
   it('is the exclusion that made the two counters disagree', () => {
     // The raw array still carries it — which is the whole point. The count must
     // come from the filter, not from the array's length.
-    expect(compassSections().length).toBeLessThan(15);
+    //
+    // Stated as a RELATION rather than a literal, because a literal here is the
+    // defect the file is named for: `15` was the array's length when this was
+    // written, so the assertion silently became "16 < 15" the day W2.2 added
+    // two sections — a spec restating a number the product derives, which is
+    // how `sectionCountForTier` and `compassSections()` came to disagree in
+    // the first place.
+    expect(compassSections().length).toBeLessThan(COMPASS_40_SECTIONS.length);
     expect(sectionCountForTier('compass-40')).toBe(compassSections().length);
   });
 });

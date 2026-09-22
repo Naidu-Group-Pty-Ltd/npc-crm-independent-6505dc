@@ -21,6 +21,7 @@ import {
   SALES_STATE_LABELS,
   salesAreaToken,
 } from './openData/salesRegister.pure.ts';
+import { finiteOrNull } from './registerCell.pure.ts';
 
 export type SalesRegisterAskKind = 'suburb' | 'lga' | 'postcode' | 'state';
 
@@ -73,8 +74,13 @@ function toRow(state: SalesRegisterState, r: RegisterRow): SalesMedianRow {
     area: r.area,
     dwellingType: r.dwelling_type as SalesMedianRow['dwellingType'],
     period: r.period,
-    medianPrice: r.median_price === null ? null : Number(r.median_price),
-    salesCount: r.sales_count,
+    // `finiteOrNull`, not `=== null ? … : Number(…)`. This register grades
+    // the Growth dimension, prints medians in a client's document and backs
+    // the Financials tab's Estimate CGR — and a NaN median is worse than an
+    // absent one, because `null` is what every consumer here branches on
+    // while NaN walks past all of them. See that module's header.
+    medianPrice: finiteOrNull(r.median_price),
+    salesCount: finiteOrNull(r.sales_count),
     priceMeasure: r.price_measure === 'mean' ? 'mean' : 'median',
     periodSpan: r.period_span === 'year' ? 'year' : 'quarter',
     capturedAt: r.captured_at ?? null,

@@ -22,10 +22,10 @@ Sections: 40. Formats: Compass, Financial Analysis, Strategic / Due Diligence, E
 | Appendix, Source Notes & Disclaimer | recorded | every format (spine) | — | authored · generator.compass; composed · supabase/functions/fork-investment-report/index.ts#renderVariantMarkdown; authored · condense.briefing; authored · condense.snapshot | spine | spine | spine | spine | spine |
 | Base Assumptions | recorded | Financial Analysis | Compass; Executive Briefing | routed · split.financial#17 | summary (in provenance) | required | — | summary (in provenance) | — |
 | Why This Location Matters | measured | Strategic / Due Diligence | Compass; Executive Briefing | authored · generator.compass; routed · split.dueDiligence#4; authored · condense.briefing | required | — | required | required | — |
-| Infrastructure and Growth Context | measured | not carried in full by any format | Compass; Strategic / Due Diligence; Executive Briefing | nothing yet | summary (in locationCase) | — | summary (in locationCase) | summary (in locationCase) | — |
+| Infrastructure and Growth Context | measured | Compass | Strategic / Due Diligence; Executive Briefing | authored · generator.compass | required | — | summary (in locationCase) | summary (in locationCase) | — |
 | Suburb Character, Lifestyle & Occupier Appeal | measured | not carried in full by any format | Compass; Strategic / Due Diligence; Executive Briefing | nothing yet | summary (in propertyFit) | — | summary (in propertyFit) | summary (in propertyFit) | — |
 | Market Positioning | measured | Strategic / Due Diligence | Compass; Financial Analysis; Executive Briefing | authored · generator.compass; routed · split.financial#3; routed · split.dueDiligence#16; authored · condense.briefing | required | required | required | required | — |
-| Competitive Landscape and Supply Pipeline | measured | not carried in full by any format | Compass; Strategic / Due Diligence; Executive Briefing | nothing yet | summary (in marketPosition) | — | summary (in marketPosition) | summary (in marketPosition) | — |
+| Competitive Landscape and Supply Pipeline | measured | Compass | Strategic / Due Diligence; Executive Briefing | authored · generator.compass | required | — | summary (in marketPosition) | summary (in marketPosition) | — |
 | Demand Drivers | measured | Strategic / Due Diligence | Compass; Executive Briefing | authored · generator.compass; routed · split.dueDiligence#9 | required | — | required | summary (in locationCase) | — |
 | Socioeconomic Profile & SEIFA Interpretation | measured | not carried in full by any format | Compass; Strategic / Due Diligence; Executive Briefing | nothing yet | summary (in population) | — | summary (in population) | summary (in locationCase) | — |
 | Employment, Income & Affordability Profile | measured | not carried in full by any format | Compass; Strategic / Due Diligence; Executive Briefing | nothing yet | summary (in population) | — | summary (in population) | summary (in locationCase) | — |
@@ -61,9 +61,7 @@ Sections: 40. Formats: Compass, Financial Analysis, Strategic / Due Diligence, E
 A declared topic nothing produces. Each is an honest gap rather than a bug,
 and `PRODUCER_GAPS` in the registry records why; a NEW one fails CI.
 
-- **Infrastructure and Growth Context** (`infrastructure`)
 - **Suburb Character, Lifestyle & Occupier Appeal** (`suburbCharacter`)
-- **Competitive Landscape and Supply Pipeline** (`supplyPipeline`)
 - **Socioeconomic Profile & SEIFA Interpretation** (`socioeconomic`)
 - **Employment, Income & Affordability Profile** (`employment`)
 - **Schools & Education** (`education`)

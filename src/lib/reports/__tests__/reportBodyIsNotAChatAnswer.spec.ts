@@ -72,14 +72,18 @@ describe('the bound a report body is read at', () => {
   });
 
   it('clears the document the registry says the Compass may be', () => {
-    // 8,410 words. The conversion is stated in the constant's own note; what
-    // this pins is that the BUDGET the product declares and the BOUND the
-    // renderer applies are compared at all, which they never were.
+    // 9,010 words — 8,410 until W2.2 (22 Sep 2026) gave Infrastructure and
+    // Supply sections of their own, which cost 600 net after the two carriers
+    // gave back what they had been writing for them. The conversion is stated
+    // in the constant's own note; what this pins is that the BUDGET the
+    // product declares and the BOUND the renderer applies are compared at all,
+    // which they never were. The two inequalities below are the contract; the
+    // literal is a ratchet, so a budget that doubles has to be looked at.
     const declaredWords = COMPASS_40_SECTIONS.reduce(
       (n, s) => n + ((s as { maxWordCount?: number }).maxWordCount ?? 0),
       0,
     );
-    expect(declaredWords).toBe(8410);
+    expect(declaredWords).toBe(9010);
     // The prose alone, at the note's ~6.5 characters a word, already exceeds
     // more than half the old bound — before a single chart directive or table.
     expect(declaredWords * 6.5).toBeGreaterThan(MAX_MARKDOWN_CHARS * 0.8);

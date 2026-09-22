@@ -510,3 +510,129 @@ with every report forbidden from stating a figure. **It must not be applied
 before the corrected parser is deployed** — against the old one the nightly
 reload rewrites exactly what it deleted, and the register ends where it
 started while looking repaired.
+
+## 13 · The walk advances — confirmed by effect, in production
+
+§11 and §12 each ended with a register that was *loaded* and *correctly
+grained*, and both readings were about a single three-month window. The
+question §12 left open is the one that matters for a reader: **does the
+register get deeper, on its own, for ever?**
+
+`ABS_BA_PLAUSIBILITY.minPeriods` is 24 for a year-on-year reading and the
+publisher holds three months ahead of its own two-month arrears, so a register
+that only ever asks forward from today can never reach twenty-four — and that
+is exactly what the code did. `pagesToCover` was computed, logged and read by
+nothing. The walk had no walker.
+
+`planApprovalsWork` is the walker, and it decides from the register's own two
+edges: nothing held → the frontier window; a frontier not read this calendar
+month → the frontier window again (currency as a **cadence**, not a
+comparison, because a comparison against a publisher two months in arrears is
+always true and would never let the backfill run — the defect the first
+version of this rebuilt); depth still owed → the window immediately below
+`oldest`; otherwise **`settled`**, which writes a sync row and asks the ABS
+nothing.
+
+### The measurement
+
+The refresh moved from `45 17 * * *` to `20 * * * *` at 08:58 UTC on
+22 Sep 2026, and nothing else changed.
+
+| | 08:59 | 09:24 (tick 1) | 10:24 (tick 2) |
+| --- | --- | --- | --- |
+| rows | 4,934 | **19,736** | **34,538** |
+| periods | `2026-07..2026-07` | **`2026-04..2026-07`** | **`2026-01..2026-07`** |
+| distinct SA2s | 2,458 | 2,458 | 2,458 |
+| `dwelling_units` | null=0 · zero=1,606 · positive=3,328 | null=0 · zero=6,377 · positive=13,359 | null=0 · zero=11,588 · positive=22,950 |
+| grain samples | `sa2` len 9 · `state` len 1 · `AUS` | unchanged, no `lga` bucket | unchanged, no `lga` bucket |
+
+`oldest` moves back **exactly `APPROVALS_PAGE_MONTHS` per tick**, twice, with
+row growth linear (+14,802 each time) and the grain distribution unmoved.
+
+And the planner said what it was doing **before** it did it, in
+`function_logs` at 09:20:03:
+
+```
+[market-sales-ingest] approvals: ABS,BA_SA2,2.0.0 key=1+2.9.TOT.110+150+100...M
+                      page=0 2026-04→2026-06 frontier=2026-07
+```
+
+`2026-04→2026-06` is the window immediately below `oldest`, against a frontier
+of `2026-07`. `oldest` moved by exactly `APPROVALS_PAGE_MONTHS`. **This is the
+first time this register has ever deepened.**
+
+### The second tick proved the half the first could not
+
+At 10:20:03 the planner chose `2026-01→2026-03`, still against
+`frontier=2026-07`:
+
+```
+[market-sales-ingest] approvals: ABS,BA_SA2,2.0.0 key=1+2.9.TOT.110+150+100...M
+                      page=0 2026-01→2026-03 frontier=2026-07
+```
+
+Two things are asserted by that line and neither is assertable from one tick.
+**The walk is not a one-off**: a second consecutive run took the window below
+the new `oldest` rather than repeating the first. And **it did not re-read the
+frontier**, which is the rule that nearly went in backwards.
+
+The first version of `planApprovalsWork` tested currency as
+`asOf > frontier` — always true against a publisher two months in arrears, so
+every run would have spent itself re-reading the same three months at the top
+and the backfill would never have executed. That is the defect this module
+exists to remove, rebuilt inside the fix for it. Currency is a **cadence**
+instead: `frontierLoadedAt` is the newest row's own `loaded_at` truncated to
+its calendar month, so the frontier is read once a month and every other tick
+is depth. Two ticks in one hour, one frontier read between them, is that rule
+working.
+
+Twelve more ticks reach the `2023-01` floor, at which point `planApprovalsWork`
+answers **`settled`**, writes a `market_sales_sync` row and asks the ABS
+nothing — which is the other end of the guarantee and the next thing worth
+reading back.
+
+Two things that reading is deliberately NOT:
+
+- It is not a green cron run. pg_cron reports on the SQL that queued the HTTP
+  call, and `market_sales_refresh` uses `net.http_post`, which is
+  asynchronous — so the honest signals are the function's own log line and the
+  register's period range, and both were read.
+- It is not a configuration check. Nothing here asserts a schedule, a page
+  size or a planner branch. The claim is that `min(period)` moved, and the
+  claim is made by reading `min(period)`.
+
+### What the section reads today, and why it is honest
+
+Four of a twelve-month window are loaded, so `windowOf` reports
+`monthsCounted: 4`, sets `floor: true`, and `summariseApprovals` returns
+`changePct: null` — a year-on-year change is computed **only** between two
+complete windows. Rendered:
+
+> | all residential dwellings | 46 | $23,550,000 | Aug 2025 – Jul 2026 |
+>
+> The publisher has released **4 of the 12 months** in that window for this
+> area, so each total above is a FLOOR — the true figure can only be higher.
+>
+> No year-on-year change is stated: that comparison is made only between two
+> complete twelve-month windows, and one of these two is short.
+
+Three more ticks reach Aug 2025 and `floor` goes false; the comparison becomes
+available at twenty-four months. Nothing about the page changes when it does,
+because the qualification is derived from what is held rather than declared.
+
+### The render is what found the next defect
+
+That block was rendered against the register's real depth rather than a
+fixture, and its money column printed **`$NaN`** — see §"absent is never
+zero" in the commit *"A supply figure that is not a figure never reaches the
+page"*. `windowOf`'s guard was `m.value !== null`, `undefined !== null` is
+true, `0 + undefined` is NaN, and `NaN === null` is false, so it survived
+every downstream absence check and reached the formatter.
+`approvalsRegisterRead`'s own mapping had the same shape. Both now admit only
+what `Number.isFinite` admits.
+
+**The lesson is §7's, again: read what the page draws, not what the module
+returns.** A register that is loaded, correctly grained and deepening on
+schedule was one narrower `select` away from printing `$NaN` to a client, and
+no test in the suite could have seen it — because every fixture spelled the
+column correctly.
