@@ -90,10 +90,16 @@ describe('the document closes on its disclaimer', () => {
   });
 
   it('reads those orders from the registry rather than a list of its own', () => {
-    expect(declaredOrderFor('Resale Liquidity & Exit Outlook', 'compass')).toBe(13);
-    expect(declaredOrderFor('SWOT Analysis', 'compass')).toBe(15);
-    expect(declaredOrderFor('Monitoring & Review Plan', 'compass')).toBe(18);
-    expect(declaredOrderFor('Final Recommendation', 'compass')).toBe(19);
+    // Each one below what it was until W2.2 (22 Sep 2026): `supplyPipeline`
+    // took order 13, directly after Market Positioning, and everything from
+    // there down shifted by one. What this pins is unchanged — that the orders
+    // are READ rather than listed — and the relation under it is what the
+    // document depends on, so it is asserted rather than left to the literals.
+    expect(declaredOrderFor('Competitive Landscape and Supply Pipeline', 'compass')).toBe(13);
+    expect(declaredOrderFor('Resale Liquidity & Exit Outlook', 'compass')).toBe(14);
+    expect(declaredOrderFor('SWOT Analysis', 'compass')).toBe(16);
+    expect(declaredOrderFor('Monitoring & Review Plan', 'compass')).toBe(19);
+    expect(declaredOrderFor('Final Recommendation', 'compass')).toBe(20);
     expect(declaredOrderFor('Appendix, Source Notes & Disclaimer', 'compass')).toBe(90);
   });
 });

@@ -588,12 +588,55 @@ old inline blocks could carry four dead field names while that file passed.
 (`documentPlacement.pure.ts`, 11 specs). Composed blocks land at their registry
 order; the document closes on its disclaimer.
 
-**W2.2 · Un-merge `infrastructure` and `supplyPipeline` for the Compass.**
-Give each a declared section, order and word budget. **This is the precondition
-for W3**: a national register with nowhere to be explained is a paragraph inside
-Location.
-*Accept:* `sectionsForTier('compass')` returns both; the contents page lists
-them; `documentPlacement` seats them at their declared order.
+**W2.2 · Un-merge `infrastructure` and `supplyPipeline` for the Compass** —
+**done** (22 Sep 2026, `compassUnmergedSections.spec.ts`, 11 specs).
+`Infrastructure and Growth Context` is ordinal 5 at 2 pages / 500 words,
+directly after the location case; `Competitive Landscape and Supply Pipeline`
+is ordinal 12 at 2 pages / 500 words, directly after Market Positioning. The
+two carriers gave back what they had been writing for them (900→650 and
+600→450), so the document goes from 8,410 words across 35 pages to 9,010
+across 37 — inside the declared 30–38 band.
+
+**The stated acceptance was satisfiable without the generator writing a
+word**, and that is the finding worth keeping. All three criteria — 
+`sectionsForTier('compass')`, the contents page, `documentPlacement` — are
+statements about `sectionRegistry.pure.ts`. The generator does not read that
+file: `generate-investment-report` builds its section list, its per-section
+prompt and its `total_sections` from `compassSectionRegistry.ts`. The only
+thing holding the two together was `sectionRegistry.spec.ts`'s *every Compass
+section is a registry placement on the compass tier*, which asserts
+`compassSections() ⊆ sectionsForTier('compass')` and says nothing about the
+other direction. A one-file W2.2 would have turned every suite green, listed
+two sections on the contents page, and authored neither. The converse pin is
+the half that was missing; it is asserted on the SET and on the ORDER, because
+two registries that agree on which sections exist and disagree on where they
+go produce a document whose contents page is a different document.
+
+Four things the move then found, each pre-existing:
+
+- **`Supply & Development Pipeline` was claimed twice** — a sourceHeading of
+  the Compass's DEMAND DRIVERS and an alias of `infrastructure` at the same
+  time. `buildRoutingTable` upserts, so the last writer wins and the first
+  claim disappears with nothing said. It belongs to `supplyPipeline`.
+- **Four sections declared `sectionPriority: 'Protected'` and were missing
+  from `PROTECTED_SECTION_IDS`**, which is the list `compassPostProcessor`
+  actually reads — among them `compass.planningConstraints`, the largest
+  section in the document and the one the owner's 17 Sep review named, whose
+  eleven-row overlay register `capListsToTop5` was free to cut to five
+  bullets. The set is DERIVED from the field now: *a rule written at both ends
+  is how the two ends drift*.
+- **`theCountThatDecidesCompletion.spec.ts` restated a number the product
+  derives** (`compassSections().length < 15`, where 15 was the array's length
+  when it was written) — in the file named for exactly that defect. It is a
+  relation now.
+- **The fork's *merges each one exactly where the Compass merges it*** was a
+  stronger claim than its own rationale needed. The rule is that the Due
+  Diligence document cannot carry a section NOTHING can fill, and a merge
+  never declares a heading. The strategic tier keeps both merges, because its
+  carriers are routed headings that NAME them — `Position Within the Locality
+  & Infrastructure Context` and `Market Position, Competitive Landscape &
+  Supply Pipeline` — and that is now what is asserted, which the equality
+  never checked.
 
 **W2.3 · Rebuild page 5 and page 37.**
 p5 either carries a real risk register or is removed and its dashboard given the
@@ -648,8 +691,36 @@ the publisher's; the scorer prices the grain; coverage travels with the answer.*
 This is `openDataSalesEvidence`'s existing rule — an LGA point scores 55, a
 postcode 80, a suburb 100 — applied to development evidence.
 
-**W3.1 · The national floor: ABS Building Approvals by LGA.** — READER AND
-PROHIBITION SHIPPED; THE REGISTER ITSELF AWAITS APPROVAL.
+**W3.1 · The national floor: ABS Building Approvals by LGA.** — **DONE, AND
+THE REGISTER IS WALKING.** This heading read "the register itself awaits
+approval" until 22 Sep 2026; approval was given, the table was applied, and
+the register is loaded, corrected and deepening itself on an hourly schedule.
+
+**The walk is confirmed by effect, not by configuration.** At 08:59 UTC the
+register held `total=4934`, `periods = 2026-07..2026-07` — one month, which is
+all the ABS publishes ahead of its own two-month arrears. At 09:20 the cron
+fired and `function_logs` recorded the planner's choice before it acted:
+
+```
+[market-sales-ingest] approvals: ABS,BA_SA2,2.0.0 key=1+2.9.TOT.110+150+100...M
+                      page=0 2026-04→2026-06 frontier=2026-07
+```
+
+— the window immediately BELOW `oldest`, which is the thing the old code never
+did once: every run before this asked forward from today, upserted the same
+three months and printed `pagesToCover` into a void. At 09:24 the read-back
+answered `total=19736`, `periods = 2026-04..2026-07`: `oldest` moved by exactly
+`APPROVALS_PAGE_MONTHS`, grains still correct (sa2 codes 9 digits, 2,458
+distinct SA2s, no `lga` bucket), `dwelling_units` null=0 with zero and positive
+both present.
+
+**And the section it feeds is not an empty one**, measured by rendering the
+block against the register as it actually stands rather than against a
+fixture: 46 dwellings and $23,550,000 for the SA2 across Aug 2025 – Jul 2026,
+stated as a **FLOOR** with "4 of the 12 months" named, and the year-on-year
+change explicitly withheld because one of the two windows is short. That
+render is also what found `$NaN` in the money column — see the commit *"A
+supply figure that is not a figure never reaches the page"*.
 
 Monthly, free, authoritative, **every local government area in Australia**;
 dwelling counts and dollar value. One source, national coverage, no key.

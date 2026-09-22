@@ -63,8 +63,13 @@ describe('compass registry parity', () => {
 });
 
 describe('the Compass structure the v4.0 brief asked for', () => {
-  it('is fourteen client-facing sections plus back matter', () => {
-    expect(COMPASS_40_SECTIONS).toHaveLength(15);
+  it('is sixteen client-facing sections plus back matter', () => {
+    // 15 until W2.2 (22 Sep 2026), which gave `Infrastructure and Growth
+    // Context` and `Competitive Landscape and Supply Pipeline` sections of
+    // their own. Both had been merged for the right reason — a section with
+    // nothing behind it should be merged — and both now have a register
+    // behind them, which is the other half of the same rule.
+    expect(COMPASS_40_SECTIONS).toHaveLength(17);
     expect(COMPASS_40_SECTIONS.at(-1)?.id).toBe('compass.disclaimer');
   });
 

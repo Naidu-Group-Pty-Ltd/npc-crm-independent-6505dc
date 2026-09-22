@@ -7,6 +7,7 @@ import {
   buildMacroReading, cpiProjectionsFromMeasured,
   type MacroFigure, type RbaMetaRow, type RbaObsRow,
 } from '../_shared/rbaReading.pure.ts';
+import { finiteOrNull } from '../_shared/reports/market/registerCell.pure.ts';
 
 /**
  * Serve the macro-economic reading from the loaded RBA statistical tables
@@ -99,8 +100,11 @@ Deno.serve(async (req) => {
       obs,
       (decisionRows ?? []).map((d: { effective_date: string; change_points: unknown; target_percent: unknown }) => ({
         effective_date: d.effective_date,
-        change_points: d.change_points === null ? null : Number(d.change_points),
-        target_percent: d.target_percent === null ? null : Number(d.target_percent),
+        // `finiteOrNull` — the target percent IS the cash rate this product
+        // prints, and `Number(undefined)` is NaN, which no downstream `null`
+        // check can see. See that module's header.
+        change_points: finiteOrNull(d.change_points),
+        target_percent: finiteOrNull(d.target_percent),
       })),
     );
 

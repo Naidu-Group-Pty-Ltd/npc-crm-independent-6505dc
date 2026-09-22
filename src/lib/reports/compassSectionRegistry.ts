@@ -106,7 +106,25 @@ export const EDITORIAL_LABELS: readonly string[] = [
   'our view',
 ];
 
-// ─── Investment Location & Property Fit Report (≈34 pages, 15 sections) ─────
+// ─── Investment Location & Property Fit Report (≈37 pages, 17 sections) ─────
+//
+// v4.1 (22 Sep 2026, W2.2) — `Infrastructure and Growth Context` (ordinal 5)
+// and `Competitive Landscape and Supply Pipeline` (ordinal 12) are sections.
+// Both were merged for the right reason and both now have a register behind
+// them, which is the rule's other half: `infrastructureEvidence.pure.ts` and
+// `nationalPipeline.pure.ts` answer for the first, and W3.1's
+// `market_building_approvals` — the ABS's own monthly count of approved
+// dwellings at this property's SA2 — for the second, whose whole prior
+// existence in this product was the statewide prompt's
+// `**Supply Pipeline Risk:** [New housing supply vs demand balance]`.
+//
+// The two carriers gave back what they had been writing for them (Why This
+// Location Matters 900→650 words, Market Positioning 600→450) and each now
+// NAMES where the subject went, because a prompt that still asks for a subject
+// the section after it owns is how `Exit Outlook` and `Monitoring Plan` came
+// to be written twice, contradicting each other, on one delivered document.
+// 8,410 words across 35 pages → 9,010 across 37, inside the 30–38 band.
+//
 // v4.0 — the document has room for what it retrieves. ALL detailed financial
 // modelling (purchase costs, yield, loan, cashflow, sensitivity, 10-year
 // projections, land tax, equity) lives in the separate Financial Analysis
@@ -135,6 +153,7 @@ export const EDITORIAL_LABELS: readonly string[] = [
 //     because a resume defect wrote it three times). The 17 Sep Compass is
 //     38,648 across 11, against a v3.0 cap of 5,010 words. v4.0 is 8,150
 //     across 15, which is what the retrieved evidence can carry honestly.
+//     (v4.1 makes that 9,010 across 17 — see the note above.)
 //
 // Three sections were split back out because the merge had put them where
 // nothing could be said: Transport (was one bullet inside a 600-word Amenity
@@ -242,26 +261,69 @@ export const COMPASS_40_SECTIONS: CompassSectionDefinition[] = [
     id: 'compass.whyLocationMatters',
     ordinal: 4,
     name: 'Why This Location Matters',
-    sourceHeadings: ['Location Overview', 'Why This Location Matters', 'Future Infrastructure', 'Infrastructure & Development', 'Growth Corridor'],
-    pageBudget: 4,
+    // Infrastructure left this list for its own section (ordinal 5), with
+    // every heading it had ever been written under. A heading in TWO
+    // sections resolves to whichever comes first and the other silently
+    // loses it — the same rule this list already answered to when
+    // Transport left Amenity & Access.
+    sourceHeadings: ['Location Overview', 'Why This Location Matters', 'Growth Corridor'],
+    pageBudget: 3,
     includeInCompass: true,
     includeInFinancialReport: false,
     includeInAppendix: false,
     isInternalOnly: false,
     sectionPriority: 'Protected',
-    maxWordCount: 900,
-    visualComponents: ['narrative', 'infrastructureTimeline', 'confidenceChip'],
-    purpose: 'The macro thesis: growth corridor, master-planned estate, LGA, economic links, and the staged infrastructure pipeline (schools, town centre, transport, roads, health, parks) as a timeline. Each infrastructure item carries a confidence chip (Verified / Planned / Under Construction). Name the project, the stage and the date — not what the project means for the reader.',
+    maxWordCount: 650,
+    visualComponents: ['narrative', 'confidenceChip'],
+    purpose: 'The macro thesis and only that: where this property sits — growth corridor, master-planned estate, LGA — the economic links that hold the area, and what is CHANGING about the place. The committed and planned pipeline is the section immediately after this one (Infrastructure and Growth Context) and is not written here: name a project only where it is the REASON the location case is being made, and leave its stage, its date and its confidence to that section. NO financial figures.',
+  },
+  {
+    id: 'compass.infrastructure',
+    ordinal: 5,
+    name: 'Infrastructure and Growth Context',
+    /*
+     * W2.2. Un-merged from `Why This Location Matters`, where it had been a
+     * paragraph and a timeline inside somebody else's section.
+     *
+     * The rule the merge was right under — *a section with nothing behind it
+     * should be merged; a section with a register behind it should not* — is
+     * the reason this is now its own. `infrastructureEvidence.pure.ts` and
+     * `nationalPipeline.pure.ts` answer, and the generator pins their table
+     * into every section call. A retrieved project with nowhere to be
+     * explained is the defect the owner's review of 17 Sep 2026 named for
+     * zoning, one register along.
+     *
+     * Every infrastructure heading this document has ever written moved HERE
+     * with it. A heading in two sections resolves to whichever comes first
+     * and the other silently loses it — `buildRoutingTable` upserts, so the
+     * LAST writer wins and the first disappears without a word.
+     */
+    sourceHeadings: [
+      'Infrastructure and Growth Context',
+      'Infrastructure & Development',
+      'Infrastructure Pipeline',
+      'Future Infrastructure',
+      'Future Infrastructure & Growth Pipeline',
+    ],
+    pageBudget: 2,
+    includeInCompass: true,
+    includeInFinancialReport: false,
+    includeInAppendix: false,
+    isInternalOnly: false,
+    sectionPriority: 'Protected',
+    maxWordCount: 500,
+    visualComponents: ['infrastructureTimeline', 'attributeTable', 'confidenceChip'],
+    purpose:
+      'The committed and planned pipeline, as its own section rather than a timeline inside the location case. One entry per NAMED project: what it is, the publisher\u2019s own status word, the date something HAPPENED (a gazettal, a determination, a funding decision), and a confidence chip. The rules that bind what may be said here \u2014 an approval is never read as funding and funding never as a start on site, an absence is never RATED, a media release or a budget page is not a register entry, and the coverage limitation is stated on a full list as well as an empty one \u2014 are stated in the \u201cInfrastructure & Development Outlook\u201d block of this prompt and are deliberately not repeated here, because two statements of one rule is how the two come to disagree. Name the project, the stage and the date \u2014 not what the project means for the reader. NO financial figures, and no development potential quantified.',
   },
   {
     id: 'compass.demandDrivers',
-    ordinal: 5,
+    ordinal: 6,
     name: 'Demand Drivers',
     sourceHeadings: [
       'Demand Drivers',
       'Population & Housing Demand',
       'Population and Development Trends',
-      'Supply & Development Pipeline',
       'Tenant & Buyer Profile',
       'Demographics & Demand Drivers',
       'Target Tenant',
@@ -279,13 +341,13 @@ export const COMPASS_40_SECTIONS: CompassSectionDefinition[] = [
     sectionPriority: 'High',
     maxWordCount: 950,
     visualComponents: ['trendTable', 'kpiTiles', 'attributeTable'],
-    purpose: 'One section answering who wants to live here and why — merged from the v2.0 population, tenant/buyer and employment sections, which repeated each other. Covers population growth and household formation, the supply pipeline, the tenant and buyer profile (household types, income brackets, a small SEIFA evidence box), and the corridor industries, major employers and employment-hub access that support that demand. Render employment ONCE, here. Macro demand only — no rent or yield numbers.',
+    purpose: 'One section answering who wants to live here and why — merged from the v2.0 population, tenant/buyer and employment sections, which repeated each other. Covers population growth and household formation, the tenant and buyer profile (household types, income brackets, a small SEIFA evidence box), and the corridor industries, major employers and employment-hub access that support that demand. Render employment ONCE, here. The supply pipeline is Competitive Landscape and Supply Pipeline and is not written here. Macro demand only — no rent or yield numbers.',
   },
   {
     id: 'compass.amenityAccess',
-    ordinal: 6,
+    ordinal: 7,
     name: 'Amenity & Access',
-    // Transport left this list for its own section (ordinal 7). A heading in
+    // Transport left this list for its own section (ordinal 8). A heading in
     // TWO sections resolves to whichever comes first and the other silently
     // loses it — the same rule a workspace path answers to.
     sourceHeadings: [
@@ -314,7 +376,7 @@ export const COMPASS_40_SECTIONS: CompassSectionDefinition[] = [
   },
   {
     id: 'compass.transportAccess',
-    ordinal: 7,
+    ordinal: 8,
     name: 'Transport & Connectivity',
     sourceHeadings: [
       'Transport & Connectivity',
@@ -336,7 +398,7 @@ export const COMPASS_40_SECTIONS: CompassSectionDefinition[] = [
   },
   {
     id: 'compass.planningConstraints',
-    ordinal: 8,
+    ordinal: 9,
     name: 'Zoning, Planning and Development Considerations',
     sourceHeadings: [
       'Zoning, Planning and Development Considerations',
@@ -364,7 +426,7 @@ export const COMPASS_40_SECTIONS: CompassSectionDefinition[] = [
   },
   {
     id: 'compass.environmentSafety',
-    ordinal: 9,
+    ordinal: 10,
     name: 'Environment, Climate & Safety',
     sourceHeadings: [
       'Environment, Climate & Safety',
@@ -385,22 +447,60 @@ export const COMPASS_40_SECTIONS: CompassSectionDefinition[] = [
   },
   {
     id: 'compass.marketPositioning',
-    ordinal: 10,
+    ordinal: 11,
     name: 'Market Positioning',
     sourceHeadings: ['Market Positioning', 'Current Market Performance', 'Market Analysis'],
-    pageBudget: 3,
+    pageBudget: 2,
     includeInCompass: true,
     includeInFinancialReport: false,
     includeInAppendix: false,
     isInternalOnly: false,
     sectionPriority: 'High',
-    maxWordCount: 600,
+    maxWordCount: 450,
     visualComponents: ['trendTable', 'kpiTiles'],
-    purpose: 'Where this property sits in the local market: new-estate context, owner-occupier appeal, comparable supply, demand signals. Qualitative growth drivers only — NO yield, cashflow, capital growth %, repayment or loan numbers.',
+    purpose: 'Where this property sits in the local market: medians and their movement, days on market, new-estate context, owner-occupier appeal, demand signals. Comparable and competing SUPPLY is the section immediately after this one (Competitive Landscape and Supply Pipeline) and is not written here. Qualitative growth drivers only — NO yield, cashflow, capital growth %, repayment or loan numbers.',
+  },
+  {
+    id: 'compass.supplyPipeline',
+    ordinal: 12,
+    name: 'Competitive Landscape and Supply Pipeline',
+    /*
+     * W2.2. Un-merged from `Market Positioning`, and it is the section W3.1
+     * was built for: `market_building_approvals` holds the ABS\u2019s own
+     * monthly count of approved dwellings at the property\u2019s SA2, and the
+     * generator pins `approvalsFactBlocks` into every section call.
+     *
+     * Before this it had nowhere to land. The statewide prompt carried
+     * `**Supply Pipeline Risk:** [New housing supply vs demand balance]` \u2014 a
+     * bracketed slot with no register behind it, which is the shape that put
+     * `450 m\u00b2` and `8.5 m` into a client\u2019s document under the wrong
+     * jurisdiction\u2019s instrument names.
+     *
+     * `Supply & Development Pipeline` was a sourceHeading of DEMAND DRIVERS
+     * and an alias of `infrastructure` at the same time \u2014 two registries
+     * disagreeing about where one heading goes. It belongs to exactly one
+     * section, and this is it.
+     */
+    sourceHeadings: [
+      'Supply & Development Pipeline',
+      'Supply Pipeline',
+      'Competitive Landscape and Supply Pipeline',
+      'Competing Supply',
+    ],
+    pageBudget: 2,
+    includeInCompass: true,
+    includeInFinancialReport: false,
+    includeInAppendix: false,
+    isInternalOnly: false,
+    sectionPriority: 'High',
+    maxWordCount: 500,
+    visualComponents: ['trendTable', 'attributeTable'],
+    purpose:
+      'What else is coming to market nearby, and what that does to this property\u2019s position. Lead with the approved-dwelling count for the area on record \u2014 an approval is not a completion, and a total summed from part of a register is a FLOOR and says so. Then the competing stock a reader can see: estate releases and comparable listings, named. Where the register answered nothing, say WHICH absence it is \u2014 a register this deployment has not loaded, a register that holds nothing for this area, a register that could not be reached, and an area that could not be resolved are four different sentences and only one of them is about the suburb. Never rate the absence, and never compute a supply-versus-demand balance the registers do not carry. NO financial figures, no yield, no growth percentage.',
   },
   {
     id: 'compass.propertyFit',
-    ordinal: 11,
+    ordinal: 13,
     name: 'Property Fit Within the Suburb',
     sourceHeadings: ['Property Fit Within the Suburb', 'Property-Level Information', 'Strategic Assessment', 'Property Fit'],
     pageBudget: 2,
@@ -415,10 +515,10 @@ export const COMPASS_40_SECTIONS: CompassSectionDefinition[] = [
   },
   {
     id: 'compass.riskDashboard',
-    ordinal: 12,
+    ordinal: 14,
     name: 'Risk Dashboard',
     // Environment, crime, zoning and planning left this list for the two
-    // sections that now carry them (ordinals 8 and 9). They were folded in
+    // sections that now carry them (ordinals 9 and 10). They were folded in
     // here because there was nowhere else, and a 500-word table whose own
     // purpose says "the table IS the section" is not a home for a planning
     // control or a climate reading.
@@ -441,7 +541,7 @@ export const COMPASS_40_SECTIONS: CompassSectionDefinition[] = [
   },
   {
     id: 'compass.dueDiligenceChecklist',
-    ordinal: 13,
+    ordinal: 15,
     name: 'Due Diligence Checklist',
     sourceHeadings: ['Due Diligence Checklist', 'Due Diligence', 'Investment Recommendations'],
     pageBudget: 1,
@@ -456,7 +556,7 @@ export const COMPASS_40_SECTIONS: CompassSectionDefinition[] = [
   },
   {
     id: 'compass.finalRecommendation',
-    ordinal: 14,
+    ordinal: 16,
     name: 'Final Recommendation',
     sourceHeadings: ['Final Recommendation', 'Final Conclusion', 'Investment Recommendation'],
     pageBudget: 1,
@@ -471,7 +571,7 @@ export const COMPASS_40_SECTIONS: CompassSectionDefinition[] = [
   },
   {
     id: 'compass.disclaimer',
-    ordinal: 15,
+    ordinal: 17,
     name: 'Appendix, Source Notes & Disclaimer',
     sourceHeadings: ['PROFESSIONAL DISCLAIMER', 'Disclaimer', 'Source Appendix', 'Appendix'],
     pageBudget: 1,
@@ -696,15 +796,26 @@ export const PAGE_PRESSURE_TRIM_ORDER: ReadonlyArray<{
 ];
 
 // ─── Protected section ids (never trim under page pressure) ─────────────────
-
-export const PROTECTED_SECTION_IDS: ReadonlySet<string> = new Set([
-  'compass.executiveVerdict',
-  'compass.whyLocationMatters',
-  'compass.propertyFit',
-  'compass.riskDashboard',
-  'compass.dueDiligenceChecklist',
-  'compass.finalRecommendation',
-]);
+//
+// DERIVED from the field, because it was a second spelling of it and the two
+// had drifted. `sectionPriority: 'Protected'` is the declaration — the trim
+// order above says so in those words — and this list was a hand-written copy
+// of the same fact, which `PAGE_PRESSURE_TRIM_ORDER` and `compassPostProcessor`
+// actually read. Measured before this change: **four sections declared
+// `Protected` and were absent from the set** — `compass.planningConstraints`
+// (1,100 words, the largest section in the document and the one the owner's
+// 17 Sep 2026 review named), `compass.environmentSafety`, `compass.cover` and
+// `compass.disclaimer`. So `capListsToTop5` was free to cut a planning
+// register of eleven overlays down to five bullets, on the section that exists
+// to explain them.
+//
+// This is the rule the risk-register instruction, `strategySectionRules` and
+// `AML_COMMAND_REFRESH_EVENT` each paid for: **a rule written at both ends is
+// how the two ends drift.** Adding a section here is now impossible to forget,
+// because there is nothing to add.
+export const PROTECTED_SECTION_IDS: ReadonlySet<string> = new Set(
+  COMPASS_40_SECTIONS.filter((s) => s.sectionPriority === 'Protected').map((s) => s.id),
+);
 
 export const COMPASS_FINANCIAL_HANDOFF_COPY =
   'This Compass Report focuses on macro suitability, suburb fundamentals, planning considerations and property-positioning factors. Detailed cashflow, lending structure, tax position, yield and 10-year financial modelling should be reviewed separately in the Financial Analysis Report.';

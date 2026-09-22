@@ -51,6 +51,7 @@ import {
   SALES_STATE_LABELS,
   salesAreaToken,
 } from './openData/salesRegister.pure.ts';
+import { finiteOrNull } from './registerCell.pure.ts';
 
 /**
  * What a caller may ask with. Every field is named for the authority behind
@@ -90,12 +91,19 @@ interface ApprovalsRow {
   loaded_at: string | null;
 }
 
+/*
+ * Every numeric cell goes through `finiteOrNull`, which is the one statement
+ * of this rule — see that module's header for what `=== null ? … : Number(…)`
+ * printed on a client's page (`$NaN`) and why it is reachable one narrower
+ * `select` away. `value_aud` is `numeric`, which supabase-js hands back as a
+ * string, so the conversion cannot be skipped either.
+ */
 function toMonth(r: ApprovalsRow): ApprovalsMonth {
   return {
     period: r.period,
     buildingType: r.building_type as ApprovalsBuildingType,
-    dwellingUnits: r.dwelling_units,
-    value: r.value_aud === null ? null : Number(r.value_aud),
+    dwellingUnits: finiteOrNull(r.dwelling_units),
+    value: finiteOrNull(r.value_aud),
   };
 }
 

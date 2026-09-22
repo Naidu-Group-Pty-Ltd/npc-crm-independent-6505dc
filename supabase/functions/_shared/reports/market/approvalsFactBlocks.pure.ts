@@ -166,12 +166,29 @@ function windowOf(
   let units: number | null = null;
   let value: number | null = null;
   let counted = 0;
+  /*
+   * `Number.isFinite`, not `!== null`.
+   *
+   * These are sums, and a sum is a figure printed in a client's table. The
+   * old guard admitted `undefined` — which `!== null` is — and `0 + undefined`
+   * is NaN, which then survives every downstream null check and renders as
+   * `$NaN` in the money column. PostgREST hands back `undefined` for a column
+   * missing from a projection exactly as it hands back `null` for an empty
+   * one (`check-edge-column-names.mjs`' whole reason for existing), so the
+   * shape is one narrower `select` away.
+   *
+   * Only a finite number contributes to a total. Anything else is an absence,
+   * and an absence travels as `null` — the rule `rentalEvidence` and
+   * `placesAvailability` each paid for, stated where the arithmetic happens as
+   * well as where the row is built, because this module is what any future
+   * producer of an `ApprovalsMonth` will be summed by.
+   */
   for (const m of inWindow) {
-    if (m.dwellingUnits !== null) {
-      units = (units ?? 0) + m.dwellingUnits;
+    if (Number.isFinite(m.dwellingUnits)) {
+      units = (units ?? 0) + (m.dwellingUnits as number);
       counted++;
     }
-    if (m.value !== null) value = (value ?? 0) + m.value;
+    if (Number.isFinite(m.value)) value = (value ?? 0) + (m.value as number);
   }
   return { from, to, monthsCounted: counted, floor: counted < WINDOW_MONTHS, units, value };
 }

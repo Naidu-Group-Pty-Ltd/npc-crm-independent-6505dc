@@ -268,3 +268,82 @@ describe('the month arithmetic', () => {
     expect(monthsBefore('not a month', 3)).toBe('not a month');
   });
 });
+
+describe('a figure that is not a figure never reaches the page', () => {
+  /*
+   * Found by rendering the block against the register's real depth on
+   * 22 Sep 2026 — four periods loaded of a twelve-month window — and reading
+   * the output rather than the source. The money column printed **`$NaN`**.
+   *
+   * The immediate cause was a fixture naming the field `valueAud`, so `value`
+   * was `undefined`. That is the whole point: `windowOf`'s guard was
+   * `m.value !== null`, and `undefined !== null` is TRUE, so `0 + undefined`
+   * became NaN and then survived every downstream null check — `NaN === null`
+   * is false, so the "no figure" branch never fired and the formatter was
+   * handed it.
+   *
+   * It is reachable from production, one narrower `select` away: PostgREST
+   * returns `undefined` for a column absent from a projection exactly as it
+   * returns `null` for one that is empty. That is the class
+   * `check-edge-column-names.mjs` exists for, and it has already cost this
+   * repository `investment_reports.client_id`, `market_updates.summary` and
+   * `custom_users.role_display` — each of which reported as normal, empty
+   * operation.
+   *
+   * The rule is `rentalEvidence`'s and `placesAvailability`' — **absent is
+   * never zero** — in its sharper form: an absence travels as an absence, and
+   * NaN is neither a figure nor an absence.
+   */
+  const seriesWith = (months: unknown[]) => ({
+    area: 'Braidwood',
+    areaKind: 'sa2' as const,
+    months: months as never,
+    source: 'Australian Bureau of Statistics',
+    sourceUrl: 'https://data.api.abs.gov.au/',
+    licence: 'CC BY 4.0',
+    loadedAt: '2026-09-22',
+  });
+
+  /** A month row whose `value` never arrived, under a mistyped column name. */
+  const rowsWithNoValue = (period: string) =>
+    (['total_residential', 'house', 'other_residential'] as const).map((buildingType) => ({
+      period,
+      buildingType,
+      dwellingUnits: 4,
+      valueAud: 1_000_000, // NOT `value` — the shape a narrower select produces
+    }));
+
+  it('sums only finite numbers, so a missing column is an absence and not NaN', () => {
+    const reading = summariseApprovals(
+      seriesWith(['2026-04', '2026-05', '2026-06', '2026-07'].flatMap(rowsWithNoValue)),
+    );
+    expect(reading).toBeTruthy();
+    expect(reading!.latest.total_residential.units).toBe(16);
+    expect(reading!.latest.total_residential.value).toBeNull();
+  });
+
+  it('prints no money figure at all rather than `$NaN`', () => {
+    const block = approvalsFactBlocks(
+      summariseApprovals(
+        seriesWith(['2026-04', '2026-05', '2026-06', '2026-07'].flatMap(rowsWithNoValue)),
+      ),
+      'not_loaded',
+    );
+    expect(block).not.toContain('NaN');
+    // The units it DOES hold are still stated: a missing money column is not a
+    // reason to withhold the count beside it.
+    expect(block).toContain('16');
+  });
+
+  it('counts a month for the units window only where the count is real', () => {
+    const reading = summariseApprovals(
+      seriesWith([
+        { period: '2026-06', buildingType: 'total_residential', dwellingUnits: 5, value: 1_000 },
+        { period: '2026-07', buildingType: 'total_residential', dwellingUnits: undefined, value: 2_000 },
+      ]),
+    );
+    expect(reading!.latest.total_residential.units).toBe(5);
+    expect(reading!.latest.total_residential.monthsCounted).toBe(1);
+    expect(reading!.latest.total_residential.value).toBe(3_000);
+  });
+});

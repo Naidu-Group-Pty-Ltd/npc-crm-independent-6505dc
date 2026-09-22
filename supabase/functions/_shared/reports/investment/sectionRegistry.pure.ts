@@ -487,13 +487,37 @@ export const SECTION_REGISTRY: readonly SectionDefinition[] = [
     aliases: [
       'Infrastructure and Growth Context', 'Future Infrastructure',
       'Future Infrastructure & Growth Pipeline', 'Infrastructure & Development',
-      'Infrastructure Pipeline', 'Supply & Development Pipeline',
+      'Infrastructure Pipeline',
+      // `Supply & Development Pipeline` LEFT this list for `supplyPipeline`,
+      // which is what that heading is actually about. It was claimed here and
+      // as a sourceHeading of the Compass's DEMAND DRIVERS at the same time —
+      // two registries disagreeing about where one heading goes, which
+      // resolves to whichever is read first and loses the other silently.
     ],
     purpose: 'The committed and planned pipeline — what is funded, what is announced, and when each lands.',
     tiers: {
-      compass: merged('locationCase'),
+      /*
+       * W2.2. Its own section on the Compass, no longer a timeline inside
+       * `Why This Location Matters`.
+       *
+       * The merge was right when it was made and the rule that justified it is
+       * the rule that ends it: *a section with nothing behind it should be
+       * merged; a section with a register behind it should not.*
+       * `infrastructureEvidence.pure.ts` and `nationalPipeline.pure.ts` answer
+       * now, and the generator pins their table into every section call — so a
+       * retrieved project had a source, a status word and a currency date, and
+       * nowhere to be explained.
+       *
+       * Order 6 was the one gap in the Compass's declared sequence, and it is
+       * where this belongs: the location case, then what is committed to it,
+       * then who wants to live there.
+       */
+      compass: { depth: 'required', order: 6, label: 'Infrastructure and Growth Context', producer: authored('generator.compass') },
       briefing: merged('locationCase'),
-      // Merged where the Compass merges it — see `propertyFit`'s strategic placement.
+      // Merged where the Compass USED to merge it. The briefing is four pages
+      // and the strategic tier draws it inside `Position Within the Locality &
+      // Infrastructure Context`, which is a real heading carrying it — neither
+      // is the Compass's defect, so neither changes here.
       strategic: merged('locationCase'),
     },
   },
@@ -548,12 +572,32 @@ export const SECTION_REGISTRY: readonly SectionDefinition[] = [
     id: 'supplyPipeline',
     canonicalLabel: 'Competitive Landscape and Supply Pipeline',
     provenance: 'measured',
-    aliases: ['Competitive Landscape and Supply Pipeline'],
+    aliases: [
+      'Competitive Landscape and Supply Pipeline',
+      // Taken from `infrastructure`, which held it while meaning something
+      // else, and from the Compass registry's DEMAND DRIVERS, which held it at
+      // the same time. A heading belongs to exactly ONE section.
+      'Supply & Development Pipeline', 'Supply Pipeline', 'Competing Supply',
+    ],
     purpose: 'What else is coming to market nearby, and what that does to this property’s position.',
     tiers: {
-      compass: merged('marketPosition'),
+      /*
+       * W2.2, and the section W3.1 was built for: `market_building_approvals`
+       * holds the ABS's own monthly count of approved dwellings at this
+       * property's SA2, and `approvalsFactBlocks` is pinned into every section
+       * call. Before it, the statewide prompt carried `**Supply Pipeline
+       * Risk:** [New housing supply vs demand balance]` — a bracketed slot
+       * with no register behind it.
+       *
+       * It sits directly after `marketPosition` (12) and before the exit
+       * outlook, which is the reading order a purchaser needs: where this
+       * property sits, what will compete with it, then how easily it sells.
+       * Everything from 13 down shifted by one to make the room.
+       */
+      compass: { depth: 'required', order: 13, label: 'Competitive Landscape and Supply Pipeline', producer: authored('generator.compass') },
       briefing: merged('marketPosition'),
-      // Merged where the Compass merges it — see `propertyFit`'s strategic placement.
+      // The strategic tier draws it inside `Market Position, Competitive
+      // Landscape & Supply Pipeline`, a heading that names it — unchanged.
       strategic: merged('marketPosition'),
     },
   },
@@ -706,7 +750,7 @@ export const SECTION_REGISTRY: readonly SectionDefinition[] = [
     ],
     purpose: 'How this dwelling aligns with local demand — position, land/build balance, occupier appeal and its limitations.',
     tiers: {
-      compass: { depth: 'required', order: 14, label: 'Property Fit Within the Suburb', producer: authored('generator.compass') },
+      compass: { depth: 'required', order: 15, label: 'Property Fit Within the Suburb', producer: authored('generator.compass') },
       briefing: { depth: 'required', order: 8, label: 'Property Fit', producer: authored('condense.briefing') },
       /*
        * The Due Diligence document mirrors the Compass's merges, because it
@@ -810,7 +854,7 @@ export const SECTION_REGISTRY: readonly SectionDefinition[] = [
     ],
     purpose: 'Every risk in one table with a level, why it matters and the check that would settle it. Protected under page pressure.',
     tiers: {
-      compass: { depth: 'required', order: 16, label: 'Risk Dashboard', producer: authored('generator.compass') },
+      compass: { depth: 'required', order: 17, label: 'Risk Dashboard', producer: authored('generator.compass') },
       briefing: { depth: 'required', order: 9, label: 'Risk Overview', producer: authored('condense.briefing') },
       financial: { depth: 'required', order: 14, label: 'Financial Risk Dashboard', producer: routed('financial', 11) },
       strategic: { depth: 'required', order: 20, label: 'Property & Location Risk Dashboard', producer: routed('dueDiligence', 18) },
@@ -851,7 +895,7 @@ export const SECTION_REGISTRY: readonly SectionDefinition[] = [
     aliases: ['Due Diligence Checklist', 'Due Diligence', 'Investment Recommendations'],
     purpose: 'What must be verified before contract, as a list somebody can work through.',
     tiers: {
-      compass: { depth: 'required', order: 17, label: 'Due Diligence Checklist', producer: authored('generator.compass') },
+      compass: { depth: 'required', order: 18, label: 'Due Diligence Checklist', producer: authored('generator.compass') },
       /*
        * `required`, with a producer, from 20 Sep 2026.
        *
@@ -1011,7 +1055,7 @@ export const SECTION_REGISTRY: readonly SectionDefinition[] = [
       + '(modelled, under the recorded growth rate). The measured half reaches the Compass; the modelled half is '
       + 'the Financial report\'s.',
     tiers: {
-      compass: { depth: 'required', order: 13, label: 'Resale Liquidity & Exit Outlook', producer: composedFrom('strategyPositions.pure.ts', 'composeExitOutlook') },
+      compass: { depth: 'required', order: 14, label: 'Resale Liquidity & Exit Outlook', producer: composedFrom('strategyPositions.pure.ts', 'composeExitOutlook') },
       financial: { depth: 'required', order: 13, label: 'Resale Liquidity & Exit Strategy', producer: composedFrom('strategyPositions.pure.ts', 'composeExitOutlook') },
       /*
        * The Due Diligence document carries it too, from 20 Sep 2026 — and
@@ -1048,7 +1092,7 @@ export const SECTION_REGISTRY: readonly SectionDefinition[] = [
     purpose:
       'The score by dimension with its weights — every row a Computed figure, and a dimension with no data omitted rather than scored zero.',
     tiers: {
-      compass: { depth: 'optional', order: 20, surface: 'document', producer: projection('recommendation.gradedDetailLine') },
+      compass: { depth: 'optional', order: 21, surface: 'document', producer: projection('recommendation.gradedDetailLine') },
       briefing: { depth: 'required', order: 16, label: 'Investment Score Breakdown', producer: composedFn('composeScoreBreakdownSection') },
       // Composed: the guide listed all five dimensions with no omission rule
       // beside it, and the record withholds the ones it could not score.
@@ -1066,7 +1110,7 @@ export const SECTION_REGISTRY: readonly SectionDefinition[] = [
       + 'reading it rests on, and an absence appearing as coverage rather than in a quadrant. Never re-authored. '
       + 'The Compass draws the location and market half; the modelling half travels only to the Financial report.',
     tiers: {
-      compass: { depth: 'required', order: 15, label: 'SWOT Analysis', producer: composedFrom('strategyPositions.pure.ts', 'composeSwot') },
+      compass: { depth: 'required', order: 16, label: 'SWOT Analysis', producer: composedFrom('strategyPositions.pure.ts', 'composeSwot') },
       briefing: { depth: 'required', order: 17, label: 'SWOT Analysis', producer: composedFn('composeSwotSection') },
       financial: { depth: 'required', order: 17, label: 'Financial SWOT: Returns, Risk & Holding Capacity', producer: composed(14) },
     },
@@ -1119,7 +1163,7 @@ export const SECTION_REGISTRY: readonly SectionDefinition[] = [
       + 'carries the same duty inside its holding strategy\'s "what would break it", so no reader meets the list '
       + 'twice. It never promises that this platform watches anything.',
     tiers: {
-      compass: { depth: 'required', order: 18, label: 'Monitoring & Review Plan', producer: composedFrom('strategyPositions.pure.ts', 'composeMonitoringPlan') },
+      compass: { depth: 'required', order: 19, label: 'Monitoring & Review Plan', producer: composedFrom('strategyPositions.pure.ts', 'composeMonitoringPlan') },
       strategic: { depth: 'required', order: 22, label: 'Monitoring & Review Plan', producer: composedFrom('strategyPositions.pure.ts', 'composeMonitoringPlan') },
     },
   },
@@ -1157,7 +1201,7 @@ export const SECTION_REGISTRY: readonly SectionDefinition[] = [
     ],
     purpose: 'The call, the rationale in a paragraph, and the immediate actions. Proceed / proceed with caution / not suitable.',
     tiers: {
-      compass: { depth: 'required', order: 19, label: 'Final Recommendation', producer: authored('generator.compass') },
+      compass: { depth: 'required', order: 20, label: 'Final Recommendation', producer: authored('generator.compass') },
       briefing: { depth: 'required', order: 20, label: 'Recommendation', producer: authored('condense.briefing') },
       snapshot: { depth: 'required', order: 10, label: 'Quick Recommendation', producer: authored('condense.snapshot') },
       financial: { depth: 'required', order: 19, label: 'Financial Recommendation & Portfolio Fit', producer: routed('financial', 16) },
