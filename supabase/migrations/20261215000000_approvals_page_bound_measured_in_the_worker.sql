@@ -1,0 +1,80 @@
+-- Measure the approvals page bound WHERE IT BINDS: inside the edge worker.
+--
+-- ## What the first real run found
+--
+-- With the loader finally deployed (`market-sales-ingest` v168, 22 Sep 2026),
+-- the first ingest got further than the 400 that preceded it and then died:
+--
+--     [market-sales-ingest] approvals: ABS,BA_SA2,2.0.0
+--       key=1+2.9.TOT.110+150+100...M page=0 2026-04→2026-09 frontier=none
+--     POST | 546 | .../functions/v1/market-sales-ingest
+--
+-- Two of the three unexercised steps therefore WORK. The dataflow was
+-- discovered from the Bureau's own catalogue — `ABS,BA_SA2,2.0.0`, the finest
+-- grain published, which is what the scorer prices — and the positional key
+-- was composed from the flow's own data structure rather than typed. Neither
+-- had ever run against the real publisher before.
+--
+-- **546 is the edge worker's resource limit**, the same answer five DCJ
+-- workbooks in one invocation produced, and the same one that killed
+-- `urban-centre-register-ingest` when it asked for a hundred full-resolution
+-- polygons.
+--
+-- ## The bound was measured on the wrong axis
+--
+-- `absApprovalsPaging.pure.ts` sets `APPROVALS_PAGE_MONTHS = 6` from a CI
+-- measurement of the Bureau's bytes:
+--
+--     33 months   111.6 MB   past the ceiling
+--     12 months    26.0 MB   past the ceiling
+--      6 months    12.2 MB   workable
+--
+-- Every one of those numbers is a fact about the WIRE, taken against "a
+-- 24 MB budget". The worker's limit is on the resources needed to PROCESS
+-- them, and the stage holds all of it at once:
+--
+--     const text = await res.text();                  -- the whole body, one string
+--     const parsed = parseAbsBuildingApprovals(text); -- then every row as an object
+--     await upsertApprovals(supabase, parsed.rows);   -- then the upsert payload
+--
+-- At SA2 grain that is ~2,300 areas x 6 months x 3 building types x 2
+-- measures, so 12.2 MB of CSV becomes a multiple of itself in heap while the
+-- original string is still live. "Workable" answered a different question
+-- from the one that decides, which is this programme's most repeated finding
+-- wearing another hat: **an instrument has to measure the quantity that
+-- binds.**
+--
+-- ## Why this file measures instead of choosing
+--
+-- The obvious move is to divide the constant by something and redeploy. That
+-- would be a number chosen and then dressed as a derivation — and the rule
+-- this register already answers to is that a bound is DERIVED or measured,
+-- never picked.
+--
+-- The stage already takes an explicit window from an operator, deliberately
+-- carrying no floor: *"they are asking for exactly what they named."* So one
+-- month can be requested with no code change at all, and the worker's own
+-- answer is the measurement. **One month** is the smallest useful page, so it
+-- is the right first probe: if it succeeds the bound lies between 1 and 6 and
+-- the constant can be set from a real curve; if it 546s as well, then no
+-- windowing saves this and the fix is to stream the parse rather than buffer
+-- it, which is a different change with a different design.
+--
+-- `2026-07` is chosen because the frontier page returned data to 2026-07 when
+-- CI measured it on 21 Sep, so it is a month the publisher is known to hold —
+-- an empty answer here would be about the window rather than about the load.
+--
+-- Nothing is destructive. The table is keyed on the publisher's own
+-- (area_kind, area_code, period, building_type), so this writes one month and
+-- a later full walk replaces it rather than accumulating a second answer.
+-- Nothing was written by the 546 — no detail row, no sync row — so the
+-- register is empty and consistent going in.
+--
+-- No `@effect` probe, for the reason `20261214000000` gives: `net.http_post`
+-- queues and returns, so any probe here would assert something untrue at the
+-- instant this file finishes. The measurement is read from
+-- `function_logs` and from `market_sales_sync`.
+
+select public.market_sales_refresh(
+  '{"stage": "approvals", "startPeriod": "2026-07", "endPeriod": "2026-07"}'::jsonb
+);

@@ -39,12 +39,16 @@ DROP POLICY IF EXISTS "Anyone can create generated reports" ON public.generated_
 DROP POLICY IF EXISTS "Anyone can update generated reports" ON public.generated_reports;
 DROP POLICY IF EXISTS "Anyone can delete generated reports" ON public.generated_reports;
 
+DROP POLICY IF EXISTS "generated_reports_select_authenticated" ON public.generated_reports;
 CREATE POLICY "generated_reports_select_authenticated" ON public.generated_reports
   FOR SELECT TO authenticated USING (true);
+DROP POLICY IF EXISTS "generated_reports_insert_authenticated" ON public.generated_reports;
 CREATE POLICY "generated_reports_insert_authenticated" ON public.generated_reports
   FOR INSERT TO authenticated WITH CHECK (true);
+DROP POLICY IF EXISTS "generated_reports_update_authenticated" ON public.generated_reports;
 CREATE POLICY "generated_reports_update_authenticated" ON public.generated_reports
   FOR UPDATE TO authenticated USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "generated_reports_delete_authenticated" ON public.generated_reports;
 CREATE POLICY "generated_reports_delete_authenticated" ON public.generated_reports
   FOR DELETE TO authenticated USING (true);
 
@@ -53,10 +57,12 @@ DROP POLICY IF EXISTS "Anyone can view global report settings"   ON public.globa
 DROP POLICY IF EXISTS "Anyone can insert global report settings" ON public.global_report_settings;
 DROP POLICY IF EXISTS "Anyone can update global report settings" ON public.global_report_settings;
 
+DROP POLICY IF EXISTS "global_report_settings_select_authenticated" ON public.global_report_settings;
 CREATE POLICY "global_report_settings_select_authenticated" ON public.global_report_settings
   FOR SELECT TO authenticated USING (true);
 -- Staff edit the settings from the templates admin surface; inserts (seeding new
 -- setting keys) stay service_role-only.
+DROP POLICY IF EXISTS "global_report_settings_update_authenticated" ON public.global_report_settings;
 CREATE POLICY "global_report_settings_update_authenticated" ON public.global_report_settings
   FOR UPDATE TO authenticated USING (true) WITH CHECK (true);
 
@@ -66,12 +72,16 @@ DROP POLICY IF EXISTS "Anyone can insert depreciation comps" ON public.depreciat
 DROP POLICY IF EXISTS "Anyone can update depreciation comps" ON public.depreciation_comps;
 DROP POLICY IF EXISTS "Anyone can delete depreciation comps" ON public.depreciation_comps;
 
+DROP POLICY IF EXISTS "depreciation_comps_select_authenticated" ON public.depreciation_comps;
 CREATE POLICY "depreciation_comps_select_authenticated" ON public.depreciation_comps
   FOR SELECT TO authenticated USING (true);
+DROP POLICY IF EXISTS "depreciation_comps_insert_authenticated" ON public.depreciation_comps;
 CREATE POLICY "depreciation_comps_insert_authenticated" ON public.depreciation_comps
   FOR INSERT TO authenticated WITH CHECK (true);
+DROP POLICY IF EXISTS "depreciation_comps_update_authenticated" ON public.depreciation_comps;
 CREATE POLICY "depreciation_comps_update_authenticated" ON public.depreciation_comps
   FOR UPDATE TO authenticated USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "depreciation_comps_delete_authenticated" ON public.depreciation_comps;
 CREATE POLICY "depreciation_comps_delete_authenticated" ON public.depreciation_comps
   FOR DELETE TO authenticated USING (true);
 
@@ -81,14 +91,19 @@ DROP POLICY IF EXISTS "Allow read gamma templates"   ON public.gamma_agreement_t
 
 ALTER TABLE public.gamma_agreement_templates ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS "gamma_agreement_templates_select_authenticated" ON public.gamma_agreement_templates;
 CREATE POLICY "gamma_agreement_templates_select_authenticated" ON public.gamma_agreement_templates
   FOR SELECT TO authenticated USING (true);
+DROP POLICY IF EXISTS "gamma_agreement_templates_insert_authenticated" ON public.gamma_agreement_templates;
 CREATE POLICY "gamma_agreement_templates_insert_authenticated" ON public.gamma_agreement_templates
   FOR INSERT TO authenticated WITH CHECK (true);
+DROP POLICY IF EXISTS "gamma_agreement_templates_update_authenticated" ON public.gamma_agreement_templates;
 CREATE POLICY "gamma_agreement_templates_update_authenticated" ON public.gamma_agreement_templates
   FOR UPDATE TO authenticated USING (true) WITH CHECK (true);
+DROP POLICY IF EXISTS "gamma_agreement_templates_delete_authenticated" ON public.gamma_agreement_templates;
 CREATE POLICY "gamma_agreement_templates_delete_authenticated" ON public.gamma_agreement_templates
   FOR DELETE TO authenticated USING (true);
+DROP POLICY IF EXISTS "gamma_agreement_templates_service_role_all" ON public.gamma_agreement_templates;
 CREATE POLICY "gamma_agreement_templates_service_role_all" ON public.gamma_agreement_templates
   FOR ALL TO public
   USING (((current_setting('request.jwt.claims', true))::json ->> 'role') = 'service_role')

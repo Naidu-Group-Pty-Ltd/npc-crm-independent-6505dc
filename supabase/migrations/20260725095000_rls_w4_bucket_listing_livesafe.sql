@@ -23,11 +23,13 @@
 -- =============================================================================
 
 DROP POLICY IF EXISTS "public_read_branding_assets" ON storage.objects;
+DROP POLICY IF EXISTS "authenticated_read_branding_assets" ON storage.objects;
 CREATE POLICY "authenticated_read_branding_assets" ON storage.objects
   FOR SELECT TO authenticated
   USING (bucket_id = 'branding-assets');
 
 DROP POLICY IF EXISTS "Public read lead magnets" ON storage.objects;
+DROP POLICY IF EXISTS "authenticated_read_lead_magnets" ON storage.objects;
 CREATE POLICY "authenticated_read_lead_magnets" ON storage.objects
   FOR SELECT TO authenticated
   USING (bucket_id = 'lead-magnets');

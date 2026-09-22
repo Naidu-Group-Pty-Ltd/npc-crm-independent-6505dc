@@ -7,6 +7,7 @@ DROP POLICY IF EXISTS "tpl_comments_insert_auth" ON public.template_comments;
 DROP POLICY IF EXISTS "tpl_comments_update_own_or_resolve" ON public.template_comments;
 DROP POLICY IF EXISTS "tpl_comments_delete_own" ON public.template_comments;
 
+DROP POLICY IF EXISTS "tpl_comments_select_template_owner" ON public.template_comments;
 CREATE POLICY "tpl_comments_select_template_owner"
   ON public.template_comments FOR SELECT TO authenticated
   USING (
@@ -18,6 +19,7 @@ CREATE POLICY "tpl_comments_select_template_owner"
     )
   );
 
+DROP POLICY IF EXISTS "tpl_comments_insert_template_owner" ON public.template_comments;
 CREATE POLICY "tpl_comments_insert_template_owner"
   ON public.template_comments FOR INSERT TO authenticated
   WITH CHECK (
@@ -30,6 +32,7 @@ CREATE POLICY "tpl_comments_insert_template_owner"
     )
   );
 
+DROP POLICY IF EXISTS "tpl_comments_update_template_owner" ON public.template_comments;
 CREATE POLICY "tpl_comments_update_template_owner"
   ON public.template_comments FOR UPDATE TO authenticated
   USING (
@@ -50,6 +53,7 @@ CREATE POLICY "tpl_comments_update_template_owner"
     )
   );
 
+DROP POLICY IF EXISTS "tpl_comments_delete_template_owner" ON public.template_comments;
 CREATE POLICY "tpl_comments_delete_template_owner"
   ON public.template_comments FOR DELETE TO authenticated
   USING (
@@ -66,6 +70,7 @@ DROP POLICY IF EXISTS "tpl_share_insert_self" ON public.template_share_links;
 DROP POLICY IF EXISTS "tpl_share_update_self" ON public.template_share_links;
 DROP POLICY IF EXISTS "tpl_share_delete_self" ON public.template_share_links;
 
+DROP POLICY IF EXISTS "tpl_share_select_template_owner" ON public.template_share_links;
 CREATE POLICY "tpl_share_select_template_owner"
   ON public.template_share_links FOR SELECT TO authenticated
   USING (
@@ -77,6 +82,7 @@ CREATE POLICY "tpl_share_select_template_owner"
     )
   );
 
+DROP POLICY IF EXISTS "tpl_share_insert_template_owner" ON public.template_share_links;
 CREATE POLICY "tpl_share_insert_template_owner"
   ON public.template_share_links FOR INSERT TO authenticated
   WITH CHECK (
@@ -89,6 +95,7 @@ CREATE POLICY "tpl_share_insert_template_owner"
     )
   );
 
+DROP POLICY IF EXISTS "tpl_share_update_template_owner" ON public.template_share_links;
 CREATE POLICY "tpl_share_update_template_owner"
   ON public.template_share_links FOR UPDATE TO authenticated
   USING (
@@ -110,6 +117,7 @@ CREATE POLICY "tpl_share_update_template_owner"
     )
   );
 
+DROP POLICY IF EXISTS "tpl_share_delete_template_owner" ON public.template_share_links;
 CREATE POLICY "tpl_share_delete_template_owner"
   ON public.template_share_links FOR DELETE TO authenticated
   USING (

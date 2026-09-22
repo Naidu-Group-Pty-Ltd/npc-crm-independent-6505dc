@@ -105,6 +105,7 @@ CREATE TABLE IF NOT EXISTS public.partner_agreement_versions (
 
 GRANT ALL ON public.partner_agreement_versions TO service_role;
 ALTER TABLE public.partner_agreement_versions ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "partner_agreement_versions_service_role_only" ON public.partner_agreement_versions;
 CREATE POLICY "partner_agreement_versions_service_role_only"
   ON public.partner_agreement_versions FOR ALL
   USING (auth.role() = 'service_role')
@@ -126,6 +127,7 @@ CREATE TABLE IF NOT EXISTS public.partner_agreement_reviews (
 
 GRANT ALL ON public.partner_agreement_reviews TO service_role;
 ALTER TABLE public.partner_agreement_reviews ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "partner_agreement_reviews_service_role_only" ON public.partner_agreement_reviews;
 CREATE POLICY "partner_agreement_reviews_service_role_only"
   ON public.partner_agreement_reviews FOR ALL
   USING (auth.role() = 'service_role')
@@ -158,6 +160,7 @@ CREATE TABLE IF NOT EXISTS public.partner_agreement_change_requests (
 
 GRANT ALL ON public.partner_agreement_change_requests TO service_role;
 ALTER TABLE public.partner_agreement_change_requests ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "partner_agreement_change_requests_service_role_only" ON public.partner_agreement_change_requests;
 CREATE POLICY "partner_agreement_change_requests_service_role_only"
   ON public.partner_agreement_change_requests FOR ALL
   USING (auth.role() = 'service_role')
@@ -198,6 +201,7 @@ CREATE TABLE IF NOT EXISTS public.partner_agreement_signatures (
 
 GRANT ALL ON public.partner_agreement_signatures TO service_role;
 ALTER TABLE public.partner_agreement_signatures ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "partner_agreement_signatures_service_role_only" ON public.partner_agreement_signatures;
 CREATE POLICY "partner_agreement_signatures_service_role_only"
   ON public.partner_agreement_signatures FOR ALL
   USING (auth.role() = 'service_role')

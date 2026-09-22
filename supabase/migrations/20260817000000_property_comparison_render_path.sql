@@ -107,6 +107,7 @@ CREATE INDEX IF NOT EXISTS property_comparison_renders_shape_idx
 
 ALTER TABLE public.property_comparison_renders ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS property_comparison_renders_select ON public.property_comparison_renders;
 CREATE POLICY property_comparison_renders_select
   ON public.property_comparison_renders
   FOR SELECT TO authenticated

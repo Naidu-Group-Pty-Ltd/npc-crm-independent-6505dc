@@ -34,6 +34,7 @@ DROP POLICY IF EXISTS "Service role can update generation log" ON auto_report_ge
 -- ============================================
 
 -- auto_report_master_settings: Admin-only access
+DROP POLICY IF EXISTS "Admins can view master settings" ON auto_report_master_settings;
 CREATE POLICY "Admins can view master settings"
   ON auto_report_master_settings FOR SELECT
   USING (
@@ -44,6 +45,7 @@ CREATE POLICY "Admins can view master settings"
     )
   );
 
+DROP POLICY IF EXISTS "Admins can update master settings" ON auto_report_master_settings;
 CREATE POLICY "Admins can update master settings"
   ON auto_report_master_settings FOR UPDATE
   USING (
@@ -55,6 +57,7 @@ CREATE POLICY "Admins can update master settings"
   );
 
 -- auto_report_switches: Admin-only access
+DROP POLICY IF EXISTS "Admins can view switches" ON auto_report_switches;
 CREATE POLICY "Admins can view switches"
   ON auto_report_switches FOR SELECT
   USING (
@@ -65,6 +68,7 @@ CREATE POLICY "Admins can view switches"
     )
   );
 
+DROP POLICY IF EXISTS "Admins can create switches" ON auto_report_switches;
 CREATE POLICY "Admins can create switches"
   ON auto_report_switches FOR INSERT
   WITH CHECK (
@@ -75,6 +79,7 @@ CREATE POLICY "Admins can create switches"
     )
   );
 
+DROP POLICY IF EXISTS "Admins can update switches" ON auto_report_switches;
 CREATE POLICY "Admins can update switches"
   ON auto_report_switches FOR UPDATE
   USING (
@@ -85,6 +90,7 @@ CREATE POLICY "Admins can update switches"
     )
   );
 
+DROP POLICY IF EXISTS "Admins can delete switches" ON auto_report_switches;
 CREATE POLICY "Admins can delete switches"
   ON auto_report_switches FOR DELETE
   USING (
@@ -96,6 +102,7 @@ CREATE POLICY "Admins can delete switches"
   );
 
 -- auto_report_processed_listings: Admin-only access
+DROP POLICY IF EXISTS "Admins can view processed listings" ON auto_report_processed_listings;
 CREATE POLICY "Admins can view processed listings"
   ON auto_report_processed_listings FOR SELECT
   USING (
@@ -107,6 +114,7 @@ CREATE POLICY "Admins can view processed listings"
   );
 
 -- auto_report_generation_log: Admin-only access
+DROP POLICY IF EXISTS "Admins can view generation log" ON auto_report_generation_log;
 CREATE POLICY "Admins can view generation log"
   ON auto_report_generation_log FOR SELECT
   USING (
@@ -124,6 +132,7 @@ CREATE POLICY "Admins can view generation log"
 DROP POLICY IF EXISTS "Anyone can view API health logs" ON api_health_log;
 DROP POLICY IF EXISTS "Service role can manage API health logs" ON api_health_log;
 
+DROP POLICY IF EXISTS "Admins can view API health logs" ON api_health_log;
 CREATE POLICY "Admins can view API health logs"
   ON api_health_log FOR SELECT
   USING (
@@ -148,11 +157,13 @@ DROP POLICY IF EXISTS "Allow document chunk updates" ON document_chunks;
 
 -- Create secure policies
 -- SELECT: Authenticated users can view chunks (needed for RAG retrieval)
+DROP POLICY IF EXISTS "Authenticated users can view document chunks" ON document_chunks;
 CREATE POLICY "Authenticated users can view document chunks"
   ON document_chunks FOR SELECT
   USING (auth.role() = 'authenticated');
 
 -- INSERT: Authenticated users can create chunks (for template parsing)
+DROP POLICY IF EXISTS "Authenticated users can create document chunks" ON document_chunks;
 CREATE POLICY "Authenticated users can create document chunks"
   ON document_chunks FOR INSERT
   WITH CHECK (auth.role() = 'authenticated');
@@ -160,11 +171,13 @@ CREATE POLICY "Authenticated users can create document chunks"
 -- UPDATE: Authenticated users can update chunks they created (if created_by exists)
 -- Note: If document_chunks doesn't have created_by, we'll allow authenticated users
 -- since this is used for template management
+DROP POLICY IF EXISTS "Authenticated users can update document chunks" ON document_chunks;
 CREATE POLICY "Authenticated users can update document chunks"
   ON document_chunks FOR UPDATE
   USING (auth.role() = 'authenticated');
 
 -- DELETE: Authenticated users can delete chunks (for cleanup)
+DROP POLICY IF EXISTS "Authenticated users can delete document chunks" ON document_chunks;
 CREATE POLICY "Authenticated users can delete document chunks"
   ON document_chunks FOR DELETE
   USING (auth.role() = 'authenticated');
@@ -180,11 +193,13 @@ DROP POLICY IF EXISTS "Allow template updates" ON report_structure_templates;
 DROP POLICY IF EXISTS "Allow template deletes" ON report_structure_templates;
 
 -- SELECT: Authenticated users can view templates (needed for report generation)
+DROP POLICY IF EXISTS "Authenticated users can view templates" ON report_structure_templates;
 CREATE POLICY "Authenticated users can view templates"
   ON report_structure_templates FOR SELECT
   USING (auth.role() = 'authenticated');
 
 -- INSERT: Admins can create templates
+DROP POLICY IF EXISTS "Admins can create templates" ON report_structure_templates;
 CREATE POLICY "Admins can create templates"
   ON report_structure_templates FOR INSERT
   WITH CHECK (
@@ -196,6 +211,7 @@ CREATE POLICY "Admins can create templates"
   );
 
 -- UPDATE: Admins can update templates
+DROP POLICY IF EXISTS "Admins can update templates" ON report_structure_templates;
 CREATE POLICY "Admins can update templates"
   ON report_structure_templates FOR UPDATE
   USING (
@@ -207,6 +223,7 @@ CREATE POLICY "Admins can update templates"
   );
 
 -- DELETE: Admins can delete templates
+DROP POLICY IF EXISTS "Admins can delete templates" ON report_structure_templates;
 CREATE POLICY "Admins can delete templates"
   ON report_structure_templates FOR DELETE
   USING (

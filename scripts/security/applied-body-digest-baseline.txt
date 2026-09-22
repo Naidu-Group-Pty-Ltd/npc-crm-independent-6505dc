@@ -1,0 +1,28 @@
+# Migrations whose repository file no longer carries the SQL that RAN, and
+# which are accepted anyway.
+#
+# FROZEN, and EMPTY. Nothing may be added to this list.
+#
+# A migration edited after it applied fails `npm run check:applied-body-digests`,
+# and adding it here to make the guard pass is the failure the guard exists to
+# prevent. The list only ever shrinks — an entry goes when the repository file
+# is put back to what ran.
+#
+# It is empty because the guard was armed on a corpus that had none: measured
+# 22 Sep 2026, 690 of 1,002 files carry bytes this deployment's ledger holds,
+# and every one of them still matches.
+#
+# ## What it is for, when it is needed
+#
+# Exactly one thing: a file whose drift a PERSON has looked at, statement by
+# statement, and judged harmless. Not a verdict computed by stripping comments
+# and comparing what is left — `executableBody` is deliberately conservative
+# and its failure mode is over-stripping, which makes two genuinely different
+# files look alike. A verdict of "only comments changed" reached that way is
+# exactly the confident-wrong answer this programme keeps finding. A person
+# looks; the checker compares digests.
+#
+# Write the reason on the line. An entry with no reason is an entry nobody can
+# ever retire.
+#
+# Format: <filename>  # why it is accepted

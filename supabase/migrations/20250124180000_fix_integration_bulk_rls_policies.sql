@@ -16,6 +16,7 @@ DROP POLICY IF EXISTS "Authenticated users can update integration configs" ON in
 DROP POLICY IF EXISTS "Authenticated users can delete integration configs" ON integration_configs;
 
 -- Create admin-only policies
+DROP POLICY IF EXISTS "Admins can view integration configs" ON integration_configs;
 CREATE POLICY "Admins can view integration configs"
   ON integration_configs FOR SELECT
   USING (
@@ -26,6 +27,7 @@ CREATE POLICY "Admins can view integration configs"
     )
   );
 
+DROP POLICY IF EXISTS "Admins can create integration configs" ON integration_configs;
 CREATE POLICY "Admins can create integration configs"
   ON integration_configs FOR INSERT
   WITH CHECK (
@@ -36,6 +38,7 @@ CREATE POLICY "Admins can create integration configs"
     )
   );
 
+DROP POLICY IF EXISTS "Admins can update integration configs" ON integration_configs;
 CREATE POLICY "Admins can update integration configs"
   ON integration_configs FOR UPDATE
   USING (
@@ -46,6 +49,7 @@ CREATE POLICY "Admins can update integration configs"
     )
   );
 
+DROP POLICY IF EXISTS "Admins can delete integration configs" ON integration_configs;
 CREATE POLICY "Admins can delete integration configs"
   ON integration_configs FOR DELETE
   USING (
@@ -65,18 +69,22 @@ DROP POLICY IF EXISTS "Anyone can view bulk generation jobs" ON bulk_generation_
 DROP POLICY IF EXISTS "Service role can manage all bulk jobs" ON bulk_generation_jobs;
 
 -- Create user-based policies
+DROP POLICY IF EXISTS "Users can view their own bulk generation jobs" ON bulk_generation_jobs;
 CREATE POLICY "Users can view their own bulk generation jobs"
   ON bulk_generation_jobs FOR SELECT
   USING (created_by = auth.uid());
 
+DROP POLICY IF EXISTS "Users can create bulk generation jobs" ON bulk_generation_jobs;
 CREATE POLICY "Users can create bulk generation jobs"
   ON bulk_generation_jobs FOR INSERT
   WITH CHECK (created_by = auth.uid());
 
+DROP POLICY IF EXISTS "Users can update their own bulk generation jobs" ON bulk_generation_jobs;
 CREATE POLICY "Users can update their own bulk generation jobs"
   ON bulk_generation_jobs FOR UPDATE
   USING (created_by = auth.uid());
 
+DROP POLICY IF EXISTS "Users can delete their own bulk generation jobs" ON bulk_generation_jobs;
 CREATE POLICY "Users can delete their own bulk generation jobs"
   ON bulk_generation_jobs FOR DELETE
   USING (created_by = auth.uid());
@@ -90,6 +98,7 @@ DROP POLICY IF EXISTS "Anyone can view bulk generation items" ON bulk_generation
 DROP POLICY IF EXISTS "Service role can manage all bulk items" ON bulk_generation_items;
 
 -- Create user-based policies (via job ownership)
+DROP POLICY IF EXISTS "Users can view items for their bulk generation jobs" ON bulk_generation_items;
 CREATE POLICY "Users can view items for their bulk generation jobs"
   ON bulk_generation_items FOR SELECT
   USING (
@@ -100,6 +109,7 @@ CREATE POLICY "Users can view items for their bulk generation jobs"
     )
   );
 
+DROP POLICY IF EXISTS "Users can create items for their bulk generation jobs" ON bulk_generation_items;
 CREATE POLICY "Users can create items for their bulk generation jobs"
   ON bulk_generation_items FOR INSERT
   WITH CHECK (
@@ -110,6 +120,7 @@ CREATE POLICY "Users can create items for their bulk generation jobs"
     )
   );
 
+DROP POLICY IF EXISTS "Users can update items for their bulk generation jobs" ON bulk_generation_items;
 CREATE POLICY "Users can update items for their bulk generation jobs"
   ON bulk_generation_items FOR UPDATE
   USING (
@@ -120,6 +131,7 @@ CREATE POLICY "Users can update items for their bulk generation jobs"
     )
   );
 
+DROP POLICY IF EXISTS "Users can delete items for their bulk generation jobs" ON bulk_generation_items;
 CREATE POLICY "Users can delete items for their bulk generation jobs"
   ON bulk_generation_items FOR DELETE
   USING (
@@ -139,6 +151,7 @@ DROP POLICY IF EXISTS "Pipelines are viewable by authenticated users" ON ghl_pip
 DROP POLICY IF EXISTS "Service role can manage pipelines" ON ghl_pipelines;
 
 -- Create user-based policies (users can view pipelines used by their clients)
+DROP POLICY IF EXISTS "Users can view pipelines for their clients" ON ghl_pipelines;
 CREATE POLICY "Users can view pipelines for their clients"
   ON ghl_pipelines FOR SELECT
   USING (
@@ -169,6 +182,7 @@ DROP POLICY IF EXISTS "Pipeline stages are viewable by authenticated users" ON g
 DROP POLICY IF EXISTS "Service role can manage pipeline stages" ON ghl_pipeline_stages;
 
 -- Create user-based policies (users can view stages for pipelines used by their clients)
+DROP POLICY IF EXISTS "Users can view stages for pipelines used by their clients" ON ghl_pipeline_stages;
 CREATE POLICY "Users can view stages for pipelines used by their clients"
   ON ghl_pipeline_stages FOR SELECT
   USING (

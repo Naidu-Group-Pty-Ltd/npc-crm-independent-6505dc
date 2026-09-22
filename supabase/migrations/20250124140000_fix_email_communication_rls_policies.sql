@@ -30,6 +30,7 @@ DROP POLICY IF EXISTS "Service role can update call logs" ON vapi_call_logs;
 -- Or emails they created themselves (via created_by)
 
 -- SELECT: Users can view emails for their clients or emails they created
+DROP POLICY IF EXISTS "Users can view emails for their clients" ON email_copilot_emails;
 CREATE POLICY "Users can view emails for their clients"
   ON email_copilot_emails FOR SELECT
   USING (
@@ -48,6 +49,7 @@ CREATE POLICY "Users can view emails for their clients"
   );
 
 -- INSERT: Users can create emails for their clients or general emails
+DROP POLICY IF EXISTS "Users can create emails for their clients" ON email_copilot_emails;
 CREATE POLICY "Users can create emails for their clients"
   ON email_copilot_emails FOR INSERT
   WITH CHECK (
@@ -63,6 +65,7 @@ CREATE POLICY "Users can create emails for their clients"
   );
 
 -- UPDATE: Users can update emails for their clients or emails they created
+DROP POLICY IF EXISTS "Users can update emails for their clients" ON email_copilot_emails;
 CREATE POLICY "Users can update emails for their clients"
   ON email_copilot_emails FOR UPDATE
   USING (
@@ -81,6 +84,7 @@ CREATE POLICY "Users can update emails for their clients"
   );
 
 -- DELETE: Users can delete emails for their clients or emails they created
+DROP POLICY IF EXISTS "Users can delete emails for their clients" ON email_copilot_emails;
 CREATE POLICY "Users can delete emails for their clients"
   ON email_copilot_emails FOR DELETE
   USING (
@@ -104,6 +108,7 @@ CREATE POLICY "Users can delete emails for their clients"
 -- Users can only access replies for emails they can access
 
 -- SELECT: Users can view replies for emails they can access
+DROP POLICY IF EXISTS "Users can view replies for their emails" ON email_copilot_sent_replies;
 CREATE POLICY "Users can view replies for their emails"
   ON email_copilot_sent_replies FOR SELECT
   USING (
@@ -132,6 +137,7 @@ CREATE POLICY "Users can view replies for their emails"
   );
 
 -- INSERT: Users can create replies for emails they can access
+DROP POLICY IF EXISTS "Users can create replies for their emails" ON email_copilot_sent_replies;
 CREATE POLICY "Users can create replies for their emails"
   ON email_copilot_sent_replies FOR INSERT
   WITH CHECK (
@@ -160,6 +166,7 @@ CREATE POLICY "Users can create replies for their emails"
   );
 
 -- UPDATE: Users can update replies for emails they can access
+DROP POLICY IF EXISTS "Users can update replies for their emails" ON email_copilot_sent_replies;
 CREATE POLICY "Users can update replies for their emails"
   ON email_copilot_sent_replies FOR UPDATE
   USING (
@@ -188,6 +195,7 @@ CREATE POLICY "Users can update replies for their emails"
   );
 
 -- DELETE: Users can delete replies for emails they can access
+DROP POLICY IF EXISTS "Users can delete replies for their emails" ON email_copilot_sent_replies;
 CREATE POLICY "Users can delete replies for their emails"
   ON email_copilot_sent_replies FOR DELETE
   USING (
@@ -224,6 +232,7 @@ CREATE POLICY "Users can delete replies for their emails"
 
 -- SELECT: Authenticated users can view call logs
 -- (In practice, edge functions will filter by client_id if needed)
+DROP POLICY IF EXISTS "Authenticated users can view call logs" ON vapi_call_logs;
 CREATE POLICY "Authenticated users can view call logs"
   ON vapi_call_logs FOR SELECT
   USING (auth.role() = 'authenticated');

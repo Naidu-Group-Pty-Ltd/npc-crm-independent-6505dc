@@ -157,14 +157,19 @@ DROP POLICY IF EXISTS "Service role full access" ON public.checklist_templates;
 DROP POLICY IF EXISTS "Service role full access" ON public.checklist_template_items;
 DROP POLICY IF EXISTS "Service role full access" ON public.checklist_template_sections;
 
+DROP POLICY IF EXISTS checklist_instances_select_module ON public.checklist_instances;
 CREATE POLICY checklist_instances_select_module ON public.checklist_instances
   FOR SELECT TO authenticated USING (public.current_user_can_view('checklists'));
+DROP POLICY IF EXISTS checklist_instance_items_select_module ON public.checklist_instance_items;
 CREATE POLICY checklist_instance_items_select_module ON public.checklist_instance_items
   FOR SELECT TO authenticated USING (public.current_user_can_view('checklists'));
+DROP POLICY IF EXISTS checklist_templates_select_module ON public.checklist_templates;
 CREATE POLICY checklist_templates_select_module ON public.checklist_templates
   FOR SELECT TO authenticated USING (public.current_user_can_view('checklists'));
+DROP POLICY IF EXISTS checklist_template_items_select_module ON public.checklist_template_items;
 CREATE POLICY checklist_template_items_select_module ON public.checklist_template_items
   FOR SELECT TO authenticated USING (public.current_user_can_view('checklists'));
+DROP POLICY IF EXISTS checklist_template_sections_select_module ON public.checklist_template_sections;
 CREATE POLICY checklist_template_sections_select_module ON public.checklist_template_sections
   FOR SELECT TO authenticated USING (public.current_user_can_view('checklists'));
 
@@ -184,16 +189,22 @@ DROP POLICY IF EXISTS "Service role full access" ON public.game_plan_milestones;
 DROP POLICY IF EXISTS "Service role full access" ON public.game_plan_notes;
 DROP POLICY IF EXISTS "Service role full access" ON public.game_plan_phases;
 
+DROP POLICY IF EXISTS game_plans_select_module ON public.game_plans;
 CREATE POLICY game_plans_select_module ON public.game_plans
   FOR SELECT TO authenticated USING (public.current_user_can_view('game_plans'));
+DROP POLICY IF EXISTS game_plan_actions_select_module ON public.game_plan_actions;
 CREATE POLICY game_plan_actions_select_module ON public.game_plan_actions
   FOR SELECT TO authenticated USING (public.current_user_can_view('game_plans'));
+DROP POLICY IF EXISTS game_plan_kpis_select_module ON public.game_plan_kpis;
 CREATE POLICY game_plan_kpis_select_module ON public.game_plan_kpis
   FOR SELECT TO authenticated USING (public.current_user_can_view('game_plans'));
+DROP POLICY IF EXISTS game_plan_milestones_select_module ON public.game_plan_milestones;
 CREATE POLICY game_plan_milestones_select_module ON public.game_plan_milestones
   FOR SELECT TO authenticated USING (public.current_user_can_view('game_plans'));
+DROP POLICY IF EXISTS game_plan_notes_select_module ON public.game_plan_notes;
 CREATE POLICY game_plan_notes_select_module ON public.game_plan_notes
   FOR SELECT TO authenticated USING (public.current_user_can_view('game_plans'));
+DROP POLICY IF EXISTS game_plan_phases_select_module ON public.game_plan_phases;
 CREATE POLICY game_plan_phases_select_module ON public.game_plan_phases
   FOR SELECT TO authenticated USING (public.current_user_can_view('game_plans'));
 
@@ -210,10 +221,13 @@ DROP POLICY IF EXISTS "Anyone can view alert history"   ON public.call_alert_his
 DROP POLICY IF EXISTS "Anyone can manage call tags"     ON public.call_tags;
 DROP POLICY IF EXISTS "Anyone can view call tags"       ON public.call_tags;
 
+DROP POLICY IF EXISTS call_alert_rules_select_module ON public.call_alert_rules;
 CREATE POLICY call_alert_rules_select_module ON public.call_alert_rules
   FOR SELECT TO authenticated USING (public.current_user_can_view('call_logs'));
+DROP POLICY IF EXISTS call_alert_history_select_module ON public.call_alert_history;
 CREATE POLICY call_alert_history_select_module ON public.call_alert_history
   FOR SELECT TO authenticated USING (public.current_user_can_view('call_logs'));
+DROP POLICY IF EXISTS call_tags_select_module ON public.call_tags;
 CREATE POLICY call_tags_select_module ON public.call_tags
   FOR SELECT TO authenticated USING (public.current_user_can_view('call_logs'));
 
@@ -228,6 +242,7 @@ REVOKE ALL ON public.report_versions FROM anon;
 DROP POLICY IF EXISTS "Service role can manage report versions"            ON public.report_versions;
 DROP POLICY IF EXISTS "All authenticated users can view all report versions" ON public.report_versions;
 
+DROP POLICY IF EXISTS report_versions_select_module ON public.report_versions;
 CREATE POLICY report_versions_select_module ON public.report_versions
   FOR SELECT TO authenticated USING (public.current_user_can_view('reports'));
 
@@ -239,14 +254,18 @@ DROP POLICY IF EXISTS generated_reports_insert_authenticated ON public.generated
 DROP POLICY IF EXISTS generated_reports_update_authenticated ON public.generated_reports;
 DROP POLICY IF EXISTS generated_reports_delete_authenticated ON public.generated_reports;
 
+DROP POLICY IF EXISTS generated_reports_select_module ON public.generated_reports;
 CREATE POLICY generated_reports_select_module ON public.generated_reports
   FOR SELECT TO authenticated USING (public.current_user_can_view('generated_reports'));
+DROP POLICY IF EXISTS generated_reports_insert_module ON public.generated_reports;
 CREATE POLICY generated_reports_insert_module ON public.generated_reports
   FOR INSERT TO authenticated WITH CHECK (public.current_user_can_edit('generated_reports'));
+DROP POLICY IF EXISTS generated_reports_update_module ON public.generated_reports;
 CREATE POLICY generated_reports_update_module ON public.generated_reports
   FOR UPDATE TO authenticated
   USING (public.current_user_can_edit('generated_reports'))
   WITH CHECK (public.current_user_can_edit('generated_reports'));
+DROP POLICY IF EXISTS generated_reports_delete_module ON public.generated_reports;
 CREATE POLICY generated_reports_delete_module ON public.generated_reports
   FOR DELETE TO authenticated USING (public.current_user_can_delete('generated_reports'));
 
@@ -256,14 +275,18 @@ DROP POLICY IF EXISTS charts_insert_authenticated ON public.charts;
 DROP POLICY IF EXISTS charts_update_authenticated ON public.charts;
 DROP POLICY IF EXISTS charts_delete_authenticated ON public.charts;
 
+DROP POLICY IF EXISTS charts_select_module ON public.charts;
 CREATE POLICY charts_select_module ON public.charts
   FOR SELECT TO authenticated USING (public.current_user_can_view('charts'));
+DROP POLICY IF EXISTS charts_insert_module ON public.charts;
 CREATE POLICY charts_insert_module ON public.charts
   FOR INSERT TO authenticated WITH CHECK (public.current_user_can_edit('charts'));
+DROP POLICY IF EXISTS charts_update_module ON public.charts;
 CREATE POLICY charts_update_module ON public.charts
   FOR UPDATE TO authenticated
   USING (public.current_user_can_edit('charts'))
   WITH CHECK (public.current_user_can_edit('charts'));
+DROP POLICY IF EXISTS charts_delete_module ON public.charts;
 CREATE POLICY charts_delete_module ON public.charts
   FOR DELETE TO authenticated USING (public.current_user_can_delete('charts'));
 
@@ -275,14 +298,18 @@ DROP POLICY IF EXISTS depreciation_comps_insert_authenticated ON public.deprecia
 DROP POLICY IF EXISTS depreciation_comps_update_authenticated ON public.depreciation_comps;
 DROP POLICY IF EXISTS depreciation_comps_delete_authenticated ON public.depreciation_comps;
 
+DROP POLICY IF EXISTS depreciation_comps_select_module ON public.depreciation_comps;
 CREATE POLICY depreciation_comps_select_module ON public.depreciation_comps
   FOR SELECT TO authenticated USING (public.current_user_can_view('depreciation_comps'));
+DROP POLICY IF EXISTS depreciation_comps_insert_module ON public.depreciation_comps;
 CREATE POLICY depreciation_comps_insert_module ON public.depreciation_comps
   FOR INSERT TO authenticated WITH CHECK (public.current_user_can_edit('depreciation_comps'));
+DROP POLICY IF EXISTS depreciation_comps_update_module ON public.depreciation_comps;
 CREATE POLICY depreciation_comps_update_module ON public.depreciation_comps
   FOR UPDATE TO authenticated
   USING (public.current_user_can_edit('depreciation_comps'))
   WITH CHECK (public.current_user_can_edit('depreciation_comps'));
+DROP POLICY IF EXISTS depreciation_comps_delete_module ON public.depreciation_comps;
 CREATE POLICY depreciation_comps_delete_module ON public.depreciation_comps
   FOR DELETE TO authenticated USING (public.current_user_can_delete('depreciation_comps'));
 
@@ -292,6 +319,7 @@ CREATE POLICY depreciation_comps_delete_module ON public.depreciation_comps
 -- requireRegistered=true); this makes the table agree with the function.
 DROP POLICY IF EXISTS "Authenticated users can view call logs" ON public.vapi_call_logs;
 
+DROP POLICY IF EXISTS vapi_call_logs_select_module ON public.vapi_call_logs;
 CREATE POLICY vapi_call_logs_select_module ON public.vapi_call_logs
   FOR SELECT TO authenticated USING (public.current_user_can_view('call_logs'));
 
@@ -305,6 +333,7 @@ CREATE POLICY vapi_call_logs_select_module ON public.vapi_call_logs
 -- 4a) global_report_settings → `settings` for writes; read stays authenticated.
 DROP POLICY IF EXISTS global_report_settings_update_authenticated ON public.global_report_settings;
 
+DROP POLICY IF EXISTS global_report_settings_update_module ON public.global_report_settings;
 CREATE POLICY global_report_settings_update_module ON public.global_report_settings
   FOR UPDATE TO authenticated
   USING (public.current_user_can_edit('settings'))
@@ -316,8 +345,10 @@ CREATE POLICY global_report_settings_update_module ON public.global_report_setti
 DROP POLICY IF EXISTS "Authenticated users can insert whitelabel settings" ON public.whitelabel_settings;
 DROP POLICY IF EXISTS "Authenticated users can update whitelabel settings" ON public.whitelabel_settings;
 
+DROP POLICY IF EXISTS whitelabel_settings_insert_module ON public.whitelabel_settings;
 CREATE POLICY whitelabel_settings_insert_module ON public.whitelabel_settings
   FOR INSERT TO authenticated WITH CHECK (public.current_user_can_edit('white_label'));
+DROP POLICY IF EXISTS whitelabel_settings_update_module ON public.whitelabel_settings;
 CREATE POLICY whitelabel_settings_update_module ON public.whitelabel_settings
   FOR UPDATE TO authenticated
   USING (public.current_user_can_edit('white_label'))
@@ -328,6 +359,7 @@ CREATE POLICY whitelabel_settings_update_module ON public.whitelabel_settings
 -- attributed to somebody else — and then only that somebody could remove it.
 DROP POLICY IF EXISTS "Authenticated can insert components" ON public.template_components;
 
+DROP POLICY IF EXISTS template_components_insert_module ON public.template_components;
 CREATE POLICY template_components_insert_module ON public.template_components
   FOR INSERT TO authenticated
   WITH CHECK (created_by = auth.uid() AND public.current_user_can_edit('templates'));
@@ -358,6 +390,7 @@ COMMENT ON COLUMN public.notifications.created_by IS
 
 DROP POLICY IF EXISTS notifications_insert_authenticated ON public.notifications;
 
+DROP POLICY IF EXISTS notifications_insert_attributed ON public.notifications;
 CREATE POLICY notifications_insert_attributed ON public.notifications
   FOR INSERT TO authenticated WITH CHECK (created_by = auth.uid());
 
