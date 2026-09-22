@@ -1,0 +1,83 @@
+-- Fire the supply register's FIRST ingest, once, rather than waiting a night.
+--
+-- `20261213010000` scheduled `market-sales-refresh-approvals` at 17:45 UTC
+-- daily, and that schedule is what keeps the register current from tomorrow
+-- on. This file exists for the one run before the first scheduled one, and
+-- the reason is not the twelve hours of data.
+--
+-- **The loader has never executed in production.** Three of its steps are
+-- unexercised against the real publisher and each can only fail there: the
+-- dataflow is DISCOVERED from the ABS's own catalogue rather than named (the
+-- version is part of an SDMX identifier and the Bureau reissues it); the
+-- query KEY is composed from the flow's own data structure, and an SDMX key
+-- is POSITIONAL, so one written against the wrong positions returns a
+-- plausible, wrong slice under an HTTP 200; and the download is paged,
+-- because `/all` at SA2 grain measured past 5 GB and one month of LGA data is
+-- 61.8 MB. A register that answers wrongly under a 200 is the failure this
+-- programme exists to catch, and discovering it at 03:45 tomorrow is strictly
+-- worse than discovering it now.
+--
+-- It is safe to apply more than once. `market_sales_refresh` posts one stage
+-- and returns; `market_building_approvals` is keyed on the publisher's own
+-- (area_kind, area_code, period, building_type), so a second run of a month
+-- the ABS has since revised REPLACES it rather than accumulating a second
+-- answer. Nothing here is destructive and nothing is seeded.
+--
+-- ## Why this declares no `@effect` probe
+--
+-- Because it could only declare a false one. `net.http_post` QUEUES the
+-- request and returns an id — the ingest runs afterwards, in the edge
+-- function, against a publisher on the other side of the Pacific. A probe
+-- asserting a `market_building_approvals` row, or a `market_sales_sync` row,
+-- would be asserting something that is not yet true at the instant this file
+-- finishes, and a probe that fails for timing rather than for effect is worse
+-- than none: it teaches a reader to discount the ones that mean something.
+--
+-- `migration-drift.mjs` will therefore count this among its "unverifiable"
+-- files, and that is the honest classification. The effect is real and it is
+-- checked, just not here:
+--
+--   -- did a run deliver, and what did it say?
+--   select created_at, detail from public.market_sales_sync
+--   where detail ->> 'stage' = 'approvals' order by created_at desc limit 5;
+--
+--   -- what did it actually load, and at whose grain?
+--   select area_kind, count(*) rows, count(distinct area) areas,
+--          min(period) first_period, max(period) last_period
+--   from public.market_building_approvals group by area_kind order by 1;
+--
+-- That is this register's own rule — asserted by effect, never by
+-- configuration — and pg_cron's own green tick is not the proof either: it
+-- reports on the SQL that queued the HTTP call, not on the call.
+--
+-- ## What the first run actually found, 22 Sep 2026 — and the ordering rule
+--
+-- It answered **HTTP 400 in five milliseconds**, and the reason is the whole
+-- value of running it early. `function_logs` shows auth SUCCEEDING
+-- (`[verifyAuth] Valid INTERNAL_EDGE_SECRET`) and the function refusing at
+-- stage dispatch before doing any work — because the DEPLOYED
+-- `market-sales-ingest` is `main`'s, and `main`'s copy contains zero
+-- occurrences of the word `approvals`. Its refusal message says so in full:
+-- *stage must be "qld", "nsw", "abs", "vic", "vic_volume", "vic_discover",
+-- "sa" or "probe"*.
+--
+-- So **the schema landed and the loader did not**. The table is in
+-- `pg_class`, the job is in `cron.job`, and the code that knows what to put
+-- in them is on an unmerged branch.
+--
+-- The rule this establishes, which nothing in the pair above stated:
+-- **a register's migration and the function that fills it have a shipping
+-- ORDER, and it is not interchangeable.** `CONTAINER_RELEASE.md` already
+-- holds the same rule for the WeasyPrint image and the render routes; this is
+-- it for an ingest. Applying the table early is harmless — an empty register
+-- reads `Not searched` and every report is forbidden from stating a figure,
+-- which is the designed degradation. Applying it early and ASSUMING it fills
+-- is not harmless, because the nightly job will take this same 400 while
+-- pg_cron reports success, and that is the documented trap the sync rows
+-- exist to defeat: a green cron run is not a delivered request.
+--
+-- **This file is therefore re-applied once `market-sales-ingest` ships.** It
+-- is safe to run again for the reason given above, and until then the 17:45
+-- job refuses nightly at no cost beyond one failed request.
+
+select public.market_sales_refresh('{"stage": "approvals"}'::jsonb);

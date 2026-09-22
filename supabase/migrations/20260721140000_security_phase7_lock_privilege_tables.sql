@@ -29,6 +29,8 @@ DROP POLICY IF EXISTS "Service role can manage dashboard modules" ON public.dash
 
 -- 3) Scope authenticated SELECT to own rows (was "Anyone can view")
 DROP POLICY IF EXISTS "Anyone can view user roles" ON public.user_roles;
+DROP POLICY IF EXISTS user_roles_select_own ON public.user_roles;
 CREATE POLICY user_roles_select_own ON public.user_roles FOR SELECT TO authenticated USING (user_id = auth.uid());
 DROP POLICY IF EXISTS "Anyone can view user permissions" ON public.user_permissions;
+DROP POLICY IF EXISTS user_permissions_select_own ON public.user_permissions;
 CREATE POLICY user_permissions_select_own ON public.user_permissions FOR SELECT TO authenticated USING (user_id = auth.uid());

@@ -18,6 +18,7 @@ DROP POLICY IF EXISTS "Users can insert own agent conversations" ON public.agent
 DROP POLICY IF EXISTS "Users can update own agent conversations" ON public.agent_conversations;
 DROP POLICY IF EXISTS "Users can delete own agent conversations" ON public.agent_conversations;
 
+DROP POLICY IF EXISTS "agent_conversations_select_own_or_shared" ON public.agent_conversations;
 CREATE POLICY "agent_conversations_select_own_or_shared" ON public.agent_conversations
   FOR SELECT TO authenticated
   USING (
@@ -29,14 +30,17 @@ CREATE POLICY "agent_conversations_select_own_or_shared" ON public.agent_convers
     )
   );
 
+DROP POLICY IF EXISTS "agent_conversations_insert_own" ON public.agent_conversations;
 CREATE POLICY "agent_conversations_insert_own" ON public.agent_conversations
   FOR INSERT TO authenticated
   WITH CHECK (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "agent_conversations_update_own" ON public.agent_conversations;
 CREATE POLICY "agent_conversations_update_own" ON public.agent_conversations
   FOR UPDATE TO authenticated
   USING (user_id = auth.uid()) WITH CHECK (user_id = auth.uid());
 
+DROP POLICY IF EXISTS "agent_conversations_delete_own" ON public.agent_conversations;
 CREATE POLICY "agent_conversations_delete_own" ON public.agent_conversations
   FOR DELETE TO authenticated
   USING (user_id = auth.uid());
@@ -45,6 +49,7 @@ CREATE POLICY "agent_conversations_delete_own" ON public.agent_conversations
 DROP POLICY IF EXISTS "Users can view own agent messages"   ON public.agent_messages;
 DROP POLICY IF EXISTS "Users can insert own agent messages" ON public.agent_messages;
 
+DROP POLICY IF EXISTS "agent_messages_select_via_conversation" ON public.agent_messages;
 CREATE POLICY "agent_messages_select_via_conversation" ON public.agent_messages
   FOR SELECT TO authenticated
   USING (
@@ -61,6 +66,7 @@ CREATE POLICY "agent_messages_select_via_conversation" ON public.agent_messages
     )
   );
 
+DROP POLICY IF EXISTS "agent_messages_insert_via_conversation" ON public.agent_messages;
 CREATE POLICY "agent_messages_insert_via_conversation" ON public.agent_messages
   FOR INSERT TO authenticated
   WITH CHECK (

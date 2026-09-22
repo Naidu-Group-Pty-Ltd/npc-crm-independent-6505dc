@@ -6,6 +6,7 @@
 DROP POLICY IF EXISTS "Users can view all report templates"
   ON public.report_templates;
 
+DROP POLICY IF EXISTS "Users can view accessible report templates" ON public.report_templates;
 CREATE POLICY "Users can view accessible report templates"
   ON public.report_templates
   FOR SELECT

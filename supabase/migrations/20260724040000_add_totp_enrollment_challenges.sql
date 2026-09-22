@@ -20,6 +20,7 @@ CREATE INDEX IF NOT EXISTS mfa_totp_enrollment_expiry_idx
 GRANT ALL ON TABLE public.mfa_totp_enrollment_challenges TO service_role;
 REVOKE ALL ON TABLE public.mfa_totp_enrollment_challenges FROM anon, authenticated, PUBLIC;
 ALTER TABLE public.mfa_totp_enrollment_challenges ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "mfa_totp_enrollment_service_only" ON public.mfa_totp_enrollment_challenges;
 CREATE POLICY "mfa_totp_enrollment_service_only"
   ON public.mfa_totp_enrollment_challenges FOR ALL
   USING (false) WITH CHECK (false);

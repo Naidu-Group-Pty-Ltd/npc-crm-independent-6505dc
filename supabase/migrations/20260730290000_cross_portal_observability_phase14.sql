@@ -56,6 +56,8 @@ RETURNS jsonb LANGUAGE plpgsql SECURITY DEFINER SET search_path=public AS $$ DEC
 
 GRANT ALL ON public.portal_operational_events,public.portal_operational_alerts TO service_role;REVOKE ALL ON public.portal_operational_events,public.portal_operational_alerts FROM anon,authenticated;
 ALTER TABLE public.portal_operational_events ENABLE ROW LEVEL SECURITY;ALTER TABLE public.portal_operational_alerts ENABLE ROW LEVEL SECURITY;
-CREATE POLICY portal_operational_events_service ON public.portal_operational_events FOR ALL TO service_role USING(true) WITH CHECK(true);CREATE POLICY portal_operational_alerts_service ON public.portal_operational_alerts FOR ALL TO service_role USING(true) WITH CHECK(true);
+DROP POLICY IF EXISTS portal_operational_events_service ON public.portal_operational_events;
+CREATE POLICY portal_operational_events_service ON public.portal_operational_events FOR ALL TO service_role USING(true) WITH CHECK(true);DROP POLICY IF EXISTS portal_operational_alerts_service ON public.portal_operational_alerts;
+CREATE POLICY portal_operational_alerts_service ON public.portal_operational_alerts FOR ALL TO service_role USING(true) WITH CHECK(true);
 REVOKE ALL ON FUNCTION public.record_portal_operational_event(text,text,uuid,text,text,uuid,text,uuid,uuid,uuid,integer,boolean,jsonb),public.get_portal_operational_health(integer),public.acknowledge_portal_operational_alert(uuid,uuid,boolean,text) FROM PUBLIC,anon,authenticated;
 GRANT EXECUTE ON FUNCTION public.record_portal_operational_event(text,text,uuid,text,text,uuid,text,uuid,uuid,uuid,integer,boolean,jsonb),public.get_portal_operational_health(integer),public.acknowledge_portal_operational_alert(uuid,uuid,boolean,text) TO service_role;

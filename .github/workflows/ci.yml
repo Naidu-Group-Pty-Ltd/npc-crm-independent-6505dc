@@ -551,6 +551,16 @@ jobs:
       # from the prime while the ledger said their version had run.
       - name: A migration version names exactly one file
         run: node scripts/security/check-migration-version-collisions.mjs
+
+      # An applied migration's BYTES are what Mission Control matches when it
+      # decides whether a clone may be sent a file, so editing one withholds it
+      # from the whole fleet along with everything the dependency order puts
+      # behind it. The gate arrived here in scripts/**, where check-gates-wired
+      # counts it, and was named by no job — which is the single thing that gate
+      # exists to refuse. It reads the committed manifest rather than the ledger,
+      # so it needs no credential and is safe on a pull request from a fork.
+      - name: An applied migration still carries the SQL that ran
+        run: node scripts/security/check-applied-body-digests.mjs
       # A version is the order a migration RUNS in, and this tree's versions run
       # months ahead of the wall clock — so today's timestamp lands in the middle
       # of applied history. A file numbered 20260917110000 altered a table created

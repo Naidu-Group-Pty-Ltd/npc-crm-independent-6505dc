@@ -3,14 +3,20 @@
   "not_a_migration": [
     "TEMPLATE_RLS_POLICY.sql"
   ],
+  "$not_an_instant_note": "Frozen inventory of versions that are fourteen digits but not a moment any calendar holds: 20260725096000 is minute 96 of an hour, and 20260730240000 through 300000 are hours 24 to 30. Postgres stores `version` as text and accepts them, which is why nothing ever refused them \u2014 and every reading that treats the version as a time then answers 'unknown' about these files for ever, including Mission Control's migrationEpochSeconds, which returns null rather than guessing. Frozen rather than renamed: a rename is a fleet-wide file move that would also touch seven CI check scripts, seven test files, MIGRATION_SECURITY_KEEPLIST.json, the AML rehearsal order list, five documents and two APPLIED migrations that name 20260725096000 in a comment \u2014 and an applied migration's bytes are not something to edit for a comment. Shrinking this list is the goal; the gate exists to stop the eleventh.",
+  "not_an_instant": [
+    "20260725096000",
+    "20260725097000",
+    "20260725098000",
+    "20260730240000",
+    "20260730250000",
+    "20260730260000",
+    "20260730270000",
+    "20260730280000",
+    "20260730290000",
+    "20260730300000"
+  ],
   "collisions": [
-    {
-      "version": "20260717000000",
-      "files": [
-        "20260717000000_add_builder_invoice_current_payment.sql",
-        "20260717000000_restrict_finance_portal_notification_routing.sql"
-      ]
-    },
     {
       "version": "20260723000000",
       "files": [
@@ -26,13 +32,6 @@
       ]
     },
     {
-      "version": "20260724030000",
-      "files": [
-        "20260724030000_activate_existing_webauthn_mfa.sql",
-        "20260724030000_add_totp_replay_protection.sql"
-      ]
-    },
-    {
       "version": "20260724140000",
       "files": [
         "20260724140000_security_email_copilot_mutation_permissions.sql",
@@ -44,7 +43,6 @@
       "files": [
         "20260725000000_add_generated_document_send_state.sql",
         "20260725000000_fix_migration_dispatcher_cron_auth.sql",
-        "20260725000000_restrict_api_health_log_select.sql",
         "20260725000000_secure_checklist_cron_recurrence_keys.sql",
         "20260725000000_secure_match_agent_memories.sql"
       ]
@@ -82,42 +80,6 @@
       "files": [
         "20260725130000_market_updates_phase1_production_recovery.sql",
         "20260725130000_repair_legacy_vownet_json_paths.sql"
-      ]
-    },
-    {
-      "version": "20260726000000",
-      "files": [
-        "20260726000000_finance_live_rate_refresh_cooldown.sql",
-        "20260726000000_scope_template_render_jobs_to_requester.sql"
-      ]
-    },
-    {
-      "version": "20260726120000",
-      "files": [
-        "20260726120000_aml_ongoing_cdd.sql",
-        "20260726120000_restrict_report_template_resolver.sql",
-        "20260726120000_revoke_mass_escalated_finance_permissions.sql"
-      ]
-    },
-    {
-      "version": "20260726180000",
-      "files": [
-        "20260726180000_market_updates_publication_decisions.sql",
-        "20260726180000_preserve_template_import_ownership.sql"
-      ]
-    },
-    {
-      "version": "20260726210000",
-      "files": [
-        "20260726210000_bind_template_component_ownership.sql",
-        "20260726210000_market_updates_continuous_automation.sql"
-      ]
-    },
-    {
-      "version": "20260729000000",
-      "files": [
-        "20260729000000_secure_finance_portal_reminder_cron.sql",
-        "20260729000000_token_balance_cache_plan_slug.sql"
       ]
     },
     {

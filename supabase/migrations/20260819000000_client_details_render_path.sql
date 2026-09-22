@@ -89,6 +89,7 @@ CREATE INDEX IF NOT EXISTS client_details_renders_portfolio_idx
 
 ALTER TABLE public.client_details_renders ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS client_details_renders_select ON public.client_details_renders;
 CREATE POLICY client_details_renders_select
   ON public.client_details_renders
   FOR SELECT TO authenticated
