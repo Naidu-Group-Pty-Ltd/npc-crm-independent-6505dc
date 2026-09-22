@@ -375,7 +375,54 @@ export interface TypeScale {
   columnHead: number;
   /** Section numeral on narrative pages. */
   numeral: number;
+  /**
+   * The VALUE in the cover's facts strip.
+   *
+   * Not in {@link BASE_SCALES}, because it is the one size here that is not a
+   * per-family measurement — see {@link COVER_FACT_BASE}. It is derived by
+   * {@link scaleFor} so it moves with density like every sibling, which is
+   * the whole reason it exists as a scale key at all.
+   */
+  coverFact: number;
 }
+
+/**
+ * The cover facts strip's base value size — one number for all ten families.
+ *
+ * ── Why it is uniform, and why that is not laziness ──────────────────────
+ *
+ * `BASE_SCALES` is each family's *measured* scale — display sizes read off
+ * its titles, body off its tables. There is no such measurement for this
+ * slot: the approved catalogue source carries no point sizes at all, only
+ * preset NAMES (`typography_preset`, `spacing_scale`, `density`), so a
+ * per-family number here would be invented. W1.4's rule — *any number picked
+ * would be invented, and it would reclassify approved designs* — so the
+ * measured `balanced` value the covers have always drawn is kept, named, and
+ * left uniform.
+ *
+ * ── What it fixes, which IS measured ─────────────────────────────────────
+ *
+ * The cover block drew this as `c.density === 'spacious' ? 14 : 11` — a
+ * hand-written two-way branch, the ONLY cover element not routed through
+ * `scaleFor`. So it had a second density behaviour of its own, and it
+ * disagreed with the system on **22 of the 50** master/variant combinations:
+ *
+ *   compact   14 variants · drew 11pt where the factor gives 9pt
+ *   spacious   8 variants · drew 14pt where the factor gives 13pt
+ *   balanced  28 variants · agreed
+ *
+ * The compact half is the one that shows on paper. Every other element on a
+ * compact cover shrinks — the title by 18%, the standfirst by 18%, the KPI
+ * value by 18% — and the facts did not, so they GREW against their
+ * surroundings. Measured at its worst, Institutional Research's `Exhibit
+ * Dense` and `Coverage Note` drew an 11pt facts value against an **11.5pt**
+ * cover title: **96%**, which is no hierarchy at all.
+ *
+ * Routing it through `scaleFor` reproduces `balanced` exactly (11 either
+ * way), so 28 of the 50 are byte-identical and only the 22 that disagreed
+ * with themselves move.
+ */
+export const COVER_FACT_BASE = 11;
 
 /**
  * Each family's measured `balanced` scale.
@@ -387,7 +434,14 @@ export interface TypeScale {
  * cover size is its masthead size, which is the honest answer rather than a
  * borrowed one.
  */
-export const BASE_SCALES: Record<string, TypeScale> = {
+/**
+ * The measured part of a scale: everything except {@link COVER_FACT_BASE},
+ * which is not a per-family measurement and must not be given the shape of
+ * one.
+ */
+export type MeasuredTypeScale = Omit<TypeScale, 'coverFact'>;
+
+export const BASE_SCALES: Record<string, MeasuredTypeScale> = {
   private_banking:        { coverTitle: 41, coverEyebrow: 7,   coverStandfirst: 15,   verdict: 29, heading: 22, eyebrow: 6.6, runningHead: 6.2, body: 9.6,  cell: 8.4, kpiValue: 23, kpiLabel: 6,   kpiNote: 7.4, columnHead: 6,   numeral: 38 },
   institutional_research: { coverTitle: 14, coverEyebrow: 6.4, coverStandfirst: 11.5, verdict: 14, heading: 12.5, eyebrow: 6.2, runningHead: 6,   body: 8.6,  cell: 8,   kpiValue: 12.5, kpiLabel: 6, kpiNote: 6.6, columnHead: 6,   numeral: 20 },
   luxury_editorial:       { coverTitle: 40, coverEyebrow: 6.4, coverStandfirst: 16,   verdict: 27, heading: 23, eyebrow: 6.4, runningHead: 6.2, body: 9.6,  cell: 8.4, kpiValue: 21, kpiLabel: 6.2, kpiNote: 7.4, columnHead: 6.2, numeral: 36 },
@@ -440,6 +494,12 @@ export function scaleFor(familyKey: string, density: Density): TypeScale {
     kpiNote: step(base.kpiNote * f.text),
     columnHead: step(base.columnHead * f.text),
     numeral: step(base.numeral * f.display),
+    /*
+     * Display rather than text, because the facts strip's VALUES are
+     * figures set in the heading face beside a mono label — the same reason
+     * `kpiValue` takes the display factor and `kpiLabel` takes the text one.
+     */
+    coverFact: step(COVER_FACT_BASE * f.display),
   };
 }
 

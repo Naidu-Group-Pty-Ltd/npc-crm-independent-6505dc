@@ -228,11 +228,32 @@ describe('a sparkline is the same defect at the smallest size drawn', () => {
   /** Page 17 of the same document, verbatim. */
   const SPARK = '{{margin: Overlay check basis | spark=1,0}}';
 
+  /** …and the form it was actually written in, with its note. */
+  const SPARK_WITH_NOTE = '{{margin: Overlay check basis | note=Vicmap Planning overlays were asked '
+    + 'and answered with no mapped control at this coordinate. | spark=1,0}}';
+
   it('withholds a two-point line drawn between two states', () => {
     const r = enforceChartQuantity(SPARK);
     expect(r.withheld).toHaveLength(1);
     expect(r.withheld[0].reason).toBe('retrieval_state');
     expect(r.markdown.trim()).toBe('');
+  });
+
+  it('takes the LINE and keeps the note, which exists nowhere else', () => {
+    /*
+     * That sparkline ran down a fifth of page 17. The line is the defect; the
+     * note is a sourced retrieval finding, and deleting it to remove a
+     * decoration would take a fact off the page. A bars or heatmap directive
+     * carries no prose of its own, so those go whole.
+     */
+    const r = enforceChartQuantity(SPARK_WITH_NOTE);
+    expect(r.withheld).toHaveLength(1);
+    expect(r.markdown).not.toContain('spark=');
+    expect(r.markdown).toContain('Overlay check basis');
+    expect(r.markdown).toContain('Vicmap Planning overlays were asked and answered with no mapped control');
+    // …and what is left is still a directive the renderer draws.
+    expect(r.markdown.startsWith('{{margin:')).toBe(true);
+    expect(r.markdown.endsWith('}}')).toBe(true);
   });
 
   it('leaves a marginal note that carries no sparkline alone', () => {

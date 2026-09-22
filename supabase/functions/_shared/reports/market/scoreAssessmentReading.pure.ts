@@ -303,12 +303,27 @@ const EXCLUSION_REASON: Partial<Record<DimensionKey, string>> = {
     + 'to score. It is not a low risk reading.',
 };
 
-/** The remedy the row records for a dimension, where it records one. */
+/**
+ * The READER's remedy for a dimension, where the row records one.
+ *
+ * It read `o.remedy`, which is the operator field: function names,
+ * documentation paths and release codes, written for somebody reading the
+ * grade-gap card. The Compass's *What each dimension rested on* bullets drew
+ * it, so `docs/reports/OPEN_DATA_GROWTH_EVIDENCE.md` and "Regenerate the
+ * report: the location service re-acquires the enrichment with its
+ * acquisition stamp (RF-7.2B)" were reaching customers.
+ *
+ * There is deliberately NO fallback to `o.remedy`. A legacy row — every one
+ * written before `readerRemedy` existed — renders its reason alone, which is
+ * a complete sentence that already tells the reader this is a gap in the
+ * record rather than a finding about the property. Falling back to the
+ * operator string is the defect, so failing closed is the fix.
+ */
 function remedyFor(gaps: unknown, key: DimensionKey): string | null {
   if (!Array.isArray(gaps)) return null;
   for (const g of gaps) {
     const o = rec(g);
-    if (o && text(o.dimension) === key) return text(o.remedy);
+    if (o && text(o.dimension) === key) return text(o.readerRemedy);
   }
   return null;
 }

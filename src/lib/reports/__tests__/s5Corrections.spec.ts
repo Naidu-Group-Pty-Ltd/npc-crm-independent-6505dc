@@ -380,12 +380,34 @@ describe('correction 3 — every score statement is fully qualified', () => {
     expect(table).toContain('No figure in this table is re-derived by this report');
   });
 
-  it('gives an unscored dimension its reason and its remedy, never a low score', () => {
+  it('gives an unscored dimension its reason, never a low score and never our backlog', () => {
     const table = composeScoreDimensionTable(rec())!;
     expect(table).toContain('Not assessed — insufficient verified property-risk evidence is available.');
-    expect(table).toContain('Answered property-risk questions from the per-class schema');
+    /*
+     * This asserted the table CONTAINED "Answered property-risk questions from
+     * the per-class schema", and that is the OPERATOR remedy — `GradeGap.remedy`,
+     * whose audience is somebody reading the grade-gap card. See §5b of
+     * REPORT_PRESENTATION_PROGRAMME.md: that field was being drawn in the
+     * client's Compass, carrying `docs/…md` paths, `RF-7.2B` and
+     * `market-sales-ingest` onto a customer's page.
+     *
+     * Two things make this worth keeping as a comment. The fixture
+     * (`storedScores.ts`) is a real LEGACY row — written before `readerRemedy`
+     * existed — so it is the exact case the fail-closed read is for, and the
+     * table now carries the reason alone. And the very literal it asserted is
+     * the one `riskRemedyFor`'s own header records as WRONG: it names hazard
+     * and planning as outstanding where the planning programme retrieves both,
+     * and strata on a house that is never asked about one. The test was
+     * vouching for a superseded string reaching a client.
+     */
+    expect(table).not.toContain('Answered property-risk questions from the per-class schema');
+    expect(table).not.toMatch(/\b(deployment|docs\/|market-sales-ingest|RF-\d)\b/);
     expect(table).toContain('the available location information does not meet the current verification standard');
-    expect(table).toContain('the location service re-acquires the enrichment with its acquisition stamp');
+    // The same renegotiation, for the same reason: "Regenerate the report: the
+    // location service re-acquires the enrichment with its acquisition stamp
+    // (RF-7.2B)" is an instruction to OUR operator, in a client's table.
+    expect(table).not.toContain('the location service re-acquires the enrichment');
+    expect(table).not.toContain('Regenerate the report');
     expect(table).toContain('A dimension that was not scored is not a low score');
   });
 

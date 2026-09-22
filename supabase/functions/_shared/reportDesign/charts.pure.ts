@@ -30,7 +30,7 @@
  */
 import { contrastRatio, hexToRgb01, mixHex } from './color.pure.ts';
 import type { ResolvedReportPalette } from './roles.pure.ts';
-import { PRINT_SCALE } from './tokens.pure.ts';
+import { CONTRAST_FLOOR, PRINT_SCALE } from './tokens.pure.ts';
 import { PRINT_STACK } from './typography.pure.ts';
 import { contentWidthMm, spanWidthMm, type GridSpan } from './page.pure.ts';
 
@@ -646,6 +646,46 @@ export function renderWaterfall(
 }
 
 /** Heatmap — an m×n grid, cells tinted by value. */
+/**
+ * The darkest a heatmap cell may be shaded and still carry a legible figure.
+ *
+ * A cell is the accent mixed over the ground at the value's own alpha, and the
+ * figure on it is set in whichever of the two page colours reads better
+ * against it. That picks the BETTER of two, which is not the same as picking
+ * one that reads — and on a colourway whose accent is already dark, neither
+ * does.
+ *
+ * Measured on the Investment Compass delivered for 9 Hollow Street, Golden
+ * Square on 21 Sep 2026, whose colourway is `#8E6C15` on `#FAF7EF`: the better
+ * of the two page colours drops below 7:1 at **alpha 0.48**, and the renderer
+ * ramps to 0.90 — so **51% of the shading scale produced a cell no figure
+ * could be read on**, bottoming out at 3.49:1. The 8.6 and 8.5 in that
+ * document's growth grids are printed at 3.79:1.
+ *
+ * The ramp is therefore capped at the darkest alpha that still clears the
+ * micro floor, computed from the palette rather than fixed: a light-accent
+ * colourway keeps its full range (the default `#D9A520` clears it to 0.86, so
+ * its drawings are unchanged), and a dark-accent one compresses. Magnitude
+ * ordering is untouched — the scale is shorter, not reordered — and no colour
+ * is invented, which is what keeps `charts paint only palette roles` true.
+ */
+export const HEATMAP_ALPHA_FLOOR = 0.08;
+const HEATMAP_ALPHA_MAX = 0.90;
+
+export function heatmapAlphaCeiling(palette: ChartPalette): number {
+  const reads = (alpha: number): boolean => {
+    const cell = mixHex(palette.ground, palette.accent, alpha);
+    return Math.max(contrastRatio(cell, palette.ink), contrastRatio(cell, palette.ground))
+      >= CONTRAST_FLOOR.micro;
+  };
+  if (reads(HEATMAP_ALPHA_MAX)) return HEATMAP_ALPHA_MAX;
+  for (let a = HEATMAP_ALPHA_MAX; a > HEATMAP_ALPHA_FLOOR; a -= 0.01) {
+    if (reads(a)) return Number(a.toFixed(2));
+  }
+  // Nothing in the ramp reads: the palest shade is the only honest one.
+  return HEATMAP_ALPHA_FLOOR;
+}
+
 export function renderHeatmap(
   ctx: ChartContext,
   grid: number[][],
@@ -750,13 +790,16 @@ export function renderHeatmap(
   const cellH = Math.max(38, Math.ceil(microU * 1.7));
   const h = padT + padB + rows * cellH;
 
+  // Capped so the darkest cell still carries a readable figure — see
+  // `heatmapAlphaCeiling`.
+  const alphaCeiling = heatmapAlphaCeiling(ctx.palette);
   let cells = '';
   for (let r = 0; r < rows; r += 1) {
     for (let c = 0; c < cols; c += 1) {
       const v = grid[r][c];
       const x = padL + c * cellW, y = padT + r * cellH;
       const t = (v - lo) / span;
-      const alpha = 0.08 + t * 0.82;
+      const alpha = HEATMAP_ALPHA_FLOOR + t * (alphaCeiling - HEATMAP_ALPHA_FLOOR);
       // The value is set in whichever of the two page colours reads against
       // the cell it sits on. The cell is the accent over the ground at this
       // alpha; the ink was drawn unconditionally, and on a structure whose
@@ -1532,6 +1575,50 @@ export function renderSeriesFan(
 export interface TileItem { label: string; value: string; sub?: string; intensity?: number }
 
 /** Tiles — small multiples that read like a faux-choropleth. */
+/**
+ * Where a tile's own label is carrying its figure, the figure is moved into
+ * the slot that promised it.
+ *
+ * Page 8 of the Investment Compass delivered for 9 Hollow Street on
+ * 21 Sep 2026 drew four amenity tiles. Three read `SHOPPING CENTRES` over
+ * `10`, `PARKS & RECREATION` over `9`, `RESTAURANTS & CAFÉS` over `10`. The
+ * first read `HEALTHCARE 10 FACILITIES` over **nothing at all** — an empty
+ * `<text>` between a label and a sub-caption — because the model wrote
+ * `Healthcare 10 facilities` where the grammar wants `Label Value`, so the
+ * parser found no value and the figure stayed in the label. It becomes
+ * `HEALTHCARE` over `10 facilities`, which is what its three siblings look
+ * like, and no character is composed: the split is at the label's first
+ * number. Same repair `chartQuantity.cutSentenceRow` makes for a bar whose
+ * value the parser took out of a sentence.
+ *
+ * ## What it deliberately does NOT do, and why
+ *
+ * A first version also DROPPED a tile left with nothing to show, on
+ * `renderKpiGridHtml`'s rule that a tile whose bound value resolved to nothing
+ * is not drawn. That was wrong, and CI caught it: the tiles parser fills
+ * `value` only from a trailing NUMBER, so `{{tiles: Economic Moderate int=0.8,
+ * Tenant Moderate int=0.7}}` parses to `label: "Economic Moderate", value: ""`
+ * — a perfectly good qualitative tile, shaded by its intensity, which that
+ * rule deleted along with the whole figure.
+ *
+ * The two are not the same thing. `renderKpiGridHtml` drops a BINDING that
+ * resolved to nothing, which is a fact about the record; this is a directive
+ * that never had a separate value, which is a fact about the grammar. So the
+ * repair fires only where a figure is demonstrably stranded — an empty value
+ * slot AND a number in the label — and every other tile is drawn exactly as it
+ * was.
+ */
+export function tileWithItsFigure(tile: TileItem): TileItem {
+  const value = String(tile?.value ?? '').trim();
+  if (value) return tile;
+  const label = String(tile?.label ?? '').trim();
+  const at = label.search(/\d/u);
+  if (at <= 0) return tile;
+  const head = label.slice(0, at).replace(/[\s:·•,-]+$/u, '').trim();
+  const tail = label.slice(at).trim();
+  return head && tail ? { ...tile, label: head, value: tail } : tile;
+}
+
 export function renderTiles(
   ctx: ChartContext,
   tiles: TileItem[],
@@ -1539,11 +1626,11 @@ export function renderTiles(
 ): string {
   if (!tiles.length) return '';
   const cols = Math.min(opts.cols ?? Math.min(tiles.length, 4), 6);
-  const rows = Math.ceil(tiles.length / cols);
   const cellW = 130, gap = 8;
   const padL = 12, padT = opts.title ? 38 : 12, padB = 12;
   const w = padL * 2 + cols * cellW + (cols - 1) * gap;
   const inner = cellW - 24;
+  const rows = Math.ceil(tiles.length / cols);
 
   // Every line of text is fitted to the cell — a label, a value or a sub-line
   // that ran past its tile ran into the next tile's ("Regional service hub"
@@ -1552,7 +1639,8 @@ export function renderTiles(
   // on up to two lines; the cell height is what the tallest tile needs.
   const labelChar = unitsPerChar(ctx, w, 'micro', true) + ptToUnits(0.9, w, ctx.widthMm);
   const microChar = unitsPerChar(ctx, w, 'micro');
-  const fitted = tiles.map((t) => {
+  const drawn = tiles.map(tileWithItsFigure);
+  const fitted = drawn.map((t) => {
     const label = fitLines((t.label ?? '').toUpperCase(), inner, labelChar, 2);
     const valueText = String(t.value ?? '');
     const asFigure = valueText.length <= Math.floor(inner / unitsPerChar(ctx, w, 'value'));
@@ -1565,7 +1653,7 @@ export function renderTiles(
     20 + (f.label.length - 1) * labelStep + 14 + (f.asFigure ? 22 : f.value.length * valueStep) + 8 + f.sub.length * subStep + 12));
   const h = padT + rows * cellH + (rows - 1) * gap + padB;
 
-  const cells = tiles.map((t, i) => {
+  const cells = drawn.map((t, i) => {
     const r = Math.floor(i / cols), c = i % cols;
     const x = padL + c * (cellW + gap), y = padT + r * (cellH + gap);
     const f = fitted[i];

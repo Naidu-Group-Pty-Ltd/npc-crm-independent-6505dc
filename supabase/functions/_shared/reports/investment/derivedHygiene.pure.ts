@@ -22,8 +22,9 @@
 import { enforceChartEvidence, type EvidenceInventory } from './chartEvidence.pure.ts';
 import { alignChartScales } from './chartScale.pure.ts';
 import { tabulateMixedUnitCharts } from './chartUnits.pure.ts';
-import { dedupeChartDirectives } from './blockHygiene.pure.ts';
+import { dedupeChartDirectives, stripEmptyListItems } from './blockHygiene.pure.ts';
 import { enforceChartQuantity } from './chartQuantity.pure.ts';
+import { substituteUndrawableGlyphs } from './printableGlyphs.pure.ts';
 import { scrubUnresolvedBraces } from './braceHygiene.pure.ts';
 import { limitEmphasis } from './emphasisDensity.pure.ts';
 import { stripFootnoteDebris } from './footnoteDebris.pure.ts';
@@ -39,6 +40,7 @@ import {
   foldStraySections,
   mergeAdjacentDuplicateHeadings,
 } from './sectionFolding.pure.ts';
+import { stripPromptRulesBlocks } from './promptLeakage.pure.ts';
 
 const PLACEHOLDER_CELL = /^(?:n\/?a|tbd|to be determined|not available|not provided|unknown|—|-|–)\.?$/i;
 
@@ -575,11 +577,114 @@ const SCAFFOLDING_RE = new RegExp(
   'gi',
 );
 
+/**
+ * …and the same defect in a vocabulary the list does not name.
+ *
+ * The four strings above are the ones the PROMPT wrote, and the model has
+ * moved on. Page 29 of the Investment Compass delivered for 9 Hollow Street on
+ * 21 Sep 2026 closes all three paragraphs of its **Final Recommendation** —
+ * the most-read section in the document — like this:
+ *
+ * ```
+ *   …settled only by the planning certificate and the planning scheme itself.
+ *   [Vicmap Planning — plan_zone][Vicmap Planning — plan_overlay]
+ *
+ *   …no project, corridor, or delivery horizon should be inferred from that
+ *   absence. [Planning registers in this report][Major public projects
+ *   register in this report]
+ * ```
+ *
+ * Six brackets, none of them one of the four. Keeping a literal list was the
+ * mistake: what the rule is actually about is not which words are inside the
+ * bracket but that **a bracket at the end of a sentence in a client document
+ * refers to nothing the reader can open.** A real reference in this document's
+ * vocabulary is a Markdown link or a footnote, and both are excluded by shape.
+ *
+ * Four bounds, each one a form that must survive untouched:
+ *
+ *  - **a link** — `[text](url)`, excluded by the `(` that follows it;
+ *  - **a footnote** — `[^12]`, and a `[^12]:` definition, which opens a line
+ *    and so has no sentence punctuation before it;
+ *  - **a bare numeric marker** — `[12]` pointing at a literal Notes list, which
+ *    `footnoteDebris.pure.ts` owns: the content must carry a letter and run to
+ *    four characters;
+ *  - **an aside inside a sentence** — the run must FOLLOW a full stop, a
+ *    question mark or an exclamation, which is where a citation marker goes
+ *    and where a parenthetical does not. A colon and a semicolon are
+ *    deliberately not included: they introduce what comes after them, so a
+ *    reference moved inside the clause would read as its subject.
+ *
+ * Measured on that document: 6 matches in 3 runs, 0 false positives over all
+ * 39 pages.
+ */
+const POINTER_RUN_RE =
+  /([.!?])([ \t]*)((?:\[(?!\^)[^\]\n]{4,80}\](?!\())+)/g;
+
+/** A bracket with no letter in it is a marker, not a pointer. */
+const HAS_A_LETTER = /[A-Za-z]/;
+
+/**
+ * Whether this run can be pointed AT the planning register, or only removed.
+ *
+ * Substituting the section name is a courtesy; removing the bracket is the
+ * guarantee. The two are not interchangeable, and getting that wrong is a
+ * defect I put in this rule and caught by reading further into the same
+ * document. Page 9 closes a paragraph about PRICE GROWTH with
+ *
+ *     [vic_vpsr_suburb][Australian Bureau of Statistics — Residential Dwellings]
+ *
+ * and page 11 does it twice more. Pointing those at *Planning controls and
+ * development registers* would send a reader after a market figure to the
+ * wrong table — worse than the bracket, because it is confidently wrong rather
+ * than merely opaque.
+ *
+ * So the section is named only where the run is ABOUT what that section
+ * carries. Everywhere else the run is removed, and nothing is lost: on every
+ * one of those pages the sentence already names its source in words — "The
+ * Victorian Valuer-General's Property Sales Report records a median sale price
+ * of $567,500" — so the bracket beside it was a citation of something already
+ * cited.
+ */
+const ABOUT_THE_PLANNING_REGISTER = /planning|zoning|overlay|land use|infrastructure|major public project/i;
+
+/**
+ * Split at `## ` headings, so the reference is made once where the reader is.
+ *
+ * Three paragraphs each closing on a run would otherwise carry three identical
+ * parentheticals in a row. The first names the section; the rest are removed,
+ * because by then the sentence before them is already sourced.
+ */
+function bySection(markdown: string): string[] {
+  const out: string[] = [];
+  let buf: string[] = [];
+  for (const line of markdown.split('\n')) {
+    if (/^##[ \t]+\S/.test(line) && buf.length) { out.push(buf.join('\n')); buf = []; }
+    buf.push(line);
+  }
+  out.push(buf.join('\n'));
+  return out;
+}
+
 export function rewriteScaffoldingPointers(
   markdown: string,
 ): { markdown: string; rewritten: number } {
   let rewritten = 0;
-  const out = (markdown || '').replace(SCAFFOLDING_RE, (_whole, offset: number, whole: string) => {
+  const sectioned = bySection(markdown || '').map((section) => {
+    let named = false;
+    return section.replace(POINTER_RUN_RE, (whole, punct: string, gap: string, run: string) => {
+      const brackets = run.match(/\[[^\]\n]*\]/g) ?? [];
+      if (!brackets.length || !brackets.every((b) => HAS_A_LETTER.test(b))) return whole;
+      rewritten += brackets.length;
+      if (named || !ABOUT_THE_PLANNING_REGISTER.test(run)) return `${punct}`;
+      named = true;
+      // The reference belongs INSIDE the sentence it sources, so the
+      // punctuation the run followed is re-emitted after it — otherwise the
+      // parenthetical stands alone as a fragment after a full stop.
+      return ` (see *${PLANNING_REGISTER_SECTION}*)${punct}`;
+    });
+  }).join('\n');
+
+  const out = sectioned.replace(SCAFFOLDING_RE, (_whole, offset: number, whole: string) => {
     rewritten += 1;
     // "See [Zoning & Planning notes]" must not become "See (see …)". Where the
     // sentence already introduces the reference, only the section is named.
@@ -633,8 +738,29 @@ export function presentStoredMarkdown(
    * them; anything that cannot be repaired is removed rather than printed.
    * See `braceHygiene.pure.ts`.
    */
-  const braces = scrubUnresolvedBraces(markdown);
-  const resolved = braces.repaired.length || braces.stripped.length ? braces.markdown : markdown;
+  /*
+   * An instruction addressed to the MODEL, removed before anything else reads
+   * the body.
+   *
+   * Three pinned blocks end in a rules list written to the writer, and this
+   * repository has already measured what a model does with pinned text it was
+   * told not to reproduce: the planning block tells it never to write a
+   * bracketed pointer, and nine of ten delivered documents carried one
+   * anyway. That is `stripEditorialBlocks`' lesson — an instruction is a
+   * request; this is the guarantee — and the rules blocks had none.
+   *
+   * FIRST, for the reason every other pass here is ordered: a leaked block is
+   * a numbered list under a shouting header, and letting the table promoter
+   * or the emphasis scrub see it first means they act on text that should not
+   * be in the document at all.
+   *
+   * A body that never says "RULES FOR" is returned byte-identical, which is
+   * what lets this sit in front of every stored report ever written.
+   */
+  const deleaked = stripPromptRulesBlocks(markdown);
+  const body = deleaked.removed ? deleaked.markdown : markdown;
+  const braces = scrubUnresolvedBraces(body);
+  const resolved = braces.repaired.length || braces.stripped.length ? braces.markdown : body;
   /*
    * A row of pipes is a table the model did not mark up.
    *
@@ -697,8 +823,21 @@ export function presentStoredMarkdown(
   const unrepeated = constants.folded.length ? constants.markdown : narrowed;
   const cited = stripEmptyCitations(unrepeated);
   const tidied = cited.removed ? cited.markdown : unrepeated;
-  const sections = dropEmptySections(tidied);
-  const clean = sections.dropped.length === 0 ? tidied : sections.markdown;
+  /*
+   * A list marker with nothing after it — four of them on page 16.
+   *
+   * Here rather than later because a marker is drawn from the LIST STYLE, so
+   * an item with no content still prints its dot and still takes its line, and
+   * because `dropEmptySections` sits directly below: a section this empties
+   * should be collected by the rule that already exists for that rather than
+   * left as a heading over nothing. See `stripEmptyListItems` for the three
+   * bounds — a parent with indented children is kept, a task list has content
+   * after its marker, and code is a quotation.
+   */
+  const listed = stripEmptyListItems(tidied);
+  const bulleted = listed.removed.length ? listed.markdown : tidied;
+  const sections = dropEmptySections(bulleted);
+  const clean = sections.dropped.length === 0 ? bulleted : sections.markdown;
   // A bracketed pointer into the prompt's own scaffolding, rewritten into the
   // report's own section. See `rewriteScaffoldingPointers`.
   const pointed = rewriteScaffoldingPointers(clean);
@@ -890,9 +1029,27 @@ export function presentStoredMarkdown(
   const emphasised = limitEmphasis(unmarked);
   const { clause, figure, repeat, table } = emphasised.unwrapped;
   const calm = clause + figure + repeat + table ? emphasised.markdown : unmarked;
-  if (!evidence) return calm;
-  const judged = enforceChartEvidence(calm, evidence);
-  return judged.findings.length ? judged.markdown : calm;
+  const judged = evidence ? enforceChartEvidence(calm, evidence) : null;
+  const settled = judged && judged.findings.length ? judged.markdown : calm;
+  /*
+   * Last, because it is the only pass here that works on CHARACTERS.
+   *
+   * Every pass above matches on structure or on markup, so running this one
+   * before any of them would mean they were reading a document one character
+   * different from the one the generator wrote. Running it last also makes its
+   * own guarantee trivial to state: it cannot change what any other pass did.
+   *
+   * Measured with fontTools over all nine faces the print container ships —
+   * `U+2011` is in none of them and `U+2010` in four — so a non-breaking
+   * hyphen in a heading, a display line or a figure run is drawn by whatever
+   * fontconfig reaches for, setting one hyphen in a different typeface from
+   * the words either side of it. See `printableGlyphs.pure.ts` for why this is
+   * not the prose scrub §8 forbids: it is a closed set of five dashes, it
+   * changes no word, and a spec folds both sides onto the drawable dash and
+   * asserts they are identical.
+   */
+  const drawable = substituteUndrawableGlyphs(settled);
+  return drawable.substituted.length ? drawable.markdown : settled;
 }
 
 const normalizeHeading = (h: string): string =>

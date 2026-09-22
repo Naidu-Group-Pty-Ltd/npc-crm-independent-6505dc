@@ -369,3 +369,45 @@ describe('what the generator does with them', () => {
     expect(append).toMatch(/if \(!isAreaReport\) \{/);
   });
 });
+
+/**
+ * Rule 9 — the provenance is stated once.
+ *
+ * Measured on the Investment Compass delivered for 9 Hollow Street, Golden
+ * Square on 21 Sep 2026, over its 29 body pages: "General Residential Zone" or
+ * "GRZ" 45 times, "Vicmap Planning" 26, "a planning certificate" or
+ * "Section 32" 24, "no mapped control" 15, and the layer's own currency date
+ * five. A reader's dominant impression of that document is being told the same
+ * four things fifteen times in different words.
+ */
+describe('the rule about where a fact goes, not what it may say', () => {
+  const rules = () => planningFactBlocks(buildPlanningFacts({ planningData: PALLAS }));
+
+  it('asks for the provenance once, and names where it belongs', () => {
+    const r = rules();
+    expect(r).toContain('State the provenance ONCE');
+    expect(r).toMatch(/register appended at the end/i);
+  });
+
+  it('does not soften a caveat, and says so', () => {
+    // Rules 2, 4 and 6 are what stop an unretrieved control being reported as
+    // absent. A rule about repetition must not read as permission to drop them.
+    const r = rules();
+    expect(r).toContain('This does not soften a caveat');
+    expect(r).toMatch(/rules 2, 4 and 6 require/);
+    // …and every prohibition it sits beside is still there.
+    expect(r).toContain('Never write that no overlay applies');
+    expect(r).toContain('An absence may NOT be rated');
+    expect(r).toContain('desktop research');
+  });
+
+  it('never tells the model to omit a control or its absence', () => {
+    // The scope is the citation apparatus, never the finding.
+    const rule9 = rules().split('\n').find((l) => l.startsWith('9.'))!;
+    expect(rule9).toBeDefined();
+    for (const forbidden of [/do not (?:state|mention|report) (?:the|a) (?:zone|control|overlay)/i]) {
+      expect(rule9).not.toMatch(forbidden);
+    }
+    expect(rule9).toMatch(/Name the zone or the control wherever a section needs it/);
+  });
+});

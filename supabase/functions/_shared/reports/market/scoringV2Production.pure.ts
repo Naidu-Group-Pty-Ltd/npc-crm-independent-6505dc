@@ -121,6 +121,7 @@ import {
 } from './scoringInputPolicy.pure.ts';
 import { dwellingTypeFor } from './domainEvidence.pure.ts';
 import { riskRemedyFor } from '../risk/propertyRiskSchema.pure.ts';
+import { measuredVolumeNote, volumeRemedyClause } from './openData/salesVolumePublishers.pure.ts';
 import {
   MIN_VALID_DIMENSIONS_TO_PUBLISH,
   PUBLICATION_DIMENSIONS,
@@ -308,18 +309,89 @@ export interface ScoringV2PolicyStamp {
   activation: { reference: string; approvedOn: string; productionVersion: string };
 }
 
-/** One named reason the grade was withheld, or a dimension was not assessed. */
+/**
+ * One named reason the grade was withheld, or a dimension was not assessed.
+ *
+ * **Every field here declares its audience, and `remedy` did not.** `reason`
+ * was documented "the client sentence, no codebase vocabulary" and `detail`
+ * "the operator detail" from the day this was written; `remedy` said only
+ * "what would close the gap", and the Compass's *What each dimension rested
+ * on* bullets read it through `exclusionRemedy`.
+ *
+ * Executed against a stored score on 21 Sep 2026, that printed to a client:
+ *
+ *     Regenerate the report: the location service re-acquires the enrichment
+ *     with its acquisition stamp (RF-7.2B) … locationInputVerification.pure.ts
+ *
+ *     … the open sales register's own transaction counts for this market
+ *     (market-sales-ingest; NSW and QLD carry one on every row, VIC and SA
+ *     one per load) …
+ *
+ *     Evidence this deployment does not hold: condition and maintenance.
+ *
+ * and growth's carried `docs/reports/OPEN_DATA_GROWTH_EVIDENCE.md` and
+ * `docs/integrations/DOMAIN_ACTIVATION_REQUEST.md` — repository paths, in a
+ * customer's investment report. It is W4.7's rule (database vocabulary never
+ * reaches the reader) at a far larger scale than the `osm_amenity_register`
+ * that opened it, and it survived because `remedy` is CORRECT for the
+ * audience it was written for: an operator reading the grade-gap card needs
+ * the function name, the doc and the release code.
+ *
+ * So the operator field is untouched and a reader field is added beside it.
+ */
 export interface GradeGap {
   dimension: ScoredDimension;
   /** The client sentence. No codebase vocabulary. */
   reason: string;
   /** The operator detail: which provider, which refusal, which input. */
   detail: string;
-  /** What would close the gap. */
+  /**
+   * The OPERATOR remedy: function names, documentation paths, release codes.
+   * Never rendered to a customer — `READER_REMEDY` is that field.
+   */
   remedy: string;
+  /**
+   * What is outstanding, in the reader's terms — what evidence is missing,
+   * never how this platform would obtain it. Null on a legacy row, where the
+   * client bullet renders its reason alone rather than falling back to
+   * `remedy`, because falling back to `remedy` IS the defect.
+   */
+  readerRemedy: string | null;
   /** True when this gap alone withholds the grade. */
   withholdsGrade: boolean;
 }
+
+/**
+ * The reader's half of each gap.
+ *
+ * Two rules. **Say what is missing, never how we would get it.** A customer
+ * cannot act on "load market-sales-ingest", and a report that asks them to is
+ * describing its own maintenance. What they can act on, or at least
+ * understand, is which evidence the assessment did not have.
+ *
+ * And **each is a whole sentence, and says nothing its reason already said.**
+ * These render immediately after `reason` in one bullet, so a noun phrase
+ * lands as a fragment — "Not recorded. A recorded weekly rent and purchase
+ * price for this property." — and a restated qualification lands as a
+ * stammer: location's first draft closed "not a finding about the area"
+ * three words after the reason closed "It is not a reading about the area".
+ *
+ * Kept as a keyed record rather than inline literals so the gate over it is
+ * total: a dimension added without a reader sentence fails the type, and one
+ * written with a repository path fails `gradeGapAudience.spec.ts`.
+ */
+export const READER_REMEDY: Readonly<Record<ScoredDimension, string>> = {
+  growth: 'What is missing is a published price history for this suburb or council area \u2014 the '
+    + 'market\u2019s own record of past sales, not anything about this property.',
+  demand: 'What is missing is a published measure of how actively this market trades: sale '
+    + 'volumes, days on market, vendor discounting or auction results. Population change is a '
+    + 'supporting indicator and cannot stand in for one.',
+  yield: 'What is missing is a recorded weekly rent and purchase price for this property.',
+  location: 'What is missing is a verifiable record of those readings, which can be taken again.',
+  risk: 'What is missing is property-specific risk measurement covering at least two independent '
+    + 'subjects \u2014 for example a building condition assessment alongside hazard or planning '
+    + 'controls checked against the parcel itself rather than a single map point.',
+};
 
 export interface ProductionDimensionScore {
   score: number;
@@ -635,11 +707,41 @@ export function describeGaps(
          * needs four periods carrying one to be measured against this
          * market's trailing rate.
          */
-        remedy = 'A PRIMARY demand measure — the population series alone is a driver and cannot carry '
+        /*
+         * The jurisdiction clause is COMPOSED, and the first version of it was
+         * wrong about two states. It read "NSW and QLD carry one on every row,
+         * VIC and SA one per load": South Australia's sheet names two counted
+         * quarters per release rather than one, and Victoria's four periods
+         * have been recovered from the archived workbooks since 21 Sep 2026.
+         * Worse, it could not draw the distinction that matters most to a
+         * reader in ACT, NT, TAS or WA — a register that needs more loads and
+         * one that has no count publisher at all are different remedies, and
+         * telling an operator to run more loads where no loader exists is a
+         * remedy that cannot discharge its reason (`refreshRemedy`'s rule).
+         *
+         * `volumeRemedyClause` reads `VOLUME_COUNT_SOURCE`, which a spec
+         * checks against the loaders themselves — so this sentence cannot
+         * drift from what the code does.
+         */
+        /*
+         * And the CLIENT-facing sentence, for the four jurisdictions where
+         * the register itself was measured. `NOT_ASSESSED_REASON.demand` is
+         * true everywhere and says nothing about WHY this area in
+         * particular; where a publisher has actually been asked, the reader
+         * is told whether no count is published (WA, NT — established) or
+         * whether this platform could not establish it (ACT, TAS — ours).
+         *
+         * Keeping those two apart is the point. `null` for the other five
+         * jurisdictions, so the existing sentence stands everywhere it
+         * already did — a reading that narrows a sentence must never widen
+         * the set of pages it appears on.
+         */
+        reasonOverride = measuredVolumeNote(input.subject.state) ?? undefined;
+        remedy = ['A PRIMARY demand measure — the population series alone is a driver and cannot carry '
           + 'the dimension. Either four periods of the open sales register\'s own transaction counts '
-          + 'for this market (market-sales-ingest; NSW and QLD carry one on every row, VIC and SA one '
-          + 'per load), or Domain days-on-market, vendor discount, auction clearance or listing counts '
-          + 'for the suburb.';
+          + 'for this market (market-sales-ingest), or Domain days-on-market, vendor discount, '
+          + 'auction clearance or listing counts for the suburb.',
+        volumeRemedyClause(input.subject.state)].filter((p): p is string => p !== null).join(' ');
         break;
       case 'yield':
         detail = input.property.weeklyRent === null || input.property.weeklyRent <= 0
@@ -679,6 +781,7 @@ export function describeGaps(
       reason: reasonOverride ?? NOT_ASSESSED_REASON[dimension],
       detail,
       remedy,
+      readerRemedy: READER_REMEDY[dimension] ?? null,
       // A gap withholds the score only where the score was actually
       // withheld — under proportional publication an unassessed dimension is
       // disclosed and excluded, not a reason to publish nothing. Where a

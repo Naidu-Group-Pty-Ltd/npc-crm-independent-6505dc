@@ -349,7 +349,8 @@ function newestLoad(candidates: readonly StoredStop[], feeds: readonly string[])
  * than an untyped body is what stops that recurring.
  */
 export interface StoredTransportBlock {
-  readonly nearestStation: string;
+  /** The nearest boardable stop's name, or null when none was found. */
+  readonly nearestStation: string | null;
   /**
    * Straight-line kilometres to the nearest boardable stop, or null when none
    * was found. Haversine from the verified coordinate — no walking or driving
@@ -431,7 +432,16 @@ export function projectTransportForLocationIntelligence(
   reading: TransportReading,
 ): StoredTransportBlock {
   return {
-    nearestStation: reading.nearest?.name ?? 'N/A',
+    // RF-7.2B.1B2's rule, paid a second time. This returned the literal
+    // `'N/A'`, which is TRUTHY — so a property outside every loaded feed did
+    // not merely lose its transport reading, it handed the generator's prompt
+    // `Nearest public transport stop on record: **N/A**` and, because the
+    // block then had one part to print, SUPPRESSED its own prohibition on
+    // naming a station or calling the area car-dependent. The sibling branch
+    // in `location-intelligence-service` was corrected to null when that rule
+    // was written; this one, which is the branch that actually runs wherever
+    // a feed is loaded, was not. Absent is null.
+    nearestStation: reading.nearest?.name ?? null,
     distanceToStation: typeof reading.nearest?.metres === 'number'
       ? Math.round(reading.nearest.metres / 100) / 10
       : null,

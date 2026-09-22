@@ -222,8 +222,28 @@ export function resolveReportPalette(
     tenantBrand ?? PRINT_BRAND.onPaper,
     CONTRAST_FLOOR.micro,
   );
+  /*
+   * `micro`, matching the two template-library derivations of this same token.
+   *
+   * It read `CONTRAST_FLOOR.display`. Measured over the catalogue's hundred
+   * approved accents, that put **89 of 100** between 4.5 and 4.7:1 on the
+   * field, while the identical element on paper — `.eyebrow` at
+   * `type.caption`, 8.5pt — sits at 7.83 through `accentOnPaper`. One
+   * element, one size, two floors.
+   *
+   * The 500 seeded masters were never affected: they store an `accentOnField`
+   * already derived at `PRINT_SMALL_TYPE_CONTRAST` (7), which is why the
+   * delivered document's `#D5A220` at 8pt is 7.00:1 and correct — it is
+   * exactly `ensureContrast(#AD831A, field, 7)`. What was exposed is the
+   * TENANT path: a workspace that supplies its own brand hex, and the routes
+   * that resolve a palette rather than reading a stored colourway.
+   *
+   * The default is untouched: `PRINT_BRAND.onField` is `#D9A520`, 7.26:1 on
+   * the signature field, so it already cleared the stricter floor and is
+   * passed through uncorrected exactly as before.
+   */
   const accentOnField = tenantBrand
-    ? ensureContrast(tenantBrand, neutrals.field, CONTRAST_FLOOR.display)
+    ? ensureContrast(tenantBrand, neutrals.field, CONTRAST_FLOOR.micro)
     : PRINT_BRAND.onField;
 
   // Category B, corrected for the stock it will print on — hue untouched.
@@ -250,6 +270,28 @@ export function resolveReportPalette(
   //
   // For all four presets this is a no-op, and `printContrast.spec.ts` asserts
   // that by comparing the result against `PRINT_SEMANTIC` byte for byte.
+  /*
+   * Category B, corrected for the stock at its DECLARED floor.
+   *
+   * This reads `CONTRAST_FLOOR.body`, and raising that band to §2's 7 darkens
+   * all four semantics on every preset — `#157A3A` → `#0F5729` and so on,
+   * hue and saturation untouched, lightness only. That is a real change and
+   * it is the right one: the floors are SIZE BANDS, so a semantic used at
+   * 10-13pt must meet the 10-13pt floor or it is not readable, and §2 says so
+   * in as many words — "Semantic colours are tuned for screen and grey out at
+   * 9pt … keep hue and saturation, clamp lightness into the 30-36% band".
+   *
+   * Holding them at 4.5 while their declared floor says 7 was tried and is
+   * incoherent: `auditPaletteContrast` judges every role against its declared
+   * floor, so the palette then fails its own contract by construction.
+   *
+   * What "Category B is FIXED" protects is unreachability and hue — a tenant
+   * cannot make risk green — and both still hold: the hue comes from a frozen
+   * constant, no input reaches it, and `ensureContrast` walks lightness only.
+   * The byte-identity assertion that caught this was pinning something
+   * incidental: it was a no-op only because the floor was 4.5, which is the
+   * value this change corrects.
+   */
   const semantic = Object.fromEntries(
     Object.entries(PRINT_SEMANTIC).map(([role, hex]) =>
       [role, legibleOnPaper(hex, CONTRAST_FLOOR.body)]),
@@ -257,6 +299,27 @@ export function resolveReportPalette(
 
   return {
     ...neutrals,
+    /*
+     * The muted ink is corrected for the stock it prints on, exactly as the
+     * accent and the four semantics above it are.
+     *
+     * It was the ONE ink in the palette that passed straight through, and
+     * with `CONTRAST_FLOOR.micro` at its true value of 7 it is the only role
+     * that fails: `#6E6253` measures 5.55:1 on paper, 5.01 on paperAlt and
+     * 5.85 on paperBright. Measured on the Investment Compass delivered for
+     * 9 Hollow Street on 21 Sep 2026, it carries the 4pt, 6pt and 8.9pt type —
+     * eyebrows, captions, running heads and page numbers, which is precisely
+     * the band `REPORT_RULES.md` §2 sets at 7:1.
+     *
+     * `legibleOnPaper` walks lightness only and stops at the floor, so the hue
+     * and saturation are the token's own and nothing is stored: `#6E6253`
+     * becomes `#5D5346` at 7.03:1 on the worst of the three grounds. Nothing
+     * here edits a token VALUE and nothing reaches the screen layer — this is
+     * the print palette, resolved per render, and a tenant that brings a
+     * lighter stock gets a darker muted ink for it rather than an unreadable
+     * caption.
+     */
+    mutedInk: legibleOnPaper(neutrals.mutedInk, CONTRAST_FLOOR.micro),
     onFieldInk: PRINT_INK.onField,
     accentFill,
     accentOnPaper,

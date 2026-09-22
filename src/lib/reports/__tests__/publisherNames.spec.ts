@@ -144,3 +144,53 @@ describe('a scored component is named in words, or not named at all', () => {
     expect(labelOfComponent('Auction clearance')).toBe('Auction clearance');
   });
 });
+
+/*
+ * The third instance of one defect, on the same document.
+ *
+ * Page 34 printed, mid-paragraph, to a client:
+ *
+ *   The reading came from `osm_amenity_register`, which counts one amenity
+ *   category rather than boarding places…
+ *
+ * set in code backticks. `vic_vpsr_suburb` where a publisher belongs and
+ * `transactionVolume` where a measure's name belongs are the other two.
+ */
+describe('an identifier we invented is debris; one the publisher uses is a name', () => {
+  it('names the register a fallback transport reading came from', async () => {
+    const { transportSourceName } = await import('../investment/strategyPositions.pure');
+    expect(transportSourceName('osm_amenity_register')).toBe('a community-edited amenity register');
+    expect(transportSourceName('osm_amenity_register')).not.toContain('_');
+  });
+
+  it('prints no identifier for a source this build has no name for', async () => {
+    const { transportSourceName } = await import('../investment/strategyPositions.pure');
+    for (const key of ['some_new_feed', 'anotherRegistry', '']) {
+      const name = transportSourceName(key);
+      expect(name).toBe('another register');
+    }
+  });
+
+  it('passes through something that is already a name', async () => {
+    const { transportSourceName } = await import('../investment/strategyPositions.pure');
+    expect(transportSourceName('Transport for NSW')).toBe('Transport for NSW');
+  });
+
+  it('leaves a publisher’s own citation alone', async () => {
+    /*
+     * `plan_zone` and `plan_overlay` are Vicmap Planning's OWN published layer
+     * names, and the register table cites them correctly as "Vicmap Planning —
+     * plan_zone (opendata.maps.vic.gov.au WFS)". Scrubbing those would remove
+     * a real citation, which is the opposite defect — so a citation carrying
+     * an underscore passes through unchanged.
+     */
+    const { transportSourceName } = await import('../investment/strategyPositions.pure');
+    for (const citation of [
+      'Vicmap Planning — plan_zone',
+      'Vicmap Planning — plan_overlay (opendata.maps.vic.gov.au WFS)',
+      'Transport for NSW GTFS',
+    ]) {
+      expect(transportSourceName(citation)).toBe(citation);
+    }
+  });
+});

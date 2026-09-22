@@ -107,10 +107,35 @@ export const PRINT_SEMANTIC = Object.freeze({
 export const CONTRAST_FLOOR = {
   /** ≥14pt — headings, cover titles. */
   display: 4.5,
-  /** 10–13pt — body copy, table cells. */
-  body: 4.5,
-  /** <10pt — eyebrows, captions, running heads, page numbers. */
-  micro: 4.5,
+  /**
+   * 10–13pt — body copy, table cells.
+   *
+   * 7, not 4.5: see the note on `micro` below. These two were both 4.5 while
+   * `REPORT_RULES.md` §2 set them at 7, so the code and the design system
+   * disagreed on two of the three bands and the code's copy is the one the
+   * renderer obeys.
+   */
+  body: 7,
+  /**
+   * <10pt — eyebrows, captions, running heads, page numbers.
+   *
+   * Measured on the Investment Compass delivered for 9 Hollow Street, Golden
+   * Square on 21 Sep 2026, by reading each text run's ink and the colour
+   * actually painted behind it: brand type on paper is `#8E6C15` at
+   * **4.56:1**, set at 12.7pt on 23 runs and at 8pt; ivory on the accent band
+   * is the same 4.56:1 at 11.6pt and in heatmap cells; the muted ink
+   * `#6E6253` is **5.55:1** at 4pt, 6pt and 8.9pt.
+   *
+   * The machinery was never wrong. `#8E6C15` is exactly
+   * `ensureContrast(brand, ivory, 4.5)`, and the ONE gold in that document
+   * that cleared the floor — `#6A5110` at 7.01:1 — is exactly
+   * `ensureContrast(brand, ivory, 7)`, from the one call site that asked for
+   * 7. So these constants are what was wrong, and correcting them makes every
+   * call site derive what §2 already required: no token VALUE is edited, and
+   * nothing reaches the screen layer, because `CONTRAST_FLOOR` lives only in
+   * the print tokens.
+   */
+  micro: 7,
 } as const;
 
 /** Point sizes, tuned for A4 at the margins in `page.pure.ts`. */

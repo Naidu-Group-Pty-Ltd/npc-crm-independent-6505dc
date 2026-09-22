@@ -125,7 +125,7 @@ Stripe mints on its own cycle). `settleGatePayment` is idempotent on
 `paid_at IS NULL`, so all three settling the same gate credits it once.
 
 **A credit top-up does not activate a workspace.** `GATE_OPENING_MODES` is
-`seat_plan` and `setup_package`; a $50 pack must not open a $2,015/month plan,
+`seat_plan` and `setup_package`; a $50 pack must not open a $2,549/month plan,
 and the CTA a customer is shown leads to their plan, not to credits.
 
 **A refund records and warns but never re-locks.** `charge.refunded` fires for
@@ -265,8 +265,8 @@ being confirmed, and the screen says so rather than going quiet.
 
 `resolvePlanPricing` used `tier.monthlyInclGstCents` — the tier WITHOUT the
 AML/CTF module — while `seatPlanForTier` refuses a catalogue row whose
-`price_cents` disagrees with the quoted price. Scale is $2,015 base against a
-$2,210 headline, so a newly armed gate would have answered `plan_not_purchasable`
+`price_cents` disagrees with the quoted price. Scale is $2,549 base against a
+$2,699 headline, so a newly armed gate would have answered `plan_not_purchasable`
 on every click. The three live rows were armed with the headline figure and were
 never affected; the fix is `tierHeadlineCents`, and a contract test now asserts
 which of the two the gate may read.

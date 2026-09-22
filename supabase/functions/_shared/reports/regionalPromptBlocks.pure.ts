@@ -14,8 +14,15 @@
  *  - unemployment gets no row and the instruction forbids inventing one
  *    until the SALM register is loaded;
  *  - with nothing measured, one honest line plus the no-invention
- *    instruction.
+ *    instruction;
+ *  - and the forward half carries a PERMITTED FORM rather than a bare
+ *    prohibition — see `forwardDemandInstruction`.
  */
+import { REGIONAL_WEB_SEARCH_RULE } from './registerAuthority.pure.ts';
+import {
+  forwardDemandCoverageNote,
+  type ForwardDemandAvailability,
+} from './market/openData/forwardDemand.pure.ts';
 
 interface Numericish { [key: string]: unknown }
 
@@ -27,6 +34,19 @@ const people = (v: number) => v.toLocaleString('en-AU');
 
 export interface RegionalPromptInput {
   regionalTrends?: Numericish | null;
+  /**
+   * The jurisdiction, so the forward-demand sentence can name its publisher.
+   * Absent resolves to the unknown-jurisdiction wording, which states the
+   * limit as this report's rather than as a finding about the area.
+   */
+  state?: string | null;
+  /**
+   * What this deployment holds by way of a PROJECTION. Defaults to
+   * `not_loaded`, which is the truth on every deployment today and stays the
+   * truth until a register lands — a default of anything else would announce
+   * a reading nobody has.
+   */
+  forwardDemand?: ForwardDemandAvailability | null;
 }
 
 function growthRow(label: string, w: Numericish | null | undefined, source: string): string | null {
@@ -66,16 +86,62 @@ export function populationTrendBlock(input: RegionalPromptInput): string {
   ].join('\n\n');
 }
 
+/**
+ * The forward half of the block, and why a prohibition alone was not enough.
+ *
+ * The instruction below already forbade *"a population projection"*, and that
+ * prohibition is right. What it had no companion for is the PERMITTED FORM —
+ * and the section validator *requires* the words `population`, `income` and
+ * `employment` in this section, so the model is obliged to write about demand
+ * while being told one thing it may not say and offered nothing to say
+ * instead.
+ *
+ * This repository has recorded twice what that produces. *A prohibition with
+ * no demonstration of the permitted form is one a model routes around*
+ * (`compassDocumentContract`), and the planning block TELLS the model never
+ * to write a bracketed pointer while nine of ten delivered documents carried
+ * one. So the absence gets a sentence, composed once by
+ * `forwardDemandCoverageNote`, naming the publisher a reader can go to.
+ *
+ * Two bounds on it. The sentence carries **no figure, no year and no rate**
+ * — asserted where it is composed. And the model is told not to present the
+ * publisher as a source this report consulted, because naming where a figure
+ * lives and claiming to have read it are different statements and only the
+ * first is true.
+ */
+function forwardDemandInstruction(input: RegionalPromptInput): string[] {
+  const note = forwardDemandCoverageNote(
+    input.forwardDemand ?? { kind: 'not_loaded' },
+    input.state ?? null,
+  );
+  return [
+    `**Forward demand — what this report holds:**\n\n${note}`,
+    'Where the analysis touches what the population is expected to do, use the statement above — '
+    + 'verbatim or closely paraphrased — and state no projected population, growth rate or horizon '
+    + 'of your own. Do NOT present the publisher named in it as a source this report consulted: '
+    + 'naming where a figure can be found and claiming to have read it are different statements, '
+    + 'and only the first is true here.',
+  ];
+}
+
 export function regionalTrendBlocks(input: RegionalPromptInput): string {
   const block = populationTrendBlock(input);
   if (block === '') {
-    return 'No measured population trend is available for this property’s area. State that plainly in one sentence; ' +
-      'do NOT assert a population figure, growth rate or unemployment rate for the area from memory.';
+    return [
+      'No measured population trend is available for this property’s area. State that plainly in one sentence; ' +
+      'do NOT assert a population figure, growth rate or unemployment rate for the area from memory.',
+      ...forwardDemandInstruction(input),
+      REGIONAL_WEB_SEARCH_RULE,
+    ].join('\n\n');
   }
   return [
     block,
     'Discuss only the measured figures above, naming the SA2 and the windows. The SA2 may cover more than the suburb — ' +
     'say "the surrounding area" where they differ. Do NOT state an unemployment rate, a population projection, or any ' +
-    'growth figure not in the table, and do NOT extrapolate the trend beyond the measured windows.',
+    'growth figure not in the table, and do NOT extrapolate the trend beyond the measured windows. ' +
+    'The table above is BACKWARD-looking: it measures what has happened, and nothing in it is a statement about ' +
+    'what will happen.',
+    ...forwardDemandInstruction(input),
+    REGIONAL_WEB_SEARCH_RULE,
   ].join('\n\n');
 }

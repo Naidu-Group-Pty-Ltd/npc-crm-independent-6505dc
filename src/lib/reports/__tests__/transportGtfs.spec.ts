@@ -535,14 +535,35 @@ describe('the transport block stored on a report', () => {
       .toEqual(['mode', 'service frequency']);
   });
 
-  it('reports no distance rather than zero when nothing was found', () => {
+  // This test was named for the rule and asserted its violation one line
+  // below: `distanceToStation` was correctly pinned to null while
+  // `nearestStation` was pinned to the literal `'N/A'`. That literal is
+  // TRUTHY, which is what let it through `if (t.nearestStation)` in the
+  // generator's prompt and print `Nearest public transport stop on record:
+  // **N/A**` for every property outside a loaded feed — suppressing, in the
+  // same stroke, the block's own prohibition on naming a station or calling
+  // the area car-dependent. Absent is null on both fields.
+  it('reports no distance and no name, rather than zero or a sentinel, when nothing was found', () => {
     const block = projectTransportForLocationIntelligence({
       ...reading,
       verdict: 'outside_loaded_networks',
       stops: [], countWithinRadius: 0, nearest: null, feeds: [], sources: [],
     });
     expect(block.distanceToStation).toBeNull();
-    expect(block.nearestStation).toBe('N/A');
+    expect(block.nearestStation).toBeNull();
     expect(block.verdict).toBe('outside_loaded_networks');
+  });
+
+  it('a sentinel is never truthy: no absent field reads as a value', () => {
+    const block = projectTransportForLocationIntelligence({
+      ...reading,
+      verdict: 'outside_loaded_networks',
+      stops: [], countWithinRadius: 0, nearest: null, feeds: [], sources: [],
+    });
+    for (const [key, value] of Object.entries(block)) {
+      if (typeof value !== 'string') continue;
+      expect(['N/A', 'n/a', 'NA', 'unknown', '-'], `${key} carries a sentinel`)
+        .not.toContain(value);
+    }
   });
 });

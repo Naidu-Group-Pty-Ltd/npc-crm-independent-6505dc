@@ -33,6 +33,39 @@ import {
   parseAbsResDwell,
 } from '../_shared/reports/market/openData/absResDwell.pure.ts';
 import {
+  ABS_BA_DATAFLOW_CATALOGUE_URL,
+  absBuildingApprovalsUrl,
+  dataflowRef,
+  resolveBuildingApprovalsFlow,
+  surveyConstructionFlows,
+  ABS_BA_LICENCE,
+  ABS_BA_SOURCE_LABEL,
+  parseAbsBuildingApprovals,
+  type ApprovalRow,
+} from '../_shared/reports/market/openData/absBuildingApprovals.pure.ts';
+import {
+  absDataStructureUrl,
+  composeApprovalsKey,
+  narrowedApprovalsUrl,
+  parseDataStructure,
+  type ComposedKey,
+} from '../_shared/reports/market/openData/absDataStructure.pure.ts';
+import {
+  approvalsPage,
+  pagesToCover,
+  planApprovalsWork,
+} from '../_shared/reports/market/openData/absApprovalsPaging.pure.ts';
+
+/**
+ * How far back the supply register is loaded.
+ *
+ * Two years is what a year-on-year reading needs
+ * (`ABS_BA_PLAUSIBILITY.minPeriods`) and `approvalsFactBlocks` reports on
+ * twelve months against the twelve before them. Three years leaves a margin
+ * for a publisher's revision without asking for a decade nobody reads.
+ */
+const REGISTER_FLOOR_PERIOD = '2023-01';
+import {
   VIC_QUARTERLY_FILE,
   VIC_TIME_SERIES_FILE,
   VIC_VPSR_ARCHIVE_PATTERN,
@@ -265,6 +298,71 @@ async function upsertRecords(supabase: any, records: RegisterRecord[]): Promise<
   return written;
 }
 
+/**
+ * The approvals register's own writer.
+ *
+ * Separate from `upsertRecords` rather than generalised with it, because the
+ * two tables carry different keys and different absences and a shared writer
+ * would have to branch on both. The one rule they share is the one that
+ * matters: **a column the publisher released nothing for is dropped from the
+ * payload rather than sent as null**, so a re-run cannot overwrite a figure
+ * the ABS published earlier with the silence of a later, partial release.
+ * That is `market-sales-ingest`'s own lesson — sending `sales_count` on every
+ * record rewrote every historical count back to NULL on every daily run, and
+ * `scoreTransactionVolume` needs four periods carrying one.
+ */
+async function upsertApprovals(
+  supabase: any,
+  rows: ReadonlyArray<ApprovalRow>,
+  sourceUrl: string,
+  loadedAt: string,
+): Promise<number> {
+  const CONFLICT = 'area_kind,area_code,period,building_type';
+  const base = rows.map((r) => ({
+    area_kind: r.areaKind,
+    area_code: r.areaCode,
+    area: r.area,
+    area_token: r.areaToken,
+    state: r.state,
+    period: r.period,
+    building_type: r.buildingType,
+    dwelling_units: r.dwellingUnits,
+    value_aud: r.value,
+    source: ABS_BA_SOURCE_LABEL,
+    source_url: sourceUrl,
+    licence: ABS_BA_LICENCE,
+    loaded_at: loadedAt,
+  }));
+  // Four shapes, because either measure may be absent independently and a
+  // null in the payload is a WRITE of null.
+  const shape = (units: boolean, value: boolean) => base
+    .filter((r) => (r.dwelling_units !== null) === units && (r.value_aud !== null) === value)
+    .map((r) => {
+      const out: Record<string, unknown> = { ...r };
+      if (!units) delete out.dwelling_units;
+      if (!value) delete out.value_aud;
+      return out;
+    });
+
+  let written = 0;
+  for (const [rowsOfShape, label] of [
+    [shape(true, true), 'units+value'],
+    [shape(true, false), 'units only'],
+    [shape(false, true), 'value only'],
+    [shape(false, false), 'neither'],
+  ] as const) {
+    for (const batch of chunk(rowsOfShape as Record<string, unknown>[], 500)) {
+      if (!batch.length) continue;
+      const { error } = await supabase
+        .from('market_building_approvals')
+        .upsert(batch, { onConflict: CONFLICT });
+      if (error) throw new Error(`market_building_approvals upsert failed (${label}): ${error.message}`);
+      written += batch.length;
+    }
+  }
+  return written;
+}
+
 Deno.serve(async (req) => {
   const corsHeaders = createCorsHeaders(req.headers.get('origin'));
   if (req.method === 'OPTIONS') return new Response(null, { headers: corsHeaders });
@@ -323,6 +421,78 @@ Deno.serve(async (req) => {
       } catch (error) {
         answers.abs = { status: null, error: error instanceof Error ? error.message : String(error) };
       }
+      /*
+       * Building approvals: reachability and DISCOVERY, and nothing else.
+       *
+       * Read-only by construction — it asks the ABS for its own dataflow
+       * catalogue, runs the selection over it, and reports which flow would
+       * be read and which candidates were rejected. It writes nothing, needs
+       * no table and touches no schedule, which is the point: the register
+       * itself is held for approval, and this is what answers whether it can
+       * work at all BEFORE anybody approves a table for it.
+       *
+       * `absBuildingApprovals.pure.ts` cannot be verified against the ABS from
+       * a development egress — neither `data.api.abs.gov.au` nor
+       * `www.abs.gov.au` answers it — so every test behind it runs on
+       * synthetic SDMX-CSV written to the published standard's shape. This
+       * stage is the one that measures the real thing, and it is the same
+       * rule the retention purge and the verification self-test answer to:
+       * asserted by effect, never by configuration.
+       */
+      try {
+        const res = await fetch(ABS_BA_DATAFLOW_CATALOGUE_URL, {
+          headers: { 'User-Agent': UA, Accept: 'application/vnd.sdmx.structure+json;version=1.0,application/xml,*/*' },
+        });
+        const text = await res.text();
+        const answer: Record<string, unknown> = {
+          status: res.status,
+          bytes: text.length,
+          content_type: res.headers.get('content-type'),
+        };
+        if (res.ok) {
+          try {
+            const choice = resolveBuildingApprovalsFlow(text, typeof body.dataflow === 'string' ? body.dataflow : null);
+            answer.flow = dataflowRef(choice.flow);
+            answer.flow_name = choice.flow.name;
+            answer.area_kind = choice.areaKind;
+            answer.geography_score = choice.geographyScore;
+            answer.how = choice.how;
+            answer.catalogued_flows = choice.cataloguedFlows;
+            answer.candidates = choice.candidates;
+            answer.data_url = absBuildingApprovalsUrl(choice.flow, '2018-01');
+          } catch (error) {
+            // A refusal is the finding, not a crash: it names what the
+            // catalogue held and why nothing in it was selected.
+            answer.refused = error instanceof Error ? error.message : String(error);
+          }
+          try {
+            /*
+             * What else the ABS publishes that bears on construction in an
+             * area, and at what grain. Reported, never selected on.
+             *
+             * `INFRASTRUCTURE_COVERAGE_LIMITS` tells every reader that this
+             * platform reaches neither council capital works nor budget
+             * infrastructure programmes, and those are the scheduled projects
+             * a reader most wants named. Residential approvals are dwelling
+             * supply and say nothing about a hospital, a school or a road.
+             * This turns "could we also read scheduled infrastructure?" into
+             * a measurement from production rather than a recollection of
+             * what the Bureau publishes.
+             */
+            answer.construction_survey = surveyConstructionFlows(text);
+          } catch (error) {
+            // A refusal is the finding, not a crash: it names what the
+            // catalogue held and why nothing in it was selected.
+            answer.refused = error instanceof Error ? error.message : String(error);
+          }
+        }
+        answers.abs_building_approvals = answer;
+      } catch (error) {
+        answers.abs_building_approvals = {
+          status: null,
+          error: error instanceof Error ? error.message : String(error),
+        };
+      }
       return json({ success: true, stage, answers, wrote: false });
     }
 
@@ -338,6 +508,231 @@ Deno.serve(async (req) => {
         periods: parsed.periods.length, first_period: parsed.periods[0], latest_period: parsed.latestPeriod,
         states: parsed.states, preliminary_periods: parsed.preliminaryPeriods, revised_periods: parsed.revisedPeriods,
         rows_written: written,
+      };
+      await supabase.from('market_sales_sync').insert({ detail });
+      return json({ success: true, ...detail });
+    }
+
+    if (stage === 'approvals') {
+      /*
+       * The dataflow is DISCOVERED, then read. Two calls, and the first one
+       * is what makes the second safe: the version is part of an SDMX
+       * identifier, the ABS reissues it, and a constant nobody here can
+       * verify fetches a 404 that reads exactly like an outage.
+       */
+      const catalogueRes = await fetch(ABS_BA_DATAFLOW_CATALOGUE_URL, {
+        headers: { 'User-Agent': UA, Accept: 'application/vnd.sdmx.structure+json;version=1.0,application/xml,*/*' },
+      });
+      if (!catalogueRes.ok) throw new Error(`${ABS_BA_DATAFLOW_CATALOGUE_URL} answered ${catalogueRes.status}`);
+      const catalogue = await catalogueRes.text();
+      // Throws, naming what it saw, on an unparseable catalogue, on nothing
+      // matching, and on a tie inside the chosen grain. Nothing is written.
+      const choice = resolveBuildingApprovalsFlow(
+        catalogue,
+        typeof body.dataflow === 'string' ? body.dataflow : null,
+      );
+      const startPeriod = typeof body.startPeriod === 'string' ? body.startPeriod : '2018-01';
+
+      /*
+       * The query is NARROWED at the source, from the publisher's own data
+       * structure. Measured from CI on 21 Sep 2026: `/all` at SA2 grain is
+       * past 5 GB and still running after sixty seconds, and ONE month of LGA
+       * data is 61.8 MB — because the download is the whole cube (every
+       * building type including hotels, factories and offices, every measure,
+       * all three series estimates) of which this loader keeps Original
+       * estimates of three residential types on two measures.
+       *
+       * Shrinking the period cannot shrink a cube that is wide rather than
+       * long, so the lever is the key. It is composed from the structure the
+       * ABS publishes rather than typed, for the reason the dataflow is
+       * discovered rather than named: an SDMX key is POSITIONAL, and one
+       * written against the wrong positions returns a plausible, wrong slice
+       * under an HTTP 200.
+       *
+       * A structure that cannot be read costs nothing — the fallback is
+       * `/all`, which is what shipped, so this can only improve a load or
+       * leave it alone.
+       */
+      let keyNarrowing: ComposedKey = { key: 'all', narrowed: [], unnarrowed: [] };
+      try {
+        const dsdRes = await fetch(absDataStructureUrl(choice.flow), {
+          headers: { 'User-Agent': UA, Accept: 'application/vnd.sdmx.structure+json;version=1.0,application/xml,*/*' },
+        });
+        if (!dsdRes.ok) throw new Error(`answered ${dsdRes.status}`);
+        keyNarrowing = composeApprovalsKey(parseDataStructure(await dsdRes.text()));
+      } catch (error) {
+        keyNarrowing = {
+          key: 'all',
+          narrowed: [],
+          unnarrowed: [{
+            dimension: '(the whole structure)',
+            reason: error instanceof Error ? error.message : String(error),
+          }],
+        };
+      }
+      /*
+       * ONE PAGE per invocation, newest first.
+       *
+       * Measured from CI on 21 Sep 2026: at SA2 grain with the query
+       * narrowed, 33 months is 111.6 MB and 12 months is 26.0 MB against a
+       * 24 MB budget, while 6 months is 12.2 MB. So a full load is several
+       * requests — the shape this loader has used since five DCJ workbooks
+       * in one call exhausted an edge worker's compute allowance.
+       *
+       * The FRONTIER is read from the register rather than assumed. The ABS
+       * publishes with a lag (a six-month window asked on 21 Sep returned
+       * four months, to 2026-07), so page 0 asks forward and whatever comes
+       * back defines it; every later page lies wholly in the past and must be
+       * full. The loader learns the lag from the publisher instead of
+       * carrying a constant nobody here can verify.
+       */
+      const asOf = typeof body.asOf === 'string' ? body.asOf : new Date().toISOString().slice(0, 7);
+      /*
+       * BOTH edges of the register, because the walk derives its own window
+       * from them. `pageIndex` stepped back from the frontier by an index
+       * nobody ever supplied — the cron posts no `page`, so every run asked
+       * page 0, which asks FORWARD, and the register never deepened past one
+       * window. See `planApprovalsWork`.
+       */
+      const { data: frontierRow } = await supabase
+        .from('market_building_approvals')
+        .select('period, loaded_at')
+        .eq('area_kind', choice.areaKind)
+        .order('period', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      const { data: oldestRow } = await supabase
+        .from('market_building_approvals')
+        .select('period')
+        .eq('area_kind', choice.areaKind)
+        .order('period', { ascending: true })
+        .limit(1)
+        .maybeSingle();
+      const frontier = typeof frontierRow?.period === 'string' ? frontierRow.period : null;
+      const oldest = typeof oldestRow?.period === 'string' ? oldestRow.period : null;
+      const frontierLoadedAt = typeof frontierRow?.loaded_at === 'string'
+        ? frontierRow.loaded_at.slice(0, 7)
+        : null;
+
+      /*
+       * An operator naming a page keeps the old arithmetic; everything else
+       * — every scheduled run — plans its own work. That is what makes the
+       * register converge on a cadence rather than on somebody's bookkeeping.
+       */
+      const explicitPage = Number.isInteger(body.page) ? Number(body.page) : null;
+      const planned = explicitPage === null
+        ? planApprovalsWork({ frontier, oldest, asOf, floor: REGISTER_FLOOR_PERIOD, frontierLoadedAt })
+        : null;
+      const pageIndex = explicitPage ?? 0;
+      const page = explicitPage === null
+        ? {
+          index: 0,
+          startPeriod: planned!.startPeriod ?? asOf,
+          endPeriod: planned!.endPeriod ?? asOf,
+          minPeriods: planned!.minPeriods,
+        }
+        : approvalsPage(explicitPage, asOf, frontier);
+
+      /*
+       * Nothing owed: current to the frontier and complete to the floor. The
+       * publisher is asked NOTHING — a settled run is one table read, which
+       * is what makes a frequent schedule free rather than wasteful.
+       */
+      if (planned?.kind === 'settled' && typeof body.startPeriod !== 'string') {
+        const detail = {
+          stage,
+          settled: true,
+          flow: dataflowRef(choice.flow),
+          frontier,
+          oldest,
+          register_floor: REGISTER_FLOOR_PERIOD,
+          windows_remaining: 0,
+          because: planned.because,
+        };
+        await supabase.from('market_sales_sync').insert({ detail });
+        return json({ success: true, ...detail });
+      }
+
+      // An explicit window from an operator overrides the page arithmetic,
+      // and carries no floor: they are asking for exactly what they named.
+      const explicitStart = typeof body.startPeriod === 'string' ? body.startPeriod : null;
+      const window = explicitStart
+        ? { startPeriod: explicitStart, endPeriod: typeof body.endPeriod === 'string' ? body.endPeriod : undefined, minPeriods: null }
+        : { startPeriod: page.startPeriod, endPeriod: page.endPeriod, minPeriods: page.minPeriods };
+
+      const url = keyNarrowing.key === 'all'
+        ? absBuildingApprovalsUrl(choice.flow, window.startPeriod)
+        : narrowedApprovalsUrl(choice.flow, window.startPeriod, keyNarrowing.key, window.endPeriod);
+      console.log(
+        `[market-sales-ingest] approvals: ${dataflowRef(choice.flow)} key=${keyNarrowing.key} `
+        + `page=${pageIndex} ${window.startPeriod}→${window.endPeriod ?? 'open'} frontier=${frontier ?? 'none'}`,
+      );
+
+      const res = await fetch(url, { headers: { 'User-Agent': UA, Accept: 'text/csv,*/*' } });
+      if (!res.ok) throw new Error(`${url} answered ${res.status}`);
+      const text = await res.text();
+      /*
+       * Throws on a reshaped, truncated or unit-drifted answer, so a partial
+       * register is never written as though it were whole — and a PAGE is
+       * judged against the window it asked for. The register's own 24-month
+       * floor is a question about the table after a full load, not about one
+       * request of six months.
+       */
+      const parsed = parseAbsBuildingApprovals(text, choice.areaKind, {
+        minPeriods: window.minPeriods ?? 0,
+      });
+      const written = await upsertApprovals(supabase, parsed.rows, url, loadedAt);
+
+      const detail = {
+        stage,
+        file: url,
+        bytes: text.length,
+        source: ABS_BA_SOURCE_LABEL,
+        licence: ABS_BA_LICENCE,
+        // How the flow was arrived at, and what lost — so an operator can see
+        // the decision rather than only its result.
+        flow: dataflowRef(choice.flow),
+        flow_name: choice.flow.name,
+        how: choice.how,
+        catalogued_flows: choice.cataloguedFlows,
+        candidates: choice.candidates,
+        area_kind: choice.areaKind,
+        geography_score: choice.geographyScore,
+        // How much of the cube was asked for, and what could not be narrowed.
+        // An unnarrowed dimension is a silently BIGGER download, so it is
+        // reported rather than left to be inferred from the byte count.
+        key: keyNarrowing.key,
+        key_narrowed: keyNarrowing.narrowed,
+        key_unnarrowed: keyNarrowing.unnarrowed,
+        // What the download itself turned out to be.
+        columns: parsed.columns,
+        series_type_unfiltered: parsed.seriesTypeUnfiltered,
+        areas: parsed.areas,
+        // Which grains the body turned out to carry. A region download is the
+        // whole hierarchy, so this is how an operator sees that one LGA read
+        // also filled the state and national rungs.
+        areas_by_grain: parsed.areasByGrain,
+        periods: parsed.periods.length,
+        first_period: parsed.periods[0],
+        latest_period: parsed.latestPeriod,
+        states: parsed.states,
+        rows_skipped: parsed.skipped,
+        rows_written: written,
+        // Which page this was, and what a full load still needs — so an
+        // operator reads what remains rather than working it out.
+        page: pageIndex,
+        // What the register asked itself for, and why — so an operator reads
+        // the decision rather than only its result.
+        work: planned?.kind ?? 'operator_page',
+        because: planned?.because ?? `operator named page ${pageIndex}`,
+        oldest_before: oldest,
+        page_window: `${window.startPeriod}→${window.endPeriod ?? 'open'}`,
+        page_judged_against: window.minPeriods,
+        frontier_before: frontier,
+        pages_remaining: planned
+          ? planned.windowsRemaining
+          : Math.max(0, pagesToCover(parsed.latestPeriod, REGISTER_FLOOR_PERIOD) - (pageIndex + 1)),
+        register_floor: REGISTER_FLOOR_PERIOD,
       };
       await supabase.from('market_sales_sync').insert({ detail });
       return json({ success: true, ...detail });
@@ -866,7 +1261,7 @@ Deno.serve(async (req) => {
     // a rejected argument rather than as a deployment that had not landed yet.
     return json({
       success: false,
-      error: 'stage must be "qld", "nsw", "abs", "vic", "vic_volume", "vic_discover", "sa" or "probe"',
+      error: 'stage must be "qld", "nsw", "abs", "approvals", "vic", "vic_volume", "vic_discover", "sa" or "probe"',
     }, 400);
   } catch (error) {
     const message = error instanceof Error ? error.message : String(error);

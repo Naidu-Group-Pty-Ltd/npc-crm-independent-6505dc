@@ -233,8 +233,11 @@ describe('the seeded catalogue', () => {
 
   /**
    * Timed, not guessed: `seededFamilies()` reads and regex-scans every
-   * `seed_template_library` migration — **199 MB** across nine files, the
-   * catalogue's 543 templates written out as SQL. That is real work, and
+   * `seed_template_library` migration — **587 MB across nineteen files** as
+   * of seed v19 (the comment above this one said 199 MB across nine, and was
+   * three releases stale; each release adds ~41.7 MB and none is ever
+   * removed, which is worth knowing before adding the twentieth). That is the
+   * catalogue's templates written out as SQL, it is real work, and
    * under vitest's default 5 s allowance it fails the whole file whenever
    * the machine is busy (measured: 7.3 s in a loaded parallel run, ~1 s
    * alone). The assertion is unchanged; only the clock is honest about what

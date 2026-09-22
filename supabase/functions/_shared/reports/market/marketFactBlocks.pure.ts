@@ -77,6 +77,7 @@ import {
   type EvidenceProvider,
   type MarketEvidence,
 } from './marketEvidence.pure.ts';
+import { parseVizDirective } from '../vizDirectives.pure.ts';
 
 /** How each measure is named to a reader, and how its value is written. */
 const MEASURE: Readonly<Record<EvidenceKey, { label: string; unit: 'money' | 'percent' | 'count' | 'days' | 'series' }>> = {
@@ -675,6 +676,73 @@ function statedNumbers(facts: MarketFacts): Set<string> {
   return out;
 }
 
+/**
+ * Every MAGNITUDE a directive plots, read through the real parser.
+ *
+ * `seriesValues` below re-parses the grammar privately and reads only a
+ * `spark=` / `values=` / `data=` / `series=` option or a bare all-numeric
+ * head. Measured by execution over all twelve production forms, that left
+ * **nine unread** — including `bars` with head pairs, which is the first
+ * example in the grammar's own documentation and the commonest shape in the
+ * corpus. So `CHART_IS_A_CLAIM`'s promise, that "a series … may contain only
+ * values from the table above", was enforced for three forms in twelve.
+ *
+ * This asks `parseVizDirective` instead — the one implementation of the
+ * grammar, which every renderer already uses. A second reading of a grammar is
+ * how the two come to disagree, and that is exactly what happened here.
+ *
+ * ## Which kinds, and why not the rest
+ *
+ * Only the kinds whose plotted values are MAGNITUDES in the same units a fact
+ * table states: `bars`, `donut`, `tiles`, `heatmap`, `waterfall`, `wheel` and
+ * `margin`'s sparkline.
+ *
+ * `gauge`, `pictograph` and `quadrant` are deliberately excluded and it is not
+ * an oversight. Their numbers are a POSITION on a declared scale — a gauge's
+ * `max`, a pictograph's `total`, a quadrant's axis — so `7/10` is a rating and
+ * `8,3` is a placement, and judging either against a table of medians would
+ * remove a sound chart. `timeline` and `glance` plot no number at all; their
+ * digits live in label text, which this rule must never read as a value.
+ *
+ * A scale is likewise never judged: a `bars` `max=100` and a `wheel`'s `max`
+ * are the axis, not a claim, so neither is returned.
+ */
+function plottedMagnitudes(kind: string, payload: string): number[] {
+  const d = parseVizDirective(kind, payload);
+  if (!d) return [];
+  const finite = (xs: Array<number | null | undefined>): number[] =>
+    xs.filter((n): n is number => typeof n === 'number' && Number.isFinite(n));
+  switch (d.kind) {
+    case 'bars': return finite(d.items.map((i) => i.value));
+    case 'donut': return finite(d.segments.map((sg) => sg.value));
+    case 'heatmap': return finite(d.grid.flat());
+    case 'waterfall': return finite(d.items.map((i) => i.value));
+    case 'wheel': return finite(d.scores);
+    case 'margin': return finite(d.spark ?? []);
+    case 'tiles':
+      /*
+       * A tile's value is a STRING and is often qualitative ("Moderate"), so
+       * only a tile whose value reads as a number is a magnitude.
+       *
+       * The digit test is the whole guard, and the first draft did not have
+       * it: stripping non-numerics from `"Moderate"` leaves `""`, and
+       * **`Number('')` is 0**, which is finite — so a qualitative tile
+       * reported a magnitude of zero and a market-worded tile grid was
+       * removed for a figure nobody plotted. That is the same trap
+       * `urban-centre-register-ingest` records paying for, where a feature
+       * with no point parsed as `(0, 0)`. A spec caught it here.
+       */
+      return finite(d.tiles.map((t) => {
+        const raw = String(t.value ?? '').trim();
+        if (!/\d/.test(raw)) return null;
+        const n = Number(raw.replace(/[^0-9.\-]/g, ''));
+        return Number.isFinite(n) ? n : null;
+      }));
+    default:
+      return [];
+  }
+}
+
 /** The numbers a directive's payload draws, ignoring prose options. */
 function seriesValues(payload: string): number[] {
   const parts = payload.split('|').map((p) => p.trim());
@@ -702,7 +770,11 @@ function seriesValues(payload: string): number[] {
 function describingWords(payload: string): string {
   const parts = payload.split('|').map((p) => p.trim());
   const head = parts[0] ?? '';
-  const headIsSeries = /^[\s\d.,-]+$/.test(head);
+  // A grid head (`8.6,3.9 / 2.0,1.0`) is a series, not a title. It carries no
+  // word, so including it changed no verdict — but leaving it would mean the
+  // same string is a title here and a value list in `heatmapGrid`, which is
+  // how two readings of one grammar come to disagree.
+  const headIsSeries = /^[\s\d.,\/-]+$/.test(head) && /\d/.test(head);
   const labels = parts
     .filter((p) => /^(label|title)\s*=/i.test(p))
     .map((p) => p.slice(p.indexOf('=') + 1));
@@ -724,7 +796,11 @@ export function suppressUnevidencedMarketSeries(
     const words = describingWords(payload);
     const matched = MARKET_WORDS.filter((w) => words.includes(w));
     if (!matched.length) { out.push(line); continue; }
-    const values = seriesValues(payload);
+    // Both readings, unioned. `seriesValues` reads the option forms the
+    // parser folds away (a `spark=` on a kind that declares no sparkline),
+    // and `plottedMagnitudes` reads what the directive actually draws. More
+    // values judged, never fewer.
+    const values = [...new Set([...seriesValues(payload), ...plottedMagnitudes(kind, payload)])];
     if (!values.length) { out.push(line); continue; }
     const unsupported = values.filter((v) => !stated.has(v.toFixed(1)));
     if (!unsupported.length) { out.push(line); continue; }

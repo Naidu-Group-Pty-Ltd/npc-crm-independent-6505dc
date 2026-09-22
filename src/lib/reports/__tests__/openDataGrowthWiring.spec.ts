@@ -103,12 +103,105 @@ describe('the loader and its declarations', () => {
     expect(LOADER).toContain('choice.chosen.slice(0, 1)');
   });
 
-  it('refuses rather than stores, and writes only the register and its log', () => {
+  it('refuses rather than stores, and writes only its registers and its log', () => {
     expect(LOADER).toContain('parseQgsoRldaSales(sheets); // throws → nothing written');
     expect(LOADER).toMatch(/\.from\('market_sales_medians'\)/);
     expect(LOADER).toMatch(/\.from\('market_sales_sync'\)/);
+    /*
+     * The containment rule, widened DELIBERATELY and once.
+     *
+     * This assertion is why the rule works: adding the `approvals` stage
+     * failed it in CI, because that stage writes a second register. The set
+     * is exhaustive on purpose — a loader that quietly gains a table is how a
+     * function's blast radius grows without anybody deciding it should — so
+     * the fix is to name the new table here rather than to relax the shape of
+     * the check.
+     *
+     * Two registers and one log, and the log is shared: `market_sales_sync`
+     * carries a row per run of every stage, approvals included, so an
+     * operator reads one table to see what this function did.
+     */
     const tables = [...LOADER.matchAll(/\.from\('([a-z_]+)'\)/g)].map((m) => m[1]);
-    expect(new Set(tables)).toEqual(new Set(['market_sales_medians', 'market_sales_sync']));
+    expect(new Set(tables)).toEqual(new Set([
+      'market_sales_medians',
+      'market_building_approvals',
+      'market_sales_sync',
+    ]));
+  });
+
+  it('the approvals stage discovers its dataflow and refuses before it writes', () => {
+    // The stage that failed the assertion above, asserted rather than assumed.
+    expect(LOADER).toContain("stage === 'approvals'");
+    /*
+     * Discovery precedes the data query, asserted INSIDE the stage rather
+     * than over the whole file. The read-only `probe` stage calls the same
+     * two functions earlier in the module, so a first-occurrence ordering
+     * over `LOADER` measures the probe and not this — which is what the
+     * first version of this assertion did, and it failed for that reason
+     * rather than because the stage was wrong.
+     */
+    const from = LOADER.indexOf("if (stage === 'approvals') {");
+    const to = LOADER.indexOf("if (stage === 'vic') {", from);
+    expect(from).toBeGreaterThan(-1);
+    expect(to).toBeGreaterThan(from);
+    const STAGE = LOADER.slice(from, to);
+    const at = (needle: string) => {
+      const i = STAGE.indexOf(needle);
+      expect(i, `${needle} is not in the approvals stage`).toBeGreaterThan(-1);
+      return i;
+    };
+    expect(at('resolveBuildingApprovalsFlow(')).toBeGreaterThan(at('ABS_BA_DATAFLOW_CATALOGUE_URL'));
+    // The structure is read between the flow and the query, because the key
+    // is composed from it. Both URL builders are present — `all` is the
+    // fallback when the structure cannot be read — so the ordering is
+    // asserted against the COMPOSITION rather than against either builder.
+    expect(at('absDataStructureUrl(')).toBeGreaterThan(at('resolveBuildingApprovalsFlow('));
+    expect(at('composeApprovalsKey(')).toBeGreaterThan(at('absDataStructureUrl('));
+    expect(at('narrowedApprovalsUrl(')).toBeGreaterThan(at('composeApprovalsKey('));
+    expect(at('absBuildingApprovalsUrl(')).toBeGreaterThan(at('composeApprovalsKey('));
+    expect(at('parseAbsBuildingApprovals(')).toBeGreaterThan(at('narrowedApprovalsUrl('));
+    expect(at('upsertApprovals(')).toBeGreaterThan(at('parseAbsBuildingApprovals('));
+    // No dataflow identifier is spelled in the loader: it comes from the
+    // catalogue or from an operator override checked against the catalogue.
+    expect(LOADER).not.toMatch(/'ABS,[A-Z0-9_]+,\d/);
+    // Nor is a KEY spelled here. A positional key typed from memory returns a
+    // plausible, wrong slice under an HTTP 200, which is the mistyped-column
+    // failure with a success code in front of it.
+    expect(STAGE).not.toMatch(/['"`][A-Z0-9_+]*\.[A-Z0-9_+]*\.[A-Z0-9_+]*['"`]/);
+  });
+
+  it('the approvals stage reads ONE page and learns the frontier from the register', () => {
+    const from = LOADER.indexOf("if (stage === 'approvals') {");
+    const STAGE = LOADER.slice(from, LOADER.indexOf("if (stage === 'vic') {", from));
+    /*
+     * Measured: SA2 narrowed is 111.6 MB over 33 months and 12.2 MB over 6,
+     * against a 24 MB budget — so a full load is several requests, the shape
+     * this loader has used since five DCJ workbooks exhausted an edge
+     * worker's compute allowance.
+     */
+    expect(STAGE).toContain('approvalsPage(');
+    // The frontier is READ, never assumed: the ABS publishes with a lag and
+    // a constant for it is one nobody here can verify.
+    expect(STAGE).toMatch(/from\('market_building_approvals'\)[\s\S]{0,200}order\('period'/);
+    expect(STAGE).toContain('frontier');
+    // And the page is judged against the window it asked for.
+    expect(STAGE).toMatch(/minPeriods: window\.minPeriods/);
+    // What remains is reported rather than left to be worked out.
+    expect(STAGE).toContain('pages_remaining');
+  });
+
+  it('a structure it cannot read costs the approvals stage nothing', () => {
+    const from = LOADER.indexOf("if (stage === 'approvals') {");
+    const STAGE = LOADER.slice(from, LOADER.indexOf("if (stage === 'vic') {", from));
+    // The narrowing is an optimisation, never a dependency: the fallback is
+    // the `/all` request that shipped, so this can only improve a load or
+    // leave it alone. A refusal here would take the register down to save
+    // bytes, which is the wrong trade in both directions.
+    expect(STAGE).toMatch(/catch \(error\) \{[\s\S]*?key: 'all'/);
+    expect(STAGE).toContain("keyNarrowing.key === 'all'");
+    // And what could not be narrowed is recorded, because an unnarrowed
+    // dimension is a silently bigger download.
+    expect(STAGE).toContain('key_unnarrowed');
   });
 
   it('the register keeps a suppressed median as null and keys a quarter by its end month', () => {

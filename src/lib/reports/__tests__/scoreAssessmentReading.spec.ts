@@ -111,7 +111,21 @@ describe('an exclusion is about the record, never about the area', () => {
       'Not assessed — the available location information does not meet the current verification standard.',
     );
     expect(location.exclusionReason).not.toContain('could be measured');
-    expect(location.exclusionRemedy).toContain('acquisition stamp');
+    /*
+     * This asserted `exclusionRemedy` CONTAINED 'acquisition stamp', and in
+     * doing so it pinned the defect `gradeGapAudience.spec.ts` was written
+     * for: `remedy` is the OPERATOR field — function names, documentation
+     * paths and release codes — and this bullet is drawn in the client's
+     * Compass under *What each dimension rested on*. The full sentence it was
+     * vouching for reads "Regenerate the report: the location service
+     * re-acquires the enrichment with its acquisition stamp (RF-7.2B) …".
+     *
+     * The bullet reads `readerRemedy` now and fails CLOSED, so a row written
+     * before that field existed — which `ANNABELLE_SCORE` is — renders its
+     * reason alone. The operator's remedy is untouched and still carries
+     * every name it needs; it simply has one reader again instead of two.
+     */
+    expect(location.exclusionRemedy).toBeNull();
   });
 
   it('falls back to a corrected sentence where the row carries none', () => {

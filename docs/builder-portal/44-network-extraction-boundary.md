@@ -23,7 +23,7 @@ this page is the explanation.
   `builder_organisation_id` to five rollout tables), and
   `20260901000700_partner_portal_agreement_cascade`.
 - **One migration that carries "builder" is not the portal's**:
-  `20260717000000_add_builder_invoice_current_payment` is a Command Centre
+  `20260717000001_add_builder_invoice_current_payment` is a Command Centre
   finance feature. `builder_invoices` / `build_progress_payments` are finance
   tables that merely wear the prefix, and they stay in the clone.
 

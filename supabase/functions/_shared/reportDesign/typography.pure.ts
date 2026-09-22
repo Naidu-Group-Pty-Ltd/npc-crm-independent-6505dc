@@ -153,9 +153,14 @@ export const PRINT_STACK = {
   /**
    * Cover titles and the closing lockup. `--font-display` in the design system.
    *
-   * Cinzel is the brand's cover face and ships Bold only, which is why it is
-   * confined to the two places set large and short. At body sizes an all-caps
-   * roman like this is unreadable.
+   * Cinzel is confined to the two places set large and short because at body
+   * sizes an all-caps inscriptional roman is unreadable.
+   *
+   * This comment used to give a different reason — "ships Bold only" — forty
+   * lines below the table that had removed Bold and shipped Regular and
+   * SemiBold in its place, with the reasoning written out. Two statements of
+   * one fact, disagreeing, in one file. The reason above is the one that was
+   * always true and does not depend on what the image happens to hold.
    */
   cover: "'Cinzel', 'Playfair Display', Georgia, serif",
   /**

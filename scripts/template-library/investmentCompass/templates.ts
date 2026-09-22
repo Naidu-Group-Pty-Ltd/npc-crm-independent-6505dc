@@ -575,10 +575,30 @@ function buildTemplate(family: DesignFamily, variant: VariantDefinition): Compas
       // Opportunities are an array on the scored reports and empty on most of
       // them, so this is drawn only where the variant has room AND the record
       // has one.
+      /*
+       * A callout, not a definition list, because there is no term.
+       *
+       * This was `definitions('Opportunities', [{ term: 'Noted', definition:
+       * '{{opportunities.0}}' }])`. Every sibling definition list on this page
+       * carries a real term naming what the row is about — `Location`,
+       * `Yield`, `Risk` — and the record gives an opportunity as one
+       * unlabelled string, so any term in that slot is invented. `Noted` is a
+       * placeholder occupying a label slot, which is `propertyTypeLabel`'s
+       * rule read from the other end.
+       *
+       * The heading already said "Opportunities", so the 160pt term column
+       * was carrying a word that repeated nothing and meant nothing. A
+       * callout is the container the page already uses for one unqualified
+       * statement (see "No risk recorded" below) and it is height-neutral
+       * here: the definition list declared 30 + one ~45pt row against the
+       * callout's 72.
+       *
+       * Only `opportunities.0` is drawn, and that is deliberate for the same
+       * measured reason `strengthsWatch` draws one each: a second row prints a
+       * marker with nothing beside it on the overwhelming majority of records.
+       */
       {
-        ...definitions('Opportunities', [
-          { term: 'Noted', definition: '{{opportunities.0}}' },
-        ], 120),
+        ...callout('Opportunity', '{{opportunities.0}}'),
         conditional: 'opportunities && opportunities[0]',
       },
     ], contentTop()), contentTop()),
@@ -781,7 +801,20 @@ function buildTemplate(family: DesignFamily, variant: VariantDefinition): Compas
       // risk dimension's own reasoning either way.
       {
         ...risks('Hazard · rating · verification', [{
-          risk: '{{risks.0.risk}}', rating: 'Noted', confidence: 'Indicative',
+          // `Not assessed`, not `Noted`. The record holds a bare risk STRING
+          // from `investment_score.risks` and no severity at all, and
+          // `RISK_EXPOSURE_LEVELS` is `Low | Moderate | High | Not assessed` —
+          // so `Noted` was a fifth word in a four-word vocabulary, in the
+          // column that states the EXPOSURE. It is also absent from
+          // `RATING_PALETTE`, which is why the chip already drew it neutral.
+          //
+          // `severityFromRating` answers null for both, so neither draws a bar;
+          // what changes is that the reader is given the platform's own word
+          // for "nobody assessed this" instead of one it uses nowhere else.
+          // `confidence: 'Indicative'` is deliberately kept — it IS in
+          // `CONFIDENCE_PALETTE`, and it is an honest qualifier for an
+          // unverified one-liner rather than a claim the record cannot support.
+          risk: '{{risks.0.risk}}', rating: 'Not assessed', confidence: 'Indicative',
           why: '{{assessment.4.details}}', ddAction: 'Verify before exchange',
         }], DETAIL_CHARS.risk),
         conditional: 'risks && risks[0] && risks[0].risk',

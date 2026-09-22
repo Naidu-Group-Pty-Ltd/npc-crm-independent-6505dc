@@ -41,14 +41,36 @@ export function severityFromRating(rating: string): number | null {
   return null;
 }
 
-/** Semantic colour for a rating — caution by default, negative when severe. */
+/**
+ * Semantic colour for a rating — and MUTED where nothing was assessed.
+ *
+ * This returned `caution` for `null`, and `null` is precisely the answer
+ * `severityFromRating` gives for a rating it does not recognise — deliberately,
+ * under its own comment, *"so the bar is omitted rather than drawn at a length
+ * that states a severity nobody assessed."*
+ *
+ * The colour is used twice: for the bar, and for the RATING WORD's own text
+ * colour in the row's third cell. So the bar was correctly withheld and the
+ * word was printed in the caution colour anyway — `NOT ASSESSED` set in the
+ * same amber as `MODERATE`, indistinguishable at a glance. One function
+ * guarded the absence and the next one below it undid the guard.
+ *
+ * That is `PLANNING_CONTROLS_IN_THE_REPORT.md` §9's rule — **an absence may not
+ * be rated** — committed in colour rather than in a word, which is the same
+ * shape as `withholdRatedAbsenceCharts`: a picture has no sentence for a rule
+ * about sentences to catch.
+ *
+ * The chip display already had this right: `ratingChipHtml` falls back to
+ * `Neutral` for an unknown rating. The two displays of one register disagreed.
+ */
 function severityColour(
   severity: number | null,
   negative: string,
   caution: string,
   positive: string,
+  muted: string,
 ): string {
-  if (severity === null) return caution;
+  if (severity === null) return muted;
   if (severity >= 0.85) return negative;
   if (severity >= 0.45) return caution;
   return positive;
@@ -123,7 +145,7 @@ export function renderRiskRegisterHtml(block: Block, ctx: HtmlBlockContext): str
       const severity = typeof it.severity === 'number'
         ? Math.max(0, Math.min(1, it.severity))
         : severityFromRating(rating);
-      const colour = severityColour(severity, negativeColor, cautionColor, positiveColor);
+      const colour = severityColour(severity, negativeColor, cautionColor, positiveColor, mutedColor);
       const last = i === items.length - 1;
       const bar = severity === null
         ? ''

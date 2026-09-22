@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest';
 
 const functionSource = readFileSync(new URL('./index.ts', import.meta.url), 'utf8');
 const migrationSource = readFileSync(
-  new URL('../../migrations/20260726180000_preserve_template_import_ownership.sql', import.meta.url),
+  new URL('../../migrations/20260726180001_preserve_template_import_ownership.sql', import.meta.url),
   'utf8',
 );
 

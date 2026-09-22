@@ -15,11 +15,16 @@ import {
   parseActZoning, parseNswZoning, parseQldInstrument, parseQldParcel,
   parseTasZoning, parseVicZoning,
   QLD_INSTRUMENT_LAYERS, QLD_STATE_PLANNING_SOURCE,
-  SA_NT_NOTE, VERIFICATION_INSTRUMENT, WA_LICENCE_NOTE,
+  NT_NOTE, SA_NOTE, VERIFICATION_INSTRUMENT, WA_LICENCE_NOTE,
   type DevelopmentInstrumentReading, type ParcelReading, type ParseOutcome,
   type PlanningJurisdiction, type ZoningReading,
 } from '../_shared/planning/planningSources.pure.ts';
 import { deriveZoneFamily, ZONE_FAMILY_LABEL } from '../_shared/planning/zoneFamily.pure.ts';
+import {
+  DEVELOPMENT_FLOOR, PLANNING_FLOOR,
+  developmentProviderOrder, floorAnswered, planningProviderOrder, refinementsThatAnswered,
+  type ProviderOutcome,
+} from '../_shared/planning/planningProviders.pure.ts';
 import {
   buildNswHazardIdentify, buildNswPrincipalIdentify, buildNswProtectionIdentify,
   buildQldFloodIdentify, buildQldMsesIdentify, buildQldStatePlanningIdentify,
@@ -218,7 +223,10 @@ Deno.serve(async (req) => {
     } else if (jurisdiction === 'WA') {
       zoningCell = { status: 'licence_restricted', note: WA_LICENCE_NOTE };
     } else if (jurisdiction === 'SA' || jurisdiction === 'NT') {
-      zoningCell = { status: 'not_integrated', note: SA_NT_NOTE };
+      // Two jurisdictions, two measured facts — SA's service answers and is
+      // unread; the NT's is behind a bot-protection challenge. One note for
+      // both is how neither got measured for a year.
+      zoningCell = { status: 'not_integrated', note: jurisdiction === 'SA' ? SA_NOTE : NT_NOTE };
     } else if (zoningByJurisdiction.some(([, o]) => o.kind === 'error')) {
       anyTransportFailure = true;
       const failures = zoningByJurisdiction.filter(([, o]) => o.kind === 'error')
@@ -282,7 +290,7 @@ Deno.serve(async (req) => {
     } else if (jurisdiction === 'WA') {
       parcelCell = { status: 'licence_restricted', note: WA_LICENCE_NOTE };
     } else if (jurisdiction === 'SA' || jurisdiction === 'NT') {
-      parcelCell = { status: 'not_integrated', note: SA_NT_NOTE };
+      parcelCell = { status: 'not_integrated', note: jurisdiction === 'SA' ? SA_NOTE : NT_NOTE };
     } else {
       parcelCell = {
         status: 'not_integrated',
@@ -464,6 +472,13 @@ Deno.serve(async (req) => {
     // that could not be reached contributes no coverage at all, so an outage
     // can never read as a property with nothing on it.
     const constraintOutcomes: ConstraintProbeOutcome[] = [];
+    /*
+     * The `instrument_currency` refinement's reading. Null everywhere but NSW
+     * today, which is exactly what a refinement that cannot answer looks
+     * like: the floor's answer stands unchanged and the cell is absent.
+     */
+    let instrumentCurrency:
+      { name: string; amendment: string | null; commenced: string | null; lga: string | null } | null = null;
     const fetchConstraint = async (
       url: string,
       parse: (body: unknown) => ConstraintProbeOutcome,
@@ -494,11 +509,13 @@ Deno.serve(async (req) => {
           : { asked: [], status: 'unavailable', readings: [], source: NSW_PROTECTION_SOURCE, licence: 'CC BY 4.0', note: protection.message },
       );
       // The LEP itself is not a control and draws no row; it is what lets the
-      // report name WHICH instrument the height and lot size come from.
-      if (principal.ok) {
-        const lep = parseNswInstrument(principal.body);
-        if (lep) console.log('[planning-data-service] NSW instrument', lep.name, lep.amendment ?? '');
-      }
+      // report name WHICH instrument the height and lot size come from — and
+      // WHICH AMENDMENT of it. Until W3.4 this was parsed correctly and handed
+      // to `console.log`, so the document printed "Muswellbrook Local
+      // Environmental Plan 2009" over a record that knew it was Amendment 12.
+      // `parseNswZoning` publishes `EPI_NAME` and carries no amendment at all,
+      // so nothing downstream had any other way to learn it.
+      if (principal.ok) instrumentCurrency = parseNswInstrument(principal.body);
     } else if (jurisdiction === 'VIC') {
       constraintOutcomes.push(await fetchConstraint(
         buildVicOverlayQuery(lng, lat), parseVicOverlays,
@@ -561,6 +578,60 @@ Deno.serve(async (req) => {
       unavailable: merged.registersUnavailable.length,
     });
 
+    /*
+     * ── Which providers were consulted, and which ANSWERED ────────────────
+     *
+     * The order is a configuration; what a report may state turns on what
+     * actually answered, which is why the two are reported separately and
+     * why `refinementsThatAnswered` returns nothing where the floor did not.
+     * A refinement answering while the floor did not is the state that has to
+     * be SAID rather than smoothed over: the reading then describes whatever
+     * the refinement happens to cover and nothing about the controls in force.
+     *
+     * `state_layer` counts as answered where a register ANSWERED, never where
+     * a reading was found. A register that answered and holds nothing here is
+     * `none_at_point` — *searched, nothing found* — and the whole point of
+     * §9's two-absences rule is that it is a different sentence from never
+     * having asked.
+     */
+    const planningOutcomes: ProviderOutcome[] = [
+      {
+        provider: 'state_layer',
+        answered: merged.registersAnswered.length > 0 || zoningCell.status === 'ok',
+      },
+      { provider: 'instrument_currency', answered: instrumentCurrency !== null },
+      // No jurisdiction's draft-instrument register is integrated yet. Listed
+      // so the reading says it was not answered rather than omitting it, which
+      // is `gradeGaps`' rule: an unmeasured dimension is named, not dropped.
+      { provider: 'amendment_register', answered: false },
+    ];
+    const developmentOutcomes: ProviderOutcome[] = [
+      { provider: 'da_register', answered: activityCell.status === 'ok' },
+      { provider: 'major_projects', answered: programmeCell.status === 'ok' },
+    ];
+    const providers = {
+      planning: {
+        order: planningProviderOrder((k) => Deno.env.get(k)),
+        floor: PLANNING_FLOOR,
+        floorAnswered: floorAnswered(planningOutcomes, PLANNING_FLOOR),
+        refinementsAnswered: refinementsThatAnswered(planningOutcomes, PLANNING_FLOOR),
+        consulted: planningOutcomes,
+      },
+      development: {
+        order: developmentProviderOrder((k) => Deno.env.get(k)),
+        floor: DEVELOPMENT_FLOOR,
+        floorAnswered: floorAnswered(developmentOutcomes, DEVELOPMENT_FLOOR),
+        refinementsAnswered: refinementsThatAnswered(developmentOutcomes, DEVELOPMENT_FLOOR),
+        consulted: developmentOutcomes,
+      },
+    };
+    console.log('[planning-data-service] providers', {
+      planning: providers.planning.refinementsAnswered,
+      planningFloor: providers.planning.floorAnswered,
+      development: providers.development.refinementsAnswered,
+      developmentFloor: providers.development.floorAnswered,
+    });
+
     const data = {
       jurisdiction,
       coordinate: { latitude: lat, longitude: lng },
@@ -573,6 +644,13 @@ Deno.serve(async (req) => {
         answered: merged.registersAnswered,
         unavailable: merged.registersUnavailable,
       },
+      /*
+       * Which instrument the controls in force belong to, and which amendment
+       * of it. A fact about the DOCUMENT and never about the property, which
+       * is what lets it be stated with no caveat about what may be built.
+       */
+      instrumentCurrency,
+      providers,
       developmentInstruments: instrumentsCell,
       developmentActivity: activityCell,
       investmentProgramme: programmeCell,

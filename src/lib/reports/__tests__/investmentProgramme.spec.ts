@@ -316,6 +316,23 @@ describe('the coverage statement is true of THIS reading', () => {
     expect(coverageLimitsFor(false)).toContain('state and federal budget infrastructure programmes');
   });
 
+  it('names the national priority list, which no other entry disclaimed', () => {
+    /*
+     * W3.2. A reader who knows the Infrastructure Priority List exists would
+     * otherwise have to infer from "federal budget programmes" that it was
+     * not consulted -- and that inference is wrong, because the Priority List
+     * is not a budget programme. It commits no money; appearing on it is not
+     * funding, which is this module's own rule about status words applied to
+     * the register rather than to an entry in one.
+     *
+     * It survives the state-programme branch, because reading one state's
+     * forward works says nothing about a national list.
+     */
+    const named = 'the Infrastructure Australia Priority List and other national pipeline registers';
+    expect(coverageLimitsFor(false)).toContain(named);
+    expect(coverageLimitsFor(true)).toContain(named);
+  });
+
   it('keeps the two a transport programme does not close', () => {
     for (const limit of coverageLimitsFor(true)) expect(typeof limit).toBe('string');
     expect(coverageLimitsFor(true)).toContain('council capital works programmes and their budgets');

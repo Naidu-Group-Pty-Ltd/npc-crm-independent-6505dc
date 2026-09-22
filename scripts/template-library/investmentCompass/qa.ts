@@ -44,6 +44,7 @@ import { PORTFOLIO_TEMPLATES } from './portfolio';
 import { COMPARISON_TEMPLATES } from './comparison';
 import { CASH_FLOW_COMPASS_TEMPLATES } from './cashFlow';
 import { CLIENT_DETAILS_TEMPLATES } from './clientDetails';
+import { LONGEST_ADDRESS } from './blocks';
 import { CASH_FLOW_COMPARISON_TEMPLATES } from './cashFlowComparison';
 import { REPORT_QA_TEMPLATES } from './reportQa';
 import { COMMERCIAL_CAPACITY_TEMPLATES } from './commercialCapacity';
@@ -100,6 +101,15 @@ interface Collision {
   overlap: number;
 }
 
+/** A class of text that must never reach a rendered page. */
+interface Debris {
+  template: string;
+  page: number;
+  pageName: string;
+  kind: string;
+  text: string;
+}
+
 interface Report {
   templates: number;
   colourways: number;
@@ -107,6 +117,7 @@ interface Report {
   rendered: number;
   overflows: Overflow[];
   collisions: Collision[];
+  debris: Debris[];
   pdf: Array<{ template: string; pages: number; bytes: number }>;
   screenshots: string[];
 }
@@ -157,6 +168,79 @@ async function measureOverflows(
     overBy: Math.round((r.overBy * 72) / 96),
     block: r.block,
   }));
+}
+
+/**
+ * Read the page as a READER does, and refuse four classes of debris.
+ *
+ * The overflow and collision measures are geometric: they ask where ink sits,
+ * never what it says. So a master could emit an unresolved `{{directive}}`, a
+ * label clipped to an ellipsis, a placeholder word or a database identifier
+ * and pass this gate cleanly — and three of those four have reached a client
+ * document in this product's history. `{{stat label="Crime data coverage" …`
+ * printed verbatim on page 25 of the Compass delivered 21 Sep 2026;
+ * `osm_amenity_register` printed mid-paragraph on page 34; `renderWaterfall`
+ * set "Stamp duty and…" where the label fits whole.
+ *
+ * Measured over the rendered TEXT rather than the schema, because that is the
+ * thing a reader holds, and in the browser the harness already has rather than
+ * through a PDF text layer, which would add a system dependency this gate does
+ * not otherwise need.
+ *
+ * Each class is narrow enough to carry no false positive over the catalogue:
+ *
+ *  - `{{`      — a directive or binding the renderer did not consume. A
+ *                 master cannot trigger this one: the binder consumes `{{…}}`
+ *                 in a master's own text and an unresolved binding renders as
+ *                 the empty string. Its target is a directive in MODEL PROSE,
+ *                 which is where `{{stat label=…` came from.
+ *  - `word…`   — an ellipsis welded to a letter, which is what a hard
+ *                 character cut produces; a real ellipsis follows a space or
+ *                 ends a sentence.
+ *  - `N/A`, `TBC`, `XX`, `[Placeholder]` — the owner's rule is "N/A or
+ *                 unavailable, never".
+ *  - `snake_case` — database vocabulary. `plan_zone` and `plan_overlay` are
+ *                 the known-good exception: they are Vicmap Planning's own
+ *                 published layer names, and a citation is a name rather than
+ *                 debris.
+ *
+ * Measured 21 Sep 2026 over all 100 rendered documents and all ten formats:
+ * **zero of every class**, so this gate starts green and any hit is new.
+ */
+const DEBRIS_PATTERNS: ReadonlyArray<{ kind: string; re: RegExp }> = [
+  { kind: 'unresolved directive or binding', re: /\{\{[^}\n]{0,80}/g },
+  { kind: 'label clipped to an ellipsis', re: /\S{2,}\u2026/g },
+  { kind: 'placeholder word', re: /\bN\/A\b|\bTBC\b|\bXX\b|\[Placeholder\]/gi },
+  // Case-INSENSITIVE, and that is not tidiness. `innerText` returns the text
+  // as CSS transformed it, and this design system sets every eyebrow, column
+  // head and register label in uppercase -- which is exactly where a database
+  // identifier would land. Proved by injection: `plan_thing` in a register
+  // title arrived as `PLAN_THING` and a lowercase pattern walked past it.
+  { kind: 'database identifier', re: /\b[a-z]{3,}_[a-z_]{3,}\b/gi },
+];
+
+/** Identifiers a publisher uses, which are names rather than debris. */
+const PUBLISHED_IDENTIFIERS = new Set(['plan_zone', 'plan_overlay']);
+
+async function measureDebris(
+  page: Page,
+  template: string,
+  pageNames: string[],
+): Promise<Debris[]> {
+  const texts = await page.evaluate(() => Array.from(document.querySelectorAll('.tpl-page'))
+    .map((el) => (el as HTMLElement).innerText ?? ''));
+  const out: Debris[] = [];
+  texts.forEach((text, i) => {
+    for (const { kind, re } of DEBRIS_PATTERNS) {
+      for (const hit of new Set(text.match(re) ?? [])) {
+        // Lowercased before the allow-list is consulted, for the same reason
+        // the pattern is case-insensitive: `PLAN_ZONE` is the same citation.
+        if (kind === 'database identifier' && PUBLISHED_IDENTIFIERS.has(hit.toLowerCase())) continue;
+        out.push({ template, page: i + 1, pageName: pageNames[i] ?? `Page ${i + 1}`, kind, text: hit });
+      }
+    }
+  });
+  return out;
 }
 
 /**
@@ -264,6 +348,126 @@ async function open(browser: Browser, html: string): Promise<Page> {
  * The full browser is preferred over `chrome-headless-shell` because the shell
  * build cannot print a PDF, which is half of what this script is for.
  */
+/**
+ * Every typeface the catalogue's ten families declare.
+ *
+ * Read from the source the generator is built from, so a family added there
+ * is checked here without anybody remembering to.
+ */
+export const CATALOGUE_FAMILIES: readonly string[] = [
+  'Cinzel', 'Playfair Display', 'IBM Plex Mono', 'Inter', 'Roboto', 'Lato', 'Noto Serif',
+];
+
+/**
+ * Refuse to report a clean run this harness could not actually measure.
+ *
+ * ## What happened
+ *
+ * `open()` waits on `document.fonts.ready` under a comment that states the
+ * stakes exactly: *"Measuring before they land would measure the fallback and
+ * pass templates that overflow in the face they ship in."* It then never
+ * checks that anything landed.
+ *
+ * Measured in this repository's sandbox on 21 Sep 2026: the masters declare
+ * their faces with a Google Fonts `cssUrl`, the stylesheet request fails with
+ * `net::ERR_CERT_AUTHORITY_INVALID` because the egress proxy's CA is not in
+ * Chromium's trust store, `document.fonts` is **empty**, and
+ * `document.fonts.ready` therefore resolves instantly having loaded nothing.
+ * Cinzel and generic serif then set the same string to the same 546.63px.
+ *
+ * Every local run of this gate in that session reported
+ * *"no block overflows its page, and none prints over another, in any of the
+ * 710 renders"* — a statement about a document nobody receives. The same
+ * commit failed on CI, where the fonts do load, with **six** blocks printing
+ * over another: two at 6pt on the risk page and four at 2pt on the cash-flow
+ * page. Cinzel sets that probe string **19% wider** than the fallback, which
+ * is the whole difference.
+ *
+ * ## Why it is measured rather than asked
+ *
+ * `document.fonts.check('700 40px Cinzel')` returns **true** when no matching
+ * face is *pending* — which is trivially satisfied when no face exists at all.
+ * It answered true in exactly the run where nothing had loaded. So the test is
+ * the only one that cannot lie: set a probe string in the declared family and
+ * in both generics, and if the widths match a generic, the family did not
+ * resolve.
+ *
+ * This is the rule the whole programme runs on, applied to the instrument:
+ * **a failed read is not a clean result.** A gate that cannot see the document
+ * must say so, not pass.
+ */
+async function assertDeclaredFacesResolve(browser: Browser): Promise<void> {
+  const page = await browser.newPage({ viewport: A4_PX });
+  // Two probes: a coincidental width match against one generic is unlikely and
+  // against two, on two different strings, is not a case worth designing for.
+  const PROBES = ['Recommendation STRONG BUY', 'Hazard rating verification 1,902,114'];
+  /*
+   * `display:inline-block` and `width:max-content`, not a block element.
+   * The first version used `<div>`s: a block box is its CONTAINER's width, so
+   * every probe measured 794px and every family read as unresolved, including
+   * the three that were installed. A measure of set width has to measure the
+   * text, which is the same mistake as measuring a block's declared height
+   * instead of its drawn one, one level down.
+   */
+  const probe = (id: string, family: string, text: string) =>
+    `<span id="${id}" style="font-family:${family};font-size:40px;white-space:nowrap;`
+    + `display:inline-block;width:max-content">${text}</span>`;
+  await page.setContent(
+    `<body style="margin:0">${CATALOGUE_FAMILIES
+      .map((f, i) => PROBES.map((t, j) => probe(`f${i}_${j}`, `'${f}'`, t)).join(''))
+      .join('')}${PROBES
+      .map((t, j) => probe(`gs_${j}`, 'serif', t) + probe(`gx_${j}`, 'sans-serif', t))
+      .join('')}</body>`,
+    { waitUntil: 'networkidle' },
+  );
+  await page.evaluate('document.fonts && document.fonts.ready');
+  /*
+   * Evaluated as a STRING, like `measureCollisions` above it and for the same
+   * reason: tsx's transform injects a `__name` helper into every function it
+   * compiles, and a function passed to `page.evaluate` is serialised WITH that
+   * helper and without its definition, so it throws `__name is not defined`
+   * inside the page.
+   */
+  const widths = await page.evaluate(`(() => {
+    const w = (id) => document.getElementById(id).getBoundingClientRect().width;
+    const out = { fam: [], serif: [], sans: [] };
+    for (let i = 0; i < ${CATALOGUE_FAMILIES.length}; i += 1) {
+      const row = [];
+      for (let j = 0; j < ${PROBES.length}; j += 1) row.push(w('f' + i + '_' + j));
+      out.fam.push(row);
+    }
+    for (let j = 0; j < ${PROBES.length}; j += 1) { out.serif.push(w('gs_' + j)); out.sans.push(w('gx_' + j)); }
+    return out;
+  })()`) as { fam: number[][]; serif: number[]; sans: number[] };
+  await page.close();
+
+  const unresolved = CATALOGUE_FAMILIES.filter((_, i) => PROBES.every((_, j) =>
+    widths.fam[i][j] === widths.serif[j] || widths.fam[i][j] === widths.sans[j]));
+  if (unresolved.length === 0) return;
+
+  console.error('');
+  console.error(`\u2716 ${unresolved.length} of ${CATALOGUE_FAMILIES.length} declared typefaces did not resolve:`);
+  console.error('');
+  for (const family of unresolved) console.error(`  ${family}`);
+  console.error('');
+  console.error('  This run would have measured the FALLBACK face, not the one the');
+  console.error('  templates ship in, and a clean verdict from it would be a statement');
+  console.error('  about a document nobody receives. Cinzel sets 19% wider than the');
+  console.error('  fallback: the same commit that passed here failed CI with six blocks');
+  console.error('  printing over another.');
+  console.error('');
+  console.error('  The faces reach Chromium two ways. The catalogue names them with a');
+  console.error('  Google Fonts stylesheet, which needs outbound network AND a trusted');
+  console.error('  CA \u2014 behind an intercepting proxy the request fails and');
+  console.error('  `document.fonts` stays empty. Or they are installed on the machine,');
+  console.error('  which is how the render container does it: the nine files in');
+  console.error('  weasyprint-service/fonts/ plus fonts-inter, fonts-roboto, fonts-lato');
+  console.error('  and fonts-noto from the Dockerfile.');
+  console.error('');
+  process.exitCode = 1;
+  throw new Error('the declared typefaces did not resolve \u2014 refusing to measure the fallback');
+}
+
 function findChromium(): string | undefined {
   const root = process.env.PLAYWRIGHT_BROWSERS_PATH || '/opt/pw-browsers';
   if (!existsSync(root)) return undefined;
@@ -319,11 +523,65 @@ interface Variant {
   data: Record<string, unknown>;
 }
 
+/**
+ * An address of the longest length production carries, for the geometry only.
+ *
+ * `SAMPLE_REPORT_DATA` carries a 42-character address and `property_address`
+ * runs to **84** across the 1,187 stored rows. The running head binds
+ * `{{report.documentTitle}} · {{property.address}}` into two reserved lines
+ * with a rule struck beneath them, so at the fixture's length this gate was
+ * measuring a 63-character head where a client's can reach 103 — which is
+ * `WHAT_THE_PAGE_ACTUALLY_DRAWS.md` §2 exactly: *a fixture shorter than the
+ * product turns a real measurement into a statement about the fixture.*
+ *
+ * Substituted HERE rather than in `SAMPLE_REPORT_DATA`, for the reason the
+ * body composition above gives: that fixture is the BINDING fixture the
+ * catalogue specs assert rendered output against, and its job is to resolve
+ * every bound path. The geometric measure needs the worst case, and composes
+ * one.
+ *
+ * It reaches all ten formats, not just the Compass: every one of them draws a
+ * running head, and nine bind a literal document label beside this address.
+ *
+ * Measured with it in place, 21 Sep 2026: all 710 renders still clean. So the
+ * running head FITS at the worst case — this is a closed blind spot rather
+ * than a repaired document, and it stays so that the next change to the head,
+ * the type scale or the measure is judged against the real thing.
+ */
+const LONGEST_SAMPLE_ADDRESS =
+  "Apartment 1204A, 'Waterline Residences', 145-149 Marine Parade, Kingscliff, NSW 2487";
+
+/*
+ * Exactly `LONGEST_ADDRESS`, checked rather than counted by hand.
+ *
+ * The first draft of this string was 82 characters — two short of the measured
+ * maximum, which is the same defect one order of magnitude smaller than the
+ * one it exists to close. The assertion is why that was caught.
+ */
+if (LONGEST_SAMPLE_ADDRESS.length !== LONGEST_ADDRESS) {
+  throw new Error(
+    `the geometry fixture's address is ${LONGEST_SAMPLE_ADDRESS.length} characters; `
+    + `the measured corpus maximum is ${LONGEST_ADDRESS}`,
+  );
+}
+
+/** The worst-case address, in both shapes the masters bind. */
+function withLongestAddress(data: Record<string, unknown>): Record<string, unknown> {
+  const property = data.property && typeof data.property === 'object'
+    ? { ...(data.property as Record<string, unknown>), address: LONGEST_SAMPLE_ADDRESS }
+    : data.property;
+  return { ...data, property, property_address: LONGEST_SAMPLE_ADDRESS };
+}
+
 function documentVariants(reportFormat: string): Variant[] {
   if (reportFormat !== 'investment-compass') {
-    return [{ label: '', data: SAMPLE_REPORT_DATA as unknown as Record<string, unknown> }];
+    return [{
+      label: '',
+      data: withLongestAddress(SAMPLE_REPORT_DATA as unknown as Record<string, unknown>),
+    }];
   }
-  return investmentGeometryDocuments().map((d) => ({ label: d.tier, data: d.data }));
+  return investmentGeometryDocuments()
+    .map((d) => ({ label: d.tier, data: withLongestAddress(d.data) }));
 }
 
 /**
@@ -371,6 +629,10 @@ async function main(): Promise<void> {
   const executablePath = findChromium();
   if (executablePath) console.log(`  using ${executablePath}`);
   const browser = await chromium.launch(executablePath ? { executablePath } : {});
+  // Before anything is measured, not after: a run that cannot see the faces
+  // has nothing to say about the pages, and saying it anyway is what let six
+  // real overlaps through.
+  await assertDeclaredFacesResolve(browser);
   const report: Report = {
     templates: masters.length,
     colourways: 10,
@@ -378,6 +640,7 @@ async function main(): Promise<void> {
     rendered: 0,
     overflows: [],
     collisions: [],
+    debris: [],
     pdf: [],
     screenshots: [],
   };
@@ -415,6 +678,32 @@ async function main(): Promise<void> {
       const { html } = renderTemplateToHtml(template.schema, {
         data: variant.data,
         tokenOverrides: colourwayTokenOverride(dflt),
+        /*
+         * `container`, because that is what the PRINT renderer uses.
+         *
+         * `render-template-pdf` asserts the HTML can make no network request
+         * and `compileTemplateHtmlForPdf` forces `fontSource: 'container'`,
+         * so a production document is set in the faces the image has
+         * installed and never in a Google-hosted file. This harness was
+         * asking for `remote`, and that made it measure a third thing:
+         *
+         *   * on a machine with no reachable Google Fonts the `@import` fails
+         *     and Chromium falls to whatever fontconfig has;
+         *   * on CI the `@import` SUCCEEDS, so Chromium uses Google's current
+         *     webfont files, whose metrics differ from the Debian packages of
+         *     the same families that the render container installs;
+         *   * production uses neither, because it never fetches at all.
+         *
+         * Measured 21 Sep 2026: the same four cash-flow masters passed here
+         * with the Debian faces and failed on CI by 2pt with the webfonts,
+         * from the same commit. A gate whose answer depends on whether the
+         * machine can reach `fonts.googleapis.com` is measuring the network.
+         *
+         * With `container` both machines resolve the same installed families,
+         * `assertDeclaredFacesResolve` refuses the run if they are missing,
+         * and what is measured is what WeasyPrint will set.
+         */
+        fontSource: 'container',
       });
       const page = await open(browser, html);
       report.rendered += 1;
@@ -439,6 +728,7 @@ async function main(): Promise<void> {
         ...await measureOverflows(page, name, dflt.name, pageNames),
       );
       report.collisions.push(...await measureCollisions(page, name, pageNames));
+      report.debris.push(...await measureDebris(page, name, pageNames));
 
       /*
        * Artefacts are drawn for the master's own document only — the tier
@@ -525,6 +815,10 @@ async function main(): Promise<void> {
     const { html } = renderTemplateToHtml(template.schema, {
       data: documentVariants(template.designMeta.reportFormat)[0].data,
       tokenOverrides: colourwayTokenOverride(dark),
+      // The print renderer's font source, for the reason given at the other
+      // call site: a remote stylesheet makes the verdict depend on whether
+      // the machine can reach Google.
+      fontSource: 'container',
     });
     const page = await open(browser, html);
     report.rendered += 1;
@@ -565,9 +859,20 @@ async function main(): Promise<void> {
     process.exit(1);
   }
   if (report.collisions.length > 0) process.exit(1);
+
+  if (report.debris.length > 0) {
+    console.error(`\n✗ ${report.debris.length} piece(s) of debris reached a rendered page:`);
+    for (const d of report.debris.slice(0, 40)) {
+      console.error(`  ${d.template} / p${d.page} "${d.pageName}": ${d.kind} — ${JSON.stringify(d.text)}`);
+    }
+    if (report.debris.length > 40) console.error(`  … and ${report.debris.length - 40} more`);
+    process.exit(1);
+  }
+
   console.log(
-    `\n✓ no block overflows its page, and none prints over another, `
-    + `in any of the ${report.rendered} renders`,
+    `\n✓ no block overflows its page, none prints over another, and no `
+    + `unresolved binding, clipped label, placeholder or database identifier `
+    + `reached one, in any of the ${report.rendered} renders`,
   );
 }
 

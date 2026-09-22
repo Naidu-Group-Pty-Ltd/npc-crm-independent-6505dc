@@ -90,10 +90,18 @@ export interface LocationEvidenceV2 {
   caveats: string[];
 }
 
+/*
+ * `statement` is declared as "what a reader must know", so it is a client
+ * sentence and answers to W4.7's rule. Both of the two below said "this
+ * deployment", which describes our plumbing rather than the retrieval --
+ * the same defect `GradeGap.remedy` was carrying into the Compass (§5b).
+ * This module has no production call site yet, which is exactly why it is
+ * worth correcting now: the wording reaches a client on the day it mounts.
+ */
 const NOT_ACQUIRED = <T,>(what: string, instead: string): LocationComponent<T> => ({
   state: 'not_acquired',
   value: null,
-  statement: `${what} is not measured: this deployment holds no source for it. ${instead}`,
+  statement: `${what} is not measured: no source for it was searched for this report. ${instead}`,
 });
 
 export interface LocationEvidenceInputs {
@@ -114,9 +122,9 @@ export function buildLocationEvidenceV2(
   if (!reading || reading.verdict === 'outside_loaded_networks') {
     transit = {
       state: 'not_covered', value: null,
-      statement: 'No public transport feed loaded by this deployment covers this location, so '
-        + 'no stop distance is measured for it. This is a limit of the data held, not a '
-        + 'finding about the area.',
+      statement: 'No published public-transport timetable covering this location was searched '
+        + 'for this report, so no stop distance is measured for it. This is a limit of what '
+        + 'was searched, not a finding about the area.',
     };
   } else if (!readingIsInJurisdiction(reading.feeds, inputs.geography.state)) {
     transit = {

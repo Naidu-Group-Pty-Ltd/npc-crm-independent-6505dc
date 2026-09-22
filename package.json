@@ -135,6 +135,7 @@
     "test:solicitor-phase15": "node --test tests/solicitor-portal/phase15-controlled-cutover.test.mjs",
     "test:solicitor-phase15-migration": "node scripts/solicitor-portal/phase-15-migration-check.mjs",
     "templates:library:seed": "tsx scripts/template-library/buildSeedCatalogue.ts",
+    "templates:library:seed:check": "tsx scripts/template-library/buildSeedCatalogue.ts --check",
     "templates:library:cards": "tsx scripts/template-library/buildDesignSystemCards.ts",
     "reportkit:tokens": "tsx scripts/reportDesign/buildTokens.ts",
     "reportkit:tokens:check": "tsx scripts/reportDesign/buildTokens.ts --check",
@@ -176,7 +177,9 @@
     "verify:pdf": "node scripts/verify/report-pdf/measure.mjs",
     "check:migration-order": "node --max-old-space-size=4096 scripts/security/check-migration-dependency-order.mjs",
     "market:registry:generate": "node scripts/market-sources/extract-registry.mjs",
-    "market:registry:check": "node scripts/market-sources/check-registry.mjs"
+    "market:registry:check": "node scripts/market-sources/check-registry.mjs",
+    "migrations:body-digests": "node scripts/security/build-applied-body-digests.mjs",
+    "check:applied-body-digests": "node scripts/security/check-applied-body-digests.mjs"
   },
   "dependencies": {
     "@hookform/resolvers": "^5.9.1",

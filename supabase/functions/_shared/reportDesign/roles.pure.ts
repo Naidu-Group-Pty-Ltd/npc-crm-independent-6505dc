@@ -59,8 +59,24 @@ export const INK_LEGALITY: Record<
    * role that forced the ramp step: `--brand` itself is 2.1:1 on ivory.
    */
   accentOnPaper: { grounds: ['paper', 'paperAlt', 'paperBright'], floor: 'micro' },
-  /** Brand type on the dark ground — the cover eyebrow and rule. */
-  accentOnField: { grounds: ['field'], floor: 'display' },
+  /**
+   * Brand type on the dark ground — the cover eyebrow and rule.
+   *
+   * `micro`, not `display`, and this line used to say `display` directly under
+   * the words "the cover eyebrow". `REPORT_RULES.md` §2 puts an eyebrow in the
+   * `< 10pt` band at **7:1** and names this exact case — *"It fails at the
+   * 8.5pt eyebrow that is the brand's own signature"* — and `.eyebrow` is set
+   * at `type.caption`, which is 8.5pt. So the role's own docstring described
+   * the case that made its floor wrong.
+   *
+   * It is also the only FIELD role that disagreed with its siblings:
+   * `onFieldInk` is `body`, `mutedInk` and `accentOnPaper` are `micro`, and the
+   * two template-library derivations of this very token
+   * (`templateColourways.pure.ts` and `designSystem.ts`) both pass
+   * `PRINT_SMALL_TYPE_CONTRAST`, which is 7. Two of the three agreed; the one
+   * that did not is the one serving a TENANT's own brand colour.
+   */
+  accentOnField: { grounds: ['field'], floor: 'micro' },
   positive: { grounds: ['paper', 'paperAlt', 'paperBright'], floor: 'body' },
   caution: { grounds: ['paper', 'paperAlt', 'paperBright'], floor: 'body' },
   /** Negative figures in a financial table — the most-read mark on the page. */
