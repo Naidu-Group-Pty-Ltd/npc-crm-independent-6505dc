@@ -1,3 +1,4 @@
+import { aurixaBillingUid, pricingUrlFor } from "@/lib/aurixaBillingIdentity";
 import { validateFeedbackUrl } from "@/lib/feedbackUrlPolicy";
 import { applyPricingMockRouting } from "@/lib/pricingMock";
 
@@ -165,27 +166,25 @@ export async function preflightTokens(estimate: number): Promise<TokenBalance> {
  *
  * Handoff-minted deep links already point here (Mission Control mints them
  * against its PUBLIC_PRICING_SITE_URL); this constant is the LAST-RESORT
- * fallback when the handoff mint is unavailable. It carries this workspace's
- * stable billing uid (Mission Control tenants.billing_user_id — 'npc-prime'
- * for the prime install, seeded by MC migration 20260714180000) so that even
- * a failed mint lands on the pricing page with purchase CTAs LIVE and
- * correctly attributed, never on a browse-only dead end.
+ * fallback when that mint is unavailable.
+ *
+ * It carries this deployment's own billing uid where it HAS one. It used to
+ * carry a compiled-in `??` default naming this deployment's own identity,
+ * inherited verbatim by every mirrored clone — and Mission Control had
+ * published `VITE_AURIXA_BILLING_UID` to none of them, so a clone's customer
+ * clicking a fallback link would have credited the PRIME's balance. The
+ * pairing rule that closes it is in `aurixaBillingIdentity.ts`: a build with
+ * no identity of its own lands on the browse-only pricing page, which is the
+ * right answer when the alternative is charging somebody else.
  */
-const AURIXA_BILLING_UID =
-  ((import.meta.env.VITE_AURIXA_BILLING_UID as string | undefined) ?? "npc-prime").trim();
-
-export const AURIXA_PRICING_URL = AURIXA_BILLING_UID
-  ? `https://www.aurixasystems.com.au/pricing?uid=${encodeURIComponent(AURIXA_BILLING_UID)}`
-  : "https://www.aurixasystems.com.au/pricing";
+export const AURIXA_PRICING_URL = pricingUrlFor(aurixaBillingUid());
 
 /**
  * Fallback for the "Add card" CTA when the handoff mint is unavailable: the
  * pricing page recognises `action=save-card` (plus the uid credential) and
  * auto-launches the Stripe-hosted card-save flow.
  */
-export const AURIXA_SAVE_CARD_URL = `${AURIXA_PRICING_URL}${
-  AURIXA_PRICING_URL.includes("?") ? "&" : "?"
-}action=save-card`;
+export const AURIXA_SAVE_CARD_URL = pricingUrlFor(aurixaBillingUid(), "action=save-card");
 
 export function openMissionControl(url: string) {
   window.open(url, "_blank", "noopener,noreferrer");
