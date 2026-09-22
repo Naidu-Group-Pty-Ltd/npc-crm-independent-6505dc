@@ -24,6 +24,7 @@ DROP POLICY IF EXISTS "All authenticated users can view all comparisons" ON prop
 -- Users can view reports they generated or reports for their clients (via client_property_id)
 
 -- SELECT: Users can view reports they generated or reports for their clients
+DROP POLICY IF EXISTS "Users can view reports they generated or for their clients" ON investment_reports;
 CREATE POLICY "Users can view reports they generated or for their clients"
   ON investment_reports FOR SELECT
   USING (
@@ -40,6 +41,7 @@ CREATE POLICY "Users can view reports they generated or for their clients"
   );
 
 -- INSERT: Users can create reports for their clients
+DROP POLICY IF EXISTS "Users can create reports for their clients" ON investment_reports;
 CREATE POLICY "Users can create reports for their clients"
   ON investment_reports FOR INSERT
   WITH CHECK (
@@ -56,6 +58,7 @@ CREATE POLICY "Users can create reports for their clients"
   );
 
 -- UPDATE: Users can update reports they generated or reports for their clients
+DROP POLICY IF EXISTS "Users can update reports they generated or for their clients" ON investment_reports;
 CREATE POLICY "Users can update reports they generated or for their clients"
   ON investment_reports FOR UPDATE
   USING (
@@ -72,6 +75,7 @@ CREATE POLICY "Users can update reports they generated or for their clients"
   );
 
 -- DELETE: Users can delete reports they generated or reports for their clients
+DROP POLICY IF EXISTS "Users can delete reports they generated or for their clients" ON investment_reports;
 CREATE POLICY "Users can delete reports they generated or for their clients"
   ON investment_reports FOR DELETE
   USING (
@@ -93,11 +97,13 @@ CREATE POLICY "Users can delete reports they generated or for their clients"
 -- Users can only access comparisons they created
 
 -- SELECT: Users can view their own comparisons
+DROP POLICY IF EXISTS "Users can view their own comparisons" ON property_comparisons;
 CREATE POLICY "Users can view their own comparisons"
   ON property_comparisons FOR SELECT
   USING (created_by = auth.uid());
 
 -- INSERT: Users can create comparisons
+DROP POLICY IF EXISTS "Users can create comparisons" ON property_comparisons;
 CREATE POLICY "Users can create comparisons"
   ON property_comparisons FOR INSERT
   WITH CHECK (
@@ -106,11 +112,13 @@ CREATE POLICY "Users can create comparisons"
   );
 
 -- UPDATE: Users can update their own comparisons
+DROP POLICY IF EXISTS "Users can update their own comparisons" ON property_comparisons;
 CREATE POLICY "Users can update their own comparisons"
   ON property_comparisons FOR UPDATE
   USING (created_by = auth.uid());
 
 -- DELETE: Users can delete their own comparisons
+DROP POLICY IF EXISTS "Users can delete their own comparisons" ON property_comparisons;
 CREATE POLICY "Users can delete their own comparisons"
   ON property_comparisons FOR DELETE
   USING (created_by = auth.uid());
@@ -121,11 +129,13 @@ CREATE POLICY "Users can delete their own comparisons"
 -- Users can only access analyses they created
 
 -- SELECT: Users can view their own cash flow analyses
+DROP POLICY IF EXISTS "Users can view their own cash flow analyses" ON cash_flow_analyses;
 CREATE POLICY "Users can view their own cash flow analyses"
   ON cash_flow_analyses FOR SELECT
   USING (created_by = auth.uid());
 
 -- INSERT: Users can create cash flow analyses
+DROP POLICY IF EXISTS "Users can create cash flow analyses" ON cash_flow_analyses;
 CREATE POLICY "Users can create cash flow analyses"
   ON cash_flow_analyses FOR INSERT
   WITH CHECK (
@@ -134,11 +144,13 @@ CREATE POLICY "Users can create cash flow analyses"
   );
 
 -- UPDATE: Users can update their own cash flow analyses
+DROP POLICY IF EXISTS "Users can update their own cash flow analyses" ON cash_flow_analyses;
 CREATE POLICY "Users can update their own cash flow analyses"
   ON cash_flow_analyses FOR UPDATE
   USING (created_by = auth.uid());
 
 -- DELETE: Users can delete their own cash flow analyses
+DROP POLICY IF EXISTS "Users can delete their own cash flow analyses" ON cash_flow_analyses;
 CREATE POLICY "Users can delete their own cash flow analyses"
   ON cash_flow_analyses FOR DELETE
   USING (created_by = auth.uid());
@@ -149,6 +161,7 @@ CREATE POLICY "Users can delete their own cash flow analyses"
 -- Users can access reviews for their clients
 
 -- SELECT: Users can view reviews for their clients
+DROP POLICY IF EXISTS "Users can view reviews for their clients" ON portfolio_reviews;
 CREATE POLICY "Users can view reviews for their clients"
   ON portfolio_reviews FOR SELECT
   USING (
@@ -160,6 +173,7 @@ CREATE POLICY "Users can view reviews for their clients"
   );
 
 -- INSERT: Users can create reviews for their clients
+DROP POLICY IF EXISTS "Users can create reviews for their clients" ON portfolio_reviews;
 CREATE POLICY "Users can create reviews for their clients"
   ON portfolio_reviews FOR INSERT
   WITH CHECK (
@@ -173,6 +187,7 @@ CREATE POLICY "Users can create reviews for their clients"
   );
 
 -- UPDATE: Users can update reviews for their clients
+DROP POLICY IF EXISTS "Users can update reviews for their clients" ON portfolio_reviews;
 CREATE POLICY "Users can update reviews for their clients"
   ON portfolio_reviews FOR UPDATE
   USING (
@@ -184,6 +199,7 @@ CREATE POLICY "Users can update reviews for their clients"
   );
 
 -- DELETE: Users can delete reviews for their clients
+DROP POLICY IF EXISTS "Users can delete reviews for their clients" ON portfolio_reviews;
 CREATE POLICY "Users can delete reviews for their clients"
   ON portfolio_reviews FOR DELETE
   USING (
@@ -200,6 +216,7 @@ CREATE POLICY "Users can delete reviews for their clients"
 -- Users can access reports for their clients or reports they generated
 
 -- SELECT: Users can view reports for their clients or reports they generated
+DROP POLICY IF EXISTS "Users can view reports for their clients or they generated" ON portfolio_analysis_reports;
 CREATE POLICY "Users can view reports for their clients or they generated"
   ON portfolio_analysis_reports FOR SELECT
   USING (
@@ -215,6 +232,7 @@ CREATE POLICY "Users can view reports for their clients or they generated"
   );
 
 -- INSERT: Users can create reports for their clients
+DROP POLICY IF EXISTS "Users can create reports for their clients" ON portfolio_analysis_reports;
 CREATE POLICY "Users can create reports for their clients"
   ON portfolio_analysis_reports FOR INSERT
   WITH CHECK (
@@ -228,6 +246,7 @@ CREATE POLICY "Users can create reports for their clients"
   );
 
 -- UPDATE: Users can update reports for their clients or reports they generated
+DROP POLICY IF EXISTS "Users can update reports for their clients or they generated" ON portfolio_analysis_reports;
 CREATE POLICY "Users can update reports for their clients or they generated"
   ON portfolio_analysis_reports FOR UPDATE
   USING (
@@ -243,6 +262,7 @@ CREATE POLICY "Users can update reports for their clients or they generated"
   );
 
 -- DELETE: Users can delete reports for their clients or reports they generated
+DROP POLICY IF EXISTS "Users can delete reports for their clients or they generated" ON portfolio_analysis_reports;
 CREATE POLICY "Users can delete reports for their clients or they generated"
   ON portfolio_analysis_reports FOR DELETE
   USING (
@@ -263,6 +283,7 @@ CREATE POLICY "Users can delete reports for their clients or they generated"
 -- Users can access assessments for their clients
 
 -- SELECT: Users can view assessments for their clients
+DROP POLICY IF EXISTS "Users can view assessments for their clients" ON borrowing_capacity_assessments;
 CREATE POLICY "Users can view assessments for their clients"
   ON borrowing_capacity_assessments FOR SELECT
   USING (
@@ -274,6 +295,7 @@ CREATE POLICY "Users can view assessments for their clients"
   );
 
 -- INSERT: Users can create assessments for their clients
+DROP POLICY IF EXISTS "Users can create assessments for their clients" ON borrowing_capacity_assessments;
 CREATE POLICY "Users can create assessments for their clients"
   ON borrowing_capacity_assessments FOR INSERT
   WITH CHECK (
@@ -285,6 +307,7 @@ CREATE POLICY "Users can create assessments for their clients"
   );
 
 -- UPDATE: Users can update assessments for their clients
+DROP POLICY IF EXISTS "Users can update assessments for their clients" ON borrowing_capacity_assessments;
 CREATE POLICY "Users can update assessments for their clients"
   ON borrowing_capacity_assessments FOR UPDATE
   USING (
@@ -296,6 +319,7 @@ CREATE POLICY "Users can update assessments for their clients"
   );
 
 -- DELETE: Users can delete assessments for their clients
+DROP POLICY IF EXISTS "Users can delete assessments for their clients" ON borrowing_capacity_assessments;
 CREATE POLICY "Users can delete assessments for their clients"
   ON borrowing_capacity_assessments FOR DELETE
   USING (

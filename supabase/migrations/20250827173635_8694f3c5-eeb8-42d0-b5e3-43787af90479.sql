@@ -1,7 +1,7 @@
 -- Create tables for dynamic QuickChart integration
 
 -- Report templates for reusable configurations
-CREATE TABLE public.report_templates (
+CREATE TABLE IF NOT EXISTS public.report_templates (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   name TEXT NOT NULL,
   description TEXT,
@@ -13,7 +13,7 @@ CREATE TABLE public.report_templates (
 );
 
 -- Chart configurations with QuickChart templates
-CREATE TABLE public.chart_configurations (
+CREATE TABLE IF NOT EXISTS public.chart_configurations (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   chart_type TEXT NOT NULL, -- 'bar', 'pie', 'line', 'scatter'
   template_name TEXT NOT NULL,
@@ -24,7 +24,7 @@ CREATE TABLE public.chart_configurations (
 );
 
 -- Generated reports history
-CREATE TABLE public.generated_reports (
+CREATE TABLE IF NOT EXISTS public.generated_reports (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   title TEXT NOT NULL,
   description TEXT,
@@ -41,7 +41,7 @@ CREATE TABLE public.generated_reports (
 );
 
 -- User preferences for branding and styling
-CREATE TABLE public.user_preferences (
+CREATE TABLE IF NOT EXISTS public.user_preferences (
   id UUID NOT NULL DEFAULT gen_random_uuid() PRIMARY KEY,
   user_id UUID NOT NULL REFERENCES auth.users(id) UNIQUE,
   company_name TEXT,
@@ -60,58 +60,71 @@ ALTER TABLE public.generated_reports ENABLE ROW LEVEL SECURITY;
 ALTER TABLE public.user_preferences ENABLE ROW LEVEL SECURITY;
 
 -- RLS Policies for report_templates
+DROP POLICY IF EXISTS "Users can view all report templates" ON public.report_templates;
 CREATE POLICY "Users can view all report templates"
 ON public.report_templates FOR SELECT USING (true);
 
+DROP POLICY IF EXISTS "Users can create their own report templates" ON public.report_templates;
 CREATE POLICY "Users can create their own report templates"
 ON public.report_templates FOR INSERT 
 WITH CHECK (auth.uid() = created_by);
 
+DROP POLICY IF EXISTS "Users can update their own report templates" ON public.report_templates;
 CREATE POLICY "Users can update their own report templates"
 ON public.report_templates FOR UPDATE 
 USING (auth.uid() = created_by);
 
+DROP POLICY IF EXISTS "Users can delete their own report templates" ON public.report_templates;
 CREATE POLICY "Users can delete their own report templates"
 ON public.report_templates FOR DELETE 
 USING (auth.uid() = created_by);
 
 -- RLS Policies for chart_configurations (public read, admin write)
+DROP POLICY IF EXISTS "Anyone can view chart configurations" ON public.chart_configurations;
 CREATE POLICY "Anyone can view chart configurations"
 ON public.chart_configurations FOR SELECT USING (true);
 
 -- RLS Policies for generated_reports
+DROP POLICY IF EXISTS "Users can view their own generated reports" ON public.generated_reports;
 CREATE POLICY "Users can view their own generated reports"
 ON public.generated_reports FOR SELECT 
 USING (auth.uid() = generated_by);
 
+DROP POLICY IF EXISTS "Users can create their own reports" ON public.generated_reports;
 CREATE POLICY "Users can create their own reports"
 ON public.generated_reports FOR INSERT 
 WITH CHECK (auth.uid() = generated_by);
 
 -- RLS Policies for user_preferences
+DROP POLICY IF EXISTS "Users can view their own preferences" ON public.user_preferences;
 CREATE POLICY "Users can view their own preferences"
 ON public.user_preferences FOR SELECT 
 USING (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can create their own preferences" ON public.user_preferences;
 CREATE POLICY "Users can create their own preferences"
 ON public.user_preferences FOR INSERT 
 WITH CHECK (auth.uid() = user_id);
 
+DROP POLICY IF EXISTS "Users can update their own preferences" ON public.user_preferences;
 CREATE POLICY "Users can update their own preferences"
 ON public.user_preferences FOR UPDATE 
 USING (auth.uid() = user_id);
 
 -- Add update triggers
+DROP TRIGGER IF EXISTS update_report_templates_updated_at ON public.report_templates;
 CREATE TRIGGER update_report_templates_updated_at
 BEFORE UPDATE ON public.report_templates
 FOR EACH ROW
 EXECUTE FUNCTION public.update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_chart_configurations_updated_at ON public.chart_configurations;
 CREATE TRIGGER update_chart_configurations_updated_at
 BEFORE UPDATE ON public.chart_configurations
 FOR EACH ROW
 EXECUTE FUNCTION public.update_updated_at_column();
 
+DROP TRIGGER IF EXISTS update_user_preferences_updated_at ON public.user_preferences;
 CREATE TRIGGER update_user_preferences_updated_at
 BEFORE UPDATE ON public.user_preferences
 FOR EACH ROW

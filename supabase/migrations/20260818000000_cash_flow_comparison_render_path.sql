@@ -117,6 +117,7 @@ CREATE INDEX IF NOT EXISTS cash_flow_comparison_renders_analysis_idx
 
 ALTER TABLE public.cash_flow_comparison_renders ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS cash_flow_comparison_renders_select ON public.cash_flow_comparison_renders;
 CREATE POLICY cash_flow_comparison_renders_select
   ON public.cash_flow_comparison_renders
   FOR SELECT TO authenticated

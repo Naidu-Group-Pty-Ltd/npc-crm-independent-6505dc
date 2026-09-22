@@ -34,6 +34,7 @@
 -- ── activity_logs: SELECT anon → authenticated ───────────────────────────────
 DROP POLICY IF EXISTS "Anyone can view activity logs" ON public.activity_logs;
 
+DROP POLICY IF EXISTS "activity_logs_select_authenticated" ON public.activity_logs;
 CREATE POLICY "activity_logs_select_authenticated" ON public.activity_logs
   FOR SELECT TO authenticated
   USING (true);
@@ -44,6 +45,7 @@ DROP POLICY IF EXISTS "Anyone can create estimator runs" ON public.depreciation_
 
 -- Reads: authenticated staff (realtime + any future authed query). Writes remain
 -- service_role-only (runs are created by the estimator edge function).
+DROP POLICY IF EXISTS "depreciation_estimator_runs_select_authenticated" ON public.depreciation_estimator_runs;
 CREATE POLICY "depreciation_estimator_runs_select_authenticated" ON public.depreciation_estimator_runs
   FOR SELECT TO authenticated
   USING (true);
@@ -54,18 +56,22 @@ DROP POLICY IF EXISTS "Anyone can create charts" ON public.charts;
 DROP POLICY IF EXISTS "Anyone can update charts" ON public.charts;
 DROP POLICY IF EXISTS "Anyone can delete charts" ON public.charts;
 
+DROP POLICY IF EXISTS "charts_select_authenticated" ON public.charts;
 CREATE POLICY "charts_select_authenticated" ON public.charts
   FOR SELECT TO authenticated
   USING (true);
 
+DROP POLICY IF EXISTS "charts_insert_authenticated" ON public.charts;
 CREATE POLICY "charts_insert_authenticated" ON public.charts
   FOR INSERT TO authenticated
   WITH CHECK (true);
 
+DROP POLICY IF EXISTS "charts_update_authenticated" ON public.charts;
 CREATE POLICY "charts_update_authenticated" ON public.charts
   FOR UPDATE TO authenticated
   USING (true) WITH CHECK (true);
 
+DROP POLICY IF EXISTS "charts_delete_authenticated" ON public.charts;
 CREATE POLICY "charts_delete_authenticated" ON public.charts
   FOR DELETE TO authenticated
   USING (true);

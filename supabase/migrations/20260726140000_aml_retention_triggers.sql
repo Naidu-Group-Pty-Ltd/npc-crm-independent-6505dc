@@ -66,6 +66,7 @@ CREATE INDEX IF NOT EXISTS aml_retention_triggers_case_idx
 -- Read for AML roles; writes only through the SECURITY DEFINER edge function
 -- so the retention clock cannot be moved from the browser.
 ALTER TABLE aml.retention_triggers ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "aml_retention_triggers_read" ON aml.retention_triggers;
 CREATE POLICY "aml_retention_triggers_read" ON aml.retention_triggers
   FOR SELECT TO authenticated USING (public.has_any_aml_role(auth.uid()));
 GRANT SELECT ON aml.retention_triggers TO authenticated;

@@ -42,6 +42,7 @@ CREATE TABLE IF NOT EXISTS aml.consent_documents (
 
 GRANT ALL ON aml.consent_documents TO service_role;
 ALTER TABLE aml.consent_documents ENABLE ROW LEVEL SECURITY;
+DROP POLICY IF EXISTS "aml_consent_documents_service_only" ON aml.consent_documents;
 CREATE POLICY "aml_consent_documents_service_only" ON aml.consent_documents
   FOR ALL TO service_role USING (true) WITH CHECK (true);
 

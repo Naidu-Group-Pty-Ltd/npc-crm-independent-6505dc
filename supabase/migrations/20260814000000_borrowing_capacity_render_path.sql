@@ -99,6 +99,7 @@ CREATE INDEX IF NOT EXISTS borrowing_capacity_renders_failed_idx
 
 ALTER TABLE public.borrowing_capacity_renders ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS borrowing_capacity_renders_select ON public.borrowing_capacity_renders;
 CREATE POLICY borrowing_capacity_renders_select
   ON public.borrowing_capacity_renders
   FOR SELECT TO authenticated

@@ -98,6 +98,7 @@ CREATE INDEX IF NOT EXISTS portfolio_review_renders_failed_idx
 
 ALTER TABLE public.portfolio_review_renders ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS portfolio_review_renders_select ON public.portfolio_review_renders;
 CREATE POLICY portfolio_review_renders_select
   ON public.portfolio_review_renders
   FOR SELECT TO authenticated

@@ -72,7 +72,9 @@ create index if not exists market_source_fetch_runs_source_idx on public.market_
 alter table public.market_ingestion_runs enable row level security; alter table public.market_source_fetch_runs enable row level security;
 grant select on public.market_ingestion_runs to authenticated; grant all on public.market_ingestion_runs to service_role;
 grant select on public.market_source_fetch_runs to authenticated; grant all on public.market_source_fetch_runs to service_role;
+drop policy if exists "Authenticated users read sanitised ingestion status" on public.market_ingestion_runs;
 create policy "Authenticated users read sanitised ingestion status" on public.market_ingestion_runs for select to authenticated using(true);
+drop policy if exists "Authenticated users read source fetch status" on public.market_source_fetch_runs;
 create policy "Authenticated users read source fetch status" on public.market_source_fetch_runs for select to authenticated using(true);
 
 -- Database-backed single-flight acquisition. Service role only.

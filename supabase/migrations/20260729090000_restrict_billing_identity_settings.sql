@@ -5,6 +5,7 @@
 DROP POLICY IF EXISTS "global_report_settings_update_authenticated"
   ON public.global_report_settings;
 
+DROP POLICY IF EXISTS "global_report_settings_update_admin" ON public.global_report_settings;
 CREATE POLICY "global_report_settings_update_admin"
   ON public.global_report_settings
   FOR UPDATE TO authenticated

@@ -101,6 +101,7 @@ create trigger trg_dispatch_web_push_solicitor_portal
 drop policy if exists "Service role full access on portal notifications"
   on public.client_portal_notifications;
 
+drop policy if exists client_portal_notifications_service_role_only on public.client_portal_notifications;
 create policy client_portal_notifications_service_role_only
   on public.client_portal_notifications
   for all to service_role

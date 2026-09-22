@@ -74,6 +74,7 @@ CREATE INDEX IF NOT EXISTS cash_flow_renders_failed_idx
 
 ALTER TABLE public.cash_flow_renders ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS cash_flow_renders_select ON public.cash_flow_renders;
 CREATE POLICY cash_flow_renders_select
   ON public.cash_flow_renders
   FOR SELECT TO authenticated

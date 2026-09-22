@@ -19,7 +19,7 @@
 -- versioned nested shape — `snapshot_version` is what a reader checks before
 -- trusting the mapping, and it is a real column so a query can find stale rows.
 
-CREATE TABLE public.report_brand_snapshots (
+CREATE TABLE IF NOT EXISTS public.report_brand_snapshots (
   id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
 
   -- 64-bit FNV-1a of the canonical payload, from `snapshotFingerprint()`.
@@ -55,9 +55,9 @@ COMMENT ON COLUMN public.report_brand_snapshots.fingerprint IS
 COMMENT ON COLUMN public.report_brand_snapshots.payload IS
   'The ReportBrandSnapshot, including inlined logo data URIs.';
 
-CREATE INDEX report_brand_snapshots_created_idx
+CREATE INDEX IF NOT EXISTS report_brand_snapshots_created_idx
   ON public.report_brand_snapshots (created_at DESC);
-CREATE INDEX report_brand_snapshots_source_idx
+CREATE INDEX IF NOT EXISTS report_brand_snapshots_source_idx
   ON public.report_brand_snapshots (source_whitelabel_setting_id)
   WHERE source_whitelabel_setting_id IS NOT NULL;
 
@@ -88,6 +88,7 @@ CREATE INDEX IF NOT EXISTS investment_reports_brand_snapshot_idx
 
 ALTER TABLE public.report_brand_snapshots ENABLE ROW LEVEL SECURITY;
 
+DROP POLICY IF EXISTS report_brand_snapshots_select ON public.report_brand_snapshots;
 CREATE POLICY report_brand_snapshots_select
   ON public.report_brand_snapshots
   FOR SELECT TO authenticated
