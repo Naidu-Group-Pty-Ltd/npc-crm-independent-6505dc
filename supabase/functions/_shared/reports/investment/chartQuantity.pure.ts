@@ -217,6 +217,32 @@ export function labelIsACutSentence(label: string): boolean {
   return CARRIES_A_NUMBER.test(s) && CONNECTIVE_TAIL.test(s);
 }
 
+/**
+ * The directive's body with its `spark=` segment removed, or '' where nothing
+ * a reader can use is left.
+ *
+ * Rebuilt from the model's own segments rather than re-composed, so the
+ * heading and the note reach the page exactly as they were written.
+ */
+export function withoutSpark(body: string): string {
+  const segments = String(body ?? '').split('|');
+  const kept = segments.filter((seg) => !/^\s*spark\s*=/i.test(seg));
+  const rejoined = kept.join('|').replace(/\|\s*$/, '').trimEnd();
+  /*
+   * A HEADING alone is not content.
+   *
+   * The payload before the first `|` is the margin's heading, and the heading
+   * is a caption for the line that has just gone — `{{margin: Overlay check
+   * basis | spark=1,0}}` reduced to `{{margin: Overlay check basis}}` draws a
+   * sidenote labelled "Context" with a bold title and nothing under it, which
+   * is a label promising something that is not there. So the directive
+   * survives only where an option carrying prose does: a `note=` or a
+   * `label=`, which is where the sentence lives.
+   */
+  const carriesProse = kept.slice(1).some((seg) => /=\s*\S/.test(seg));
+  return carriesProse && /[A-Za-z0-9]/.test(rejoined) ? rejoined : '';
+}
+
 export interface WithheldFlagChart {
   readonly kind: string;
   /** Why it was withheld: the non-unit, or the retrieval state it named. */
@@ -354,6 +380,23 @@ export function enforceChartQuantity(markdown: string): ChartQuantityResult {
           : null;
       if (reason) {
         withheld.push({ kind: k, reason, title: series.title, directive: whole.slice(0, 160) });
+        /*
+         * A margin loses its SPARKLINE and keeps its note.
+         *
+         * `{{margin: Overlay check basis | note=Vicmap Planning overlays were
+         * asked and answered with no mapped control at this coordinate. |
+         * spark=1,0}}` drew a two-point flag line down a fifth of page 17. The
+         * line is the defect; the note is a sourced sentence that exists
+         * nowhere else in the document, and deleting it would take a retrieval
+         * finding off the page to remove a decoration. A bars or heatmap
+         * directive carries no prose of its own — its labels are restated in
+         * the section around it and in the appended registers — so those go
+         * whole, as `withholdRatedAbsenceCharts` does.
+         */
+        if (d.kind === 'margin') {
+          const kept = withoutSpark(String(body));
+          return kept ? `{{${k}:${kept}}}` : '';
+        }
         return '';
       }
     }

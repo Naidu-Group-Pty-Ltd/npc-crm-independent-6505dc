@@ -53,6 +53,8 @@
  * empty" is how the two ends come to disagree.
  */
 
+import { partitionCode } from './printableGlyphs.pure.ts';
+
 export interface BlockScrubResult {
   markdown: string;
   /** Stat cards dropped for having no value. */
@@ -184,4 +186,92 @@ export function scrubBlocks(markdown: string): BlockScrubResult {
     emptyStatCards: cards.removed,
     duplicateDirectives: charts.removed,
   };
+}
+
+/**
+ * W4.6 — a list marker with nothing after it.
+ *
+ * Page 16 of the 9 Hollow Street Compass drew **four empty bullets**: a
+ * bullet glyph, indented, with no words beside it. A marker is drawn from the
+ * list style rather than from the item's content, so an item holding nothing
+ * still prints its dot and still takes its line — which reads as a list whose
+ * entries failed to load.
+ *
+ * Nothing removed them. Driven through the real read path, every one survived
+ * to the end: `stripPlaceholderRows` judges table rows, `stripEmptyStatCards`
+ * judges stat cards, `dropEmptySections` judges headings, and an item inside a
+ * list is none of those.
+ *
+ * ## Why this is not the prose scrub §8 forbids
+ *
+ * **There is no prose.** An item with nothing after its marker carries no
+ * word, no figure, no claim and no source, so there is nothing for this to
+ * change — which is a stronger version of the argument the footnote rule had
+ * to make, where a digit at least existed. A spec asserts that every surviving
+ * line is byte-identical and that only whole empty-marker lines are ever
+ * dropped.
+ *
+ * ## Three bounds
+ *
+ * **A parent is never orphaned from its child.** An empty marker followed by a
+ * more-indented line is a parent whose children carry the content — removing
+ * it would promote them into the list above or strand them entirely — so it is
+ * kept. Measured against the ordinary shape a model writes, where an empty
+ * parent is rare and a trailing empty sibling is the common debris.
+ *
+ * **A task list is not empty.** `- [ ]` and `- [x]` have content after the
+ * marker; the pattern requires the line to end at the marker, so neither
+ * matches.
+ *
+ * **Code is a quotation.** The partition is `printableGlyphs.pure.ts`'s, which
+ * is asserted to reproduce its input byte-for-byte over thirteen shapes,
+ * imported rather than re-implemented for the reason everything else here is:
+ * two readings of one grammar is how the two come to disagree.
+ */
+/** `-`, `*`, `+`, `1.`, `1)` and nothing else on the line. */
+const EMPTY_ITEM_RE = /^([ \t]*)(?:[-*+]|\d{1,3}[.)])[ \t]*$/;
+
+/** How much a line is indented, tabs counted as four. */
+function indentOf(line: string): number {
+  const m = /^[ \t]*/.exec(line);
+  return (m?.[0] ?? '').replace(/\t/g, '    ').length;
+}
+
+export interface EmptyListItemResult {
+  markdown: string;
+  /** The lines removed, as written, so a caller can say what went. */
+  removed: string[];
+  /** Empty markers kept because a more-indented line depends on them. */
+  keptAsParents: number;
+}
+
+export function stripEmptyListItems(markdown: string): EmptyListItemResult {
+  if (!markdown || !markdown.split('\n').some((l) => EMPTY_ITEM_RE.test(l))) {
+    return { markdown, removed: [], keptAsParents: 0 };
+  }
+  const removed: string[] = [];
+  let keptAsParents = 0;
+
+  const out = partitionCode(markdown).map(([text, isCode]) => {
+    if (isCode) return text;
+    const lines = text.split('\n');
+    const kept = lines.filter((line, i) => {
+      if (!EMPTY_ITEM_RE.test(line)) return true;
+      // Look past blank lines to the next line that says anything.
+      let j = i + 1;
+      while (j < lines.length && lines[j].trim() === '') j += 1;
+      const next = j < lines.length ? lines[j] : null;
+      if (next !== null && next.trim() !== '' && indentOf(next) > indentOf(line)) {
+        keptAsParents += 1;
+        return true;
+      }
+      removed.push(line);
+      return false;
+    });
+    return kept.join('\n');
+  }).join('');
+
+  return removed.length
+    ? { markdown: out.replace(/\n{3,}/g, '\n\n'), removed, keptAsParents }
+    : { markdown, removed: [], keptAsParents };
 }

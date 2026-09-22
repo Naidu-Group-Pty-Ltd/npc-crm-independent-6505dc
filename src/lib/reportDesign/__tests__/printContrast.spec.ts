@@ -38,6 +38,37 @@ const TENANT_BRANDS: Array<[string, string | null]> = [
   ['mid grey', '#808080'],
 ];
 
+/**
+ * Hue in degrees, for asserting that a correction moved lightness only.
+ *
+ * At module scope because two describes need it: `brought neutrals`, which has
+ * always used it, and `Category B is fixed`, which asserts the frozen hue now
+ * that the semantics are corrected for the stock they print on.
+ */
+const HUE_TOLERANCE_DEGREES = 2;
+
+/**
+ * "Lightness only" as an assertion.
+ *
+ * A stated tolerance rather than `toBeCloseTo(..., 0)`, which admits 0.5°:
+ * stepping lightness re-quantises to 8 bits per channel, so a hue that did not
+ * move can still read 0.7° away. Two degrees is invisible and still fails any
+ * real hue change — the nearest semantic hues here are 145° apart.
+ */
+const expectSameHue = (a: string, b: string, what: string): void => {
+  expect(Math.abs(hueOf(a) - hueOf(b)), `${what}: hue moved`).toBeLessThan(HUE_TOLERANCE_DEGREES);
+};
+
+const hueOf = (hex: string): number => {
+  const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  if (max === min) return 0;
+  const d = max - min;
+  const h = max === r ? ((g - b) / d) % 6 : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
+  return ((h * 60) + 360) % 360;
+};
+
 describe('print contrast floors', () => {
   describe.each(PRESETS)('preset %s', (preset) => {
     describe.each(TENANT_BRANDS)('tenant brand %s', (_label, brandHex) => {
@@ -77,17 +108,43 @@ describe('print contrast floors', () => {
 });
 
 describe('Category B is fixed', () => {
-  it('is byte-identical across every tenant and preset', () => {
+  /*
+   * Renegotiated when `CONTRAST_FLOOR.body` was corrected from 4.5 to the 7
+   * `REPORT_RULES.md` §2 has always specified.
+   *
+   * This asserted byte-identity with `PRINT_SEMANTIC`, and that held only
+   * because the correction was a no-op at 4.5 — the constants are documented
+   * as "darkened to clear 4.5:1 on the darkest stock", so at 7 they move
+   * (`#157A3A` → `#0F5729`). The floors are SIZE BANDS: a semantic used at
+   * 10-13pt must meet the 10-13pt floor or it is not readable, and §2 says so
+   * outright — "keep hue and saturation, clamp lightness into the 30-36%
+   * band".
+   *
+   * What "Category B is FIXED" protects is that a TENANT cannot move them.
+   * That is the property, and it is what is asserted now: for any stock, every
+   * tenant brand resolves the same four semantics, and each keeps the frozen
+   * constant's hue. The bytes were incidental.
+   */
+  it('does not vary with the tenant brand, and keeps the frozen hue', () => {
     for (const preset of PRESETS) {
+      const [, firstBrand] = TENANT_BRANDS[0];
+      const reference = resolveReportPalette({ preset, brandHex: firstBrand });
       for (const [, brandHex] of TENANT_BRANDS) {
         const p = resolveReportPalette({ preset, brandHex });
-        expect({
-          positive: p.positive,
-          caution: p.caution,
-          negative: p.negative,
-          informative: p.informative,
-        }).toEqual({ ...PRINT_SEMANTIC });
+        for (const role of ['positive', 'caution', 'negative', 'informative'] as const) {
+          expect(p[role], `${role} moved with the tenant brand on ${preset}`).toBe(reference[role]);
+          expectSameHue(p[role], PRINT_SEMANTIC[role], role);
+        }
       }
+    }
+  });
+
+  it('clears the floor its own role declares, on every legal ground', () => {
+    // The reason it moves at all. Before the floor was corrected these sat at
+    // 4.5 while their declared band asks for 7.
+    for (const preset of PRESETS) {
+      const p = resolveReportPalette({ preset });
+      expect(auditPaletteContrast(p).filter((x) => x.role in PRINT_SEMANTIC)).toEqual([]);
     }
   });
 
@@ -99,8 +156,14 @@ describe('Category B is fixed', () => {
       negative: '#00FF00',
       positive: '#FF0000',
     });
-    expect(smuggled.negative).toBe(PRINT_SEMANTIC.negative);
-    expect(smuggled.positive).toBe(PRINT_SEMANTIC.positive);
+    // The guarantee is that the INPUT made no difference — not that the result
+    // is the raw constant, which stopped being true when the semantics started
+    // being corrected for the stock they print on.
+    const clean = resolveReportPalette({ brandHex: '#00FF00' });
+    expect(smuggled.negative).toBe(clean.negative);
+    expect(smuggled.positive).toBe(clean.positive);
+    expectSameHue(smuggled.negative, PRINT_SEMANTIC.negative, 'negative');
+    expectSameHue(smuggled.positive, PRINT_SEMANTIC.positive, 'positive');
   });
 
   it('is frozen at runtime', () => {
@@ -119,16 +182,6 @@ describe('Category B is fixed', () => {
  * fall back to the preset whole rather than half.
  */
 describe('brought neutrals', () => {
-  /** Hue in degrees, for asserting that a correction moved lightness only. */
-  const hueOf = (hex: string): number => {
-    const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
-    const max = Math.max(r, g, b);
-    const min = Math.min(r, g, b);
-    if (max === min) return 0;
-    const d = max - min;
-    const h = max === r ? ((g - b) / d) % 6 : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
-    return ((h * 60) + 360) % 360;
-  };
 
   /** A dark stock, so a failure to apply it is visible rather than subtle. */
   const SLATE: ReportNeutrals = {
@@ -155,12 +208,41 @@ describe('brought neutrals', () => {
     }
   });
 
+  /*
+   * Renegotiated with `CONTRAST_FLOOR.micro`'s correction from 4.5 to §2's 7.
+   *
+   * This asserted that every one of `NEUTRAL_ROLES` comes through byte-
+   * identical, and `mutedInk` is in that list. It is an INK, not a ground, and
+   * the test directly below has always established that inks are corrected for
+   * the brought stock rather than passed through — that is the whole reason
+   * importing grounds is safe. `mutedInk` was simply the one ink that was not
+   * corrected, which is what made its byte-identity true.
+   *
+   * So the grounds still come through untouched, and the inks are now judged
+   * the way the accent already was.
+   */
+  const BROUGHT_GROUNDS = ['paper', 'paperAlt', 'paperBright', 'field', 'rule'] as const;
+
   it('replaces the preset\'s grounds when it is given', () => {
     const brought = resolveReportPalette({ preset: 'minimal_ink', neutrals: SLATE });
     const preset = resolveReportPalette({ preset: 'minimal_ink' });
-    for (const role of NEUTRAL_ROLES) {
+    for (const role of BROUGHT_GROUNDS) {
       expect(brought[role], role).toBe(SLATE[role]);
       expect(brought[role], role).not.toBe(preset[role]);
+    }
+  });
+
+  it('corrects the brought stock\'s inks against it, as it does the accent', () => {
+    const brought = resolveReportPalette({ preset: 'minimal_ink', neutrals: SLATE });
+    // The body ink already clears its floor on slate, so it is untouched.
+    expect(brought.bodyInk).toBe(SLATE.bodyInk);
+    // The muted ink does not: `#B8C0C7` measures below 7:1 on that stock, and
+    // is lightened for it — lightness only, and only far enough to be read.
+    expect(brought.mutedInk).not.toBe(SLATE.mutedInk);
+    expectSameHue(brought.mutedInk, SLATE.mutedInk, 'mutedInk');
+    for (const ground of ['paper', 'paperAlt', 'paperBright'] as const) {
+      expect(contrastRatio(brought.mutedInk, SLATE[ground]), ground)
+        .toBeGreaterThanOrEqual(CONTRAST_FLOOR.micro);
     }
   });
 

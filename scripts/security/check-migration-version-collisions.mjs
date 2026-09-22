@@ -28,8 +28,9 @@
  * ## What this checks
  *
  * Every `supabase/migrations/*.sql` must start with a 14-digit version and an
- * underscore, and no two may share that version — except for the groups already
- * frozen in MIGRATION_VERSION_COLLISIONS.json.
+ * underscore, no two may share that version, and that version must be a real
+ * INSTANT — except for the groups and files already frozen in
+ * MIGRATION_VERSION_COLLISIONS.json.
  *
  * The baseline is an inventory, not an exemption: it fails when a listed group's
  * file set CHANGES (a third file joining an existing collision is new debt), and
@@ -40,6 +41,26 @@
  * under its own version — which, for every group in there, is exactly the
  * situation, since the version was already taken. It is still a fleet-wide file
  * move, so it is a deliberate act rather than something this gate demands.
+ *
+ * ## And the version has to be a time
+ *
+ * Fourteen digits is a shape, not an instant. Measured 2026-09-22, ten files
+ * here carry a version no calendar can hold: `20260725096000` is minute 96 of
+ * an hour, and `20260730240000` through `…300000` are hours 24 to 30.
+ *
+ * Postgres does not care — `version` is `text` — so nothing breaks, and that is
+ * the problem: every reading that treats the version as a time answers `null`
+ * about these and can say nothing at all. Mission Control's
+ * `migrationEpochSeconds` is one, and it is deliberately null rather than a
+ * guess, because an unparsed id defaulting to 0 would sit fourteen hundred
+ * years from every ledger entry.
+ *
+ * The ten are frozen rather than renamed. Renaming them is a fleet-wide file
+ * move that would also touch seven CI check scripts, seven test files, a
+ * security keeplist, an order list, five documents and two APPLIED migrations
+ * that name one of them in a comment — and an applied migration's bytes are
+ * not something to edit for a comment. This gate stops the eleventh, which is
+ * the part that compounds.
  */
 import { readFileSync, readdirSync } from 'node:fs';
 import { join, resolve } from 'node:path';
@@ -54,6 +75,35 @@ const BASELINE = join(MIGRATIONS, 'MIGRATION_VERSION_COLLISIONS.json');
 
 const VERSIONED = /^(\d{14})_.+\.sql$/;
 
+/**
+ * Is a 14-digit version a moment that exists?
+ *
+ * Deliberately calendar-exact rather than range-checked on each field: 31
+ * February is four valid fields and not a day, and a version that round-trips
+ * through `Date.UTC` is one every reader can place on a line.
+ */
+function isInstant(version) {
+  const [y, mo, d, h, mi, s] = [0, 4, 6, 8, 10, 12].map((i, n) =>
+    Number(version.slice(i, [4, 6, 8, 10, 12, 14][n])));
+  if (mo < 1 || mo > 12 || d < 1 || h > 23 || mi > 59 || s > 59) return false;
+  const t = new Date(Date.UTC(y, mo - 1, d, h, mi, s));
+  return t.getUTCFullYear() === y && t.getUTCMonth() === mo - 1 && t.getUTCDate() === d;
+}
+
+/** Which field is impossible, so the message names the fault rather than the rule. */
+function describeNonInstant(version) {
+  const mo = Number(version.slice(4, 6));
+  const d = Number(version.slice(6, 8));
+  const h = Number(version.slice(8, 10));
+  const mi = Number(version.slice(10, 12));
+  const s = Number(version.slice(12, 14));
+  if (mo < 1 || mo > 12) return `month ${mo}`;
+  if (h > 23) return `hour ${h}`;
+  if (mi > 59) return `minute ${mi}`;
+  if (s > 59) return `second ${s}`;
+  return `${version.slice(0, 4)}-${version.slice(4, 6)} has no day ${d}`;
+}
+
 let baseline;
 try {
   baseline = JSON.parse(readFileSync(BASELINE, 'utf8'));
@@ -63,6 +113,8 @@ try {
 }
 
 const notAMigration = new Set(baseline.not_a_migration ?? []);
+/** Versions that are 14 digits but not an instant, frozen as they stand. */
+const notAnInstant = new Set(baseline.not_an_instant ?? []);
 /** version -> sorted file list, as the baseline froze it. */
 const frozen = new Map(
   (baseline.collisions ?? []).map((c) => [c.version, [...(c.files ?? [])].sort()]),
@@ -87,8 +139,23 @@ for (const name of files) {
     continue;
   }
   const version = m[1];
+  if (!isInstant(version) && !notAnInstant.has(version)) {
+    errors.push(
+      `${name}: ${version} is fourteen digits but not a real instant `
+      + `(${describeNonInstant(version)}). Postgres stores the version as text, so nothing `
+      + `refuses it — and every reading that treats it as a time then answers "unknown" about `
+      + `this file for ever. Use an instant that keeps the file's place in the sort.`);
+  }
   if (!byVersion.has(version)) byVersion.set(version, []);
   byVersion.get(version).push(name);
+}
+
+for (const version of notAnInstant) {
+  if (!byVersion.has(version)) {
+    errors.push(
+      `${version} is frozen in "not_an_instant" but no file carries it. Remove the entry — `
+      + `a stale exemption is the same failure wearing a note.`);
+  }
 }
 
 const live = new Map(
@@ -135,5 +202,6 @@ if (errors.length) {
 const grandfathered = [...live.values()].reduce((n, g) => n + g.length, 0);
 console.log(
   `Migration version check passed (${files.length} file(s); `
-  + `${live.size} frozen collision(s) over ${grandfathered} files, 0 new).`,
+  + `${live.size} frozen collision(s) over ${grandfathered} files, 0 new; `
+  + `${notAnInstant.size} frozen non-instant version(s), 0 new).`,
 );

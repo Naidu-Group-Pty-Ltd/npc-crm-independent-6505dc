@@ -388,6 +388,45 @@ function transportCountPhrase(t: StrategyTransportCount): string {
  * the exact source, the radius, the unit, the date and the measurement
  * definition — followed by what it does not establish.
  */
+/**
+ * The register a fallback transport reading came from, in the reader's words.
+ *
+ * Page 34 of the Investment Compass delivered for 9 Hollow Street on
+ * 21 Sep 2026 printed the sentence below with `` `osm_amenity_register` `` set
+ * in code backticks, mid-paragraph, to a client. That is the third instance of
+ * one defect on this document — `vic_vpsr_suburb` where a publisher belongs
+ * and `transactionVolume` where a measure's name belongs — and the rule is the
+ * AML roster's: **database vocabulary never reaches the reader.**
+ *
+ * `plan_zone` and `plan_overlay` are deliberately untouched anywhere in this
+ * report, and the distinction is the whole rule: those are **Vicmap
+ * Planning's own published layer names**, which the register table cites
+ * correctly as "Vicmap Planning — plan_zone (opendata.maps.vic.gov.au WFS)".
+ * An identifier the PUBLISHER uses is a name. An identifier WE invented is
+ * debris.
+ *
+ * The fallback names the kind of thing rather than the key, because the
+ * sentence around it already says what matters — that this was not the
+ * operator's stop file and counts a category rather than boarding places — so
+ * an unrecognised source needs no identifier to read correctly.
+ */
+const TRANSPORT_SOURCE_NAME: Readonly<Record<string, string>> = {
+  osm_amenity_register: 'a community-edited amenity register',
+  amenity_register: 'a community-edited amenity register',
+  places: 'a places directory',
+};
+
+export function transportSourceName(source: string | null | undefined): string {
+  const key = String(source ?? '').trim();
+  const named = TRANSPORT_SOURCE_NAME[key];
+  if (named) return named;
+  // A name a reader could already use passes through; anything that reads as
+  // an identifier is replaced rather than printed.
+  return key && !/^[a-z0-9]+(?:[_-][a-z0-9]+)+$/.test(key) && !/^[a-z]+[A-Z]/.test(key)
+    ? key
+    : 'another register';
+}
+
 function transportBasis(t: StrategyTransport): string {
   const parts: string[] = [];
   if (t.sources.length) parts.push(t.sources.join('; ') + '.');
@@ -547,8 +586,8 @@ export function buildSwot(rec: StrategyRecord): Swot {
      */
     coverage.push(
       `Public transport was **not read from an operator's own stop file** for this property. The reading came from `
-      + `\`${rec.transport.source}\`, which counts one amenity category rather than boarding places, so nothing `
-      + 'here states how this property is served and no conclusion is drawn either way.',
+      + `${transportSourceName(rec.transport.source)}, which counts one amenity category rather than boarding `
+      + 'places, so nothing here states how this property is served and no conclusion is drawn either way.',
     );
   }
 

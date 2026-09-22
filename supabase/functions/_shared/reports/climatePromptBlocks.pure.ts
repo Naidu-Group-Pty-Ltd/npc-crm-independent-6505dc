@@ -18,6 +18,7 @@
  *  - law 2 throughout: a labelled row promises a figure; an empty section
  *    is one honest line plus the no-invention instruction.
  */
+import { CLIMATE_WEB_SEARCH_RULE } from './registerAuthority.pure.ts';
 
 interface Numericish { [key: string]: unknown }
 
@@ -99,11 +100,13 @@ export function climateStatBlocks(input: ClimatePromptInput): string {
   const parts = [climateProfileBlock(input), hazardBlock(input)].filter((b) => b !== '');
 
   if (parts.length === 0) {
-    return 'No measured climate or hazard reading is available for this property. State that plainly in one sentence; do NOT print a climate table, name a climate zone, or rate any hazard.';
+    return 'No measured climate or hazard reading is available for this property. State that plainly in one sentence; do NOT print a climate table, name a climate zone, or rate any hazard. '
+      + CLIMATE_WEB_SEARCH_RULE;
   }
 
   parts.push(
     'Discuss only the measured figures above, with their stated windows and sources. Do NOT name a climate zone classification, rate a hazard that does not appear in the table (storms, cyclones and heatwaves are unmeasured here), or assert trends the windows above cannot support. Where flood or bushfire is absent, direct verification to AFRIP and the state fire authority without asserting a level.',
+    CLIMATE_WEB_SEARCH_RULE,
   );
   return parts.join('\n\n');
 }

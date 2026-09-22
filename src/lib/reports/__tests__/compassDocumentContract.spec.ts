@@ -101,13 +101,25 @@ describe('the evidence pack is what the report may state', () => {
   it('carries every retrieved evidence block', () => {
     for (const block of [
       'planningStatBlocks(enhancedData)',
-      'regionalTrendBlocks(enhancedData)',
+      // The open paren, like `reconcileNearestSchool(` below: what this
+      // asserts is that the block is COMPOSED, and the argument shape is
+      // incidental — it now carries the trusted state for the
+      // forward-demand sentence. Pinning a call site's argument is the
+      // defect `headMarker`'s spec had, where the asserted argument was
+      // one 39 masters discard.
+      'regionalTrendBlocks(',
       'macroEconomicBlock(enhancedData)',
       'demographicsStatBlocks(enhancedData)',
       'climateStatBlocks(enhancedData)',
       'crimeStatBlocks(enhancedData)',
       'reconcileNearestSchool(',
       'reconcileSchoolDistances(',
+      // Composed, like their five siblings above, rather than written inline.
+      // The two inline blocks these replace read six field names, four of
+      // which nothing in the repository writes — including `commuteToCbd`,
+      // whose only occurrence anywhere was the line that read it.
+      'amenityFactBlocks(enhancedData.locationIntelligence)',
+      'transportFactBlocks(enhancedData.locationIntelligence)',
     ]) {
       expect(p, block).toContain(block);
     }
@@ -117,17 +129,17 @@ describe('the evidence pack is what the report may state', () => {
     // The rule every absence in this product answers to. A category nobody
     // reached must never read as a category with nothing in it.
     expect(p).toMatch(/No school register reading was retrieved/);
-    expect(p).toMatch(/No amenity reading was retrieved/);
-    expect(p).toMatch(/No public-transport reading was retrieved/);
-    expect(p).toMatch(/do NOT describe[\s\S]{0,12}the area as well or poorly served/);
+    // The amenity and transport absences moved into `amenityFactBlocks.pure.ts`
+    // with the blocks themselves, and are asserted there by EXECUTION against
+    // the shape `location-intelligence-service` publishes — which is stronger
+    // than grepping a template literal, and is why the old inline blocks could
+    // carry four dead field names while this file passed.
   });
 
-  it('keeps a measured zero as a measurement', () => {
-    // `absent is never zero` has a mirror: a reached-and-empty category IS a
-    // finding, and a rural address with no hospital within five kilometres is
-    // a fact worth printing.
-    expect(p).toMatch(/A count of zero here is a measurement/);
-  });
+  // `absent is never zero` has a mirror: a reached-and-empty category IS a
+  // finding, and a rural address with no hospital within five kilometres is a
+  // fact worth printing. Asserted in `amenityFactBlocks.spec.ts`, where the
+  // rule now lives and can be exercised rather than matched.
 
   it('states the price and the rent once, and forbids analysing them', () => {
     // Asserted as the RULE — a price line is present, singular, and not

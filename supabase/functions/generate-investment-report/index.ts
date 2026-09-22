@@ -32,6 +32,8 @@ import {
 import { withPlanningEvidence } from '../_shared/reports/location/planningEvidenceRecord.pure.ts';
 import { crimeStatBlocks } from '../_shared/reports/crimePromptBlocks.pure.ts';
 import { climateStatBlocks } from '../_shared/reports/climatePromptBlocks.pure.ts';
+import { amenityFactBlocks, transportFactBlocks } from '../_shared/reports/location/amenityFactBlocks.pure.ts';
+import { approvalsFactBlocks, summariseApprovals } from '../_shared/reports/market/approvalsFactBlocks.pure.ts';
 import { macroEconomicBlock } from '../_shared/reports/macroPromptBlocks.pure.ts';
 import { activateSafeGenerationInputs, subjectPostcodeOf } from '../_shared/reports/contract/safeGenerationInputs.pure.ts';
 import { resolveOneReportGeography } from '../_shared/geography/resolveOneReportGeography.ts';
@@ -84,6 +86,7 @@ import {
   governedFaultToFlag,
 } from '../_shared/reports/contract/governedNarrativeAuthority.pure.ts';
 import { regionalTrendBlocks } from '../_shared/reports/regionalPromptBlocks.pure.ts';
+import { trustedStateForForwardDemand } from '../_shared/reports/market/openData/forwardDemand.pure.ts';
 import { runQAValidation } from '../_shared/compassQAValidator.ts';
 import { correctUnsupportedEvidenceClaims } from '../_shared/reports/investment/evidenceClaims.pure.ts';
 import { startRun as traceStartRun, recordChunk as traceRecordChunk, finishRun as traceFinishRun, packetKeysAttached as tracePacketKeys } from '../_shared/generation-trace.ts';
@@ -121,6 +124,7 @@ import {
 import { ENRICHMENT_STAMP } from '../_shared/reports/location/locationEnrichmentReuse.pure.ts';
 import { transportCountReading } from '../_shared/transportReading.pure.ts';
 import { readSalesRegister } from '../_shared/reports/market/salesRegisterRead.ts';
+import { readApprovalsRegister } from '../_shared/reports/market/approvalsRegisterRead.ts';
 import type { SalesRegisterState } from '../_shared/reports/market/openData/salesRegister.pure.ts';
 import { describeLandArea } from '../_shared/reports/investment/landAreaScope.pure.ts';
 import { applyDisplayOverrides, buildAnnualCostOverrides, normalisePropertyType, toFiniteNumber } from '../_shared/reports/investment/overrides.pure.ts';
@@ -2910,6 +2914,17 @@ const __investmentReportHandler = async (req: Request): Promise<Response> => {
        * point of recording it rather than passing it.
        */
       marketEvidence?: any;
+      /**
+       * The area's approved dwelling supply, as an `ApprovalsSeries`.
+       *
+       * Declared and written by nothing yet: the national register behind it
+       * needs a table, a schedule and a first ingest. It is declared HERE
+       * rather than when the loader lands because the prose block that reads
+       * it ships first, deliberately — a report with no reading must SAY so
+       * and be forbidden from describing the pipeline, which is a guarantee
+       * worth having before the evidence exists rather than after.
+       */
+      buildingApprovals?: any;
     }
     
     let enhancedData: EnhancedData = {};
@@ -4457,9 +4472,44 @@ const __investmentReportHandler = async (req: Request): Promise<Response> => {
        * scoring failure must not take the evidence with it: what was measured
        * was measured whether or not a grade came back.
        */
+      /*
+       * Approved dwelling supply, from this deployment's own register.
+       *
+       * `approvalsFactBlocks` was wired to `enhancedData.buildingApprovals`
+       * and NOTHING wrote it, so every report would have carried the absence
+       * branch for ever — a correct sentence about a feature that could never
+       * turn on, which is the shape `builder_network_connections` has on the
+       * prime: read in four places, written in none. Nothing false ships from
+       * a gap like that, which is exactly why nothing reports it.
+       *
+       * It is a read of our OWN table rather than a vendor call, so it is not
+       * on the acquisition ledger, costs no budget and is not reuse-gated: a
+       * resume picks up whatever the last ingest wrote, which is what a
+       * resumed report should see.
+       *
+       * The whole answer is stored, absence and all, because WHICH absence it
+       * is decides what the document says — `not_loaded` is about this
+       * deployment, `none_for_area` is about the area, and the call site used
+       * to guess between them from whether planning had named a council.
+       */
+      const approvals = await readApprovalsRegister(supabase, {
+        state: (marketState ?? null) as SalesRegisterState | null,
+        trustedSuburb: marketSuburb,
+        cadastreLga: enhancedData.planningData?.parcel?.status === 'ok'
+          && typeof enhancedData.planningData?.parcel?.lga === 'string'
+          ? enhancedData.planningData.parcel.lga.trim() || null
+          : null,
+      });
+      console.log(
+        `[approvals] ${approvals.kind === 'series'
+          ? `${approvals.series.months.length} months at ${approvals.askedAt} for ${approvals.series.area}`
+          : `${approvals.absence}${approvals.askedAt ? ` (asked at ${approvals.askedAt})` : ''}`}`,
+      );
+
       enhancedData = {
         ...enhancedData,
         marketEvidence: { points: marketPoints, providersConsulted, providersUnavailable },
+        buildingApprovals: approvals,
       };
 
       // Calculate investment score - property OR area scoring
@@ -4947,7 +4997,13 @@ Suburb Investment Snapshot: [SUBURB NAME], [STATE]
 
 ${demographicsStatBlocks(enhancedData)}
 
-${regionalTrendBlocks(enhancedData)}
+${regionalTrendBlocks({
+  ...enhancedData,
+  // The TRUSTED geography only. `state` here is `detectedState || 'NSW'`,
+  // so reading it would name the NSW publisher on every property whose
+  // state was never resolved.
+  state: trustedStateForForwardDemand(subjectGeography, abbreviateState),
+})}
 
 # 5. Infrastructure & Amenities
 **Education:**
@@ -5914,6 +5970,42 @@ Produce a comprehensive statewide investment analysis following the structure ab
       '# Infrastructure & Development Outlook — what the registers answered',
       infrastructureTable,
       infrastructureSectionRules,
+      /*
+       * Approved dwelling supply, and today it is always the ABSENCE branch.
+       *
+       * The register behind it (`absBuildingApprovals.pure.ts`) needs a table,
+       * a schedule and a first ingest, none of which this change makes. What
+       * ships now is the half that protects the document: the statewide
+       * prompt's `**Supply Pipeline Risk:** [New housing supply vs demand
+       * balance]` is a bracketed slot with no register behind it, and
+       * `PLANNING_CONTROLS_IN_THE_REPORT.md` records exactly what a model does
+       * with one of those. So the absence is STATED and the rating is
+       * forbidden, in the publisher's own terms, before the evidence exists —
+       * `CLONE_PROVISIONING_GAPS.md`'s rule that a feature the migrations have
+       * not reached degrades rather than failing, applied before the gap.
+       *
+       * It rides the pin for §6's reason: it is the authority for a set of
+       * figures, and an authority `limitPromptContext` can cut while its rule
+       * survives is the defect that put `450 m²` into a client's document.
+       */
+      /*
+       * The absence is the REGISTER'S own answer now, not a guess.
+       *
+       * This used to read `planningFacts.council ? 'not_loaded' :
+       * 'no_area_resolved'` — a stand-in for a question nothing had asked,
+       * which would have told a reader the register was unloaded on a
+       * deployment where it was loaded and simply held nothing for the area.
+       * The four absences are four different sentences and only the read
+       * knows which one is true.
+       */
+      approvalsFactBlocks(
+        enhancedData.buildingApprovals?.kind === 'series'
+          ? summariseApprovals(enhancedData.buildingApprovals.series)
+          : null,
+        enhancedData.buildingApprovals?.kind === 'absent'
+          ? enhancedData.buildingApprovals.absence
+          : 'not_loaded',
+      ),
       // Recorded from official publications rather than retrieved from a
       // register, and pinned for the same reason everything else here is:
       // it is the AUTHORITY for a set of figures and dates, and a rule that
@@ -6058,7 +6150,13 @@ is available to you.
 
 ${planningStatBlocks(enhancedData)}
 
-${regionalTrendBlocks(enhancedData)}
+${regionalTrendBlocks({
+  ...enhancedData,
+  // The TRUSTED geography only. `state` here is `detectedState || 'NSW'`,
+  // so reading it would name the NSW publisher on every property whose
+  // state was never resolved.
+  state: trustedStateForForwardDemand(subjectGeography, abbreviateState),
+})}
 
 ---
 
@@ -6112,51 +6210,13 @@ ${(() => {
 
 ## Healthcare, shopping and recreation
 
-${(() => {
-  const li: any = enhancedData.locationIntelligence ?? {};
-  const rows: string[] = [];
-  const add = (label: string, count: unknown, nearest: unknown) => {
-    // `absent is never zero` — a failed Places category stores null and a
-    // reached-but-empty one stores 0, so a number is a measurement and
-    // anything else is a category nobody reached.
-    if (typeof count !== 'number') return;
-    rows.push(`| ${label} | ${count} within 5 km | ${typeof nearest === 'string' && nearest ? nearest : '—'} |`);
-  };
-  add('Healthcare facilities', li.healthcare?.facilitiesWithin5km, li.healthcare?.nearestHospital);
-  add('Supermarkets', li.lifestyle?.supermarkets, li.lifestyle?.nearestSupermarket);
-  add('Shopping centres', li.lifestyle?.shoppingCenters, li.lifestyle?.nearestShoppingCenter);
-  add('Parks and recreation', li.lifestyle?.parks, li.lifestyle?.nearestPark);
-  add('Restaurants and cafés', li.lifestyle?.restaurants, null);
-  if (!rows.length) {
-    return 'No amenity reading was retrieved for this property. Say that amenity data was not '
-      + 'retrieved; do NOT state a count, a distance or a named facility, and do NOT describe '
-      + 'the area as well or poorly served.';
-  }
-  return `| Category | Count | Nearest |\n|---|---|---|\n${rows.join('\n')}\n\n`
-    + 'A count of zero here is a measurement and may be reported as one — a rural address with no '
-    + 'hospital within five kilometres is a fact worth printing. A category absent from this table '
-    + 'was not measured and must not be described either way.';
-})()}
+${amenityFactBlocks(enhancedData.locationIntelligence)}
 
 ---
 
 ## Getting about
 
-${(() => {
-  const t: any = enhancedData.locationIntelligence?.transport ?? {};
-  const parts: string[] = [];
-  if (t.nearestStation) parts.push(`Nearest public transport stop on record: **${t.nearestStation}**${t.stationDistance ? `, ${t.stationDistance}` : ''}.`);
-  if (Array.isArray(t.transportTypes) && t.transportTypes.length) parts.push(`Modes recorded: ${t.transportTypes.join(', ')}.`);
-  if (t.commuteToCbd) parts.push(`Measured commute: ${t.commuteToCbd}.`);
-  if (!parts.length) {
-    return 'No public-transport reading was retrieved for this property. Say that transport data '
-      + 'was not retrieved; do NOT name a station, state a distance or a commute time, and do NOT '
-      + 'call the area well served or car-dependent. Car dependence is a finding that needs a '
-      + 'measurement like any other.';
-  }
-  return `${parts.join('\n\n')}\n\nA stop found is a fact about this area; no stop found is a fact about the `
-    + 'FEEDS that were loaded. Neither is a score, and no service frequency or mode quality was measured.';
-})()}
+${transportFactBlocks(enhancedData.locationIntelligence)}
 
 ---
 

@@ -28,6 +28,7 @@
  *  - with nothing measured, the block is one honest line plus the
  *    no-invention instruction.
  */
+import { MACRO_WEB_SEARCH_RULE } from './registerAuthority.pure.ts';
 
 interface Numericish { [key: string]: unknown }
 
@@ -123,7 +124,7 @@ export function macroEconomicBlock(input: MacroPromptInput): string {
   if (rows.length === 0) {
     return 'No measured macro-economic reading is available for this report. State that in one sentence; ' +
       'do NOT print an economic indicators table, and do NOT state a cash rate, inflation figure, GDP growth, ' +
-      'unemployment rate or any other macro figure from memory.';
+      'unemployment rate or any other macro figure from memory. ' + MACRO_WEB_SEARCH_RULE;
   }
 
   return [
@@ -133,6 +134,7 @@ export function macroEconomicBlock(input: MacroPromptInput): string {
     'Use only the figures in the table, with their stated periods. Do NOT state GDP growth, unemployment, participation, ' +
     'consumer confidence or any other macro figure — none is measured here. Do NOT attribute any projection to the RBA ' +
     'or Treasury. Do NOT put a "What This Means" heading or any other commentary label above the paragraphs.',
+    MACRO_WEB_SEARCH_RULE,
     haveTarget
       ? 'The cash rate in force is the row labelled "RBA cash rate target (current)". Its effective date is the ' +
         '"effective from" row — the most recent Board decision, whether or not that decision moved the rate. The ' +

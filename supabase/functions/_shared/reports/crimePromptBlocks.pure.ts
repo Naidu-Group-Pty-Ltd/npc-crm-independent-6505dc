@@ -16,6 +16,8 @@
  *    the block is one honest line and an instruction not to invent.
  */
 
+import { CRIME_WEB_SEARCH_RULE } from './registerAuthority.pure.ts';
+
 interface NumericishReading { [key: string]: unknown }
 
 const num = (v: unknown): number | null =>
@@ -33,7 +35,8 @@ export function crimeStatBlocks(input: CrimePromptInput): string {
   const c = input.crimeStatistics;
   const total = num(c?.['totalLast12Months']);
   if (!c || total === null) {
-    return 'No recorded-crime register is integrated for this location. State that plainly in one sentence; do NOT print a crime table, a safety score, a rating or an estimated rate.';
+    return 'No recorded-crime register is integrated for this location. State that plainly in one sentence; do NOT print a crime table, a safety score, a rating or an estimated rate. '
+      + CRIME_WEB_SEARCH_RULE;
   }
 
   const parts: string[] = [];
@@ -112,6 +115,7 @@ export function crimeStatBlocks(input: CrimePromptInput): string {
 
   parts.push(
     'Discuss only the recorded figures above, attributed to their source and reference period. Do NOT compute or assert a safety score, a rating, a ranking, or any figure not in this table; a change percentage is movement in recorded counts, not a statement about safety. Where a row reads "not comparable", say that no comparison exists rather than implying no change.',
+    CRIME_WEB_SEARCH_RULE,
   );
   return parts.join('\n\n');
 }

@@ -65,15 +65,27 @@ describe('a pointer into the prompt becomes a pointer into the report', () => {
   });
 
   it('keeps the sentence sourced — the reference is a real section', () => {
-    // The production form, verbatim from the generator's own note: the pointer
-    // sits hard against the full stop of the sentence it closes.
+    /*
+     * The production form, verbatim from the generator's own note: the pointer
+     * sits hard against the full stop of the sentence it closes.
+     *
+     * This assertion previously expected the reference AFTER that full stop —
+     * `expectations. (see *…*) The recorded…` — which leaves a parenthetical
+     * standing alone between two sentences, belonging to neither. A source
+     * belongs inside the sentence it sources, so the punctuation the pointer
+     * followed is now re-emitted after the reference. Renegotiated rather than
+     * worked around: the old string was pinning a placement, not a guarantee,
+     * and the guarantees here are that the bracket goes and the sentence stays
+     * sourced.
+     */
     const production = 'must factor into rental and resale expectations.[Infrastructure section] '
       + 'The recorded 680 new dwellings…';
     const { markdown } = rewriteScaffoldingPointers(production);
     expect(markdown).toBe(
-      'must factor into rental and resale expectations. '
-      + `(see *${PLANNING_REGISTER_SECTION}*) The recorded 680 new dwellings…`,
+      'must factor into rental and resale expectations '
+      + `(see *${PLANNING_REGISTER_SECTION}*). The recorded 680 new dwellings…`,
     );
+    expect(markdown).not.toContain('[');
   });
 
   it('does not write "see (see …)" where the sentence already says it', () => {

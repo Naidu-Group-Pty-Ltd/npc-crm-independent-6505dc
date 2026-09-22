@@ -25,7 +25,7 @@
  * `ReportTemplate` schema and pass the same gates; only their authoring
  * vocabulary differs, and each gets the design-consistency check that suits it.
  */
-import { writeFileSync, mkdirSync } from 'node:fs';
+import { writeFileSync, mkdirSync, readFileSync, existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { ReportTemplateSchema } from '../../src/lib/reportTemplate/templateSchema';
@@ -365,19 +365,142 @@ const REPO = resolve(__dirname, '../..');
  * The version is `20261209000000`. `20261209010000` re-copies the ACTIVE
  * masters from it, for the reason above.
  *
+ * ## v19 — two placeholder words in slots that name things
+ *
+ * Checked before editing, as the line below asked: `20261209000000` and
+ * `20261209010000` are both in the applied migration list (1,012 of them, the
+ * latest being `20261211000000`), so this change is a **v19**.
+ *
+ * Two literals on the 50 Investment Compass masters, and nothing else in the
+ * catalogue moves.
+ *
+ * **The risk register's rating read `Noted`.** The record holds a bare risk
+ * STRING from `investment_score.risks` and no severity at all, and the
+ * platform's exposure vocabulary is `Low | Moderate | High | Not assessed`
+ * (`riskRegister.pure.ts`). `Noted` was a fifth word in a four-word
+ * vocabulary, in the column that states the EXPOSURE, and it is absent from
+ * `RATING_PALETTE` too — which is why the chip display already drew it
+ * neutral. `severityFromRating` answers null for both, so neither draws a
+ * bar; what changes is that a reader is given the platform's own word for
+ * "nobody assessed this" instead of one it uses nowhere else.
+ * `confidence: 'Indicative'` is deliberately KEPT: it is in
+ * `CONFIDENCE_PALETTE`, and it is an honest qualifier for an unverified
+ * one-liner rather than a claim the record cannot support.
+ *
+ * **The Opportunities list's term read `Noted`.** Every sibling definition
+ * list on that page carries a real term naming what the row is about —
+ * `Location`, `Yield`, `Risk` — and the record gives an opportunity as one
+ * unlabelled string, so any term in that slot is invented. The heading
+ * already said "Opportunities", so the 160pt term column carried a word that
+ * repeated nothing and meant nothing. It is a `callout` now, which is the
+ * container the same page already uses for one unqualified statement ("No
+ * risk recorded"), and it is height-neutral: the definition list declared
+ * 30 + one ~45pt row against the callout's 72.
+ *
+ * A sweep of every literal `term:`, `rating:`, `confidence:`, `value:` and
+ * `status:` across all eleven format files found no other placeholder — the
+ * rest are real labels (`Location`, `Yield`, `Risk`, `Suburb`, `Value and
+ * equity`, `Cash contributed`). These two were the class.
+ *
+ * ## What the diff actually is, measured rather than claimed
+ *
+ * Parsed out of both files and compared schema by schema — 2,172 in each:
+ *
+ *   * **34 schemas changed**, and every one is an Investment Compass master.
+ *     The other ten formats' 493 masters are byte-identical, and the changed
+ *     lines are exactly 50 distinct family names plus the two header lines
+ *     (the `@effect` probe and the baseline's release id).
+ *   * `"rating":"Noted"` **50 → 0**, `"rating":"Not assessed"` **0 → 50**.
+ *   * `"type":"definition-list"` **−32**, `"type":"callout"` **+34**.
+ *
+ * That `+34` against `−32` is the part worth writing down, because the first
+ * draft of this comment claimed "no page gains or loses one" and that is
+ * **false**. Two masters — **Analyst Folio** and **Monograph** — gain a block
+ * (333→334 and 320→321) while keeping all seven of their definition lists.
+ *
+ * They never carried the Opportunities list. It is an OPTIONAL item, and
+ * `ifItFits` keeps one only while `y + height + SLACK <= contentBottom`. The
+ * definition list declared `30 + one ~45pt row` ≈ 75pt; the callout declares
+ * 72. On those two variants those three points are the difference, so a block
+ * they had been dropping silently now fits. That is `ifItFits` doing exactly
+ * its job — and it is a small improvement, not a regression: two more masters
+ * now show an opportunity the record holds instead of discarding it.
+ *
+ * `SLACK` is untouched at 36, so the comfort margin that stops an optional
+ * block printing over the one above it is unchanged.
+ *
+ * The version is `20261212000000`. `20261212010000` re-copies the ACTIVE
+ * masters from it, for the reason above.
+ *
+ * ## v19, regenerated — and why it is still a v19
+ *
+ * The one-query check the line below demands was run on 22 September 2026 and
+ * answers the OPPOSITE of what a fourth seed release would need:
+ * `20261212000000` is **not** recorded. 1,012 migrations are applied and the
+ * latest is `20261211000000`, so v19's own pair has never landed — it is
+ * unmerged, on one branch, in one pull request. The condition this header
+ * states for a v20 is that the previous version is RECORDED, and it is not,
+ * so the right move is to regenerate v19 in place rather than stack a second
+ * seed migration on top of an unapplied one.
+ *
+ * What made that necessary is a gap in this repository rather than a change
+ * of mind. The seed is GENERATED, and until now **nothing compared it to the
+ * definitions that generate it** — so the generator could be run or not run
+ * and the tree looked identical either way. Four commits landed after v19 was
+ * written and two of them changed what the definitions produce:
+ *
+ *   * `bcd1bf5` — a bound KPI note was budgeted one line and sets two, which
+ *     grows the DASHBOARD grid on page 2 of **142** masters by 8 to 21pt, and
+ *     pushes the blocks below it down by the same amount (76 callouts, 59 text
+ *     blocks, 40 data tables, 31 decision boxes, 18 strengths-watch panels).
+ *   * `b842936` — the cover facts had their own density behaviour and it
+ *     disagreed with the family's on 22 of 50, so `valueSize` on page 0 comes
+ *     off a literal and onto the scale: **140** masters 11pt → 9pt (compact)
+ *     and **80** masters 14pt → 13pt (spacious).
+ *
+ * Neither had reached the migration, and the migration is what a deployment
+ * applies. A fix that reaches only the definitions reaches no document at
+ * all — which is exactly how seed v18 came to merge without landing, the
+ * failure `20261212010000`'s `@effect` line was added to catch one layer
+ * further down. `npm run templates:library:seed:check` closes the layer above
+ * it: it re-derives the SQL and compares the BYTES, naming the templates that
+ * drifted, and `ci.yml`'s `template-geometry` job runs it beside the render
+ * gate. Measured both ways before it was trusted — exit 1 on the stale file
+ * (301 of 543 named), exit 0 on the fresh one.
+ *
+ * ## What the regenerated release is, measured rather than claimed
+ *
+ * Parsed out of both files and compared template by template — 543 in each:
+ *
+ *   * **301 of 543 templates differ**, all of them design-family masters. The
+ *     43 voice templates are byte-identical. By format: 47 Investment Compass,
+ *     37 Portfolio Review, 36 Cash Flow Comparison, 35 Borrowing Capacity,
+ *     35 Property Comparison, 23 Ten Year Cash Flow, 22 each of Client Details,
+ *     Report Q&A, Commercial Capacity and Market Intelligence.
+ *   * **No template's page count changes, and no template's block count
+ *     changes** — checked rather than asserted, because the first draft of the
+ *     v19 comment above claimed exactly that about the placeholder words and
+ *     was false. Every difference is a size, a height or a `y`.
+ *   * The two changes do not touch the same grid: of the grids that moved,
+ *     none changed both its `valueSize` and its `height`. The cover facts are
+ *     page 0; the note that grew is page 2.
+ *
+ * The placeholder-word measurement above still stands as the record of THAT
+ * change; these are the two that joined it.
+ *
  * Run the same one-query check before editing this file: if
- * `20261209000000` is already recorded, the next change needs a v19.
+ * `20261212000000` is already recorded, the next change needs a v20.
  */
 /**
  * The identifier this release records against a baseline and against a
  * refreshed master. It is the seed migration's own basename, so a row that
  * says it carries this release names the artefact that put it there.
  */
-const RELEASE_ID = '20261209000000_seed_template_library_v18_assessment_share_of_grade';
+const RELEASE_ID = '20261212000000_seed_template_library_v19_placeholder_words';
 
 const MIGRATION = resolve(
   REPO,
-  'supabase/migrations/20261209000000_seed_template_library_v18_assessment_share_of_grade.sql',
+  'supabase/migrations/20261212000000_seed_template_library_v19_placeholder_words.sql',
 );
 
 /** Postgres string literal, dollar-quoted so JSON never has to be escaped. */
@@ -616,7 +739,106 @@ function rowFor(t: CatalogueTemplate): string {
   )`;
 }
 
-function main(): void {
+/**
+ * Does the seed migration on disk still say what the template definitions
+ * say?
+ *
+ * ## The defect this exists for
+ *
+ * The seeded catalogue is GENERATED — the file's own header says so, and
+ * `npm run templates:library:seed` is the only thing that may write it. But
+ * nothing anywhere compared the two, so the generator could be run or not run
+ * and the repository looked identical either way. Measured on this branch,
+ * 22 September 2026: seed v19 was written at `5d17954` and FOUR commits
+ * changed what the definitions produce after it —
+ *
+ *   * `bcd1bf5` grew 142 dashboard KPI grids by 8–20pt, because a bound note
+ *     was budgeted one line and sets two;
+ *   * `b842936` took the cover facts off a density literal, moving 440 grids
+ *     (280 from 11pt to 9pt, 160 from 14pt to 13pt);
+ *
+ * — and the migration still carried the pre-`5d17954` geometry for all of
+ * them. The seed is what a deployment applies, so a fix that only reaches the
+ * definitions reaches no document at all. That is precisely how v18 came to
+ * merge without landing, which `20261212010000`'s own `@effect` line was
+ * added to catch one layer further down.
+ *
+ * ## Why the comparison is the ARTEFACT and not a count
+ *
+ * A count baseline absorbs a change: one master gains a block while another
+ * loses one and the number holds — the lesson `check-edge-functions.mjs` paid
+ * for when `TS2304` was frozen by count and a live `ReferenceError` went with
+ * it. So this compares the bytes the generator would write against the bytes
+ * on disk, and where they differ it names the templates rather than the
+ * offset, because a 40 MB diff sends nobody to a remedy.
+ *
+ * It is `investmentCompassSource.spec.ts`' rule one layer out: that spec
+ * re-checks the generated families against the Design file's own evaluation
+ * every run, and this checks the generated MIGRATION against the definitions
+ * those families feed.
+ */
+function seedTuples(sql: string): Map<string, string> {
+  const starts: { slug: string; at: number }[] = [];
+  // The slug is the tuple's FIRST field and `version` is always 1, so this
+  // sequence occurs nowhere else: `sqlText` picks a different dollar tag
+  // whenever a value would contain its own, so no field's CONTENT can carry
+  // `$tlt$` at all.
+  const re = /\$tlt\$([a-z0-9][a-z0-9-]*)\$tlt\$, 1, /g;
+  for (let m = re.exec(sql); m !== null; m = re.exec(sql)) {
+    starts.push({ slug: m[1], at: m.index });
+  }
+  // The VALUES list ends at `ON CONFLICT`, and the last tuple must stop
+  // there — otherwise the upsert clause and the publish statement ride on the
+  // last template and a change to either is reported against a row that did
+  // not move.
+  const tail = sql.indexOf('\nON CONFLICT', starts.length > 0 ? starts[starts.length - 1].at : 0);
+  const listEnd = tail === -1 ? sql.length : tail;
+  const tuples = new Map<string, string>();
+  starts.forEach((s, i) => {
+    const end = i + 1 < starts.length ? starts[i + 1].at : listEnd;
+    tuples.set(s.slug, sql.slice(s.at, end));
+  });
+  return tuples;
+}
+
+function reportDrift(fresh: string): void {
+  const path = MIGRATION.replace(REPO + '/', '');
+  if (!existsSync(MIGRATION)) {
+    console.error(`✗ ${path} does not exist — the seed has never been written.`);
+    console.error('  Run: npm run templates:library:seed');
+    process.exit(1);
+  }
+  const onDisk = readFileSync(MIGRATION, 'utf-8');
+  if (onDisk === fresh) {
+    console.log(`✓ ${path} is what the template definitions produce (${(fresh.length / 1024).toFixed(0)} KB, byte-identical)`);
+    return;
+  }
+
+  const a = seedTuples(onDisk);
+  const b = seedTuples(fresh);
+  const drifted = [...b.keys()].filter((slug) => a.get(slug) !== b.get(slug));
+  const added = [...b.keys()].filter((slug) => !a.has(slug));
+  const removed = [...a.keys()].filter((slug) => !b.has(slug));
+
+  console.error(`✗ ${path} is not what the template definitions produce.`);
+  console.error(
+    `  ${drifted.length} of ${b.size} templates differ`
+    + `${added.length > 0 ? `, ${added.length} are new` : ''}`
+    + `${removed.length > 0 ? `, ${removed.length} are gone` : ''}`
+    + `${drifted.length === 0 && added.length === 0 && removed.length === 0 ? ' — the difference is in the file header alone' : ''}.`,
+  );
+  for (const slug of [...added, ...removed, ...drifted].slice(0, 12)) {
+    console.error(`    ${slug}`);
+  }
+  if (drifted.length + added.length + removed.length > 12) {
+    console.error(`    … and ${drifted.length + added.length + removed.length - 12} more`);
+  }
+  console.error('  The migration is generated and must never be hand-edited.');
+  console.error('  Run: npm run templates:library:seed');
+  process.exit(1);
+}
+
+function main(mode: 'write' | 'check'): void {
   const problems: Problem[] = [];
   const slugs = new Set<string>();
 
@@ -662,7 +884,33 @@ function main(): void {
     (t) => deriveEntryFacts({ report_type: t.reportType, schema: t.schema }).production_ready,
   ).length;
 
-  const sql = `-- =====================================================================
+  /*
+   * The drift guard, EMITTED rather than hand-added.
+   *
+   * This header was written into the migration by hand, under a comment
+   * explaining that it exists because the migration creates no object — so
+   * `scripts/ops/migration-drift.mjs` has nothing to count and reports it as
+   * unverifiable, "which is exactly how seed v18 merged to main, never landed,
+   * and left every report printing the heading it was written to fix".
+   *
+   * The generator did not emit it. So the FIRST thing the documented workflow
+   * does — `CLAUDE.md`: "never hand-edit the generated migration — edit the
+   * source and run `npm run templates:library:seed`" — was silently delete the
+   * guard that exists because a seed once merged without landing. Measured: a
+   * seed run on an unchanged tree produced an 8-line deletion and nothing else.
+   *
+   * It is derived from `RELEASE_ID` rather than restated, so the assertion and
+   * the rows it is asserting about can never name different releases.
+   */
+  const sql = `-- @effect: select 1 from public.template_library_release_baselines where release = '${RELEASE_ID}'
+-- The line above is this file's own statement of what is true once it has
+-- run. It exists because this migration creates no object, so
+-- \`scripts/ops/migration-drift.mjs\` has nothing to count and would report
+-- it as unverifiable — which is exactly how seed v18 merged to main, never
+-- landed, and left every report printing the heading it was written to fix.
+-- Read-only by construction: the runner refuses anything that is not a
+-- lone SELECT.
+-- =====================================================================
 -- Template Library — seeded catalogue.
 --
 -- Generated by scripts/template-library/buildSeedCatalogue.ts. Do not hand-edit:
@@ -774,6 +1022,11 @@ WHERE version = 1
   AND slug IN (${all.map((t) => sqlText(t.slug)).join(', ')});
 `;
 
+  if (mode === 'check') {
+    reportDrift(sql);
+    return;
+  }
+
   mkdirSync(dirname(MIGRATION), { recursive: true });
   writeFileSync(MIGRATION, sql);
 
@@ -794,4 +1047,4 @@ WHERE version = 1
   console.log(`  → ${MIGRATION.replace(REPO + '/', '')} (${(sql.length / 1024).toFixed(0)} KB)`);
 }
 
-main();
+main(process.argv.includes('--check') ? 'check' : 'write');

@@ -54,7 +54,10 @@ describe('location evidence v2', () => {
         geography: { gccsaName: 'Greater Perth', significantUrbanArea: 'Perth', urbanCentre: 'Perth', state: 'WA' },
       }));
       expect(e.transit.state).toBe('not_covered');
-      expect(e.transit.statement).toMatch(/limit of the data held, not a finding about the area/);
+      // Reworded with the deployment vocabulary: "a limit of the data held"
+      // became "a limit of what was searched". The property asserted here is
+      // the one that matters -- it is about the retrieval, not the area.
+      expect(e.transit.statement).toMatch(/limit of what was searched, not a finding about the area/);
     });
 
     it('distinguishes "a network covers this and there is no stop" from "no network"', () => {
@@ -94,7 +97,37 @@ describe('location evidence v2', () => {
     });
   });
 
-  describe('nothing is invented for a source this deployment does not hold', () => {
+  describe('a reader sentence describes the retrieval, not this platform', () => {
+    it('names no deployment, database or data load in any statement', () => {
+      /*
+       * `statement` is declared as "what a reader must know", so it is client
+       * prose. Two of them read "this deployment holds no source for it" and
+       * "No public transport feed loaded by this deployment covers this
+       * location" -- the defect §5b of REPORT_PRESENTATION_PROGRAMME.md found
+       * reaching the Compass through `GradeGap.remedy`. This module has no
+       * production call site yet, so the wording would have reached a client
+       * on the day it mounted.
+       */
+      const evidence = buildLocationEvidenceV2({
+        transport: null,
+        geography: { state: 'WA', centre: null, centreKind: null },
+      } as never);
+      const statements = [
+        evidence.transit.statement,
+        evidence.centre.statement,
+        evidence.accessToCentre.statement,
+        evidence.amenities.statement,
+        ...evidence.caveats,
+      ].filter(Boolean) as string[];
+      expect(statements.length).toBeGreaterThan(0);
+      for (const statement of statements) {
+        expect(statement, statement)
+          .not.toMatch(/\b(deployment|database|data load|loaded by|cache|ingest)\b/i);
+      }
+    });
+  });
+
+  describe('nothing is invented for a source this platform has not acquired', () => {
     it('marks access and amenities not_acquired and says why', () => {
       const e = buildLocationEvidenceV2(inputs({
         geography: { gccsaName: 'Greater Sydney', significantUrbanArea: 'Sydney', urbanCentre: 'Sydney', state: 'NSW' },

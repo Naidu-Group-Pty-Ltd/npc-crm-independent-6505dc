@@ -32,12 +32,9 @@
  * vocabulary would be a third thing to keep in step.
  */
 import { describe, expect, it } from 'vitest';
-import { readFileSync, readdirSync } from 'node:fs';
-import { resolve } from 'node:path';
 
 import { RBA_WANTED_SERIES } from '../../../../supabase/functions/_shared/rbaTables.pure';
-
-const MIGRATIONS = resolve(__dirname, '../../../../supabase/migrations');
+import { migrationText, migrationsContaining } from '../../testSupport/migrationCorpus';
 
 /**
  * The codes the LIVE constraint admits, read from the most recent migration
@@ -45,10 +42,17 @@ const MIGRATIONS = resolve(__dirname, '../../../../supabase/migrations');
  * later migration is what widens it.
  */
 function admittedByConstraint(): string[] {
-  const files = readdirSync(MIGRATIONS).filter((f) => f.endsWith('.sql')).sort();
+  /*
+   * Only the migrations whose BYTES name the column. `supabase/migrations` is
+   * 620 MB and all but ~14 of them are the generated template library, so
+   * decoding every file to look for one constraint cost 10.9s a pass and
+   * timed out under the parallel suite -- see `testSupport/migrationCorpus`.
+   * The set this walks is identical; what changes is what is decoded.
+   */
+  const files = migrationsContaining('rba_series_meta', 'table_code');
   let latest: string | null = null;
   for (const file of files) {
-    const sql = readFileSync(resolve(MIGRATIONS, file), 'utf-8');
+    const sql = migrationText(file);
     // Both spellings the repo uses: the inline `check (...)` on CREATE TABLE
     // and the named ADD CONSTRAINT that widens it later.
     const m = sql.match(/table_code\s+text\s+not\s+null\s+check\s*\(\s*table_code\s+in\s*\(([^)]*)\)/i)

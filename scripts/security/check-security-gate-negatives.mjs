@@ -130,6 +130,17 @@ const CASES = [
     replace: '"version": "20261112999999"',
   },
   {
+    gate: 'check-migration-version-collisions.mjs',
+    file: 'supabase/migrations/MIGRATION_VERSION_COLLISIONS.json',
+    what: 'a version that is fourteen digits but not a moment any calendar holds',
+    // Ten files here carry one — minute 96 of an hour, hours 24 to 30 — and
+    // Postgres accepts every one, because `version` is text. Dropping the freeze
+    // must turn the gate red, or the inventory is a place to hide the eleventh
+    // rather than a record of the ten.
+    find: '"20260730240000",',
+    replace: '',
+  },
+  {
     gate: 'check-migration-security.mjs',
     file: 'supabase/migrations/20261119150000_revoke_public_execute_trigger_bodies.sql',
     what: 'a revoke names anon and authenticated but not PUBLIC, so it removes nothing',
@@ -258,6 +269,25 @@ const CASES = [
   },
 
   // ── WP-17: the database's own gate ───────────────────────────────────────
+  {
+    gate: 'check-applied-body-digests.mjs',
+    file: 'supabase/migrations/20250827173834_c6923655-f82f-42ad-8561-6e348ff74015.sql',
+    what: 'a migration this deployment has already RUN is edited',
+    // Not a literal-matching gate — it compares sha256 of the file against the
+    // SQL the ledger holds — but the same failure mode applies: a manifest that
+    // no longer covers what it names passes every run and guards nothing.
+    //
+    // The consequence is not local. Mission Control decides what a clone may be
+    // sent by these bytes, and `partitionByDependency` treats a withheld version
+    // as a barrier, so editing one applied migration can withhold every runnable
+    // migration behind it from the whole fleet.
+    //
+    // The mutation adds a statement rather than touching whitespace or a
+    // comment, deliberately: those two ARE discounted by rungs 1 and 2, and a
+    // case that mutated one would assert the opposite of the rule.
+    find: '-- Create the missing update function',
+    replace: '-- Create the missing update function' + '\nSELECT 1; -- planted',
+  },
   {
     gate: 'check-migration-security.mjs',
     file: 'supabase/migrations/20260909000000_wp17_secdef_drift_remediation.sql',

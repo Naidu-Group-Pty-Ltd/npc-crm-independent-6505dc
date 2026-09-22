@@ -528,6 +528,19 @@ function runningHeadBottom(): number {
  * three for a strata address with a building name, and a rule struck through
  * the running head is the kind of defect that only shows on a real address.
  */
+/**
+ * The longest `property_address` in the corpus, measured 2026-08-16 over all
+ * 1,187 stored rows: median 19, p90 44, p99 61, **max 84**.
+ *
+ * Exported, and named ONCE. It was declared here inside `cover()` and again as
+ * a bare `const LONGEST_ADDRESS = 84` in
+ * `investmentPropertyRows.spec.ts` — two copies of one measurement, which is
+ * how the two come to disagree the next time the corpus is re-measured. Both
+ * read this now, and so does the geometry harness, which needs an address of
+ * this length rather than the binding fixture's 42-character one.
+ */
+export const LONGEST_ADDRESS = 84;
+
 export function runningHead(documentLabel: string, part: string): BlockDef[] {
   const c = ctx();
   const labelWidth = Math.floor(c.contentWidth * 0.66);
@@ -950,12 +963,8 @@ export function cover(opts: CoverOptions): PageDef {
     const lines = Math.max(1, Math.floor(titleRoom / (size * 1.12)));
     return perLine * lines;
   };
-  /**
-   * The longest `property_address` in the corpus, measured 2026-08-16 over all
-   * 1,187 rows: median 19, p90 44, p99 61, max 84. The step-down size is the
-   * first one that fits 84 characters, so no stored address can overrun it.
-   */
-  const LONGEST_ADDRESS = 84;
+  // The step-down size is the first that fits `LONGEST_ADDRESS`, so no stored
+  // address can overrun it. See that constant for the measurement.
   const fullChars = titleCharsAt(c.scale.coverTitle);
   let smallSize = c.scale.coverTitle;
   while (smallSize > 12 && titleCharsAt(smallSize) < LONGEST_ADDRESS) smallSize = Math.round((smallSize - 1) * 10) / 10;
@@ -1026,7 +1035,17 @@ export function cover(opts: CoverOptions): PageDef {
     labelFont: 'token:mono',
     labelSize: c.scale.kpiLabel,
     labelTracking: TRACKING.label,
-    valueSize: c.density === 'spacious' ? 14 : 11,
+    /*
+     * `c.scale.coverFact`, not a density branch of its own.
+     *
+     * This read `c.density === 'spacious' ? 14 : 11` and was the only element
+     * on the cover not routed through `scaleFor` — so it carried a SECOND
+     * density behaviour and disagreed with the family's own on 22 of the 50
+     * master/variant combinations. The compact half is what showed: every
+     * other element on a compact cover shrinks 18% and this did not, so the
+     * facts grew against their surroundings. See `COVER_FACT_BASE`.
+     */
+    valueSize: c.scale.coverFact,
     valueColor: bodyInk,
     labelColor: mutedInk,
     ruleColor: onField ? 'token:line' : 'token:line',
@@ -1563,6 +1582,7 @@ export function kpis(items: KpiItem[]): FlowItem {
     );
     // A bound label or note cannot be measured from its own source text.
     const literal = (s: string | undefined): number => (s && !s.includes('{{') ? s.length : 0);
+    const bound = (s: string | undefined): boolean => !!s && s.includes('{{');
     const labelLines = Math.max(
       shared.labelLines,
       ...shown.map((k) => linesFor(literal(k.label), c.scale.kpiLabel)),
@@ -1570,8 +1590,27 @@ export function kpis(items: KpiItem[]): FlowItem {
     const valueLines = Math.max(
       1, ...shown.map((k) => (k.valueChars ? linesFor(k.valueChars, valueSize) : 1)),
     );
+    /*
+     * A BOUND note is budgeted two lines, for the reason `shared.labelLines`
+     * already budgets two for a bound label: `literal()` answers 0 for
+     * anything carrying `{{`, so `linesFor` returns its floor of 1 and the
+     * budget becomes a promise about text the template does not hold.
+     *
+     * Measured on the cash-flow page's "Where it lands", 21 Sep 2026: the
+     * note under *Value at year ten* renders "From $1,336,400 at year one"
+     * and sets two lines in the cell, and the block below — the optional
+     * equity callout `ifItFits` keeps — took 2pt of it on four masters. The
+     * comment two lines above states the limitation and the arithmetic then
+     * ignored it.
+     *
+     * A note whose text IS literal is still measured from it, so nothing that
+     * fits today grows.
+     */
     const noteLines = shown.some((k) => k.note)
-      ? Math.max(1, ...shown.map((k) => linesFor(literal(k.note), c.scale.kpiNote)))
+      ? Math.max(
+        shown.some((k) => bound(k.note)) ? 2 : 1,
+        ...shown.map((k) => linesFor(literal(k.note), c.scale.kpiNote)),
+      )
       : 0;
     const cell = padTop
       + labelLines * c.scale.kpiLabel * 1.25
@@ -1853,9 +1892,31 @@ export function risks(
 ): FlowItem {
   const c = ctx();
   const bars = riskKind(c.manifest.risk_display) === 'bars';
+  /*
+   * `+22` was 8pt of cell padding above, 8pt below and 6pt spare, and the
+   * spare is what ran out. Measured on `Frontispiece [compass]` p6 with the
+   * catalogue's real faces installed — the first measurement of this block
+   * ever taken in the face it ships in, because every earlier run of the
+   * geometry gate loaded no webfont at all (`assertDeclaredFacesResolve` in
+   * `qa.ts`) — the register's ink ends at 369.1pt where the block below it
+   * begins at 363.0pt: **6.1pt** past its declared slot.
+   *
+   * What made that 6.1pt a collision rather than a tight fit is the block
+   * BELOW. The page declares the register at y=199, a withheld-register
+   * callout at 363 and the recommendation at 437; the callout is conditional
+   * on there being no risk string, so on a record that carries one it is
+   * dropped and `closeDroppedBlocks` moves the recommendation up into the
+   * band the callout held — onto the 6.1pt the register had already
+   * overrun. Neither block is wrong on its own, which is why this needed a
+   * render to find.
+   *
+   * 30 rather than 22: the observed shortfall plus headroom, since the two
+   * prose columns are bound and this budget is a promise about text the
+   * template does not hold.
+   */
   const rowHeight = chars === undefined
     ? 46
-    : Math.max(46, textHeight(chars, { size: c.scale.cell, width: c.contentWidth * 0.74 }) * 2 + 22);
+    : Math.max(46, textHeight(chars, { size: c.scale.cell, width: c.contentWidth * 0.74 }) * 2 + 30);
   return {
     height: bars ? 26 + items.length * 24 : 44 + items.length * rowHeight,
     block: (y) => block('risk-register', {

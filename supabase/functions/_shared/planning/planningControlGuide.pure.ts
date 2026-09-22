@@ -247,4 +247,46 @@ export const NO_STATE_LAYER_NOTE: Partial<Record<PlanningJurisdiction, string>> 
   WA: 'Western Australia’s state planning layers are published under terms that do not permit commercial republication, so they were not retrieved. Nothing here says whether a control applies.',
   SA: 'South Australia’s Planning and Design Code layers are not yet integrated by this platform. Nothing here says whether a control applies.',
   NT: 'The Northern Territory’s planning scheme layers are not yet integrated by this platform. Nothing here says whether a control applies.',
+  ACT: 'The Australian Capital Territory’s zone was read, and its overlay layers — the Territory Plan’s precinct codes and its bushfire, flood and heritage overlays — are not yet integrated by this platform. Nothing here says whether a control applies. In the ACT the Crown lease’s purpose clause also governs use, and no spatial layer carries it.',
+};
+
+/**
+ * What this platform reads of each jurisdiction's OVERLAY registers.
+ *
+ * W3.6's rule: *a Western Australian property must read "no state planning
+ * register is loaded for Western Australia", never "no overlays".* The five
+ * absences already existed and the sentences already existed; what did not
+ * exist was anything that could tell you a jurisdiction had been FORGOTTEN.
+ * `NO_STATE_LAYER_NOTE` is a `Partial` record — correctly, because a
+ * jurisdiction whose overlays this platform reads in full needs no such note
+ * — and a `Partial` record is exactly the shape that lets one go missing.
+ *
+ * The Australian Capital Territory did. Its ZONE is read (`buildActZoningQuery`
+ * is one of the four zoning probes), so it never looked unserved; its overlay
+ * registers have no branch at all, so `constraintOutcomes` stayed empty and
+ * the page fell through to the generic sentence — the same words a transport
+ * failure produces, naming neither the territory nor where a reader should
+ * go instead.
+ *
+ * So the coverage is DECLARED, and the invariant is asserted:
+ * **anything not `state_layers_read` owes a note.** A new jurisdiction, or a
+ * register withdrawn, then fails a test rather than quietly printing the
+ * generic line.
+ *
+ * `partial` is its own value because Queensland is genuinely partial — the
+ * state registers answer for state instruments and the council scheme is
+ * unread — and collapsing it into either neighbour would make one of two
+ * true sentences unsayable.
+ */
+export type OverlayCoverage = 'state_layers_read' | 'partial_state_layers_read' | 'not_read';
+
+export const OVERLAY_COVERAGE: Readonly<Record<PlanningJurisdiction, OverlayCoverage>> = {
+  NSW: 'state_layers_read',
+  VIC: 'state_layers_read',
+  TAS: 'state_layers_read',
+  QLD: 'partial_state_layers_read',
+  WA: 'not_read',
+  SA: 'not_read',
+  NT: 'not_read',
+  ACT: 'not_read',
 };

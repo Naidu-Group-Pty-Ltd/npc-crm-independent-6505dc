@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync, readdirSync } from 'node:fs';
 import { resolve } from 'node:path';
+import { migrationText, migrationsContaining } from '../testSupport/migrationCorpus';
 
 /**
  * The provider catalogue must not contradict the provider client.
@@ -57,15 +58,14 @@ function flagTheClientSends(): string {
  * Sorted by filename, which is the order the CLI applies them.
  */
 function catalogueEndState(): { flag: string | null; note: string | null } {
-  const files = readdirSync(MIGRATIONS)
-    .filter((f) => f.endsWith('.sql'))
-    .sort();
+  // Byte-gated, both casings, because both matches below are `/gi`.
+  const files = migrationsContaining(['save_api_request', 'SAVE_API_REQUEST']);
 
   let flag: string | null = null;
   let note: string | null = null;
 
   for (const file of files) {
-    const sql = readFileSync(resolve(MIGRATIONS, file), 'utf8');
+    const sql = migrationText(file);
     for (const m of sql.matchAll(/'save_api_request'\s*,\s*(true|false)\b/gi)) {
       flag = m[1].toLowerCase();
     }

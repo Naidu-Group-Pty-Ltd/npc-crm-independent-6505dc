@@ -20,7 +20,7 @@ const repoPath = (rel: string) => join(REPO_ROOT, rel);
 const appSource = readFileSync(repoPath('src/App.tsx'), 'utf8');
 const pageSource = readFileSync(repoPath('src/pages/admin/BcSegmentEngineAdmin.tsx'), 'utf8');
 const migrationSource = readFileSync(
-  repoPath('supabase/migrations/20260725000000_restrict_api_health_log_select.sql'),
+  repoPath('supabase/migrations/20260725000001_restrict_api_health_log_select.sql'),
   'utf8',
 );
 

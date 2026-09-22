@@ -144,6 +144,7 @@ import {
 } from './investmentProgramme.pure.ts';
 import { ABSENCE_GUIDE, guidesForKinds } from './infrastructureGuide.pure.ts';
 import { auDate } from './auDate.pure.ts';
+import { NATIONAL_PIPELINE_COVERAGE_PHRASE } from './nationalPipeline.pure.ts';
 
 const isRecord = (v: unknown): v is Record<string, unknown> =>
   typeof v === 'object' && v !== null && !Array.isArray(v);
@@ -399,6 +400,18 @@ export const INFRASTRUCTURE_COVERAGE_LIMITS: readonly string[] = [
   'council capital works programmes and their budgets',
   'state and federal budget infrastructure programmes',
   'transport, water, energy and health agency project announcements',
+  /*
+   * W3.2. The Infrastructure Priority List was not disclaimed by any of the
+   * three above, and it is the register a reader is most likely to assume
+   * was consulted: it is the national list of proposals Infrastructure
+   * Australia has evaluated. It is NOT a budget programme — it commits no
+   * money and appearing on it is not funding — so "state and federal budget
+   * infrastructure programmes" does not cover it, and the entry above that
+   * replaces that one when a state forward-works programme HAS been read
+   * does not cover it either. It therefore stands on its own and is never
+   * removed, which is why it is not folded into `coverageLimitsFor`.
+   */
+  NATIONAL_PIPELINE_COVERAGE_PHRASE,
   'projects outside the local government area the registers were asked about',
 ];
 
@@ -1316,20 +1329,52 @@ export function renderInfrastructureOutlook(evidence: InfrastructureEvidence): s
  * one are the same mistake waiting to be made — and two copies of a rule is
  * how one screen comes to warn about something the other does not.
  */
-const NO_RATING_FROM_AN_ABSENCE: readonly string[] = [
-  'An absence may NOT be rated. Where a risk register, a scorecard, a SWOT table, a heat map or any other '
-  + 'rating gives infrastructure a row, the rating cell reads "Not assessed" and the row states which registers '
-  + 'were asked and which publish nothing. Never rate it Low, Minimal, Limited, Negligible, Favourable or any '
-  + 'other reassuring value, and never file it as a strength or an opportunity. A register that returned '
-  + 'nothing has '
-  + 'measured the SEARCH, not the area — and the coverage sentence above names council capital works, budget '
-  + 'programmes and agency announcements as things it does not reach, which is where much of an area\u2019s '
-  + 'infrastructure is actually recorded.',
-  'An evidence, confidence or verification note describes the RETRIEVAL and never the conclusion beside it. '
-  + '"Verified" may be written of a register reading — that a layer was checked and answered nothing at this '
-  + 'coordinate — and may NOT be written of a rating, an outlook, a recommendation or any inference drawn from '
-  + 'it. Where the conclusion is yours rather than the register\u2019s, say so in those words.',
-];
+/**
+ * The two rules, composed from the coverage list rather than restating it.
+ *
+ * Both halves of this were wrong, and each in a way the other hid.
+ *
+ * It was a module-level constant carrying a HAND-WRITTEN paraphrase of
+ * `INFRASTRUCTURE_COVERAGE_LIMITS` — "council capital works, budget
+ * programmes and agency announcements" — so extending the authoritative list
+ * left the prose rule quietly describing the old one. That is
+ * `riskRegisterInstruction`'s defect exactly: one declaration, two verbatim
+ * copies, four paragraphs of drift before anybody looked.
+ *
+ * And it named "the coverage sentence above" in the branch where **nothing
+ * was retrieved**, which draws no table and no coverage paragraph — a rule
+ * pointing at a sentence that is not on the page, which is a rule a model
+ * reasons its way around. So where the paragraph is drawn the rule points at
+ * it, and where it is not the rule states the limits itself.
+ *
+ * Joined with semicolons, not commas: three of the five entries contain a
+ * comma of their own, and a five-item comma list reading "council capital
+ * works programmes and their budgets, state and federal budget infrastructure
+ * programmes, transport, water, energy and health agency project
+ * announcements, …" has no recoverable structure.
+ */
+function noRatingFromAnAbsence(
+  coverageLimits: readonly string[],
+  coverageParagraphDrawn: boolean,
+): [string, string] {
+  const named = coverageLimits.join('; ');
+  const where = coverageParagraphDrawn
+    ? `and the coverage sentence under the table names what these registers do not reach (${named})`
+    : `and these registers do not reach ${named}`;
+  return [
+    'An absence may NOT be rated. Where a risk register, a scorecard, a SWOT table, a heat map or any other '
+    + 'rating gives infrastructure a row, the rating cell reads "Not assessed" and the row states which registers '
+    + 'were asked and which publish nothing. Never rate it Low, Minimal, Limited, Negligible, Favourable or any '
+    + 'other reassuring value, and never file it as a strength or an opportunity. A register that returned '
+    + 'nothing has '
+    + `measured the SEARCH, not the area — ${where}, which is where much of an area’s `
+    + 'infrastructure is actually recorded.',
+    'An evidence, confidence or verification note describes the RETRIEVAL and never the conclusion beside it. '
+    + '"Verified" may be written of a register reading — that a layer was checked and answered nothing at this '
+    + 'coordinate — and may NOT be written of a rating, an outlook, a recommendation or any inference drawn from '
+    + 'it. Where the conclusion is yours rather than the register’s, say so in those words.',
+  ];
+}
 
 /**
  * How each register that returned nothing must be described (rule 9).
@@ -1366,8 +1411,10 @@ export function infrastructureRules(evidence: InfrastructureEvidence): string {
       + 'Do NOT draw a `{{timeline: …}}` pipeline. There is nothing to put in it.',
       '3. Do NOT say that infrastructure supports, drives or underwrites capital growth for this property. That is '
       + 'a causal claim, and there is no project here to hang it on.',
-      `4. ${NO_RATING_FROM_AN_ABSENCE[0]}`,
-      `5. ${NO_RATING_FROM_AN_ABSENCE[1]}`,
+      // No table was drawn here, so the rule states the limits rather than
+      // pointing at a paragraph the page does not carry.
+      `4. ${noRatingFromAnAbsence(evidence.coverageLimits, false)[0]}`,
+      `5. ${noRatingFromAnAbsence(evidence.coverageLimits, false)[1]}`,
     ].join('\n');
   }
   return [
@@ -1397,10 +1444,10 @@ export function infrastructureRules(evidence: InfrastructureEvidence): string {
     + 'number of projects, never multiply a stated cost by it, and never total the table by counting a '
     + 'development\u2019s cost once per amendment. The number of developments is the number of ROWS above, which '
     + 'the paragraph under the table states.',
-    '6. Repeat the coverage limitation in your own words: these registers do not cover council capital works, '
-    + 'budget programmes or agency announcements, so a short list is a short search.',
-    `7. ${NO_RATING_FROM_AN_ABSENCE[0]} A SHORT list is the same mistake as an empty one: rate what the table `
-    + 'states, never the length of it.',
-    `8. ${NO_RATING_FROM_AN_ABSENCE[1]}`,
+    '6. Repeat the coverage limitation in your own words, from the sentence under the table: these registers do '
+    + `not cover ${evidence.coverageLimits.join('; ')}. A short list is a short search.`,
+    `7. ${noRatingFromAnAbsence(evidence.coverageLimits, true)[0]} A SHORT list is the same mistake as an empty `
+    + 'one: rate what the table states, never the length of it.',
+    `8. ${noRatingFromAnAbsence(evidence.coverageLimits, true)[1]}`,
   ].join('\n');
 }

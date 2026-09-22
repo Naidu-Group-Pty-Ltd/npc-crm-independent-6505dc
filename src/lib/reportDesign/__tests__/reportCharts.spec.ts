@@ -39,6 +39,8 @@ import {
   renderDonut,
   renderGauge,
   renderHeatmap,
+  heatmapAlphaCeiling,
+  HEATMAP_ALPHA_FLOOR,
   renderInlineSpark,
   renderMarginSpark,
   renderMarimekko,
@@ -47,6 +49,7 @@ import {
   renderQuadrant,
   renderScoreBars,
   renderTiles,
+  tileWithItsFigure,
   renderTimelineRibbon,
   renderWaterfall,
   fitLines,
@@ -57,7 +60,7 @@ import {
 } from '../charts.pure';
 import { resolveReportPalette } from '../brandResolve.pure';
 import { CONTRAST_FLOOR, PRINT_SEMANTIC } from '../tokens.pure';
-import { contrastRatio } from '../color.pure';
+import { contrastRatio, mixHex } from '../color.pure';
 
 const palette = resolveReportPalette();
 const ctx = chartContext(palette);
@@ -128,6 +131,16 @@ describe('every chart draws', () => {
   });
 });
 
+/** Hue in degrees — for asserting a correction moved lightness only. */
+function hueDegrees(hex: string): number {
+  const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
+  const max = Math.max(r, g, b), min = Math.min(r, g, b);
+  if (max === min) return 0;
+  const d = max - min;
+  const h = max === r ? ((g - b) / d) % 6 : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
+  return ((h * 60) + 360) % 360;
+}
+
 describe('charts have no colour of their own', () => {
   it.each(CHARTS)('%s paints only palette roles', (_name, render) => {
     const svg = render();
@@ -146,11 +159,30 @@ describe('charts have no colour of their own', () => {
   });
 
   it('keeps the semantic three fixed whatever the tenant does', () => {
-    // A chart must not be the place "risk" becomes green.
-    const tenant = chartContext(resolveReportPalette({ brandHex: '#00FF00', preset: 'high_contrast' }));
-    const svg = renderWaterfall(tenant, [{ label: 'Loss', value: -100 }, { label: 'Gain', value: 40 }]);
-    expect(svg).toContain(PRINT_SEMANTIC.negative);
-    expect(svg).toContain(PRINT_SEMANTIC.positive);
+    /*
+     * A chart must not be the place "risk" becomes green.
+     *
+     * This asserted the raw `PRINT_SEMANTIC` hexes appear in the SVG, and that
+     * held while the semantics were a no-op through `legibleOnPaper`. With
+     * `CONTRAST_FLOOR.body` corrected from 4.5 to the 7 `REPORT_RULES.md` §2
+     * specifies, they are darkened for the stock they print on — `#D31212`
+     * becomes `#9B0D0D` on this preset — so the bytes move while the guarantee
+     * does not. The guarantee is that the TENANT cannot move them, and that a
+     * red stays red, which is what is asserted now.
+     */
+    const hostile = chartContext(resolveReportPalette({ brandHex: '#00FF00', preset: 'high_contrast' }));
+    const plain = chartContext(resolveReportPalette({ preset: 'high_contrast' }));
+    const draw = (c: typeof hostile) =>
+      renderWaterfall(c, [{ label: 'Loss', value: -100 }, { label: 'Gain', value: 40 }]);
+    // The hostile brand changed nothing about the semantics.
+    expect(draw(hostile)).toBe(draw(plain));
+    // …and they are still the frozen hues, not the tenant's.
+    for (const role of ['negative', 'positive'] as const) {
+      const used = hostile.palette[role === 'negative' ? 'negative' : 'positive'];
+      expect(draw(hostile)).toContain(used);
+      expect(hueDegrees(used)).toBeCloseTo(hueDegrees(PRINT_SEMANTIC[role]), 0);
+    }
+    expect(draw(hostile)).not.toContain('#00FF00');
   });
 
   it('draws its labels in ink that clears the micro floor on its own ground', () => {
@@ -269,6 +301,31 @@ describe('output safety', () => {
 
   it('refuses a ragged heatmap grid', () => {
     expect(renderHeatmap(ctx, [[1, 2], [3]])).toBe('');
+  });
+
+  it('refuses a heatmap whose labels cover only part of an axis', () => {
+    /*
+     * Page 23 of the 9 Hollow Street Compass (20 Sep 2026) drew one row of
+     * SEVEN cells under a single column label: the model wrote seven risks
+     * separated by commas where the grammar wants `/`, so the grid
+     * transposed and six of the seven figures named nothing. A partial label
+     * set is worse than none, because it reads as complete.
+     */
+    expect(renderHeatmap(ctx, [[3, 3, 3, 4, 4, 4, 5]], {
+      rowLabels: ['Crime'], colLabels: ['Exposure level'],
+    })).toBe('');
+    expect(renderHeatmap(ctx, [[1, 2], [3, 4]], { rowLabels: ['A'] })).toBe('');
+
+    // …and draws, unchanged, when an axis is fully labelled or not labelled
+    // at all. Both shapes are in production: the Hollow planning check names
+    // all four of its columns, the Crestview growth grid names none of its
+    // rows.
+    expect(renderHeatmap(ctx, [[1, 0, 0, 0]], {
+      rowLabels: ['Controls'], colLabels: ['Zone', 'Overlays', 'Min lot', 'Height'],
+    })).not.toBe('');
+    expect(renderHeatmap(ctx, [[6.3, 4.4, 6.2], [11, 7, 7.6]], {
+      colLabels: ['1-year', '3-year', '5-year'],
+    })).not.toBe('');
   });
 
   it('returns empty rather than a broken drawing for empty data', () => {
@@ -593,5 +650,207 @@ describe('a waterfall label fits the bar it belongs to', () => {
       { label: 'Total', value: 714500, total: true },
     ]));
     expect(drawn.some((t) => t.endsWith('…'))).toBe(true);
+  });
+});
+
+/**
+ * A heatmap's title fits the grid it belongs to.
+ *
+ * Page 26 of the Investment Compass delivered for 9 Hollow Street, Golden
+ * Square on 21 Sep 2026 printed the title below cut mid-word, over a 3×2 grid
+ * whose own labels are six and thirteen characters. `w` is computed from the
+ * row labels, the column labels and the cell text; the title was drawn as one
+ * unmeasured `<text>` and ran off the viewBox.
+ */
+describe('a heatmap title is fitted, never clipped', () => {
+  const GRID = [[8.6, 5.6], [1.5, 1.9], [8.5, 3.8]];
+  const LABELS = { rowLabels: ['1-year', '3-year', '5-year'], colLabels: ['Golden Square', 'Victoria'] };
+  const DELIVERED = 'House price growth · Golden Square vs Victoria (Valuer-General, 2025)';
+
+  const textNodes = (svg: string) => [...svg.matchAll(/<text[^>]*>([^<]*)<\/text>/g)].map((m) => m[1]);
+  const viewBox = (svg: string) => /viewBox="0 0 ([\d.]+) ([\d.]+)"/.exec(svg)!.slice(1).map(Number);
+
+  it('sets the delivered title whole, across as many lines as it needs', () => {
+    const svg = renderHeatmap(ctx, GRID, { ...LABELS, title: DELIVERED });
+    const drawn = textNodes(svg);
+    // Every word of the title is on the page…
+    const joined = drawn.slice(0, 2).join(' ');
+    expect(joined.replace(/\s+/g, ' ')).toBe(DELIVERED);
+    // …and nothing anywhere in the drawing is cut.
+    expect(drawn.filter((t) => t.includes('…'))).toEqual([]);
+  });
+
+  it('grows only the header band — the grid keeps its geometry', () => {
+    // §8's rule: increase the component's space before shrinking its text.
+    const long = viewBox(renderHeatmap(ctx, GRID, { ...LABELS, title: DELIVERED }));
+    const short = viewBox(renderHeatmap(ctx, GRID, { ...LABELS, title: 'House price growth' }));
+    expect(long[0]).toBe(short[0]);          // same width: same grid
+    expect(long[1]).toBeGreaterThan(short[1]); // taller: one more title line
+  });
+
+  it('is unchanged for a title that already fitted', () => {
+    // One line in, one line out, at the same y — which is what makes this safe
+    // to adopt for every chart in the corpus that was already right.
+    const svg = renderHeatmap(ctx, GRID, { ...LABELS, title: 'Growth' });
+    expect(textNodes(svg)[0]).toBe('Growth');
+    expect(textNodes(svg).filter((t) => t === 'Growth')).toHaveLength(1);
+  });
+
+  it('still draws no title where none was given', () => {
+    const svg = renderHeatmap(ctx, GRID, LABELS);
+    expect(textNodes(svg)[0]).toBe('Golden Square');
+  });
+
+  it('says a title was cut rather than dropping its tail', () => {
+    const svg = renderHeatmap(ctx, GRID, { ...LABELS, title: 'x '.repeat(400).trim() });
+    expect(textNodes(svg).some((t) => t.endsWith('…'))).toBe(true);
+  });
+});
+
+/**
+ * A tile promises a figure.
+ *
+ * Page 8 of the Investment Compass delivered for 9 Hollow Street, Golden
+ * Square on 21 Sep 2026 drew four amenity tiles. Three read a category over a
+ * count. The first read `HEALTHCARE 10 FACILITIES` over **nothing at all** —
+ * an empty `<text>` between a label and a sub-caption — because the model
+ * wrote `Healthcare 10 facilities` where the grammar wants `Label Value`.
+ */
+describe('a tile carries its figure, or it is not drawn', () => {
+  /** The four tiles, as the parser read them off that page. */
+  const PAGE_8 = [
+    { label: 'Healthcare 10 facilities', value: '', sub: 'Within 5 km of the property' },
+    { label: 'Shopping centres', value: '10', sub: 'Within 5 km of the property' },
+    { label: 'Parks & recreation', value: '9', sub: 'Within 5 km of the property' },
+    { label: 'Restaurants & cafés', value: '10', sub: 'Within 5km' },
+  ];
+  const textNodes = (svg: string) => [...svg.matchAll(/<text[^>]*>([^<]*)<\/text>/g)].map((m) => m[1]);
+
+  it('moves the figure out of the label into the slot that promised it', () => {
+    expect(tileWithItsFigure(PAGE_8[0])).toEqual({
+      label: 'Healthcare', value: '10 facilities', sub: 'Within 5 km of the property',
+    });
+  });
+
+  it('draws no empty value slot on that page', () => {
+    const drawn = textNodes(renderTiles(ctx, PAGE_8, { title: 'Everyday amenity within 5 km' }));
+    expect(drawn.filter((t) => !t.trim())).toEqual([]);
+    // …and the repaired tile now looks like its three siblings.
+    expect(drawn).toContain('HEALTHCARE');
+    expect(drawn).toContain('10 facilities');
+  });
+
+  it('leaves a qualitative tile alone — the parser gives it no value either', () => {
+    /*
+     * A first version of this rule also DROPPED a tile left with nothing to
+     * show, and CI caught it. The tiles parser fills `value` only from a
+     * trailing NUMBER, so `{{tiles: Economic Moderate int=0.8, Tenant Moderate
+     * int=0.7}}` parses to `label: "Economic Moderate", value: ""` — a
+     * perfectly good qualitative tile, shaded by its intensity, which that
+     * rule deleted along with the whole figure.
+     *
+     * `renderKpiGridHtml` drops a BINDING that resolved to nothing, a fact
+     * about the record. This is a directive that never had a separate value, a
+     * fact about the grammar. They are not the same thing.
+     */
+    const qualitative = [
+      { label: 'Economic Moderate', value: '', intensity: 0.8 },
+      { label: 'Tenant Moderate', value: '', intensity: 0.7 },
+    ];
+    for (const t of qualitative) expect(tileWithItsFigure(t)).toBe(t);
+    expect(renderTiles(ctx, qualitative, {})).toMatch(/^<svg\b/);
+    expect(textNodes(renderTiles(ctx, qualitative, {}))).toContain('ECONOMIC MODERATE');
+  });
+
+  it('draws every tile it was handed, in the rows they need', () => {
+    const five = [...PAGE_8, { label: 'Crime rate', value: '', sub: 'Not assessed' }];
+    const height = (svg: string) => Number(/viewBox="0 0 [\d.]+ ([\d.]+)"/.exec(svg)![1]);
+    // Five across four columns is two rows; four is one.
+    expect(height(renderTiles(ctx, five, {}))).toBeGreaterThan(height(renderTiles(ctx, PAGE_8, {})));
+    expect(textNodes(renderTiles(ctx, five, {}))).toContain('CRIME RATE');
+  });
+
+  it('is untouched where every tile already carries its value', () => {
+    const good = [{ label: 'A', value: '1' }, { label: 'B', value: '2' }];
+    expect(textNodes(renderTiles(ctx, good, { title: 'T' }))).toEqual(['T', 'A', '1', 'B', '2']);
+    for (const t of good) expect(tileWithItsFigure(t)).toBe(t);
+  });
+
+  it('does not take a label that merely contains a number', () => {
+    // A label carrying its own figure is one with NOTHING in the value slot.
+    const t = { label: '3-bedroom houses', value: '620000' };
+    expect(tileWithItsFigure(t)).toBe(t);
+  });
+
+  it('leaves a label that opens on its number', () => {
+    // Nothing before the first digit means no subject to split off.
+    const t = { label: '450 m² minimum lot', value: '' };
+    expect(tileWithItsFigure(t)).toBe(t);
+  });
+});
+
+/**
+ * A heatmap cell may not be shaded darker than its figure can be read on.
+ *
+ * The cell is the accent mixed over the ground at the value's own alpha, and
+ * the figure is set in whichever of the two page colours reads BETTER against
+ * it — which is not the same as one that reads. Measured on the colourway of
+ * the Investment Compass delivered for 9 Hollow Street on 21 Sep 2026
+ * (`#8E6C15` on `#FAF7EF`): the better of the two drops below 7:1 at alpha
+ * 0.48 while the ramp went to 0.90, so **51% of the shading scale produced a
+ * cell no figure could be read on**, bottoming out at 3.49:1.
+ */
+describe('a heatmap cell stays light enough to read its own figure', () => {
+  const DOCUMENT_COLOURWAY = {
+    ...chartPalette(palette), ground: '#FAF7EF', accent: '#8E6C15', ink: '#312A21',
+  };
+
+  const bestOn = (p: typeof DOCUMENT_COLOURWAY, alpha: number) => {
+    const cell = mixHex(p.ground, p.accent, alpha);
+    return Math.max(contrastRatio(cell, p.ink), contrastRatio(cell, p.ground));
+  };
+
+  it('caps the ramp where the better page colour still clears the micro floor', () => {
+    const ceiling = heatmapAlphaCeiling(DOCUMENT_COLOURWAY);
+    expect(ceiling).toBeLessThan(0.9);
+    expect(bestOn(DOCUMENT_COLOURWAY, ceiling)).toBeGreaterThanOrEqual(CONTRAST_FLOOR.micro);
+    // …and one step darker would not have.
+    expect(bestOn(DOCUMENT_COLOURWAY, ceiling + 0.02)).toBeLessThan(CONTRAST_FLOOR.micro);
+  });
+
+  it('every cell in the ramp carries a readable figure', () => {
+    for (const p of [chartPalette(palette), DOCUMENT_COLOURWAY]) {
+      const ceiling = heatmapAlphaCeiling(p);
+      for (let t = 0; t <= 1.0001; t += 0.1) {
+        const alpha = HEATMAP_ALPHA_FLOOR + t * (ceiling - HEATMAP_ALPHA_FLOOR);
+        expect(bestOn(p, alpha), `accent ${p.accent} at t=${t.toFixed(1)}`)
+          .toBeGreaterThanOrEqual(CONTRAST_FLOOR.micro);
+      }
+    }
+  });
+
+  it('leaves a light-accent colourway its full range', () => {
+    // The cap is computed from the palette, not fixed: a colourway whose
+    // accent never darkens past the floor is not compressed.
+    const pale = { ...DOCUMENT_COLOURWAY, accent: '#F2E3B0' };
+    expect(heatmapAlphaCeiling(pale)).toBe(0.9);
+  });
+
+  it('keeps the magnitude ordering — the scale is shorter, not reordered', () => {
+    const ceiling = heatmapAlphaCeiling(DOCUMENT_COLOURWAY);
+    let previous = -1;
+    for (let t = 0; t <= 1.0001; t += 0.25) {
+      const alpha = HEATMAP_ALPHA_FLOOR + t * (ceiling - HEATMAP_ALPHA_FLOOR);
+      expect(alpha).toBeGreaterThan(previous);
+      previous = alpha;
+    }
+  });
+
+  it('invents no colour — the drawing still paints only palette roles', () => {
+    const svg = renderHeatmap(ctx, [[1, 5], [3, 9]], { rowLabels: ['A', 'B'], colLabels: ['X', 'Y'] });
+    const used = new Set((svg.match(/#[0-9A-Fa-f]{6}/g) ?? []).map((h) => h.toUpperCase()));
+    const allowed = new Set(Object.values(chartPalette(palette)).flat()
+      .filter((v): v is string => typeof v === 'string').map((h) => h.toUpperCase()));
+    for (const hex of used) expect(allowed, `${hex} is not a palette role`).toContain(hex);
   });
 });

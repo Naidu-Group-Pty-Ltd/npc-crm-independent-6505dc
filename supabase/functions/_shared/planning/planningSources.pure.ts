@@ -488,8 +488,49 @@ export function parseActZoning(body: unknown): ParseOutcome<ZoningReading> {
 export const WA_LICENCE_NOTE =
   'WA planning scheme data (SLIP) is published for personal, non-commercial use; commercial republication requires written authorisation, so nothing is fetched. Verify zoning via PlanWA or the local government scheme.';
 
-export const SA_NT_NOTE =
-  'No verified endpoint yet: every candidate host refused this platform’s scripted egress during integration, so no parser could be verified against a real response. Verify via the PlanSA / NT planning portals.';
+/**
+ * South Australia and the Northern Territory, MEASURED rather than assumed.
+ *
+ * These were one constant, `SA_NT_NOTE`, reading *"every candidate host
+ * refused this platform's scripted egress during integration"*. That was a
+ * measurement about the DEVELOPMENT egress — the one that answers 403 to
+ * CONNECT for `data.gov.au` and every ABS host, three registers that answer
+ * production perfectly well — and W3.4 asked the publishers from CI instead.
+ *
+ * Measured 22 Sep 2026 (`scripts/market/jurisdiction-layer-liveness.ts`):
+ *
+ *   SA  `dpti.geohub.sa.gov.au/server/rest/services`  HTTP 200,
+ *       **131 services across 30 folders**, two of them named `PlanSA`
+ *       and `ePlanning`.
+ *   NT  `www.ntlis.nt.gov.au/arcgis/rest/services`    HTTP 403 carrying
+ *       `<title>Just a moment...</title>` — a bot-protection interstitial.
+ *
+ * So the old sentence was **false for South Australia** and described the
+ * wrong thing for the Northern Territory. They are two notes now, because
+ * they are two different facts and one sentence for both is how the
+ * measurement was never taken: a claim that covers two jurisdictions is a
+ * claim nobody can check against either.
+ *
+ * Both still say `not_integrated`, which is the honest status — reachable is
+ * not read, and no parser here has been verified against either publisher's
+ * response.
+ */
+export const SA_NOTE =
+  'South Australia’s planning layers are published by a state spatial service this platform can reach — it answers with a catalogue of 131 services, including folders named PlanSA and ePlanning — and none of them is read into this report yet. That is outstanding integration work rather than a limitation of the source, and nothing here says whether a control applies. Verify via the PlanSA portal.';
+
+export const NT_NOTE =
+  'A bot-protection challenge stood in front of the Northern Territory’s land-information service on every address this platform asked, so no layer was read. That is a property of automated access rather than a decision the Territory made about publishing, and nothing here says whether a control applies. Verify via the NT planning portal.';
+
+/*
+ * `SA_NT_NOTE` is DELETED rather than aliased onto `SA_NOTE`.
+ *
+ * An alias would have served South Australia's sentence to the Northern
+ * Territory, which is the exact fault the split exists to end — and a
+ * dormant export is one import away from putting it back
+ * (`ResponsibilityNotice.tsx`'s rule). `planningNotesAreMeasured.spec.ts`
+ * refuses the name anywhere in the repository, so a caller reintroducing it
+ * fails rather than silently getting the wrong jurisdiction's note.
+ */
 
 /**
  * What settles the question when the spatial layer and reality must agree:

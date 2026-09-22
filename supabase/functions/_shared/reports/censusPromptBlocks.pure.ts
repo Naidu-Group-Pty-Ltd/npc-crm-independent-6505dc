@@ -30,6 +30,7 @@
  * Pure: no Deno, no network; used by `generate-investment-report` and under
  * test from vitest.
  */
+import { CENSUS_WEB_SEARCH_RULE } from './registerAuthority.pure.ts';
 
 interface NumericishBlock { [key: string]: unknown }
 
@@ -145,11 +146,13 @@ export function demographicsStatBlocks(input: DemographicsPromptInput): string {
   if (industries) parts.push('**Employment & Industry Breakdown:**\n\n' + industries);
 
   if (parts.length === 0) {
-    return 'Local demographic, socio-economic and industry statistics are unavailable for this postal area. State that plainly in one sentence; do not estimate or invent figures for this section.';
+    return 'Local demographic, socio-economic and industry statistics are unavailable for this postal area. State that plainly in one sentence; do not estimate or invent figures for this section. '
+      + CENSUS_WEB_SEARCH_RULE;
   }
 
   parts.push(
     'No employment or income time-series is integrated for this area: do NOT assert job-growth, income-growth or population-growth percentages. Discuss only the figures in the tables above, and attribute them to their stated source.',
+    CENSUS_WEB_SEARCH_RULE,
   );
   return parts.join('\n\n');
 }
