@@ -1057,7 +1057,7 @@ export function renderBars(
 ): string {
   if (!items.length) return '';
   const w = CHART_WIDTH.wide;
-  const rowH = 28;
+  const BASE_ROW_H = 28;
   const padT = opts.title ? 36 : 14;
   const padB = 14;
   // The label column sizes to the longest label, the heatmap's own treatment.
@@ -1071,6 +1071,38 @@ export function renderBars(
   const charU = ptToUnits(CHART_TEXT_PT.micro, w, ctx.widthMm) * 0.58;
   const longestLabel = items.reduce((m, it) => Math.max(m, String(it.label ?? '').length), 0);
   const labelW = Math.min(Math.max(180, Math.ceil(longestLabel * charU) + 8), Math.floor(w * 0.45));
+  /*
+   * A label too long for the capped column is WRAPPED, and the row grows.
+   *
+   * The comment above records that a fixed 180-unit column "clipped at the
+   * SVG's left edge: 'Property-specific verification need' lost its first
+   * letters on a real render, which in a right-anchored column is the START of
+   * the words — the worst place." Sizing the column to the longest label fixed
+   * the case it was measured on, and the 45% cap on the next line silently
+   * reintroduced the same failure for anything longer.
+   *
+   * Measured 22 Sep 2026: the cap is 342 units and holds **51 characters**.
+   * The ABS approvals register's own wording for a dwelling class —
+   * `other residential dwellings (townhouses, units and apartments)`, sixty-two
+   * characters — is drawn from x = **-73.7** in a `0 0 760 134` viewBox, so
+   * eleven characters are set outside the viewport and clipped. That register
+   * entered the Compass's reach with the Supply section (W2.2), and `{{bars:}}`
+   * is the most-used directive in the document at ~107 a report.
+   *
+   * The rule is `fitLines`' own and the one `renderWaterfall` was repaired
+   * under: **increase the component's space before shrinking its text.** The
+   * column keeps its cap — the bars need room to differ — and the ROW grows a
+   * line-step per extra line. `LABEL_LINE` is the waterfall's measured micro
+   * leading, named here rather than re-derived.
+   *
+   * A chart whose labels all fit one line is byte-identical: `fitLines`
+   * returns a single line, `deepest` is 1, `rowH` is the 28 it always was, and
+   * the bar and figure sit where they always sat.
+   */
+  const LABEL_LINE = 13;
+  const labelRows = items.map((it) => fitLines(String(it.label ?? ''), labelW - 8, charU, 2));
+  const deepest = Math.max(1, ...labelRows.map((r) => r.length));
+  const rowH = BASE_ROW_H + (deepest - 1) * LABEL_LINE;
   const valueW = 76;
   const barX = labelW + 12;
   const barW = w - barX - valueW - 16;
@@ -1110,10 +1142,19 @@ export function renderBars(
     const bw = Math.max(2, pct * barW);
     const display = it.display
       ?? `${Number.isInteger(it.value) ? String(it.value) : it.value.toFixed(1)}${opts.unit ?? ''}`;
-    return text(ctx, w, { x: labelW, y: y + 17, pt: 'micro', fill: ctx.palette.ink, anchor: 'end' }, svgEscape(it.label))
-      + `<rect x="${barX}" y="${y + 8}" width="${barW}" height="12" fill="${ctx.palette.groundAlt}" rx="2"/>`
-      + `<rect x="${barX}" y="${y + 8}" width="${bw.toFixed(1)}" height="12" fill="${toneColour(it.tone)}" rx="2"/>`
-      + text(ctx, w, { x: barX + barW + 10, y: y + 17, pt: 'micro', fill: ctx.palette.ink, weight: 700, tabular: true }, svgEscape(display));
+    // The label's lines are centred on the row, and the bar and the figure sit
+    // on the row's own centre — which for a one-line row is the y + 8 / y + 17
+    // they have always been.
+    const lines = labelRows[i];
+    const labelTop = y + 17 - ((lines.length - 1) * LABEL_LINE) / 2;
+    const barY = y + (rowH - 12) / 2;
+    const figureY = y + rowH / 2 + 3;
+    return lines.map((line, k) => text(ctx, w,
+      { x: labelW, y: labelTop + k * LABEL_LINE, pt: 'micro', fill: ctx.palette.ink, anchor: 'end' },
+      svgEscape(line))).join('')
+      + `<rect x="${barX}" y="${barY}" width="${barW}" height="12" fill="${ctx.palette.groundAlt}" rx="2"/>`
+      + `<rect x="${barX}" y="${barY}" width="${bw.toFixed(1)}" height="12" fill="${toneColour(it.tone)}" rx="2"/>`
+      + text(ctx, w, { x: barX + barW + 10, y: figureY, pt: 'micro', fill: ctx.palette.ink, weight: 700, tabular: true }, svgEscape(display));
   }).join('');
 
   const title = opts.title

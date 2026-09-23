@@ -11,6 +11,7 @@
  * fixture would be a statement about the fixture.
  */
 import { describe, it, expect } from 'vitest';
+import { readFileSync } from 'node:fs';
 import {
   ABS_BA_GRAIN_LADDER,
   ABS_BA_NAME_PATTERN,
@@ -31,6 +32,9 @@ import {
   flowEdition,
   grainOfAreaCode,
   isStorableGrain,
+  approvalsWriteOrder,
+  carriesNetNegative,
+  type ApprovalRow,
 } from '../../../../supabase/functions/_shared/reports/market/openData/absBuildingApprovals.pure.ts';
 
 // ─── Catalogues ─────────────────────────────────────────────────────────────
@@ -275,15 +279,21 @@ describe('a region download is a HIERARCHY, and the grain is the row’s own', (
   });
 
   it('still refuses a figure that is implausible FOR ITS OWN grain', () => {
-    // The bound did not go away; it became the right bound. A council with
-    // 900,000 dwellings approved in a month is unit drift.
-    const mad = [HEADER, ...rollupRows()]
-      .concat(download().split('\n').slice(1))
-      .join('\n')
-      .replace('BA,1,Number of dwelling units,1,Houses,10,Original,10050,Albury (C),M,2024-01,10,0',
-        'BA,1,Number of dwelling units,1,Houses,10,Original,10050,Albury (C),M,2024-01,900000,0');
+    /*
+     * The bound did not go away; it became the right bound. A council with
+     * 900,000 dwellings approved in a month is unit drift.
+     *
+     * RENEGOTIATED 22 Sep 2026: this drifted ONE cell and asserted a throw,
+     * and a single cell must no longer refuse a ~22,000-cell download — that
+     * is the livelock that stalled the production walk for nine consecutive
+     * hourly ticks. Drift is systematic, so the fixture is now systematic,
+     * and the single-cell case is asserted directly below as a DROP.
+     */
+    const mad = download({ units: () => '900000' });
     expect(() => parseAbsBuildingApprovals(mad, 'lga'))
-      .toThrow(/900000 dwelling units, outside 0–100000 for a lga area/);
+      .toThrow(/outside their magnitude ceiling/);
+    expect(() => parseAbsBuildingApprovals(mad, 'lga'))
+      .toThrow(/900000 dwelling units \(\|x\| > 100000, lga\)/);
   });
 });
 
@@ -638,9 +648,148 @@ describe('the refusals', () => {
   });
 
   it('refuses a unit drift rather than writing an implausible count', () => {
-    const drifted = download({ units: (i) => (i === 0 ? '999999' : String(10 + (i % 40))) });
+    // Renegotiated with the one above, and for the same reason: drift moves
+    // EVERY cell, so drifting one and calling it drift was the fixture
+    // encoding the defect.
+    const drifted = download({ units: () => '999999' });
     expect(() => parseAbsBuildingApprovals(drifted, 'lga'))
-      .toThrow(/reads 999999 dwelling units, outside 0–100000/);
+      .toThrow(/outside their magnitude ceiling/);
+  });
+
+  /*
+   * THE STALL, 22 Sep 2026 — nine consecutive hourly ticks, writing nothing:
+   *
+   *   the ABS building-approvals count for Ulverstone 2025-08 reads -5
+   *   dwelling units, outside 0-100000 for a sa2 area (unit or column drift)
+   *   — refused
+   *
+   * `oldest` never moved off 2025-10, and the next tick asked for the same
+   * window again, for ever.
+   */
+  it('accepts a NEGATIVE count, because an amendment is the publisher’s own value', () => {
+    // ABS Building Approvals are net of amendments: a small area records a
+    // negative in a month when a previously approved dwelling is cancelled or
+    // revised down. Refusing it is the filter `ABS_BA_PLAUSIBILITY`'s own
+    // header warns against — "a check that fires on a true figure".
+    const withAmendment = download({ units: (i) => (i === 0 ? '-5' : String(10 + (i % 40))) });
+    const parse = parseAbsBuildingApprovals(withAmendment, 'lga');
+    expect(parse.implausibleCells).toEqual([]);
+    const amended = parse.rows.find((r) => r.area === 'Albury (C)' && r.period === '2024-01'
+      && r.buildingType === 'house');
+    expect(amended?.dwellingUnits).toBe(-5);
+  });
+
+  it('drops ONE implausible cell and names it, rather than refusing the window', () => {
+    const oneBadCell = download({ units: (i) => (i === 0 ? '900000' : String(10 + (i % 40))) });
+    const parse = parseAbsBuildingApprovals(oneBadCell, 'lga');
+    // The download still lands — thousands of rows, not an exception.
+    expect(parse.rows.length).toBeGreaterThan(1000);
+    // The cell is named, so it is a finding rather than a silent omission…
+    expect(parse.implausibleCells).toHaveLength(1);
+    expect(parse.implausibleCells[0]).toMatch(/Albury \(C\) 2024-01 900000 dwelling units/);
+    // …and it is ABSENT rather than written, which is the whole point: an
+    // implausible figure must never reach a client's page as a fact.
+    const dropped = parse.rows.find((r) => r.area === 'Albury (C)' && r.period === '2024-01'
+      && r.buildingType === 'house');
+    expect(dropped?.dwellingUnits).toBeNull();
+  });
+
+  /*
+   * THE BOUNDARY IS A COUNT, NOT A SHARE.
+   *
+   * The first version of this fix allowed 1% of the cells read to be dropped
+   * before refusing. For dwelling counts that is too loose to catch the fault
+   * the ceiling exists for: a 1,000x drift crosses the SA2/LGA ceiling of
+   * 100,000 only on cells whose TRUE figure is above 100 units a month, and
+   * those are a small minority. This fixture is that case — one cell in 250
+   * is a large month, the rest are ordinary — and under a 1,000x drift the
+   * over-ceiling cells are 0.2% of those read. The share rule would have
+   * ACCEPTED it and written every other cell a thousand times too large.
+   */
+  it('refuses a 1,000x drift that crosses the ceiling on only a few percent of cells', () => {
+    const base = (i: number) => (i % 250 === 0 ? 150 : i % 30);
+    const drifted = download({ units: (i) => String(base(i) * 1000) });
+    // The fixture really is the case the share rule missed: under 1%.
+    const unitCells = 205 * 26 * 3;
+    const over = Array.from({ length: unitCells }, (_, i) => base(i) * 1000)
+      .filter((v) => v > ABS_BA_PLAUSIBILITY.maxUnitsPerAreaMonth.lga).length;
+    const cellsRead = unitCells * 2; // units and value, both judged
+    expect(over / cellsRead).toBeLessThan(0.01);
+    expect(over).toBeGreaterThan(ABS_BA_PLAUSIBILITY.maxIsolatedImplausibleCells);
+    // …and it is refused, naming examples rather than a bare count.
+    expect(() => parseAbsBuildingApprovals(drifted, 'lga'))
+      .toThrow(/outside their magnitude ceiling \(more than 3\).*For example: .*150000 dwelling units/);
+  });
+
+  it('drops up to three isolated cells, and refuses on the fourth', () => {
+    const bad = (n: number) => download({
+      units: (i) => (i < n ? '900000' : String(10 + (i % 40))),
+    });
+    const three = parseAbsBuildingApprovals(bad(3), 'lga');
+    expect(three.implausibleCells).toHaveLength(3);
+    expect(() => parseAbsBuildingApprovals(bad(4), 'lga'))
+      .toThrow(/4 of \d+ ABS building-approvals cells are outside their magnitude ceiling/);
+  });
+
+  it('judges a negative by its magnitude, so drift is still caught in both directions', () => {
+    // A negative is admitted as a figure — and a negative of impossible size
+    // is as implausible as a positive one.
+    const oneHugeNegative = download({ units: (i) => (i === 0 ? '-900000' : String(10 + (i % 40))) });
+    const parse = parseAbsBuildingApprovals(oneHugeNegative, 'lga');
+    expect(parse.implausibleCells).toHaveLength(1);
+    expect(parse.implausibleCells[0]).toMatch(/-900000 dwelling units/);
+  });
+
+  it('holds the boundary at a count', () => {
+    expect(ABS_BA_PLAUSIBILITY.maxIsolatedImplausibleCells).toBe(3);
+  });
+});
+
+/*
+ * The write order is part of the fix, not a nicety.
+ *
+ * `oldest` is min(period) over the table and the loader writes in batches that
+ * throw on the first failure, so a batch refused part-way through a window
+ * leaves the rows before it committed and moves the walk past a window it never
+ * finished. Until the migration admitting negatives is applied, the table
+ * refuses them — so they are written FIRST, and a refusal happens before
+ * anything else of the window commits.
+ */
+describe('a window is written negatives-first', () => {
+  const row = (area: string, period: string, units: number | null, value: number | null = null): ApprovalRow => ({
+    state: 'NSW', areaKind: 'sa2', area, areaToken: area.toLowerCase(), areaCode: area,
+    period, buildingType: 'house', dwellingUnits: units, value,
+  });
+
+  it('puts every row carrying a negative ahead of the rest, keeping each group in parse order', () => {
+    const rows = [
+      row('A', '2025-07', 4), row('B', '2025-07', -5), row('C', '2025-08', 9),
+      row('D', '2025-08', 3, -250_000), row('E', '2025-09', 0), row('F', '2025-09', null),
+    ];
+    const { first, then } = approvalsWriteOrder(rows);
+    expect(first.map((r) => r.area)).toEqual(['B', 'D']);
+    expect(then.map((r) => r.area)).toEqual(['A', 'C', 'E', 'F']);
+    // Nothing lost, nothing written twice.
+    expect(first.length + then.length).toBe(rows.length);
+  });
+
+  it('treats zero and null as ordinary — only a published negative goes first', () => {
+    expect(carriesNetNegative(row('Z', '2025-07', 0, 0))).toBe(false);
+    expect(carriesNetNegative(row('N', '2025-07', null, null))).toBe(false);
+    expect(carriesNetNegative(row('M', '2025-07', 2, -1))).toBe(true);
+  });
+
+  it('is what the loader actually calls, before anything else of the window is written', () => {
+    const src = readFileSync('supabase/functions/market-sales-ingest/index.ts', 'utf8');
+    const writer = src.slice(src.indexOf('async function upsertApprovals('), src.indexOf('async function upsertApprovalShapes('));
+    expect(writer).toContain('approvalsWriteOrder(rows)');
+    expect(writer).toMatch(/for \(const group of \[order\.first, order\.then\]\)/);
+  });
+
+  it('records the dropped and the negative cells where an operator reads them', () => {
+    const src = readFileSync('supabase/functions/market-sales-ingest/index.ts', 'utf8');
+    expect(src).toContain('implausible_cells: parsed.implausibleCells');
+    expect(src).toContain('negative_rows: parsed.rows.filter(carriesNetNegative).length');
   });
 });
 

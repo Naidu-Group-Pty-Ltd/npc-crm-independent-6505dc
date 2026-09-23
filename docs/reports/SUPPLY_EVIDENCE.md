@@ -103,13 +103,17 @@ reached further than the refusal: stamping every row with the *requested*
 grain files the national total as a council area, and the read path would have
 served Australia's monthly approvals as one suburb's supply.
 
-**A total summed from part of a register is a FLOOR and says so.**
+**A total summed from part of a register is PARTIAL and says so.**
 `DA_REGISTER_RECONCILIATION.md` paid for that rule once. A twelve-month window
 states how many of its months carried a figure, an incomplete window's total
-is labelled a floor, and a year-on-year change is computed **only between two
-complete windows** — comparing a floor with a floor produces a percentage that
-describes the gaps rather than the market, and it arrives looking exactly like
-a measurement.
+is named as the sum of those months, and a year-on-year change is computed
+**only between two complete windows** — comparing two partial windows produces
+a percentage that describes the gaps rather than the market, and it arrives
+looking exactly like a measurement. This rule was first written as *"a FLOOR —
+the true figure can only be higher"*, borrowing the DA register's word, and
+that is true only of a count that cannot fall. ABS approvals are **net of
+amendments**: a month in which approved dwellings were cancelled is negative,
+so a missing month can lower the year as well as raise it (§14).
 
 **An absence may not be rated.** Not Low, not Limited, not Constrained — and
 not Strong either, because a rating drawn from the coverage of a search is a
@@ -620,6 +624,12 @@ Three more ticks reach Aug 2025 and `floor` goes false; the comparison becomes
 available at twenty-four months. Nothing about the page changes when it does,
 because the qualification is derived from what is held rather than declared.
 
+*23 Sep 2026: the rendered wording above is false in both halves. The ABS had
+released all twelve months, and two were simply not held yet. And "can only be
+higher" is untrue of a series that is net of amendments. §14 records the
+correction. Of the three ticks predicted here, two wrote, and the third, the
+window that reaches Aug 2025, is the one that stalled.*
+
 ### The render is what found the next defect
 
 That block was rendered against the register's real depth rather than a
@@ -636,3 +646,54 @@ returns.** A register that is loaded, correctly grained and deepening on
 schedule was one narrower `select` away from printing `$NaN` to a client, and
 no test in the suite could have seen it — because every fixture spelled the
 column correctly.
+
+## 14 · The publisher's negatives, and the stall they caused
+
+From 12:20 UTC on 22 Sep 2026 every hourly tick asked for 2025-07 → 2025-09
+and was refused on one cell of roughly 22,000:
+
+    the ABS building-approvals count for Ulverstone 2025-08 reads -5 dwelling
+    units, outside 0–100000 for a sa2 area (unit or column drift) — refused
+
+That was seventeen consecutive ticks by 04:20 UTC on 23 Sep, with one message
+every time and `oldest` frozen at 2025-10. The -5 is the Bureau's own figure.
+Approvals are **net of amendments**, so a small area records a negative in a
+month when a previously approved dwelling is cancelled or revised down. Four
+rules came out of it, and each is enforced where it can be checked.
+
+**The sign was never the thing worth checking.** Drift is a fault of
+MAGNITUDE and shows in either direction. So the parser tests each ceiling on
+`Math.abs`, and `20261217000000_approvals_admit_net_amendments.sql` replaces
+the table's own `CHECK (… >= 0)` pair with symmetric bounds at the loosest
+grain's ceilings. The first fix was the parser alone, and it would have moved
+the refusal one layer down, into the table.
+
+**Drift is a share, an artefact is a count.** An isolated over-ceiling cell is
+dropped and named (`implausible_cells` in the sync ledger), and more than
+`maxIsolatedImplausibleCells` (3) refuses the download. The first version
+allowed a 1% share. Under a 1,000× drift only the SA2 months whose true figure
+is above 100 units cross the ceiling, which is a small minority, so a drifted
+download could have passed with every other cell a thousand times too large.
+
+**A window is never left half written by a sign.** The loader commits in
+batches, and the walk steps below `min(period)`. A window refused part-way
+therefore moves `oldest` past rows nothing will ask for again.
+`approvalsWriteOrder` writes the negative-bearing rows first, so while the
+table still refuses them, the first statement is refused before any other row
+of the window commits. Emulated on PostgreSQL 16.13 with the loader's batch
+shape, the old order committed 1,500 of 1,800 rows and moved `oldest`; the new
+order committed none. This closes the hole for this class only. A transient
+failure mid-window still leaves one, which is recorded with three remedies in
+`docs/operations/SESSION_HANDOFF_2026-09-23.md` §6.
+
+**The migration proves its swap by what the table does.** It finds the sign
+checks by definition and runs as one statement. It then inserts a negative in
+a nested block that always rolls it back, and raises, undoing everything, if
+the table refuses it. A draft that re-counted the checks with the same pattern
+that found them exited 0 against a check spelled `not (dwelling_units < 0)`,
+while the table still refused the -5.
+
+It ships as a merge plus one dispatch of `apply-migration.yml`, and the two
+can land in either order. The evidence, the order-independence argument and
+how to verify it by effect are in
+`docs/operations/SESSION_HANDOFF_2026-09-23.md`.

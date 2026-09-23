@@ -41,6 +41,8 @@ import {
   ABS_BA_LICENCE,
   ABS_BA_SOURCE_LABEL,
   parseAbsBuildingApprovals,
+  approvalsWriteOrder,
+  carriesNetNegative,
   type ApprovalRow,
 } from '../_shared/reports/market/openData/absBuildingApprovals.pure.ts';
 import {
@@ -318,6 +320,28 @@ async function upsertApprovals(
   loadedAt: string,
 ): Promise<number> {
   const CONFLICT = 'area_kind,area_code,period,building_type';
+  /*
+   * Negative-bearing rows FIRST. See `approvalsWriteOrder`: until the
+   * migration that admits them is applied, the table refuses a negative, and
+   * written first they are refused before any other row of the window
+   * commits — so the walk cannot step past a half-written window.
+   */
+  const order = approvalsWriteOrder(rows);
+  let written = 0;
+  for (const group of [order.first, order.then]) {
+    written += await upsertApprovalShapes(supabase, group, sourceUrl, loadedAt, CONFLICT);
+  }
+  return written;
+}
+
+/** One group of rows, in the four shapes a partial release needs. */
+async function upsertApprovalShapes(
+  supabase: any,
+  rows: ReadonlyArray<ApprovalRow>,
+  sourceUrl: string,
+  loadedAt: string,
+  CONFLICT: string,
+): Promise<number> {
   const base = rows.map((r) => ({
     area_kind: r.areaKind,
     area_code: r.areaCode,
@@ -718,6 +742,18 @@ Deno.serve(async (req) => {
         states: parsed.states,
         rows_skipped: parsed.skipped,
         rows_written: written,
+        // A cell dropped for magnitude is named HERE, because "dropped and
+        // named" means an operator can read the name. The parse carried the
+        // list and nothing recorded it.
+        implausible_cells_dropped: parsed.implausibleCells.length,
+        implausible_cells: parsed.implausibleCells.slice(0, 20),
+        // Net-of-amendment negatives, stored as published. Counted so a
+        // window whose rows the table refused on its sign check reads as that
+        // rather than as a mystery.
+        negative_rows: parsed.rows.filter(carriesNetNegative).length,
+        negative_examples: parsed.rows.filter(carriesNetNegative).slice(0, 5)
+          .map((r) => `${r.area} ${r.period} ${r.buildingType}: `
+            + `${r.dwellingUnits ?? '—'} units, ${r.value === null ? '—' : `$${r.value}`}`),
         // Which page this was, and what a full load still needs — so an
         // operator reads what remains rather than working it out.
         page: pageIndex,

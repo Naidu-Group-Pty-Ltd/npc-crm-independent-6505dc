@@ -146,14 +146,55 @@ describe('the block on a reading', () => {
     expect(block()).not.toContain('is a FLOOR');
   });
 
-  it('calls an incomplete window a FLOOR and says the true figure can only be higher', () => {
+  /*
+   * Renegotiated, and the old assertion was pinning a sentence that stopped
+   * being true.
+   *
+   * It asserted "is a FLOOR" and "the true figure can only be higher". The ABS
+   * publishes approvals NET OF AMENDMENTS — Ulverstone's 2025-08 is -5 — and
+   * once the register stores the publisher's negatives, a missing month of
+   * cancellations LOWERS the year. It also opened "The publisher has released
+   * N of the 12 months", which is false while the register is still walking
+   * back: the ABS released all twelve and they are not yet held. What is true
+   * is how many months the total covers, and that it is neither the year's
+   * total nor a minimum.
+   */
+  it('names an incomplete window as the sum of the months it covers, not a floor', () => {
     const holed = summariseApprovals(series({
       months: months('2026-06', 24, (i) => (i < 3 ? null : 10)),
     }));
     const out = approvalsFactBlocks(holed);
     expect(out).toContain('**9 of the 12 months**');
-    expect(out).toContain('is a FLOOR');
-    expect(out).toContain('the true figure can only be higher');
+    expect(out).toContain('the sum of those 9 months');
+    expect(out).toContain('**not** a twelve-month total');
+    // "At least N" is the sentence a model reaches for next, so it is ruled
+    // out by name, with the reason.
+    expect(out).toContain('not a minimum either');
+    expect(out).toContain('net of amendments');
+    expect(out).not.toContain('can only be higher');
+    expect(out).not.toContain('is a FLOOR');
+    expect(out).not.toMatch(/publisher has released/i);
+  });
+
+  it('sums a net-of-amendments negative month rather than refusing or hiding it', () => {
+    // One month of cancellations inside an otherwise ordinary year.
+    const amended = summariseApprovals(series({
+      months: months('2026-06', 24, (i) => (i === 2 ? -5 : 10)),
+    }))!;
+    // Eleven months of 10 and one of -5: the net figure, not 115 and not 110.
+    expect(amended.latest.total_residential.units).toBe(105);
+    expect(amended.latest.total_residential.monthsCounted).toBe(12);
+    expect(amended.latest.total_residential.floor).toBe(false);
+  });
+
+  it('puts the sign before the currency, in the form that prints', () => {
+    const negativeValue = summariseApprovals(series({
+      months: months('2026-06', 24).map((m) => (m.buildingType === 'house' ? { ...m, value: -250_000 } : m)),
+    }))!;
+    const out = approvalsFactBlocks(negativeValue);
+    // Twelve months of -$250,000 is -$3,000,000 — sign first, never "$-3,000,000".
+    expect(out).toContain('| houses | 60 | -$3,000,000 |');
+    expect(out).not.toMatch(/\$-\d/);
   });
 
   it('refuses to state a year-on-year change it could not compute, and says so', () => {
