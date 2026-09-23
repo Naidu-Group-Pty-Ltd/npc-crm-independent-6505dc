@@ -407,6 +407,58 @@ deployed bundle differs from this tree. **It is not resolved here**, and the
 de-duplication above is deliberately safe under either answer: it prints what
 the register produced, whatever that turns out to be.
 
+#### Narrowed, 22 Sep 2026 — two of the four candidates are dead
+
+Driven through the REAL composer rather than a synthetic table, which is §5's
+rule, on a NSW R2 shape with four secondary uses named explicitly:
+
+```
+group term prohibited : otherResidential 12 → 13 body rows → 14 <tr>
+group term absent     : otherResidential  4 →  5 body rows →  6 <tr>
+                        last row: | Dual occupancies (detached) | Permitted … |
+```
+
+**The composer emits thirteen or five and nothing between**, and the group
+flag is the only lever. Two explanations die here:
+
+* **"The list was shorter then."** `SECONDARY_RESIDENTIAL` has carried twelve
+  entries since the file was created (`7a84fed`, 19 Sep), and the
+  group-term branch and `residentialSentence`'s group clause were both in
+  that first commit — a day before the render.
+* **"The two copies were composed separately and disagreed."**
+  `renderPlanningControls` — which contains the land-use block — is composed
+  **once**, at one call site, and the same string is both pinned into every
+  section call and appended verbatim. The pinned copy and the appended copy
+  cannot differ.
+
+**And one attractive inference is wrong, recorded because it nearly went in.**
+That page 33's table ends at `Dual occupancies (detached)` looked like proof
+of the five-row shape. It is not: that use is item 4 of the module's own
+order, and in the thirteen-row shape the first four secondary rows read
+*"Permitted with development consent"* exactly as they do in the five-row one.
+**The two shapes are indistinguishable by their first five rows**, so a
+truncated thirteen and a complete five end on the same line. The only
+discriminator in the document is the SENTENCE above the table, and only where
+that sentence can be shown to be the register's rather than the model's.
+
+#### Why it cannot be settled from here, and what settles it
+
+What is left is the deployed bundle at the moment of that render, and that
+evidence is gone: `generate-investment-report` has been redeployed since, and
+again on 22 Sep. Reading the function now reports today's bundle, not
+September the twentieth's.
+
+So this stops being an open question and becomes a **pending measurement with
+a trigger**: the current tree emits thirteen-or-five with the flag as the only
+lever, so the next delivered Compass for a property whose land use table
+prohibits *Residential accommodation* as a group shows which. If that document
+carries the group sentence above a five-row table, there is a truncation with
+no producer anywhere in this tree and it is worth hunting; if it carries
+thirteen, the 20 Sep document was a bundle that no longer exists.
+
+Nothing is built on either answer in the meantime, which is the same reason
+the de-duplication above was written to be safe under both.
+
 ## 10. A footnote marker with nothing it can refer to
 
 Five sentences ended in a bare digit glued to the full stop before them, set in

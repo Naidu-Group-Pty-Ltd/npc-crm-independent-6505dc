@@ -59,6 +59,8 @@ import {
   withAlpha,
 } from '../charts.pure';
 import { resolveReportPalette } from '../brandResolve.pure';
+import { BUILDING_TYPE_WORDS }
+  from '../../../../supabase/functions/_shared/reports/market/approvalsFactBlocks.pure';
 import { CONTRAST_FLOOR, PRINT_SEMANTIC } from '../tokens.pure';
 import { contrastRatio, mixHex } from '../color.pure';
 
@@ -852,5 +854,168 @@ describe('a heatmap cell stays light enough to read its own figure', () => {
     const allowed = new Set(Object.values(chartPalette(palette)).flat()
       .filter((v): v is string => typeof v === 'string').map((h) => h.toUpperCase()));
     for (const hex of used) expect(allowed, `${hex} is not a palette role`).toContain(hex);
+  });
+});
+
+/**
+ * Every primitive draws a real production label whole, not only the waterfall.
+ *
+ * The clipped-label guard above was written for `renderWaterfall`, because
+ * that is where the defect was found — the `{{waterfall:}}` directive's own
+ * documented example drew its own label as `Non-mortgage o…`. Every other
+ * primitive went onto `fitLines` in the same change and **nothing asserted
+ * any of them**, so the question "does a gauge caption, a donut legend, a tile
+ * or a timeline stop survive?" had no answer for six of the seven.
+ *
+ * It matters more since W2.2 (22 Sep 2026): the Compass now carries a
+ * `Competitive Landscape and Supply Pipeline` section fed by the ABS approvals
+ * register, whose own vocabulary includes
+ * `other residential dwellings (townhouses, units and apartments)` — sixty
+ * characters, the longest label this product prints into a chart. That string
+ * entered the Compass's reach for the first time with that section.
+ *
+ * Measured when this was written: **0 of 9 clip**. So this is a closed blind
+ * spot rather than a repaired drawing, and it is written down for the same
+ * reason the honest fixture was in `WHAT_THE_PAGE_ACTUALLY_DRAWS` §2 — the
+ * next change to a vocabulary, a measure or a type scale is judged against
+ * the real thing rather than against `Rent` and `Expenses`.
+ *
+ * The vocabularies are IMPORTED where the product owns one (`BUILDING_TYPE_WORDS`),
+ * never restated, so a register that rewords itself is measured at its new
+ * wording rather than at a copy that has gone stale here.
+ */
+describe('a real production label is drawn whole by every primitive', () => {
+  const drawn = (svg: string): string[] =>
+    [...svg.matchAll(/>([^<>]+)<\/text>/g)].map((m) => m[1]);
+  const clipped = (svg: string): string[] => drawn(svg).filter((t) => t.includes('…'));
+
+  /** The approvals register's own words — the longest this product prints. */
+  const DWELLING_TYPES = Object.values(BUILDING_TYPE_WORDS);
+  /** Risk-dashboard categories, as the delivered documents carry them. */
+  const RISKS = [
+    'Infrastructure timing and pipeline',
+    'Environmental nuisance',
+    'Planning and overlay constraints',
+    'Market liquidity and resale depth',
+    'Crime and personal safety',
+  ];
+  const AMENITY = [
+    'Schools and childcare', 'Healthcare facilities', 'Shopping and dining',
+    'Parks and recreation', 'Public transport',
+  ];
+  const PROJECTS = [
+    'Sydney Metro West — Westmead station',
+    'Western Sydney Airport rail link',
+    'Parramatta Light Rail Stage 2',
+  ];
+
+  const CASES: Array<[string, () => string]> = [
+    ['gauge label and caption', () => renderGauge(ctx, 72, {
+      label: 'Investment score', caption: 'weighted across the metrics assessed' })],
+    ['bars — dwelling types', () => renderBars(ctx,
+      DWELLING_TYPES.map((label, i) => ({ label, value: 40 - i * 8 })),
+      { title: 'Approved dwellings by type' })],
+    ['bars — risk categories', () => renderBars(ctx,
+      RISKS.map((label, i) => ({ label, value: 30 - i * 4 })), { title: 'Risk exposure' })],
+    ['donut legend — dwelling types', () => renderDonut(ctx,
+      DWELLING_TYPES.map((label, i) => ({ label, value: 30 - i * 8 })),
+      { title: 'Approved dwelling mix' })],
+    ['tiles — amenity and access', () => renderTiles(ctx,
+      AMENITY.map((label) => ({ label, value: '12 min', sub: 'driving, measured' })),
+      { title: 'Amenity and access' })],
+    ['pictograph label and sub', () => renderPictograph(ctx, 7, 10, {
+      label: 'Dwellings approved this quarter',
+      sub: 'against the trailing four-quarter mean' })],
+    ['timeline — named projects', () => renderTimelineRibbon(ctx,
+      PROJECTS.map((label, i) => ({ label, phase: ['Existing', '0-2y', '3-5y'][i] })),
+      { title: 'Infrastructure pipeline' })],
+    ['score bars — the five dimensions', () => renderScoreBars(ctx, [74, 32, 56, 27],
+      { labels: ['Location', 'Yield', 'Growth', 'Demand'] })],
+  ];
+
+  it.each(CASES)('%s', (_name, draw) => {
+    expect(clipped(draw())).toEqual([]);
+  });
+
+  it('is measuring the real register wording, not a copy of it', () => {
+    // If this ever fails, the vocabulary moved and the cases above are
+    // measuring something the product no longer says.
+    expect(DWELLING_TYPES.length).toBeGreaterThan(2);
+    expect(DWELLING_TYPES.some((w) => w.length >= 55)).toBe(true);
+  });
+});
+
+/**
+ * `renderBars` wraps a label the capped column cannot hold, and grows the row.
+ *
+ * The comment inside `renderBars` records that a FIXED 180-unit column
+ * "clipped at the SVG's left edge: 'Property-specific verification need' lost
+ * its first letters on a real render, which in a right-anchored column is the
+ * START of the words — the worst place." Sizing the column to the longest
+ * label closed the case it was measured on. The `w * 0.45` cap on the very
+ * next line silently reopened it for anything longer, and nothing asserted the
+ * result, because `renderBars` was the one primitive in the file that never
+ * called `fitLines`.
+ *
+ * Measured 22 Sep 2026: the cap is 342 units and holds 51 characters. The ABS
+ * approvals register's own wording for a dwelling class —
+ * `other residential dwellings (townhouses, units and apartments)`, 62
+ * characters — was drawn from **x = -73.7** in a `0 0 760 134` viewBox, so
+ * about eleven characters were set outside the viewport and clipped. That
+ * register reached the Compass with the Supply section (W2.2), and `{{bars:}}`
+ * is the most-used directive in the document at ~107 a report.
+ */
+describe('renderBars gives a long label somewhere to go', () => {
+  const LONG = BUILDING_TYPE_WORDS.other_residential;
+  const endRuns = (svg: string): string[] =>
+    [...svg.matchAll(/<text[^>]*text-anchor="end"[^>]*>([^<]*)<\/text>/g)].map((m) => m[1]);
+  const viewBoxHeight = (svg: string): number =>
+    Number(/viewBox="0 0 [0-9.]+ ([0-9.]+)"/.exec(svg)?.[1]);
+
+  it('sets every word of the register\'s own longest wording', () => {
+    const svg = renderBars(ctx, Object.values(BUILDING_TYPE_WORDS)
+      .map((label, i) => ({ label, value: 40 - i * 8 })), { title: 'Approved dwellings by type' });
+    const joined = endRuns(svg).join(' ');
+    for (const word of LONG.split(' ')) expect(joined).toContain(word);
+    expect(svg).not.toContain('…');
+  });
+
+  it('draws no run that would start outside the viewport', () => {
+    /*
+     * The label is anchored `end` at the column's right edge and runs
+     * leftwards, so a run wider than the column starts at a NEGATIVE x and is
+     * clipped — losing the beginning of the words. The advance is the same
+     * 0.58em the column sizing uses, so the two cannot disagree.
+     */
+    const charU = ptToUnits(CHART_TEXT_PT.micro, CHART_WIDTH.wide, ctx.widthMm) * 0.58;
+    const svg = renderBars(ctx, Object.values(BUILDING_TYPE_WORDS)
+      .map((label, i) => ({ label, value: 40 - i * 8 })), { title: 'Approved dwellings by type' });
+    const column = Math.floor(CHART_WIDTH.wide * 0.45);
+    for (const run of endRuns(svg)) {
+      expect(column - run.length * charU, `"${run}" starts off the left edge`)
+        .toBeGreaterThanOrEqual(0);
+    }
+  });
+
+  it('grows the drawing for the extra line rather than shrinking the type', () => {
+    const short = renderBars(ctx, [{ label: 'Houses', value: 40 }, { label: 'Units', value: 20 }]);
+    const long = renderBars(ctx, [{ label: LONG, value: 40 }, { label: 'Units', value: 20 }]);
+    expect(viewBoxHeight(long)).toBeGreaterThan(viewBoxHeight(short));
+    // §4's rule: increase the component's space before shrinking its text.
+    expect(/font-size="([0-9.]+)"/.exec(long)?.[1]).toBe(/font-size="([0-9.]+)"/.exec(short)?.[1]);
+  });
+
+  it('is byte-identical where every label already fits one line', () => {
+    /*
+     * The waterfall's rule, and what makes this change safe to ship into 510
+     * seeded masters: a chart that never needed wrapping must not move by a
+     * unit. Verified against the pre-change renderer over five shapes before
+     * this was committed; pinned here as the geometry those shapes produce.
+     */
+    const svg = renderBars(ctx, [{ label: 'Rent', value: 42_400 }, { label: 'Expenses', value: 11_900 }],
+      { title: 'Cash flow' });
+    expect(viewBoxHeight(svg)).toBe(106);
+    expect(svg).toContain('<text x="180.0" y="53.0" text-anchor="end"');
+    expect(svg).toContain('<rect x="192" y="44" width="476" height="12"');
   });
 });

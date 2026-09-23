@@ -31,15 +31,23 @@
  *
  * **An approval is not a completion**, said wherever a figure is quoted.
  *
- * **A total summed from part of a register is a FLOOR and says so.** A
- * twelve-month total built from nine published months is not the year's
- * approvals; `DA_REGISTER_RECONCILIATION.md` paid for that rule once. So a
- * window states how many of its months carried a figure, and an incomplete
- * window's total is labelled a floor.
+ * **A total summed from part of a register is PARTIAL and says so.** A
+ * twelve-month total built from nine months is not the year's approvals;
+ * `DA_REGISTER_RECONCILIATION.md` paid for that rule once. So a window states
+ * how many of its months carried a figure, and an incomplete window's total is
+ * named as the sum of those months. It is deliberately NOT called a floor:
+ * that word is right for a register of counts that cannot fall, and the ABS
+ * publishes approvals NET OF AMENDMENTS — a month in which approved dwellings
+ * were cancelled is negative — so a missing month can lower the year as well
+ * as raise it. The first version said "the true figure can only be higher",
+ * which stopped being true the day the register admitted the publisher's
+ * negatives.
  *
- * **A change is computed only between two COMPLETE windows.** Comparing a
- * floor with a floor produces a percentage that describes the gaps rather
- * than the market, and it arrives looking exactly like a measurement.
+ * **A change is computed only between two COMPLETE windows.** Comparing two
+ * partial windows produces a percentage that describes the gaps rather than
+ * the market, and it arrives looking exactly like a measurement. (`floor` on
+ * a window is the field's historical name for "partial"; only this module and
+ * its specs read it, and renaming it would change nothing a reader sees.)
  *
  * **The grain is the publisher's and is never renamed.** An LGA reading
  * describes a council area — often hundreds of square kilometres — and
@@ -316,8 +324,20 @@ export const NO_PLUMBING_IN_THE_PROSE =
 const n = (value: number | null): string =>
   value === null ? '—' : value.toLocaleString('en-AU');
 
-const money = (value: number | null): string =>
-  value === null ? '—' : `$${Math.round(value).toLocaleString('en-AU')}`;
+/**
+ * The sign goes before the currency: `-$200,000`, never `$-200,000`.
+ *
+ * A net-of-amendments value is negative in a month of cancellations, and the
+ * old form put the minus inside the amount. The hyphen-minus is the form that
+ * PRINTS — `printableGlyphs.pure.ts` records that the typographic minus is
+ * undrawable in two of the print faces and maps it back to `-` — and it is a
+ * form `documentConsistency.pure.ts` already reads.
+ */
+const money = (value: number | null): string => {
+  if (value === null) return '—';
+  const rounded = Math.round(value);
+  return `${rounded < 0 ? '-' : ''}$${Math.abs(rounded).toLocaleString('en-AU')}`;
+};
 
 function windowSentence(w: ApprovalsWindow, type: ApprovalsBuildingType): string {
   const span = `${monthLabel(w.from) ?? w.from} – ${monthLabel(w.to) ?? w.to}`;
@@ -368,10 +388,24 @@ export function approvalsFactBlocks(
   const total = reading.latest.total_residential;
   lines.push('');
   if (total.floor) {
+    /*
+     * Two statements the first version made here were not true. "The
+     * publisher has released N of the 12 months" is false while the register
+     * is still walking back — the ABS released all twelve and they are simply
+     * not held yet. And "the true figure can only be higher" is false once the
+     * publisher's negatives are stored: a missing month of cancellations lowers
+     * the year. What IS true is how many months the total covers, and that it
+     * is neither the year's total nor a minimum — so that is what is said, and
+     * "not a minimum" is said out loud because "at least N dwellings" is the
+     * sentence a model reaches for next.
+     */
     lines.push(
-      `The publisher has released **${total.monthsCounted} of the ${WINDOW_MONTHS} months** in that `
-      + 'window for this area, so each total above is a FLOOR — the true figure can only be '
-      + 'higher. Carry that qualification wherever you use one of them.',
+      `Only **${total.monthsCounted} of the ${WINDOW_MONTHS} months** in that window carry a figure `
+      + `for this area, so each total above is the sum of those ${total.monthsCounted} months. It is `
+      + '**not** a twelve-month total, and it is not a minimum either: the publisher\'s monthly '
+      + 'figures are net of amendments, and a month of cancellations is negative. Quote each one as '
+      + `the approvals over those ${total.monthsCounted} months, and carry that qualification `
+      + 'wherever you use it.',
     );
   } else {
     lines.push(`All ${WINDOW_MONTHS} months of that window are published for this area.`);

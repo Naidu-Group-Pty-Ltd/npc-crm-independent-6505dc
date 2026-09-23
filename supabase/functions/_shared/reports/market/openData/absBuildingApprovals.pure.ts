@@ -165,6 +165,32 @@ export const ABS_BA_PLAUSIBILITY = {
   maxValuePerAreaMonth: {
     sa2: 20_000_000_000, lga: 20_000_000_000, state: 80_000_000_000, national: 250_000_000_000,
   } as Record<ApprovalsAreaKind, number>,
+  /**
+   * How many cells may exceed those ceilings before the download is refused
+   * as drifted rather than having them dropped individually.
+   *
+   * A COUNT, not a share, and the difference is the whole of the rule. An
+   * isolated publisher artefact is a count: it does not grow with the window.
+   * Drift is a share: a changed `UNIT_MULT` or a moved column moves every
+   * cell by the same factor, so the number it pushes over a ceiling grows
+   * with the window.
+   *
+   * The first version of this rule was a 1% share, and for dwelling counts
+   * that is too loose to catch the fault it exists for. Under a 1,000x drift
+   * the SA2 ceiling of 100,000 is crossed only by cells whose TRUE figure is
+   * above 100 units in a month, and that is a small minority of SA2 months —
+   * so a drifted download could have been ACCEPTED with every other cell
+   * written a thousand times too large, which is a wrong column reaching a
+   * client's page. At a count of three, a 22,000-cell window refuses on the
+   * fourth over-ceiling cell, which is what drift of any real extent
+   * produces, while one or two publisher typos are dropped and named.
+   *
+   * The production parser before this refused on the FIRST such cell, which
+   * is what turned one publisher value into a nine-hour livelock. Three is
+   * the smallest allowance that ends the livelock for an isolated artefact
+   * and the tightest that keeps drift detection close to what it was.
+   */
+  maxIsolatedImplausibleCells: 3,
 } as const;
 
 // ─── The dataflow catalogue ─────────────────────────────────────────────────
@@ -551,10 +577,59 @@ export interface ApprovalRow {
   areaCode: string;
   period: string;
   buildingType: ApprovalsBuildingType;
-  /** Dwelling units approved. Null where the ABS published none. */
+  /**
+   * Dwelling units approved, NET OF AMENDMENTS — so negative in a month when
+   * previously approved dwellings were cancelled or revised down. Null where
+   * the ABS published none.
+   */
   dwellingUnits: number | null;
-  /** Dollars of building approved, where the flow carries a value measure. */
+  /** Dollars of building approved, net of amendments, where the flow carries a value measure. */
   value: number | null;
+}
+
+/** Does this row carry a published negative on either measure? */
+export const carriesNetNegative = (r: ApprovalRow): boolean =>
+  (r.dwellingUnits !== null && r.dwellingUnits < 0) || (r.value !== null && r.value < 0);
+
+/**
+ * The order a window's rows are written in: every row carrying a negative
+ * FIRST, then the rest.
+ *
+ * ## Why an order is part of the fix
+ *
+ * The walk derives its next window from the register's own edges —
+ * `oldest` is `min(period)` over the table — and the loader writes a window
+ * in batches of five hundred, throwing on the first batch that fails. So a
+ * batch refused half-way through a window leaves the rows before it committed,
+ * `oldest` moves to the window's first month, and the planner steps below a
+ * window it never finished. Nothing ever asks for those rows again. That is
+ * a hole in the register, and a hole reads to every report as data.
+ *
+ * Until `20261217000000_approvals_admit_net_amendments.sql` is applied the
+ * table refuses a negative on its own CHECK, and the code that admits
+ * negatives ships on merge while that migration is dispatched by hand. In the
+ * gap, a window containing a negative would have punched a hole. Written
+ * first, the negative-bearing rows are the FIRST request of the window: a table
+ * that still refuses them refuses before any other row commits, the register
+ * stays exactly where it was, and the next tick asks again. Once the migration
+ * lands the whole window writes. The order makes the two changes safe to
+ * deploy in either sequence.
+ *
+ * Stable within each group, so the order is otherwise the parse's own.
+ *
+ * It does NOT make a window atomic. A transient failure part-way through the
+ * non-negative rows still commits the batches before it, as it always has;
+ * that is recorded in `docs/operations/SESSION_HANDOFF_2026-09-23.md` as a
+ * defect of its own rather than papered over here.
+ */
+export function approvalsWriteOrder(rows: ReadonlyArray<ApprovalRow>): {
+  first: ApprovalRow[];
+  then: ApprovalRow[];
+} {
+  const first: ApprovalRow[] = [];
+  const then: ApprovalRow[] = [];
+  for (const r of rows) (carriesNetNegative(r) ? first : then).push(r);
+  return { first, then };
 }
 
 /*
@@ -770,6 +845,8 @@ export interface AbsApprovalsParse {
    * fault.
    */
   refusedByGrain: Partial<Record<ApprovalsIntermediateGrain | 'unknown', number>>;
+  /** Cells dropped for magnitude, named. Empty is the ordinary outcome. */
+  implausibleCells: string[];
 }
 
 /**
@@ -826,6 +903,9 @@ export function parseAbsBuildingApprovals(
   // against one grain's floor is a count of the wrong thing.
   const areasByGrain = new Map<ApprovalsAreaKind, Set<string>>();
   const refusedByGrain = new Map<ApprovalsIntermediateGrain | 'unknown', number>();
+  /** Cells outside the magnitude ceiling — dropped individually, named together. */
+  const implausible: string[] = [];
+  let cellsRead = 0;
   const states = new Set<SalesRegisterState>();
   let skipped = 0;
   let sawSeriesType = false;
@@ -891,24 +971,54 @@ export function parseAbsBuildingApprovals(
       if (state) states.add(state);
     }
     if (scaled !== null) {
-      if (isValue) {
-        const ceiling = ABS_BA_PLAUSIBILITY.maxValuePerAreaMonth[rowKind];
-        if (scaled < 0 || scaled > ceiling) {
-          throw new Error(
-            `the ABS building-approvals value for ${area} ${period} reads $${scaled}, `
-            + `outside 0–${ceiling} for a ${rowKind} area (unit or column drift) — refused`,
-          );
-        }
+      cellsRead += 1;
+      /*
+       * The bound is on MAGNITUDE, and one cell never refuses the download.
+       *
+       * This read `scaled < 0 || scaled > ceiling` and THREW, and it stalled
+       * the production walk for nine consecutive hourly ticks on 22 Sep 2026:
+       *
+       *   the ABS building-approvals count for Ulverstone 2025-08 reads -5
+       *   dwelling units, outside 0-100000 for a sa2 area (unit or column
+       *   drift) — refused
+       *
+       * Two faults, either of which alone is enough.
+       *
+       * **A negative is the publisher's own value, not drift.** ABS Building
+       * Approvals are net of AMENDMENTS, so a small area records a negative
+       * in a month when a previously approved dwelling is cancelled or
+       * revised down. Drift — a column read in thousands, a value column read
+       * as a count — is a fault of MAGNITUDE and shows up in either
+       * direction, which is what `Math.abs` tests. `ABS_BA_PLAUSIBILITY`'s own
+       * header already said this: *"a check that fires on a true figure is not
+       * a plausibility check, it is a filter nobody asked for."*
+       *
+       * **And one cell may not refuse a series.** The window is ~22,000 cells
+       * (2,458 areas x 3 months x 3 building types); throwing on any one of
+       * them discarded all of it, and the next tick asked for the same window
+       * again — a livelock, for ever, reported by nothing but a log line. That
+       * is the rule the sibling register already paid for: *a publisher's typo
+       * is nulled and named, never a reason to refuse a series*, where one
+       * $7,000 cell refused 444 localities.
+       *
+       * So an isolated implausible cell is DROPPED and NAMED, and the refusal
+       * is kept for what it was written for — systematic drift, which is many
+       * cells rather than one. `maxIsolatedImplausibleCells` is the boundary
+       * between the two.
+       */
+      const ceiling = isValue
+        ? ABS_BA_PLAUSIBILITY.maxValuePerAreaMonth[rowKind]
+        : ABS_BA_PLAUSIBILITY.maxUnitsPerAreaMonth[rowKind];
+      if (Math.abs(scaled) > ceiling) {
+        implausible.push(
+          isValue
+            ? `${area} ${period} value $${scaled} (|x| > ${ceiling}, ${rowKind})`
+            : `${area} ${period} ${scaled} dwelling units (|x| > ${ceiling}, ${rowKind})`,
+        );
+      } else if (isValue) {
         assertNoCollision(row.value, scaled, 'value of building approved', area, period, buildingType);
         row.value = scaled;
       } else {
-        const ceiling = ABS_BA_PLAUSIBILITY.maxUnitsPerAreaMonth[rowKind];
-        if (scaled < 0 || scaled > ceiling) {
-          throw new Error(
-            `the ABS building-approvals count for ${area} ${period} reads ${scaled} dwelling units, `
-            + `outside 0–${ceiling} for a ${rowKind} area (unit or column drift) — refused`,
-          );
-        }
         assertNoCollision(row.dwellingUnits, scaled, 'dwelling units', area, period, buildingType);
         row.dwellingUnits = scaled;
       }
@@ -917,6 +1027,21 @@ export function parseAbsBuildingApprovals(
     let atGrain = areasByGrain.get(rowKind);
     if (!atGrain) { atGrain = new Set<string>(); areasByGrain.set(rowKind, atGrain); }
     atGrain.add(areaCode);
+  }
+
+  /*
+   * Systematic drift still refuses. See `maxIsolatedImplausibleCells` for why
+   * the allowance is a count: an artefact does not grow with the window and
+   * drift does. The message NAMES examples rather than a count alone — a bare
+   * number sends nobody to a remedy.
+   */
+  if (implausible.length > ABS_BA_PLAUSIBILITY.maxIsolatedImplausibleCells) {
+    throw new Error(
+      `${implausible.length} of ${cellsRead} ABS building-approvals cells are outside their `
+      + `magnitude ceiling (more than ${ABS_BA_PLAUSIBILITY.maxIsolatedImplausibleCells}), which is a `
+      + `column read wrongly rather than a publisher artefact — refused. `
+      + `For example: ${implausible.slice(0, 3).join('; ')}`,
+    );
   }
 
   const rows = [...byKey.values()];
@@ -978,6 +1103,7 @@ export function parseAbsBuildingApprovals(
     seriesTypeUnfiltered: !sawSeriesType,
     skipped,
     refusedByGrain: Object.fromEntries(refusedByGrain) as AbsApprovalsParse['refusedByGrain'],
+    implausibleCells: implausible,
   };
 }
 

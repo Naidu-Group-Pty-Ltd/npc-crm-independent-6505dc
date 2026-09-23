@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "migration_files": 1022,
+  "migration_files": 1023,
   "created": [
     "function:aml.aml_touch_updated_at",
     "function:aml.apply_partner_material_change",

@@ -67,9 +67,16 @@ begin
   -- it released a zero. Both present is the healthy shape; all-NULL would
   -- mean the measure never parsed, and no NULLs at all on a suppressed-month
   -- publisher would mean an absence was written as a zero.
+  --
+  -- `negative=` since `20261217000000`: the ABS publishes approvals net of
+  -- amendments, and a month of cancellations is stored as the negative it is.
+  -- Without this bucket a negative falls into none of the others, and the
+  -- counts would silently stop adding up to `total`: a read-back that cannot
+  -- account for its own rows.
   select 'null=' || count(*) filter (where dwelling_units is null)::text
       || ' zero=' || count(*) filter (where dwelling_units = 0)::text
       || ' positive=' || count(*) filter (where dwelling_units > 0)::text
+      || ' negative=' || count(*) filter (where dwelling_units < 0)::text
     into nulls
   from public.market_building_approvals;
 
