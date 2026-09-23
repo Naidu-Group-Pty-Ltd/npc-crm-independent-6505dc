@@ -19,6 +19,7 @@ import {
   useState,
   type ReactNode,
 } from "react";
+import { workspaceCacheKey } from "@/lib/aurixaBillingIdentity";
 import { fetchTokenBalance } from "@/lib/missionControl";
 import { useAuth } from "@/hooks/useAuth";
 import {
@@ -33,11 +34,17 @@ import {
   type WorkspaceEntitlementSnapshot,
 } from "@/lib/entitlements";
 
-/** Single-tenant install: the workspace is the deployment. Mirrors the
- * billing uid used for storefront attribution. */
-const WORKSPACE_ID =
-  ((import.meta.env.VITE_AURIXA_BILLING_UID as string | undefined) ?? "npc-prime").trim() ||
-  "npc-prime";
+/**
+ * Single-tenant install: the workspace is the deployment.
+ *
+ * Read through `aurixaBillingIdentity` rather than from `import.meta.env`
+ * directly, because two reads of one variable are two rules — and this one
+ * carried the same compiled-in default the storefront URL did, so a clone's
+ * cached entitlements were keyed on the PRIME's handle. This is a
+ * browser-local cache key and never a credential, so it falls back to this
+ * deployment's Supabase project ref rather than to null.
+ */
+const WORKSPACE_ID = workspaceCacheKey();
 
 /** Re-fetch cadence while the app is open. Entitlements move at billing
  * speed; anything volatile arrives sooner via the refresh events below. */
