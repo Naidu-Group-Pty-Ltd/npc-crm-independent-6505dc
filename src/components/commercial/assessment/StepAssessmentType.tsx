@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { Building2, Factory, AlertTriangle } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { TextField } from './AssessmentFields';
+import { isUntitled, UNTITLED_ASSESSMENT } from '@/lib/ciAssessment/newAssessment';
 
 import {
   ASSESSMENT_TYPE_DEFINITIONS,
@@ -44,29 +45,51 @@ export function StepAssessmentType({
    * on every keystroke made the field feel frozen (each character raced the
    * reload that replaced it). Keep a local draft, commit it on a debounce and
    * on blur, and only accept the incoming value when the field is idle.
+   *
+   * A draft nobody has named yet is stored as "Untitled assessment", which is
+   * the list's word for it and not a name. So the field shows it as EMPTY,
+   * with the placeholder, rather than as text to delete before typing. This is
+   * the step a new assessment opens on, and naming it is the first thing asked.
+   * An archived one shows what it is actually called, since its field cannot
+   * be edited.
    */
-  const [draftTitle, setDraftTitle] = useState(title);
+  const shownTitle = (stored: string) => (isUntitled(stored) && !titleDisabled ? '' : stored);
+  const [draftTitle, setDraftTitle] = useState(() => shownTitle(title));
   const dirtyRef = useRef(false);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   useEffect(() => {
-    if (!dirtyRef.current) setDraftTitle(title);
-  }, [title]);
+    if (!dirtyRef.current) setDraftTitle(isUntitled(title) && !titleDisabled ? '' : title);
+  }, [title, titleDisabled]);
 
   useEffect(() => () => { if (timerRef.current) clearTimeout(timerRef.current); }, []);
 
-  const commitTitle = (next: string) => {
+  /**
+   * An empty name is never sent: the server refuses one ("A name is
+   * required"), and an empty field is how an unnamed draft is SHOWN. So a
+   * pause while the field is empty commits nothing, and leaving it empty puts
+   * back what it showed before.
+   */
+  const commitTitle = (next: string, { leaving }: { leaving: boolean }) => {
     if (timerRef.current) clearTimeout(timerRef.current);
     timerRef.current = null;
+    const trimmed = next.trim();
+    if (!trimmed) {
+      if (leaving) {
+        dirtyRef.current = false;
+        setDraftTitle(shownTitle(title));
+      }
+      return;
+    }
     dirtyRef.current = false;
-    if (next !== title) onTitleChange(next);
+    if (trimmed !== title) onTitleChange(trimmed);
   };
 
   const handleTitleChange = (next: string) => {
     dirtyRef.current = true;
     setDraftTitle(next);
     if (timerRef.current) clearTimeout(timerRef.current);
-    timerRef.current = setTimeout(() => commitTitle(next), 800);
+    timerRef.current = setTimeout(() => commitTitle(next, { leaving: false }), 800);
   };
 
   const select = (type: AssessmentType) => {
@@ -94,13 +117,15 @@ export function StepAssessmentType({
           label="Assessment name"
           value={draftTitle}
           onChange={handleTitleChange}
-          onBlur={() => commitTitle(draftTitle)}
+          onBlur={() => commitTitle(draftTitle, { leaving: true })}
           disabled={titleDisabled}
           placeholder="e.g. 45 Industrial Drive — Wetherill Park"
           help={
             titleDisabled
               ? 'This assessment is archived. Restore it to change its name.'
-              : 'How this assessment appears in your list. You can change it at any time, including after the assessment is complete.'
+              : isUntitled(title)
+                ? `How this assessment appears in your list, where it reads “${UNTITLED_ASSESSMENT}” until you name it. You can change it at any time.`
+                : 'How this assessment appears in your list. You can change it at any time, including after the assessment is complete.'
           }
         />
       </div>

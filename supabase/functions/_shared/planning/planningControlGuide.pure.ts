@@ -245,7 +245,7 @@ export const VERIFICATION_DOCUMENT: Readonly<Record<PlanningJurisdiction, string
 export const NO_STATE_LAYER_NOTE: Partial<Record<PlanningJurisdiction, string>> = {
   QLD: 'Queensland sets zoning and most overlays in each council’s own planning scheme, and publishes no state-wide layer for them. The state registers below were checked and answer only for state-level instruments; the council scheme has not been read, so nothing here says whether a council overlay applies.',
   WA: 'Western Australia’s state planning layers are published under terms that do not permit commercial republication, so they were not retrieved. Nothing here says whether a control applies.',
-  SA: 'South Australia’s Planning and Design Code layers are not yet integrated by this platform. Nothing here says whether a control applies.',
+  SA: 'South Australia’s zone was read from the Planning and Design Code’s own layer, and the Code’s overlay layers are not yet integrated by this platform. Nothing here says whether a control applies.',
   NT: 'The Northern Territory’s planning scheme layers are not yet integrated by this platform. Nothing here says whether a control applies.',
   ACT: 'The Australian Capital Territory’s zone was read, and its overlay layers — the Territory Plan’s precinct codes and its bushfire, flood and heritage overlays — are not yet integrated by this platform. Nothing here says whether a control applies. In the ACT the Crown lease’s purpose clause also governs use, and no spatial layer carries it.',
 };

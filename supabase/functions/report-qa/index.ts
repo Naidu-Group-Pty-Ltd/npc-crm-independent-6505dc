@@ -5,6 +5,7 @@ import { PDFDocument, rgb, StandardFonts, PDFPage, PDFFont } from "https://esm.s
 import { verifyAuth, createUnauthorizedResponse } from '../_shared/auth.ts';
 import { enforceCsrf, csrfDenied } from "../_shared/csrfGuard.ts";
 import { getBrandConfig } from '../_shared/brand-config.ts';
+import { escapeHtml, getEmailIdentity, resendAddressing } from '../_shared/emailIdentity.ts';
 import { logApiUsage, extractOpenAIUsage } from '../_shared/logApiUsage.ts';
 import { createUsageTrackingStream } from '../_shared/streamUsageLogger.ts';
 import { runAgentLoop, agentLoopHasTools, type AgentLoopProvider } from '../_shared/agent-loop.ts';
@@ -3682,6 +3683,15 @@ ${transcript}`;
 
       const resend = new Resend(RESEND_API_KEY);
 
+      // Sent as this deployment. The footer used to fall back to the prime's
+      // own mailbox wherever the tenant had configured none, so a clone's
+      // report named another business's address.
+      const identity = await getEmailIdentity(supabase);
+      const contactLine = [
+        identity.contactPhone ? `Phone: ${escapeHtml(identity.contactPhone)}` : null,
+        identity.contactEmail ? `Email: ${escapeHtml(identity.contactEmail)}` : null,
+      ].filter(Boolean).join(' | ');
+
       const htmlContent = `
         <!DOCTYPE html>
         <html>
@@ -3705,18 +3715,17 @@ ${transcript}`;
               <pre>${content}</pre>
             </div>
             <div class="footer">
-              <p>${(await getBrandConfig()).companyName}</p>
-              <p>Phone: ${(await getBrandConfig()).contactPhone || ''} | Email: ${(await getBrandConfig()).contactEmail}</p>
-              <p>Website: ${(await getBrandConfig()).contactWebsite || ''}</p>
+              <p>${escapeHtml(identity.organisationName)}</p>
+              ${contactLine ? `<p>${contactLine}</p>` : ''}
+              ${identity.contactWebsite ? `<p>Website: ${escapeHtml(identity.contactWebsite)}</p>` : ''}
             </div>
           </div>
         </body>
         </html>
       `;
 
-      const _brand = await getBrandConfig();
       const emailResponse = await resend.emails.send({
-        from: _brand.fromHeaderAdmin,
+        ...resendAddressing(identity, 'Admin'),
         to: [to],
         subject: subject || "Investment Report Summary",
         html: htmlContent,

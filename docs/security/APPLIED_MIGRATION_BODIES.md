@@ -114,8 +114,15 @@ can do far past what the check is worth.
 
 That leaves one way for the manifest to become fiction: a line written by hand
 that the ledger cannot back. `apply-migration.yml` already holds the credential,
-so it runs `build-applied-body-digests.mjs --verify` after every apply and fails
-the run if any recorded digest is one this ledger never held.
+so on the prime it runs `build-applied-body-digests.mjs --verify` after every
+apply, on either route, and fails the run if any recorded digest is one this
+ledger never held. Until 23 Sep 2026 the step ran on the psql route only, before
+the Management API step, so on the prime, which applies over the Management
+API, it never ran. It is skipped on a mirror, because a mirror's copy of the
+manifest describes the prime's ledger. The workflow now also stores the body of
+every file of 256 KiB or less it applies (`scripts/security/ledgerRecord.mjs`),
+so those files can enter the manifest; the rows it wrote before that are
+body-less and are judged by version only.
 
 ## What it does not cover, and says so
 

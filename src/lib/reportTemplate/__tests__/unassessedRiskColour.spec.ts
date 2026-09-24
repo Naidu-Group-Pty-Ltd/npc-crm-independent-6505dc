@@ -17,7 +17,7 @@
  * `Neutral`), so the two displays of one register disagreed.
  */
 import { describe, expect, it } from 'vitest';
-import type { Block } from '../types';
+import type { Block } from '../templateSchema';
 import type { HtmlBlockContext } from '../blocks/_shared.html';
 import { renderRiskRegisterHtml, severityFromRating } from '../blocks/riskRegister.html';
 import { RISK_EXPOSURE_LEVELS } from '../../../../supabase/functions/_shared/reports/investment/riskRegister.pure';

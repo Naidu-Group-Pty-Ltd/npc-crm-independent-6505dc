@@ -33,7 +33,7 @@ redefine or shrink that denominator.
 | **Client Details Form** | record projection | client record | `render-client-details-pdf` (`CLIENT_DETAILS.md`) |
 | **Report Q&A** | `report-qa` (the only render route that may call a model) | Q&A rows | `render-report-qa-pdf` (`QA.md`) |
 | **Market Intelligence** | `generate-market-intelligence-report` | its own rows + a written PDF | `render-market-intelligence-pdf`; the PDF is attached by the scheduled `dispatch-marketing-reports` (`MARKET_INTELLIGENCE.md`) |
-| **Commercial & Industrial Capacity** | the `/calculators` analysis workspace — the assessment record IS the analysis (`ANALYSIS_WORKSPACE.md`) | assessment rows | `render-commercial-capacity-pdf` (`COMMERCIAL_CAPACITY.md`) |
+| **Commercial & Industrial Capacity** | an assessment's Results step, the module's Reports tab and the client's C&I tab — the assessment record IS the analysis (`docs/commercial/MODULE_STRUCTURE.md`; the `/calculators` workspace is retired) | assessment rows | `render-commercial-capacity-pdf` (`COMMERCIAL_CAPACITY.md`) |
 | **Quantitative listings report** | `quantitative-report-pipeline` — marketplace listings digest | its own report record + `quantitative-reports` bucket | **pdf-lib, inside the function** (see §3) |
 
 Adjacent document producers that are NOT Reporting-family and stay out of RF-7

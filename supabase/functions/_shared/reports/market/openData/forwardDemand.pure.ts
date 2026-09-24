@@ -50,9 +50,12 @@
  * rule for the same reason: a guide that carries no figure can be written in
  * advance and still be true, and a spec rejects any that creeps in.
  *
- * **Nothing is `ingested: true`.** Every entry is false, truthfully, and a
- * test asserts it — so the day one is loaded, the flag and the sentence
- * change together rather than one of them being forgotten.
+ * **`ingested` is derived, never typed.** It was `false` on all eight,
+ * truthfully, until the register had a loader. It is now whether
+ * `PROJECTION_FILES` holds a file for the jurisdiction whose licence has
+ * been READ from its publisher and accepted (`projectionIngested`) — so the
+ * flag, the sentence and the loader cannot disagree, and a file with no
+ * accepted licence counts for nothing, because the loader refuses it.
  *
  * Deno-compatible: no `@/` aliases, explicit `.ts` extensions.
  */
@@ -62,6 +65,7 @@ import {
   PROJECTION_GRAIN_LABEL,
   type ProjectionGrain,
 } from './absPopulationProjections.pure.ts';
+import { projectionIngested } from './stateProjectionFiles.pure.ts';
 
 /** A jurisdiction's own forward projection, and what form it takes. */
 export interface ForwardDemandPublisher {
@@ -78,7 +82,7 @@ export interface ForwardDemandPublisher {
    * conservative value is `publication`.
    */
   form: 'structured' | 'publication';
-  /** Whether this platform reads it today. */
+  /** Whether this platform's loader reads it — derived from `PROJECTION_FILES`, never typed. */
   ingested: boolean;
   /** Where a reader goes to see it themselves. */
   url: string;
@@ -96,64 +100,64 @@ export const FORWARD_DEMAND_PUBLISHERS: Readonly<Record<string, ForwardDemandPub
     publisher: 'the NSW Department of Planning, Housing and Infrastructure',
     product: 'the NSW population projections',
     form: 'publication',
-    ingested: false,
+    ingested: projectionIngested('NSW'),
     url: 'https://www.planning.nsw.gov.au/research-and-demography/population-projections',
   },
   VIC: {
     publisher: 'the Victorian Department of Transport and Planning',
     product: 'Victoria in Future',
     form: 'publication',
-    ingested: false,
+    ingested: projectionIngested('VIC'),
     url: 'https://www.planning.vic.gov.au/guides-and-resources/data-and-insights/victoria-in-future',
   },
   QLD: {
     publisher: 'the Queensland Government Statistician’s Office',
     product: 'the Queensland Government population projections',
     form: 'publication',
-    ingested: false,
+    ingested: projectionIngested('QLD'),
     url: 'https://www.qgso.qld.gov.au/statistics/theme/population/population-projections',
   },
   SA: {
     publisher: 'the South Australian Department for Housing and Urban Development',
     product: 'the South Australian population projections',
     form: 'publication',
-    ingested: false,
+    ingested: projectionIngested('SA'),
     url: 'https://plan.sa.gov.au/',
   },
   WA: {
     publisher: 'the Western Australian Planning Commission',
     product: 'WA Tomorrow',
     form: 'publication',
-    ingested: false,
+    ingested: projectionIngested('WA'),
     url: 'https://www.wa.gov.au/organisation/department-of-planning-lands-and-heritage',
   },
   TAS: {
     publisher: 'the Tasmanian Department of Treasury and Finance',
     product: 'the Tasmanian population projections',
     form: 'publication',
-    ingested: false,
-    url: 'https://www.treasury.tas.gov.au/economy/population',
+    ingested: projectionIngested('TAS'),
+    url: 'https://www.treasury.tas.gov.au/economy-site/Pages/2023-Population-projections-for-Tasmania-and-its-Local-Government-Areas.aspx',
   },
   ACT: {
     publisher: 'the ACT Chief Minister, Treasury and Economic Development Directorate',
     product: 'the ACT population projections',
     form: 'publication',
-    ingested: false,
+    ingested: projectionIngested('ACT'),
     url: 'https://www.treasury.act.gov.au/',
   },
   NT: {
     publisher: 'the Northern Territory Department of Treasury and Finance',
     product: 'the Northern Territory population projections',
     form: 'publication',
-    ingested: false,
-    url: 'https://treasury.nt.gov.au/',
+    ingested: projectionIngested('NT'),
+    url: 'https://treasury.nt.gov.au/dtf/economic-group/population-projections',
   },
 };
 
 /**
  * What this deployment can say about forward demand for one property, and why.
  *
- * Five readings, and they are five different sentences for the reason
+ * Eight readings, and they are eight different sentences for the reason
  * `SUPPLY_EVIDENCE.md` and `NATIONAL_PIPELINE_EVIDENCE.md` both record: an
  * absence that cannot say which kind it is sends a reader — or an operator —
  * to the wrong conclusion. Here the two that would otherwise collapse are
@@ -161,6 +165,13 @@ export const FORWARD_DEMAND_PUBLISHERS: Readonly<Record<string, ForwardDemandPub
  * than this suburb) and `grain_not_published` (the publisher does not offer
  * one for an area this size at all): the first is a caveat on a figure that
  * IS printed, the second is the absence of any figure.
+ *
+ * Three more arrived with the register (23 Sep 2026), because a register that
+ * can hold a jurisdiction can also hold it and not name this property's area
+ * (`area_not_named`), be asked about a property whose area was never resolved
+ * (`no_area_resolved`), or not be asked at all (`not_read`) — and each of
+ * those is a different remedy from `not_loaded`, which is about the
+ * deployment.
  */
 export type ForwardDemandAvailability =
   /** Held at a grain that describes the property's own area. */
@@ -172,7 +183,22 @@ export type ForwardDemandAvailability =
   /** The register exists and this deployment has never loaded it. */
   | { kind: 'not_loaded' }
   /** The retrieval failed. Ours, or theirs — never the area's. */
-  | { kind: 'unavailable'; reason: string };
+  | { kind: 'unavailable'; reason: string }
+  /**
+   * The jurisdiction's projection IS held here, and names no area matching
+   * this property's. A statement about how the publisher's areas line up
+   * with this property's — never about the area, and never "not loaded".
+   */
+  | { kind: 'area_not_named' }
+  /** The property's area could not be resolved from its verified location, so nothing could be selected. */
+  | { kind: 'no_area_resolved' }
+  /**
+   * The caller did not read the register at all. Once a jurisdiction is
+   * loaded, `not_loaded` stops being true for a caller that simply never
+   * asked — the regeneration path composes this block without a register
+   * read — so a report that did not read says THAT, which is always true.
+   */
+  | { kind: 'not_read' };
 
 /**
  * Resolve the availability from what was actually read.
@@ -219,11 +245,22 @@ export function forwardDemandCoverageNote(
    * reader who cannot get the figure from this report is entitled to know
    * where it is, which is the half `programmeCoverageNote` exists for.
    */
-  const route = pub
-    ? ` Forward projections for this jurisdiction are published by ${pub.publisher} as `
-      + `${pub.product}, which this report does not read; they can be read at ${pub.url}.`
+  /*
+   * Where the jurisdiction's projection IS held, "which this report does not
+   * read" is false — the register was read and answered for somewhere else.
+   * The route is still owed; only that clause is not. The same holds for a
+   * jurisdiction this platform's loader reads: on a deployment that has not
+   * run it yet the sentence before says so, and the clause would claim the
+   * platform does not read what it does.
+   */
+  const heldRoute = pub
+    ? ` The projection is published by ${pub.publisher} as ${pub.product} and can be read at ${pub.url}.`
     : ' No forward projection publisher is named for this jurisdiction in this report, '
       + 'which is a limit of this report rather than a finding about the area.';
+  const route = pub && !pub.ingested
+    ? ` Forward projections for this jurisdiction are published by ${pub.publisher} as `
+      + `${pub.product}, which this report does not read; they can be read at ${pub.url}.`
+    : heldRoute;
 
   switch (availability.kind) {
     case 'projected':
@@ -241,9 +278,23 @@ export function forwardDemandCoverageNote(
           : 'The national projection publishes no geography this report reads.')
         + route;
     case 'not_loaded':
-      return 'No population projection has been loaded by this deployment, so this report '
-        + 'states no projected figure for this area. That is a statement about this '
+      return 'No population projection for this jurisdiction has been loaded by this deployment, so '
+        + 'this report states no projected figure for this area. That is a statement about this '
         + 'deployment rather than about the area.'
+        + route;
+    case 'area_not_named':
+      return 'The population projection this deployment holds for this jurisdiction names no area '
+        + 'matching this property\'s, so this report states no projected figure for it. That is a '
+        + 'statement about how the publisher\'s areas line up with this property\'s, not about the area.'
+        + heldRoute;
+    case 'no_area_resolved':
+      return 'No population projection could be selected for this property, because its area could '
+        + 'not be resolved from its verified location, so this report states no projected figure for '
+        + 'it. That is a statement about this report\'s inputs rather than about the area.'
+        + route;
+    case 'not_read':
+      return 'This report does not read a population projection, so it states no projected figure '
+        + 'for this area.'
         + route;
     case 'unavailable':
       return 'The population projection could not be read for this report, so no projected '

@@ -13,10 +13,12 @@
  *     "probeResults":    { "20261209000000_seed_....sql": true }
  *   }
  *
- * Exit 1 when anything is `not_applied`. `unverifiable` does not fail the run
- * on its own — 800-odd historical files declare no probe and failing on them
- * would make this report the thing people switch off — but it is always
- * printed, and a file added from here on can close its own gap with one line.
+ * Exit 1 when anything is `not_applied`, when a file declared withdrawn in
+ * `MIGRATION_WITHDRAWN.json` is `contradicted` by the database, or when that
+ * manifest cannot be read. `unverifiable` does not fail the run on its own —
+ * 800-odd historical files declare no probe and failing on them would make
+ * this report the thing people switch off — but it is always printed, and a
+ * file added from here on can close its own gap with one line.
  *
  * See `migrationDrift.pure.mjs` for why the ledger cannot answer this.
  */
@@ -24,6 +26,7 @@ import { readFileSync, readdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { objectsCreatedIn, effectProbeIn } from '../build-migration-object-index.mjs';
 import { assessMigrationDrift, probeIsReadOnly } from './migrationDrift.pure.mjs';
+import { WITHDRAWALS_PATH, parseWithdrawals, withdrawalsByFile } from './migrationWithdrawals.pure.mjs';
 
 const MIGRATIONS_DIR = 'supabase/migrations';
 
@@ -128,6 +131,26 @@ export function readRepoMigrations(dir = MIGRATIONS_DIR) {
     });
 }
 
+/**
+ * The withdrawn-migration manifest, or the reason it could not be read.
+ *
+ * An absent manifest is an empty one: a clone whose tree predates it has
+ * nothing declared. A manifest that exists and cannot be parsed is a fault,
+ * and it is reported rather than treated as empty, because treating it as
+ * empty turns every withdrawal back into NOT APPLIED with nothing saying why.
+ */
+export function readWithdrawals(path = WITHDRAWALS_PATH) {
+  let text;
+  try {
+    text = readFileSync(path, 'utf8');
+  } catch (err) {
+    if (err?.code === 'ENOENT') return { byFile: new Map(), errors: [] };
+    return { byFile: new Map(), errors: [`${path}: ${err.message}`] };
+  }
+  const { entries, errors } = parseWithdrawals(text);
+  return { byFile: withdrawalsByFile(entries), errors: errors.map((e) => `${path}: ${e}`) };
+}
+
 function main() {
   const factsPath = arg('--facts');
   if (!factsPath) {
@@ -137,16 +160,22 @@ function main() {
   const facts = JSON.parse(readFileSync(factsPath, 'utf8'));
   const migrations = readRepoMigrations();
   const refused = migrations.filter((m) => m.probeRefused);
+  const withdrawals = readWithdrawals();
 
   const result = assessMigrationDrift({
     migrations,
     appliedVersions: facts.appliedVersions ?? [],
     existingObjects: facts.existingObjects ?? [],
     probeResults: facts.probeResults ?? {},
+    withdrawn: withdrawals.byFile,
   });
 
   if (has('--json')) {
-    console.log(JSON.stringify({ ...result, refusedProbes: refused.map((m) => m.file) }, null, 2));
+    console.log(JSON.stringify({
+      ...result,
+      refusedProbes: refused.map((m) => m.file),
+      manifestErrors: withdrawals.errors,
+    }, null, 2));
   } else {
     const n = migrations.length;
     console.log(`Migration drift — ${n} migration(s) in the repo, `
@@ -157,6 +186,15 @@ function main() {
       + '(create no object, declare no @effect probe)');
     console.log(`  NOT APPLIED    : ${result.notApplied.length.toString().padStart(4)}  `
       + '(merged, and the database does not carry it)');
+    console.log(`  withdrawn      : ${result.withdrawn.length.toString().padStart(4)}  `
+      + '(declared absent in MIGRATION_WITHDRAWN.json, and absent)');
+    console.log(`  CONTRADICTED   : ${result.contradicted.length.toString().padStart(4)}  `
+      + '(declared absent, and the database carries it)');
+
+    if (withdrawals.errors.length) {
+      console.log('\nThe withdrawn-migration manifest could not be read:');
+      for (const e of withdrawals.errors) console.log(`  - ${e}`);
+    }
 
     if (refused.length) {
       console.log('\nRefused @effect probes (not a lone SELECT — never executed):');
@@ -174,6 +212,22 @@ function main() {
       console.log('\nApply one with the "Apply a migration" workflow, newest-last.');
     }
 
+    if (result.contradicted.length) {
+      console.log('\nCONTRADICTED — declared withdrawn, and the database holds what the declaration says is absent:\n');
+      for (const r of result.contradicted) {
+        console.log(`  ${r.file}`);
+        for (const o of r.present) console.log(`      present: ${o}`);
+      }
+      console.log('\nEither the object was created by some other route, or the decision was reversed '
+        + 'without its entry being removed. Decide which is true and record it in a reviewed change; '
+        + 'if the object is meant to exist, the change removes the entry.');
+    }
+
+    if (result.withdrawn.length) {
+      console.log('\nWithdrawn — deliberately absent, see MIGRATION_WITHDRAWN.json:');
+      for (const r of result.withdrawn) console.log(`  - ${r.file}`);
+    }
+
     if (!has('--quiet-unverifiable') && result.unverifiable.length) {
       const recent = result.unverifiable.slice(-15);
       console.log(`\nUnverifiable — the ${recent.length} most recent of `
@@ -183,7 +237,8 @@ function main() {
     }
   }
 
-  process.exit(result.notApplied.length ? 1 : 0);
+  const failed = result.notApplied.length || result.contradicted.length || withdrawals.errors.length;
+  process.exit(failed ? 1 : 0);
 }
 
 if (import.meta.url === `file://${process.argv[1]}`) main();

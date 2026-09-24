@@ -141,6 +141,59 @@ const CASES = [
     replace: '',
   },
   {
+    gate: 'check-migration-withdrawals.mjs',
+    file: 'supabase/migrations/MIGRATION_WITHDRAWN.json',
+    what: 'a withdrawal declares absent an object its file never creates',
+    // Drift compares the database against what the FILE would make. An absent
+    // object the file does not create can never be found, so the declaration
+    // could never be shown false and drift would stop watching the file.
+    find: '"absent": ["index:uq_aml_verification_attempt"]',
+    replace: '"absent": ["index:uq_aml_verification_attempts"]',
+  },
+  {
+    gate: 'check-migration-withdrawals.mjs',
+    file: 'supabase/migrations/MIGRATION_WITHDRAWN.json',
+    what: 'a withdrawal names no object at all',
+    // An empty `absent` is the same silence by a shorter route: nothing in it
+    // can exist, so the entry is true whatever the database holds.
+    find: '"absent": ["function:public.builder_accept_current_terms"]',
+    replace: '"absent": []',
+  },
+  {
+    gate: 'check-migration-withdrawals.mjs',
+    file: 'supabase/migrations/MIGRATION_WITHDRAWN.json',
+    what: 'a withdrawal names a migration that does not exist',
+    // A mistyped file name hides nothing and tells every reader something
+    // false: drift keeps reporting the real file, and Mission Control keeps
+    // counting it as a hole, while the manifest says it was settled.
+    find: '"file": "20260724000000_prevent_duplicate_portfolio_publications.sql"',
+    replace: '"file": "20260724000000_prevent_duplicate_portfolio_publication.sql"',
+  },
+  {
+    gate: 'check-migration-ledger-writes.mjs',
+    file: 'supabase/migrations/20261219050000_market_sales_first_loads_where_empty.sql',
+    what: 'a migration re-arms a delivered file by deleting its ledger row',
+    // The shortcut this file exists to avoid. Its first loads went nowhere on
+    // the clones, and the quick repair is to delete `20261214000000`'s row so
+    // Mission Control delivers that file again. That DELETE runs on every
+    // database the file reaches, and on each it edits rows the database's
+    // own deliveries wrote.
+    find: `select public.market_sales_refresh('{"stage": "approvals"}'::jsonb)`,
+    replace: "delete from supabase_migrations.schema_migrations where version = '20261214000000';\n"
+      + `select public.market_sales_refresh('{"stage": "approvals"}'::jsonb)`,
+  },
+  {
+    gate: 'check-migration-ledger-writes.mjs',
+    file: 'supabase/migrations/20261219050000_market_sales_first_loads_where_empty.sql',
+    what: 'the same ledger write, quoted and handed to EXECUTE',
+    // Comments are stripped before the scan and strings are not, so a
+    // statement inside a string is still a statement.
+    find: `select public.market_sales_refresh('{"stage": "approvals"}'::jsonb)`,
+    replace: "do $body$ begin execute 'DELETE FROM \"supabase_migrations\".schema_migrations "
+      + "WHERE version = ''20261214000000'''; end $body$;\n"
+      + `select public.market_sales_refresh('{"stage": "approvals"}'::jsonb)`,
+  },
+  {
     gate: 'check-migration-security.mjs',
     file: 'supabase/migrations/20261119150000_revoke_public_execute_trigger_bodies.sql',
     what: 'a revoke names anon and authenticated but not PUBLIC, so it removes nothing',
@@ -437,6 +490,39 @@ const CASES = [
     what: 'the step running the object-index check stops mapping BACKEND_DEPLOYED_BY',
     find: 'BACKEND_DEPLOYED_BY: ${{ vars.BACKEND_DEPLOYED_BY }}',
     replace: 'DEPLOYED_BY: ${{ vars.BACKEND_DEPLOYED_BY }}',
+  },
+
+  {
+    /* The seed-skeleton check stands down on the same marker, and its step is
+       a second mapping of the same line — so the case above, which rewrites
+       the FIRST occurrence, never reaches it. Anchored on the step's own run
+       line so it removes this mapping and no other. */
+    gate: 'check-gate-env-wiring.mjs',
+    file: '.github/workflows/ci.yml',
+    what: 'the step running the seed-skeleton check stops mapping BACKEND_DEPLOYED_BY',
+    find:
+      'BACKEND_DEPLOYED_BY: ${{ vars.BACKEND_DEPLOYED_BY }}\n'
+      + '        run: npm run migrations:seed-skeletons:check',
+    replace:
+      'DEPLOYED_BY: ${{ vars.BACKEND_DEPLOYED_BY }}\n'
+      + '        run: npm run migrations:seed-skeletons:check',
+  },
+
+  {
+    /* The seed-currency comparison stands down on the same marker, from a
+       third mapping of the same line in another job. Starved, it said "the
+       seed has never been written" on every clone — the one red check on
+       npc-client-dashboard#245 on 24 Sep 2026, and Mission Control merges no
+       cascade pull request with a red check. Anchored on its own run line. */
+    gate: 'check-gate-env-wiring.mjs',
+    file: '.github/workflows/ci.yml',
+    what: 'the step running the seed-currency check stops mapping BACKEND_DEPLOYED_BY',
+    find:
+      'BACKEND_DEPLOYED_BY: ${{ vars.BACKEND_DEPLOYED_BY }}\n'
+      + '        run: npm run templates:library:seed:check',
+    replace:
+      'DEPLOYED_BY: ${{ vars.BACKEND_DEPLOYED_BY }}\n'
+      + '        run: npm run templates:library:seed:check',
   },
 
 ];

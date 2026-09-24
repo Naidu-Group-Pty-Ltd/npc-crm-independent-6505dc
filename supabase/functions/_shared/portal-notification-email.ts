@@ -1,7 +1,16 @@
 import { meteredFetch } from "./meteredFetch.ts";
+import { escapeHtml, getEmailIdentity, linkOrigin, PRIME_APP_ORIGIN, resendAddressing } from "./emailIdentity.ts";
 /**
  * Shared utility for sending branded portal notification emails via Resend.
  * Used by all edge functions that create client_portal_notifications.
+ *
+ * Who the email comes from, and where its button leads, is the deployment's
+ * email identity (`emailIdentity.pure.ts`), not a parameter. This used to
+ * send from a literal address on the prime's domain, under a name each caller
+ * looked up for itself with a generic fallback. On a clone, whose Resend key
+ * can send only from its own domain, Resend refused every one of these
+ * emails. The button's fallback was the Lovable editor, which is not an
+ * application at all.
  */
 
 const TYPE_EMOJI: Record<string, string> = {
@@ -29,7 +38,6 @@ interface PortalNotificationEmail {
   type?: string;
   category?: string;
   actionUrl?: string;
-  companyName?: string;
 }
 
 export async function sendPortalNotificationEmail(params: PortalNotificationEmail): Promise<{ success: boolean; error?: string }> {
@@ -47,13 +55,21 @@ export async function sendPortalNotificationEmail(params: PortalNotificationEmai
     type = 'info',
     category = 'general',
     actionUrl,
-    companyName = 'Property Consulting',
   } = params;
+
+  const identity = await getEmailIdentity();
+  const companyName = escapeHtml(identity.organisationName);
+  // The prime keeps the origin it always used (with the editor URL replaced
+  // by its real application); a clone's button opens the clone, or is not
+  // drawn at all.
+  const appUrl = linkOrigin(identity, Deno.env.get('APP_URL') || PRIME_APP_ORIGIN);
+  if (!appUrl) {
+    console.error('[portal-email] No application URL is provisioned for this deployment; the email is sent without a portal link');
+  }
 
   const emoji = TYPE_EMOJI[type] || 'ℹ️';
   const catLabel = CATEGORY_LABEL[category] || 'Notification';
-  const appUrl = Deno.env.get('APP_URL') || 'https://app.lovable.dev';
-  const portalUrl = actionUrl ? `${appUrl}${actionUrl}` : `${appUrl}/client`;
+  const portalUrl = appUrl ? (actionUrl ? `${appUrl}${actionUrl}` : `${appUrl}/client`) : null;
 
   const html = `
 <!DOCTYPE html>
@@ -99,7 +115,7 @@ export async function sendPortalNotificationEmail(params: PortalNotificationEmai
                 </tr>
               </table>
 
-              <!-- CTA Button -->
+              ${portalUrl ? `<!-- CTA Button -->
               <table width="100%" cellpadding="0" cellspacing="0">
                 <tr>
                   <td align="center">
@@ -108,7 +124,7 @@ export async function sendPortalNotificationEmail(params: PortalNotificationEmai
                     </a>
                   </td>
                 </tr>
-              </table>
+              </table>` : ''}
             </td>
           </tr>
           <!-- Footer -->
@@ -135,7 +151,7 @@ export async function sendPortalNotificationEmail(params: PortalNotificationEmai
         'Content-Type': 'application/json',
       },
       body: JSON.stringify({
-        from: `${companyName} <notifications@npcservices.com.au>`, // SAFETY: notifications@ kept as Resend-verified fallback sender
+        ...resendAddressing(identity),
         to: [to],
         subject: `${emoji} ${title}`,
         html,
@@ -159,11 +175,14 @@ export async function sendPortalNotificationEmail(params: PortalNotificationEmai
 /**
  * Helper to resolve client email + first name from a client_id.
  * Returns null if client or portal user not found.
+ *
+ * It no longer returns a company name: the organisation is the deployment's
+ * email identity, which `sendPortalNotificationEmail` resolves itself.
  */
 export async function resolveClientEmailInfo(
   supabase: any,
   clientId: string
-): Promise<{ email: string; firstName: string; companyName: string } | null> {
+): Promise<{ email: string; firstName: string } | null> {
   try {
     // Get portal user email
     const { data: portalUser } = await supabase
@@ -182,17 +201,9 @@ export async function resolveClientEmailInfo(
       .eq('id', clientId)
       .maybeSingle();
 
-    // Get company name from whitelabel
-    const { data: wl } = await supabase
-      .from('whitelabel_settings')
-      .select('company_name')
-      .limit(1)
-      .maybeSingle();
-
     return {
       email: portalUser.email,
       firstName: client?.primary_first_name || 'there',
-      companyName: wl?.company_name || 'Property Consulting',
     };
   } catch (err) {
     console.error('[portal-email] Failed to resolve client info:', err);

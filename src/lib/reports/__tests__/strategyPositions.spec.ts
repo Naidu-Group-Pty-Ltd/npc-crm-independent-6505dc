@@ -295,7 +295,10 @@ describe('rule 5 — liquidity is measured, equity is modelled', () => {
 
   it('never states an equity figure where the modelling does not travel', () => {
     const doc = composeExitOutlook(base({ finance: null }), 'Exit');
-    expect(doc).toContain('belongs to the Financial Analysis Report');
+    // No figure, and no heading over a pointer either: an empty subsection
+    // whose only sentence says the content is elsewhere is what the
+    // 23 Sep 2026 Compass printed under "The modelled position".
+    expect(doc).not.toMatch(/The modelled position/);
     expect(doc).not.toMatch(/\$2,012,838/);
   });
 });

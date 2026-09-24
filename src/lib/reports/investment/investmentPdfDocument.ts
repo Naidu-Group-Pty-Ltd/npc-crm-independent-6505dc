@@ -47,6 +47,7 @@ import { tabulateVizDirectives } from '@/lib/reports/vizDirectiveTables.pure';
 import { rentIsEstablished } from '@/lib/reports/investment/rentalEvidence.pure';
 import { presenceOf } from '../../../../supabase/functions/_shared/reports/contract/visibilityPolicy.pure';
 import { contentPolicyFor } from './tierContent.pure';
+import { audiencePolicyFor } from './audienceContent.pure';
 import { documentTitleForTier } from '../../../../supabase/functions/_shared/reportBindingProjection.pure';
 import { meaningfulPropertyType } from '@/lib/reports/investment/propertyRecord.pure';
 import {
@@ -2474,6 +2475,14 @@ export async function generateInvestmentPdfBlob(
          * rent on every tier.
          */
         const tierPolicy = contentPolicyFor(reportTier);
+        /*
+         * And who the document is FOR. An owner-occupier's copy draws no tile
+         * that describes the property as a letting — the rent, the yields, the
+         * weekly net position — the same keys the projection withholds from a
+         * chosen template (`audienceContent.pure.ts`), so the two
+         * presentations of one choice lead with the same figures.
+         */
+        const letting = audiencePolicyFor(presentation.audience).lettingFigures;
         const modelled = (v: unknown): boolean => tierPolicy.financialModelling && has(v);
         const identity = (v: unknown): boolean => tierPolicy.identityFigures && has(v);
         const money = (v: unknown) => {
@@ -2491,7 +2500,7 @@ export async function generateInvestmentPdfBlob(
         }
 
         // Weekly Rent, through the rent authority rather than a local test.
-        if (tierPolicy.identityFigures && rentIsEstablished(income) && has(income?.weeklyRent)) {
+        if (letting && tierPolicy.identityFigures && rentIsEstablished(income) && has(income?.weeklyRent)) {
           row1.push({
             label: 'Weekly Rent',
             value: money(income.weeklyRent),
@@ -2529,11 +2538,11 @@ export async function generateInvestmentPdfBlob(
         const grossYield = has(keyMetrics?.grossRentalYield)
           ? keyMetrics.grossRentalYield
           : keyMetrics?.grossYield;
-        if (tierPolicy.financialModelling && yieldIsFounded && has(grossYield)) {
+        if (letting && tierPolicy.financialModelling && yieldIsFounded && has(grossYield)) {
           row1.push({ label: 'Gross Yield', value: pct(grossYield, 2), subtitle: 'Annual rental return' });
         }
 
-        if (tierPolicy.financialModelling && yieldIsFounded && has(keyMetrics?.netRentalYield)) {
+        if (letting && tierPolicy.financialModelling && yieldIsFounded && has(keyMetrics?.netRentalYield)) {
           row1.push({ label: 'Net Yield', value: pct(keyMetrics.netRentalYield, 2), subtitle: 'After all costs' });
         }
 
@@ -2559,7 +2568,7 @@ export async function generateInvestmentPdfBlob(
         // The holding position. An authoritative $0 is a breakeven investment
         // outcome and is one of the most consequential things this band can
         // say, so it must survive.
-        if (modelled(keyMetrics?.weeklyNet)) {
+        if (letting && modelled(keyMetrics?.weeklyNet)) {
           row1.push({
             label: 'Weekly Net Cash Flow',
             value: money(keyMetrics.weeklyNet),
@@ -2597,7 +2606,11 @@ export async function generateInvestmentPdfBlob(
           row1.push({ label: 'Capital Growth', value: pct(assumptions.capitalGrowth, 1), subtitle: 'Scenario assumption' });
         }
 
-        if (row1.length < 2) return null;
+        // An owner-occupier's Compass publishes one identity figure, the price,
+        // because the other is the rent; the chosen template draws that one
+        // tile, so this band does too rather than dropping it and disagreeing
+        // with the template about whether the price is on the page.
+        if (row1.length < (letting ? 2 : 1)) return null;
 
         // ─── Row 2: Demographic KPIs ───
         const row2: Array<{ label: string; value: string; subtitle?: string }> = [];
@@ -3796,9 +3809,13 @@ export async function generateInvestmentPdfBlob(
          * needs a label it wants to be a chart instead.
          */
         if (wantsSparklines && projectionSeries) {
+          // An owner-occupier's copy draws no rent series: the rent is a
+          // letting's, and the audience withholds it wherever it is drawn.
           const strip: Array<[string, 'propertyValue' | 'annualRent' | 'loanBalance']> = [
             ['Value', 'propertyValue'],
-            ['Rent', 'annualRent'],
+            ...(audiencePolicyFor(presentation.audience).lettingFigures
+              ? [['Rent', 'annualRent'] as [string, 'annualRent']]
+              : []),
             ['Loan balance', 'loanBalance'],
           ];
           const rowHeight = 16;

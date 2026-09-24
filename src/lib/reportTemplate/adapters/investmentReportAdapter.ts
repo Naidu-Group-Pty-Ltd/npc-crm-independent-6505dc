@@ -212,6 +212,12 @@ export const investmentReportAdapter: ReportTemplateAdapter = {
     // Absent means "not included", never "not graded": nothing here rewrites
     // the stored row, and the default (the switch not sent) includes it.
     const includeScoring = payload?.includeScoring !== false;
+    // Who the document is for. The Markdown already carries the audience's
+    // sections (`deliverInvestmentPdf`); what it cannot reach are the BOUND
+    // values — the rent and yield tiles, the cash-flow rows, the standfirst —
+    // which the projection withholds or rewords for an owner-occupier. Absent
+    // is the investor, which binds exactly what it always did.
+    const audience = typeof payload?.audience === 'string' ? payload.audience : null;
     // Through the read-path placeholder scrub every renderer applies
     // (`presentStoredMarkdown`): a derived report stored before the write-path
     // hygiene carries its "N/A" cells verbatim, and the templated document is
@@ -262,7 +268,7 @@ export const investmentReportAdapter: ReportTemplateAdapter = {
     // catalogue binds a different one. Without this, 79 of the 50 Compass
     // masters' 80 bindings resolve to nothing on a real report — see
     // `reportBindingProjection.pure.ts`. Additive: nothing above is replaced.
-    applyInvestmentProjection(data, row as Record<string, unknown>);
+    applyInvestmentProjection(data, row as Record<string, unknown>, { audience });
     // The letterhead — the wordmark on the cover and the contact block on the
     // disclaimer page every template ends with. Nothing published `org` until
     // August 2026, so both printed blank on every report this product has ever

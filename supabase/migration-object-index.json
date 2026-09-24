@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "migration_files": 1023,
+  "migration_files": 1034,
   "created": [
     "function:aml.aml_touch_updated_at",
     "function:aml.apply_partner_material_change",
@@ -1456,6 +1456,8 @@
     "index:pdf_import_jobs_idempotency_key_idx",
     "index:pdf_import_jobs_watchdog_idx",
     "index:planning_data_cache_fetched_at_idx",
+    "index:population_projections_code_idx",
+    "index:population_projections_token_idx",
     "index:portal_terms_acceptances_agreement_path_key",
     "index:portal_terms_acceptances_builder_key",
     "index:portal_terms_acceptances_builder_user_idx",
@@ -2095,6 +2097,7 @@
     "table:public.pdf_import_watchdog_config",
     "table:public.permission_invite_tokens",
     "table:public.planning_data_cache",
+    "table:public.population_projections",
     "table:public.portal_configuration",
     "table:public.portal_operational_alerts",
     "table:public.portal_operational_events",
@@ -2957,6 +2960,7 @@
     "table:_v16_classified",
     "table:_v18_classified",
     "table:_v19_classified",
+    "table:_v20_classified",
     "table:aml.analyst_recommendations",
     "table:aml.arrangement_assessments",
     "table:aml.biometric_access_log",

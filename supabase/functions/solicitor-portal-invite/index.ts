@@ -2,14 +2,11 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.55.0'
 import { createCorsHeaders, createForbiddenResponse, verifyAuth } from "../_shared/auth.ts"
 import { requireModulePermission } from "../_shared/authz.ts"
 import { enforceCsrf, csrfDenied } from "../_shared/csrfGuard.ts"
-import { getBrandConfig } from "../_shared/brand-config.ts"
+import { escapeHtml, getEmailIdentity, linkOrigin, PRIME_APP_ORIGIN, resendAddressing } from "../_shared/emailIdentity.ts"
 import { meteredFetch } from "../_shared/meteredFetch.ts";
 
 const INVITE_EXPIRY_HOURS = 72;
 const MODULE_KEY = 'solicitor_portal_admin';
-// Hard-pinned production origin — APP_URL is intentionally ignored so preview
-// URLs can never leak into an invite email.
-const APP_URL = 'https://command-centre.npcservices.com.au';
 
 Deno.serve(async (req) => {
   const origin = req.headers.get('origin');
@@ -120,6 +117,19 @@ Deno.serve(async (req) => {
     }
 
     // === INVITE / RESEND ===
+    // Which application the invitation opens, decided before anything is
+    // written. The prime stays hard-pinned to its own domain, so a preview URL
+    // can never reach an invite there. That pin used to apply on every clone
+    // too, sending a clone's solicitors into the PRIME's portal. A clone's
+    // invitation opens the clone Mission Control provisioned. With no origin
+    // provisioned, nothing is created.
+    const identity = await getEmailIdentity(supabase);
+    const appUrl = linkOrigin(identity, PRIME_APP_ORIGIN);
+    if (!appUrl) {
+      console.error('[solicitor-portal-invite] No application URL is provisioned for this deployment; refusing to build an invite link');
+      return json({ error: "Could not determine this workspace's application URL (PUBLIC_APP_URL / APP_URL). Nothing was created and no email was sent." }, 500)
+    }
+
     let targetUserId: string | null = solicitor_user_id ?? null;
     let targetFirmId: string | null = firm_id ?? null;
 
@@ -200,8 +210,8 @@ Deno.serve(async (req) => {
       })
       .eq('id', portalUser.id)
 
-    const brand = await getBrandConfig(supabase);
-    const inviteUrl = `${APP_URL}/solicitor/accept-invite?token=${inviteToken}`;
+    const orgName = escapeHtml(identity.organisationName);
+    const inviteUrl = `${appUrl}/solicitor/accept-invite?token=${inviteToken}`;
     const safeName = String(portalUser.name || 'there').replace(/[<>]/g, '');
     const firmRecord = portalUser.solicitor_firms as any;
     const safeFirm = String(firmRecord?.trading_name || firmRecord?.name || '').replace(/[<>]/g, '');
@@ -217,24 +227,24 @@ Deno.serve(async (req) => {
             'Authorization': `Bearer ${resendApiKey}`,
           },
           body: JSON.stringify({
-            from: brand.fromHeaderAdmin,
+            ...resendAddressing(identity, 'Admin'),
             to: [portalUser.email],
-            subject: `You've been invited to the ${brand.companyName} Solicitor Portal`,
+            subject: `You've been invited to the ${identity.organisationName} Solicitor Portal`,
             html: `<!doctype html><html><body style="margin:0;padding:0;background:#f4f5f7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;">
 <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background:#f4f5f7;padding:32px 12px;"><tr><td align="center">
 <table role="presentation" width="560" cellspacing="0" cellpadding="0" border="0" style="max-width:560px;background:#ffffff;border-radius:14px;overflow:hidden;">
 <tr><td style="background:#0D264D;padding:28px 32px;text-align:center;">
-<div style="font-family:Georgia,serif;color:#BF9B50;font-size:13px;letter-spacing:4px;text-transform:uppercase;font-weight:600;">${brand.companyName}</div>
+<div style="font-family:Georgia,serif;color:#BF9B50;font-size:13px;letter-spacing:4px;text-transform:uppercase;font-weight:600;">${orgName}</div>
 <div style="margin-top:6px;color:#ffffff;font-size:20px;font-weight:600;">Solicitor Portal</div></td></tr>
 <tr><td style="padding:32px;">
 <p style="margin:0 0 18px;color:#0D264D;font-size:16px;">Hi ${safeName},</p>
-<p style="margin:0 0 16px;color:#475569;font-size:15px;line-height:1.6;">You've been invited to access the ${brand.companyName} Solicitor Portal${safeFirm ? ` on behalf of <strong>${safeFirm}</strong>` : ''}. From there you can manage your conveyancing matters, critical dates, contract documents and secure messaging with the ${brand.companyName} team and your clients.</p>
+<p style="margin:0 0 16px;color:#475569;font-size:15px;line-height:1.6;">You've been invited to access the ${orgName} Solicitor Portal${safeFirm ? ` on behalf of <strong>${safeFirm}</strong>` : ''}. From there you can manage your conveyancing matters, critical dates, contract documents and secure messaging with the ${orgName} team and your clients.</p>
 <div style="text-align:center;margin:28px 0;">
 <a href="${inviteUrl}" style="display:inline-block;background:#BF9B50;color:#0D264D;text-decoration:none;font-weight:700;font-size:15px;padding:14px 34px;border-radius:8px;">Set up your account</a></div>
 <p style="margin:0 0 8px;color:#64748b;font-size:13px;line-height:1.6;">This invite link expires in ${INVITE_EXPIRY_HOURS} hours. If the button doesn't work, copy this link into your browser:</p>
 <p style="margin:0;word-break:break-all;color:#0D264D;font-size:12px;">${inviteUrl}</p>
 </td></tr></table></td></tr></table></body></html>`,
-            text: `Hi ${safeName},\n\nYou've been invited to the ${brand.companyName} Solicitor Portal${safeFirm ? ` on behalf of ${safeFirm}` : ''}.\n\nSet up your account: ${inviteUrl}\n\nThis link expires in ${INVITE_EXPIRY_HOURS} hours.`,
+            text: `Hi ${safeName},\n\nYou've been invited to the ${identity.organisationName} Solicitor Portal${safeFirm ? ` on behalf of ${safeFirm}` : ''}.\n\nSet up your account: ${inviteUrl}\n\nThis link expires in ${INVITE_EXPIRY_HOURS} hours.`,
             tags: [{ name: 'category', value: 'solicitor_portal_invite' }],
           }),
         })

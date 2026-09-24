@@ -35,11 +35,14 @@ describe('the resolver can see', () => {
     expect(clients).toContain('primary_first_name');
   });
 
+  // The first read parses every migration — 634 MB on 23 Sep 2026, growing by
+  // ~42 MB with each template-library seed — and took 6.1s on a clean checkout
+  // against vitest's 5s default. The limit is sized to the work, not the check.
   it('reads the migrations', () => {
     // If this comes back empty the gate is blind to everything added since the
     // types were last regenerated, and it would pass on any of it.
     expect(migrationColumns('builder_network_stock_items').length).toBeGreaterThan(0);
-  });
+  }, 60_000);
 });
 
 describe('a column is known when EITHER source has it', () => {

@@ -54,6 +54,7 @@
  */
 
 import { partitionCode } from './printableGlyphs.pure.ts';
+import { parseVizDirective } from '../vizDirectives.pure.ts';
 
 export interface BlockScrubResult {
   markdown: string;
@@ -148,22 +149,79 @@ export function directiveKey(directive: string): string {
 }
 
 /**
+ * A drawn point's identity: the year its label names, where it names one, and
+ * otherwise the whole label — with the value it draws.
+ *
+ * The year is the part of a period label that means something. "2026 Main
+ * series", "2026" and "2026 (projected)" are one bar in one series; a label
+ * with no year is compared whole, so two categories are never mistaken for
+ * each other because they share a word.
+ */
+function pointKey(label: string, value: number): string {
+  const year = /\b(1[89]\d{2}|20\d{2})\b/.exec(label)?.[1];
+  return `${year ?? label.toLowerCase().replace(/\s+/g, ' ').trim()}=${value}`;
+}
+
+/** The points a `bars` directive draws, and the options that change its reading. */
+function barSeries(directive: string): { points: string[]; options: string } | null {
+  const m = /^\{\{\s*bars\s*:([\s\S]*)\}\}$/i.exec(directive.trim());
+  if (!m) return null;
+  const parsed = parseVizDirective('bars', m[1]);
+  if (!parsed || parsed.kind !== 'bars' || parsed.items.length < 3) return null;
+  return {
+    points: parsed.items.map((i) => pointKey(i.label, i.value)),
+    options: `${parsed.max ?? ''}|${(parsed.unit ?? '').toLowerCase()}`,
+  };
+}
+
+/** Every point of `later` in `earlier`, in the same order. */
+function isRedrawOf(later: readonly string[], earlier: readonly string[]): boolean {
+  let at = 0;
+  for (const p of later) {
+    while (at < earlier.length && earlier[at] !== p) at += 1;
+    if (at === earlier.length) return false;
+    at += 1;
+  }
+  return true;
+}
+
+/**
  * Keep the first drawing of each chart and drop the later repeats.
  *
  * First rather than last, because a report is read forwards: the earlier
  * placement is the one whose surrounding prose introduced it.
+ *
+ * ## A series redrawn under other labels is the same chart
+ *
+ * The 23 Sep 2026 Due Diligence report for 97 Poole Road drew the Kellyville–
+ * East population projection three times: five bars from the 2021 base to
+ * 2041, then the same four projected years labelled "2026 Main series", then
+ * the five again labelled "2026". The values were identical to the person;
+ * the key compared labels verbatim, so each looked new. A `bars` directive is
+ * now also dropped where EVERY point it draws — by year where the label names
+ * one, by whole label otherwise, and with its value — was already drawn, in
+ * the same order, by an earlier bar chart with the same unit and maximum.
+ * Three points at least, and never the other way round: a later chart that
+ * ADDS a point is kept, because dropping it would lose that point.
  */
 export function dedupeChartDirectives(markdown: string): { markdown: string; removed: number } {
   const seen = new Set<string>();
+  const drawn: Array<{ points: string[]; options: string }> = [];
   let removed = 0;
   const out = (markdown || '').replace(DIRECTIVE, (whole) => {
     const key = directiveKey(whole);
-    if (!seen.has(key)) {
-      seen.add(key);
-      return whole;
+    if (seen.has(key)) {
+      removed += 1;
+      return '';
     }
-    removed += 1;
-    return '';
+    const series = barSeries(whole);
+    if (series && drawn.some((d) => d.options === series.options && isRedrawOf(series.points, d.points))) {
+      removed += 1;
+      return '';
+    }
+    seen.add(key);
+    if (series) drawn.push(series);
+    return whole;
   });
   return { markdown: removed ? collapseBlankRuns(out) : out, removed };
 }

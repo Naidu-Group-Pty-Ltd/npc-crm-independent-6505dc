@@ -191,8 +191,8 @@ decide.
 | **Analysis** | Reused from the run unless refreshed; rate-limited per caller; never fatal. |
 | **Resources** | `assertSafeRenderResources` on HTML this function built itself — the assets came from a tenant's settings form, and the guard belongs on the boundary. |
 | **Render** | `_shared/weasyprintClient.ts`. No fallback: a silent downgrade ships a client a document nobody approved. |
-| **Storage** | `client-files/commercial-capacity/<assessmentId>/<day>/<uuid>-<file>.pdf`, `upsert: false`. |
-| **Record** | Every attempt writes a `commercial_industrial_report_renders` row, failures included, with their reason. Plus a `report_generated` audit event, because a document leaving the building is a state change. |
+| **Storage** | `client-files/commercial-capacity/<assessmentId>/<day>/<uuid>-<file>.pdf`, `upsert: false`. Downloaded again from here: `manage-ci-assessments`' `document_url` signs five minutes for the stored file and never re-renders it, because a second render reads today's brand and analysis and is not the document the client was sent. |
+| **Record** | Every attempt past the refusals writes its `commercial_industrial_report_renders` row first — before the model call, the brand, the build and the engine — so a failure in any of them is recorded with its reason, and a row that cannot be written stops the render. The row used to be written late, so a failure before it left nothing to find. A refusal (not found, not completed, no calculation run) writes nothing: it is an answer, not an attempt. Plus a `report_generated` audit event naming the render and the client linked when it was drawn, because a document leaving the building is a state change. |
 
 ### The filename
 
@@ -211,6 +211,15 @@ sort together.
 linked to a client at all, so scoping through `clients` here would make a
 standalone assessment's renders readable by nobody, or by everybody, depending
 on how the join was written.
+
+No browser reads the table, then: the documents are listed and downloaded
+through `manage-ci-assessments` (`list_documents`, `client_documents`,
+`documents_library`, `document_url`), which reads this ledger and the template
+route's `template_render_jobs` as one list through
+`_shared/ciAssessments/documents.pure.ts`. Its rule is the owner, or anybody who
+may see the client a document was drawn for. A document belongs to the client
+whose link was open when it was drawn, never to today's link.
+[`MODULE_STRUCTURE.md`](../commercial/MODULE_STRUCTURE.md) §6 carries it.
 
 ---
 

@@ -720,7 +720,10 @@ Deno.serve(async (req) => {
         `📊 Scoring V2 (${record.policy.methodologyVersion}): `
         + `${record.policy.gradeIssued ? `grade ${record.grade} at ${record.totalScore}` : 'grade withheld'} — `
         + `measured ${record.policy.measuredDimensions.join(', ') || 'nothing'}`
-        + (record.gradeGaps.length ? `; gaps: ${record.gradeGaps.map((g) => `${g.dimension} (${g.detail})`).join('; ')}` : ''),
+        + (record.gradeGaps.length ? `; gaps: ${record.gradeGaps.map((g) => `${g.dimension} (${g.detail})`).join('; ')}` : '')
+        // Eligibility 5.0.0: the letter follows the score, and where the
+        // evidence alone would not carry it the caution travels beside it.
+        + (record.evidenceCaution ? `; caution (evidence alone carries ${record.evidenceCaution.supports}): ${record.evidenceCaution.cautions.join(' ')}` : ''),
       );
       return new Response(JSON.stringify({ success: true, data: record }), {
         status: 200,

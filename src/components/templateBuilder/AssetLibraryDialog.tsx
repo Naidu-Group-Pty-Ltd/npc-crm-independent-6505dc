@@ -30,6 +30,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs';
 import { toast } from 'sonner';
 import { secureStorageUpload } from '@/hooks/useSecureStorage';
 import { useBrandKits } from '@/hooks/useBrandKits';
+import { SUPABASE_URL } from '@/integrations/supabase/env';
 
 const RECENTS_KEY = 'tplb.asset-library.recents.v1';
 const MAX_RECENTS = 24;
@@ -72,7 +73,6 @@ const readDims = (url: string): Promise<{ width: number; height: number }> =>
   });
 
 export function AssetLibraryDialog({ open, onOpenChange, templateId, pageWidth, pageHeight, onInsert }: Props) {
-  const supabaseUrl = (import.meta as any).env?.VITE_SUPABASE_URL ?? '';
   const { kits, loading: kitsLoading } = useBrandKits();
   const [recents, setRecents] = useState<RecentAsset[]>([]);
   const [busy, setBusy] = useState(false);
@@ -128,13 +128,19 @@ export function AssetLibraryDialog({ open, onOpenChange, templateId, pageWidth, 
         toast.error(`Upload failed: ${result.error ?? 'unknown error'}`);
         return;
       }
-      const publicUrl = `${supabaseUrl}/storage/v1/object/public/report-templates/${result.path ?? path}`;
+      // The project the upload just went to: the client's own, as `env.ts`
+      // resolved it. This used to read `VITE_SUPABASE_URL` raw with an ''
+      // fallback, so a build that never set the variable wrote an address on
+      // the app's own origin into the template, and a half-configured one
+      // named a project the client was not talking to. See
+      // `oneResolverForTheProjectUrl.spec.ts`.
+      const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/report-templates/${result.path ?? path}`;
       toast.success('Uploaded · inserting…');
       await insert(publicUrl, file.name);
     } finally {
       setBusy(false);
     }
-  }, [templateId, supabaseUrl, insert]);
+  }, [templateId, insert]);
 
   const removeRecent = (url: string) => {
     const next = recents.filter((r) => r.url !== url);

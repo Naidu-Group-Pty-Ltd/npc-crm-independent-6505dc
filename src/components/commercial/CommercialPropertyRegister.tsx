@@ -6,6 +6,17 @@
  * still works. The one behavioural change is the decluttering the brief asked
  * for: a single "Add property" action with a segment choice, instead of
  * duplicated "New Commercial" and "New Industrial" buttons.
+ *
+ * ## What the register is for
+ *
+ * The register holds the buildings — address, areas, tenancies, capital works —
+ * and outlives any one deal. An assessment is a finance test of one
+ * transaction on a building. They used to have no connection: a register row's
+ * only onward action was a property page's "Send to Calculators", which minted
+ * an "Untitled analysis" without filling anything from it. Each row now starts
+ * an assessment of that building ("New assessment"), which fills the
+ * assessment's blanks from the register and records which building it is, so
+ * the property's page lists every assessment made of it.
  */
 
 import { useMemo, useState, type ReactNode } from 'react';
@@ -22,12 +33,13 @@ import {
   AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent,
   AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle,
 } from '@/components/ui/alert-dialog';
-import { Building2, Factory, Loader2, Pencil, Plus, Trash2 } from 'lucide-react';
+import { Building2, Factory, FilePlus2, Loader2, Pencil, Plus, Trash2 } from 'lucide-react';
 import { useCommercialProperties, commercialApi, type CommercialProperty } from '@/hooks/useCommercialProperties';
 import { useIndustrialProperties, industrialApi, type IndustrialProperty } from '@/hooks/useIndustrialProperties';
 import { CommercialPropertyFormModal } from '@/components/commercial/CommercialPropertyFormModal';
 import { IndustrialPropertyFormModal } from '@/components/industrial/IndustrialPropertyFormModal';
 import { toast } from '@/hooks/use-toast';
+import { startKey } from '@/components/commercial/assessment/useStartAssessment';
 
 type AssetKind = 'commercial' | 'industrial';
 type CombinedRow =
@@ -67,7 +79,17 @@ function Value({ children }: { children: ReactNode }) {
   return <span className={missing ? 'text-muted-foreground' : ''}>{missing ? '—' : children}</span>;
 }
 
-export function CommercialPropertyRegister() {
+interface RegisterProps {
+  /**
+   * Start an assessment of a building: the landing's own "New assessment",
+   * which creates it and opens its Type step (`useStartAssessment`).
+   */
+  onStartAssessment: (property: { domain: AssetKind; propertyId: string }) => void;
+  /** The start under way, by `startKey`, so the row that was pressed says so. */
+  starting: string | null;
+}
+
+export function CommercialPropertyRegister({ onStartAssessment, starting }: RegisterProps) {
   const commercial = useCommercialProperties();
   const industrial = useIndustrialProperties();
   const navigate = useNavigate();
@@ -228,7 +250,7 @@ export function CommercialPropertyRegister() {
                 <TableHead className="text-right">Site (m²)</TableHead>
                 <TableHead className="text-right">Price / valuation</TableHead>
                 <TableHead>Status / GST</TableHead>
-                <TableHead className="w-24"><span className="sr-only">Actions</span></TableHead>
+                <TableHead className="w-32"><span className="sr-only">Actions</span></TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -289,6 +311,18 @@ export function CommercialPropertyRegister() {
                       <div className="flex justify-end gap-1">
                         <Button
                           size="icon" variant="ghost" className="h-8 w-8"
+                          onClick={() => onStartAssessment({ domain: row.kind, propertyId: property.id })}
+                          disabled={starting !== null}
+                          aria-busy={starting === startKey({ domain: row.kind, propertyId: property.id })}
+                          aria-label={`New assessment of ${address || 'this property'}`}
+                          title="New assessment of this property"
+                        >
+                          {starting === startKey({ domain: row.kind, propertyId: property.id })
+                            ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                            : <FilePlus2 className="h-4 w-4" aria-hidden="true" />}
+                        </Button>
+                        <Button
+                          size="icon" variant="ghost" className="h-8 w-8"
                           onClick={() => editRow(row)}
                           aria-label={`Edit ${address || 'property'}`}
                         >
@@ -334,7 +368,8 @@ export function CommercialPropertyRegister() {
             <AlertDialogTitle>Delete “{deleteLabel}”?</AlertDialogTitle>
             <AlertDialogDescription>
               This also deletes the property&apos;s tenancies, capital expenditure and saved scenarios.
-              This cannot be undone.
+              This cannot be undone. Assessments made of this property are kept — they hold their own
+              figures — but will no longer be able to open it.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

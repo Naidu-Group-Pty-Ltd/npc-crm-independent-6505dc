@@ -40,7 +40,10 @@ import { buildScoreOutput } from '../market/scoreOutputContract.pure';
 import {
   applyEligibility,
   GRADE_THRESHOLDS,
+  GRADE_THRESHOLDS_BEFORE_5_0_0,
   gradeFor,
+  gradeThresholdsFor,
+  gradeUnder,
 } from '../market/gradeEligibility.pure';
 import {
   emptyEvidence,
@@ -195,25 +198,42 @@ const assertIntegrity = (name: string, r: ShadowScoreResult, evidence: MarketEvi
 // ---------------------------------------------------------------------------
 
 describe('closure: the grade boundaries', () => {
-  it('A+ floors at 85 and A at 75, in the threshold table itself', () => {
-    expect(GRADE_THRESHOLDS.find(([, g]) => g === 'A+')![0]).toBe(85);
+  // Eligibility 5.0.0 (owner decision, 24 Sep 2026): A+ from 80. The closure
+  // pinned 85; the pin moves with the decision rather than being dropped,
+  // and the line every earlier grade was issued against is pinned beside it.
+  it('A+ floors at 80 and A at 75, in the threshold table itself', () => {
+    expect(GRADE_THRESHOLDS.find(([, g]) => g === 'A+')![0]).toBe(80);
     expect(GRADE_THRESHOLDS.find(([, g]) => g === 'A')![0]).toBe(75);
+  });
+
+  it('keeps the table every grade before 5.0.0 was issued against — A+ from 85', () => {
+    expect(GRADE_THRESHOLDS_BEFORE_5_0_0.find(([, g]) => g === 'A+')![0]).toBe(85);
+    // Nothing else moved: the two tables differ in exactly one line.
+    const moved = GRADE_THRESHOLDS.filter(([floor, g], i) =>
+      GRADE_THRESHOLDS_BEFORE_5_0_0[i][0] !== floor || GRADE_THRESHOLDS_BEFORE_5_0_0[i][1] !== g);
+    expect(moved).toEqual([[80, 'A+']]);
+    expect(gradeThresholdsFor('4.0.0')).toBe(GRADE_THRESHOLDS_BEFORE_5_0_0);
+    expect(gradeThresholdsFor(undefined)).toBe(GRADE_THRESHOLDS_BEFORE_5_0_0);
+    expect(gradeThresholdsFor('not a version')).toBe(GRADE_THRESHOLDS_BEFORE_5_0_0);
+    expect(gradeThresholdsFor('5.0.0')).toBe(GRADE_THRESHOLDS);
+    expect(gradeUnder(82, GRADE_THRESHOLDS_BEFORE_5_0_0)).toBe('A');
   });
 
   it('gradeFor answers correctly immediately below, at, and above each line', () => {
     expect(gradeFor(74.99)).toBe('B+');
     expect(gradeFor(75)).toBe('A');
     expect(gradeFor(75.01)).toBe('A');
-    expect(gradeFor(84.99)).toBe('A');
-    expect(gradeFor(85)).toBe('A+');
-    expect(gradeFor(85.01)).toBe('A+');
+    expect(gradeFor(79.99)).toBe('A');
+    expect(gradeFor(80)).toBe('A+');
+    expect(gradeFor(80.01)).toBe('A+');
+    expect(gradeFor(84.99)).toBe('A+');
   });
 
-  // S5/S6 §8 removed the delivered-points ceiling. The test that stood here
-  // pinned its turning points at 85 and 75; what replaces it pins that the
-  // delivered points no longer reach the grade at all, and that the gate which
-  // DID survive is the one about evidence quality.
-  it('the delivered points no longer move the printed grade', () => {
+  // S5/S6 §8 removed the delivered-points ceiling, and 5.0.0 made the quality
+  // test a caution rather than a cap. What stands: the delivered points never
+  // reach the grade, the printed letter is the band of the score, and the
+  // quality test decides only whether a caution travels with it.
+  it('the delivered points no longer move the printed grade, and evidence quality cautions rather than caps', () => {
     const strong = run({
       evidence: ev({ ...growthBlock(15), ...demandBlock('strong') }),
       yieldInputs: { basis: 'purchase', basisAmount: 500_000, weeklyRent: 820 },
@@ -231,17 +251,22 @@ describe('closure: the grade boundaries', () => {
     const at = (evidenceQualityCoverage: number) =>
       applyEligibility({ compositeScore: 90, growth: strong.growth, evidenceQualityCoverage });
 
-    // Quality gates A+ at 0.70 and A at 0.55, and nothing else does.
-    expect(at(0.9).grade).toBe('A+');
-    expect(at(0.9).capped).toBe(false);
-    expect(at(0.69).grade).toBe('A');
-    expect(at(0.69).capped).toBe(true);
-    expect(at(0.69).reasons.join(' ')).toMatch(/evidenced/);
-    expect(at(0.54).grade).toBe('B+');
-
-    // No reason this module can give mentions the removed ceiling.
+    // The letter is the score's at every quality; quality decides the caution.
     for (const q of [0.2, 0.54, 0.69, 0.9]) {
-      expect(at(q).reasons.join(' ')).not.toMatch(/delivered|never lifts the grade/);
+      expect(at(q).grade, `quality ${q}`).toBe('A+');
+      expect(at(q).capped, `quality ${q}`).toBe(false);
+      expect(at(q).reasons, `quality ${q}`).toEqual([]);
+    }
+    expect(at(0.9).cautions).toEqual([]);
+    expect(at(0.9).caution).toBeNull();
+    expect(at(0.69).ceiling).toBe('A');
+    expect(at(0.69).cautions.join(' ')).toMatch(/evidenced/);
+    expect(at(0.69).caution).toMatch(/69% of their methods ran/);
+    expect(at(0.54).ceiling).toBe('B+');
+
+    // No caution this module can give mentions the removed ceiling.
+    for (const q of [0.2, 0.54, 0.69, 0.9]) {
+      expect(at(q).cautions.join(' ')).not.toMatch(/delivered|never lifts the grade/);
     }
   });
 
@@ -258,6 +283,9 @@ describe('closure: the grade boundaries', () => {
     expect(threeOfFive.measured).toEqual(['growth', 'yield', 'demand']);
     expect(threeOfFive.eligibility!.ceiling).toBe('A+');
     expect(threeOfFive.gradeCapReason.join(' ')).not.toMatch(/dimension|delivered/);
+    // …nor a caution: evidence this strong carries the letter on its own.
+    expect(threeOfFive.gradeCautions).toEqual([]);
+    expect(threeOfFive.gradeCaution).toBeNull();
   });
 });
 

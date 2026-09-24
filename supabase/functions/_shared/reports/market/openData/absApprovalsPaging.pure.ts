@@ -175,22 +175,29 @@ export function pagesToCover(
  * caller's bookkeeping. It has two edges of its own and they are enough:
  *
  *   * `frontier` — the newest month it holds. Currency.
- *   * `oldest`   — the oldest month it holds. Depth.
+ *   * `oldest`   — the oldest month it can PROVE it holds, unbroken from the
+ *     frontier down. Depth. This was `min(period)` until 23 Sep 2026, and
+ *     rows are not proof: a window a run died part-way through has rows and
+ *     is not whole. `vouchedOldest`, below, is where the proof comes from.
  *
  * So each invocation asks itself what is owed, in this order, and the order
  * is what makes it converge:
  *
  *   1. **Nothing held** → the frontier window. Establishes the edge and lets
  *      the publisher's own lag define it, which is `approvalsPage`'s rule.
+ *      **1b. Rows at the frontier that nothing proves whole** → the frontier
+ *      window again, in the same calendar month.
  *   2. **A month may have been published** (`asOf` past `frontier`) → the
  *      frontier window again. This also re-reads the recent months, which is
  *      how a Bureau REVISION reaches the register at all — the upsert
  *      replaces on the publisher's own key.
  *   3. **Current, and shallower than the floor** → the window immediately
  *      below `oldest`. One window deeper per invocation, self-advancing, no
- *      index anywhere.
- *   4. **Current and deep enough** → `settled`: nothing is owed and NO
- *      request is made. A settled run costs one table read.
+ *      index anywhere — and because `oldest` is the PROVEN edge, a window a
+ *      run left half-written is the next one asked for, not stepped past.
+ *   4. **Current and deep enough** → `settled`: nothing is owed and no DATA
+ *      is requested. A settled run reads the catalogue (to know which flow,
+ *      and so which grain, it is) and four facts from its own tables.
  *
  * Step 4 is what makes frequency free. Convergence is bounded by cadence
  * rather than by nights — hourly reaches 24 months in eight hours and then
@@ -246,8 +253,18 @@ export interface ApprovalsWork {
 export function planApprovalsWork(args: {
   /** Newest month held, or null on a register with no rows. */
   frontier: string | null;
-  /** Oldest month held, or null on a register with no rows. */
+  /**
+   * The edge the walk steps below: the oldest month of the unbroken run the
+   * register can PROVE it holds down from the frontier — `vouchedOldest`'s
+   * answer, not `min(period)`. Null where nothing is proven; see below.
+   */
   oldest: string | null;
+  /**
+   * `min(period)` in the table, for the reason an operator reads and nothing
+   * else. Where it lies below `oldest` the window asked for is a RE-READ of
+   * months the table holds rows for and nothing proves whole.
+   */
+  heldOldest?: string | null;
   /** `YYYY-MM` the run is asking from — the frontier is asked forward to it. */
   asOf: string;
   /** `YYYY-MM` the register is owed back to. */
@@ -271,10 +288,26 @@ export function planApprovalsWork(args: {
     };
   };
 
-  // 1 — nothing held, or an edge the register cannot state.
-  if (args.frontier === null || args.oldest === null) {
+  // 1 — nothing held.
+  if (args.frontier === null) {
     return frontierWindow('the register holds nothing; establishing the frontier',
       pagesToCover(args.asOf, args.floor, months));
+  }
+
+  /*
+   * 1b — rows at the frontier, and nothing proving them whole: the frontier
+   * window was half-written, or every write that vouched for it describes
+   * rows that have since gone. Read it again. This is the frontier's half of
+   * the rule `vouchedOldest` states — an unproven month is asked for again,
+   * never stepped past — and it is placed before the cadence so a
+   * half-written frontier is repaired in the same calendar month rather than
+   * next month.
+   */
+  if (args.oldest === null) {
+    return frontierWindow(
+      `the register holds rows for ${args.frontier} and no completed write vouches for them; reading the frontier again`,
+      Math.ceil(Math.max(0, monthSpan(args.floor, args.frontier) - 1) / months),
+    );
   }
 
   /*
@@ -295,16 +328,20 @@ export function planApprovalsWork(args: {
     );
   }
 
-  // 3 — deepen by exactly one window, immediately below the oldest held.
+  // 3 — deepen by exactly one window, immediately below the oldest PROVEN.
   if (depthOwed > 0) {
     const end = shiftMonth(args.oldest, -1);
+    const held = args.heldOldest ?? null;
     return {
       kind: 'backfill',
       startPeriod: shiftMonth(end, -(months - 1)),
       endPeriod: end,
       minPeriods: months,
       windowsRemaining: depthOwed - 1,
-      because: `the register reaches back to ${args.oldest} and is owed ${args.floor}`,
+      because: held !== null && held < args.oldest
+        ? `the register is proven whole back to ${args.oldest} and holds rows back to ${held}; `
+          + `re-reading the window below the proof, because rows are not a whole window`
+        : `the register reaches back to ${args.oldest} and is owed ${args.floor}`,
     };
   }
 
@@ -317,4 +354,253 @@ export function planApprovalsWork(args: {
     windowsRemaining: 0,
     because: `current to ${args.frontier} and complete to ${args.oldest}`,
   };
+}
+
+/**
+ * # Which months the register can PROVE it holds
+ *
+ * ## The hole this closes
+ *
+ * The walk above deepens from the register's oldest month, and it first read
+ * that edge as `min(period)` over the table. A window is written in batches
+ * of five hundred rows across four payload shapes, so an invocation that
+ * dies part-way — the worker's `546`, a dropped connection, a batch refused —
+ * commits some of a window's rows and not the rest. `min(period)` moves INTO
+ * the half-written window, the next invocation asks for the window below it,
+ * and nothing ever asks for the half-written months again. The register then
+ * settles and calls itself complete with a hole in it, which is the outcome
+ * `SUPPLY_EVIDENCE.md` §4 exists to forbid, reached by the loader rather than
+ * by the publisher.
+ *
+ * `approvalsWriteOrder` closed the one DETERMINISTIC route there — a negative
+ * the table refused part-way through a window. It could not close the
+ * transient ones, because a transient failure is not in the data.
+ *
+ * ## The rule
+ *
+ * The table can say which months have rows. Only the sync ledger can say
+ * which months were written WHOLE: the stage inserts its success row after
+ * the last batch commits and never before, so a run that died part-way leaves
+ * no success row at all. The edge the walk steps below is therefore the
+ * bottom of the unbroken run of months, counted down from the frontier, that
+ * completed writes vouch for. Three things follow from that one rule:
+ *
+ *   * a half-written window vouches for nothing, so the next invocation asks
+ *     for the SAME window again — and re-writing it is an upsert on the
+ *     publisher's own key, so the repair costs one request;
+ *   * a gap ANYWHERE below the frontier ends the run, so a month missed at
+ *     the top (a release that slipped past a calendar month, which the
+ *     frontier window's `asOf`-anchored range then steps over) is re-read
+ *     too, not only a hole at the bottom;
+ *   * a frontier month nothing vouches for sends the planner back to the
+ *     frontier window (`planApprovalsWork`, rule 1b).
+ *
+ * What this can cost is a re-read, never a hole: a success row the ledger
+ * failed to record costs one repeated window. That asymmetry is the point —
+ * the absence of proof is read as absence.
+ *
+ * ## Two guards, because the ledger outlives the rows it describes
+ *
+ * The ledger is never pruned and the table can be. It already has been:
+ * `20261215030000_approvals_clear_mislabelled_grains.sql` deleted every row
+ * the SA2 flow had written so a corrected parser could reload it, and the
+ * success rows of the two runs before it — 06:43 and 06:48 UTC on 22 Sep
+ * 2026, vouching for 2026-05 → 2026-07 — are still in the ledger describing
+ * rows that do not exist. (The production log shows it: the 07:58 run read
+ * `frontier=none`, and at 09:20 the walk asked for 2026-04 → 2026-06 below
+ * an oldest month of 2026-07.) A stale success row is worse than none,
+ * because it vouches for a window a later partial write can leave half-full.
+ *
+ *   * **Staleness.** Every row one write makes carries that write's
+ *     `loaded_at`, and the success row now names it (`rows_loaded_at`). A
+ *     success row whose stamp precedes the OLDEST stamp the table still holds
+ *     made nothing that survives as it was made — every one of its rows has
+ *     since been replaced or deleted — so it vouches for nothing. A row
+ *     written before the stamp was recorded is judged on its own insert
+ *     time, which follows the stamp by the length of the run; the worst a
+ *     skewed clock can do there is cost one window's re-read, after which
+ *     the new row carries its stamp and is compared on one clock.
+ *   * **The table's own floor.** The edge is never below `min(period)`: a
+ *     month the table holds no row for is not held, however the ledger reads.
+ *
+ * What neither can see is rows deleted from the MIDDLE of the register while
+ * older rows survive. The loader never deletes; that would be an operator's
+ * act, and it is named here rather than guessed at.
+ */
+
+/**
+ * The fields of a sync-ledger row that can vouch for a window, and nothing
+ * else. A success row's `detail` names every catalogued flow and candidate
+ * and runs to kilobytes; this projection is a few hundred bytes, which is
+ * what lets the read ask for every approvals row an area kind has without
+ * spending the worker's memory on it — the resource that answered `546`.
+ */
+export const APPROVALS_LEDGER_SELECT = [
+  'stage:detail->>stage',
+  'area_kind:detail->>area_kind',
+  'first:detail->>first_period',
+  'last:detail->>latest_period',
+  'periods:detail->periods',
+  'rows_written:detail->rows_written',
+  'period_list:detail->period_list',
+  'stamp:detail->>rows_loaded_at',
+  'created_at',
+].join(',');
+
+/**
+ * How many ledger rows one invocation reads. A success row is written about
+ * once an hour while the walk deepens and about once a MONTH after it
+ * settles, and refusals and settled runs are filtered out at the source, so
+ * this is decades of history. Reaching it costs re-reads of the oldest
+ * windows and never a hole.
+ */
+export const APPROVALS_LEDGER_READ_LIMIT = 2000;
+
+/** A window wider than this is not believed, whatever the row says. */
+export const APPROVALS_LEDGER_MAX_MONTHS = 600;
+
+/** One `APPROVALS_LEDGER_SELECT` row, typed as what it is: unverified. */
+export interface ApprovalsLedgerEntry {
+  stage?: unknown;
+  area_kind?: unknown;
+  first?: unknown;
+  last?: unknown;
+  periods?: unknown;
+  rows_written?: unknown;
+  period_list?: unknown;
+  stamp?: unknown;
+  created_at?: unknown;
+}
+
+/** A window a ledger row proves was written whole. */
+export interface CompletedApprovalsWindow {
+  /** Every month the write carried, ascending. */
+  months: string[];
+  /** The `loaded_at` its rows carry, or null on a row written before it was recorded. */
+  stamp: string | null;
+  /** When the ledger recorded it — the database's clock, after the last batch. */
+  recordedAt: string | null;
+}
+
+/** A calendar month, strictly: `2026-13` and `0000-01` are not periods. */
+const LEDGER_PERIOD = /^(19|20|21)\d{2}-(0[1-9]|1[0-2])$/;
+
+const isInstant = (v: unknown): v is string => typeof v === 'string' && Number.isFinite(Date.parse(v));
+
+/**
+ * The window one ledger row proves was written whole, or null where it
+ * proves nothing.
+ *
+ * A row vouches only where it is a success row for THIS area kind, it wrote
+ * something, and the months it carried are stated consistently. Rows written
+ * since `period_list` was recorded name their months exactly. Older rows
+ * carry only a first month, a last month and a count, so they are believed
+ * only where the count says the window had no gap — a window of three months
+ * spanning four is a window with a hole in it, and which month is missing is
+ * not something the row can say.
+ */
+export function completedWindowOf(
+  entry: ApprovalsLedgerEntry | null | undefined,
+  areaKind: string,
+): CompletedApprovalsWindow | null {
+  if (entry === null || entry === undefined || typeof entry !== 'object') return null;
+  if (entry.stage !== 'approvals' || entry.area_kind !== areaKind) return null;
+  const { first, last, periods, rows_written: written } = entry;
+  if (typeof first !== 'string' || typeof last !== 'string') return null;
+  if (!LEDGER_PERIOD.test(first) || !LEDGER_PERIOD.test(last)) return null;
+  if (typeof periods !== 'number' || !Number.isInteger(periods) || periods < 1) return null;
+  if (typeof written !== 'number' || !Number.isFinite(written) || written <= 0) return null;
+  const span = monthSpan(first, last);
+  if (span < 1 || span > APPROVALS_LEDGER_MAX_MONTHS || periods > span) return null;
+
+  let months: string[];
+  if (entry.period_list === undefined || entry.period_list === null) {
+    if (periods !== span) return null;
+    months = Array.from({ length: span }, (_, i) => shiftMonth(first, i));
+  } else if (Array.isArray(entry.period_list)) {
+    const list = entry.period_list;
+    if (list.length !== periods) return null;
+    if (!list.every((p) => typeof p === 'string' && LEDGER_PERIOD.test(p))) return null;
+    const sorted = [...new Set(list as string[])].sort();
+    if (sorted.length !== periods || sorted[0] !== first || sorted[sorted.length - 1] !== last) return null;
+    months = sorted;
+  } else {
+    return null;
+  }
+
+  return {
+    months,
+    stamp: isInstant(entry.stamp) ? entry.stamp : null,
+    recordedAt: isInstant(entry.created_at) ? entry.created_at : null,
+  };
+}
+
+/**
+ * Does this completed write still describe rows the table holds?
+ *
+ * `stalestLoadedAt` is the OLDEST `loaded_at` in the table. A write whose own
+ * stamp precedes it made no row that survives as it was made. Where the row
+ * predates the stamp, its insert time stands in — later than the stamp by the
+ * length of the run, so it errs towards believing, and a clock skew larger
+ * than a run costs one re-read rather than a hole. Where nothing can be
+ * compared, it is not believed.
+ */
+export function stillDescribesTheTable(
+  window: CompletedApprovalsWindow,
+  stalestLoadedAt: string | null,
+): boolean {
+  if (!isInstant(stalestLoadedAt)) return false;
+  const floor = Date.parse(stalestLoadedAt);
+  const own = window.stamp ?? window.recordedAt;
+  return own !== null && Date.parse(own) >= floor;
+}
+
+export interface VouchedEdge {
+  /**
+   * The edge the walk steps below: the bottom of the vouched run, and never
+   * below `min(period)`. Null where the frontier itself is unproven, which
+   * is `planApprovalsWork`'s rule 1b.
+   */
+  oldest: string | null;
+  /** Bottom of the unbroken vouched run down from the frontier, before the table's floor. */
+  ledgerOldest: string | null;
+  /** Completed writes that vouched, and those set aside as describing rows that have gone. */
+  windowsVouching: number;
+  windowsStale: number;
+}
+
+/**
+ * The oldest month the register can prove it holds, contiguously, from the
+ * frontier down. See the note above `APPROVALS_LEDGER_SELECT`.
+ */
+export function vouchedOldest(args: {
+  /** `max(period)` in the table. */
+  frontier: string | null;
+  /** `min(period)` in the table. */
+  tableOldest: string | null;
+  /** The oldest `loaded_at` in the table. */
+  stalestLoadedAt: string | null;
+  completed: ReadonlyArray<CompletedApprovalsWindow>;
+}): VouchedEdge {
+  const vouching = args.completed.filter((w) => stillDescribesTheTable(w, args.stalestLoadedAt));
+  const edge: VouchedEdge = {
+    oldest: null,
+    ledgerOldest: null,
+    windowsVouching: vouching.length,
+    windowsStale: args.completed.length - vouching.length,
+  };
+  if (args.frontier === null || args.tableOldest === null) return edge;
+
+  const proven = new Set<string>();
+  for (const w of vouching) for (const m of w.months) proven.add(m);
+  if (!proven.has(args.frontier)) return edge;
+
+  let bottom = args.frontier;
+  for (let below = shiftMonth(bottom, -1); proven.has(below); below = shiftMonth(below, -1)) {
+    bottom = below;
+  }
+  edge.ledgerOldest = bottom;
+  // The later of the two: a month is held only where BOTH say so.
+  edge.oldest = bottom > args.tableOldest ? bottom : args.tableOldest;
+  return edge;
 }

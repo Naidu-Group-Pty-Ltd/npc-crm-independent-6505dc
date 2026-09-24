@@ -575,11 +575,23 @@ export type VolumeCoverage =
    * believable beside the size of the question that found it, which is the
    * rule the sanctions register and the PEP index both answer to.
    */
-  | { kind: 'medians_only'; searched: number; inventory: number | null }
+  | { kind: 'medians_only'; searched: number; inventory: number | null; route?: VolumeRoute }
   /** The catalogues answered and hold no count series. */
-  | { kind: 'no_count_published'; searched: number; inventory: number | null }
+  | { kind: 'no_count_published'; searched: number; inventory: number | null; route?: VolumeRoute }
   /** A catalogue could not be read. Says nothing about the jurisdiction. */
   | { kind: 'catalogue_unavailable'; reason: string };
+
+/**
+ * How an absence was established, where it matters to the sentence.
+ *
+ * `harvest_enumeration` is the route a jurisdiction with no catalogue of its
+ * own is read by: every dataset its own publishers list in the Commonwealth
+ * catalogue, enumerated publisher by publisher and read in full, beside the
+ * relevance search of the same index — two questions that fail differently.
+ * Absent, the route is the ordinary one (its own catalogue and the harvest),
+ * and the sentence is unchanged.
+ */
+export type VolumeRoute = 'harvest_enumeration';
 
 /**
  * Decide, from corroborated reads.
@@ -599,6 +611,8 @@ export function assessVolumeCoverage(
    * only what survived it.
    */
   inventory: number | null = null,
+  /** How the reads were taken, where it is not the ordinary route. */
+  route?: VolumeRoute,
 ): VolumeCoverage {
   /*
    * ── Corroboration gates an ABSENCE, not a FIND ──────────────────────────
@@ -666,9 +680,8 @@ export function assessVolumeCoverage(
     };
   }
   const anyMedian = parse.datasets.some((d) => judgeVolumeDataset(d).median);
-  return anyMedian
-    ? { kind: 'medians_only', searched: parse.total, inventory }
-    : { kind: 'no_count_published', searched: parse.total, inventory };
+  const kind = anyMedian ? 'medians_only' as const : 'no_count_published' as const;
+  return route ? { kind, searched: parse.total, inventory, route } : { kind, searched: parse.total, inventory };
 }
 
 /**
@@ -701,6 +714,21 @@ function searchScale(searched: number, inventory: number | null): string {
     : `${matched} out of a published index of ${inventory.toLocaleString('en-AU')}`;
 }
 
+/** The size of an enumerated question: every dataset a jurisdiction's own publishers list. */
+function enumerationScale(saleNaming: number, inventory: number | null): string {
+  const named = `${saleNaming.toLocaleString('en-AU')} name${saleNaming === 1 ? 's' : ''} a sale`;
+  return inventory === null || inventory <= 0
+    ? `${named} among the datasets its own publishers list in the Commonwealth catalogue`
+    : `of the ${inventory.toLocaleString('en-AU')} datasets its own publishers list in the `
+      + `Commonwealth catalogue, read in full, ${named}`;
+}
+
+/** Why the Commonwealth catalogue is the index for this jurisdiction. */
+function noOwnCatalogue(state: VolumeGapState): string {
+  return `${state} runs no open-data catalogue of its own, so that list is where its published `
+    + 'data is indexed.';
+}
+
 export function volumeCoverageNote(coverage: VolumeCoverage, state: VolumeGapState): string {
   switch (coverage.kind) {
     case 'countable':
@@ -720,11 +748,23 @@ export function volumeCoverageNote(coverage: VolumeCoverage, state: VolumeGapSta
         + `${coverage.publisher}), so nothing from it is read here. That is a statement about the `
         + 'form it is published in, not about the market.';
     case 'medians_only':
+      if (coverage.route === 'harvest_enumeration') {
+        return `${state}'s published sales data states prices and not counts — `
+          + `${enumerationScale(coverage.searched, coverage.inventory)}, and none carries a number `
+          + `of sales. ${noOwnCatalogue(state)} This report therefore states no transaction-volume `
+          + 'reading for this area, which is a limit of what is published rather than a measurement.';
+      }
       return `${state}'s published sales data states prices and not counts — `
         + `${searchScale(coverage.searched, coverage.inventory)} and none carries a number of `
         + 'sales. This report therefore states no transaction-volume reading for this area, which '
         + 'is a limit of what is published rather than a measurement.';
     case 'no_count_published':
+      if (coverage.route === 'harvest_enumeration') {
+        return `No count of residential sales below ${grainWord(state)} level was found published `
+          + `for ${state} — ${enumerationScale(coverage.searched, coverage.inventory)}, and none `
+          + `carries a number of sales. ${noOwnCatalogue(state)} This report states no `
+          + 'transaction-volume reading for this area.';
+      }
       return `No count of residential sales below ${grainWord(state)} level was found published `
         + `for ${state} — ${searchScale(coverage.searched, coverage.inventory)} across its own `
         + 'catalogue and the Commonwealth catalogue, and none carries a number of sales. This '
@@ -831,7 +871,9 @@ export function volumeRemedyClause(state: string | null | undefined): string | n
 // ---------------------------------------------------------------------------
 
 /**
- * The readings, measured 22 September 2026 from CI.
+ * The readings, measured from CI — WA, the NT and the ACT on 22 September
+ * 2026, Tasmania on 23 September, when the same run re-measured the other
+ * three and every one of their readings held.
  *
  * A constant and not a live lookup, for `amenity_register`'s reason and
  * `nationalPipeline`'s: a per-report round trip would spend a request to
@@ -845,14 +887,17 @@ export function volumeRemedyClause(state: string | null | undefined): string | n
  *                                phrasings matched — corroborated
  *   ACT  `no_count_published`    index of **378** read through SOCRATA,
  *                                none of the five matched — corroborated
- *   TAS  `catalogue_unavailable` `data.tas.gov.au` does not resolve, and
- *                                its one harvest-attributed dataset carries
- *                                no count — OURS
+ *   TAS  `no_count_published`    no catalogue of its own: **982** datasets,
+ *                                every one its 14 government publishers list
+ *                                in the Commonwealth catalogue, read in full;
+ *                                5 name a sale and none carries a count —
+ *                                corroborated by the search of the same index
  *
- * Three of the four are therefore a real limit of what is published, and one
- * is a gap in this repository. Keeping them apart is the whole point: a
- * reader is told *"no count is published"* only where that was established,
- * and *"this could not be established"* where the failure is ours.
+ * All four are therefore a real limit of what is published. That took two
+ * instruments, and the distinction they kept is the point: a reader is told
+ * *"no count is published"* only where that was established, and *"this
+ * could not be established"* where the failure is ours — which is what
+ * Tasmania read, correctly, until the probe could find where it publishes.
  *
  * ── The ACT's reading changed when the instrument did ────────────────────
  *
@@ -862,13 +907,32 @@ export function volumeRemedyClause(state: string | null | undefined): string | n
  * `no_count_published` over an index of 378. Tasmania was re-measured by the
  * same run and did not move, because its host still does not resolve.
  *
+ * ── Tasmania's reading changed when the instrument did, too ─────────────
+ *
+ * `data.tas.gov.au` answers ENOTFOUND. The fix was never a second typed
+ * host: the harvest's own records name Tasmania's publishers and the hosts
+ * their files are served from, and none of those eight hosts answers as a
+ * searchable catalogue (two are map-layer directories, and neither names a
+ * sales layer). So the Commonwealth catalogue IS Tasmania's index, and the
+ * reading is taken from everything its government lists there rather than
+ * from a relevance search — `harvest_enumeration`, whose sentence says so.
+ *
  * That is why `VOLUME_READING_IS_CURRENT` exists: a reading stored against
  * an instrument that has since been replaced is the *asserted by
  * configuration rather than by effect* trap the retention purge and the
  * verification self-test both answer to, and it is the kind of staleness
  * nobody notices because the constant still reads plausibly. All four
- * entries are current as of this run; the flag is kept so the next
+ * entries are current as of the 23 Sep run; the flag is kept so the next
  * instrument change has somewhere to be declared.
+ *
+ * 23 Sep's first WA count was 204 against 22 Sep's 203, and it was first
+ * written up here as a relevance search drifting by a dataset. It was not.
+ * The corrected instrument (`attributedRead`) printed *"203 distinct — 1
+ * found only by harvest search, 1 it also returned from WA's own list"*: the
+ * 204th was ONE dataset counted twice, once from each route, which is the
+ * same fault Tasmania's six-against-five exposed. The count is 203, the
+ * reading did not move, and a re-measurement confirmed it by effect rather
+ * than by the explanation first offered for it.
  */
 export const MEASURED_VOLUME_COVERAGE: Readonly<Record<VolumeGapState, VolumeCoverage>> = {
   /*
@@ -881,11 +945,13 @@ export const MEASURED_VOLUME_COVERAGE: Readonly<Record<VolumeGapState, VolumeCov
   WA: { kind: 'medians_only', searched: 203, inventory: 2911 },
   NT: { kind: 'no_count_published', searched: 0, inventory: 1075 },
   ACT: { kind: 'no_count_published', searched: 0, inventory: 378 },
-  TAS: {
-    kind: 'catalogue_unavailable',
-    reason: 'data.tas.gov.au does not resolve from this egress, and its one harvest-attributed '
-      + 'dataset carries no count',
-  },
+  /*
+   * `searched` is the ENUMERATED list's own count — the probe's line
+   * `datasets naming a sale  5 of 982`. The run's sentence first said 6,
+   * folding in the search's one attributed find; `attributedRead` is why it
+   * no longer can.
+   */
+  TAS: { kind: 'no_count_published', searched: 5, inventory: 982, route: 'harvest_enumeration' },
 };
 
 /**
@@ -1050,9 +1116,11 @@ export function parseSocrataCatalogue(text: string): VolumeCatalogueParse {
 /**
  * Which measured readings were taken with the CURRENT instrument.
  *
- * All four, as of 22 Sep 2026: the run that added the Socrata reader and the
- * find/absence asymmetry re-measured every jurisdiction, and the ACT moved
- * from `catalogue_unavailable` to `no_count_published` as a result.
+ * All four, as of 23 Sep 2026: the run that added harvest discovery and the
+ * enumeration route re-measured every jurisdiction. Tasmania moved from
+ * `catalogue_unavailable` to `no_count_published` as a result — the second
+ * reading to move when the instrument did, after the ACT's on 22 Sep — and
+ * the other three held.
  *
  * Kept although nothing is `false` today, because the point is to have
  * somewhere for the NEXT instrument change to be declared. A reading stored
@@ -1067,3 +1135,412 @@ export const VOLUME_READING_IS_CURRENT: Readonly<Record<VolumeGapState, boolean>
   ACT: true,
   TAS: true,
 };
+
+// ---------------------------------------------------------------------------
+// Where a jurisdiction actually publishes — read off the harvest, not typed
+// ---------------------------------------------------------------------------
+
+/*
+ * ── Why Tasmania needs discovery rather than a second guess ──────────────
+ *
+ * Tasmania's typed root, `data.tas.gov.au`, does not resolve (measured from
+ * CI, 22 Sep 2026), so its reading is `catalogue_unavailable` and that is
+ * ours. The obvious next step is to type another host, and that is the
+ * mistake this module keeps declining: a typed host that is wrong fails
+ * exactly like a jurisdiction that publishes nothing, and the ACT's first
+ * root proved it.
+ *
+ * The harvest already knows. `data.gov.au` indexes Tasmanian publishers, and
+ * every harvested dataset carries resource URLs pointing at wherever its
+ * publisher actually serves it. So the question is asked of the harvest's
+ * OWN records, in three steps, and nothing in it is an identifier anybody
+ * typed:
+ *
+ *   1. the harvest's organisation facet names the jurisdiction's publishers
+ *      (judged on the publisher's own full name — `attributableTo`'s rule);
+ *   2. their datasets' resource URLs name the hosts they are served from,
+ *      counted, so the tally says where the jurisdiction really publishes;
+ *   3. each of the jurisdiction's own hosts is asked, in each catalogue
+ *      dialect this module reads, whether it is a catalogue at all.
+ *
+ * A host that answers as a populated catalogue is then searched like any
+ * `own` catalogue. One that does not is printed with what it did answer,
+ * because that is what the next increment needs.
+ */
+
+/** The domain a jurisdiction's own government hosts sit under. */
+export const JURISDICTION_DOMAINS: Readonly<Record<VolumeGapState, string>> = {
+  ACT: 'act.gov.au',
+  NT: 'nt.gov.au',
+  TAS: 'tas.gov.au',
+  WA: 'wa.gov.au',
+};
+
+/** Is this host the jurisdiction's own — the domain itself or under it? */
+export function isJurisdictionHost(host: string, state: VolumeGapState): boolean {
+  const h = host.trim().toLowerCase().replace(/\.$/, '');
+  const domain = JURISDICTION_DOMAINS[state];
+  return h === domain || h.endsWith(`.${domain}`);
+}
+
+/**
+ * The harvest's publishers, from its own organisation facet.
+ *
+ * A facet rather than `organization_list`, because the Commonwealth
+ * catalogue answered `organization_list` with CKAN's default page of 25 and
+ * ignored `limit=1000` — a page read as a list is the W3.2 fault. A facet
+ * counts what the index holds for the query it was asked.
+ */
+export function harvestOrgFacetUrl(api: string, query: string): string {
+  const p = new URLSearchParams({
+    q: query,
+    rows: '0',
+    'facet.field': '["organization"]',
+    'facet.limit': '-1',
+  });
+  return `${api.replace(/\/+$/, '')}/action/package_search?${p}`;
+}
+
+export interface HarvestOrganisation {
+  /** The slug the index filters on — read from the index, never typed. */
+  name: string;
+  /** The publisher's own name, which is what attribution is judged on. */
+  title: string;
+  count: number;
+}
+
+export type OrgFacetParse =
+  | { kind: 'facet'; organisations: HarvestOrganisation[] }
+  | { kind: 'refused'; reason: string };
+
+export function parseOrgFacet(text: string): OrgFacetParse {
+  let body: unknown;
+  try {
+    body = JSON.parse(text);
+  } catch (err) {
+    return { kind: 'refused', reason: `not JSON (${text.length} bytes, ${String(err)}): ${JSON.stringify(text.slice(0, 220))}` };
+  }
+  const result = (body as { result?: { search_facets?: { organization?: { items?: unknown } } } }).result;
+  const items = result?.search_facets?.organization?.items;
+  if (!Array.isArray(items)) {
+    return { kind: 'refused', reason: `no result.search_facets.organization.items (${text.length} bytes): ${JSON.stringify(text.slice(0, 220))}` };
+  }
+  const organisations: HarvestOrganisation[] = [];
+  for (const raw of items as unknown[]) {
+    const it = raw as Record<string, unknown>;
+    const name = str(it.name);
+    const count = num(it.count);
+    if (!name || count === null) continue;
+    organisations.push({ name, title: str(it.display_name) ?? name, count });
+  }
+  return { kind: 'facet', organisations: organisations.sort((a, b) => b.count - a.count) };
+}
+
+/** The organisations in a facet that are this jurisdiction's, by their own full name. */
+export function jurisdictionOrganisations(
+  organisations: readonly HarvestOrganisation[],
+  state: VolumeGapState,
+): HarvestOrganisation[] {
+  return organisations.filter((o) => {
+    const title = o.title.toLowerCase();
+    return JURISDICTION_NAMES[state].some((n) => title.includes(n));
+  });
+}
+
+/** One organisation's datasets, by the slug the facet returned. */
+export function orgDatasetsUrl(api: string, slug: string, rows = 200, start = 0): string {
+  const p = new URLSearchParams({
+    fq: `organization:"${slug.replace(/"/g, '')}"`,
+    rows: String(Math.max(1, Math.min(1000, rows))),
+    start: String(Math.max(0, start)),
+  });
+  return `${api.replace(/\/+$/, '')}/action/package_search?${p}`;
+}
+
+export interface HostTally {
+  host: string;
+  /** Datasets with at least one resource served from this host. */
+  datasets: number;
+  resources: number;
+  /** The commonest leading path segments, so a directory of downloads is visible. */
+  paths: string[];
+}
+
+/**
+ * Where a set of datasets is actually served from, most-used host first.
+ *
+ * Read off resource URLs, because that is where a harvested dataset's bytes
+ * live. A URL that does not parse is skipped rather than guessed at.
+ */
+export function publicationHostsOf(datasets: readonly VolumeDataset[]): HostTally[] {
+  const tally = new Map<string, { datasets: Set<string>; resources: number; paths: Map<string, number> }>();
+  for (const d of datasets) {
+    for (const r of d.resources) {
+      let url: URL;
+      try {
+        url = new URL(r.url);
+      } catch {
+        continue;
+      }
+      if (url.protocol !== 'https:' && url.protocol !== 'http:') continue;
+      const host = url.hostname.toLowerCase();
+      const entry = tally.get(host) ?? { datasets: new Set<string>(), resources: 0, paths: new Map<string, number>() };
+      entry.datasets.add(d.id);
+      entry.resources += 1;
+      const lead = url.pathname.split('/').filter(Boolean).slice(0, 2).join('/');
+      const path = `/${lead}${lead ? '/' : ''}`;
+      entry.paths.set(path, (entry.paths.get(path) ?? 0) + 1);
+      tally.set(host, entry);
+    }
+  }
+  return [...tally.entries()]
+    .map(([host, e]) => ({
+      host,
+      datasets: e.datasets.size,
+      resources: e.resources,
+      paths: [...e.paths.entries()].sort((a, b) => b[1] - a[1]).slice(0, 3).map(([p]) => p),
+    }))
+    .sort((a, b) => b.datasets - a.datasets || b.resources - a.resources || a.host.localeCompare(b.host));
+}
+
+/**
+ * The catalogue dialects a host is asked in, cheapest question each.
+ *
+ * `ckan` and `ckan_data` are the same API at the two roots state portals use
+ * (`/api/3` and `/data/api/3` — `data.gov.au` itself is the second). `dcat`
+ * is the `data.json` feed an ArcGIS Hub or DKAN portal publishes: the whole
+ * inventory in one document. `arcgis` is a map-service directory, which is
+ * a catalogue of LAYERS rather than of datasets and is reported but never
+ * searched for a sales series.
+ */
+export type CatalogueDialect = 'ckan' | 'ckan_data' | 'socrata' | 'dcat' | 'arcgis';
+
+export function catalogueProbesFor(host: string): { dialect: CatalogueDialect; url: string }[] {
+  const h = host.trim().toLowerCase();
+  return [
+    { dialect: 'ckan', url: volumeInventoryUrl(`https://${h}/api/3`) },
+    { dialect: 'ckan_data', url: volumeInventoryUrl(`https://${h}/data/api/3`) },
+    { dialect: 'socrata', url: socrataInventoryUrl(h) },
+    { dialect: 'dcat', url: `https://${h}/data.json` },
+    { dialect: 'arcgis', url: `https://${h}/arcgis/rest/services?f=json` },
+  ];
+}
+
+/** The CKAN root a dialect answered at, for searching it afterwards. */
+export function ckanRootFor(host: string, dialect: 'ckan' | 'ckan_data'): string {
+  return dialect === 'ckan' ? `https://${host}/api/3` : `https://${host}/data/api/3`;
+}
+
+export interface DialectAnswer {
+  /** Did the host answer AS this dialect — the shape, not the digit. */
+  answered: boolean;
+  /** How big it says its index is, where it said. */
+  inventory: number | null;
+  detail: string;
+}
+
+/**
+ * Did a host answer in this dialect?
+ *
+ * Judged on the SHAPE of the body, never the status alone: a portal that is
+ * not CKAN answers `/api/3` with a 200 HTML page as often as with a 404, and
+ * the ACT's Socrata portal answered CKAN's path with a JSON 404. So a 200
+ * that is not the dialect's own envelope is "not this dialect", and says
+ * what it was.
+ */
+export function readCatalogueDialect(dialect: CatalogueDialect, status: number, body: string): DialectAnswer {
+  const head = JSON.stringify(body.slice(0, 120));
+  if (status !== 200) return { answered: false, inventory: null, detail: `HTTP ${status} ${head}` };
+  let json: unknown;
+  try {
+    json = JSON.parse(body);
+  } catch {
+    return { answered: false, inventory: null, detail: `200 but not JSON ${head}` };
+  }
+  switch (dialect) {
+    case 'ckan':
+    case 'ckan_data': {
+      const parse = parseVolumeCatalogue(body);
+      if (parse.kind === 'refused') return { answered: false, inventory: null, detail: parse.reason };
+      return { answered: parse.total > 0, inventory: parse.total, detail: `CKAN index of ${parse.total}` };
+    }
+    case 'socrata': {
+      const parse = parseSocrataCatalogue(body);
+      if (parse.kind === 'refused') return { answered: false, inventory: null, detail: parse.reason };
+      return { answered: parse.total > 0, inventory: parse.total, detail: `Socrata catalog of ${parse.total}` };
+    }
+    case 'dcat': {
+      const ds = (json as { dataset?: unknown }).dataset;
+      if (!Array.isArray(ds)) return { answered: false, inventory: null, detail: `JSON without a dataset array ${head}` };
+      return { answered: ds.length > 0, inventory: ds.length, detail: `DCAT feed of ${ds.length}` };
+    }
+    case 'arcgis': {
+      const dir = json as { folders?: unknown; services?: unknown };
+      if (!Array.isArray(dir.folders) && !Array.isArray(dir.services)) {
+        return { answered: false, inventory: null, detail: `JSON without folders or services ${head}` };
+      }
+      const services = Array.isArray(dir.services) ? dir.services.length : 0;
+      const folders = Array.isArray(dir.folders) ? dir.folders.length : 0;
+      return {
+        answered: services + folders > 0,
+        inventory: null,
+        detail: `ArcGIS directory: ${services} services, ${folders} folders — a catalogue of layers, not of datasets`,
+      };
+    }
+  }
+}
+
+/**
+ * Read a DCAT `data.json` into the SAME `VolumeDataset` shape.
+ *
+ * The feed is the whole inventory, so it is judged in full rather than
+ * searched: `matched` is the datasets whose own words name a sale, which is
+ * the question the CKAN and Socrata queries ask of their indexes.
+ */
+export function parseDcatCatalogue(text: string, publisher: string): VolumeCatalogueParse {
+  let body: unknown;
+  try {
+    body = JSON.parse(text);
+  } catch (err) {
+    return { kind: 'refused', reason: `not JSON (${text.length} bytes, ${String(err)}): ${JSON.stringify(text.slice(0, 220))}` };
+  }
+  const ds = (body as { dataset?: unknown }).dataset;
+  if (!Array.isArray(ds)) {
+    return { kind: 'refused', reason: `no dataset array (${text.length} bytes): ${JSON.stringify(text.slice(0, 220))}` };
+  }
+  const datasets: VolumeDataset[] = [];
+  for (const raw of ds as unknown[]) {
+    const d = raw as Record<string, unknown>;
+    const id = str(d.identifier) ?? str(d['@id']);
+    const title = str(d.title);
+    if (!id || !title) continue;
+    const resources: VolumeResource[] = [];
+    const dist = Array.isArray(d.distribution) ? (d.distribution as unknown[]) : [];
+    dist.forEach((rawDist, i) => {
+      const r = rawDist as Record<string, unknown>;
+      const url = str(r.downloadURL) ?? str(r.accessURL);
+      if (!url) return;
+      const format = (str(r.format) ?? str(r.mediaType)?.split('/').pop() ?? '').toUpperCase();
+      resources.push({ id: `${id}#${i}`, name: str(r.title) ?? format, format, url, datastoreActive: false, size: null });
+    });
+    const pub = d.publisher as Record<string, unknown> | undefined;
+    datasets.push({
+      id,
+      name: id,
+      title,
+      notes: str(d.description),
+      organisation: str(pub?.name) ?? publisher,
+      licence: str(d.license),
+      metadataModified: str(d.modified),
+      resources,
+    });
+  }
+  return { kind: 'catalogue', total: datasets.length, datasets };
+}
+
+/** The datasets in a whole-inventory feed whose own words name a sale. */
+export const SALE_WORDS = /\b(?:sales?|sold|transfers?|transactions?)\b/i;
+
+export function datasetsNamingASale(datasets: readonly VolumeDataset[]): VolumeDataset[] {
+  return datasets.filter((d) => SALE_WORDS.test([d.title, d.notes].filter(Boolean).join(' ')));
+}
+
+/**
+ * A body named for the jurisdiction that is not its government.
+ *
+ * The harvest's facet for "tasmania" named the University of Tasmania's
+ * schools and institutes beside the state's departments — attributable by
+ * name, and not the jurisdiction's own publishers. An absence stated about
+ * what a jurisdiction publishes has to be about the jurisdiction.
+ */
+export const ACADEMIC_PUBLISHER = /\buniversit(?:y|ies)\b|\binstitute\b|\bschool of\b|\bresearch\b/i;
+
+export function governmentPublishers(
+  organisations: readonly HarvestOrganisation[],
+  state: VolumeGapState,
+): HarvestOrganisation[] {
+  return jurisdictionOrganisations(organisations, state).filter((o) => !ACADEMIC_PUBLISHER.test(o.title));
+}
+
+/** One publisher's list, as the enumeration read it. */
+export interface EnumeratedPublisher {
+  name: string;
+  title: string;
+  /** How many datasets the index says the publisher holds. */
+  declared: number;
+  /** How many were read. */
+  read: number;
+}
+
+/**
+ * Was every publisher's every dataset read?
+ *
+ * An absence found by reading part of a list is a truncated download by
+ * another route — `organization_list` answered a page of 25 once and was read
+ * as the list. So complete means complete: no publishers is not complete, and
+ * one publisher read short makes the whole enumeration short.
+ */
+export function enumerationComplete(publishers: readonly EnumeratedPublisher[]): boolean {
+  return publishers.length > 0 && publishers.every((p) => p.declared > 0 && p.read >= p.declared);
+}
+
+/**
+ * The read an assessment is handed: every attributed dataset once, and the
+ * number its absence sentence states.
+ *
+ * Two faults, both visible in the 23 Sep 2026 run's own output for Tasmania:
+ *
+ *  - **A dataset both routes returned was counted twice.** The attributed
+ *    list was the jurisdiction's datasets CONCATENATED with the harvest's,
+ *    and its length was the count. Where the jurisdiction's list is itself
+ *    read from the harvest — the enumeration route — the relevance search
+ *    and the enumeration ask the SAME index, so one dataset can arrive by
+ *    both, under one id.
+ *  - **The enumeration's sentence counted what the enumeration did not
+ *    find.** It reads *"of the 982 datasets its own publishers list …, read
+ *    in full, N name a sale"* — a statement about that list — and the run
+ *    printed N = 6 beside its own line `datasets naming a sale  5 of 982`,
+ *    because the search's one attributed find was folded into the number.
+ *    The search is the CORROBORATING question on that route (it is what
+ *    "and the search of the same index" names), not part of the list.
+ *
+ * So every attributed dataset still reaches the ranking — a find needs one
+ * endpoint that answered — and the number is the one its sentence describes:
+ * the enumeration's on the enumeration route, every distinct dataset
+ * otherwise.
+ */
+export interface AttributedRead {
+  parse: Extract<VolumeCatalogueParse, { kind: 'catalogue' }>;
+  /** Attributed harvest datasets the jurisdiction's own list did not already hold. */
+  harvestOnly: VolumeDataset[];
+  /** Attributed harvest datasets that WERE already in the jurisdiction's own list. */
+  overlap: number;
+}
+
+export function attributedRead(args: {
+  /** The jurisdiction's own list, already attributed. */
+  own: readonly VolumeDataset[];
+  /** The harvest search's finds, already attributed. */
+  harvest: readonly VolumeDataset[];
+  route?: VolumeRoute;
+}): AttributedRead {
+  const ownIds = new Set<string>();
+  const ownDistinct: VolumeDataset[] = [];
+  for (const d of args.own) {
+    if (ownIds.has(d.id)) continue;
+    ownIds.add(d.id);
+    ownDistinct.push(d);
+  }
+  const harvestIds = new Set<string>();
+  const harvestOnly: VolumeDataset[] = [];
+  let overlap = 0;
+  for (const d of args.harvest) {
+    if (harvestIds.has(d.id)) continue;
+    harvestIds.add(d.id);
+    if (ownIds.has(d.id)) overlap += 1;
+    else harvestOnly.push(d);
+  }
+  const datasets = [...ownDistinct, ...harvestOnly];
+  const total = args.route === 'harvest_enumeration' ? ownDistinct.length : datasets.length;
+  return { parse: { kind: 'catalogue', total, datasets }, harvestOnly, overlap };
+}

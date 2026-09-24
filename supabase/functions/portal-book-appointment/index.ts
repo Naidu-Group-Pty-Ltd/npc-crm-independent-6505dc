@@ -1,6 +1,6 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.55.0'
 import { createCorsHeaders } from "../_shared/auth.ts"
-import { getBrandConfig } from "../_shared/brand-config.ts"
+import { escapeHtml, getEmailIdentity, resendAddressing } from "../_shared/emailIdentity.ts"
 import { getEffectiveGhlCredentials } from "../_shared/ghl-account.ts"
 import { meteredFetch } from "../_shared/meteredFetch.ts";
 import { internalError } from '../_shared/errorResponse.ts';
@@ -206,8 +206,9 @@ Deno.serve(async (req) => {
       const formattedDate = startDate.toLocaleDateString('en-AU', { weekday: 'long', day: 'numeric', month: 'long', year: 'numeric', timeZone: 'Australia/Sydney' });
       const formattedTime = startDate.toLocaleTimeString('en-AU', { hour: '2-digit', minute: '2-digit', timeZone: 'Australia/Sydney' });
 
-      // Resolve sender once for both notification + confirmation emails.
-      const brand = await getBrandConfig();
+      // Who both emails are from, resolved once: the deployment's email
+      // identity (organisation, sender, reply-to).
+      const identity = await getEmailIdentity(supabase);
 
       // Send team notification email
       if (portalConfig?.booking_team_notification_email) {
@@ -221,7 +222,7 @@ Deno.serve(async (req) => {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                from: brand.fromHeaderNotifications,
+                ...resendAddressing(identity),
                 to: portalConfig.booking_team_notification_email,
                 subject: `New Portal Booking: ${client?.primary_first_name || ''} ${client?.primary_last_name || ''} - ${formattedDate}`,
                 html: `
@@ -259,7 +260,7 @@ Deno.serve(async (req) => {
                 'Content-Type': 'application/json',
               },
               body: JSON.stringify({
-                from: brand.fromHeaderNotifications,
+                ...resendAddressing(identity),
                 to: portalUser.email,
                 subject: `Booking Confirmed - ${formattedDate} at ${formattedTime}`,
                 html: `
@@ -273,7 +274,7 @@ Deno.serve(async (req) => {
                       ${notes ? `<p style="margin: 4px 0;"><strong>📝 Notes:</strong> ${notes}</p>` : ''}
                     </div>
                     <p>If you need to reschedule or cancel, please contact us directly.</p>
-                    <p>Best regards,<br/>${brand.companyName}</p>
+                    <p>Best regards,<br/>${escapeHtml(identity.organisationName)}</p>
                   </div>
                 `,
               }),
@@ -311,7 +312,6 @@ Deno.serve(async (req) => {
             type: 'success',
             category: 'appointment',
             actionUrl: '/client/appointments',
-            companyName: emailInfo.companyName,
           });
         }
       } catch (notifErr) {

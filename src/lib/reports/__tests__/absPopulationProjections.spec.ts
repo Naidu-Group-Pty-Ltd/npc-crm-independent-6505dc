@@ -35,6 +35,7 @@ import {
   isOurRequestFault,
 } from '@/lib/reports/../../../supabase/functions/_shared/reports/market/openData/absDataStructure.pure';
 import { regionalTrendBlocks } from '@/lib/reports/../../../supabase/functions/_shared/reports/regionalPromptBlocks.pure';
+import { PROJECTION_FILES } from '../../../../supabase/functions/_shared/reports/market/openData/stateProjectionFiles.pure';
 import {
   FORWARD_DEMAND_PUBLISHERS,
   assessForwardDemand,
@@ -400,7 +401,9 @@ describe('a projection is not a measurement, and the type says so', () => {
   it('states no growth rate, no year and no population anywhere in the module', () => {
     // The `planningControlGuide` rule: a guide explains a control and carries
     // no figure, which is what lets it be written in advance and stay true.
-    const prose = source.match(/'[^']{20,}'/g) ?? [];
+    // A URL is an address, not prose: Tasmania's measured page carries its
+    // edition's year in its path, and that states nothing about the area.
+    const prose = (source.match(/'[^']{20,}'/g) ?? []).filter((l) => !/^'https?:\/\//.test(l));
     for (const line of prose) {
       expect(line, line).not.toMatch(/\b(19|20)\d{2}\b/);
       expect(line, line).not.toMatch(/\d+(\.\d+)?\s*%/);
@@ -411,7 +414,7 @@ describe('a projection is not a measurement, and the type says so', () => {
 describe('W3.3’s word is "everywhere"', () => {
   const JURISDICTIONS = ['NSW', 'VIC', 'QLD', 'SA', 'WA', 'TAS', 'ACT', 'NT'] as const;
 
-  it('names a publisher and a product for all eight, and reads none of them', () => {
+  it('names a publisher and a product for all eight, and says it reads exactly the ones its loader does', () => {
     /*
      * The acceptance is that "no forward projection" is replaced EVERYWHERE
      * rather than in one state. Loading one jurisdiction replaces the sentence
@@ -424,9 +427,11 @@ describe('W3.3’s word is "everywhere"', () => {
       expect(pub.publisher.length, j).toBeGreaterThan(12);
       expect(pub.product.length, j).toBeGreaterThan(8);
       expect(pub.url, j).toMatch(/^https:\/\//);
-      // Truthfully false, all eight. The day one is loaded, the flag and the
-      // sentence change together rather than one being forgotten.
-      expect(pub.ingested, j).toBe(false);
+      // Derived, never typed: true exactly where the loader holds a file for
+      // the jurisdiction whose licence has been read from its publisher. The
+      // day one is loaded, the flag and the sentence change together rather
+      // than one being forgotten.
+      expect(pub.ingested, j).toBe(PROJECTION_FILES.some((f) => f.state === j && f.licence !== null));
     }
     expect(Object.keys(FORWARD_DEMAND_PUBLISHERS).sort()).toEqual([...JURISDICTIONS].sort());
   });
@@ -466,13 +471,23 @@ describe('W3.3’s word is "everywhere"', () => {
   });
 });
 
-describe('the five forward-demand readings', () => {
+describe('the eight forward-demand readings', () => {
+  /*
+   * Five from the national floor, three from the register (23 Sep 2026): a
+   * jurisdiction held and the area not named in it, a property whose area was
+   * never resolved, and a caller that never read the register at all — which
+   * is what the regeneration path is, and why `not_loaded` stopped being a
+   * safe default the day one jurisdiction loaded.
+   */
   const readings = [
     { kind: 'projected', grain: 'sa2' },
     { kind: 'coarser_than_area', grain: 'state' },
     { kind: 'grain_not_published', finest: 'state' },
     { kind: 'not_loaded' },
     { kind: 'unavailable', reason: 'HTTP 503' },
+    { kind: 'area_not_named' },
+    { kind: 'no_area_resolved' },
+    { kind: 'not_read' },
   ] as const;
 
   it('resolves each from what was actually read', () => {
@@ -497,9 +512,29 @@ describe('the five forward-demand readings', () => {
     expect(r.reason).toBe('timeout');
   });
 
-  it('writes five distinct sentences', () => {
+  it('writes eight distinct sentences', () => {
     const notes = readings.map((r) => forwardDemandCoverageNote(r, 'NSW'));
-    expect(new Set(notes).size).toBe(5);
+    expect(new Set(notes).size).toBe(8);
+  });
+
+  /*
+   * Where the jurisdiction IS held, "which this report does not read" is
+   * false — the register was read and answered for somewhere else. The route
+   * is still owed; that clause is not.
+   */
+  it('never says it does not read a register it read', () => {
+    const held = forwardDemandCoverageNote({ kind: 'area_not_named' }, 'SA');
+    expect(held).toContain(FORWARD_DEMAND_PUBLISHERS.SA.publisher);
+    expect(held).toContain(FORWARD_DEMAND_PUBLISHERS.SA.url);
+    expect(held).not.toMatch(/does not read/);
+    expect(held).toMatch(/line up with this property/);
+    // And the reading that DID not read says so, whichever jurisdiction.
+    expect(forwardDemandCoverageNote({ kind: 'not_read' }, 'SA')).toMatch(/does not read a population projection/);
+  });
+
+  it('keeps "not loaded" about the jurisdiction, not the whole deployment', () => {
+    expect(forwardDemandCoverageNote({ kind: 'not_loaded' }, 'NSW'))
+      .toMatch(/No population projection for this jurisdiction has been loaded by this deployment/);
   });
 
   it('separates a caveat on a printed figure from the absence of one', () => {

@@ -68,6 +68,18 @@ export interface TierContentPolicy {
   standfirst: string;
   /** One line naming where the material this tier does not carry lives. */
   companionNote: string | null;
+  /**
+   * The front matter is one page that flows into the report's own body.
+   *
+   * Every tier this platform produces today: the verdict, the figures and
+   * the property facts close up around what the record holds, and the body
+   * opens in the room they leave — measured on the five documents issued for
+   * 97 Poole Road on 23 Sep 2026, the verdict page was 54% white on every
+   * tier and the Compass's three pages after it 66-74%. `composite`, the
+   * pre-tier document nothing produces any more, keeps the page sequence its
+   * stored reports were written for.
+   */
+  continuousFrontMatter: boolean;
 }
 
 export const TIER_CONTENT: Readonly<Record<string, TierContentPolicy>> = {
@@ -78,6 +90,7 @@ export const TIER_CONTENT: Readonly<Record<string, TierContentPolicy>> = {
     dueDiligenceRegister: true,
     standfirst: 'Where the property is, who wants to live there, what is mapped over the land, and what the assessment concluded.',
     companionNote: 'Purchase costs, yield, loan structure, cash flow and the ten-year projection are set out in the Financial Analysis Report for this property.',
+    continuousFrontMatter: true,
   },
   financial: {
     financialModelling: true,
@@ -86,6 +99,7 @@ export const TIER_CONTENT: Readonly<Record<string, TierContentPolicy>> = {
     dueDiligenceRegister: false,
     standfirst: 'What it costs to buy and hold, what it returns, and how the position moves over ten years.',
     companionNote: 'The location case, the planning controls mapped over the land and the risk register are set out in the Investment Compass for this property.',
+    continuousFrontMatter: true,
   },
   strategic: {
     // A due-diligence report verifies; it does not model. Its financial
@@ -97,6 +111,7 @@ export const TIER_CONTENT: Readonly<Record<string, TierContentPolicy>> = {
     dueDiligenceRegister: true,
     standfirst: 'What must be verified before contract: the property and location risks at depth, and the verification register.',
     companionNote: 'The financial position is set out in the Financial Analysis Report for this property.',
+    continuousFrontMatter: true,
   },
   briefing: {
     financialModelling: false,
@@ -105,6 +120,7 @@ export const TIER_CONTENT: Readonly<Record<string, TierContentPolicy>> = {
     dueDiligenceRegister: false,
     standfirst: 'The assessment, condensed for a decision.',
     companionNote: 'The full assessment is in the Investment Compass, and the financial position in the Financial Analysis Report.',
+    continuousFrontMatter: true,
   },
   snapshot: {
     // The snapshot's whole purpose is the figures — its own standfirst has
@@ -115,6 +131,7 @@ export const TIER_CONTENT: Readonly<Record<string, TierContentPolicy>> = {
     dueDiligenceRegister: false,
     standfirst: 'The numbers that matter and a short assessment.',
     companionNote: 'The location case is in the Investment Compass, and the full modelling in the Financial Analysis Report.',
+    continuousFrontMatter: true,
   },
   composite: {
     // The pre-tier document, and the only one that legitimately carries both:
@@ -126,6 +143,7 @@ export const TIER_CONTENT: Readonly<Record<string, TierContentPolicy>> = {
     dueDiligenceRegister: true,
     standfirst: 'The property, the location, the financial position and the assessment.',
     companionNote: null,
+    continuousFrontMatter: false,
   },
 };
 

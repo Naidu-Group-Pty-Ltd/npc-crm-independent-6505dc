@@ -36,6 +36,7 @@ import {
   downloadCapacityReport,
   requestCapacityReport,
 } from '@/lib/reports/commercialCapacity/requestCapacityReport';
+import { ciAssessmentApi } from '@/hooks/useCiAssessments';
 
 export interface UseCapacityReport {
   /** Which assessment is currently rendering, or null. */
@@ -43,8 +44,40 @@ export interface UseCapacityReport {
   generate: (assessmentId: string, options?: { refreshAnalysis?: boolean }) => Promise<void>;
 }
 
-export function useCapacityReport(): UseCapacityReport {
+export interface UseCapacityReportOptions {
+  /**
+   * Called when a render ends, whether it produced a document or not — a
+   * failed render is a ledger row too, and a list of the assessment's
+   * documents should show it.
+   */
+  onFinished?: (assessmentId: string) => void;
+}
+
+/**
+ * The audit event for a document a report template drew.
+ *
+ * `render-commercial-capacity-pdf` records its own; a template render happens
+ * in a function that knows nothing of assessments, so it is reported here and
+ * checked by the server against the template ledger before anything is
+ * written. Only a document the print engine STORED has a path to report — one
+ * the browser drew as a stand-in was said out loud when it happened and was
+ * never kept anywhere.
+ *
+ * Never fails the render it accompanies: the document is already saved.
+ */
+async function recordTemplateDocument(assessmentId: string, storagePath: string | null): Promise<void> {
+  if (!storagePath) return;
+  try {
+    const { error } = await ciAssessmentApi.recordTemplateDocument({ assessmentId, storagePath });
+    if (error) console.warn('[useCapacityReport] template document not recorded:', error);
+  } catch (error) {
+    console.warn('[useCapacityReport] template document not recorded:', error);
+  }
+}
+
+export function useCapacityReport(options: UseCapacityReportOptions = {}): UseCapacityReport {
   const [generatingId, setGeneratingId] = useState<string | null>(null);
+  const { onFinished } = options;
 
   const generate = useCallback(async (
     assessmentId: string,
@@ -79,6 +112,7 @@ export function useCapacityReport(): UseCapacityReport {
         : await tryTemplateDocument('commercial_capacity', assessmentId, { renderer: 'weasyprint' });
       if (templated) {
         saveTemplateDocument(templated);
+        await recordTemplateDocument(assessmentId, templated.storagePath);
         toast({ title: 'Capacity report ready', description: templated.fileName });
         return;
       }
@@ -111,8 +145,9 @@ export function useCapacityReport(): UseCapacityReport {
       });
     } finally {
       setGeneratingId(null);
+      onFinished?.(assessmentId);
     }
-  }, [generatingId]);
+  }, [generatingId, onFinished]);
 
   return { generatingId, generate };
 }

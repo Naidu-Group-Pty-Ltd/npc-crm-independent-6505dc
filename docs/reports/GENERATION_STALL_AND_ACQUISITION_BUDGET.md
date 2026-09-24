@@ -521,3 +521,74 @@ One content consequence is worth naming: the three strategy sections that block
 composes — **Resale Liquidity & Exit Outlook, SWOT Analysis, Monitoring &
 Review Plan** — have never appeared in any report, because the code that
 composes them has thrown on every run since it was introduced.
+
+## 8 · The location call was cut off by a ceiling built for something else
+
+Measured on 60 Lawley Street, Spalding WA (report `5d8bc97e`, 24 Sep 2026),
+from `function_logs` and `function_edge_logs`:
+
+| When (UTC) | What |
+| --- | --- |
+| 01:46:36.98 | the generator asks `location-intelligence-service` (+9.9 s of the run) |
+| 01:46:39.23 | the service boots — 2.25 s of cold routing |
+| 01:46:40.15 | geocode answered (Nominatim, 0.85 s) |
+| 01:46:40.15 → 46.41 | `public-transport-service` over HTTP: **6,255 ms** to say no loaded feed reaches WA |
+| 01:46:46.41 → 48.46 | the amenity register: 2.05 s |
+| 01:46:48.98 | **the generator aborts at the `vendor` ceiling, 12 s** |
+| 01:46:51.89 | the service logs "fetched successfully" — 2.9 s too late |
+| 01:46:54.6 | acquisition finished at **+27.6 s of 125 s**: 33% of the data, no geography, grade withheld |
+
+The run had 95 s of budget left when the ceiling fired. The ceiling, not the
+clock, lost the answer — and because every geography-keyed register is keyed on
+that coordinate, the boundary resolution, the trusted postal area, the
+demographics, the planning parcel, the crime area and the market evidence all
+went unasked with it. The second invocation's identical call took 6.0 s warm
+(the transport hop 826 ms), and got everything. §11 of
+`INVESTMENT_REPORT_RESUME.md` is what the document looked like as a result.
+
+Five changes, each closing one step of that timeline:
+
+1. **A ceiling for what the call is.** `CALL_CEILING_MS.composite` is 30 s: a
+   service in this project that makes several provider calls of its own before
+   it can answer. `vendor`'s 12 s is a ceiling for ONE commercial call. The
+   run clock still wins — `acquisitionWindowMs` takes the smaller of the
+   ceiling and what the run can spare after the section and checkpoint
+   reserves — so this cannot overrun an invocation.
+2. **One retry, only for what a retry cures.** `locationEnrichmentCall.pure.ts`
+   reads every answer as one of eight things. A timeout, a reset, a 5xx or the
+   service's provider-error envelope is asked once more while the run has 10 s
+   of window; a geocoder that refused, an address with no match and a call
+   with no window are not. The same module fixed a misfiling on the way: the
+   service's `success: false` for a geocoder that refused or was not attempted
+   was recorded as "answered and returned nothing" — an absence about the
+   address — when the service's own message says the address was never
+   rejected. It is a failure now, and stays outstanding.
+3. **The three readings are taken together.** Transport, the six amenity
+   lookups and the commute depend on the coordinate and nothing else, and were
+   awaited in series. They are one `Promise.all` now (the SUA lookup and the
+   urban-centre register inside the commute branch are concurrent too), so the
+   call costs the slowest of them rather than the sum.
+4. **The transport reading is not a hop.** It is two indexed reads of
+   `transport_stops`, and the location service now makes them itself through
+   `_shared/transportStopRead.ts` — the same module `public-transport-service`
+   answers from, so the reading cannot differ between the two. The 6.3 s cold
+   hop is gone; the rules it carried (coverage by measurement, "outside every
+   loaded feed" never collapsed into "no stops nearby", a failed read never an
+   empty area) are unchanged and still pinned.
+5. **A later invocation cannot lose what an earlier one placed.** Two paths
+   could: a re-fetch of a PARTIAL enrichment that fails now keeps the stored
+   reading (`standsInAfterFailedRefetch` — only `incomplete_acquisition`,
+   never a refusal that names a defect in the stored object), and the ABS
+   boundary resolution answers from the report's own `report_geography` row
+   when it already places the same point under the same release
+   (`storedRowDescribesPoint`). Before, a boundary-service failure on a later
+   invocation OVERWROTE the resolved row with `unresolved`. And a write that
+   failed dropped the resolution entirely while both callers logged
+   "resolution still used" — `row` is now the resolution whether or not it was
+   stored.
+
+What stays unmeasured until the next generation: the concurrent location call's
+cold time. The table above predicts roughly the slowest branch — the amenity
+register plus Google for WA's transit category, or the commute — plus routing
+and the geocode, well inside 30 s; the production logs of the next WA report
+will say whether that prediction holds.

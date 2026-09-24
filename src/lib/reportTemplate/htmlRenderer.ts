@@ -18,6 +18,8 @@ import { resolvePageOutputPolicy, resolvePageRenderPlan, shouldRenderPageBackgro
 import { shouldRenderBlock } from './renderVisibility';
 import { applyNarrativePlan, planNarrative } from './narrativePlan';
 import { closeDroppedBlocks } from './closeDroppedBlocks';
+import { layoutFlowColumn } from './flowLayout';
+import { flowFactsFor } from './flowFacts';
 import {
   NARRATIVE_GEOMETRY_KEY, NARRATIVE_NOTES_KEY, resolveMarkdownBlockContent,
 } from './blocks/markdownBlockContent';
@@ -594,11 +596,29 @@ function pagesWithContent(pages: Page[], template: ReportTemplate, ctxBase: Reso
  * the pages are drawn. A marker that binds its number is left to the binding.
  */
 const STATIC_PART_RE = /^Part\s+\d+/i;
+/**
+ * Where a marker block carries its part text: a running head sets it as the
+ * `Part marker`'s body, a railed family as the `Rail marker`'s eyebrow.
+ *
+ * The rail was not read here until 23 Sep 2026, so the eleven railed Compass
+ * masters kept every hole a dropped page left in their numbering while the
+ * thirty-nine running-head ones were healed.
+ */
+const PART_TEXT_KEY: Readonly<Record<string, 'body' | 'eyebrow'>> = {
+  'Part marker': 'body',
+  'Rail marker': 'eyebrow',
+};
+/** A marker block's static `Part NN · Label`, or null for anything else. */
+function staticPartText(b: Block): string | null {
+  const key = PART_TEXT_KEY[String(b.name ?? '')];
+  if (!key) return null;
+  const text = (b.props as Record<string, unknown> | undefined)?.[key];
+  return typeof text === 'string' && !text.includes('{{') && STATIC_PART_RE.test(text) ? text : null;
+}
 function staticPartMarkerBody(page: Page): string | null {
   for (const b of page.blocks) {
-    if (String(b.name ?? '') !== 'Part marker') continue;
-    const body = (b.props as { body?: unknown } | undefined)?.body;
-    if (typeof body === 'string' && !body.includes('{{') && STATIC_PART_RE.test(body)) return body;
+    const text = staticPartText(b);
+    if (text !== null) return text;
   }
   return null;
 }
@@ -615,11 +635,49 @@ function healedPartNumbers(pages: Page[]): Array<number | null> {
 }
 /** The marker block with its static number replaced by the healed one. */
 function healPartMarker(block: Block, part: number | null): Block {
-  if (part === null || String(block.name ?? '') !== 'Part marker') return block;
-  const body = (block.props as { body?: unknown } | undefined)?.body;
-  if (typeof body !== 'string' || body.includes('{{') || !STATIC_PART_RE.test(body)) return block;
+  if (part === null) return block;
+  const text = staticPartText(block);
+  if (text === null) return block;
+  const key = PART_TEXT_KEY[String(block.name ?? '')];
   const numeral = String(part).padStart(2, '0');
-  return { ...block, props: { ...(block.props as Record<string, unknown>), body: body.replace(STATIC_PART_RE, `Part ${numeral}`) } } as Block;
+  return { ...block, props: { ...(block.props as Record<string, unknown>), [key]: text.replace(STATIC_PART_RE, `Part ${numeral}`) } } as Block;
+}
+
+/**
+ * The section numeral, healed with the marker it was composed beside.
+ *
+ * A master that bakes its parts counts them at compose time, and the section
+ * opener's numeral comes off the same counter (`nextNumeral()` returns the
+ * number `nextPart()` just took). Healing the marker alone left the two
+ * disagreeing on one page: the 23 Sep 2026 Compass for 97 Poole Road ran its
+ * openers 01, 03, 04, 07, 09 over running heads reading Part 01 to Part 06,
+ * and its Method page said "Part 06 · Sources" above "09 How this assessment
+ * was reached".
+ *
+ * Only a numeral that EQUALS the page's static part number is touched, so a
+ * number an author typed for any other reason is left alone. It sits in one of
+ * the two places `sectionHeading` puts it — the `numeral` opener's left
+ * heading, or the `decimal` opener's heading prefix.
+ */
+function healSectionNumeral(block: Block, staticPart: string | null, part: number | null): Block {
+  if (part === null || staticPart === null || String(block.name ?? '') !== 'Section opener') return block;
+  const healed = String(part).padStart(2, '0');
+  if (healed === staticPart) return block;
+  const props = block.props as Record<string, unknown>;
+  if (props.leftHeading === staticPart) {
+    return { ...block, props: { ...props, leftHeading: healed } } as Block;
+  }
+  const heading = props.heading;
+  if (typeof heading === 'string' && heading.startsWith(`${staticPart}  `)) {
+    return { ...block, props: { ...props, heading: `${healed}${heading.slice(staticPart.length)}` } } as Block;
+  }
+  return block;
+}
+
+/** `Part 09 · Sources` → `09`: the number exactly as the composer padded it. */
+function staticPartNumeral(page: Page): string | null {
+  const text = staticPartMarkerBody(page);
+  return text ? /^Part\s+(\d+)/i.exec(text)?.[1] ?? null : null;
 }
 
 /**
@@ -771,14 +829,20 @@ function renderPage(page: Page, ctxBase: ResolveContext, pageIndex: number, temp
   const renderNativeBlocks = pageRenderPlan.renderNativeBlocks
     || shouldFallBackToNativeBlocks(pageRenderPlan, sourceRasterPainted);
   const healedPart = (ctxBase.data as { __healedPartNumber?: number | null } | undefined)?.__healedPartNumber ?? null;
+  const composedPart = staticPartNumeral(page);
   if (renderNativeBlocks) {
     // A dropped block leaves no hole: the blocks under it in its column move
     // up to where it began. Never in the editor. See `closeDroppedBlocks`.
+    // A FLOWING page goes further: its column is re-stacked from what draws,
+    // so a block that draws fewer of its declared rows gives the difference
+    // back too. See `flowLayout.ts`.
     const laid = editorMode
       ? page.blocks
-      : closeDroppedBlocks(page.blocks, (b) => !blockDrawsContent(b, blockCtxBase, blockCtx), isFurniture);
+      : (page as { flow?: boolean }).flow === true
+        ? layoutFlowColumn(page.blocks, flowFactsFor(blockCtxBase, blockCtx))
+        : closeDroppedBlocks(page.blocks, (b) => !blockDrawsContent(b, blockCtxBase, blockCtx), isFurniture);
     for (const authored of sortBlocksForPaint(laid)) {
-      const block = healPartMarker(authored, healedPart);
+      const block = healSectionNumeral(healPartMarker(authored, healedPart), composedPart, healedPart);
       if (!shouldRenderBlock(block, ctxBase)) continue;
       blocks.push(...renderBlockWithRepeat(block, blockCtxBase, blockCtx, pages, editorMode));
     }

@@ -23,7 +23,7 @@ import {
   releaseGenerationDriver,
 } from '@/lib/reports/generationDriver';
 import { resolveGenerationEngine, type GenerationEngine } from '@/lib/reports/generationEngine.pure';
-import { sectionWasWritten } from '@/lib/reports/investment/runProgress.pure';
+import { nextSectionIndex } from '@/lib/reports/investment/runProgress.pure';
 
 export type RegenerationPhase = 'idle' | 'generate' | 'condense' | 'qa' | 'done';
 
@@ -240,6 +240,14 @@ export function useChunkedRegeneration() {
          `regenerate` is dependency-free by design, so `state` here is the value
          captured on first render and would report 0 for ever. */
       let sectionsDone = startSection;
+      /* A bound on the whole run, not per section. Following the server's
+         counter (below) means a restarted document is walked again from its
+         first section — once, because the server restarts only on strictly
+         better evidence — so the ordinary run plus one restart plus every
+         retry fits well inside three passes. Past that something is wrong,
+         and saying so beats calling for ever. */
+      const maxCalls = totalSections * (MAX_RETRIES_PER_SECTION + 1) + 4;
+      let callsMade = 0;
       for (let section = startSection; section < totalSections; section++) {
         if (abortRef.current) {
           console.log('[ChunkedRegeneration] Aborted by user');
@@ -264,10 +272,19 @@ export function useChunkedRegeneration() {
 
         let sectionSuccess = false;
         let lastError = '';
+        /* Where the server's counter says to go next, when that is not simply
+           the section after this one. */
+        let resumeAt: number | null = null;
 
         for (let retry = 0; retry < MAX_RETRIES_PER_SECTION && !sectionSuccess; retry++) {
           if (retry > 0) {
             await new Promise(resolve => setTimeout(resolve, 2000));
+          }
+          callsMade += 1;
+          if (callsMade > maxCalls) {
+            throw new Error(
+              `Report regeneration did not converge after ${maxCalls} calls — the record's own section counter is the place to look.`,
+            );
           }
 
           const { data, error } = await invokeSecureFunction('generate-investment-report', {
@@ -307,10 +324,26 @@ export function useChunkedRegeneration() {
           // written nothing — that is how it tells the caller "resume me", not
           // "the section is done". Treating it as done stepped the loop past a
           // section that was never generated, and the report would have shipped
-          // with that section silently missing. `sectionWasWritten` is the one
-          // place that judgement is made; see `runProgress.pure.ts`.
-          if (sectionWasWritten(data ?? {}, section)) {
+          // with that section silently missing.
+          //
+          // And the counter can go DOWN: the server restarts the document when
+          // a later invocation holds strictly more evidence than the sections
+          // on the row were written from (`evidenceBasis.pure.ts`). This loop
+          // then follows the row rather than its own count, which would read a
+          // restart as "no progress", retry, throw, and stamp a healthy report
+          // failed. `nextSectionIndex` is the one place both judgements are
+          // made; see `runProgress.pure.ts`.
+          const next = nextSectionIndex(data ?? {}, section);
+          if (next !== null) {
             sectionSuccess = true;
+            if (next !== section + 1) {
+              console.warn(
+                `[ChunkedRegeneration] Asked for section ${section + 1}; the record now stands at ${next}`
+                + (data?.sectionsRestarted ? ' — restarted on a better evidence basis' : '')
+                + '. Following the record.',
+              );
+              resumeAt = next;
+            }
           } else if (data?.success) {
             // A healthy hand-off that banked nothing. Not a failure, and not
             // progress either: retry this SAME section rather than moving on.
@@ -328,6 +361,10 @@ export function useChunkedRegeneration() {
         if (!sectionSuccess) {
           throw new Error(`Failed to generate section ${section + 1}: ${lastError}`);
         }
+
+        // Land the loop on the record's own counter: the increment below takes
+        // it to `resumeAt`, the next section the server has not written.
+        if (resumeAt !== null) section = resumeAt - 1;
 
         sectionsDone = allSectionsComplete ? totalSections : section + 1;
 

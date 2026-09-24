@@ -66,9 +66,22 @@
  * score — a genuine zero counts, a `scored: true` flag alone never does.
  *
  * Every remaining safeguard is about the EVIDENCE rather than the count: the
- * A/A+ growth-confidence and evidence-quality ceilings stand, because they
+ * A/A+ growth-confidence and evidence-quality tests stand, because they
  * answer "can this evidence carry this claim", which is a different question
  * from "how many dimensions answered".
+ *
+ * ## The letter is the band of the number (eligibility 5.0.0, 24 Sep 2026)
+ *
+ * Those tests used to CAP the letter, and on 24 September 2026 the owner's
+ * list showed why that could not stand: 60 Lawley Street at **B+ · 89** beside
+ * 9 Hollow Street at **A · 77**. Lawley's growth came from the ABS state
+ * series for Western Australia, whose confidence cannot exceed 44 of 100, one
+ * point under the A test — so every property graded on a state series was
+ * held at B+ whatever it scored, and the number beside the letter said
+ * something else. The owner's decision: the letter follows the score, and A+
+ * starts at 80. The tests now decide whether `evidenceCaution` travels with
+ * the grade — the engine's own sentence saying what the evidence is — and
+ * every surface that prints the grade prints it beside it.
  *
  * ## Absence is named, never hidden
  *
@@ -133,7 +146,7 @@ import {
 export { dwellingTypeFor };
 
 /** Bumped whenever the projection or the activation conditions change. */
-export const SCORING_V2_PRODUCTION_VERSION = '1.1.0';
+export const SCORING_V2_PRODUCTION_VERSION = '1.2.0';
 
 /**
  * The activation record. Editing it is the decision; nothing reads an
@@ -436,6 +449,19 @@ export interface ProductionScoreRecord {
   policy: ScoringV2PolicyStamp;
   /** The client-facing statement where no grade is issued; null when one is. */
   evidenceStatement: { heading: string; value: string; explanation: string } | null;
+  /**
+   * What the evidence behind an ISSUED grade can carry, where it would not
+   * carry the letter on its own (eligibility 5.0.0) — or null.
+   *
+   * The letter is the band of the score; this is the finding that used to
+   * lower it, now stated beside it. `statement` is one sentence a client may
+   * read ("Capital growth is measured for Western Australia as a whole and
+   * across all dwelling types, not for this property's suburb and dwelling
+   * type."), `cautions` the operator's detail, `supports` the highest letter
+   * the evidence carries on its own. Every surface that prints the grade
+   * prints the statement beside it.
+   */
+  evidenceCaution: { statement: string; cautions: string[]; supports: string } | null;
   /** Per-dimension reason, in the client's words, for each dimension not assessed. */
   notAssessed: Record<string, string>;
   /** What the record offered before the engine ruled, for the audit trail. */
@@ -728,8 +754,10 @@ export function describeGaps(
          * the register itself was measured. `NOT_ASSESSED_REASON.demand` is
          * true everywhere and says nothing about WHY this area in
          * particular; where a publisher has actually been asked, the reader
-         * is told whether no count is published (WA, NT — established) or
-         * whether this platform could not establish it (ACT, TAS — ours).
+         * is told whether no count is published or whether this platform
+         * could not establish it. All four read the first as of 23 Sep 2026
+         * — the ACT and Tasmania each read the second, correctly, until the
+         * probe could reach where they publish.
          *
          * Keeping those two apart is the point. `null` for the other five
          * jurisdictions, so the existing sentence stands everywhere it
@@ -1147,6 +1175,15 @@ export function scoreForProduction(input: ProductionScoringInput): ProductionSco
           value: OVERALL_GRADE_UNAVAILABLE.value,
           explanation: publication.withheldReason ?? OVERALL_GRADE_UNAVAILABLE.explanation,
         },
+    // Only beside a grade that was ISSUED: a caution about a letter nobody
+    // prints is a sentence with nothing to qualify.
+    evidenceCaution: gradeIssued && result.gradeCaution && result.eligibility
+      ? {
+          statement: result.gradeCaution,
+          cautions: [...result.gradeCautions],
+          supports: result.eligibility.ceiling,
+        }
+      : null,
     notAssessed,
     dataPointsPresented,
     gradeGaps: gaps,

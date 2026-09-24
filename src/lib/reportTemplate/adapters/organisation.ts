@@ -32,6 +32,7 @@
  * while the letterhead beside them looked fine.
  */
 import { supabase } from '@/integrations/supabase/client';
+import { SUPABASE_URL } from '@/integrations/supabase/env';
 import { getAuthenticatedSupabaseClient } from '@/hooks/useAuthenticatedSupabase';
 import {
   ORGANISATION_COLUMNS,
@@ -115,9 +116,25 @@ export async function loadBrandMarks(): Promise<BrandMarks> {
       const stored = ((data as any).logo_config ?? {}) as Record<string, string | null>;
       if (!stored || !Object.keys(stored).length) return {};
 
-      const supabaseUrl = (import.meta as any)?.env?.VITE_SUPABASE_URL
-        ?? (supabase as any)?.supabaseUrl ?? '';
-      const { assets } = await inlineBrandAssets(stored, { supabaseUrl });
+      // The RESOLVED project URL, never the raw variable.
+      //
+      // Two defects live at this line, and the first fix only closed one of
+      // them. `import.meta?.env?.X` is not a token sequence the bundler
+      // replaces, so the original resolved to undefined in every production
+      // build; writing it out statically fixed that and left the real fault
+      // in place. `resolveSupabaseTarget` REFUSES a half-configured pair and
+      // falls back to BOTH built-in defaults, so on a build carrying a URL
+      // and no publishable key the raw read names a project the client never
+      // talks to. The row above came from the fallback project, its stored
+      // logo URLs are on that project's storage, and `inlineBrandAssets`
+      // would compare them against the configured origin, reject every one as
+      // `not-project-storage`, and print the document with no brand mark and
+      // no error anywhere.
+      //
+      // `@/integrations/supabase/env` is the only module that resolves this
+      // pair — the rule `internalMessageAttachments` already answers to — and
+      // it never yields an empty string, so there is nothing to fall back to.
+      const { assets } = await inlineBrandAssets(stored, { supabaseUrl: SUPABASE_URL });
 
       const mark = resolveReportAsset(assets as any, 'report').resolved?.asset.dataUri ?? null;
       const mono = resolveReportAsset(assets as any, 'report-mono').resolved?.asset.dataUri ?? null;

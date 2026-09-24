@@ -52,6 +52,29 @@ export const EMPTY_BODY_SHA256 =
 export const LEDGER_BODY_DIGEST_SQL =
   "encode(sha256(convert_to(array_to_string(statements, E'\\n'), 'UTF8')), 'hex')";
 
+/**
+ * Every distinct body digest the ledger holds, as ONE query.
+ *
+ * The digest builder reads it to write the manifest and to `--verify` it, and
+ * the apply preflight reads it to find a file this database already ran under
+ * a different version. Rows with no body are left out: they are evidence of a
+ * version, not of any bytes.
+ */
+export const LEDGER_DIGESTS_QUERY =
+  `select distinct ${LEDGER_BODY_DIGEST_SQL} from supabase_migrations.schema_migrations ` +
+  `where statements is not null and array_length(statements, 1) > 0`;
+
+/**
+ * Bodies past this are not digested, and not stored in the ledger when this
+ * repository's own workflow applies them. 256 KB rather than the 8 MB a single
+ * apply permits: the digest builder walks the whole corpus at once, and an
+ * accidental 8 MB × 900 would be a different program. Mission Control applies
+ * the same ceiling when it reads bodies for the cascade
+ * (`primeBodyDigests.server.ts`), so a file past it is cleared by version or
+ * not at all, wherever it is read.
+ */
+export const MAX_DIGEST_BYTES = 256 * 1024;
+
 /** A body with every byte that cannot execute removed. */
 export function executableBody(sql) {
   const lines = sql.split("\n");

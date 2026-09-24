@@ -20,11 +20,13 @@ import { StepAssessmentType } from '../StepAssessmentType';
 
 afterEach(cleanup);
 
-function renderStep(props: { disabled?: boolean; titleDisabled?: boolean; onTitleChange?: (t: string) => void } = {}) {
+function renderStep(props: {
+  disabled?: boolean; titleDisabled?: boolean; onTitleChange?: (t: string) => void; title?: string;
+} = {}) {
   return render(
     <StepAssessmentType
       payload={baseAssessment()}
-      title="Test"
+      title={props.title ?? 'Test'}
       onTitleChange={props.onTitleChange ?? (() => {})}
       onChange={() => {}}
       disabled={props.disabled}
@@ -72,6 +74,74 @@ describe('the assessment name field', () => {
     fireEvent.blur(field);
     expect(onTitleChange).toHaveBeenCalledTimes(1);
     expect(onTitleChange).toHaveBeenCalledWith('Foundry Link');
+  });
+});
+
+/*
+ * "New assessment" creates the draft on the click and opens this step, so a
+ * draft nobody has named yet arrives here called "Untitled assessment". That is
+ * the list's word for it, not a name, and the server refuses an empty one.
+ */
+describe('an assessment nobody has named yet', () => {
+  it('shows an empty name field with its placeholder, not the placeholder name as text', () => {
+    renderStep({ title: 'Untitled assessment' });
+    const field = screen.getByLabelText(/assessment name/i) as HTMLInputElement;
+    expect(field.value).toBe('');
+    expect(field.placeholder).toMatch(/45 Industrial Drive/);
+    expect(screen.getByText(/reads “Untitled assessment” until you name it/i)).toBeInTheDocument();
+  });
+
+  it('sends nothing when the field is left empty — an empty name is never saved', () => {
+    const onTitleChange = vi.fn();
+    renderStep({ title: 'Untitled assessment', onTitleChange });
+    const field = screen.getByLabelText(/assessment name/i);
+    fireEvent.focus(field);
+    fireEvent.blur(field);
+    fireEvent.change(field, { target: { value: '   ' } });
+    fireEvent.blur(field);
+    expect(onTitleChange).not.toHaveBeenCalled();
+  });
+
+  it('saves the name once it is typed, trimmed', () => {
+    const onTitleChange = vi.fn();
+    renderStep({ title: 'Untitled assessment', onTitleChange });
+    const field = screen.getByLabelText(/assessment name/i);
+    fireEvent.change(field, { target: { value: '  45 Industrial Drive — acquisition ' } });
+    fireEvent.blur(field);
+    expect(onTitleChange).toHaveBeenCalledTimes(1);
+    expect(onTitleChange).toHaveBeenCalledWith('45 Industrial Drive — acquisition');
+  });
+
+  it('does not refill the field while it is being retyped', () => {
+    vi.useFakeTimers();
+    try {
+      const onTitleChange = vi.fn();
+      renderStep({ title: 'Test', onTitleChange });
+      const field = screen.getByLabelText(/assessment name/i) as HTMLInputElement;
+      fireEvent.change(field, { target: { value: '' } });
+      // The pause that would commit a typed name commits nothing for an empty
+      // field, and leaves it empty for the name about to be typed.
+      act(() => { vi.advanceTimersByTime(2_000); });
+      expect(onTitleChange).not.toHaveBeenCalled();
+      expect(field.value).toBe('');
+    } finally {
+      vi.useRealTimers();
+    }
+  });
+
+  it('puts a real name back when its field is cleared and left, rather than sending nothing to the server', () => {
+    const onTitleChange = vi.fn();
+    renderStep({ title: 'Test', onTitleChange });
+    const field = screen.getByLabelText(/assessment name/i) as HTMLInputElement;
+    fireEvent.change(field, { target: { value: '' } });
+    fireEvent.blur(field);
+    expect(onTitleChange).not.toHaveBeenCalled();
+    expect(field.value).toBe('Test');
+  });
+
+  it('shows an archived one what it is actually called, since its field cannot be edited', () => {
+    renderStep({ title: 'Untitled assessment', disabled: true, titleDisabled: true });
+    expect((screen.getByLabelText(/assessment name/i) as HTMLInputElement).value).toBe('Untitled assessment');
   });
 });
 

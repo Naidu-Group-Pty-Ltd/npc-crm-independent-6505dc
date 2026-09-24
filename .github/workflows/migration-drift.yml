@@ -104,8 +104,13 @@ jobs:
             echo '```'
           } >> "$GITHUB_STEP_SUMMARY"
 
-      - name: Fail when something merged and never landed
+      # Three findings fail the run, and each is a disagreement between the
+      # repository and the database: a merged migration that never landed, a
+      # withdrawal in MIGRATION_WITHDRAWN.json that the database contradicts,
+      # and a withdrawal manifest that cannot be read. The report above names
+      # which.
+      - name: Fail when the repository and the database disagree
         if: steps.drift.outputs.status != '0'
         run: |
-          echo '::error title=Unapplied migrations::A migration is in `main` and not in the database. Apply it with the "Apply a migration" workflow, oldest first.'
+          echo '::error title=Migration drift::The repository and the database disagree. A migration in `main` may be missing from the database (apply it with the "Apply a migration" workflow, oldest first), or a declared withdrawal may be contradicted. The report above names which.'
           exit 1

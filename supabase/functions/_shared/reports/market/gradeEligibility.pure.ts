@@ -102,23 +102,113 @@
  * "based on 3 of the 5 assessment dimensions" — carried by
  * `scorePublicationPolicy.pure.ts` on every surface, which is disclosure
  * rather than a silent deduction.
+ *
+ * ## 5.0.0 — the letter is the band of the number (owner decision, 24 Sep 2026)
+ *
+ * The list the owner reads showed **60 Lawley Street, Spalding WA at B+ · 89**
+ * beside **9 Hollow Street, Golden Square VIC at A · 77**. Both came from this
+ * module working as designed, and together they read as a fault: a higher
+ * score printed a lower letter. The owner's decision: the letter follows the
+ * score, and anything from 80 carries the A+.
+ *
+ * What held Lawley at B+ was not the property. Its growth came from the one
+ * reading Western Australia publishes openly — the ABS mean dwelling price for
+ * the whole state, all dwelling types, no sales count — and that shape scores
+ * **44 of 100 on growth confidence at best** (geography 10, dwelling type 0,
+ * sample 30, history 100, one provider 55, freshness 100). The A gate is 45.
+ * So every property whose growth rests on a state series — all of WA, TAS,
+ * NT and the ACT, and anywhere a finer register is missing — could never
+ * print above B+ however high it scored. The gate was written before the
+ * state series existed as a source, and nobody noticed it had become a
+ * jurisdiction rule.
+ *
+ * The concern the gate answered is real and survives: a growth figure for a
+ * whole state is not a finding about one suburb. What 5.0.0 changes is WHERE
+ * that is said. A cap lowered the letter and left the number standing, so the
+ * reader was handed two claims that disagree and no way to reconcile them —
+ * the same objection 4.0.0 made of the missing-dimension penalty, one step
+ * further. So:
+ *
+ * - **The letter is `gradeFor(composite)`, always.** A higher score never
+ *   prints a lower letter. `grade === scoreGrade` and `capped` is `false` on
+ *   every record graded from 5.0.0; the fields stay so every stored row keeps
+ *   its shape and its own explanation.
+ * - **The evidence test still runs, and its finding is DISCLOSED.** Where the
+ *   evidence alone would not carry the letter the score gives, `cautions`
+ *   says why in the operator's words and `caution` says it in one sentence a
+ *   client may read — "Capital growth is measured for Western Australia as a
+ *   whole and across all dwelling types, not for this property's suburb and
+ *   dwelling type." — beside the grade on every surface that prints one.
+ * - **A stored grade is read by the line it was issued against.** A record
+ *   graded before 5.0.0 was graded with A+ at 85; `gradeThresholdsFor` reads
+ *   its version, so an 82 issued as an A is never re-labelled an A+ that was
+ *   "held down", and a capped 4.0.0 record keeps the explanation of the rule
+ *   that capped it.
  */
 
 import type { GrowthResult } from './growthScoring.pure.ts';
+import { type EvidencePoint, levelRank } from './marketEvidence.pure.ts';
 
 /** Bumped whenever a threshold changes. Persisted beside the grade. */
-export const ELIGIBILITY_VERSION = '4.0.0';
+export const ELIGIBILITY_VERSION = '5.0.0';
 
-/** The grade thresholds. Unchanged, and not this module's to move. */
-export const GRADE_THRESHOLDS: ReadonlyArray<readonly [number, string]> = [
+export type GradeThresholds = ReadonlyArray<readonly [number, string]>;
+
+/**
+ * The grade thresholds, from 5.0.0: **A+ from 80**.
+ *
+ * Moved by the platform owner on 24 September 2026 ("anything above 80 should
+ * reflect an A+"), the one threshold moved, and moved by a decision rather
+ * than by calibration — no calibration may target a grade distribution, and
+ * this is not one. Every other line is unchanged, so A now spans 75–79.
+ */
+export const GRADE_THRESHOLDS: GradeThresholds = [
+  [80, 'A+'], [75, 'A'], [65, 'B+'], [55, 'B'], [50, 'C+'], [40, 'C'], [30, 'D'], [0, 'F'],
+];
+
+/**
+ * The table every grade issued before 5.0.0 was issued against — A+ from 85,
+ * the V1 line Scoring V2 kept. Retained so a stored grade is READ by the line
+ * it was issued against: re-reading an 82 issued as an A under today's table
+ * would report a cap that never happened.
+ */
+export const GRADE_THRESHOLDS_BEFORE_5_0_0: GradeThresholds = [
   [85, 'A+'], [75, 'A'], [65, 'B+'], [55, 'B'], [50, 'C+'], [40, 'C'], [30, 'D'], [0, 'F'],
 ];
 
-export function gradeFor(score: number): string {
-  for (const [floor, grade] of GRADE_THRESHOLDS) if (score >= floor) return grade;
+/**
+ * The table a record was graded under, from the eligibility version it carries.
+ *
+ * Absent or unreadable means graded before 5.0.0 — every V1 row and every V2
+ * row written before this version — which is the conservative reading: the
+ * older table is what those rows were issued against.
+ */
+export function gradeThresholdsFor(eligibilityVersion: unknown): GradeThresholds {
+  if (typeof eligibilityVersion !== 'string') return GRADE_THRESHOLDS_BEFORE_5_0_0;
+  const major = /^(\d+)\./.exec(eligibilityVersion.trim());
+  return major && Number(major[1]) >= 5 ? GRADE_THRESHOLDS : GRADE_THRESHOLDS_BEFORE_5_0_0;
+}
+
+/** The letter a score carries under a given table. */
+export function gradeUnder(score: number, thresholds: GradeThresholds): string {
+  for (const [floor, grade] of thresholds) if (score >= floor) return grade;
   return 'F';
 }
 
+/** The letter a score carries today. */
+export function gradeFor(score: number): string {
+  return gradeUnder(score, GRADE_THRESHOLDS);
+}
+
+/**
+ * What the evidence has to show before it carries an A or an A+ ON ITS OWN.
+ *
+ * From 5.0.0 these lower nothing — the letter is the band of the score. They
+ * decide whether a CAUTION travels with the letter: where the evidence falls
+ * short of what the letter claims, the shortfall is stated beside the grade
+ * rather than deducted from it. The values are unchanged from 4.0.0, so the
+ * same records are cautioned that used to be capped.
+ */
 export const ELIGIBILITY_RULES = {
   /**
    * A needs Growth evidence that is at least credible — **where growth
@@ -156,28 +246,163 @@ export interface EligibilityInput {
 
 export interface EligibilityResult {
   version: string;
-  /** The grade the score alone would give. */
+  /** The grade the score alone gives. */
   scoreGrade: string;
-  /** The grade after the evidence cap. Never better than `scoreGrade`. */
+  /**
+   * The grade printed. From 5.0.0 it is always `scoreGrade`: the letter is the
+   * band of the number, and a higher score never prints a lower letter.
+   */
   grade: string;
-  /** True when evidence held the grade below what the score would allow. */
+  /**
+   * True when evidence held the printed grade below `scoreGrade`. Always false
+   * from 5.0.0. A record graded under 4.0.0 or earlier may carry `true`, and is
+   * explained by the rule that capped it.
+   */
   capped: boolean;
-  /** The highest grade the evidence supports. */
+  /** The highest grade the evidence carries ON ITS OWN. */
   ceiling: string;
-  /** Why, in the operator's terms. Empty when nothing was capped. */
+  /** Why the grade was held down. Always empty from 5.0.0 — nothing is held down. */
   reasons: ReadonlyArray<string>;
+  /**
+   * Where the evidence alone would not carry the letter the score gives, in
+   * the operator's words. Empty when it would.
+   */
+  cautions: ReadonlyArray<string>;
+  /**
+   * The same finding as ONE sentence a client may be shown, printed beside the
+   * grade — or null when the evidence carries the letter. It says what the
+   * evidence IS (the geography and dwelling type the growth figures describe,
+   * how much of a method ran), never a score.
+   */
+  caution: string | null;
+}
+
+const pct = (v: number): number => Math.round(v * 100);
+
+/** The growth figures' own evidence points. */
+function growthPoints(growth: GrowthResult): EvidencePoint<unknown>[] {
+  return growth.components
+    .map((c) => c.evidence)
+    .filter((p): p is EvidencePoint<unknown> => p !== null);
 }
 
 /**
- * Apply the evidence ceiling to a composite score.
+ * Where the growth figures are measured, when that is coarser than the
+ * property's own area — "for Western Australia as a whole" — or null.
  *
- * A grade can only ever be lowered here, never raised: this is a guard on an
- * over-claim, not a second opinion on the arithmetic.
+ * A postal area and an SA2 are the property's own neighbourhood for this
+ * purpose; a council area is the wider area; a capital city, a state or the
+ * nation is the market as a whole.
+ */
+function coarseGeography(points: ReadonlyArray<EvidencePoint<unknown>>): string | null {
+  if (!points.length) return null;
+  const finest = points.reduce((best, p) => (levelRank(p.level) < levelRank(best.level) ? p : best));
+  switch (finest.level) {
+    case 'property':
+    case 'suburb':
+    case 'postcode':
+    case 'sa2':
+      return null;
+    case 'lga':
+    case 'sa3':
+      return `for the wider ${finest.areaName} area`;
+    default:
+      return `for ${finest.areaName} as a whole`;
+  }
+}
+
+/** Which dwellings the growth figures describe, when NONE of them is this property's type — or null. */
+function unmatchedDwelling(points: ReadonlyArray<EvidencePoint<unknown>>): string | null {
+  if (!points.length || points.some((p) => p.dwellingTypeMatched)) return null;
+  const types = new Set(points.map((p) => p.dwellingType));
+  if (types.size !== 1) return 'across other dwelling types';
+  switch ([...types][0]) {
+    case 'any': return 'across all dwelling types';
+    case 'house': return 'for houses';
+    case 'attached': return 'for units and other attached dwellings';
+    case 'land': return 'for vacant land';
+    default: return 'across other dwelling types';
+  }
+}
+
+/** A thin-evidence clause from one confidence factor's own detail, or null. */
+function thinEvidenceClause(key: string, detail: string): string | null {
+  if (key === 'sample') {
+    if (/not published/i.test(detail)) return 'the source publishes no count of the sales behind it';
+    const n = /^(\d+)/.exec(detail);
+    return n ? `it rests on ${n[1]} sales` : null;
+  }
+  if (key === 'history') {
+    const n = /^(\d+) periods?/.exec(detail);
+    return n ? `it has ${n[1]} periods of price history` : null;
+  }
+  if (key === 'freshness') {
+    const n = /(\d+) quarter/.exec(detail);
+    return n ? `its newest reading is ${n[1]} quarters old` : null;
+  }
+  return null;
+}
+
+/**
+ * The client's sentence: what the evidence behind the letter IS.
+ *
+ * Read from the evidence's own facts — the geography and dwelling type the
+ * growth figures describe, the confidence factors' own details, how much of
+ * each method ran — and never from a score, so it cannot disagree with the
+ * record it sits beside.
+ */
+function cautionSentence(input: {
+  growth: GrowthResult;
+  growthShort: boolean;
+  growthCoverageShort: boolean;
+  qualityShort: boolean;
+  evidenceQualityCoverage: number;
+}): string | null {
+  const sentences: string[] = [];
+  if (input.growthShort) {
+    const points = growthPoints(input.growth);
+    const where = coarseGeography(points);
+    const what = unmatchedDwelling(points);
+    if (where && what) {
+      sentences.push(`Capital growth is measured ${where} and ${what}, not for this property's suburb and dwelling type.`);
+    } else if (where) {
+      sentences.push(`Capital growth is measured ${where}, not for this property's suburb.`);
+    } else if (what) {
+      sentences.push(`Capital growth is measured ${what} in this area, not for this property's own dwelling type.`);
+    } else {
+      const weak = input.growth.confidence.factors
+        .filter((f) => f.score < 50)
+        .map((f) => thinEvidenceClause(f.key, f.detail))
+        .filter((c): c is string => c !== null);
+      sentences.push(weak.length
+        ? `The capital-growth evidence behind this grade is limited: ${weak.join('; ')}.`
+        : 'The capital-growth evidence behind this grade is limited.');
+    }
+  }
+  if (input.growthCoverageShort) {
+    sentences.push(`Only ${pct(input.growth.weightCovered)}% of the capital-growth method could be measured.`);
+  }
+  if (input.qualityShort) {
+    sentences.push(
+      `The dimensions assessed could be evidenced only in part: ${pct(input.evidenceQualityCoverage)}% of their `
+        + 'methods ran.',
+    );
+  }
+  return sentences.length ? sentences.join(' ') : null;
+}
+
+/**
+ * Grade a composite score, and say what its evidence can carry.
+ *
+ * The letter is the band of the score (5.0.0). The evidence test that used to
+ * lower it now decides whether a caution travels with it: `ceiling` is the
+ * highest letter the evidence carries on its own, and where the score's letter
+ * is above it, `cautions` and `caution` say why.
  */
 export function applyEligibility(input: EligibilityInput): EligibilityResult {
   const { compositeScore, growth, evidenceQualityCoverage } = input;
   const scoreGrade = gradeFor(compositeScore);
-  const reasons: string[] = [];
+  const cautions: string[] = [];
   const r = ELIGIBILITY_RULES;
 
   const gConf = growth.confidence.score;
@@ -185,91 +410,71 @@ export function applyEligibility(input: EligibilityInput): EligibilityResult {
   const hasGrowth = growth.score !== null;
 
   /*
-   * The growth gates judge growth evidence that EXISTS (4.0.0). Where growth
+   * The growth tests judge growth evidence that EXISTS (4.0.0). Where growth
    * was not measured they do not apply — there is no growth claim to
-   * over-state — and the quality floor over the measured dimensions carries
-   * the guard on its own. `hasGrowth &&` here was the missing-dimension
-   * penalty reintroduced after being removed from the other two modules.
+   * over-state — and the quality floor over the measured dimensions stands on
+   * its own.
    */
   const growthCarriesAPlus = !hasGrowth
     || (gConf >= r.aPlusMinGrowthConfidence && gCover >= r.aPlusMinGrowthCoverage);
   const growthCarriesA = !hasGrowth
     || (gConf >= r.aMinGrowthConfidence && gCover >= r.aMinGrowthCoverage);
 
-  // Can the evidence carry an A+?
+  // Can the evidence carry an A+ on its own?
   const aPlusOk = growthCarriesAPlus && evidenceQualityCoverage >= r.aPlusMinEvidenceQuality;
 
   // Can it carry an A?
   const aOk = growthCarriesA && evidenceQualityCoverage >= r.aMinEvidenceQuality;
 
-  // The one remaining ceiling, and it is about the QUALITY of the evidence
-  // this report holds — never about how many dimensions happened to answer.
   const ceiling = aPlusOk ? 'A+' : aOk ? 'A' : 'B+';
 
-  const order = ['F', 'D', 'C', 'C+', 'B', 'B+', 'A', 'A+'];
-
-  // Only explain the constraint that actually binds.
+  // Only the letter actually printed is explained, against its own tests.
   const wanted = scoreGrade === 'A+' ? 'A+' : scoreGrade === 'A' ? 'A' : null;
-  if (wanted === 'A+' && !aPlusOk) {
+  let growthShort = false;
+  let growthCoverageShort = false;
+  let qualityShort = false;
+  if (wanted && !(wanted === 'A+' ? aPlusOk : aOk)) {
+    const minQuality = wanted === 'A+' ? r.aPlusMinEvidenceQuality : r.aMinEvidenceQuality;
+    const minConfidence = wanted === 'A+' ? r.aPlusMinGrowthConfidence : r.aMinGrowthConfidence;
+    const minCoverage = wanted === 'A+' ? r.aPlusMinGrowthCoverage : r.aMinGrowthCoverage;
     // The quality floor explains itself whether or not growth was measured:
-    // it is a statement about the dimensions that DID answer, so it must not
-    // sit inside the growth branch (4.0.0).
-    if (evidenceQualityCoverage < r.aPlusMinEvidenceQuality) {
-      reasons.push(
-        `The assessed dimensions are ${Math.round(evidenceQualityCoverage * 100)}% evidenced; `
-          + `A+ requires at least ${Math.round(r.aPlusMinEvidenceQuality * 100)}%.`,
+    // it is a statement about the dimensions that DID answer (4.0.0).
+    if (evidenceQualityCoverage < minQuality) {
+      qualityShort = true;
+      cautions.push(
+        `The assessed dimensions are ${pct(evidenceQualityCoverage)}% evidenced; the evidence alone carries `
+          + `an ${wanted} from ${pct(minQuality)}%.`,
       );
     }
-    // Absence is no longer a reason, because it is no longer a cause (4.0.0).
+    // Absence is not a reason, because it is not a cause (4.0.0).
     if (hasGrowth) {
-      if (gConf < r.aPlusMinGrowthConfidence) {
-        reasons.push(
-          `Growth evidence confidence is ${gConf} (${growth.confidence.band}); ` +
-            `A+ requires at least ${r.aPlusMinGrowthConfidence}.`,
+      if (gConf < minConfidence) {
+        growthShort = true;
+        cautions.push(
+          `Growth evidence confidence is ${gConf} (${growth.confidence.band}); the evidence alone carries `
+            + `an ${wanted} from ${minConfidence}.`,
         );
       }
-      if (gCover < r.aPlusMinGrowthCoverage) {
-        reasons.push(
-          `Only ${Math.round(gCover * 100)}% of the growth methodology could be measured; ` +
-            `A+ requires at least ${Math.round(r.aPlusMinGrowthCoverage * 100)}%.`,
-        );
-      }
-    }
-  } else if (wanted === 'A' && !aOk) {
-    if (evidenceQualityCoverage < r.aMinEvidenceQuality) {
-      reasons.push(
-        `The assessed dimensions are ${Math.round(evidenceQualityCoverage * 100)}% evidenced; `
-          + `A requires at least ${Math.round(r.aMinEvidenceQuality * 100)}%.`,
-      );
-    }
-    // Absence is no longer a reason, because it is no longer a cause (4.0.0).
-    if (hasGrowth) {
-      if (gConf < r.aMinGrowthConfidence) {
-        reasons.push(
-          `Growth evidence confidence is ${gConf} (${growth.confidence.band}); ` +
-            `A requires at least ${r.aMinGrowthConfidence}.`,
-        );
-      }
-      if (gCover < r.aMinGrowthCoverage) {
-        reasons.push(
-          `Only ${Math.round(gCover * 100)}% of the growth methodology could be measured; ` +
-            `A requires at least ${Math.round(r.aMinGrowthCoverage * 100)}%.`,
+      if (gCover < minCoverage) {
+        growthCoverageShort = true;
+        cautions.push(
+          `Only ${pct(gCover)}% of the growth methodology could be measured; the evidence alone carries `
+            + `an ${wanted} from ${pct(minCoverage)}%.`,
         );
       }
     }
   }
 
-
-  const scoreIndex = order.indexOf(scoreGrade);
-  const capIndex = order.indexOf(ceiling);
-  const grade = scoreIndex > capIndex ? ceiling : scoreGrade;
-
   return {
     version: ELIGIBILITY_VERSION,
     scoreGrade,
-    grade,
-    capped: grade !== scoreGrade,
+    grade: scoreGrade,
+    capped: false,
     ceiling,
-    reasons,
+    reasons: [],
+    cautions,
+    caution: cautions.length
+      ? cautionSentence({ growth, growthShort, growthCoverageShort, qualityShort, evidenceQualityCoverage })
+      : null,
   };
 }

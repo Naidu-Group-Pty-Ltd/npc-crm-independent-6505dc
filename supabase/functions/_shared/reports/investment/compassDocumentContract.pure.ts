@@ -206,15 +206,14 @@ tell it from the paragraph above, and they will take it to a builder.
   confidence, certainty, risk, "focus" or "emphasis" — in prose, in a table,
   or in any chart.
 - **No absence drawn as a finding.** "Omit the sentence" above governs what
-  the document SAYS, and a strip, a cell and a chart say things too. An
-  at-a-glance cell is a finding about the PROPERTY: \`⚠\` means something a
+  the document SAYS, and a cell, a register row and a chart say things too.
+  A row in a table of findings is a finding about the PROPERTY: an item a
   buyer should watch, not something this record failed to capture. Measured
-  across seven issued reports, 4 of 194 cells read like
-  "⚠ Exact bed/bath/car details not provided" — which a client reads as a
+  across seven issued reports, 4 of 194 summary items read like
+  "Exact bed/bath/car details not provided" — which a client reads as a
   defect in the house rather than a gap in our file. Where a section's
-  evidence is thin, build the strip from what IS known and give it fewer
-  cells: three cells that each carry a finding is a complete strip, and a
-  fourth reporting our own gap is not.
+  evidence is thin, say less: two rows that each carry a finding are a
+  complete table, and a third reporting our own gap is not.
 - **No forecast.** You may describe what a register has designated, what a
   publisher has stated and what a trend has done. You may not say what
   anything will be worth, will grow by, or will complete.

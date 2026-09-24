@@ -597,12 +597,12 @@ export const carriesNetNegative = (r: ApprovalRow): boolean =>
  *
  * ## Why an order is part of the fix
  *
- * The walk derives its next window from the register's own edges —
- * `oldest` is `min(period)` over the table — and the loader writes a window
+ * The walk derived its next window from the register's own edges —
+ * `oldest` was `min(period)` over the table — and the loader writes a window
  * in batches of five hundred, throwing on the first batch that fails. So a
- * batch refused half-way through a window leaves the rows before it committed,
- * `oldest` moves to the window's first month, and the planner steps below a
- * window it never finished. Nothing ever asks for those rows again. That is
+ * batch refused half-way through a window left the rows before it committed,
+ * `oldest` moved to the window's first month, and the planner stepped below a
+ * window it never finished. Nothing ever asked for those rows again. That is
  * a hole in the register, and a hole reads to every report as data.
  *
  * Until `20261217000000_approvals_admit_net_amendments.sql` is applied the
@@ -618,9 +618,13 @@ export const carriesNetNegative = (r: ApprovalRow): boolean =>
  * Stable within each group, so the order is otherwise the parse's own.
  *
  * It does NOT make a window atomic. A transient failure part-way through the
- * non-negative rows still commits the batches before it, as it always has;
- * that is recorded in `docs/operations/SESSION_HANDOFF_2026-09-23.md` as a
- * defect of its own rather than papered over here.
+ * non-negative rows still commits the batches before it. What stops that
+ * becoming a hole is the walk, not the order: since 23 Sep 2026 the planner
+ * steps below the edge the sync LEDGER proves whole (`vouchedOldest` in
+ * `absApprovalsPaging.pure.ts`) rather than below `min(period)`, so a window a
+ * run left half-written is asked for again. The order is kept because it is
+ * still the cheapest refusal: a table that refuses a negative refuses before
+ * anything of the window commits.
  */
 export function approvalsWriteOrder(rows: ReadonlyArray<ApprovalRow>): {
   first: ApprovalRow[];

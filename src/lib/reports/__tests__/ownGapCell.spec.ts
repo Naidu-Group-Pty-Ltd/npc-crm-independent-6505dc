@@ -87,9 +87,17 @@ describe('the edges', () => {
   });
 
   it('leaves a clean document byte for byte', () => {
-    const clean = '## At a glance\n\n{{glance: ✓ A | ✓ B | ★ C}}\n\nProse here.\n';
+    const clean = '## Nearby suburbs\n\n{{tiles: ✓ A | ✓ B | ★ C}}\n\nProse here.\n';
     expect(stripOwnGapCells(clean).markdown).toBe(clean);
     expect(presentStoredMarkdown(clean)).toBe(clean);
+  });
+
+  it('never sees an at-a-glance strip on the read path, which withdraws it first', () => {
+    // The owner asked for the strip to go from every document (23 Sep 2026);
+    // `withdrawGlanceStrips` runs ahead of this scrub in presentStoredMarkdown,
+    // so a clean strip is withdrawn rather than kept. See glanceWithdrawn.spec.
+    const withStrip = '## Amenity\n\n{{glance: ✓ A | ✓ B | ★ C}}\n\nProse here.\n';
+    expect(presentStoredMarkdown(withStrip)).toBe('## Amenity\n\nProse here.\n');
   });
 
   it('does not touch prose that explains an absence in a sentence', () => {

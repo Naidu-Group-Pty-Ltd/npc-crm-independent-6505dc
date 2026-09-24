@@ -53,8 +53,9 @@
  * | `c3` | the forward investment programme — `investmentProgramme` (shipped 18 Sep 2026). A `c2` row was cached before any programme was read, so serving one would report a property as having no funded investment near it when the programme was never asked. Exactly the fault `c2` exists for. |
  * | `c4` | the instrument's own land use table — `landUse` (shipped 19 Sep 2026). A `c3` row carries a zone code and nothing that says what may be built on it, and a zone code alone is what lets "E3 Productivity Support" be read as a residential property in the wrong zone when the table in fact permits a dwelling house with consent. Serving a `c3` row would withhold the reading the section is now written around. |
  * | `c5` | which instrument the controls belong to and which amendment of it — `instrumentCurrency` — plus `providers`, the record of which registers were consulted and which ANSWERED (shipped 22 Sep 2026, W3.4). The amendment was being parsed off layer 8 of the NSW principal Identify and handed to `console.log`, so every `c4` row carries the register's Instrument column with no statement of which amendment is in force. Serving one under-reports in exactly the direction `c2` was written for, and a stale `providers` would report a refinement as unanswered on a deployment where it answers. |
+ * | `c6` | South Australia's zone, read from the Planning and Design Code's own layer (`parseSaZoning`, shipped 23 Sep 2026, W3.4's third half). No key is added — `zoning` has always been there — but a `c5` row at a South Australian coordinate says the zone is `not_integrated` where the Code's layer now answers, so serving one withholds the zone for seven days on exactly the properties this adds it for. The shape did not widen; its CONTENT did, which is the same fault by another route. |
  */
-export const PLANNING_ANSWER_VERSION = 'c5' as const;
+export const PLANNING_ANSWER_VERSION = 'c6' as const;
 
 /** Every top-level key the answer of this version carries. */
 export const PLANNING_ANSWER_KEYS: readonly string[] = [

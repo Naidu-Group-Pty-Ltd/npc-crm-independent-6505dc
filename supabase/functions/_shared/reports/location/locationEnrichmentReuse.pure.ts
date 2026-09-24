@@ -409,3 +409,33 @@ export function assessEnrichmentReuse(
       + 'this same property — the provider answer cannot change between resumes.',
   };
 }
+
+/**
+ * The refusals whose stored object may still stand in when the re-fetch they
+ * asked for FAILS.
+ *
+ * `incomplete_acquisition` refuses a sound reading for a better one: the stamp
+ * names this subject, the coordinate is there, every reading the stages claim
+ * is present, and the commute names its destination — it was refused only
+ * because an amenity lookup did not answer, in the hope that asking again
+ * completes the set. When asking again fails, the choice is no longer between
+ * a partial set and a complete one; it is between a partial set and NOTHING —
+ * no coordinate, so no geography, no demographics, no planning parcel and no
+ * Location dimension for every section that invocation writes, beside
+ * sections an earlier invocation wrote with all of them. Dropping the stored
+ * reading there lets a transient failure do what the retry was meant to
+ * prevent.
+ *
+ * Every other refusal names a defect in the stored object itself — another
+ * subject, no stamp to prove its subject, no coordinate, readings a gate
+ * removed, a commute measured to an unrecorded destination — and none of
+ * those becomes sound because a fresh call failed. They stay refused.
+ */
+const STANDS_IN_AFTER_FAILED_REFETCH: ReadonlySet<ReuseVerdict> = new Set<ReuseVerdict>([
+  'incomplete_acquisition',
+]);
+
+/** Whether the stored enrichment may stand in after its re-fetch failed. */
+export function standsInAfterFailedRefetch(decision: ReuseDecision): boolean {
+  return !decision.reuse && STANDS_IN_AFTER_FAILED_REFETCH.has(decision.verdict);
+}

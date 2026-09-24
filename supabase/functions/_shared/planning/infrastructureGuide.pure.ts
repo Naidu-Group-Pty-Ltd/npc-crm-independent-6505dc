@@ -166,6 +166,20 @@ export const ABSENCE_GUIDE: FindingGuide = {
 };
 
 /**
+ * The line that opens the guide, named once.
+ *
+ * It announces the entries under it and says nothing on its own, so it is
+ * only ever drawn with at least one entry beneath it. The 20 Sep 2026 Compass
+ * for 97 Poole Road stored it with none — the line, then the next heading —
+ * and both the Compass and the Due Diligence report forked from it printed a
+ * promise the page did not keep. The composer has always pushed an entry after
+ * it; the stored document lost them after composition, so
+ * `dropOrphanedLeadIns` (`derivedHygiene.pure.ts`) repairs it where it is READ,
+ * against this spelling — `orphanedLeadIn.spec.ts` holds the two together.
+ */
+export const INFRASTRUCTURE_GUIDE_LEAD_IN = 'What these findings mean, and what to do about them.';
+
+/**
  * The guides for the kinds actually present, in the order they appear.
  *
  * Only what the table drew: a guide to an entry kind the reader is not looking

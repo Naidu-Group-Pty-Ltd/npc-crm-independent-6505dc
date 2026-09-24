@@ -42,7 +42,8 @@
  * protections keep one action to one render: concurrent calls for the same
  * report share one in-flight production, and a completed finalisation is
  * remembered (per tab) under a fingerprint of the record's version, the
- * chosen template and the five controls, so Download after Generate, or Send
+ * chosen template and the panel's controls (the five switches and the
+ * audience), so Download after Generate, or Send
  * after Download, reuse the document rather than drawing it again. Change the
  * report, the template or a control and the fingerprint moves.
  *
@@ -95,6 +96,9 @@ import {
   type InvestmentPresentationOptions,
 } from '@/lib/reports/investment/presentationOptions';
 import { loadInvestmentHeroImages } from '@/lib/reports/investment/investmentHeroImages';
+import { applyAudienceToMarkdown, audiencePolicyFor } from '@/lib/reports/investment/audienceContent.pure';
+import { contentPolicyFor } from '@/lib/reports/investment/tierContent.pure';
+import { composeOwnerOccupierLens } from '../../../../supabase/functions/_shared/reports/location/ownerOccupierLens.pure';
 import { secureStorageUpload } from '@/hooks/useSecureStorage';
 import type { PdfDesignOptions } from '@/components/reports/premiumPdfDesign';
 
@@ -251,7 +255,7 @@ async function produceInvestmentDocumentOnce(
   const presentedRow = {
     ...row,
     report_content: applyPresentationOptionsToContent(
-      typeof row.report_content === 'string' ? row.report_content : '',
+      presentForAudience(row, presentation.audience, options.variant ?? null),
       presentation,
     ),
   };
@@ -285,6 +289,9 @@ async function produceInvestmentDocumentOnce(
       reportContent: presentedRow.report_content,
       includeScoring: presentation.includeScoring,
       includeSources: presentation.includeSources,
+      // Read by the adapter for the BOUND values a Markdown edit cannot reach:
+      // the rent and yield tiles, the cash-flow rows, the standfirst.
+      audience: presentation.audience,
     },
     // The FINAL document: the chosen template drawn by the pinned engine.
     renderer: 'weasyprint',
@@ -339,6 +346,39 @@ async function produceInvestmentDocumentOnce(
   };
   rememberFinalised(reportId, { fingerprint, doc });
   return doc;
+}
+
+/**
+ * The report's own Markdown as the chosen audience reads it.
+ *
+ * Investor is the report as stored, byte for byte. An owner-occupier's copy
+ * leaves out the sections whose whole subject is a letting and gains the
+ * owner-occupier's view, composed from the record (`ownerOccupierLens.pure.ts`);
+ * "both" gains the section and loses nothing. The tier decides two of the
+ * section's lines: whether the land use qualifications travel with it (they
+ * are already printed where a tier carries the planning register) and whether
+ * a line about land tax is owed (only where the financial model is printed).
+ */
+function presentForAudience(
+  row: StoredInvestmentReportRow,
+  audience: InvestmentPresentationOptions['audience'],
+  variant: string | null,
+): string {
+  const content = typeof row.report_content === 'string' ? row.report_content : '';
+  const policy = audiencePolicyFor(audience);
+  if (!policy.ownerOccupierSection && policy.lettingSections) return content;
+  const stored = row as unknown as Record<string, unknown>;
+  // The order `projectRowForPdf` reads the tier in, so the section and the
+  // document it lands in agree about which tier this is.
+  const tier = contentPolicyFor(String(variant || row.report_variant || row.report_tier || ''));
+  const section = composeOwnerOccupierLens({
+    locationIntelligence: stored.location_intelligence,
+    demographicsData: stored.demographics_data,
+    economicData: stored.economic_data,
+    carriesPlanningRegister: tier.locationDepth,
+    carriesFinancialModelling: tier.financialModelling,
+  });
+  return applyAudienceToMarkdown(content, policy.audience, section).markdown;
 }
 
 /** Produce and save to the browser's downloads. */

@@ -1,9 +1,9 @@
 /**
- * The five controls on the Investment export panel, and what each one is.
+ * The controls on the Investment export panel, and what each one is.
  *
- * ## Two different kinds of switch
+ * ## Three different kinds of control
  *
- * They look alike on the panel and they are not alike at all:
+ * The five switches look alike on the panel and they are not alike at all:
  *
  *  * **Sources** and **Scoring** are CONTENT INCLUSION rules. They remove
  *    whole sections from the report a client receives. Whether the document
@@ -19,6 +19,14 @@
  * change a chosen template's document while changing nothing would be worse
  * than one that plainly did not apply.
  *
+ * The sixth control is not a switch: **Audience** — investor, owner-occupier
+ * or both — says who the document is FOR (`audienceContent.pure.ts`). Like
+ * the content rules it is applied once, above the choice of presentation, so
+ * the standard document and a chosen template agree about it; unlike them it
+ * can ADD a section — the owner-occupier's view, composed from the record —
+ * as well as leave out the few whose whole subject is a letting. Investor is
+ * the default and changes nothing.
+ *
  * ## What these may never do
  *
  * None of the five alters a calculated value, the narrative, the evidence, the
@@ -26,6 +34,14 @@
  * report is structurally required to have. A hidden chart does not remove the
  * figures it plotted; a hidden scoring SECTION does not re-score anything.
  */
+
+import {
+  DEFAULT_REPORT_AUDIENCE,
+  readReportAudience,
+  type ReportAudience,
+} from '@/lib/reports/investment/audienceContent.pure';
+
+export type { ReportAudience };
 
 export interface InvestmentPresentationOptions {
   /** Content: append source notes and supporting references. */
@@ -38,6 +54,8 @@ export interface InvestmentPresentationOptions {
   includeHeroImages: boolean;
   /** Presentation: draw inline series alongside the financial figures. */
   includeSparklines: boolean;
+  /** Who the document is for — see `audienceContent.pure.ts`. */
+  audience: ReportAudience;
 }
 
 /**
@@ -52,12 +70,15 @@ export const DEFAULT_INVESTMENT_PRESENTATION_OPTIONS: InvestmentPresentationOpti
   includeCharts: true,
   includeHeroImages: false,
   includeSparklines: true,
+  audience: DEFAULT_REPORT_AUDIENCE,
 };
 
 export function resolvePresentationOptions(
   partial?: Partial<InvestmentPresentationOptions> | null,
 ): InvestmentPresentationOptions {
-  return { ...DEFAULT_INVESTMENT_PRESENTATION_OPTIONS, ...(partial ?? {}) };
+  const merged = { ...DEFAULT_INVESTMENT_PRESENTATION_OPTIONS, ...(partial ?? {}) };
+  // An audience nobody recognises is the investor's, never a fourth reading.
+  return { ...merged, audience: readReportAudience(merged.audience) };
 }
 
 /**

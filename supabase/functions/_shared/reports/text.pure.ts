@@ -85,3 +85,18 @@ export function repairFloatArtefacts(value: string): string {
     return String(tidied).length < whole.length ? String(tidied) : whole;
   });
 }
+
+/**
+ * Close the join artefacts in a sentence an engine composed, and nothing else.
+ *
+ * A scoring engine's evidence is several measure sentences joined with `. `,
+ * and some already end in a full stop — so a stored row reads "…the five-year
+ * rate of 6.2% p.a.. Twelve-month movement…". Purely presentational: no figure,
+ * word or clause is altered, and an ellipsis is left alone. One copy, because
+ * the Compass's grade table and the derived documents' score list both print
+ * the same engine sentences and a second copy of a rule is how the two come to
+ * read differently.
+ */
+export function closeDoubledStops(text: string): string {
+  return String(text ?? '').replace(/([^.])\.\.(?!\.)/g, '$1.');
+}

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback, useRef, useMemo } from 'react';
+import { useState, useEffect, useCallback, useRef, useMemo, type ReactNode } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { ScrollArea } from '@/components/ui/scroll-area';
@@ -133,6 +133,8 @@ interface PreGenerationOverridesProps {
   onBuildPriceChange?: (value: string) => void;
   /** Hide the in-panel build type selector when the host page already owns it. */
   hideBuildTypeSelector?: boolean;
+  /** Host action (e.g. Generate Report) rendered inside the sticky step footer on every step. */
+  action?: ReactNode;
 }
 
 export function PreGenerationOverrides({ 
@@ -168,7 +170,8 @@ export function PreGenerationOverrides({
   onBuildSizeChange,
   onLandPriceChange,
   onBuildPriceChange,
-  hideBuildTypeSelector = false
+  hideBuildTypeSelector = false,
+  action
 }: PreGenerationOverridesProps) {
   const { toast } = useToast();
   const isMobile = useIsMobile();
@@ -920,7 +923,7 @@ export function PreGenerationOverrides({
                 setFloorSpaceRatio={setFloorSpaceRatio}
                 disabled={disabled}
               />
-              <OverrideStepFooter current="property" onNavigate={goToStep} />
+              <OverrideStepFooter current="property" onNavigate={goToStep} action={action} />
             </TabsContent>
 
             <TabsContent value="financials" className="reports-overrides-tab-content mt-0">
@@ -966,7 +969,7 @@ export function PreGenerationOverrides({
                 setOffsetBalance={setOffsetBalance}
                 localityGrowthEstimate={localityGrowthEstimate}
               />
-              <OverrideStepFooter current="financials" onNavigate={goToStep} />
+              <OverrideStepFooter current="financials" onNavigate={goToStep} action={action} />
             </TabsContent>
 
             <TabsContent value="income" className="reports-overrides-tab-content mt-0">
@@ -1005,7 +1008,7 @@ export function PreGenerationOverrides({
                 purchasePrice={parseFloat(purchasePrice) || undefined}
                 landPrice={parseFloat(landPrice) || undefined}
               />
-              <OverrideStepFooter current="income" onNavigate={goToStep} />
+              <OverrideStepFooter current="income" onNavigate={goToStep} action={action} />
             </TabsContent>
 
             <TabsContent value="advanced" className="reports-overrides-tab-content mt-0">
@@ -1065,7 +1068,7 @@ export function PreGenerationOverrides({
                 derivedCpiHint={derivedCpiHint}
                 capitalGrowthValue={capitalGrowth}
               />
-              <OverrideStepFooter current="advanced" onNavigate={goToStep} />
+              <OverrideStepFooter current="advanced" onNavigate={goToStep} action={action} />
             </TabsContent>
           </ScrollArea>
         </Tabs>

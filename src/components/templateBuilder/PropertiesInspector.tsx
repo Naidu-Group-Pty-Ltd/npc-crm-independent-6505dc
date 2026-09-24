@@ -39,6 +39,7 @@ import {
 } from '@/lib/reportTemplate/bindingValidation';
 import { BLOCK_DEFS, type BlockField } from '@/lib/reportTemplate/blocks';
 import { secureStorageUpload } from '@/hooks/useSecureStorage';
+import { SUPABASE_URL } from '@/integrations/supabase/env';
 import { templateEditorActions, useActivePage, useEditorTemplate, useSelectedOverlay, useTemplateEditorStore } from '@/stores/templateEditorStore';
 import { BlockStylePanel, BlockVisibilityPanel, BlockRepeatPanel, BlockAlignmentPanel, BlockInteractionsPanel } from './BlockStylePanels';
 import { TypographyPanel, FontLibraryPopover } from './TypographyPanel';
@@ -1353,7 +1354,6 @@ function ImageUploadField({
     try { return localStorage.getItem('tb.autoMatchAspect') === '1'; } catch { return false; }
   });
   const inputRef = useRef<HTMLInputElement | null>(null);
-  const supabaseUrl = (import.meta as any).env?.VITE_SUPABASE_URL ?? '';
 
   const toggleAutoMatch = (next: boolean) => {
     setAutoMatch(next);
@@ -1443,7 +1443,13 @@ function ImageUploadField({
         toast.error(`Upload failed: ${result.error ?? 'unknown error'}`);
         return;
       }
-      const publicUrl = `${supabaseUrl}/storage/v1/object/public/report-templates/${result.path ?? path}`;
+      // The project the upload just went to: the client's own, as `env.ts`
+      // resolved it. This used to read `VITE_SUPABASE_URL` raw with an ''
+      // fallback, so a build that never set the variable wrote an address on
+      // the app's own origin into the template, and a half-configured one
+      // named a project the client was not talking to. See
+      // `oneResolverForTheProjectUrl.spec.ts`.
+      const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/report-templates/${result.path ?? path}`;
 
       // Optionally compute fresh aspect ratio and apply it together with src.
       let nextPatch: Partial<ImageOverlay> = { src: publicUrl } as Partial<ImageOverlay>;

@@ -645,6 +645,13 @@ export interface MarkdownTableMeta {
   rowLines: number[];
   /** Head + frame charge the row charges sit on. */
   headLines: number;
+  /**
+   * What the geometry model charged, kept so a chunk cut from this table can
+   * be charged as the table the engine will lay out: a chunk is set from its
+   * own rows, so its columns — and its rows' heights — are not the whole
+   * table's (`tableCharge`). Absent under the two constant models.
+   */
+  charge?: { geometry: NarrativeGeometry; cells: string[][]; head: string[]; caption?: string };
 }
 
 /** A list's items, kept so a list taller than a page can be split by item. */
@@ -1893,19 +1900,28 @@ export function renderMarkdown(source: string, options: MarkdownOptions = {}): M
     // (`narrativeGeometry.pure.ts`); the two constant models keep theirs.
     // The table model reads each cell's words (its longest word sets the
     // column's floor), so it is handed the printed text rather than a count.
-    const geometryTable = geometry ? tableCharge(geometry, cells.map((r) => r.slice(0, width).map(printedText)), width) : null;
+    // The head is charged too: a column narrow enough to wrap its reason
+    // wraps its label, and a two-line head is a line the page must hold.
+    const printedCells = cells.map((r) => r.slice(0, width).map(printedText));
+    const printedHead = cols.map((c) => printedText(c.label));
+    const captionText = wantsCaption ? headlessCaption ?? '' : '';
+    const geometryTable = geometry ? tableCharge(geometry, printedCells, width, printedHead, captionText) : null;
     const rowLines = geometryTable
       ? geometryTable.rowLines
       : rowCharCounts.map((totalChars) => (measured
         ? Math.max(1.35, totalChars / cpl + 0.35 + Math.max(0, width - 1) * 0.08)
         : 1));
-    const headLines = geometryTable ? geometryTable.headLines : 3;
+    // The "Columns not shown" sidenote rides on the first chunk and is charged
+    // there, as the sidenote it is.
+    const noteLines = geometry && note ? sidenoteCharge(geometry, [droppedCols.map((h) => stripMarkers(h).trim()).filter(Boolean).join(', ').length]) : 0;
+    const headLines = geometryTable ? geometryTable.headLines + noteLines : 3;
     const bodyCharge = measured ? rowLines.reduce((a, b) => a + b, 0) : rows.length;
     const meta: MarkdownTableMeta = {
       cols, rows, signedKeys: cols.filter((c) => c.align === 'right').map((c) => c.key),
       caption: wantsCaption ? headlessCaption : undefined,
       note: note || undefined,
       rowLines, headLines,
+      ...(geometry ? { charge: { geometry, cells: printedCells, head: printedHead, caption: captionText } } : {}),
     };
     if (wide && landscape) {
       notices.tablesLandscaped++;
@@ -2165,25 +2181,40 @@ export function splitTableBlock(
   // A two-row table splits only when its rows are tall enough to stand alone.
   if (t.rows.length === 2 && !(tall(0) && tall(1))) return [block];
 
+  // Under the geometry model a chunk is charged as the table it becomes: the
+  // engine lays each chunk out from its own rows (`MarkdownTableMeta.charge`).
+  const own = t.charge;
+  // The whole table's head carries what only the first chunk draws (the
+  // caption and the dropped-columns note), so a later chunk under the
+  // constant models pays for its head alone.
+  const chunkCharge = (from: number, to: number): { rowLines: number[]; headLines: number; total: number } => {
+    if (!own) {
+      const rowLines = t.rowLines.slice(from, to);
+      return { rowLines, headLines: t.headLines, total: t.headLines + rowLines.reduce((a, b) => a + b, 0) };
+    }
+    const first = from === 0;
+    const charged = tableCharge(own.geometry, own.cells.slice(from, to), t.cols.length, own.head, first ? own.caption ?? '' : '');
+    if (!first || !t.note) return charged;
+    const noteLines = t.headLines - tableCharge(own.geometry, own.cells, t.cols.length, own.head, own.caption ?? '').headLines;
+    return { ...charged, headLines: charged.headLines + noteLines, total: charged.total + noteLines };
+  };
+
   const out: MarkdownBlock[] = [];
   let index = 0;
   while (index < t.rows.length) {
     const first = out.length === 0;
     const budget = Math.max(t.headLines + 2, (first ? firstBudget : contBudget));
-    let charge = t.headLines;
     let take = 0;
     // The chunk's first row decides how many it must hold: a tall row stands alone.
     const minRows = tall(index) ? 1 : 2;
     while (index + take < t.rows.length) {
-      const rowCost = t.rowLines[index + take] ?? 1;
-      if (take >= minRows && charge + rowCost > budget) break;
-      charge += rowCost;
+      if (take >= minRows && chunkCharge(index, index + take + 1).total > budget) break;
       take++;
     }
     // Never strand a single short row in the final chunk: pull one back.
-    if (index + take === t.rows.length - 1 && take > 2 && !tall(t.rows.length - 1)) { take--; charge -= t.rowLines[index + take] ?? 1; }
+    if (index + take === t.rows.length - 1 && take > 2 && !tall(t.rows.length - 1)) take--;
+    const charged = chunkCharge(index, index + take);
     const rows = t.rows.slice(index, index + take);
-    const rowLines = t.rowLines.slice(index, index + take);
     const html = renderDataTable(t.cols, rows, {
       signedKeys: t.signedKeys,
       caption: first ? t.caption : undefined,
@@ -2191,8 +2222,14 @@ export function splitTableBlock(
     out.push({
       kind: 'table',
       html,
-      lines: Math.max(1, Math.round(charge * 2) / 2),
-      table: { ...t, rows, rowLines, caption: first ? t.caption : undefined, note: first ? t.note : undefined },
+      // A measured chunk carries its charge as it is; the constant models keep
+      // the half-line rounding their packs were tuned against.
+      lines: own ? Math.max(1, charged.total) : Math.max(1, Math.round(charged.total * 2) / 2),
+      table: {
+        ...t, rows, rowLines: charged.rowLines, headLines: charged.headLines,
+        caption: first ? t.caption : undefined, note: first ? t.note : undefined,
+        ...(own ? { charge: { ...own, cells: own.cells.slice(index, index + take), caption: first ? own.caption : undefined } } : {}),
+      },
     });
     index += take;
   }

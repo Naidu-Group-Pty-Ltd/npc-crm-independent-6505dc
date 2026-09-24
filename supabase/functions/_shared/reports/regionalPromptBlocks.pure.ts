@@ -23,6 +23,10 @@ import {
   forwardDemandCoverageNote,
   type ForwardDemandAvailability,
 } from './market/openData/forwardDemand.pure.ts';
+import {
+  forwardDemandStatement,
+  type ProjectionRegisterRead,
+} from './market/openData/projectionRegister.pure.ts';
 
 interface Numericish { [key: string]: unknown }
 
@@ -41,12 +45,20 @@ export interface RegionalPromptInput {
    */
   state?: string | null;
   /**
-   * What this deployment holds by way of a PROJECTION. Defaults to
-   * `not_loaded`, which is the truth on every deployment today and stays the
-   * truth until a register lands — a default of anything else would announce
-   * a reading nobody has.
+   * What this deployment holds by way of a PROJECTION, where a caller states
+   * it without reading the register. Defaults to `not_read`: `not_loaded` was
+   * the default while no register existed and was true everywhere, and it
+   * stops being true for a caller that simply never asked the moment one
+   * jurisdiction loads — the regeneration path is such a caller.
    */
   forwardDemand?: ForwardDemandAvailability | null;
+  /**
+   * What the register read returned for this property (`readProjectionRegister`).
+   * A reading prints the publisher's own table, provenance and rules; an
+   * absence prints its own sentence. Outranks `forwardDemand`, because it is
+   * what was actually read.
+   */
+  forwardDemandProjection?: ProjectionRegisterRead | null;
 }
 
 function growthRow(label: string, w: Numericish | null | undefined, source: string): string | null {
@@ -110,10 +122,13 @@ export function populationTrendBlock(input: RegionalPromptInput): string {
  * first is true.
  */
 function forwardDemandInstruction(input: RegionalPromptInput): string[] {
-  const note = forwardDemandCoverageNote(
-    input.forwardDemand ?? { kind: 'not_loaded' },
-    input.state ?? null,
-  );
+  const read = input.forwardDemandProjection ?? null;
+  // A held projection is the publisher's own table, which carries its own
+  // provenance and the rules that bound what may be said about it.
+  if (read && read.kind === 'reading') return [forwardDemandStatement(read, input.state ?? null)];
+  const note = read
+    ? forwardDemandStatement(read, input.state ?? null)
+    : forwardDemandCoverageNote(input.forwardDemand ?? { kind: 'not_read' }, input.state ?? null);
   return [
     `**Forward demand — what this report holds:**\n\n${note}`,
     'Where the analysis touches what the population is expected to do, use the statement above — '
@@ -124,8 +139,19 @@ function forwardDemandInstruction(input: RegionalPromptInput): string[] {
   ];
 }
 
+/**
+ * The forward-demand statement alone — the table or the absence, with its
+ * rules — for the pinned context, so the authority for a projected figure
+ * cannot be trimmed away while the demographics section's rule survives.
+ * The same composer the section uses, so the two cannot disagree.
+ */
+export function forwardDemandBlocks(input: RegionalPromptInput): string {
+  return forwardDemandInstruction(input).join('\n\n');
+}
+
 export function regionalTrendBlocks(input: RegionalPromptInput): string {
   const block = populationTrendBlock(input);
+  const projected = input.forwardDemandProjection?.kind === 'reading';
   if (block === '') {
     return [
       'No measured population trend is available for this property’s area. State that plainly in one sentence; ' +
@@ -137,8 +163,11 @@ export function regionalTrendBlocks(input: RegionalPromptInput): string {
   return [
     block,
     'Discuss only the measured figures above, naming the SA2 and the windows. The SA2 may cover more than the suburb — ' +
-    'say "the surrounding area" where they differ. Do NOT state an unemployment rate, a population projection, or any ' +
-    'growth figure not in the table, and do NOT extrapolate the trend beyond the measured windows. ' +
+    'say "the surrounding area" where they differ. Do NOT state an unemployment rate, ' +
+    (projected
+      ? 'a projected figure other than those in the forward-demand table below, '
+      : 'a population projection, ') +
+    'or any growth figure not in the table, and do NOT extrapolate the trend beyond the measured windows. ' +
     'The table above is BACKWARD-looking: it measures what has happened, and nothing in it is a statement about ' +
     'what will happen.',
     ...forwardDemandInstruction(input),
