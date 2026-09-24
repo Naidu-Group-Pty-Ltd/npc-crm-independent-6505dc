@@ -28,7 +28,7 @@
  * inventing one — and lists the measured dimensions as the only scores it may
  * quote, because "no grade" is not "no analysis".
  */
-import { dimensionLabel, dimensionWasScored, publishableGrade } from './scoreSections.pure.ts';
+import { dimensionLabel, dimensionWasScored, evidenceCautionLine, publishableGrade } from './scoreSections.pure.ts';
 
 const isRecord = (v: unknown): v is Record<string, unknown> =>
   typeof v === 'object' && v !== null && !Array.isArray(v);
@@ -75,11 +75,21 @@ export function investmentScorePromptBlock(score: unknown, opts: { hasDocument: 
       : '\n\nNo dimension of the investment score was measured; quote no score of any kind.'}`;
   }
 
+  // Eligibility 5.0.0: the letter is the band of the score, and where the
+  // evidence alone would not carry it the run's own sentence travels with the
+  // grade — so the prose that states the grade states what it rests on, and
+  // cannot present (say) a state-wide growth figure as the suburb's own.
+  const caution = evidenceCautionLine(score);
+  const cautionBlock = caution
+    ? `\n\n**Evidence behind the grade:** ${caution} Wherever the grade or the growth outlook is discussed, `
+      + 'say this plainly, and never present the evidence as more specific to this property than that sentence describes.'
+    : '';
+
   return `**Investment Grade:** ${grade} (${opts.hasDocument ? 'Based on property analysis' : 'Based on suburb fundamentals - requires property-specific assessment'})
 
 **Total Score:** ${total}/100
 
-**Recommendation:** ${recommendation ?? 'As stated by the investment score'}
+**Recommendation:** ${recommendation ?? 'As stated by the investment score'}${cautionBlock}
 
 **Score Breakdown (use these exact values):**
 ${table}`;

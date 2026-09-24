@@ -14,7 +14,7 @@ import type { PdfDesignOptions } from "./premiumPdfDesign";
 
 interface ClientPdfButtonProps extends Pick<
   ProduceInvestmentOptions,
-  'includeSources' | 'includeScoring' | 'includeCharts' | 'includeHeroImages' | 'includeSparklines'
+  'includeSources' | 'includeScoring' | 'includeCharts' | 'includeHeroImages' | 'includeSparklines' | 'audience'
 > {
   reportId: string;
   propertyAddress: string;
@@ -49,12 +49,13 @@ export function PremiumPdfButton({
   includeCharts = true,
   includeHeroImages = false,
   includeSparklines = true,
+  audience = 'investor',
   designOptions,
 }: ClientPdfButtonProps) {
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
 
-  /** All five, every time. A control the caller drops is a control that lies. */
+  /** Every control, every time. A control the caller drops is a control that lies. */
   const options = useCallback((): ProduceInvestmentOptions => ({
     variant,
     includeSources,
@@ -62,9 +63,10 @@ export function PremiumPdfButton({
     includeCharts,
     includeHeroImages,
     includeSparklines,
+    audience,
     designOptions,
   }), [variant, includeSources, includeScoring, includeCharts, includeHeroImages,
-    includeSparklines, designOptions]);
+    includeSparklines, audience, designOptions]);
 
   /**
    * What the evidence records is the renderer that drew THESE bytes.
@@ -83,6 +85,7 @@ export function PremiumPdfButton({
       format: "pdf",
       source: doc.engine,
       templateId: doc.templateId,
+      audience,
       ...(flattened ? { flattened: true } : {}),
       designOptions,
     },

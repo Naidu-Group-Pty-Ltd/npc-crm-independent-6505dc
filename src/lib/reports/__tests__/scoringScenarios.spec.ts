@@ -355,7 +355,9 @@ describe('missing evidence neither punishes nor rewards', () => {
     expect(withWeakDemand.nominalMeasuredScore).toBeGreaterThanOrEqual(without.nominalMeasuredScore);
   });
 
-  it('low-confidence evidence caps the grade and says so', () => {
+  // Eligibility 5.0.0 (owner decision, 24 Sep 2026): low-confidence evidence
+  // no longer lowers the letter — it is stated beside it.
+  it('low-confidence evidence is cautioned, and says so, while the letter stays the score\'s', () => {
     const thin = run({
       evidence: ev({
         growth1Year: pt(19, {
@@ -366,16 +368,20 @@ describe('missing evidence neither punishes nor rewards', () => {
       yieldInputs: { basis: 'purchase', basisAmount: 500_000, weeklyRent: 850 },
       locationInputs: { walkScore: 95, commuteTimeCBD: 12, schoolsNearby: 9 },
     });
-    expect(thin.grade).not.toBe('A+');
-    if (thin.uncappedGrade !== thin.grade) expect(thin.gradeCapReason.length).toBeGreaterThan(0);
+    expect(thin.grade).toBe(thin.uncappedGrade);
+    expect(thin.eligibility?.capped).toBe(false);
+    if (thin.grade === 'A+' || thin.grade === 'A') {
+      expect(thin.gradeCautions.length).toBeGreaterThan(0);
+      expect(thin.gradeCaution).toBeTruthy();
+    }
     expect(full.growth.confidence.score).toBeGreaterThan(thin.growth.confidence.score);
   });
 
-  it('whenever the grade is capped, at least one reason is stated', () => {
+  it('no scenario is capped, and every caution is stated in both vocabularies', () => {
     for (const [name, r] of Object.entries(SCENARIOS)) {
-      if (r.eligibility?.capped) {
-        expect(r.gradeCapReason.length, name).toBeGreaterThan(0);
-      }
+      expect(r.eligibility?.capped ?? false, name).toBe(false);
+      expect(r.grade, name).toBe(r.uncappedGrade);
+      expect(r.gradeCautions.length > 0, name).toBe(r.gradeCaution !== null);
     }
   });
 });

@@ -93,19 +93,19 @@ export function provenanceNotice(p: ScrapeProvenance): ProvenanceNotice | null {
   }
   return {
     tone: 'caution',
-    title: 'This scrape did not say where its figures came from',
+    title: 'This extraction did not say where its figures came from',
     body:
       'Check the address and the price against the listing before generating a report.',
   };
 }
 
 /**
- * The summary line under the Scrape button.
+ * The summary line under the Extract button.
  *
  * `parts` is what was extracted, already formatted. The heading changes with
- * the provenance because "Scraping Successful" over a search-derived answer is
+ * the provenance because "Extraction Successful" over a search-derived answer is
  * the sentence that made this defect invisible.
  */
 export function scrapeSummaryTitle(p: ScrapeProvenance): string {
-  return p.readThePage ? 'Scraped from the listing page' : 'Scraped — check the figures';
+  return p.readThePage ? 'Extracted from the listing page' : 'Extracted — check the figures';
 }

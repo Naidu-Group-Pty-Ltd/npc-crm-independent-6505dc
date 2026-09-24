@@ -130,6 +130,15 @@ import { gradedDetailLine, gradedLine, publishableGrade } from './reports/invest
 import { OVERALL_GRADE_UNAVAILABLE } from './reports/market/scoringInputPolicy.pure.ts';
 import { DOCUMENT_IDENTITY, documentTitleForTier } from './reports/investment/tierIdentity.pure.ts';
 import { contentPolicyFor } from './reports/investment/tierContent.pure.ts';
+import {
+  LETTING_ASSUMPTION_KEYS,
+  LETTING_DETAIL_DIMENSIONS,
+  LETTING_FIGURE_KEYS,
+  audiencePolicyFor,
+  audienceWording,
+  type ReportAudience,
+} from './reports/investment/audienceContent.pure.ts';
+import { frontMatterFlagsFor } from './reports/investment/tierPageSequence.pure.ts';
 
 /** Loose row shape — the caller passes the `investment_reports` row as stored. */
 export interface InvestmentReportRowLike {
@@ -506,6 +515,12 @@ export function projectReportNarrative(
 export interface ProjectionOptions {
   /** The tier of the document being produced, when it is not the row's own. */
   tier?: string | null;
+  /**
+   * Who the document is for (`audienceContent.pure.ts`). Absent is the
+   * investor — every document produced before the audience existed — and
+   * publishes exactly what it always did.
+   */
+  audience?: ReportAudience | string | null;
 }
 
 export function projectInvestmentReport(
@@ -856,6 +871,14 @@ export function projectInvestmentReport(
    */
   const tier = String(options.tier ?? storedTier).trim().toLowerCase();
   const policy = contentPolicyFor(tier);
+  /*
+   * And who it is FOR — the other axis. An owner-occupier's copy publishes
+   * nothing that describes the property as a letting; see
+   * `audienceContent.pure.ts`. Withholding is the whole mechanism, because a
+   * bound value that resolves to nothing is how a tile, a row or a sentence
+   * already drops out of every master.
+   */
+  const audience = audiencePolicyFor(options.audience);
 
   /**
    * Dimensions whose `details` sentence states financial modelling.
@@ -965,7 +988,8 @@ export function projectInvestmentReport(
       // measured and it carries weight in the grade, and saying so is not
       // modelling. What goes is the arithmetic behind it, which belongs in
       // the Financial Analysis with the rest.
-      if (policy.financialModelling || !MODELLING_DETAIL_DIMENSIONS.has(key)) {
+      if ((policy.financialModelling || !MODELLING_DETAIL_DIMENSIONS.has(key))
+        && (audience.lettingFigures || !LETTING_DETAIL_DIMENSIONS.includes(key))) {
         put(entry, 'details', humaniseScoreDetail(str(d.details)));
       }
     }
@@ -1027,9 +1051,29 @@ export function projectInvestmentReport(
   // "What the property is, what it costs to hold, and what the assessment
   // concluded" — which promised the financial modelling the Compass does not
   // carry, on the cover, above a page sequence that then drew it.
-  put(report, 'standfirst', policy.standfirst);
-  put(report, 'companionNote', policy.companionNote ?? undefined);
+  const wording = audienceWording(tier, options.audience);
+  put(report, 'standfirst', wording.standfirst);
+  put(report, 'companionNote', wording.companionNote ?? undefined);
+  // Published only where it is not the investor, so every document produced
+  // before the audience existed binds exactly the namespace it always did.
+  // `ownerOccupier` is what a master's conditional reads.
+  if (audience.audience !== 'investor') put(report, 'audience', audience.audience);
+  if (!audience.lettingFigures) put(report, 'ownerOccupier', true);
   put(report, 'drawsFinancialModelling', policy.financialModelling);
+  /*
+   * How the front matter is drawn: one page that flows into the body, or the
+   * page sequence a stored pre-tier report was written for. And what that
+   * page carries beyond the verdict and the figures, read from the SAME rules
+   * that decide the typed pages (`tierPageSequence.pure.ts`), so the summary
+   * cannot carry a section the tier keeps in its prose: the property where
+   * "The property" page would have been kept, the scorecard where "The
+   * assessment" would have been (the Compass alone — every derived tier
+   * places the score breakdown in its markdown).
+   */
+  const frontMatter = frontMatterFlagsFor(tier);
+  put(report, 'continuousFrontMatter', frontMatter.continuousFrontMatter);
+  put(report, 'drawsPropertyIdentity', frontMatter.drawsPropertyIdentity);
+  put(report, 'frontScorecard', frontMatter.frontScorecard);
 
   /*
    * What the tier may publish.
@@ -1068,11 +1112,42 @@ export function projectInvestmentReport(
     );
   // The modelled assumptions go with the modelling: a capital-growth rate and
   // an interest rate on a location report are an analysis nobody asked for.
-  const assumptionsPublished = policy.financialModelling ? assumptionsOut : {};
+  const assumptionsModelled = policy.financialModelling ? assumptionsOut : {};
+
+  /*
+   * An owner-occupier's copy: what describes a letting leaves, whole.
+   *
+   * Nothing here is recomputed. The rent, what it returns and what letting it
+   * costs are withheld; the price, the loan, the repayment, the rates and the
+   * maintenance are printed as the record holds them. One line is narrowed
+   * rather than withheld — "Land tax and strata" — because a home you live in
+   * is exempt from land tax and still pays its strata levy, so the line is the
+   * record's own strata figure and nothing else. Its label stays true: the
+   * land tax on a home is nil.
+   */
+  let financialsPublished: Record<string, unknown> = financialsOut;
+  let assumptionsPublished: Record<string, unknown> = assumptionsModelled;
+  if (!audience.lettingFigures) {
+    const letting = new Set<string>(LETTING_FIGURE_KEYS);
+    financialsPublished = Object.fromEntries(Object.entries(financialsOut).filter(([k]) => !letting.has(k)));
+    if ('annualOtherCosts' in financialsPublished) {
+      const strata = num(costs.strataFees);
+      delete financialsPublished.annualOtherCosts;
+      delete financialsPublished.weeklyOtherCosts;
+      if (strata !== undefined && strata !== 0) {
+        put(financialsPublished, 'annualOtherCosts', strata);
+        put(financialsPublished, 'weeklyOtherCosts', weekly(strata));
+      }
+    }
+    const lettingAssumptions = new Set<string>(LETTING_ASSUMPTION_KEYS);
+    assumptionsPublished = Object.fromEntries(
+      Object.entries(assumptionsModelled).filter(([k]) => !lettingAssumptions.has(k)),
+    );
+  }
 
   return {
     property,
-    financials: financialsOut,
+    financials: financialsPublished,
     assumptions: assumptionsPublished,
     recommendation,
     summary,

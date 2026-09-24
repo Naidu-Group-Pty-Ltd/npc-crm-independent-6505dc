@@ -117,7 +117,10 @@ headings after them — anything outside this structure is discarded.
 REPORT STRUCTURE (~5 PAGES):
 
 ## Property Summary
-- Address, Property Type, Bedrooms/Bathrooms
+- Address, Property Type, Bedrooms/Bathrooms — each only where the record
+  states it. A line whose value is not held is LEFT OUT: never fill it with
+  an instruction such as "confirm from the contract", which is advice to
+  us, not a fact about the property.
 - The purchase price the analysis is modelled on, labelled by what it IS:
   "Modelled purchase price" (and "Asking price" where the report says the
   figure is the listing's). NEVER label it "Estimated Value" or "Valuation" —
@@ -137,9 +140,12 @@ REPORT STRUCTURE (~5 PAGES):
 ### Scenario assumptions (not market statistics)
 | Assumption | Value |
 - The recorded modelling inputs, named as assumptions: "Capital growth
-  scenario assumption", "Model vacancy allowance (N weeks, X%)", "Interest
-  rate assumed for modelling", "CPI assumption". Never "forecast", never
-  "market rate". Omit the sub-section if the record states none.
+  scenario assumption", "Model vacancy allowance", "Interest rate assumed
+  for modelling", "CPI assumption". The vacancy allowance's VALUE is the
+  weeks vacant a year and the share of the year that is, both exactly as
+  the record states them — the label carries no figures of its own. Never
+  "forecast", never "market rate". Omit a row the record does not state,
+  and the sub-section if it states none.
 
 DO NOT WRITE: Investment Score, Score Breakdown, or Financial Snapshot. Those
 three sections are composed from the stored record after you finish and are
@@ -581,6 +587,7 @@ IMPORTANT:
 - Include a metric's table row ONLY when its value is known from those sources; NEVER write "N/A", "TBD" or any placeholder — omit the row entirely
 - The reader is handed exactly ONE document: this one. Never mention the source material, "the original report", "the parent report", "the full report" or what it did or did not contain. "Vacancy rate was not provided in the original report" describes our pipeline, not their property, and names a document they cannot open.
 - Where the source material and the RECORDED FIGURES are both silent on something, OMIT the line, the bullet or the row. Do not write a sentence reporting the gap, and do not put the gap in a heading with nothing under it — a reader who is not told a number has lost nothing.
+- A price below (or above) the market's median is NOT an opportunity, a risk, value, a discount, a bargain or an entry point, and it never appears under Top 3 Opportunities or Top 3 Risks. A median is the middle of every dwelling that sold across the whole area — every size, age, condition and position — so it says nothing about what THIS dwelling is worth. Where the comparison is worth stating, state it once as context, in this form: "The price this analysis is modelled on is $X; the market's median is $Y (publisher, period)." An opportunity is something the record evidences about this property or its setting: measured price growth with its period and source, a use the land-use table permits, access a transport or amenity reading measured.
 - Keep all table data intact
 - Follow the section structure precisely
 - Maintain professional formatting throughout`;

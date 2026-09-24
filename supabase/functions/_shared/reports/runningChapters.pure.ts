@@ -118,7 +118,19 @@ export function runningChapters(
     // The chapter in force when this page OPENS is what the running head must
     // say: a page that ends with a new heading belongs to the chapter it spent
     // its body in, not to the one starting in its last two lines.
-    const opening = current;
+    //
+    // And a page whose FIRST block is a chapter heading opens in that chapter
+    // — "at or before its first block", as the header says. Reading only what
+    // was carried in headed such a page with the chapter that had just ended:
+    // the 23 Sep 2026 Compass for 97 Poole Road opened page 28 on "Monitoring
+    // & Review Plan" under a running head reading "Due Diligence Checklist",
+    // and its first body page on "Executive Verdict" under the LAST chapter on
+    // the page, because nothing had been carried in yet.
+    const first = page[0];
+    const opensOn = first && first.kind === 'heading' && levelOf(first) <= CHAPTER_LEVEL_MAX
+      ? headingText(first)
+      : '';
+    const opening = opensOn || current;
     for (const block of page) {
       if (block.kind !== 'heading') continue;
       if (levelOf(block) > CHAPTER_LEVEL_MAX) continue;

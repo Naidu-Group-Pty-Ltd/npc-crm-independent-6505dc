@@ -4,7 +4,7 @@ import { verifyAuth, createCorsHeaders, createUnauthorizedResponse } from '../_s
 import { enforceCsrf, csrfDenied } from '../_shared/csrfGuard.ts';
 import { logApiUsage } from '../_shared/logApiUsage.ts';
 import { getBrandConfig } from '../_shared/brand-config.ts';
-import { publishableGrade } from '../_shared/reports/investment/scoreSections.pure.ts';
+import { evidenceCautionLine, publishableGrade } from '../_shared/reports/investment/scoreSections.pure.ts';
 import { withReportMetering, resolveUserId, buildIdempotencyKey } from '../_shared/reportMetering.ts';
 import { insertTargetedNotification } from '../_shared/notify.ts';
 import { compassSections, financialSections, COMPASS_PAGE_BAND, EDITORIAL_LABELS, type CompassSectionDefinition as CanonicalSectionDefinition } from '../_shared/compassSectionRegistry.ts';
@@ -41,7 +41,24 @@ import {
   assessEnrichmentReuse,
   nextAcquisitionAttempt,
   recordAcquisitionAttempt,
+  standsInAfterFailedRefetch,
 } from '../_shared/reports/location/locationEnrichmentReuse.pure.ts';
+import {
+  LOCATION_CALL_MAX_ATTEMPTS,
+  describeLocationReading,
+  mayRetryLocationNow,
+  readLocationAnswer,
+  readLocationThrow,
+  type LocationCallReading,
+} from '../_shared/reports/location/locationEnrichmentCall.pure.ts';
+import {
+  decideWrittenBasis,
+  isLocated,
+  withWrittenBasis,
+  withoutWrittenBasis,
+  writtenBasisMarkerOf,
+  type WrittenBasisDecision,
+} from '../_shared/reports/investment/evidenceBasis.pure.ts';
 import { AcquisitionRecorder } from '../_shared/reports/acquisitionLedger.pure.ts';
 import {
   classifyProgress,
@@ -85,8 +102,9 @@ import {
   governedCategoryDirective,
   governedFaultToFlag,
 } from '../_shared/reports/contract/governedNarrativeAuthority.pure.ts';
-import { regionalTrendBlocks } from '../_shared/reports/regionalPromptBlocks.pure.ts';
+import { forwardDemandBlocks, regionalTrendBlocks } from '../_shared/reports/regionalPromptBlocks.pure.ts';
 import { trustedStateForForwardDemand } from '../_shared/reports/market/openData/forwardDemand.pure.ts';
+import type { ProjectionState } from '../_shared/reports/market/openData/stateProjectionPublishers.pure.ts';
 import { runQAValidation } from '../_shared/compassQAValidator.ts';
 import { correctUnsupportedEvidenceClaims } from '../_shared/reports/investment/evidenceClaims.pure.ts';
 import { startRun as traceStartRun, recordChunk as traceRecordChunk, finishRun as traceFinishRun, packetKeysAttached as tracePacketKeys } from '../_shared/generation-trace.ts';
@@ -125,6 +143,8 @@ import { ENRICHMENT_STAMP } from '../_shared/reports/location/locationEnrichment
 import { transportCountReading } from '../_shared/transportReading.pure.ts';
 import { readSalesRegister } from '../_shared/reports/market/salesRegisterRead.ts';
 import { readApprovalsRegister } from '../_shared/reports/market/approvalsRegisterRead.ts';
+import { readProjectionRegister } from '../_shared/reports/market/projectionRegisterRead.ts';
+import { planningCouncilName } from '../_shared/reports/market/openData/projectionRegister.pure.ts';
 import type { SalesRegisterState } from '../_shared/reports/market/openData/salesRegister.pure.ts';
 import { describeLandArea } from '../_shared/reports/investment/landAreaScope.pure.ts';
 import { applyDisplayOverrides, buildAnnualCostOverrides, normalisePropertyType, toFiniteNumber } from '../_shared/reports/investment/overrides.pure.ts';
@@ -1646,30 +1666,21 @@ Why this property earns a top-quartile rating.
 {{pictograph: 3/10 | label=Renter share | sub=3 in 10 dwellings are tenanted | icon=person | cols=10}}
 \`\`\`
 
-15. AT-A-GLANCE STRIP — 3-4 cell editorial strip that opens a chapter. Each cell:
-    "<symbol> <text>". Symbols: ✓ strength, ⚠ watch, ▲ trend up, ▼ trend down, ◆ metric, ★ verdict.
-    Use ONCE at the very top of each chapter (right after the H2) to compress the
-    "TL;DR" so the reader doesn't have to wade through prose to find the verdict.
-    Format: \`{{glance: ✓ Strong fundamentals | ⚠ Vacancy uptick | ◆ Yield 4.8% | ★ Buy with caveats}}\`
-\`\`\`
-{{glance: ✓ Top-quartile growth | ⚠ Body-corporate fees rising | ◆ Median $1.18M | ★ Hold 7-10y}}
-\`\`\`
-
-16. INLINE SPARKLINE — tiny chart that flows next to prose. Use inside a sentence
+15. INLINE SPARKLINE — tiny chart that flows next to prose. Use inside a sentence
     to show a trend ("yields ~~[4.2,4.4,4.6,4.5,4.8]~~ now 4.8%"). 5-12 numbers ideal.
     Format: \`~~[v1,v2,v3,…]~~\`
 \`\`\`
 Median values have climbed steadily ~~[820,860,910,980,1050,1180]~~ over six years.
 \`\`\`
 
-17. DONUT / RING — composition chart for mixes (tenure, demographics, capital
+16. DONUT / RING — composition chart for mixes (tenure, demographics, capital
     allocation, expense shares). Center number is the headline slice.
     Format: \`{{donut: SliceA value, SliceB value, … | title=… | center=58% | centerSub=Owner-occupied}}\`
 \`\`\`
 {{donut: Owner-occupied 58, Renter 32, Other 10 | title=Tenure mix | center=58% | centerSub=Owner-occupied}}
 \`\`\`
 
-18. SUBURB TILES — small-multiples grid that reads like a faux-choropleth. Use
+17. SUBURB TILES — small-multiples grid that reads like a faux-choropleth. Use
     for "this suburb + 3-7 adjacent suburbs" comparisons. \`int=0..1\` shades the
     tile (higher = stronger). \`sub\` lives in quotes.
     Format: \`{{tiles: Label value sub="…" int=0.7, Label value sub="…" int=0.5 | title=… | cols=4}}\`
@@ -1677,24 +1688,24 @@ Median values have climbed steadily ~~[820,860,910,980,1050,1180]~~ over six yea
 {{tiles: Hawthorn $1.42M sub="↑ 6.4% YoY" int=0.85, Kew $1.61M sub="↑ 5.1% YoY" int=0.70, Camberwell $1.28M sub="↑ 4.8% YoY" int=0.60, Glen Iris $1.19M sub="↑ 3.2% YoY" int=0.45 | title=Adjacent suburbs · median house | cols=4}}
 \`\`\`
 
-19. MARGIN MICRO-CHART — editorial sidenote with a tiny sparkline. Use to flag
+18. MARGIN MICRO-CHART — editorial sidenote with a tiny sparkline. Use to flag
     a single supporting datum without breaking prose flow. Keep \`note\` to one line.
     Format: \`{{margin: Title | spark=v1,v2,v3,… | note=One-line context | label=Context}}\`
 \`\`\`
 {{margin: Median rent, last six quarters | spark=v1,v2,v3,v4,v5,v6 | note=One line of context, from the figures in this report. | label=Rental watch}}
 \`\`\`
 
-20. TIMELINE RIBBON — infrastructure / delivery pipeline. Use instead of a list
+19. TIMELINE RIBBON — infrastructure / delivery pipeline. Use instead of a list
     of projects and timing windows.
     Format: \`{{timeline: Existing "Station access", 0-2y "Road upgrade", 3-5y "Hospital stage", 5y+ "Town centre renewal" | title=Infrastructure pipeline}}\`
 
-21. BIG-NUMBER KPI STRIPS — when a sentence says "median grew from X to Y" or
+20. BIG-NUMBER KPI STRIPS — when a sentence says "median grew from X to Y" or
     compares 3 headline metrics, use stat blocks / gauges / bars rather than prose.
     Use \`::: stat\` for a single in-flow number, \`{{bars}}\` for X vs suburb vs metro,
     and \`~~[…]~~\` beside any trend sentence.
 
 VISUAL-FIRST RULES (CRITICAL):
-- Every chapter MUST open with a \`{{glance: …}}\` strip immediately after the H2.
+- Every chapter OPENS WITH ITS FINDING: the first sentence after the H2 states the chapter's conclusion for this purchase in plain words, and the evidence follows it. No summary strip, no key of tagged phrases, no "At a glance" list and no \`{{glance: …}}\` directive — the document's one summary is the executive summary at the front, drawn from the record.
 - **At most 2 visualisations per chapter**, drawn from the full library
   (gauge / bars / quadrant / pictograph / donut / tiles / heatmap / wheel /
   waterfall / margin / timeline / stat / inline sparkline), each showing data
@@ -1849,7 +1860,14 @@ async function generateReportSection(
     investmentScoreContext = `
 **INVESTMENT SCORE DATA (USE THESE EXACT VALUES):**
 ${publishedGrade
-    ? `- Total Investment Score: ${score.totalScore}/100\n- Investment Grade: ${publishedGrade}\n- Recommendation: ${score.recommendation}`
+    ? `- Total Investment Score: ${score.totalScore}/100\n- Investment Grade: ${publishedGrade}\n- Recommendation: ${score.recommendation}${
+      // Eligibility 5.0.0: the letter follows the score; where the evidence
+      // alone would not carry it, the run's own sentence travels with it so
+      // the prose cannot present, say, a state-wide growth figure as the
+      // suburb's own.
+      evidenceCautionLine(score)
+        ? `\n- Evidence behind the grade: ${evidenceCautionLine(score)} Wherever the grade or the growth outlook is discussed, say this plainly, and never present the evidence as more specific to this property than that sentence describes.`
+        : ''}`
     : '- No overall grade or total score is issued for this property. Do NOT state a grade, a score out of 100, or that a grade is unavailable — write the section without one.'}
 ${dimensionLines.join('\n')}
 ${score.strengths?.length ? `- Strengths: ${score.strengths.join(', ')}` : ''}
@@ -1878,7 +1896,7 @@ ${previousSections.substring(Math.max(0, previousSections.length - 6000))}
  2. Follow the exact markdown formatting with ## for main section headings and ### for subsections
 3. Use tables ONLY when a visual shortcode cannot express the data. Prefer \`{{bars}}\`, \`{{heatmap}}\`, \`{{donut}}\`, \`{{tiles}}\`, \`{{timeline}}\`, \`{{gauge}}\`, \`{{pictograph}}\`, and inline \`~~[…]~~\` sparklines over tables or long paragraphs.
 4. NEVER follow a visual, table or data point with a paragraph explaining it. State the finding in the sentence that INTRODUCES the data, then show the data, then move on. Do not write ${EDITORIAL_LABELS.map((l) => `"${l}"`).join(', ')} — not as a heading, not as a bold lead-in, not as a bare line. There is no permitted number of these.
-5. Lead each section with a \`{{glance: …}}\` strip carrying the section's own findings — not a description of what the section will cover.
+5. Open each section with ONE plain sentence that states its finding for this purchase — the conclusion first, then the evidence for it. Not a description of what the section will cover, and never a summary list, a tagged key, an "At a glance" block or a \`{{glance: …}}\` directive.
 6. Be thorough and accurate, but compress prose aggressively; every paragraph must add a fact that is not already on the page.
 7. Start immediately with the first section heading - no preamble
 8. Use contextual comparisons (e.g., "30% above the state average") to make numbers meaningful
@@ -2511,6 +2529,22 @@ const __investmentReportHandler = async (req: Request): Promise<Response> => {
      */
     let existingTotalSections: number | null = null;
 
+    /**
+     * What this invocation does with the score it computes, against the score
+     * the sections already on the row were written from. Decided once, after
+     * acquisition, and read at the early write, the section loop's reset and
+     * every response. See `evidenceBasis.pure.ts`.
+     */
+    let writtenBasisDecision: WrittenBasisDecision | null = null;
+    /**
+     * True when this invocation restarted the document from its first section
+     * on a better basis. Every response carries it, because a caller counting
+     * sections itself (`useChunkedRegeneration`) would otherwise read the
+     * server's lower counter as no progress, retry, and mark a healthy report
+     * failed.
+     */
+    let sectionsRestartedThisRun = false;
+
     // Get pre-generation overrides from request (passed from frontend)
     const frontendManualOverrides = propertyDetails?.manualOverrides || null;
     if (frontendManualOverrides && Object.keys(frontendManualOverrides).length > 0) {
@@ -2645,8 +2679,13 @@ const __investmentReportHandler = async (req: Request): Promise<Response> => {
               completedSectionIndices.push(idx);
             }
             
-            console.log(`   Completed sections: ${completedSectionIndices.length}/${REPORT_SECTIONS.length}`);
-            console.log(`   Will resume from section: ${lastCompletedSection} (${REPORT_SECTIONS[lastCompletedSection]?.name || 'END'})`);
+            // Counted against the list this report is written under. It printed
+            // the legacy twelve-section list's length and names — "9/12 … (Loan
+            // & Sensitivity)" on a sixteen-section Compass — which is a log
+            // line an operator reads while diagnosing exactly this code.
+            const plannedTotal = registryTotal || storedTotal || REPORT_SECTIONS.length;
+            console.log(`   Completed sections: ${completedSectionIndices.length}/${plannedTotal}`);
+            console.log(`   Will resume from section ${lastCompletedSection + 1} of ${plannedTotal}`);
           } else {
             // Fresh regeneration: either last_completed_section was reset to 0,
             // or the section list changed underneath a partially generated
@@ -2925,6 +2964,14 @@ const __investmentReportHandler = async (req: Request): Promise<Response> => {
        * worth having before the evidence exists rather than after.
        */
       buildingApprovals?: any;
+      /**
+       * The forward-demand register's answer for this property
+       * (`readProjectionRegister`): the jurisdiction's own population
+       * projection for the area, or which absence it was. Read on every
+       * invocation, like the approvals beside it — our own table, so a resume
+       * sees whatever the last ingest wrote.
+       */
+      forwardDemandProjection?: any;
     }
     
     let enhancedData: EnhancedData = {};
@@ -3572,27 +3619,48 @@ const __investmentReportHandler = async (req: Request): Promise<Response> => {
           'location-intelligence-service',
         );
       } else {
-      // Fetch location intelligence data
-      try {
-        console.log(`Fetching location intelligence for: ${formattedInput} (${reuse.verdict})`);
-        const locationResponse = await acquisitionFetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/location-intelligence-service`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            'Authorization': `Bearer ${INTERNAL_EDGE_SECRET}`,
-            ...(supabaseAnonKey ? { 'apikey': supabaseAnonKey } : {})
-          },
-          body: JSON.stringify({
-            address: formattedInput,
-            postcode: postcode,
-            state: state
-          })
-        }, 'vendor', 'location-intelligence-service');
-        
-        if (locationResponse.ok) {
-          const locationData = await locationResponse.json();
-          
-          if (locationData.success && locationData.data) {
+      // Fetch location intelligence data — the one call every geography-keyed
+      // reading downstream is keyed on: the boundary resolution, the trusted
+      // postal area, the demographics the gate admits, the planning parcel,
+      // the crime area, the market evidence and the Location dimension.
+      //
+      // It carries the `composite` ceiling rather than a single vendor call's,
+      // and a transient failure is asked once more while the run has room:
+      // on 24 Sep 2026 (60 Lawley Street, Spalding WA) the answer arrived three
+      // seconds after a 12 s ceiling had abandoned it, with 95 s of the run
+      // unspent, and the invocation wrote nine sections about a property it
+      // could not place. See `locationEnrichmentCall.pure.ts`.
+      for (let attempt = 1; attempt <= LOCATION_CALL_MAX_ATTEMPTS; attempt++) {
+        let reading: LocationCallReading;
+        try {
+          console.log(
+            `Fetching location intelligence for: ${formattedInput} (${reuse.verdict})`
+            + (attempt > 1 ? ` — attempt ${attempt}` : ''),
+          );
+          const locationResponse = await acquisitionFetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/location-intelligence-service`, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': `Bearer ${INTERNAL_EDGE_SECRET}`,
+              ...(supabaseAnonKey ? { 'apikey': supabaseAnonKey } : {})
+            },
+            body: JSON.stringify({
+              address: formattedInput,
+              postcode: postcode,
+              state: state
+            })
+          }, 'composite', 'location-intelligence-service');
+
+          // The body is read either way: an error's words are what an operator
+          // needs to tell a geocoder refusal from a boot failure, and an
+          // answer's are the enrichment.
+          const errorText = locationResponse.ok ? '' : await locationResponse.text().catch(() => '');
+          const locationData: any = locationResponse.ok
+            ? await locationResponse.json().catch(() => undefined)
+            : undefined;
+          reading = readLocationAnswer(locationResponse.status, locationData);
+
+          if (reading.kind === 'answered') {
             // RF-7.2B.1B1 — carry the attempt count forward. A partial
             // acquisition is retried a bounded number of times and then
             // accepted, so a persistently failing amenity category cannot
@@ -3609,35 +3677,69 @@ const __investmentReportHandler = async (req: Request): Promise<Response> => {
             };
             console.log('✓ Location intelligence data fetched successfully');
             acquisition.answered('locationIntelligence', 'Retrieved and used', 'location-intelligence-service');
-            
+
             if (locationData.usingMockData) {
               console.warn('⚠️ Using mock location data:', locationData.message);
             }
-          } else {
-            console.warn('⚠️ Location intelligence returned no data');
+          } else if (reading.kind === 'no_match') {
+            // A statement about the address: no provider matches it.
+            console.warn(`⚠️ Location intelligence ${describeLocationReading(reading)}`);
             acquisition.empty(
               'locationIntelligence',
-              'The location service answered and returned nothing for this address',
+              'The location service answered and could place nothing: no provider matches this address',
               'location-intelligence-service',
             );
+          } else {
+            // Everything else is a statement about this invocation, never about
+            // the property — including the service's own `success: false` for a
+            // geocoder that refused or was not attempted, which used to be
+            // filed as "answered and returned nothing".
+            const detail = reading.kind === 'http_error'
+              // The body is bounded because a ledger entry is read by a person,
+              // not parsed.
+              ? `location-intelligence-service answered HTTP ${reading.status}: ${String(errorText).slice(0, 200)}`
+              : `location-intelligence-service ${describeLocationReading(reading)}`;
+            console.error('❌ Location intelligence API error:', detail);
+            acquisition.failed('locationIntelligence', detail, 'location-intelligence-service');
           }
-        } else {
-          const errorText = await locationResponse.text();
-          console.error('❌ Location intelligence API error:', locationResponse.status, errorText);
-          // The body is the provider's own words and is what an operator needs
-          // to tell a geocoder refusal from a boot failure; it is bounded here
-          // because a ledger entry is read by a person, not parsed.
+        } catch (error: any) {
+          reading = readLocationThrow(error);
+          console.error('❌ Location intelligence fetch failed:', error?.message || 'Unknown error');
           acquisition.failed(
             'locationIntelligence',
-            `location-intelligence-service answered HTTP ${locationResponse.status}: ${String(errorText).slice(0, 200)}`,
+            String(error?.message ?? 'The location request threw and reported no message'),
             'location-intelligence-service',
           );
         }
-      } catch (error: any) {
-        console.error('❌ Location intelligence fetch failed:', error?.message || 'Unknown error');
-        acquisition.failed(
+
+        const retryWindowMs = acquisitionWindowMs(acquisitionBudgetFor('composite'));
+        if (!mayRetryLocationNow({ reading, attempt, windowMs: retryWindowMs })) break;
+        console.log(
+          `🔁 Location intelligence ${describeLocationReading(reading)} — asking once more with `
+          + `${Math.round((retryWindowMs ?? 0) / 1000)}s of window: every geography-keyed reading is keyed on it.`,
+        );
+      }
+
+      // A failed re-fetch never discards a sound reading this report already
+      // holds for this property. `incomplete_acquisition` refused the stored
+      // enrichment only in the hope of completing its amenity set; when asking
+      // again fails, the choice is between that partial set and nothing, and
+      // nothing is no coordinate, no geography, no demographics and no planning
+      // for every section this invocation writes. It is still recorded as
+      // partial, and it is not rewritten.
+      if (!enhancedData.locationIntelligence && standsInAfterFailedRefetch(reuse)) {
+        locationEnrichmentReused = true;
+        enhancedData = {
+          ...enhancedData,
+          locationIntelligence: existingEnhancedFields.locationIntelligence,
+        };
+        console.log(
+          '♻️ Location re-fetch failed — keeping the partial enrichment this report already holds for '
+          + 'this property rather than proceeding with none.',
+        );
+        acquisition.answered(
           'locationIntelligence',
-          String(error?.message ?? 'The location request threw and reported no message'),
+          'The re-fetch failed; kept the partial enrichment this report already holds for this property',
           'location-intelligence-service',
         );
       }
@@ -3682,9 +3784,17 @@ const __investmentReportHandler = async (req: Request): Promise<Response> => {
             reportId,
             latitude: Number.isFinite(subjectLat) ? subjectLat : null,
             longitude: Number.isFinite(subjectLng) ? subjectLng : null,
+            // Every invocation of this report resolves the same coordinate. A
+            // row that already places it under this release answers, and a
+            // later boundary-service failure can no longer overwrite it with
+            // `unresolved` and write this invocation's sections as if the
+            // property had never been placed. See `storedRowDescribesPoint`.
+            reuseStored: true,
           });
           geographyResolution = {
-            source: 'pre_generation', status: geoOutcome.status, requeried: false,
+            source: geoOutcome.reused ? 'stored_row' : 'pre_generation',
+            status: geoOutcome.status,
+            requeried: false,
           };
           if (geoOutcome.writeError) {
             // The row could not be persisted. The RESOLUTION is still sound —
@@ -3700,10 +3810,16 @@ const __investmentReportHandler = async (req: Request): Promise<Response> => {
             status: geoOutcome.row.status,
             suburb: geoOutcome.row.suburb,
             state: geoOutcome.row.state,
+            // The SA2 the verified coordinate falls in — the finest rung the
+            // forward-demand register is asked by: the code, and the ABS's own
+            // name for it, because New South Wales keys its projections by name.
+            sa2_code: geoOutcome.row.sa2_code,
+            sa2_name: geoOutcome.row.sa2_name,
           };
           console.log(
             `🗺️ Geography resolved before the gate: ${geoOutcome.status}`
-            + (geoOutcome.row?.postcode ? ` (POA ${geoOutcome.row.postcode})` : ''),
+            + (geoOutcome.row?.postcode ? ` (POA ${geoOutcome.row.postcode})` : '')
+            + (geoOutcome.reused ? ' — the stored row already places this point; the boundary service was not asked' : ''),
           );
         } catch (error: any) {
           // Total: a resolution that cannot be made is an absence, never a
@@ -4506,10 +4622,38 @@ const __investmentReportHandler = async (req: Request): Promise<Response> => {
           : `${approvals.absence}${approvals.askedAt ? ` (asked at ${approvals.askedAt})` : ''}`}`,
       );
 
+      /*
+       * Forward demand, from this deployment's own register of each
+       * jurisdiction's population projection. The same shape as the approvals
+       * read beside it: our own table, so no ledger, no budget and no reuse
+       * gate, and the WHOLE answer stored, absence and all — `not_loaded`,
+       * `none_for_area`, `no_area_resolved` and `unavailable` are four
+       * different sentences, and only the read knows which is true.
+       *
+       * Asked by the TRUSTED geography only: the SA2 the verified coordinate
+       * falls in, the resolved suburb and the council the cadastre returned.
+       */
+      const forwardDemandProjection = await readProjectionRegister(supabase, {
+        state: (trustedStateForForwardDemand(subjectGeography, abbreviateState) ?? null) as ProjectionState | null,
+        sa2Code: typeof subjectGeography?.sa2_code === 'string' ? subjectGeography.sa2_code : null,
+        sa2Name: typeof subjectGeography?.sa2_name === 'string' ? subjectGeography.sa2_name : null,
+        trustedSuburb: marketSuburb,
+        // The cadastre's council, or the zone layer's where no cadastre is
+        // read — Victoria and Tasmania project by council and have no parcel
+        // cell (`planningCouncilName`).
+        cadastreLga: planningCouncilName(enhancedData.planningData),
+      });
+      console.log(
+        `[forward-demand] ${forwardDemandProjection.kind === 'reading'
+          ? `${forwardDemandProjection.reading.series.length} series at ${forwardDemandProjection.askedAt} for ${forwardDemandProjection.reading.area} (${forwardDemandProjection.reading.release})`
+          : `${forwardDemandProjection.absence}${forwardDemandProjection.askedAt ? ` (asked at ${forwardDemandProjection.askedAt})` : ''}`}`,
+      );
+
       enhancedData = {
         ...enhancedData,
         marketEvidence: { points: marketPoints, providersConsulted, providersUnavailable },
         buildingApprovals: approvals,
+        forwardDemandProjection,
       };
 
       // Calculate investment score - property OR area scoring
@@ -4817,6 +4961,41 @@ const __investmentReportHandler = async (req: Request): Promise<Response> => {
     );
 
     // ========================================================================
+    // ONE GENERATION, ONE EVIDENCE BASIS
+    // ========================================================================
+    // Decided here: after the last score this invocation computes, and before
+    // the gate, the prompts or the early write read it. The sections already on
+    // the row were written from the score already on the row; this invocation's
+    // score may replace it only by being STRICTLY better evidenced, and then
+    // every section is rewritten on it. Anything else leaves the written score
+    // standing. See `evidenceBasis.pure.ts` — 60 Lawley Street was written from
+    // `withheld` for sections 1-9 and B+ 89 for 10-16 because nothing compared
+    // the two.
+    writtenBasisDecision = decideWrittenBasis({
+      applies: !isAreaReport && !!reportId,
+      sectionsWritten: completedSectionIndices.length,
+      storedScore: existingEnhancedFields.investmentScore,
+      storedLocated: isLocated(existingEnhancedFields.locationIntelligence),
+      freshScore: enhancedData.investmentScore,
+      freshLocated: isLocated(enhancedData.locationIntelligence),
+    });
+    console.log(`🧭 Evidence basis: ${writtenBasisDecision.action} — ${writtenBasisDecision.note}`);
+    if (writtenBasisDecision.action === 'rewrite') {
+      // Every section on the row was written from less than this invocation
+      // holds. The document starts again here, and the early write resets the
+      // row's counter in the SAME update that records the new score — so an
+      // invocation that dies before its first section cannot leave the old
+      // sections standing beside the new score.
+      existingReportContent = '';
+      completedSectionIndices.length = 0;
+      sectionsRestartedThisRun = true;
+    } else if (writtenBasisDecision.action === 'keep_written') {
+      // The written sections' score stands, for this invocation's prompts and
+      // for the record: a failed or equal re-acquisition does not restate it.
+      enhancedData = { ...enhancedData, investmentScore: existingEnhancedFields.investmentScore };
+    }
+
+    // ========================================================================
     // RF-7.2B.1 — CLIENT-SAFE GATE ACTIVATION
     // ========================================================================
     // Everything below this line reads gated facts. The gate sits HERE, on the
@@ -4849,7 +5028,7 @@ const __investmentReportHandler = async (req: Request): Promise<Response> => {
     if (subjectGeography === null && reportId && supabaseClient) {
       const { data: geoRow, error: geoError } = await supabaseClient
         .from('report_geography')
-        .select('postcode, status, suburb, state')
+        .select('postcode, status, suburb, state, sa2_code, sa2_name')
         .eq('report_id', reportId)
         .maybeSingle();
       if (geoError) {
@@ -6006,6 +6185,20 @@ Produce a comprehensive statewide investment analysis following the structure ab
           ? enhancedData.buildingApprovals.absence
           : 'not_loaded',
       ),
+      /*
+       * Forward demand rides the pin for the same reason: a held projection
+       * is the AUTHORITY for every projected figure the report may state, and
+       * the demographics section that discusses demand sits in the trimmed
+       * middle of the base prompt. An absence rides it too, because the rule
+       * that forbids a projected figure is only half a rule without the
+       * sentence that may be written instead. One composer
+       * (`forwardDemandBlocks`) for the section and the pin.
+       */
+      '# Forward demand — the population projection this report holds',
+      forwardDemandBlocks({
+        state: trustedStateForForwardDemand(subjectGeography, abbreviateState),
+        forwardDemandProjection: enhancedData.forwardDemandProjection ?? null,
+      }),
       // Recorded from official publications rather than retrieved from a
       // register, and pinned for the same reason everything else here is:
       // it is the AUTHORITY for a set of figures and dates, and a rule that
@@ -7005,6 +7198,29 @@ YOUR DEDICATED PROPERTY PARTNER
     let acquisitionFieldsBankedThisRun = 0;
     const sectionPlanNewlyKnown = existingTotalSections === null;
 
+    /**
+     * The score as the row should hold it once it becomes the basis the
+     * sections are written from: marked with whether this invocation held a
+     * verified location, and with how many times this generation has been
+     * rewritten. Anything that is not becoming the basis is returned as it is.
+     * One definition for the early write and its progressive-save fallback, so
+     * the two cannot record different bases.
+     */
+    const basisRecordedAt = new Date().toISOString();
+    const basisScoreForRow = (): any => {
+      const score = enhancedData?.investmentScore;
+      if (!score) return score;
+      const action = writtenBasisDecision?.action;
+      if (action !== 'record_first' && action !== 'rewrite') return score;
+      const priorRewrites = writtenBasisMarkerOf(existingEnhancedFields.investmentScore)?.rewrites ?? 0;
+      return withWrittenBasis(
+        score,
+        isLocated(measuredLocationIntelligence ?? enhancedData?.locationIntelligence),
+        basisRecordedAt,
+        action === 'rewrite' ? priorRewrites + 1 : 0,
+      );
+    };
+
     // ============================================================================
     // EARLY ENHANCED DATA PERSISTENCE
     // Persist scoring + calculations before section generation so chunked/resume calls
@@ -7014,9 +7230,33 @@ YOUR DEDICATED PROPERTY PARTNER
       try {
         const earlyUpdate: any = { updated_at: new Date().toISOString() };
 
-        // Only write fields that are currently missing on the report row
-        if (!existingEnhancedFields.investmentScore && enhancedData?.investmentScore) {
+        // The score is the basis the sections are written from
+        // (`evidenceBasis.pure.ts`). The invocation that writes the FIRST
+        // section records it and a rewrite replaces it — marked, so a later
+        // invocation can tell the score these sections were written from from
+        // a leftover of an earlier generation. It used to be written only when
+        // the row had none, so a regeneration kept the previous generation's
+        // grade until its last section, and 60 Lawley Street kept `withheld`
+        // on the row while ten sections were being written from B+ 89.
+        const scoreBecomesBasis = writtenBasisDecision?.action === 'record_first'
+          || writtenBasisDecision?.action === 'rewrite';
+        if (scoreBecomesBasis && enhancedData?.investmentScore) {
+          earlyUpdate.investment_score = basisScoreForRow();
+        } else if (writtenBasisDecision?.action === 'clear_marker') {
+          // A document that never finished left its marker, and this pass
+          // starts a new one with no score of its own to record. The score
+          // stays — it is still a measurement — and the marker goes, so no
+          // later pass reads it as the basis of sections it never described.
+          earlyUpdate.investment_score = withoutWrittenBasis(existingEnhancedFields.investmentScore);
+        } else if (!existingEnhancedFields.investmentScore && enhancedData?.investmentScore) {
+          // Only write fields that are currently missing on the report row
           earlyUpdate.investment_score = enhancedData.investmentScore;
+        }
+        if (writtenBasisDecision?.action === 'rewrite') {
+          // The counter goes back to zero in the same update that records the
+          // new basis. Written separately, an invocation that died between the
+          // two would leave the old sections resumable beside the new score.
+          earlyUpdate.last_completed_section = 0;
         }
         if (!existingEnhancedFields.financials && enhancedData?.financials) {
           earlyUpdate.financial_calculations = enhancedData.financials;
@@ -7026,6 +7266,14 @@ YOUR DEDICATED PROPERTY PARTNER
         }
         if (!existingEnhancedFields.economics && enhancedData?.economics) {
           earlyUpdate.economic_data = enhancedData.economics;
+        }
+        if (writtenBasisDecision?.action === 'rewrite') {
+          // The rewritten document rests on THIS invocation's acquisition, so
+          // the row carries it — "only what is missing" would leave the
+          // readings the old sections were written from beside the new ones.
+          if (enhancedData?.financials) earlyUpdate.financial_calculations = enhancedData.financials;
+          if (enhancedData?.demographics) earlyUpdate.demographics_data = enhancedData.demographics;
+          if (enhancedData?.economics) earlyUpdate.economic_data = enhancedData.economics;
         }
         // RF-7.2B.1B1 — also write it when this run RE-ACQUIRED it. The guard
         // below is "don't overwrite what is already banked", which is right for
@@ -7062,12 +7310,24 @@ YOUR DEDICATED PROPERTY PARTNER
 
         if (hasAnyEnhancedField) {
           console.log('💾 Early persistence: saving enhanced data to DB before section generation...');
-          await supabaseClient
+          const { error: earlyWriteError } = await supabaseClient
             .from('investment_reports')
             .update(earlyUpdate)
             .eq('id', reportId);
-          enhancedDataPersisted = true;
-          console.log('✓ Early enhanced data saved:', Object.keys(earlyUpdate).filter(k => k !== 'updated_at').join(', '));
+          if (earlyWriteError) {
+            // A client that answers with an error does not throw, and this was
+            // read as saved: the fallback on the first section's save never
+            // ran, so the basis this write carries — and a rewrite's reset —
+            // reached the row a section late or not at all. Unsaved now means
+            // unsaved, exactly as a thrown write always did.
+            console.warn(
+              '⚠️ Early enhanced data persistence failed (non-blocking) — the first section\'s save will carry it:',
+              earlyWriteError.message,
+            );
+          } else {
+            enhancedDataPersisted = true;
+            console.log('✓ Early enhanced data saved:', Object.keys(earlyUpdate).filter(k => k !== 'updated_at').join(', '));
+          }
         } else {
           // If the DB already has enhanced fields, treat them as persisted for this run
           enhancedDataPersisted = alreadyHasAnyEnhancedField;
@@ -7358,8 +7618,17 @@ YOUR DEDICATED PROPERTY PARTNER
             if (!enhancedDataPersisted && enhancedData) {
               console.log('📊 First generated section in this run - saving enhanced data to DB...');
               if (enhancedData.investmentScore) {
-                progressiveUpdatePayload.investment_score = enhancedData.investmentScore;
+                // Marked where it becomes the basis — the same value the early
+                // write would have recorded, had it not failed.
+                progressiveUpdatePayload.investment_score = basisScoreForRow();
                 console.log('  ✓ Saving investment_score:', enhancedData.investmentScore?.grade, enhancedData.investmentScore?.totalScore);
+                didAttachEnhancedData = true;
+              } else if (writtenBasisDecision?.action === 'clear_marker') {
+                // …and the same clear, where the early write that carried it
+                // failed. This section is the first of a new document.
+                progressiveUpdatePayload.investment_score = withoutWrittenBasis(
+                  existingEnhancedFields.investmentScore,
+                );
                 didAttachEnhancedData = true;
               }
               if (enhancedData.financials) {
@@ -7417,7 +7686,13 @@ YOUR DEDICATED PROPERTY PARTNER
                   sectionCompleted: completedSectionIndex,
                   totalSections: filteredSections.length,
                   isComplete: false,
-                  contentLength: combinedContent.length
+                  contentLength: combinedContent.length,
+                  // This invocation wrote the section `sectionCompleted` names.
+                  // A caller counting sections itself follows the server's
+                  // counter on this flag, including when the counter went DOWN
+                  // because the document was restarted on a better basis.
+                  sectionWrittenThisRun: true,
+                  sectionsRestarted: sectionsRestartedThisRun,
                 }), {
                   headers: { ...corsHeaders, 'Content-Type': 'application/json' },
                 });
@@ -7453,6 +7728,7 @@ YOUR DEDICATED PROPERTY PARTNER
             sectionCompleted: lastCompletedSectionIndex,
             totalSections: filteredSections.length,
             contentLength: combinedContent.length,
+            sectionsRestarted: sectionsRestartedThisRun,
           }), {
             status: 200,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -7508,6 +7784,7 @@ YOUR DEDICATED PROPERTY PARTNER
             isComplete: false,
             resumeRequired: true,
             contentLength: combinedContent.length,
+            sectionsRestarted: sectionsRestartedThisRun,
           }), {
             status: 200,
             headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -7615,6 +7892,7 @@ YOUR DEDICATED PROPERTY PARTNER
         // measured from the network tab rather than from edge-log access.
         acquisitionMs,
         sectionMsThisRun: sectionDurationsMs,
+        sectionsRestarted: sectionsRestartedThisRun,
       }), {
         status: 200,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -7645,7 +7923,25 @@ YOUR DEDICATED PROPERTY PARTNER
       averageScore: avgScore,
       sectionScores: sectionResults.map(s => ({ id: s.id, name: s.name, score: s.score, valid: s.valid, attempts: s.attempts })),
       invalidSectionCount: invalidSections.length,
-      errorsEncountered: generationErrors.length
+      errorsEncountered: generationErrors.length,
+      /*
+       * Whether this document was written on one evidence basis from its first
+       * section, or rewritten when a later invocation held more — so the row
+       * can answer that question after the marker that tracked it has gone.
+       */
+      evidenceBasis: (() => {
+        const marker = writtenBasisMarkerOf(
+          writtenBasisDecision?.action === 'record_first' || writtenBasisDecision?.action === 'rewrite'
+            ? basisScoreForRow()
+            : enhancedData.investmentScore,
+        );
+        return {
+          finalDecision: writtenBasisDecision?.action ?? null,
+          rewrites: marker?.rewrites ?? null,
+          located: marker?.located ?? null,
+          recordedAt: marker?.recordedAt ?? null,
+        };
+      })(),
     };
     console.log('📋 Quality metadata:', JSON.stringify(qualityMetadata));
     // === END FINAL VALIDATION ===
@@ -8362,7 +8658,9 @@ YOUR DEDICATED PROPERTY PARTNER
         demographics_data: enhancedData.demographics || null,
         economic_data: enhancedData.economics || null,
         financial_calculations: enhancedData.financials || null,
-        investment_score: enhancedData.investmentScore || null,
+        // The basis marker is generation state and leaves with the last
+        // section; what it recorded travels in `_generationQuality`.
+        investment_score: withoutWrittenBasis(enhancedData.investmentScore) || null,
         // …with the planning and development evidence this report was shown
         // recorded beside it. It was retrieved on every run, rendered into two
         // tables in the document, and persisted NOWHERE — so no projection,

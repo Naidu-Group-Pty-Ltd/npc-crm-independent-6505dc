@@ -141,6 +141,25 @@ export const CALL_CEILING_MS = {
   register: 20_000,
   /** A scrape or an archive mirror: slowest, and the least reliable. */
   archive: 25_000,
+  /**
+   * A service in THIS project that makes several provider calls of its own
+   * before it can answer — `location-intelligence-service`: a geocode, then the
+   * transport, amenity and commute readings.
+   *
+   * It had the `vendor` class's 12 s, which is a ceiling for ONE commercial
+   * call. Measured on 24 Sep 2026 (60 Lawley Street, Spalding WA) the service
+   * needed 12.6 s of its own work plus 2.3 s of cold routing, so the generator
+   * abandoned an answer that arrived three seconds later, with 95 s of the
+   * run's budget unspent — and every geography-keyed register downstream went
+   * unasked. Warm, the same call answered in 6.0 s.
+   *
+   * A ceiling is never a guarantee: `acquisitionWindowMs` still takes the
+   * smaller of this and what the run can spare after the section loop's and
+   * the checkpoint's reserves, so a generous ceiling here cannot overrun the
+   * invocation. What it stops is a fixed number cutting off the one call every
+   * other reading is keyed on.
+   */
+  composite: 30_000,
 } as const;
 
 export type CallClass = keyof typeof CALL_CEILING_MS;

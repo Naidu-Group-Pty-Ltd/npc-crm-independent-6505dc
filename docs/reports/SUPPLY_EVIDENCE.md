@@ -535,7 +535,8 @@ comparison, because a comparison against a publisher two months in arrears is
 always true and would never let the backfill run — the defect the first
 version of this rebuilt); depth still owed → the window immediately below
 `oldest`; otherwise **`settled`**, which writes a sync row and asks the ABS
-nothing.
+nothing. (`oldest` was `min(period)` here. Since §15 it is the oldest month
+the sync ledger PROVES was written whole.)
 
 ### The measurement
 
@@ -682,9 +683,8 @@ therefore moves `oldest` past rows nothing will ask for again.
 table still refuses them, the first statement is refused before any other row
 of the window commits. Emulated on PostgreSQL 16.13 with the loader's batch
 shape, the old order committed 1,500 of 1,800 rows and moved `oldest`; the new
-order committed none. This closes the hole for this class only. A transient
-failure mid-window still leaves one, which is recorded with three remedies in
-`docs/operations/SESSION_HANDOFF_2026-09-23.md` §6.
+order committed none. That closed the hole for this class only; a transient
+failure mid-window still left one, and §15 is how that was closed.
 
 **The migration proves its swap by what the table does.** It finds the sign
 checks by definition and runs as one statement. It then inserts a negative in
@@ -697,3 +697,91 @@ It ships as a merge plus one dispatch of `apply-migration.yml`, and the two
 can land in either order. The evidence, the order-independence argument and
 how to verify it by effect are in
 `docs/operations/SESSION_HANDOFF_2026-09-23.md`.
+
+## 15 · The edge is what the ledger proves, not what the table holds
+
+§14's write order closed the one *deterministic* route to a half-written
+window. The transient routes stayed open: the worker's `546`, a dropped
+connection or a refused batch part-way through a window commits the batches
+before it. `min(period)` then moves into the half-written window, the next
+tick asks for the window below it, and nothing ever asks for the rest again.
+The register settles, calls itself complete, and has a hole in it. That is
+the outcome §4 exists to forbid, and here the loader caused it, not the
+publisher.
+
+**Rows are not proof.** The table can say which months have rows. Only the
+sync ledger can say which months were written *whole*, because the stage
+inserts its success row after the last batch commits and never before. A
+run that dies part-way leaves no success row. So the walk now steps below the
+bottom of the unbroken run of months, counted down from the frontier, that
+completed writes vouch for (`vouchedOldest` in `absApprovalsPaging.pure.ts`).
+The rest follows from that one rule:
+
+- A half-written window vouches for nothing, so the next tick asks for **the
+  same window again**. Re-writing it is an upsert on the publisher's own key.
+- A gap **anywhere** below the frontier ends the run, not only at the bottom.
+  That covers a month missed at the top, when a release slips past a calendar
+  month and the next frontier window starts above it.
+- A frontier month nothing vouches for sends the planner back to the frontier
+  window in the same month (rule 1b).
+- What this can cost is a re-read, never a hole. A success row the ledger
+  failed to record costs one repeated window, and the stage now logs it when
+  that happens.
+
+**The ledger outlives the rows it describes, and this has already happened.**
+`20261215030000` deleted every row the SA2 flow had written so a corrected
+parser could reload it. Nothing prunes the ledger, so the success rows the
+two runs before it recorded (06:43 and 06:48 UTC, 22 Sep) still stand,
+vouching for 2026-05 → 2026-07.
+The function log shows the sequence: the 07:58 run read `frontier=none`, and
+at 09:20 the walk asked for 2026-04 → 2026-06 below an oldest month of
+2026-07. A stale success row is worse than none, because it vouches for a
+window a later partial write can leave half-full. Two guards bound it:
+
+- **Staleness.** Each success row now names the `loaded_at` its rows carry
+  (`rows_loaded_at`) and the exact months it wrote (`period_list`). A row
+  whose stamp is older than the oldest stamp the table still holds made
+  nothing that survives as it made it, so it vouches for nothing. A row
+  written before the stamp existed is judged on its own insert time, which
+  follows the stamp by the length of the run. On those rows, clock skew can
+  cost one re-read, and nothing worse.
+- **The table's own floor.** The edge is never below `min(period)`.
+
+Neither guard can see rows deleted from the *middle* while older rows
+survive. The loader never deletes. That would be an operator's act, and it is
+recorded here as unguarded.
+
+**Checked by simulation as well as by case.** The spec drives the real planner
+and the real proof through 172 simulated days for each of 16 seeds. It
+includes a 30% part-way failure rate, releases that slip past their month, and
+rare full clears of the table. Two properties are checked: the register never
+reports `settled` over a hole, and it always settles whole once failures stop.
+The same simulation run under the old rule (`oldest = min(period)`) settles
+over holes on more than half the seeds. That result is what shows the test
+can see the defect. With no failures, the new rule asks for exactly the
+windows the old rule asked for. Modelled on the timeline production's
+function log records (the ledger itself is not read here), the rebuild's
+writes prove 2025-10 → 2026-07, the two stale rows are set aside, and the next
+window is 2025-07 → 2025-09, as it was at 12:20. The
+loader wiring is pinned at the source by six assertions. Five of them fail
+against the loader this replaced. The sixth, success row after last batch,
+already held.
+
+Every read the planner uses now refuses the run when it fails. The two edge
+reads had discarded their errors, and a failed read taken as "no rows"
+re-establishes a frontier the table already has.
+
+**Observed in production, 23 Sep 2026.** The rule shipped on #2737 (deployed
+10:49 UTC). The first scheduled tick on it, at 11:20 UTC, logged
+`page=0 2024-04→2024-06 frontier=2026-07 proven=2024-07 held=2024-07` and
+answered POST 200 in 8,820 ms. `proven` is the edge the ledger vouches for and
+`held` is `min(period)`, and only this rule logs them. They agree, so
+completed writes vouch for every month from 2026-07 down to 2024-07. That
+covers the rebuild's walk down from 22 Sep and the stalled window §14
+describes. The window asked is the one directly below that edge, which is the
+window the old rule would have asked. That is the "no failures" case above,
+seen on the real ledger rather than a model of it. The counts on that run's
+sync row (`windows_vouching`, and `windows_stale`, where the two rows from
+before the clear should appear) are in the table and not the log, so they are
+not read here.
+

@@ -574,6 +574,8 @@ export function composeForkDocuments(input: {
    */
   const dueDiligenceComposed: ComposedChapter[] = dueDiligenceRecord
     ? ([
+      // The document's opening argument (PLDD 1.5) — see `composeStrategicRead`.
+      ['strategicRead', 'The Opportunity in Strategic Terms'],
       ['monitoring', 'Monitoring & Review Plan'],
       ['exitStrategy', 'Resale Liquidity'],
     ] as const).flatMap(([id, prefix]) => {

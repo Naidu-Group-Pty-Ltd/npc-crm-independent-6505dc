@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -22,14 +22,16 @@ import {
 } from '@/lib/ciAssessment/reconciliation';
 import type { AssessmentPayload } from '@/lib/ciAssessment/types';
 import { clientCommercialIndustrialPath } from '@/lib/ciAssessment/clientRoute';
+import { intendedClient, type IntendedClient } from '@/lib/ciAssessment/assessmentManagement';
 import { prefillFromAssessment } from './clientPrefill';
+import { ClientCreateForm } from './ClientCreateForm';
 import { toast } from '@/hooks/use-toast';
 
 const DISPOSITION_OPTIONS: ReadonlyArray<{ value: ReconciliationDisposition; label: string }> = [
   { value: 'assessment_only', label: 'Keep in assessment only' },
-  { value: 'update_client', label: 'Update the client record' },
-  { value: 'create_portfolio_item', label: 'Create a new portfolio item' },
-  { value: 'update_portfolio_item', label: 'Update the existing portfolio item' },
+  { value: 'update_client', label: 'Mark to update the client record' },
+  { value: 'create_portfolio_item', label: 'Mark as a new portfolio item' },
+  { value: 'update_portfolio_item', label: 'Mark to update the existing portfolio item' },
 ];
 
 const CATEGORY_TONE: Record<ReconciliationItem['category'], string> = {
@@ -69,9 +71,15 @@ interface Props {
  *
  * The sequence is deliberate and enforced: find the client — by search, where
  * the record found must then be confirmed, or by creating one here — then
- * reconcile every field, choose a disposition per item, and link. Nothing is
- * written to the client record except the items explicitly set to update it,
- * and the whole decision set is stored on the link for audit.
+ * reconcile every field, choose a disposition per item, and link. The whole
+ * decision set is stored on the link for audit.
+ *
+ * What a disposition does NOT do is write to the client record. Nothing in the
+ * platform applies `applied_changes` — `link_client` stores them and never
+ * touches a client table — and this screen used to say otherwise ("N item(s)
+ * will be recorded against the client record", "exactly what changed … written
+ * to the audit trail"). A reconciliation choice is a recorded decision about
+ * what the client record should say, and the copy now says exactly that.
  */
 export function StepClientLink({
   assessmentId, payload, linkedClientId, onLinked, canLink, canUpdateClient,
@@ -120,7 +128,8 @@ export function StepClientLink({
     } catch (error) {
       toast({
         title: 'Could not load the client portfolio',
-        description: error instanceof Error ? error.message : 'Try again, or link without reconciling.',
+        // No "link without reconciling" route exists, so none is suggested.
+        description: error instanceof Error ? error.message : 'Try again in a moment.',
         variant: 'destructive',
       });
       setConfirmed(false);
@@ -131,53 +140,61 @@ export function StepClientLink({
 
   // ---- Create a new client ----------------------------------------------
   const [creatingOpen, setCreatingOpen] = useState(false);
-  const [creating, setCreating] = useState(false);
-  const [draft, setDraft] = useState(() => ({
-    ...prefillFromAssessment(payload), email: '', mobile: '',
-  }));
+  const initialName = useMemo(() => prefillFromAssessment(payload), [payload]);
 
-  const createAndSelect = useCallback(async () => {
-    if (!draft.firstName.trim() && !draft.surname.trim()) {
-      toast({ title: 'A name is required', description: 'Enter at least a first name or surname.', variant: 'destructive' });
-      return;
-    }
-    setCreating(true);
-    const result = await ciAssessmentApi.createClient({
-      firstName: draft.firstName.trim(),
-      surname: draft.surname.trim(),
-      email: draft.email.trim() || undefined,
-      mobile: draft.mobile.trim() || undefined,
-      assessmentId,
-    });
-    setCreating(false);
-
-    if (result.error || !result.data) {
-      toast({ title: 'Could not create the client', description: result.error ?? 'Try again.', variant: 'destructive' });
-      return;
-    }
-
-    toast({
-      title: 'Client created',
-      description: `${clientLabel(result.data)} was added to your client book. Review the reconciliation below, then link.`,
-    });
-    // Straight into the existing flow: the new client becomes the selected
-    // client, and reconciliation + linking run exactly as they do for one
-    // found by search. One path, not two.
-    //
-    // The identity confirmation is the one step that is skipped, and only
-    // here. "Confirm this is the right client" exists to stop an assessment
-    // being linked to the wrong *existing* record — a client created from this
-    // form, from details the user has just typed, cannot be someone else. What
-    // it cost to keep was worse than what it bought: creating a client left
-    // the user two unexplained clicks short of a link, and the reported
-    // symptom was a client record with a created-here client and no
-    // assessment on it. Linking still takes an explicit action and its own
-    // confirmation dialog; nothing is written by creating.
+  /**
+   * A client created here goes straight into the existing flow: the new client
+   * becomes the selected client, and reconciliation + linking run exactly as
+   * they do for one found by search. One path, not two.
+   *
+   * The identity confirmation is the one step that is skipped, and only for a
+   * client created from THIS assessment. "Confirm this is the right client"
+   * exists to stop an assessment being linked to the wrong *existing* record —
+   * a client created from details the user has just typed cannot be someone
+   * else. Linking still takes an explicit action and its own confirmation
+   * dialog; nothing is written by creating.
+   */
+  const selectCreatedClient = useCallback(async (client: ClientSearchRow) => {
     setCreatingOpen(false);
-    setSelected(result.data);
+    setSelected(client);
     setReconciliation(null);
-    await confirmClient(result.data);
-  }, [draft, assessmentId, confirmClient]);
+    await confirmClient(client);
+  }, [confirmClient]);
+
+  /** An existing record chosen instead of creating a duplicate — confirmed like any search result. */
+  const selectExistingClient = useCallback((client: ClientSearchRow) => {
+    setCreatingOpen(false);
+    setSelected(client);
+    setConfirmed(false);
+    setReconciliation(null);
+  }, []);
+
+  // ---- The client this assessment was prepared for ------------------------
+  /**
+   * Chosen when the assessment was started, or created from its intake step.
+   * Either way the adviser already said who the assessment is for, and asking
+   * them to search for that person again is how a second record gets created
+   * for them. A client created from this assessment is selected and reconciled
+   * (see above); one chosen from the book is selected and still confirmed.
+   */
+  const [preparedFor, setPreparedFor] = useState<IntendedClient | null>(null);
+  const preselectedRef = useRef(false);
+  useEffect(() => {
+    if (linkedClientId || preselectedRef.current) return undefined;
+    let cancelled = false;
+    void intendedClient(assessmentId).then((result) => {
+      const intent = result.data;
+      if (cancelled || !intent?.client || preselectedRef.current) return;
+      preselectedRef.current = true;
+      setPreparedFor(intent);
+      if (intent.source === 'created') {
+        void selectCreatedClient(intent.client);
+      } else {
+        selectExistingClient(intent.client);
+      }
+    });
+    return () => { cancelled = true; };
+  }, [assessmentId, linkedClientId, selectCreatedClient, selectExistingClient]);
 
   // Debounced so typing a name does not fire a request per keystroke.
   useEffect(() => {
@@ -250,7 +267,7 @@ export function StepClientLink({
     toast({
       title: 'Assessment linked',
       description: mutatingCount
-        ? `${mutatingCount} item(s) recorded for the client record.`
+        ? `${mutatingCount} item(s) recorded on the link as changes to make to the client record.`
         : 'Linked without changing any client data.',
     });
     onLinked();
@@ -312,6 +329,16 @@ export function StepClientLink({
           <span className="font-medium text-foreground">Link it to an existing client</span> or{' '}
           <span className="font-medium text-foreground">Create a New Client</span>.
         </p>
+        {preparedFor?.client ? (
+          <p className="mt-2 flex items-start gap-2 text-sm text-muted-foreground">
+            <User className="mt-0.5 h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+            <span>
+              {preparedFor.source === 'created'
+                ? `${clientLabel(preparedFor.client)} was created from this assessment and is selected below.`
+                : `This assessment was started for ${clientLabel(preparedFor.client)}, who is selected below — confirm it is them, or search for someone else.`}
+            </span>
+          </p>
+        ) : null}
       </div>
 
 
@@ -414,58 +441,16 @@ export function StepClientLink({
       {/* ---- 1b. The create form ------------------------------------------ */}
       {creatingOpen ? (
         <section className="space-y-3">
-          <div className="rounded-lg border border-border bg-muted/25 p-4">
-            <h3 className="text-sm font-semibold tracking-tight text-foreground">Create a new client</h3>
-            <p className="mt-0.5 text-xs text-muted-foreground">
-              Prefilled from this assessment where possible — check it before creating. The client is
-              added to your book and then linked through the same confirmation and reconciliation steps.
-            </p>
-            <div className="mt-3 grid gap-3 sm:grid-cols-2">
-              <div>
-                <Label htmlFor="new-client-first" className="ci-field-label">First name</Label>
-                <Input
-                  id="new-client-first" className="mt-1.5" value={draft.firstName}
-                  onChange={(event) => setDraft((d) => ({ ...d, firstName: event.target.value }))}
-                  autoComplete="off"
-                />
-              </div>
-              <div>
-                <Label htmlFor="new-client-surname" className="ci-field-label">Surname</Label>
-                <Input
-                  id="new-client-surname" className="mt-1.5" value={draft.surname}
-                  onChange={(event) => setDraft((d) => ({ ...d, surname: event.target.value }))}
-                  autoComplete="off"
-                />
-              </div>
-              <div>
-                <Label htmlFor="new-client-email" className="ci-field-label">Email</Label>
-                <Input
-                  id="new-client-email" className="mt-1.5" type="email" value={draft.email}
-                  onChange={(event) => setDraft((d) => ({ ...d, email: event.target.value }))}
-                  autoComplete="off"
-                />
-              </div>
-              <div>
-                <Label htmlFor="new-client-mobile" className="ci-field-label">Mobile</Label>
-                <Input
-                  id="new-client-mobile" className="mt-1.5" value={draft.mobile}
-                  onChange={(event) => setDraft((d) => ({ ...d, mobile: event.target.value }))}
-                  autoComplete="off"
-                />
-              </div>
-            </div>
-            <div className="mt-3 flex flex-wrap items-center gap-2">
-              <Button size="sm" onClick={createAndSelect} disabled={creating}>
-                {creating
-                  ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" aria-hidden="true" />
-                  : <UserPlus className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />}
-                {creating ? 'Creating…' : 'Create client'}
-              </Button>
-              <Button size="sm" variant="ghost" onClick={() => setCreatingOpen(false)} disabled={creating}>
-                Cancel
-              </Button>
-            </div>
-          </div>
+          <ClientCreateForm
+            assessmentId={assessmentId}
+            initial={initialName}
+            heading="Create a new client"
+            intro="Prefilled from this assessment where possible — check it before creating. The new client is then reconciled and linked below."
+            onCreated={(client) => { void selectCreatedClient(client); }}
+            onUseExisting={selectExistingClient}
+            onCancel={() => setCreatingOpen(false)}
+            disabled={!canLink}
+          />
         </section>
       ) : null}
 
@@ -500,8 +485,8 @@ export function StepClientLink({
           </div>
 
           <p className="text-sm text-muted-foreground">
-            Choose what happens to each item. Anything left as &ldquo;keep in assessment only&rdquo; leaves the
-            client record untouched.
+            Choose what should happen to each item. Your choices are recorded on the link as the changes to
+            make to the client record — nothing on the client record is changed automatically.
           </p>
 
           {reconciliation.duplicateWarnings.length ? (
@@ -577,7 +562,7 @@ export function StepClientLink({
             <p className="text-sm text-muted-foreground">
               {mutatingCount === 0
                 ? 'No client data will be changed.'
-                : `${mutatingCount} item(s) will be recorded against the client record.`}
+                : `${mutatingCount} item(s) will be recorded on the link as changes to make to the client record.`}
             </p>
           </div>
         </section>
@@ -590,7 +575,7 @@ export function StepClientLink({
             <AlertDialogDescription>
               {mutatingCount === 0
                 ? 'The assessment will be associated with this client. No client data will be changed.'
-                : `${mutatingCount} reconciliation item(s) will be recorded against the client record. Who linked it, when, and exactly what changed are all written to the audit trail.`}
+                : `The ${mutatingCount} item(s) you marked will be recorded on the link as changes to make to the client record — nothing on the client record is changed automatically. Who linked it, when, and every choice are written to the audit trail.`}
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>

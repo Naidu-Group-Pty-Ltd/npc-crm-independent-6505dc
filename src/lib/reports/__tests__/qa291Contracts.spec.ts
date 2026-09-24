@@ -165,7 +165,12 @@ describe('QA-17 — a score names what it rests on', () => {
   it('prints the basis under the dimension table', () => {
     const md = composeScoreDimensionsSection(score, 'Score Breakdown')!;
     expect(md).toContain('| Serviceability (LVR proxy) | 22% | 80/100 |');
-    expect(md).toContain('_Scored from: yield — Gross yield: 3.60%; serviceability (LVR proxy) — LVR 80%;');
+    // One line per dimension, in the engine's own words (it was one italic
+    // paragraph joining every dimension with "; ").
+    expect(md).toContain('**What each dimension rested on.**');
+    expect(md).toContain('- **Yield.** Gross yield: 3.60%.');
+    expect(md).toContain('- **Serviceability (LVR proxy).** LVR 80%');
+    expect(md).not.toContain('Scored from:');
     expect(scoreBasisLine({ totalScore: 50, breakdown: { yieldScore: { score: 50, weight: 100 } } })).toBeUndefined();
   });
 });

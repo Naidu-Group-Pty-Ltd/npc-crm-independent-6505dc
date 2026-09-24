@@ -321,92 +321,104 @@ describe('Yield measures rental return once', () => {
 
 // --- A/A+ eligibility --------------------------------------------------------
 
-describe('a grade is capped by the evidence behind it, never raised', () => {
+/*
+ * RENEGOTIATED 24 September 2026 — eligibility 5.0.0 (owner decision).
+ *
+ * This block asserted that thin evidence CAPS the letter. On the owner's list
+ * that printed 60 Lawley Street at B+ · 89 beside 9 Hollow Street at A · 77 —
+ * a higher score, a lower letter — because Lawley's growth came from a state
+ * series whose confidence cannot exceed 44, one under the A test. The letter
+ * is now the band of the score; the evidence test decides whether a CAUTION
+ * travels with it. Every case below is the same case as before, asserting the
+ * new half of the same rule: the letter never moves, the finding is stated.
+ */
+describe('the letter is the band of the score; thin evidence travels as a caution', () => {
   const eligible = (composite: number, k: keyof typeof FIXTURES, overall: number) =>
     applyEligibility({ compositeScore: composite, growth: run(k), evidenceQualityCoverage: overall });
 
-  it('refuses A+ to a high score built on thin growth evidence', () => {
+  it('prints the score\'s A+ on thin growth evidence, and says what the evidence is', () => {
     // Growth 93 on 10% coverage, low confidence, regional level, six sales,
-    // dwelling type unmatched. The score is honest; the grade would not be.
+    // dwelling type unmatched. The score is honest; the caution says why the
+    // evidence alone would not carry the letter.
     const r = eligible(88, 'thinButStrong', 0.9);
     expect(r.scoreGrade).toBe('A+');
-    expect(r.grade).not.toBe('A+');
-    expect(r.capped).toBe(true);
-    expect(r.reasons.join(' ')).toMatch(/confidence|could be measured/);
-  });
-
-  it('allows A+ when growth evidence is strong and coverage is high', () => {
-    const r = eligible(88, 'exceptionalSustained', 0.92);
     expect(r.grade).toBe('A+');
     expect(r.capped).toBe(false);
     expect(r.reasons).toEqual([]);
+    expect(r.ceiling).not.toBe('A+');
+    expect(r.cautions.join(' ')).toMatch(/confidence|could be measured/);
+    expect(r.caution).toBeTruthy();
   });
 
-  it('allows A on the same strong evidence', () => {
+  it('carries no caution when growth evidence is strong and coverage is high', () => {
+    const r = eligible(88, 'exceptionalSustained', 0.92);
+    expect(r.grade).toBe('A+');
+    expect(r.capped).toBe(false);
+    expect(r.cautions).toEqual([]);
+    expect(r.caution).toBeNull();
+  });
+
+  it('prints A on the same strong evidence', () => {
     expect(eligible(78, 'exceptionalSustained', 0.8).grade).toBe('A');
   });
 
-  it('does not block A+ merely because one minor measure is absent', () => {
+  it('does not caution A+ merely because one minor measure is absent', () => {
     // The explicit instruction: a missing optional metric must not sink an
     // otherwise strongly evidenced property. 88% overall coverage still passes.
     const r = eligible(86, 'exceptionalSustained', 0.88);
     expect(r.grade).toBe('A+');
+    expect(r.cautions).toEqual([]);
   });
 
-  /*
-   * RENEGOTIATED 18 September 2026 — eligibility 4.0.0.
-   *
-   * This asserted that ABSENCE of growth evidence refuses A+. That was the
-   * missing-dimension penalty in its third hiding place: both gates opened
-   * `hasGrowth &&`, so a property with no growth reading failed them however
-   * strong and however well evidenced its other dimensions were, and the
-   * ceiling fell to B+ — the delivered-points rule under another name, after
-   * it had been removed from the other two modules.
-   *
-   * The invariant that survives is about the QUALITY of evidence the report
-   * actually holds, which is what this module exists for. Both halves are
-   * asserted below so the distinction cannot quietly collapse again.
-   */
-  it('absence of growth evidence alone no longer refuses A+', () => {
+  it('absence of growth evidence alone is no caution', () => {
     const r = eligible(90, 'noEvidence', 0.75);
     expect(r.grade).toBe('A+');
     // And it is not explained away as a growth failure, because it is not one.
-    expect(r.reasons.join(' ')).not.toMatch(/capital-growth evidence/);
+    expect(r.cautions.join(' ')).not.toMatch(/growth/i);
+    expect(r.caution).toBeNull();
   });
 
-  it('…but thin evidence on the dimensions that DID answer still refuses it', () => {
+  it('…but thin evidence on the dimensions that DID answer is cautioned', () => {
     // Same absent growth, same score; the measured dimensions are now only
-    // 60% evidenced, under the 70% A+ floor. This is the safeguard: a
-    // statement about evidence we hold, never about evidence we do not.
+    // 60% evidenced, under the 70% A+ test. A statement about evidence we
+    // hold, never about evidence we do not.
     const r = eligible(90, 'noEvidence', 0.60);
-    expect(r.grade).not.toBe('A+');
-    expect(r.reasons.join(' ')).toMatch(/assessed dimensions are 60% evidenced/);
+    expect(r.grade).toBe('A+');
+    expect(r.cautions.join(' ')).toMatch(/assessed dimensions are 60% evidenced/);
+    expect(r.caution).toMatch(/60% of their methods ran/);
   });
 
-  it('growth evidence that EXISTS and is weak still caps, which is the point', () => {
-    // The module's opening case, untouched by 4.0.0: a strong score on thin,
-    // low-confidence growth evidence cannot print A+.
+  it('growth evidence that EXISTS and is weak is cautioned, which is the point', () => {
+    // The module's opening case: a strong score on thin, low-confidence growth
+    // evidence. The letter is the score's; the caution is the finding.
     const r = eligible(90, 'thinButStrong', 0.95);
-    expect(r.grade).not.toBe('A+');
-    expect(r.reasons.join(' ')).toMatch(/Growth evidence confidence|growth methodology could be measured/);
+    expect(r.grade).toBe('A+');
+    expect(r.cautions.join(' ')).toMatch(/Growth evidence confidence|growth methodology could be measured/);
   });
 
-  it('never raises a grade', () => {
-    const r = eligible(42, 'exceptionalSustained', 1);
-    expect(r.grade).toBe(r.scoreGrade);
-    expect(r.capped).toBe(false);
+  it('never moves a grade in either direction', () => {
+    for (const [score, k, q] of [[42, 'exceptionalSustained', 1], [58, 'thinButStrong', 0.2], [90, 'thinButStrong', 0.1]] as const) {
+      const r = eligible(score, k, q);
+      expect(r.grade).toBe(r.scoreGrade);
+      expect(r.capped).toBe(false);
+    }
   });
 
-  it('leaves grades below A untouched', () => {
+  it('cautions nothing below A — the tests are about what an A or A+ claims', () => {
     const r = eligible(58, 'thinButStrong', 0.2);
     expect(r.grade).toBe('B');
-    expect(r.capped).toBe(false);
+    expect(r.cautions).toEqual([]);
+    expect(r.caution).toBeNull();
   });
 
-  it('states a reason whenever it caps', () => {
+  it('states every caution as a sentence, and the client sentence names no score', () => {
     const r = eligible(88, 'thinButStrong', 0.9);
-    expect(r.reasons.length).toBeGreaterThan(0);
-    for (const reason of r.reasons) expect(reason).toMatch(/[.]$/);
+    expect(r.cautions.length).toBeGreaterThan(0);
+    for (const caution of r.cautions) expect(caution).toMatch(/[.]$/);
+    expect(r.caution).toMatch(/[.]$/);
+    // A client sentence says what the evidence IS; confidence scores and
+    // thresholds are the operator's vocabulary.
+    expect(r.caution).not.toMatch(/confidence|requires|\bA\+|\d+ of 100/);
   });
 });
 
@@ -636,7 +648,9 @@ describe('the evidence statement states, and never derives', () => {
     expect(withheldFromClient(unverified).length).toBe(2);
   });
 
-  it('explains a cap where the grade is stated, not in a footnote', () => {
+  // Eligibility 5.0.0: nothing is capped, and the caution leads the
+  // limitations — the single most likely thing a reader will ask about.
+  it('states the caution where the grade is stated, not in a footnote', () => {
     const g = scoreGrowth(FIXTURES.thinButStrong, NOW);
     const e = applyEligibility({ compositeScore: 91, growth: g, evidenceQualityCoverage: 0.4 });
     const s = buildEvidenceStatement({
@@ -647,10 +661,14 @@ describe('the evidence statement states, and never derives', () => {
       evidence: FIXTURES.thinButStrong,
       audience: 'client',
     });
-    expect(s.grade).toBe('B+');
+    expect(s.grade).toBe('A+');
     expect(s.scoreGrade).toBe('A+');
-    expect(s.capExplanation.length).toBeGreaterThan(0);
-    expect(s.limitations[0]).toContain('rather than the A+');
+    expect(s.capExplanation).toEqual([]);
+    expect(s.caution).toBe(e.caution);
+    expect(s.caution).toBeTruthy();
+    expect(s.limitations[0]).toBe(e.caution);
+    // Nothing in it speaks of a letter being held down, because none was.
+    expect(s.limitations.join(' ')).not.toContain('rather than the A+');
   });
 
   it('gives Yield no confidence reading rather than inventing one', () => {

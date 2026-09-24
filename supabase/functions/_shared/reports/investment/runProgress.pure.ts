@@ -149,3 +149,46 @@ export function sectionWasWritten(response: {
   return typeof response.sectionCompleted === 'number'
     && response.sectionCompleted > sectionIndexRequested;
 }
+
+/** What a continuation response can say about the section counter. */
+export interface SectionCounterResponse {
+  success?: boolean;
+  durableProgress?: boolean;
+  sectionCompleted?: number;
+  /** The invocation wrote the section `sectionCompleted` names. */
+  sectionWrittenThisRun?: boolean;
+  /** The invocation restarted the document from its first section on a better evidence basis. */
+  sectionsRestarted?: boolean;
+}
+
+/**
+ * Where a caller counting sections itself goes next — the zero-based index of
+ * the next section to ask for — or null when this response moved nothing and
+ * the SAME section should be asked for again.
+ *
+ * `sectionWasWritten` answers the ordinary case: the server's counter moved
+ * past the section requested. But the server can also RESTART the document on
+ * a better evidence basis (`evidenceBasis.pure.ts`), and then its counter goes
+ * DOWN — it wrote section 1 when section 10 was asked for, or reset to 0 and
+ * deferred. Read by `sectionWasWritten` alone that is "no progress": the caller
+ * retries the same section, gives up, throws, and its failure path stamps a
+ * healthy, restarting report `failed`.
+ *
+ * So a response that says it wrote a section, or that it restarted, is
+ * followed to wherever the server's counter now is. The row is the authority
+ * on how far the document has got; a caller's own count is a cache of it. A
+ * response that says neither — an older server, a hand-off that banked nothing
+ * — keeps today's behaviour exactly.
+ */
+export function nextSectionIndex(
+  response: SectionCounterResponse,
+  sectionIndexRequested: number,
+): number | null {
+  if (sectionWasWritten(response, sectionIndexRequested)) return response.sectionCompleted as number;
+  if (!response?.success || response.durableProgress === false) return null;
+  const counter = response.sectionCompleted;
+  if (typeof counter !== 'number' || !Number.isInteger(counter) || counter < 0) return null;
+  if (response.sectionsRestarted === true) return counter;
+  if (response.sectionWrittenThisRun === true && counter >= 1) return counter;
+  return null;
+}

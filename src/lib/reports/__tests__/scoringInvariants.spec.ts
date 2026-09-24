@@ -385,7 +385,10 @@ describe('another horizon from one source is not another source', () => {
 // ---------------------------------------------------------------------------
 
 describe('grade integrity', () => {
-  it('refuses A+ to a high score built on thin evidence', () => {
+  // Eligibility 5.0.0 (owner decision, 24 Sep 2026): the letter is the band
+  // of the score, and thin evidence is CAUTIONED rather than capped. This
+  // asserted a cap; it now asserts the two halves of the same guard.
+  it('prints the score\'s letter on thin evidence, and cautions it', () => {
     const thin = run({
       evidence: ev({
         growth1Year: pt(19, { level: 'gccsa', sampleSize: 5, periodsAvailable: 2, dwellingTypeMatched: false }),
@@ -396,11 +399,58 @@ describe('grade integrity', () => {
       yieldInputs: { basis: 'purchase', basisAmount: 500_000, weeklyRent: 900 },
     });
     expect(thin.compositeScore).not.toBeNull();
+    expect(thin.grade).toBe(thin.uncappedGrade);
+    expect(thin.gradeCapReason).toEqual([]);
     if (thin.uncappedGrade === 'A+' || thin.uncappedGrade === 'A') {
-      expect(thin.grade).not.toBe('A+');
-      expect(thin.gradeCapReason.length).toBeGreaterThan(0);
+      expect(thin.gradeCautions.length).toBeGreaterThan(0);
+      expect(thin.gradeCaution).toBeTruthy();
     }
     expect(thin.evidenceCoverage).toBeLessThan(0.7);
+  });
+
+  /*
+   * The owner's list, 24 Sep 2026: 60 Lawley Street at B+ · 89 beside 9 Hollow
+   * Street at A · 77. Whatever the evidence, a higher score must never print a
+   * lower letter — swept across growth grain, dwelling match, sample, yield and
+   * location so that no future cap can reintroduce the inversion unseen.
+   */
+  it('a higher score never prints a lower letter', () => {
+    const order = ['F', 'D', 'C', 'C+', 'B', 'B+', 'A', 'A+'];
+    const results: Array<{ score: number; grade: string }> = [];
+    for (const level of ['suburb', 'lga', 'state'] as const) {
+      for (const matched of [true, false]) {
+        for (const g5 of [1, 4, 8, 12]) {
+          for (const rent of [350, 600, 900]) {
+            for (const walk of [40, 75, 99]) {
+              const r = run({
+                evidence: ev({
+                  growth5YearCagr: pt(g5, { level, dwellingTypeMatched: matched, sampleSize: level === 'state' ? null : 80 }),
+                  growth3YearCagr: pt(g5 + 1, { level, dwellingTypeMatched: matched, sampleSize: level === 'state' ? null : 80 }),
+                  growth1Year: pt(g5, { level, dwellingTypeMatched: matched, sampleSize: level === 'state' ? null : 80 }),
+                }),
+                yieldInputs: { basis: 'purchase', basisAmount: 500_000, weeklyRent: rent },
+                locationInputs: { walkScore: walk, commuteTimeCBD: 15, schoolsNearby: 6 },
+              });
+              if (r.compositeScore !== null && r.grade !== null) {
+                results.push({ score: r.compositeScore, grade: r.grade });
+                expect(r.grade).toBe(r.uncappedGrade);
+              }
+            }
+          }
+        }
+      }
+    }
+    expect(results.length).toBeGreaterThan(100);
+    const letters = new Set(results.map((x) => x.grade));
+    expect(letters.size, 'the sweep must span several letters to mean anything').toBeGreaterThan(3);
+    for (const a of results) {
+      for (const b of results) {
+        if (a.score > b.score) {
+          expect(order.indexOf(a.grade), `${a.score} → ${a.grade} against ${b.score} → ${b.grade}`)
+            .toBeGreaterThanOrEqual(order.indexOf(b.grade));
+        }
+      }
+    }
   });
 
   it('always reports both the uncapped and the final grade', () => {

@@ -233,6 +233,21 @@ network genuinely serves.
 **A failed read is not an empty area.** A database fault answers 503 so a
 caller can retry, never "no transport here" — the `aml.cases` lesson.
 
+### One reading, two callers
+
+The read — two bounding-box queries over `transport_stops` and the verdict
+`readTransport` draws from them — lives in `_shared/transportStopRead.ts`.
+`public-transport-service` answers from it over HTTP, exactly as it always
+did. `location-intelligence-service` used to reach it through that endpoint,
+and on 24 Sep 2026 (60 Lawley Street, Spalding WA) the hop cost **6,255 ms
+cold** — the largest single step in a location call the generator then
+abandoned at 12 s — and 826 ms warm, in front of two indexed reads. It reads
+the register directly now, through the same module, so the two callers cannot
+disagree and every rule above holds for both: coverage by measurement,
+`outside_loaded_networks` never collapsed into "no stops nearby", and a failed
+read never an empty area. See §8 of
+[`GENERATION_STALL_AND_ACQUISITION_BUDGET.md`](./GENERATION_STALL_AND_ACQUISITION_BUDGET.md).
+
 ## No score, and no mode
 
 **Nothing returns a rating, grade or `qualityScore`.** The invented one is

@@ -14,7 +14,7 @@ import { provenanceNotice, readScrapeProvenance } from '@/lib/reports/scrapeProv
 export type PropertyImportCategory = 'commercial' | 'industrial';
 
 /**
- * A scrape that could not read the listing page says so.
+ * An extraction that could not read the listing page says so.
  *
  * The server records `metadata.scrapedFromPage` on every job and nothing here
  * read it, so "URL listing imported · Populated: …" was the same sentence
@@ -187,7 +187,7 @@ export function PropertyImportPanel({ category, onImported }: Props) {
 
   const handleScrapeUrl = async () => {
     if (!propertyUrl.trim()) {
-      toast({ title: 'URL required', description: 'Please enter a property listing URL to scrape.', variant: 'destructive' });
+      toast({ title: 'URL required', description: 'Please enter a property listing URL to extract.', variant: 'destructive' });
       return;
     }
 
@@ -195,15 +195,15 @@ export function PropertyImportPanel({ category, onImported }: Props) {
     setScrapeError(null);
 
     try {
-      // 1) Enqueue the scrape job (returns immediately with a jobId).
+      // 1) Enqueue the existing extraction job (returns immediately with a jobId).
       const { data: startData, error: startError } = await invokeSecureFunction('scrape-property-listing', {
         url: propertyUrl,
         propertyCategory: category,
       }, { timeoutMs: 60000 });
 
-      if (startError) throw new Error(startError.message || 'Failed to start scraping job');
+      if (startError) throw new Error(startError.message || 'Failed to start the extraction');
       if (!startData?.success || !startData?.jobId) {
-        throw new Error(startData?.error || 'Failed to start scraping job');
+        throw new Error(startData?.error || 'Failed to start the extraction');
       }
 
       const jobId: string = startData.jobId;
@@ -219,7 +219,7 @@ export function PropertyImportPanel({ category, onImported }: Props) {
 
       while (true) {
         if (Date.now() - startedAt > MAX_WAIT_MS) {
-          throw new Error('Scrape is taking longer than expected. Please try again or use the PDF/Image tab.');
+          throw new Error('Extraction is taking longer than expected. Please try again or use the PDF / Image tab.');
         }
         await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL_MS));
 
@@ -230,9 +230,9 @@ export function PropertyImportPanel({ category, onImported }: Props) {
         // Tolerate transient poll failures — only abort after several consecutive errors.
         if (pollError || !pollData?.success) {
           consecutivePollErrors += 1;
-          lastPollErrorMsg = pollError?.message || pollData?.error || 'Failed to check scrape status';
+          lastPollErrorMsg = pollError?.message || pollData?.error || 'Failed to check extraction status';
           if (consecutivePollErrors >= MAX_CONSECUTIVE_POLL_ERRORS) {
-            throw new Error(`Scrape status check failed repeatedly: ${lastPollErrorMsg}`);
+            throw new Error(`Extraction status check failed repeatedly: ${lastPollErrorMsg}`);
           }
           continue;
         }
@@ -243,13 +243,13 @@ export function PropertyImportPanel({ category, onImported }: Props) {
           break;
         }
         if (pollData.status === 'failed') {
-          throw new Error(pollData.error || 'Scraping failed');
+          throw new Error(pollData.error || 'Extraction failed');
         }
         // queued | processing → keep polling
       }
 
 
-      if (!finalData) throw new Error('No data returned from scrape');
+      if (!finalData) throw new Error('No data returned from the extraction');
 
       applyImportedData(
         normalizeDetails(finalData, category, finalData?.sourceUrl || propertyUrl),
@@ -257,9 +257,9 @@ export function PropertyImportPanel({ category, onImported }: Props) {
         finalData?.metadata,
       );
     } catch (error) {
-      const message = error instanceof Error ? error.message : 'Failed to scrape property listing';
+      const message = error instanceof Error ? error.message : 'Failed to extract property listing';
       setScrapeError(message);
-      toast({ title: 'Scraping failed', description: message, variant: 'destructive' });
+      toast({ title: 'Extraction failed', description: message, variant: 'destructive' });
     } finally {
       setIsScraping(false);
     }
@@ -341,13 +341,13 @@ export function PropertyImportPanel({ category, onImported }: Props) {
       <CardHeader className="pb-3">
         <CardTitle className="text-base">Import property details</CardTitle>
         <CardDescription>
-          Scrape a listing URL or parse a PDF/image, then review the populated fields before saving.
+          Extract a listing URL or import a PDF/image, then review the populated fields before saving.
         </CardDescription>
       </CardHeader>
       <CardContent>
         <Tabs defaultValue="url" className="space-y-4">
           <TabsList className="grid w-full grid-cols-2">
-            <TabsTrigger value="url" className="gap-2"><Link className="h-4 w-4" /> URL</TabsTrigger>
+            <TabsTrigger value="url" className="gap-2"><Link className="h-4 w-4" /> URL Extraction</TabsTrigger>
             <TabsTrigger value="pdf" className="gap-2"><FileText className="h-4 w-4" /> PDF / Image</TabsTrigger>
           </TabsList>
 
@@ -364,7 +364,7 @@ export function PropertyImportPanel({ category, onImported }: Props) {
                 />
                 <Button type="button" onClick={handleScrapeUrl} disabled={isScraping || !propertyUrl.trim()}>
                   {isScraping ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Link className="h-4 w-4 mr-2" />}
-                  Scrape
+                  {isScraping ? 'Extracting…' : 'Extract URL'}
                 </Button>
               </div>
             </div>

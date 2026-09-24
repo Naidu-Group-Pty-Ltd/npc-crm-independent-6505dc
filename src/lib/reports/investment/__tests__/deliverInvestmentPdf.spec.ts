@@ -129,12 +129,52 @@ describe('produceInvestmentDocument', () => {
     // module already read, so the memo below and the route agree on it.
     expect(tryTemplate).toHaveBeenCalledWith('investment', 'r-1', {
       variant: 'briefing',
-      payload: { reportContent: expect.stringContaining('$700,000'), includeScoring: true, includeSources: true },
+      // The audience travels beside the content it shaped, for the bound
+      // values no Markdown edit can reach; unset is the investor.
+      payload: {
+        reportContent: expect.stringContaining('$700,000'), includeScoring: true, includeSources: true,
+        audience: 'investor',
+      },
       renderer: 'weasyprint',
       selectedTemplateId: null,
     });
     expect(invoke).not.toHaveBeenCalled();
     expect(draw).not.toHaveBeenCalled();
+  });
+
+  it("hands the route an owner-occupier's body, and never reuses the investor's document for it", async () => {
+    loadRow.mockResolvedValue({
+      id: 'r-1',
+      report_tier: 'financial',
+      report_content: [
+        '## Client Investment Decision Summary', 'The verdict.', '',
+        '## Financial Input Snapshot', 'The inputs.', '',
+        '## Rental Assessment, Gross Yield & Net Yield', 'Rent $850 a week.', '',
+        '## Loan Structure, Repayments & Cashflow Impact', 'The loan.', '',
+      ].join('\n'),
+      location_intelligence: {
+        schools: { topSchools: [{ name: 'Kellyville Public School', distance: 0.09 }] },
+        lifestyle: { nearestShopping: 'Woolworths', nearestPark: 'Kellyville Rotary Park' },
+      },
+      validation_flags: [],
+    } as never);
+    tryTemplate.mockResolvedValue(finalDoc());
+
+    await produceInvestmentDocument('r-1', { variant: 'financial' });
+    await produceInvestmentDocument('r-1', { variant: 'financial', audience: 'owner_occupier' });
+
+    // Two finalisations: a different audience is a different document.
+    expect(tryTemplate).toHaveBeenCalledTimes(2);
+    const investor = tryTemplate.mock.calls[0][2]!.payload as Record<string, unknown>;
+    const owner = tryTemplate.mock.calls[1][2]!.payload as Record<string, unknown>;
+    expect(investor.audience).toBe('investor');
+    expect(investor.reportContent).toContain('Rent $850 a week.');
+    expect(owner.audience).toBe('owner_occupier');
+    expect(owner.reportContent).not.toContain('Rent $850 a week.');
+    expect(owner.reportContent).toContain("## Living Here: An Owner-Occupier's View");
+    expect(owner.reportContent).toContain('Kellyville Public School, 90 m');
+    expect(String(owner.reportContent).indexOf('Living Here'))
+      .toBeLessThan(String(owner.reportContent).indexOf('## Loan Structure'));
   });
 
   it('hands the route the template the person chose, read once', async () => {

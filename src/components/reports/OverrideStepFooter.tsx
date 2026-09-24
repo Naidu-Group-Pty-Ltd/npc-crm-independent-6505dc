@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { ArrowLeft, ArrowRight, Check } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -14,6 +15,12 @@ export type OverrideStep = (typeof OVERRIDE_STEPS)[number]['value'];
 interface OverrideStepFooterProps {
   current: OverrideStep;
   onNavigate: (step: OverrideStep) => void;
+  /**
+   * Optional host action (e.g. the Generate Report button) rendered in the
+   * footer's right-hand cluster, so the primary act of the page travels with
+   * the sticky step navigation instead of living far below it.
+   */
+  action?: ReactNode;
 }
 
 /**
@@ -21,7 +28,7 @@ interface OverrideStepFooterProps {
  * tab. Makes the four categories read as a guided sequence rather than four
  * disconnected tabs — each step names the next one explicitly.
  */
-export function OverrideStepFooter({ current, onNavigate }: OverrideStepFooterProps) {
+export function OverrideStepFooter({ current, onNavigate, action }: OverrideStepFooterProps) {
   const index = OVERRIDE_STEPS.findIndex((step) => step.value === current);
   const previous = index > 0 ? OVERRIDE_STEPS[index - 1] : null;
   const next = index >= 0 && index < OVERRIDE_STEPS.length - 1 ? OVERRIDE_STEPS[index + 1] : null;
@@ -45,7 +52,8 @@ export function OverrideStepFooter({ current, onNavigate }: OverrideStepFooterPr
         </div>
       </div>
 
-      <div className="flex items-center gap-2 sm:justify-end">
+      <div className="flex flex-wrap items-center gap-2 sm:justify-end">
+        {action}
         {previous && (
           <Button
             type="button"

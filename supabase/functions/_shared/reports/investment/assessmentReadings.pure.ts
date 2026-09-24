@@ -42,6 +42,7 @@ interface ScoreRecordLike {
     readonly scoreGrade?: unknown;
     readonly gradeCapped?: unknown;
     readonly gradeCapReasons?: unknown;
+    readonly gradeCaution?: unknown;
     readonly evidenceCoverage?: unknown;
     readonly gradeEligibility?: { readonly ceiling?: unknown } | null;
     readonly dimensions?: ReadonlyArray<{
@@ -114,10 +115,14 @@ export function assessmentReadings(score: ScoreRecordLike | null | undefined): A
   const capExplanation = capped ? text(capReasons[0]) : null;
 
   const supportsConclusion = supports(issuedGrade, capped);
+  // Eligibility 5.0.0: nothing is capped, and where the evidence alone would
+  // not carry the letter the engine's own sentence is part of the conclusion
+  // rather than a reason to withhold it.
+  const caution = supportsConclusion ? text(v2?.gradeCaution) : null;
   const conclusionLine = criteriaTotal === null
     ? null
     : supportsConclusion
-      ? 'The evidence available supports the overall assessment below.'
+      ? `The evidence available supports the overall assessment below.${caution ? ` ${caution}` : ''}`
       : 'The evidence available does not support an overall recommendation on this property.';
 
   return {

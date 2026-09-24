@@ -88,7 +88,10 @@ describe('manage-client-data: client-scoped vs standalone', () => {
       if (has === false) misplaced.push(table);
     }
     expect(misplaced).toEqual([]);
-  });
+    // Reads every migration (634 MB on 23 Sep 2026, ~42 MB more with each
+    // template-library seed): 6.3s on a clean checkout against vitest's 5s
+    // default. The limit is sized to the work, not the check.
+  }, 60_000);
 
   it('keeps the conversation tables standalone', () => {
     // Named because this is the pair the audit found, and because a future

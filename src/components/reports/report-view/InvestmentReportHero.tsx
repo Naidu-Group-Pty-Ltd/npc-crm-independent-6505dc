@@ -90,6 +90,7 @@ export function InvestmentReportHero({
             {scoreSummary.withheld
               ? <p className="mt-1 text-xs text-muted-foreground">By the scoring policy</p>
               : scoreSummary.insufficient && <p className="mt-1 text-xs text-muted-foreground">Insufficient data</p>}
+            {scoreSummary.evidenceCaution && <p className="mt-1 line-clamp-3 text-xs text-muted-foreground" title={scoreSummary.evidenceCaution}>{scoreSummary.evidenceCaution}</p>}
           </div>
           <div className="rounded-xl border bg-background/70 p-4">
             <p className="text-xs text-muted-foreground">Score /100</p>

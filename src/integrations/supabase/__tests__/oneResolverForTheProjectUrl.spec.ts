@@ -24,6 +24,28 @@
  * With NOTHING configured the raw read is `undefined`, which interpolates as
  * the literal string `undefined/functions/v1/...`.
  *
+ * ## What counts as reading it
+ *
+ * Not the literal text. This spec first looked for
+ * `import.meta.env.VITE_SUPABASE_URL` and, while its own header said three raw
+ * readers remained, the tree held five: the Template Builder's two image
+ * upload paths read `(import.meta as any).env?.VITE_SUPABASE_URL ?? ''`, which
+ * the bundler replaces exactly like the plain form (esbuild removes the cast
+ * first; `buildTimeEnvReads.spec.ts` records the measurement) and which no
+ * scan for the literal can see. With nothing configured that `''` put an
+ * address on the app's own origin into every template an image was uploaded
+ * to. Both read `SUPABASE_URL` now.
+ *
+ * So the rule is about the module, not the spelling: one that reads the build
+ * environment and names `VITE_SUPABASE_URL` in its code is reading the project
+ * URL for itself, whether through a cast, an optional chain, an alias or a
+ * helper that takes the name — the form `env.ts` itself used until
+ * 23 Sep 2026. Measured on the tree before that date it finds all seven
+ * readers, where the literal found three. It can be wrong in one direction
+ * only: a module that reads some OTHER variable and quotes this one's name in
+ * a string is listed too, and the remedy is to say so here rather than to
+ * narrow the rule, because the opposite mistake is the silent one.
+ *
  * ## Why a ratchet rather than a ban
  *
  * Three call sites still read it raw, and each is a separate behaviour change
@@ -82,6 +104,14 @@ function stripComments(source: string): string {
   return out;
 }
 
+/**
+ * Whether a module reads `VITE_SUPABASE_URL` for itself, in any spelling.
+ * Comments are stripped first, so prose about the variable is not a read.
+ */
+export function readsProjectUrlItself(code: string): boolean {
+  return /\bimport\s*\.\s*meta\b/.test(code) && /\bVITE_SUPABASE_URL\b/.test(code);
+}
+
 function sourceFiles(dir: string, found: string[] = []): string[] {
   for (const entry of readdirSync(dir)) {
     const full = join(dir, entry);
@@ -108,12 +138,30 @@ const NOT_YET_MOVED = [
 
 describe('one resolver for the project URL', () => {
   const raw = sourceFiles(SRC)
-    .filter((file) => stripComments(readFileSync(file, 'utf8')).includes('import.meta.env.VITE_SUPABASE_URL'))
+    .filter((file) => readsProjectUrlItself(stripComments(readFileSync(file, 'utf8'))))
     .map((file) => relative(SRC, file).split(sep).join('/'))
     .sort();
 
   it('is read raw only by env.ts and the three sites named here', () => {
     expect(raw).toEqual([RESOLVER, ...NOT_YET_MOVED].sort());
+  });
+
+  it('recognises every spelling a raw read has taken in this tree', () => {
+    const reads = [
+      'const u = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/x`;',
+      "const u = (import.meta as any).env?.VITE_SUPABASE_URL ?? '';",
+      "const read = (k: string) => import.meta?.env?.[k];\nconst u = read('VITE_SUPABASE_URL');",
+      'const env = import.meta.env;\nconst u = env.VITE_SUPABASE_URL;',
+    ];
+    for (const code of reads) expect(readsProjectUrlItself(stripComments(code)), code).toBe(true);
+
+    // Naming the variable is not reading it: the resolver's own warning
+    // quotes it and touches no environment.
+    expect(readsProjectUrlItself("const w = 'VITE_SUPABASE_URL is set but no key is';")).toBe(false);
+    // And prose about it is not code.
+    expect(
+      readsProjectUrlItself(stripComments('// import.meta.env.VITE_SUPABASE_URL was read here\nconst a = 1;')),
+    ).toBe(false);
   });
 
   it('and the brand-asset origin is the resolved one', () => {

@@ -41,6 +41,7 @@ import {
   mergeAdjacentDuplicateHeadings,
 } from './sectionFolding.pure.ts';
 import { stripPromptRulesBlocks } from './promptLeakage.pure.ts';
+import { withdrawGlanceStrips } from './glanceWithdrawal.pure.ts';
 
 const PLACEHOLDER_CELL = /^(?:n\/?a|tbd|to be determined|not available|not provided|unknown|—|-|–)\.?$/i;
 
@@ -158,6 +159,69 @@ export function stripPlaceholderRows(markdown: string): PlaceholderScrubResult {
     removedTables,
     removedLines,
     blankedCells,
+  };
+}
+
+/**
+ * The lead-ins this platform composes, each of which announces entries.
+ *
+ * A CLOSED SET, the way `dedupeRegisterTables`' headers are: it names the
+ * lines the platform itself writes, never a pattern a model's prose could
+ * also match. The spelling is the composer's — `INFRASTRUCTURE_GUIDE_LEAD_IN`
+ * in `planning/infrastructureGuide.pure.ts`, which this module may not import —
+ * and `orphanedLeadIn.spec.ts` fails the day the two differ.
+ */
+export const COMPOSED_LEAD_INS: readonly string[] = [
+  'What these findings mean, and what to do about them.',
+];
+
+/**
+ * A composed lead-in with nothing under it is dropped.
+ *
+ * The 20 Sep 2026 Compass for 97 Poole Road stored the infrastructure guide's
+ * opening line with no entry beneath it — the line, then the heading of the
+ * next register — so the Compass and the Due Diligence report forked from it
+ * both printed "What these findings mean, and what to do about them." over
+ * nothing. The composer pushes an entry after it on every path and the read
+ * path keeps every entry (both measured on this commit and on `main`), so the
+ * entries were lost after composition — the likeliest route is the run two
+ * drivers were rewinding that day (`INVESTMENT_REPORT_RESUME.md` §9), which
+ * is an inference: the stored row itself was not read. A stored document
+ * cannot be re-composed, so the promise it cannot keep is removed where it is
+ * read.
+ *
+ * `dropEmptySections`' rule, one level down: a lead-in is orphaned when the
+ * next non-blank line is a heading, a rule, another lead-in or the end of the
+ * document. Anything else under it is kept as written — a lead-in above a
+ * paragraph that is not an entry is left alone rather than judged.
+ */
+export function dropOrphanedLeadIns(markdown: string): { markdown: string; dropped: number } {
+  const source = markdown || '';
+  if (!COMPOSED_LEAD_INS.some((l) => source.includes(l))) return { markdown: source, dropped: 0 };
+  // With or without its bold: the emphasis scrub may already have taken it.
+  const bare = (line: string) => line.trim().replace(/^(\*\*|__)(.*)\1$/, '$2').trim();
+  const lines = source.split('\n');
+  const out: string[] = [];
+  let dropped = 0;
+  for (let i = 0; i < lines.length; i += 1) {
+    if (COMPOSED_LEAD_INS.includes(bare(lines[i]))) {
+      let j = i + 1;
+      while (j < lines.length && lines[j].trim() === '') j += 1;
+      const next = j < lines.length ? lines[j].trim() : '';
+      const orphaned = next === ''
+        || /^#{1,6}\s/.test(next)
+        || /^(-{3,}|\*{3,}|_{3,})$/.test(next)
+        || COMPOSED_LEAD_INS.includes(bare(next));
+      if (orphaned) {
+        dropped += 1;
+        continue;
+      }
+    }
+    out.push(lines[i]);
+  }
+  return {
+    markdown: dropped ? out.join('\n').replace(/\n{3,}/g, '\n\n') : source,
+    dropped,
   };
 }
 
@@ -758,7 +822,23 @@ export function presentStoredMarkdown(
    * what lets this sit in front of every stored report ever written.
    */
   const deleaked = stripPromptRulesBlocks(markdown);
-  const body = deleaked.removed ? deleaked.markdown : markdown;
+  const prompted = deleaked.removed ? deleaked.markdown : markdown;
+  /*
+   * The at-a-glance strip is not presented, on any stored document.
+   *
+   * The owner read five delivered reports and asked for it to go
+   * "throughout": it restated each section's prose in shorthand, filed its
+   * findings under categories the model chose (8.6% growth under "Watch"),
+   * and its "Proceed with caution" contradicted a verdict page that said BUY.
+   * The summary is made once, at the front, from the record; each section
+   * opens with its finding instead. See `glanceWithdrawal.pure.ts`.
+   *
+   * Before the brace scrub, so a well-formed strip is withdrawn whole rather
+   * than read as markup to repair; a malformed one is still the brace
+   * scrub's to remove.
+   */
+  const unglanced = withdrawGlanceStrips(prompted);
+  const body = unglanced.withdrawn ? unglanced.markdown : prompted;
   const braces = scrubUnresolvedBraces(body);
   const resolved = braces.repaired.length || braces.stripped.length ? braces.markdown : body;
   /*
@@ -835,7 +915,11 @@ export function presentStoredMarkdown(
    * after its marker, and code is a quotation.
    */
   const listed = stripEmptyListItems(tidied);
-  const bulleted = listed.removed.length ? listed.markdown : tidied;
+  const listTidy = listed.removed.length ? listed.markdown : tidied;
+  // A composed lead-in over nothing, above `dropEmptySections` for the same
+  // reason the list scrub is: a section it empties is collected by that rule.
+  const leadIns = dropOrphanedLeadIns(listTidy);
+  const bulleted = leadIns.dropped ? leadIns.markdown : listTidy;
   const sections = dropEmptySections(bulleted);
   const clean = sections.dropped.length === 0 ? bulleted : sections.markdown;
   // A bracketed pointer into the prompt's own scaffolding, rewritten into the

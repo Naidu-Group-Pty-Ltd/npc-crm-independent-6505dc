@@ -14,6 +14,12 @@ import {
   endOfMonth,
 } from 'date-fns';
 import { matchesTimeBucket, type ReminderTimeBucket } from '@/lib/reminders/timeBucket.pure';
+import {
+  REMINDER_PRIORITIES,
+  isEscalatedPriority,
+  reminderPriorityBadge,
+  type ReminderPriority,
+} from '@/lib/reminders/priority.pure';
 import { cn } from '@/lib/utils';
 import {
   Bell,
@@ -55,13 +61,11 @@ type ReminderTab = 'client' | 'team';
 // the team tab can offer the same chips without a second copy of the rule.
 type TimeFilter = ReminderTimeBucket;
 type SourceFilter = 'all' | 'client_reminder' | 'follow_up' | 'deal_milestone';
-type PriorityFilter = 'all' | 'high' | 'medium' | 'low';
+type PriorityFilter = 'all' | ReminderPriority;
 
-const PRIORITY_CONFIG = {
-  high: { label: 'High', color: 'bg-destructive/15 text-destructive border-destructive/40 shadow-[0_0_18px_rgba(248,113,113,0.14)]' },
-  medium: { label: 'Medium', color: 'bg-brand-500/15 text-brand-200 border-brand-300/35 shadow-[0_0_18px_rgba(245,158,11,0.12)]' },
-  low: { label: 'Low', color: 'bg-success/10 text-success border-success/30 shadow-[0_0_18px_rgba(16,185,129,0.10)]' },
-};
+// The badge is `lib/reminders/priority.pure` now. It was a three-key map here
+// against a four-value column, indexed unguarded — one Urgent reminder threw
+// on `priorityCfg.color` and the boundary replaced the whole page.
 
 const SOURCE_ICONS = {
   client_reminder: <Bell className="h-3.5 w-3.5" />,
@@ -126,7 +130,7 @@ export default function RemindersHub() {
       const d = new Date(r.due_date);
       return d >= todayStart && d <= weekEnd;
     }).length;
-    const highPriority = reminders.filter(r => r.priority === 'high').length;
+    const highPriority = reminders.filter(r => isEscalatedPriority(r.priority)).length;
     return { overdue, today, thisWeek, total: reminders.length, highPriority };
   }, [reminders]);
 
@@ -484,9 +488,11 @@ export default function RemindersHub() {
                 </SelectTrigger>
                 <SelectContent className="rounded-xl border-brand-300/20 bg-background dark:bg-background/95 p-1 text-foreground dark:text-foreground shadow-[0_18px_50px_rgba(0,0,0,0.45)] backdrop-blur">
                   <SelectItem value="all">All Priorities</SelectItem>
-                  <SelectItem value="high">High</SelectItem>
-                  <SelectItem value="medium">Medium</SelectItem>
-                  <SelectItem value="low">Low</SelectItem>
+                  {REMINDER_PRIORITIES.map(value => (
+                    <SelectItem key={value} value={value}>
+                      {reminderPriorityBadge(value).label}
+                    </SelectItem>
+                  ))}
                 </SelectContent>
               </Select>
             </div>
@@ -593,7 +599,7 @@ export default function RemindersHub() {
                       const isWeekPlanningReminder = timeFilter === 'week' && !isOverdue && !isDueToday;
                       const isMonthPlanningReminder = timeFilter === 'month' && !isOverdue && !isDueToday;
                       const daysUntil = differenceInDays(new Date(reminder.due_date), now);
-                      const priorityCfg = PRIORITY_CONFIG[reminder.priority];
+                      const priorityCfg = reminderPriorityBadge(reminder.priority);
 
                         return (
                           <Card

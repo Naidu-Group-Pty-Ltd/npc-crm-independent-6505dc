@@ -154,6 +154,20 @@ describe('the content rules reach BOTH presentations', () => {
     expect(contentSentToStandard()).toContain('$650');
   });
 
+  it("sends the SAME audience's body to both presentations", async () => {
+    h.row = {
+      ...h.row,
+      location_intelligence: {
+        schools: { topSchools: [{ name: 'Cowra Public School', distance: 0.6 }] },
+        lifestyle: { nearestShopping: 'Woolworths Cowra', nearestPark: 'Apex Park' },
+      },
+    };
+    await produceInvestmentDocument('r1', { audience: 'both' });
+    expect(contentSentToTemplate()).toContain("Living Here: An Owner-Occupier's View");
+    expect(contentSentToTemplate()).toContain('Cowra Public School, 600 m');
+    expect(contentSentToTemplate()).toBe(contentSentToStandard());
+  });
+
   it('sends the record’s own content when nothing is switched off', async () => {
     await produceInvestmentDocument('r1');
     expect(contentSentToStandard()).toBe(CONTENT);
@@ -176,7 +190,7 @@ describe('the presentation rules', () => {
     expect(contentSentToStandard()).toContain('{{bars:');
   });
 
-  it('passes all five to the standard renderer, resolved', async () => {
+  it('passes every control to the standard renderer, resolved', async () => {
     await produceInvestmentDocument('r1', { includeCharts: false, includeSparklines: false });
     expect(h.standardCalls[0]?.presentation).toEqual({
       includeSources: true,
@@ -184,6 +198,9 @@ describe('the presentation rules', () => {
       includeCharts: false,
       includeHeroImages: false,
       includeSparklines: false,
+      // Unset is the investor's document, which is every document before
+      // the audience existed.
+      audience: 'investor',
     });
   });
 

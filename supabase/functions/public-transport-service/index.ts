@@ -3,9 +3,7 @@ import { parseJsonBody } from '../_shared/validate.ts';
 import { PublicTransportRequest, PUBLIC_SERVICE_MAX_BODY_BYTES } from '../_shared/publicServiceSchemas.ts';
 import { sourceUnavailable } from '../_shared/sourceUnavailable.pure.ts';
 import { internalError } from '../_shared/errorResponse.ts';
-import {
-  COVERAGE_RADIUS_M, NEARBY_RADIUS_M, boundingBox, readTransport, type StoredStop,
-} from '../_shared/transportReading.pure.ts';
+import { loadedTransportNetworks, readTransportAt } from '../_shared/transportStopRead.ts';
 
 /**
  * Public transport near a property, measured from its own coordinate.
@@ -50,6 +48,13 @@ import {
  * and frequency is not measured. Mode is absent for the same reason
  * (`route_type` is NULL on every row loaded), and `notMeasured` says both in
  * words a report can print.
+ *
+ * ## One reading, two callers
+ *
+ * The read itself lives in `_shared/transportStopRead.ts`.
+ * `location-intelligence-service` used to reach it through this endpoint over
+ * HTTP and now reads it directly — the hop cost 6.3 s cold in front of two
+ * indexed queries (24 Sep 2026). This endpoint answers exactly as it did.
  */
 
 const corsHeaders = {
@@ -57,18 +62,6 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-correlation-id, x-step-up-token',
   'Access-Control-Expose-Headers': 'x-correlation-id, x-tokens-used, x-tokens-reserved, x-tokens-estimated, x-duration-ms',
 };
-
-// `loaded_at` is the reading's own currency: without it a report states a
-// stop count and its source and never says WHEN the feed behind it was
-// current. The column has always existed; nothing selected it.
-const STOP_COLUMNS = 'feed, stop_id, stop_name, lat, lon, location_type, parent_station, route_type, source_label, loaded_at';
-
-/**
- * How many rows the far query takes when nothing is close. Enough to name the
- * nearest place honestly, and bounded because the only question it answers is
- * "does any loaded feed reach here at all".
- */
-const FAR_QUERY_LIMIT = 200;
 
 interface PublicTransportInput {
   lat: number;
@@ -106,19 +99,14 @@ Deno.serve(async (req) => {
 
     const supabase = createClient(Deno.env.get('SUPABASE_URL')!, Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
 
-    const near = boundingBox(lat, lng, NEARBY_RADIUS_M);
-    const { data: nearRows, error: nearError } = await supabase
-      .from('transport_stops')
-      .select(STOP_COLUMNS)
-      .gte('lat', near.minLat).lte('lat', near.maxLat)
-      .gte('lon', near.minLon).lte('lon', near.maxLon);
+    const read = await readTransportAt(supabase, lat, lng);
 
     // A failed read is not an empty area. It answers 503 so a caller can
     // retry, rather than reporting "no transport here" about a database
     // fault — the `aml.cases` lesson: a read that FAILED is not a row that is
     // ABSENT.
-    if (nearError) {
-      console.error('[public-transport-service] stop read failed:', nearError.message);
+    if (!read.ok) {
+      console.error('[public-transport-service] stop read failed:', read.message);
       return new Response(JSON.stringify(sourceUnavailable(
         'public-transport',
         'provider_error',
@@ -126,39 +114,10 @@ Deno.serve(async (req) => {
       )), { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
-    let candidates = (nearRows ?? []) as StoredStop[];
-
-    // Nothing close. The remaining question is whether a loaded feed reaches
-    // here at all, which is a different answer and needs the wider window.
-    if (candidates.length === 0) {
-      const far = boundingBox(lat, lng, COVERAGE_RADIUS_M);
-      const { data: farRows, error: farError } = await supabase
-        .from('transport_stops')
-        .select(STOP_COLUMNS)
-        .gte('lat', far.minLat).lte('lat', far.maxLat)
-        .gte('lon', far.minLon).lte('lon', far.maxLon)
-        .limit(FAR_QUERY_LIMIT);
-      if (farError) {
-        console.error('[public-transport-service] coverage read failed:', farError.message);
-        return new Response(JSON.stringify(sourceUnavailable(
-          'public-transport',
-          'provider_error',
-          'The public transport stop register could not be read. This is a fault rather than an absence of stops, and is worth retrying.',
-        )), { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
-      }
-      candidates = (farRows ?? []) as StoredStop[];
-    }
-
-    const reading = readTransport(lat, lng, candidates, NEARBY_RADIUS_M);
+    const reading = read.reading;
 
     if (reading.verdict === 'outside_loaded_networks') {
-      // Which networks ARE held, read from the register rather than listed
-      // here, so this can never claim a feed that is not loaded.
-      const { data: loaded } = await supabase
-        .from('transport_feed_syncs')
-        .select('feed')
-        .eq('status', 'succeeded');
-      const networks = [...new Set((loaded ?? []).map((r) => (r as { feed: string }).feed))].sort();
+      const networks = await loadedTransportNetworks(supabase);
       return new Response(JSON.stringify(sourceUnavailable(
         'public-transport',
         'no_data_for_location',

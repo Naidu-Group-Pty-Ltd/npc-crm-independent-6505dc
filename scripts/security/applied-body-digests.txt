@@ -16,9 +16,9 @@
 #
 # Format: <64-hex sha256>  <filename>
 #
-# 690 file(s) recorded of 1002 in the corpus; 904 distinct bodies in the ledger.
-# Matched 619 byte-identical, 56 identical but for trailing whitespace, 15 identical in what executes.
-# 16 file(s) past 262144 bytes were not digested.
+# 699 file(s) recorded of 1032 in the corpus; 913 distinct bodies in the ledger.
+# Matched 628 byte-identical, 56 identical but for trailing whitespace, 15 identical in what executes.
+# 18 file(s) past 262144 bytes were not digested.
 7dba85d6808e9d07f53c7ca984851f965fb3de11568f596711851fc5622f144b  20250827173834_c6923655-f82f-42ad-8561-6e348ff74015.sql
 1808b48be5adb59877cd3bb538b227f43c7e56d1394dc811a5a5ac476b15a4bb  20250827173907_18e662c9-baec-432b-b617-8eb7ec18c522.sql
 f8b5e42420c272757d807a24aa04dfc219011fd9633984cae6a0e8a4bc1470da  20250831091525_eafc9d31-fc67-474b-8924-c82e64771733.sql
@@ -709,3 +709,12 @@ a1ddf4dec233ff13476457d11972a1628ea4ff2c1e9fbb14dbbbe8e16287b6bd  20261001000100
 039ba3e53cb7a61fa7645281e3a94b2fde6c522e634fe0118720ce123a7ec92a  20261112030000_abs_poa_reference_tables.sql
 9873b822f9e2f3af9d228403f314de4da821c29a65b392ead1fb194a6921b119  20261113090000_transport_gtfs.sql
 cc7e0b137ff832269db3196add2b3026135c46a962da96e6485f69297c8af93d  20261123000000_builder_network_stock_mirror.sql
+77d61975bd6ed8696a7dfb85f89c058444bfb892565a87c90dc5a82633981db5  20261210000000_urban_centre_register.sql
+65e9abc29e010d9b0fe2a4a804837f99fcbda0e621828957c115fcb34f8777d8  20261210010000_urban_centre_refresh.sql
+079e1672faddb264dd6124ffbfa9ae6cf670e07e1e4cedd376ddc0aa375cf06f  20261210020000_urban_centre_point_basis.sql
+f210dfd1dbf2851b48a6ef8fece4d5d5aab65eaaecb16742512553bb78d58301  20261210030000_urban_centre_monthly.sql
+e0fa7cce0ef1af5174973833f8a06ed7da3200e8443a5565fa50ad5e9fe93967  20261210040000_regenerate_investment_report.sql
+99a37ad05cb8f1bc028c8cc989229175e882228d9b1e66bdc5db737f1e51473f  20261219000000_restate_mfa_recovery_code_consumption.sql
+af057da7b70206499bad8206804c7bb5054c3264e336c3431d76dee0ac07747a  20261219010000_restate_report_market_fact_snapshot.sql
+77a9de3f36a73f07635e48eab98167fbdb0d52ce2fd09dc05bb22289046281d1  20261219020000_restate_email_copilot_mutation_permissions.sql
+1bfe31c3b3b050e14a47e40de7b5145112b48fe461543dc98b0b471672c12465  20261219030000_restate_email_copilot_sent_reply_scope.sql

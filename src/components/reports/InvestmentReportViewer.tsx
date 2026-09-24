@@ -490,6 +490,12 @@ export function InvestmentReportViewer({ report, isOpen, onClose, onReportUpdate
                         <span className="text-xs text-muted-foreground">
                           {report.investment_score.recommendation || 'Score calculated from market, financial & location data'}
                         </span>
+                        {/* Eligibility 5.0.0: the run's own sentence on what the evidence behind the letter is. */}
+                        {typeof report.investment_score.evidenceCaution?.statement === 'string' && (
+                          <span className="mt-1 text-xs text-muted-foreground">
+                            {report.investment_score.evidenceCaution.statement}
+                          </span>
+                        )}
                       </div>
                     </div>
                     <div className="flex items-center gap-4">

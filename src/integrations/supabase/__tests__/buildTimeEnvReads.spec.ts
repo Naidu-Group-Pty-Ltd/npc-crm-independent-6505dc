@@ -199,10 +199,12 @@ export function stripCommentsAndStrings(source: string): string {
  *
  * `(import.meta as any).env?.VITE_X` IS replaced: esbuild removes the cast
  * before Vite's define runs, so what the substitution sees is a contiguous
- * `import.meta.env`. Verified by execution — that exact expression in
- * `AssetLibraryDialog.tsx` compiles to the project URL as a literal. A scan
- * that judged the written text would report a working read as broken, so the
- * cast is removed here for the same reason the compiler removes it.
+ * `import.meta.env`. Verified by execution — that exact expression, in
+ * `AssetLibraryDialog.tsx` until 23 Sep 2026, compiled to the project URL as a
+ * literal. (It reads `SUPABASE_URL` now, for a reason that is not this rule's:
+ * see `oneResolverForTheProjectUrl.spec.ts`.) A scan that judged the written
+ * text would report a working read as broken, so the cast is removed here for
+ * the same reason the compiler removes it.
  *
  * What the cast does NOT excuse is an optional chain after it:
  * `(import.meta as {...})?.env` leaves `import.meta?.env`, which is the form
@@ -283,7 +285,9 @@ describe('build-time environment reads', () => {
   });
 
   it('a TypeScript cast is stripped, and an optional chain after it is not', () => {
-    // Both of these are live in the tree and both are replaced by the bundler.
+    // Both are replaced by the bundler. The first is the form the Template
+    // Builder's upload paths used until 23 Sep 2026; the second is live in
+    // `extractPdfViaDocling.ts`.
     expect(importMetaUses('(import.meta as any).env?.VITE_SUPABASE_URL')).toEqual([
       '.env?.VITE_SUPABASE_URL',
     ]);

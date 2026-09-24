@@ -56,6 +56,17 @@ export function renderDisclaimerHtml(block: Block, ctx: HtmlBlockContext): strin
   const inkOnField = resolveBindableColor('token:text', ctx, '#F3EFE6');
   const mutedOnField = resolveBindableColor('token:mutedOnField', ctx, '#B9B3A6');
   const headingFont = fontFamilyDecl('token:heading', '--font-heading');
+  /*
+   * The page's inset, and the family's own when the master states it.
+   *
+   * The block set its copy 20pt from the paper's edge while every page before
+   * it sits on the master's margin — about 45pt on the Compass the owner sent
+   * back on 23 Sep 2026 — so the closing page was the only one in the document
+   * whose words ran out towards the trim. A master passes `margin`; a template
+   * that does not (the voice catalogue, hand-built rows) keeps 40pt/20pt.
+   */
+  const margin = typeof p.margin === 'number' && Number.isFinite(p.margin) && p.margin > 0 ? p.margin : null;
+  const padding = margin === null ? '40pt 20pt' : `${margin}pt`;
 
   const row = (label: string, raw: unknown) => {
     const v = resolveBindable(raw, ctx);
@@ -98,7 +109,7 @@ export function renderDisclaimerHtml(block: Block, ctx: HtmlBlockContext): strin
     })
     : '';
 
-  return `<div style="position:absolute;inset:0;background:${ground};color:${accent};padding:40pt 20pt;font-family:var(--font-body, Helvetica);">
+  return `<div style="position:absolute;inset:0;background:${ground};color:${accent};padding:${padding};font-family:var(--font-body, Helvetica);">
     ${markBlock}
     ${heading}
     <div style="${headingFont}margin-top:30pt;font-size:12pt;font-weight:700;letter-spacing:0.08em;color:${accent};">CONTACT US</div>

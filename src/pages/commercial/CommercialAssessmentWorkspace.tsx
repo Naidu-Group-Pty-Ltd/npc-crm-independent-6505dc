@@ -5,6 +5,12 @@
  * narrow scrolling modal the feature used to create properties through. Steps
  * are directly navigable rather than strictly sequential, because a user
  * revisiting an assessment usually knows which section they came back for.
+ *
+ * This is the module's one workflow. The "Standalone calculators" workspace
+ * edited these same records through a second set of stages; its valuation and
+ * forecast are now the optional "Valuation & forecast" step here, its property
+ * link is the register panel on the Property step, and its route redirects to
+ * this page. See `docs/commercial/MODULE_STRUCTURE.md`.
  */
 
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -12,8 +18,14 @@ import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import {
-  AlertCircle, ArrowLeft, ArrowRight, Building2, Check, CloudOff,
-  Factory, Loader2, Save, RefreshCw,
+  Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle,
+} from '@/components/ui/dialog';
+import {
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
+  AlertCircle, Archive, ArchiveRestore, ArrowLeft, ArrowRight, Building2, Check, CloudOff,
+  Factory, Loader2, MoreHorizontal, Save, RefreshCw, Trash2,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from '@/hooks/use-toast';
@@ -22,6 +34,12 @@ import { usePermissions } from '@/hooks/usePermissions';
 import { ciAssessmentApi, useCiAssessment } from '@/hooks/useCiAssessments';
 import { useCapacityReport } from '@/hooks/useCapacityReport';
 import { runAssessment, type AssessmentResult } from '@/lib/ciAssessment/engine';
+import { runAnalysis } from '@/lib/ciAssessment/analysisEngine';
+import {
+  archiveAssessment, intendedClient, restoreAssessment, type IntendedClient,
+} from '@/lib/ciAssessment/assessmentManagement';
+import { clientLabel } from '@/lib/ciAssessment/clientRecords';
+import { registerLinkOf } from '@/lib/ciAssessment/registerProperty';
 import { validateAssessment, type ValidationIssue } from '@/lib/ciAssessment/validation';
 import { focusAssessmentFieldWhenReady } from '@/components/commercial/assessment/fieldFocus';
 import { ASSESSMENT_STATUS_LABELS, assessmentTypeDefinition, type AssessmentPayload } from '@/lib/ciAssessment/types';
@@ -37,8 +55,26 @@ import { StepLeaseIncome } from '@/components/commercial/assessment/StepLeaseInc
 import { StepLoanStructure } from '@/components/commercial/assessment/StepLoanStructure';
 import { StepResults } from '@/components/commercial/assessment/StepResults';
 import { StepClientLink } from '@/components/commercial/assessment/StepClientLink';
+import { StepValuationForecast } from '@/components/commercial/assessment/StepValuationForecast';
+import { RegisterPropertyPanel } from '@/components/commercial/assessment/RegisterPropertyPanel';
+import { ClientCreateForm } from '@/components/commercial/assessment/ClientCreateForm';
+import { prefillFromAssessment } from '@/components/commercial/assessment/clientPrefill';
+import { DeleteAssessmentDialog } from '@/components/commercial/assessment/DeleteAssessmentDialog';
+import { useMayOfferAssessmentDelete } from '@/components/commercial/assessment/useMayOfferAssessmentDelete';
 import { ResultsRail } from '@/components/commercial/assessment/ResultsRail';
+import { AssessmentDocumentsPanel } from '@/components/commercial/assessment/AssessmentDocumentsPanel';
+import { useAssessmentDocuments } from '@/components/commercial/assessment/useAssessmentDocuments';
 
+/**
+ * The steps, in the order an assessment is built.
+ *
+ * The ten established steps are unchanged in key, order and behaviour.
+ * "Valuation & forecast" is inserted between Loan structure and Results
+ * because it reads all three things above it — the price, the income and the
+ * loan — and it is optional: nothing on it is validated, and the lending result
+ * does not depend on it. Steps are addressed by key (`?step=results`), never by
+ * position, so no existing link moved.
+ */
 const STEPS = [
   { key: 'type', label: 'Type', section: 'assessmentType' },
   // The intake pack sits early on purpose: the usual flow is create the
@@ -50,6 +86,7 @@ const STEPS = [
   { key: 'portfolio', label: 'Portfolio', section: 'portfolio' },
   { key: 'lease', label: 'Lease income', section: 'lease' },
   { key: 'loan', label: 'Loan structure', section: 'loan' },
+  { key: 'analysis', label: 'Valuation & forecast', section: 'analysis' },
   { key: 'results', label: 'Results', section: 'results' },
   { key: 'link', label: 'Save & link', section: 'link' },
 ] as const;
@@ -113,6 +150,30 @@ export default function CommercialAssessmentWorkspace() {
   const [calculating, setCalculating] = useState(false);
   const [savedResult, setSavedResult] = useState<AssessmentResult | null>(null);
   const [showAllErrors, setShowAllErrors] = useState(false);
+  const [deleteOpen, setDeleteOpen] = useState(false);
+  const [clientDialogOpen, setClientDialogOpen] = useState(false);
+  const [managing, setManaging] = useState(false);
+  const mayOfferDelete = useMayOfferAssessmentDelete();
+
+  /**
+   * Who the assessment is being prepared for, before it is linked: the client
+   * created from its intake step, or, for one started while the New assessment
+   * dialog existed, named there. Read from the assessment's own audit trail by
+   * the server — it is never a link.
+   */
+  const [intent, setIntent] = useState<{ assessmentId: string; client: IntendedClient | null } | null>(null);
+  const linkedClientId = record?.client_id ?? null;
+  useEffect(() => {
+    if (!id || linkedClientId) return undefined;
+    let cancelled = false;
+    void intendedClient(id).then((result) => {
+      if (!cancelled) setIntent({ assessmentId: id, client: result.data ?? null });
+    });
+    return () => { cancelled = true; };
+  }, [id, linkedClientId]);
+  // Kept against the assessment it was read for: moving to another assessment
+  // shows nobody until that one's own answer arrives, and a link supersedes it.
+  const preparedFor = id && !linkedClientId && intent?.assessmentId === id ? intent.client : null;
 
   const stepParam = searchParams.get('step') as StepKey | null;
   const activeStep: StepKey = STEPS.some((step) => step.key === stepParam) ? stepParam! : 'type';
@@ -150,6 +211,14 @@ export default function CommercialAssessmentWorkspace() {
   const validation = useMemo(
     () => (payload ? validateAssessment(payload) : null),
     [payload],
+  );
+
+  // The investment half — valuation and forecast — from the same payload and
+  // the same lending result, so the yield here and the income on the lease
+  // step can never disagree.
+  const analysis = useMemo(
+    () => (payload && liveResult ? runAnalysis(payload, liveResult) : null),
+    [payload, liveResult],
   );
 
   const issues = useMemo(
@@ -244,7 +313,10 @@ export default function CommercialAssessmentWorkspace() {
       || moved(record.proposed_dscr, liveResult.summary.proposedDscr, 0.0001);
   }, [record, liveResult]);
 
-  const { generatingId, generate } = useCapacityReport();
+  // Every document this assessment has issued. A render that ends — with a
+  // document or without one — is a new ledger row, so the list is re-read.
+  const assessmentDocuments = useAssessmentDocuments(id);
+  const { generatingId, generate } = useCapacityReport({ onFinished: assessmentDocuments.reload });
 
   const setPayload = useCallback((next: AssessmentPayload) => {
     update(next, STEPS[activeIndex]?.section);
@@ -370,6 +442,52 @@ export default function CommercialAssessmentWorkspace() {
     void generate(id);
   }, [id, generate]);
 
+  // ---- Managing the record ------------------------------------------------
+  // Above the early returns below, like every hook on this page.
+
+  const archiveOrRestore = useCallback(async () => {
+    if (!id || !record) return;
+    const restoring = record.status === 'archived';
+    // Anything typed and not yet saved is saved first — archiving is not a
+    // reason to lose it, and a pending autosave on an archived record fails.
+    if (!restoring) await saveNow();
+    setManaging(true);
+    const result = restoring ? await restoreAssessment(id) : await archiveAssessment(id);
+    setManaging(false);
+    if (result.error) {
+      toast({ title: restoring ? 'Could not restore' : 'Could not archive', description: result.error, variant: 'destructive' });
+      return;
+    }
+    await reload();
+    toast({
+      title: restoring ? 'Assessment restored' : 'Assessment archived',
+      description: restoring
+        ? 'It is back in your working list, at the status it had before it was archived.'
+        : 'It is read-only and out of your working list. Restore it from here or from Archived.',
+    });
+  }, [id, record, saveNow, reload]);
+
+  const openDelete = useCallback(async () => {
+    // Settle any pending autosave first, so a save cannot land on a record
+    // that is being deleted — and the delete checks the version it read.
+    await saveNow();
+    setDeleteOpen(true);
+  }, [saveNow]);
+
+  const clientCreatedHere = useCallback((client: NonNullable<IntendedClient['client']>) => {
+    setClientDialogOpen(false);
+    if (id) {
+      setIntent({
+        assessmentId: id,
+        client: { clientId: client.id, source: 'created', recordedAt: new Date().toISOString(), client },
+      });
+    }
+    toast({
+      title: `${clientLabel(client)} is ready to link`,
+      description: 'They are selected on the final step, once the assessment is complete.',
+    });
+  }, [id]);
+
   if (loading) {
     return (
       <div className="ci-shell">
@@ -396,6 +514,8 @@ export default function CommercialAssessmentWorkspace() {
 
   const definition = assessmentTypeDefinition(payload.assessmentType);
   const SegmentIcon = definition.segment === 'industrial' ? Factory : Building2;
+  const registerLink = registerLinkOf(payload);
+  const preparedForName = !record.client_id && preparedFor?.client ? clientLabel(preparedFor.client) : null;
 
   return (
     <div className="ci-foundation ci-workspace">
@@ -416,6 +536,8 @@ export default function CommercialAssessmentWorkspace() {
               </h1>
               <p className="truncate text-xs text-muted-foreground">
                 {record.reference} · {definition.label} · v{record.version}
+                {registerLink?.label ? ` · ${registerLink.label}` : ''}
+                {preparedForName ? ` · For ${preparedForName} (not linked yet)` : ''}
               </p>
             </div>
           </div>
@@ -436,6 +558,36 @@ export default function CommercialAssessmentWorkspace() {
                 : <RefreshCw className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />}
               {calculating ? 'Calculating…' : 'Run calculation'}
             </Button>
+            {/* Managing the record lives with the record: archiving or deleting
+                an assessment used to be possible only from a list row, and
+                deleting was not possible anywhere. */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button size="icon" variant="outline" className="h-8 w-8" aria-label="More actions" disabled={managing}>
+                  {managing
+                    ? <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
+                    : <MoreHorizontal className="h-4 w-4" aria-hidden="true" />}
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onSelect={() => { void archiveOrRestore(); }}>
+                  {record.status === 'archived'
+                    ? <><ArchiveRestore className="mr-2 h-4 w-4" aria-hidden="true" /> Restore assessment</>
+                    : <><Archive className="mr-2 h-4 w-4" aria-hidden="true" /> Archive assessment</>}
+                </DropdownMenuItem>
+                {mayOfferDelete ? (
+                  <>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      className="text-destructive focus:text-destructive"
+                      onSelect={() => { void openDelete(); }}
+                    >
+                      <Trash2 className="mr-2 h-4 w-4" aria-hidden="true" /> Delete assessment…
+                    </DropdownMenuItem>
+                  </>
+                ) : null}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
         </div>
 
@@ -568,14 +720,22 @@ export default function CommercialAssessmentWorkspace() {
               assessmentTitle={record.title}
               segment={definition.segment === 'industrial' ? 'industrial' : 'commercial'}
               onApply={applyIntakePack}
-              onCreateClient={() => window.open('/clients', '_blank', 'noopener,noreferrer')}
+              // In the assessment, against the assessment. This opened the whole
+              // client list in a new tab, where nothing tied the client back here.
+              onCreateClient={() => setClientDialogOpen(true)}
+              preparedFor={preparedForName && preparedFor
+                ? { name: preparedForName, source: preparedFor.source }
+                : null}
               linkedClientId={record.client_id}
               onOpenClient={() => navigate(clientCommercialIndustrialPath(record.client_id!))}
               disabled={readOnly}
             />
           ) : null}
           {activeStep === 'property' ? (
-            <StepPropertyTransaction payload={payload} onChange={setPayload} issues={issues} disabled={readOnly} />
+            <>
+              <RegisterPropertyPanel payload={payload} onChange={setPayload} disabled={readOnly} />
+              <StepPropertyTransaction payload={payload} onChange={setPayload} issues={issues} disabled={readOnly} />
+            </>
           ) : null}
           {activeStep === 'ownership' ? (
             <StepOwnership payload={payload} onChange={setPayload} issues={issues} disabled={readOnly} />
@@ -594,6 +754,9 @@ export default function CommercialAssessmentWorkspace() {
               payload={payload} onChange={setPayload} issues={issues}
               canOverridePolicy={canOverridePolicy} disabled={readOnly}
             />
+          ) : null}
+          {activeStep === 'analysis' && analysis ? (
+            <StepValuationForecast payload={payload} analysis={analysis} onChange={setPayload} disabled={readOnly} />
           ) : null}
           {activeStep === 'results' ? (
             <>
@@ -638,6 +801,7 @@ export default function CommercialAssessmentWorkspace() {
                   </p>
                 </div>
               ) : null}
+              <AssessmentDocumentsPanel assessmentId={record.id} documents={assessmentDocuments} />
             </>
           ) : null}
           {activeStep === 'link' ? (
@@ -687,8 +851,42 @@ export default function CommercialAssessmentWorkspace() {
           </nav>
         </main>
 
-        <ResultsRail result={liveResult} onJumpToResults={() => goToStep('results')} />
+        <ResultsRail result={liveResult} analysis={analysis} onJumpToResults={() => goToStep('results')} />
       </div>
+
+      {/* Creating the client from the intake step — the same form as the final
+          step, recorded against this assessment so the final step starts with
+          them selected. */}
+      <Dialog open={clientDialogOpen} onOpenChange={setClientDialogOpen}>
+        <DialogContent className="max-w-2xl">
+          <DialogHeader>
+            <DialogTitle>Create the client</DialogTitle>
+            <DialogDescription>
+              Added to your client book now, and linked on the final step once the assessment is complete —
+              where the portfolio is reconciled against their record.
+            </DialogDescription>
+          </DialogHeader>
+          {clientDialogOpen ? (
+            <ClientCreateForm
+              assessmentId={record.id}
+              initial={prefillFromAssessment(payload)}
+              heading="Client details"
+              intro="Prefilled from the borrowing entity where there is one — check it before creating."
+              onCreated={clientCreatedHere}
+              onCancel={() => setClientDialogOpen(false)}
+              disabled={readOnly}
+            />
+          ) : null}
+        </DialogContent>
+      </Dialog>
+
+      <DeleteAssessmentDialog
+        assessment={deleteOpen ? { id: record.id, title: record.title, reference: record.reference } : null}
+        open={deleteOpen}
+        onOpenChange={setDeleteOpen}
+        onDeleted={() => navigate('/commercial?tab=assessments')}
+        onArchived={() => { void reload(); }}
+      />
     </div>
   );
 }

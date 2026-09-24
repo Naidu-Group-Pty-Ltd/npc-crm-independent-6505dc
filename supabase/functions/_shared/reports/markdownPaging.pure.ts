@@ -217,8 +217,8 @@ export function geometryAwareFormat(reportType: string | null | undefined): bool
 
 export const BOUNDARY_SPLIT_MIN_ROWS = 6;
 /** Room worth cutting a paragraph for, and the paragraph worth cutting. */
-export const PARAGRAPH_SPLIT_MIN_ROOM = 3;
-export const PARAGRAPH_SPLIT_MIN_LINES = 5;
+export const PARAGRAPH_SPLIT_MIN_ROOM = 2.5;
+export const PARAGRAPH_SPLIT_MIN_LINES = 4;
 export const BOUNDARY_SPLIT_MIN_LINES = 8;
 /**
  * A table short of `BOUNDARY_SPLIT_MIN_ROWS` still meets the boundary when it
@@ -261,8 +261,13 @@ export function packMarkdownPages(
   options: PackOptions = {},
 ): MarkdownBlock[][] {
   const contBudget = Math.max(1, linesPerPage);
-  const firstBudget = Math.max(1, options.firstPageLines ?? contBudget);
-  const pages: MarkdownBlock[][] = [];
+  // Zero is a real answer, and only for the first page: the body's opening
+  // box is shared with a summary and too small to open in (see
+  // `MIN_SHARED_FIRST_LINES`), so the first bucket is EMPTY and the body
+  // opens on the next page. Anything else keeps its floor of one line.
+  const openingSkipped = options.firstPageLines === 0;
+  const firstBudget = openingSkipped ? contBudget : Math.max(1, options.firstPageLines ?? contBudget);
+  const pages: MarkdownBlock[][] = openingSkipped ? [[]] : [];
   let current: MarkdownBlock[] = [];
   let used = 0;
   // Figures carried past the prose that follows them; they open the next page.
@@ -432,6 +437,17 @@ export function packMarkdownPages(
           // and opens the next page.
           if (parts.length === 2) { queue.unshift(...cutInto(parts)); continue; }
         }
+        // A later chunk of a table was cut for a fresh page; where it lands on
+        // one already part-full, it is cut again for the room that is there.
+        // The risk register of the 18 Annabelle Crescent Compass (Board Pack
+        // Brief, 23 Sep 2026) left ten lines white under its second chunk
+        // because its third — two tall rows — could not follow whole, when
+        // its first row could.
+        if (options.splitTables && piece.kind === 'table' && piece.table
+          && remaining >= BOUNDARY_SPLIT_MIN_LINES) {
+          const parts = splitTableBlock(piece, remaining, contBudget);
+          if (parts.length > 1 && parts[0].lines <= remaining) { queue.unshift(...cutInto(parts)); continue; }
+        }
         breakPage();
       } else if (floated.length && piece.kind === 'heading' && current.length) {
         // A new section: the figure it follows must not drift into it.
@@ -447,11 +463,13 @@ export function packMarkdownPages(
     else { current = floated; floated = []; }
   }
   if (current.length) pages.push(current);
-  if (options.absorbTail && pages.length > 1 && sumLines(pages[pages.length - 1]) <= TAIL_ABSORB_LINES) {
+  // The reserved empty opening is not a page anything may be folded into.
+  const firstPackable = openingSkipped ? 1 : 0;
+  if (options.absorbTail && pages.length > firstPackable + 1 && sumLines(pages[pages.length - 1]) <= TAIL_ABSORB_LINES) {
     const tail = pages.pop()!;
     pages[pages.length - 1].push(...tail);
   }
-  if (options.balanceTail && pages.length > 1 && sumLines(pages[pages.length - 1]) < tailMin) {
+  if (options.balanceTail && pages.length > firstPackable + 1 && sumLines(pages[pages.length - 1]) < tailMin) {
     const last = pages[pages.length - 1];
     const prev = pages[pages.length - 2];
     const prevBudget = budgetFor(pages.length - 2);

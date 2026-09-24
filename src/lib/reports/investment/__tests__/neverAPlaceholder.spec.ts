@@ -141,6 +141,12 @@ describe('a chip, a chart point and a prompt line never carry a placeholder', ()
       /realistic estimates/i,
       /clearly labelled estimates/i,
       /\|\| 'N\/A'\}\/100/,
+      // A LABEL with a slot in it. The Snapshot guide named the row "Model
+      // vacancy allowance (N weeks, X%)", and the 23 Sep 2026 Snapshot for
+      // 97 Poole Road printed exactly that — the model copied the label it
+      // was handed, slots and all.
+      /\(\s*N\s+weeks\s*,\s*X\s*%\s*\)/,
+      /\b[NX]\s+(?:weeks|years|months)\b/,
     ];
     for (const rel of [
       'supabase/functions/generate-investment-report/index.ts',

@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Building2, Pencil, FileDown, Loader2, Calculator } from 'lucide-react';
+import { ArrowLeft, Building2, Pencil, FileDown, Loader2, FilePlus2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { commercialApi, useCommercialFinancing, type CommercialProperty } from '@/hooks/useCommercialProperties';
 import { CommercialPropertyFormModal } from '@/components/commercial/CommercialPropertyFormModal';
@@ -12,6 +12,8 @@ import { RentRollTable } from '@/components/commercial/RentRollTable';
 import { FinancialSnapshot } from '@/components/commercial/FinancialSnapshot';
 import { CommercialCapexTable } from '@/components/commercial/CommercialCapexTable';
 import { PropertyFinancingPanel } from '@/components/property/PropertyFinancingPanel';
+import { PropertyAssessmentsPanel } from '@/components/commercial/PropertyAssessmentsPanel';
+import { useStartAssessment } from '@/components/commercial/assessment/useStartAssessment';
 import { generateCommercialInvestmentReport } from '@/utils/commercial/commercialReportPdf';
 
 
@@ -23,6 +25,7 @@ const ASSET_LABEL: Record<string, string> = {
 export default function CommercialPropertyDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { start: startAssessment, starting } = useStartAssessment();
   const [property, setProperty] = useState<CommercialProperty | null>(null);
   const [loading, setLoading] = useState(true);
   const [editOpen, setEditOpen] = useState(false);
@@ -59,7 +62,7 @@ export default function CommercialPropertyDetail() {
     <div className="container mx-auto p-6 space-y-6">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={() => navigate('/commercial')}>
+          <Button variant="ghost" size="icon" onClick={() => navigate('/commercial?tab=properties')} aria-label="Back to the property register">
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
@@ -75,8 +78,21 @@ export default function CommercialPropertyDetail() {
           </div>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="secondary" onClick={() => navigate(`/calculators?domain=commercial&propertyId=${property.id}`)}>
-            <Calculator className="h-4 w-4 mr-2" /> Send to Calculators
+          {/* Starts an assessment of this building and opens its Type step: its
+              blanks are filled from this record, and the assessment records the
+              building, so it is listed below. This was "Send to Calculators",
+              which minted an "Untitled analysis" on arrival and held the building
+              only in memory — the record never said which property it was about. */}
+          <Button
+            variant="secondary"
+            onClick={() => void startAssessment({ domain: 'commercial', propertyId: property.id })}
+            disabled={starting !== null}
+            aria-busy={starting !== null}
+          >
+            {starting !== null
+              ? <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              : <FilePlus2 className="h-4 w-4 mr-2" />}
+            New assessment
           </Button>
           <Button onClick={handleGenerateReport} disabled={generating}>
             {generating ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <FileDown className="h-4 w-4 mr-2" />}
@@ -96,6 +112,7 @@ export default function CommercialPropertyDetail() {
           <TabsTrigger value="capex">Capex</TabsTrigger>
           <TabsTrigger value="financing">Financing</TabsTrigger>
           <TabsTrigger value="financials">Financials</TabsTrigger>
+          <TabsTrigger value="assessments">Assessments</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
@@ -136,6 +153,9 @@ export default function CommercialPropertyDetail() {
 
         <TabsContent value="financials">
           <FinancialSnapshot property={property} />
+        </TabsContent>
+        <TabsContent value="assessments">
+          <PropertyAssessmentsPanel domain="commercial" propertyId={property.id} />
         </TabsContent>
       </Tabs>
 

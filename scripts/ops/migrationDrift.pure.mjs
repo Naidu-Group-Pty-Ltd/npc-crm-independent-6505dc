@@ -37,6 +37,14 @@
  *
  *     -- @effect: select 1 from public.template_library_entries where version = 18
  *
+ * ## Two more verdicts, for files declared withdrawn
+ *
+ * - `withdrawn` — `MIGRATION_WITHDRAWN.json` declares the file deliberately
+ *   absent, and every object it names as absent is absent. Not a backlog.
+ * - `contradicted` — one of those objects exists, so the declaration is false.
+ *   It fails the run the way NOT APPLIED does: in both cases the repository
+ *   and the database disagree.
+ *
  * ## What this module does not do
  *
  * It does not decide what to apply, and it must never grow that. The apply
@@ -49,7 +57,7 @@
  * workflow and this stays testable.
  */
 
-/** @typedef {'effect_present'|'not_applied'|'unverifiable'} DriftVerdict */
+/** @typedef {'effect_present'|'not_applied'|'unverifiable'|'withdrawn'|'contradicted'} DriftVerdict */
 
 /**
  * @param {object} args
@@ -62,19 +70,46 @@
  *   `"<class>:<qualified name>"` for every object the database actually holds.
  * @param {ReadonlyMap<string, boolean>|undefined} [args.probeResults]
  *   For each file that declared a probe, whether it was satisfied.
+ * @param {ReadonlyMap<string, {absent: ReadonlyArray<string>}>|undefined} [args.withdrawn]
+ *   Files `MIGRATION_WITHDRAWN.json` declares deliberately absent, by name.
  */
 export function assessMigrationDrift({
   migrations,
   appliedVersions,
   existingObjects,
   probeResults = new Map(),
+  withdrawn = new Map(),
 }) {
   const applied = appliedVersions instanceof Set ? appliedVersions : new Set(appliedVersions ?? []);
   const present = existingObjects instanceof Set ? existingObjects : new Set(existingObjects ?? []);
   const probes = probeResults instanceof Map ? probeResults : new Map(Object.entries(probeResults ?? {}));
+  const declared = withdrawn instanceof Map ? withdrawn : new Map(Object.entries(withdrawn ?? {}));
 
   const rows = [];
   for (const m of migrations ?? []) {
+    /*
+     * A withdrawn file is judged before the ledger is consulted, and by its
+     * declaration alone. Its version can be recorded for a reason that says
+     * nothing about it: `20260724000000` is shared with another file, and
+     * recording that sibling would otherwise let a withdrawn index come back
+     * with nothing reporting it. The declaration is a claim about the
+     * database, so it is checked against the database on every run.
+     */
+    const withdrawal = declared.get(m.file);
+    if (withdrawal) {
+      const found = (withdrawal.absent ?? []).filter((o) => present.has(o));
+      rows.push({
+        ...m,
+        verdict: found.length === 0 ? 'withdrawn' : 'contradicted',
+        why: found.length === 0
+          ? 'declared withdrawn in MIGRATION_WITHDRAWN.json, and what it would create is absent'
+          : `declared withdrawn in MIGRATION_WITHDRAWN.json, but ${found.length} object(s) it declares absent exist`,
+        missing: [],
+        present: found,
+      });
+      continue;
+    }
+
     if (applied.has(m.version)) continue;
 
     // A probe is the author's own statement of what is true once this ran, and
@@ -123,6 +158,8 @@ export function assessMigrationDrift({
     notApplied: by('not_applied'),
     unverifiable: by('unverifiable'),
     effectPresent: by('effect_present'),
+    withdrawn: by('withdrawn'),
+    contradicted: by('contradicted'),
   };
 }
 

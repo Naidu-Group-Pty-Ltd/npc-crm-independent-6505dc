@@ -196,12 +196,21 @@ describe('consumer guards', () => {
     }
   });
 
-  it('location intelligence rejects a transport envelope rather than reading it as stops', () => {
+  it('location intelligence never prefers a transport refusal over the measured transit lookup', () => {
     // The transport service historically returned a BARE payload — no success
-    // field — so an envelope would otherwise be truthy, and `transportInfo`
-    // would prefer a refusal over Google's real, coordinate-measured transit.
+    // field — so its refusal envelope would otherwise be truthy, and
+    // `transportInfo` would prefer a refusal over the real, coordinate-measured
+    // transit lookup. The service is no longer called over HTTP (24 Sep 2026:
+    // the hop cost 6.3 s cold in front of two indexed reads), so there is no
+    // envelope at this boundary any more — the same rule now reads the
+    // register's own verdict: outside every loaded feed, or a read that
+    // failed, is NO reading, and the transit lookup stands.
     const src = read('supabase/functions/location-intelligence-service/index.ts');
-    expect(src).toContain('isSourceUnavailable(transportBody)');
+    expect(src).toContain('readTransportAt(');
+    expect(src).not.toContain('functions/v1/public-transport-service');
+    expect(src).toMatch(/if \(!read\.ok\) \{[\s\S]{0,200}?return null;/);
+    expect(src).toMatch(/verdict === 'outside_loaded_networks'\) \{[\s\S]{0,200}?return null;/);
+    expect(src).toContain('const transportInfo = transportReading ? {');
   });
 });
 

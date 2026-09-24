@@ -795,6 +795,9 @@ and not strong either.
 eight jurisdictions, each naming its grain and period. **Not met**, and
 cannot be until the register loads.
 
+*Superseded 23 Sep 2026: the register is loaded and walking (§7). What the
+acceptance still needs is a delivered report in each jurisdiction.*
+
 **What needs approval, exactly.** One table, one sync table, one `pg_cron`
 job, and one stage in `market-sales-ingest`. It is additive and non-
 destructive: nothing existing is altered or dropped.
@@ -979,6 +982,29 @@ Replaces "no forward projection" everywhere rather than in one state.
 > validator REQUIRES it to write about population, and a prohibition with no
 > permitted form is one a model routes around. Full record:
 > `FORWARD_DEMAND_EVIDENCE.md`.
+>
+> **The per-jurisdiction register has loaders (23 Sep 2026,
+> `FORWARD_DEMAND_EVIDENCE.md` §9).** Six files are declared and every one is
+> run DRY in CI over the real file on every build, through the loader's own
+> code: NSW's 2024 projections by SA2 (622 areas) and council (129), Victoria
+> in Future 2023 by council (80), and Tasmania's three series (29 councils
+> each). NSW and Victoria load under CC BY 4.0 read from each publisher —
+> NSW's from its own copyright page, with the © notice the workbook supplies
+> carried onto every row. **Tasmania parses and is refused**: its workbook
+> says *"© Government of Tasmania"* and nothing about reuse, and a notice is
+> silence about terms. South Australia's and the ACT's catalogue editions are
+> 2016- and 2015-based and superseded, so they are declined rather than
+> printed as today's view; WA's SA2 forecasts are *Custom (Active
+> Acceptance)*; the NT's 2024 edition sits behind a challenge; Queensland's two
+> tables are being described before a parser is written. `ingested` is now
+> derived from the loader, so the flag cannot say a state is held that the
+> loader refuses. **Not yet run in production** — each file's first load is
+> proved by its own `market_sales_sync` row.
+>
+> *Superseded 23 Sep 2026: eight files are declared, not six. Queensland's
+> two were parsed from the layout CI printed, and NSW, Victoria and
+> Queensland loaded in production that day (§7). Tasmania's terms have since
+> been read, and whether it loads is the owner's decision.*
 
 **W3.4 · Per-jurisdiction refinement behind a declared order.**
 `DEVELOPMENT_PROVIDERS` / `PLANNING_PROVIDERS`, mirroring `AMENITY_PROVIDERS`
@@ -1068,6 +1094,23 @@ answer.
 > answered folders-only and softening a restriction on no evidence is the one
 > direction that could breach a licence; `amendment_register` is integrated
 > nowhere and says so rather than being omitted.
+>
+> **The third half — the ZONE layers, asked a question (23 Sep 2026,
+> [`JURISDICTION_PLANNING_COVERAGE.md`](./JURISDICTION_PLANNING_COVERAGE.md)
+> §3.5–§3.6).** Metadata settled reachability and could not say which layer
+> is the zone. A zone probe now finds it in each publisher's own catalogue and
+> directory and asks it one point in each capital. **South Australia's zone is
+> read now**: the Planning and Design Code's own layer answered *Adelaide Park
+> Lands* at Victoria Square and *Established Neighbourhood* at Prospect, each
+> in force since 19 March 2021, and `parseSaZoning` reads only the zone in
+> force (the layer is temporal) under the catalogue's Creative Commons
+> Attribution. **Western Australia's is readable and deliberately not read** —
+> its zone layers answered correctly, and every dataset carrying them is
+> "Custom (Active Acceptance)", so `WA_LICENCE_NOTE` is measured rather than
+> typed and stands. **The Northern Territory's is behind a challenge** and its
+> catalogue holds no zoning dataset; `NT_NOTE` stands. Whether production's
+> egress reaches South Australia's service is unmeasured until the first South
+> Australian report after deploy.
 
 **W3.5 · Close the Demand scoring gap.**
 Sales counts for ACT, NT, TAS and WA, so Demand can score nationally rather than
@@ -1085,16 +1128,18 @@ measure this deployment is entitled to, and it needs four counted periods.
 > datasets, 434 match "property sales" and 2,883 match "land sales" — and not
 > one of the 203 matched and attributed carries a number of sales.** The
 > Northern Territory's index holds 1,075 and matched none of five phrasings;
-> the **ACT's holds 378, read through Socrata**, and matched none. Only
-> Tasmania is unresolved, and it is OURS — `data.tas.gov.au` does not
-> resolve.
+> the **ACT's holds 378, read through Socrata**, and matched none. Tasmania
+> was unresolved on 22 Sep, and it was OURS — `data.tas.gov.au` does not
+> resolve. **Closed 23 Sep:** Tasmania runs no catalogue of its own, so the
+> probe read everything its 14 government publishers list in the Commonwealth
+> catalogue — **982 datasets, in full, 5 naming a sale and none a count**
+> (`SALES_VOLUME_COVERAGE.md` §4.4).
 >
-> **Three of the four are settled, and the answer is that no sub-state count
-> of residential sales is published.** So W3.5's original shape — load counts
-> for four jurisdictions — is answered for three of them by *there is nothing
-> to load*, and blocked for the fourth by our own host rather than by an
-> approval. **That is a better outcome than asking for a table to put nothing
-> in.**
+> **All four are settled, and the answer is that no sub-state count of
+> residential sales is published.** So W3.5's original shape — load counts
+> for four jurisdictions — is answered for every one of them by *there is
+> nothing to load*. **That is a better outcome than asking for a table to put
+> nothing in.**
 >
 > The ACT reached that answer only because its CKAN 404 was **kept and
 > printed** rather than swapped for another guess: the body
@@ -1609,6 +1654,9 @@ its register is not loaded, so un-merging `infrastructure` now would create
 exactly the empty section both rules forbid. It waits on the first ingest, not
 on more code.
 
+*Superseded 22 Sep 2026: the register loaded and W2.2 shipped (#2734); its
+entry in §3 carries the measurement.*
+
 **Everything left in this programme that needs no new infrastructure is
 closed.** W3.1's prohibition and W3.2's coverage statement shipped without
 their registers because the guarantee is worth having before the evidence
@@ -1654,6 +1702,10 @@ it says *"The publisher has released 10 of the 12 months"* and calls the total
 a floor, when the ABS released all twelve and two are simply not held yet —
 and it states nothing year-on-year.
 
+*Superseded 23 Sep 2026: it shipped. #2736 merged, deployed and
+`20261217000000` was applied. The 06:20 UTC tick wrote the stalled window
+whole, and the walk has stepped down one window an hour since (§7).*
+
 W3.3 needs no register at all, for the reason its own entry gives: there is no
 ABS projection at SA2 to load. The Bureau publishes four projection flows over
 one `REGION` dimension of 23 codes — 8 states, 1 national, 14 capital-city or
@@ -1664,6 +1716,9 @@ property's own area is a per-jurisdiction register, and
 `FORWARD_DEMAND_PUBLISHERS` names all eight publishers with `ingested: false`
 truthfully because nothing here can reach them to check one.
 
+*Superseded 23 Sep 2026: `ingested` is derived from the loader now, and
+NSW, Victoria and Queensland are loaded in production (§7).*
+
 **W3.5 was on that list and is off it, because the probe answered first.**
 It is struck from the sentence above rather than left in it, since a reader
 who trusted that list would ask for a table with nothing to put in it. Its
@@ -1673,8 +1728,10 @@ count of residential sales at all** — WA's catalogue holds 2,911 datasets of
 which 203 matched and attributed and none carries a count, the NT's 1,075
 matched none of five phrasings, and the ACT's 378 (read through Socrata, after
 its CKAN 404 was kept and printed rather than replaced with another guess)
-matched none either. Only Tasmania is unresolved and the reason is OURS:
-`data.tas.gov.au` does not resolve from this egress. So there is no register
+matched none either. Tasmania was unresolved for a day for a reason that
+was OURS — `data.tas.gov.au` does not resolve — and closed on 23 Sep when the
+probe read the 982 datasets its government lists in the Commonwealth
+catalogue, in full: none carries a count. So there is no register
 to create, no schedule to run and no approval to seek, and Demand's national
 gap is a fact about what Australian publishers publish rather than a fact
 about this deployment. **That is a better outcome than the approval would have
@@ -1698,6 +1755,11 @@ Identify the height and the minimum lot size come from, and handed to
 `console.log`; publishing it took no register, no schedule and no request that
 was not already being made. The third half, a verified parser for SA, WA or
 NT, does still need the ingest, and §5 of its doc says so.
+
+*Superseded 23 Sep 2026: South Australia's zone is read now, from the
+Planning and Design Code's own layer. Western Australia's is readable and
+declined for its licence, and the Northern Territory's is behind a challenge
+(W3.4's entry in §3).*
 
 The general lesson, which is this programme's most repeated one wearing a new
 hat: **a requirement phrased as an acquisition is not always an acquisition.**
@@ -1973,7 +2035,9 @@ delivered request.** Had the first run been left to the schedule, the register
 would have sat empty behind a green tick until somebody read the sync rows.
 
 Two things follow. The trigger migration is **re-applied once
-`market-sales-ingest` ships**, which it is written to survive. And the
+`market-sales-ingest` ships**, which it is written to survive (*superseded
+22 Sep 2026: the stage shipped and the first ingest ran that day; §4 records
+what followed*). And the
 distinction that makes this reportable rather than embarrassing is that the
 failure was found by asking the database what happened rather than by trusting
 that a migration's success meant a register's readiness — §7's rule, paid
@@ -2041,3 +2105,93 @@ by taking it out.
 - Whether Risk can ever score. It needs a construction year, held on 0 of 1,230
   stored reports, and `propertyRiskSchema.pure.ts` forbids manufacturing it. Four
   of five remains the honest ceiling.
+
+## 7 · Where the programme stands, 23 Sep 2026
+
+**Every workstream is closed**: done, withdrawn on measurement, or closed by a
+recorded decision. Nothing in this plan is waiting on code. What is left is
+evidence that arrives on its own schedule, decisions that belong to the owner,
+and follow-ups found on the way. Each is listed below with what settles it.
+
+### The workstreams
+
+| item | state |
+| --- | --- |
+| W1.1 directive vocabulary | done. The scan of stored reports was not run: it needs a read of `report_content`, and direct SQL is out of scope |
+| W1.2 | withdrawn: the figures already drew |
+| W1.3 a chart is a measurement | done |
+| W1.4 one chart standard | contrast done (W4.2, W4.10). Saturation deliberately not built, because the evidence gives no threshold |
+| W1.5, W1.6, W1.7 | done |
+| W1.8 the chart guard | eight of twelve forms judged, and the other four excluded by kind. How often it fires on stored reports is unmeasured, for W1.1's reason |
+| W2.1 placement | done |
+| W2.2 un-merged sections | done, 22 Sep (#2734) |
+| W2.3, W2.4 | answered on measurement; withdrawn |
+| W3.1 national supply floor | loaded and walking (below) |
+| W3.2 national named projects | closed by measurement: the Priority List is not published as a feed, so the coverage statement is the honest branch |
+| W3.3 forward demand | loaded for NSW, Victoria and Queensland (below) |
+| W3.4 per-jurisdiction planning | declared orders and instrument currency, 22 Sep; South Australia's zone, 23 Sep. Western Australia's zone is declined for its licence and the Northern Territory's is behind a challenge. SA, WA, NT and ACT overlays are not read, and the page says so |
+| W3.5 Demand in four jurisdictions | closed: the ACT, NT, Tasmania and WA publish no sub-state count of residential sales |
+| W3.6 coverage travels | done, 22 Sep |
+| W4.1 running head | not a defect |
+| W4.3 placeholder words | done, and seed v19 is applied: neither of its two `@effect` probes is among the drift report's unapplied migrations |
+| W4.2, W4.5, W4.7 to W4.11 | done or closed |
+| W4.4 | withdrawn |
+| W4.6 debris | empty bullets done. The stray "1" could not be attributed, and a rule for it would be a guess |
+
+### What the new registers hold, read from production
+
+- **Supply (W3.1).** The register has walked down one window an hour since
+  the 06:20 UTC tick wrote the stalled window whole. Item 4's rule
+  (`SUPPLY_EVIDENCE.md` §15) shipped at 10:49 UTC. Its first tick, at 11:20,
+  logged `proven=2024-07 held=2024-07`, so every month from 2026-07 down to
+  2024-07 is proven written whole. If every remaining window writes, the walk
+  reaches the 2023-01 floor at 16:20 UTC, and the 17:20 tick answers
+  `settled` for the first time.
+- **Forward demand (W3.3).** Five files loaded at 10:52–10:53 UTC, 21,191
+  rows in all, each count equal to its CI dry run: NSW by SA2 (622 areas) and
+  by council (129); Victoria by council (80, read through the archive); and
+  Queensland by SA2 (546) and by council (78, three series). A monthly
+  refresh runs from 3 Oct.
+
+### What arrives on its own, and what settles it
+
+| what | settled by |
+| --- | --- |
+| the supply walk's first `settled` verdict | the 17:20 UTC tick on 23 Sep, if every window writes |
+| a report reading the projection register | the next NSW, VIC or QLD report, through its `[forward-demand]` log line. None has been generated since the deploy |
+| whether production reaches South Australia's zone layer | the first South Australian report |
+| W3.1's acceptance in all eight jurisdictions | a delivered report in each |
+| the projection refresh | its first tick, 3 Oct from 18:05 UTC |
+| the land-use register's five rows against thirteen (`A_PREMIUM_DOCUMENT.md` §9) | the next Compass for a property whose land-use table prohibits *Residential accommodation* as a group |
+
+### The owner's decisions
+
+- **Tasmania's projection terms** (`FORWARD_DEMAND_EVIDENCE.md` §9.2): is a
+  report prepared for a paying client "published work" under the Treasury's
+  grant? If yes, the licence is declared and the credit printed. If no,
+  Tasmania stays refused.
+- **The 21 `market_sources` rows** (§6).
+- **Regenerating the nine pre-19-Sep reports.** The owner has said no (§6).
+- **Risk.** Four of five scored dimensions is the ceiling until a
+  construction year is held (§6).
+- **A source for council capital works**, which is needed before any code
+  (W3.1's tiers). State major-project registers are not built.
+
+### Found on the way, and not done
+
+- Two reader-facing ISO dates bypass `auDate`: the archive-capture clause in
+  `openDataSalesEvidence.pure.ts`, and the same clause in
+  `capitalGrowthEstimate.pure.ts`. The second is the Estimate CGR caveat,
+  which this programme protects.
+- Two production reads are still owed, both of a table rather than a log.
+  One is the supply register's read-back (`SESSION_HANDOFF_2026-09-23.md` §5,
+  step 5). The other is the `windows_vouching` / `windows_stale` counts on the
+  11:20 sync row.
+- The nightly drift report fails on three migrations that predate this
+  programme, each missing one object:
+  - `20260724000000` — index `client_portal_reports_unique_portfolio_source`;
+  - `20260728120000` — index `uq_aml_verification_attempt`;
+  - `20260901000700` — function `public.builder_accept_current_terms`.
+
+  None of them belongs to this programme, and two are in areas it does not
+  touch.

@@ -61,6 +61,7 @@ import {
   composeExitOutlook,
   composeHoldingStrategy,
   composeMonitoringPlan,
+  composeStrategicRead,
   composeSuitability,
   composeSwot,
   type StrategyRecord,
@@ -293,6 +294,7 @@ const STRATEGY: StrategyRecord = {
 
 const STRATEGY_COMPOSERS: Record<string, (rec: StrategyRecord, heading: string) => string> = {
   composeSwot, composeSuitability, composeHoldingStrategy, composeExitOutlook, composeMonitoringPlan,
+  composeStrategicRead,
 };
 
 const SCORE = {

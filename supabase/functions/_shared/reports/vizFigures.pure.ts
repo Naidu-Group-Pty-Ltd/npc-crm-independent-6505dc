@@ -59,7 +59,7 @@ import {
 } from '../reportDesign/primitives.pure.ts';
 import { isPlaceholderValue, splitRefusedItem, type VizDirective } from './vizDirectives.pure.ts';
 import {
-  calloutCharge, figureCharge, sidenoteCharge, type NarrativeGeometry,
+  calloutCharge, figureCharge, sidenoteCharge, tableCharge, type NarrativeGeometry,
 } from './narrativeGeometry.pure.ts';
 
 /**
@@ -219,14 +219,22 @@ export function renderVizDirective(
      */
     const rows = all.filter((r) => !isPlaceholderValue(r.value));
     if (!rows.length) return null;
+    const caption = d.kind === 'bars' || d.kind === 'donut' ? d.title : undefined;
     const html = renderDataTable(
       [{ key: 'label', label: 'Item' }, { key: 'value', label: valueHeading, align: 'right' }],
       rows.map((r) => ({ label: r.label, value: r.value })),
-      { caption: d.kind === 'bars' || d.kind === 'donut' ? d.title : undefined },
+      { caption },
     );
     if (!html) return null;
-    // A table row is one body line plus the head and the caption.
-    return { html, lines: rows.length + (('title' in d && d.title) ? 2 : 1) };
+    // With a geometry it is charged as the table it is — rows, head, caption
+    // and margin at the page's own measure. The constant below charged a
+    // five-row table with a caption seven lines where the engine drew ten
+    // (18 Annabelle Crescent, Board Pack Brief, 23 Sep 2026), which is text
+    // set through the foot of a page packed to its budget.
+    const lines = geometry
+      ? tableCharge(geometry, rows.map((r) => [r.label, r.value]), 2, ['Item', valueHeading], caption ?? '').total
+      : rows.length + (('title' in d && d.title) ? 2 : 1);
+    return { html, lines };
   };
 
   switch (d.kind) {

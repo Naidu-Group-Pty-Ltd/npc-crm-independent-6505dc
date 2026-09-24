@@ -40,6 +40,25 @@ describe('the chapter in force when a page opens', () => {
     expect(chapters[0]).toBe('First');
   });
 
+  it('a page that OPENS on a new chapter heading is in that chapter', () => {
+    // Page 28 of the 97 Poole Road Compass opened on "Monitoring & Review
+    // Plan" and its running head still read "Due Diligence Checklist".
+    const md = ['## First', 'p'.repeat(80), '', '## Second', 'q'.repeat(600)].join('\n');
+    const pages = pack(md, 4);
+    const second = pages.findIndex((pg) => pg[0]?.kind === 'heading' && headingText(pg[0]) === 'Second');
+    expect(second).toBeGreaterThan(0);
+    expect(runningChapters(pages, 'Report')[second]).toBe('Second');
+  });
+
+  it('the first page of the body is headed by the chapter it opens with, not its last', () => {
+    // Page 7 of the same document opened on "Executive Verdict" and was headed
+    // "Property & Locality Snapshot", the chapter starting at its foot.
+    const md = ['## Executive Verdict', 'a'.repeat(120), '', '## Property & Locality Snapshot', 'b'.repeat(120)].join('\n');
+    const pages = pack(md, 30);
+    expect(pages).toHaveLength(1);
+    expect(runningChapters(pages, 'Report')).toEqual(['Executive Verdict']);
+  });
+
   it('falls back before the first heading, and never prints a marker', () => {
     const chapters = runningChapters(pack('Opening prose with no heading at all.'), 'Investment Compass');
     expect(chapters).toEqual(['Investment Compass']);

@@ -73,6 +73,10 @@ import {
   verdict,
   withFurniture,
   beginCompassTemplate,
+  flowColumn,
+  label,
+  type BlockDef,
+  type FlowItem,
   type PageDef,
   type TableRowDef,
 } from './blocks';
@@ -378,7 +382,11 @@ function buildTemplate(family: DesignFamily, variant: VariantDefinition): Compas
     { label: 'Loan amount', value: '{{financials.loanAmount | currency}}', note: 'At settlement' },
     { label: 'Cash on cash', value: '{{financials.cashOnCash | percent}}', note: 'Year one' },
     { label: 'Total cost', value: '{{financials.totalCost | currency}}', note: 'Including acquisition costs' },
-    { label: 'Annual repayment', value: '{{financials.annualRepayment | currency}}', note: 'P&I, modelled rate' },
+    // Year one, whatever the loan: `annualRepayment` is the ledger's own first
+    // year, which on an interest-only loan is interest only — so "P&I" was a
+    // false caption on every such report (the 18 Annabelle Crescent row reads
+    // $77,480, exactly 6.5% of $1,192,000).
+    { label: 'Annual repayment', value: '{{financials.annualRepayment | currency}}', note: 'Year one, modelled rate' },
     // Was `financials.breakEvenRent`, which no column supplies and no
     // derivation can honestly reach. `netYield` is stored on every scored
     // report and is the figure a reader wants beside the gross.
@@ -391,31 +399,143 @@ function buildTemplate(family: DesignFamily, variant: VariantDefinition): Compas
   // twelve for a console, five for a position strip. Supplying more than it
   // asks for would silently drop them.
   const dashboardKpis = allKpis.slice(0, kpiCapacity());
+  /*
+   * The same band for a buyer who will LIVE in the property.
+   *
+   * An owner-occupier's copy withholds every figure that describes a letting
+   * (`audienceContent.pure.ts`): the rent, the yields, the weekly position,
+   * cash on cash, the vacancy allowance. The investor band leads with four of
+   * those, so on a four-figure master it would close up around the price
+   * alone. This band leads with what a home buyer weighs instead — what it
+   * costs, what it costs to borrow, what it costs each year — every one a
+   * figure the projection already publishes, in the words the investor band
+   * already uses for it, so one figure never carries two labels. Chosen by
+   * `report.ownerOccupier`, which only an owner-occupier's projection sets,
+   * so every other document draws exactly the band it always did.
+   */
+  const kpiByLabel = (label: string) => {
+    const found = allKpis.find((k) => k.label === label);
+    if (!found) throw new Error(`No KPI labelled ${label}`);
+    return found;
+  };
+  const ownerOccupierKpis = [
+    kpiByLabel('Purchase price'),
+    kpiByLabel('Annual repayment'),
+    kpiByLabel('Total cost'),
+    kpiByLabel('Loan amount'),
+    { label: 'Deposit', value: '{{financials.deposit | currency}}', note: 'Cash at exchange' },
+    kpiByLabel('Interest rate'),
+    kpiByLabel('Capital growth'),
+  ];
+  const OWNER_OCCUPIER = 'report && report.ownerOccupier';
+  /*
+   * Both bands at ONE position, as mutually exclusive variants — never two
+   * items stacked. Stacked, every master would declare the second band's
+   * height as well, and the room left for the body's first page is computed
+   * from declared heights at compose time (`bodyOpening`), so the investor's
+   * dashboard would lose that room on every master for a band it never
+   * draws. One slot, the taller variant's height and rows; the flow gives
+   * back what the drawn one does not use. Not `oneOf`, which keeps only the
+   * first block of each variant and no `rows` — a band that lost its rows
+   * could no longer give back a row of tiles a report does not fill.
+   */
+  const investorBand = kpis(dashboardKpis);
+  const ownerBand = kpis(ownerOccupierKpis);
+  const taller = ownerBand.height > investorBand.height ? ownerBand : investorBand;
+  const asBlocks = (b: BlockDef | BlockDef[]): BlockDef[] => (Array.isArray(b) ? b : [b]);
+  const dashboardBand: FlowItem = {
+    ...taller,
+    height: taller.height,
+    ...(taller.rows
+      ? { rows: { ...taller.rows, height: Math.max(investorBand.rows?.height ?? 0, ownerBand.rows?.height ?? 0) } }
+      : {}),
+    block: (y: number) => [
+      ...asBlocks(investorBand.block(y)).map((b) => ({ ...b, conditional: `!(${OWNER_OCCUPIER})` })),
+      ...asBlocks(ownerBand.block(y)).map((b) => ({ ...b, conditional: OWNER_OCCUPIER })),
+    ],
+  };
 
-  pages.push(withFurniture(page('Executive dashboard', [
-    ...furniture(DOCUMENT_LABEL, nextPart('Verdict'), 'Verdict and dashboard'),
-    ...flow([
-      verdict({
-        eyebrow: 'The verdict',
-        heading: '{{recommendation.headline}}',
-        // `investment_score` holds ONE recommendation string and no rationale
-        // beside it, so this used to be blank under a heading that promised an
-        // explanation. The sentence is COMPOSED by the projection
-        // (`recommendation.gradedLine`) rather than interpolated here, for two
-        // measured reasons: a row with no score used to print "Graded  at
-        // out of 100" with the holes left in (every Strategic fork ever
-        // produced), and the hardcoded weighting clause misstated variant
-        // scores, whose dimensions are not the composite five. Absent score →
-        // absent binding → no sentence, never a broken one.
-        body: '{{recommendation.gradedLine}}',
-        // The heading is a binding, so it is sized from what it can RESOLVE to
-        // rather than from its own 27 characters. See `verdictVocabulary.ts`:
-        // the vocabulary is closed, so this is exact rather than estimated.
-        headingChars: VERDICT_HEADLINE_CHARS,
-      }),
-      kpis(dashboardKpis),
-      ...(splitSnapshot ? [] : [
-        table({
+  /*
+   * The plates that followed the property and the thesis pages lead the front
+   * matter now: the summary opens the report's body on its own page, so a
+   * plate placed after it would stand between the body's first page and its
+   * second. A photograph ahead of the summary reads as a frontispiece.
+   */
+  pages.push(...platesFor('property'));
+  pages.push(...platesFor('thesis'));
+
+  /*
+   * ── The front matter flows into the report ───────────────────────────────
+   *
+   * Measured on the five documents issued for 97 Poole Road and 9 Hollow
+   * Street on 23 Sep 2026, on the Board Pack Brief master the owner chose at
+   * random: the verdict page ended at 408pt of 842 on EVERY tier (54% white),
+   * and on the Compass the three pages after it were 68%, 66% and 74% white —
+   * a property table of five rows, a scorecard of four and a "No risk
+   * recorded" panel, each a page of its own, before the report's body began
+   * on page 7. Every block was placed at the `y` its worst case declared: a
+   * KPI ledger sized for six figures on a tier that publishes two, a property
+   * table sized for eight guarded rows that draws five.
+   *
+   * So on every tier this platform produces today the front matter is ONE
+   * page that FLOWS (`flowColumn`, `flowLayout.ts`): what does not draw gives
+   * its height back, and the report's own body opens in the room left under
+   * it — the verdict, the figures and the property facts, then the Executive
+   * Verdict prose, on one continuous page. `composite` — the pre-tier
+   * document nothing produces any more — keeps the page sequence it was
+   * written for, so a stored legacy report draws as it did.
+   *
+   * Two versions of the page, because the tiers carry different figures and a
+   * single page reserving both would not fit: the Financial Analysis and the
+   * Snapshot lead with the modelled figures (up to twelve), the Compass, the
+   * Due Diligence report and the Briefing with the two identity figures every
+   * tier keeps, the property and — on the Compass — what the grade rests on.
+   */
+  const CFM = 'report && report.continuousFrontMatter';
+  const NOT_CFM = `!(${CFM})`;
+  const SUMMARY_TIERS = `${CFM} && !report.drawsFinancialModelling`;
+  const verdictPart = nextPart('Verdict');
+  const verdictItem = (): FlowItem => verdict({
+    eyebrow: 'The verdict',
+    heading: '{{recommendation.headline}}',
+    // `investment_score` holds ONE recommendation string and no rationale
+    // beside it, so this used to be blank under a heading that promised an
+    // explanation. The sentence is COMPOSED by the projection
+    // (`recommendation.gradedLine`) rather than interpolated here, for two
+    // measured reasons: a row with no score used to print "Graded  at
+    // out of 100" with the holes left in (every Strategic fork ever
+    // produced), and the hardcoded weighting clause misstated variant
+    // scores, whose dimensions are not the composite five. Absent score →
+    // absent binding → no sentence, never a broken one.
+    body: '{{recommendation.gradedLine}}',
+    // The heading is a binding, so it is sized from what it can RESOLVE to
+    // rather than from its own 27 characters. See `verdictVocabulary.ts`:
+    // the vocabulary is closed, so this is exact rather than estimated.
+    headingChars: VERDICT_HEADLINE_CHARS,
+  });
+  /**
+   * The report body's first bucket, in the room a flowing page leaves.
+   *
+   * Its declared height is the worst-case room; the narrative pre-pass sizes
+   * the bucket from the room THIS record leaves (`narrativePlan.ts`), and
+   * where that is a sliver the bucket is empty and the body opens on the next
+   * page instead (`MIN_SHARED_FIRST_LINES`). Null where the page declares no
+   * room at all, which the page conditionals below account for.
+   */
+  const bodyOpening = (items: FlowItem[], when: string): FlowItem | null => {
+    const room = remainingAfter(items, contentTop());
+    return room > 0
+      ? { ...markdown('{{narrative.source}}', 0, room, MARKDOWN_LINES_PER_PAGE), fill: true, conditional: when }
+      : null;
+  };
+
+  // The dashboard: the Financial Analysis and the Snapshot (and `composite`).
+  const dashboardItems: FlowItem[] = [
+    verdictItem(),
+    dashboardBand,
+    ...(splitSnapshot ? [] : [
+      {
+        ...table({
           headers: ['Property', 'Detail'],
           // Every row is guarded. See `PROPERTY_ROWS` for what each one costs
           // when it is not — this page printed four ruled, labelled, empty rows
@@ -429,22 +549,107 @@ function buildTemplate(family: DesignFamily, variant: VariantDefinition): Compas
           columnWidths: [0.42, 0.58],
           numeric: [],
         }),
-        // One each, not two.
-        //
-        // Across the 985 scored reports `investment_score.strengths` holds at
-        // least one on 745 and at least two on **47**; `weaknesses` holds one on
-        // 874 and two on **15**. A second row therefore printed a marker with
-        // nothing beside it on 95% and 98% of reports respectively.
-        strengthsWatch(['{{summary.strength.0}}'], ['{{summary.watch.0}}']),
-      ]),
-      // No closing callout. It bound `financials.narrative`, which nothing
-      // publishes and no column holds, so it printed a titled panel with an
-      // empty body on every report.
-    ], contentTop()),
-  ]), FOOTER));
+      },
+      // One each, not two.
+      //
+      // Across the 985 scored reports `investment_score.strengths` holds at
+      // least one on 745 and at least two on **47**; `weaknesses` holds one on
+      // 874 and two on **15**. A second row therefore printed a marker with
+      // nothing beside it on 95% and 98% of reports respectively.
+      strengthsWatch(['{{summary.strength.0}}'], ['{{summary.watch.0}}']),
+    ]),
+    // No closing callout. It bound `financials.narrative`, which nothing
+    // publishes and no column holds, so it printed a titled panel with an
+    // empty body on every report.
+  ];
+  const dashboardOpening = bodyOpening(dashboardItems, `${CFM} && narrative && narrative.source`);
+  pages.push({
+    ...withFurniture(page('Executive dashboard', [
+      ...furniture(DOCUMENT_LABEL, verdictPart, 'Verdict and dashboard'),
+      ...flowColumn([...dashboardItems, ...(dashboardOpening ? [dashboardOpening] : [])], contentTop()),
+    ]), FOOTER),
+    conditional: `!(${SUMMARY_TIERS})`,
+    flow: true,
+  });
+
+  // The summary: the Compass, the Due Diligence report and the Briefing.
+  const summaryKpis = allKpis.filter((k) => k.label === 'Purchase price' || k.label === 'Weekly rent');
+  const summaryItems: FlowItem[] = [
+    verdictItem(),
+    kpis(summaryKpis),
+    // The property where this tier places it on the document rather than in
+    // the prose — the Compass and the Briefing (`report.drawsPropertyIdentity`
+    // reads the same rule `tierPageSequence` applies to "The property").
+    {
+      ...table({
+        headers: ['Property', 'Detail'],
+        rows: PROPERTY_ROWS.map((r) => r.row),
+        columnWidths: [0.34, 0.66],
+        numeric: [],
+        // The address is bound text and can set over two lines.
+        spareRows: 1,
+      }),
+      conditional: 'report && report.drawsPropertyIdentity',
+    },
+    {
+      ...strengthsWatch(['{{summary.strength.0}}'], ['{{summary.watch.0}}']),
+      conditional: 'report && report.drawsPropertyIdentity',
+    },
+  ];
+  /*
+   * What the grade rests on — the Compass's scorecard, where it fits.
+   *
+   * It had a page of its own ("Weighted across what was measured"), 66% white
+   * on both issued documents. Here it is the summary's last element before
+   * the body, as one unit: a label and the table, or neither. It is the
+   * compact reading; the body's "How this grade was reached" carries the
+   * original and adjusted weights and each dimension's evidence.
+   */
+  const SCORECARD = 'report && report.frontScorecard && recommendation && recommendation.grade';
+  const scorecardItems: FlowItem[] = [
+    { ...label('What the grade rests on'), conditional: SCORECARD },
+    {
+      ...table({
+        // `scoreLabel` / `weightLabel`, as on the assessment page: the engine
+        // leaves a placeholder 50 and a 0 weight in an excluded dimension, so
+        // the projection composes the words and an unscored dimension draws
+        // no row at all.
+        headers: ['Dimension', 'Score', 'Share of grade'],
+        rows: [0, 1, 2, 3, 4].map((i) => [
+          `{{assessment.${i}.label}}`,
+          `{{assessment.${i}.scoreLabel}}`,
+          `{{assessment.${i}.weightLabel}}`,
+        ]),
+        columnWidths: [0.5, 0.25, 0.25],
+        numeric: [1, 2],
+      }),
+      conditional: SCORECARD,
+    },
+  ];
+  const withScorecard = [...summaryItems, ...scorecardItems];
+  const summaryFlow = remainingAfter(withScorecard, contentTop()) >= 0 ? withScorecard : summaryItems;
+  const summaryOpening = bodyOpening(summaryFlow, 'narrative && narrative.source');
+  pages.push({
+    ...withFurniture(page('Executive summary', [
+      ...furniture(DOCUMENT_LABEL, verdictPart, 'Summary'),
+      ...flowColumn([...summaryFlow, ...(summaryOpening ? [summaryOpening] : [])], contentTop()),
+    ]), FOOTER),
+    conditional: SUMMARY_TIERS,
+    flow: true,
+  });
+
+  /**
+   * Where the report body's first bucket is drawn for this document: in the
+   * front matter where a page above opens it, on a page of its own otherwise.
+   */
+  const opensInFrontMatter = [
+    ...(summaryOpening ? [`(${SUMMARY_TIERS})`] : []),
+    ...(dashboardOpening ? [`(${CFM} && !(${SUMMARY_TIERS}))`] : []),
+  ];
+  const BODY_OPENS_IN_FRONT_MATTER = opensInFrontMatter.length ? `(${opensInFrontMatter.join(' || ')})` : 'false';
 
   if (splitSnapshot) {
-    pages.push(withFurniture(page('The property', [
+    pages.push({ ...withFurniture(page('The property', [
       ...furniture(DOCUMENT_LABEL, nextPart('The property'), 'The property'),
       ...flow([
         sectionHeading({
@@ -467,13 +672,9 @@ function buildTemplate(family: DesignFamily, variant: VariantDefinition): Compas
         // nothing beside it on 95% and 98% of reports respectively.
         strengthsWatch(['{{summary.strength.0}}'], ['{{summary.watch.0}}']),
       ], contentTop()),
-    ]), FOOTER));
+    ]), FOOTER), conditional: NOT_CFM });
   }
 
-  // Outside the `splitSnapshot` branch on purpose: not every variant gives the
-  // property its own page, and a plate that exists only when it does would be
-  // dropped from four of the ten plated masters without anything saying so.
-  pages.push(...platesFor('property'));
 
   // ── 03 The assessment ────────────────────────────────────────────────────
   //
@@ -494,7 +695,7 @@ function buildTemplate(family: DesignFamily, variant: VariantDefinition): Compas
   // `growthScore` and `demandScore` are scored a flat 50 with no details on 919
   // of the 985, which is why they appear in the scorecard and not in the
   // reasoning beneath it.
-  pages.push(withFurniture(page('The assessment', [
+  pages.push({ ...withFurniture(page('The assessment', [
     ...furniture(DOCUMENT_LABEL, nextPart('Assessment'), 'The assessment'),
     ...flow(ifItFits([
       sectionHeading({
@@ -602,8 +803,7 @@ function buildTemplate(family: DesignFamily, variant: VariantDefinition): Compas
         conditional: 'opportunities && opportunities[0]',
       },
     ], contentTop()), contentTop()),
-  ]), FOOTER));
-  pages.push(...platesFor('thesis'));
+  ]), FOOTER), conditional: NOT_CFM });
 
   /**
    * The financial modelling pages, and the tiers that may carry them.
@@ -724,7 +924,7 @@ function buildTemplate(family: DesignFamily, variant: VariantDefinition): Compas
         }),
       ]),
     ], contentTop()),
-  ]), FOOTER), conditional: FINANCIAL_TIERS });
+  ]), FOOTER), conditional: `${FINANCIAL_TIERS} && ${NOT_CFM}` });
 
   if (spacious) {
     pages.push({ ...withFurniture(page('Cash flow', [
@@ -744,7 +944,7 @@ function buildTemplate(family: DesignFamily, variant: VariantDefinition): Compas
         // No funding callout: `financials.fundingNote` has no column and no
         // producer, so it printed a titled panel with nothing in it.
       ], contentTop()),
-    ]), FOOTER), conditional: FINANCIAL_TIERS });
+    ]), FOOTER), conditional: `${FINANCIAL_TIERS} && ${NOT_CFM}` });
   }
 
   // ── 05 Chart and scenario ────────────────────────────────────────────────
@@ -776,11 +976,10 @@ function buildTemplate(family: DesignFamily, variant: VariantDefinition): Compas
         { term: 'Occupancy', definition: '{{assumptions.occupancyWeeks}} weeks a year' },
       ]),
     ], contentTop()),
-  ]), FOOTER), conditional: FINANCIAL_TIERS });
-  pages.push(...platesFor('projection'));
+  ]), FOOTER), conditional: `${FINANCIAL_TIERS} && ${NOT_CFM}` });
 
   // ── 06 Risk and recommendation ───────────────────────────────────────────
-  pages.push(withFurniture(page('Risk and recommendation', [
+  pages.push({ ...withFurniture(page('Risk and recommendation', [
     ...furniture(DOCUMENT_LABEL, nextPart('Risk'), 'Risk and recommendation'),
     ...flow([
       sectionHeading({
@@ -847,7 +1046,7 @@ function buildTemplate(family: DesignFamily, variant: VariantDefinition): Compas
         '{{recommendation.gradedDetailLine}}',
       ),
     ], contentTop()),
-  ]), FOOTER));
+  ]), FOOTER), conditional: NOT_CFM });
 
   // ── 06b The report itself ────────────────────────────────────────────────
   //
@@ -960,8 +1159,9 @@ function buildTemplate(family: DesignFamily, variant: VariantDefinition): Compas
       ], contentTop()),
     ]), FOOTER),
     // `narrative.source`, not `narrative`: 4 of the 1,187 stored reports carry
-    // no body, and this page must not open a heading over nothing.
-    conditional: 'narrative && narrative.source',
+    // no body, and this page must not open a heading over nothing. And not
+    // where the front matter above opens the body in the room it leaves.
+    conditional: `narrative && narrative.source && !${BODY_OPENS_IN_FRONT_MATTER}`,
   });
 
   for (let i = 1; i < NARRATIVE_PAGES; i += 1) {
@@ -1005,8 +1205,20 @@ function buildTemplate(family: DesignFamily, variant: VariantDefinition): Compas
     conditional: `narrative && narrative.pages > ${NARRATIVE_PAGES}`,
   });
 
+  // The projection's plates follow the body now: placed after the projection
+  // page they would stand between the body's first page and its second on
+  // every tier whose front matter opens the body.
+  pages.push(...platesFor('projection'));
+
   // ── 07 Sources and appendix ──────────────────────────────────────────────
-  pages.push(withFurniture(page('Sources and methodology', [
+  /*
+   * Only where the front matter does not flow (`composite`). Every row it
+   * held — who prepared the document, when, which property, the grade — is on
+   * the cover, and on the Compass it was a page 43% white standing between
+   * the body's last page and the closing one. The body's own appendix states
+   * what the assessment does and does not establish.
+   */
+  pages.push({ ...withFurniture(page('Sources and methodology', [
     ...furniture(DOCUMENT_LABEL, nextPart('Sources'), 'Sources and methodology'),
     ...flow([
       sectionHeading({
@@ -1034,7 +1246,7 @@ function buildTemplate(family: DesignFamily, variant: VariantDefinition): Compas
         textHeight(150, { extra: 34 }),
       ),
     ], contentTop()),
-  ]), FOOTER));
+  ]), FOOTER), conditional: NOT_CFM });
   pages.push(...platesFor('sources'));
 
   // The plates that belong to no section — `six_with_bleed`'s two extras. They

@@ -224,20 +224,121 @@ export interface ResolveOneOptions {
   readonly longitude: number | null;
   /** Injected so the generator and the batch can share one HTTP policy. */
   readonly lookupPoint?: (lat: number, lng: number) => Promise<AsgsLookup>;
+  /**
+   * Answer from the report's stored row when it already resolves THIS point
+   * under THIS release, rather than asking the boundary service again — see
+   * `storedRowDescribesPoint`.
+   *
+   * The generator sets it, because it resolves the same coordinate on every
+   * invocation of one report and a boundary service that answered the first
+   * time can fail the fourth. The batch sweep does not: re-resolving is its
+   * job, and a sweep that trusted its own earlier answers could never correct
+   * one.
+   */
+  readonly reuseStored?: boolean;
 }
 
 export interface ResolveOneResult {
   readonly status: string;
+  /**
+   * The resolution — present whether or not it could be persisted. A failed
+   * write is a storage fault, not a property with no geography: both callers
+   * that run a report say "resolution still used" on a write failure, and
+   * until 24 Sep 2026 this returned null there, so they logged that sentence
+   * and then withheld the demographics anyway.
+   */
   readonly row: GeographyRowShape | null;
-  /** Present only where the write succeeded — and it is a real failure now. */
+  /** The write's own error, where the persist failed. */
   readonly writeError: string | null;
   /**
-   * Whether the suburb-directory cross-check actually ran. Reported rather than
-   * inferred from the flags, because the absence of `suburb_not_in_directory`
-   * means "matched" and "not checked" at once if you read it that way — which
-   * is the confusion this whole field exists to end.
+   * Whether the suburb-directory cross-check actually ran IN THIS CALL.
+   * Reported rather than inferred from the flags, because the absence of
+   * `suburb_not_in_directory` means "matched" and "not checked" at once if you
+   * read it that way — which is the confusion this whole field exists to end.
+   * False for a reused row: this call opened no directory, and the row's own
+   * flags carry what the original resolution found.
    */
   readonly directoryChecked: boolean;
+  /** True where the stored row answered and the boundary service was not asked. */
+  readonly reused?: boolean;
+}
+
+/** The statuses a stored row may be reused at. `unresolved` is always asked again. */
+const REUSABLE_STATUSES: ReadonlySet<string> = new Set([
+  'resolved', 'resolved_with_warning', 'requires_review',
+]);
+
+/**
+ * Degrees. A stored double-precision coordinate round-trips exactly; the
+ * tolerance exists only so a value that passed through a JSON boundary as a
+ * shorter decimal still matches. 1e-7° is about a centimetre.
+ */
+const SAME_POINT_TOLERANCE_DEG = 1e-7;
+
+/**
+ * Whether a stored geography row may answer for this point without asking the
+ * boundary service.
+ *
+ * Every condition is a refusal: the row must place the SAME point, by the SAME
+ * method, against the SAME ASGS release, and must have placed it — an
+ * `unresolved` row is asked again, because `boundary_service_unavailable` is
+ * one of the ways to be unresolved and it is the one a retry can clear.
+ *
+ * The case this closes: the generator resolves one report's coordinate on
+ * every invocation, and a boundary service that answered on the first could
+ * fail on a later one. The failure then OVERWROTE the resolved row with an
+ * unresolved one, and the invocation went on to withhold the demographics,
+ * skip the market evidence and write its sections as if the property had
+ * never been placed — beside sections an earlier invocation wrote with all of
+ * it. A point's ASGS geography under a fixed release does not change between
+ * invocations; asking again could only lose it.
+ */
+export function storedRowDescribesPoint(
+  stored: Partial<GeographyRowShape> | null | undefined,
+  latitude: number,
+  longitude: number,
+): boolean {
+  if (!stored) return false;
+  const lat = num(stored.latitude);
+  const lng = num(stored.longitude);
+  return lat !== null && lng !== null
+    && Math.abs(lat - latitude) <= SAME_POINT_TOLERANCE_DEG
+    && Math.abs(lng - longitude) <= SAME_POINT_TOLERANCE_DEG
+    && typeof stored.status === 'string' && REUSABLE_STATUSES.has(stored.status)
+    && stored.method === GEOGRAPHY_METHOD
+    && stored.source_version === ASGS_RELEASE;
+}
+
+const STORED_GEOGRAPHY_COLUMNS = 'report_id, latitude, longitude, suburb, locality_code, postcode, state, '
+  + 'sa2_code, sa2_name, sa3_name, sa4_name, gccsa_name, remoteness_area, urban_centre, '
+  + 'significant_urban_area, method, boundary_source, source_version, status, flags, notes';
+
+/**
+ * The report's stored row, or null for every reason that is not a row —
+ * absent, or a read that failed. A failed read is NOT an answer here: the
+ * caller then asks the boundary service exactly as it did before, so a
+ * database fault can cost a request and never a geography.
+ */
+async function readStoredGeography(
+  supabase: { from: (table: string) => any },
+  reportId: string,
+): Promise<GeographyRowShape | null> {
+  try {
+    const { data, error } = await supabase
+      .from('report_geography')
+      .select(STORED_GEOGRAPHY_COLUMNS)
+      .eq('report_id', reportId)
+      .maybeSingle();
+    if (error || !data) return null;
+    const flags = Array.isArray(data.flags) ? data.flags.filter((f: unknown) => typeof f === 'string') : [];
+    return {
+      ...(data as GeographyRowShape),
+      flags,
+      notes: typeof data.notes === 'string' ? data.notes : '',
+    };
+  } catch {
+    return null;
+  }
 }
 
 const num = (v: unknown): number | null =>
@@ -269,6 +370,16 @@ export async function resolveOneReportGeography(
   const worthAsking = latitude !== null && longitude !== null
     && isPlausiblyAustralian({ latitude, longitude })
     && !isAustraliaCentroid(latitude, longitude);
+
+  // The report already placed this point, by this method, against this
+  // release: that answer stands, and nothing is written over it. See
+  // `storedRowDescribesPoint` for why asking again can only lose it.
+  if (opts.reuseStored && worthAsking) {
+    const stored = await readStoredGeography(opts.supabase, opts.reportId);
+    if (stored && storedRowDescribesPoint(stored, latitude!, longitude!)) {
+      return { status: stored.status, row: stored, writeError: null, directoryChecked: false, reused: true };
+    }
+  }
 
   const lookup = worthAsking ? await lookupPoint(latitude!, longitude!) : null;
 
@@ -337,8 +448,10 @@ export async function resolveOneReportGeography(
 
   return {
     status: resolved.status,
-    row: error ? null : row,
+    // The resolution stands whether or not it was stored — see `row` above.
+    row,
     writeError: error ? String(error.message ?? error) : null,
     directoryChecked: directoryMatches !== null,
+    reused: false,
   };
 }
