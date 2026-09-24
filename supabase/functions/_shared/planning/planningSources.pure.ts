@@ -482,6 +482,87 @@ export function parseActZoning(body: unknown): ParseOutcome<ZoningReading> {
 }
 
 // ---------------------------------------------------------------------------
+// SA — Planning and Design Code zones (PlanSA's hosted Code Zones layer)
+// ---------------------------------------------------------------------------
+
+/*
+ * Found by asking, not typed (`planning-zone-liveness`, CI run 35827597400,
+ * 23 Sep 2026). The state's spatial service `dpti.geohub.sa.gov.au` lists 131
+ * services across 30 folders; ranked for the question, one carries a layer
+ * named as a zone — `Hosted/Code_Amendment__BaseLayers`, layer 3 "Code Zones"
+ * — and it answered a point in each capital:
+ *
+ *   Victoria Square, Adelaide   Adelaide Park Lands       APL   Z0302
+ *   Prospect Road, Prospect     Established Neighbourhood EN    Z1506
+ *
+ * each with `legalstartdate` 1616112000000 — 19 March 2021, the day the
+ * Planning and Design Code commenced across metropolitan Adelaide. So the
+ * layer carries the Code's own zone name and code, and the date each zone
+ * took legal effect.
+ *
+ * Three things the reader holds to:
+ *
+ *  - **The layer is temporal.** It carries legal and system END dates, so a
+ *    zone the Code has since replaced keeps its row; only a feature with
+ *    neither end date is the zone in force, and a point whose features have
+ *    all ended has no zone read here (`empty`), never the replaced one.
+ *  - **The licence is the catalogue's.** The service states no terms of its
+ *    own (`copyrightText` null); the publisher's catalogue entry for this
+ *    dataset — "Planning and Design Code Zones", the Department for Housing
+ *    and Urban Development, data.sa.gov.au — states Creative Commons
+ *    Attribution. A licence read from the catalogue outranks a service that
+ *    states none (`JURISDICTION_PLANNING_COVERAGE.md`: the ACT's precedent),
+ *    while a stated RESTRICTION would stay above it, which is WA's case.
+ *  - **The zone is not a permission.** What the Code allows in a zone is in
+ *    the Code's zone policy, which no structured service publishes; the land
+ *    use table says so rather than printing nothing.
+ */
+export const SA_ZONING_SOURCE = 'PlanSA — Planning and Design Code Zones (dpti.geohub.sa.gov.au, Code Zones layer)';
+export const SA_ZONING_LICENCE = 'Creative Commons Attribution (data.sa.gov.au, Planning and Design Code Zones)';
+export const SA_CODE_INSTRUMENT = 'Planning and Design Code (South Australia)';
+
+export function buildSaZoningQuery(lng: number, lat: number): string {
+  const base = 'https://dpti.geohub.sa.gov.au/server/rest/services/Hosted/Code_Amendment__BaseLayers/FeatureServer/3/query';
+  const p = new URLSearchParams({
+    geometry: `${lng},${lat}`,
+    geometryType: 'esriGeometryPoint',
+    inSR: '4326',
+    spatialRel: 'esriSpatialRelIntersects',
+    outFields: 'name,value,legalstartdate,legalenddate,systemenddate',
+    returnGeometry: 'false',
+    f: 'json',
+  });
+  return `${base}?${p}`;
+}
+
+export function parseSaZoning(body: unknown): ParseOutcome<ZoningReading> {
+  const feats = arcgisFeatures(body);
+  if (feats.kind !== 'ok') return feats;
+  // Only the zone in force: a replaced zone keeps its row with an end date.
+  const current = feats.reading.filter((a) => a['legalenddate'] == null && a['systemenddate'] == null);
+  if (current.length === 0) return { kind: 'empty' };
+  const a = current[0];
+  const code = str(a['value']);
+  const name = str(a['name']);
+  if (!code && !name) return { kind: 'error', message: 'feature carries neither a zone code nor a zone name' };
+  return {
+    kind: 'ok',
+    reading: {
+      jurisdiction: 'SA',
+      zoneCode: code ?? name!,
+      zoneLabel: name,
+      instrument: SA_CODE_INSTRUMENT,
+      lga: null,
+      // The date this zone took legal effect at this point — the Code's own
+      // statement of currency for the control, not the day it was read.
+      currencyDate: epochMsToIsoDate(a['legalstartdate']),
+      source: SA_ZONING_SOURCE,
+      licence: SA_ZONING_LICENCE,
+    },
+  };
+}
+
+// ---------------------------------------------------------------------------
 // The cells no adapter may fill, and why — rendered, never silently skipped
 // ---------------------------------------------------------------------------
 
@@ -511,12 +592,15 @@ export const WA_LICENCE_NOTE =
  * measurement was never taken: a claim that covers two jurisdictions is a
  * claim nobody can check against either.
  *
- * Both still say `not_integrated`, which is the honest status — reachable is
- * not read, and no parser here has been verified against either publisher's
- * response.
+ * Both said `not_integrated`, which was the honest status — reachable is not
+ * read. On 23 Sep 2026 the zone half of South Australia's changed: CI found
+ * the Planning and Design Code's own zone layer and it answered at a point in
+ * each capital (`buildSaZoningQuery`), so the ZONE is now read and this note
+ * speaks only for what is still not — the parcel. The Northern Territory's is
+ * unchanged: its service is still behind a challenge.
  */
 export const SA_NOTE =
-  'South Australia’s planning layers are published by a state spatial service this platform can reach — it answers with a catalogue of 131 services, including folders named PlanSA and ePlanning — and none of them is read into this report yet. That is outstanding integration work rather than a limitation of the source, and nothing here says whether a control applies. Verify via the PlanSA portal.';
+  'South Australia’s planning layers are published by a state spatial service this platform can reach — it answers with a catalogue of 131 services, including folders named PlanSA and ePlanning — and the zone is read from the Planning and Design Code’s own layer, while the parcel’s attributes are not read into this report yet. That is outstanding integration work rather than a limitation of the source, and nothing here says whether a control applies. Verify via the PlanSA portal.';
 
 export const NT_NOTE =
   'A bot-protection challenge stood in front of the Northern Territory’s land-information service on every address this platform asked, so no layer was read. That is a property of automated access rather than a decision the Territory made about publishing, and nothing here says whether a control applies. Verify via the NT planning portal.';

@@ -2,6 +2,7 @@ import { AlertTriangle, CheckCircle2, Info, ShieldAlert } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { formatMoney, formatMultiple, formatRatioPercent, toCents } from '@/lib/ciAssessment/money';
 import type { AssessmentResult } from '@/lib/ciAssessment/engine';
+import type { AnalysisResult } from '@/lib/ciAssessment/analysisEngine';
 
 /**
  * The always-visible summary rail.
@@ -12,11 +13,19 @@ import type { AssessmentResult } from '@/lib/ciAssessment/engine';
  * would take a third of the viewport.
  */
 export function ResultsRail({
-  result, onJumpToResults,
+  result, analysis, onJumpToResults,
 }: {
   result: AssessmentResult;
+  /**
+   * The valuation and forecast, where the optional Valuation & forecast step
+   * has been filled. Drawn only when it produced something: an empty block of
+   * dashes beside the lending position would read as a failed calculation.
+   */
+  analysis?: AnalysisResult | null;
   onJumpToResults: () => void;
 }) {
+  const valuation = analysis?.valuation ?? null;
+  const forecast = analysis?.forecast ?? null;
   const { summary, serviceability } = result;
   const critical = result.warnings.filter((warning) => warning.severity === 'critical');
   const warnings = result.warnings.filter((warning) => warning.severity === 'warning');
@@ -89,6 +98,41 @@ export function ResultsRail({
           </p>
         </div>
       </dl>
+
+      {valuation || forecast ? (
+        <section aria-label="Investment analysis">
+          <p className="mb-1.5 text-[0.7rem] font-semibold uppercase tracking-[0.12em] text-muted-foreground">
+            Investment
+          </p>
+          <dl className="grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-border bg-border">
+            <div className="bg-card px-3 py-2.5">
+              <dt className="ci-result-cell-label">Passing yield</dt>
+              <dd className="mt-0.5 text-base font-semibold tabular-nums text-foreground">
+                {valuation?.passingYield != null ? `${valuation.passingYield.toFixed(2)}%` : '—'}
+              </dd>
+            </div>
+            <div className="bg-card px-3 py-2.5">
+              {/* Already a percentage from the engine — see ForecastStage. */}
+              <dt className="ci-result-cell-label">Levered IRR</dt>
+              <dd className="mt-0.5 text-base font-semibold tabular-nums text-foreground">
+                {forecast?.leveredIrr != null && Number.isFinite(forecast.leveredIrr) ? `${forecast.leveredIrr.toFixed(1)}%` : '—'}
+              </dd>
+            </div>
+            <div className="col-span-2 bg-card px-3 py-2.5">
+              <dt className="ci-result-cell-label">Value at target rate</dt>
+              <dd className="mt-0.5 text-base font-semibold tabular-nums text-foreground">
+                {valuation?.impliedValue != null ? formatMoney(toCents(valuation.impliedValue)) : '—'}
+              </dd>
+              {/* A ratio from the cap-rate engine — 0.28 means 28%. */}
+              {valuation?.valuationGapPct != null ? (
+                <p className={cn('mt-0.5 text-xs', valuation.valuationGapPct >= 0 ? 'text-success' : 'text-warning')}>
+                  {(valuation.valuationGapPct * 100).toFixed(1)}% {valuation.valuationGapPct >= 0 ? 'above' : 'below'} the price
+                </p>
+              ) : null}
+            </div>
+          </dl>
+        </section>
+      ) : null}
 
       {critical.length || warnings.length ? (
         <section className="rounded-lg border border-border bg-card p-3">

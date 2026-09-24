@@ -20,9 +20,19 @@
  * wall-clock budget and stops, and whatever is left is picked up by the
  * `analyse` sweep. Nothing here decides how much to do; it just does one image
  * and reports how it went.
+ *
+ * Time is not the only thing a decode spends. The decoder holds every pixel
+ * before it downscales — 13 to 17.5 bytes a pixel, measured — so an image
+ * whose header states more than the pixel ceiling is refused before the
+ * decoder loads. A floor plan of that size killed every `analyse` run for
+ * eleven days; see `listingImageDecode.pure.ts`.
  */
 
 import { analyseRgba, ANALYSIS_SIZE, type VisualAnalysis } from './listingImageVision.pure.ts';
+import {
+  DEFAULT_DECODE_PIXEL_ALLOWANCE,
+  readDecodableDimensions,
+} from './listingImageDecode.pure.ts';
 
 export type { VisualAnalysis };
 
@@ -59,8 +69,20 @@ function loadDecoder(): Promise<DecodeFn> {
  * caller treats as "no verdict". A wrong verdict would demote a real
  * photograph; an absent one leaves the agent's own ordering exactly as it was,
  * so `null` is always the safe answer.
+ *
+ * An image whose header states more than `maxPixels` is `null` too, without the
+ * decoder being loaded: the decoder holds every pixel before it downscales, and
+ * the platform ends a worker that runs out of memory without anything here
+ * being able to catch it (`listingImageDecode.pure.ts`). Callers that decode
+ * more than one image in a request bound the SUM as well.
  */
-export async function analyseImageBytes(bytes: Uint8Array): Promise<VisualAnalysis | null> {
+export async function analyseImageBytes(
+  bytes: Uint8Array,
+  maxPixels: number = DEFAULT_DECODE_PIXEL_ALLOWANCE,
+): Promise<VisualAnalysis | null> {
+  const stated = readDecodableDimensions(bytes);
+  if (!stated || stated.width * stated.height > maxPixels) return null;
+
   try {
     const decode = await loadDecoder();
     const decoded = (await decode(bytes)) as DecodedImage | null;

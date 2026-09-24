@@ -6,14 +6,29 @@
  *  - one primary action ("New assessment") instead of duplicated
  *    "New Commercial" / "New Industrial" buttons — segment is a *field*, not a
  *    separate process
- *  - the calculator is the default tab rather than a secondary button
  *  - the empty state is an inline prompt, not a panel that owns the viewport
  *
- * The existing property register is preserved intact under its own tab, so no
- * existing record, route or workflow regresses.
+ * ## One way in (September 2026 audit)
+ *
+ * The page offered four ways to start the same record and two editors for it:
+ * the header's "New assessment", ten "Start from a transaction type" buttons,
+ * and a "Standalone calculators" button whose workspace listed these same
+ * assessments and edited them through a second set of stages.
+ *
+ * Now there is one "New assessment". It creates the draft and opens it on its
+ * Type step, where the name and the transaction type are the first two
+ * questions (`useStartAssessment`). The calculators workspace is retired into
+ * the assessment's own "Valuation & forecast" step. An assessment can be
+ * deleted, within the limits `deletion.pure.ts` sets, which is what lets a
+ * click create again: a draft nobody wanted goes with one confirmation. A LINK
+ * still never creates one (see below). The tabs name what they hold: the
+ * Property register is where buildings live and assessments start from, and
+ * Policy defaults are the assumptions every assessment starts under.
+ *
+ * See `docs/commercial/MODULE_STRUCTURE.md`.
  */
 
-import { useCallback, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,23 +39,30 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { SearchInput } from '@/components/ui/search-input';
 import { ReportTemplateSelector } from '@/components/reports/ReportTemplateSelector';
 import {
-  Archive, Building2, Calculator, ExternalLink, Factory, FileDown, Loader2,
-  Plus, Settings2, FileText,
+  DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
+  Archive, ArchiveRestore, Building2, ExternalLink, Factory, FileDown, Loader2,
+  MoreHorizontal, Plus, Settings2, FileText, Trash2,
 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toast } from '@/hooks/use-toast';
 import { ciAssessmentApi, useCiAssessments, type AssessmentListRow } from '@/hooks/useCiAssessments';
 import { useCapacityReport } from '@/hooks/useCapacityReport';
 import { isReportable } from '@/lib/reports/commercialCapacity/route.pure';
-import {
-  ASSESSMENT_STATUS_LABELS, ASSESSMENT_TYPE_DEFINITIONS,
-  assessmentTypeDefinition, emptyAssessmentPayload, type AssessmentStatus, type AssessmentType,
-} from '@/lib/ciAssessment/types';
+import { ASSESSMENT_STATUS_LABELS, type AssessmentStatus } from '@/lib/ciAssessment/types';
 import { formatMoney, formatMultiple, formatRatioPercent, toCents } from '@/lib/ciAssessment/money';
 import { clientCommercialIndustrialPath } from '@/lib/ciAssessment/clientRoute';
 import { PROFILE_LABELS, PLATFORM_DEFAULT_POLICY, POLICY_VERSION, CALCULATION_ENGINE_VERSION } from '@/lib/ciAssessment/policy';
 import { CommercialPropertyRegister } from '@/components/commercial/CommercialPropertyRegister';
 import { PortfolioImpactTab } from '@/components/commercial/assessment/PortfolioImpactTab';
+import { STARTING_BLANK, useStartAssessment } from '@/components/commercial/assessment/useStartAssessment';
+import {
+  DeleteAssessmentDialog, type DeletableAssessment,
+} from '@/components/commercial/assessment/DeleteAssessmentDialog';
+import { useMayOfferAssessmentDelete } from '@/components/commercial/assessment/useMayOfferAssessmentDelete';
+import { readNewAssessmentLink, withoutNewAssessmentLink } from '@/lib/ciAssessment/legacyCalculatorLinks';
+import { registerPropertyPath } from '@/lib/ciAssessment/registerProperty';
 
 const STATUS_TONE: Record<AssessmentStatus, string> = {
   draft: 'ci-status-neutral',
@@ -94,7 +116,8 @@ export default function CommercialIndustrial() {
   const [search, setSearch] = useState('');
   const [status, setStatus] = useState('all');
   const [segment, setSegment] = useState('all');
-  const [creating, setCreating] = useState(false);
+  const [pendingDelete, setPendingDelete] = useState<DeletableAssessment | null>(null);
+  const mayOfferDelete = useMayOfferAssessmentDelete();
 
   const activeTab = searchParams.get('tab') ?? 'assessments';
   const setTab = (tab: string) => {
@@ -114,23 +137,30 @@ export default function CommercialIndustrial() {
   const { rows, loading, refresh, metrics } = useCiAssessments(filters);
   const { generatingId, generate } = useCapacityReport();
 
-  const createAssessment = useCallback(async (type: AssessmentType) => {
-    setCreating(true);
-    const definition = assessmentTypeDefinition(type);
-    const result = await ciAssessmentApi.create({
-      title: 'Untitled assessment',
-      segment: definition.segment === 'industrial' ? 'industrial' : 'commercial',
-      assessmentType: type,
-      payload: emptyAssessmentPayload(type),
-    });
-    setCreating(false);
+  const { start: startAssessment, starting } = useStartAssessment();
+  const startingBlank = starting === STARTING_BLANK;
 
-    if (result.error || !result.data) {
-      toast({ title: 'Could not create assessment', description: result.error ?? 'Try again.', variant: 'destructive' });
-      return;
+  /**
+   * `?new=assessment[&domain=…&propertyId=…]` is a LINK asking for a new
+   * assessment: the old "Send to Calculators" links and the ones this page used
+   * to open a dialog from. A link never creates a record, because a refresh,
+   * the Back button or a bookmark is not somebody asking for one. A link
+   * naming a building goes to that building's page, where "New assessment"
+   * starts one of it in one click. One naming no building is simply this list.
+   * Either way the request is REPLACED, so Back does not bring it round again.
+   */
+  const linkRequest = readNewAssessmentLink(searchParams);
+  const hasLinkRequest = linkRequest !== null;
+  const linkedDomain = linkRequest?.property?.domain ?? null;
+  const linkedPropertyId = linkRequest?.property?.propertyId ?? null;
+  useEffect(() => {
+    if (!hasLinkRequest) return;
+    if (linkedDomain && linkedPropertyId) {
+      navigate(registerPropertyPath({ domain: linkedDomain, propertyId: linkedPropertyId }), { replace: true });
+    } else {
+      setSearchParams((current) => withoutNewAssessmentLink(current), { replace: true });
     }
-    navigate(`/commercial/assessments/${result.data.id}?step=type`);
-  }, [navigate]);
+  }, [hasLinkRequest, linkedDomain, linkedPropertyId, navigate, setSearchParams]);
 
   const archive = async (row: AssessmentListRow) => {
     const result = row.archived_at
@@ -157,19 +187,12 @@ export default function CommercialIndustrial() {
           </h1>
           <p className="ci-page-subtitle">
             Finance assessments for office, retail, warehouse and logistics assets — borrowing capacity,
-            portfolio impact and stress testing in one workspace.
+            valuation, portfolio impact and stress testing, from intake to the client&apos;s report.
           </p>
         </div>
         <div className="ci-page-actions">
-          <Button variant="outline" size="sm" onClick={() => navigate('/calculators?domain=commercial')}>
-            <Calculator className="mr-1.5 h-4 w-4" aria-hidden="true" /> Standalone calculators
-          </Button>
-          <Button
-            size="sm"
-            disabled={creating}
-            onClick={() => createAssessment('commercial_investment')}
-          >
-            {creating
+          <Button size="sm" onClick={() => void startAssessment()} disabled={starting !== null} aria-busy={startingBlank}>
+            {startingBlank
               ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" aria-hidden="true" />
               : <Plus className="mr-1.5 h-4 w-4" aria-hidden="true" />}
             New assessment
@@ -196,10 +219,10 @@ export default function CommercialIndustrial() {
       <Tabs value={activeTab} onValueChange={setTab}>
         <TabsList className="ci-tabs-list">
           <TabsTrigger className="ci-tab" value="assessments">Assessments</TabsTrigger>
-          <TabsTrigger className="ci-tab" value="properties">Properties</TabsTrigger>
+          <TabsTrigger className="ci-tab" value="properties">Property register</TabsTrigger>
           <TabsTrigger className="ci-tab" value="portfolio">Portfolio impact</TabsTrigger>
           <TabsTrigger className="ci-tab" value="reports">Reports</TabsTrigger>
-          <TabsTrigger className="ci-tab" value="settings">Calculator settings</TabsTrigger>
+          <TabsTrigger className="ci-tab" value="settings">Policy defaults</TabsTrigger>
         </TabsList>
 
         {/* ---- Assessments -------------------------------------------- */}
@@ -261,8 +284,11 @@ export default function CommercialIndustrial() {
                     : 'Start one to work through the property, borrower, portfolio and loan structure, then see indicative capacity and portfolio impact.'}
                 </p>
               </div>
-              <Button size="sm" disabled={creating} onClick={() => createAssessment('commercial_investment')}>
-                <Plus className="mr-1.5 h-4 w-4" aria-hidden="true" /> New assessment
+              <Button size="sm" onClick={() => void startAssessment()} disabled={starting !== null} aria-busy={startingBlank}>
+                {startingBlank
+                  ? <Loader2 className="mr-1.5 h-4 w-4 animate-spin" aria-hidden="true" />
+                  : <Plus className="mr-1.5 h-4 w-4" aria-hidden="true" />}
+                New assessment
               </Button>
             </div>
           ) : (
@@ -278,7 +304,7 @@ export default function CommercialIndustrial() {
                     <TableHead className="text-right">LVR</TableHead>
                     <TableHead className="text-right">DSCR</TableHead>
                     <TableHead>Binding constraint</TableHead>
-                    <TableHead className="w-24"><span className="sr-only">Actions</span></TableHead>
+                    <TableHead className="ci-sticky-actions w-28"><span className="sr-only">Actions</span></TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -340,7 +366,7 @@ export default function CommercialIndustrial() {
                       <TableCell className="text-xs text-muted-foreground">
                         {row.binding_constraint ?? '—'}
                       </TableCell>
-                      <TableCell>
+                      <TableCell className="ci-sticky-actions">
                         <div className="flex justify-end gap-1">
                           {/* Reporting is offered only where it is possible.
                               The action is absent rather than disabled on an
@@ -367,13 +393,38 @@ export default function CommercialIndustrial() {
                           >
                             <ExternalLink className="h-4 w-4" aria-hidden="true" />
                           </Button>
-                          <Button
-                            size="icon" variant="ghost" className="h-8 w-8 text-muted-foreground"
-                            onClick={() => archive(row)}
-                            aria-label={row.archived_at ? `Restore ${row.title}` : `Archive ${row.title}`}
-                          >
-                            <Archive className="h-4 w-4" aria-hidden="true" />
-                          </Button>
+                          {/* Managing the record — archive, restore, delete —
+                              sits behind one menu, as it does in the
+                              assessment's own header: a destructive act is
+                              not a bare icon in a dense row. */}
+                          <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                              <Button
+                                size="icon" variant="ghost" className="h-8 w-8 text-muted-foreground"
+                                aria-label={`More actions for ${row.title}`}
+                              >
+                                <MoreHorizontal className="h-4 w-4" aria-hidden="true" />
+                              </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent align="end">
+                              <DropdownMenuItem onSelect={() => { void archive(row); }}>
+                                {row.archived_at
+                                  ? <><ArchiveRestore className="mr-2 h-4 w-4" aria-hidden="true" /> Restore</>
+                                  : <><Archive className="mr-2 h-4 w-4" aria-hidden="true" /> Archive</>}
+                              </DropdownMenuItem>
+                              {mayOfferDelete ? (
+                                <>
+                                  <DropdownMenuSeparator />
+                                  <DropdownMenuItem
+                                    className="text-destructive focus:text-destructive"
+                                    onSelect={() => setPendingDelete({ id: row.id, title: row.title, reference: row.reference })}
+                                  >
+                                    <Trash2 className="mr-2 h-4 w-4" aria-hidden="true" /> Delete…
+                                  </DropdownMenuItem>
+                                </>
+                              ) : null}
+                            </DropdownMenuContent>
+                          </DropdownMenu>
                         </div>
                       </TableCell>
                     </TableRow>
@@ -382,34 +433,14 @@ export default function CommercialIndustrial() {
               </Table>
             </div>
           )}
-
-          {/* Assessment types, offered as a quick-start rather than duplicated
-              primary buttons in the header. */}
-          <section className="rounded-lg border border-border bg-card p-4">
-            <h2 className="text-sm font-semibold tracking-tight text-foreground">Start from a transaction type</h2>
-            <p className="mt-0.5 text-xs text-muted-foreground">
-              The type sets which fields are required and which income drives serviceability.
-            </p>
-            <div className="mt-3 flex flex-wrap gap-2">
-              {ASSESSMENT_TYPE_DEFINITIONS.map((definition) => (
-                <Button
-                  key={definition.key}
-                  size="sm" variant="outline" disabled={creating}
-                  onClick={() => createAssessment(definition.key)}
-                >
-                  {definition.segment === 'industrial'
-                    ? <Factory className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />
-                    : <Building2 className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />}
-                  {definition.label}
-                </Button>
-              ))}
-            </div>
-          </section>
         </TabsContent>
 
-        {/* ---- Properties (existing register, preserved) ---------------- */}
+        {/* ---- Property register ---------------------------------------- */}
         <TabsContent value="properties" className="mt-4">
-          <CommercialPropertyRegister />
+          <CommercialPropertyRegister
+            onStartAssessment={(property) => void startAssessment(property)}
+            starting={starting}
+          />
         </TabsContent>
 
         {/* ---- Portfolio impact ---------------------------------------- */}
@@ -500,14 +531,14 @@ export default function CommercialIndustrial() {
           )}
         </TabsContent>
 
-        {/* ---- Calculator settings -------------------------------------- */}
+        {/* ---- Policy defaults ------------------------------------------- */}
         <TabsContent value="settings" className="mt-4 space-y-4">
           <div className="rounded-lg border border-border bg-card p-4">
             <h2 className="flex items-center gap-2 text-sm font-semibold tracking-tight text-foreground">
               <Settings2 className="h-4 w-4 text-primary" aria-hidden="true" /> Platform default assumptions
             </h2>
             <p className="mt-1 text-sm leading-6 text-muted-foreground">
-              These are the starting assumptions before any lender profile or scenario override is applied.
+              The assumptions every assessment starts under, before any lender profile or scenario override is applied.
               A completed assessment keeps the assumptions it was calculated under, so changing these
               never rewrites a historical result.
             </p>
@@ -565,6 +596,14 @@ export default function CommercialIndustrial() {
           </div>
         </TabsContent>
       </Tabs>
+
+      <DeleteAssessmentDialog
+        assessment={pendingDelete}
+        open={pendingDelete !== null}
+        onOpenChange={(open) => { if (!open) setPendingDelete(null); }}
+        onDeleted={() => { void refresh(); }}
+        onArchived={() => { void refresh(); }}
+      />
     </div>
   );
 }

@@ -1,6 +1,8 @@
 # Sales counts, and the four jurisdictions Demand cannot score in
 
-**W3.5, step one.** Read-only discovery. Nothing here writes to a register.
+**W3.5 — closed 23 September 2026.** Read-only discovery. Nothing here
+writes to a register, and the answer is that nothing needs to: none of the
+four jurisdictions publishes a sub-state count of residential sales (§4).
 
 This records what was asked, why it is asked that way, and what the
 publishers answered. It exists because loading a series is a register
@@ -203,17 +205,21 @@ second dialect exists.
 
 ---
 
-## 4. What the publishers answered, 22 September 2026
+## 4. What the publishers answered, 22 and 23 September 2026
 
-Measured from CI. Two of the four are a real limit of what is published and
-two are gaps in this repository, and **keeping those apart is the point**.
+Measured from CI. WA, the NT and the ACT on 22 September; Tasmania on 23
+September, by the run that re-measured the other three and found every one of
+their readings unchanged. **All four are now a real limit of what is
+published** — and two of them got there only when the instrument did, which is
+why a gap in this repository and a limit of the source are kept apart until
+the moment one is shown to be the other.
 
 | | its index says it holds | matched a sales query | carrying a count | reading |
 | --- | ---: | ---: | ---: | --- |
 | **WA** | **2,911** | 203 | **0** | `medians_only` |
 | **NT** | **1,075** | **0** of five phrasings | 0 | `no_count_published` |
 | **ACT** | **378** (via Socrata) | **0** of five phrasings | 0 | `no_count_published` |
-| TAS | — (host does not resolve) | 1, from the harvest, no count | 0 | `catalogue_unavailable` |
+| **TAS** | **982** — its whole list in the Commonwealth catalogue (§4.4) | **5** name a sale | **0** | `no_count_published` |
 
 **Western Australia's catalogue answers, holds 2,911 datasets, matches 434
 for "property sales" and 2,883 for "land sales" — and not one of the 203
@@ -225,9 +231,9 @@ and the Commonwealth catalogue both answered and both agree.
 **So three of the four are settled, and the answer is that no sub-state count
 of residential sales is published.** That is the measurement W3.5 was for.
 
-One remains **ours**: **Tasmania** — `data.tas.gov.au` does not resolve from
-this egress, and its one harvest-attributed dataset carries no count, so
-nothing was established either way.
+On 22 September one remained **ours**: **Tasmania** — `data.tas.gov.au` does
+not resolve from this egress, and its one harvest-attributed dataset carried
+no count, so nothing was established either way. §4.4 is how that closed.
 
 The ACT reached this answer only because of §3.4. For one revision it read
 `catalogue_unavailable`, correctly, because its CKAN root 404'd; the Socrata
@@ -286,8 +292,77 @@ reading that narrows a sentence must never widen the set of pages it appears
 on.
 
 So a Western Australian report now reads that no count is published, a
-Tasmanian one reads that this could not be established, and a New South Wales
-one reads exactly what it read before.
+Tasmanian one reads the same — from its government's whole list, and saying
+so — and a New South Wales one reads exactly what it read before. (Until 23
+September a Tasmanian report read that this could not be established, which
+was true.)
+
+### 4.4 Tasmania: found from the harvest's own records, not a second typed host
+
+`data.tas.gov.au` answers **ENOTFOUND**. The tempting fix is to type another
+host, and it is the mistake this module keeps declining: a typed host that is
+wrong fails exactly like a jurisdiction that publishes nothing, which is what
+the ACT's first root proved. The harvest already knows where Tasmania
+publishes, so the probe asks the harvest's **own records**, and nothing in
+the route is an identifier anybody typed.
+
+Measured from CI, 23 September 2026:
+
+1. **The harvest's organisation facet names Tasmania's publishers** — 17 by
+   their own full name, 14 of them its government once universities and
+   institutes are set aside (`governmentPublishers`; a university of
+   Tasmania is not the Tasmanian Government).
+2. **Every dataset those 14 list was read in full: 982**, each publisher
+   paged until what was read reached what the index declared
+   (`enumerationComplete`). The largest is *Tasmania Government's The List
+   Data* at 794. A list read in part is not a list — the
+   `organization_list`-answered-with-25 fault from W3.2.
+3. **Their resource URLs name 63 hosts**, counted; eight are Tasmania's own
+   (`maps.thelist`, `listdata.thelist`, `www.thelist`, `services.thelist`,
+   `parks`, `maps.stategrowth`, `data.stategrowth`, `www.mrt`).
+4. **Each own host was asked, in every dialect this module reads, whether it
+   is a catalogue** — CKAN at both roots, Socrata, a DCAT `data.json`, and an
+   ArcGIS directory. **None answered as CKAN, Socrata or DCAT.** Two are
+   ArcGIS directories — `services.thelist` (8 folders) and
+   `data.stategrowth` (14 services, 19 folders) — which are catalogues of
+   map LAYERS, not of datasets; their folders were walked for a layer named
+   for sales and **none is**. `www.mrt` answered with a bot-protection
+   challenge, which is recorded as a challenge and never as a refusal.
+
+So Tasmania runs no open-data catalogue of its own, and the Commonwealth
+catalogue **is** its index. The reading is therefore taken from everything
+its government lists there — **`harvest_enumeration`** — rather than from a
+relevance search, and its sentence says which: *"of the 982 datasets its own
+publishers list in the Commonwealth catalogue, read in full, 5 name a sale,
+and none carries a number of sales. TAS runs no open-data catalogue of its
+own, so that list is where its published data is indexed."*
+
+The five that name a sale are *Toilets and Waste Systems (PWS)*, *Private
+Timber Reserves (PFT)*, *Tasmanian Irrigation — Pipeline*, *Derwent Estuary
+Recreational Water Quality monitoring program — Boat Sales Wharf* and
+*Service Tasmania shop locations* — which is what an honest word match looks
+like on a list with no sales register in it. Corroboration is the relevance
+search of the **same** index, the question that fails differently, and it
+agreed.
+
+#### The instrument over-counted, and the constant records the corrected number
+
+The run's own sentence said **"6 name a sale"** beside its own line
+`datasets naming a sale  5 of 982`. Two faults, one number:
+
+- the attributed list was the jurisdiction's datasets **concatenated** with
+  the harvest search's, and its length was the count — on this route the two
+  ask the **same** index, so one dataset can arrive by both, under one id,
+  and be counted twice;
+- the sentence describes the **enumerated list**, and the search's one
+  attributed find was folded into it. On this route the search is the
+  corroborating question, not part of the list.
+
+`attributedRead` fixes both: every attributed dataset reaches the ranking
+once — **a find still needs only one endpoint** — and the number is the one
+its sentence describes. The constant records **5**, the enumeration's own
+printed line, and §4.2's rule (*record the number the instrument printed*)
+now has an instrument whose sentence and whose line agree.
 
 ---
 
@@ -318,6 +393,8 @@ another schema — a typed host being wrong, printed and green).
 | the demand remedy's clause | `volumeRemedyClause`, read by `describeGaps` in `scoringV2Production.pure.ts` |
 | the client-facing sentence | `measuredVolumeNote`, the demand gap's `reasonOverride` |
 | the second catalogue dialect | `parseSocrataCatalogue` / `SOCRATA_PORTALS` — the ACT portal is Socrata |
+| where a jurisdiction publishes | `harvestOrgFacetUrl`, `governmentPublishers`, `enumerationComplete`, `publicationHostsOf`, `catalogueProbesFor` — Tasmania (§4.4) |
+| what an assessment is handed | `attributedRead` — each dataset once, and the number its sentence describes |
 | the CI probe | `scripts/market/sales-volume-liveness.ts` |
 | the spec | `src/lib/reports/__tests__/salesVolumePublishers.spec.ts` |
 
@@ -334,17 +411,20 @@ another schema — a typed host being wrong, printed and green).
   catalogue states a format and a size; how many quarters are inside the file
   is a question for the loader, and four are needed. No candidate survived to
   need it.
-- **Tasmania is not established either way.** It has not been shown to
-  publish a count and has not been shown not to. It needs a host this
-  repository does not have, and it is named in the readings rather than
-  folded into the other three's answer. The ACT was in this state until the
-  Socrata reader reached it.
+- **Tasmania's reading is about the Commonwealth catalogue, because that is
+  its index.** It rests on every dataset its 14 government publishers list
+  there and on the finding that none of its eight own hosts is a searchable
+  catalogue. A count published only on a Tasmanian site outside both — a
+  valuer-general's page, a report behind a form — would be invisible here,
+  which is the same bound as the bullet below and is stated for it by name
+  because its route differs.
 - **Whether a count exists somewhere other than these catalogues** is not
   established. A valuer-general's own website, a paid feed or a report series
   behind a form would each be invisible here, and the reading says only that
   none was found published in the two catalogues asked.
-- **No migration is requested.** W3.5's original shape — load counts for four
-  jurisdictions — is answered for two of them by *there is nothing to load*,
-  and blocked for the other two by our own endpoints rather than by an
-  approval. So there is nothing to ask for yet, which is a better outcome
-  than asking for a table to put nothing in.
+- **No migration is requested, and none is owed.** W3.5's original shape —
+  load counts for four jurisdictions — is answered for **all four** by
+  *there is nothing to load*: no sub-state count of residential sales is
+  published by any of them in the catalogues that index them. That is a
+  better outcome than asking for a table to put nothing in, and W3.5 is
+  closed on it.

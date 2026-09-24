@@ -35,9 +35,11 @@
  * a silent hole is a worse disclosure than one that says a source is not
  * quotable.
  *
- * **The cap is explained where the grade is stated.** If the evidence held the
- * grade below what the score would allow, that belongs in the headline, not in
- * a footnote — it is the single most likely thing a reader will ask about.
+ * **What the evidence can carry is stated where the grade is stated.** Until
+ * eligibility 5.0.0 that was a cap explained in the headline; from 5.0.0 the
+ * letter is the band of the score, and where the evidence alone would not
+ * carry that letter the engine's own caution sentence leads the limitations —
+ * it is the single most likely thing a reader will ask about.
  */
 
 import {
@@ -90,8 +92,10 @@ export interface EvidenceStatement {
   grade: string;
   /** The grade the composite score alone would have given. */
   scoreGrade: string;
-  /** Present only when the evidence held the grade down. */
+  /** Present only when the evidence held the grade down (a rule before eligibility 5.0.0). */
   capExplanation: ReadonlyArray<string>;
+  /** The engine's caution when the evidence alone would not carry the letter, or null. */
+  caution: string | null;
   dimensions: ReadonlyArray<StatementDimension>;
   /** Every source quoted, de-duplicated, in the order first used. */
   sources: ReadonlyArray<string>;
@@ -256,6 +260,12 @@ export function buildEvidenceStatement(input: StatementInput): EvidenceStatement
       + `${eligibility.grade} rather than the ${eligibility.scoreGrade} the score alone would give.`,
     );
   }
+  // 5.0.0: the letter follows the score, and the caution is the engine's own
+  // sentence — stated, never re-derived, per this module's first rule.
+  const caution = typeof eligibility.caution === 'string' && eligibility.caution.trim()
+    ? eligibility.caution.trim()
+    : null;
+  if (caution) limitations.push(caution);
   for (const d of dimensions) {
     if (d.score === null && d.absenceReason) limitations.push(d.absenceReason);
     else if (d.coverage < 1 && d.notMeasured.length > 0) {
@@ -277,6 +287,7 @@ export function buildEvidenceStatement(input: StatementInput): EvidenceStatement
     grade: eligibility.grade,
     scoreGrade: eligibility.scoreGrade,
     capExplanation: eligibility.reasons,
+    caution,
     dimensions,
     sources,
     unavailable,

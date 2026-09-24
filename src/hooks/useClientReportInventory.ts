@@ -3,14 +3,17 @@ import { useQuery } from '@tanstack/react-query';
 import { format } from 'date-fns';
 import { invokeSecureFunction } from '@/lib/secureInvoke';
 import { useAuth } from '@/hooks/useAuth';
+import { useCapability } from '@/hooks/useCapability';
+import { ciAssessmentApi } from '@/hooks/useCiAssessments';
 import {
   buildClientReportInventory,
   publishedFileIndex,
   type UnifiedReport,
 } from '@/lib/reports/clientReportInventory.pure';
+import type { ListedDocument } from '@/lib/ciAssessment/issuedDocuments';
 
 /**
- * Every report that exists for a client, from the five places they live.
+ * Every report that exists for a client, from the six places they live.
  *
  * This is `ClientReportsTab`'s own set of queries, lifted out so the Sent
  * Reports tab can offer the same reports for publishing without assembling a
@@ -36,6 +39,9 @@ export function useClientReportInventory(
 ): ClientReportInventory {
   const { user, loading: authLoading } = useAuth();
   const canFetchReports = !authLoading && !!user;
+  // The module's own entitlement: without it `manage-ci-assessments` answers
+  // every call with a refusal, so the query is not made at all.
+  const commercialIndustrial = useCapability('client.commercial_industrial').enabled;
 
   const { data: reportFiles = [], isLoading: filesLoading } = useQuery({
     queryKey: ['client-report-files', clientId],
@@ -147,13 +153,30 @@ export function useClientReportInventory(
     },
   });
 
+  // Commercial & Industrial Capacity Reports drawn for this client, from both
+  // of that format's render routes (`documents.pure.ts`). A failed read costs
+  // this one source, not the tab — the same rule as every source above.
+  const { data: ciDocuments = [] } = useQuery({
+    queryKey: ['client-ci-documents', clientId],
+    enabled: canFetchReports && commercialIndustrial,
+    retry: false,
+    queryFn: async (): Promise<ListedDocument[]> => {
+      const { data, error } = await ciAssessmentApi.clientDocuments(clientId);
+      if (error) {
+        console.warn('[useClientReportInventory] Failed to fetch Commercial & Industrial reports:', error);
+        return [];
+      }
+      return data ?? [];
+    },
+  });
+
   const reports = useMemo(
     () =>
       buildClientReportInventory(
-        { reportFiles, investmentReports, portfolioReports, bcAssessments, portalReports },
+        { reportFiles, investmentReports, portfolioReports, bcAssessments, portalReports, ciDocuments },
         (iso) => format(new Date(iso), 'dd MMM yyyy'),
       ),
-    [reportFiles, investmentReports, portfolioReports, bcAssessments, portalReports],
+    [reportFiles, investmentReports, portfolioReports, bcAssessments, portalReports, ciDocuments],
   );
 
   const publishedFiles = useMemo(() => publishedFileIndex(portalReports), [portalReports]);

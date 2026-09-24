@@ -121,6 +121,14 @@ export const PLDD_SECTION_ORDER: { ordinal: number; heading: string }[] = [
    * slot instead of discarding one.
    */
   { ordinal: 1,  heading: 'Client Property & Location Snapshot' },
+  /*
+   * 1.5, composed. The document's own opening argument — what kind of
+   * purchase the land use table makes this, how the market has moved, what
+   * supply it meets, what decides it — so the chapters below read as its
+   * evidence. Between two ordinals rather than a renumber, for the reason the
+   * gaps below are kept: every `routed('dueDiligence', N)` is one of these.
+   */
+  { ordinal: 1.5, heading: 'The Opportunity in Strategic Terms' },
   { ordinal: 2,  heading: 'Core Property Facts & Physical Profile' },
   { ordinal: 3,  heading: 'Dwelling, Suburb Character & Occupier Appeal' },
   { ordinal: 4,  heading: 'Position Within the Locality & Infrastructure Context' },

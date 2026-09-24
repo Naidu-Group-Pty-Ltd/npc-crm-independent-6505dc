@@ -13,6 +13,7 @@ import { useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { commercialApi, type CommercialProperty } from '@/hooks/useCommercialProperties';
 import { industrialApi, type IndustrialProperty } from '@/hooks/useIndustrialProperties';
+import { buildCommercialPrefill, buildIndustrialPrefill } from '@/lib/ciAssessment/registerProperty';
 
 export type CalculatorDomain = 'commercial' | 'industrial';
 
@@ -70,67 +71,9 @@ interface ContextValue {
 
 const Ctx = createContext<ContextValue | undefined>(undefined);
 
-function sumOutgoings(map?: Record<string, number> | null): number {
-  if (!map) return 0;
-  return Object.values(map).reduce((acc, v) => acc + (Number(v) || 0), 0);
-}
-
-function buildCommercialPrefill(p: CommercialProperty): CalculatorPrefill {
-  const specs = (p.industrial_specs ?? {}) as Record<string, any>;
-  const outgoings = (p.outgoings_recoverable ?? {}) as Record<string, number>;
-  return {
-    propertyId: p.id,
-    domain: 'commercial',
-    address: p.address,
-    state: p.state ?? null,
-    assetCategory: p.asset_class === 'industrial' ? 'industrial' : 'commercial',
-    assetSubtype: p.asset_sub_type ?? p.asset_class,
-    gstTreatment: p.gst_treatment,
-    purchasePrice: p.purchase_price ?? null,
-    valuation: p.valuation ?? null,
-    gfaSqm: p.gfa_sqm ?? null,
-    nlaSqm: p.nla_sqm ?? null,
-    glaSqm: p.nla_sqm ?? null,
-    siteAreaSqm: p.site_area_sqm ?? null,
-    parkingBays: p.parking_bays ?? null,
-    hardstandSqm: Number(specs.hardstand_sqm) || null,
-    officePct: Number(specs.office_pct) || null,
-    siteCoverPct: Number(specs.site_cover_pct) || null,
-    clearanceMetres: Number(specs.clearance_metres) || null,
-    powerKva: Number(specs.power_kva) || null,
-    dockDoors: Number(specs.dock_doors) || null,
-    groundFloorLoadKpa: Number(specs.ground_floor_load_kpa) || null,
-    recoveredOutgoingsPa: sumOutgoings(outgoings) || null,
-    outgoings,
-    yearBuilt: p.year_built ?? null,
-    zoning: p.zoning ?? null,
-  };
-}
-
-function buildIndustrialPrefill(p: IndustrialProperty): CalculatorPrefill {
-  return {
-    propertyId: p.id,
-    domain: 'industrial',
-    address: [p.street, p.suburb, p.state, p.postcode].filter(Boolean).join(', '),
-    state: p.state ?? null,
-    assetCategory: 'industrial',
-    assetSubtype: p.asset_subtype,
-    purchasePrice: p.purchase_price ?? null,
-    valuation: p.current_valuation ?? null,
-    glaSqm: p.gla_sqm ?? null,
-    siteAreaSqm: p.site_area_sqm ?? null,
-    siteCoverPct: p.site_cover_pct ?? null,
-    officePct: p.office_pct ?? null,
-    hardstandSqm: p.hardstand_sqm ?? null,
-    clearanceMetres: p.clearance_metres ?? null,
-    powerKva: p.power_kva ?? null,
-    dockDoors: p.dock_doors ?? null,
-    groundFloorLoadKpa: p.ground_floor_load_kpa ?? null,
-    yearBuilt: p.year_built ?? null,
-    zoning: p.zoning ?? null,
-    conditionRating: p.condition_rating ?? null,
-  };
-}
+// The row-to-prefill mapping lives in `lib/ciAssessment/registerProperty.ts`,
+// which the assessment workflow uses to start an assessment from a register
+// property. One mapping, so a building reads the same in both places.
 
 interface ProviderProps { domain: CalculatorDomain; children: ReactNode }
 

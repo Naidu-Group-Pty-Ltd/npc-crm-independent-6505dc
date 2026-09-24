@@ -1,8 +1,16 @@
 # The Commercial & Industrial Analysis Workspace
 
-Read this before touching `/calculators`, `src/components/commercial/workspace/`,
-`src/lib/ciAssessment/analysis*.ts`, or anything that decides where a standalone
-analysis is stored.
+> **Superseded (September 2026).** The workspace this describes is retired.
+> `/calculators` is now a redirect, its valuation and forecast are the
+> assessment's optional **Valuation & forecast** step, and starting from a
+> register property is part of **New assessment**. Read
+> [`MODULE_STRUCTURE.md`](./MODULE_STRUCTURE.md) first. What stays true here is
+> §3 (the `analysis` payload section) and §4 (the two engines' units), both of
+> which the assessment step reuses unchanged. §6's link behaviour is replaced by
+> `legacyCalculatorRedirect`.
+
+Read this before touching `src/lib/ciAssessment/analysis*.ts` or the
+Valuation & forecast step.
 
 ## 1. What was wrong, measured
 

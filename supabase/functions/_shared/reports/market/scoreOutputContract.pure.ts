@@ -85,11 +85,22 @@ export interface ScoreOutput {
   score: number | null;
   /** The grade the score alone gives. */
   scoreGrade: string | null;
-  /** The grade after the evidence ceiling — what a report prints. */
+  /**
+   * What a report prints. From eligibility 5.0.0 always `scoreGrade` — the
+   * letter is the band of the score.
+   */
   grade: string | null;
+  /** Always false from eligibility 5.0.0; true on a row an older rule capped. */
   gradeCapped: boolean;
   gradeCapReasons: ReadonlyArray<string>;
-  /** True only when the evidence can carry the printed grade at A/A+ level. */
+  /**
+   * Where the evidence alone would not carry the printed letter, in the
+   * operator's words (5.0.0). Empty when it would.
+   */
+  gradeCautions: ReadonlyArray<string>;
+  /** The same finding as one sentence a client may read, printed beside the grade; null when none. */
+  gradeCaution: string | null;
+  /** The highest letter the evidence carries on its own, and the rule's version. */
   gradeEligibility: { ceiling: string; version: string } | null;
 
   /** Share of the nominal composite weight actually measured, 0-1. */
@@ -196,6 +207,8 @@ export function buildScoreOutput(
     grade: result.grade,
     gradeCapped: result.eligibility?.capped ?? false,
     gradeCapReasons: result.gradeCapReason,
+    gradeCautions: result.gradeCautions,
+    gradeCaution: result.gradeCaution,
     gradeEligibility: result.eligibility
       ? { ceiling: result.eligibility.ceiling, version: result.eligibility.version }
       : null,

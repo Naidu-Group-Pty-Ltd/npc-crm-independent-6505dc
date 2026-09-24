@@ -490,17 +490,56 @@ const REPO = resolve(__dirname, '../..');
  *
  * Run the same one-query check before editing this file: if
  * `20261212000000` is already recorded, the next change needs a v20.
+ *
+ * ## v20 — one summary page that flows into the report
+ *
+ * Checked before editing, as the line above asked, on 23 Sep 2026 through
+ * the ledger (all 1,036 recorded versions read): v19 IS recorded — Lovable
+ * stamped it `20261209010000` and its refresh `20261211000000` — so this
+ * change is a **v20**, and v19's file is not touched.
+ *
+ * The owner sent the 23 Sep 2026 Compass for 97 Poole Road and 9 Hollow
+ * Street back for its white space: pages 3 to 6 were 54%, 68%, 66% and 74%
+ * empty, on every master, because each summary element was a page of its own
+ * laid out for the worst case and the report's body waited on the page after
+ * the last of them. Every master now carries an `Executive summary` page for
+ * the tiers whose front matter flows (`frontMatterFlagsFor`): the verdict,
+ * the published figures, the property, the strengths and watch-points and —
+ * on the Compass alone — the grade's dimensions, with the body opening in the
+ * room left under them. It is a `flow` page (`flowLayout.ts`), so its blocks
+ * stack from what they draw. The typed pages it replaces are KEPT, made
+ * conditional on the report not flowing, which is how the composite tier
+ * prints exactly as it did.
+ *
+ * ## What the release is, measured rather than claimed
+ *
+ * Parsed out of the v19 and v20 files and compared template by template —
+ * 543 in each:
+ *
+ *   * **50 of 543 differ**, and they are exactly the 50 Investment Compass
+ *     masters. The other ten formats' 493 masters and the 43 voice templates
+ *     are byte-identical.
+ *   * **Every one of the 50 gains one page** (the summary), and **between 9
+ *     and 13 blocks** — 2 masters +9, 4 +10, 19 +11, 1 +12, 24 +13. Nothing
+ *     is removed, because the typed pages stay for the tier that draws them.
+ *
+ * The version is `20261219060000`. `20261219070000` re-copies the ACTIVE
+ * masters from it, by the v15 mechanism, unchanged. It was written as
+ * `20261219000000` / `…010000` and moved before it was applied anywhere,
+ * because main had meanwhile taken both versions for its restatements
+ * (`20261219000000_restate_mfa_recovery_code_consumption` onwards) — a version
+ * is the order a migration runs in, so two files cannot share one.
  */
 /**
  * The identifier this release records against a baseline and against a
  * refreshed master. It is the seed migration's own basename, so a row that
  * says it carries this release names the artefact that put it there.
  */
-const RELEASE_ID = '20261212000000_seed_template_library_v19_placeholder_words';
+const RELEASE_ID = '20261219060000_seed_template_library_v20_continuous_front_matter';
 
 const MIGRATION = resolve(
   REPO,
-  'supabase/migrations/20261212000000_seed_template_library_v19_placeholder_words.sql',
+  'supabase/migrations/20261219060000_seed_template_library_v20_continuous_front_matter.sql',
 );
 
 /** Postgres string literal, dollar-quoted so JSON never has to be escaped. */
@@ -801,6 +840,30 @@ function seedTuples(sql: string): Map<string, string> {
   return tuples;
 }
 
+/**
+ * Is this repository the one that AUTHORS the seed, or one that CARRIES it?
+ *
+ * The same question, and the same marker, as `indexIsCarriedNotAuthored` in
+ * `build-migration-object-index.mjs` and `skeletonsAreCarriedNotAuthored` in
+ * `build-migration-seed-skeletons.mjs`. The seed is past what a cascade
+ * carries in one file — v20 is 42.2 MB, and GitHub refuses a blob that size
+ * with a 422 — so it is absent on every clone, and the comparison below
+ * reported "the seed has never been written" about a seed the prime wrote.
+ * Measured 24 Sep 2026 on npc-client-dashboard#245: verify and security green,
+ * this step the only red check, and Mission Control merges no cascade pull
+ * request with a red check — so the delivery stopped there, with both of that
+ * clone's children queued behind it. Only the CURRENCY comparison stands down:
+ * every template is still validated against the live schema, the renderer
+ * allow-list and the publish gate, on every repository, before this is asked.
+ * It FAILS CLOSED: an unset or unrecognised value asserts, so a repository that
+ * authors its own backend is held to its own seed, and
+ * `scripts/security/check-gate-env-wiring.mjs` fails if the workflow step stops
+ * mapping the variable.
+ */
+function seedIsCarriedNotAuthored(env: NodeJS.ProcessEnv = process.env): boolean {
+  return env.BACKEND_DEPLOYED_BY === 'mission-control';
+}
+
 function reportDrift(fresh: string): void {
   const path = MIGRATION.replace(REPO + '/', '');
   if (!existsSync(MIGRATION)) {
@@ -1023,6 +1086,16 @@ WHERE version = 1
 `;
 
   if (mode === 'check') {
+    if (seedIsCarriedNotAuthored()) {
+      console.log(
+        `✓ ${all.length} templates validated against the live schema. `
+        + `${MIGRATION.replace(REPO + '/', '')} is carried here, not authored: Mission Control `
+        + "owns this repository's backend, the definitions and their seed are the prime's, and a "
+        + 'seed past what a cascade carries in one file never arrives here, so its currency is not '
+        + "this repository's to assert.",
+      );
+      return;
+    }
     reportDrift(sql);
     return;
   }

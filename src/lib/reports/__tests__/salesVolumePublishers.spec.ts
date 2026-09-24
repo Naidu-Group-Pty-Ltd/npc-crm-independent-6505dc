@@ -48,6 +48,22 @@ import {
   type VolumeCoverage,
   type VolumeDataset,
   type VolumeGapState,
+  JURISDICTION_DOMAINS,
+  catalogueProbesFor,
+  ckanRootFor,
+  datasetsNamingASale,
+  harvestOrgFacetUrl,
+  isJurisdictionHost,
+  jurisdictionOrganisations,
+  orgDatasetsUrl,
+  parseDcatCatalogue,
+  parseOrgFacet,
+  publicationHostsOf,
+  readCatalogueDialect,
+  ACADEMIC_PUBLISHER,
+  enumerationComplete,
+  governmentPublishers,
+  attributedRead,
 } from '../../../../supabase/functions/_shared/reports/market/openData/salesVolumePublishers.pure';
 import { VOLUME_BASELINE_PERIODS } from '../../../../supabase/functions/_shared/reports/market/demandScoring.pure';
 
@@ -749,8 +765,11 @@ describe('a harvest hit is not a statement about a jurisdiction', () => {
 /**
  * The measured readings, and the sentence a client's page carries.
  *
- * Two of the four are a real limit of what is published and two are gaps in
- * this repository. Keeping them apart is the whole point.
+ * All four are now a real limit of what is published — and two of them got
+ * there only when the instrument did (the ACT through Socrata on 22 Sep,
+ * Tasmania through the harvest's own records on 23 Sep). Until then each
+ * read that it could not be established, which was true. Keeping the two
+ * kinds of reading apart is the whole point.
  */
 describe('the measured readings', () => {
   it('records a reading for each of the four and nothing else', () => {
@@ -758,16 +777,44 @@ describe('the measured readings', () => {
   });
 
   /*
-   * WA, the NT and the ACT were established; Tasmania is ours. The ACT moved
-   * from `catalogue_unavailable` once the Socrata reader existed — which is
-   * the whole reason its CKAN 404 was kept and printed rather than replaced
-   * with another guess.
+   * The ACT moved from `catalogue_unavailable` once the Socrata reader
+   * existed — the whole reason its CKAN 404 was kept and printed rather than
+   * replaced with another guess — and Tasmania once the probe read where its
+   * publishers actually publish, rather than typing a second host.
    */
-  it('separates what was established from what this platform could not reach', () => {
+  it('records what each jurisdiction was established to publish', () => {
     expect(MEASURED_VOLUME_COVERAGE.WA.kind).toBe('medians_only');
     expect(MEASURED_VOLUME_COVERAGE.NT.kind).toBe('no_count_published');
     expect(MEASURED_VOLUME_COVERAGE.ACT.kind).toBe('no_count_published');
-    expect(MEASURED_VOLUME_COVERAGE.TAS.kind).toBe('catalogue_unavailable');
+    expect(MEASURED_VOLUME_COVERAGE.TAS.kind).toBe('no_count_published');
+  });
+
+  /*
+   * Tasmania has no catalogue of its own, so its reading is the enumeration
+   * of everything its government lists in the Commonwealth catalogue — and
+   * its sentence must say THAT, not claim a catalogue it does not have.
+   */
+  it('reads Tasmania from its whole list in the Commonwealth catalogue', () => {
+    const tas = MEASURED_VOLUME_COVERAGE.TAS;
+    expect(tas).toEqual({ kind: 'no_count_published', searched: 5, inventory: 982, route: 'harvest_enumeration' });
+    const note = measuredVolumeNote('TAS') as string;
+    expect(note).toContain('of the 982 datasets its own publishers list in the Commonwealth catalogue, read in full, 5 name a sale');
+    expect(note).toMatch(/TAS runs no open-data catalogue of its own/);
+    expect(note).not.toMatch(/across its own catalogue/);
+    expect(note).not.toMatch(/could not be established/);
+  });
+
+  /*
+   * The count is the ENUMERATED list's own. The 23 Sep run's sentence said
+   * 6 beside its own line "datasets naming a sale 5 of 982", because the
+   * relevance search's one attributed find had been folded into a number
+   * describing a list it is not part of.
+   */
+  it('counts the list its sentence describes, not the search that corroborated it', () => {
+    const tas = MEASURED_VOLUME_COVERAGE.TAS;
+    if (tas.kind !== 'no_count_published') return expect.fail('expected no_count_published');
+    expect(tas.searched).toBe(5);
+    expect(tas.searched).not.toBe(6);
   });
 
   /*
@@ -795,6 +842,8 @@ describe('the measured readings', () => {
     expect(act).toContain('378');
     const nt = measuredVolumeNote('NT') as string;
     expect(nt).toContain('1,075');
+    const tas = measuredVolumeNote('TAS') as string;
+    expect(tas).toContain('982');
   });
 
   /*
@@ -830,17 +879,17 @@ describe('the measured readings', () => {
   });
 
   /*
-   * The ACT's and Tasmania's readings were taken before the Socrata reader
-   * existed and before corroboration stopped gating a find, so they are
-   * conservative placeholders awaiting the next probe run rather than
-   * established answers. A measurement stored against an instrument that has
-   * since been replaced is the *asserted by configuration rather than by
-   * effect* trap, so the distinction is asserted rather than promised.
+   * A measurement stored against an instrument that has since been replaced
+   * is the *asserted by configuration rather than by effect* trap, so which
+   * readings the current instrument took is asserted rather than promised.
+   * Two have already moved when the instrument did — the ACT's and
+   * Tasmania's — and both moved from "could not be established" to an
+   * answer, which is the only direction a stale conservative reading may go.
    */
   it('names which readings the current instrument has taken', () => {
     /*
-     * All four, as of the run that added the Socrata reader and the
-     * find/absence asymmetry. Nothing is `false` today and the flag is kept
+     * All four, as of the 23 Sep run that added harvest discovery and the
+     * enumeration route. Nothing is `false` today and the flag is kept
      * anyway, because the point is to have somewhere for the NEXT instrument
      * change to be declared — the assertion below is a ratchet rather than a
      * live measurement of anything, and saying so is better than letting it
@@ -988,5 +1037,265 @@ describe('Socrata, because the ACT portal is not CKAN', () => {
     const probe = readFileSync('scripts/market/sales-volume-liveness.ts', 'utf8');
     expect(probe).toMatch(/if \(socrata && !catalogueAnswered\(ownRead\.verdict\)\)/);
     expect(probe).toMatch(/askSocrata\(socrata\)/);
+  });
+});
+
+
+/*
+ * ── Where a jurisdiction publishes, read off the harvest ──────────────────
+ *
+ * Tasmania's typed root does not resolve. The answer to that is not a second
+ * typed host — it is to ask the harvest where Tasmania's own publishers serve
+ * their files, and then ask those hosts whether they are catalogues.
+ */
+describe('discovering where a jurisdiction publishes, rather than typing it', () => {
+  const ds = (id: string, org: string | null, urls: string[], title = id, notes: string | null = null): VolumeDataset => ({
+    id, name: id, title, notes, organisation: org, licence: null, metadataModified: null,
+    resources: urls.map((url, i) => ({ id: `${id}-${i}`, name: `${id}-${i}`, format: 'CSV', url, datastoreActive: false, size: null })),
+  });
+
+  it('knows a jurisdiction host by its domain, and not by a lookalike', () => {
+    expect(isJurisdictionHost('listdata.thelist.tas.gov.au', 'TAS')).toBe(true);
+    expect(isJurisdictionHost('tas.gov.au', 'TAS')).toBe(true);
+    expect(isJurisdictionHost('TAS.GOV.AU.', 'TAS')).toBe(true);
+    expect(isJurisdictionHost('nottas.gov.au', 'TAS')).toBe(false);
+    expect(isJurisdictionHost('tas.gov.au.example.com', 'TAS')).toBe(false);
+    expect(isJurisdictionHost('data.gov.au', 'TAS')).toBe(false);
+    for (const state of VOLUME_GAP_STATES) expect(JURISDICTION_DOMAINS[state]).toMatch(/\.gov\.au$/);
+  });
+
+  it('asks the harvest for its publishers through the facet, never a paged list', () => {
+    const url = new URL(harvestOrgFacetUrl('https://data.gov.au/data/api/3/', 'tasmania'));
+    expect(url.pathname).toBe('/data/api/3/action/package_search');
+    expect(url.searchParams.get('rows')).toBe('0');
+    expect(url.searchParams.get('facet.field')).toBe('["organization"]');
+    expect(url.searchParams.get('facet.limit')).toBe('-1');
+    expect(url.pathname).not.toContain('organization_list');
+  });
+
+  it('reads the facet, most datasets first, and refuses a body that has none', () => {
+    const body = JSON.stringify({ success: true, result: { count: 40, search_facets: { organization: { items: [
+      { name: 'dpac-tas', display_name: 'Department of Premier and Cabinet (Tasmania)', count: 3 },
+      { name: 'nre-tas', display_name: 'Department of Natural Resources and Environment Tasmania', count: 31 },
+      { name: 'csiro', display_name: 'CSIRO', count: 6 },
+      { name: 'broken', display_name: 'no count' },
+    ] } } } });
+    const parsed = parseOrgFacet(body);
+    expect(parsed.kind).toBe('facet');
+    if (parsed.kind !== 'facet') return;
+    expect(parsed.organisations.map((o) => o.name)).toEqual(['nre-tas', 'csiro', 'dpac-tas']);
+    expect(jurisdictionOrganisations(parsed.organisations, 'TAS').map((o) => o.name)).toEqual(['nre-tas', 'dpac-tas']);
+    expect(parseOrgFacet(JSON.stringify({ success: true, result: { count: 0 } })).kind).toBe('refused');
+    expect(parseOrgFacet('<html>').kind).toBe('refused');
+  });
+
+  it('filters one publisher by the slug the facet returned, quoted', () => {
+    const url = new URL(orgDatasetsUrl('https://data.gov.au/data/api/3', 'nre-tas', 5000));
+    expect(url.searchParams.get('fq')).toBe('organization:"nre-tas"');
+    expect(url.searchParams.get('rows')).toBe('1000');
+    expect(new URL(orgDatasetsUrl('https://x/api/3', 'a"b')).searchParams.get('fq')).toBe('organization:"ab"');
+  });
+
+  it('tallies where the files are served from, most datasets first, with the paths that name the directory', () => {
+    const hosts = publicationHostsOf([
+      ds('a', 'Tas', ['https://listdata.thelist.tas.gov.au/opendata/data/LIST_A.zip', 'https://listdata.thelist.tas.gov.au/opendata/data/LIST_B.zip']),
+      ds('b', 'Tas', ['https://listdata.thelist.tas.gov.au/opendata/data/LIST_C.zip']),
+      ds('c', 'Tas', ['https://www.treasury.tas.gov.au/Documents/x.xlsx', 'not a url', 'ftp://old.example/x']),
+    ]);
+    expect(hosts.map((h) => [h.host, h.datasets, h.resources])).toEqual([
+      ['listdata.thelist.tas.gov.au', 2, 3],
+      ['www.treasury.tas.gov.au', 1, 1],
+    ]);
+    expect(hosts[0].paths[0]).toBe('/opendata/data/');
+  });
+
+  it('asks each host in five dialects, and the CKAN roots it would then search are the ones it asked', () => {
+    const probes = catalogueProbesFor('Data.Example.tas.gov.au');
+    expect(probes.map((p) => p.dialect)).toEqual(['ckan', 'ckan_data', 'socrata', 'dcat', 'arcgis']);
+    expect(probes[0].url).toBe(volumeInventoryUrl(ckanRootFor('data.example.tas.gov.au', 'ckan')));
+    expect(probes[1].url).toBe(volumeInventoryUrl(ckanRootFor('data.example.tas.gov.au', 'ckan_data')));
+    expect(probes[2].url).toBe(socrataInventoryUrl('data.example.tas.gov.au'));
+  });
+
+  it('judges a dialect by the SHAPE of the answer, never the digit alone', () => {
+    const ckan = JSON.stringify({ success: true, result: { count: 812, results: [] } });
+    expect(readCatalogueDialect('ckan', 200, ckan)).toMatchObject({ answered: true, inventory: 812 });
+    // A portal that is not CKAN answers its path with a 200 HTML page.
+    expect(readCatalogueDialect('ckan', 200, '<!doctype html><title>Home</title>').answered).toBe(false);
+    // The ACT's Socrata portal answered CKAN's path with a JSON 404.
+    expect(readCatalogueDialect('ckan', 404, '{"code":"not_found"}').answered).toBe(false);
+    // An index that says it is empty has not answered the question.
+    expect(readCatalogueDialect('ckan', 200, JSON.stringify({ success: true, result: { count: 0, results: [] } })).answered).toBe(false);
+    expect(readCatalogueDialect('socrata', 200, JSON.stringify({ resultSetSize: 378, results: [] })))
+      .toMatchObject({ answered: true, inventory: 378 });
+    expect(readCatalogueDialect('dcat', 200, JSON.stringify({ dataset: [{ identifier: 'x', title: 'X' }] })))
+      .toMatchObject({ answered: true, inventory: 1 });
+    expect(readCatalogueDialect('dcat', 200, JSON.stringify({ something: [] })).answered).toBe(false);
+    const arc = readCatalogueDialect('arcgis', 200, JSON.stringify({ folders: ['Public'], services: [] }));
+    expect(arc.answered).toBe(true);
+    expect(arc.detail).toMatch(/catalogue of layers, not of datasets/);
+  });
+
+  it('reads a DCAT feed into the same dataset shape, and judges it whole', () => {
+    const feed = JSON.stringify({ dataset: [
+      { identifier: 'https://x/1', title: 'Property sales by suburb', description: 'Number of sales per quarter',
+        publisher: { name: 'Valuer-General Tasmania' }, distribution: [{ downloadURL: 'https://x/1.csv', mediaType: 'text/csv' }] },
+      { identifier: 'https://x/2', title: 'Road network', distribution: [] },
+      { title: 'no identifier' },
+    ] });
+    const parsed = parseDcatCatalogue(feed, 'example.tas.gov.au');
+    expect(parsed.kind).toBe('catalogue');
+    if (parsed.kind !== 'catalogue') return;
+    expect(parsed.total).toBe(2);
+    expect(parsed.datasets[0].resources[0]).toMatchObject({ format: 'CSV', url: 'https://x/1.csv' });
+    expect(parsed.datasets[0].organisation).toBe('Valuer-General Tasmania');
+    expect(parsed.datasets[1].organisation).toBe('example.tas.gov.au');
+    expect(datasetsNamingASale(parsed.datasets).map((d) => d.title)).toEqual(['Property sales by suburb']);
+    // And the judgement that follows is the one every dialect gets.
+    expect(rankVolumeCandidates(parsed.datasets).map((c) => c.dataset.title)).toEqual(['Property sales by suburb']);
+    expect(parseDcatCatalogue('{"nope":1}', 'x').kind).toBe('refused');
+  });
+
+  it('types no Tasmanian host in the probe: the host it searches comes from the harvest', () => {
+    const probe = readFileSync('scripts/market/sales-volume-liveness.ts', 'utf8');
+    expect(probe).not.toMatch(/https?:\/\/[a-z0-9.-]+\.tas\.gov\.au/i);
+    expect(probe).toContain('discoverOwnCatalogue(state, harvestEntry.api, own.api)');
+    // Only where the typed root did not answer — a working root is never second-guessed.
+    expect(probe).toMatch(/if \(!catalogueAnswered\(ownRead\.verdict\)\) \{\s*const discovered = await discoverOwnCatalogue/);
+  });
+});
+
+/*
+ * ── A jurisdiction with no catalogue of its own ───────────────────────────
+ *
+ * Measured from CI on 23 Sep 2026: `data.tas.gov.au` answers ENOTFOUND, and
+ * none of the eight Tasmanian hosts its publishers' files are served from
+ * answers as a searchable catalogue (one is a map-layer directory). The
+ * Commonwealth catalogue is where Tasmania's data is indexed — so the reading
+ * is taken from EVERYTHING Tasmania's government lists there, read in full.
+ */
+describe('reading a jurisdiction whose data is indexed only in the harvest', () => {
+  const org = (name: string, title: string, count: number) => ({ name, title, count });
+
+  it('counts the jurisdiction’s government, not every body named for it', () => {
+    const orgs = [
+      org('tas-government-the-list', "Tasmania Government's The List Data", 792),
+      org('department-of-justice-tasmania', 'Department of Justice (Tasmania)', 68),
+      org('sbs-utas', 'School of Biological Sciences (SBS), University of Tasmania (UTAS)', 7),
+      org('imas-utas', 'Institute for Marine and Antarctic Studies (IMAS), University of Tasmania (UTAS)', 6),
+      org('tmag', 'Tasmanian Museum and Art Gallery', 2),
+      org('vic', 'Department of Energy, Environment and Climate Action', 40),
+    ];
+    expect(governmentPublishers(orgs, 'TAS').map((o) => o.name))
+      .toEqual(['tas-government-the-list', 'department-of-justice-tasmania', 'tmag']);
+    expect(ACADEMIC_PUBLISHER.test('Libraries Tasmania')).toBe(false);
+  });
+
+  it('calls an enumeration complete only when every publisher was read to what it declared', () => {
+    expect(enumerationComplete([])).toBe(false);
+    expect(enumerationComplete([{ name: 'a', title: 'A', declared: 792, read: 792 }])).toBe(true);
+    expect(enumerationComplete([
+      { name: 'a', title: 'A', declared: 792, read: 792 },
+      { name: 'b', title: 'B', declared: 68, read: 50 },
+    ])).toBe(false);
+    // A publisher the index says holds nothing has not been enumerated.
+    expect(enumerationComplete([{ name: 'a', title: 'A', declared: 0, read: 0 }])).toBe(false);
+  });
+
+  it('says where the absence was established, and why that index is the right one', () => {
+    const cov = assessVolumeCoverage(
+      { kind: 'catalogue', total: 3, datasets: [] },
+      true,
+      1_021,
+      'harvest_enumeration',
+    );
+    expect(cov).toEqual({ kind: 'no_count_published', searched: 3, inventory: 1_021, route: 'harvest_enumeration' });
+    const note = volumeCoverageNote(cov, 'TAS');
+    expect(note).toMatch(/of the 1,021 datasets its own publishers list in the Commonwealth catalogue, read in full, 3 name a sale/);
+    expect(note).toMatch(/TAS runs no open-data catalogue of its own/);
+    // Never the ordinary route's words, which would claim a catalogue it does not have.
+    expect(note).not.toMatch(/across its own catalogue/);
+  });
+
+  it('leaves the ordinary route’s sentence exactly as it was', () => {
+    const cov = assessVolumeCoverage({ kind: 'catalogue', total: 0, datasets: [] }, true, 1_075);
+    expect(cov).toEqual({ kind: 'no_count_published', searched: 0, inventory: 1_075 });
+    expect('route' in cov).toBe(false);
+    expect(volumeCoverageNote(cov, 'NT')).toMatch(/across its own catalogue and the Commonwealth catalogue/);
+  });
+
+  it('still refuses an absence nobody corroborated, whatever the route', () => {
+    expect(assessVolumeCoverage({ kind: 'catalogue', total: 0, datasets: [] }, false, 1_021, 'harvest_enumeration').kind)
+      .toBe('catalogue_unavailable');
+  });
+});
+
+/*
+ * ── What an assessment is handed, and the number its sentence states ─────
+ *
+ * The 23 Sep run printed `datasets naming a sale  5 of 982` and then a
+ * sentence saying "6 name a sale": the relevance search's one attributed
+ * find had been folded into a number describing the enumerated list, and on
+ * that route the list and the search ask the SAME index — so a dataset can
+ * also arrive by both and be counted twice.
+ */
+describe('the read an assessment is handed', () => {
+  const sale = (id: string, over: Partial<VolumeDataset> = {}) =>
+    dataset({ id, title: `Sales dataset ${id}`, organisation: 'Department of Justice (Tasmania)', ...over });
+
+  it('holds a dataset both routes returned once', () => {
+    const r = attributedRead({ own: [sale('a'), sale('b')], harvest: [sale('b'), sale('c')] });
+    expect(r.parse.datasets.map((d) => d.id)).toEqual(['a', 'b', 'c']);
+    expect(r.parse.total).toBe(3);
+    expect(r.overlap).toBe(1);
+    expect(r.harvestOnly.map((d) => d.id)).toEqual(['c']);
+  });
+
+  it('holds a dataset a route returned twice once', () => {
+    const r = attributedRead({ own: [sale('a'), sale('a')], harvest: [sale('c'), sale('c')] });
+    expect(r.parse.datasets.map((d) => d.id)).toEqual(['a', 'c']);
+    expect(r.overlap).toBe(0);
+  });
+
+  it('counts the enumerated list on the enumeration route, and every distinct dataset otherwise', () => {
+    const own = [sale('a'), sale('b'), sale('c'), sale('d'), sale('e')];
+    const harvest = [sale('f')];
+    const enumerated = attributedRead({ own, harvest, route: 'harvest_enumeration' });
+    expect(enumerated.parse.total).toBe(5);
+    expect(enumerated.parse.datasets).toHaveLength(6);
+    const ordinary = attributedRead({ own, harvest });
+    expect(ordinary.parse.total).toBe(6);
+  });
+
+  it('prints the enumeration’s own count in the sentence, as the probe’s line does', () => {
+    const own = [sale('a'), sale('b'), sale('c'), sale('d'), sale('e')];
+    const r = attributedRead({ own, harvest: [sale('f')], route: 'harvest_enumeration' });
+    const note = volumeCoverageNote(assessVolumeCoverage(r.parse, true, 982, 'harvest_enumeration'), 'TAS');
+    expect(note).toContain('of the 982 datasets its own publishers list in the Commonwealth catalogue, read in full, 5 name a sale');
+  });
+
+  /*
+   * The count is narrowed; the ranking is not. A find needs one endpoint
+   * that answered, so a dataset only the search returned — attributed and
+   * saying it carries a count — is still a find on the enumeration route.
+   */
+  it('still ranks what only the search found', () => {
+    const counted = sale('f', {
+      title: 'Residential property sales by suburb',
+      notes: 'Number of sales and median sale price by suburb, quarterly.',
+      resources: [{ id: 'r1', name: 'sales.csv', format: 'CSV', url: 'https://x/sales.csv', datastoreActive: true, size: null }],
+    });
+    const r = attributedRead({ own: [sale('a')], harvest: [counted], route: 'harvest_enumeration' });
+    const judged = judgeVolumeDataset(counted);
+    expect(judged.count).toBe(true);
+    expect(r.parse.datasets.map((d) => d.id)).toContain('f');
+    expect(assessVolumeCoverage(r.parse, true, 982, 'harvest_enumeration').kind).not.toBe('no_count_published');
+  });
+
+  it('is what the probe hands the assessment, with the route the reads were taken by', () => {
+    const probe = readFileSync('scripts/market/sales-volume-liveness.ts', 'utf8');
+    expect(probe).toMatch(/const read = attributedRead\(\{/);
+    expect(probe).toMatch(/route: ownRead\.route,\s*\}\);/);
+    expect(probe).toMatch(/const merged = read\.parse;/);
   });
 });

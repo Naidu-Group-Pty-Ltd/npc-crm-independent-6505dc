@@ -1,0 +1,29 @@
+{
+  "$schema_note": "Migrations that stay in this directory as history but whose effect is deliberately ABSENT from every database — withdrawn at the owner's direction, or superseded by a later file whose work they would undo. A file listed here is not a backlog. `migration-drift` reports it under WITHDRAWN rather than NOT APPLIED, and FAILS if any object named in `absent` exists, because then this declaration is false. Mission Control reads this file from the prime and neither sends a listed file to any clone nor counts it as a hole, so it cannot hold back the files after it. `apply-migration.yml` refuses to apply a listed file. `scripts/security/check-migration-withdrawals.mjs` checks every entry: the file exists, every `absent` object is one the file itself creates, and a named successor exists. The files are NOT deleted: an applied migration's bytes are what `applied-body-digests.txt` protects, and a deleted file is a gap in the record of what ran. To reverse a withdrawal, remove its entry in the same pull request that records the decision, then apply the file.",
+  "schema_version": 1,
+  "withdrawn": [
+    {
+      "file": "20260724000000_prevent_duplicate_portfolio_publications.sql",
+      "absent": ["index:client_portal_reports_unique_portfolio_source"],
+      "decided": "2026-09-21",
+      "reason": "Superseded by the data it would constrain. Its UNIQUE (client_id, source_report_id) forbids a legitimate fork: a Compass and a Cash Flow analysis derived from one parent report share that parent's id. On 21 Sep 2026 it failed 23505 on exactly such a pair, two documents published 62 seconds apart, one of which the client had already opened. Every portfolio row carries source_report_id NULL, so it never constrained the publication its own comment describes. The per-tier replacement (20260921070000) stopped a report being re-sent and was withdrawn the same day. Forcing it would mean deleting a document a client has been sent.",
+      "evidence": "apply-migration run 35563567196 (23505); commit 63763226f"
+    },
+    {
+      "file": "20260728120000_aml_verification_checks.sql",
+      "absent": ["index:uq_aml_verification_attempt"],
+      "decided": "2026-09-21",
+      "withdrawn_by": "20260921100000_withdraw_builder_aml_partner_portal_changes.sql",
+      "reason": "Withdrawn at the owner's direction with the other 21 Sep 2026 AML/CTF changes: the AML/CTF module is not to be changed. Its table and its three other indexes exist on every database. Only the unique attempt index is absent, as it was on every database before 21 Sep.",
+      "evidence": "20260921100000's own header; migration-drift runs since 21 Sep 2026"
+    },
+    {
+      "file": "20260901000700_partner_portal_agreement_cascade.sql",
+      "absent": ["function:public.builder_accept_current_terms"],
+      "decided": "2026-09-21",
+      "superseded_by": "20261001000100_portal_terms_direct_channel.sql",
+      "reason": "Superseded, not pending. Its first statement narrows portal_terms_versions' portal discriminator to three values, but 20261001000100 has already widened it to four, adding 'direct', and inserted that channel's terms. On 21 Sep 2026 it failed 23514 on those rows, and replaying it would break the direct channel. Its Builder Portal terms function was restored on 21 Sep and then withdrawn with the Builder Portal changes (20260921100000). Its remaining work, cascading the Portal Access agreement to the Builder and Finance portals, would move live terms versions and acceptances. That is a decision about what partners have agreed to, not a missing object, and it has not been made.",
+      "evidence": "apply-migration run 35563660031 (23514); commit 63763226f"
+    }
+  ]
+}

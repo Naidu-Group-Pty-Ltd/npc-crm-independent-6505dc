@@ -113,7 +113,9 @@ export async function requestCapacityReport(
  * captures; and a link the browser follows takes its filename from the storage
  * path, which carries a uuid segment. This keeps the name the server chose.
  */
-export async function downloadCapacityReport(result: CapacityReportResult): Promise<void> {
+export async function downloadCapacityReport(
+  result: Pick<CapacityReportResult, 'url' | 'fileName'>,
+): Promise<void> {
   const response = await fetch(result.url);
   if (!response.ok) throw new Error('The report could not be downloaded.');
 

@@ -39,7 +39,7 @@ import * as COLOURWAYS from '../../../../supabase/functions/_shared/templateColo
 const REPO = resolve(__dirname, '../../../..');
 
 /** Every approved accent in the catalogue, as a brand hex a tenant could bring. */
-const accents = Object.values(COLOURWAYS)
+const accents = (Object.values(COLOURWAYS) as unknown[])
   .filter((v): v is ReadonlyArray<Record<string, unknown>> => Array.isArray(v))
   .flatMap((list) => list.map((c) => c.accent))
   .filter((a): a is string => typeof a === 'string');

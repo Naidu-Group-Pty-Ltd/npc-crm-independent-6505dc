@@ -137,6 +137,14 @@ export function getInvestmentScoreSummary(report: InvestmentReport | null) {
   const grade = !withheld && rawGrade && rawGrade.toUpperCase() !== 'N/A' ? rawGrade : null;
   const recommendation = typeof investmentScore?.recommendation === 'string' ? investmentScore.recommendation : null;
   const partialLabel = typeof investmentScore?.coverage?.partialLabel === 'string' ? investmentScore.coverage.partialLabel : null;
+  // Eligibility 5.0.0: the letter is the band of the score, and where the
+  // evidence alone would not carry it the run recorded ONE sentence saying
+  // what the evidence is. It is drawn beside the grade and never without one —
+  // a caution about a letter nobody prints qualifies nothing.
+  const cautionStatement = investmentScore?.evidenceCaution?.statement;
+  const evidenceCaution = grade && typeof cautionStatement === 'string' && cautionStatement.trim()
+    ? cautionStatement.trim()
+    : null;
 
   return {
     grade,
@@ -144,6 +152,7 @@ export function getInvestmentScoreSummary(report: InvestmentReport | null) {
     score: withheld ? null : numericScore,
     insufficient,
     partialLabel: partialLabel || (insufficient ? 'Qualitative review only' : null),
+    evidenceCaution,
     withheld: withheld && policy.reason
       ? {
           reason: policy.reason,
@@ -161,6 +170,8 @@ export interface ResolvedInvestmentGrade {
   recommendation: string | null;
   score: number | null;
   partialLabel: string | null;
+  /** The run's own caution beside an issued grade (eligibility 5.0.0), or null. */
+  evidenceCaution: string | null;
   status: InvestmentGradeStatus;
   sourceReportId: string | null;
   /** Set with status `withheld`: the run's own reason, for the surface to say. */
@@ -198,6 +209,7 @@ export function resolveInvestmentGrade(reports: readonly GradeReport[]): Resolve
       recommendation: summary.recommendation,
       score: summary.score,
       partialLabel: summary.partialLabel,
+      evidenceCaution: summary.evidenceCaution,
       status,
       sourceReportId: report.id,
       withheld: summary.withheld,
@@ -232,7 +244,7 @@ export function resolveInvestmentGrade(reports: readonly GradeReport[]): Resolve
   if (calculated) return toResolved(calculated, 'calculated');
 
   const latest = ordered[0];
-  if (!latest) return { grade: null, recommendation: null, score: null, partialLabel: null, status: 'not_graded', sourceReportId: null, withheld: null };
+  if (!latest) return { grade: null, recommendation: null, score: null, partialLabel: null, evidenceCaution: null, status: 'not_graded', sourceReportId: null, withheld: null };
   if (latest.status === 'pending' || latest.status === 'processing') return toResolved(latest, 'pending');
   if (latest.status === 'failed') return toResolved(latest, 'failed');
 

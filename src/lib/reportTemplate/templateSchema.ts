@@ -765,6 +765,20 @@ export const PageSchema = z.object({
    * running head; it only stops opening a second entry in the list.
    */
   tocContinues: z.boolean().optional(),
+  /**
+   * This page's column is laid out from what actually draws.
+   *
+   * A master positions each block at the `y` its flow declared, and a declared
+   * height is a worst case — so a page whose record holds less than the worst
+   * case is correct and mostly white (the Compass verdict page ended a third
+   * of the way down on every master). On a flowing page the blocks the master
+   * stamped with a `flowSlot` are re-stacked from what draws: a dropped block
+   * costs nothing and a block that draws fewer of its declared rows gives the
+   * difference back. Furniture never moves, and the editor never moves
+   * anything. Optional and absent on every page that predates it, so those
+   * render exactly as they did. See `flowLayout.ts`.
+   */
+  flow: z.boolean().optional(),
   // Phase 2 — canvas/print furniture (all optional, additive)
   master: z.boolean().optional(),                   // true → reusable master/template page
   masterPageId: z.string().optional(),              // resolve master backdrop at render

@@ -437,7 +437,7 @@ describe('J — a stored commute with no destination is re-acquired', () => {
     const stored = stampAcquisition(
       { coordinates: { lat: -33.8386, lng: 148.6903 }, ...PLACES_READINGS,
         commute: { mode: 'driving', distanceKm: 1, durationMinutes: 2 } },
-      { ...ACQUISITION, stages: { ...ACQUISITION.stages, commute: 'unavailable' } },
+      { ...ACQUISITION, stages: { ...ACQUISITION.stages, commute: 'no_route' } },
     );
     expect(assessEnrichmentReuse(stored, SUBJECT).reuse).toBe(true);
   });

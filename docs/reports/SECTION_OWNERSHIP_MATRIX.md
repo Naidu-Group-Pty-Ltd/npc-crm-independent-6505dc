@@ -11,13 +11,14 @@ nowhere else may. **Producer** is what actually makes the content — a projecti
 path, a model call, or a composition. `—` in a column means the format does not
 carry the topic at all, which is a decision rather than an omission.
 
-Sections: 40. Formats: Compass, Financial Analysis, Strategic / Due Diligence, Executive Briefing, Snapshot.
+Sections: 41. Formats: Compass, Financial Analysis, Strategic / Due Diligence, Executive Briefing, Snapshot.
 
 | Topic | Provenance | Full detail | Summarised in | Producer(s) | Compass | Financial Analysis | Strategic / Due Diligence | Executive Briefing | Snapshot |
 |---|---|---|---|---|---|---|---|---|---|
 | Cover & report identity | recorded | every format (spine) | — | projection · report.* | spine | spine | spine | spine | spine |
 | Key figures | computed | every format (spine) | — | projection · financials.* | spine | spine | spine | spine | spine |
 | Executive Verdict | authored | every format (spine) | — | authored · generator.compass; routed · split.financial#1; routed · split.dueDiligence#1; authored · condense.briefing; composed · scoreSections.pure.ts#composeVerdictSection | spine | spine | spine | spine | spine |
+| The Opportunity in Strategic Terms | computed | Strategic / Due Diligence | — | composed · strategyPositions.pure.ts#composeStrategicRead | — | — | required | — | — |
 | Property & Locality Snapshot | recorded | every format (spine) | — | authored · generator.compass; routed · split.financial#2; routed · split.dueDiligence#2; projection · property.*; authored · condense.snapshot | spine | spine | spine | spine | spine |
 | Appendix, Source Notes & Disclaimer | recorded | every format (spine) | — | authored · generator.compass; composed · supabase/functions/fork-investment-report/index.ts#renderVariantMarkdown; authored · condense.briefing; authored · condense.snapshot | spine | spine | spine | spine | spine |
 | Base Assumptions | recorded | Financial Analysis | Compass; Executive Briefing | routed · split.financial#17 | summary (in provenance) | required | — | summary (in provenance) | — |

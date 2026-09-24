@@ -22,6 +22,7 @@ import type { ClientInfo, InvestmentReport } from '@/components/reports/report-v
 import { getHasOverrides, getOverriddenFields, getReportStatusLabel, getReportTierLabel, getReportVariantLabel } from '@/components/reports/report-view/utils';
 import { logActivityDirect } from '@/hooks/useActivityLogger';
 import { deliverInvestmentPdf, publishInvestmentPdf } from '@/lib/reports/investment/deliverInvestmentPdf';
+import { readReportAudience, type ReportAudience } from '@/lib/reports/investment/audienceContent.pure';
 import { InvestmentReportFamilyNotice } from '@/components/reports/report-view/InvestmentReportFamilyNotice';
 import { fetchReportFamily, type ReportFamily } from '@/lib/reports/subReports';
 import { toast } from 'sonner';
@@ -31,6 +32,19 @@ import {
   cameFromCashFlowAnalysis,
   navigateBackToCashFlowAnalysis,
 } from '@/lib/navigation/cashFlowOrigin';
+
+/** Where this browser remembers who a report's client document is written for. */
+const audienceStorageKey = (reportId: string) => `investment-report-audience:${reportId}`;
+
+/** What this browser remembered for a report, or the investor where it cannot say. */
+function rememberedAudience(reportId: string | undefined): ReportAudience {
+  if (!reportId) return 'investor';
+  try {
+    return readReportAudience(window.localStorage.getItem(audienceStorageKey(reportId)));
+  } catch {
+    return 'investor';
+  }
+}
 
 export default function InvestmentReportView() {
   const { id } = useParams<{ id: string }>();
@@ -58,6 +72,28 @@ export default function InvestmentReportView() {
   const [includeSparklines, setIncludeSparklines] = useState(true);
   const [pdfDesignOptions, setPdfDesignOptions] = useState<PdfDesignOptions>(DEFAULT_PDF_DESIGN_OPTIONS);
   const [showOverrides, setShowOverrides] = useState(true);
+  /*
+   * Who the client document is written for — investor, owner-occupier or
+   * both. Remembered per report in this browser, because it describes the
+   * CLIENT the report is for rather than a passing view preference: an
+   * adviser who chose owner-occupier for this report should not have to
+   * choose it again before the next send. Storage that cannot be read or
+   * written falls back to the investor document, which is what every report
+   * was before the choice existed.
+   */
+  // Read during render rather than copied into state by an effect: the choice
+  // made on this visit wins, then what this browser remembered for the report.
+  const [chosenAudience, setChosenAudience] = useState<Record<string, ReportAudience>>({});
+  const audience: ReportAudience = (id && chosenAudience[id]) || rememberedAudience(id);
+  const handleAudienceChange = (next: ReportAudience) => {
+    if (!id) return;
+    setChosenAudience((prev) => ({ ...prev, [id]: next }));
+    try {
+      window.localStorage.setItem(audienceStorageKey(id), next);
+    } catch {
+      // A private window or blocked storage: the choice holds for this visit.
+    }
+  };
 
   const isClientReport = report?.is_client_report === true;
 
@@ -154,11 +190,12 @@ export default function InvestmentReportView() {
     if (!report || downloadBusy) return;
     setDownloadBusy(true);
     try {
-      // All five controls, every time. This passed three of them and left
+      // Every control, every time. This passed three of them and left
       // Sources and Scoring to their defaults, so the page's primary button
       // ignored two of the switches drawn beside it while the panel's
       // "Generate Client PDF" honoured all five — two documents from one
-      // screen, depending on which button was pressed.
+      // screen, depending on which button was pressed. The audience rides
+      // with them for the same reason.
       await deliverInvestmentPdf(report.id, {
         variant: report.report_variant ?? null,
         includeSources,
@@ -166,6 +203,7 @@ export default function InvestmentReportView() {
         includeCharts,
         includeHeroImages,
         includeSparklines,
+        audience,
         designOptions: pdfDesignOptions,
       });
     } catch (err) {
@@ -276,12 +314,14 @@ export default function InvestmentReportView() {
                 includeCharts={includeCharts}
                 includeHeroImages={includeHeroImages}
                 includeSparklines={includeSparklines}
+                audience={audience}
                 pdfDesignOptions={pdfDesignOptions}
                 onIncludeSourcesChange={setIncludeSources}
                 onIncludeScoringChange={setIncludeScoring}
                 onIncludeChartsChange={setIncludeCharts}
                 onIncludeHeroImagesChange={setIncludeHeroImages}
                 onIncludeSparklinesChange={setIncludeSparklines}
+                onAudienceChange={handleAudienceChange}
                 onPdfDesignOptionsChange={setPdfDesignOptions}
                 onHeroImagesManage={() => setHeroDialogOpen(true)}
                 onRegenerated={handleReportUpdate}
@@ -351,8 +391,8 @@ export default function InvestmentReportView() {
         reportTier={report.report_tier || undefined}
         storagePath={null}
         /*
-         * The same contract the download button asks, with the same five
-         * controls. There used to be a second generator behind this on
+         * The same contract the download button asks, with the same
+         * controls, the audience among them. There used to be a second generator behind this on
          * failure — a different document, drawn from a different projection
          * and honouring a different half of the switches — so a send that
          * fell back delivered something the operator had never seen. The one
@@ -367,6 +407,7 @@ export default function InvestmentReportView() {
             includeCharts,
             includeHeroImages,
             includeSparklines,
+            audience,
             designOptions: pdfDesignOptions,
           });
           setReport((prev) => prev ? { ...prev, pdf_url: published.path } : prev);

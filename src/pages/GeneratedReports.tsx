@@ -19,7 +19,9 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import { useToast } from '@/hooks/use-toast';
 import { useNotifications } from '@/contexts/NotificationsContext';
 import { ReportLibraryHero } from '@/components/reports/library/ReportLibraryHero';
-import { ReportLibraryTabs } from '@/components/reports/library/ReportLibraryTabs';
+import { ReportLibraryTabs, type ReportLibraryTab } from '@/components/reports/library/ReportLibraryTabs';
+import { CommercialDocumentsPanel } from '@/components/reports/library/CommercialDocumentsPanel';
+import { useCommercialDocumentsLibrary } from '@/components/reports/library/useCommercialDocumentsLibrary';
 import { ReportLibraryToolbar, type ReportLibraryViewMode } from '@/components/reports/library/ReportLibraryToolbar';
 import { InvestmentReportCard } from '@/components/reports/library/InvestmentReportCard';
 import { PropertyReportPackageCard } from '@/components/reports/library/PropertyReportPackageCard';
@@ -76,7 +78,20 @@ export default function GeneratedReports() {
   // library: Growth and Scale include them, Launch needs the add-on. When
   // the capability is off, the tab, its counts, its queries, the basket and
   // the ?tab=comparisons deep link are all withheld together.
-  const comparisonsEnabled = useCapability('report.comparisons').enabled;
+  const comparisonsCapability = useCapability('report.comparisons');
+  const comparisonsEnabled = comparisonsCapability.enabled;
+  // Commercial & Industrial Capacity Reports are the module's own, sold with
+  // it: without the module the tab, its read and the ?tab=commercial deep link
+  // are withheld together, exactly as Comparisons are above.
+  const commercialCapability = useCapability('module.commercial_industrial');
+  const commercialEnabled = commercialCapability.enabled;
+  const commercialDocuments = useCommercialDocumentsLibrary(commercialEnabled);
+  // A capability still loading resolves to `enabled: false`, and that is not an
+  // answer — the resolver's contract is "a skeleton, not a denial". A deep link
+  // or an open tab is taken away only once the capability is decided, or a
+  // bookmark opened while permissions load lands on Investment every time.
+  const comparisonsDecided = comparisonsCapability.status !== 'loading';
+  const commercialDecided = commercialCapability.status !== 'loading';
   const [investmentReports, setInvestmentReports] = useState<InvestmentReport[]>([]);
   const [investmentLoading, setInvestmentLoading] = useState(true);
   const [investmentRefreshing, setInvestmentRefreshing] = useState(false);
@@ -171,7 +186,10 @@ export default function GeneratedReports() {
   }, [investmentReports, comparisons]);
   const { labelFor: generatorLabel } = useUserNames(allGeneratorIds);
 
-  const [activeTab, setActiveTab] = useState<'investment' | 'comparisons'>(() => searchParams.get('tab') === 'comparisons' ? 'comparisons' : 'investment');
+  const [activeTab, setActiveTab] = useState<ReportLibraryTab>(() => {
+    const tab = searchParams.get('tab');
+    return tab === 'comparisons' || tab === 'commercial' ? tab : 'investment';
+  });
   const [lastHandledReportId, setLastHandledReportId] = useState<string | null>(null);
 
   useEffect(() => {
@@ -184,20 +202,28 @@ export default function GeneratedReports() {
     }
     // A ?tab=comparisons deep link on a workspace without the capability
     // lands on the Investment library, same as the quantitative redirect.
-    if (tabParam === 'comparisons' && !comparisonsEnabled) {
+    if (tabParam === 'comparisons' && !comparisonsEnabled && comparisonsDecided) {
       const params = new URLSearchParams(searchParams);
       params.delete('tab');
       navigate(`/generated-reports${params.toString() ? `?${params}` : ''}`, { replace: true });
       return;
     }
-    if ((tabParam === 'investment' || tabParam === 'comparisons') && tabParam !== activeTab) setActiveTab(tabParam);
-  }, [searchParams, activeTab, navigate, comparisonsEnabled]);
+    // The same for ?tab=commercial without the Commercial & Industrial module.
+    if (tabParam === 'commercial' && !commercialEnabled && commercialDecided) {
+      const params = new URLSearchParams(searchParams);
+      params.delete('tab');
+      navigate(`/generated-reports${params.toString() ? `?${params}` : ''}`, { replace: true });
+      return;
+    }
+    if ((tabParam === 'investment' || tabParam === 'comparisons' || tabParam === 'commercial') && tabParam !== activeTab) setActiveTab(tabParam);
+  }, [searchParams, activeTab, navigate, comparisonsEnabled, commercialEnabled, comparisonsDecided, commercialDecided]);
 
   // If entitlement resolves (or expires) while the page is open, never leave
   // the user stranded on a tab that no longer exists.
   useEffect(() => {
-    if (!comparisonsEnabled && activeTab === 'comparisons') setActiveTab('investment');
-  }, [comparisonsEnabled, activeTab]);
+    if (comparisonsDecided && !comparisonsEnabled && activeTab === 'comparisons') setActiveTab('investment');
+    if (commercialDecided && !commercialEnabled && activeTab === 'commercial') setActiveTab('investment');
+  }, [comparisonsEnabled, commercialEnabled, comparisonsDecided, commercialDecided, activeTab]);
 
   // Helper function to get grade color classes
   const getGradeColor = (grade: string): string => {
@@ -958,12 +984,15 @@ export default function GeneratedReports() {
         selectedComparisonCount={comparisonsEnabled ? selectedReports.length : 0}
       />
 
-      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as 'investment' | 'comparisons')} className="w-full">
+      <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as ReportLibraryTab)} className="w-full">
         <ReportLibraryTabs
           isMobile={isMobile}
           investmentCount={investmentLastSuccessfulLoad ? filteredInvestmentReports.length : null}
           comparisonCount={filteredComparisons.length}
           showComparisons={comparisonsEnabled}
+          commercialCount={commercialDocuments.library ? commercialDocuments.library.documents.length : null}
+          showCommercial={commercialEnabled}
+          activeTab={activeTab}
         />
 
         <TabsContent value="investment" className="space-y-4">
@@ -1152,6 +1181,12 @@ export default function GeneratedReports() {
               ))}
             </div>
           )}
+        </TabsContent>
+        )}
+
+        {commercialEnabled && (
+        <TabsContent value="commercial" className="space-y-4">
+          <CommercialDocumentsPanel source={commercialDocuments} />
         </TabsContent>
         )}
       </Tabs>

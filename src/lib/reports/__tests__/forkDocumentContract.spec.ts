@@ -269,14 +269,14 @@ describe('the seven slots nothing could fill', () => {
   };
 
   it('merges each one where the Compass merges it, or into a heading that names it', () => {
-    const compassMerges = new Map(
-      mergesForTier('compass' as never).map((m) => [m.id, m.into]),
+    const compassMerges = new Map<string, string>(
+      mergesForTier('compass' as never).map((m) => [m.id as string, m.into as string]),
     );
-    const strategicMerges = new Map(
-      mergesForTier('strategic' as never).map((m) => [m.id, m.into]),
+    const strategicMerges = new Map<string, string>(
+      mergesForTier('strategic' as never).map((m) => [m.id as string, m.into as string]),
     );
-    const strategicLabels = new Map(
-      sectionsForTier('strategic' as never).map((s) => [s.id, s.label]),
+    const strategicLabels = new Map<string, string>(
+      sectionsForTier('strategic' as never).map((s) => [s.id as string, s.label as string]),
     );
 
     for (const [id, into] of MERGED_AWAY) {
@@ -460,12 +460,12 @@ describe('the resale section, which was routed nowhere', () => {
     const docs = await compose({ strategy: strategyRecord() });
     const pldd = docs.dueDiligence.markdown;
     /*
-     * The same function writes both. The Due Diligence copy states that the
-     * equity path belongs elsewhere rather than printing it, which is the
-     * branch `carriesModelling: false` has always taken on the Compass and
-     * which no fork had ever reached.
+     * The same function writes both. The Due Diligence copy carries no
+     * modelled position at all — since 23 Sep 2026 not even a heading over a
+     * sentence saying it is elsewhere, which is what the document's own
+     * companion note is for — and the Financial copy carries the projection.
      */
-    expect(pldd).toContain('belongs to the Financial Analysis Report');
+    expect(pldd).not.toMatch(/Modelled value|The modelled position/);
     expect(pldd).toContain('Days on market, time to sell and buyer depth are not measured');
     // The Financial report carries the projection itself.
     expect(docs.financial.markdown).toContain('Resale Liquidity & Exit Strategy');

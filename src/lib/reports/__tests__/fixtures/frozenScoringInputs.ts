@@ -143,7 +143,7 @@ export function pooleEvidence(): MarketEvidence {
     priceSeries: seriesOf(pooleSeries()),
     salesVolumeSeries: seriesOf(POOLE_VOLUME),
     populationGrowth: pt(-0.368, {
-      level: 'sa2', areaName: 'Kellyville - East', provider: 'abs', sampleSize: null,
+      level: 'sa2', areaName: 'Kellyville - East', provider: 'abs_erp', sampleSize: null,
     }),
     // Deliberately absent, because the report says these were not held:
     // vacancyRate, daysOnMarket, vendorDiscount, auctionClearance, medianRent.
@@ -154,7 +154,7 @@ export function pooleEvidence(): MarketEvidence {
 export function pooleInput(): ShadowScoreInput {
   return {
     evidence: pooleEvidence(),
-    yieldInputs: { basisAmount: 1_650_000, basis: 'purchase_price', weeklyRent: 1_100 },
+    yieldInputs: { basisAmount: 1_650_000, basis: 'purchase', weeklyRent: 1_100 },
     locationInputs: { walkScore: 80, commuteTimeCBD: 39, schoolsNearby: 10 },
     // Not assessed on the issued report: no property-risk question was answered.
     propertyRisk: { propertyType: 'house', answers: {} },
@@ -215,9 +215,9 @@ export function strongCase(): ShadowScoreInput {
       daysOnMarket: ctl(18),
       auctionClearance: ctl(78),
       listingActivity: ctl(0.9),
-      populationGrowth: ctl(2.6, { level: 'sa2', provider: 'abs' }),
+      populationGrowth: ctl(2.6, { level: 'sa2', provider: 'abs_erp' }),
     } as MarketEvidence,
-    yieldInputs: { basisAmount: 700_000, basis: 'purchase_price', weeklyRent: 720 },
+    yieldInputs: { basisAmount: 700_000, basis: 'purchase', weeklyRent: 720 },
     locationInputs: { walkScore: 96, commuteTimeCBD: 18, schoolsNearby: 9 },
     propertyRisk: { propertyType: 'house', answers: {} },
     finance: { lvr: null, weeklyCashFlow: null, purchasePrice: 700_000 },
@@ -247,9 +247,9 @@ export function weakCase(): ShadowScoreInput {
       daysOnMarket: ctl(96),
       auctionClearance: ctl(38),
       listingActivity: ctl(0.22),
-      populationGrowth: ctl(-0.6, { level: 'sa2', provider: 'abs' }),
+      populationGrowth: ctl(-0.6, { level: 'sa2', provider: 'abs_erp' }),
     } as MarketEvidence,
-    yieldInputs: { basisAmount: 620_000, basis: 'purchase_price', weeklyRent: 330 },
+    yieldInputs: { basisAmount: 620_000, basis: 'purchase', weeklyRent: 330 },
     locationInputs: { walkScore: 38, commuteTimeCBD: 72, schoolsNearby: 1 },
     propertyRisk: { propertyType: 'house', answers: {} },
     finance: { lvr: null, weeklyCashFlow: null, purchasePrice: 620_000 },
@@ -280,9 +280,9 @@ export function sparseCase(): ShadowScoreInput {
     evidence: {
       ...emptyEvidence(subject({ suburb: 'Control Sparse', postcode: '0003' })),
       growth5YearCagr: ctl(7.0),
-      populationGrowth: ctl(2.0, { level: 'sa2', provider: 'abs' }),
+      populationGrowth: ctl(2.0, { level: 'sa2', provider: 'abs_erp' }),
     } as MarketEvidence,
-    yieldInputs: { basisAmount: 800_000, basis: 'purchase_price', weeklyRent: 600 },
+    yieldInputs: { basisAmount: 800_000, basis: 'purchase', weeklyRent: 600 },
     locationInputs: { walkScore: 92, commuteTimeCBD: null, schoolsNearby: null },
     propertyRisk: { propertyType: 'house', answers: {} },
     finance: { lvr: null, weeklyCashFlow: null, purchasePrice: 800_000 },

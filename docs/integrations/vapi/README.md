@@ -10,6 +10,11 @@ Two things live here, and they are not the same thing.
 | --- | --- |
 | [`snapshot/`](./snapshot) | **The whole org, as it is now.** All 28 assistants and 20 tools with full configuration, plus every squad, phone number, workflow, test suite and file. Read-only capture; no migration opinion. |
 | [`npc-services/`](./npc-services) | **The migration bundle.** Only the 15 NPC assistants and their closure, plus the clone plan, tool audit and webhook re-point map. |
+| [`aurixa-org/`](./aurixa-org) | **The live prompts, in the org that now answers.** The three inbound assistants changed by [`TRANSFER_TO_HUMAN.md`](./TRANSFER_TO_HUMAN.md), as Vapi returns them today. Not a snapshot — a rollback artefact and a drift check. |
+
+Both `snapshot/` and `npc-services/` capture the **source** org `c9015cd5-…`
+before the migration. The live line answers in `453f00c2-…`, which is what
+`aurixa-org/` records.
 
 Snapshotting is not migrating. The 13 non-NPC assistants are captured in `snapshot/`
 for completeness and are **not** in scope for the clone.

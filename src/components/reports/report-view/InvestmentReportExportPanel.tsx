@@ -1,8 +1,9 @@
 import { useState, type ReactNode } from 'react';
-import { ChevronDown, Download, FileText, Images, Link, Paintbrush, RotateCcw, Sparkles, TrendingUp } from 'lucide-react';
+import { ChevronDown, Download, FileText, Images, Link, Paintbrush, RotateCcw, Sparkles, TrendingUp, Users } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Switch } from '@/components/ui/switch';
+import { ToggleGroup, ToggleGroupItem } from '@/components/ui/toggle-group';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import { ErrorBoundary } from '@/components/common/ErrorBoundary';
 import { PremiumPdfButton } from '@/components/reports/PremiumPdfButton';
@@ -12,6 +13,12 @@ import { ReportTemplateSelector } from '@/components/reports/ReportTemplateSelec
 import { DEFAULT_PDF_DESIGN_OPTIONS } from '@/components/reports/premiumPdfDesign';
 import { REPORT_DESIGN_CONTROLS_VISIBLE } from '@/lib/reports/designControlsVisibility';
 import { INVESTMENT_REPORT_FORMAT } from '@/lib/reportTemplate/reportFormats';
+import {
+  AUDIENCE_DESCRIPTION,
+  AUDIENCE_LABEL,
+  REPORT_AUDIENCES,
+  readReportAudience,
+} from '@/lib/reports/investment/audienceContent.pure';
 import type { ExportPanelProps } from './types';
 
 interface ToggleRowProps {
@@ -44,12 +51,14 @@ export function InvestmentReportExportPanel({
   includeCharts,
   includeHeroImages,
   includeSparklines,
+  audience,
   pdfDesignOptions,
   onIncludeSourcesChange,
   onIncludeScoringChange,
   onIncludeChartsChange,
   onIncludeHeroImagesChange,
   onIncludeSparklinesChange,
+  onAudienceChange,
   onPdfDesignOptionsChange,
   onHeroImagesManage,
   onRegenerated,
@@ -78,10 +87,40 @@ export function InvestmentReportExportPanel({
             <div>
               <h3 className="text-sm font-semibold">PDF Content</h3>
               <p className="text-xs text-muted-foreground">
-                Scoring and sources decide what the report <em>contains</em>, in every
-                presentation. Charts, hero images and sparklines decide what is <em>drawn</em>
+                Who it is written for, scoring and sources decide what the report <em>contains</em>,
+                in every presentation. Charts, hero images and sparklines decide what is <em>drawn</em>
                 — the figures they illustrate stay on the page either way.
               </p>
+            </div>
+            {/* Who the document is FOR, above the switches because it is the
+                larger decision: an owner-occupier's copy leads with living in
+                the home and leaves the letting out (`audienceContent.pure.ts`).
+                A single-choice group rather than a switch, because "both" is a
+                real answer for an adviser who has not been told yet. */}
+            <div className="space-y-2 rounded-lg border bg-background/70 p-3">
+              <div id="report-audience-label" className="flex items-center gap-2 text-sm font-medium">
+                <Users className="h-3.5 w-3.5 text-muted-foreground" />
+                <span>Written for</span>
+              </div>
+              <ToggleGroup
+                type="single"
+                variant="outline"
+                size="sm"
+                value={audience}
+                // Radix clears a single group when the chosen item is pressed
+                // again; a document is always written for somebody, so an
+                // empty value keeps the current choice.
+                onValueChange={(value) => { if (value) onAudienceChange(readReportAudience(value)); }}
+                aria-labelledby="report-audience-label"
+                className="grid grid-cols-3 gap-1"
+              >
+                {REPORT_AUDIENCES.map((option) => (
+                  <ToggleGroupItem key={option} value={option} className="h-8 px-2 text-xs">
+                    {AUDIENCE_LABEL[option]}
+                  </ToggleGroupItem>
+                ))}
+              </ToggleGroup>
+              <p className="text-xs text-muted-foreground" aria-live="polite">{AUDIENCE_DESCRIPTION[audience]}</p>
             </div>
             <ToggleRow
               icon={<TrendingUp className="h-3.5 w-3.5 text-muted-foreground" />}
@@ -140,7 +179,7 @@ export function InvestmentReportExportPanel({
             <div className="grid gap-2">
               {/* ONE client-PDF action. A second, separately mounted generator
                   used to sit beneath this one as "Download (legacy layout)",
-                  and the two took different halves of the five controls above
+                  and the two took different halves of the controls above
                   — so which switches a client's document honoured depended on
                   which button was pressed. See `PremiumPdfButton`. */}
               <ErrorBoundary fallback={<div className="text-sm text-muted-foreground">PDF tools are unavailable.</div>}>
@@ -153,6 +192,7 @@ export function InvestmentReportExportPanel({
                   includeCharts={includeCharts}
                   includeHeroImages={includeHeroImages}
                   includeSparklines={includeSparklines}
+                  audience={audience}
                   designOptions={pdfDesignOptions}
                 />
               </ErrorBoundary>

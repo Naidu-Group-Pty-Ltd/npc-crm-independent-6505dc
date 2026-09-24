@@ -202,11 +202,11 @@ backtest unable to attribute any change to either.
 
 ## 2. Grades
 
-`gradeEligibility.pure.ts`, version `4.0.0`.
+`gradeEligibility.pure.ts`, version `5.0.0`.
 
 | grade | floor |
 | --- | ---: |
-| A+ | **85** |
+| A+ | **80** |
 | A | **75** |
 | B+ | 65 |
 | B | 55 |
@@ -216,16 +216,25 @@ backtest unable to attribute any change to either.
 | F | 0 |
 
 These thresholds are not this programme's to move, and no calibration may
-target a grade distribution.
+target a grade distribution. The one line that has moved was moved by the
+platform owner, not by calibration: on 24 September 2026, **A+ from 80**
+(it was **85**, the V1 line Scoring V2 kept), so A now spans 75–79. Every
+grade issued before `5.0.0` was issued against A+ **85**, and is READ against
+it — `gradeThresholdsFor` takes the eligibility version the record carries,
+so a stored 82 issued as an A is never re-labelled an A+ that was "held
+down".
 
 ## 3. A/A+ evidence eligibility — one ceiling, about the evidence
 
 A grade is a claim; the score says how strong, eligibility says whether the
-evidence can carry it. Eligibility **never changes the score** — it caps the
-printed grade and states why. Deliberately not "N of 5 dimensions": a missing
-vacancy rate and a missing five-year growth series are nothing alike.
+evidence can carry it. Eligibility **never changes the score**. Until `5.0.0`
+it capped the printed grade and stated why; from `5.0.0` it never changes the
+letter either — the letter is the band of the score, and where the evidence
+alone would not carry that letter a **caution** is stated beside it (see
+*5.0.0* below). Deliberately not "N of 5 dimensions": a missing vacancy rate
+and a missing five-year growth series are nothing alike.
 
-**The ceiling — Growth-centred and quality-gated** (`ELIGIBILITY_RULES`):
+**The tests — Growth-centred and quality-gated** (`ELIGIBILITY_RULES`):
 
 | rule | A | A+ |
 | --- | ---: | ---: |
@@ -237,8 +246,11 @@ Growth confidence is itself six measured factors (§4.1): geography precision,
 dwelling-type match, sample size, history depth, source independence,
 freshness — the checklist a client-facing A/A+ must survive.
 
-Whenever the printed grade is capped, at least one reason is stated, in the
-operator's words.
+Until `5.0.0`, whenever the printed grade was capped at least one reason was
+stated, in the operator's words. From `5.0.0` nothing is capped: whenever the
+evidence alone would not carry the letter the score gives, the finding is
+stated twice — `cautions`, in the operator's words, and `caution`, one
+sentence a client may read.
 
 ### The delivered-points ceiling, and why 3.0.0 removed it
 
@@ -315,6 +327,66 @@ dimensions are strongly evidenced can now reach A. What tells the reader its
 scope is the **qualification** — *"based on 3 of the 5 assessment
 dimensions"* — carried on every surface by §3a's publication policy. Absence
 is disclosed with the result, never deducted from it.
+
+### 5.0.0 — the letter is the band of the number (owner decision, 24 September 2026)
+
+The owner's report list showed **60 Lawley Street, Spalding WA at B+ · 89**
+beside **9 Hollow Street, Golden Square VIC at A · 77**: a higher score, a
+lower letter. Both were this module working as designed. Measured from the
+production run and reproduced through the engine: Lawley's growth came from
+the one reading Western Australia publishes openly, the ABS mean dwelling
+price for the whole state (`abs_res_dwell`, 8 points, all dwelling types, no
+sales count), and that shape scores **44 of 100** on growth confidence at
+best —
+
+| factor | weight | score on a state series |
+| --- | ---: | ---: |
+| geography (state) | 0.25 | 10 |
+| dwelling type (not matched) | 0.15 | 0 |
+| sample (no count published) | 0.20 | 30 |
+| history | 0.20 | 100 |
+| source independence (one provider) | 0.10 | 55 |
+| freshness | 0.10 | 100 |
+
+— one point under the A test of **45**. So every property whose growth rests
+on a state series (all of WA, Tasmania, the NT and the ACT, and anywhere a
+finer register is missing) could never print above **B+** however it scored.
+The tests were written before the state series existed as a source (§*Growth
+providers, 16 September 2026*), and nothing noticed they had become a
+jurisdiction rule. Hollow Street's growth is Golden Square's own suburb
+series (`vic_vpsr_suburb`, 10 points), which passes the A tests, so its 77
+printed the A its score gives.
+
+The concern the tests answer is real and survives: a growth figure for a
+whole state is not a finding about one suburb. What `5.0.0` changes is WHERE
+that is said. A cap lowered the letter and left the number standing, so a
+reader was handed two claims that disagree and no way to reconcile them —
+the objection `4.0.0` made of the missing-dimension penalty, one step
+further. The owner's decision, 24 September 2026: *the letter follows the
+score, and anything from 80 is an A+.*
+
+| | until `4.0.0` | from `5.0.0` |
+| --- | --- | --- |
+| printed letter | the score's, or the evidence ceiling if lower | **always the score's** (`grade === scoreGrade`) |
+| `capped` / `reasons` | set when the ceiling bound | always `false` / empty |
+| evidence short of the letter | the letter was lowered | **`cautions`** (operator) and **`caution`** (one client sentence) state it |
+| A+ | from **85** | from **80** |
+
+The caution is composed from the evidence's own facts — the geography and
+dwelling type the growth figures describe, the confidence factors' own
+details, how much of each method ran — never from a score, so it cannot
+disagree with the record beside it. For Lawley it reads: *"Capital growth is
+measured for Western Australia as a whole and across all dwelling types, not
+for this property's suburb and dwelling type."* It travels on the production
+record as `evidenceCaution`, and every surface that prints the grade prints
+it beside it: the report list card, the report page, the Method page's
+*Grade issued* step, the condensed verdict lines, the evidence statement's
+limitations, and the model's own score block.
+
+What `5.0.0` deliberately does not do: it does not discount the NUMBER for a
+state series. That would be a calibration of the growth dimension against
+real evidence, which ME-7 still waits on, and it would move every WA score
+the owner has already read.
 
 ## 3a. Publication — when a score and grade reach a client
 
@@ -492,7 +564,8 @@ ceiling, §3). Coverage is separately visible from performance at every level.
 
 `scoreOutputContract.pure.ts`, contract version `1.0.0` — one object every
 consumer reads and none recalculates: methodology + component versions, score,
-both grades and every cap reason, eligibility ceiling, evidence coverage,
+both grades and every cap reason, the caution (`gradeCautions` / `gradeCaution`,
+`5.0.0`), eligibility ceiling, evidence coverage,
 per-dimension `{performance, confidence, nominalWeight, effectiveWeight,
 contributionPoints, coverage, reason}`, provenance, unavailable dimensions,
 the evidence statement, Finance Suitability and the holding-cash-flow signal.

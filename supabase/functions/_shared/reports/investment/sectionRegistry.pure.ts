@@ -254,6 +254,7 @@ export const SECTION_IDS = [
   'suitability',
   'holdingStrategy',
   'monitoring',
+  'strategicRead',
   // the close
   'opportunities',
   'risks',
@@ -380,6 +381,31 @@ export const SECTION_REGISTRY: readonly SectionDefinition[] = [
       snapshot: { depth: 'spine', order: 5, label: 'Investment Score', producer: composedFn('composeVerdictSection') },
       financial: { depth: 'spine', order: 3, label: 'Client Investment Decision Summary', producer: routed('financial', 1) },
       strategic: { depth: 'spine', order: 3, label: 'Client Property & Location Snapshot', producer: routed('dueDiligence', 1) },
+    },
+  },
+  {
+    /*
+     * The Due Diligence document's own opening argument.
+     *
+     * The owner, of the 23 Sep 2026 document for 97 Poole Road: it should
+     * identify "the strategic nature of this opportunity itself rather than
+     * just information pounding". Its sixteen chapters each described one
+     * register and none said what they added up to. This is composed from the
+     * same record — the land use table, the market's growth against its
+     * benchmark, the development pipeline — and it rates, forecasts and values
+     * nothing. Order 3.5 (PLDD 1.5): straight after the snapshot that opens
+     * the document, before the property facts the chapters go on to set out.
+     */
+    id: 'strategicRead',
+    canonicalLabel: 'The Opportunity in Strategic Terms',
+    provenance: 'computed',
+    aliases: ['The Opportunity in Strategic Terms', 'Strategic Position'],
+    purpose:
+      'What kind of purchase the land use table makes this, how its market has moved against the benchmark it is '
+      + 'judged by, what supply it will meet, and what the decision turns on — four paragraphs from the record, so '
+      + 'the chapters after it read as evidence for an argument rather than a list of registers.',
+    tiers: {
+      strategic: { depth: 'required', order: 3.5, label: 'The Opportunity in Strategic Terms', producer: composedFrom('strategyPositions.pure.ts', 'composeStrategicRead') },
     },
   },
   {

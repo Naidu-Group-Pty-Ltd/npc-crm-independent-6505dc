@@ -55,14 +55,16 @@ describe('an absence is never drawn as a finding', () => {
     expect(COMPASS_DOCUMENT_CONTRACT).toMatch(/No absence drawn as a finding/);
     // The rule has to say WHICH surfaces, or it reads as a restatement of the
     // prose rule directly above it.
-    expect(COMPASS_DOCUMENT_CONTRACT).toMatch(/a strip, a cell and a chart say things too/);
+    expect(COMPASS_DOCUMENT_CONTRACT).toMatch(/a cell, a register row and a chart say things too/);
   });
 
-  it('it names what the watch symbol means, because that is the confusion', () => {
+  it('it names what an item to watch means, because that is the confusion', () => {
     const at = COMPASS_DOCUMENT_CONTRACT.indexOf('No absence drawn as a finding');
     const rule = COMPASS_DOCUMENT_CONTRACT.slice(at, at + 900);
-    expect(rule).toContain('⚠');
-    expect(rule).toMatch(/something a\s+buyer should watch/);
+    // The at-a-glance strip that carried the \u26a0 symbol is withdrawn from
+    // the document (glanceWithdrawal.pure.ts); the rule outlives it, because a
+    // table row or a register entry can report our own gap just as a cell did.
+    expect(rule).toMatch(/an item a\s+buyer should watch/);
     expect(rule, 'the reading it produces is the point').toMatch(/defect in the house/);
   });
 
@@ -71,8 +73,8 @@ describe('an absence is never drawn as a finding', () => {
     const rule = COMPASS_DOCUMENT_CONTRACT.slice(at, at + 900);
     // A prohibition with no demonstration of the permitted form is one a model
     // routes around — which is how this defect exists at all.
-    expect(rule).toMatch(/fewer\s+cells/);
-    expect(rule).toMatch(/three cells that each carry a finding is a complete strip/);
+    expect(rule).toMatch(/say less/);
+    expect(rule).toMatch(/two rows that each carry a finding are a\s+complete table/);
   });
 
   it('the prose rule it builds on is still there and still says omit', () => {

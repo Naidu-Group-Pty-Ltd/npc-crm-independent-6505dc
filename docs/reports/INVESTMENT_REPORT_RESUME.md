@@ -409,3 +409,111 @@ carries no measurement cannot be sized**: the log said
 and a wrong unit were the same word, and the severity had to be guessed. It
 logs the delta, the direction, the caller and both bounds now, which is what
 turns the next occurrence into a reading instead of an inference.
+
+## §11 One generation, one evidence basis
+
+**What happened.** 60 Lawley Street, Spalding WA — report `5d8bc97e`, started
+24 Sep 2026 at 01:46 UTC. From the production logs:
+
+```
+01:46:36.98  location intelligence requested            (+9.9 s of the run)
+01:46:48.98  aborted at the `vendor` ceiling of 12 s
+01:46:51.89  the service logs its answer — three seconds too late
+01:46:54.6   acquisition finished at +27.6 s of 125 s   → 33% of data, grade withheld
+01:46:55     sections 1-9 written (≈8 s each), hand-off at 111 s
+01:50:23     second invocation: location answers in 6.0 s, geography resolves,
+             crime, Domain, regional, climate and planning answer
+01:50:44     Scoring V2 3.0.0: B+ at 89 — sections 10-16 written on that
+```
+
+Nothing compared the second invocation's evidence with the evidence sections
+1-9 were written from, so one document carried two: the first nine had no
+coordinate, no demographics, no planning and a withheld grade; the last seven
+had all of them and a B+. The row made it worse. Early persistence wrote
+`investment_score` **only when the row had none**, so the stored grade stayed
+`withheld` for the whole run and the final write stamped whatever the last
+invocation happened to compute. That is also how a regeneration kept the
+PREVIOUS generation's grade until its last section.
+
+**The rule** — `_shared/reports/investment/evidenceBasis.pure.ts`: the sections
+on the row and the score on the row describe one basis.
+
+- The invocation that writes the **first** section records its score as the
+  basis, marked (`__writtenBasis`) with whether it held a verified location.
+- A later invocation rewrites the whole document from section 1 **only when it
+  holds strictly more evidence** — a location the written basis lacked, or a
+  dimension it could not measure, and nothing it could. The reset of
+  `last_completed_section` goes in the **same** update that records the new
+  score, so an invocation that dies before its first section cannot leave the
+  old sections resumable beside the new basis.
+- Anything else **keeps the written score**, for that invocation's prompts and
+  for the record: a pass that lost a reading, measured the same things and
+  printed a different figure, or whose scoring call failed outright. The last
+  of those used to write `investment_score: null` over a finished report's
+  grade.
+- The marker leaves with the last section; `_generationQuality.evidenceBasis`
+  records the final decision and how many times the generation was rewritten.
+
+Four bounds make it safe. **An unmarked stored score is never kept** — a
+report in flight across the deploy, or a regeneration whose row still carries
+the previous generation's grade, cannot be shown to be the sections' basis, so
+only a strictly better fresh basis acts on it. **A marker never outlives its
+document**: the final write strips it, but a generation that is stopped or
+fails for good leaves it on the row, so a new document's first pass that has
+no score of its own to record clears it (`clear_marker`) and keeps the score —
+still a measurement, only not the basis of anything now on the row. Left in
+place, the next pass would read the stopped generation's grade as the basis of
+sections it never described and hold it over its own. **A rewrite needs a
+fresh score it can record**, so a pass whose scoring failed cannot rewrite and
+then rewrite again on every invocation. And **while the document keeps
+growing, the recorded basis only moves up** the lattice (located × five
+dimensions), so it rewrites at most six times and cannot oscillate. The one
+way back down is a restart whose pass dies before its first section: the next
+pass records afresh, as any new document's first pass does, and that costs a
+death per restart, bounded by the drivers' own limits rather than by this
+rule. All four are asserted over 400 simulated noisy generations in
+`evidenceBasis.spec.ts`, which also carries a document identity so it can
+assert that a kept score was always recorded in the current document — with
+the clear removed, it fails at seed 50. Area reports are scored by another
+engine and keep today's behaviour.
+
+**The early write reads its own error.** It discarded the client's
+`{ error }`, so a write the database refused was taken as saved: the fallback on
+the first section's save — which exists to carry exactly this basis — never
+ran, and a rewrite's reset reached the row a section late. A refused write is
+now treated as the thrown write always was.
+
+**The browser had to learn it too.** `useChunkedRegeneration` counts sections
+itself and advanced only when the server's counter passed the one it asked
+for — so a restart, which writes section 1 when section 10 was asked for, read
+as "no progress", was retried twice, threw, and the failure path would have
+stamped a healthy report `failed`. Responses now carry `sectionsRestarted` and
+`sectionWrittenThisRun`, and `nextSectionIndex` (`runProgress.pure.ts`) follows
+the row's counter wherever it says a section was written or the document
+restarted, with the whole run bounded at three passes' worth of calls. A
+response that says neither — an older server — keeps the old behaviour
+exactly. The progress widget's pump counts nothing and needs no change; it
+will show the counter going back to 1 when a restart happens, which is the
+truth.
+
+**What it costs.** A rewrite re-buys the sections already written — on 60
+Lawley Street, nine sections at about eight seconds each. That is the price of
+a document that says one thing; the first half of this fix (§8 of
+`GENERATION_STALL_AND_ACQUISITION_BUDGET.md`) is what makes it rare, by not
+missing the location in the first place.
+
+**What is not done.** A restart is visible only as the counter going back; the
+widget does not say why. Evidence other than the grade's inputs — a crime
+reading, a school list — can still differ between passes where it is
+re-fetched and not reused; the rule protects the basis the grade and the
+geography-keyed registers rest on, and the location and geography halves (§8)
+are what keep those from regressing. And a REGENERATION whose first pass
+cannot score writes its first sections with no grade while the row still
+carries the previous generation's score, unmarked: a later pass rewrites only
+if it beats that score, and otherwise writes on its own evidence as it always
+did. Closing that means recording "written with no score" on the row, which
+would take the previous grade off a report mid-regeneration; that is a
+product decision, not one to take inside this fix. The progressive save after
+each section also still discards its own `{ error }` (the early write no
+longer does); a refused save there is re-written by the next pass rather than
+lost, and fixing it is a separate change.

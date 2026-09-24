@@ -21,7 +21,7 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 
 import { COMPOSITE_WEIGHTS, MIN_DIMENSIONS_FOR_GRADE, SHADOW_METHODOLOGY_VERSION } from '../market/shadowScorer.pure';
-import { ELIGIBILITY_RULES, ELIGIBILITY_VERSION, GRADE_THRESHOLDS } from '../market/gradeEligibility.pure';
+import { ELIGIBILITY_RULES, ELIGIBILITY_VERSION, GRADE_THRESHOLDS, GRADE_THRESHOLDS_BEFORE_5_0_0 } from '../market/gradeEligibility.pure';
 import { SCORE_OUTPUT_CONTRACT_VERSION } from '../market/scoreOutputContract.pure';
 import { GROWTH_METHODOLOGY_VERSION } from '../market/growthScoring.pure';
 import { DEMAND_METHODOLOGY_VERSION } from '../market/demandScoring.pure';
@@ -67,13 +67,18 @@ describe('the methodology document agrees with the code', () => {
     }
   });
 
-  it('states the grade thresholds, A+ 85 and A 75 among them', () => {
+  // Eligibility 5.0.0 (owner decision, 24 Sep 2026): A+ from 80. The line
+  // every earlier grade was issued against must stay stated beside it, or a
+  // reader cannot tell why a stored 82 reads A.
+  it('states the grade thresholds, A+ 80 and A 75 among them, and the line before 5.0.0', () => {
     const a = GRADE_THRESHOLDS.find(([, g]) => g === 'A+')![0];
     const b = GRADE_THRESHOLDS.find(([, g]) => g === 'A')![0];
-    expect(a).toBe(85);
+    expect(a).toBe(80);
     expect(b).toBe(75);
-    expect(DOC).toContain('| A+ | **85** |');
+    expect(DOC).toContain('| A+ | **80** |');
     expect(DOC).toContain('| A | **75** |');
+    expect(GRADE_THRESHOLDS_BEFORE_5_0_0.find(([, g]) => g === 'A+')![0]).toBe(85);
+    expect(DOC.replace(/\s+/g, ' ')).toMatch(/\*\*A\+ from 80\*\* \(it was \*\*85\*\*/);
   });
 
   it('states every eligibility rule number', () => {
@@ -99,8 +104,8 @@ describe('the methodology document agrees with the code', () => {
     expect(DOC).toMatch(/solely because a dimension was unavailable/);
     // And the rule that replaced it is stated as a SELECTION rule.
     expect(DOC).toMatch(/never omit a low-scoring dimension to\s+improve the result/);
-    expect(DOC).toContain('`gradeEligibility.pure.ts`, version `4.0.0`');
-    expect(ELIGIBILITY_VERSION).toBe('4.0.0');
+    expect(DOC).toContain('`gradeEligibility.pure.ts`, version `5.0.0`');
+    expect(ELIGIBILITY_VERSION).toBe('5.0.0');
     // 4.0.0 — the third hiding place of the same penalty. The doc must say
     // which absence stopped capping and which quality floor still does, or
     // the `hasGrowth &&` comes back on the next edit.
@@ -108,6 +113,14 @@ describe('the methodology document agrees with the code', () => {
     // Newline-tolerant: the doc is wrapped, so `.` would stop at the break.
     expect(DOC.replace(/\s+/g, ' ')).toMatch(/an absence is no longer a cap/i);
     expect(DOC).toMatch(/evidenceQualityCoverage/);
+    // 5.0.0 — weakness is disclosed rather than deducted from the letter. The
+    // doc must say the letter is the score's and that the finding travels as a
+    // caution, or the cap comes back on the next edit.
+    const flat = DOC.replace(/\s+/g, ' ');
+    expect(flat).toMatch(/the letter is the band of the (number|score)/i);
+    expect(flat).toMatch(/always the score's\*\* \(`grade === scoreGrade`\)/);
+    expect(flat).toMatch(/`cautions`/);
+    expect(flat).toMatch(/44 of 100/);
   });
 
   it('states the publication policy the five-dimension gate was superseded by', () => {

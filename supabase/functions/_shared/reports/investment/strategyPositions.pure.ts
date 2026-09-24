@@ -87,6 +87,32 @@ import {
   type ScoreAssessmentReading,
 } from '../market/scoreAssessmentReading.pure.ts';
 import type { SubjectPrice } from './subjectPrice.pure.ts';
+import { MONTHS_SHORT, formatReportDateShort } from '../reportDate.pure.ts';
+import { closeDoubledStops } from '../text.pure.ts';
+
+/**
+ * A date as the reader writes it: `17 Sep 2026`, never `2026-09-17`.
+ *
+ * Every date in these sections used to be printed with `.slice(0, 10)` — the
+ * machine's form, on a page a client reads (the 23 Sep 2026 Compass for
+ * 97 Poole Road carried nine of them). The value is unchanged; only how it is
+ * written. Anything that is not an ISO date comes back as it was.
+ */
+function dayOf(iso: string | null | undefined): string {
+  if (!iso) return '';
+  return formatReportDateShort(iso.slice(0, 10)).replace(/^0(?=\d)/, '');
+}
+
+/** `2021-03` → `Mar 2021`, `2026-03-31` → `31 Mar 2026`, anything else unchanged. */
+function periodsIn(text: string): string {
+  return text
+    // Found here and READ by the shared formatter (`dayOf`), never parsed.
+    .replace(/\b\d{4}-\d{2}-\d{2}\b/g, (m) => dayOf(m))
+    .replace(/\b(\d{4})-(\d{2})\b/g, (m, y: string, mo: string) => {
+      const name = MONTHS_SHORT[Number(mo) - 1];
+      return name ? `${name} ${y}` : m;
+    });
+}
 
 // ─── What the sections rest on ──────────────────────────────────────────────
 
@@ -310,6 +336,48 @@ export interface StrategyRecord {
   planning: StrategyPlanning;
   transport: StrategyTransport;
   score: StrategyScore;
+  /**
+   * What the site's own registers said, where the caller read them. Optional,
+   * and absent on every record built before the strategic read existed, which
+   * is what keeps every composer that does not read it byte-identical.
+   */
+  site?: StrategySite | null;
+}
+
+/** How a land use table treats a use — `landUsePermissibility`'s own words. */
+export type StrategyStanding =
+  | 'permitted_with_consent' | 'permitted_without_consent' | 'prohibited' | 'not_stated';
+
+/**
+ * The land use table and the development pipeline, read by the CALLER.
+ *
+ * A canonical investment module may not import `_shared/planning`, so the
+ * reading arrives as plain data — and the planning module's own qualifying
+ * sentences arrive WITH it, verbatim, because a rule stated twice is how the
+ * two statements come to disagree.
+ */
+export interface StrategySite {
+  landUse: {
+    /** `instrumentAnchor(table)` — "Under <instrument>, as read on <date>,". */
+    anchor: string;
+    dwellingHouse: StrategyStanding;
+    /** The additional residential uses the table names, each with its standing. */
+    additional: Array<{ use: string; standing: StrategyStanding }>;
+    /** `EXISTING_DWELLING_CAVEAT`, verbatim. */
+    caveat: string;
+    /** `READING_LIMIT`, verbatim. */
+    limit: string;
+  } | null;
+  pipeline: {
+    /** New dwellings stated on the applications that gave a count. */
+    dwellings: number;
+    council: string;
+    /** The register window, as the evidence words it. */
+    window: string | null;
+    /** How much of the register the total was summed from. */
+    rowsRead: number | null;
+    totalStated: number | null;
+  } | null;
 }
 
 // ─── Small shared writers ───────────────────────────────────────────────────
@@ -367,7 +435,7 @@ function subjectRow(market: MarketFacts, key: EvidenceKey): MarketFactRow | null
 
 /** "the NSW Department of … median sale price of houses, postcode 2155, March 2026 quarter". */
 function citeRow(row: MarketFactRow): string {
-  return `${row.publisher} — ${row.describes}`;
+  return periodsIn(`${row.publisher} — ${row.describes}`);
 }
 
 /**
@@ -442,20 +510,20 @@ function transportBasis(t: StrategyTransport): string {
   // Stating only the load stamp presented the publisher's currency as ours.
   if (t.measuredAt) {
     parts.push(t.feedLoadedAt
-      ? `Counted on ${t.measuredAt.slice(0, 10)}, against a stop file last loaded on ${t.feedLoadedAt.slice(0, 10)}.`
-      : `Counted on ${t.measuredAt.slice(0, 10)}. When the stop file behind it was loaded is not recorded on this reading.`);
+      ? `Counted on ${dayOf(t.measuredAt)}, against a stop file last loaded on ${dayOf(t.feedLoadedAt)}.`
+      : `Counted on ${dayOf(t.measuredAt)}. When the stop file behind it was loaded is not recorded on this reading.`);
   } else {
     parts.push(t.feedLoadedAt
-      ? `The stop file behind this count was last loaded on ${t.feedLoadedAt.slice(0, 10)}. When the count itself was taken is not recorded on this reading.`
+      ? `The stop file behind this count was last loaded on ${dayOf(t.feedLoadedAt)}. When the count itself was taken is not recorded on this reading.`
       : 'Neither the date this count was taken nor the date the stop file behind it was loaded is recorded on this reading.');
   }
   if (t.nearestName && isNum(t.nearestKm)) {
     parts.push(`Nearest boarding place: ${t.nearestName}, ${t.nearestKm} km straight-line.`);
   }
-  parts.push(
-    'It does not establish mode, service frequency, walking distance or travel time'
-    + (t.notMeasured.length ? ` — ${t.notMeasured.join(' ')}` : '.'),
-  );
+  // One sentence, not the feeds' own paragraph on each thing they omit: the
+  // reader needs to know the count is not a journey, and the four words say
+  // it. The fuller notes stay on the reading for anyone who asks the record.
+  parts.push('It does not establish mode, service frequency, walking distance or travel time.');
   return parts.join(' ');
 }
 
@@ -527,31 +595,35 @@ export function buildSwot(rec: StrategyRecord): Swot {
    * produce a rating.** The volume is a fact and it is stated as one, in the
    * exit section, where a reader can judge it against a market they know.
    */
+  /*
+   * The price beside the market's median is CONTEXT, never a quadrant entry.
+   *
+   * It was an Opportunity when the price sat below the median and a Weakness
+   * when above — on the 23 Sep 2026 Compass for 97 Poole Road, "9% below the
+   * market's median" was the whole Opportunities quadrant. A median is the
+   * middle of what sold across a postcode; the difference can be land,
+   * condition, age or position, and filing it under Opportunities is the
+   * valuation claim `MARKET_FIGURES_IN_THE_REPORT.md` forbids by name. Both
+   * figures stay on the page (S5-F), stated side by side in the evidence
+   * notes, with no verdict between them.
+   */
   if (median && median.value && rec.price.value !== null) {
     const m = Number(median.value.replace(/[^0-9.]/g, ''));
     if (Number.isFinite(m) && m > 0) {
-      const diff = rec.price.value - m;
-      const share = Math.abs(diff) / m * 100;
-      const side = diff < 0 ? 'below' : 'above';
-      (diff < 0 ? o : w).push({
-        // The label is a noun phrase that can end in a preposition ("…this
-        // analysis is modelled on"), so it is quoted as a subject rather than
-        // run straight into a verb: "The purchase price this analysis is
-        // modelled on sits 18% below" is correct and reads as a mistake.
-        claim: `At ${money(rec.price.value)}, the ${rec.price.basis === 'accepted_input' ? 'figure this analysis is modelled on' : 'price the listing recorded'} is ${pct(share, 0)} ${side} the market's median.`,
-        basis: `${money(rec.price.value)} against ${median.value} — ${citeRow(median)}. `
-          + 'A median is the middle of what sold across the whole geography and dwelling split named; it does not '
-          + 'describe this dwelling, and the difference may be land size, condition, age or position rather than value.',
-      });
+      coverage.push(
+        `The ${rec.price.basis === 'accepted_input' ? 'price this analysis is modelled on' : 'price the listing recorded'} `
+        + `is ${money(rec.price.value)}; the market's median is ${median.value} (${citeRow(median)}). A median describes `
+        + 'the whole market, not this dwelling, so the difference is not counted for or against the property.',
+      );
     }
   }
 
   // ── Planning ──
   if (rec.planning.zoneStatus === 'stated' && rec.planning.zone) {
     s.push({
-      claim: `The zone is on a published layer: ${rec.planning.zone}.`,
+      claim: `The zone is confirmed on the published planning layer: ${rec.planning.zone}.`,
       basis: `${rec.planning.zoneSource ?? 'the jurisdiction planning layer'}`
-        + (rec.planning.zoneEffectiveDate ? `, current at ${rec.planning.zoneEffectiveDate}` : '')
+        + (rec.planning.zoneEffectiveDate ? `, current at ${dayOf(rec.planning.zoneEffectiveDate)}` : '')
         + `. ${rec.planning.verification ?? ''}`.trimEnd(),
     });
   } else if (rec.planning.zoneStatus) {
@@ -698,8 +770,8 @@ export function buildSwot(rec: StrategyRecord): Swot {
   }
   if (rec.score.gaps.length) {
     coverage.push(
-      `The investment score itself records ${rec.score.gaps.length === 1 ? 'a gap' : `${rec.score.gaps.length} gaps`}: `
-      + `${rec.score.gaps.join('; ')}.`,
+      tidySentences(`The investment score itself records ${rec.score.gaps.length === 1 ? 'a gap' : `${rec.score.gaps.length} gaps`}: `
+      + `${rec.score.gaps.map((g) => g.replace(/[.\s]+$/, '')).join('; ')}.`),
     );
   }
   if (rec.score.coverageLabel) {
@@ -725,26 +797,20 @@ export function buildSwot(rec: StrategyRecord): Swot {
  * reading is a reassurance the record does not support.
  */
 const QUADRANT_NOTE: Record<keyof Omit<Swot, 'coverage'>, string> = {
-  strengths: 'No entry. This quadrant draws only on the market register, the planning layer, the transport feeds '
-    + 'and the recorded financial position; on this record none of them produced a reading that stands on its own '
-    + 'as a strength. Read *What this rests on* below for which of them answered and which did not.',
-  weaknesses: 'No entry. The same four sources feed this quadrant, and none of them produced a reading that stands '
-    + 'on its own as a weakness. That is a statement about what was examined, not a clearance: the sources listed '
-    + 'below are the whole of what was looked at.',
-  opportunities: 'No entry. An opportunity here has to be evidenced by a figure the record holds, and none of the '
-    + 'readings below supports one. Nothing is inferred in its place.',
-  threats: 'No entry. A threat here has to come from a register, a planning layer or the recorded loan; the ones '
-    + 'read for this property are listed below and none returned a finding. Registers that were NOT read are '
-    + 'listed there too — an unread register is not a clean one.',
+  strengths: 'None identified from the market register, the planning layer, the transport feeds or the recorded '
+    + 'financial position. The evidence examined is listed below.',
+  weaknesses: 'None identified from the same sources. That is a statement about what was examined, not a clearance.',
+  opportunities: 'None identified: no recorded figure supports one, and none is inferred.',
+  threats: 'None identified in the registers read for this property. Registers not read are listed below — an '
+    + 'unread register is not a clean one.',
 };
 
 export function composeSwot(rec: StrategyRecord, heading: string): string {
   const swot = buildSwot(rec);
   const lines: string[] = [`## ${heading}`, ''];
   lines.push(
-    'Each entry names the recorded figure or register reading it rests on. Nothing here is inferred from an '
-    + 'absence: a measure nobody published, and a register nobody read, appear under *What this rests on* at the '
-    + 'foot rather than in a quadrant.',
+    'Each entry names the recorded figure it rests on. Measures not published for this market, and registers not '
+    + 'read, are listed under *What this rests on* rather than counted for or against the property.',
     '',
   );
   const groups: Array<[keyof Omit<Swot, 'coverage'>, string]> = [
@@ -779,18 +845,8 @@ export function composeSwot(rec: StrategyRecord, heading: string): string {
  * reason rather than omitted — excluding is a statement, and a table that
  * silently drops two of five rows reads as a complete score.
  */
-/**
- * Close the join artefacts in a sentence the engine composed, and nothing else.
- *
- * `breakdown.growthScore.details` is five measure sentences joined with `. `,
- * and three of them already end in a full stop — so the production row reads
- * "…the five-year rate of 6.2% p.a.. Twelve-month movement…". Purely
- * presentational: no figure, word or clause is altered, and an ellipsis is
- * left alone.
- */
-function tidySentences(text: string): string {
-  return text.replace(/([^.])\.\.(?!\.)/g, '$1.');
-}
+/** The shared rule, under the name this module has always called it by. */
+const tidySentences = closeDoubledStops;
 
 export function composeScoreDimensionTable(rec: StrategyRecord): string | null {
   const a = rec.score.assessment;
@@ -933,7 +989,12 @@ export function composeScoreDimensionTable(rec: StrategyRecord): string | null {
     // graded it, so it follows the methodology too. Where the record does not
     // state one, the difference is reported and not explained away.
     steps.push(!a.capped
-      ? `**Grade issued: ${a.issuedGrade}**, which the composite and the evidence behind it both support.`
+      // Eligibility 5.0.0: the letter is the band of the composite, and where
+      // the evidence alone would not carry it the engine's caution says what
+      // the evidence is — stated here rather than deducted from the letter.
+      ? (a.caution
+        ? `**Grade issued: ${a.issuedGrade}**, the grade the composite gives. ${a.caution}`
+        : `**Grade issued: ${a.issuedGrade}**, which the composite and the evidence behind it both support.`)
       : a.methodology === 'unknown'
         ? `**Grade issued: ${a.issuedGrade}**, below the ${a.uncappedGrade} the composite alone gives. This `
           + 'record does not state which scoring methodology issued it, so the reason for the difference is not '
@@ -1190,7 +1251,7 @@ export function composeHoldingStrategy(rec: StrategyRecord, heading: string): st
     holds.push({
       claim: `The zone in force is ${rec.planning.zone}, and it can change.`,
       basis: `${rec.planning.zoneSource ?? 'the planning layer'}`
-        + (rec.planning.zoneEffectiveDate ? `, current at ${rec.planning.zoneEffectiveDate}` : '')
+        + (rec.planning.zoneEffectiveDate ? `, current at ${dayOf(rec.planning.zoneEffectiveDate)}` : '')
         + '. A zone admits uses; it is not approval for any of them, and a planning proposal in this locality would '
         + 'change what the register says without anything happening on this lot.',
     });
@@ -1268,11 +1329,9 @@ export function composeExitOutlook(rec: StrategyRecord, heading: string): string
      */
     liquidity.push({
       claim: `${volume.value} dwellings settled in the latest published quarter.`,
-      basis: `${citeRow(volume)}. That is a count of completed transactions at the geography and dwelling split `
-        + 'named — not at this street, and not a measure of liquidity. **Days on market, time to sell and buyer '
-        + 'depth are not held for this market.** The registers this report reads did not return them; whether any '
-        + 'publisher issues them at this geography is a separate question this report does not answer. Nothing '
-        + 'here estimates them.',
+      basis: 'A count of completed transactions at the geography and dwelling split named — not at this street, and '
+        + 'not a measure of liquidity. **Days on market, time to sell and buyer depth are not held for this market:** '
+        + 'the registers this report reads did not return them, and nothing here estimates them.',
     });
   }
   if (median?.value) {
@@ -1282,22 +1341,29 @@ export function composeExitOutlook(rec: StrategyRecord, heading: string): string
       // inferred a buyer pool from a median and a count. Nothing in this
       // record measures one, which is the liquidity claim this section
       // already says it cannot make.
-      basis: `${citeRow(median)}. Half of what sold went for less and half for more, across the whole geography and `
-        + 'dwelling split named. How many buyers are active at any particular price is not published at this '
-        + 'geography and is not measured here.',
+      basis: 'Half of what sold went for less and half for more, across the whole geography and dwelling split named. '
+        + 'How many buyers are active at any particular price is not published at this geography.',
     });
   }
   if (series?.value) {
+    // "4 periods, 2021-03 to 2026-03" — the count, then the span, each said once.
+    const [count, ...span] = periodsIn(series.value).split(',');
     liquidity.push({
-      claim: `The register holds ${series.value} of history for this market.`,
-      basis: `${citeRow(series)}. A long series is what makes a growth rate a measurement rather than an impression, `
-        + 'and it is re-read each time this report is produced.',
+      claim: `The register holds ${count.trim()} of price history for this market${span.length ? ` (${span.join(',').trim()})` : ''}.`,
+      basis: 'A long series is what makes a growth rate a measurement rather than an impression.',
     });
   }
   if (liquidity.length) {
     lines.push('### What the market recorded', '');
     lines.push(...writeEntries(liquidity));
     lines.push('');
+    // The source, once. Each bullet used to carry the full citation — the same
+    // forty words three times in three bullets on the 23 Sep 2026 Compass.
+    const sourced = [volume, median, series].filter((r): r is MarketFactRow => Boolean(r?.value));
+    const cites = [...new Set(sourced.map(citeRow))];
+    if (cites.length) {
+      lines.push(`*Source: ${cites.join('; ')}.*`, '');
+    }
     if (rec.property.landSqm) {
       lines.push(
         `*This property's land is ${rec.property.landSqm} m² — recorded on the property rather than by any `
@@ -1343,14 +1409,10 @@ export function composeExitOutlook(rec: StrategyRecord, heading: string): string
       + 'no market is obliged to do, and it is not a valuation, an appraisal or a forecast.*',
       '',
     );
-  } else if (!f) {
-    lines.push(
-      '### The modelled position', '',
-      '*The equity path at year five and year ten is modelling, and belongs to the Financial Analysis Report. It is '
-      + 'not restated here.*',
-      '',
-    );
   }
+  // Where the tier carries no modelling there is no modelled position here at
+  // all — not a heading over a sentence saying it is elsewhere. The document's
+  // own companion note already names where the ten-year projection is.
   return lines.join('\n').trimEnd();
 }
 
@@ -1379,7 +1441,7 @@ export function buildMonitorRows(rec: StrategyRecord): MonitorRow[] {
       what: 'The market\'s median sale price and its growth',
       register: median.publisher,
       cadence: 'Quarterly, on the publisher\'s own schedule',
-      lastRead: `${median.value ?? '—'} — ${median.describes}`,
+      lastRead: periodsIn(`${median.value ?? '—'} — ${median.describes}`),
       // "Two consecutive quarters" and "four quarters" were thresholds
       // invented in this file. Rule 7 forbids exactly that.
       changesIf: 'A median that moves away from the recorded trend is the first place a change in this market shows '
@@ -1404,8 +1466,8 @@ export function buildMonitorRows(rec: StrategyRecord): MonitorRow[] {
       register: rec.planning.zoneSource ?? 'the jurisdiction planning layer',
       cadence: 'On gazettal — no schedule; the layer carries its own currency date',
       lastRead: rec.planning.zoneEffectiveDate
-        ? `current at ${rec.planning.zoneEffectiveDate}`
-        : (rec.planning.retrievedAt ? `retrieved ${rec.planning.retrievedAt.slice(0, 10)}` : 'retrieved for this report'),
+        ? `current at ${dayOf(rec.planning.zoneEffectiveDate)}`
+        : (rec.planning.retrievedAt ? `retrieved ${dayOf(rec.planning.retrievedAt)}` : 'retrieved for this report'),
       changesIf: 'A planning proposal, a new overlay or an amended instrument changes what may be built here and '
         + 'nearby. A spatial layer is indicative — a planning certificate from the council is what settles it.',
     });
@@ -1428,7 +1490,7 @@ export function buildMonitorRows(rec: StrategyRecord): MonitorRow[] {
       cadence: 'Each time the feed is reloaded on this platform',
       lastRead: rec.transport.countReading
         ? transportCountPhrase(rec.transport.countReading)
-          + (rec.transport.feedLoadedAt ? `, feed loaded ${rec.transport.feedLoadedAt.slice(0, 10)}` : '')
+          + (rec.transport.feedLoadedAt ? `, feed loaded ${dayOf(rec.transport.feedLoadedAt)}` : '')
         : '—',
       changesIf: 'A count changes when the network changes. Mode, service frequency, walking distance and travel '
         + 'time are not measured at all here, so a change in any of them would not show in this reading.',
@@ -1669,6 +1731,13 @@ export interface StrategyRowOptions {
    * before this option existed.
    */
   measuredAt?: string | null;
+  /**
+   * The land use table's standing and the development pipeline, read by the
+   * caller from the stored planning and infrastructure evidence — for the
+   * same reason `transport` is. Only the Due Diligence document's strategic
+   * read uses it; absent, nothing changes.
+   */
+  site?: StrategySite | null;
 }
 
 const rec = (v: unknown): Record<string, unknown> | null =>
@@ -1821,6 +1890,9 @@ export function readStrategyRecord(row: StrategyRowInput, opts: StrategyRowOptio
       // dimension, and the composer draws no table for that.
       assessment: readScoreAssessment(row.investmentScore),
     },
+    // Only where the caller read it, so a record built without it carries no
+    // key at all and every composer that ignores it stays byte-identical.
+    ...(opts.site ? { site: opts.site } : {}),
   };
 }
 
@@ -1837,8 +1909,228 @@ export function readStrategyRecord(row: StrategyRowInput, opts: StrategyRowOptio
  * `Cumulative Cashflow Projections`) that a Financial report legitimately
  * writes as sections of their own beside the canonical one.
  */
+// ─── The opportunity in strategic terms ─────────────────────────────────────
+
+/** "a, b and c"; more than four named, the rest counted. */
+function listUses(uses: readonly string[]): string {
+  const named = uses.length > 4 ? uses.slice(0, 3) : [...uses];
+  const rest = uses.length - named.length;
+  const parts = rest > 0 ? [...named, `${rest} other forms of residential accommodation`] : named;
+  return parts.length <= 1 ? (parts[0] ?? '') : `${parts.slice(0, -1).join(', ')} and ${parts[parts.length - 1]}`;
+}
+
+/** The benchmark row for a measure, or null. Never the subject's. */
+function benchmarkRow(market: MarketFacts, key: EvidenceKey): MarketFactRow | null {
+  return market.rows.find((r) => r.key === key && r.benchmark) ?? null;
+}
+
+/** The period a row's description ends on (its last ISO date), or null. */
+function rowPeriod(row: MarketFactRow): string | null {
+  const all = row.describes.match(/\b\d{4}-\d{2}(?:-\d{2})?\b/g);
+  return all ? all[all.length - 1] : null;
+}
+
+/** A percentage row's figure as a number, or null. */
+function percentOf(row: MarketFactRow | null): number | null {
+  if (!row || row.value === null) return null;
+  const m = /^\s*(−|-)?\s*(\d+(?:\.\d+)?)\s*%/.exec(row.value);
+  if (!m) return null;
+  return Number(m[2]) * (m[1] ? -1 : 1);
+}
+
+/** A register's all-capitals name set as a name: "THE HILLS SHIRE" → "The Hills Shire". */
+function asName(value: string): string {
+  if (value !== value.toUpperCase()) return value;
+  return value.toLowerCase().replace(/\b[a-z]/g, (c, at: number) => (
+    at > 0 && /^(of|and|the)\b/.test(value.toLowerCase().slice(at)) ? c : c.toUpperCase()
+  ));
+}
+
+/** An area, grouped by hand (never `toLocaleString` — see `money`). */
+const area = (n: number): string => {
+  const [whole, frac] = String(n).split('.');
+  return `${whole.replace(/\B(?=(\d{3})+(?!\d))/g, ',')}${frac ? `.${frac}` : ''}`;
+};
+
+/** "A house on 497.6 m² in the R2 — Low Density Residential zone, The Hills Shire." — held facts only. */
+function assetLine(rec: StrategyRecord): string | null {
+  const kind = rec.property.propertyType ? rec.property.propertyType.toLowerCase() : null;
+  const land = isNum(rec.property.landSqm) ? `${area(rec.property.landSqm)} m²` : null;
+  const zone = rec.planning.zone;
+  const councilRaw = rec.planning.council ?? rec.property.councilArea;
+  const council = councilRaw ? asName(councilRaw) : null;
+  if (!kind && !land && !zone) return null;
+  const what = kind ? `A ${kind}` : 'A property';
+  return `${what}${land ? ` on ${land}` : ''}${zone ? ` in the ${zone} zone` : ''}${council ? `, ${council}` : ''}.`;
+}
+
+/**
+ * What a land use table says about the residential uses this platform asks
+ * about, in one sentence — or null where it names none of them.
+ *
+ * "Under <instrument>, as read on <date>, a dwelling house is permitted with
+ * development consent, and secondary dwellings and dual occupancies are
+ * prohibited." Exported because two sections state it — the Due Diligence
+ * document's strategic read and the owner-occupier's view — and one sentence
+ * written twice is how the two come to say different things about one table.
+ * The permitted additional uses are returned beside it rather than folded in:
+ * what a permission means is each caller's own paragraph.
+ */
+export function landUseStanding(table: NonNullable<StrategySite['landUse']>): {
+  sentence: string | null;
+  dwellingStated: boolean;
+  dwellingPermitted: boolean;
+  prohibited: string[];
+  permitted: string[];
+} {
+  const dwelling = table.dwellingHouse === 'permitted_with_consent'
+    ? 'a dwelling house is permitted with development consent'
+    : table.dwellingHouse === 'permitted_without_consent'
+      ? 'a dwelling house is permitted without development consent'
+      : table.dwellingHouse === 'prohibited'
+        ? 'a dwelling house is prohibited'
+        : null;
+  const prohibited = table.additional.filter((a) => a.standing === 'prohibited').map((a) => a.use);
+  const permitted = table.additional
+    .filter((a) => a.standing === 'permitted_with_consent' || a.standing === 'permitted_without_consent')
+    .map((a) => a.use);
+  /*
+   * The verb agrees with the NOUN, not with the count. A land use table names
+   * its uses in the plural — "secondary dwellings", "dual occupancies" — so
+   * one of them is still "are"; only the mass nouns ("multi dwelling
+   * housing", "seniors housing", "shop top housing") take "is". Counting
+   * printed "secondary dwellings is prohibited" wherever a table named one.
+   */
+  const verb = prohibited.length === 1 && /\bhousing$/i.test(prohibited[0]) ? 'is' : 'are';
+  const said = [
+    dwelling,
+    prohibited.length ? `${listUses(prohibited)} ${verb} prohibited` : null,
+  ].filter((x): x is string => x !== null);
+  return {
+    sentence: said.length ? `${table.anchor} ${said.join(', and ')}.` : null,
+    dwellingStated: dwelling !== null,
+    dwellingPermitted: table.dwellingHouse === 'permitted_with_consent'
+      || table.dwellingHouse === 'permitted_without_consent',
+    prohibited,
+    permitted,
+  };
+}
+
+/**
+ * What kind of purchase the land use table makes this.
+ *
+ * Drawn from the TABLE, never from the land's size or the zone's name — the
+ * planning programme's rule that land size is not a permission. Where the
+ * table permits a dwelling house and prohibits every additional dwelling it
+ * names, the consequence is stated in one sentence, because that is the
+ * strategic fact a buyer most needs and the evidence chapters only imply it.
+ * Where it permits one, the permission is named and no value is attached.
+ */
+function purchaseKind(rec: StrategyRecord): string | null {
+  const asset = assetLine(rec);
+  const table = rec.site?.landUse ?? null;
+  if (!table) {
+    if (!asset) return null;
+    return `**What kind of purchase this is.** ${asset} No land use table was retrieved for this property, so `
+      + 'nothing here says what may or may not be added to it — the council\'s planning certificate settles that.';
+  }
+  const { sentence, dwellingStated, dwellingPermitted, prohibited, permitted } = landUseStanding(table);
+  if (!sentence && !permitted.length) {
+    return asset
+      ? `**What kind of purchase this is.** ${asset} The land use table that was retrieved does not name the `
+        + 'residential uses this report asks about, so it settles nothing here — the council\'s planning certificate does.'
+      : null;
+  }
+  const standing = sentence ?? '';
+  const consequence = permitted.length
+    ? `The table permits ${listUses(permitted)} with consent. A permission in the table is not an approval: whether `
+      + 'this site could take one is a question for a planning professional with the survey in hand, and no value '
+      + 'is attached to it here.'
+    : dwellingPermitted && prohibited.length
+      ? 'So this is a single-dwelling purchase: its value rests on the dwelling that stands on the land and on the '
+        + 'land itself, not on adding another dwelling to it.'
+      : '';
+  return [
+    `**What kind of purchase this is.** ${[asset, standing, consequence].filter(Boolean).join(' ')}`,
+    '',
+    `*${dwellingStated ? `${table.caveat} ` : ''}${table.limit}*`,
+  ].join('\n');
+}
+
+/**
+ * What the market has done, beside the benchmark it is judged against.
+ *
+ * A gap is computed only where the two rows end on the same period, because a
+ * difference between windows that do not match is two facts, not one.
+ */
+function marketPath(rec: StrategyRecord): string | null {
+  const g5 = subjectRow(rec.market, 'growth5YearCagr');
+  const g5n = percentOf(g5);
+  if (!g5 || g5n === null) return null;
+  const parts = [`Measured price growth over five years was ${g5.value} a year (${citeRow(g5)}).`];
+  const b5 = benchmarkRow(rec.market, 'benchmarkGrowth5YearCagr');
+  const b5n = percentOf(b5);
+  if (b5 && b5n !== null) {
+    const same = rowPeriod(g5) !== null && rowPeriod(g5) === rowPeriod(b5);
+    parts.push(`The benchmark it is judged against grew ${b5.value} a year (${citeRow(b5)})`
+      + (same && Math.abs(g5n - b5n) >= 0.05
+        ? `, so this market ${g5n < b5n ? 'trailed' : 'ran ahead of'} it by ${Math.abs(g5n - b5n).toFixed(1)} points over the same window.`
+        : same ? ', so this market kept pace with it over the same window.' : '.'));
+  }
+  parts.push('That is a record of what happened, not a forecast of what will.');
+  return `**What the market has done.** ${parts.join(' ')}`;
+}
+
+/** What it will compete with — the register's pipeline, as a floor where it is one. */
+function competingSupply(rec: StrategyRecord): string | null {
+  const p = rec.site?.pipeline;
+  if (!p || !isNum(p.dwellings) || p.dwellings <= 0) return null;
+  const count = String(Math.round(p.dwellings)).replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  const floor = isNum(p.rowsRead) && isNum(p.totalStated) && p.rowsRead < p.totalStated;
+  return `**What it competes with.** ${floor ? 'At least ' : ''}${count} new dwellings were stated on development `
+    + `applications in ${p.council}${p.window ? `, ${periodsIn(p.window)}` : ''}`
+    + (floor ? ` — a floor, summed from ${p.rowsRead} of the ${p.totalStated} applications the register states.` : '.')
+    + ' That is supply arriving in the same local government area, which a buyer reselling or letting a comparable '
+    + 'dwelling will meet.';
+}
+
+/**
+ * The strategic read the Due Diligence document opens with.
+ *
+ * The owner's words about the 23 Sep 2026 document for 97 Poole Road: it
+ * should identify "the strategic nature of this opportunity itself rather
+ * than just information pounding". Its sixteen chapters each describe one
+ * register, and none said what they add up to — what kind of purchase the
+ * land use table makes it, how its market has moved against the benchmark,
+ * what supply it will meet, and what the decision turns on. This says that,
+ * in four paragraphs, from the same record the chapters read; it rates
+ * nothing, forecasts nothing and values nothing.
+ *
+ * Empty where the record supports none of the first three, so a record with
+ * no planning, market or pipeline reading draws no section rather than a
+ * section of absences.
+ */
+export function composeStrategicRead(rec: StrategyRecord, heading: string): string {
+  const paragraphs = [purchaseKind(rec), marketPath(rec), competingSupply(rec)]
+    .filter((p): p is string => p !== null);
+  if (!paragraphs.length) return '';
+  paragraphs.push(
+    '**What decides it.** The case turns on what no register can answer: the condition and lawful status of the '
+    + 'dwelling, the title, and the council\'s planning certificate. The Due Diligence Checklist sets them out in '
+    + 'the order they are owed.',
+  );
+  return [
+    `## ${heading}`,
+    '',
+    'What this purchase is, what its value rests on and what the decision turns on, drawn from the registers read '
+    + 'for this report. The chapters that follow carry the evidence; this is what it adds up to.',
+    '',
+    ...paragraphs.flatMap((p) => [p, '']),
+  ].join('\n').trimEnd() + '\n';
+}
+
 export const STRATEGY_SECTION_IDS = [
-  'swot', 'suitability', 'holdingStrategy', 'exitStrategy', 'monitoring',
+  'swot', 'suitability', 'holdingStrategy', 'exitStrategy', 'monitoring', 'strategicRead',
 ] as const;
 
 export interface StrategySection {
@@ -1865,6 +2157,7 @@ export function composeStrategySections(
     holdingStrategy: composeHoldingStrategy,
     exitStrategy: composeExitOutlook,
     monitoring: composeMonitoringPlan,
+    strategicRead: composeStrategicRead,
   };
   return wanted.map(({ id, heading }) => ({ id, heading, markdown: composers[id](record, heading) }));
 }

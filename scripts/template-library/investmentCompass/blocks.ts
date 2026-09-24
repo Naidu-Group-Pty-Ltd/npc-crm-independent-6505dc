@@ -104,6 +104,12 @@ export interface PageDef {
    * `PageSchema.tocContinues`.
    */
   tocContinues?: boolean;
+  /**
+   * Lay this page's column out from what draws, not from the declared worst
+   * case. Only blocks placed by `flowColumn` carry the stamp that lets them
+   * move; see `src/lib/reportTemplate/flowLayout.ts`.
+   */
+  flow?: boolean;
 }
 
 export interface FlowItem {
@@ -137,6 +143,14 @@ export interface FlowItem {
    * at the foot of a page rather than above its heading.
    */
   conditional?: string;
+  /**
+   * The block's depth follows the record: `count` rows (or items) of `height`
+   * each were declared, and on a flowing page the ones that do not draw are
+   * given back. `perRow` for a grid; `spare` rows kept because a row can wrap.
+   */
+  rows?: { count: number; height: number; perRow?: number; spare?: number };
+  /** Fills the room left on a flowing page and keeps its declared bottom. */
+  fill?: boolean;
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
@@ -290,6 +304,35 @@ export function flow(items: FlowItem[], startY?: number): BlockDef[] {
     });
   }
   return out;
+}
+
+/**
+ * `flow`, for a page that lays its column out from what draws.
+ *
+ * Identical placement — the same declared `y` for every block, and the same
+ * overflow guard, because a flowing page must still fit at its worst case —
+ * with each block stamped `flowSlot`: the height and gap it was placed with,
+ * and, for a block whose depth follows the record, its rows. The renderer
+ * re-stacks stamped blocks from what they draw (`flowLayout.ts`); a renderer
+ * that knows nothing of the stamp draws the declared positions, which are
+ * exactly what `flow` would have produced.
+ */
+export function flowColumn(items: FlowItem[], startY?: number): BlockDef[] {
+  const c = ctx();
+  return flow(items.map((item) => ({
+    ...item,
+    block: (y: number) => {
+      const slot = {
+        height: item.height,
+        gap: item.gap ?? c.spacing.gap,
+        ...(item.rows ? { rows: item.rows } : {}),
+        ...(item.fill ? { fill: true } : {}),
+      };
+      const stamp = (b: BlockDef): BlockDef => ({ ...b, props: { ...b.props, flowSlot: slot } });
+      const emitted = item.block(y);
+      return Array.isArray(emitted) ? emitted.map(stamp) : stamp(emitted);
+    },
+  })), startY);
 }
 
 /**
@@ -1393,6 +1436,33 @@ export function companionNote(binding: string, chars: number): FlowItem {
   };
 }
 
+/**
+ * A label over the block that follows it — the section opener's eyebrow and
+ * nothing else.
+ *
+ * For a part of a page rather than a page: on the flowing summary the
+ * scorecard is one element among the verdict, the figures and the property,
+ * and a numbered section opener there would announce a new section in the
+ * middle of a page that is one. Set exactly as `sectionHeading` sets its
+ * eyebrow, so the two read as one voice, and held close to what it labels.
+ */
+export function label(text: string): FlowItem {
+  const c = ctx();
+  return {
+    // The eyebrow's line, and the 6pt `textBlock.html.ts` puts under it.
+    height: Math.ceil(c.scale.eyebrow * 1.6) + 6,
+    gap: 2,
+    block: (y) => block('text-block', {
+      eyebrow: text,
+      eyebrowSize: c.scale.eyebrow,
+      eyebrowFont: 'token:mono',
+      eyebrowTracking: TRACKING.eyebrow,
+      eyebrowColor: 'token:accentInk',
+      x: c.contentLeft, y, width: c.contentWidth,
+    }, 'Label'),
+  };
+}
+
 export function prose(body: string, height?: number): FlowItem {
   const c = ctx();
   return {
@@ -1620,11 +1690,19 @@ export function kpis(items: KpiItem[]): FlowItem {
     return Math.ceil(rows * cell);
   };
 
+  /** Rows of a grid, for a flowing page: an unresolved tile gives its row back. */
+  const gridRows = (height: number, perRow: number) => ({
+    count: shown.length,
+    perRow,
+    height: height / Math.max(1, Math.ceil(shown.length / perRow)),
+  });
+
   if (plan.variant === 'display') {
     // `kpiGrid.html.ts` caps a display grid at two across, whatever the plan says.
     const height = gridHeight(Math.min(plan.columns, 2), c.scale.kpiValue);
     return {
       height,
+      rows: gridRows(height, Math.min(plan.columns, 2)),
       block: (y) => block('kpi-grid', {
         ...shared, variant: 'display', columns: plan.columns,
         valueSize: c.scale.kpiValue, y, height,
@@ -1633,9 +1711,11 @@ export function kpis(items: KpiItem[]): FlowItem {
   }
 
   if (plan.variant === 'rows') {
-    const height = 12 + shown.length * (Math.round(c.scale.kpiValue * 0.72 + 16) + noteLine);
+    const rowHeight = Math.round(c.scale.kpiValue * 0.72 + 16) + noteLine;
+    const height = 12 + shown.length * rowHeight;
     return {
       height,
+      rows: { count: shown.length, height: rowHeight },
       block: (y) => block('kpi-grid', {
         ...shared, variant: 'rows',
         valueSize: Math.round(c.scale.kpiValue * 0.72), y, height,
@@ -1644,9 +1724,11 @@ export function kpis(items: KpiItem[]): FlowItem {
   }
 
   if (plan.variant === 'stacked') {
-    const height = shown.length * (Math.round(c.scale.kpiValue * 0.8 + 26) + noteLine);
+    const rowHeight = Math.round(c.scale.kpiValue * 0.8 + 26) + noteLine;
+    const height = shown.length * rowHeight;
     return {
       height,
+      rows: { count: shown.length, height: rowHeight },
       block: (y) => block('kpi-grid', {
         ...shared, variant: 'stacked',
         accent: 'token:primary',
@@ -1673,6 +1755,7 @@ export function kpis(items: KpiItem[]): FlowItem {
     const height = gridHeight(plan.columns, valueSize);
     return {
       height,
+      rows: gridRows(height, plan.columns),
       block: (y) => block('kpi-grid', {
         ...shared,
         variant: 'tile',
@@ -1699,6 +1782,7 @@ export function kpis(items: KpiItem[]): FlowItem {
   const height = gridHeight(plan.columns, valueSize);
   return {
     height,
+    rows: gridRows(height, plan.columns),
     block: (y) => block('kpi-grid', {
       ...shared, variant: 'ruled', columns: plan.columns,
       ...(plan.cellBorders ? { cellBorders: true } : {}),
@@ -1768,6 +1852,11 @@ export function table(opts: {
    * existing table moves.
    */
   wraps?: { chars: number; columnWidth: number };
+  /**
+   * Rows a flowing page keeps in reserve when rows do not draw, because a
+   * bound text cell can wrap. See `rows` on the returned item.
+   */
+  spareRows?: number;
 }): FlowItem {
   const c = ctx();
   const plan = tablePlan(c.manifest.table_style);
@@ -1811,6 +1900,10 @@ export function table(opts: {
 
   return {
     height: 24 + opts.rows.length * rowHeight,
+    // A guarded row that does not hold draws nothing, and on a flowing page
+    // gives its height back — less `spareRows`, kept for a caller whose cells
+    // can wrap (an 84-character address sets over two lines).
+    rows: { count: opts.rows.length, height: rowHeight, spare: opts.spareRows ?? 0 },
     block: (y) => block('data-table', {
       headers: opts.headers,
       rows: opts.rows.map((row) => (Array.isArray(row) ? { cells: row } : { cells: row.cells, when: row.when })),
@@ -2442,6 +2535,9 @@ export function disclaimerPage(text: string): PageDef {
       // the binding resolves to nothing.
       mark: '{{org.markMono}}',
       markHeight: 37,
+      // The family's margin, so the closing page's copy sits on the same inset
+      // as every page before it rather than the block's own 20pt.
+      margin: ctx().margin,
       /*
        * The deployment's own disclaimer, not this constant.
        *

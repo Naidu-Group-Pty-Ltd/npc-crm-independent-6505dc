@@ -142,7 +142,7 @@ import {
   PROGRAMME_RADIUS_KM as PROGRAMME_RADIUS_KM_FALLBACK,
   stageSentence,
 } from './investmentProgramme.pure.ts';
-import { ABSENCE_GUIDE, guidesForKinds } from './infrastructureGuide.pure.ts';
+import { ABSENCE_GUIDE, INFRASTRUCTURE_GUIDE_LEAD_IN, guidesForKinds } from './infrastructureGuide.pure.ts';
 import { auDate } from './auDate.pure.ts';
 import { NATIONAL_PIPELINE_COVERAGE_PHRASE } from './nationalPipeline.pure.ts';
 
@@ -1301,7 +1301,7 @@ export function renderInfrastructureOutlook(evidence: InfrastructureEvidence): s
   const guides = guidesForKinds(evidence.items.map((i) => i.kind));
   if (guides.length) {
     lines.push('');
-    lines.push('**What these findings mean, and what to do about them.**');
+    lines.push(`**${INFRASTRUCTURE_GUIDE_LEAD_IN}**`);
     lines.push('');
     for (const [kind, g] of guides) {
       lines.push(`*${kind}.* ${g.what} **What it does not tell you:** ${g.limits} `
@@ -1312,7 +1312,7 @@ export function renderInfrastructureOutlook(evidence: InfrastructureEvidence): s
   // An absence is a finding too, and it is the one a reader is most often
   // given with nothing to do about it.
   if (evidence.readings.some((r) => r.reading === 'not_searched')) {
-    if (!guides.length) lines.push('', '**What these findings mean, and what to do about them.**', '');
+    if (!guides.length) lines.push('', `**${INFRASTRUCTURE_GUIDE_LEAD_IN}**`, '');
     lines.push(`*A register that was not searched.* ${ABSENCE_GUIDE.what} `
       + `**What it does not tell you:** ${ABSENCE_GUIDE.limits} **Next step:** ${ABSENCE_GUIDE.next}`);
   }

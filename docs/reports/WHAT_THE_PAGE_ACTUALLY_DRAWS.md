@@ -471,6 +471,47 @@ tail is worse than the truncation this replaces. And the regression guard is
 stated as the defect rather than as the fix — no drawn label may be an ellipsis
 at exactly the length the old cut produced.
 
+## 9. One number per part, the chapter a page opens in, and the closing page's inset (23 Sep 2026)
+
+Three defects on the 23 Sep 2026 Compass for 97 Poole Road. Each one was
+correct as the master declared it and wrong as the page drew it.
+
+**The section numerals skipped numbers, and the page's own head disagreed.**
+The openers ran 01, 03, 04, 07, 09 while the running heads above them read Part
+01 to Part 06, so the Method page said "Part 06 · Sources" over "09 How this
+assessment was reached". The Compass master counts parts when it is
+composed, and the tier drops Financials, Cash flow and Projection when it is
+rendered. `healedPartNumbers` has renumbered a static `Part NN` marker over the
+pages that actually draw since the comparison report's Part 12 → Part 19. The
+numeral comes off the same counter (`nextNumeral()` returns the number
+`nextPart()` just took) and nothing healed it. It is healed with its marker now
+(`healSectionNumeral`), and only where it EQUALS the page's static part number,
+so a number an author typed is never touched. The same pass had never read the
+rail: the heal looked for `Part marker` and not the `Rail marker` eyebrow, so
+the eleven railed masters kept every hole. The heal is in the renderer, so it
+reaches the v19 masters already active in production as soon as the frontend
+ships, without waiting for a seed.
+
+**A page that opened on a new chapter was headed with the one that had just
+ended.** Page 28 opened on "Monitoring & Review Plan" under the head "Due
+Diligence Checklist". The first body page opened on "Executive Verdict" under
+"Property & Locality Snapshot", the chapter that starts at its foot, because
+nothing had been carried in. `runningChapters`' header states the rule as "the
+last top-level heading at or before its first block", and the loop read only
+what came before the page. A page whose first block is a chapter heading is in
+that chapter now. A page that ENDS on a new heading still keeps the chapter it
+spent its body in.
+
+**The closing page set its copy 20pt from the paper's edge.** Every other page
+sits on the master's margin, about 45pt on that master. The `disclaimer` block
+hard-coded `padding: 40pt 20pt`. A master now passes its own `margin`, and a
+template that passes none keeps the old inset byte for byte. This one is a
+master change, so it rides seed v20.
+
+The Method page gap itself (a callout left under two rows the Compass never
+fills) does not arise under v20. That page is drawn only where the front matter
+does not flow, and on that tier every row resolves.
+
 ## What is still outstanding
 
 One item from the same report is **not** closed here, because closing it from a

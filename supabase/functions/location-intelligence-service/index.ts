@@ -14,7 +14,8 @@ import {
   type UrbanCentre,
 } from '../_shared/reports/location/urbanCentre.pure.ts';
 import { ASGS_RELEASE } from '../_shared/geography/asgsGeography.pure.ts';
-import { projectTransportForLocationIntelligence } from '../_shared/transportReading.pure.ts';
+import { projectTransportForLocationIntelligence, type TransportReading } from '../_shared/transportReading.pure.ts';
+import { readTransportAt } from '../_shared/transportStopRead.ts';
 import {
   stampAcquisition,
   subjectKeyFor,
@@ -46,7 +47,7 @@ import { geocodeAddress as geocodeThroughChain } from "../_shared/geocode/geocod
 import { judgeGoogleMapsBody } from "../_shared/googleMapsBody.pure.ts";
 import { assessAuPoint } from "../_shared/auGeoSanity.pure.ts";
 import { buildAuGeocodeQuery } from "../_shared/auGeocodeQuery.pure.ts";
-import { sourceUnavailable, isSourceUnavailable } from "../_shared/sourceUnavailable.pure.ts";
+import { sourceUnavailable } from "../_shared/sourceUnavailable.pure.ts";
 import { internalError } from '../_shared/errorResponse.ts';
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -260,7 +261,11 @@ async function fetchLocationIntelligence(
   // process-local ceiling is not a ceiling.
   db: unknown,
 ): Promise<LocationIntelligenceResult> {
-  let coordinates: { lat: number; lng: number } | null;
+  // The point, once placed. Named `point` until it is known to be non-null,
+  // then bound as `coordinates` for everything measured from it — a `const`,
+  // so the three concurrent readings below keep the narrowing inside their
+  // closures.
+  let point: { lat: number; lng: number } | null;
   let reason: UnresolvedReason;
   // RF-7.2B.1B1 — what the acquisition record will say about this run.
   let geocodeStage: EnrichmentStages['geocode'] = 'fetched';
@@ -273,14 +278,14 @@ async function fetchLocationIntelligence(
     // out-of-country points live — trusting the caller here would let the
     // fault back in through the one door the fix did not cover.
     const verdict = assessAuPoint(input.lat as number, input.lng as number, input.state);
-    coordinates = verdict.ok ? { lat: input.lat as number, lng: input.lng as number } : null;
-    if (!coordinates) {
+    point = verdict.ok ? { lat: input.lat as number, lng: input.lng as number } : null;
+    if (!point) {
       console.warn(`[location-intelligence-service] supplied point rejected (${verdict.reason})`);
     }
     reason = 'supplied_coordinates_rejected';
   } else {
     const geocoded = await geocodeAddress(input, apiKey, db);
-    coordinates = geocoded.ok ? { lat: geocoded.lat, lng: geocoded.lng } : null;
+    point = geocoded.ok ? { lat: geocoded.lat, lng: geocoded.lng } : null;
     matchedAddress = geocoded.ok ? geocoded.matchedAddress : null;
     // Which of the two it was is decided where the provider's own status is
     // in hand, never re-derived here from the absence of a point.
@@ -293,68 +298,42 @@ async function fetchLocationIntelligence(
           : 'address_not_resolved';
   }
 
-  if (!coordinates) return { resolved: false, reason };
+  if (!point) return { resolved: false, reason };
+  const coordinates: { lat: number; lng: number } = point;
 
   console.log('Coordinates:', coordinates);
 
-  // Fetch enhanced public transport data from dedicated service
-  let publicTransportData: any = null;
-  if (input.state) {
-    try {
-      console.log('Fetching detailed public transport data from public-transport-service...');
-      // THIS deployment's own project, from the URL Supabase injects into every
-      // function runtime -- never a literal.
-      //
-      // It was `https://<this repository's project>.supabase.co/...`, which is
-      // correct in exactly one deployment and a cross-tenant call in every
-      // other. A clone of this repository ships the same line and reaches back
-      // into the origin project for every location lookup it serves: somebody
-      // else's function, somebody else's rate limits, somebody else's bill, and
-      // the clone's own `public-transport-service` never invoked at all.
-      const projectUrl = (Deno.env.get('SUPABASE_URL') ?? '').replace(/\/+$/, '');
-      if (!projectUrl) {
-        throw new Error('SUPABASE_URL is unset — cannot resolve this project’s own functions');
-      }
-      const transportResponse = await fetch(
-        `${projectUrl}/functions/v1/public-transport-service`,
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            lat: coordinates.lat,
-            lng: coordinates.lng,
-            state: input.state,
-            suburb: input.suburb
-          })
-        }
-      );
-      
-      if (transportResponse.ok) {
-        const transportBody = await transportResponse.json();
-        // The transport service historically answered with a bare payload —
-        // no `success` wrapper — so its new refusal envelope would read as a
-        // payload full of undefineds here, and `transportInfo` below would
-        // have preferred it over Google's real, coordinate-measured transit
-        // results. An honest refusal must leave the real fallback standing.
-        if (isSourceUnavailable(transportBody)) {
-          console.log('Public transport service unavailable, will use Google transit data');
-        } else if (transportBody?.success === true && transportBody.data) {
-          // The service answers `{ success, data: { ... } }`. This used to take
-          // the ENVELOPE, so `publicTransportData.stopsWithin1km.length` below
-          // dereferenced undefined and threw for every location a loaded GTFS
-          // feed covers — Sydney, south-east Queensland, Darwin, Alice Springs.
-          publicTransportData = transportBody.data;
-          console.log('✓ Public transport data fetched successfully');
-        } else {
-          console.warn('Public transport service returned an unrecognised body; using Google data');
-        }
-      } else {
-        console.warn('Public transport service returned error, will use Google data');
-      }
-    } catch (error) {
-      console.error('Error fetching public transport data:', error);
+  // ── Three readings from one point, taken together ──────────────────────
+  //
+  // The transport reading, the six amenity lookups and the commute depend on
+  // the coordinate and on nothing else, and were awaited one after another.
+  // Measured on 24 Sep 2026 (60 Lawley Street, Spalding WA, cold): 6.3 s for
+  // the transport hop, 2.1 s for the amenity register, then Google transit,
+  // the SUA lookup, the urban-centre register and the OSRM route — 12.6 s of
+  // work behind a caller that gave up at 12. Taken together they cost the
+  // slowest of the three instead of the sum. Each branch writes only its own
+  // results, and each is read exactly where it always was.
+  //
+  // The transport reading is also no longer a function-to-function hop: it is
+  // the same two indexed reads `public-transport-service` makes, through the
+  // same shared module, without the cold start in front of them — see
+  // `_shared/transportStopRead.ts`. A reading outside every loaded feed, or a
+  // read that failed, leaves the coordinate-measured transit lookup below
+  // standing, exactly as the service's refusal envelope did.
+  const transportBranch = (async (): Promise<TransportReading | null> => {
+    if (!input.state) return null;
+    const read = await readTransportAt(db as Parameters<typeof readTransportAt>[0], coordinates.lat, coordinates.lng);
+    if (!read.ok) {
+      console.warn(`[location-intelligence-service] transport register unread (${read.message}); using the transit lookup`);
+      return null;
     }
-  }
+    if (read.reading.verdict === 'outside_loaded_networks') {
+      console.log('No loaded public transport feed covers this location; using the transit lookup');
+      return null;
+    }
+    console.log('✓ Public transport reading taken from the GTFS register');
+    return read.reading;
+  })();
 
   // The six amenity lookups, through the provider order (AMENITY_PROVIDERS,
   // default register,google): the local OSM amenity register answers every
@@ -377,38 +356,33 @@ async function fetchLocationIntelligence(
   const chained: Partial<Record<PlacesCategory, PlacesLookup>> = {};
   const amenitySources: Partial<Record<PlacesCategory, 'register' | 'google'>> = {};
   const amenityRegisterLoadedAt: Record<string, string> = {};
-  for (const provider of amenityOrder) {
-    const missing = AMENITY_CATEGORY_ORDER.filter((c) => chained[c]?.ok !== true);
-    if (missing.length === 0) break;
-    if (provider === 'register') {
-      const readings = await readAmenityRegister(db, coordinates, registerState, missing, Deno.env.get);
-      for (const c of missing) {
-        const reading = readings[c];
-        if (reading && reading.unavailableReason === null) {
-          chained[c] = reading.lookup;
-          amenitySources[c] = 'register';
-          if (reading.loadedAt) amenityRegisterLoadedAt[c] = reading.loadedAt;
-        } else if (reading) {
-          console.log(`[location-intelligence-service] register did not answer ${c} (${reading.unavailableReason}); next provider`);
+  const amenityBranch = (async (): Promise<void> => {
+    for (const provider of amenityOrder) {
+      const missing = AMENITY_CATEGORY_ORDER.filter((c) => chained[c]?.ok !== true);
+      if (missing.length === 0) break;
+      if (provider === 'register') {
+        const readings = await readAmenityRegister(db, coordinates, registerState, missing, Deno.env.get);
+        for (const c of missing) {
+          const reading = readings[c];
+          if (reading && reading.unavailableReason === null) {
+            chained[c] = reading.lookup;
+            amenitySources[c] = 'register';
+            if (reading.loadedAt) amenityRegisterLoadedAt[c] = reading.loadedAt;
+          } else if (reading) {
+            console.log(`[location-intelligence-service] register did not answer ${c} (${reading.unavailableReason}); next provider`);
+          }
         }
+      } else if (provider === 'google') {
+        const answers = await Promise.all(
+          missing.map((c) => fetchNearbyPlaces(coordinates, GOOGLE_TYPE_FOR[c], apiKey, db)),
+        );
+        missing.forEach((c, i) => {
+          chained[c] = answers[i];
+          if (answers[i].ok) amenitySources[c] = 'google';
+        });
       }
-    } else if (provider === 'google') {
-      const answers = await Promise.all(
-        missing.map((c) => fetchNearbyPlaces(coordinates, GOOGLE_TYPE_FOR[c], apiKey, db)),
-      );
-      missing.forEach((c, i) => {
-        chained[c] = answers[i];
-        if (answers[i].ok) amenitySources[c] = 'google';
-      });
     }
-  }
-  const UNMEASURED: PlacesLookup = { ok: false, count: 0, results: [] };
-  const transitData = chained.transit ?? UNMEASURED;
-  const schoolsData = chained.schools ?? UNMEASURED;
-  const healthcareData = chained.healthcare ?? UNMEASURED;
-  const shoppingData = chained.shopping ?? UNMEASURED;
-  const recreationData = chained.recreation ?? UNMEASURED;
-  const restaurantsData = chained.restaurants ?? UNMEASURED;
+  })();
 
   // Calculate CBD commute time. No state means no known destination, and a
   // guessed destination is what put a Perth property 82 hours from "the CBD".
@@ -421,17 +395,38 @@ async function fetchLocationIntelligence(
   // minutes, which `COMMUTE_ANCHORS` scores 0 of 100. See
   // `urbanCentre.pure.ts`. Both reads fail soft: an unreachable geoserver or
   // an unloaded register leaves `ownCentre: 'unknown'`, which is exactly
-  // today's behaviour.
-  const propertySua = await resolveSuaAtPoint(coordinates.lat, coordinates.lng);
-  const centreRegister = await readUrbanCentreRegister(db, input.state);
-  const destination: CommuteDestination | null = resolveCommuteDestination({
-    state: input.state,
-    sua: propertySua,
-    register: centreRegister,
-  });
-  const measuredCommute = destination
-    ? await measureCommuteThroughChain(coordinates, destination, apiKey, db)
-    : { data: COMMUTE_DESTINATION_UNKNOWN, provider: null };
+  // today's behaviour. They are independent of each other, so they are
+  // asked together too.
+  const commuteBranch = (async () => {
+    const [propertySua, centreRegister] = await Promise.all([
+      resolveSuaAtPoint(coordinates.lat, coordinates.lng),
+      readUrbanCentreRegister(db, input.state),
+    ]);
+    const destination: CommuteDestination | null = resolveCommuteDestination({
+      state: input.state,
+      sua: propertySua,
+      register: centreRegister,
+    });
+    const measuredCommute = destination
+      ? await measureCommuteThroughChain(coordinates, destination, apiKey, db)
+      : { data: COMMUTE_DESTINATION_UNKNOWN, provider: null };
+    return { destination, measuredCommute };
+  })();
+
+  const [transportReading, , commuteOutcome] = await Promise.all([
+    transportBranch,
+    amenityBranch,
+    commuteBranch,
+  ]);
+  const { destination, measuredCommute } = commuteOutcome;
+
+  const UNMEASURED: PlacesLookup = { ok: false, count: 0, results: [] };
+  const transitData = chained.transit ?? UNMEASURED;
+  const schoolsData = chained.schools ?? UNMEASURED;
+  const healthcareData = chained.healthcare ?? UNMEASURED;
+  const shoppingData = chained.shopping ?? UNMEASURED;
+  const recreationData = chained.recreation ?? UNMEASURED;
+  const restaurantsData = chained.restaurants ?? UNMEASURED;
   const commuteData = measuredCommute.data;
 
   // RF-7.2B.1B2 — the six lookups, named once so that every projection below
@@ -472,22 +467,13 @@ async function fetchLocationIntelligence(
   // eight states — and the GTFS service publishes none of them, because a
   // stops file carries no mode, no frequency and no rating. Naming a field the
   // source cannot fill is how the template got written in the first place.
-  const transportInfo = publicTransportData ? {
-    ...projectTransportForLocationIntelligence({
-      verdict: publicTransportData.verdict,
-      stops: publicTransportData.stops ?? [],
-      countWithinRadius: publicTransportData.stopsWithinRadius ?? 0,
-      radiusMetres: publicTransportData.radiusMetres ?? 0,
-      nearest: publicTransportData.nearest ?? null,
-      feeds: publicTransportData.feeds ?? [],
-      sources: publicTransportData.sources ?? [],
-      notMeasured: publicTransportData.notMeasured ?? [],
-      // When the contributing feed was last loaded, carried through from the
-      // transport service so the stored block can state the reading's own
-      // currency. A feed with no load stamp answers null; a feed-load date is
-      // never presented as the date this measurement was taken.
-      feedLoadedAt: publicTransportData.feedLoadedAt ?? null,
-    }),
+  //
+  // The reading is the register's own `TransportReading`, projected whole: it
+  // carries `feedLoadedAt`, so the stored block states when the contributing
+  // feed was last loaded, and a feed-load date is never presented as the date
+  // this measurement was taken.
+  const transportInfo = transportReading ? {
+    ...projectTransportForLocationIntelligence(transportReading),
   } : {
     // RF-7.2B.1B2 — `'N/A'` is truthy, so it survived every `||` fallback in
     // the generator's prompt and arrived in front of the model as a value.

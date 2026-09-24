@@ -90,6 +90,11 @@ export function deriveZoneFamily(
     }
   }
   const text = `${zoneLabel ?? ''}`;
+  // South Australia's Planning and Design Code names its residential zones by
+  // the kind of neighbourhood — General, Suburban, Established, Housing
+  // Diversity, Hills — and the word is SA's alone here: NSW's "Neighbourhood
+  // Centre" is a centre, so a keyword entry would file it as housing.
+  if (jurisdiction === 'SA' && /\bneighbourhood\b/i.test(text) && !/centre|activity/i.test(text)) return 'residential';
   for (const [re, fam] of KEYWORD_FAMILIES) {
     if (re.test(text)) return fam;
   }

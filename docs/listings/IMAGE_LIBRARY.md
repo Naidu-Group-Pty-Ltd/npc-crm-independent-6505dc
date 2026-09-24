@@ -233,13 +233,79 @@ seconds, so it is **budgeted rather than counted**:
   default 1,200 ms). New photographs are therefore judged as they arrive.
 - `op: 'analyse'` drains the backlog, **heroes first** — the queue is ordered by
   `position`, so a backfill that is a third done has still fixed every card in
-  the marketplace. Point cron at it; `LISTING_IMAGE_ANALYSIS_BATCH` caps a run.
+  the marketplace. Point cron at it; `LISTING_IMAGE_ANALYSIS_BATCH` caps a run
+  and `LISTING_IMAGE_ANALYSIS_MAX_PIXELS` caps what it may decode.
 - The decoder is imported **lazily**. `resolve` serves the marketplace on every
   page view and must not pay a WASM cold start to analyse nothing.
 
 An image the decoder cannot read is stamped analysed with **no verdict** rather
 than left null — otherwise it returns to the head of a position-ordered queue
 for ever.
+
+### Budgeted in pixels, and stamped before it is decoded
+
+That stamp was written only when the decoder *returned*, and a decoder that
+runs a worker out of memory does not return. From at least 12 Sep 2026 every
+`op: 'analyse'` run — every five minutes, 287 in one 24-hour window — was ended
+by the platform with "Memory limit exceeded" about four and a half seconds
+after boot, 546 each time, while nothing in the function logged. The memory at
+the kill was 339.5–341.6 MB on all 287, which is what one image met again on
+every run looks like: the image at the head of the queue was never stamped,
+because the worker died decoding it, so the next run met it first.
+
+The decoder holds the whole image as pixels before it downscales. Measured with
+`imagescript@1.2.17`, heap plus external memory above the runtime's own:
+
+| Image | Bytes per pixel |
+| --- | --- |
+| JPEG photograph | ~13 |
+| 8-bit RGB / RGBA PNG | ~12.7 – 13.6 |
+| 16-bit RGBA PNG | ~17.5 |
+
+A line-art PNG compresses to almost nothing — a synthetic 48-megapixel floor
+plan is 1.3 MB, well under the 8 MB store cap — and decodes to ~720 MB. And
+floor plans are a third of sampled heroes, which is exactly where a
+position-ordered queue begins.
+
+Two rules, in `listingImageDecode.pure.ts`:
+
+- **The size is read from the image's own header before anything is decoded**,
+  and a request decodes at most `LISTING_IMAGE_ANALYSIS_MAX_PIXELS` pixels
+  (default 9,000,000) **summed over every image it decodes** — a decode's
+  memory is not always returned before the next begins (a 6 MP JPEG then a
+  6.75 MP PNG stood at 201 MB). 9 MP is ~158 MB at the worst measured rate and
+  admits an A4 plan at 300 dpi. An image larger than a whole request's
+  allowance is stamped with no verdict: it stays where the agent put it, as it
+  did before anything could see it. Only JPEG and PNG are decoded, because
+  they are the only stored formats the decoder makes a still of — a GIF comes
+  back as an animation after decoding every frame. The reader was checked
+  against the decoder on 50 files, the repository's 35 JPEG/PNG assets and 15
+  generated at the sizes above: 50 agreed.
+- **The sweep stamps a row before it decodes it.** A kill nothing can catch
+  then costs that one image its verdict and nothing else, and each run ends
+  with one line in the function log (`analysed`, `failed`, `too_large`,
+  `unsupported`, `deferred`, `remaining`), because cron reads no response.
+
+The harvest paths spend the same allowance through `analyseWithinBudget`; an
+image a request cannot afford is stored without a verdict and the sweep takes
+it, in a request with the whole allowance to itself.
+
+**In production, 23 Sep 2026.** The last run on version 481 (20:47 UTC) ended
+546 like every run before it. The first on version 483 (20:57) answered 200 and
+logged `analysed=1 failed=0 too_large=1 unsupported=0 deferred=false
+remaining=3507`. Two rows inside a 1,200 ms budget means the first cost no
+decode: the head of the queue, which every earlier run had died decoding, was
+read from its header, stamped too large, and passed. The next three runs each
+answered 200 and analysed one image (3,506 → 3,504).
+
+**One image a run is the time budget, not the pixel budget**: 1,200 ms of wall
+clock is spent by the first image's download and decode, so `hasBudget` ends
+the run after it. Measured runs took 3.1–6.4 s end to end. At one image every
+five minutes the backlog takes about twelve days.
+`LISTING_IMAGE_ANALYSIS_BUDGET_MS` is the lever, and raising it is a decision
+about the plan's CPU allowance, which the function cannot read. What now
+protects the worker's memory is the pixel allowance, whatever the time budget
+is.
 
 ## A photograph that is not of this property
 

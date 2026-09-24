@@ -1,6 +1,6 @@
 {
   "$comment": "WP-14: per-file type-error counts for supabase/functions entry points, frozen so new errors fail CI while the existing backlog is worked down. Regenerate with `node scripts/security/check-edge-functions.mjs --update`. Numbers may only go down.",
-  "generated_total": 334,
+  "generated_total": 330,
   "files": {
     "supabase/functions/_shared/agent-tools-registry.ts": 6,
     "supabase/functions/_shared/figma.ts": 1,
@@ -50,7 +50,6 @@
     "supabase/functions/listings-cache/index.ts": 4,
     "supabase/functions/log-activity/index.ts": 2,
     "supabase/functions/manage-bc-scenarios/index.ts": 4,
-    "supabase/functions/manage-ci-assessments/index.ts": 4,
     "supabase/functions/manage-client-data/index.ts": 6,
     "supabase/functions/manage-generated-documents/index.ts": 1,
     "supabase/functions/manage-loan-writer-undertakings/index.ts": 1,

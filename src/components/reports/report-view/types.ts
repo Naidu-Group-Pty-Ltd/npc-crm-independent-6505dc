@@ -1,6 +1,7 @@
 import type { RefObject } from 'react';
 import type { PixelPerfectPDFGeneratorHandle } from '@/components/reports/PixelPerfectPDFGenerator';
 import type { PdfDesignOptions } from '@/components/reports/premiumPdfDesign';
+import type { ReportAudience } from '@/lib/reports/investment/presentationOptions';
 
 export interface InvestmentReport {
   id: string;
@@ -49,12 +50,15 @@ export interface ExportPanelProps {
   includeCharts: boolean;
   includeHeroImages: boolean;
   includeSparklines: boolean;
+  /** Who the client document is written for. */
+  audience: ReportAudience;
   pdfDesignOptions: PdfDesignOptions;
   onIncludeSourcesChange: (checked: boolean) => void;
   onIncludeScoringChange: (checked: boolean) => void;
   onIncludeChartsChange: (checked: boolean) => void;
   onIncludeHeroImagesChange: (checked: boolean) => void;
   onIncludeSparklinesChange: (checked: boolean) => void;
+  onAudienceChange: (audience: ReportAudience) => void;
   onPdfDesignOptionsChange: (options: PdfDesignOptions) => void;
   onHeroImagesManage: () => void;
   onRegenerated: () => void;

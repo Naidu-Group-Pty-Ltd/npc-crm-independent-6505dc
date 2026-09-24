@@ -100,12 +100,14 @@ describe('the premium-PDF design controls are hidden', () => {
         includeCharts
         includeHeroImages
         includeSparklines
+        audience="investor"
         pdfDesignOptions={DEFAULT_PDF_DESIGN_OPTIONS}
         onIncludeSourcesChange={() => {}}
         onIncludeScoringChange={() => {}}
         onIncludeChartsChange={() => {}}
         onIncludeHeroImagesChange={() => {}}
         onIncludeSparklinesChange={() => {}}
+        onAudienceChange={() => {}}
         onPdfDesignOptionsChange={() => {}}
         onHeroImagesManage={() => {}}
         onRegenerated={() => {}}

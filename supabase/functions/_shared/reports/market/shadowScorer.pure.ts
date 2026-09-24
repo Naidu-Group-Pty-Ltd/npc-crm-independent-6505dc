@@ -36,10 +36,14 @@
  * unmeasured dimension 0 is a claim about the property that the evidence does
  * not support — and scoring it 50 is the placeholder this programme removes.
  *
- * **The grade is capped by evidence and the cap is explained.** `uncappedGrade`
- * and `grade` are both returned, always, so the difference between "the score
- * says A+" and "the evidence supports A+" is legible rather than silently
- * resolved.
+ * **The letter is the band of the score, and what the evidence can carry is
+ * stated beside it** (eligibility 5.0.0). `uncappedGrade` and `grade` are both
+ * still returned and are now always the same letter; where the evidence alone
+ * would not carry that letter, `gradeCaution` says so in a sentence a client
+ * may read, so "the score says A+" and "the evidence behind it is state-wide"
+ * are both legible rather than one silently overriding the other. Until 5.0.0
+ * the evidence capped the letter instead, which printed a lower letter than
+ * the number beside it.
  *
  * **The buyer never scores into the property** (2.1.0). Risk is Model D
  * (`riskModelD.pure.ts`, variant D2): the property type selects the risk
@@ -184,10 +188,20 @@ export interface ShadowScoreResult {
   compositeScore: number | null;
   /** The grade the score alone gives. */
   uncappedGrade: string | null;
-  /** The grade after the evidence ceiling. Never better than `uncappedGrade`. */
+  /**
+   * The grade printed. From eligibility 5.0.0 always `uncappedGrade`: the
+   * letter is the band of the score.
+   */
   grade: string | null;
-  /** Why the grade was held down, in the operator's words. Empty when it was not. */
+  /** Why the grade was held down. Always empty from eligibility 5.0.0. */
   gradeCapReason: ReadonlyArray<string>;
+  /**
+   * Where the evidence alone would not carry the printed letter, in the
+   * operator's words. Empty when it would, and when no grade was formed.
+   */
+  gradeCautions: ReadonlyArray<string>;
+  /** The same finding as one client-readable sentence, or null. */
+  gradeCaution: string | null;
 
   /**
    * The total return the growth dimension was scored on (3.0.0), or null
@@ -393,7 +407,8 @@ export function scoreInvestmentV2Shadow(input: ShadowScoreInput): ShadowScoreRes
   );
 
   const base: Omit<ShadowScoreResult,
-    'compositeScore' | 'uncappedGrade' | 'grade' | 'gradeCapReason' | 'eligibility' | 'unavailableReason'> = {
+    'compositeScore' | 'uncappedGrade' | 'grade' | 'gradeCapReason' | 'gradeCautions' | 'gradeCaution'
+    | 'eligibility' | 'unavailableReason'> = {
     methodologyVersion: SHADOW_METHODOLOGY_VERSION,
     componentVersions: {
       growth: GROWTH_METHODOLOGY_VERSION,
@@ -435,6 +450,8 @@ export function scoreInvestmentV2Shadow(input: ShadowScoreInput): ShadowScoreRes
       uncappedGrade: null,
       grade: null,
       gradeCapReason: [],
+      gradeCautions: [],
+      gradeCaution: null,
       eligibility: null,
       unavailableReason:
         `Only ${measured.length} of ${raw.length} scoring dimensions could be measured; `
@@ -460,9 +477,11 @@ export function scoreInvestmentV2Shadow(input: ShadowScoreInput): ShadowScoreRes
     uncappedGrade: eligibility.scoreGrade,
     grade: eligibility.grade,
     gradeCapReason: eligibility.reasons,
+    gradeCautions: eligibility.cautions,
+    gradeCaution: eligibility.caution,
     eligibility,
-    // Rebuild the statement with the real eligibility, so the cap it explains
-    // is the cap that was applied rather than a placeholder.
+    // Rebuild the statement with the real eligibility, so the caution it
+    // states is the one this grade carries rather than a placeholder's.
     evidenceStatement: buildEvidenceStatement({
       growth, demand, yieldResult, eligibility, evidence: input.evidence, audience,
     }),

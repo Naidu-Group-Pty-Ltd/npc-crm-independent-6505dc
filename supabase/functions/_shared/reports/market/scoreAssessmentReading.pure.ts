@@ -79,7 +79,7 @@
  */
 
 import { COMPOSITE_WEIGHTS, type DimensionKey } from './shadowScorer.pure.ts';
-import { gradeFor, GRADE_THRESHOLDS } from './gradeEligibility.pure.ts';
+import { GRADE_THRESHOLDS, gradeThresholdsFor, gradeUnder } from './gradeEligibility.pure.ts';
 import { isValidDimensionScore } from './proportionalWeighting.pure.ts';
 import { MIN_VALID_DIMENSIONS_TO_PUBLISH } from './scorePublicationPolicy.pure.ts';
 
@@ -251,6 +251,13 @@ export interface ScoreAssessmentReading {
   capped: boolean;
   /** Reasons the row records for a withheld or capped grade. */
   capReasons: string[];
+  /**
+   * The engine's own caution beside an ISSUED grade (eligibility 5.0.0): where
+   * the evidence alone would not carry the letter the score gives, the
+   * sentence saying what the evidence is. Null where none was recorded, and
+   * always null where no grade may be printed.
+   */
+  caution: string | null;
   /**
    * `evidenceCoverage` where the row retained it, else null — NOT
    * `measuredNominalWeight`, which is a different and coarser measure.
@@ -591,10 +598,23 @@ export function readScoreAssessment(storedScore: unknown): ScoreAssessmentReadin
    */
   const recordedGrade = text(s.grade);
   const issuedGrade = !publishable && methodology === 'proportional' ? null : recordedGrade;
-  const uncappedGrade = compositeScore === null ? null : gradeFor(compositeScore);
-  const nominalCeiling = deliveredPoints === null ? null : gradeFor(deliveredPoints);
+  /*
+   * The grade line the record was ISSUED against, read from the record.
+   *
+   * Eligibility 5.0.0 moved A+ from 85 to 80 (owner decision, 24 Sep 2026).
+   * Re-reading a stored 82 with today's table would report its A as a cap
+   * from an A+ that never existed — a false statement about a delivered
+   * report — so a row graded before 5.0.0 (or naming no version at all) is
+   * read with the table it was graded under.
+   */
+  const eligibilityVersion = text(rec(v2?.gradeEligibility)?.version)
+    ?? text(rec(v2?.componentVersions)?.eligibility);
+  const thresholds = gradeThresholdsFor(eligibilityVersion);
+  const gradedUnderCurrentRule = thresholds === GRADE_THRESHOLDS;
+  const uncappedGrade = compositeScore === null ? null : gradeUnder(compositeScore, thresholds);
+  const nominalCeiling = deliveredPoints === null ? null : gradeUnder(deliveredPoints, thresholds);
 
-  const order = GRADE_THRESHOLDS.map(([, g]) => g).slice().reverse();
+  const order = thresholds.map(([, g]) => g).slice().reverse();
   const capped = Boolean(
     issuedGrade && uncappedGrade && order.indexOf(issuedGrade) < order.indexOf(uncappedGrade),
   );
@@ -622,6 +642,10 @@ export function readScoreAssessment(storedScore: unknown): ScoreAssessmentReadin
       + 'methodology in force when this grade was issued; where the two differed the stricter bound, so the issued '
       + 'grade may be lower than it and never higher.',
     );
+  } else if (methodology === 'proportional' && gradedUnderCurrentRule) {
+    // 5.0.0: nothing is capped, and what the evidence can carry is on the
+    // record as the caution beside the grade — there is no ceiling left
+    // unretained to apologise for.
   } else if (methodology === 'proportional') {
     notRetained.push(
       'The evidence ceiling — whether the evidence behind the assessed dimensions was strong enough to carry an A '
@@ -663,6 +687,9 @@ export function readScoreAssessment(storedScore: unknown): ScoreAssessmentReadin
     nominalCeiling,
     issuedGrade,
     capped,
+    caution: issuedGrade
+      ? (text(rec(s.evidenceCaution)?.statement) ?? text(v2?.gradeCaution))
+      : null,
     capReasons: Array.isArray(s.gradeGaps)
       ? (s.gradeGaps as unknown[]).flatMap((g) => {
         const o = rec(g);

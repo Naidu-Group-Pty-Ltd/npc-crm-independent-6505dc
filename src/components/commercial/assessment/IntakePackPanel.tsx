@@ -106,8 +106,18 @@ interface Props {
   segment?: 'commercial' | 'industrial';
   /** Applies the reviewed import. The caller merges and autosaves. */
   onApply: (parsed: ParsedPack) => void;
-  /** Opens the Command Centre client flow. */
+  /**
+   * Creates the client from inside the assessment. The workspace opens the
+   * shared create form against this assessment — it used to open the whole
+   * client list in a new tab, where nothing tied the new client back here.
+   */
   onCreateClient: () => void;
+  /**
+   * Who the assessment is being prepared for before it is linked — named when
+   * it was started, or created from this step. Replaces the create button, so
+   * one client is not created twice from the same assessment.
+   */
+  preparedFor?: { name: string; source: 'intended' | 'created' } | null;
   /** Set once the assessment is linked; switches the hand-off to "Open client". */
   linkedClientId?: string | null;
   /** Opens the linked client's own Commercial / Industrial file. */
@@ -146,7 +156,7 @@ function isPackFile(file: File): boolean {
 
 export function IntakePackPanel({
   payload, assessmentReference, assessmentTitle, segment = 'commercial',
-  onApply, onCreateClient, linkedClientId, onOpenClient, disabled,
+  onApply, onCreateClient, preparedFor, linkedClientId, onOpenClient, disabled,
 }: Props) {
   const [downloading, setDownloading] = useState<PackDocumentKind | null>(null);
   const [parsing, setParsing] = useState(false);
@@ -719,15 +729,23 @@ export function IntakePackPanel({
       {/* ---- Proceed ----------------------------------------------------- */}
       <div className="rounded-lg border border-border bg-muted/20 p-4">
         <h3 className="text-sm font-semibold tracking-tight text-foreground">
-          {linkedClientId ? 'This assessment belongs to a client' : 'If the client wishes to proceed'}
+          {linkedClientId
+            ? 'This assessment belongs to a client'
+            : preparedFor
+              ? `Being prepared for ${preparedFor.name}`
+              : 'If the client wishes to proceed'}
         </h3>
         <p className="mt-1 text-xs leading-5 text-muted-foreground">
           {linkedClientId
             ? 'Everything gathered here — the assessment, its calculations and its reports — sits in the '
               + 'client’s own Commercial / Industrial file. That is where it is read from.'
-            : 'The assessment stays standalone until you link it. You can create the client here or on the '
-              + 'final step, where the completed assessment is linked and the portfolio is reconciled '
-              + 'against what is already on file.'}
+            : preparedFor
+              ? `${preparedFor.name} ${preparedFor.source === 'created' ? 'was created from this assessment' : 'was chosen when this assessment was started'}. `
+                + 'They are linked on the final step, once the assessment is complete, and the portfolio is '
+                + 'reconciled against their record then.'
+              : 'The assessment stays standalone until you link it. Create the client here and they are ready '
+                + 'to link on the final step, once the assessment is complete, where the portfolio is reconciled '
+                + 'against what is already on file.'}
         </p>
         <div className="mt-3 flex flex-wrap gap-2">
           {linkedClientId && onOpenClient ? (
@@ -735,7 +753,7 @@ export function IntakePackPanel({
               <UserCheck className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" />
               Open client
             </Button>
-          ) : (
+          ) : preparedFor ? null : (
             <Button size="sm" variant="outline" onClick={onCreateClient}>
               <UserPlus className="mr-1.5 h-3.5 w-3.5" aria-hidden="true" /> Create a new client
             </Button>

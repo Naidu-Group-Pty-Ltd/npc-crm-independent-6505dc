@@ -45,6 +45,7 @@ import {
   Landmark,
   Send,
   Sparkles,
+  Factory,
 } from 'lucide-react';
 import { format } from 'date-fns';
 import { PropertyReportGenerator } from './PropertyReportGenerator';
@@ -61,6 +62,7 @@ import { useClientReportInventory } from '@/hooks/useClientReportInventory';
 import { publishReportToPortal } from '@/lib/reports/publishReportToPortal';
 import { publishInvestmentPdf } from '@/lib/reports/investment/deliverInvestmentPdf';
 import type { UnifiedReport } from '@/lib/reports/clientReportInventory.pure';
+import { downloadIssuedDocument } from '@/lib/ciAssessment/documentDownload';
 import { useAuth } from '@/hooks/useAuth';
 import { PORTFOLIO_REPORT_LABEL } from '@/lib/reports/portfolio/label';
 
@@ -79,7 +81,7 @@ interface ClientReportsTabProps {
   onOpenEmailCompose: () => void;
 }
 
-type ReportType = 'all' | 'portfolio' | 'formara' | 'investment' | 'property' | 'borrowing' | 'published';
+type ReportType = 'all' | 'portfolio' | 'formara' | 'investment' | 'property' | 'borrowing' | 'published' | 'commercial';
 type SortMode = 'newest' | 'oldest' | 'name';
 
 /* `UnifiedReport` is declared once, in `clientReportInventory.pure.ts`. */
@@ -104,6 +106,27 @@ export function ClientReportsTab({
   const [reportToDelete, setReportToDelete] = useState<UnifiedReport | null>(null);
   /** The report currently being rendered, so its button can show progress. */
   const [generatingReportId, setGeneratingReportId] = useState<string | null>(null);
+  /** The Commercial & Industrial document being fetched, so its button can show progress. */
+  const [downloadingCiId, setDownloadingCiId] = useState<string | null>(null);
+
+  /**
+   * A Commercial & Industrial Capacity Report, downloaded exactly as issued.
+   *
+   * Through `manage-ci-assessments`, never `secure-storage`: the file has no
+   * storage binding, and that function decides — by THIS client — whether the
+   * reader may have it. Nothing is re-rendered to serve a download.
+   */
+  const handleDownloadCiDocument = async (report: UnifiedReport) => {
+    if (!report.ciDocument) return;
+    setDownloadingCiId(report.id);
+    try {
+      await downloadIssuedDocument(report.ciDocument, { viaClientId: clientId });
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : 'The report could not be downloaded.');
+    } finally {
+      setDownloadingCiId((current) => (current === report.id ? null : current));
+    }
+  };
   const queryClient = useQueryClient();
   const { user, loading: authLoading } = useAuth();
   /* The signed-in reading is still the page's own: the hook declines to fetch
@@ -175,6 +198,7 @@ export function ClientReportsTab({
     property: allReports.filter(r => r.type === 'property').length,
     borrowing: allReports.filter(r => r.type === 'borrowing').length,
     published: allReports.filter(r => r.type === 'published').length,
+    commercial: allReports.filter(r => r.type === 'commercial').length,
   }), [allReports]);
 
   const getReportIcon = (type: string) => {
@@ -185,6 +209,7 @@ export function ClientReportsTab({
       case 'property':
       case 'investment': return <Building2 className="h-4 w-4" />;
       case 'published': return <Send className="h-4 w-4" />;
+      case 'commercial': return <Factory className="h-4 w-4" />;
       default: return <FileText className="h-4 w-4" />;
     }
   };
@@ -197,6 +222,7 @@ export function ClientReportsTab({
       case 'borrowing': return 'bg-primary/15 text-primary border-primary/25';
       case 'property': return 'bg-muted text-muted-foreground border-border';
       case 'published': return 'bg-accent/50 text-accent-foreground border-accent';
+      case 'commercial': return 'bg-secondary/50 text-secondary-foreground border-secondary';
       default: return '';
     }
   };
@@ -394,6 +420,7 @@ export function ClientReportsTab({
     { key: 'formara', label: 'Client Forms' },
     { key: 'investment', label: 'Investment' },
     { key: 'property', label: 'Property' },
+    { key: 'commercial', label: 'Commercial & Industrial' },
     { key: 'published', label: 'Published' },
   ];
 
@@ -538,7 +565,9 @@ export function ClientReportsTab({
                   <div className="flex items-center gap-2 flex-wrap">
                     <span className="text-sm font-medium truncate">{report.name}</span>
                     <Badge variant="outline" className={cn("text-[10px] px-1.5 py-0", getTypeBadgeClass(report.type))}>
-                      {report.type.charAt(0).toUpperCase() + report.type.slice(1)}
+                      {report.type === 'commercial'
+                        ? 'C&I'
+                        : report.type.charAt(0).toUpperCase() + report.type.slice(1)}
                     </Badge>
                     {getStatusIcon(report.status)}
                   </div>
@@ -674,8 +703,27 @@ export function ClientReportsTab({
                   </>
                 )}
 
-                {/* Send to Client Portal (hide for already-published portal reports) */}
-                {report.source !== 'portal_report' && (
+                {/* A Commercial & Industrial Capacity Report: the stored file, as issued. */}
+                {report.source === 'ci_document' && report.ciDocument?.downloadable && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-10 w-10 sm:h-8 sm:w-8"
+                    disabled={downloadingCiId === report.id}
+                    onClick={() => void handleDownloadCiDocument(report)}
+                    title="Download"
+                    aria-label={`Download ${report.ciDocument.fileName}`}
+                  >
+                    {downloadingCiId === report.id
+                      ? <Loader2 className="h-4 w-4 animate-spin" />
+                      : <Download className="h-4 w-4" />}
+                  </Button>
+                )}
+
+                {/* Send to Client Portal — not for a report already there, and
+                    not for a Commercial & Industrial one, which the portal has
+                    no route to (`publishVerdict` says why). */}
+                {report.source !== 'portal_report' && report.source !== 'ci_document' && (
                 <Button
                   variant="ghost"
                   size="icon"

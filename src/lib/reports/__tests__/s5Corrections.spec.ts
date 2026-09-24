@@ -194,8 +194,11 @@ describe('correction 2 — the transport reading states its own radius', () => {
     // enrichment ran (2026-09-17); the stop file behind it is current as at the
     // publisher's load (2026-09-07). Stating only the second presented the
     // publisher's currency as ours.
-    expect(doc).toContain('Counted on 2026-09-17');
-    expect(doc).toContain('against a stop file last loaded on 2026-09-07');
+    // Both dates, written as a reader writes them (23 Sep 2026: ISO dates
+    // left these sections; the two-date rule is unchanged).
+    expect(doc).toContain('Counted on 17 Sep 2026');
+    expect(doc).toContain('against a stop file last loaded on 7 Sep 2026');
+    expect(doc).not.toMatch(/\b20\d\d-\d\d-\d\d\b/);
     expect(doc).toContain('does not establish mode, service frequency, walking distance or travel time');
   });
 
@@ -474,7 +477,7 @@ describe('correction 5 — a sales count is not liquidity', () => {
     // 4d — an absence is about the registers THIS report reads, never about
     // what any publisher issues. "No publisher issues them" is a claim about
     // the world that nothing here measured.
-    expect(doc).toContain('The registers this report reads did not return them');
+    expect(doc).toMatch(/the registers this report reads did not return them/i);
     expect(doc).not.toMatch(/no publisher (issues|publishes)/i);
   });
 

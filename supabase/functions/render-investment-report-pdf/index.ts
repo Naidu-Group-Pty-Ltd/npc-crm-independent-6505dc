@@ -3075,7 +3075,12 @@ export async function buildHtml(
   bodyHtml = colourCodeTableCells(bodyHtml);
   bodyHtml = wrapWideTablesLandscape(bodyHtml);
   bodyHtml = addDataSparklinesToParagraphs(bodyHtml);
-  bodyHtml = injectChapterGlanceFallbacks(bodyHtml);
+  // No synthesised at-a-glance strip. The owner asked for the strip to go
+  // from every document (23 Sep 2026): each chapter opens with its finding,
+  // and the one summary is the executive summary. `presentStoredMarkdown`
+  // withdraws the model's own strips on read; this was the second producer,
+  // inventing one per chapter from sentence keywords when none was written.
+  // See `_shared/reports/investment/glanceWithdrawal.pure.ts`.
   const { html: bodyAnnotated, toc } = annotateChaptersAndExtractToc(bodyHtml);
 
   // Hero illustrations per chapter — consumes ONLY pre-generated assets
@@ -3240,11 +3245,12 @@ export async function buildHtml(
   const execWatch = (para2Parts.join(" ").match(/[^.!?]*\b(risk|vacancy|caution|watch|exposure|concern|soft)\b[^.!?]*[.!?]/i)?.[0] || "").trim() || null;
   const execTrend = yieldTxt && modelled ? `Yield ${yieldTxt}` : null;
   const execView = scoreTxt ? `Score ${scoreTxt}` : null;
-  const execGlance = chapterGlanceHtmlFromValues("Executive Summary", [execSignal, execWatch ? execWatch.slice(0, 80) : null, execTrend, execView]);
+  // The executive summary no longer opens on a synthesised glance strip —
+  // see the note where the chapters' strips were withdrawn.
+  void [execSignal, execWatch, execTrend, execView];
 
   const executiveSummaryHtml = `
     <h2 id="ch-executive-summary" data-ch="1">Executive Summary</h2>
-    ${execGlance}
     ${editorsNoteHtml}
     ${summaryKpiHtml || (kpiTiles ? `<div class="snapshot">${kpiTiles}</div>` : "")}
     ${scoreVisualsHtml}

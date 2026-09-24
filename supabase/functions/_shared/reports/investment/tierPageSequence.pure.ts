@@ -51,6 +51,7 @@
  * which `publishableGrade` publishes only where the policy issued one.
  */
 import { REPORT_TIERS, section, type ReportTier } from './sectionRegistry.pure.ts';
+import { contentPolicyFor } from './tierContent.pure.ts';
 
 export const DERIVED_TIERS = ['snapshot', 'briefing', 'financial', 'strategic'] as const;
 export type DerivedTier = (typeof DERIVED_TIERS)[number];
@@ -96,6 +97,36 @@ export function pagesForTier<P extends { name?: string | null }>(pages: readonly
   const derived = derivedTierOf(tier);
   if (!derived) return [...pages];
   return pages.filter((p) => pageVerdictForTier(p.name, derived) === 'kept');
+}
+
+/**
+ * How a tier's front matter is drawn, as the masters bind it (`report.*`).
+ *
+ *  - `continuousFrontMatter` — one summary page that flows into the body,
+ *    rather than the typed pages a stored pre-tier report was written for;
+ *  - `drawsPropertyIdentity` — the summary carries the property table where
+ *    "The property" page would have been kept for this tier;
+ *  - `frontScorecard` — the summary carries the grade's dimensions where "The
+ *    assessment" page would have been: the Compass alone, since every derived
+ *    tier places the score breakdown in its prose.
+ *
+ * ONE function, because two readers need it and must not disagree: the
+ * projection that binds a real report, and the geometry gate's fixture
+ * (`narrativeGeometryFixture.ts`). The gate once passed 710 renders without
+ * ever drawing the flowing summary page, because its fixture did not carry
+ * these three flags.
+ */
+export function frontMatterFlagsFor(tier: unknown): {
+  continuousFrontMatter: boolean;
+  drawsPropertyIdentity: boolean;
+  frontScorecard: boolean;
+} {
+  const derived = derivedTierOf(tier);
+  return {
+    continuousFrontMatter: contentPolicyFor(typeof tier === 'string' ? tier : null).continuousFrontMatter,
+    drawsPropertyIdentity: derived === null || pageVerdictForTier('The property', derived) === 'kept',
+    frontScorecard: derived === null,
+  };
 }
 
 /** The typed pages that are about the grade, and go with it when none was issued. */

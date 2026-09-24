@@ -16,7 +16,7 @@ import { useNotifications } from '@/contexts/NotificationsContext';
 import { useAuth } from '@/hooks/useAuth';
 import { useActivityLogger } from '@/hooks/useActivityLogger';
 import { addBackgroundJob } from '@/components/BackgroundJobTracker';
-import { Loader2, MapPin, Hash, Globe, TrendingUp, FileText, Link, Upload, X, Image, AlertCircle, Sparkles } from 'lucide-react';
+import { Loader2, MapPin, Hash, Globe, TrendingUp, FileText, Link, Upload, X, Image, AlertCircle, Sparkles, ClipboardPaste } from 'lucide-react';
 import { convertPdfToImages, isPdfFile, isImageFile, imageFileToBase64 } from '@/utils/pdfToImages';
 import { PreGenerationOverrides, PreGenerationData } from './PreGenerationOverrides';
 import { removeCommas } from '@/hooks/useFormattedNumber';
@@ -719,12 +719,34 @@ export function InvestmentReportGenerator() {
     return plan.owned;
   };
 
+  // Paste the listing URL straight from the clipboard. Clipboard access can be
+  // refused by the browser, so the fallback is the field itself — never a
+  // silent failure.
+  const handlePasteUrl = async () => {
+    try {
+      const text = await navigator.clipboard.readText();
+      if (text.trim()) {
+        setPropertyUrl(text.trim());
+        toast({
+          title: "URL pasted",
+          description: 'Review the link, then click "Extract URL".',
+        });
+      }
+    } catch {
+      toast({
+        title: "Paste not available",
+        description: "Your browser blocked clipboard access — use Ctrl+V (or Cmd+V) in the field instead.",
+        variant: "destructive",
+      });
+    }
+  };
+
   // Handle URL scraping ONLY - populates fields without generating report
   const handleScrapeUrlOnly = async () => {
     if (!propertyUrl.trim()) {
       toast({
         title: "URL Required",
-        description: "Please enter a property listing URL to scrape.",
+        description: "Please enter a property listing URL to extract.",
         variant: "destructive",
       });
       return;
@@ -733,7 +755,7 @@ export function InvestmentReportGenerator() {
     if (!user) {
       toast({
         title: "Authentication Required",
-        description: "Please log in to scrape listings.",
+        description: "Please log in to extract listings.",
         variant: "destructive",
       });
       return;
@@ -753,11 +775,11 @@ export function InvestmentReportGenerator() {
 
       if (startError) {
         console.error('Scrape function error:', startError);
-        throw new Error(startError.message || 'Failed to scrape property listing');
+        throw new Error(startError.message || 'Failed to extract the property listing');
       }
 
       if (!startData?.success || !startData?.jobId) {
-        throw new Error(startData?.error || 'Failed to start scraping job');
+        throw new Error(startData?.error || 'Failed to start the extraction job');
       }
 
       const pollIntervalMs = 5000;
@@ -777,7 +799,7 @@ export function InvestmentReportGenerator() {
         if (pollError || !pollData?.success) {
           consecutivePollErrors += 1;
           if (consecutivePollErrors >= maxConsecutivePollErrors) {
-            throw new Error(pollError?.message || pollData?.error || 'Failed to check scrape status');
+            throw new Error(pollError?.message || pollData?.error || 'Failed to check extraction status');
           }
           continue;
         }
@@ -793,7 +815,7 @@ export function InvestmentReportGenerator() {
       }
 
       if (!scrapedResult) {
-        throw new Error('Scrape is taking longer than expected. Please try again.');
+        throw new Error('Extraction is taking longer than expected. Please try again.');
       }
 
       console.log('Scrape successful:', scrapedResult);
@@ -866,10 +888,10 @@ export function InvestmentReportGenerator() {
 
     } catch (error) {
       console.error('Error scraping URL:', error);
-      const errorMessage = error instanceof Error ? error.message : 'Failed to scrape property listing';
+      const errorMessage = error instanceof Error ? error.message : 'Failed to extract the property listing';
       setScrapeError(errorMessage);
       toast({
-        title: "Scraping Failed",
+        title: "Extraction Failed",
         description: errorMessage,
         variant: "destructive",
       });
@@ -882,8 +904,8 @@ export function InvestmentReportGenerator() {
   const handleGenerateFromUrl = async () => {
     if (!urlScrapedData) {
       toast({
-        title: "Scrape Required",
-        description: "Please scrape a URL first before generating a report.",
+        title: "Extraction Required",
+        description: "Please extract a URL first before generating a report.",
         variant: "destructive",
       });
       return;
@@ -1003,7 +1025,7 @@ export function InvestmentReportGenerator() {
         action: 'insert',
         data: {
           property_address: propertyAddress,
-          report_content: 'Generating report from scraped listing...',
+          report_content: 'Generating report from extracted listing...',
           status: 'pending',
           report_scope: 'address',
           generated_by: user?.id ?? null,
@@ -1497,7 +1519,7 @@ export function InvestmentReportGenerator() {
                 Generate Investment Analysis
               </CardTitle>
               <CardDescription>
-                Choose your input method - enter details manually, scrape from a URL, or upload a PDF.
+                Choose your input method - enter details manually, extract from a URL, or upload a PDF.
               </CardDescription>
             </CardHeader>
             <CardContent className="reports-investment-panel-content space-y-6">
@@ -1512,7 +1534,7 @@ export function InvestmentReportGenerator() {
                       </TabsTrigger>
                       <TabsTrigger value="url" className="reports-investment-mode-tab">
                         <Link className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
-                        <span className="reports-investment-mode-label">URL Scrape</span>
+                        <span className="reports-investment-mode-label">URL Extraction</span>
                       </TabsTrigger>
                       <TabsTrigger value="pdf" className="reports-investment-mode-tab">
                         <Upload className="h-3.5 w-3.5 sm:h-4 sm:w-4" />
@@ -1785,9 +1807,29 @@ export function InvestmentReportGenerator() {
                     onLandSizeChange={handleLandSizeChange}
                     onBuildSizeChange={handleBuildSizeChange}
                     onLandPriceChange={setLandPrice}
-                    onBuildPriceChange={setBuildPrice}
-                    hideBuildTypeSelector
-                  />
+                     onBuildPriceChange={setBuildPrice}
+                     hideBuildTypeSelector
+                     action={
+                       <Button
+                         onClick={handleGenerate}
+                         disabled={isGenerating || !query.trim() || (isPropertySpecific && (!propertyPrice || parseFloat(propertyPrice) <= 0))}
+                         size="sm"
+                         className="h-9 w-full rounded-xl font-semibold shadow-lg shadow-primary/20 sm:w-auto"
+                       >
+                         {isGenerating ? (
+                           <>
+                             <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                             Generating...
+                           </>
+                         ) : (
+                           <>
+                             <TrendingUp className="h-4 w-4 mr-2" />
+                             Generate Investment Report
+                           </>
+                         )}
+                       </Button>
+                     }
+                   />
                 </>
               )}
 
@@ -1863,25 +1905,6 @@ export function InvestmentReportGenerator() {
                 </div>
               </div>
 
-              {/* Generate Button */}
-              <Button
-                onClick={handleGenerate}
-                disabled={isGenerating || !query.trim() || (isPropertySpecific && (!propertyPrice || parseFloat(propertyPrice) <= 0))}
-                size="lg"
-                className="w-full h-12 shadow-lg shadow-primary/20 disabled:cursor-not-allowed disabled:border disabled:border-border disabled:bg-muted disabled:text-muted-foreground disabled:shadow-none"
-              >
-                {isGenerating ? (
-                  <>
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                    Generating Analysis...
-                  </>
-                ) : (
-                  <>
-                    <TrendingUp className="h-4 w-4 mr-2" />
-                    Generate Investment Report
-                  </>
-                )}
-              </Button>
 
               {isGenerating && (
                 <div className="reports-processing-state text-center space-y-2">
@@ -1898,7 +1921,7 @@ export function InvestmentReportGenerator() {
               )}
                 </TabsContent>
 
-                {/* URL Scrape Tab - Only for property-specific queries */}
+                {/* URL Extraction Tab - Only for property-specific queries */}
                 {isPropertySpecific && (
                 <TabsContent value="url" className="reports-investment-flow space-y-6 pt-4">
                   {/* Build Type Radio Selection */}
@@ -1915,25 +1938,49 @@ export function InvestmentReportGenerator() {
 
                   <Separator />
 
-                  {/* URL Input */}
+                  {/* URL Extraction */}
                   <div className="space-y-3">
-                    <Label htmlFor="propertyUrl" className="flex items-center gap-2">
-                      <Link className="h-4 w-4" />
-                      Property Listing URL
-                    </Label>
-                    <Input
-                      id="propertyUrl"
-                      value={propertyUrl}
-                      onChange={(e) => setPropertyUrl(e.target.value)}
-                      placeholder="https://www.domain.com.au/property/..."
-                      disabled={isScraping}
-                    />
-                    <p className="text-xs text-muted-foreground">
-                      Paste a URL from Domain, REA, or other property listing sites. Click "Scrape URL" to extract property details.
-                    </p>
+                    <div className="flex flex-wrap items-center justify-between gap-2">
+                      <Label htmlFor="propertyUrl" className="flex items-center gap-2">
+                        <Link className="h-4 w-4 text-primary" />
+                        Property Listing URL
+                      </Label>
+                      <span className="inline-flex items-center gap-1.5 rounded-full border border-primary/25 bg-primary/10 px-2.5 py-1 text-[11px] font-semibold uppercase tracking-wide text-primary">
+                        <Sparkles className="h-3 w-3" />
+                        Auto-fills the form
+                      </span>
+                    </div>
+                    <div className="relative">
+                      <Globe className="pointer-events-none absolute left-3.5 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
+                      <Input
+                        id="propertyUrl"
+                        value={propertyUrl}
+                        onChange={(e) => setPropertyUrl(e.target.value)}
+                        placeholder="https://www.domain.com.au/property/..."
+                        disabled={isScraping}
+                        className="h-12 pl-10 pr-24"
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={handlePasteUrl}
+                        disabled={isScraping}
+                        className="absolute right-1.5 top-1/2 h-8 -translate-y-1/2 gap-1.5 rounded-lg px-2.5 text-xs"
+                      >
+                        <ClipboardPaste className="h-3.5 w-3.5" />
+                        Paste
+                      </Button>
+                    </div>
+                    <div className="flex flex-wrap items-center gap-x-2 gap-y-1.5 text-xs leading-5 text-muted-foreground">
+                      <span>Paste a link from</span>
+                      <span className="rounded-md border border-border/70 bg-background/60 px-1.5 py-0.5 font-medium text-foreground/80">Domain</span>
+                      <span className="rounded-md border border-border/70 bg-background/60 px-1.5 py-0.5 font-medium text-foreground/80">REA</span>
+                      <span>or any other listing site — click "Extract URL" and the details fill themselves in.</span>
+                    </div>
                   </div>
 
-                  {/* Scrape Button - Moved to top right after URL input */}
+                  {/* Extract Button */}
                   <div className="flex gap-3">
                     <Button
                       onClick={handleScrapeUrlOnly}
@@ -1945,23 +1992,23 @@ export function InvestmentReportGenerator() {
                       {isScraping ? (
                         <>
                           <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                          Scraping...
+                          Extracting...
                         </>
                       ) : urlScrapedData ? (
                         <>
                           <Link className="h-4 w-4 mr-2" />
-                          Re-Scrape URL
+                          Re-extract URL
                         </>
                       ) : (
                         <>
                           <Link className="h-4 w-4 mr-2" />
-                          Scrape URL
+                          Extract URL
                         </>
                       )}
                     </Button>
                   </div>
 
-                  {/* Scrape Error */}
+                  {/* Extraction Error */}
                   {scrapeError && (
                     <div className="reports-validation-state reports-validation-state-error">
                       <div className="flex items-start gap-3">
@@ -1969,7 +2016,7 @@ export function InvestmentReportGenerator() {
                           <AlertCircle className="h-4 w-4" />
                         </span>
                         <div className="space-y-1">
-                          <p className="text-sm font-semibold text-destructive">Scraping Failed</p>
+                          <p className="text-sm font-semibold text-destructive">Extraction Failed</p>
                           <p className="text-sm leading-6 text-destructive/80">{scrapeError}</p>
                         </div>
                       </div>
@@ -1999,7 +2046,7 @@ export function InvestmentReportGenerator() {
                           ? 'text-sm font-semibold text-warning'
                           : 'text-sm font-semibold text-success'}
                         >
-                          {caution ? 'Scraped' : '✓ Scraped'}: <strong>{urlScrapedData.propertyAddress}</strong>
+                          {caution ? 'Extracted' : '✓ Extracted'}: <strong>{urlScrapedData.propertyAddress}</strong>
                         </p>
                         {caution ? (
                           <div className="mt-1 space-y-1">
@@ -2056,9 +2103,29 @@ export function InvestmentReportGenerator() {
                     onLandSizeChange={handleLandSizeChange}
                     onBuildSizeChange={handleBuildSizeChange}
                     onLandPriceChange={setLandPrice}
-                    onBuildPriceChange={setBuildPrice}
-                    hideBuildTypeSelector
-                  />
+                     onBuildPriceChange={setBuildPrice}
+                     hideBuildTypeSelector
+                     action={
+                       <Button
+                         onClick={handleGenerateFromUrl}
+                         disabled={isUrlGenerating || !urlScrapedData || !propertyPrice || parseFloat(propertyPrice) <= 0}
+                         size="sm"
+                         className="h-9 w-full rounded-xl font-semibold shadow-lg shadow-primary/20 sm:w-auto"
+                       >
+                         {isUrlGenerating ? (
+                           <>
+                             <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                             Generating Report...
+                           </>
+                         ) : (
+                           <>
+                             <TrendingUp className="h-4 w-4 mr-2" />
+                             Generate Report
+                           </>
+                         )}
+                       </Button>
+                     }
+                   />
 
                   {/* Info for URL mode */}
                   <div className="reports-supported-sites-panel space-y-2">
@@ -2073,7 +2140,7 @@ export function InvestmentReportGenerator() {
                           <li>Most Australian property listing sites</li>
                         </ul>
                         <p className="mt-2">
-                          The scraper will extract property details and automatically generate a comprehensive investment report. Override values above will be used if provided.
+                          The extractor will pull the property details and automatically generate a comprehensive investment report. Override values above will be used if provided.
                         </p>
                       </div>
                     </div>
@@ -2093,25 +2160,6 @@ export function InvestmentReportGenerator() {
                     />
                   </div>
 
-                  {/* Generate Button - At bottom after overrides */}
-                  <Button
-                    onClick={handleGenerateFromUrl}
-                    disabled={isUrlGenerating || !urlScrapedData || !propertyPrice || parseFloat(propertyPrice) <= 0}
-                    size="lg"
-                    className="w-full shadow-lg shadow-primary/20"
-                  >
-                    {isUrlGenerating ? (
-                      <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Generating Report...
-                      </>
-                    ) : (
-                      <>
-                        <TrendingUp className="h-4 w-4 mr-2" />
-                        Generate Report
-                      </>
-                    )}
-                  </Button>
                 </TabsContent>
                 )}
 
@@ -2304,9 +2352,29 @@ export function InvestmentReportGenerator() {
                     onLandSizeChange={handleLandSizeChange}
                     onBuildSizeChange={handleBuildSizeChange}
                     onLandPriceChange={setLandPrice}
-                    onBuildPriceChange={setBuildPrice}
-                    hideBuildTypeSelector
-                  />
+                     onBuildPriceChange={setBuildPrice}
+                     hideBuildTypeSelector
+                     action={
+                       <Button
+                         onClick={handleGenerateFromPdf}
+                         disabled={isPdfGenerating || !pdfParsedData || !propertyPrice || parseFloat(propertyPrice) <= 0}
+                         size="sm"
+                         className="h-9 w-full rounded-xl font-semibold shadow-lg shadow-primary/20 sm:w-auto"
+                       >
+                         {isPdfGenerating ? (
+                           <>
+                             <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                             Generating Report...
+                           </>
+                         ) : (
+                           <>
+                             <TrendingUp className="h-4 w-4 mr-2" />
+                             Generate Report
+                           </>
+                         )}
+                       </Button>
+                     }
+                   />
 
                   {/* Info for PDF mode */}
                   <div className="reports-supported-sites-panel space-y-2">
@@ -2341,25 +2409,6 @@ export function InvestmentReportGenerator() {
                     />
                   </div>
 
-                  {/* Generate Button - At bottom after overrides */}
-                  <Button
-                    onClick={handleGenerateFromPdf}
-                    disabled={isPdfGenerating || !pdfParsedData || !propertyPrice || parseFloat(propertyPrice) <= 0}
-                    size="lg"
-                    className="w-full shadow-lg shadow-primary/20"
-                  >
-                    {isPdfGenerating ? (
-                      <>
-                        <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                        Generating Report...
-                      </>
-                    ) : (
-                      <>
-                        <TrendingUp className="h-4 w-4 mr-2" />
-                        Generate Report
-                      </>
-                    )}
-                  </Button>
                 </TabsContent>
                 )}
 

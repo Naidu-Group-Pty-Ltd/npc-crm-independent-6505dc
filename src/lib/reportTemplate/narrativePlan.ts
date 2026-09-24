@@ -28,7 +28,7 @@
  * to count is the render every instance then draws from.
  */
 import type { ReportTemplate } from './templateSchema';
-import { resolveBindable, type ResolveContext } from './bindingResolver';
+import { evalConditional, resolveBindable, type ResolveContext } from './bindingResolver';
 import { geometryAwareFormat, resolveNarrativeProfile } from '../../../supabase/functions/_shared/reports/markdownPaging.pure';
 import {
   narrativeGeometry, type NarrativeBox, type NarrativeGeometry, type PageSize,
@@ -39,6 +39,10 @@ import {
   narrativeChartContext, type ContinuationNote,
 } from './blocks/markdownBlockContent';
 import { runningChapters } from '@/lib/reports/runningChapters.pure';
+import { shouldRenderBlock } from './renderVisibility';
+import { pagesForDocument } from '../../../supabase/functions/_shared/reports/investment/tierPageSequence.pure';
+import { placeFlowColumn } from './flowLayout';
+import { flowBlockContext, flowFactsFor } from './flowFacts';
 
 export interface NarrativePlan {
   /** Geometry per source binding, as the blocks are written (`{{narrative.source}}`). */
@@ -100,6 +104,8 @@ interface Instance {
   index: number;
   /** The template page's own conditional — where the pages path is written. */
   conditional: string;
+  /** Whether this instance is the one the document draws (index 0 only). */
+  drawn: boolean;
 }
 
 /**
@@ -174,6 +180,27 @@ export function planNarrative(template: ReportTemplate, ctxBase: ResolveContext)
   const profile = resolveNarrativeProfile(reportType);
   if (!(profile?.geometryAware || geometryAwareFormat(reportType))) return null;
 
+  /*
+   * Which page carries the run's FIRST bucket is a question about this
+   * document, not about the template.
+   *
+   * A master may offer the body's opening in more than one place — on the
+   * summary page, in the room the summary leaves, for the tiers whose front
+   * matter flows into the report; on a page of its own for the rest — each
+   * gated on a conditional that is not about the page count. The first
+   * instance is the one this document will actually draw: its page survives
+   * its conditional and the tier's page rule, and the block its own. Where
+   * none does (no narrative at all), the first in template order stands, as
+   * it always did.
+   */
+  const drawnPageIds = new Set(
+    pagesForDocument(
+      template.pages.filter((pg) => evalConditional(pg.conditional, ctxBase)),
+      data as Parameters<typeof pagesForDocument>[1],
+    ).map((pg) => pg.id),
+  );
+  const pageList = template.pages.map((pg) => ({ id: pg.id, name: pg.name, tocContinues: pg.tocContinues === true }));
+
   const runs = new Map<string, { first?: Instance; cont?: Instance; instances: Instance[] }>();
   for (const page of template.pages) {
     for (const block of page.blocks) {
@@ -190,12 +217,29 @@ export function planNarrative(template: ReportTemplate, ctxBase: ResolveContext)
         lineHeight: Number(p.lineHeight ?? 1.5) || 1.5,
         face: bodyFace(p.bodyFont, ctxBase.tokens),
       };
+      const drawn = index === 0 && drawnPageIds.has(page.id) && shouldRenderBlock(block, ctxBase);
+      /*
+       * On a flowing page the box starts where the column above it ENDS for
+       * this record, not where the master declared it — the summary above the
+       * body closes up around what the record holds, and the body's first box
+       * is the room that leaves. Placed with the same facts the renderer uses,
+       * so the box packed here is the box drawn there.
+       */
+      if (drawn && (page as { flow?: boolean }).flow === true) {
+        const placed = placeFlowColumn(page.blocks, flowFactsFor(
+          ctxBase,
+          flowBlockContext(ctxBase, page, pageList, template.slots ?? {}),
+        ));
+        const at = placed.y.get(block.id);
+        if (at !== undefined) box.y = at;
+      }
       const instance: Instance = {
-        box, page: { width: page.size.width, height: page.size.height }, index, conditional: page.conditional ?? '',
+        box, page: { width: page.size.width, height: page.size.height }, index, conditional: page.conditional ?? '', drawn,
       };
       const run = runs.get(key) ?? { instances: [] };
-      if (index === 0) run.first = run.first ?? instance;
-      else if (!run.cont || index < run.cont.index) run.cont = instance;
+      if (index === 0) {
+        if (!run.first || (drawn && !run.first.drawn)) run.first = instance;
+      } else if (!run.cont || index < run.cont.index) run.cont = instance;
       run.instances.push(instance);
       runs.set(key, run);
     }

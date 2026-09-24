@@ -9,6 +9,7 @@ import { requireWorkspaceCapability, entitlementDeniedResponse } from '../_share
 import { enforceCsrf, csrfDenied } from "../_shared/csrfGuard.ts";
 import { pickAllowed } from '../_shared/wp09Guards.ts';
 import { COMMERCIAL_WRITABLE } from '../_shared/assetWritableColumns.ts';
+import { createNeedsOwnedProperty, createStampsUser } from '../_shared/commercialOwnership.pure.ts';
 type TableName = 'commercial_properties' | 'commercial_leases' | 'commercial_dcf_runs' | 'commercial_capex' | 'commercial_financing';
 
 const ALLOWED_TABLES: TableName[] = [
@@ -166,14 +167,17 @@ Deno.serve(async (req) => {
         // The two ownership columns are absent from the allowlist on purpose, so
         // they are set HERE — from the verified session, or from a value that has
         // been ownership-checked first — and can never simply arrive in the body.
-        if (isPropertyOwned) {
+        // A lease and a DCF run carry BOTH, so both are set for them; see
+        // `commercialOwnership.pure.ts` for what failed while they got one.
+        if (createNeedsOwnedProperty(body.table)) {
           const requestedPropertyId = (body.data as Record<string, unknown> | undefined)?.property_id;
           if (typeof requestedPropertyId !== 'string' || !requestedPropertyId) {
             throw new Error('property_id required');
           }
           await assertPropertyOwned(requestedPropertyId);
           payload.property_id = requestedPropertyId;
-        } else {
+        }
+        if (createStampsUser(body.table)) {
           payload.user_id = userId;
         }
         const { data, error } = await supabase

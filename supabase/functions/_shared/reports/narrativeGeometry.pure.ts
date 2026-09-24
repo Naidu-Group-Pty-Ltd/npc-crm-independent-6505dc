@@ -117,8 +117,18 @@ export const NARRATIVE_FOOT_RESERVE_PT = 30;
  * half a line of the engine block for block; what this covers is the line
  * breaking a character count cannot see — a paragraph of long words, a run of
  * bold — which is worth about a line and a half over a full page.
+ *
+ * 4%, two lines on the 50-line page the Board Pack Brief master sets. It was
+ * 6% — three and a quarter lines, twice what this comment says it covers —
+ * and on the five documents issued on 23 Sep 2026 that was 41pt of white at
+ * the foot of every body page, on top of the reserve under the box, on a
+ * document the owner sent back for its white space. 3% was tried first and a
+ * prose page of the 18 Annabelle Crescent Compass set two lines past its box
+ * (still 15pt clear of the running foot); two lines of holdback plus the
+ * untouched reserve keep even that page, AND the three-line tail
+ * `absorbTail` folds onto a page, above the foot.
  */
-export const NARRATIVE_HOLDBACK = 0.06;
+export const NARRATIVE_HOLDBACK = 0.02;
 
 /** One markdown block instance's box, as its props state it. */
 export interface NarrativeBox {
@@ -147,6 +157,13 @@ export interface NarrativeGeometry {
   firstPageLines: number;
   /** Lines a continuation page's box holds, after the holdback. */
   contLines: number;
+  /**
+   * The body face, as the box stated it. Prose is charged by
+   * `charsPerLine`; a table is charged character by character at the face's
+   * measured class widths (`FACE_CLASS_ADVANCE_EM`), and an absent face is
+   * charged at the widest.
+   */
+  face?: string | null;
 }
 
 /** The master's own content bottom, recovered from the block's right edge. */
@@ -182,19 +199,37 @@ function boxLines(box: NarrativeBox, page: PageSize): number {
  * which is why the renderer computes it once, from the template, rather than
  * each block from its own box.
  */
+/**
+ * The fewest lines worth opening the report body in, on a page it SHARES.
+ *
+ * A master may set the body's first box in the room a summary leaves above it
+ * (the tiers whose front matter flows into the report — see `flowLayout.ts`).
+ * Where that room is a sliver, opening there puts a heading and a line at the
+ * foot of the summary and the rest overleaf, which is worse than starting the
+ * body on the next page — so a shared first box under this is not used and
+ * the first bucket is empty. A first box on a page of its own is never
+ * affected: it is a whole page.
+ */
+export const MIN_SHARED_FIRST_LINES = 6;
+
 export function narrativeGeometry(first: NarrativeBox, cont: NarrativeBox | null, page: PageSize): NarrativeGeometry {
   const body = first.bodyPt;
   const lineHeight = first.lineHeight;
   const widthPt = first.width;
   const advance = faceAdvanceEm(first.face);
   const charsPerLine = Math.max(20, widthPt / (body * advance));
+  const contLines = boxLines(cont ?? first, page);
+  const opening = boxLines(first, page);
+  // Shared when the first box starts well below where a continuation's does.
+  const shared = cont !== null && first.y > cont.y + pitchPt(first) * 2;
   return {
     bodyPt: body,
     lineHeight,
     widthPt,
     charsPerLine,
-    firstPageLines: boxLines(first, page),
-    contLines: boxLines(cont ?? first, page),
+    firstPageLines: shared && opening < MIN_SHARED_FIRST_LINES ? 0 : opening,
+    contLines,
+    ...(first.face ? { face: first.face } : {}),
   };
 }
 
@@ -309,20 +344,151 @@ export function sidenoteCharge(g: NarrativeGeometry, paragraphChars: readonly nu
 }
 
 /**
- * A table's rows, charged the way auto layout sets them.
+ * What a table cell is made of, by the width its characters take.
  *
- * Auto layout gives every column at least its longest word, then shares what
- * is left of the measure by how much each column has to say — so the
- * "Why it matters" column of a five-column risk register gets a third of the
- * measure and its 300-character cell wraps to eleven lines, while the same
- * characters charged against the whole measure came to seven. Measured
- * against the engine (`measureNarrativeMetrics.py`, 14 Sep 2026): the share
- * is damped (`TABLE_SHARE_EXPONENT`), because the engine gives the largest
- * column a little less than its raw share, and a narrow column wraps a
- * little worse than its width says (`TABLE_WRAP_LOSS`).
+ * A table is not prose. Its cells are figures, dates, capitalised names and
+ * short labels, and a prose average charges them wrong in both directions: a
+ * digit is a fifth wider than an average prose character, so a column of
+ * `$1,192,000` and `7 Aug 2026` sets wider than the average says, while a
+ * 300-character reason in a risk register sets narrower. Measured with the
+ * pinned engine on 23 Sep 2026 — each class set on one unbroken line at 20pt,
+ * per face, at the three weights the block sets a table in (400 in a cell,
+ * 500 for the row label, 600 for the column head; a face with no such weight
+ * falls back exactly as the engine does, which is why Noto Serif's 500 reads
+ * as its 400). `lower` is weighted by English letter frequency; `upper`,
+ * `digit` and `punct` are uniform over their sets.
  */
-export const TABLE_SHARE_EXPONENT = 0.8;
-export const TABLE_WRAP_LOSS = 1.12;
+export interface ClassAdvance {
+  lower: number;
+  upper: number;
+  digit: number;
+  space: number;
+  punct: number;
+  dash: number;
+}
+export type TableWeight = 400 | 500 | 600;
+
+export const FACE_CLASS_ADVANCE_EM: Readonly<Record<string, Readonly<Record<TableWeight, ClassAdvance>>>> = {
+  'inter': {
+    400: { lower: 0.515, upper: 0.681, digit: 0.592, space: 0.281, punct: 0.432, dash: 0.75 },
+    500: { lower: 0.523, upper: 0.688, digit: 0.601, space: 0.267, punct: 0.441, dash: 0.75 },
+    600: { lower: 0.532, upper: 0.694, digit: 0.61, space: 0.252, punct: 0.451, dash: 0.75 },
+  },
+  'noto serif': {
+    400: { lower: 0.524, upper: 0.668, digit: 0.559, space: 0.26, punct: 0.398, dash: 0.75 },
+    500: { lower: 0.524, upper: 0.668, digit: 0.559, space: 0.26, punct: 0.398, dash: 0.75 },
+    600: { lower: 0.561, upper: 0.707, digit: 0.559, space: 0.26, punct: 0.429, dash: 0.75 },
+  },
+  'lato': {
+    400: { lower: 0.475, upper: 0.663, digit: 0.58, space: 0.256, punct: 0.376, dash: 0.687 },
+    500: { lower: 0.477, upper: 0.665, digit: 0.58, space: 0.253, punct: 0.378, dash: 0.687 },
+    600: { lower: 0.48, upper: 0.668, digit: 0.58, space: 0.249, punct: 0.381, dash: 0.688 },
+  },
+  'roboto': {
+    400: { lower: 0.484, upper: 0.634, digit: 0.562, space: 0.248, punct: 0.365, dash: 0.719 },
+    500: { lower: 0.489, upper: 0.638, digit: 0.568, space: 0.249, punct: 0.378, dash: 0.709 },
+    600: { lower: 0.492, upper: 0.641, digit: 0.574, space: 0.249, punct: 0.39, dash: 0.698 },
+  },
+};
+
+/**
+ * For a face not in the table: every class at the WIDEST any measured face
+ * sets it, so an unknown family's tables pack sparser rather than overflowing
+ * — the rule `UNKNOWN_FACE_ADVANCE_EM` applies to prose.
+ */
+export const UNKNOWN_FACE_CLASS_ADVANCE_EM: Readonly<Record<TableWeight, ClassAdvance>> = (() => {
+  const faces = Object.values(FACE_CLASS_ADVANCE_EM);
+  const widest = (w: TableWeight): ClassAdvance => {
+    const pick = (k: keyof ClassAdvance) => Math.max(...faces.map((f) => f[w][k]));
+    return { lower: pick('lower'), upper: pick('upper'), digit: pick('digit'), space: pick('space'), punct: pick('punct'), dash: pick('dash') };
+  };
+  return { 400: widest(400), 500: widest(500), 600: widest(600) };
+})();
+
+export function faceClassAdvance(family: string | null | undefined): Readonly<Record<TableWeight, ClassAdvance>> {
+  const face = primaryFace(family);
+  return (face && FACE_CLASS_ADVANCE_EM[face]) || UNKNOWN_FACE_CLASS_ADVANCE_EM;
+}
+
+function classOf(ch: string): keyof ClassAdvance {
+  if (ch >= 'a' && ch <= 'z') return 'lower';
+  if (ch >= '0' && ch <= '9') return 'digit';
+  if (ch === ' ') return 'space';
+  if (ch === '—' || ch === '–') return 'dash';
+  if (/[.,;:\-()/%$&'’"“”!?[\]]/.test(ch)) return 'punct';
+  // Capitals — and anything unclassified (accented, symbols) charged as wide as one.
+  return 'upper';
+}
+
+/**
+ * Where a line may end inside a word: after a dash, and after a hyphen or a
+ * slash that is not followed by a digit — the line-breaking rules the engine
+ * applies (UAX #14: a break after `–` and `—`, none between a hyphen and a
+ * number). Only real opportunities are listed, so a word is never charged as
+ * narrower than the engine can set it.
+ */
+function breakPieces(word: string): string[] {
+  const chars = [...word];
+  const out: string[] = [];
+  let piece = '';
+  chars.forEach((ch, i) => {
+    piece += ch;
+    const next = chars[i + 1];
+    if (next === undefined) return;
+    if (ch === '—' || ch === '–' || ((ch === '-' || ch === '/') && !(next >= '0' && next <= '9'))) {
+      out.push(piece);
+      piece = '';
+    }
+  });
+  if (piece) out.push(piece);
+  return out;
+}
+
+/**
+ * A table's rows, charged the way the engine sets them.
+ *
+ * ## Why the old model was replaced
+ *
+ * It charged each row from its characters against a damped share of the
+ * measure, with a wrap-loss factor — calibrated once, on one five-column risk
+ * register. Measured on 23 Sep 2026 against the pinned engine over every table
+ * the ten S5 documents and the two stored reports draw (74 tables, 406 rows)
+ * at fourteen of the geometries the masters set — every body face, from
+ * 7.5pt over 509pt to 10.25pt over 437pt — it was wrong both ways at once: it
+ * charged a risk register's long reasons up to two-thirds high, which is how
+ * a table page came to end 40% empty, and it charged a two-column ledger's
+ * wrapped labels as ONE line where the engine set two, on 35 of 1,036 tables
+ * by as much as 3.7 lines, which is an overflow into the running foot.
+ *
+ * ## What it does now
+ *
+ * Exactly what the engine does (`auto_table_layout`, CSS 2.1 §17.5.2.2 as
+ * WeasyPrint 69 implements it): every column's min-content width is its
+ * longest unbreakable piece and its max-content width its longest cell set on
+ * one line, head cells included, each plus the cell's padding; when the
+ * max-contents do not fit the measure, each column gets its min-content plus
+ * the SAME fraction of its (max − min) — a linear interpolation, not a share
+ * by characters. Then each cell is wrapped greedily at its column's width,
+ * word by word, at the character-class widths above. It reproduces the three
+ * probes `narrativeGeometry.spec.ts` pins from the engine to the hundredth of
+ * a line.
+ *
+ * A table the packer cuts across pages is a NEW table to the engine — each
+ * chunk is laid out from its own rows, so its columns differ from the whole
+ * table's (a chunk without the longest label gives that width to the reasons
+ * beside it). The old model sliced the whole table's row charges, and on 250
+ * chunks of that corpus (halves and thirds, 3,500 layouts) it was 9.7% high
+ * and still left 50 chunks below the engine by up to 1.8 lines.
+ * `splitTableBlock` therefore charges every chunk by calling this again on
+ * the chunk's own rows.
+ *
+ * `TABLE_WIDTH_SAFETY` widens every character by 3%, for the metrics a class
+ * average cannot see (an `m` is not an `i`) and the face revisions the
+ * container may ship. At 3%: whole tables 3.8% high and chunks 4.3% high in
+ * total, and not one of the 1,036 table layouts or 3,500 chunk layouts below
+ * the engine by half a line. At 2% three chunks still were.
+ */
+export const TABLE_WIDTH_SAFETY = 1.03;
 /** Horizontal cell padding as the block styles it (`padding: 3pt 4pt`). */
 const TABLE_H_PADDING_PT = 8;
 
@@ -337,42 +503,103 @@ export interface TableCharge {
 const plainCell = (cell: unknown): string => String(cell ?? '')
   .replace(/<[^>]+>/g, '')
   .replace(/[*_`]/g, '')
+  .replace(/\s+/g, ' ')
   .trim();
 
-export function tableCharge(g: NarrativeGeometry, cells: readonly (readonly string[])[], columns: number): TableCharge {
+/**
+ * @param cells   each row's printed cell text, in column order
+ * @param columns the table's column count
+ * @param head    the column heads' printed text; a head that wraps costs lines too
+ * @param caption the table's `<caption>`, when it carries one: set above the
+ *                head at the table's size and leading, across the measure
+ */
+export function tableCharge(
+  g: NarrativeGeometry,
+  cells: readonly (readonly string[])[],
+  columns: number,
+  head: readonly string[] = [],
+  caption = '',
+): TableCharge {
   const t = MARKDOWN_TYPE.table;
   const cellPt = scaledPt(g.bodyPt, t.scale);
   const cellLine = (cellPt * g.lineHeight) / pitchPt(g);
-  // Points per character at the cell size: the geometry's own advance.
-  const advanceEm = g.widthPt / (g.bodyPt * g.charsPerLine);
-  const charPt = Math.max(1, cellPt * advanceEm);
   const cols = Math.max(1, Math.floor(columns));
+  const advance = faceClassAdvance(g.face);
 
-  const minWidth = new Array<number>(cols).fill(charPt * 2 + TABLE_H_PADDING_PT);
-  const content = new Array<number>(cols).fill(0);
+  const widthOf = (text: string, weight: TableWeight): number => {
+    const a = advance[weight];
+    let em = 0;
+    for (const ch of text) em += a[classOf(ch)];
+    return em * cellPt * TABLE_WIDTH_SAFETY;
+  };
+  const spaceOf = (weight: TableWeight): number => advance[weight].space * cellPt * TABLE_WIDTH_SAFETY;
+  // The head is set at 600, the first cell of a row is its label at 500.
+  const weightOf = (row: number, col: number): TableWeight => (row < 0 ? 600 : col === 0 ? 500 : 400);
+
+  const headTexts = Array.from({ length: cols }, (_, i) => plainCell(head[i]));
   const texts = cells.map((row) => Array.from({ length: cols }, (_, i) => plainCell(row[i])));
-  for (const row of texts) {
-    row.forEach((text, i) => {
-      const longest = text.split(/\s+/).reduce((m, w) => Math.max(m, w.length), 0);
-      minWidth[i] = Math.max(minWidth[i], longest * charPt + TABLE_H_PADDING_PT);
-      content[i] = Math.max(content[i], text.length);
+  const words = (text: string) => (text ? text.split(' ') : []);
+
+  const minContent = new Array<number>(cols).fill(TABLE_H_PADDING_PT);
+  const maxContent = new Array<number>(cols).fill(TABLE_H_PADDING_PT);
+  [headTexts, ...texts].forEach((row, r) => row.forEach((text, i) => {
+    const weight = weightOf(r - 1, i);
+    let min = 0;
+    let max = 0;
+    words(text).forEach((w, k) => {
+      for (const piece of breakPieces(w)) min = Math.max(min, widthOf(piece, weight));
+      max += widthOf(w, weight) + (k > 0 ? spaceOf(weight) : 0);
     });
+    minContent[i] = Math.max(minContent[i], min + TABLE_H_PADDING_PT);
+    maxContent[i] = Math.max(maxContent[i], max + TABLE_H_PADDING_PT);
+  }));
+
+  const sumMin = minContent.reduce((a, b) => a + b, 0);
+  const sumMax = maxContent.reduce((a, b) => a + b, 0);
+  const measure = g.widthPt;
+  let width: number[];
+  if (sumMax <= measure) width = maxContent.slice();
+  else if (sumMin >= measure) width = minContent.slice();
+  else {
+    const r = (measure - sumMin) / (sumMax - sumMin);
+    width = minContent.map((m, i) => m + (maxContent[i] - m) * r);
   }
-  const free = Math.max(0, g.widthPt - minWidth.reduce((a, b) => a + b, 0));
-  const shares = content.map((c) => Math.pow(Math.max(1, c), TABLE_SHARE_EXPONENT));
-  const shareSum = shares.reduce((a, b) => a + b, 0) || 1;
-  const width = minWidth.map((w, i) => w + (free * shares[i]) / shareSum);
+
+  const linesIn = (text: string, col: number, weight: TableWeight): number => {
+    const avail = width[col] - TABLE_H_PADDING_PT;
+    const space = spaceOf(weight);
+    let lines = 1;
+    let x = -1;
+    for (const w of words(text)) {
+      breakPieces(w).forEach((piece, j) => {
+        const pw = widthOf(piece, weight);
+        if (x < 0) { x = pw; return; }
+        const gap = j === 0 ? space : 0;
+        if (x + gap + pw > avail + 0.01) { lines++; x = pw; } else x += gap + pw;
+      });
+    }
+    return lines;
+  };
 
   const padPt = 2 * t.cellPaddingPt;
   const rowLines = texts.map((row) => {
     let lines = 1;
-    row.forEach((text, i) => {
-      const perLine = Math.max(4, (width[i] - TABLE_H_PADDING_PT) / charPt);
-      lines = Math.max(lines, Math.ceil((text.length * TABLE_WRAP_LOSS) / perLine));
-    });
+    row.forEach((text, i) => { lines = Math.max(lines, linesIn(text, i, weightOf(0, i))); });
     return lines * cellLine + linesOf(g, padPt + t.rowRulePt);
   });
-  const headLines = cellLine + linesOf(g, padPt + t.headRulePt + t.marginBottomPt);
+  let headRowLines = 1;
+  headTexts.forEach((text, i) => { if (text) headRowLines = Math.max(headRowLines, linesIn(text, i, 600)); });
+  // A caption is a block of its own above the head: it inherits the table's
+  // size and leading and has no margin, so it costs its lines and nothing
+  // else. Charged at the widest class widths the face has, because it is one
+  // line of arbitrary words across the whole measure.
+  const captionText = plainCell(caption);
+  let captionLines = 0;
+  if (captionText) {
+    const perLine = Math.max(8, (measure / (cellPt * TABLE_WIDTH_SAFETY)) / Math.max(...Object.values(advance[400])));
+    captionLines = Math.ceil(captionText.length / perLine) * cellLine;
+  }
+  const headLines = captionLines + headRowLines * cellLine + linesOf(g, padPt + t.headRulePt + t.marginBottomPt);
   return { rowLines, headLines, total: headLines + rowLines.reduce((a, b) => a + b, 0) };
 }
 

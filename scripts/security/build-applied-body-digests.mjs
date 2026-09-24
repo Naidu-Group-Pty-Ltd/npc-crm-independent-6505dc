@@ -1,14 +1,16 @@
 #!/usr/bin/env node
 // Write `applied-body-digests.txt` from the ledger this deployment actually has.
 //
-//   node scripts/security/build-applied-body-digests.mjs            # read the ledger over psql
+//   node scripts/security/build-applied-body-digests.mjs            # read the ledger (psql or the Management API)
 //   node scripts/security/build-applied-body-digests.mjs --digests f  # …or from a file of sha256 lines
 //   node scripts/security/build-applied-body-digests.mjs --verify      # do not write; check the manifest
 //
-// `--digests` exists because the ledger is reachable from more than one place —
-// `SUPABASE_DB_URL` here, Mission Control's Management API elsewhere — and the
-// merge must not care which produced the digests. The manifest header records
-// the route that wrote it.
+// The ledger is read through `scripts/lib/ledgerQuery.mjs`: `SUPABASE_DB_URL`
+// where a deployment has one, the Management API (`SUPABASE_ACCESS_TOKEN` and a
+// project ref) where it has only that — which is the prime. `--digests` exists
+// because the ledger is also reachable from places that are not this script,
+// Mission Control among them, and the merge must not care which produced the
+// digests. The manifest header records the route that wrote it.
 //
 // ## It never drops an entry
 //
@@ -25,12 +27,13 @@
 // file the cascade clears by version or not at all. Measured on this corpus:
 // 16 files, all of them successive generations of the seeded template
 // catalogue, and every one already version-matched.
-import { execFileSync } from "node:child_process";
 import { existsSync, readdirSync, readFileSync, statSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
+import { describeLedgerRoute, ledgerQuery, ledgerRoute } from "../lib/ledgerQuery.mjs";
 import {
   EMPTY_BODY_SHA256,
-  LEDGER_BODY_DIGEST_SQL,
+  LEDGER_DIGESTS_QUERY,
+  MAX_DIGEST_BYTES,
   bodyDigests,
   bodyFormLabel,
 } from "./appliedBodyIdentity.mjs";
@@ -38,12 +41,6 @@ import {
 const MIGRATIONS = "supabase/migrations";
 const MANIFEST = "scripts/security/applied-body-digests.txt";
 
-/**
- * Bodies past this are not digested. 256 KB rather than the 8 MB a single
- * apply permits: this walks the whole corpus at once, and an accidental
- * 8 MB × 900 would be a different program.
- */
-const MAX_DIGEST_BYTES = 256 * 1024;
 
 const argv = process.argv.slice(2);
 const flag = (name) => argv.includes(name);
@@ -52,11 +49,7 @@ const value = (name) => {
   return i >= 0 ? argv[i + 1] : undefined;
 };
 
-const LEDGER_QUERY =
-  `select distinct ${LEDGER_BODY_DIGEST_SQL} from supabase_migrations.schema_migrations ` +
-  `where statements is not null and array_length(statements, 1) > 0`;
-
-function readLedgerDigests() {
+async function readLedgerDigests() {
   const file = value("--digests");
   if (file) {
     // The PATH is deliberately not recorded: it is where one operator happened
@@ -64,18 +57,22 @@ function readLedgerDigests() {
     // provenance while carrying none.
     return { route: "--digests: a ledger read taken elsewhere", digests: parseDigests(readFileSync(file, "utf8")) };
   }
-  const url = process.env.SUPABASE_DB_URL;
-  if (!url) {
+  // The same reader `apply-migration.yml` uses for its preflight and its
+  // ledger record, so the re-check runs on whichever route the apply took —
+  // the prime applies over the Management API, where this used to be skipped.
+  const route = ledgerRoute(process.env);
+  if (!route) {
     console.error(
       `\n✗ No route to the ledger.\n\n` +
-        `  Set SUPABASE_DB_URL to this deployment's own database, or pass\n` +
+        `  Set SUPABASE_DB_URL to this deployment's own database, or\n` +
+        `  SUPABASE_ACCESS_TOKEN with SUPABASE_PROJECT_REF (or PROJECT_REF), or pass\n` +
         `  \`--digests <file>\` holding one sha256 per line read from\n` +
         `  supabase_migrations.schema_migrations elsewhere.\n`,
     );
     process.exit(1);
   }
-  const out = execFileSync("psql", [url, "-At", "-c", LEDGER_QUERY], { encoding: "utf8" });
-  return { route: "psql $SUPABASE_DB_URL", digests: parseDigests(out) };
+  const lines = await ledgerQuery(route)(LEDGER_DIGESTS_QUERY);
+  return { route: describeLedgerRoute(route), digests: parseDigests(lines.join("\n")) };
 }
 
 function parseDigests(text) {
@@ -102,7 +99,7 @@ function readManifest() {
   return recorded;
 }
 
-const { route, digests } = readLedgerDigests();
+const { route, digests } = await readLedgerDigests();
 if (digests.size === 0) {
   // A read that FAILED is not a ledger that is EMPTY. Writing a manifest from
   // nothing would delete every entry's evidence in one commit.

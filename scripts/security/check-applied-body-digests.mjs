@@ -34,8 +34,10 @@
 // and this check is pure: no network, no credential.
 //
 // The manifest cannot become fiction unnoticed: `apply-migration.yml` already
-// holds the credential and re-checks every recorded digest against the live
-// ledger each time a migration is applied.
+// holds the credential and, on the prime, re-checks every recorded digest
+// against the live ledger after each apply, on either route. Until 23 Sep 2026
+// that step was psql-only, and the prime applies over the Management API, so
+// it had never run there.
 //
 // ## The manifest is sticky, and that is the whole point
 //

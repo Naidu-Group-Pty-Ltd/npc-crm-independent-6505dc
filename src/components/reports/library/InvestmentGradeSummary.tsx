@@ -50,6 +50,10 @@ export function InvestmentGradeSummary({ grade, variant = 'full', sourceLabel = 
             </div>
             <p className="mt-1 line-clamp-1 text-sm font-semibold text-foreground">{status ? status.value : recommendation}</p>
             <p className="mt-0.5 line-clamp-1 text-[11px] text-muted-foreground">{status ? status.detail : (grade.partialLabel || 'Latest available property scoring assessment')}</p>
+            {/* The letter follows the score (eligibility 5.0.0); what the evidence can carry is said beside it. */}
+            {!status && grade.evidenceCaution && (
+              <p className="mt-0.5 line-clamp-1 text-[11px] text-muted-foreground" title={grade.evidenceCaution}>{grade.evidenceCaution}</p>
+            )}
             {sourceLabel && (
               <p className="mt-0.5 line-clamp-1 text-[11px] text-muted-foreground/80">From the {sourceLabel} assessment for this property</p>
             )}

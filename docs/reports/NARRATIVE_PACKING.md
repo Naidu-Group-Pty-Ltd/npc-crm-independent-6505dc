@@ -365,3 +365,84 @@ reading to know: `measure.mjs` flags the word "undefined" as a placeholder
 TOKEN wherever it appears — on the Q&A transcript it is the author's own
 prose ("an undefined or improvised installation"), which is why the runner
 judges TOKEN by eye rather than failing on it.
+
+## 8. The summary flows into the report, and a table is charged as the engine sets it (23 Sep 2026)
+
+The owner sent back the 23 Sep 2026 Compass for 97 Poole Road and 9 Hollow
+Street for its white space: pages 3 to 6 at 54%, 68%, 66% and 74% empty, and
+the body pages 15–37% empty at the foot. Five things were wrong, and each
+was measured on the pinned engine before it was changed.
+
+**The front matter was four pages laid out for the worst case.** Each
+summary element was a page of its own, every block placed at the `y` its
+DECLARED height allowed — a KPI ledger declaring six rows for a record that
+publishes two, a property table declaring eight guarded rows and drawing
+five — and the body waited on the page after the last of them. The tiers
+whose front matter flows (`frontMatterFlagsFor`, the one decision the
+projection and the geometry gate both read) now draw ONE `Executive summary`
+page: a `flow` page (`src/lib/reportTemplate/flowLayout.ts`) whose stamped
+blocks re-stack from what draws — a dropped block costs nothing, a block that
+draws fewer of its declared rows gives the difference back, a row that can
+wrap keeps a spare — with the report's body opening in the room left under
+them. The pre-pass (`narrativePlan`) sizes that first box from the same
+placement, so the box it packs is the box that prints, and a box under
+`MIN_SHARED_FIRST_LINES` is refused rather than opened with a heading and a
+line (`firstPageLines: 0` packs an empty opening). The typed pages stay for
+the composite, whose stored reports predate the tiers. Seed **v20** plus the
+active-master refresh.
+
+**The geometry gate had never drawn that page.** Its fixture did not carry
+the three flags that select it, so its 710 clean renders were of the old
+layout — the fixture-shorter-than-the-product trap again. The fixture now
+spreads `frontMatterFlagsFor(tier)` exactly as the projection publishes it.
+
+**The table charge was wrong both ways.** Measured over every table the ten
+S5 documents and the two stored reports draw (74 tables, 406 rows) at
+fourteen of the masters' geometries, on the four body faces: the old model
+charged long risk-register reasons up to two-thirds high, and charged a
+two-column ledger's wrapped labels ONE line where the engine set two — 35 of
+1,036 layouts below the engine, by as much as 3.7 lines, which is an
+overflow. `tableCharge` now does what WeasyPrint's `auto_table_layout` does
+(each column its min-content width plus the same fraction of its max − min),
+wraps each cell greedily at per-face CHARACTER-CLASS widths measured on the
+engine (`FACE_CLASS_ADVANCE_EM` — a digit is a fifth wider than an average
+prose character), and charges the head and the caption. With a 3% width
+margin: 3.8% high on whole tables and 4.3% on split chunks, and not one of
+4,536 layouts below the engine by half a line.
+
+**A chunk is a new table to the engine.** A table cut across pages is laid
+out chunk by chunk from each chunk's own rows, so its columns are not the
+whole table's; slicing the whole table's row charges was 9.7% high on 250
+chunks and still left 50 below the engine. `splitTableBlock` charges every
+chunk by calling `tableCharge` on its rows, and a later chunk that lands on a
+part-full page is cut again for the room that is there.
+
+**A chart set as a table was charged a constant.** `asTable` — the table a
+chart that cannot plot everything becomes — charged `rows + 2` lines under a
+geometry, and a five-row one with a caption drew ten where it was charged
+seven: text set through the foot of a page packed to its budget, found only
+because the holdback came down.
+
+**The holdback is 2%, and it was judged on the wrong face.** The 4% it
+replaced was set on renders drawn in DejaVu Sans, because Noto Serif, Lato
+and Roboto were not installed where the measuring was done — every master
+with one of those bodies was measured in a wider face than it prints in.
+**Measure with the container's faces** (`fonts-noto-core`, `fonts-lato`,
+`fonts-roboto` and Inter, per `weasyprint-service/Dockerfile`): `fc-match
+"Noto Serif"` must answer Noto Serif before any number here is trusted. With
+the real faces, the prose charge was confirmed rather than changed — 220
+real report paragraphs over thirteen geometries, 0.2–2% of lines off — and a
+paragraph now splits wherever two lines can stand on each side of the cut
+(`PARAGRAPH_SPLIT_MIN_ROOM` 2.5, `PARAGRAPH_SPLIT_MIN_LINES` 4).
+
+Measured after, Board Pack Brief (Noto Serif 8.25/505): 18 Annabelle
+Crescent 30 → 21 pages and 262 Pallas Street 20 → 13, the summary page ~90%
+full and flowing into the verdict, body pages ending 658–733pt against a box
+bottom of 767; and on eight masters across all four faces, no page's ink
+below its box. What still leaves white is where a page MUST break — a
+heading kept with its first lines, a lead-in kept with its list, and a risk
+register whose rows are ten to thirteen lines tall each.
+
+Unverified until a production render: the container ships Debian bookworm's
+`fonts-inter` (3.19); Inter was measured locally at 4.001. The 3% width
+margin exists partly for that.

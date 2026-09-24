@@ -30,7 +30,10 @@ import { chromium, type Browser, type Page } from 'playwright';
 import { renderTemplateToHtml } from '../../../src/lib/reportTemplate/htmlRenderer';
 import { evalConditional } from '../../../src/lib/reportTemplate/bindingResolver';
 import { SAMPLE_REPORT_DATA } from '../../../src/lib/templateLibrary/sampleReportData';
-import { investmentGeometryDocuments } from '../../../src/lib/templateLibrary/narrativeGeometryFixture';
+import {
+  investmentGeometryDocuments,
+  investmentOwnerOccupierGeometryDocuments,
+} from '../../../src/lib/templateLibrary/narrativeGeometryFixture';
 import {
   pagesForDocument,
 } from '../../../supabase/functions/_shared/reports/investment/tierPageSequence.pure';
@@ -580,7 +583,7 @@ function documentVariants(reportFormat: string): Variant[] {
       data: withLongestAddress(SAMPLE_REPORT_DATA as unknown as Record<string, unknown>),
     }];
   }
-  return investmentGeometryDocuments()
+  return [...investmentGeometryDocuments(), ...investmentOwnerOccupierGeometryDocuments()]
     .map((d) => ({ label: d.tier, data: withLongestAddress(d.data) }));
 }
 

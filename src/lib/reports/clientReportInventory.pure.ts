@@ -31,9 +31,18 @@
  * row that looks healthy in every list and fails on the client's click. So the
  * reference is parsed BEFORE it is offered, and one that cannot be resolved is
  * declared unavailable rather than published and discovered later.
+ *
+ * A sixth source, Commercial & Industrial Capacity Reports, came later and
+ * arrives differently: its ledgers admit the service role only, so it is read
+ * through `manage-ci-assessments` (`client_documents`), which hands back the
+ * documents drawn FOR this client from both of the format's render routes. Its
+ * files download through that function too — never through `secure-storage`,
+ * which holds no binding for them — so it carries no `fileUrl`, and it is not
+ * offered for the portal (see `publishVerdict`).
  */
 
 import { parseStorageRef, isExternalUrl } from './storageRef';
+import type { ListedDocument } from '../ciAssessment/issuedDocuments';
 
 export type ClientReportKind =
   | 'formara'
@@ -41,14 +50,16 @@ export type ClientReportKind =
   | 'property'
   | 'investment'
   | 'borrowing'
-  | 'published';
+  | 'published'
+  | 'commercial';
 
 export type ClientReportSource =
   | 'file'
   | 'investment_report'
   | 'portfolio_report'
   | 'borrowing_assessment'
-  | 'portal_report';
+  | 'portal_report'
+  | 'ci_document';
 
 export interface UnifiedReport {
   id: string;
@@ -62,6 +73,8 @@ export interface UnifiedReport {
   healthScore?: number | null;
   overallHealth?: string | null;
   portfolioValue?: number | null;
+  /** A Commercial & Industrial document: what its download asks the server for. */
+  ciDocument?: ListedDocument;
 }
 
 export interface InventorySources {
@@ -70,6 +83,8 @@ export interface InventorySources {
   portfolioReports: any[];
   bcAssessments: any[];
   portalReports: any[];
+  /** Commercial & Industrial documents drawn for this client. Optional: a workspace without the module has none. */
+  ciDocuments?: ListedDocument[];
 }
 
 /** `dd MMM yyyy`, the shape the Reports tab has always used for a portfolio row. */
@@ -169,6 +184,21 @@ export function buildClientReportInventory(
     });
   });
 
+  // Last, and defaulted: the five sources above keep their order.
+  (sources.ciDocuments ?? []).forEach((doc) => {
+    reports.push({
+      // Two ledgers, each with its own ids: the ledger is part of the identity.
+      id: `ci-${doc.ledger}-${doc.id}`,
+      type: 'commercial',
+      name: `Commercial & Industrial Capacity – ${doc.assessmentTitle}`,
+      generatedAt: doc.createdAt,
+      status: doc.state === 'ready' ? 'completed' : doc.state === 'in_progress' ? 'pending' : 'failed',
+      fileUrl: null,
+      source: 'ci_document',
+      ciDocument: doc,
+    });
+  });
+
   return reports;
 }
 
@@ -253,6 +283,21 @@ export function publishVerdict(
       ...base,
       readiness: 'unavailable',
       reason: 'Already on the portal.',
+      storagePath: null,
+      bucket: null,
+    };
+  }
+
+  // Stored, and deliberately not offered. Its file is served by the
+  // Commercial & Industrial function under that module's access rule, and the
+  // portal has no route to it — publishing would point a client at a file they
+  // could not open. Checked before the "no file" branch below, whose words
+  // ("nothing has been generated") would be false here.
+  if (report.source === 'ci_document') {
+    return {
+      ...base,
+      readiness: 'unavailable',
+      reason: 'Commercial & Industrial reports are downloaded from here and sent directly; they are not published to the portal.',
       storagePath: null,
       bucket: null,
     };
