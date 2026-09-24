@@ -552,6 +552,24 @@ jobs:
       - name: A migration version names exactly one file
         run: node scripts/security/check-migration-version-collisions.mjs
 
+      # A migration declared withdrawn in MIGRATION_WITHDRAWN.json stays in the
+      # tree as history, and three readers act on the declaration: drift reports
+      # it as WITHDRAWN instead of NOT APPLIED, "Apply a migration" refuses it,
+      # and Mission Control stops counting it as a hole that holds back every
+      # later file. An entry that names nothing checkable would silence all three.
+      - name: A withdrawn migration names what stays absent
+        run: node scripts/security/check-migration-withdrawals.mjs
+
+      # The migration ledger is written by whatever APPLIES a migration and by
+      # nothing else. A migration runs on every database it is delivered to, so
+      # one that edits the ledger edits rows it does not own: 20260921100000
+      # deleted five rows to make the prime's record match the prime, and on the
+      # clones the same DELETE met four different ledgers and left the Quick
+      # Send columns present on two and absent on two, decided by delivery
+      # order rather than by anyone.
+      - name: A migration never writes the migration ledger
+        run: node scripts/security/check-migration-ledger-writes.mjs
+
       # An applied migration's BYTES are what Mission Control matches when it
       # decides whether a clone may be sent a file, so editing one withholds it
       # from the whole fleet along with everything the dependency order puts
@@ -593,6 +611,23 @@ jobs:
         env:
           BACKEND_DEPLOYED_BY: ${{ vars.BACKEND_DEPLOYED_BY }}
         run: npm run migrations:index:check
+
+      # Mission Control reads a migration's dependency facts from its body, and
+      # reads no body over 256 KiB — so every template-library seed was a file
+      # that might create anything, and held everything behind it on every
+      # clone. The skeleton manifest publishes each seed's statements without
+      # its rows, pinned to the file's git blob, and Mission Control reads the
+      # facts from that. Generated, never hand-edited; a stale entry is
+      # ignored there, and caught here.
+      #
+      # It stands itself down where Mission Control owns the backend, on the
+      # same marker as the index above and for the same reason: a clone cannot
+      # hold the seeds it describes. `check-gate-env-wiring.mjs` fails if this
+      # mapping goes.
+      - name: The migration seed skeletons are current
+        env:
+          BACKEND_DEPLOYED_BY: ${{ vars.BACKEND_DEPLOYED_BY }}
+        run: npm run migrations:seed-skeletons:check
 
       # WP-18: 329 catch blocks across 275 functions returned the caught error
       # to the caller. A Postgres message names tables, columns and constraints;
@@ -990,6 +1025,118 @@ jobs:
           pdfinfo /tmp/cc.pdf | grep -E '^Pages: +17$' || {
             echo "unexpected page count:"; pdfinfo /tmp/cc.pdf | grep Pages; exit 1;
           }
+
+  # The geometry gate, which nothing ran.
+  #
+  # `templates:compass:qa` renders all 500 masters as real documents in a real
+  # Chromium and measures every block against the page that contains it, and
+  # every text node against every other. `CLAUDE.md` names it for the class it
+  # catches: "a declared block height is a promise the renderer keeps only if
+  # the text is as short as the author assumed, and a block that sets taller
+  # does not overflow the page, it prints over the next one ... `npm run
+  # templates:compass:qa` fails on the class."
+  #
+  # That class has reached a client. The verdict heading printed THROUGH the
+  # KPI band, over `$1,975,000` and `$850`, on a delivered Compass. Until this
+  # job existed the gate that catches it ran when somebody remembered to run
+  # it -- no workflow invoked any `templates:*` script at all, checked across
+  # every file in this directory. The catalogue SCHEMA was covered by vitest in
+  # `verify`; the rendered GEOMETRY was covered by nothing.
+  #
+  # It is its own job rather than a step in `verify` because it is ~15 minutes
+  # of browser against that job's few, and jobs run in parallel: as a step it
+  # would put every other check behind it.
+  #
+  # It runs unconditionally rather than behind a path filter. The surface it
+  # depends on is wide -- the masters, the block builders, the resolvers, the
+  # HTML renderer, the design tokens, the binding projection, the section
+  # registry -- and this repository has already paid for a guess at that kind
+  # of list once: the deploy workflow built its changed-function set from
+  # `supabase/functions/**` alone, so a config-only edit deployed nothing and
+  # a `verify_jwt` declaration and production came to disagree.
+  template-geometry:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Install Chromium
+        run: npx playwright install --with-deps chromium
+
+      # The faces the render container sets type in, installed the same two
+      # ways it installs them: the Debian packages the Dockerfile names, and
+      # the files this repository ships. Without them Chromium falls back to
+      # whatever fontconfig picks and the geometry measured is a document
+      # nobody receives -- which is exactly what happened on the machine this
+      # gate was written on, where the Google Fonts stylesheet the masters
+      # declare fails behind an intercepting proxy and `document.fonts` stays
+      # empty. `assertDeclaredFacesResolve` refuses such a run; this step is
+      # what makes CI able to pass it without reaching the network at all,
+      # which is also the rule `RENDER_BOUNDARY.md` holds for print.
+      - name: Install the render container's typefaces
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            fonts-inter fonts-roboto fonts-lato fonts-noto-core
+          mkdir -p ~/.local/share/fonts
+          cp weasyprint-service/fonts/*.ttf ~/.local/share/fonts/
+          fc-cache -f
+
+      # Fails on three things: a block whose bottom is past its page box, a
+      # text node that overlaps another, and -- since 21 Sep 2026 -- debris in
+      # the rendered TEXT: an unresolved binding, a label clipped to an
+      # ellipsis, a placeholder word, or a database identifier. The first two
+      # ask where ink SITS; the third asks what it SAYS, and three of its four
+      # classes have reached a client document.
+      - name: Every master renders as a document (geometry and content)
+        run: npm run templates:compass:qa
+
+      # The gate above renders the template DEFINITIONS. What a deployment
+      # applies is the seed migration, and nothing compared the two -- so the
+      # generator could be run or not run and the repository looked identical
+      # either way. Measured on this branch: seed v19 was written, then four
+      # commits changed what the definitions produce, and the migration still
+      # carried the old geometry for 301 of 543 templates. A fix that reaches
+      # only the definitions reaches no document at all, which is how seed v18
+      # came to merge without landing.
+      #
+      # `always()` so a stale seed and a geometry failure are both reported by
+      # one run rather than the first hiding the second.
+      #
+      # The currency half stands itself down where Mission Control owns the
+      # backend, on the same marker as the object index and the seed skeletons:
+      # a seed past what a cascade carries in one file never reaches a clone, so
+      # the comparison said "never written" about a seed the prime wrote, and
+      # Mission Control merges no cascade pull request with a red check. Every
+      # template is still validated on every repository.
+      # `check-gate-env-wiring.mjs` fails if this mapping goes.
+      - name: The seed migration is what the template definitions produce
+        if: always()
+        env:
+          BACKEND_DEPLOYED_BY: ${{ vars.BACKEND_DEPLOYED_BY }}
+        run: npm run templates:library:seed:check
+
+      # The renders themselves, when it fails: a reviewer should be able to
+      # look at the page rather than read a coordinate.
+      - name: Upload the renders
+        if: failure()
+        uses: actions/upload-artifact@v7
+        with:
+          name: template-geometry-renders
+          path: audit-output/investment-compass/
+          retention-days: 7
+          if-no-files-found: ignore
 
   # Security Remediation Phase 11 (SUPPLY-001): supply-chain visibility.
   # Fails on unaccepted high/critical dependency vulnerabilities and publishes a

@@ -642,7 +642,6 @@
     "ghl-conversations-cron->sync-ghl-conversations",
     "ghl-legacy-wipe-orchestrator->ghl-legacy-wipe-worker",
     "ghl-legacy-wipe-worker->ghl-legacy-wipe-worker",
-    "location-intelligence-service->public-transport-service",
     "manage-investment-reports->financial-calculator-service",
     "market-updates-ingest->market-updates-digest",
     "migration-job-control->migration-dispatcher",
