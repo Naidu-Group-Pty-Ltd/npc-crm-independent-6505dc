@@ -100,7 +100,7 @@ export async function getSeatRole(slug: string): Promise<CatalogRole | null> {
  * Catalog prices are TAX-INCLUSIVE — the figure already contains GST.
  *
  * Cents are kept whenever they are non-zero. Rounding to whole dollars hid
- * real amounts: a $9,169.20 annual plan rendered as $9,169, and every GST
+ * real amounts: an $8,659.80 annual plan rendered as $8,660, and every GST
  * component (a $999 plan contains $90.82) disappeared entirely.
  */
 export function formatPriceRange(minCents: number, maxCents: number, currency = "AUD"): string {
