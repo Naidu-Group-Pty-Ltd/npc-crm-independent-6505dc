@@ -10,6 +10,11 @@ export interface InvestmentReport {
   report_content: string;
   sources_content?: string | null;
   created_at: string;
+  updated_at?: string | null;
+  variant_generated_at?: string | null;
+  /** When this report was generated — see `reportGeneratedAt.pure.ts`. */
+  generated_at?: string | null;
+  generated_at_basis?: 'generation' | 'activity' | 'created' | null;
   current_version?: number | null;
   status?: string;
   manual_overrides?: any;

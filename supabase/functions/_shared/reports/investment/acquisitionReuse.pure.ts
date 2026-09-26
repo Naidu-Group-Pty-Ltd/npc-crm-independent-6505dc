@@ -35,6 +35,9 @@
  * property.
  */
 
+/** How finely a planning answer's point was placed — the geocoder's own four words. */
+type PlanningPrecision = 'address' | 'street' | 'locality' | 'postcode';
+
 /** What a stored acquisition result must carry to be reusable. */
 export interface AcquisitionStamp {
   /** The address the result was acquired for, as submitted. */
@@ -105,7 +108,11 @@ export type ReuseDecision =
         | 'schema_changed'
         | 'expired'
         | 'previous_attempt_failed'
-        | 'no_stored_value';
+        | 'no_stored_value'
+        | 'point_not_recorded'
+        | 'point_changed'
+        | 'answer_version_not_recorded'
+        | 'answer_version_changed';
     };
 
 function normaliseAddress(value: string): string {
@@ -277,6 +284,123 @@ export const REUSABLE_ACQUISITIONS: Record<string, ReusableDependency> = {
   economics:       { producer: 'economics',       sensitivity: 'geography', reuseClass: 'market' },
 };
 
+/**
+ * Does a stored planning answer record that it was read at the property or on
+ * its street? `pointBasis` rides on the answer from the generator's own
+ * request (`planningCoordinate.pure.ts` decides the point).
+ */
+export function planningPointIsRecorded(value: unknown): boolean {
+  if (!value || typeof value !== 'object') return false;
+  const basis = (value as Record<string, unknown>).pointBasis;
+  if (!basis || typeof basis !== 'object') return false;
+  const precision = (basis as Record<string, unknown>).precision;
+  return precision === 'address' || precision === 'street';
+}
+
+/**
+ * The planning answer version a stored answer was read under, or null where
+ * it records none.
+ *
+ * `planning-data-service` keys its own cache on `PLANNING_ANSWER_VERSION`, so
+ * a deployment that widens the answer stops serving the narrow rows. This
+ * reuse is a second cache in front of that one, and it carried no version: on
+ * 25 Sep 2026 the regeneration of 60 Lawley Street, Spalding WA adopted the
+ * planning answer its own earlier generation had read at 01:31 UTC, under
+ * `c6`. `c7`, which reads Western Australia's bush fire prone areas, had
+ * shipped in between. So the service was never asked, and the bushfire
+ * register that answers at that point never reached the regenerated
+ * document. The thirty-day cadastral shelf life would have kept that answer
+ * for a month.
+ *
+ * The generator stamps the version on the answer it stores and hands the
+ * current one to `planReuse`. Both the stamp and the service's cache key read
+ * `PLANNING_ANSWER_VERSION`, and both deploy with the shared module. It is
+ * passed in rather than imported because a module here imports nothing from
+ * another domain (`investmentSourceOfTruth.spec.ts`).
+ */
+export function planningAnswerVersionOf(value: unknown): string | null {
+  if (!value || typeof value !== 'object') return null;
+  const version = (value as Record<string, unknown>).answerVersion;
+  return typeof version === 'string' && version.trim() ? version.trim() : null;
+}
+
+/** A point a planning answer was, or is about to be, read at. */
+export interface PlanningPoint {
+  precision: PlanningPrecision | null;
+  provider: string | null;
+  /** Recorded from 25 Sep 2026; absent on every answer stored before. */
+  lat: number | null;
+  lng: number | null;
+}
+
+const finiteOrNull = (v: unknown): number | null => (typeof v === 'number' && Number.isFinite(v) ? v : null);
+
+/** The point a stored planning answer records it was read at. Total. */
+export function planningPointOf(value: unknown): PlanningPoint {
+  const basis = value && typeof value === 'object'
+    ? (value as Record<string, unknown>).pointBasis as Record<string, unknown> | undefined
+    : undefined;
+  const b = basis && typeof basis === 'object' ? basis : {};
+  const precision = b.precision;
+  const provider = b.provider;
+  return {
+    precision: precision === 'address' || precision === 'street' || precision === 'locality' || precision === 'postcode'
+      ? precision
+      : null,
+    provider: typeof provider === 'string' && provider.trim() ? provider.trim() : null,
+    lat: finiteOrNull(b.lat),
+    lng: finiteOrNull(b.lng),
+  };
+}
+
+/**
+ * Was a stored planning answer read at the point THIS run is working from?
+ *
+ * A planning answer is a reading at a point, and the point can move between
+ * generations: the geocoder puts a remembered street answer to the address
+ * register (`geocodeChainPolicy.pure.ts`, rule 4) and the location enrichment
+ * is placed again (`streetPointIsStale`). An answer kept for its thirty-day
+ * cadastral life across that move would leave a report measuring its
+ * amenities at the property and reading its zone on the street — measured on
+ * 25 Sep 2026, `60 Lawley Street, Spalding` read its planning at
+ * OpenStreetMap's street point while the register held the property's own.
+ *
+ * So the point is compared, not the clock: same precision, same provider,
+ * and — where both record one — the same coordinate. Nothing recorded is not
+ * a match.
+ */
+export function planningAnswerFitsPoint(
+  stored: unknown,
+  current: { precision: string | null; provider: string | null; lat?: number | null; lng?: number | null },
+): boolean {
+  const recorded = planningPointOf(stored);
+  if (recorded.precision === null || recorded.precision !== current.precision) return false;
+  if (recorded.provider !== (current.provider ?? null)) return false;
+  const lat = finiteOrNull(current.lat);
+  const lng = finiteOrNull(current.lng);
+  if (recorded.lat !== null && recorded.lng !== null && lat !== null && lng !== null) {
+    return Math.abs(recorded.lat - lat) < 1e-6 && Math.abs(recorded.lng - lng) < 1e-6;
+  }
+  return true;
+}
+
+/**
+ * Take back a reuse `planReuse` admitted, once the run learns it does not fit.
+ *
+ * The provenance ledger is written from the plan LAST, and is last-write-wins,
+ * so a withdrawn entry left standing would record "reused" over the fresh
+ * answer the run then fetched.
+ */
+export function withdrawReuse(plan: ReusePlan, key: string, reason: 'point_changed'): ReusePlan {
+  const values = { ...plan.values };
+  delete values[key];
+  return {
+    ...plan,
+    values,
+    entries: plan.entries.map((e) => (e.key === key ? { ...e, decision: { reuse: false, reason } } : e)),
+  };
+}
+
 /** Compose the stamp a run writes beside what it acquired. */
 export function acquisitionStamp(subject: AcquisitionSubject, nowIso: string): AcquisitionStamp {
   return {
@@ -316,8 +440,14 @@ export function planReuse(args: {
   storedPacket: Record<string, unknown> | null | undefined;
   subject: AcquisitionSubject;
   nowMs: number;
+  /**
+   * The answer version the planning service answers under now
+   * (`PLANNING_ANSWER_VERSION`). Required: a caller that could omit it would
+   * reuse every stored answer whatever shape it had.
+   */
+  planningAnswerVersion: string;
 }): ReusePlan {
-  const { storedPacket, subject, nowMs } = args;
+  const { storedPacket, subject, nowMs, planningAnswerVersion } = args;
   const rawStamp = storedPacket?.[ACQUISITION_STAMP_KEY];
   const stamp = (rawStamp && typeof rawStamp === 'object')
     ? (rawStamp as AcquisitionStamp)
@@ -328,7 +458,7 @@ export function planReuse(args: {
 
   for (const [key, policy] of Object.entries(REUSABLE_ACQUISITIONS)) {
     const storedValue = storedPacket?.[key];
-    const decision = assessReuse({
+    let decision = assessReuse({
       storedValue,
       stamp,
       subject,
@@ -336,6 +466,22 @@ export function planReuse(args: {
       currentSchemaVersion: ACQUISITION_SCHEMA_VERSION,
       nowMs,
     });
+    // A planning answer is a reading AT A POINT, and it is reusable only where
+    // it records that the point was the property or its street. Every answer
+    // stored before 24 Sep 2026 records nothing — and on that day two were
+    // read at the centre of a suburb and would otherwise have been served for
+    // thirty days (`cadastral`) on every regeneration.
+    if (decision.reuse && key === 'planningData' && !planningPointIsRecorded(storedValue)) {
+      decision = { reuse: false, reason: 'point_not_recorded' };
+    }
+    // …and it is an answer of a particular SHAPE. One read under an earlier
+    // `PLANNING_ANSWER_VERSION` lacks what the current version asks for, so it
+    // is asked again once, exactly as the service's own cache would.
+    if (decision.reuse && key === 'planningData') {
+      const version = planningAnswerVersionOf(storedValue);
+      if (version === null) decision = { reuse: false, reason: 'answer_version_not_recorded' };
+      else if (version !== planningAnswerVersion) decision = { reuse: false, reason: 'answer_version_changed' };
+    }
     entries.push({ key, producer: policy.producer, decision });
     if (decision.reuse) values[key] = storedValue;
   }

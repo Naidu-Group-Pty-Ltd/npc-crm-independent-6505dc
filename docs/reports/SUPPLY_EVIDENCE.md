@@ -356,7 +356,8 @@ shape of the parse, not weighed, and CI measures transfer from a runner. A
 green run proves the download fits the constraint the check can see.
 
 **And nothing writes to `market_building_approvals` on any deployment.**
-Until something does, every report reads **Not searched.** and is forbidden
+Until something does, every report reads **Not covered by this report.**
+(until 26 Sep 2026, **Not searched.**) and is forbidden
 from stating a figure, which is `CLONE_PROVISIONING_GAPS.md`'s rule applied
 before the gap exists.
 
@@ -509,7 +510,7 @@ select — because a DELETE whose WHERE clause re-implements
 `grainOfAreaCode` is the two-ends-drift defect this programme records against
 `riskRegisterInstruction` and `strategySectionRules`. The register is a pure
 projection of a public download, so clearing and reloading costs nothing but a
-reload, and the empty interval is the designed degradation: `Not searched`,
+reload, and the empty interval is the designed degradation: `Not covered by this report`,
 with every report forbidden from stating a figure. **It must not be applied
 before the corrected parser is deployed** — against the old one the nightly
 reload rewrites exactly what it deleted, and the register ends where it

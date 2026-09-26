@@ -28,8 +28,9 @@ export function InternalToolingGuard({ children }: { children: React.ReactNode }
         <AlertTitle>Internal operations tooling</AlertTitle>
         <AlertDescription>
           <p>
-            This page is part of NPC Services' own operations and is not available on this
-            workspace. Nothing here is missing or misconfigured, and there is nothing to enable.
+            This page is internal operations tooling for another deployment and is not available
+            on this workspace. Nothing here is missing or misconfigured, and there is nothing to
+            enable.
           </p>
         </AlertDescription>
       </Alert>

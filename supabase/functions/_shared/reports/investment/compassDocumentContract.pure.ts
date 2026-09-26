@@ -113,24 +113,25 @@ state, and a confident sentence is not evidence.**
 
 - Use only the figures, readings and registers supplied to you in this
   prompt. A live web search may give you context and a name; it does not
-  give you a retrieval, and anything found that way must be attributed to
-  the source that published it, in the sentence that uses it.
+  give you evidence this report holds, and anything found that way must be
+  attributed to the source that published it, in the sentence that uses it.
 - Where a figure was not supplied, **omit the sentence that would have
   carried it**. Do not estimate it, do not give a typical range, do not say
   it is unavailable, and never write "N/A", "TBD", "[XX]" or any bracketed
   placeholder. A reader who is not told a number has lost nothing; a reader
   who is told an invented one has been misled.
 - Where a check has NOT been made, say so as a fact about the check and
-  never as a fact about the property. "No council overlay mapping was
-  retrieved for this lot" is honest. "The property carries no overlays" is a
-  finding nobody made.
+  never as a fact about the property, and say how the client makes it.
+  "Council overlay mapping has not been confirmed for this lot; the council's
+  planning certificate confirms it" is honest. "The property carries no
+  overlays" is a finding nobody made.
 - **An absence is not a clearance.** This is the single most expensive error
   this report can make. Not screened is not clear. Not mapped is not safe.
-  Not retrieved is not absent.
+  Not checked is not absent.
 - Distinguish the kinds of absence, because a reader acts on them
-  differently: *not served* (no such dataset exists for this state), *not
-  retrieved* (it exists and this report did not read it), *checked and
-  nothing found at this point*, and *the register could not be reached*.
+  differently: *not published* (no such source exists for this state), *not
+  covered* (it exists and this report does not include it), *checked and
+  nothing found at the property*, and *the source could not be consulted*.
 
 ## WHAT DEPTH MEANS HERE
 
@@ -138,10 +139,10 @@ Depth is not length, and it is not more adjectives. A section is deep when a
 reader finishes it knowing something they could act on that they did not
 know before. Three things produce that, in order of value:
 
-  1. **A retrieved fact they could not easily get themselves** — the
+  1. **A confirmed fact they could not easily get themselves** — the
      instrument and clause that sets the height limit on this lot, the
-     school that is actually closest and how far, the register that says a
-     regional plan designates this area.
+     school that is actually closest and how far, the published plan that
+     designates this area.
   2. **What that fact obliges, limits or signals**, stated plainly and
      without overstatement.
   3. **What they should do about it before they exchange** — the document to
@@ -159,7 +160,7 @@ announcing that you are about to.
 > Zoning: General Residential. The property is zoned for residential use,
 > which supports long-term investment value.
 
-**Substantial — the same fact, retrieved, explained and actionable:**
+**Substantial — the same fact, sourced, explained and actionable:**
 
 > The lot sits in the R1 General Residential zone under the Muswellbrook
 > Local Environmental Plan 2009, with a maximum building height of 8.5 m
@@ -177,7 +178,7 @@ announcing that you are about to.
 > Minimum lot size 450 m², site coverage 50%, setbacks 4.5 m front and 1.5 m
 > side, BAL-19 construction required, adding 5-8% to build cost.
 
-Not one of those numbers was retrieved. Every one of them is plausible.
+Not one of those numbers came from a source. Every one of them is plausible.
 That is precisely why it is the dangerous kind of writing: the reader cannot
 tell it from the paragraph above, and they will take it to a builder.
 

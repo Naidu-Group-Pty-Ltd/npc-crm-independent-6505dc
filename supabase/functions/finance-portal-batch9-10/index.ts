@@ -23,6 +23,7 @@ import { createCorsHeaders } from '../_shared/auth.ts';
 import { internalError } from '../_shared/errorResponse.ts';
 import { extractFinanceCredential } from '../_shared/financeSessionToken.ts';
 import { enforceCsrf, csrfDenied } from '../_shared/csrfGuard.ts';
+import { loadWorkspaceIdentity, partnerPingHeading } from '../_shared/workspaceIdentity.ts';
 
 const jsonWithHeaders = (d: unknown, responseCorsHeaders: Record<string, string>, s = 200) =>
   new Response(JSON.stringify(d), {
@@ -487,7 +488,7 @@ Deno.serve(async (req) => {
           sender_type: 'finance_partner',
           finance_user_id: portalUser.id,
           sender_name: partnerName,
-          body: `[NPC ping — PF ${fid.slice(0, 8)}] ${messageText}`,
+          body: `${partnerPingHeading(await loadWorkspaceIdentity({ readPrimeName: false }), fid.slice(0, 8))} ${messageText}`,
         })
         .select()
         .single();

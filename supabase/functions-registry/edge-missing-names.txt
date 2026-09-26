@@ -31,10 +31,6 @@ supabase/functions/finance-portal-batch6/index.ts::canAccessPurchaseFileResource
 supabase/functions/finance-portal-batch9-10/index.ts::hasFinancePortalPermission
 supabase/functions/finance-portal-briefing-runner/index.ts::CRON_SECRET
 supabase/functions/finance-portal-briefing-runner/index.ts::verifyRequiredCronSecret
-supabase/functions/hero-image-studio/index.ts::MAX_REQUEST_BYTES
-supabase/functions/hero-image-studio/index.ts::enforceActorQuota
-supabase/functions/hero-image-studio/index.ts::enforceRawBodyLimit
-supabase/functions/hero-image-studio/index.ts::validateImageUpload
 supabase/functions/solicitor-portal-comms/index.ts::assignedClientIds
 supabase/functions/solicitor-portal-comms/index.ts::resolveClientPermissions
 supabase/functions/solicitor-portal-compliance/index.ts::assignedClientIds

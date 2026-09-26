@@ -48,6 +48,9 @@ export const OVERRIDE_FIELD_PATHS: Record<string, string> = {
   landPrice: 'initialCosts.landPrice',
   landSizeSqm: 'propertySpecs.landSizeSqm',
   buildSizeSqm: 'propertySpecs.buildSizeSqm',
+  bedrooms: 'propertySpecs.bedrooms',
+  bathrooms: 'propertySpecs.bathrooms',
+  yearBuilt: 'propertySpecs.yearBuilt',
   // Cash flow and loan fields
   marketValueNow: 'cashFlow.marketValueNow',
   loanAmount: 'cashFlow.loanAmount',

@@ -34,7 +34,7 @@ export const DOCUMENT_IDENTITY: Record<string, { title: string; standfirst: stri
   },
   strategic: {
     title: 'Due Diligence Report',
-    standfirst: 'What must be verified before contract: the property and location risks at depth, and the verification register.',
+    standfirst: 'What must be verified before contract: the property and location risks at depth, and the checks that settle them.',
   },
 };
 

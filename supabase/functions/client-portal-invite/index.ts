@@ -2,7 +2,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.55.0'
 import { hashPassword } from "../_shared/password.ts"
 import { createCorsHeaders, verifyAuth } from "../_shared/auth.ts"
 import { enforceCsrf, csrfDenied } from "../_shared/csrfGuard.ts"
-import { getBrandConfig } from "../_shared/brand-config.ts"
+import { escapeHtml, getEmailIdentity, linkOrigin, PRIME_APP_ORIGIN, resendAddressing } from "../_shared/emailIdentity.ts"
 import { meteredFetch } from "../_shared/meteredFetch.ts";
 
 Deno.serve(async (req) => {
@@ -21,11 +21,13 @@ Deno.serve(async (req) => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     const resendApiKey = Deno.env.get('RESEND_API_KEY')
+    // The origin the PRIME uses: a configured APP_URL that is not a preview or
+    // a localhost, else its own application. A clone never uses it: its
+    // invitation opens the clone (see `linkOrigin` under SEND INVITE).
     const configuredAppUrl = Deno.env.get('APP_URL')?.trim()
-    const fallbackAppUrl = 'https://npc-property-dashbord.lovable.app'
-    const appUrl = configuredAppUrl && !configuredAppUrl.includes('preview--') && !configuredAppUrl.includes('localhost')
+    const primeAppUrl = configuredAppUrl && !configuredAppUrl.includes('preview--') && !configuredAppUrl.includes('localhost')
       ? configuredAppUrl.replace(/\/+$/, '')
-      : fallbackAppUrl
+      : PRIME_APP_ORIGIN
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
     const body = await req.json()
@@ -102,6 +104,22 @@ Deno.serve(async (req) => {
     }
 
     // === SEND INVITE ===
+    // Which application the invitation opens, and who it is from, decided
+    // BEFORE anything is written. A clone's link used to fall back to the
+    // prime's own application, where the token means nothing. With no origin
+    // provisioned there is no safe default, so nothing is created.
+    const identity = await getEmailIdentity(supabase)
+    const appUrl = linkOrigin(identity, primeAppUrl)
+    if (!appUrl) {
+      console.error('[client-portal-invite] No application URL is provisioned for this deployment; refusing to build an invite link')
+      return new Response(
+        JSON.stringify({
+          error: "Could not determine this workspace's application URL (PUBLIC_APP_URL / APP_URL). Nothing was created and no email was sent.",
+        }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
     const inputEmail = typeof email === 'string' ? email.trim().toLowerCase() : ''
 
     if (!client_id && !inputEmail) {
@@ -247,7 +265,7 @@ Deno.serve(async (req) => {
 
     // Send invite email via Resend
     if (resendApiKey) {
-      const brand = await getBrandConfig();
+      const orgName = escapeHtml(identity.organisationName)
       try {
         const emailRes = await meteredFetch('https://api.resend.com/emails', {
           method: 'POST',
@@ -256,9 +274,9 @@ Deno.serve(async (req) => {
             'Authorization': `Bearer ${resendApiKey}`,
           },
           body: JSON.stringify({
-            from: brand.fromHeader,
+            ...resendAddressing(identity),
             to: [normalizedEmail],
-            subject: `You're Invited to the Client Portal - ${brand.companyName}`,
+            subject: `You're Invited to the Client Portal - ${identity.organisationName}`,
             html: `
               <div style="font-family: Arial, sans-serif; max-width: 560px; margin: 0 auto; padding: 40px 24px;">
                 <div style="text-align: center; margin-bottom: 32px;">
@@ -266,7 +284,7 @@ Deno.serve(async (req) => {
                 </div>
                 <p style="color: #555; font-size: 16px; line-height: 1.6;">Hi ${clientName},</p>
                 <p style="color: #555; font-size: 16px; line-height: 1.6;">
-                  You've been invited to access your personal Client Portal at ${brand.companyName}. 
+                  You've been invited to access your personal Client Portal at ${orgName}. 
                   Here you can view your property portfolio, financial details, correspondence, and more.
                 </p>
                 <div style="text-align: center; margin: 32px 0;">
@@ -281,7 +299,7 @@ Deno.serve(async (req) => {
                 </p>
                 <hr style="border: none; border-top: 1px solid #eee; margin: 32px 0;" />
                 <p style="color: #aaa; font-size: 12px; text-align: center;">
-                  ${brand.companyName} — Property Investment Advisory
+                  ${orgName}
                 </p>
               </div>
             `,

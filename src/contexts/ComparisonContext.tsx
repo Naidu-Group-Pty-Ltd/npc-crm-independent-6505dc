@@ -6,6 +6,8 @@ export interface SelectedReport {
   id: string;
   property_address: string;
   created_at: string;
+  /** When the report was generated — a regeneration reuses the row, so `created_at` never moves. */
+  generated_at?: string | null;
   report_tier?: string | null;
 }
 

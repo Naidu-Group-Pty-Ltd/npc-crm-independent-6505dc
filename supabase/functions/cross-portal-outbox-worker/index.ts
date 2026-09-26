@@ -6,6 +6,10 @@ import { verifyInternal, logSecurityEvent } from '../_shared/auth_v2.ts';
 
 // ── Builders Network aggregate (extraction plan §7 Phase 3) ────────────────
 import { builderNetworkEnabled } from '../_shared/builderNetwork.ts';
+import { agencyMessageRouteHeld } from '../_shared/builderStock/agencyMessages.pure.ts';
+import { sendActivationAcknowledgedEmail } from '../_shared/builderStock/acknowledgementEmailJob.ts';
+import { sendPortalNotificationEmail } from '../_shared/portal-notification-email.ts';
+import { outboxFailureDisposition } from '../_shared/outboxDeferral.pure.ts';
 import {
   HMAC_CONNECTION_HEADER,
   HMAC_SIGNATURE_HEADER,
@@ -49,9 +53,27 @@ async function drainBuilderNetworkOutbox(db: any, workerIdValue: string): Promis
   for (const event of events || []) {
     try {
       const { data: connection } = await db.from('builder_network_connections')
-        .select('id, state, outbound_hmac_secret, network_inbound_url, network_connection_id')
+        .select('id, state, outbound_hmac_secret, network_inbound_url, network_connection_id, identity_mismatch_since, scopes')
         .eq('id', event.connection_id).maybeSingle();
       if (!connection || connection.state === 'revoked') { await release(event, 'connection_revoked', { dead: true }); dead++; continue; }
+      // A message never overtakes the activation it depends on: while an
+      // earlier activation on this connection is undelivered, it waits.
+      if (event.event_type === 'agency.message.posted') {
+        const { data: deferred, error: deferError } = await db.rpc('builder_network_defer_message_behind_activation', { _outbox_id: event.id, _worker_id: workerIdValue });
+        // A check that could not be made is not a pass: retry, never send unchecked.
+        if (deferError) { await release(event, 'activation_order_unchecked'); retried++; continue; }
+        if (deferred === true) { retried++; continue; }
+      }
+      if (agencyMessageRouteHeld(connection, String(event.event_type ?? ''))) {
+        // Claimed before the hold began: put it back to wait, spending no
+        // delivery attempt. The database re-decides under the connection's
+        // lock, so a recovery landing now is not overwritten by this park.
+        const { error: parkError } = await db.rpc('builder_network_park_held_message', { _outbox_id: event.id, _worker_id: workerIdValue });
+        // A park that did not happen still holds this worker's claim: release
+        // it, so a route that recovers is not left waiting on a stale lock.
+        if (parkError) { await release(event, 'route_hold_unrecorded'); retried++; continue; }
+        retried++; continue;
+      }
       if (!connection.network_inbound_url || !connection.outbound_hmac_secret) {
         // Not yet deliverable is not failure: transport arrives with
         // configuration, and the queue simply waits.
@@ -257,7 +279,16 @@ Deno.serve(async req=>{
   let authorised=Boolean(secret)&&presentedSecret===secret;
   if(!authorised&&req.headers.get('x-internal-signature')){
     const db0=createClient(Deno.env.get('SUPABASE_URL')!,Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!);
-    const ctx=await verifyInternal(db0,req,rawBody,{allowedCallers:['pg_cron']});
+    /*
+     * `agency_message` is the builder conversations' own "deliver now" kick
+     * (`builder_network_kick_outbox`, signed by the same database function as
+     * pg_cron's). Left off this list, every kick was refused — 99 refusals in
+     * the 24 hours to 26 Sep 2026, the last three seconds after a message — so
+     * a message to a builder, and the receipt that marks a builder's message
+     * Delivered, waited for the next minute's tick. A caller name is part of
+     * the signed envelope, so naming one here admits nothing unsigned.
+     */
+    const ctx=await verifyInternal(db0,req,rawBody,{allowedCallers:['pg_cron','agency_message']});
     authorised=ctx.ok===true&&ctx.authType==='internal_service';
     /*
      * Say WHY, the way every other guarded function here does.
@@ -294,19 +325,22 @@ Deno.serve(async req=>{
   const id=workerId(); const {data:events,error}=await db.rpc('claim_integration_outbox',{_worker_id:id,_limit:25}); if(error)return json({error:'claim_failed'},500);
   let succeeded=0,failed=0;
   for(const event of events||[]){
-    const consumer=event.event_type==='aml.screening.requested'?'aml_screening':event.event_type==='aml.verification.requested'||event.event_type==='aml.client_request.created'?'aml_verification':String(event.event_type).startsWith('aml.')?'aml_partner_events':event.event_type==='legal.message.created'?'cross_portal_delivery':event.event_type==='conversation.message.created'?'canonical_conversations':'case_projections';
+    const consumer=event.event_type==='aml.screening.requested'?'aml_screening':event.event_type==='aml.verification.requested'||event.event_type==='aml.client_request.created'?'aml_verification':String(event.event_type).startsWith('aml.')?'aml_partner_events':event.event_type==='legal.message.created'?'cross_portal_delivery':event.event_type==='conversation.message.created'?'canonical_conversations':event.event_type==='builder_activation_acknowledged'?'builder_activation_email':'case_projections';
     await db.from('integration_delivery_attempts').insert({outbox_id:event.id,consumer_name:consumer,attempt_number:event.attempts,status:'started'});
     try{
-      if(event.event_type==='aml.screening.requested')await processScreeningEvent(db,event);else if(event.event_type==='aml.verification.requested')await processVerificationEvent(db,event);else if(event.event_type==='aml.client_request.created'){/* notification written transactionally by the trigger; the event is checkpoint evidence */}else if(String(event.event_type).startsWith('aml.'))await deliverAmlPartnerEvent(db,event);else if(event.event_type==='legal.message.created')await deliverLegalMessage(db,event);else if(event.event_type==='conversation.message.created'){/* participant reads are immediate; channel delivery is claimed below */}else if(event.aggregate_type==='transaction_case')await projectCase(db,event);else if(event.event_type==='legal.audit_chain.failed')throw new Error('audit_chain_failure_requires_operator');
+      if(event.event_type==='aml.screening.requested')await processScreeningEvent(db,event);else if(event.event_type==='aml.verification.requested')await processVerificationEvent(db,event);else if(event.event_type==='aml.client_request.created'){/* notification written transactionally by the trigger; the event is checkpoint evidence */}else if(String(event.event_type).startsWith('aml.'))await deliverAmlPartnerEvent(db,event);else if(event.event_type==='legal.message.created')await deliverLegalMessage(db,event);else if(event.event_type==='conversation.message.created'){/* participant reads are immediate; channel delivery is claimed below */}else if(event.event_type==='builder_activation_acknowledged')await sendActivationAcknowledgedEmail(db,event,sendPortalNotificationEmail);else if(event.aggregate_type==='transaction_case')await projectCase(db,event);else if(event.event_type==='legal.audit_chain.failed')throw new Error('audit_chain_failure_requires_operator');
       await db.from('integration_delivery_attempts').update({status:'succeeded',completed_at:new Date().toISOString()}).eq('outbox_id',event.id).eq('consumer_name',consumer).eq('attempt_number',event.attempts);
       await db.from('integration_outbox').update({processed_at:new Date().toISOString(),locked_at:null,locked_by:null,last_error:null}).eq('id',event.id).eq('locked_by',id);
       await db.from('projection_checkpoints').upsert({consumer_name:consumer,last_event_id:event.id,last_occurred_at:event.occurred_at,updated_at:new Date().toISOString()},{onConflict:'consumer_name'});
       await db.rpc('record_portal_operational_event',{_event_name:'outbox_delivery',_severity:'info',_correlation_id:event.correlation_id||crypto.randomUUID(),_request_id:event.id,_actor_type:'worker',_actor_id:null,_portal:'integration_worker',_case_id:event.aggregate_type==='transaction_case'?event.aggregate_id:null,_matter_id:event.aggregate_type==='legal_matter'?event.aggregate_id:null,_firm_id:null,_duration_ms:Math.max(0,Date.now()-new Date(event.occurred_at).getTime()),_success:true,_metadata:{event_type:event.event_type,consumer,attempt:event.attempts}});
       succeeded++;
     }catch(error){
-      const message=error instanceof Error?error.message:String(error);const terminal=event.attempts>=10;
-      await db.from('integration_delivery_attempts').update({status:'failed',error:message.slice(0,2000),completed_at:new Date().toISOString()}).eq('outbox_id',event.id).eq('consumer_name',consumer).eq('attempt_number',event.attempts);
-      await db.from('integration_outbox').update({available_at:new Date(Date.now()+Math.min(3600,2**event.attempts)*1000).toISOString(),locked_at:null,locked_by:null,last_error:message.slice(0,2000),...(terminal?{processed_at:new Date().toISOString()}:{})}).eq('id',event.id).eq('locked_by',id);
+      // A deferral (a lease still held elsewhere) is offered again when it ends and never dead-letters.
+      const message=error instanceof Error?error.message:String(error);const disposition=outboxFailureDisposition(error,event.attempts,Date.now());const terminal=event.attempts>=10&&!disposition.deferred;
+      // A deferred claim made no delivery attempt and gives its number back, so its ledger row is removed rather than left for the next claim to collide with.
+      if(disposition.deferred)await db.from('integration_delivery_attempts').delete().eq('outbox_id',event.id).eq('consumer_name',consumer).eq('attempt_number',event.attempts);
+      else await db.from('integration_delivery_attempts').update({status:'failed',error:message.slice(0,2000),completed_at:new Date().toISOString()}).eq('outbox_id',event.id).eq('consumer_name',consumer).eq('attempt_number',event.attempts);
+      await db.from('integration_outbox').update({attempts:disposition.attempts,available_at:disposition.deferred?disposition.availableAt:new Date(Date.now()+Math.min(3600,2**event.attempts)*1000).toISOString(),locked_at:null,locked_by:null,last_error:message.slice(0,2000),...(terminal?{processed_at:new Date().toISOString()}:{})}).eq('id',event.id).eq('locked_by',id);
       if(terminal)await db.from('integration_dead_letters').upsert({outbox_id:event.id,aggregate_type:event.aggregate_type,aggregate_id:event.aggregate_id,event_type:event.event_type,payload:event.payload,attempts:event.attempts,last_error:message.slice(0,2000)},{onConflict:'outbox_id'});failed++;
       await db.rpc('record_portal_operational_event',{_event_name:terminal&&String(event.event_type).includes('settlement')?'dead_lettered_settlement_event':'outbox_delivery',_severity:terminal?'critical':'warning',_correlation_id:event.correlation_id||crypto.randomUUID(),_request_id:event.id,_actor_type:'worker',_actor_id:null,_portal:'integration_worker',_case_id:event.aggregate_type==='transaction_case'?event.aggregate_id:null,_matter_id:event.aggregate_type==='legal_matter'?event.aggregate_id:null,_firm_id:null,_duration_ms:Math.max(0,Date.now()-new Date(event.occurred_at).getTime()),_success:false,_metadata:{event_type:event.event_type,consumer,attempt:event.attempts,error_code:message.slice(0,120)}});
     }

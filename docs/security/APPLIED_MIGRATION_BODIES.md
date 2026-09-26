@@ -124,6 +124,27 @@ every file of 256 KiB or less it applies (`scripts/security/ledgerRecord.mjs`),
 so those files can enter the manifest; the rows it wrote before that are
 body-less and are judged by version only.
 
+The re-check also reports files that now match and are not recorded yet. On
+26 Sep 2026 it said "8 file(s) now match and are not recorded yet" and named
+none of them. That sent the next person to a ledger only the workflow run could
+read. It now prints, for each one, the exact line the generator would write
+(`<digest>  <file>`) and which rung matched. Every one of those digests was
+matched against the live ledger a moment earlier, so the lines are exactly what
+`--digests` needs to add them from anywhere.
+
+Those eight were added that way, through `--digests`, and never typed by hand.
+Each was applied by the prime's own "Apply a migration" run, whose log reads
+"Recorded `<version>` in schema_migrations, with its body."
+`ledgerRecord.mjs` prints that only once the row the ledger returned carries
+the sha256 of the file it applied, so each file's own digest is the ledger's.
+They are the v20, v21 and v22 template refreshes, the Photon/G-NAF
+geocode-cache provider, the three `20261221…` media migrations and the
+agency–builder network. The manifest went from 699 to 707 entries, and
+`check-applied-body-digests.mjs` passes 707 of 707.
+`appliedBodyDigests.spec.ts` runs the re-check against a digests file holding
+one unrecorded file, and asserts that it prints that file's line and leaves the
+manifest unwritten.
+
 ## What it does not cover, and says so
 
 - **16 files past 256 KB** are not digested — successive generations of the

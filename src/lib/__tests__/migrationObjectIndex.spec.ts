@@ -18,8 +18,24 @@ describe("the committed index matches the migrations it describes", () => {
   // clone cannot be failed by one of them and excused by the other. Every
   // other assertion below is about the FILE and stays true wherever it is
   // carried; this one alone is about THIS repository's migrations.
+  /*
+   * Timed, not guessed. `buildIndex()` reads all 1,014 migrations, and
+   * `supabase/migrations` is 620 MB — 587 MB of it the generated template
+   * library, nineteen seed releases at ~41.7 MB each. Measured on an idle
+   * machine it takes 3.9 s, which is inside vitest's 5 s default and outside
+   * it the moment anything else is running: this test failed at 8.5 s in a
+   * parallel run while `npm run migrations:index:check` reported the index
+   * current in the same working tree.
+   *
+   * The allowance is raised rather than the generator narrowed. Teaching
+   * `buildIndex` to skip files is a change to what the index DESCRIBES, and
+   * the index exists so that an absent object name reads as "never ours" —
+   * the reading that would let one of this repository's leftovers pass as a
+   * tenant's data. That is not a property to trade for four seconds.
+   */
   it.skipIf(indexIsCarriedNotAuthored())(
     "regenerating produces exactly what is committed",
+    { timeout: 120_000 },
     () => {
       // The same assertion `npm run migrations:index:check` makes in CI, kept
       // here too so a local run catches it before the push.

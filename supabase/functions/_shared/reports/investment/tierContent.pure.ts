@@ -109,7 +109,7 @@ export const TIER_CONTENT: Readonly<Record<string, TierContentPolicy>> = {
     identityFigures: true,
     locationDepth: true,
     dueDiligenceRegister: true,
-    standfirst: 'What must be verified before contract: the property and location risks at depth, and the verification register.',
+    standfirst: 'What must be verified before contract: the property and location risks at depth, and the checks that settle them.',
     companionNote: 'The financial position is set out in the Financial Analysis Report for this property.',
     continuousFrontMatter: true,
   },

@@ -30,6 +30,7 @@
  * reproduction of it, and a row the register did not produce has no
  * provenance.
  */
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
   PLANNING_REGISTER_SECTION,
@@ -194,7 +195,9 @@ describe('what it must not do', () => {
   });
 
   it('names every header from the module that composes them', () => {
-    expect(REGISTER_TABLE_HEADERS).toHaveLength(5);
+    // Five tables; two of them in the spelling stored reports carry as well
+    // as today's (the headers moved into an adviser's words on 26 Sep 2026).
+    expect(REGISTER_TABLE_HEADERS).toHaveLength(7);
     for (const h of REGISTER_TABLE_HEADERS) expect(h).toBe(h.toLowerCase());
     expect(registerHeaderKey('| Control | Reading | Standing | Evidence |'))
       .toBe('control|reading|standing|evidence');
@@ -224,3 +227,35 @@ describe('through the read path every renderer applies', () => {
     expect(presentStoredMarkdown(clean)).toBe(clean);
   });
 });
+
+describe('every table a composer draws is one the dedupe recognises', () => {
+  /*
+   * The list above is matched WHOLE, so renaming a column in the composer
+   * without adding the new spelling here stops a model's reproduction from
+   * being recognised — silently, because an unrecognised table is simply left
+   * alone. It happened once: the control summary's columns became "Finding /
+   * Status / Source" and this list still read "Reading / Standing /
+   * Evidence". So the header rows are read out of the two composers' own
+   * source, where a table is a header literal followed by its rule row.
+   */
+  const COMPOSERS = [
+    'supabase/functions/_shared/planning/planningFacts.pure.ts',
+    'supabase/functions/_shared/planning/infrastructureEvidence.pure.ts',
+  ];
+
+  it('reads every drawn header row and finds each in the list', () => {
+    const drawn: string[] = [];
+    for (const file of COMPOSERS) {
+      const lines = readFileSync(file, 'utf8').split('\n');
+      lines.forEach((line, i) => {
+        const header = /lines\.push\('(\|[^']+\|)'\);/.exec(line);
+        const rule = /lines\.push\('\|[-|: ]+\|'\);/.test(lines[i + 1] ?? '');
+        if (header && rule) drawn.push(header[1]);
+      });
+    }
+    // All five tables, each found — the scan itself can see them.
+    expect(drawn).toHaveLength(5);
+    for (const header of drawn) expect(registerHeaderKey(header), header).not.toBeNull();
+  });
+});
+

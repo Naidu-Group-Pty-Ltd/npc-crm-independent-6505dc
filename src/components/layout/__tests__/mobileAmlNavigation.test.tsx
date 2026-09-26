@@ -27,6 +27,7 @@ let access = {
   refresh: vi.fn(),
 };
 vi.mock('@/hooks/useAmlAccess', () => ({ useAmlAccess: () => access }));
+vi.mock('@/hooks/useBuilderStockMarketplaceFlag', () => ({ useBuilderStockMarketplaceFlag: () => ({ loading: false, enabled: false }) }));
 
 /* The registry's own capability resolver reaches Supabase; the entitlement
    answer is not what these tests are about, so every module is enabled. */

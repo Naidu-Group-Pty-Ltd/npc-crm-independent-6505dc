@@ -63,8 +63,10 @@
  *  - `author.*`, `client.*` — there is no `profiles` table for an adviser and
  *    no client-name column on this row (`client_property_id` is set on 2 of the
  *    1,182). The masters no longer bind either.
- *  - `property.images.*` — no adapter emits photographs; see
- *    `docs/template-library/07-investment-compass-families.md`.
+ *  - `property.images.*` — not on this row. The Investment adapter binds
+ *    them from the image library after this projection runs, where the
+ *    report's listing holds any a client's document may carry — see
+ *    `docs/reports/PROPERTY_PHOTOGRAPHS.md`.
  *
  * `org.*` was on that list until August 2026 and should not have been. The
  * sentence "organisation data lives outside this row" is true of the *row* and
@@ -126,7 +128,9 @@ import { planningChartContext, vizDirectiveRenderer } from './reports/vizFigures
 import { reconcileStoredFinancials } from './reports/investment/financialEngine.pure.ts';
 import { readAnnualRent } from './reports/investment/rentBasis.pure.ts';
 import { rentIsEstablished } from './reports/investment/rentalEvidence.pure.ts';
-import { gradedDetailLine, gradedLine, publishableGrade } from './reports/investment/scoreSections.pure.ts';
+import { gradedDetailLine, gradedLine, publishableGrade, verdictWatchPoints } from './reports/investment/scoreSections.pure.ts';
+import { splitVerdictScope } from './reports/investment/verdictAction.pure.ts';
+import { printedVerdict } from './reports/printedVerdict.pure.ts';
 import { OVERALL_GRADE_UNAVAILABLE } from './reports/market/scoringInputPolicy.pure.ts';
 import { DOCUMENT_IDENTITY, documentTitleForTier } from './reports/investment/tierIdentity.pure.ts';
 import { contentPolicyFor } from './reports/investment/tierContent.pure.ts';
@@ -139,6 +143,11 @@ import {
   type ReportAudience,
 } from './reports/investment/audienceContent.pure.ts';
 import { frontMatterFlagsFor } from './reports/investment/tierPageSequence.pure.ts';
+
+// Re-exported: callers and specs read it from the projection, where it was
+// defined until the verdict page and the generator's instructions came to
+// share it (`verdictAction.pure.ts`).
+export { splitVerdictScope };
 
 /** Loose row shape — the caller passes the `investment_reports` row as stored. */
 export interface InvestmentReportRowLike {
@@ -212,7 +221,17 @@ function put(target: Record<string, unknown>, key: string, value: unknown): void
   if (value !== undefined && value !== null && value !== '') target[key] = value;
 }
 
-/** `3 bed · 2 bath · 1 car`, from whichever parts are present. */
+/**
+ * `3 bed · 2 bath · 1 car`, from whichever parts are present.
+ *
+ * A configuration with the rooms missing says so. Page 3 of the 60 Lawley
+ * Street Compass (25 Sep 2026) printed "Configuration · 2 car" — the record
+ * held the parking and not the bedrooms or bathrooms, and a reader takes a
+ * configuration line as the whole configuration. Where the car spaces are
+ * the only part held, the line names what was not recorded, so it cannot be
+ * read as a description of the dwelling; with nothing held at all the row is
+ * still not drawn.
+ */
 function configuration(spec: (...keys: string[]) => unknown): string | undefined {
   const parts: string[] = [];
   const bed = num(spec('bedrooms'));
@@ -221,94 +240,15 @@ function configuration(spec: (...keys: string[]) => unknown): string | undefined
   if (bed !== undefined) parts.push(`${bed} bed`);
   if (bath !== undefined) parts.push(`${bath} bath`);
   if (car !== undefined) parts.push(`${car} car`);
-  return parts.length ? parts.join(' · ') : undefined;
+  if (!parts.length) return undefined;
+  const unrecorded = [bed === undefined ? 'bedrooms' : null, bath === undefined ? 'bathrooms' : null]
+    .filter((x): x is string => x !== null);
+  return unrecorded.length
+    ? `${parts.join(' · ')} · ${unrecorded.join(' and ')} not recorded`
+    : parts.join(' · ');
 }
 
-/**
- * The verdict as a figure: `HOLD`, not the sentence that explains it.
- *
- * `investment_score.recommendation` is one string carrying both — "HOLD -
- * Above average investment with some positive indicators, monitor closely",
- * 69 characters on average and 78 at its longest. A KPI cell is a quarter of
- * the cover's measure, about 28mm, and a sentence that long needs five lines
- * in it: rendered through WeasyPrint the cover's VERDICT cell ran past the
- * band's bottom rule, which struck through its last line.
- *
- * The split is exact rather than a guess. Every one of the 988 scored reports
- * is either `ACTION - sentence` or the bare action, and the vocabulary is four
- * words:
- *
- * | action | with a sentence | bare |
- * | --- | ---: | ---: |
- * | `HOLD` | 799 | 56 |
- * | `CAUTION` | 98 | 1 |
- * | `HOLD/BUY` | 24 | 9 |
- * | `BUY` | 1 | 0 |
- *
- * The longest action is eight characters. A string that does not match the
- * pattern is returned whole — the caller gets the same thing `headline` would
- * have given it, which is what it printed before this existed.
- */
-function recommendationAction(headline: string | undefined): string | undefined {
-  if (!headline) return undefined;
-  const match = /^([A-Z][A-Za-z/ ]{1,20}?)\s+-\s+\S/.exec(headline);
-  return match ? match[1].trim() : headline;
-}
 
-/**
- * The verdict CLAIM, separated from the coverage sentence appended after it.
- *
- * This paragraph used to end "`headline` is untouched, and the page-3 verdict
- * block still sets the whole sentence, where there is a full measure to set it
- * in." That was true when it was written and measured — the vocabulary in
- * `RECOMMENDATION_BY_GRADE` runs 59 to **89** characters, which sets in two
- * lines at the verdict page's 27pt.
- *
- * `qualifyRecommendation` then began appending a second sentence whenever the
- * run measured fewer than all five dimensions:
- *
- *     HOLD - Average investment with mixed indicators, monitor market
- *     conditions. Assessed on 4 of 5 dimensions: capital growth, location,
- *     rental yield and demand.
- *
- * **156 characters**, measured on the 42 Patya Circuit report of 19 Sep 2026.
- * That needs five lines where the block declares two, and the masters position
- * every block at an absolute `y` — so it did not overflow the page, it printed
- * ON TOP of the KPI band beneath it. `$1,975,000` and `$850` were struck
- * through by the heading's last two lines, and the strapline under them was
- * unreadable. `callout(…, 72)` and `decision(…, 104)` are the declared heights
- * it broke.
- *
- * Nothing is dropped and nothing is truncated. The appended sentence is split
- * off at the boundary `qualifyRecommendation` itself creates, and the CLAIM
- * alone binds the heading.
- *
- * The scope sentence is not published. It was, as `scopeNote`, "so a master
- * may set it at body size where it belongs" — and no master ever did: across
- * `scripts/template-library/`, the six `{{recommendation.*}}` paths any master
- * binds are `action`, `grade`, `gradedDetailLine`, `gradedLine`, `headline`
- * and `rationale`. Nothing is lost by dropping it, for the reason the sentence
- * above already gave: `gradedLine` names the same dimensions one line below,
- * and it IS drawn — the 9 Hollow Street Compass of 20 Sep 2026 prints
- * "Graded B+ at 65 out of 100, weighted across yield, growth and location —
- * 3 of the 5 assessment dimensions" on pages 3 and 5. Publishing a second copy
- * for a master to draw would put the coverage on the page twice.
- *
- * `splitVerdictScope` still returns the scope: the split is what keeps it out
- * of the heading, and a caller that wants it has it.
- *
- * The split is exact rather than a guess: it matches only the sentence that
- * appender writes, anchored at the end. Anything else is returned whole, which
- * is what every caller had before this existed.
- */
-export function splitVerdictScope(
-  headline: string | undefined,
-): { claim: string | undefined; scope: string | undefined } {
-  if (!headline) return { claim: undefined, scope: undefined };
-  const match = /^(.*?)\.\s+(Assessed on \d+ of \d+ dimensions:[^.]*\.)\s*$/s.exec(headline.trim());
-  if (!match) return { claim: headline, scope: undefined };
-  return { claim: `${match[1].trim()}.`, scope: match[2].trim() };
-}
 
 /**
  * The specification, read from the two columns it actually lives in.
@@ -738,18 +678,20 @@ export function projectInvestmentReport(
   // was withheld and why — that surface is not the document.
   const storedRecommendation = str(score.recommendation);
   const ungradedStatement = storedRecommendation?.trim() === OVERALL_GRADE_UNAVAILABLE.explanation;
-  const storedHeadline = ungradedStatement ? undefined : storedRecommendation;
   // The coverage sentence leaves the display slot and keeps its own name. See
   // `splitVerdictScope`: this is the page-3 overlap, and it is fixed here
   // rather than in a master because every selectable master binds `headline`.
-  const verdict = splitVerdictScope(storedHeadline);
-  const headline = verdict.claim;
+  // `printedVerdict` is the one reading of the stored verdict: the generator
+  // hands the same answer to the two sections that state a recommendation, so
+  // the page and the prose cannot issue two (60 Lawley Street, 25 Sep 2026).
+  const verdict = printedVerdict(score);
+  const headline = verdict?.headline;
   put(recommendation, 'headline', headline);
   // `scopeNote` is deliberately NOT published — see `splitVerdictScope`. No
   // master binds it, and `gradedLine` below already names the same dimensions.
   // A binding nothing draws is not a feature waiting for one; a dormant field
   // is one line away from printing the coverage twice.
-  put(recommendation, 'action', recommendationAction(headline));
+  put(recommendation, 'action', verdict?.action);
   // The grade and its score go through the ONE rule that decides whether this
   // record may state a grade at all. This used to be `str(score.grade)`, which
   // published the scorer's own `'N/A'` sentinel verbatim: every selectable
@@ -806,10 +748,12 @@ export function projectInvestmentReport(
   put(recommendation, 'gradedDetailLine', gradedDetailLine(score));
 
   const strengths = strArray(score.strengths);
-  const weaknesses = strArray(score.weaknesses);
+  // Weaknesses where the record has them, else the scorer's risks and the
+  // run's evidence caution — see `verdictWatchPoints`.
+  const watch = verdictWatchPoints(score);
   const summary: Record<string, unknown> = {};
   if (strengths.length) summary.strength = strengths;
-  if (weaknesses.length) summary.watch = weaknesses;
+  if (watch.length) summary.watch = watch;
 
   // Objects rather than bare strings, because the catalogue binds `risks.N.risk`.
   //

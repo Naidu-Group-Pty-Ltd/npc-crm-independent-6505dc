@@ -17,6 +17,7 @@ import { AvailabilityCard } from '@/components/finance-portal/AvailabilityCard';
 import { BookingsCard } from '@/components/finance-portal/BookingsCard';
 import { UiPreferencesCard } from '@/components/finance-portal/UiPreferencesCard';
 import { toast } from 'sonner';
+import { houseLabel } from '@/lib/houseLabel';
 
 const EVENT_TYPES: { key: string; label: string; description: string }[] = [
   { key: 'pf_action_required', label: 'Action required on a file', description: 'You have a task to complete on a deal room.' },
@@ -24,7 +25,7 @@ const EVENT_TYPES: { key: string; label: string; description: string }[] = [
   { key: 'pf_unconditional_approval', label: 'Unconditional approval reached', description: 'A file just hit unconditional.' },
   { key: 'pf_settlement_imminent', label: 'Settlement T-7 / T-2', description: 'Settlement countdown reminders.' },
   { key: 'doc_request_overdue', label: 'Document request overdue', description: 'Client is sitting on an outstanding request.' },
-  { key: 'message_received', label: 'New message from client / NPC', description: 'Any new portal/shared message.' },
+  { key: 'message_received', label: houseLabel('New message from client / NPC', 'New message from client / Command Centre'), description: 'Any new portal/shared message.' },
   { key: 'commission_milestone', label: 'Commission milestone reached', description: 'Build payment or settlement commission triggered.' },
   { key: 'clawback_warning', label: 'Clawback expiry approaching', description: 'Active clawback exposure within 60 days.' },
 ];

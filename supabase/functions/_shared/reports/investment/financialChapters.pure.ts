@@ -136,7 +136,7 @@ function purchaseAndHolding(fin: Record<string, unknown>): ComposedChapter | nul
   ]);
 
   return chapter(4, 'Purchase Costs & Annual Holding Cost Breakdown',
-    'Acquisition and annual holding costs as recorded for this property.',
+    'The acquisition and annual holding costs of this purchase.',
     [acquisition, holding]);
 }
 
@@ -158,8 +158,8 @@ function rentalAndYield(fin: Record<string, unknown>): ComposedChapter | null {
 
   // A yield is the rent divided by the price. Where the record establishes no
   // rent, the rent rows above suppress themselves and these two must follow —
-  // otherwise the section reads "Recorded rental income and the yields it
-  // produces" over a table containing yields and no income, which is a return
+  // otherwise the section reads "The rental income used in this analysis, and
+  // the yields it produces" over a table containing yields and no income, which is a return
   // asserted on an income the record does not hold. One rule, asked here and
   // in the two other renderers that print a yield.
   const founded = rentIsEstablished(income);
@@ -177,7 +177,7 @@ function rentalAndYield(fin: Record<string, unknown>): ComposedChapter | null {
   ]);
 
   return chapter(5, 'Rental Assessment, Gross Yield & Net Yield',
-    'Recorded rental income and the yields it produces against the purchase price.',
+    'The rental income used in this analysis, and the yields it produces against the purchase price.',
     [table]);
 }
 
@@ -227,7 +227,7 @@ function loanStructure(fin: Record<string, unknown>): ComposedChapter | null {
   ]);
 
   return chapter(6, 'Loan Structure, Repayments & Cashflow Impact',
-    'The recorded lending structure behind the cashflow position.',
+    'The lending structure behind the cashflow position.',
     [table]);
 }
 
@@ -302,7 +302,7 @@ function sensitivity(fin: Record<string, unknown>): ComposedChapter | null {
   const rentTable = twoCol(['Scenario', 'Annual cashflow'], scenarioRows(rents, RENT_LABELS));
 
   return chapter(8, 'Sensitivity & Scenario Testing',
-    'How the recorded year-1 position moves as the interest rate and the rent move.',
+    'How the year-1 position moves as the interest rate and the rent move.',
     [position, rateTable, rentTable]);
 }
 
@@ -426,7 +426,7 @@ function projections(
   ]);
 
   return chapter(9, '10-Year Cashflow, Equity & Growth Projection',
-    'The recorded ten-year modelling, shown at years 1, 3, 5, 7 and 10.',
+    'The ten-year projection, shown at years 1, 3, 5, 7 and 10.',
     [...blocks, assumptionTable, bridge]);
 }
 
@@ -517,7 +517,7 @@ function financialRiskDashboard(fin: Record<string, unknown>): ComposedChapter |
   ]);
 
   const chapterOut = chapter(11, 'Financial Risk Dashboard',
-    'The financial exposures the recorded calculation states: the cash the investor must fund, how it moves under a rate or rent shock, and the debt structure behind it. Property and locality risks (crime, environmental, planning, condition) are assessed in the Property & Location Due Diligence Report and are not restated here.',
+    'The financial exposures in this analysis: the cash the investor must fund, how it moves under a rate or rent shock, and the debt structure behind it. Property and locality risks (crime, environmental, planning, condition) are assessed in the Property & Location Due Diligence Report and are not restated here.',
     [deficit, shocks, structure]);
   return chapterOut;
 }

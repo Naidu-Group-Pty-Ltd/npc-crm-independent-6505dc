@@ -527,14 +527,19 @@ describe('the eight forward-demand readings', () => {
     expect(held).toContain(FORWARD_DEMAND_PUBLISHERS.SA.publisher);
     expect(held).toContain(FORWARD_DEMAND_PUBLISHERS.SA.url);
     expect(held).not.toMatch(/does not read/);
-    expect(held).toMatch(/line up with this property/);
+    expect(held).toMatch(/line up with the property/);
     // And the reading that DID not read says so, whichever jurisdiction.
-    expect(forwardDemandCoverageNote({ kind: 'not_read' }, 'SA')).toMatch(/does not read a population projection/);
+    expect(forwardDemandCoverageNote({ kind: 'not_read' }, 'SA')).toMatch(/does not include a population projection/);
   });
 
-  it('keeps "not loaded" about the jurisdiction, not the whole deployment', () => {
-    expect(forwardDemandCoverageNote({ kind: 'not_loaded' }, 'NSW'))
-      .toMatch(/No population projection for this jurisdiction has been loaded by this deployment/);
+  it('keeps "not loaded" about this report and this area, never a finding about the area', () => {
+    // Adviser wording since 25 Sep 2026: the sentence no longer describes a
+    // deployment at all — it says what the report does not include, and that
+    // this is the report's limit rather than the area's.
+    const note = forwardDemandCoverageNote({ kind: 'not_loaded' }, 'NSW');
+    expect(note).toMatch(/not included in this report/);
+    expect(note).toMatch(/limit of this report rather than a finding about the area/);
+    expect(note).not.toMatch(/deployment|loaded/);
   });
 
   it('separates a caveat on a printed figure from the absence of one', () => {
@@ -546,16 +551,16 @@ describe('the eight forward-demand readings', () => {
      */
     const coarse = forwardDemandCoverageNote({ kind: 'coarser_than_area', grain: 'state' }, 'NSW');
     const absent = forwardDemandCoverageNote({ kind: 'grain_not_published', finest: 'state' }, 'NSW');
-    expect(coarse).toMatch(/drawn apart/i);
-    expect(coarse).toMatch(/region this property sits in/i);
-    expect(absent).toMatch(/No population projection is held/i);
-    expect(absent).not.toMatch(/drawn apart/i);
+    expect(coarse).toMatch(/shown separately/i);
+    expect(coarse).toMatch(/region the property sits in/i);
+    expect(absent).toMatch(/No population projection is published for an area this small/i);
+    expect(absent).not.toMatch(/shown separately/i);
   });
 
   it('every reading carries the sentence, or says why there is no figure', () => {
     for (const r of readings) {
       const note = forwardDemandCoverageNote(r, 'VIC');
-      const qualifies = note.includes('not a measurement') || /no projected figure|No population projection is held/i.test(note);
+      const qualifies = note.includes('not a measurement') || /no projected figure|No population projection is published/i.test(note);
       expect(qualifies, r.kind).toBe(true);
     }
   });

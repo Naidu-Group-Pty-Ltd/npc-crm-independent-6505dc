@@ -117,16 +117,58 @@ describe('the loader and its declarations', () => {
      * the fix is to name the new table here rather than to relax the shape of
      * the check.
      *
-     * Two registers and one log, and the log is shared: `market_sales_sync`
-     * carries a row per run of every stage, approvals included, so an
-     * operator reads one table to see what this function did.
+     * Three registers and one log, and the log is shared: `market_sales_sync`
+     * carries a row per run of every stage, approvals and projections
+     * included, so an operator reads one table to see what this function did.
+     *
+     * Widened a second time, and for the same reason: the `projections`
+     * stage writes `population_projections` (W3.4's per-jurisdiction
+     * register, 20261218000000), and this assertion failed in CI the moment
+     * it did — which is the rule working. The table is named here; the shape
+     * of the check is unchanged.
      */
     const tables = [...LOADER.matchAll(/\.from\('([a-z_]+)'\)/g)].map((m) => m[1]);
     expect(new Set(tables)).toEqual(new Set([
       'market_sales_medians',
       'market_building_approvals',
+      'population_projections',
       'market_sales_sync',
     ]));
+  });
+
+  it('the projections stage refuses an unread licence before it fetches, and writes only what the gate passed', () => {
+    const from = LOADER.indexOf("if (stage === 'projections') {");
+    const to = LOADER.indexOf('return json({ success: true, ...detail });', from);
+    expect(from).toBeGreaterThan(-1);
+    expect(to).toBeGreaterThan(from);
+    const STAGE = LOADER.slice(from, to);
+    const at = (needle: string) => {
+      const i = STAGE.indexOf(needle);
+      expect(i, `${needle} is not in the projections stage`).toBeGreaterThan(-1);
+      return i;
+    };
+    /*
+     * Readable is not republishable. A file whose licence has not been read
+     * from its publisher is refused BEFORE a byte is fetched, so no copy of
+     * it exists anywhere this platform wrote — asserted as an order inside
+     * the stage, because a refusal that followed the fetch would still have
+     * held the publisher's file.
+     */
+    expect(at('file.licence === null')).toBeLessThan(at('fetchProjectionWorkbook('));
+    // Read → parse → gate, then the first write, and the gate's rows are the
+    // ones written: a batch composed from `parsed.rows` would skip the gate.
+    expect(at('readXlsxSheets(')).toBeGreaterThan(at('fetchProjectionWorkbook('));
+    expect(at('parseProjectionFile(')).toBeGreaterThan(at('readXlsxSheets('));
+    expect(at('guardProjectionRows(')).toBeGreaterThan(at('parseProjectionFile('));
+    expect(at("if (!guard.ok) throw")).toBeGreaterThan(at('guardProjectionRows('));
+    expect(at('projectionBatchesByArea(guard.rows)')).toBeGreaterThan(at("if (!guard.ok) throw"));
+    expect(STAGE).not.toContain('projectionBatchesByArea(parsed.rows)');
+    // The prune follows every batch, keeps to this edition and series, and
+    // carries no RETURNING projection (SANCTIONS_LIST_LOADING's third fault).
+    expect(at('.delete()')).toBeGreaterThan(at('.upsert('));
+    expect(STAGE).toMatch(/\.delete\(\)[\s\S]{0,200}\.eq\('release', parsed\.release\)[\s\S]{0,80}\.eq\('series', series\)/);
+    expect(STAGE).toContain(".lt('loaded_at', loadedAt)");
+    expect(STAGE.slice(at('.delete()'))).not.toMatch(/\.delete\(\)[^;]*\.select\(/);
   });
 
   it('the approvals stage discovers its dataflow and refuses before it writes', () => {

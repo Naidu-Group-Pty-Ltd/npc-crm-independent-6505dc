@@ -297,8 +297,12 @@ export const INTEGRATIONS: IntegrationDefinition[] = [
     fields: [
       { key: 'RESEND_API_KEY', label: 'API Key', placeholder: 're_...', type: 'password', required: true },
       // Same reasoning as Twilio's number: optional, and the default a workflow
-      // "Send an email" step uses when its own From is blank.
-      { key: 'RESEND_FROM_EMAIL', label: 'Default From address', placeholder: 'NPC Services <hello@example.com>', type: 'text' },
+      // "Send an email" step uses when its own From is blank. An ADDRESS, not
+      // "Name <address>": `brand-config.ts` accepts only a bare address here
+      // and ignores anything else, and the name every email carries comes from
+      // the workspace's own branding. The placeholder used to show the prime's
+      // brand in the other format on every workspace.
+      { key: 'RESEND_FROM_EMAIL', label: 'Default From address', placeholder: 'hello@example.com', type: 'text' },
     ],
   },
   {

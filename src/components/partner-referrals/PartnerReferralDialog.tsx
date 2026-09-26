@@ -31,6 +31,7 @@ import {
   type PartnerReferral,
   type ReferralDirection,
 } from '@/hooks/usePartnerReferrals';
+import { houseLabel } from '@/lib/houseLabel';
 
 const UNASSIGNED = '__unassigned__';
 
@@ -263,7 +264,7 @@ export default function PartnerReferralDialog({ open, onOpenChange, referral, de
 
               <TabsContent value="assignment" className="mt-0 space-y-4">
                 <div className="grid gap-4 sm:grid-cols-2">
-                  <Field label="Assigned consultant (NPC)">
+                  <Field label={houseLabel('Assigned consultant (NPC)', 'Assigned consultant')}>
                     <Input value={form.assigned_consultant_name ?? ''} onChange={(e) => set('assigned_consultant_name', e.target.value)} />
                   </Field>
                   <Field label="Loan writer name">

@@ -78,6 +78,16 @@ export interface NavItemDef {
   mobile?: boolean;
   /** Only surfaced through the command palette, not the sidebars. */
   paletteOnly?: boolean;
+  /**
+   * A count drawn beside the entry: unread notifications of one kind. Only
+   * the reader's own notifications are counted — the bell's feed is theirs.
+   */
+  badge?: 'builder_activations';
+  /**
+   * A server-read feature flag the entry also needs (presentation only; the
+   * server refuses the page's calls while the flag is off). Fails closed.
+   */
+  featureFlag?: 'builder_stock_marketplace';
 }
 
 export const NAVIGATION_ITEMS: readonly NavItemDef[] = [
@@ -118,7 +128,22 @@ export const NAVIGATION_ITEMS: readonly NavItemDef[] = [
   // Templates only. The keywords deliberately drop 'issue', 'sign' and
   // 'executed': searching for those should not surface a page that cannot do
   // them, now that agreements are not entered into through the platform.
-  { title: 'Agreement Templates', url: '/partner-agreements', icon: FileSignature, moduleKey: 'agreements', group: 'Operations', keywords: ['partner agreements', 'agreement templates', 'referral agreement', 'commission agreement', 'download template', 'word'], paletteOnly: true },
+  {
+    title: 'Agreement Templates',
+    url: '/partner-agreements',
+    icon: FileSignature,
+    moduleKey: 'agreements',
+    group: 'Operations',
+    keywords: [
+      'partner agreements',
+      'agreement templates',
+      'referral agreement',
+      'commission agreement',
+      'download template',
+      'word',
+    ],
+    paletteOnly: true,
+  },
   { title: 'Partner Referrals', url: '/partner-referrals', icon: ArrowLeftRight, moduleKey: 'agreements', group: 'Operations' },
   { title: 'Loan Writer Undertakings', url: '/loan-writer-undertakings', icon: FileSignature, moduleKey: 'agreements', group: 'Operations' },
   { title: 'Partner Compliance', url: '/partner-compliance', icon: ShieldCheck, moduleKey: 'agreements', group: 'Operations' },
@@ -130,6 +155,7 @@ export const NAVIGATION_ITEMS: readonly NavItemDef[] = [
   { title: 'Billing & Usage', url: '/billing', icon: Coins, moduleKey: '__always__', group: 'Help & Usage' },
   { title: 'Feedback', url: '/feedback', icon: MessageSquareQuote, moduleKey: '__always__', group: 'Help & Usage' },
   { title: 'Support', url: '/support', icon: LifeBuoy, moduleKey: '__always__', group: 'Help & Usage', keywords: ['help', 'ticket', 'issue', 'incident', 'support portal'] },
+
 ];
 
 export const ADMIN_NAVIGATION_ITEMS: readonly NavItemDef[] = [
@@ -137,11 +163,6 @@ export const ADMIN_NAVIGATION_ITEMS: readonly NavItemDef[] = [
   { title: 'Templates', url: '/templates', icon: FileStack, moduleKey: 'templates', group: 'Administration' },
   { title: 'Template Builder', url: '/admin/template-builder', icon: Layers, moduleKey: 'templates', group: 'Administration', keywords: ['visual editor', 'pdf template', 'builder', 'report template'], paletteOnly: true },
   { title: 'Template Converter', url: '/admin/template-builder/converter', icon: Wand2, moduleKey: 'templates', group: 'Administration', keywords: ['convert', 'converter', 'refurbish', 'rebrand', 'existing template', 'design system'], paletteOnly: true },
-  // Brand systems is hidden product-wide with the rest of the design factor
-  // (`@/lib/reports/designControlsVisibility`). The ROUTE stays declared in
-  // App.tsx — hiding is never deleting, so a bookmark lands on a page that
-  // explains itself rather than a 404 — but no navigation surface draws a door
-  // to it. An entry is a claim that a page will open and do something.
   ...(REPORT_DESIGN_CONTROLS_VISIBLE
     ? [{ title: 'Brand systems', url: '/admin/template-builder/brand-systems', icon: Palette, moduleKey: 'templates', group: 'Administration', keywords: ['brand', 'design system', 'palette', 'paper', 'ink', 'claude design', 'import design system', 'tokens'], paletteOnly: true }]
     : []),
@@ -159,9 +180,11 @@ export const ADMIN_NAVIGATION_ITEMS: readonly NavItemDef[] = [
   { title: 'Activity Logs', url: '/admin/activity-logs', icon: History, moduleKey: 'activity_logs', group: 'Administration' },
   { title: 'Settings', url: '/settings', icon: Settings, moduleKey: 'settings', group: 'Administration' },
   { title: 'User Management', url: '/admin/users', icon: Users, moduleKey: 'user_management', group: 'Administration' },
-  { title: 'Finance Portal', url: '/admin/finance-portal', icon: ShieldCheck, moduleKey: 'finance_portal_admin', group: 'Administration' },
-  { title: 'Solicitor Portal', url: '/admin/solicitor-portal', icon: Scale, moduleKey: 'solicitor_portal_admin', group: 'Administration', keywords: ['solicitor', 'conveyancer', 'legal', 'matter'] },
-  { title: 'Client Portal', url: '/portal-config', icon: Globe, moduleKey: 'portal_config', group: 'Administration', keywords: ['portal config', 'portal configuration'] },
+  { title: 'Finance Portal', url: '/admin/finance-portal', icon: ShieldCheck, moduleKey: 'finance_portal_admin', group: 'Portals' },
+  // One activation, one private conversation (docs/builder-portal/52).
+  { title: 'Builder Portal', url: '/admin/builder-portal', icon: Building2, moduleKey: 'listings', group: 'Portals', keywords: ['builder', 'activated', 'acknowledged', 'builder messages'], activePatterns: ['/admin/builder-portal'], badge: 'builder_activations', featureFlag: 'builder_stock_marketplace' },
+  { title: 'Solicitor Portal', url: '/admin/solicitor-portal', icon: Scale, moduleKey: 'solicitor_portal_admin', group: 'Portals', keywords: ['solicitor', 'conveyancer', 'legal', 'matter'] },
+  { title: 'Client Portal', url: '/portal-config', icon: Globe, moduleKey: 'portal_config', group: 'Portals', keywords: ['portal config', 'portal configuration'] },
   { title: 'Token Audit Log', url: '/admin/token-audit', icon: Coins, moduleKey: '__superadmin_only__', group: 'Administration' },
   { title: 'PDF Import Engine', url: '/admin/pdf-import-engine', icon: Cpu, moduleKey: '__superadmin_only__', group: 'Administration' },
   { title: 'PDF Import Diagnostics', url: '/admin/pdf-import-diagnostics', icon: Activity, moduleKey: '__superadmin_only__', group: 'Administration' },
@@ -176,6 +199,7 @@ export const NAVIGATION_GROUP_ORDER: readonly string[] = [
   'Reports & Analysis',
   'Client & CRM',
   'Operations',
+  'Portals',
   'Help & Usage',
 ];
 

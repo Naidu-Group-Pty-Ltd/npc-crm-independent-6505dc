@@ -22,6 +22,7 @@
 import { describe, it, expect } from 'vitest';
 import { ReportTemplateSchema, parseTemplate } from '@/lib/reportTemplate/templateSchema';
 import { renderTemplateToHtml } from '@/lib/reportTemplate/htmlRenderer';
+import { evalConditional } from '@/lib/reportTemplate/bindingResolver';
 import {
   deriveEntryFacts, validateForPublish,
 } from '../../../../supabase/functions/_shared/templateLibraryCore.pure';
@@ -347,8 +348,17 @@ describe.each(INVESTMENT_COMPASS_TEMPLATES.map((t) => [
     // the opportunity, the risk row — all resolve against the sample and are
     // therefore still counted, exactly as before. The three financial pages
     // resolve here because this data is a tier that carries them.
+    //
+    // A page whose conditional does not hold for this data is not expected
+    // either: since seed v20 the master carries BOTH front matters — the
+    // `Executive summary` a flowing tier draws and the typed pages a stored
+    // pre-tier report draws — and the sample, which names no flowing tier,
+    // selects the second. Counting the summary here would assert that a
+    // master prints two front matters at once.
+    const ctx = { data: SAMPLE_WITH_MODELLING as Record<string, unknown>, tokens: (template.schema as any).tokens };
     const expected = template.schema.pages.filter(
-      (p: any) => !/^(The report|Not the whole report)/.test(p.name),
+      (p: any) => !/^(The report|Not the whole report)/.test(p.name)
+        && (!p.conditional || evalConditional(p.conditional, ctx as never)),
     );
     expect(pages.length).toBe(expected.length);
     expect(expected.length).toBeGreaterThan(4);
@@ -366,9 +376,15 @@ describe.each(INVESTMENT_COMPASS_TEMPLATES.map((t) => [
     const asCompass = renderTemplateToHtml(template.schema, { data: SAMPLE }).html;
     const asFinancial = renderTemplateToHtml(template.schema, { data: SAMPLE_WITH_MODELLING }).html;
     const count = (h: string) => (h.match(/class="[^"]*tpl-page/g) ?? []).length;
-    const dropped = template.schema.pages.filter(
-      (p: any) => p.conditional === 'report && report.drawsFinancialModelling',
-    );
+    // The pages that print for the modelling tier and not for the Compass:
+    // read by evaluating each page's own conditional under both, because a
+    // financial page's conditional also names the front matter it belongs to
+    // (seed v20), so matching it as a string tests the spelling, not the rule.
+    const at = (data: unknown) => ({ data: data as Record<string, unknown>, tokens: (template.schema as any).tokens });
+    const dropped = template.schema.pages.filter((p: any) => Boolean(p.conditional)
+      && evalConditional(p.conditional, at(SAMPLE_WITH_MODELLING) as never)
+      && !evalConditional(p.conditional, at(SAMPLE) as never)
+      && String(p.conditional).includes('report.drawsFinancialModelling'));
     expect(dropped.length, 'the master must make its financial pages conditional').toBeGreaterThanOrEqual(2);
     expect(count(asCompass)).toBe(count(asFinancial) - dropped.length);
     // And the drop is clean: no labelled empty rows survive where the tables were.

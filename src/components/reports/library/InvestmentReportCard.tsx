@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { format } from 'date-fns';
+import { reportGeneratedAt } from '@/lib/reports/investment/reportGeneratedAt.pure';
 import {
   Building2,
   Calendar,
@@ -193,7 +194,7 @@ export function InvestmentReportCard({
               <div className="mt-2 grid gap-1.5 text-xs text-muted-foreground sm:grid-cols-2">
                 <span className="flex items-center gap-1.5">
                   <Calendar className="h-3.5 w-3.5" />
-                  {format(new Date(report.created_at), 'PPp')}
+                  {format(new Date(reportGeneratedAt(report)?.at ?? report.created_at), 'PPp')}
                 </span>
                 <span className="flex items-center gap-1.5">
                   <User className="h-3.5 w-3.5" />

@@ -13,6 +13,7 @@ import { Badge } from '@/components/ui/badge';
 import { Loader2, Building2, Send, Clock, UserCog, Link2Off } from 'lucide-react';
 import { toast } from 'sonner';
 import { formatDistanceToNow } from 'date-fns';
+import { houseLabel } from '@/lib/houseLabel';
 
 const FN = 'finance-portal-batch9-10';
 
@@ -46,7 +47,7 @@ export function NpcHandoffCard({ purchaseFileId }: { purchaseFileId: string }) {
     });
     setPinging(false);
     if (error) return toast.error('Ping failed');
-    toast.success('Ping sent to NPC');
+    toast.success(houseLabel('Ping sent to NPC', 'Ping sent to the deal owner'));
     setMsg('');
     setOpen(false);
     qc.invalidateQueries({ queryKey: ['npc-handoff', purchaseFileId] });
@@ -56,9 +57,9 @@ export function NpcHandoffCard({ purchaseFileId }: { purchaseFileId: string }) {
     <Card>
       <CardHeader className="pb-3">
         <CardTitle className="flex items-center gap-2 text-base">
-          <Building2 className="h-4 w-4 text-primary" /> NPC Handoff
+          <Building2 className="h-4 w-4 text-primary" /> {houseLabel('NPC Handoff', 'Command Centre Handoff')}
         </CardTitle>
-        <CardDescription>Internal deal owner & last activity from NPC's side.</CardDescription>
+        <CardDescription>{houseLabel("Internal deal owner & last activity from NPC's side.", "Internal deal owner & last activity from the Command Centre's side.")}</CardDescription>
       </CardHeader>
       <CardContent className="space-y-3">
         {isLoading ? (
@@ -80,7 +81,7 @@ export function NpcHandoffCard({ purchaseFileId }: { purchaseFileId: string }) {
               </div>
               <div>
                 <p className="text-muted-foreground flex items-center gap-1">
-                  <UserCog className="h-3 w-3" /> NPC owner
+                  <UserCog className="h-3 w-3" /> {houseLabel('NPC owner', 'Deal owner')}
                 </p>
                 <p className="font-medium">{data.npc_owner?.full_name ?? data.npc_owner?.email ?? 'Unassigned'}</p>
                 {data.npc_owner?.email && (
@@ -104,12 +105,12 @@ export function NpcHandoffCard({ purchaseFileId }: { purchaseFileId: string }) {
 
             {!open ? (
               <Button size="sm" variant="outline" className="w-full" onClick={() => setOpen(true)}>
-                <Send className="h-3 w-3 mr-1.5" /> Ping NPC owner
+                <Send className="h-3 w-3 mr-1.5" /> {houseLabel('Ping NPC owner', 'Ping deal owner')}
               </Button>
             ) : (
               <div className="space-y-2">
                 <Textarea
-                  placeholder="What do you need from NPC?"
+                  placeholder={houseLabel('What do you need from NPC?', 'What do you need from the deal owner?')}
                   value={msg}
                   onChange={(e) => setMsg(e.target.value)}
                   rows={2}

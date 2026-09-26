@@ -492,3 +492,13 @@ export function useAuth() {
   }
   return context;
 }
+
+/**
+ * The signed-in user's id, or null — without throwing outside an
+ * AuthProvider. Query keys for data that belongs to one person name them with
+ * it, so a sign-out and a different sign-in on the same browser can never
+ * read the previous person's cache.
+ */
+export function useAuthUserIdOptional(): string | null {
+  return useContext(AuthContext)?.user?.id ?? null;
+}

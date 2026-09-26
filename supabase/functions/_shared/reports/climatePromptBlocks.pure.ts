@@ -19,6 +19,7 @@
  *    is one honest line plus the no-invention instruction.
  */
 import { CLIMATE_WEB_SEARCH_RULE } from './registerAuthority.pure.ts';
+import { elsewhereOnly, inHomeSection } from './adviserVoice.pure.ts';
 
 interface Numericish { [key: string]: unknown }
 
@@ -61,7 +62,7 @@ export function climateProfileBlock(input: ClimatePromptInput): string {
     evap !== null ? `| Annual pan evaporation (${normalPeriod} normal) | ${fmt(evap)} mm | ${src} |` : null,
   ].filter((r): r is string => r !== null);
 
-  const parts = [`**Climate profile (measured at the property's grid cell):**\n\n| Metric | Value | Source |\n|---|---|---|\n${rows.join('\n')}`];
+  const parts = [`**Climate profile (SILO climate data for the property's location):**\n\n| Metric | Value | Source |\n|---|---|---|\n${rows.join('\n')}`];
 
   const recent = c['recent'] as Numericish | null | undefined;
   const recentRain = num(recent?.['rainfallMm']);
@@ -93,14 +94,16 @@ export function hazardBlock(input: ClimatePromptInput): string {
   hazard('floodRisk', 'Flooding');
   hazard('bushfireRisk', 'Bushfire');
   if (rows.length === 0) return '';
-  return `**Assessed hazards (from the risk services' own readings):**\n\n| Hazard | Assessment | Detail |\n|---|---|---|\n${rows.join('\n')}`;
+  return `**Assessed hazards (from the hazard assessments held for this report):**\n\n| Hazard | Assessment | Detail |\n|---|---|---|\n${rows.join('\n')}`;
 }
 
 export function climateStatBlocks(input: ClimatePromptInput): string {
   const parts = [climateProfileBlock(input), hazardBlock(input)].filter((b) => b !== '');
 
   if (parts.length === 0) {
-    return 'No measured climate or hazard reading is available for this property. State that plainly in one sentence; do NOT print a climate table, name a climate zone, or rate any hazard. '
+    return `No measured climate or hazard reading is held for this property. ${inHomeSection('environment')} `
+      + `say so once. ${elsewhereOnly('environment')} Anywhere in the report, do NOT print a climate table, `
+      + 'name a climate zone, or rate any hazard. '
       + CLIMATE_WEB_SEARCH_RULE;
   }
 

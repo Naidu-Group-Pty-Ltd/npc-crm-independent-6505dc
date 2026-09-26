@@ -144,7 +144,9 @@ import {
 } from './investmentProgramme.pure.ts';
 import { ABSENCE_GUIDE, INFRASTRUCTURE_GUIDE_LEAD_IN, guidesForKinds } from './infrastructureGuide.pure.ts';
 import { auDate } from './auDate.pure.ts';
+import { readerNote, uncheckedSentence } from './serviceNote.pure.ts';
 import { NATIONAL_PIPELINE_COVERAGE_PHRASE } from './nationalPipeline.pure.ts';
+import { DISCLOSURE_HOMES, REGISTER_CHECKED_EMPTY, REGISTER_NOT_COVERED, elsewhereOnly, inHomeSection } from '../reports/adviserVoice.pure.ts';
 
 const isRecord = (v: unknown): v is Record<string, unknown> =>
   typeof v === 'object' && v !== null && !Array.isArray(v);
@@ -412,8 +414,15 @@ export const INFRASTRUCTURE_COVERAGE_LIMITS: readonly string[] = [
    * removed, which is why it is not folded into `coverageLimitsFor`.
    */
   NATIONAL_PIPELINE_COVERAGE_PHRASE,
-  'projects outside the local government area the registers were asked about',
+  'projects outside the property\u2019s local government area',
 ];
+
+/**
+ * The two absences, as a reader is told them (rule 9). Defined once in
+ * `adviserVoice.pure.ts`, because the supply block prints them too, and
+ * re-exported here for every existing importer.
+ */
+export { REGISTER_CHECKED_EMPTY, REGISTER_NOT_COVERED };
 
 /**
  * The same list, with the programme limit removed where a programme WAS read.
@@ -440,6 +449,7 @@ export interface InfrastructureEvidenceInput {
 export function buildInfrastructureEvidence(input: InfrastructureEvidenceInput): InfrastructureEvidence {
   const data = isRecord(input.planningData) ? input.planningData : null;
   const retrievedAt = data ? str(data.fetchedAt) : null;
+  const jurisdiction = data ? str(data.jurisdiction) : null;
   const items: InfrastructureItem[] = [];
   const readings: RegisterReading[] = [];
 
@@ -460,7 +470,9 @@ export function buildInfrastructureEvidence(input: InfrastructureEvidenceInput):
     readings.push({
       register,
       reading: str(block.status) === 'none_at_point' ? 'searched_empty' : 'not_searched',
-      note: str(block.note) ?? fallback,
+      // The service's words, unless they describe our build rather than the
+      // register — `serviceNote.pure.ts` says why.
+      note: readerNote(str(block.note), jurisdiction) ?? fallback,
     });
   };
 
@@ -632,7 +644,7 @@ export function buildInfrastructureEvidence(input: InfrastructureEvidenceInput):
       }
     }
   } else if (inst) {
-    note('development instruments', inst, 'No state development-instrument reading for this point.');
+    note('development instruments', inst, uncheckedSentence('State-level development designations', 'Any that affect the property will appear on the local government’s planning certificate.'));
   }
 
   /*
@@ -891,7 +903,7 @@ export function buildInfrastructureEvidence(input: InfrastructureEvidenceInput):
       });
     }
   } else if (act) {
-    note('development applications', act, 'No development-application register reading for this jurisdiction.');
+    note('development applications', act, uncheckedSentence('Development applications', 'The council’s own application tracker shows activity near the property.'));
   }
 
   /*
@@ -976,8 +988,8 @@ export function buildInfrastructureEvidence(input: InfrastructureEvidenceInput):
     // Its statement belongs beside the table it explains, so it travels as
     // `programmeStatement` and only joins the absence list when it found
     // nothing — which is a real absence and reads correctly there.
-    programmeStatement = `${source}${edition ? ` (${edition})` : ''} was read for `
-      + `${num(programme.radiusKm) ?? PROGRAMME_RADIUS_KM_FALLBACK} km around this property. `
+    programmeStatement = `${source}${edition ? ` (${edition})` : ''} was checked for investments within `
+      + `${num(programme.radiusKm) ?? PROGRAMME_RADIUS_KM_FALLBACK} km of the property. `
       + horizonCaveat(edition ?? 'its published window');
     if (programme.investments.length === 0) {
       readings.push({
@@ -991,7 +1003,8 @@ export function buildInfrastructureEvidence(input: InfrastructureEvidenceInput):
     readings.push({
       register: 'forward investment programme',
       reading: str(programme.status) === 'none_at_point' ? 'searched_empty' : 'not_searched',
-      note: str(programme.note) ?? 'No forward investment programme reading for this jurisdiction.',
+      note: readerNote(str(programme.note), jurisdiction)
+        ?? uncheckedSentence('The state’s forward infrastructure programme', 'The state budget papers list the projects it funds.'),
     });
   }
 
@@ -1039,7 +1052,7 @@ function fundingCell(item: InfrastructureItem): string {
   if (item.costBasis === 'committed_budget') return 'Committed by the programme; contributors not named on this entry';
   return item.statedCost !== null
     ? 'Not stated — the figure is the applicant’s own cost of development'
-    : 'Not stated by this register';
+    : 'Not stated';
 }
 
 /**
@@ -1073,7 +1086,7 @@ function kindCell(item: InfrastructureItem): string {
 
 /** The status cell: the publisher's word, and the reading where one is certain. */
 function statusCell(item: InfrastructureItem): string {
-  if (!item.statedStatus) return 'Status not stated by the register';
+  if (!item.statedStatus) return 'Status not stated';
   const read = item.standing ? DELIVERY_STANDING_LABEL[item.standing] : null;
   return read && read.toLowerCase() !== item.statedStatus.toLowerCase()
     ? `${item.statedStatus} (${read})`
@@ -1089,7 +1102,7 @@ function walkNote(walk: InfrastructureEvidence['registerWalk']): string {
   if (!walk || walk.rowsRead >= walk.totalStated) return '';
   const n = (v: number) => v.toLocaleString('en-AU');
   return `Both totals were summed from ${n(walk.rowsRead)} of the ${n(walk.totalStated)} applications the register `
-    + 'states for this window, so each is a FLOOR rather than a total: reading the remainder can only raise it. ';
+    + 'lists for this period, so each is a floor rather than a total: the remainder can only add to it. ';
 }
 
 /**
@@ -1117,7 +1130,7 @@ export function renderInfrastructureOutlook(evidence: InfrastructureEvidence): s
       lines.push(
         `| ${i.reference ?? '—'} | ${i.name} | ${kindCell(i)} | ${statusCell(i)} | ${when} | ${where} | `
         + `${costCell(i)} | ${fundingCell(i)} | `
-        + `${i.statedDelivery ?? 'Not published by this register'} |`,
+        + `${i.statedDelivery ?? 'Not published'} |`,
       );
     }
     lines.push('');
@@ -1135,7 +1148,7 @@ export function renderInfrastructureOutlook(evidence: InfrastructureEvidence): s
         .map((i) => `"${i.name}" (${i.source}) beside "${i.unconfirmedDuplicateOf}"`);
       lines.push(
         `**Two readings that may be one project.** ${pairs.join('; ')}. `
-        + 'Both registers describe a designation of the same name at this point, and neither '
+        + 'Both sources describe a designation of the same name at the property, and neither '
         + 'published a reference that would confirm they are the same record — so both are '
         + 'listed rather than one being dropped. **Do not add their figures together**: they may '
         + 'be one project counted twice, and no total in this report treats them as independent.',
@@ -1143,7 +1156,8 @@ export function renderInfrastructureOutlook(evidence: InfrastructureEvidence): s
       );
     }
     const sources = [...new Set(evidence.items.map((i) => `${i.source}${i.licence ? ` (${i.licence})` : ''}`))];
-    lines.push(`Sources: ${sources.join('; ')}. Retrieved ${auDate(evidence.retrievedAt) ?? 'this run'}.`);
+    const accessed = auDate(evidence.retrievedAt);
+    lines.push(`Sources: ${sources.join('; ')}${accessed ? `, accessed ${accessed}` : ''}.`);
     lines.push('');
 
     /*
@@ -1187,11 +1201,11 @@ export function renderInfrastructureOutlook(evidence: InfrastructureEvidence): s
       const amended = withApps.filter((i) => (i.applications?.amendments ?? 0) > 0).length;
       const plural = (n: number, one: string) => `${n.toLocaleString('en-AU')} ${one}${n === 1 ? '' : 's'}`;
       lines.push(
-        `**How to count these.** ${plural(withApps.length, 'development')} from the application register `
-        + `${withApps.length === 1 ? 'is' : 'are'} listed above, resolved from ${plural(rowsBehind, 'register row')}.`
+        `**How to count these.** ${plural(withApps.length, 'development')} from the council's application register `
+        + `${withApps.length === 1 ? 'is' : 'are'} listed above, drawn from ${plural(rowsBehind, 'lodged application')}.`
         + (amended
-          ? ' An amendment restates the development it amends — the register carries the WHOLE cost and the whole'
-            + ' dwelling count on the amendment row rather than the change — so a development amended three times'
+          ? ' An amendment restates the development it amends — the register carries the whole cost and the whole'
+            + ' dwelling count on the amendment rather than the change — so a development amended three times'
             + ' is one development, its stated cost is counted once, and the amendment count is not a number of'
             + ' projects.'
           : ''),
@@ -1221,7 +1235,7 @@ export function renderInfrastructureOutlook(evidence: InfrastructureEvidence): s
     const inv = evidence.pipelineInvestment;
     const apps = (n: number) => `${n.toLocaleString('en-AU')} application${n === 1 ? '' : 's'}`;
     lines.push(
-      `**Dwellings in the register's pipeline.** ${d.total.toLocaleString('en-AU')} new dwellings were stated on `
+      `**Dwellings in the development pipeline.** ${d.total.toLocaleString('en-AU')} new dwellings were stated on `
       + `the ${apps(d.rowsStating)} that gave a dwelling count in ${d.council}${d.window ? `, ${d.window}` : ''}`
       + `${inv
         ? `, and ${money(inv.total)} of development cost on the ${apps(inv.rowsStating)} that gave a cost`
@@ -1258,29 +1272,31 @@ export function renderInfrastructureOutlook(evidence: InfrastructureEvidence): s
    * searched".
    */
   for (const r of evidence.readings) {
-    lines.push(r.reading === 'searched_empty'
-      ? `**Searched, nothing found.** ${r.note} That is what these layers hold at this point, within the `
-        + 'coverage stated below.'
-      : `**Not searched.** ${r.note} No question was put to this register, so nothing about this area follows `
-        + 'from it.');
+    lines.push(`**${r.reading === 'searched_empty' ? REGISTER_CHECKED_EMPTY : REGISTER_NOT_COVERED}** ${r.note}`);
     lines.push('');
   }
 
-  // Rule 5, stated whether the list is long or empty.
+  // Rule 5, stated whether the list is long or empty — once, here, in the
+  // section that owns the subject (`DISCLOSURE_HOMES.infrastructure`).
+  //
+  // Said as a statement about what WAS checked only where something was: a
+  // Western Australian property has no state source checked at all, and "the
+  // entries above come from the state's registers, checked for the property"
+  // over an empty list is a claim of a search that never happened.
+  const anyChecked = evidence.items.length > 0 || evidence.readings.some((r) => r.reading === 'searched_empty');
   lines.push(
-    '**What this covers, and what it does not.** These entries come from the planning registers this platform '
-    + 'reads at the property\'s own coordinate and for its local government area. They do NOT cover '
-    + `${evidence.coverageLimits.join(', ')}. A short list here is a statement about those registers rather than `
-    + 'a finding that nothing is planned nearby, and it is not a basis for rating infrastructure risk as low: '
-    // "a regional centre's" was wrong here and right in the rule it mirrors.
-    // This paragraph draws on every property the platform reports on, and the
-    // first two it was measured against are Maryborough and Kellyville — one
-    // regional centre and one metropolitan Sydney suburb.
-    + 'what these registers do not reach is where much of an area\u2019s infrastructure is actually recorded.',
+    (anyChecked
+      ? '**What these searches cover.** The entries above come from the state\'s published planning and '
+        + 'development records, checked for the property and its local government area. They do not include '
+      : '**What this section covers.** None of the state\'s published planning and development records is '
+        + 'covered by this report for this property, and nor are ')
+    + `${evidence.coverageLimits.join('; ')}. A short list is therefore not a finding that nothing is planned `
+    + 'nearby, and it is not a basis for rating infrastructure risk as low: much of an area\u2019s '
+    + 'infrastructure is recorded in those other sources, and they are worth reading before exchange.',
   );
   lines.push('');
   lines.push(
-    '**What a status means.** Each status above is the register\'s own word. An approval is not funding, funding is '
+    '**What a status means.** Each status above is the publisher\'s own word. An approval is not funding, funding is '
     + 'not a start on site, and a date recorded above is the date something was decided or declared — not a '
     + 'completion date. No delivery date is stated here unless a publisher stated one.',
   );
@@ -1313,7 +1329,7 @@ export function renderInfrastructureOutlook(evidence: InfrastructureEvidence): s
   // given with nothing to do about it.
   if (evidence.readings.some((r) => r.reading === 'not_searched')) {
     if (!guides.length) lines.push('', `**${INFRASTRUCTURE_GUIDE_LEAD_IN}**`, '');
-    lines.push(`*A register that was not searched.* ${ABSENCE_GUIDE.what} `
+    lines.push(`*A source this report does not cover.* ${ABSENCE_GUIDE.what} `
       + `**What it does not tell you:** ${ABSENCE_GUIDE.limits} **Next step:** ${ABSENCE_GUIDE.next}`);
   }
 
@@ -1359,27 +1375,28 @@ function noRatingFromAnAbsence(
 ): [string, string] {
   const named = coverageLimits.join('; ');
   const where = coverageParagraphDrawn
-    ? `and the coverage sentence under the table names what these registers do not reach (${named})`
-    : `and these registers do not reach ${named}`;
+    ? `and the coverage paragraph under the table names what these searches do not include (${named})`
+    : `and these searches do not include ${named}`;
   return [
     'An absence may NOT be rated. Where a risk register, a scorecard, a SWOT table, a heat map or any other '
-    + 'rating gives infrastructure a row, the rating cell reads "Not assessed" and the row states which registers '
-    + 'were asked and which publish nothing. Never rate it Low, Minimal, Limited, Negligible, Favourable or any '
-    + 'other reassuring value, and never file it as a strength or an opportunity. A register that returned '
+    + 'rating gives infrastructure a row, the rating cell reads "Not assessed" and the row says in a few words '
+    + `that nothing was identified and points to the ${DISCLOSURE_HOMES.infrastructure.sectionName} section. `
+    + 'Never rate it Low, Minimal, Limited, Negligible, Favourable or any '
+    + 'other reassuring value, and never file it as a strength or an opportunity. A search that found '
     + 'nothing has '
     + `measured the SEARCH, not the area — ${where}, which is where much of an area’s `
     + 'infrastructure is actually recorded.',
-    'An evidence, confidence or verification note describes the RETRIEVAL and never the conclusion beside it. '
-    + '"Verified" may be written of a register reading — that a layer was checked and answered nothing at this '
-    + 'coordinate — and may NOT be written of a rating, an outlook, a recommendation or any inference drawn from '
-    + 'it. Where the conclusion is yours rather than the register’s, say so in those words.',
+    'An evidence, confidence or verification note describes the SEARCH and never the conclusion beside it. '
+    + '"Verified" may be written of a source that was checked and records nothing at the property, and may NOT '
+    + 'be written of a rating, an outlook, a recommendation or any inference drawn from it. Where the '
+    + 'conclusion is yours rather than the source’s, say so in those words.',
   ];
 }
 
 /**
- * How each register that returned nothing must be described (rule 9).
+ * How each source that returned nothing must be described (rule 9).
  *
- * A register asked at this point and a register that publishes nothing at all
+ * A source checked for this property and a source this report never consulted
  * are two different statements, and a report that calls the second one "a
  * register searched" has misdescribed its own evidence. The sentences are
  * generated per reading rather than written once, so a jurisdiction where both
@@ -1387,24 +1404,27 @@ function noRatingFromAnAbsence(
  */
 function registerSentences(readings: readonly RegisterReading[]): string[] {
   return readings.map((r, i) => r.reading === 'searched_empty'
-    ? `1${String.fromCharCode(97 + i)}. The ${r.register} register WAS asked at this property\u2019s coordinate `
-      + `and answered that it holds nothing here: "${r.note}" You may say it was checked and returned nothing. `
-      + 'That is true of those layers at this point and of nothing else.'
-    : `1${String.fromCharCode(97 + i)}. The ${r.register} register was NOT searched: "${r.note}" Do NOT write `
-      + 'that it was searched, that it returned nothing, or that nothing was found in it. No question was put, '
-      + 'so no finding about this area follows from it.');
+    ? `1${String.fromCharCode(97 + i)}. The ${r.register} source WAS checked for this property and records nothing `
+      + `here: "${r.note}" You may say it was checked and records nothing. That is true of that source at this `
+      + 'property and of nothing else.'
+    : `1${String.fromCharCode(97 + i)}. The ${r.register} source is NOT covered by this report: "${r.note}" Do NOT `
+      + 'write that it was checked, that it returned nothing, or that nothing was found in it. Nothing about '
+      + 'the area follows from it; where it matters, say where the client can check it.');
 }
 
 /** The rules the prose beside the table must obey. */
 export function infrastructureRules(evidence: InfrastructureEvidence): string {
+  const limits = evidence.coverageLimits.join('; ');
   if (evidence.enrichmentMissing || !evidence.anyEvidenced) {
     return [
-      'INFRASTRUCTURE RULES FOR THE WHOLE REPORT — nothing was retrieved for this property. They apply in '
-      + 'every section, including risk registers, scorecards, SWOT tables, checklists, summaries and verdicts, '
-      + 'and they override anything a live web search returns.',
-      '1. Say in one sentence that no infrastructure project or development instrument was retrieved for this '
-      + 'location, and that this is a statement about the registers this platform reads rather than a finding '
-      + 'that nothing is planned.',
+      'INFRASTRUCTURE — nothing was identified for this property. The prohibitions below bind every section, '
+      + 'including risk registers, scorecards, SWOT tables, checklists, summaries and verdicts, and they '
+      + 'override anything a live web search returns.',
+      `1. ${inHomeSection('infrastructure')} say, in a sentence or two, that our searches of the state\u2019s `
+      + 'published planning and development registers identified no major project or development '
+      + `designation affecting the property; that those searches do not include ${limits}; and where the client `
+      + 'can read them (the council\u2019s capital works programme and development-application tracker, and the '
+      + `state budget papers). ${elsewhereOnly('infrastructure')}`,
       ...registerSentences(evidence.readings),
       '2. Do NOT name a project, a rail line, a station, a hospital, a road upgrade, a town-centre renewal or a '
       + 'delivery horizon — not from a budget page, a news article or an agency media release found by search. '
@@ -1418,8 +1438,8 @@ export function infrastructureRules(evidence: InfrastructureEvidence): string {
     ].join('\n');
   }
   return [
-    'INFRASTRUCTURE RULES FOR THE WHOLE REPORT — they apply in every section and override any example '
-    + 'elsewhere in this prompt AND anything a live web search returns:',
+    'INFRASTRUCTURE — the prohibitions below bind every section and override any example elsewhere in this '
+    + 'prompt AND anything a live web search returns:',
     '1. The evidenced table above is supplied complete. Name only the projects in it. Do NOT add a rail line, a '
     + 'station, a hospital, a road upgrade or a town-centre renewal that is not in it — including one found by '
     + 'live web search — and do not invent a bracketed placeholder for one.',
@@ -1444,8 +1464,9 @@ export function infrastructureRules(evidence: InfrastructureEvidence): string {
     + 'number of projects, never multiply a stated cost by it, and never total the table by counting a '
     + 'development\u2019s cost once per amendment. The number of developments is the number of ROWS above, which '
     + 'the paragraph under the table states.',
-    '6. Repeat the coverage limitation in your own words, from the sentence under the table: these registers do '
-    + `not cover ${evidence.coverageLimits.join('; ')}. A short list is a short search.`,
+    `6. ${inHomeSection('infrastructure')} state the coverage limitation once, in your own words, from the `
+    + `paragraph under the table: these searches do not include ${limits}. ${elsewhereOnly('infrastructure')} `
+    + 'A short list is a short search.',
     `7. ${noRatingFromAnAbsence(evidence.coverageLimits, true)[0]} A SHORT list is the same mistake as an empty `
     + 'one: rate what the table states, never the length of it.',
     `8. ${noRatingFromAnAbsence(evidence.coverageLimits, true)[1]}`,

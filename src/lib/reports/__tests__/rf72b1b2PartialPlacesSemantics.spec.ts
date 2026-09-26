@@ -164,6 +164,7 @@ describe('RF-7.2B.1B2 §4 — partial Places failure must not become factual abs
         acquiredAt: '2026-09-12T11:00:00.000Z',
         stages: {
           geocode: 'fetched',
+          geocodePrecision: 'address',
           places: placesAreComplete(lookups) ? 'complete' : 'partial',
           placesUnavailable: unavailableCategories(lookups),
           commute: 'measured',
@@ -287,6 +288,7 @@ const storedFor = (l: PlacesLookups, attempt = 1) => stampAcquisition(
     acquiredAt: '2026-09-12T11:00:00.000Z',
     stages: {
       geocode: 'fetched',
+      geocodePrecision: 'address',
       places: placesAreComplete(l) ? 'complete' : 'partial',
       placesUnavailable: unavailableCategories(l),
       commute: 'measured',

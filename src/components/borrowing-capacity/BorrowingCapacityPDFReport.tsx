@@ -18,6 +18,8 @@ import jsPDF from 'jspdf';
 import { toast } from 'sonner';
 import { fetchGlobalReportSettings } from '@/hooks/useGlobalReportSettings';
 import { drawJsPDFDisclaimerPage } from '@/utils/pdfDisclaimerPage';
+import { issuerClosingPage, loadLegacyDocumentBrand, rgbObject, type LegacyDocumentBrand } from '@/lib/reports/legacyDocumentBrand';
+import { drawLegacyIssuerCover } from '@/lib/reports/legacyIssuerCover';
 import { hexToRgb01 } from '@/lib/reportDesign/color.pure';
 import { resolveReportPalette } from '@/lib/reportDesign/brandResolve.pure';
 import { auditDelta, auditMeasures } from '@/lib/reports/borrowingCapacity/audit.pure';
@@ -44,6 +46,49 @@ const AMBER_LIGHT = { r: 255, g: 243, b: 205 };
 const BODY_TEXT = { r: 55, g: 55, b: 55 };
 
 type RGB = { r: number; g: number; b: number };
+
+/**
+ * The colours that say whose document this is.
+ *
+ * On the prime these are NPC's, exactly as they have always been drawn — the
+ * house palette below is the old constants, unchanged. On a clone the same
+ * roles take the issuer's brand family (`legacyDocumentBrand.ts`): its brand
+ * for rules and bars, a fill dark enough to carry white type where a bar holds
+ * words, its deep shade for headings and table heads, and its wash for callout
+ * grounds. Every semantic colour — green, amber, red, the greys — is shared.
+ */
+interface DocumentPalette {
+  /** Rules, accent bars and borders. */
+  gold: RGB;
+  /** A bar that carries white type. */
+  goldFill: RGB;
+  /** The ground of a callout. */
+  goldLight: RGB;
+  /** Headings, table heads, figures. */
+  navy: RGB;
+  /** A note set on the callout ground. */
+  noteInk: RGB;
+}
+
+const HOUSE_PALETTE: DocumentPalette = {
+  gold: GOLD,
+  goldFill: GOLD,
+  goldLight: GOLD_LIGHT,
+  navy: NAVY,
+  noteInk: { r: 120, g: 90, b: 30 },
+};
+
+function documentPalette(brand: LegacyDocumentBrand): DocumentPalette {
+  if (brand.artwork === 'house') return HOUSE_PALETTE;
+  const { family } = brand;
+  return {
+    gold: rgbObject(family.accent),
+    goldFill: rgbObject(family.accentInk),
+    goldLight: rgbObject(family.wash),
+    navy: rgbObject(family.deep),
+    noteInk: rgbObject(family.accentInk),
+  };
+}
 
 // ─── Helpers ─────────────────────────────────────────────────────────────────
 const fmt = (v: number) => {
@@ -102,20 +147,20 @@ const FOOTER_Y = PAGE_H - 15;
 
 let totalPages = 0; // Will be set after generation for "Page X of Y"
 
-function addFooter(doc: jsPDF, pageNum: number) {
+function addFooter(doc: jsPDF, pageNum: number, P: DocumentPalette) {
   doc.setFontSize(7);
   setColor(doc, GRAY);
   doc.setFont('helvetica', 'normal');
   doc.text('Borrowing Capacity Snapshot  |  Confidential', MARGIN, FOOTER_Y);
   doc.text(`Page ${pageNum}`, PAGE_W - MARGIN, FOOTER_Y, { align: 'right' });
   // Gold line
-  setFill(doc, GOLD);
+  setFill(doc, P.gold);
   doc.rect(MARGIN, FOOTER_Y - 4, CONTENT_W, 0.4, 'F');
 }
 
-function checkPageBreak(doc: jsPDF, y: number, needed: number, pageNum: { value: number }): number {
+function checkPageBreak(doc: jsPDF, y: number, needed: number, pageNum: { value: number }, P: DocumentPalette): number {
   if (y + needed > PAGE_H - 25) {
-    addFooter(doc, pageNum.value);
+    addFooter(doc, pageNum.value, P);
     doc.addPage();
     pageNum.value++;
     return 30;
@@ -124,14 +169,14 @@ function checkPageBreak(doc: jsPDF, y: number, needed: number, pageNum: { value:
 }
 
 // ─── Section header (enhanced with full gold accent bar) ─────────────────────
-function drawSectionHeader(doc: jsPDF, title: string, y: number): number {
+function drawSectionHeader(doc: jsPDF, title: string, y: number, P: DocumentPalette): number {
   // Gold accent bar
-  setFill(doc, GOLD);
+  setFill(doc, P.gold);
   doc.rect(MARGIN, y, 3, 12, 'F');
   // Title
   doc.setFontSize(12);
   doc.setFont('helvetica', 'bold');
-  setColor(doc, NAVY);
+  setColor(doc, P.navy);
   doc.text(title, MARGIN + 8, y + 9);
   // Subtle underline
   setFill(doc, { r: 230, g: 230, b: 230 });
@@ -223,10 +268,24 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
   const __brandLine1 = (__brandParts.length > 1 ? __brandParts.slice(0, -1).join(' ') : __brandName).toUpperCase();
   const __brandLine2 = __brandParts.length > 1 ? __brandParts[__brandParts.length - 1].toUpperCase() : '';
 
+  // Whose template this document is printed in: NPC's artwork on the prime,
+  // exactly as it has always been drawn, and the issuer's own on every clone
+  // (`legacyDocumentBrand.ts`). The content is the same either way.
+  const legacyBrand = await loadLegacyDocumentBrand(__brand?.company_name);
+  const P = documentPalette(legacyBrand);
+
   // ════════════════════════════════════════════════════════════════════════════
   // PAGE 1: COVER — standard template image (no overlay text)
   // ════════════════════════════════════════════════════════════════════════════
-  try {
+  if (legacyBrand.artwork === 'issuer') {
+    drawLegacyIssuerCover(doc, {
+      issuerName: legacyBrand.issuer.name,
+      mark: legacyBrand.mark,
+      documentTitle: 'Borrowing Capacity Snapshot',
+      subject: smartCapitalize(data.clientName),
+      family: legacyBrand.family,
+    });
+  } else try {
     const coverImageUrl = '/templates/npc-cashflow-cover.jpg';
     const coverResponse = await fetch(coverImageUrl);
     if (coverResponse.ok) {
@@ -275,7 +334,7 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
   // ── Client Summary Header ──────────────────────────────────────────────────
   doc.setFontSize(18);
   doc.setFont('helvetica', 'bold');
-  setColor(doc, NAVY);
+  setColor(doc, P.navy);
   const displayName = smartCapitalize(data.clientName);
   doc.text(displayName, MARGIN, y + 5);
 
@@ -290,11 +349,11 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
 
   // Gold divider below client header
   y += 12;
-  setFill(doc, GOLD);
+  setFill(doc, P.gold);
   doc.rect(MARGIN, y, CONTENT_W, 0.8, 'F');
   y += 10;
 
-  y = drawSectionHeader(doc, 'Executive Summary', y);
+  y = drawSectionHeader(doc, 'Executive Summary', y, P);
 
   // ── Executive Summary Narrative ────────────────────────────────────────────
   {
@@ -344,7 +403,7 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
   // Box 1: Borrowing Capacity
   setFill(doc, LIGHT_GRAY);
   doc.roundedRect(MARGIN, y, boxW, boxH, 2, 2, 'F');
-  setFill(doc, GOLD);
+  setFill(doc, P.gold);
   doc.rect(MARGIN, y + 2, 2.5, boxH - 4, 'F'); // gold left accent
   doc.setFontSize(7);
   doc.setFont('helvetica', 'normal');
@@ -352,7 +411,7 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
   doc.text('BORROWING CAPACITY', MARGIN + 8, y + 10);
   doc.setFontSize(16);
   doc.setFont('helvetica', 'bold');
-  setColor(doc, NAVY);
+  setColor(doc, P.navy);
   doc.text(fmt(a.borrowing_capacity || 0), MARGIN + 8, y + 23);
   doc.setFontSize(7);
   doc.setFont('helvetica', 'normal');
@@ -409,7 +468,7 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
 
     doc.setFontSize(8);
     doc.setFont('helvetica', 'bold');
-    setColor(doc, NAVY);
+    setColor(doc, P.navy);
     doc.text('Capacity Utilisation', barX, y);
     doc.setFont('helvetica', 'normal');
     setColor(doc, GRAY);
@@ -452,14 +511,14 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
   setColor(doc, GRAY);
   doc.text('Stress Tested:', MARGIN + metricColW, y);
   doc.setFont('helvetica', 'bold');
-  setColor(doc, NAVY);
+  setColor(doc, P.navy);
   doc.text(fmt(a.stress_tested_capacity || 0), MARGIN + metricColW + 30, y);
 
   doc.setFont('helvetica', 'normal');
   setColor(doc, GRAY);
   doc.text('Assessment Rate:', MARGIN + metricColW * 2, y);
   doc.setFont('helvetica', 'bold');
-  setColor(doc, NAVY);
+  setColor(doc, P.navy);
   doc.text(`${round2(a.assessment_rate || a.interest_rate_used || 0).toFixed(2)}%`, MARGIN + metricColW * 2 + 35, y);
 
   y += 10;
@@ -474,15 +533,15 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
   const selectedLender = (a.assumptions as any)?.selectedLenderName || null;
   const bufferLabel = bufferIncluded ? 'Included' : 'Excluded';
 
-  setFill(doc, GOLD_LIGHT);
-  setDraw(doc, GOLD);
+  setFill(doc, P.goldLight);
+  setDraw(doc, P.gold);
   doc.setLineWidth(0.3);
   const assumptionsBoxH = selectedLender ? 34 : 28;
   doc.roundedRect(MARGIN, y, CONTENT_W, assumptionsBoxH, 2, 2, 'FD');
 
   doc.setFontSize(8);
   doc.setFont('helvetica', 'bold');
-  setColor(doc, NAVY);
+  setColor(doc, P.navy);
   doc.text('KEY ASSUMPTIONS', MARGIN + 5, y + 7);
 
   doc.setFontSize(7.5);
@@ -503,7 +562,7 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
   doc.text(`Expense Method: ${expMethodLabel}`, col2, y + 21);
   if (selectedLender) {
     doc.setFont('helvetica', 'bold');
-    setColor(doc, NAVY);
+    setColor(doc, P.navy);
     doc.text(`Selected Lender: ${selectedLender}`, col3, y + 21);
     doc.setFont('helvetica', 'normal');
   }
@@ -519,7 +578,7 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
   const netPurchase = a.net_purchase_capacity || 0;
 
   if (lmiModeVal !== 'none' && lmiAmountVal > 0) {
-    y = checkPageBreak(doc, y, 45, pageNum);
+    y = checkPageBreak(doc, y, 45, pageNum, P);
     const lmiBoxH = 32;
     setFill(doc, AMBER_LIGHT);
     setDraw(doc, AMBER);
@@ -529,7 +588,7 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
     doc.rect(MARGIN, y + 2, 2.5, lmiBoxH - 4, 'F');
     doc.setFontSize(8);
     doc.setFont('helvetica', 'bold');
-    setColor(doc, NAVY);
+    setColor(doc, P.navy);
     doc.text('LENDERS MORTGAGE INSURANCE (LMI)', MARGIN + 8, y + 7);
     const lmiModeLabel = lmiModeVal === 'display_deduction' ? 'Display Deduction' : 'Capitalised to Loan';
     doc.setFontSize(7);
@@ -565,8 +624,8 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
   // ════════════════════════════════════════════════════════════════════════════
   // INCOME ANALYSIS
   // ════════════════════════════════════════════════════════════════════════════
-  y = checkPageBreak(doc, y, 40, pageNum);
-  y = drawSectionHeader(doc, 'Income Analysis', y);
+  y = checkPageBreak(doc, y, 40, pageNum, P);
+  y = drawSectionHeader(doc, 'Income Analysis', y, P);
 
   // Summary row
   doc.setFontSize(9);
@@ -580,7 +639,7 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
   const incomeBreakdown = a.income_breakdown || data.incomeSources;
   if (incomeBreakdown && Array.isArray(incomeBreakdown) && incomeBreakdown.length > 0) {
     // Header row with navy background
-    setFill(doc, NAVY);
+    setFill(doc, P.navy);
     doc.rect(MARGIN, y - 5, CONTENT_W, ROW_HEIGHT, 'F');
     doc.setFontSize(8);
     doc.setFont('helvetica', 'bold');
@@ -594,10 +653,10 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
     for (let i = 0; i < incomeBreakdown.length; i++) {
       const item = incomeBreakdown[i];
       const prevY = y;
-      y = checkPageBreak(doc, y, 20, pageNum);
+      y = checkPageBreak(doc, y, 20, pageNum, P);
       if (y < prevY) {
         // Re-draw header after page break
-        setFill(doc, NAVY);
+        setFill(doc, P.navy);
         doc.rect(MARGIN, y - 5, CONTENT_W, ROW_HEIGHT, 'F');
         doc.setFontSize(8);
         doc.setFont('helvetica', 'bold');
@@ -626,8 +685,8 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
   // ════════════════════════════════════════════════════════════════════════════
   // EXPENSES & LIABILITIES
   // ════════════════════════════════════════════════════════════════════════════
-  y = checkPageBreak(doc, y, 40, pageNum);
-  y = drawSectionHeader(doc, 'Expenses & Liabilities', y);
+  y = checkPageBreak(doc, y, 40, pageNum, P);
+  y = drawSectionHeader(doc, 'Expenses & Liabilities', y, P);
 
   doc.setFontSize(9);
   doc.setFont('helvetica', 'normal');
@@ -643,12 +702,12 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
   if (liabilities && Array.isArray(liabilities) && liabilities.length > 0) {
     doc.setFontSize(10);
     doc.setFont('helvetica', 'bold');
-    setColor(doc, NAVY);
+    setColor(doc, P.navy);
     doc.text('Existing Liabilities', MARGIN, y);
     y += 10;
 
     // Header row with navy background
-    setFill(doc, NAVY);
+    setFill(doc, P.navy);
     doc.rect(MARGIN, y - 5, CONTENT_W, ROW_HEIGHT, 'F');
     doc.setFontSize(8);
     doc.setFont('helvetica', 'bold');
@@ -660,9 +719,9 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
 
     for (let i = 0; i < liabilities.length; i++) {
       const prevY = y;
-      y = checkPageBreak(doc, y, 20, pageNum);
+      y = checkPageBreak(doc, y, 20, pageNum, P);
       if (y < prevY) {
-        setFill(doc, NAVY);
+        setFill(doc, P.navy);
         doc.rect(MARGIN, y - 5, CONTENT_W, ROW_HEIGHT, 'F');
         doc.setFontSize(8);
         doc.setFont('helvetica', 'bold');
@@ -694,22 +753,22 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
   // ════════════════════════════════════════════════════════════════════════════
   // CAPACITY BREAKDOWN
   // ════════════════════════════════════════════════════════════════════════════
-  y = checkPageBreak(doc, y, 80, pageNum);
-  y = drawSectionHeader(doc, 'Capacity Breakdown', y);
+  y = checkPageBreak(doc, y, 80, pageNum, P);
+  y = drawSectionHeader(doc, 'Capacity Breakdown', y, P);
 
   const breakdownItems = [
-    { label: 'Gross Annual Income', value: fmt(a.gross_annual_income || 0), color: NAVY },
-    { label: 'Shaded Annual Income', value: fmt(a.shaded_annual_income || 0), color: NAVY },
+    { label: 'Gross Annual Income', value: fmt(a.gross_annual_income || 0), color: P.navy },
+    { label: 'Shaded Annual Income', value: fmt(a.shaded_annual_income || 0), color: P.navy },
     { label: 'Living Expenses (Monthly)', value: `-${fmt(a.living_expenses_monthly || 0)}`, color: RED },
     { label: 'Existing Commitments (Monthly)', value: `-${fmt(a.existing_commitments_monthly || 0)}`, color: RED },
     { label: 'Monthly Surplus', value: fmt(a.monthly_surplus || 0), color: (a.monthly_surplus || 0) >= 0 ? GREEN : RED },
-    { label: 'Assessment Rate Applied', value: `${round2(a.assessment_rate || a.interest_rate_used || 0).toFixed(2)}%`, color: NAVY },
-    { label: 'Loan Term', value: `${a.loan_term_years || 30} years`, color: NAVY },
+    { label: 'Assessment Rate Applied', value: `${round2(a.assessment_rate || a.interest_rate_used || 0).toFixed(2)}%`, color: P.navy },
+    { label: 'Loan Term', value: `${a.loan_term_years || 30} years`, color: P.navy },
   ];
 
   for (let i = 0; i < breakdownItems.length; i++) {
     const item = breakdownItems[i];
-    y = checkPageBreak(doc, y, 12, pageNum);
+    y = checkPageBreak(doc, y, 12, pageNum, P);
     const bg = i % 2 === 0 ? LIGHT_GRAY : undefined;
     if (bg) {
       setFill(doc, bg);
@@ -726,9 +785,9 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
   }
 
   // Final capacity row with gold background — ensure it doesn't overlap footer
-  y = checkPageBreak(doc, y, 25, pageNum);
+  y = checkPageBreak(doc, y, 25, pageNum, P);
   y += 2;
-  setFill(doc, GOLD);
+  setFill(doc, P.goldFill);
   doc.roundedRect(MARGIN, y - 5, CONTENT_W, 14, 2, 2, 'F');
   doc.setFontSize(11);
   doc.setFont('helvetica', 'bold');
@@ -747,12 +806,12 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
       : [];
 
   if (assumptionItems.length > 0) {
-    y = checkPageBreak(doc, y, 30, pageNum);
+    y = checkPageBreak(doc, y, 30, pageNum, P);
 
     // Section header
     doc.setFontSize(10);
     doc.setFont('helvetica', 'bold');
-    setColor(doc, NAVY);
+    setColor(doc, P.navy);
     doc.text('Additional Assumptions', MARGIN, y);
     y += 8;
 
@@ -760,13 +819,13 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
     const assumptionLineH = 8.5;
     const cardPadY = 6;
     const cardH = assumptionItems.length * assumptionLineH + cardPadY * 2;
-    y = checkPageBreak(doc, y, cardH + 5, pageNum);
+    y = checkPageBreak(doc, y, cardH + 5, pageNum, P);
     setFill(doc, LIGHT_GRAY);
     setDraw(doc, { r: 220, g: 220, b: 220 });
     doc.setLineWidth(0.3);
     doc.roundedRect(MARGIN, y - 3, CONTENT_W, cardH, 2, 2, 'FD');
     // Navy left accent bar
-    setFill(doc, NAVY);
+    setFill(doc, P.navy);
     doc.rect(MARGIN, y - 1, 2.5, cardH - 4, 'F');
 
     const labelX = MARGIN + 10;
@@ -783,7 +842,7 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
       }
       doc.setFontSize(8);
       doc.setFont('helvetica', 'bold');
-      setColor(doc, NAVY);
+      setColor(doc, P.navy);
       doc.text(key, labelX, ay);
       if (val) {
         doc.setFont('helvetica', 'normal');
@@ -800,10 +859,10 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
   // ════════════════════════════════════════════════════════════════════════════
   const recs = a.recommendations || [];
   if (Array.isArray(recs) && recs.length > 0) {
-    y = checkPageBreak(doc, y, 25, pageNum);
-    y = drawSectionHeader(doc, 'Recommendations', y);
+    y = checkPageBreak(doc, y, 25, pageNum, P);
+    y = drawSectionHeader(doc, 'Recommendations', y, P);
     for (const rec of recs) {
-      y = checkPageBreak(doc, y, 12, pageNum);
+      y = checkPageBreak(doc, y, 12, pageNum, P);
       const recText = typeof rec === 'string' ? rec : rec.text || JSON.stringify(rec);
 
       // Green circle indicator
@@ -824,13 +883,13 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
   // ════════════════════════════════════════════════════════════════════════════
   const warnings = a.warnings || [];
   if (Array.isArray(warnings) && warnings.length > 0) {
-    y = checkPageBreak(doc, y, 25, pageNum);
-    y = drawSectionHeader(doc, 'Warnings', y);
+    y = checkPageBreak(doc, y, 25, pageNum, P);
+    y = drawSectionHeader(doc, 'Warnings', y, P);
 
     // Subtle amber background box for warnings
     const warningsStartY = y;
     for (const w of warnings) {
-      y = checkPageBreak(doc, y, 12, pageNum);
+      y = checkPageBreak(doc, y, 12, pageNum, P);
 
       // Amber triangle indicator
       setFill(doc, AMBER);
@@ -853,23 +912,23 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
   const explanationData = a.explanation || null;
   if (explanationData && explanationData.steps && explanationData.steps.length > 0) {
     // Start new page for explanation
-    addFooter(doc, pageNum.value);
+    addFooter(doc, pageNum.value, P);
     doc.addPage();
     pageNum.value++;
     y = 30;
 
-    y = drawSectionHeader(doc, 'How This Was Calculated', y);
+    y = drawSectionHeader(doc, 'How This Was Calculated', y, P);
 
     // Executive summary box
     if (explanationData.executiveSummary) {
       const summaryLines: string[] = doc.splitTextToSize(explanationData.executiveSummary, CONTENT_W - 16);
       const summaryH = summaryLines.length * 4 + 12;
-      y = checkPageBreak(doc, y, summaryH + 5, pageNum);
-      setFill(doc, GOLD_LIGHT);
-      setDraw(doc, GOLD);
+      y = checkPageBreak(doc, y, summaryH + 5, pageNum, P);
+      setFill(doc, P.goldLight);
+      setDraw(doc, P.gold);
       doc.setLineWidth(0.3);
       doc.roundedRect(MARGIN, y - 3, CONTENT_W, summaryH, 2, 2, 'FD');
-      setFill(doc, GOLD);
+      setFill(doc, P.gold);
       doc.rect(MARGIN, y - 1, 2.5, summaryH - 4, 'F');
       doc.setFontSize(8);
       doc.setFont('helvetica', 'normal');
@@ -885,10 +944,10 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
       const narLines: string[] = doc.splitTextToSize(step.narrative, CONTENT_W - 24);
       const figuresH = step.figures && step.figures.length > 0 ? 10 : 0;
       const stepH = 12 + narLines.length * 4 + figuresH + 8;
-      y = checkPageBreak(doc, y, stepH, pageNum);
+      y = checkPageBreak(doc, y, stepH, pageNum, P);
 
       // Step number circle
-      setFill(doc, NAVY);
+      setFill(doc, P.navy);
       doc.circle(MARGIN + 5, y + 3, 4, 'F');
       doc.setFontSize(8);
       doc.setFont('helvetica', 'bold');
@@ -898,7 +957,7 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
       // Step title
       doc.setFontSize(9);
       doc.setFont('helvetica', 'bold');
-      setColor(doc, NAVY);
+      setColor(doc, P.navy);
       doc.text(step.title, MARGIN + 14, y + 5);
       y += 12;
 
@@ -923,7 +982,7 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
           setFill(doc, LIGHT_GRAY);
           doc.roundedRect(fx, y - 3, figW, 7, 1, 1, 'F');
           doc.setFont('helvetica', 'normal');
-          setColor(doc, NAVY);
+          setColor(doc, P.navy);
           doc.text(figText, fx + 3, y + 1);
           fx += figW + 3;
         }
@@ -942,18 +1001,18 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
   // ════════════════════════════════════════════════════════════════════════════
   const auditData = a.auditTrail || null;
   if (auditData && auditData.entries && auditData.entries.length > 0) {
-    addFooter(doc, pageNum.value);
+    addFooter(doc, pageNum.value, P);
     doc.addPage();
     pageNum.value++;
     y = 30;
 
-    y = drawSectionHeader(doc, 'Audit Trail — Raw vs Assessed Values', y);
+    y = drawSectionHeader(doc, 'Audit Trail — Raw vs Assessed Values', y, P);
 
     // Summary stats row
     const auditSummary = auditData.summary;
     if (auditSummary) {
       const statsBoxH = 20;
-      y = checkPageBreak(doc, y, statsBoxH + 5, pageNum);
+      y = checkPageBreak(doc, y, statsBoxH + 5, pageNum, P);
       const statColW = (CONTENT_W - 15) / 4;
       
       const statItems = [
@@ -984,7 +1043,7 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
 
     // Audit entries table
     // Header
-    setFill(doc, NAVY);
+    setFill(doc, P.navy);
     doc.rect(MARGIN, y - 5, CONTENT_W, ROW_HEIGHT, 'F');
     doc.setFontSize(7.5);
     doc.setFont('helvetica', 'bold');
@@ -1014,17 +1073,17 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
       if (!entries || entries.length === 0) continue;
 
       // Category sub-header
-      y = checkPageBreak(doc, y, 15, pageNum);
+      y = checkPageBreak(doc, y, 15, pageNum, P);
       setFill(doc, { r: 240, g: 240, b: 245 });
       doc.rect(MARGIN, y - 4, CONTENT_W, 8, 'F');
       doc.setFontSize(7);
       doc.setFont('helvetica', 'bold');
-      setColor(doc, NAVY);
+      setColor(doc, P.navy);
       doc.text(categoryLabels[cat] || cat.toUpperCase(), MARGIN + 3, y);
       y += 7;
 
       for (let ei = 0; ei < entries.length; ei++) {
-        y = checkPageBreak(doc, y, 12, pageNum);
+        y = checkPageBreak(doc, y, 12, pageNum, P);
         const entry = entries[ei];
         const bg = ei % 2 === 0 ? LIGHT_GRAY : undefined;
         const deltaColor = entry.delta > 0 ? GREEN : entry.delta < 0 ? RED : GRAY;
@@ -1060,7 +1119,7 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
 
     // Overrides / constraints note
     if (auditSummary?.hasOverrides) {
-      y = checkPageBreak(doc, y, 12, pageNum);
+      y = checkPageBreak(doc, y, 12, pageNum, P);
       setFill(doc, AMBER_LIGHT);
       doc.rect(MARGIN, y - 3, CONTENT_W, 10, 'F');
       doc.setFontSize(7);
@@ -1072,7 +1131,7 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
   }
 
   // Add footer to last content page
-  addFooter(doc, pageNum.value);
+  addFooter(doc, pageNum.value, P);
 
   // ════════════════════════════════════════════════════════════════════════════
   // SCENARIO COMPARISON PAGE (if presets exist with non-base scenarios)
@@ -1085,7 +1144,7 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
     pageNum.value++;
     let sy = 30;
 
-    sy = drawSectionHeader(doc, 'Scenario Comparison Analysis', sy);
+    sy = drawSectionHeader(doc, 'Scenario Comparison Analysis', sy, P);
 
     // Introductory text
     doc.setFontSize(8.5);
@@ -1106,17 +1165,17 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
     const colX = { name: MARGIN, capacity: MARGIN + 60, surplus: MARGIN + 108, band: MARGIN + 145, change: PAGE_W - MARGIN };
     
     sy = drawTableRow(doc, sy, [
-      { text: 'Scenario', x: colX.name, bold: true, color: NAVY },
-      { text: 'Capacity', x: colX.capacity, bold: true, color: NAVY },
-      { text: 'Monthly Surplus', x: colX.surplus, bold: true, color: NAVY },
-      { text: 'Band', x: colX.band, bold: true, color: NAVY },
-      { text: 'Change', x: colX.change, align: 'right', bold: true, color: NAVY },
+      { text: 'Scenario', x: colX.name, bold: true, color: P.navy },
+      { text: 'Capacity', x: colX.capacity, bold: true, color: P.navy },
+      { text: 'Monthly Surplus', x: colX.surplus, bold: true, color: P.navy },
+      { text: 'Band', x: colX.band, bold: true, color: P.navy },
+      { text: 'Change', x: colX.change, align: 'right', bold: true, color: P.navy },
     ], LIGHT_GRAY);
 
     // Base case row (always present)
     sy = drawTableRow(doc, sy, [
-      { text: 'Base Case (Original)', x: colX.name, bold: true, color: NAVY },
-      { text: fmt(baseCapacity), x: colX.capacity, bold: true, color: NAVY },
+      { text: 'Base Case (Original)', x: colX.name, bold: true, color: P.navy },
+      { text: fmt(baseCapacity), x: colX.capacity, bold: true, color: P.navy },
       { text: fmt(baseSurplus), x: colX.surplus, color: baseSurplus >= 0 ? GREEN : RED },
       { text: baseBandLabel, x: colX.band, bold: true, color: bandColor(basePreset?.result?.serviceabilityBand ?? a.serviceability_band ?? 'amber') },
       { text: '—', x: colX.change, align: 'right', color: GRAY },
@@ -1133,10 +1192,10 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
       const changeColor = capacityDelta > 0 ? GREEN : capacityDelta < 0 ? RED : GRAY;
       const rowBg = si % 2 === 0 ? ALT_ROW : undefined;
 
-      sy = checkPageBreak(doc, sy, 12, pageNum);
+      sy = checkPageBreak(doc, sy, 12, pageNum, P);
       sy = drawTableRow(doc, sy, [
         { text: sc.name || `Scenario ${si + 1}`, x: colX.name, color: BODY_TEXT, maxWidth: 55 },
-        { text: fmt(scCapacity), x: colX.capacity, bold: true, color: NAVY },
+        { text: fmt(scCapacity), x: colX.capacity, bold: true, color: P.navy },
         { text: fmt(scSurplus), x: colX.surplus, color: scSurplus >= 0 ? GREEN : RED },
         { text: bandLabel(scBand), x: colX.band, bold: true, color: bandColor(scBand) },
         { text: changeText, x: colX.change, align: 'right', bold: true, color: changeColor },
@@ -1202,13 +1261,13 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
       });
 
       if (scenarioDetails.length > 0) {
-        sy = checkPageBreak(doc, sy, 8 + scenarioDetails.length * 5, pageNum);
+        sy = checkPageBreak(doc, sy, 8 + scenarioDetails.length * 5, pageNum, P);
         doc.setFontSize(7);
         doc.setFont('helvetica', 'normal');
         setColor(doc, BODY_TEXT);
         scenarioDetails.forEach((line) => {
           const wrapped = doc.splitTextToSize(`• ${line}`, CONTENT_W - 8);
-          sy = checkPageBreak(doc, sy, wrapped.length * 4 + 2, pageNum);
+          sy = checkPageBreak(doc, sy, wrapped.length * 4 + 2, pageNum, P);
           doc.text(wrapped, MARGIN + 4, sy);
           sy += wrapped.length * 4 + 1;
         });
@@ -1218,18 +1277,18 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
 
     // Summary note
     sy += 8;
-    sy = checkPageBreak(doc, sy, 20, pageNum);
-    setFill(doc, GOLD_LIGHT);
+    sy = checkPageBreak(doc, sy, 20, pageNum, P);
+    setFill(doc, P.goldLight);
     doc.rect(MARGIN, sy - 4, CONTENT_W, 16, 'F');
     doc.setFontSize(8);
     doc.setFont('helvetica', 'italic');
-    setColor(doc, { r: 120, g: 90, b: 30 });
+    setColor(doc, P.noteInk);
     doc.text(
       'Note: Scenario figures are estimates based on modelled adjustments. Actual lending outcomes may vary based on lender policies and credit assessment.',
       MARGIN + 4, sy + 2, { maxWidth: CONTENT_W - 8 }
     );
 
-    addFooter(doc, pageNum.value);
+    addFooter(doc, pageNum.value, P);
   }
 
   // ════════════════════════════════════════════════════════════════════════════
@@ -1237,7 +1296,12 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
   // ════════════════════════════════════════════════════════════════════════════
   try {
     const globalSettings = await fetchGlobalReportSettings();
-    drawJsPDFDisclaimerPage(doc, globalSettings.contactDetails, globalSettings.disclaimer);
+    if (legacyBrand.artwork === 'issuer') {
+      const closing = issuerClosingPage(legacyBrand, globalSettings);
+      drawJsPDFDisclaimerPage(doc, closing.contact, closing.disclaimer, closing.palette);
+    } else {
+      drawJsPDFDisclaimerPage(doc, globalSettings.contactDetails, globalSettings.disclaimer);
+    }
   } catch (e) {
     console.warn('Could not fetch global settings for disclaimer page:', e);
   }

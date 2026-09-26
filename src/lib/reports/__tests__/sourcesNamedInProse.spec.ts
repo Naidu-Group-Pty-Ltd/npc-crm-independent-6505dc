@@ -49,8 +49,8 @@ const src = readFileSync(
  * about.
  */
 const ruleSource = src.slice(src.indexOf('const planningCitationRule'), src.indexOf('const pinnedPlanningContext'));
-const rule = [...ruleSource.matchAll(/'((?:[^'\\]|\\.)*)'/g)]
-  .map((m) => m[1].replace(/\\'/g, "'"))
+const rule = [...ruleSource.matchAll(/'((?:[^'\\]|\\.)*)'|`((?:[^`\\]|\\.)*)`/g)]
+  .map((m) => (m[1] ?? m[2]).replace(/\\'/g, "'"))
   .join('\n');
 
 describe('the report cites its evidence in the sentence', () => {
@@ -74,16 +74,22 @@ describe('the report cites its evidence in the sentence', () => {
   it('gives the two references a reader can actually follow', () => {
     // Naming the publisher, which the table beside it already carries…
     expect(rule).toContain('Name the publisher and its currency');
-    // …or the report's own section, which is where the tables are reproduced.
-    expect(rule).toContain('Planning controls and');
-    expect(rule).toContain('development registers');
+    // …or the heading the table is set out under, inside its own chapter.
+    expect(rule).toContain('Name the heading it is set out under');
+    expect(rule).toContain('*${PLANNING_REGISTER_HEADING}*');
+    expect(rule).toContain('*${INFRASTRUCTURE_REGISTER_HEADING}*');
   });
 
-  it('is the section the document really has', () => {
-    // The rule points at a heading; this is the line that writes it. If the
-    // heading is ever renamed, the reference becomes another dangling
-    // pointer — which is the fault, not the fix.
-    expect(src).toContain('## Planning controls and development registers');
+  it('names headings the document really has', () => {
+    // The rule points at a heading; these are the lines that write them, from
+    // the same constants. It used to name "Planning controls and development
+    // registers" — the section the tables were appended under before they
+    // moved inside their chapters (25 Sep 2026), which the page then carried
+    // only when a chapter was absent: a dangling pointer, the fault this
+    // test exists for.
+    expect(src).toContain('`### ${PLANNING_REGISTER_HEADING}');
+    expect(src).toContain('`### ${INFRASTRUCTURE_REGISTER_HEADING}');
+    expect(rule).not.toContain('at the end of this report');
   });
 
   it('rides INSIDE the pinned context, where the trim cannot separate them', () => {

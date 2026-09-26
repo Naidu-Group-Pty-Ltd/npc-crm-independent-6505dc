@@ -52,12 +52,59 @@ import {
 } from '../_shared/listingImageChrome.pure.ts';
 import { canonicalAssetKey } from '../_shared/listingImageAsset.pure.ts';
 import { analyseImageBytes } from '../_shared/listingImageAnalyse.ts';
+import {
+  decideDecode,
+  readDecodableDimensions,
+  resolveDecodePixelAllowance,
+} from '../_shared/listingImageDecode.pure.ts';
 import type { VisualAnalysis } from '../_shared/listingImageAnalyse.ts';
 import {
   partitionListingImageCopies,
   selectListingGallery,
+  signatureDistance,
+  SIGNATURE_MATCH_BITS,
 } from '../_shared/listingImageSelection.pure.ts';
 import { INTAKE_FIELDS } from '../_shared/airtableIntakeFields.pure.ts';
+import {
+  beginCaptureAttempt,
+  BROCHURE_PHOTOGRAPH_MAX_BYTES,
+  BROCHURE_RECORD_NAME,
+  brochurePhotographsAreOfReportAddress,
+  brochurePhotographSource,
+  candidatesToTry,
+  CAPTURE_RECORD_NAME,
+  captureFinish,
+  captureFolder,
+  floorPlanFolder,
+  captureObjectName,
+  captureStateOf,
+  extractionPhotographSource,
+  finishCaptureAttempt,
+  heldCapturedPhotographs,
+  isDocumentDigest,
+  isLastingRefusal,
+  isRecordId,
+  MIN_PRINT_LONG_EDGE_PX,
+  newBrochureRecord,
+  newCaptureRecord,
+  parseBrochureRecord,
+  parseCaptureObjectName,
+  parseCaptureRecord,
+  photographsAreOfReportAddress,
+  placesTakenBefore,
+  REPORT_FLOOR_PLAN_LIMIT,
+  REPORT_PHOTOGRAPH_LIMIT,
+  type BrochureRecord,
+  type CapturedPhotograph,
+  type CaptureFinish,
+  type CaptureRecord,
+  type CaptureState,
+} from '../_shared/reportPhotographs.pure.ts';
+import {
+  captureRenditions,
+  readPageCandidates,
+  readPageFloorPlanCandidates,
+} from '../_shared/listingPagePhotographs.pure.ts';
 
 /**
  * The client type these helpers actually receive.
@@ -96,6 +143,21 @@ type ListingImagesClient = SupabaseClient;
  *                  attachment columns on the intake table are empty on every one
  *                  of the 1,441 records. The photos are on the agency's listing
  *                  page, and the enrichment sweep is what goes and finds them.
+ *   op: 'capture_report' (the report's author, to start; anyone who may read
+ *                  the report, to resume) — keep the photographs a URL
+ *                  extraction named on its listing page, and its floor plans
+ *                  (filed in `plans/`), for the report made from it, and only
+ *                  while the report's address is the listing's.
+ *                  Answered at once and finished in the background; resumed
+ *                  by the next document drawn while work is left over. Filed
+ *                  under the report, never in `listing_images`; see
+ *                  `captureReportPhotographs`.
+ *   op: 'capture_brochure_photograph' (the report's author) — keep one
+ *                  photograph the author chose from the brochure a PDF-made
+ *                  report was made from, held to the capture's checks and
+ *                  filed beside it the same way; with `kind: 'floorplan'`,
+ *                  one of its floor plans, filed in `plans/`; see
+ *                  `fileBrochurePhotograph`.
  *
  * The bytes live in the private `listing-images` bucket. The browser only ever
  * receives short-lived signed URLs, never a bucket path and never a source URL.
@@ -130,6 +192,18 @@ const SIGNED_URL_TTL_SECONDS = 60 * 60;
 const ANALYSIS_BUDGET_MS = Number(Deno.env.get('LISTING_IMAGE_ANALYSIS_BUDGET_MS') ?? 1_200);
 /** Images the `analyse` sweep claims per invocation, before the budget bites. */
 const MAX_ANALYSED_PER_SWEEP = Number(Deno.env.get('LISTING_IMAGE_ANALYSIS_BATCH') ?? 40);
+/*
+ * How many pixels one request may decode, summed over every image it decodes.
+ *
+ * Time is not the only thing a decode spends: the decoder holds every pixel
+ * before it downscales, 13 to 17.5 bytes each, and a worker that runs out of
+ * memory is ended by the platform without anything here able to catch it. One
+ * floor plan did that to every `analyse` run for eleven days. The measurement
+ * and the default are in `listingImageDecode.pure.ts`.
+ */
+const DECODE_PIXEL_ALLOWANCE = resolveDecodePixelAllowance(
+  Deno.env.get('LISTING_IMAGE_ANALYSIS_MAX_PIXELS'),
+);
 
 const ALLOWED_CONTENT_TYPES = new Set([
   'image/jpeg',
@@ -180,14 +254,38 @@ function imageAgeAnchor(capturedAt: unknown, listedAt: unknown): number | null {
  */
 interface AnalysisBudget {
   until: number;
+  /** Pixels this request may still decode. */
+  pixelsLeft: number;
 }
 
 function newAnalysisBudget(ms: number = ANALYSIS_BUDGET_MS): AnalysisBudget {
-  return { until: Date.now() + Math.max(0, ms) };
+  return { until: Date.now() + Math.max(0, ms), pixelsLeft: DECODE_PIXEL_ALLOWANCE };
 }
 
 function hasBudget(budget: AnalysisBudget | null | undefined): boolean {
   return Boolean(budget) && Date.now() < budget!.until;
+}
+
+/**
+ * Looks at one image if this request can still afford it, in time and in pixels.
+ *
+ * `null`, with nothing spent, when it cannot. The row is then stored with no
+ * verdict and `op: 'analyse'` picks it up, in a request with the whole
+ * allowance to itself, which either affords it or records that none can.
+ */
+async function analyseWithinBudget(
+  budget: AnalysisBudget | null,
+  bytes: Uint8Array,
+): Promise<VisualAnalysis | null> {
+  if (!budget || !hasBudget(budget)) return null;
+  const decision = decideDecode(
+    readDecodableDimensions(bytes),
+    budget.pixelsLeft,
+    DECODE_PIXEL_ALLOWANCE,
+  );
+  if (!decision.decode) return null;
+  budget.pixelsLeft -= decision.pixels;
+  return analyseImageBytes(bytes, DECODE_PIXEL_ALLOWANCE);
 }
 
 /**
@@ -325,8 +423,17 @@ async function storagePathFor(
  */
 async function fetchImageBytes(
   candidate: ImageCandidate,
+  options: {
+    /**
+     * Refuse what the URL says is page furniture. On for everything but a
+     * listing page's own floor plan: the furniture rule refuses a file called
+     * `floorplan` — which is how it keeps plans off photo cards, and exactly
+     * what a plan may be called.
+     */
+    furniture?: boolean;
+  } = {},
 ): Promise<{ bytes: Uint8Array; contentType: string } | { error: string }> {
-  if (looksLikeChromeUrl(candidate.url)) return { error: 'page_furniture' };
+  if (options.furniture !== false && looksLikeChromeUrl(candidate.url)) return { error: 'page_furniture' };
 
   let safeUrl: URL;
   try {
@@ -592,11 +699,12 @@ async function harvestListing(
      * This is the only moment the server ever holds the decoded image for free,
      * and the verdict is what stops a floor plan leading a card — six of
      * sixteen sampled listings led with one, and five of those six are served
-     * from opaque Google Drive ids that no URL rule can read. Budgeted, because
-     * a decode is ~116 ms of CPU and an Edge Function has seconds; whatever
-     * this pass cannot afford is picked up by `op: 'analyse'`.
+     * from opaque Google Drive ids that no URL rule can read. Budgeted, in time
+     * and in pixels, because a decode is ~116 ms of CPU and 13 to 17.5 bytes of
+     * memory a pixel; whatever this pass cannot afford is picked up by
+     * `op: 'analyse'`.
      */
-    const visual = hasBudget(budget) ? await analyseImageBytes(fetched.bytes) : null;
+    const visual = await analyseWithinBudget(budget, fetched.bytes);
 
     const path = await storagePathFor(listingId, identity, fetched.contentType);
 
@@ -1238,15 +1346,31 @@ async function syncAirtable(
  * leading image is settled before any listing's fifth one — a backfill that is
  * only a third done has still fixed every card in the marketplace.
  *
- * Bounded twice over: a row count, and a wall-clock budget, because a decode is
- * ~116 ms of CPU and an Edge Function's allowance is measured in seconds. It is
- * safe to call repeatedly and safe to call concurrently — the worst case is two
- * workers analysing the same image and writing the same answer.
+ * Bounded three times over: a row count, a wall-clock budget, and a pixel
+ * allowance, because a decode is ~116 ms of CPU and 13 to 17.5 bytes of memory
+ * a pixel, and an Edge Function has seconds and 256 MB. It is safe to call
+ * repeatedly and safe to call concurrently — the worst case is two workers
+ * analysing the same image and writing the same answer.
+ *
+ * **A row is stamped before its image is decoded.** A worker the platform ends
+ * mid-decode — out of memory, out of CPU — cannot be caught, and a row it left
+ * unstamped is back at the head of this position-ordered queue on the next run,
+ * and the one after. That is how one floor plan stopped this sweep, every five
+ * minutes, for eleven days. Stamped first, a kill costs that image its verdict
+ * and nothing else. A stamp with no verdict is exactly "no evidence", which
+ * leaves the image where the agent put it.
  */
 async function analyseStoredImages(
   supabase: ListingImagesClient,
   limit: number,
-): Promise<{ analysed: number; failed: number; remaining: number | null }> {
+): Promise<{
+  analysed: number;
+  failed: number;
+  tooLarge: number;
+  unsupported: number;
+  deferred: boolean;
+  remaining: number | null;
+}> {
   const budget = newAnalysisBudget();
 
   const { data, error } = await supabase
@@ -1261,7 +1385,14 @@ async function analyseStoredImages(
   if (error) {
     if (isMissingVisualColumn(error)) {
       visualColumnsMissing = true;
-      return { analysed: 0, failed: 0, remaining: null };
+      return {
+        analysed: 0,
+        failed: 0,
+        tooLarge: 0,
+        unsupported: 0,
+        deferred: false,
+        remaining: null,
+      };
     }
     throw error;
   }
@@ -1274,6 +1405,9 @@ async function analyseStoredImages(
 
   let analysed = 0;
   let failed = 0;
+  let tooLarge = 0;
+  let unsupported = 0;
+  let deferred = false;
 
   for (const row of queue) {
     if (!hasBudget(budget)) break;
@@ -1284,22 +1418,45 @@ async function analyseStoredImages(
       failed += 1;
       continue;
     }
-    const analysis = await analyseImageBytes(new Uint8Array(await blob.arrayBuffer()));
+    const bytes = new Uint8Array(await blob.arrayBuffer());
+
+    // Read from the image's own header before anything is decoded.
+    const decision = decideDecode(
+      readDecodableDimensions(bytes),
+      budget.pixelsLeft,
+      DECODE_PIXEL_ALLOWANCE,
+    );
+    if (!decision.decode && decision.reason === 'deferred') {
+      // It fits a request, just not what is left of this one. The next run
+      // starts with the whole allowance, so the head of the queue always fits.
+      deferred = true;
+      break;
+    }
+
+    const { error: stampError } = await supabase
+      .from('listing_images')
+      .update({ visual_analysed_at: new Date().toISOString() })
+      .eq('listing_id', row.listing_id)
+      .eq('image_identity', row.image_identity);
+    if (stampError) {
+      // Never decode a row that is not stamped: that is the whole guarantee.
+      failed += 1;
+      continue;
+    }
+
+    if (!decision.decode) {
+      // Nothing this worker can afford, or nothing the decoder can make a still
+      // of. Stamped with no verdict, which is what the decoder would have said.
+      if (decision.reason === 'too_large') tooLarge += 1;
+      else unsupported += 1;
+      continue;
+    }
+
+    budget.pixelsLeft -= decision.pixels;
+    const analysis = await analyseImageBytes(bytes, DECODE_PIXEL_ALLOWANCE);
     if (!analysis) {
-      /*
-       * An image the decoder cannot read.
-       *
-       * Stamped as analysed anyway, with no verdict. Leaving it null would put
-       * it back at the head of a queue ordered by position and the sweep would
-       * spend its whole budget on the same handful of unreadable files for
-       * ever. A null `visual_kind` is exactly "no evidence", which is what it
-       * is.
-       */
-      await supabase
-        .from('listing_images')
-        .update({ visual_analysed_at: new Date().toISOString() })
-        .eq('listing_id', row.listing_id)
-        .eq('image_identity', row.image_identity);
+      // An image the decoder cannot read. Already stamped, so it does not come
+      // back to the head of the queue; a null `visual_kind` is "no evidence".
       failed += 1;
       continue;
     }
@@ -1314,7 +1471,657 @@ async function analyseStoredImages(
     .eq('status', 'stored')
     .is('visual_analysed_at', null);
 
-  return { analysed, failed, remaining: count ?? null };
+  // One line a run. This sweep is called by cron, which reads no response, so
+  // a run that did nothing for eleven days said so to nobody.
+  console.log(
+    `[listing-images] analyse: analysed=${analysed} failed=${failed} ` +
+      `too_large=${tooLarge} unsupported=${unsupported} deferred=${deferred} ` +
+      `remaining=${count ?? 'unknown'}`,
+  );
+
+  return { analysed, failed, tooLarge, unsupported, deferred, remaining: count ?? null };
+}
+
+/* -------------------------------------------------------------------------- */
+/* A URL-extract report's photographs, captured from its listing page          */
+/* -------------------------------------------------------------------------- */
+
+/*
+ * A report made through URL extract has no listing in this library, so its
+ * photographs come from the listing page the extraction read. The scrape named
+ * them (`listingPagePhotographs.pure.ts`, stored on its job); this fetches each
+ * one, checks it, and keeps what passes under the REPORT
+ * (`reportPhotographs.pure.ts` names the folder, the files and the record).
+ *
+ * The request is answered as soon as what it asks for is written down, and the
+ * work runs after that, so a browser that stops waiting — a closed tab, a
+ * dropped connection, the minute its request timer allows — costs nothing. An
+ * attempt that leaves work over (a host that did not answer, time that ran
+ * out) is finished by the next request for the report, which a document being
+ * drawn makes; see `CaptureRecord`.
+ *
+ * Nothing here writes to `listing_images`: these are not a listing's
+ * photographs in the marketplace's sense, and filing them there would change
+ * what the reuse reading says about photographs the marketplace does hold.
+ */
+
+/** Time to look at pixels in an attempt nobody is waiting on. */
+const CAPTURE_BUDGET_DETACHED_MS = 20_000;
+/** …and in one a document being drawn is waiting on, within its minute. */
+const CAPTURE_BUDGET_WAITED_MS = 15_000;
+const CAPTURE_SCOPE = 'report_photograph_capture';
+
+interface CaptureAttempt {
+  kept: CapturedPhotograph[];
+  settled: string[];
+  refusals: string[];
+}
+
+interface CaptureAnswer {
+  status: number;
+  state?: CaptureState | 'accepted';
+  /** Photographs the report holds, as far as this request knows. */
+  held?: number;
+  reason?: string;
+  attempt?: {
+    number: number;
+    kept: number;
+    refused: Record<string, number>;
+    /** The same attempt's floor plans. */
+    plans: { kept: number; refused: Record<string, number> };
+  };
+}
+
+function countRefusals(refusals: readonly string[]): Record<string, number> {
+  const counted: Record<string, number> = {};
+  for (const why of refusals) counted[why] = (counted[why] ?? 0) + 1;
+  return counted;
+}
+
+/**
+ * Keeps this request's worker alive for `work` after the answer, as the
+ * extraction job's does. `EdgeRuntime` is the Supabase Edge runtime's own
+ * global; read off `globalThis` so nothing has to silence the compiler, and
+ * absent (a local run) the work still runs, just unheld.
+ */
+function continueAfterResponse(work: Promise<unknown>): void {
+  const runtime = (globalThis as unknown as { EdgeRuntime?: { waitUntil?: (work: Promise<unknown>) => void } })
+    .EdgeRuntime;
+  if (typeof runtime?.waitUntil === 'function') runtime.waitUntil(work);
+}
+
+/** Writes the capture's record; false (and the storage's own words logged) where it could not. */
+async function writeCaptureRecord(
+  supabase: ListingImagesClient,
+  folder: string,
+  record: CaptureRecord,
+): Promise<boolean> {
+  const { error } = await supabase.storage
+    .from(BUCKET)
+    .upload(`${folder}/${CAPTURE_RECORD_NAME}`, new TextEncoder().encode(JSON.stringify(record)), {
+      contentType: 'application/json',
+      upsert: true,
+    });
+  if (error) console.warn(`[listing-images] capture record not written for ${folder}: ${error.message}`);
+  return !error;
+}
+
+/**
+ * The server's judgement of one image for a capture, or why there is none.
+ *
+ * `analyseWithinBudget` answers null for reasons a capture must tell apart:
+ * out of time or out of pixels passes (the next attempt looks again), while a
+ * size no request can decode does not. So the reason is asked first, of the
+ * same decision the helper takes, and the decode itself goes through the
+ * helper the harvest paths use — one budgeted way to decode, not two.
+ */
+async function judgeForCapture(
+  budget: AnalysisBudget,
+  bytes: Uint8Array,
+): Promise<{ analysis: VisualAnalysis } | { refusal: string }> {
+  if (!hasBudget(budget)) return { refusal: 'out_of_time' };
+  const decision = decideDecode(readDecodableDimensions(bytes), budget.pixelsLeft, DECODE_PIXEL_ALLOWANCE);
+  if (!decision.decode) return { refusal: decision.reason === 'deferred' ? 'deferred' : 'undecodable' };
+  const analysis = await analyseWithinBudget(budget, bytes);
+  return analysis ? { analysis } : { refusal: 'unanalysed' };
+}
+
+/**
+ * One pass of an attempt over one of a report's lists — its photographs, or
+ * its floor plans: the candidates not yet settled, in the listing's order,
+ * until the first `limit` places are taken or the allowance is spent.
+ *
+ * A picture is kept only when every check passes: it downloads through the
+ * SSRF guard as a bounded image, its header states at least the print floor on
+ * its long edge, the server's own judgement of its pixels says it is what the
+ * list is for — a photograph, or for the plans a plan — and it is not a second
+ * copy of one already kept, by this attempt or an earlier one. An image the
+ * allowance cannot look at is not kept — no evidence is not a verdict — and
+ * the next attempt looks again. The two passes share one allowance,
+ * photographs first, because the cover is what a reader sees first.
+ */
+async function runCaptureAttempt(
+  supabase: ListingImagesClient,
+  args: {
+    kind: 'photo' | 'floorplan';
+    folder: string;
+    candidates: readonly string[];
+    settled: ReadonlySet<string>;
+    held: readonly CapturedPhotograph[];
+    budget: AnalysisBudget;
+  },
+): Promise<CaptureAttempt> {
+  const { budget } = args;
+  const limit = args.kind === 'floorplan' ? REPORT_FLOOR_PLAN_LIMIT : REPORT_PHOTOGRAPH_LIMIT;
+  // A plan comes from the page's own floor-plan list, so the photographs'
+  // furniture rule, which refuses a file called `floorplan`, is not asked.
+  const furniture = args.kind === 'photo';
+  const places = new Set(args.held.map((photo) => photo.place));
+  const checksums = new Set(args.held.map((photo) => photo.checksum));
+  const signatures = args.held.map((photo) => photo.signature);
+  const kept: CapturedPhotograph[] = [];
+  const settled: string[] = [];
+  const refusals: string[] = [];
+  const refuse = (url: string, why: string) => {
+    refusals.push(why);
+    if (isLastingRefusal(why)) settled.push(url);
+  };
+
+  for (const place of candidatesToTry(args.candidates, args.settled, args.held, limit)) {
+    // A picture this attempt kept may already have decided the places ahead.
+    if (placesTakenBefore(places, place) >= limit) break;
+    const url = args.candidates[place];
+    // Past the allowance nothing more can be judged, so nothing more is
+    // fetched; what is left is the next attempt's.
+    if (!hasBudget(budget)) { refusals.push('out_of_time'); continue; }
+    const renditions = captureRenditions(url);
+
+    const fetched = await fetchImageBytes({ url: renditions.store, origin: 'scraped' }, { furniture });
+    if ('error' in fetched) { refuse(url, fetched.error.split(':')[0]); continue; }
+
+    const size = readDecodableDimensions(fetched.bytes);
+    if (!size) { refuse(url, 'unreadable'); continue; }
+    if (Math.max(size.width, size.height) < MIN_PRINT_LONG_EDGE_PX) { refuse(url, 'below_print_floor'); continue; }
+
+    const checksum = (await sha256Hex(fetched.bytes)).slice(0, 16);
+    if (checksums.has(checksum)) { refuse(url, 'duplicate'); continue; }
+
+    // The smaller rendition, where the host serves one: the judgement samples a
+    // 64 px square, and a decode is paid for in pixels.
+    let look = fetched.bytes;
+    if (renditions.classify) {
+      const small = await fetchImageBytes({ url: renditions.classify, origin: 'scraped' }, { furniture });
+      if ('error' in small) { refuse(url, small.error.split(':')[0]); continue; }
+      look = small.bytes;
+    }
+    const judged = await judgeForCapture(budget, look);
+    if ('refusal' in judged) { refuse(url, judged.refusal); continue; }
+    const { analysis } = judged;
+    // The server's own verdict decides which list a picture may join: a
+    // photograph only where the pixels read as one, a plan only as a plan.
+    if (analysis.kind !== args.kind) { refuse(url, analysis.kind); continue; }
+    const repeat = signatures.some((prior) => {
+      const distance = signatureDistance(prior, analysis.signature);
+      return distance !== null && distance <= SIGNATURE_MATCH_BITS;
+    });
+    if (repeat) { refuse(url, 'duplicate'); continue; }
+
+    const name = captureObjectName({
+      place,
+      width: size.width,
+      height: size.height,
+      checksum,
+      signature: analysis.signature,
+      contentType: fetched.contentType,
+    });
+    const photo = parseCaptureObjectName(name);
+    if (!name || !photo) { refuse(url, 'unnameable'); continue; }
+    const upload = await supabase.storage
+      .from(BUCKET)
+      .upload(`${args.folder}/${name}`, fetched.bytes, { contentType: fetched.contentType, upsert: true });
+    if (upload.error) { refuse(url, 'upload_failed'); continue; }
+
+    places.add(place);
+    checksums.add(checksum);
+    signatures.push(analysis.signature);
+    kept.push(photo);
+    settled.push(url);
+  }
+  return { kept, settled, refusals };
+}
+
+/**
+ * Asks for, resumes, or reports on the capture of one report's photographs.
+ *
+ * Two ways in, one rule:
+ *
+ *  - STARTING needs the report's author, naming the extraction they made it
+ *    from, which must be theirs and finished. What was asked is written down
+ *    before anything is fetched.
+ *  - RESUMING names only the report, and may be asked by anybody the report
+ *    broker would show the report to: it continues exactly what the author
+ *    asked for, from the record, and can ask for nothing new.
+ *
+ * A derived report (a fork or a condensed child) is refused either way: it
+ * reads its parent's photographs, so there is only ever one copy to keep.
+ * Without `wait` the attempt runs after the answer (202); a document being
+ * drawn passes `wait` so it can carry what the attempt kept.
+ *
+ * And either way the photographs must be of the REPORT's address (rule 4 in
+ * `reportPhotographs.pure.ts`). A start is refused unless the address the
+ * extraction read is the report's own; a resume stops if the report has been
+ * re-pointed since. The address is written into the record, and every reader
+ * holds the report against it again.
+ *
+ * The listing's floor plans, where its page named any, ride the same capture:
+ * the same record, the same address check, the same attempts, filed in
+ * `plans/` and settled in the record's own `plans` list. The capture is
+ * finished when both lists are (`captureFinish`).
+ */
+async function captureReportPhotographs(
+  supabase: ListingImagesClient,
+  args: { reportId: string; scrapeJobId: string | null; userId: string; wait: boolean },
+): Promise<CaptureAnswer> {
+  const folder = captureFolder(args.reportId);
+  const planFolder = floorPlanFolder(args.reportId);
+  if (!folder || !planFolder) return { status: 400, reason: 'invalid_report_id' };
+  if (args.scrapeJobId !== null && !isRecordId(args.scrapeJobId)) return { status: 400, reason: 'invalid_extraction_id' };
+
+  const { data: report, error: reportError } = await supabase
+    .from('investment_reports')
+    .select('id, generated_by, parent_report_id, derived_from_report_id, property_address')
+    .eq('id', args.reportId)
+    .maybeSingle();
+  if (reportError) return { status: 503, reason: 'report_unreadable' };
+  if (!report) return { status: 404, reason: 'report_not_found' };
+  if (report.parent_report_id || report.derived_from_report_id) return { status: 409, reason: 'derived_report' };
+
+  const listed = await supabase.storage.from(BUCKET).list(folder, { limit: 100 });
+  if (listed.error) return { status: 503, reason: 'storage_unreadable' };
+  const held = heldCapturedPhotographs(listed.data ?? []);
+
+  let record: CaptureRecord | null = null;
+  if ((listed.data ?? []).some((object) => object?.name === CAPTURE_RECORD_NAME)) {
+    const stored = await supabase.storage.from(BUCKET).download(`${folder}/${CAPTURE_RECORD_NAME}`);
+    // A record that is there and cannot be read is not a record that is absent.
+    if (stored.error || !stored.data) return { status: 503, reason: 'record_unreadable', held: held.length };
+    try {
+      record = parseCaptureRecord(JSON.parse(await stored.data.text()));
+    } catch {
+      record = null;
+    }
+  }
+
+  const now = Date.now();
+  if (!record) {
+    // Only the author, naming the extraction, can ask for a capture.
+    if (!args.scrapeJobId) {
+      return held.length
+        ? { status: 200, state: 'complete', held: held.length }
+        : { status: 404, reason: 'nothing_requested' };
+    }
+    if (report.generated_by !== args.userId) return { status: 403, reason: 'not_the_author' };
+    // A report's photographs come from one source. One whose author chose
+    // them from its brochure is not topped up from a listing page.
+    if ((listed.data ?? []).some((object) => object?.name === BROCHURE_RECORD_NAME)) {
+      return { status: 409, reason: 'brochure_photographs', held: held.length };
+    }
+  } else {
+    if (args.scrapeJobId && args.scrapeJobId.trim().toLowerCase() !== record.scrapeJobId) {
+      return { status: 409, reason: 'different_extraction', held: held.length };
+    }
+    if (record.requestedBy !== report.generated_by) return { status: 409, reason: 'record_mismatch', held: held.length };
+    // Rule 4 again: the report may have been re-pointed at another address
+    // since the capture was asked for, and then these are not its photographs.
+    if (!photographsAreOfReportAddress(report.property_address, record.source)) {
+      return { status: 409, reason: 'address_changed', held: held.length };
+    }
+    const state = captureStateOf(record, now);
+    if (state === 'complete') return { status: 200, state, held: held.length };
+    if (state === 'running') return { status: 202, state, held: held.length };
+  }
+
+  const scrapeJobId = record?.scrapeJobId ?? String(args.scrapeJobId).trim().toLowerCase();
+  const requestedBy = record?.requestedBy ?? args.userId;
+  const { data: job, error: jobError } = await supabase
+    .from('property_scrape_jobs')
+    .select('id, user_id, status, result')
+    .eq('id', scrapeJobId)
+    .maybeSingle();
+  if (jobError) return { status: 503, reason: 'extraction_unreadable', held: held.length };
+  if (!job) return { status: 404, reason: 'extraction_not_found', held: held.length };
+  if (job.user_id !== requestedBy) return { status: 403, reason: 'not_your_extraction', held: held.length };
+  if (job.status !== 'succeeded') return { status: 409, reason: 'extraction_not_finished', held: held.length };
+
+  if (!record) {
+    // Rule 4: the page's gallery is the photographs of the listing at the
+    // address the extraction read. They are kept for this report only if that
+    // is the report's own address; otherwise nothing is fetched or written.
+    const source = extractionPhotographSource(job.result);
+    if (!source) return { status: 409, reason: 'address_unknown' };
+    if (!photographsAreOfReportAddress(report.property_address, source)) {
+      return { status: 409, reason: 'address_mismatch' };
+    }
+    record = newCaptureRecord({ scrapeJobId, requestedBy, now, source });
+  }
+
+  const result = (job.result ?? {}) as { photographs?: { candidates?: unknown; floorPlans?: unknown } };
+  const candidates = readPageCandidates(result.photographs?.candidates).map((candidate) => candidate.url);
+  const planCandidates = readPageFloorPlanCandidates(result.photographs?.floorPlans).map((candidate) => candidate.url);
+  const settled = new Set(record.settled);
+  const planSettled = new Set(record.plans.settled);
+  // The plans already kept, where the page named any. A folder that cannot be
+  // listed is not an empty one: a place could be filled twice.
+  let heldPlans: CapturedPhotograph[] = [];
+  if (planCandidates.length) {
+    const plans = await supabase.storage.from(BUCKET).list(planFolder, { limit: 100 });
+    if (plans.error) return { status: 503, reason: 'storage_unreadable', held: held.length };
+    heldPlans = heldCapturedPhotographs(plans.data ?? []);
+  }
+
+  // Final before any attempt: nothing was named, every place of both lists is
+  // decided, or the attempts are spent (an attempt whose worker ended before
+  // it could say so).
+  const final: CaptureFinish | null = captureFinish({
+    photographs: { candidates, settled, held },
+    plans: { candidates: planCandidates, settled: planSettled, held: heldPlans },
+  }, record.attempts);
+  if (final) {
+    await writeCaptureRecord(supabase, folder, {
+      ...record,
+      leaseUntil: null,
+      finished: { at: new Date(now).toISOString(), reason: final },
+    });
+    return { status: 200, state: 'complete', held: held.length };
+  }
+
+  const begun = beginCaptureAttempt(record, now);
+  // No record, no photographs: a reader serves only what a record vouches is
+  // of the report's address (rule 4), so nothing is fetched until it is written.
+  if (!(await writeCaptureRecord(supabase, folder, begun))) {
+    return { status: 503, reason: 'record_unwritable', held: held.length };
+  }
+
+  const attempt = (async () => {
+    // One allowance for the attempt, photographs first: the cover is what a
+    // reader sees first, and plans the allowance cannot reach wait for the
+    // next attempt like any other unfinished work.
+    const budget = newAnalysisBudget(args.wait ? CAPTURE_BUDGET_WAITED_MS : CAPTURE_BUDGET_DETACHED_MS);
+    const outcome = await runCaptureAttempt(supabase, { kind: 'photo', folder, candidates, settled, held, budget });
+    const planOutcome: CaptureAttempt = planCandidates.length
+      ? await runCaptureAttempt(supabase, {
+        kind: 'floorplan',
+        folder: planFolder,
+        candidates: planCandidates,
+        settled: planSettled,
+        held: heldPlans,
+        budget,
+      })
+      : { kept: [], settled: [], refusals: [] };
+    const finished = finishCaptureAttempt(begun, {
+      now: Date.now(),
+      candidates,
+      settledNow: outcome.settled,
+      refusalsNow: outcome.refusals,
+      held: [...held, ...outcome.kept],
+      plans: {
+        candidates: planCandidates,
+        settledNow: planOutcome.settled,
+        refusalsNow: planOutcome.refusals,
+        held: [...heldPlans, ...planOutcome.kept],
+      },
+    });
+    await writeCaptureRecord(supabase, folder, finished);
+    // One line an attempt: most run with nobody reading their answer.
+    console.log(
+      `[listing-images] capture_report: report=${args.reportId} attempt=${begun.attempts} ` +
+        `candidates=${candidates.length} kept=${outcome.kept.length} held=${held.length + outcome.kept.length} ` +
+        `refused=${JSON.stringify(countRefusals(outcome.refusals))} ` +
+        `plans=${planCandidates.length} plans_kept=${planOutcome.kept.length} ` +
+        `plans_held=${heldPlans.length + planOutcome.kept.length} ` +
+        `plans_refused=${JSON.stringify(countRefusals(planOutcome.refusals))} ` +
+        `finished=${finished.finished?.reason ?? 'no'}`,
+    );
+    return { outcome, planOutcome, finished };
+  })();
+
+  if (!args.wait) {
+    continueAfterResponse(
+      attempt.catch((error) => console.error('[listing-images] capture_report attempt failed', redactError(error))),
+    );
+    return { status: 202, state: 'accepted', held: held.length };
+  }
+  try {
+    const { outcome, planOutcome, finished } = await attempt;
+    return {
+      status: 200,
+      state: captureStateOf(finished, Date.now()),
+      held: held.length + outcome.kept.length,
+      attempt: {
+        number: begun.attempts,
+        kept: outcome.kept.length,
+        refused: countRefusals(outcome.refusals),
+        plans: { kept: planOutcome.kept.length, refused: countRefusals(planOutcome.refusals) },
+      },
+    };
+  } catch (error) {
+    console.error('[listing-images] capture_report attempt failed', redactError(error));
+    return { status: 503, reason: 'attempt_failed', held: held.length };
+  }
+}
+
+/* -------------------------------------------------------------------------- */
+/* A PDF-made report's photographs, chosen from its brochure                   */
+/* -------------------------------------------------------------------------- */
+
+/*
+ * A report made from an uploaded PDF has no listing page to capture from. Its
+ * brochure is read in the author's browser (`src/lib/reports/brochurePhotographs.ts`),
+ * the author ticks the photographs the report may carry, and each is sent here,
+ * one to a request. Nothing about it is taken on trust: it is held to what a
+ * listing page's photograph is held to (`runCaptureAttempt`) — a header stating
+ * the print floor, one copy of each picture, and this server's own verdict on
+ * the pixels that it is a photograph — and filed under the report with the same
+ * object name, so the report broker reads it exactly as it reads a capture.
+ *
+ * `brochure.json` is written before the first photograph and holds the report
+ * against the address the brochure states (rule 4, in its lot-aware form); a
+ * report re-pointed at another property stops accepting them, and every reader
+ * stops serving them.
+ */
+
+/** Time to look at the one photograph a request carries. */
+const BROCHURE_BUDGET_MS = 10_000;
+const BROCHURE_SCOPE = 'report_brochure_photograph';
+
+interface BrochureAnswer {
+  status: number;
+  reason?: string;
+  /** Photographs (or, for a plan, plans) the report holds, as far as this request knows. */
+  held?: number;
+  /** The stored name, where this photograph was kept. */
+  name?: string;
+}
+
+/** The base64 a request carries, as bytes; null for anything that is not base64 or is too large. */
+function decodeImagePayload(value: unknown): Uint8Array | null {
+  if (typeof value !== 'string' || !value) return null;
+  // Four characters carry three bytes; anything longer cannot be within the cap.
+  if (value.length > Math.ceil(BROCHURE_PHOTOGRAPH_MAX_BYTES / 3) * 4 + 4) return null;
+  if (!/^[A-Za-z0-9+/]+={0,2}$/.test(value)) return null;
+  try {
+    const text = atob(value);
+    const bytes = new Uint8Array(text.length);
+    for (let index = 0; index < text.length; index += 1) bytes[index] = text.charCodeAt(index);
+    return bytes;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * What a brochure picture is filed as. A plan is kept apart from the
+ * photographs, in the capture folder's `plans/`, because every photo slot
+ * crops to fill its frame and a plan must be drawn whole
+ * (`reportPhotographs.pure.ts`, "Floor plans").
+ */
+type BrochureKind = 'photo' | 'floorplan';
+
+function brochureKindOf(value: unknown): BrochureKind | null {
+  if (value === undefined || value === null || value === 'photo') return 'photo';
+  return value === 'floorplan' ? 'floorplan' : null;
+}
+
+/**
+ * Files one photograph (or floor plan) the report's author chose from its
+ * brochure, or says why not.
+ *
+ * Only the author, of a report that is not derived (a fork or a condensed child
+ * reads its parent's photographs), and never beside a listing page's capture:
+ * a report's photographs come from one source. A plan is held to every rule a
+ * photograph is, with one word changed: the server's own reading of the pixels
+ * must call it a plan.
+ */
+async function fileBrochurePhotograph(
+  supabase: ListingImagesClient,
+  args: {
+    reportId: string;
+    userId: string;
+    documentSha256: unknown;
+    source: unknown;
+    place: unknown;
+    image: unknown;
+    kind?: unknown;
+  },
+): Promise<BrochureAnswer> {
+  const folder = captureFolder(args.reportId);
+  if (!folder) return { status: 400, reason: 'invalid_report_id' };
+  const kind = brochureKindOf(args.kind);
+  if (!kind) return { status: 400, reason: 'invalid_kind' };
+  // Where this picture is filed, and how many of its kind a report carries.
+  const target = kind === 'floorplan' ? floorPlanFolder(args.reportId) : folder;
+  const limit = kind === 'floorplan' ? REPORT_FLOOR_PLAN_LIMIT : REPORT_PHOTOGRAPH_LIMIT;
+  if (!target) return { status: 400, reason: 'invalid_report_id' };
+  if (!isDocumentDigest(args.documentSha256)) return { status: 400, reason: 'invalid_document' };
+  const documentSha256 = args.documentSha256.trim().toLowerCase();
+  const place = Number(args.place);
+  if (!Number.isInteger(place) || place < 0 || place >= limit) {
+    return { status: 400, reason: 'invalid_place' };
+  }
+  const bytes = decodeImagePayload(args.image);
+  if (!bytes || bytes.length < MIN_IMAGE_BYTES || bytes.length > BROCHURE_PHOTOGRAPH_MAX_BYTES) {
+    return { status: 400, reason: 'invalid_image' };
+  }
+
+  const { data: report, error: reportError } = await supabase
+    .from('investment_reports')
+    .select('id, generated_by, parent_report_id, derived_from_report_id, property_address')
+    .eq('id', args.reportId)
+    .maybeSingle();
+  if (reportError) return { status: 503, reason: 'report_unreadable' };
+  if (!report) return { status: 404, reason: 'report_not_found' };
+  if (report.parent_report_id || report.derived_from_report_id) return { status: 409, reason: 'derived_report' };
+  if (report.generated_by !== args.userId) return { status: 403, reason: 'not_the_author' };
+
+  const listed = await supabase.storage.from(BUCKET).list(folder, { limit: 100 });
+  if (listed.error) return { status: 503, reason: 'storage_unreadable' };
+  const objects = listed.data ?? [];
+  let held = heldCapturedPhotographs(objects);
+  if (kind === 'floorplan') {
+    // A plan is counted, de-duplicated and placed among the plans alone.
+    const plans = await supabase.storage.from(BUCKET).list(target, { limit: 100 });
+    if (plans.error) return { status: 503, reason: 'storage_unreadable' };
+    held = heldCapturedPhotographs(plans.data ?? []);
+  }
+  if (objects.some((object) => object?.name === CAPTURE_RECORD_NAME)) {
+    return { status: 409, reason: 'listing_capture', held: held.length };
+  }
+
+  if (objects.some((object) => object?.name === BROCHURE_RECORD_NAME)) {
+    const stored = await supabase.storage.from(BUCKET).download(`${folder}/${BROCHURE_RECORD_NAME}`);
+    // A record that is there and cannot be read is not a record that is absent.
+    if (stored.error || !stored.data) return { status: 503, reason: 'record_unreadable', held: held.length };
+    let record: BrochureRecord | null;
+    try {
+      record = parseBrochureRecord(JSON.parse(await stored.data.text()));
+    } catch {
+      record = null;
+    }
+    if (!record) return { status: 409, reason: 'record_unreadable', held: held.length };
+    if (record.requestedBy !== report.generated_by) return { status: 409, reason: 'record_mismatch', held: held.length };
+    if (record.documentSha256 !== documentSha256) return { status: 409, reason: 'different_document', held: held.length };
+    // Rule 4 again: the report may have been re-pointed since the first photograph.
+    if (!brochurePhotographsAreOfReportAddress(report.property_address, record.source)) {
+      return { status: 409, reason: 'address_changed', held: held.length };
+    }
+  } else {
+    // Rule 4: the photographs are of the address the brochure states, and they
+    // are kept for this report only if that is the report's own address.
+    const source = brochurePhotographSource(
+      args.source && typeof args.source === 'object' ? args.source as Record<string, unknown> : null,
+    );
+    if (!source) return { status: 400, reason: 'address_unknown' };
+    if (!brochurePhotographsAreOfReportAddress(report.property_address, source)) {
+      return { status: 409, reason: 'address_mismatch' };
+    }
+    // No record, no photographs: nothing is written until this is.
+    const record = newBrochureRecord({ documentSha256, source, requestedBy: report.generated_by, now: Date.now() });
+    const { error } = await supabase.storage
+      .from(BUCKET)
+      .upload(`${folder}/${BROCHURE_RECORD_NAME}`, new TextEncoder().encode(JSON.stringify(record)), {
+        contentType: 'application/json',
+        upsert: true,
+      });
+    if (error) {
+      console.warn(`[listing-images] brochure record not written for ${folder}: ${error.message}`);
+      return { status: 503, reason: 'record_unwritable' };
+    }
+  }
+
+  const size = readDecodableDimensions(bytes);
+  if (!size) return { status: 422, reason: 'unreadable', held: held.length };
+  if (Math.max(size.width, size.height) < MIN_PRINT_LONG_EDGE_PX) {
+    return { status: 422, reason: 'below_print_floor', held: held.length };
+  }
+  const checksum = (await sha256Hex(bytes)).slice(0, 16);
+  const atPlace = held.find((photo) => photo.place === place);
+  // The same photograph at the same place is a retry that already landed.
+  if (atPlace?.checksum === checksum) return { status: 200, held: held.length, name: atPlace.name };
+  if (atPlace) return { status: 409, reason: 'place_taken', held: held.length };
+  if (held.length >= limit) return { status: 409, reason: 'limit', held: held.length };
+  if (held.some((photo) => photo.checksum === checksum)) return { status: 409, reason: 'duplicate', held: held.length };
+
+  const judged = await judgeForCapture(newAnalysisBudget(BROCHURE_BUDGET_MS), bytes);
+  if ('refusal' in judged) {
+    // Out of time or pixels says nothing about the photograph; undecodable does.
+    const lasting = judged.refusal === 'undecodable';
+    return { status: lasting ? 422 : 503, reason: judged.refusal, held: held.length };
+  }
+  const { analysis } = judged;
+  // The server's own verdict, never the browser's: a plan is kept only where
+  // the pixels read as a plan, a photograph only where they read as one.
+  if (analysis.kind !== kind) return { status: 422, reason: analysis.kind, held: held.length };
+  const repeat = held.some((photo) => {
+    const distance = signatureDistance(photo.signature, analysis.signature);
+    return distance !== null && distance <= SIGNATURE_MATCH_BITS;
+  });
+  if (repeat) return { status: 409, reason: 'duplicate', held: held.length };
+
+  const contentType = `image/${size.format}`;
+  const name = captureObjectName({
+    place,
+    width: size.width,
+    height: size.height,
+    checksum,
+    signature: analysis.signature,
+    contentType,
+  });
+  if (!name || !parseCaptureObjectName(name)) return { status: 422, reason: 'unnameable', held: held.length };
+  const upload = await supabase.storage
+    .from(BUCKET)
+    .upload(`${target}/${name}`, bytes, { contentType, upsert: true });
+  if (upload.error) return { status: 503, reason: 'upload_failed', held: held.length };
+  return { status: 200, held: held.length + 1, name };
 }
 
 /* -------------------------------------------------------------------------- */
@@ -1559,6 +2366,94 @@ Deno.serve(async (req) => {
       }
 
       return j({ success: true, op, claimed: dueIds.length, harvested, unchanged, errors });
+    }
+
+    /* -- A URL-extract report's photographs, by its author ---------------- */
+    if (op === 'capture_report') {
+      const auth = await verifyAuth(supabase, req.headers, body as { session_token?: string });
+      if (auth.error || !auth.userId) {
+        return createUnauthorizedResponse(auth.error || 'Authentication required', corsHeaders);
+      }
+      // The report permission, not the listings one: this files photographs
+      // under a report, which is what the report broker later signs them from.
+      const reportsPermission = await requireModulePermission(
+        supabase,
+        { userId: auth.userId, authMethod: auth.authMethod },
+        'reports',
+        'can_view',
+      );
+      if (!reportsPermission.ok) {
+        return createForbiddenResponse(reportsPermission.error || 'Reports access required', corsHeaders);
+      }
+      const captureActorQuota = await enforceActorQuota(supabase, auth.userId, CAPTURE_SCOPE, {
+        limit: 6,
+        windowMs: 60_000,
+      });
+      const captureIpQuota = await enforceIpQuota(supabase, getClientIp(req), CAPTURE_SCOPE, {
+        limit: 20,
+        windowMs: 60_000,
+      });
+      if (!captureActorQuota.ok || !captureIpQuota.ok) return j({ success: false, error: 'rate_limited' }, 429);
+
+      // Starting names the extraction; resuming names only the report, and is
+      // what a document being drawn asks for, with `wait`, when the broker says
+      // a capture has work left over.
+      const { status, ...captured } = await captureReportPhotographs(supabase, {
+        reportId: typeof body.reportId === 'string' ? body.reportId : '',
+        scrapeJobId: typeof body.scrapeJobId === 'string' && body.scrapeJobId.trim() ? body.scrapeJobId.trim() : null,
+        userId: auth.userId,
+        wait: body.wait === true,
+      });
+      return j({ success: status < 400, op, ...captured }, status);
+    }
+
+    /* -- A PDF-made report's photographs, chosen from its brochure -------- */
+    if (op === 'capture_brochure_photograph') {
+      const auth = await verifyAuth(supabase, req.headers, body as { session_token?: string });
+      if (auth.error || !auth.userId) {
+        return createUnauthorizedResponse(auth.error || 'Authentication required', corsHeaders);
+      }
+      // The report permission, as for a capture: this files photographs under
+      // a report, which is what the report broker later signs them from.
+      const reportsPermission = await requireModulePermission(
+        supabase,
+        { userId: auth.userId, authMethod: auth.authMethod },
+        'reports',
+        'can_view',
+      );
+      if (!reportsPermission.ok) {
+        return createForbiddenResponse(reportsPermission.error || 'Reports access required', corsHeaders);
+      }
+      // One picture a request, and a report carries six photographs and two
+      // plans: room for a retry of each, and for an author filing two reports
+      // in a minute.
+      const brochureActorQuota = await enforceActorQuota(supabase, auth.userId, BROCHURE_SCOPE, {
+        limit: 30,
+        windowMs: 60_000,
+      });
+      const brochureIpQuota = await enforceIpQuota(supabase, getClientIp(req), BROCHURE_SCOPE, {
+        limit: 60,
+        windowMs: 60_000,
+      });
+      if (!brochureActorQuota.ok || !brochureIpQuota.ok) return j({ success: false, error: 'rate_limited' }, 429);
+
+      const reportId = typeof body.reportId === 'string' ? body.reportId : '';
+      const { status, ...filed } = await fileBrochurePhotograph(supabase, {
+        reportId,
+        userId: auth.userId,
+        documentSha256: body.documentSha256,
+        source: body.source,
+        place: body.place,
+        image: body.image,
+        kind: body.kind,
+      });
+      // One line a photograph; nobody reads the answer but the browser that sent it.
+      console.log(
+        `[listing-images] capture_brochure_photograph: report=${captureFolder(reportId) ? reportId : 'invalid'} ` +
+          `kind=${body.kind === 'floorplan' ? 'floorplan' : 'photo'} ` +
+          `status=${status} ${filed.reason ? `refused=${filed.reason}` : 'kept'} held=${filed.held ?? 0}`,
+      );
+      return j({ success: status < 400, op, ...filed }, status);
     }
 
     /* -- User-facing resolve --------------------------------------------- */

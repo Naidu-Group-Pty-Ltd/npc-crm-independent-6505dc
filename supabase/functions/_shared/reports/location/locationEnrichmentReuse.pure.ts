@@ -60,6 +60,7 @@
  * This changes no figure in any document. An enrichment reused is byte-identical
  * to the enrichment stored, because it IS the enrichment stored.
  */
+import { STREET_POINT_REUSE_HOURS, streetPointIsStale } from './enrichmentPoint.pure.ts';
 
 /** Where the acquisition record lives on the persisted object. */
 export const ENRICHMENT_STAMP = '__acquisition' as const;
@@ -91,6 +92,16 @@ export interface EnrichmentStages {
   readonly amenityRegisterLoadedAt?: Readonly<Record<string, string>>;
   /** Which provider measured the commute, when one did. */
   readonly commuteProvider?: string;
+  /**
+   * How finely the geocode placed the address every reading was measured
+   * from: the property (`address`), its street, or only the centre of its
+   * suburb (`locality`) or postal area. Absent on every stamp written before
+   * 24 Sep 2026 and on a supplied coordinate. `enrichmentPoint.pure.ts` is
+   * the one reader.
+   */
+  readonly geocodePrecision?: 'address' | 'street' | 'locality' | 'postcode';
+  /** Who placed it (`nominatim`, `photon`, `gnaf`, `abs_locality`, `google`). */
+  readonly geocodeProvider?: string;
 }
 
 export interface EnrichmentAcquisition {
@@ -123,6 +134,17 @@ export interface EnrichmentAcquisition {
  * acquisition. What is exhausted is the re-buying, not the honesty.
  */
 export const MAX_PARTIAL_ACQUISITIONS = 3;
+
+/**
+ * How long an enrichment measured from an AREA's centre may be reused.
+ *
+ * Long enough to cover one generation's continuations, which arrive every
+ * thirty seconds for a few minutes and must all read the same point; short
+ * enough that a regeneration the next day asks the geocoder again, because an
+ * area centre is what the chain answers when the providers that place a street
+ * could not be asked — on 24 Sep 2026 that was an outage, not the address.
+ */
+export const AREA_CENTRE_REUSE_HOURS = 6;
 
 /** The attempt number a fresh acquisition for this subject should carry. */
 export function nextAcquisitionAttempt(stored: unknown, subject: EnrichmentSubject): number {
@@ -239,7 +261,10 @@ export type ReuseVerdict =
   | 'incomplete_acquisition'
   | 'partial_retry_exhausted'
   | 'readings_missing'
-  | 'commute_destination_unrecorded';
+  | 'commute_destination_unrecorded'
+  | 'point_precision_unrecorded'
+  | 'area_centre_stale'
+  | 'street_point_stale';
 
 export interface ReuseDecision {
   readonly reuse: boolean;
@@ -269,6 +294,14 @@ const finiteCoords = (stored: Record<string, unknown>): boolean => {
 export function assessEnrichmentReuse(
   stored: unknown,
   subject: EnrichmentSubject,
+  /** The clock the area-centre shelf life is measured on; the wall clock unless a spec pins it. */
+  nowMs: number = Date.now(),
+  /**
+   * What the generation reusing it has already written. A street point is
+   * placed again only where this is known to be nothing
+   * (`streetPointIsStale`); a caller that does not say keeps today's reuse.
+   */
+  generation: { sectionsWritten?: number | null } = {},
 ): ReuseDecision {
   if (!stored || typeof stored !== 'object' || Array.isArray(stored)) {
     return refuse('nothing_stored', 'No location enrichment is stored for this report.');
@@ -301,6 +334,55 @@ export function assessEnrichmentReuse(
       'missing_coordinates',
       'The stored enrichment carries no usable coordinate, so nothing downstream '
       + 'can be built from it. Re-acquiring.',
+    );
+  }
+
+  // What the point IS. A geocoded enrichment stamped before the precision was
+  // recorded cannot say whether it was measured from the property or from the
+  // middle of its suburb — on 24 Sep 2026 two reports were measured from the
+  // middle of their suburbs and nothing downstream could tell. Refused rather
+  // than guessed at; the next generation re-acquires with the precision on
+  // the stamp, which is the remedy every other refusal here already uses.
+  const stages = (acquisition.stages ?? {}) as EnrichmentStages;
+  if (stages.geocode !== 'supplied' && !stages.geocodePrecision) {
+    return refuse(
+      'point_precision_unrecorded',
+      'The stored enrichment does not record how precisely its address was placed, '
+      + 'so it cannot show it was measured from the property rather than the centre '
+      + 'of its suburb. Re-acquiring.',
+    );
+  }
+  if (stages.geocodePrecision === 'locality' || stages.geocodePrecision === 'postcode') {
+    const acquiredMs = Date.parse(acquisition.acquiredAt);
+    const ageHours = Number.isFinite(acquiredMs) ? (nowMs - acquiredMs) / 3_600_000 : Number.POSITIVE_INFINITY;
+    if (!(ageHours >= 0 && ageHours <= AREA_CENTRE_REUSE_HOURS)) {
+      return refuse(
+        'area_centre_stale',
+        `The stored enrichment was measured from the centre of the ${stages.geocodePrecision === 'postcode' ? 'postal area' : 'suburb'}, `
+        + `not the property, more than ${AREA_CENTRE_REUSE_HOURS} hours ago. Asking the geocoder `
+        + 'again: an area centre is what the chain answers when the providers that place a street '
+        + 'could not be asked.',
+      );
+    }
+  }
+  // A street point is a sound reading, so it stands through the generation
+  // that measured from it — but it is what a provider answers when it found
+  // the street and not the lot, and the address register can see the lot. A
+  // generation that has written nothing yet asks the geocoder again, which now
+  // puts a remembered street answer to the register
+  // (`geocodeChainPolicy.pure.ts`, rule 4).
+  const acquiredMsForPoint = Date.parse(acquisition.acquiredAt);
+  const pointAgeHours = Number.isFinite(acquiredMsForPoint) ? (nowMs - acquiredMsForPoint) / 3_600_000 : null;
+  if (streetPointIsStale(
+    { precision: stages.geocodePrecision ?? null, provider: stages.geocodeProvider ?? null },
+    { sectionsWritten: generation.sectionsWritten ?? null, ageHours: pointAgeHours },
+  )) {
+    return refuse(
+      'street_point_stale',
+      'The stored enrichment was measured from a point on the property’s street, not the '
+      + `property itself, more than ${STREET_POINT_REUSE_HOURS} hour ago, and this generation has written `
+      + 'nothing from it yet. Asking the geocoder again: the national address register may now place '
+      + 'the address at the property.',
     );
   }
 
@@ -426,6 +508,11 @@ export function assessEnrichmentReuse(
  * reading there lets a transient failure do what the retry was meant to
  * prevent.
  *
+ * `street_point_stale` is the same kind of refusal: the stored reading is
+ * sound — measured from the property's own street, for this subject — and is
+ * refused only in the hope that the address register now places the lot. If
+ * asking again fails, the street reading is still the best evidence there is.
+ *
  * Every other refusal names a defect in the stored object itself — another
  * subject, no stamp to prove its subject, no coordinate, readings a gate
  * removed, a commute measured to an unrecorded destination — and none of
@@ -433,6 +520,7 @@ export function assessEnrichmentReuse(
  */
 const STANDS_IN_AFTER_FAILED_REFETCH: ReadonlySet<ReuseVerdict> = new Set<ReuseVerdict>([
   'incomplete_acquisition',
+  'street_point_stale',
 ]);
 
 /** Whether the stored enrichment may stand in after its re-fetch failed. */

@@ -14,6 +14,7 @@ import {
 import { useWhiteLabel } from '@/contexts/WhiteLabelContext';
 import { useAmlNavEntry } from '@/hooks/useAmlNavEntry';
 import { useNavigationVisibility } from '@/hooks/useNavigation';
+import { NavItemBadge } from '@/components/layout/NavItemBadge';
 import { AML_NAV_GROUP_TITLE } from '@/lib/navigation/amlEntry';
 import {
   NAVIGATION_GROUP_ORDER,
@@ -45,24 +46,23 @@ export function DashboardSidebar() {
   const matchesFilter = (title: string) =>
     normalisedFilter.length === 0 || title.toLowerCase().includes(normalisedFilter);
 
-  const groupedNavItems = useMemo(
-    () =>
-      NAVIGATION_GROUP_ORDER.map((title) => ({
-        title,
-        items: visibleNavItems.filter(
-          (item) => item.group === title && matchesFilter(item.title),
-        ),
-      })).filter((group) => group.items.length > 0),
-     
-    [visibleNavItems, normalisedFilter],
-  );
+  const groupedNavItems = useMemo(() => {
+    const portalItems = visibleAdminItems.filter((item) => item.group === 'Portals');
+    return NAVIGATION_GROUP_ORDER.map((title) => ({
+      title,
+      items: (title === 'Portals' ? portalItems : visibleNavItems).filter(
+        (item) => item.group === title && matchesFilter(item.title),
+      ),
+    })).filter((group) => group.items.length > 0);
+  }, [visibleAdminItems, visibleNavItems, normalisedFilter]);
 
   const groupedAdminItems = useMemo(
     () => ({
       title: 'Administration',
-      items: visibleAdminItems.filter((item) => matchesFilter(item.title)),
+      items: visibleAdminItems.filter(
+        (item) => item.group === 'Administration' && matchesFilter(item.title),
+      ),
     }),
-     
     [visibleAdminItems, normalisedFilter],
   );
 
@@ -97,6 +97,7 @@ export function DashboardSidebar() {
           >
             <item.icon className="h-4 w-4 shrink-0" />
             {!isCollapsed && <span className="min-w-0 truncate">{item.title}</span>}
+            {!isCollapsed && item.badge ? <NavItemBadge kind={item.badge} /> : null}
           </NavLink>
         </SidebarMenuButton>
       </SidebarMenuItem>

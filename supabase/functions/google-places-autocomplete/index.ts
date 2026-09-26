@@ -12,7 +12,7 @@ import {
 } from "../_shared/publicAbuseControls.ts";
 import { clientHttpStatusFor, clientStatusFor, consumeGoogleDailyCap } from '../_shared/googleMapsDailyCaps.ts';
 import { consumeOsmDailyAllowance } from '../_shared/geocode/osmAllowance.ts';
-import { PHOTON_PUBLIC_BASE, photonSearchUrl, predictionsFromPhoton } from '../_shared/geocode/osmAutocomplete.pure.ts';
+import { PHOTON_PUBLIC_BASE, isPublicPhotonBase, photonSearchUrl, predictionsFromPhoton } from '../_shared/geocode/osmAutocomplete.pure.ts';
 import { GEOCODER_USER_AGENT } from '../_shared/geocode/geocoder.ts';
 
 // WP-10 — address autocomplete abuse controls.
@@ -98,15 +98,21 @@ Deno.serve(async (req) => {
       // and its refusal is read through the one shared mapping: an exhausted
       // allowance clears tomorrow, an unreadable counter does not, and the
       // caller is told which.
-      const osmBudget = await consumeOsmDailyAllowance(supabase, 'autocomplete');
-      if (!osmBudget.ok) {
-        console.warn(`[google-places-autocomplete] osm not attempted (${osmBudget.reason})`);
-        return j(
-          { error: clientStatusFor(osmBudget.reason), success: false },
-          clientHttpStatusFor(osmBudget.reason),
-        );
-      }
+      //
+      // The allowance is what the PUBLIC instance is owed; a copy this product
+      // runs itself (`AUTOCOMPLETE_PHOTON_URL`, the address service) is not
+      // held to it, by the same rule the geocoding chain reads.
       const base = (Deno.env.get('AUTOCOMPLETE_PHOTON_URL') || PHOTON_PUBLIC_BASE).trim();
+      if (isPublicPhotonBase(base)) {
+        const osmBudget = await consumeOsmDailyAllowance(supabase, 'autocomplete');
+        if (!osmBudget.ok) {
+          console.warn(`[google-places-autocomplete] osm not attempted (${osmBudget.reason})`);
+          return j(
+            { error: clientStatusFor(osmBudget.reason), success: false },
+            clientHttpStatusFor(osmBudget.reason),
+          );
+        }
+      }
       let osmResponse: Response;
       try {
         osmResponse = await fetchWithTimeout(photonSearchUrl(base, input), { headers: { 'User-Agent': GEOCODER_USER_AGENT, Accept: 'application/json' } }, 5000);

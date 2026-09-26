@@ -21,6 +21,7 @@ import { SearchInput } from '@/components/ui/search-input';
 import { Inbox, RefreshCw, Loader2, Mail, Phone } from 'lucide-react';
 import { toast } from 'sonner';
 import { REFERRAL_STATUS_LABELS, type ReferralStatus } from '@/hooks/usePartnerReferrals';
+import { houseLabel } from '@/lib/houseLabel';
 
 const FN = 'manage-partner-referrals';
 
@@ -171,7 +172,7 @@ export default function PartnerReferralInbox() {
             <Inbox className="h-6 w-6 text-primary" /> Referrals
           </h1>
           <p className="text-sm text-muted-foreground">
-            Clients referred to you by NPC. Name, contact details and the general purpose of the referral only.
+            {houseLabel('Clients referred to you by NPC. Name, contact details and the general purpose of the referral only.', 'Clients referred to you by the Command Centre. Name, contact details and the general purpose of the referral only.')}
           </p>
         </div>
         <Button variant="outline" size="icon" onClick={() => void load()} disabled={loading}>
@@ -208,7 +209,7 @@ export default function PartnerReferralInbox() {
             <div className="flex flex-col items-center gap-2 py-16 text-center">
               <Inbox className="h-10 w-10 text-muted-foreground" />
               <p className="font-medium">No referrals yet</p>
-              <p className="text-sm text-muted-foreground">New referrals from NPC will appear here.</p>
+              <p className="text-sm text-muted-foreground">{houseLabel('New referrals from NPC will appear here.', 'New referrals will appear here.')}</p>
             </div>
           ) : (
             <Table>
@@ -256,7 +257,7 @@ export default function PartnerReferralInbox() {
                   <Badge variant={statusVariant(selected.status)}>{REFERRAL_STATUS_LABELS[selected.status]}</Badge>
                 </SheetTitle>
                 <SheetDescription>
-                  Referred by {selected.referring_entity_name || 'NPC'}
+                  Referred by {selected.referring_entity_name || houseLabel('NPC', 'the Command Centre')}
                   {selected.referring_individual_name ? ` · ${selected.referring_individual_name}` : ''}
                 </SheetDescription>
               </SheetHeader>
@@ -327,7 +328,7 @@ export default function PartnerReferralInbox() {
 
                   <section className="space-y-2">
                     <h3 className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">Notes</h3>
-                    <Textarea rows={2} placeholder="Add a note for NPC" value={note} onChange={(e) => setNote(e.target.value)} />
+                    <Textarea rows={2} placeholder={houseLabel('Add a note for NPC', 'Add a note for the Command Centre')} value={note} onChange={(e) => setNote(e.target.value)} />
                     <Button size="sm" variant="outline" disabled={busy || !note.trim()} onClick={() => void submitNote()}>
                       Add note
                     </Button>

@@ -35,6 +35,13 @@ vi.mock('@/hooks/useGlobalReportSettings', async (orig) => ({
     disclaimer: { text: 'Test disclaimer.', font_size: 'medium', is_enabled: true },
   }),
 }));
+// The issuer's brand is read from the deployment's own settings; here there is
+// none to read, so the document is issued under the contact name above.
+vi.mock('@/lib/reportTemplate/adapters/organisation', async (orig) => ({
+  ...(await orig() as object),
+  loadOrganisation: async () => null,
+  loadBrandMarks: async () => ({}),
+}));
 
 const CONTENT = [
   '# Investment Report: 9 Test Street, Cowra NSW 2794',

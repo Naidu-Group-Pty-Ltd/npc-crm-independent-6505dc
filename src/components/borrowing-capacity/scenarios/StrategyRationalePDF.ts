@@ -23,6 +23,8 @@ import jsPDF from 'jspdf';
 import { format } from 'date-fns';
 import { fetchGlobalReportSettings } from '@/hooks/useGlobalReportSettings';
 import { drawJsPDFDisclaimerPage } from '@/utils/pdfDisclaimerPage';
+import { issuerClosingPage, loadLegacyDocumentBrand, rgbObject, type LegacyDocumentBrand } from '@/lib/reports/legacyDocumentBrand';
+import { drawLegacyIssuerCover } from '@/lib/reports/legacyIssuerCover';
 import { smartCapitalize } from '@/utils/nameFormatting';
 import type { RationaleReport, RationaleSeverity } from '@/utils/strategyRationaleEngine';
 
@@ -40,6 +42,39 @@ const RED = { r: 239, g: 68, b: 68 };
 const AMBER = { r: 217, g: 119, b: 6 };
 
 type RGB = { r: number; g: number; b: number };
+
+/**
+ * The colours that say whose document this is.
+ *
+ * On the prime these are NPC's, exactly as they have always been drawn. On a
+ * clone the same roles take the issuer's brand family (`legacyDocumentBrand.ts`):
+ * its brand for rules and accent bars, a fill dark enough to carry white type
+ * where a pill holds words, its deep shade for headings and badges, and the ink
+ * that reads on that deep shade. The semantic colours are shared.
+ */
+interface DocumentPalette {
+  /** Rules and accent bars. */
+  gold: RGB;
+  /** A pill that carries white type. */
+  goldFill: RGB;
+  /** A figure set on a navy badge. */
+  goldOnNavy: RGB;
+  /** Headings, figures and badges. */
+  navy: RGB;
+}
+
+const HOUSE_PALETTE: DocumentPalette = { gold: GOLD, goldFill: GOLD, goldOnNavy: GOLD, navy: NAVY };
+
+function documentPalette(brand: LegacyDocumentBrand): DocumentPalette {
+  if (brand.artwork === 'house') return HOUSE_PALETTE;
+  const { family } = brand;
+  return {
+    gold: rgbObject(family.accent),
+    goldFill: rgbObject(family.accentInk),
+    goldOnNavy: rgbObject(family.onDeep),
+    navy: rgbObject(family.deep),
+  };
+}
 
 // ─── Page setup ─────────────────────────────────────────────────────────────
 const PAGE_W = 210;
@@ -86,21 +121,21 @@ function severityLabel(sev: RationaleSeverity): string {
   }
 }
 
-function ownerColor(owner: 'broker' | 'finance' | 'client'): RGB {
+function ownerColor(owner: 'broker' | 'finance' | 'client', P: DocumentPalette): RGB {
   switch (owner) {
     case 'finance': return { r: 37, g: 99, b: 235 };
     case 'client': return { r: 147, g: 51, b: 234 };
-    default: return GOLD;
+    default: return P.goldFill;
   }
 }
 
-function addFooter(doc: jsPDF, pageNum: number, totalPages: number, footerLabel: string) {
+function addFooter(doc: jsPDF, pageNum: number, totalPages: number, footerLabel: string, P: DocumentPalette) {
   doc.setFontSize(7);
   setColor(doc, GRAY);
   doc.setFont('helvetica', 'normal');
   doc.text(footerLabel, MARGIN, FOOTER_Y);
   doc.text(`Page ${pageNum} of ${totalPages}`, PAGE_W - MARGIN, FOOTER_Y, { align: 'right' });
-  setFill(doc, GOLD);
+  setFill(doc, P.gold);
   doc.rect(MARGIN, FOOTER_Y - 4, CONTENT_W, 0.4, 'F');
 }
 
@@ -113,12 +148,12 @@ function ensureSpace(doc: jsPDF, y: number, needed: number, pageNum: { value: nu
   return y;
 }
 
-function drawSectionHeader(doc: jsPDF, title: string, y: number): number {
-  setFill(doc, GOLD);
+function drawSectionHeader(doc: jsPDF, title: string, y: number, P: DocumentPalette): number {
+  setFill(doc, P.gold);
   doc.rect(MARGIN, y, CONTENT_W, 0.6, 'F');
   doc.setFontSize(11);
   doc.setFont('helvetica', 'bold');
-  setColor(doc, NAVY);
+  setColor(doc, P.navy);
   doc.text(title.toUpperCase(), MARGIN, y + 6);
   return y + 11;
 }
@@ -190,10 +225,25 @@ export async function generateStrategyRationalePDF(
   const __brandLine1 = (__brandParts.length > 1 ? __brandParts.slice(0, -1).join(' ') : __brandName).toUpperCase();
   const __brandLine2 = __brandParts.length > 1 ? __brandParts[__brandParts.length - 1].toUpperCase() : '';
 
+  // Whose template this brief is printed in: NPC's artwork on the prime,
+  // exactly as it has always been drawn, and the issuer's own on every clone
+  // (`legacyDocumentBrand.ts`). The content is the same either way.
+  const legacyBrand = await loadLegacyDocumentBrand(__brand?.company_name);
+  const P = documentPalette(legacyBrand);
+
   // ════════════════════════════════════════════════════════════════════════
   // PAGE 1 — COVER
   // ════════════════════════════════════════════════════════════════════════
-  try {
+  if (legacyBrand.artwork === 'issuer') {
+    drawLegacyIssuerCover(doc, {
+      issuerName: legacyBrand.issuer.name,
+      mark: legacyBrand.mark,
+      documentTitle: 'Strategy Rationale Brief',
+      subject: displayName,
+      standfirst: 'Borrowing Capacity Scenario — Finance Hand-off',
+      family: legacyBrand.family,
+    });
+  } else try {
     const coverImageUrl = '/templates/npc-cashflow-cover.jpg';
     const coverResponse = await fetch(coverImageUrl);
     if (coverResponse.ok) {
@@ -236,7 +286,7 @@ export async function generateStrategyRationalePDF(
   // Client header
   doc.setFontSize(18);
   doc.setFont('helvetica', 'bold');
-  setColor(doc, NAVY);
+  setColor(doc, P.navy);
   doc.text(displayName, MARGIN, y + 5);
 
   doc.setFontSize(9);
@@ -248,22 +298,22 @@ export async function generateStrategyRationalePDF(
   }
 
   y += 14;
-  setFill(doc, GOLD);
+  setFill(doc, P.gold);
   doc.rect(MARGIN, y, CONTENT_W, 0.8, 'F');
   y += 10;
 
-  y = drawSectionHeader(doc, 'Strategy Rationale Brief', y);
+  y = drawSectionHeader(doc, 'Strategy Rationale Brief', y, P);
 
   // ── Headline ───────────────────────────────────────────────────────────
   setFill(doc, MUTED_BG);
   const headlineHeight = 18 + (report.subHeadline ? 14 : 0);
   doc.roundedRect(MARGIN, y, CONTENT_W, headlineHeight, 2, 2, 'F');
-  setFill(doc, GOLD);
+  setFill(doc, P.gold);
   doc.rect(MARGIN, y + 2, 2.5, headlineHeight - 4, 'F');
 
   doc.setFontSize(10);
   doc.setFont('helvetica', 'bold');
-  setColor(doc, NAVY);
+  setColor(doc, P.navy);
   const headlineY = drawWrappedText(doc, report.headline, MARGIN + 8, y + 8, CONTENT_W - 14, 4.5);
 
   if (report.subHeadline) {
@@ -297,7 +347,7 @@ export async function generateStrategyRationalePDF(
     doc.text(label, x + 8, y + 8);
     doc.setFontSize(13);
     doc.setFont('helvetica', 'bold');
-    setColor(doc, NAVY);
+    setColor(doc, P.navy);
     doc.text(value, x + 8, y + 19);
     doc.setFontSize(7);
     doc.setFont('helvetica', 'normal');
@@ -318,7 +368,7 @@ export async function generateStrategyRationalePDF(
     'SCENARIO CAPACITY',
     fmtAud(context.scenarioCapacity),
     `${fmtSigned(capacityChange)} vs base`,
-    capacityChange > 0 ? GREEN : capacityChange < 0 ? RED : GOLD,
+    capacityChange > 0 ? GREEN : capacityChange < 0 ? RED : P.gold,
   );
   if (context.effectivePurchasePower != null) {
     const target = context.targetPurchasePrice ?? 0;
@@ -333,7 +383,7 @@ export async function generateStrategyRationalePDF(
       'PURCHASE POWER',
       fmtAud(context.effectivePurchasePower),
       sub,
-      context.meetsTarget === false ? RED : GOLD,
+      context.meetsTarget === false ? RED : P.gold,
     );
   }
   y += boxH + 12;
@@ -342,7 +392,7 @@ export async function generateStrategyRationalePDF(
   // SECTION: WHAT & WHY (per-lever bullets)
   // ════════════════════════════════════════════════════════════════════════
   y = ensureSpace(doc, y, 18, pageNum);
-  y = drawSectionHeader(doc, `What we propose & why  (${report.bullets.length} lever${report.bullets.length === 1 ? '' : 's'})`, y);
+  y = drawSectionHeader(doc, `What we propose & why  (${report.bullets.length} lever${report.bullets.length === 1 ? '' : 's'})`, y, P);
 
   if (report.bullets.length === 0) {
     doc.setFontSize(9);
@@ -374,7 +424,7 @@ export async function generateStrategyRationalePDF(
       // What (bold)
       doc.setFontSize(9);
       doc.setFont('helvetica', 'bold');
-      setColor(doc, NAVY);
+      setColor(doc, P.navy);
       doc.text(whatLines, MARGIN + 5, y + 4);
       let bulletY = y + 4 + whatLines.length * 4.5;
 
@@ -421,7 +471,7 @@ export async function generateStrategyRationalePDF(
   // SECTION: RECONCILIATION
   // ════════════════════════════════════════════════════════════════════════
   y = ensureSpace(doc, y, 28, pageNum);
-  y = drawSectionHeader(doc, 'How the math reconciles', y);
+  y = drawSectionHeader(doc, 'How the math reconciles', y, P);
 
   setFill(doc, MUTED_BG);
   doc.setFontSize(8.5);
@@ -438,7 +488,7 @@ export async function generateStrategyRationalePDF(
   // SECTION: EXECUTION SEQUENCE
   // ════════════════════════════════════════════════════════════════════════
   y = ensureSpace(doc, y, 18, pageNum);
-  y = drawSectionHeader(doc, `Recommended execution sequence  (${report.sequence.length} step${report.sequence.length === 1 ? '' : 's'})`, y);
+  y = drawSectionHeader(doc, `Recommended execution sequence  (${report.sequence.length} step${report.sequence.length === 1 ? '' : 's'})`, y, P);
 
   if (report.sequence.length === 0) {
     doc.setFontSize(9);
@@ -448,7 +498,7 @@ export async function generateStrategyRationalePDF(
     y += 8;
   } else {
     for (const step of report.sequence) {
-      const oColor = ownerColor(step.owner);
+      const oColor = ownerColor(step.owner, P);
 
       doc.setFontSize(9);
       doc.setFont('helvetica', 'bold');
@@ -463,17 +513,17 @@ export async function generateStrategyRationalePDF(
       y = ensureSpace(doc, y, blockH + 3, pageNum);
 
       // Step number circle
-      setFill(doc, NAVY);
+      setFill(doc, P.navy);
       doc.circle(MARGIN + 4, y + 4, 3.2, 'F');
       doc.setFontSize(8);
       doc.setFont('helvetica', 'bold');
-      setColor(doc, GOLD);
+      setColor(doc, P.goldOnNavy);
       doc.text(String(step.step), MARGIN + 4, y + 5.2, { align: 'center' });
 
       // Action
       doc.setFontSize(9);
       doc.setFont('helvetica', 'bold');
-      setColor(doc, NAVY);
+      setColor(doc, P.navy);
       doc.text(actionLines, MARGIN + 11, y + 4);
 
       // Owner pill (top right)
@@ -503,7 +553,7 @@ export async function generateStrategyRationalePDF(
   // SECTION: CAVEATS
   // ════════════════════════════════════════════════════════════════════════
   y = ensureSpace(doc, y, 18, pageNum);
-  y = drawSectionHeader(doc, 'Caveats & assumptions', y);
+  y = drawSectionHeader(doc, 'Caveats & assumptions', y, P);
 
   for (const c of report.caveats) {
     doc.setFontSize(8.5);
@@ -525,7 +575,7 @@ export async function generateStrategyRationalePDF(
   if (report.capitalFlow && report.capitalFlow.legs.length > 0) {
     const cf = report.capitalFlow;
     y = ensureSpace(doc, y, 30, pageNum);
-    y = drawSectionHeader(doc, `Capital allocation flow  (${cf.legs.length} leg${cf.legs.length === 1 ? '' : 's'})`, y);
+    y = drawSectionHeader(doc, `Capital allocation flow  (${cf.legs.length} leg${cf.legs.length === 1 ? '' : 's'})`, y, P);
 
     // Pool summary strip
     setFill(doc, MUTED_BG);
@@ -538,7 +588,7 @@ export async function generateStrategyRationalePDF(
     doc.text('RESIDUAL', MARGIN + (CONTENT_W * 2) / 3 + 4, y + 5);
     doc.setFontSize(10);
     doc.setFont('helvetica', 'bold');
-    setColor(doc, NAVY);
+    setColor(doc, P.navy);
     doc.text(fmtAud(cf.totalAvailable), MARGIN + 4, y + 11);
     doc.text(fmtAud(cf.totalRouted), MARGIN + CONTENT_W / 3 + 4, y + 11);
     doc.text(fmtAud(cf.remainder), MARGIN + (CONTENT_W * 2) / 3 + 4, y + 11);
@@ -568,13 +618,13 @@ export async function generateStrategyRationalePDF(
       y = ensureSpace(doc, y, blockH + 2, pageNum);
 
       // Severity bar
-      setFill(doc, isUnallocated ? GRAY : GOLD);
+      setFill(doc, isUnallocated ? GRAY : P.gold);
       doc.rect(MARGIN, y, 1.2, blockH, 'F');
 
       // Header
       doc.setFontSize(8.5);
       doc.setFont('helvetica', 'bold');
-      setColor(doc, NAVY);
+      setColor(doc, P.navy);
       doc.text(headerLines, MARGIN + 5, y + 4);
 
       // Right-side metrics: amount + servicing + debt pills
@@ -599,7 +649,7 @@ export async function generateStrategyRationalePDF(
           leg.monthlyServicingDelta < 0 ? GREEN : RED,
         );
       }
-      drawPill(fmtAud(leg.amount), NAVY);
+      drawPill(fmtAud(leg.amount), P.navy);
 
       // Note
       if (noteLines.length > 0) {
@@ -617,7 +667,7 @@ export async function generateStrategyRationalePDF(
     doc.roundedRect(MARGIN, y, CONTENT_W, 8, 1, 1, 'F');
     doc.setFontSize(8);
     doc.setFont('helvetica', 'bold');
-    setColor(doc, NAVY);
+    setColor(doc, P.navy);
     doc.text(
       `Net capital impact: ${cf.monthlyServicingDelta < 0 ? '−' : '+'}${fmtAud(Math.abs(cf.monthlyServicingDelta))}/mo servicing  ·  ${cf.debtBalanceDelta < 0 ? '−' : '+'}${fmtAud(Math.abs(cf.debtBalanceDelta))} debt balance`,
       MARGIN + 3, y + 5.2,
@@ -630,7 +680,7 @@ export async function generateStrategyRationalePDF(
   // ════════════════════════════════════════════════════════════════════════
   if (context.valuationAssumptions && context.valuationAssumptions.length > 0) {
     y = ensureSpace(doc, y, 22, pageNum);
-    y = drawSectionHeader(doc, `Valuation assumptions  (${context.valuationAssumptions.length} override${context.valuationAssumptions.length === 1 ? '' : 's'})`, y);
+    y = drawSectionHeader(doc, `Valuation assumptions  (${context.valuationAssumptions.length} override${context.valuationAssumptions.length === 1 ? '' : 's'})`, y, P);
     doc.setFontSize(8);
     doc.setFont('helvetica', 'italic');
     setColor(doc, GRAY);
@@ -645,7 +695,7 @@ export async function generateStrategyRationalePDF(
       );
       const blockH = lines.length * 4 + 3;
       y = ensureSpace(doc, y, blockH + 1, pageNum);
-      setFill(doc, GOLD);
+      setFill(doc, P.gold);
       doc.rect(MARGIN, y + 1, 1.2, blockH - 2, 'F');
       doc.setFontSize(8.5);
       doc.setFont('helvetica', 'normal');
@@ -662,7 +712,7 @@ export async function generateStrategyRationalePDF(
   if (context.crossCollatPool && context.crossCollatPool.enabled) {
     const pool = context.crossCollatPool;
     y = ensureSpace(doc, y, 30, pageNum);
-    y = drawSectionHeader(doc, 'Equity release methodology — cross-collateralised', y);
+    y = drawSectionHeader(doc, 'Equity release methodology — cross-collateralised', y, P);
     const blendedActual = pool.totalPoolValue > 0
       ? ((pool.totalPoolDebt + pool.poolReleaseAmount) / pool.totalPoolValue) * 100
       : 0;
@@ -678,7 +728,7 @@ export async function generateStrategyRationalePDF(
     y = ensureSpace(doc, y, blockH + 2, pageNum);
     setFill(doc, MUTED_BG);
     doc.roundedRect(MARGIN, y, CONTENT_W, blockH, 2, 2, 'F');
-    setFill(doc, NAVY);
+    setFill(doc, P.navy);
     doc.rect(MARGIN, y + 2, 2.5, blockH - 4, 'F');
     doc.setFontSize(8.5);
     doc.setFont('helvetica', 'normal');
@@ -692,7 +742,12 @@ export async function generateStrategyRationalePDF(
   // ════════════════════════════════════════════════════════════════════════
   try {
     const globalSettings = await fetchGlobalReportSettings();
-    drawJsPDFDisclaimerPage(doc, globalSettings.contactDetails, globalSettings.disclaimer);
+    if (legacyBrand.artwork === 'issuer') {
+      const closing = issuerClosingPage(legacyBrand, globalSettings);
+      drawJsPDFDisclaimerPage(doc, closing.contact, closing.disclaimer, closing.palette);
+    } else {
+      drawJsPDFDisclaimerPage(doc, globalSettings.contactDetails, globalSettings.disclaimer);
+    }
     pageNum.value++;
   } catch (e) {
     console.warn('Could not fetch global settings for disclaimer page:', e);
@@ -706,7 +761,7 @@ export async function generateStrategyRationalePDF(
   // Skip cover page (1) and disclaimer page (last)
   for (let p = 2; p <= totalPages - 1; p++) {
     doc.setPage(p);
-    addFooter(doc, p, totalPages, footerLabel);
+    addFooter(doc, p, totalPages, footerLabel, P);
   }
 
   // ════════════════════════════════════════════════════════════════════════

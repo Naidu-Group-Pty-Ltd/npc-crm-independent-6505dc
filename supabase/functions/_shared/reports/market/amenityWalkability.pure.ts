@@ -138,6 +138,31 @@ const finite = (v: unknown): number | null =>
   typeof v === 'number' && Number.isFinite(v) ? v : null;
 
 /**
+ * What each category's lookup actually counts, in a reader's words.
+ *
+ * `Public Transport` is a count of STATIONS: the amenity register reads rail
+ * stations, halts, tram stops and transport interchanges
+ * (`AMENITY_FILTERS.transit`) and the Places fallback asks for
+ * `transit_station`. Neither is a count of bus stops, and neither says how
+ * often anything runs. The detail used to read "no public transport within
+ * the searched radius", and on the Compass for 60 Lawley Street, Spalding
+ * (25 Sep 2026) that sentence stood two pages from a bus route and a stop on
+ * the property's own street — both true, and a reader could only conclude
+ * that one of them was wrong. Only the WORDS change: the score, the anchors
+ * and the floor a reached-and-empty category takes are exactly as they were,
+ * which is why `AMENITY_WALKABILITY_VERSION` does not move.
+ */
+const MEASURE_NOUN: Readonly<Record<string, string>> = {
+  'Public Transport': 'transit station',
+};
+const EMPTY_QUALIFIER: Readonly<Record<string, string>> = {
+  'Public Transport': ' (a count of rail, tram and interchange stations: it does not record every bus stop, '
+    + 'or how often any service runs)',
+};
+const measureNoun = (category: string): string =>
+  MEASURE_NOUN[category] ?? category.toLowerCase();
+
+/**
  * Score walkability from the measured distances.
  *
  * Returns null where nothing weighted could be read — never a placeholder,
@@ -185,7 +210,7 @@ export function scoreAmenityWalkability(
         score: clamp(floor),
         distanceKm: null,
         weight,
-        detail: `no ${category.toLowerCase()} within the searched radius`,
+        detail: `no ${measureNoun(category)} within the searched radius${EMPTY_QUALIFIER[category] ?? ''}`,
       });
       continue;
     }
@@ -195,7 +220,7 @@ export function scoreAmenityWalkability(
       score: clamp(interpolate(distance, anchors)),
       distanceKm: distance,
       weight,
-      detail: `nearest ${category.toLowerCase()} ${distance < 1
+      detail: `nearest ${measureNoun(category)} ${distance < 1
         ? `${Math.round(distance * 1000)} m`
         : `${distance.toFixed(1)} km`} away`,
     });

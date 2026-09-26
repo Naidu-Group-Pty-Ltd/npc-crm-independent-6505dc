@@ -72,8 +72,14 @@ export const HAZARD_ABSENCE_RE =
  * nothing, stated in `checkedAndNotMapped`'s own words. It reads as a negation
  * beside a hazard noun, so it is excluded by name rather than by hoping the
  * pattern misses it.
+ *
+ * Both spellings: the page has printed `CHECKED_NOT_MAPPED_LEAD` ("Checked and
+ * not mapped at the property") since 25 Sep 2026, and every report written
+ * before that carries "at this coordinate". The pattern is a KEY on another
+ * module's words, so a spec holds it to that constant — the page's wording
+ * moved once without it, and the one permitted absence became removable.
  */
-export const PERMITTED_ABSENCE_RE = /checked and not mapped at this coordinate/i;
+export const PERMITTED_ABSENCE_RE = /checked and not mapped at (?:the property|this coordinate)/i;
 
 /**
  * A future delivery horizon, spelled as a duration or as a relative term.

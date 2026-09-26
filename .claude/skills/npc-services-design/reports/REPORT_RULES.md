@@ -51,13 +51,43 @@ Express hierarchy with **rules, type weight, ground colour and space** instead.
 
 ## 4 · Typography in print
 
-Cinzel Bold and Playfair Display Medium (`public/fonts/`) are the display faces.
-Both must be installed in the WeasyPrint container — they are not Debian packages,
-so they are `COPY`-ed in and `fc-cache`-d.
+The print container ships four brand families, and the list is a **contract**:
+a face a report names that the image lacks does not warn — it silently prints in
+the engine's default. `_shared/reportDesign/typography.pure.ts`'s
+`CONTAINER_FONT_FILES` is the authority, and `reportTypography.spec.ts` reads it,
+the Dockerfile **and this file**, so none of the three can drift from the others.
 
-The container currently ships Inter, Playfair Display, Cormorant Garamond, Fraunces,
-IBM Plex, Roboto, Lato and the DejaVu/Liberation/Noto families. **Cinzel is not
-installed yet.**
+| Family | Weights in the print container | Where it is set |
+| --- | --- | --- |
+| **Cinzel** | Regular 400, SemiBold 600 | cover title and closing lockup, nowhere else |
+| **Playfair Display** | Regular 400, Italic 400, SemiBold 600, Bold 700 | chapter titles, section heads, pull quotes |
+| **Inter** | Debian `fonts-inter` | body copy and tables |
+| **IBM Plex Mono** | Regular 400, Medium 500, Bold 700 | figures, eyebrows, running heads, page numbers, column heads |
+
+Beneath them the image carries Roboto, Lato and the DejaVu / Liberation / Noto
+families, which exist to keep a missing glyph legible rather than to be named.
+
+**Cinzel ships no Bold, deliberately.** It is an inscriptional roman cut after
+Trajan-column capitals and those are light, so the cover title is Regular and
+the closing wordmark SemiBold — which is what the face was drawn for. Asking
+for 700 gets a synthetic bold of a face that never had one. It stays confined
+to those two places for a second reason that holds regardless: at body sizes an
+all-caps roman is unreadable.
+
+`public/fonts/` holds Cinzel **Bold** and Playfair Display **Medium**, and
+neither weight is in the print container — those are the screen copies, so do
+not specify a document's type from that directory.
+
+**Cormorant Garamond and Fraunces are not installed and are not coming.**
+Neither exists as a Debian binary package in bookworm or trixie, and both were
+removed from the type stacks entirely. `fonts-ibm-plex` is the subtle one: it
+is a Debian *source* package, so packages.debian.org serves a page for it and it
+reads as available — only the binary index says otherwise.
+
+**A dash a face cannot draw.** No shipped face holds `U+2011`, and only
+Playfair holds `U+2010`, so `printableGlyphs.pure.ts` sets five dashes as ones
+the faces do hold, on the read path. Write an em dash or an en dash freely —
+every face has both.
 
 Figures in financial tables get **tabular numerals**, and a monospaced face where
 columns must align down a long projection. A ten-year table is only readable if the

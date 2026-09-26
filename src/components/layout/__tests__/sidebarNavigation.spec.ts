@@ -79,6 +79,21 @@ describe('navigation registry coherence', () => {
       expect(NAVIGATION_GROUP_ORDER, item.title).toContain(item.group);
     }
   });
+
+  it('places portal links in their own group between Operations and Help & Usage', () => {
+    const portals = ADMIN_NAVIGATION_ITEMS.filter((item) => item.group === 'Portals');
+    expect(portals.map((item) => item.title)).toEqual([
+      'Finance Portal',
+      'Builder Portal',
+      'Solicitor Portal',
+      'Client Portal',
+    ]);
+    expect(NAVIGATION_GROUP_ORDER.slice(-3)).toEqual([
+      'Operations',
+      'Portals',
+      'Help & Usage',
+    ]);
+  });
 });
 
 /**

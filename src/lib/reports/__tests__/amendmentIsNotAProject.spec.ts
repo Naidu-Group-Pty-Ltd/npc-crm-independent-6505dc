@@ -95,8 +95,8 @@ describe('the page says how to count the table', () => {
   const drawn = renderInfrastructureOutlook(buildInfrastructureEvidence({ planningData: THREE_ROWS_ONE_DEVELOPMENT }));
 
   it('states the developments and the rows behind them as different numbers', () => {
-    expect(drawn).toContain('1 development from the application register is listed above, '
-      + 'resolved from 3 register rows');
+    expect(drawn).toContain('1 development from the council\'s application register is listed above, '
+      + 'drawn from 3 lodged applications');
   });
 
   it('says a stated cost is counted once', () => {
@@ -115,7 +115,7 @@ describe('the page says how to count the table', () => {
     // A sentence about amendments beside a table with none is noise, and the
     // count itself is still worth stating.
     const plain = renderInfrastructureOutlook(buildInfrastructureEvidence({ planningData: ONE_ROW_ONE_DEVELOPMENT }));
-    expect(plain).toContain('resolved from 1 register row');
+    expect(plain).toContain('drawn from 1 lodged application');
     expect(plain).not.toMatch(/An amendment restates/);
   });
 });

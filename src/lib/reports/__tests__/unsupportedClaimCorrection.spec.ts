@@ -22,8 +22,10 @@ import {
   correctUnsupportedEvidenceClaims,
   findPortalSourcedClearances,
   findUnpublishedHorizons,
+  PERMITTED_ABSENCE_RE,
 } from '../investment/evidenceClaims.pure';
 import { runQAValidation } from '../compassQAValidator';
+import { CHECKED_NOT_MAPPED_LEAD } from '../../../../supabase/functions/_shared/planning/planningFacts.pure';
 
 /** The sentence, as it printed. */
 const MEASURED_CLEARANCE =
@@ -86,6 +88,31 @@ describe('what a listing IS may still be cited', () => {
     const { markdown, removed } = correctUnsupportedEvidenceClaims(doc(line));
     expect(markdown).toContain(line);
     expect(removed).toHaveLength(0);
+  });
+
+  /*
+   * The exemption is a KEY on the planning table's own words. The table's lead
+   * became "Checked and not mapped at the property" on 25 Sep 2026 and this
+   * pattern still read "at this coordinate", so the one permitted absence could
+   * be removed — the test above could not see it, because a sentence that names
+   * neither a portal nor a neighbour is kept with or without the exemption.
+   */
+  it('recognises the absence in the words the planning table prints today, and in the stored ones', () => {
+    expect(PERMITTED_ABSENCE_RE.test(CHECKED_NOT_MAPPED_LEAD)).toBe(true);
+    expect(PERMITTED_ABSENCE_RE.test('**Checked and not mapped at this coordinate:** bushfire, flood.')).toBe(true);
+  });
+
+  it('keeps the permitted absence even beside a neighbouring parcel, in either spelling', () => {
+    for (const where of ['the property', 'this coordinate']) {
+      const line = `Flood: checked and not mapped at ${where}, and there is no overlay on the adjoining lots either `
+        + '(NSW Planning Portal — Hazard, 17 Sep 2026).';
+      const { markdown, removed } = correctUnsupportedEvidenceClaims(doc(line));
+      expect(removed, where).toHaveLength(0);
+      expect(markdown, where).toContain(line);
+    }
+    // …and the same clearance WITHOUT the table's words is still the defect.
+    const unsupported = 'There is no flood overlay on the adjoining lots, so the site is clear.';
+    expect(correctUnsupportedEvidenceClaims(doc(unsupported)).removed).toHaveLength(1);
   });
 
   it('keeps a hazard absence that rests on neither a portal nor a neighbour', () => {

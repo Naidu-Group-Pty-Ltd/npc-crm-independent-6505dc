@@ -31,6 +31,17 @@ export interface InvestmentReport {
   report_content?: string;
   sources_content?: string | null;
   created_at: string;
+  /** Trigger-stamped on every write — read only for a report still being written. */
+  updated_at?: string | null;
+  /** When a child report was last drawn from its parent. */
+  variant_generated_at?: string | null;
+  /**
+   * When this report was generated, resolved by `get-investment-reports`
+   * (`reportGeneratedAt.pure.ts`). A regeneration reuses the row, so
+   * `created_at` is the first generation's time and never the latest.
+   */
+  generated_at?: string | null;
+  generated_at_basis?: 'generation' | 'activity' | 'created' | null;
   current_version: number;
   report_scope?: string;
   report_tier?: 'compass' | 'financial' | 'strategic' | 'briefing' | 'snapshot' | string;

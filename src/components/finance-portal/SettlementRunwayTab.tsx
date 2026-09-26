@@ -14,6 +14,7 @@ import { useFinancePortalAuth } from '@/hooks/useFinancePortalAuth';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { format, parseISO } from 'date-fns';
+import { houseLabel } from '@/lib/houseLabel';
 
 interface Task {
   id: string;
@@ -36,7 +37,7 @@ const OWNER_ICON: Record<string, any> = {
   finance: Briefcase, client: User2, solicitor: Scale, npc: Building2,
 };
 const OWNER_LABEL: Record<string, string> = {
-  finance: 'Finance Partner', client: 'Client', solicitor: 'Solicitor', npc: 'NPC Team',
+  finance: 'Finance Partner', client: 'Client', solicitor: 'Solicitor', npc: houseLabel('NPC Team', 'Command Centre'),
 };
 const STATUS_TONE: Record<string, string> = {
   pending: 'text-muted-foreground border-muted',

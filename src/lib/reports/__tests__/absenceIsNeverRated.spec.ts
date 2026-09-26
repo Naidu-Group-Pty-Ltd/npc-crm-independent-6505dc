@@ -43,6 +43,8 @@ import {
   buildInfrastructureEvidence,
   infrastructureRules,
   renderInfrastructureOutlook,
+  REGISTER_CHECKED_EMPTY,
+  REGISTER_NOT_COVERED,
 } from '../../../../supabase/functions/_shared/planning/infrastructureEvidence.pure';
 import {
   buildPlanningFacts,
@@ -103,27 +105,32 @@ describe('the two absences are different readings', () => {
     // The persisted record and three existing readers take this field; the
     // typed reading is added beside it, never in place of it.
     expect(evidence.absences).toEqual(evidence.readings.map((r) => r.note));
-    expect(evidence.absences[0]).toMatch(/no declared priority development area/);
-    expect(evidence.absences[1]).toMatch(/No state-wide development-application feed/);
+    // The reader's words since 25 Sep 2026 (`serviceNote.pure.ts`); the order
+    // and the one-to-one pairing with the readings are what this pins.
+    expect(evidence.absences[0]).toMatch(/not within a declared priority development area/);
+    expect(evidence.absences[1]).toMatch(/published council by council/);
   });
 
   it('does not call an unsearchable register one that was searched', () => {
     const drawn = renderInfrastructureOutlook(evidence);
-    const notSearched = drawn.split('\n').filter((l) => l.startsWith('**Not searched.**'));
-    const empty = drawn.split('\n').filter((l) => l.startsWith('**Searched, nothing found.**'));
+    // The two headings are the distinction; their words are the adviser's
+    // (`REGISTER_NOT_COVERED` / `REGISTER_CHECKED_EMPTY`) and must differ.
+    expect(REGISTER_NOT_COVERED).not.toBe(REGISTER_CHECKED_EMPTY);
+    const notSearched = drawn.split('\n').filter((l) => l.startsWith(`**${REGISTER_NOT_COVERED}**`));
+    const empty = drawn.split('\n').filter((l) => l.startsWith(`**${REGISTER_CHECKED_EMPTY}**`));
     expect(notSearched).toHaveLength(1);
     expect(empty).toHaveLength(1);
-    expect(notSearched[0]).toMatch(/No state-wide development-application feed/);
-    expect(empty[0]).toMatch(/no declared priority development area/);
+    expect(notSearched[0]).toMatch(/published council by council/);
+    expect(empty[0]).toMatch(/not within a declared priority development area/);
   });
 
   it('tells the model which sentence is true of which register', () => {
     const rules = infrastructureRules(evidence);
     // The instruments register may be described as checked and empty.
-    expect(rules).toMatch(/development instruments register WAS asked/);
-    // The application register may not be described as searched at all.
-    expect(rules).toMatch(/development applications register was NOT searched/);
-    expect(rules).toMatch(/Do NOT write\s+that it was searched/);
+    expect(rules).toMatch(/development instruments source WAS checked/);
+    // The application register may not be described as checked at all.
+    expect(rules).toMatch(/development applications source is NOT covered by this report/);
+    expect(rules).toMatch(/Do NOT\s+write that it was checked/);
   });
 });
 
@@ -179,7 +186,7 @@ describe('an evidence note describes the retrieval, never the conclusion', () =>
   const empty = infrastructureRules(buildInfrastructureEvidence({ planningData: PALLAS }));
 
   it('permits "Verified" of a reading and refuses it of a rating', () => {
-    expect(empty).toMatch(/describes the RETRIEVAL and never the conclusion beside it/);
+    expect(empty).toMatch(/describes the SEARCH and never the conclusion beside it/);
     expect(empty).toMatch(/may NOT be written of a rating/);
   });
 });
@@ -215,11 +222,11 @@ describe('the planning half closes the same gap', () => {
   });
 
   it('refuses an inference from area character as a substitute for a retrieval', () => {
-    expect(rules).toMatch(/inference from the area’s general character is not a retrieval/);
+    expect(rules).toMatch(/inference from the area’s general character is not a check either/);
   });
 
   it('separates the evidence note from the conclusion here too', () => {
-    expect(rules).toMatch(/describes the RETRIEVAL and never the conclusion beside it/);
+    expect(rules).toMatch(/describes the CHECK and never the conclusion beside it/);
   });
 });
 
@@ -306,7 +313,7 @@ describe('the rule and the section registry agree on the vocabulary', () => {
     expect(risk, 'the risk dashboard section').toBeTruthy();
     expect(risk!.purpose).toMatch(/Not assessed/);
     // And it says WHY, rather than adding a word to a list.
-    expect(risk!.purpose).toMatch(/measured the SEARCH, not\s+the area/);
+    expect(risk!.purpose).toMatch(/describes the CHECK,\s+not the area/);
   });
 
   it('separates the chip from the level there too', async () => {

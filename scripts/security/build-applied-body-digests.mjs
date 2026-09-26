@@ -163,10 +163,18 @@ if (flag("--verify")) {
       `(${digests.size} bodies), read over ${route}.`,
   );
   if (added.length > 0) {
+    // Named, with the line the generator would write for each. A count alone
+    // sent the next person to a ledger this run could read and they cannot:
+    // every digest below was matched against THIS ledger a moment ago, so the
+    // lines are exactly what `--digests` needs to add them anywhere.
     console.log(
       `  ${added.length} file(s) now match and are not recorded yet — ` +
-        `run \`npm run migrations:body-digests\` to add them.`,
+        `run \`npm run migrations:body-digests\` to add them. As the generator would write them:`,
     );
+    for (const name of [...added].sort()) {
+      console.log(`    ${fresh.get(name)}  ${name}`);
+      console.log(`      (${bodyFormLabel(rungOf.get(name))})`);
+    }
   }
   process.exit(0);
 }
@@ -198,7 +206,9 @@ const header = [
   "# Format: <64-hex sha256>  <filename>",
   "#",
   `# ${lines.length} file(s) recorded of ${files.length} in the corpus; ` +
-    `${digests.size} distinct bodies in the ledger.`,
+    // A `--digests` file may hold only part of the ledger, so its count is not
+    // a statement about the ledger's size.
+    `${digests.size} distinct bodies in ${value("--digests") ? "the digests read" : "the ledger"}.`,
   `# Matched ${rungs.map((n, i) => `${n} ${bodyFormLabel(i)}`).join(", ")}.`,
   `# ${oversize.length} file(s) past ${MAX_DIGEST_BYTES} bytes were not digested.`,
   "",

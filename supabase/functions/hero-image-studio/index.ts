@@ -17,6 +17,16 @@ import { actorIsSuperadmin, requireModulePermission, type ModulePerm } from "../
 import { enforceCsrf, csrfDenied } from "../_shared/csrfGuard.ts";
 import { signStoragePath, signStoragePaths } from "../_shared/storageSign.ts";
 import { validateReferenceImages } from "./referenceImages.ts";
+// Restored 25 Sep 2026. These three lines arrived with 967c44a5 ("validate
+// hero image uploads", 29 Jul 2026) and were dropped 61 seconds later by the
+// web-UI conflict resolution of 7a3ed532, which kept their uses. The body
+// limit runs before every action, so from that merge on EVERY studio call
+// threw a ReferenceError and answered 500 "Internal error" — the library,
+// the chapter list and the placements alike, and the PDF export read the
+// same 500 as "no hero images placed".
+import { MAX_REQUEST_BYTES, validateImageUpload } from "./imageUpload.ts";
+import { enforceActorQuota } from "../_shared/publicAbuseControls.ts";
+import { enforceRawBodyLimit } from "../_shared/requestSecurity.ts";
 import { meteredFetch } from "../_shared/meteredFetch.ts";
 import { internalError } from '../_shared/errorResponse.ts';
 

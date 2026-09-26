@@ -10,6 +10,15 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Progress } from '@/components/ui/progress';
 import { supabase } from '@/integrations/supabase/client';
 import { invokeSecureFunction } from '@/lib/secureInvoke';
+import { namedPhotographCount, photographCaptureRequest, startPhotographCapture } from '@/lib/reports/urlExtractPhotographs';
+import { fileChosenBrochurePhotographs, fileWhilePageHeld } from '@/lib/reports/brochurePhotographs';
+import {
+  BROCHURE_FILING_BROKE,
+  BROCHURE_FILING_STILL_RUNNING,
+  describeBrochureFiling,
+  type BrochureFiling,
+} from '@/lib/reports/brochurePhotographs.pure';
+import { useBrochurePhotographs } from '@/hooks/useBrochurePhotographs';
 import type { Json } from '@/integrations/supabase/types';
 import { useToast } from '@/hooks/use-toast';
 import { useNotifications } from '@/contexts/NotificationsContext';
@@ -18,7 +27,9 @@ import { useActivityLogger } from '@/hooks/useActivityLogger';
 import { addBackgroundJob } from '@/components/BackgroundJobTracker';
 import { Loader2, MapPin, Hash, Globe, TrendingUp, FileText, Link, Upload, X, Image, AlertCircle, Sparkles, ClipboardPaste } from 'lucide-react';
 import { convertPdfToImages, isPdfFile, isImageFile, imageFileToBase64 } from '@/utils/pdfToImages';
+import { readUploadedDocumentText } from '@/lib/reports/uploadedDocumentText';
 import { PreGenerationOverrides, PreGenerationData } from './PreGenerationOverrides';
+import { BrochurePhotographsPicker } from './BrochurePhotographsPicker';
 import { removeCommas } from '@/hooks/useFormattedNumber';
 import { BuildTypeSelector } from './shared/BuildTypeSelector';
 import { BuildType } from '@/types/overrideFields';
@@ -80,7 +91,7 @@ export function InvestmentReportGenerator() {
   const [propertyUrl, setPropertyUrl] = useState('');
   const [isScraping, setIsScraping] = useState(false);
   const [scrapeError, setScrapeError] = useState<string | null>(null);
-  const [urlScrapedData, setUrlScrapedData] = useState<{ propertyAddress: string; scrapedContent: string; sourceUrl: string } | null>(null);
+  const [urlScrapedData, setUrlScrapedData] = useState<{ propertyAddress: string; scrapedContent: string; sourceUrl: string; scrapeJobId?: string; photographCount?: number } | null>(null);
   const [isUrlGenerating, setIsUrlGenerating] = useState(false);
   
   // PDF upload state
@@ -89,8 +100,13 @@ export function InvestmentReportGenerator() {
   const [pdfError, setPdfError] = useState<string | null>(null);
   const [isDragging, setIsDragging] = useState(false);
   const [conversionProgress, setConversionProgress] = useState<{ current: number; total: number } | null>(null);
-  const [pdfParsedData, setPdfParsedData] = useState<{ propertyAddress: string; pdfContent: string } | null>(null);
+  const [pdfParsedData, setPdfParsedData] = useState<{ propertyAddress: string; pdfContent: string | null } | null>(null);
   const [isPdfGenerating, setIsPdfGenerating] = useState(false);
+  // The brochure's own photographs, read beside the parse and confirmed by
+  // the adviser before the report is made (`useBrochurePhotographs`).
+  const brochurePhotographs = useBrochurePhotographs();
+  // True while the ticked pictures are on their way to the report.
+  const [isFilingBrochure, setIsFilingBrochure] = useState(false);
   
   const [queryType, setQueryType] = useState<'address' | 'zipcode' | 'suburb' | 'state'>('address');
   const [query, setQuery] = useState('');
@@ -847,6 +863,10 @@ export function InvestmentReportGenerator() {
         propertyAddress,
         scrapedContent: scrapedResult.markdown,
         sourceUrl: scrapedResult.sourceUrl || propertyUrl,
+        // The job the extraction ran as, and how many of the listing's own
+        // photographs it named — kept so the report made from it can keep them.
+        scrapeJobId: startData.jobId,
+        photographCount: namedPhotographCount(scrapedResult),
       });
 
       // Populate form fields with scraped data (without triggering sync loops).
@@ -1056,6 +1076,20 @@ export function InvestmentReportGenerator() {
         console.error('Background generation error:', error);
       });
 
+      // Keep the listing's own photographs for this report, beside the
+      // generation and never in its way. The server finishes the work in the
+      // background, and a document drawn later finishes anything it left
+      // over, so only the ask itself has to land (`urlExtractPhotographs.ts`).
+      const photographCapture = photographCaptureRequest(pendingReport.id, urlScrapedData);
+      if (photographCapture) {
+        void startPhotographCapture(
+          (request) => invokeSecureFunction('listing-images', { ...request }),
+          photographCapture,
+        ).then((outcome) => {
+          if (!outcome.ok) console.warn('Listing photographs were not requested for this report:', outcome.error);
+        });
+      }
+
       // Add "generation started" notification
       addNotification({
         type: 'report_generation_started',
@@ -1088,6 +1122,7 @@ export function InvestmentReportGenerator() {
 
 
   // Handle PDF/image file drop
+  const resetBrochurePhotographs = brochurePhotographs.reset;
   const handleDrop = useCallback((e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
     setIsDragging(false);
@@ -1098,11 +1133,12 @@ export function InvestmentReportGenerator() {
       if (isPdfFile(file) || isImageFile(file)) {
         setPdfFile(file);
         setPdfError(null);
+        resetBrochurePhotographs();
       } else {
         setPdfError('Please upload a PDF or image file (PNG, JPG, WEBP)');
       }
     }
-  }, []);
+  }, [resetBrochurePhotographs]);
 
   const handleDragOver = useCallback((e: React.DragEvent<HTMLDivElement>) => {
     e.preventDefault();
@@ -1121,6 +1157,7 @@ export function InvestmentReportGenerator() {
       if (isPdfFile(file) || isImageFile(file)) {
         setPdfFile(file);
         setPdfError(null);
+        brochurePhotographs.reset();
       } else {
         setPdfError('Please upload a PDF or image file (PNG, JPG, WEBP)');
       }
@@ -1151,11 +1188,17 @@ export function InvestmentReportGenerator() {
     setPdfError(null);
     setConversionProgress(null);
     setPdfParsedData(null);
+    brochurePhotographs.reset();
 
     try {
       console.log('Processing file:', pdfFile.name, 'Type:', pdfFile.type);
       
       let requestBody: any = { fileName: pdfFile.name };
+      // The document's own words. `parse-property-pdf` reads the pages as
+      // images and answers fields, never text, so the report used to be handed
+      // a `pdfContent` nothing had ever filled. Read from the text layer while
+      // the parser reads the pages; nothing about it can fail the parse.
+      let documentText: Promise<string | null> = Promise.resolve(null);
       
       if (isPdfFile(pdfFile)) {
         console.log('🔄 Converting PDF to images...');
@@ -1175,6 +1218,11 @@ export function InvestmentReportGenerator() {
         }
         
         console.log(`✅ PDF converted: ${conversionResult.images.length} pages rendered`);
+
+        // The brochure's own photographs, read while the parser reads the
+        // pages. Nothing about it can fail the parse.
+        brochurePhotographs.begin(pdfFile);
+        documentText = readUploadedDocumentText(pdfFile);
         
         requestBody.pageImages = conversionResult.images.map(img => ({
           pageNumber: img.pageNumber,
@@ -1238,8 +1286,10 @@ export function InvestmentReportGenerator() {
       // Store parsed data for later generation
       setPdfParsedData({
         propertyAddress,
-        pdfContent: data.pdfContent,
+        pdfContent: await documentText.catch(() => null),
       });
+      // Now the brochure has named its property, its pages can be read for it.
+      brochurePhotographs.settle({ address: extracted.extractedAddress, suburb: extracted.extractedSuburb });
 
       // Populate form fields with extracted data (without triggering sync
       // loops). One applier, shared with the URL path, so a document and a
@@ -1267,6 +1317,7 @@ export function InvestmentReportGenerator() {
 
     } catch (error) {
       console.error('Error processing document:', error);
+      brochurePhotographs.reset();
       const errorMessage = error instanceof Error ? error.message : 'Failed to process document';
       setPdfError(errorMessage);
       toast({
@@ -1435,6 +1486,33 @@ export function InvestmentReportGenerator() {
         console.error('Background generation error:', error);
       });
 
+      // The photographs the adviser ticked from the brochure, filed under the
+      // report now it exists. The generation has already started and never
+      // waits for them: a document reads its photographs when it is drawn.
+      // But they exist only in this page, so the page is held while they are
+      // in flight, and the report is announced and the form cleared only once
+      // they have landed or the patience has run out (`fileWhilePageHeld`).
+      // The server checks each one again before it keeps it.
+      const brochureFiling = brochurePhotographs.filingArgs();
+      if (brochureFiling) {
+        const reportBrochureFiling = (outcome: BrochureFiling | null) => {
+          const message = outcome ? describeBrochureFiling(outcome) : BROCHURE_FILING_BROKE;
+          if (message) toast(message);
+        };
+        setIsFilingBrochure(true);
+        const held = await fileWhilePageHeld(
+          () => fileChosenBrochurePhotographs({
+            invoke: (request) => invokeSecureFunction('listing-images', { ...request }),
+            reportId: pendingReport.id,
+            ...brochureFiling,
+          }),
+          { onLateOutcome: reportBrochureFiling },
+        );
+        setIsFilingBrochure(false);
+        if (held.state === 'settled') reportBrochureFiling(held.outcome);
+        else toast(BROCHURE_FILING_STILL_RUNNING);
+      }
+
       // Add "generation started" notification
       addNotification({
         type: 'report_generation_started',
@@ -1452,6 +1530,7 @@ export function InvestmentReportGenerator() {
       // Clear form
       setPdfFile(null);
       setPdfParsedData(null);
+      brochurePhotographs.reset();
 
     } catch (error) {
       console.error('Error generating report from PDF:', error);
@@ -1461,6 +1540,7 @@ export function InvestmentReportGenerator() {
         variant: "destructive",
       });
     } finally {
+      setIsFilingBrochure(false);
       setIsPdfGenerating(false);
     }
   };
@@ -2210,6 +2290,7 @@ export function InvestmentReportGenerator() {
                             onClick={(e) => {
                               e.stopPropagation();
                               setPdfFile(null);
+                              brochurePhotographs.reset();
                             }}
                           >
                             <X className="h-4 w-4 mr-1" />
@@ -2318,6 +2399,21 @@ export function InvestmentReportGenerator() {
                     );
                   })()}
 
+                  {/* The brochure's own photographs, for the adviser to confirm */}
+                  {pdfParsedData && brochurePhotographs.state && (
+                    <BrochurePhotographsPicker
+                      status={brochurePhotographs.state.status}
+                      offer={brochurePhotographs.state.offer}
+                      previews={brochurePhotographs.state.previews}
+                      selected={brochurePhotographs.state.selected}
+                      onSelectedChange={brochurePhotographs.setSelected}
+                      selectedPlans={brochurePhotographs.state.selectedPlans}
+                      onSelectedPlansChange={brochurePhotographs.setSelectedPlans}
+                      addressUsable={brochurePhotographs.state.source !== null}
+                      disabled={isPdfGenerating}
+                    />
+                  )}
+
                   <Separator />
 
                   {/* Pre-Generation Overrides for PDF mode */}
@@ -2364,7 +2460,7 @@ export function InvestmentReportGenerator() {
                          {isPdfGenerating ? (
                            <>
                              <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                             Generating Report...
+                             {isFilingBrochure ? 'Adding Brochure Pictures...' : 'Generating Report...'}
                            </>
                          ) : (
                            <>

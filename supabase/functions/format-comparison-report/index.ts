@@ -5,6 +5,11 @@ import { enforceCsrf, csrfDenied } from "../_shared/csrfGuard.ts";
 import { logApiUsage } from '../_shared/logApiUsage.ts';
 import { withReportMetering, resolveUserId, buildIdempotencyKey } from '../_shared/reportMetering.ts';
 import { internalError } from '../_shared/errorResponse.ts';
+import { deploymentKind } from '../_shared/emailIdentity.pure.ts';
+import {
+  PRIME_COMPARISON_CONTACT_SECTION,
+  comparisonContactSection,
+} from '../_shared/reports/comparisonContactSection.pure.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -112,6 +117,25 @@ const __formatComparisonReportHandler = async (req: Request): Promise<Response> 
       const state = propertyStates[idx] || 'N/A';
       return `| Property ${idx + 1} | ${addr} | ${state} |`;
     }).join('\n');
+
+    // The block the report closes on. The prime's is exactly the one this
+    // prompt has always carried; a clone's names the clone, never the house
+    // (`comparisonContactSection.pure.ts`).
+    const reportDeployment = { prime: deploymentKind(supabaseUrl) === 'prime' };
+    let closingContactSection = PRIME_COMPARISON_CONTACT_SECTION;
+    if (!reportDeployment.prime) {
+      const [contactRes, whitelabelRes] = await Promise.all([
+        supabase.from('global_report_settings').select('setting_value').eq('setting_key', 'contact_details').maybeSingle(),
+        supabase.from('whitelabel_settings').select('company_name').limit(1).maybeSingle(),
+      ]);
+      closingContactSection = comparisonContactSection(
+        {
+          contact: (contactRes?.data?.setting_value ?? null) as Record<string, unknown> | null,
+          brandName: whitelabelRes?.data?.company_name ?? null,
+        },
+        reportDeployment,
+      );
+    }
 
     // Create a comprehensive prompt for Perplexity to format the comparison data
     const prompt = `You are a professional real estate analyst report formatter. Convert the following property comparison analysis data into a beautifully formatted markdown report.
@@ -263,13 +287,7 @@ Format with clear subsections:
 
 ---
 
-## MANDATORY CLOSING SECTION:
-
-### Contact Information
-**Property Consulting**
-- **Phone:** 0433 005 110
-- **Email:** admin@npcservices.com.au
-- **Website:** npcservices.com.au
+${closingContactSection}
 
 ---
 

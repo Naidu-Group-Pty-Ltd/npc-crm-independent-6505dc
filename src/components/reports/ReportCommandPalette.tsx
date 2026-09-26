@@ -29,6 +29,7 @@ import {
 import type { PropertyListing } from '@/lib/airtable';
 import type { ReportScope, ReportTier } from '@/hooks/useReportPreferences';
 import { buildFullAddress } from '@/lib/addressUtils';
+import { houseLabel } from '@/lib/houseLabel';
 
 const SCOPE_LABEL: Record<ReportScope, string> = {
   address: 'Address',
@@ -53,7 +54,7 @@ const TIER_ICON = {
 
 const TIER_HINT: Record<ReportTier, string> = {
   compass: 'Deep 17-section Location & Property Fit deep-dive (~38 pages). Best for full due diligence.',
-  strategic: 'Advisor-grade narrative with strategy, risks and NPC view — mid depth.',
+  strategic: houseLabel('Advisor-grade narrative with strategy, risks and NPC view — mid depth.', 'Advisor-grade narrative with strategy, risks and our view — mid depth.'),
   briefing: 'Concise executive briefing suitable for a first client-ready summary.',
   snapshot: 'Fast one-page snapshot — quickest to generate, minimal token cost.',
   financial: 'Financial-only fork (FIN) — cash flow, servicing, tax and scenarios.',

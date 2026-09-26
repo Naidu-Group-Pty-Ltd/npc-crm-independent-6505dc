@@ -108,7 +108,7 @@ export const ENGAGEMENT_NODES: CatalogNode[] = [
 
   // ── Email, SMS and voice ─────────────────────────────────────────────────
   ...provider({ integrationId: 'resend', category: 'communications', docs: 'https://resend.com/docs/api-reference' }, [
-    { op: 'send_email', name: 'Send an email', summary: 'Sends an email from your verified domain.', fields: [...EMAIL_FIELDS, f.text('from', 'From', { placeholder: 'NPC Services <hello@example.com>', help: 'Must be an address on a domain verified with Resend.' })], outputs: DELIVERY_OUTPUTS, keywords: ['email', 'send', 'transactional'],
+    { op: 'send_email', name: 'Send an email', summary: 'Sends an email from your verified domain.', fields: [...EMAIL_FIELDS, f.text('from', 'From', { placeholder: 'Your Business <hello@example.com>', help: 'Must be an address on a domain verified with Resend. Leave blank to use the Default From address on the Resend integration.' })], outputs: DELIVERY_OUTPUTS, keywords: ['email', 'send', 'transactional'],
       request: {
         method: 'POST',
         url: 'https://api.resend.com/emails',

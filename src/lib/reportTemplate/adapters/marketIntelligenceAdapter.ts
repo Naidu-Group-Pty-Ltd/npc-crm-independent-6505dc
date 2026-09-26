@@ -1,3 +1,4 @@
+import { isPrimeDeployment } from '@/lib/primeDeployment';
 import { getAuthenticatedSupabaseClient } from '@/hooks/useAuthenticatedSupabase';
 import type {
   BrandContext, ReportListing, ReportTemplateAdapter, RoutingContext, TemplateBindingContext,
@@ -176,6 +177,8 @@ export const marketIntelligenceAdapter: ReportTemplateAdapter = {
       organisation,
       await loadBrandMarks(),
       await loadReportSettings(),
+      // On a clone the letterhead is never the house's (`issuerIdentity.pure.ts`).
+      { prime: isPrimeDeployment() },
     );
 
     return {

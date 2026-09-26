@@ -195,8 +195,8 @@ Deno.serve(async (req) => {
           action_url: '/client',
         });
 
-        // Send welcome email
-        const { data: wl } = await supabase.from('whitelabel_settings').select('company_name').limit(1).maybeSingle();
+        // Send welcome email. Who it is from is the deployment's email
+        // identity, which the notifier resolves itself.
         await sendPortalNotificationEmail({
           to: portalUser.email,
           clientFirstName: smartCapitalizeStr(firstName),
@@ -205,7 +205,6 @@ Deno.serve(async (req) => {
           type: 'info',
           category: 'account',
           actionUrl: '/client',
-          companyName: wl?.company_name || 'Property Consulting',
         });
       } catch (notifErr) {
         console.warn('[client-portal-login] Failed to create welcome notification:', notifErr);

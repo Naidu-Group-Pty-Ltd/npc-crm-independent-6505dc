@@ -63,11 +63,46 @@ export function asksForStreet(ask: Pick<GeocodeAsk, 'address' | 'street'>): bool
   return /\b(street|st|road|rd|avenue|ave|drive|dr|court|ct|crescent|cres|place|pl|way|lane|ln|parade|pde|terrace|tce|boulevard|blvd|circuit|cct|close|cl|highway|hwy|esplanade|esp|grove|gr|rise|square|sq|track|trk|walk)\b\.?/i.test(s);
 }
 
-/** The house-number-and-street part of a street line, for Nominatim's structured `street`. */
-export function streetLineOf(ask: Pick<GeocodeAsk, 'address' | 'street'>): string | null {
+const STATE_ABBREVIATION = '(?:NSW|VIC|QLD|SA|WA|TAS|NT|ACT)';
+const STATE_NAME = '(?:New South Wales|Victoria|Queensland|South Australia|Western Australia|Tasmania|Northern Territory|Australian Capital Territory)';
+/**
+ * What may trail a street line and is not part of it: a postcode (with or
+ * without the state before it), a state ABBREVIATION on its own, or the
+ * country. A state's full NAME on its own is deliberately not included —
+ * "12 Victoria" is a street line, and only a following postcode says the
+ * word is a state.
+ */
+const LOCALITY_TAIL = new RegExp(
+  `\\s+(?:(?:${STATE_ABBREVIATION}|${STATE_NAME})\\.?\\s+)?\\d{4}$|\\s+${STATE_ABBREVIATION}\\.?$|\\s+Australia$`,
+  'i',
+);
+
+/**
+ * The house-number-and-street part of a street line, for Nominatim's structured `street`.
+ *
+ * The first comma-separated part is the street line — once whatever locality
+ * rides on the end of it is set aside. An address stored without a comma
+ * before its state (`93 Schofields Farm Road NSW 2762`, and the same with
+ * the `, Australia` the location service appends) handed Nominatim a street
+ * called "93 Schofields Farm Road NSW 2762" on 24 Sep 2026 and got zero
+ * candidates. So the trailing postcode, state and country come off, and then
+ * the suburb where one is known and the line ends with it — never when what
+ * is left would stop reading as a street.
+ */
+export function streetLineOf(ask: Pick<GeocodeAsk, 'address' | 'street'> & { suburb?: string | null }): string | null {
   if (ask.street && ask.street.trim()) return ask.street.trim();
-  const first = ask.address.split(',')[0]?.trim() ?? '';
-  return asksForStreet({ address: first }) ? first : null;
+  let street = ask.address.split(',')[0]?.trim() ?? '';
+  for (;;) {
+    const next = street.replace(LOCALITY_TAIL, '').trim();
+    if (next === street || !next) break;
+    street = next;
+  }
+  const suburb = typeof ask.suburb === 'string' ? ask.suburb.trim() : '';
+  if (suburb && street.toLowerCase().endsWith(` ${suburb.toLowerCase()}`)) {
+    const withoutSuburb = street.slice(0, street.length - suburb.length).trim();
+    if (asksForStreet({ address: withoutSuburb })) street = withoutSuburb;
+  }
+  return asksForStreet({ address: street }) ? street : null;
 }
 
 /**

@@ -472,10 +472,16 @@ permitted at all.
 
 ## 5. What is NOT claimed
 
-- **No layer from SA, WA, NT or ACT's overlay registers is read.** All
-  four remain `not_integrated` / `licence_restricted` for overlays, and
-  `OVERLAY_COVERAGE` still records all four as `not_read`. Reachable is
-  not read. South Australia's ZONE is read (§3.6); its overlays are not.
+- **No layer from SA, NT or ACT's overlay registers is read, and one of
+  WA's is.** SA, NT and the ACT remain `not_integrated` for overlays and
+  `OVERLAY_COVERAGE` records them `not_read`. Reachable is not read. South
+  Australia's ZONE is read (§3.6); its overlays are not. Western Australia
+  is `partial_state_layers_read` since 25 Sep 2026: its designated bush fire
+  prone areas (OBRM-026, the Fire and Emergency Services Commissioner's map)
+  are published under CC BY 4.0 and read at the point, while its scheme
+  zones, density codes and the DWER floodplain mapping stay unread under
+  "Custom (Active Acceptance)" terms — a licence is read per RESOURCE, never
+  per jurisdiction. See `LAWLEY_RECTIFICATION.md`.
 - **`WA_LICENCE_NOTE` is unchanged, and now measured** (§3.5): WA's zone
   layer answers correctly at a point and every dataset carrying it is listed
   under "Custom (Active Acceptance)". Readable is not republishable.

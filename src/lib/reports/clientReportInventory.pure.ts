@@ -43,6 +43,7 @@
 
 import { parseStorageRef, isExternalUrl } from './storageRef';
 import type { ListedDocument } from '../ciAssessment/issuedDocuments';
+import { reportGeneratedAt } from './investment/reportGeneratedAt.pure';
 
 export type ClientReportKind =
   | 'formara'
@@ -135,7 +136,9 @@ export function buildClientReportInventory(
       id: r.id,
       type: 'investment',
       name: `Investment Report - ${r.property_address}`,
-      generatedAt: r.created_at,
+      // When it was generated, not when its row was inserted — a regeneration
+      // reuses the row (`reportGeneratedAt.pure.ts`).
+      generatedAt: reportGeneratedAt(r)?.at ?? r.created_at,
       status: (r.status === 'completed' ? 'completed' : r.status === 'failed' ? 'failed' : 'pending') as any,
       fileUrl: r.pdf_url || null,
       propertyAddress: r.property_address,

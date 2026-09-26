@@ -211,7 +211,7 @@ export const CONTROL_GUIDE: Readonly<Record<ConstraintFamily, ControlExplanation
   },
   other: {
     what: 'A mapped designation the publisher records over this land.',
-    effect: 'Its effect is set by the instrument that creates it, which this platform has not read.',
+    effect: 'Its effect is set by the instrument that creates it, which is not summarised in this report.',
     verify: 'Ask the council or a town planner what this designation requires for the kind of work you have in mind.',
   },
 };
@@ -243,11 +243,11 @@ export const VERIFICATION_DOCUMENT: Readonly<Record<PlanningJurisdiction, string
  * zoning is set by each council scheme and no state layer carries it.
  */
 export const NO_STATE_LAYER_NOTE: Partial<Record<PlanningJurisdiction, string>> = {
-  QLD: 'Queensland sets zoning and most overlays in each council’s own planning scheme, and publishes no state-wide layer for them. The state registers below were checked and answer only for state-level instruments; the council scheme has not been read, so nothing here says whether a council overlay applies.',
-  WA: 'Western Australia’s state planning layers are published under terms that do not permit commercial republication, so they were not retrieved. Nothing here says whether a control applies.',
-  SA: 'South Australia’s zone was read from the Planning and Design Code’s own layer, and the Code’s overlay layers are not yet integrated by this platform. Nothing here says whether a control applies.',
-  NT: 'The Northern Territory’s planning scheme layers are not yet integrated by this platform. Nothing here says whether a control applies.',
-  ACT: 'The Australian Capital Territory’s zone was read, and its overlay layers — the Territory Plan’s precinct codes and its bushfire, flood and heritage overlays — are not yet integrated by this platform. Nothing here says whether a control applies. In the ACT the Crown lease’s purpose clause also governs use, and no spatial layer carries it.',
+  QLD: 'In Queensland, zoning and most overlays are set by each council’s planning scheme rather than on a state-wide map. The state-level designations below were checked; council overlays are not covered by this report, so nothing here says whether a council overlay applies. The council’s planning and development certificate confirms them.',
+  WA: 'The bush fire prone area designation is read from the Fire and Emergency Services Commissioner’s published map. Western Australia publishes its planning scheme zones, density codes and other overlays, and its floodplain mapping, for personal use only, so they are not covered by this report and nothing here says whether any of them applies. The local government confirms them.',
+  SA: 'The zone is read from the Planning and Design Code. The Code’s overlays are not covered by this report, so nothing here says whether one applies; the PlanSA portal confirms them.',
+  NT: 'The Northern Territory’s planning scheme overlays are not covered by this report, so nothing here says whether one applies. A zoning certificate from the Northern Territory Planning Commission confirms them.',
+  ACT: 'In the Australian Capital Territory the zone is read from the Territory Plan. Its precinct codes and its bushfire, flood and heritage overlays are not covered by this report, so nothing here says whether one applies. In the ACT the Crown lease’s purpose clause also governs use, and no map carries it.',
 };
 
 /**
@@ -285,7 +285,7 @@ export const OVERLAY_COVERAGE: Readonly<Record<PlanningJurisdiction, OverlayCove
   VIC: 'state_layers_read',
   TAS: 'state_layers_read',
   QLD: 'partial_state_layers_read',
-  WA: 'not_read',
+  WA: 'partial_state_layers_read',
   SA: 'not_read',
   NT: 'not_read',
   ACT: 'not_read',

@@ -24,6 +24,7 @@ import { describe, it, expect } from 'vitest';
 import { renderTemplateToHtml } from '@/lib/reportTemplate/htmlRenderer';
 import { applyInvestmentProjection } from '../../../../supabase/functions/_shared/reportBindingProjection.pure';
 import { INVESTMENT_COMPASS_TEMPLATES } from '../../../../scripts/template-library/investmentCompass/templates';
+import { LONGEST_ADDRESS } from '../../../../scripts/template-library/investmentCompass/blocks';
 
 /**
  * The stored row, verbatim from production, trimmed to the columns this page
@@ -110,10 +111,16 @@ function render(row: unknown): string {
    * about how the masters BIND a stored record, so they project the tier that
    * has every binding; `investmentCompassCatalogue.spec.ts` asserts the drop.
    */
+  //
+  // As the COMPOSITE since seed v20: the tiers produced today draw their
+  // front matter as one flowing summary (`frontMatterFlagsFor`), and the
+  // typed pages these bindings live on — the property page, the equity
+  // chart, the scorecard — are the stored pre-tier report's, which is the
+  // one tier that carries both the location case and the modelling.
   const data = applyInvestmentProjection(
     { report: {}, brand: {} } as Record<string, unknown>,
     row as never,
-    { tier: 'financial' },
+    { tier: 'composite' },
   );
   // The spacious variants are the ones that give the property its own page; one
   // of each arrangement is enough for a binding question.
@@ -213,7 +220,7 @@ describe('the ten-year equity chart', () => {
  * rather than on a client's cover.
  */
 describe('the cover title against the longest address in production', () => {
-  const LONGEST_ADDRESS = 84;
+  // Imported, not restated: one measurement, one home.
 
   /** Points of height `chars` need at `size` across `width`. */
   const heightFor = (chars: number, size: number, width: number) => {
@@ -291,15 +298,51 @@ describe('the cover title against the longest address in production', () => {
 describe('the scorecard on a report with an unscored dimension', () => {
   const html = render(STORED);
 
+  /**
+   * The cell each occurrence of `text` sits in, as its opening `<td …>` style.
+   *
+   * The two assertions below used to count `>Not assessed</td>` over the WHOLE
+   * document and require zero. That was a document-wide selector for a
+   * scorecard-shaped rule, and seed v19 exposed it: the risk register's
+   * exposure column now reads `Not assessed` — correctly, because
+   * `RISK_EXPOSURE_LEVELS` is `Low | Moderate | High | Not assessed` and the
+   * record holds a named risk with no severity, so unlike a withheld scorecard
+   * dimension the ROW cannot be omitted. The rule this test protects is
+   * unchanged; only its aim needed narrowing.
+   */
+  const cellStyles = (text: string): string[] => {
+    const out: string[] = [];
+    let at = html.indexOf(`>${text}</td>`);
+    while (at !== -1) {
+      const open = html.lastIndexOf('<td', at);
+      out.push(open === -1 ? '' : html.slice(open, at));
+      at = html.indexOf(`>${text}</td>`, at + 1);
+    }
+    return out;
+  };
+
   it('draws no row for a withheld dimension — neither "Not assessed" nor a dash', () => {
     // Two dimensions are withheld on this record. They used to print "Not
     // assessed" beside a dash, once per master; the owner's rule (14 Sep 2026)
     // is that no placeholder reaches a client document, so the row is not
     // drawn. `50` is NOT checked for on its own: Yield genuinely scores 50
     // here, which is the whole reason a placeholder of 50 was invisible.
-    expect(html.split('>Not assessed</td>').length - 1).toBe(0);
-    expect(html.split('>—</td>').length - 1).toBe(0);
+    //
+    // This is the assertion that carries the rule: a row that is not drawn has
+    // no cells to hold a placeholder.
     expect(html).not.toMatch(/>Growth<\/td>|>Demand<\/td>/);
+    expect(html.split('>—</td>').length - 1).toBe(0);
+  });
+
+  it('says "Not assessed" only in the risk register’s exposure column', () => {
+    // Every occurrence must be the risk exposure cell, which is the mono
+    // uppercase label; no scorecard cell is set that way. Zero occurrences is
+    // also a pass — a master that draws no risk register says it nowhere.
+    const styles = cellStyles('Not assessed');
+    for (const style of styles) {
+      expect(style, 'a non-exposure cell says "Not assessed"')
+        .toMatch(/text-transform:uppercase/);
+    }
   });
 
   it('keeps the dimensions that were scored', () => {

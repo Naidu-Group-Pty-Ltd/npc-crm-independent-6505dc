@@ -782,6 +782,11 @@ export interface CoverOptions {
   facts: Array<{ label: string; value: string; valueChars?: number }>;
 }
 
+/** The depth of a banded cover's field, from the head of the sheet. */
+export const COVER_BAND_HEIGHT = 176;
+/** The band's block name, which `withCoverPhotograph` finds it by. */
+const COVER_BAND_NAME = 'Cover band';
+
 /**
  * The cover.
  *
@@ -889,9 +894,9 @@ export function cover(opts: CoverOptions): PageDef {
       title: '',
       bg: 'token:bg',
       color: 'token:text',
-      height: 176,
+      height: COVER_BAND_HEIGHT,
       x: 0, y: 0, width: PAGE.width,
-    }, 'Cover band'));
+    }, COVER_BAND_NAME));
   }
 
   if (plan.frame) {
@@ -2192,8 +2197,14 @@ export function definitions(
     ? 1
     : Math.max(1, Math.ceil(chars / Math.max(1, Math.floor(measure / (SIZE * 0.5)))));
   const rowHeight = 8 + Math.max(SIZE * 1.2, lines * SIZE * LEADING) + 8 + 1;
+  // The 30 is the title's line (14pt on 1.2, plus its 10pt margin). An
+  // untitled list draws no title at all (`title()` in `extras.html.ts` returns
+  // nothing for an empty string), so reserving it there puts a band of blank
+  // paper under the last row — which, on a page that seats the list at its
+  // foot, is a gap between the list and the running foot.
+  const titleLine = title.trim() ? 30 : 0;
   return {
-    height: Math.ceil(30 + items.length * rowHeight),
+    height: Math.ceil(titleLine + items.length * rowHeight),
     block: (y) => block('definition-list', {
       title, items, x: c.contentLeft, y, width: c.contentWidth,
     }),
@@ -2328,14 +2339,13 @@ export function scenarioChart(opts: {
 /**
  * Where a plate's photograph comes from.
  *
- * `property.images` is a forward-looking path: **no adapter emits it today**.
- * That is deliberate rather than an oversight. A plate is a designed hole an
- * operator fills in the Builder for a specific report — the archetype's own
- * briefs say "Drop the hero photograph" — and binding it means the day an
- * adapter does carry photographs, every plate in two families fills itself with
- * no template change.
+ * `property.images` was written as a forward-looking path, so that the day an
+ * adapter carried photographs every plate in two families would fill itself
+ * with no template change. That day came on 25 Sep 2026: the Investment
+ * adapter now binds the listing's own photographs where the image library
+ * holds any a client's document may carry (`docs/reports/PROPERTY_PHOTOGRAPHS.md`).
  *
- * Until then the binding resolves empty, and the plate prints nothing.
+ * Where it holds none, the binding resolves empty and the plate prints nothing.
  */
 function plateSrc(index: number): string {
   return `{{property.images.${index}}}`;
@@ -2484,6 +2494,126 @@ function measuredPlateBlocks(opts: {
   ];
 }
 
+// ─────────────────────────────────────────────────────────────────────────────
+// The floor plan
+// ─────────────────────────────────────────────────────────────────────────────
+
+/**
+ * The longest `property.address` a floor-plan sheet sets as its standfirst.
+ *
+ * Measured the way the cover's address is: a new build's street line with its
+ * lot, its suburb, its state and its postcode is ~60 characters
+ * ("Lot 1629 Hornsea Street, Armstrong Creek VIC 3217" is 49), and a unit with
+ * a long street name runs past 70. Sized for 90 so no address sets taller than
+ * its box.
+ */
+const FLOOR_PLAN_ADDRESS_CHARS = 90;
+
+/**
+ * What a plan on this sheet is, in the three facts a reader of a plan looks for
+ * first, and in the words a buyer's adviser would use.
+ *
+ * "Not to scale" because the plan is printed to fit the sheet, whatever it was
+ * drawn at. The source is named because the plan is the builder's or the
+ * agent's marketing, not a survey. The instruction is the one every contract
+ * plan carries in its own words: the areas and dimensions to rely on are the
+ * contract's.
+ */
+const FLOOR_PLAN_NOTES = [
+  { term: 'Scale', definition: 'Not to scale. Printed to fit the page.' },
+  { term: 'Source', definition: "The builder's or agent's marketing material." },
+  { term: 'Before relying on it', definition: 'Confirm dimensions and areas against the contract drawings.' },
+];
+
+/**
+ * The longest definition above, for the row depth. Every note is kept to one
+ * line at the narrowest measure in the catalogue (a railed family's, ~300pt
+ * after the 160pt term column), because a note that wraps leaves the sheet's
+ * title block deeper than the drawing above it can spare.
+ */
+const FLOOR_PLAN_NOTE_CHARS = Math.max(...FLOOR_PLAN_NOTES.map((n) => n.definition.length));
+
+/** Where a floor plan comes from: `property.floorPlans[n]`, bound apart from the photographs. */
+function floorPlanSrc(index: number): string {
+  return `{{property.floorPlans.${index}}}`;
+}
+
+/** The sheet renders only where the plan does; see `plateConditional` for the three cases. */
+function floorPlanConditional(index: number): string {
+  return `property && property.floorPlans && property.floorPlans[${index}]`;
+}
+
+/**
+ * The property's floor plan, on a sheet of its own.
+ *
+ * ## Why a sheet of its own, and never a photo slot
+ *
+ * Every photo slot in the catalogue fills its frame (`fit: 'cover'`) and crops
+ * what does not fit, which is right for a facade and wrong for a plan: a
+ * cropped plan is a plan with a room missing and nothing on the page to say
+ * so. A plan is drawn with `contain`, whole, whatever its proportions, centred
+ * in the room between the heading and the title block.
+ *
+ * ## Why it reads as a drawing sheet, and why it has no border
+ *
+ * A plan is a drawing, and the convention a buyer already knows for a drawing
+ * is the sheet it arrives on: a heading, the drawing, and a title block at the
+ * foot saying what scale it is at, where it came from and what to check it
+ * against. The heading is the family's own section opener and the title
+ * block's rules are its own line colour, so the sheet reads as part of the
+ * document it is bound into, in every one of the fifty families.
+ *
+ * The first render drew a ruled border round the drawing area, and the owner's
+ * own plan (1,199 × 751, wider than the area) sat in it with a third of the
+ * box empty above and below: a border is drawn to the box, and a plan's
+ * proportions are not known until it arrives. Unbordered, the same space reads
+ * as margin, which is what it is.
+ *
+ * ## Why it is conditional on the page
+ *
+ * Most reports have no plan. As with `platePage`, the `conditional` is on the
+ * PAGE, so a report without one loses the page rather than printing an empty
+ * sheet, and `visiblePages` drops it before anything is laid out. The contents
+ * block lists the pages that rendered, so it lists this one exactly when it
+ * prints.
+ */
+export function floorPlanPage(opts: { index: number; footerText: string }): PageDef {
+  const c = ctx();
+  const first = opts.index === 0;
+  const heading = sectionHeading({
+    eyebrow: 'The design',
+    heading: first ? 'Floor plan' : 'Floor plan, continued',
+    standfirst: '{{property.address}}',
+    standfirstChars: FLOOR_PLAN_ADDRESS_CHARS,
+  });
+  const notes = definitions('', FLOOR_PLAN_NOTES, FLOOR_PLAN_NOTE_CHARS);
+
+  const top = c.margin;
+  const drawingTop = top + heading.height + c.spacing.sectionGap;
+  const notesTop = c.contentBottom - notes.height;
+  const drawingBottom = notesTop - c.spacing.sectionGap;
+  const asBlocks = (b: BlockDef | BlockDef[]): BlockDef[] => (Array.isArray(b) ? b : [b]);
+
+  const blocks: BlockDef[] = [
+    ...asBlocks(heading.block(top)),
+    block('image', {
+      src: floorPlanSrc(opts.index),
+      // Whole, never cropped: see the header.
+      fit: 'contain',
+      // Never a grey "No image" rectangle on a client's report.
+      placeholder: false,
+      alt: first ? 'Floor plan of the property' : 'Floor plan of the property, continued',
+      x: c.contentLeft,
+      y: drawingTop,
+      width: c.contentWidth,
+      height: drawingBottom - drawingTop,
+    }, 'Floor plan'),
+    ...asBlocks(notes.block(notesTop)),
+  ];
+  const sheet = withFurniture(page(first ? 'Floor plan' : 'Floor plan, continued', blocks, 'token:surface'), opts.footerText);
+  return { ...sheet, conditional: floorPlanConditional(opts.index) };
+}
+
 /**
  * The cover's photographic ground.
  *
@@ -2514,6 +2644,90 @@ export function coverHero(index: number, brief: string): BlockDef[] {
       x: 0, y: 0, width: PAGE.width, height: PAGE.height,
     }, 'Cover scrim'),
   ].map((b) => ({ ...b, conditional: plateConditional(index) }));
+}
+
+/** One pass of the field colour over the head of the sheet, `height` points deep. */
+function scrim(height: number, name: string): BlockDef {
+  // `tint` rather than `bg`, as in `coverHero`: the hero paints a tint at 0.55.
+  return block('hero', { title: '', tint: 'token:bg', x: 0, y: 0, width: PAGE.width, height }, name);
+}
+
+const FIELD_PHOTOGRAPH_BRIEF = 'Drop the cover photograph — the dwelling or its streetscape';
+const BAND_PHOTOGRAPH_BRIEF = 'Drop the masthead photograph — the dwelling or its streetscape';
+
+/**
+ * The report's lead photograph, on a cover the catalogue drew without one.
+ *
+ * Five of the fifty Investment masters were designed around photographs
+ * (`image_slots`). The other forty-five had nowhere to put one, so a report
+ * holding the property's own photographs printed none of them, and a dark
+ * cover left an empty field where a reader expected the house. The owner asked
+ * for a photograph on those covers (25 Sep 2026). The cover's ground decides
+ * where one can go:
+ *
+ *   - `field`: behind the whole sheet, under the photographic covers' own
+ *     scrim (`coverHero`) and a second pass of it. The type is already
+ *     reversed out of the field colour, and the scrim is that colour, so the
+ *     type reads over a photograph as it reads over the field.
+ *   - `band`: inside the band and nowhere else. The band is the one part of a
+ *     banded cover with a fixed extent. The title below it grows upward from
+ *     its rule by as many lines as the address needs (`cover`), so a
+ *     photograph anywhere on the paper would sit where a long address sets.
+ *     In the band it lies behind the mark, the wordmark and the tagline, which
+ *     never move, under the same two passes.
+ *   - `paper`: unchanged. Type on paper is dark ink, and a photograph under it
+ *     needs a pale wash strong enough to keep that ink legible. That makes a
+ *     different cover, not this cover with a picture added. One of the eleven,
+ *     Monograph, is photo-free by the catalogue's own design. This is a
+ *     decision for the design source, not something to derive here.
+ *
+ * The scrim is laid TWICE, which the photographic covers' own is not. Their
+ * design sets its small type over one 0.55 pass of the field colour. Over a
+ * white facade or a pale sky, the commonest ground in a listing photograph,
+ * that leaves the tagline and the fact labels at about 3.5:1 (measured on
+ * Private Banking's palette over pure white), half the 7:1 print floor
+ * `REPORT_RULES.md` §2 sets for small type. Two passes darken by
+ * 1 − 0.45² ≈ 0.80 and bring the same worst case to about 7.9:1. The house
+ * stays plainly visible: rendered over a pale-sky, white-facade stand-in, the
+ * roof line, the windows and the lawn all read. The renderer's tint opacity is
+ * one fixed value, so the second pass is a second block, not a new property.
+ *
+ * Every block is conditional on the photograph, so a report without one
+ * draws exactly the cover it drew before. The missing photograph is a dropped
+ * LAYER, which `closeDroppedBlocks` leaves in place rather than closing.
+ * Call this after the rest of the master is built: the new blocks then take
+ * the last ids, and every existing block keeps its own.
+ */
+export function withCoverPhotograph(
+  coverPage: PageDef,
+  index: number,
+  ground: CoverPlan['ground'],
+): PageDef {
+  if (ground === 'field') {
+    const photograph = [
+      ...coverHero(index, FIELD_PHOTOGRAPH_BRIEF),
+      { ...scrim(PAGE.height, 'Cover scrim, second pass'), conditional: plateConditional(index) },
+    ];
+    return { ...coverPage, blocks: [...photograph, ...coverPage.blocks] };
+  }
+  if (ground !== 'band') return coverPage;
+  const band = coverPage.blocks.findIndex((b) => b.name === COVER_BAND_NAME);
+  if (band < 0) throw new Error(`A banded cover with no "${COVER_BAND_NAME}" block: ${coverPage.name}`);
+  // Above the band's colour, beneath the head's type: blocks paint in order.
+  const photograph = [
+    block('image', {
+      src: plateSrc(index),
+      fit: 'cover',
+      placeholder: false,
+      x: 0, y: 0, width: PAGE.width, height: COVER_BAND_HEIGHT,
+    }, BAND_PHOTOGRAPH_BRIEF),
+    scrim(COVER_BAND_HEIGHT, 'Band scrim'),
+    scrim(COVER_BAND_HEIGHT, 'Band scrim, second pass'),
+  ].map((b) => ({ ...b, conditional: plateConditional(index) }));
+  return {
+    ...coverPage,
+    blocks: [...coverPage.blocks.slice(0, band + 1), ...photograph, ...coverPage.blocks.slice(band + 1)],
+  };
 }
 
 // ─────────────────────────────────────────────────────────────────────────────

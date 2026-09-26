@@ -27,6 +27,7 @@ import {
   COMPASS_DOCUMENT_CONTRACT,
   compassDocumentContract,
 } from '../../../../supabase/functions/_shared/reports/investment/compassDocumentContract.pure';
+import { documentRules } from '../../../../supabase/functions/_shared/compassSectionContract';
 
 const GEN = 'supabase/functions/generate-investment-report/index.ts';
 const source = () => readFileSync(GEN, 'utf8');
@@ -79,19 +80,33 @@ describe('the legacy 38-page template is gone from the live prompt', () => {
     }
   });
 
-  it('is an order of magnitude smaller, so nothing is trimmed away', () => {
+  it('is an order of magnitude smaller than the legacy template it replaced', () => {
     /*
      * The trim is head-tail at `PERPLEXITY_SAFE_USER_MESSAGE_BYTES` (70,000),
      * so at 79,603 bytes the model lost the middle of the prompt on every
-     * section call and kept the legacy template's two ends. The whole prompt
-     * now fits, which means the evidence pack reaches every section intact.
+     * section call and kept the legacy template's two ends.
+     *
+     * Corrected 24 Sep 2026: this used to conclude "the whole prompt now fits,
+     * which means the evidence pack reaches every section intact". It measures
+     * the template's SOURCE, and what the model is sent is the RENDERED prompt
+     * with the evidence interpolated — about 30 KB of it, behind an 18.7 KB
+     * structure guide, trimmed to 14–19 KB on every section call because the
+     * pinned evidence had grown to 33–46 KB (`📏 … trimmed true` on all 32
+     * calls of 24 Sep 05:23–05:32Z). A fixture shorter than the product turns
+     * a real measurement into a statement about the fixture. What the trim
+     * still takes is recorded in INVESTMENT_STRUCTURE.md, *What a section is
+     * told*; this assertion keeps only the claim it can support.
      */
     expect(Buffer.byteLength(propertyPrompt(), 'utf8')).toBeLessThan(20_000);
   });
 
   it('injects the contract from the shared module rather than restating it', () => {
     expect(source()).toContain("import { compassDocumentContract } from '../_shared/reports/investment/compassDocumentContract.pure.ts'");
-    expect(propertyPrompt()).toContain('${compassDocumentContract(_brandPp.companyName)}');
+    // The firm is the writer identity's (`writerFirm.pure.ts`): on the prime the
+    // name Report Settings always gave it, on a clone the clone's own business,
+    // and none at all where a clone has named nobody — which the contract
+    // itself reads as "your adviser" (pinned below).
+    expect(propertyPrompt()).toContain("${compassDocumentContract(_writerPp.firm ?? '')}");
   });
 });
 
@@ -128,7 +143,7 @@ describe('the evidence pack is what the report may state', () => {
   it('states an absent register as a fact about the CHECK', () => {
     // The rule every absence in this product answers to. A category nobody
     // reached must never read as a category with nothing in it.
-    expect(p).toMatch(/No school register reading was retrieved/);
+    expect(p).toMatch(/Schools near this property were not assessed for this report/);
     // The amenity and transport absences moved into `amenityFactBlocks.pure.ts`
     // with the blocks themselves, and are asserted there by EXECUTION against
     // the shape `location-intelligence-service` publishes — which is stronger
@@ -171,7 +186,7 @@ describe('the contract itself', () => {
 
   it('says what depth is, because the legacy answer was length', () => {
     expect(COMPASS_DOCUMENT_CONTRACT).toMatch(/Depth is not length/);
-    expect(COMPASS_DOCUMENT_CONTRACT).toMatch(/A retrieved fact they could not easily get themselves/);
+    expect(COMPASS_DOCUMENT_CONTRACT).toMatch(/A confirmed fact they could not easily get themselves/);
   });
 
   it('shows the invented paragraph beside the evidenced one', () => {
@@ -299,14 +314,20 @@ describe('the Compass prompt states its structure exactly once', () => {
   it('keeps every control the overlay carried', () => {
     /*
      * Removing a ceremony must never remove a control. Each of these was in
-     * the overlay or its banner, and each is now in
-     * `buildCanonicalTemplateContext`, which is injected on the same runs.
+     * the overlay or its banner, and each is now in `documentRules`, which
+     * reaches every section call of the same runs untrimmed.
+     *
+     * Renegotiated 24 Sep 2026: this read a slice of the GENERATOR'S SOURCE,
+     * which proved the controls were written down and nothing about whether
+     * they arrived — and they did not: the guide they were part of sat at the
+     * head of a base prompt trimmed to 14–19 KB on every section, and they
+     * began 15 KB in. The assertion is on the composed text now, and
+     * `aSectionIsToldWhatItIs.spec.ts` asserts that text is what is sent.
      */
-    const guide = generator.slice(
-      generator.indexOf('const compassStyleRules'),
-      generator.indexOf('## RECOMMENDATION FORMAT') + 400,
-    );
-    expect(guide).toContain('EDITORIAL_LABELS');           // forbidden labels, all forms
+    const guide = documentRules('compass-40');
+    for (const label of ['What This Means', 'NPC view']) {
+      expect(guide).toContain(label);                       // forbidden labels, all forms
+    }
     expect(guide).toContain('no permitted number');         // …with no allowance
     expect(guide).toMatch(/\[citation\]/);                  // no placeholder markers
     expect(guide).toMatch(/DO NOT repeat education, transport or employment/);
@@ -336,12 +357,15 @@ describe('the Compass prompt states its structure exactly once', () => {
      * control; they were being removed by arithmetic instead.
      */
     expect(generator).toMatch(/templateContextIsCanonical\s*\n?\s*\?\s*templateContext/);
-    // The flag is set exactly where the canonical guide is built, and nowhere
-    // else — an uploaded row must never be able to claim it.
+    // The flag is set exactly where the canonical string is built, and nowhere
+    // else — an uploaded row must never be able to claim it. The canonical
+    // string is the document OUTLINE since 24 Sep 2026: the rules and each
+    // section's own entry travel untrimmed in the system message instead of
+    // being prepended to a base the trim cuts (`compassSectionContract.ts`).
     const setters = generator.split('\n').filter((l) => /templateContextIsCanonical = true/.test(l));
     expect(setters).toHaveLength(1);
     const at = generator.indexOf('templateContextIsCanonical = true');
-    expect(generator.slice(at - 200, at)).toContain('buildCanonicalTemplateContext');
+    expect(generator.slice(at - 200, at)).toContain("documentOutline('compass-40')");
   });
 
   it('excludes the modelling and permits the price, which the overlay had backwards', () => {
@@ -353,10 +377,12 @@ describe('the Compass prompt states its structure exactly once', () => {
      * Positioning cannot place a property in its market without naming what it
      * costs. What is excluded is the ANALYSIS and the KPI-row form.
      */
-    const exclusions = generator.slice(
-      generator.indexOf('## HARD EXCLUSIONS (Compass'),
-      generator.indexOf('## LENGTH AND STRUCTURE'),
+    const rules = documentRules('compass-40');
+    const exclusions = rules.slice(
+      rules.indexOf('## HARD EXCLUSIONS (Compass'),
+      rules.indexOf('## LENGTH AND STRUCTURE'),
     );
+    expect(exclusions.length, 'both headings are in the pinned rules').toBeGreaterThan(200);
     expect(exclusions).toMatch(/DO NOT include deposit, stamp duty/);
     expect(exclusions, 'the modelling is still excluded').toMatch(/gross\/net yield/);
     expect(exclusions, 'a blanket ban on the price is the defect').not.toMatch(/DO NOT include purchase price/i);

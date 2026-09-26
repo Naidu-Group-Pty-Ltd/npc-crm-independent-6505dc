@@ -27,13 +27,18 @@ measured rate for this market"*.
 
 **What it says now.** The two labels the owner set, side by side, always:
 
-> **Accepted CGR assumption used by the financial model:** 6.2% a year,
-> recorded through the override workflow before this report was generated and
+> **Accepted CGR assumption used by the financial model:** 6.2% a year, set
+> as an assumption for this analysis before the report was prepared, and
 > carried unchanged into the loan, the cash flow and the ten-year projection.
 > **Historical market growth observed in the approved register:** 6.2% a year
 > — NSW Department of Communities and Justice … They are separate facts from
-> separate sources; nothing on this record states that the assumption was
+> separate sources; nothing in this analysis shows that the assumption was
 > derived from the measurement, and the two agreeing does not make it so.
+
+(The two bold labels are the owner's and are unchanged. The sentence around
+them was reworded on 25 Sep 2026 for the adviser's voice — "the override
+workflow" and "before this report was generated" describe how the platform
+works, not the purchase — see [`ADVISER_VOICE.md`](./ADVISER_VOICE.md).)
 
 **The regression test.** `MARKET EVIDENCE CANNOT OVERWRITE THE ACCEPTED CGR,
 THE CASH FLOW OR THE PROJECTIONS` sets the register to 6.2% and the accepted

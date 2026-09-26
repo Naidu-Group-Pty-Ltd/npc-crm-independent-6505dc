@@ -8,6 +8,10 @@ import { secureStorageUpload } from '@/hooks/useSecureStorage';
 import html2canvas from 'html2canvas';
 import { jsPDF } from 'jspdf';
 import { drawBorrowingCapacitySections, transformAssessmentToSectionData } from '@/utils/borrowingCapacityPdfSections';
+import { highlightColourFor, issuerClosingPage, issuerSectionColours, loadLegacyDocumentBrand, rgbObject, type LegacyDocumentBrand } from '@/lib/reports/legacyDocumentBrand';
+import { drawLegacyIssuerCover } from '@/lib/reports/legacyIssuerCover';
+import { issuerContactDetails } from '@/lib/reports/issuerIdentity.pure';
+import { drawJsPDFDisclaimerPage } from '@/utils/pdfDisclaimerPage';
 import { fetchLatestBorrowingCapacity } from '@/lib/fetchLatestBorrowingCapacity';
 import { fetchGlobalReportSettings, type ContactDetails, type ProfessionalDisclaimer } from '@/hooks/useGlobalReportSettings';
 import { getBrandPdfPalette } from '@/branding/brandPalette';
@@ -483,7 +487,6 @@ export function FormaraPDFGenerator({
     if (actionLock.current) return null;
     actionLock.current = true;
     setIsGenerating(true);
-    applyBrandGold(brand.brandColor);
     let iframe: HTMLIFrameElement | null = null;
 
     try {
@@ -494,8 +497,24 @@ export function FormaraPDFGenerator({
         }
       };
 
-      // Pre-load cover image as data URL to avoid cross-origin / hanging issues
-      const coverDataUrl = await preloadImageAsDataUrl('/templates/npc-formara-cover.jpg', 5000);
+      // Whose template this form is printed in: NPC's artwork on the prime,
+      // exactly as it has always been drawn, and the issuer's own on every clone
+      // (`legacyDocumentBrand.ts`). The content is the same either way; on the
+      // prime nothing below is read.
+      const legacyBrand: LegacyDocumentBrand = await loadLegacyDocumentBrand(
+        async () => (await fetchGlobalReportSettings())?.contactDetails?.company_name,
+      );
+      applyDocumentDeep(legacyBrand);
+      // The gold ramp: from the app's accent on the prime, as always, and on a
+      // clone from the colour the rest of this form is drawn in
+      // (`highlightColourFor`).
+      applyBrandGold(highlightColourFor(legacyBrand, brand.brandColor));
+
+      // Pre-load cover image as data URL to avoid cross-origin / hanging issues.
+      // NPC's cover artwork is the prime's alone.
+      const coverDataUrl = legacyBrand.artwork === 'house'
+        ? await preloadImageAsDataUrl('/templates/npc-formara-cover.jpg', 5000)
+        : null;
 
       // ── Render inside an isolated iframe to avoid dashboard DOM interference ──
       // The main page has 1000+ DOM nodes (charts, listings, modals) that cause
@@ -533,6 +552,12 @@ export function FormaraPDFGenerator({
         if (coverEl) {
           coverEl.style.backgroundImage = `url('${coverDataUrl}')`;
         }
+      }
+      // An issuer's cover is drawn by the PDF itself, below; the artwork is
+      // never loaded behind it.
+      if (legacyBrand.artwork === 'issuer') {
+        const coverEl = iframeDoc.querySelector('.cover-page-image') as HTMLElement | null;
+        if (coverEl) coverEl.style.backgroundImage = 'none';
       }
 
       // Wait for styles to apply inside the iframe
@@ -599,6 +624,22 @@ export function FormaraPDFGenerator({
         const page = renderList[i];
         const isAutoPage = page.classList.contains('page-auto');
 
+        // The issuer's cover is set in type on the PDF's first page, carrying
+        // what NPC's carries — the form's title, the client and the date.
+        if (legacyBrand.artwork === 'issuer' && page.classList.contains('cover-page-image')) {
+          if (pdfPageIndex > 0) pdf.addPage('a4', 'portrait');
+          drawLegacyIssuerCover(pdf, {
+            issuerName: legacyBrand.issuer.name,
+            mark: legacyBrand.mark,
+            documentTitle: 'Client Portfolio Form',
+            subject: formaraClientFullName(data.client) || clientName,
+            standfirst: new Date().toLocaleDateString('en-AU', { day: '2-digit', month: 'long', year: 'numeric' }),
+            family: legacyBrand.family,
+          });
+          pdfPageIndex++;
+          continue;
+        }
+
         if (isAutoPage) {
           // ── Fluid-height page: single PDF page sized to fit ALL content ──
           // No tiling, no splits → no truncated tables, no orphan pages.
@@ -644,9 +685,15 @@ export function FormaraPDFGenerator({
           pdf.rect(0, lineY - 1, PAGE_WIDTH_MM, pageHeightMm - lineY + 1, 'F');
           pdf.line(10, lineY, 200, lineY);
 
-          const _bPhone = __brandSettings?.contactDetails?.phone || '';
-          const _bEmail = __brandSettings?.contactDetails?.email || '';
-          const _bWeb = __brandSettings?.contactDetails?.website || '';
+          // On a clone the running foot names the issuer's own contact details —
+          // never an address of the house left in a seeded row.
+          const _bContact = legacyBrand.artwork === 'issuer'
+            ? issuerContactDetails(__brandSettings?.contactDetails, legacyBrand.issuer, legacyBrand.deployment)
+            : __brandSettings?.contactDetails;
+          const _bPhone = _bContact?.phone || '';
+          const _bEmail = _bContact?.email || '';
+          const _bWeb = _bContact?.website || '';
+          const _bConfidentialInk = legacyBrand.artwork === 'issuer' ? rgbObject(legacyBrand.family.accentInk) : { r: 180, g: 140, b: 50 };
           const footerDiv = document.createElement('div');
           footerDiv.style.cssText = 'position:absolute;left:-9999px;top:0;width:794px;background:#f8f9fa;padding:4px 40px;font-family:Arial,sans-serif;display:flex;justify-content:space-between;align-items:center;';
 
@@ -664,7 +711,7 @@ export function FormaraPDFGenerator({
           });
 
           const confidentiality = document.createElement('div');
-          confidentiality.style.cssText = 'font-size:6pt;color:#b48c32;font-weight:700;letter-spacing:1.5px;';
+          confidentiality.style.cssText = `font-size:6pt;color:${legacyBrand.artwork === 'issuer' ? legacyBrand.family.accentInk : '#b48c32'};font-weight:700;letter-spacing:1.5px;`;
           confidentiality.textContent = 'CONFIDENTIAL';
 
           const pageNumber = document.createElement('div');
@@ -684,7 +731,7 @@ export function FormaraPDFGenerator({
             pdf.setTextColor(74, 85, 104);
             pdf.text([_bPhone && `Ph: ${_bPhone}`, _bEmail, _bWeb].filter(Boolean).join('  |  '), 10, footerY);
             pdf.setFontSize(6);
-            pdf.setTextColor(180, 140, 50);
+            pdf.setTextColor(_bConfidentialInk.r, _bConfidentialInk.g, _bConfidentialInk.b);
             pdf.setFont('helvetica', 'bold');
             pdf.text('CONFIDENTIAL', 105, footerY + 4, { align: 'center' });
             pdf.setFontSize(7);
@@ -725,7 +772,14 @@ export function FormaraPDFGenerator({
             const pageNum = { value: pdf.getNumberOfPages() + 1 };
 
             pdf.addPage();
-            drawBorrowingCapacitySections(pdf, bcPdfData, 20, pageNum, false);
+            drawBorrowingCapacitySections(
+              pdf,
+              bcPdfData,
+              20,
+              pageNum,
+              false,
+              legacyBrand.artwork === 'issuer' ? issuerSectionColours(legacyBrand.family) : undefined,
+            );
 
             console.log('✓ Borrowing capacity pages appended to Formara PDF');
           } else {
@@ -737,7 +791,17 @@ export function FormaraPDFGenerator({
       }
 
       // ── Render the disclaimer/contact page LAST (always the final page) ──
-      if (isDisclaimerPage && lastFixedPage) {
+      // On a clone it is the issuer's closing page — its name, its contact
+      // details, the disclaimer it is entitled to speak, its colours.
+      if (legacyBrand.artwork === 'issuer') {
+        const closing = issuerClosingPage(legacyBrand, {
+          contactDetails: __brandSettings?.contactDetails ?? {
+            company_name: '', phone: '', email: '', website: '', address: '', abn: '',
+          },
+          disclaimer: __brandSettings?.disclaimer ?? { text: '', is_enabled: true },
+        });
+        drawJsPDFDisclaimerPage(pdf, closing.contact, closing.disclaimer, closing.palette);
+      } else if (isDisclaimerPage && lastFixedPage) {
         ensureWithinBudget();
         await new Promise(resolve => setTimeout(resolve, 0));
 
@@ -1011,6 +1075,35 @@ function applyBrandGold(brandColorHsl?: string | null) {
   NPC_COLORS.goldLight = p.goldLight;
   NPC_COLORS.goldDark = p.goldDeep;
   NPC_COLORS.goldTint = p.cream;
+}
+
+/**
+ * The client's name as the form's cover sets it — both applicants where there
+ * are two. One reading, for either cover.
+ */
+function formaraClientFullName(client: FormaraPDFData['client']): string {
+  const primaryName = `${smartCapitalize(client.primary_first_name)} ${smartCapitalize(client.primary_surname)}`;
+  const secondaryName = client.secondary_first_name
+    ? `${smartCapitalize(client.secondary_first_name)} ${smartCapitalize(client.secondary_surname || client.primary_surname)}`
+    : '';
+  return secondaryName ? `${primaryName} & ${secondaryName}` : primaryName;
+}
+
+/**
+ * NPC's navy pair, as the form has always been drawn on the prime — read from
+ * `NPC_COLORS` at load, before anything re-applies it, so the pair is declared
+ * once.
+ */
+const HOUSE_NAVY = Object.freeze({ darkBlue: NPC_COLORS.darkBlue, navy: NPC_COLORS.navy });
+
+/**
+ * The deep shade the form's headers are set in: NPC's navy pair on the prime,
+ * the issuer's own deep brand shade on a clone (`legacyDocumentBrand.ts`).
+ * Re-applied before each generation, as the gold ramp above is.
+ */
+function applyDocumentDeep(brand: LegacyDocumentBrand) {
+  NPC_COLORS.darkBlue = brand.artwork === 'issuer' ? brand.family.deep : HOUSE_NAVY.darkBlue;
+  NPC_COLORS.navy = brand.artwork === 'issuer' ? brand.family.deep : HOUSE_NAVY.navy;
 }
 
 // Generate the full HTML content for the PDF
@@ -1699,11 +1792,7 @@ function generateHTMLContent(
   const displayNetCashFlow = displayMonthlyIncome - displayMonthlyExpenditure;
 
   // Properly capitalize client names
-  const primaryName = `${smartCapitalize(client.primary_first_name)} ${smartCapitalize(client.primary_surname)}`;
-  const secondaryName = client.secondary_first_name 
-    ? `${smartCapitalize(client.secondary_first_name)} ${smartCapitalize(client.secondary_surname || client.primary_surname)}`
-    : '';
-  const clientFullName = secondaryName ? `${primaryName} & ${secondaryName}` : primaryName;
+  const clientFullName = formaraClientFullName(client);
   
   // Calculate equity based on filtered properties (respects toggle setting)
   const summaryEquity = totalValue - totalLoans;

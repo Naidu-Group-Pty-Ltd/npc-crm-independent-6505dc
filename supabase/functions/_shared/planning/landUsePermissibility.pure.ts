@@ -433,4 +433,4 @@ export const READING_LIMIT =
 export const EXISTING_DWELLING_CAVEAT =
   'That describes the use class, not this building: whether the dwelling now on the land holds a '
   + 'development consent, or stands on existing use rights, is answered by the title, the '
-  + "council's own records and the contract, and nothing retrieved here establishes it.";
+  + "council's own records and the contract, and nothing in this report establishes it.";

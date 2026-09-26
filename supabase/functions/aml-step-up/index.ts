@@ -19,6 +19,7 @@ import { enforceCsrf, csrfDenied } from "../_shared/csrfGuard.ts";
 import { withRequestOrigin } from "../_shared/corsOrigin.ts";
 import { meteredFetch } from "../_shared/meteredFetch.ts";
 import { internalError } from '../_shared/errorResponse.ts';
+import { getEmailIdentity, resendAddressing } from "../_shared/emailIdentity.ts";
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, x-correlation-id, x-step-up-token, x-session-token, x-command-centre-session-token",
@@ -48,11 +49,16 @@ async function deliverCode(email: string, code: string, capability: string) {
   const apiKey = Deno.env.get("RESEND_API_KEY");
   if (!apiKey) return { error: "Step-up email delivery is not configured" };
 
+  // From this deployment's own address, under its own name. This used to be a
+  // literal sender on the prime's domain, which a clone's domain-scoped Resend
+  // key cannot send from: on every clone the code was refused, never arrived,
+  // and step-up could not be completed.
+  const identity = await getEmailIdentity();
   const response = await meteredFetch("https://api.resend.com/emails", {
     method: "POST",
     headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
     body: JSON.stringify({
-      from: "Property Consulting Security <notifications@npcservices.com.au>",
+      ...resendAddressing(identity, "Security"),
       to: [email],
       subject: "Your AML verification code",
       text: `Your verification code for ${capability} is ${code}. It expires in 5 minutes. If you did not request this code, contact your administrator.`,

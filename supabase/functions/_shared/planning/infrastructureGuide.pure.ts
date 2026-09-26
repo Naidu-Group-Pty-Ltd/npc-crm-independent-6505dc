@@ -73,8 +73,8 @@ export const FINDING_GUIDE: Readonly<Record<string, FindingGuide>> = {
       + 'plans are where you see how close, how tall and how it is oriented.',
   },
   'Approved development': {
-    what: 'A council has granted permission for a development. It was approved before the window this '
-      + 'register was asked about, so no new application for it falls inside that window.',
+    what: 'A council has granted permission for a development. It was approved before the period this '
+      + 'report looked at, so no new application for it falls inside that period.',
     limits: 'An approval permits building; it does not oblige it, fund it or date it. Approvals lapse if '
       + 'they are not acted on within the period the consent sets, and consents are commonly modified '
       + 'afterwards. The register publishes no commencement date and no completion date.',
@@ -155,11 +155,12 @@ export const FINDING_GUIDE: Readonly<Record<string, FindingGuide>> = {
  * and it is the only place in this module that may be true of a jurisdiction.
  */
 export const ABSENCE_GUIDE: FindingGuide = {
-  what: 'One or more of the registers behind this table was not asked, because the jurisdiction publishes '
-    + 'no feed of that kind, its licence does not permit it, or the request did not succeed.',
-  limits: 'Nothing about this area follows from that. A register nobody asked holds no evidence either '
-    + 'way, and a short table is a statement about this report’s coverage rather than a finding that '
-    + 'nothing is planned nearby.',
+  what: 'One or more of the sources behind this table is not covered by this report — the state does not '
+    + 'publish it in a form this report can use, its licence does not allow it to be reproduced, or it could '
+    + 'not be consulted when the report was prepared.',
+  limits: 'Nothing about this area follows from that. A source that was not consulted holds no evidence '
+    + 'either way, and a short table reflects this report’s coverage rather than a finding that nothing is '
+    + 'planned nearby.',
   next: 'The council’s own development-application tracker and its adopted capital works programme, '
     + 'and the state’s budget infrastructure statement, are public and cover most of what this table '
     + 'does not. A conveyancer or buyer’s agent will read them as part of a standard search.',

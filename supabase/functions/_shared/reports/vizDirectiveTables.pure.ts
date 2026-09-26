@@ -48,10 +48,14 @@ const fmt = (n: number): string => (Number.isInteger(n) ? String(n) : String(Mat
  * never worded.
  */
 export function refusedRows(sources: readonly string[]): string[][] {
-  return sources
+  const rows = sources
     .map((src) => splitRefusedItem(src))
     .filter((r) => !isPlaceholderValue(r.value))
     .map((r) => [r.label, r.value]);
+  // A comparison with one side left is not a comparison: two or more items
+  // named and fewer than two surviving draws nothing (60 Lawley Street,
+  // 25 Sep 2026 — see the same rule in `vizFigures.pure.ts`).
+  return sources.length >= 2 && rows.length < 2 ? [] : rows;
 }
 
 function table(headers: string[], rows: string[][]): string[] {
@@ -65,6 +69,20 @@ function table(headers: string[], rows: string[][]): string[] {
 
 const caption = (title?: string): string[] => (title ? [`**${cell(title)}**`, ''] : []);
 
+/**
+ * A caption travels only with the table it names.
+ *
+ * Every case below used to write `[...caption(title), ...table(…)]`, and
+ * `table()` answers `[]` when nothing survives — so a directive whose rows
+ * were all placeholders, or a comparison with one side left, came out as its
+ * caption alone: page 14 of the 60 Lawley Street Compass would have read
+ * **Visible competing Houses in Spalding** in bold over nothing at all, a
+ * heading promising competing stock with no stock under it. A table with a
+ * caption is byte-identical to before.
+ */
+const captioned = (title: string | undefined, rows: string[]): string[] =>
+  (rows.length ? [...caption(title), ...rows] : []);
+
 /** The Markdown a directive becomes, or null when it holds nothing to keep. */
 export function directiveAsMarkdown(d: VizDirective): string | null {
   let lines: string[] = [];
@@ -73,17 +91,17 @@ export function directiveAsMarkdown(d: VizDirective): string | null {
       // `sources` is present only where the parser refused an item, and it is
       // every item in the model's own order — so the table carries the labels
       // the figure could not plot rather than silently shortening the list.
-      lines = [...caption(d.title), ...table(['Item', d.unit ? `Value (${d.unit})` : 'Value'],
+      lines = captioned(d.title, table(['Item', d.unit ? `Value (${d.unit})` : 'Value'],
         d.refused?.length
           ? refusedRows(d.sources ?? [])
-          : d.items.map((i) => [i.label, i.display ?? fmt(i.value)]))];
+          : d.items.map((i) => [i.label, i.display ?? fmt(i.value)])));
       break;
     case 'donut':
-      lines = [...caption(d.title), ...table(['Segment', 'Share'],
+      lines = captioned(d.title, table(['Segment', 'Share'],
         d.refused?.length
           ? refusedRows(d.sources ?? [])
-          : d.segments.map((s) => [s.label, s.display ?? fmt(s.value)]))];
-      if (d.center && !d.refused?.length) {
+          : d.segments.map((s) => [s.label, s.display ?? fmt(s.value)])));
+      if (lines.length && d.center && !d.refused?.length) {
         lines.push('', `_${cell(d.center)}${d.centerSub ? ` — ${cell(d.centerSub)}` : ''}_`);
       }
       break;
@@ -117,25 +135,25 @@ export function directiveAsMarkdown(d: VizDirective): string | null {
       lines = [`**${cell(d.label ?? 'Count')}:** ${fmt(d.filled)} of ${fmt(d.total)}${d.sub ? ` — ${cell(d.sub)}` : ''}`];
       break;
     case 'quadrant':
-      lines = [...caption(d.title), ...table(['Item', d.xLabel ?? 'X', d.yLabel ?? 'Y'],
-        d.points.map((p) => [p.label, fmt(p.x), fmt(p.y)]))];
+      lines = captioned(d.title, table(['Item', d.xLabel ?? 'X', d.yLabel ?? 'Y'],
+        d.points.map((p) => [p.label, fmt(p.x), fmt(p.y)])));
       break;
     case 'tiles': {
       const withSub = d.tiles.some((t) => t.sub);
-      lines = [...caption(d.title), ...table(withSub ? ['Item', 'Value', 'Note'] : ['Item', 'Value'],
-        d.tiles.map((t) => (withSub ? [t.label, t.value, t.sub ?? ''] : [t.label, t.value])))];
+      lines = captioned(d.title, table(withSub ? ['Item', 'Value', 'Note'] : ['Item', 'Value'],
+        d.tiles.map((t) => (withSub ? [t.label, t.value, t.sub ?? ''] : [t.label, t.value]))));
       break;
     }
     case 'timeline':
-      lines = [...caption(d.title), ...table(['Phase', 'Milestone'], d.items.map((i) => [i.phase, i.label]))];
+      lines = captioned(d.title, table(['Phase', 'Milestone'], d.items.map((i) => [i.phase, i.label])));
       break;
     case 'waterfall':
-      lines = [...caption(d.title), ...table(['Step', 'Amount'],
-        d.items.map((i) => [i.total ? `**${cell(i.label)}**` : i.label, fmt(i.value)]))];
+      lines = captioned(d.title, table(['Step', 'Amount'],
+        d.items.map((i) => [i.total ? `**${cell(i.label)}**` : i.label, fmt(i.value)])));
       break;
     case 'wheel':
-      lines = [...caption(d.title), ...table(['Dimension', `Score (of ${fmt(d.max)})`],
-        d.labels.map((l, i) => [l, d.scores[i] === undefined ? '' : fmt(d.scores[i])]))];
+      lines = captioned(d.title, table(['Dimension', `Score (of ${fmt(d.max)})`],
+        d.labels.map((l, i) => [l, d.scores[i] === undefined ? '' : fmt(d.scores[i])])));
       break;
   }
   const body = lines.join('\n').trim();

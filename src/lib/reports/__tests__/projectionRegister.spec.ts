@@ -126,7 +126,10 @@ describe('the block a report may print', () => {
     // The date a reader sees is the reader's format (`auDate`), never an ISO
     // prefix — this assertion pinned `2026-09-24` until the prose-date rule
     // reached the register.
-    expect(block).toContain('Taken into this platform\'s register on 24 Sep 2026.');
+    // When the figures were read, as a citation states it — never a note
+    // about this platform's own register (`adviserVoice.pure.ts`).
+    expect(block).toContain('Accessed 24 Sep 2026.');
+    expect(block).not.toMatch(/platform/i);
     expect(block).not.toMatch(/\b\d{4}-\d{2}-\d{2}\b/);
     expect(block).toContain(A_PROJECTION_IS_NOT_A_MEASUREMENT);
     expect(block).toMatch(/State no other projected population, growth rate or horizon/);
@@ -215,7 +218,7 @@ describe('one composer for the section and the pin', () => {
    * "No population projection has been loaded" would be false there.
    */
   it('says a caller that did not read did not read', () => {
-    expect(forwardDemandStatement(null, 'QLD')).toMatch(/This report does not read a population projection/);
+    expect(forwardDemandStatement(null, 'QLD')).toMatch(/This report does not include a population projection/);
     expect(forwardDemandStatement(undefined, null)).toMatch(/limit of this report rather than a finding about the area/);
   });
 
@@ -240,7 +243,7 @@ describe('one composer for the section and the pin', () => {
       },
     });
     expect(without).toMatch(/Do NOT state an unemployment rate, a population projection,/);
-    expect(without).toMatch(/No population projection for this jurisdiction has been loaded/);
+    expect(without).toMatch(/not included in this report/);
   });
 
   it('pins exactly what the section says', () => {
@@ -310,6 +313,6 @@ describe('the generator reads the register by trusted geography, stores it and p
   it('leaves the regeneration path reading nothing, and saying so', () => {
     expect(regenerator).not.toMatch(/readProjectionRegister/);
     expect(regenerator).toContain('regionalTrendBlocks(enhancedData)');
-    expect(regionalTrendBlocks({})).toMatch(/This report does not read a population projection/);
+    expect(regionalTrendBlocks({})).toMatch(/This report does not include a population projection/);
   });
 });

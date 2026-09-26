@@ -1362,8 +1362,10 @@ export const SAMPLE_REPORT_DATA: Record<string, unknown> = {
    * `renderResourcePolicy` skips a base64 payload and holds a
    * percent-encoded one under the SSRF scanner.
    *
-   * No adapter emits `property.images` today. A real report therefore has
-   * none, every plate is conditional, and an unfilled plate prints nothing.
+   * The Investment adapter emits `property.images` only where the report's
+   * listing holds photographs a client's document may carry
+   * (`docs/reports/PROPERTY_PHOTOGRAPHS.md`). Most reports have none, every
+   * plate is conditional, and an unfilled plate prints nothing.
    */
   images: [
     // Frontage
@@ -2912,3 +2914,24 @@ export const SAMPLE_REPORT_DATA: Record<string, unknown> = {
  */
 export const SAMPLE_DATA_NOTICE =
   'Filled with sample data for preview. Your reports use live client and market data.';
+
+/**
+ * A floor plan for measuring the floor-plan sheet, and for nothing else.
+ *
+ * Deliberately NOT part of `SAMPLE_REPORT_DATA`. That fixture is what every
+ * catalogue preview draws, and a floor plan is the rarest thing a report
+ * carries: only a new build whose brochure named the lot has one. A preview
+ * that showed a plan page on every master would describe a document most
+ * reports never are. The sheet is conditional on the plan, so with this left
+ * out every preview is exactly what it was.
+ *
+ * The geometry gate (`investmentCompass/qa.ts`) and the catalogue spec add it,
+ * because a page nobody draws is a page nobody measures.
+ *
+ * A line sketch rather than a plan: an outer wall and five partitions, black
+ * on white like the real thing, so it prints as a drawing and cannot be
+ * mistaken for any property's layout. Base64 SVG for the reason the sample
+ * plates give: `renderResourcePolicy` skips a base64 payload.
+ */
+export const SAMPLE_FLOOR_PLAN =
+  'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCA2MDAgNDAwIj48cmVjdCB3aWR0aD0iNjAwIiBoZWlnaHQ9IjQwMCIgZmlsbD0iI0ZGRkZGRiIvPjxnIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzFBMUExQSIgc3Ryb2tlLXdpZHRoPSI2Ij48cmVjdCB4PSIzMCIgeT0iMzAiIHdpZHRoPSI1NDAiIGhlaWdodD0iMzQwIi8+PC9nPjxnIGZpbGw9Im5vbmUiIHN0cm9rZT0iIzFBMUExQSIgc3Ryb2tlLXdpZHRoPSIzIj48cGF0aCBkPSJNMjUwIDMwVjM3ME0zMCAyMDBIMjUwTTI1MCAxNTBINTcwTTQyMCAxNTBWMzcwTTQyMCAyNjBINTcwIi8+PC9nPjwvc3ZnPg==';

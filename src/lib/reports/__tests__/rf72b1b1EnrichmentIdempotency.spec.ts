@@ -38,7 +38,7 @@ const SUBJECT = { address: '48 Redfern Street, Cowra NSW 2794', postcode: '2794'
 const ACQUISITION: EnrichmentAcquisition = {
   subjectKey: subjectKeyFor(SUBJECT),
   acquiredAt: '2026-09-12T09:11:05.000Z',
-  stages: { geocode: 'fetched', places: 'complete', commute: 'measured' },
+  stages: { geocode: 'fetched', places: 'complete', commute: 'measured', geocodePrecision: 'address', geocodeProvider: 'nominatim' },
   matchedAddress: '48 Redfern St, Cowra NSW 2794, Australia',
 };
 

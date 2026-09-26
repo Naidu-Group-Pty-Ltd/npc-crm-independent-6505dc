@@ -46,8 +46,11 @@
  * because the whole class of error this replaces is an infrastructure sentence
  * that implies an effect on prices nobody measured.
  *
- * Deno-compatible: no imports.
+ * Deno-compatible: its one import is the pure adviser-voice module, which
+ * decides where each limitation is explained (`DISCLOSURE_HOMES`).
  */
+
+import { elsewhereOnly, inHomeSection } from '../reports/adviserVoice.pure.ts';
 
 /** A published milestone of one project, with the date of the STATEMENT. */
 export interface ProjectStage {
@@ -114,7 +117,7 @@ export interface PublishedProject {
 
 /** How a row reached the report. Never a register reading. */
 export const PUBLISHED_PROJECT_BASIS =
-  'Recorded from the responsible authority’s own published pages, not retrieved from a machine-readable register.';
+  'Recorded from the responsible authority’s own published pages.';
 
 /**
  * The register.
@@ -303,7 +306,13 @@ export type RegisterSearch =
     }
   | {
       searched: false;
-      /** One sentence: why no search could be made. */
+      /**
+       * One sentence: why no search could be made. It is the OPERATOR's — the
+       * acquisition ledger records it — and neither the page nor the writer is
+       * handed it: "none was usable — the geocoder answered at locality
+       * precision" is true, and it describes how the report was made rather
+       * than the property (`adviserVoice.pure.ts`).
+       */
       reason: string;
     };
 
@@ -316,20 +325,21 @@ export function renderPublishedProjects(
     // and a reader cannot see the prompt rules. So the page says which.
     if (!search.searched) {
       return [
-        '**Not searched.** This platform holds a register of major public projects recorded from the '
-        + `responsible authority's own published pages. It could not be consulted for this property: `
-        + `${(search as Extract<RegisterSearch, { searched: false }>).reason}`,
+        '**Major public projects were not checked.** We track major public projects from the responsible '
+        + 'authorities\' own published pages, and the property\'s location could not be confirmed closely enough '
+        + 'to measure what lies near it.',
         '',
-        'Nothing follows from that about what is or is not planned near this property.',
+        'Nothing follows from that about what is or is not planned near this property. The state\'s infrastructure '
+        + 'agency and the local council publish their current projects.',
         '',
       ].join('\n');
     }
     return [
-      `**Searched, nothing recorded.** The register was swept within ${search.radiusKm} km of this `
-      + `property's verified coordinate and holds no major public project there.`,
+      `**No major public project recorded nearby.** None of the major public projects we track lies within `
+      + `${search.radiusKm} km of the property.`,
       '',
-      'That is a statement about what this register has RECORDED, not a finding about the area — its '
-      + 'coverage is set out below.',
+      'That describes what has been RECORDED, not a finding about the area — what these records cover is set '
+      + 'out below.',
       '',
     ].join('\n');
   }
@@ -400,19 +410,19 @@ export function publishedProjectRules(
   search: RegisterSearch,
 ): string {
   if (!near.length && !search.searched) {
-    return 'PUBLISHED PROJECT RULES — this register was NOT consulted for this property, because '
-      + `${(search as Extract<RegisterSearch, { searched: false }>).reason} `
-      + 'You therefore know nothing about major public projects near it. Do not write that there are '
-      + 'none, do not write that the register holds none, do not rate the area’s infrastructure '
-      + 'outlook, and do not fill the gap from a live web search, a news article or a listing portal. '
-      + 'Say that the register could not be consulted and why, and stop there.';
+    return 'PUBLISHED PROJECT RULES — major public projects near this property could NOT be checked for this '
+      + 'report. You therefore know nothing about major public projects near it. Do not write that there are '
+      + 'none, do not rate the area’s infrastructure outlook, and do not fill the gap from a live web search, '
+      + `a news article or a listing portal. ${inHomeSection('infrastructure')} say once that major public `
+      + `projects nearby could not be checked for this report, and stop there. ${elsewhereOnly('infrastructure')}`;
   }
   if (!near.length) {
-    return 'PUBLISHED PROJECT RULES — no major public project near this property is recorded in this '
-      + 'platform’s register of official publications. That is a statement about what has been '
+    return 'PUBLISHED PROJECT RULES — no major public project near this property is recorded among the projects '
+      + 'we track from the responsible authorities’ own published pages. That is a statement about what has been '
       + 'RECORDED, not about the area: do not write that there is no infrastructure investment nearby, '
       + 'do not rate the area’s infrastructure outlook from it, and do not fill the gap from a live '
-      + 'web search, a news article or a listing portal. Say what was searched and what it does not reach.';
+      + `web search, a news article or a listing portal. ${inHomeSection('infrastructure')} say once what these `
+      + `records cover and what they do not. ${elsewhereOnly('infrastructure')}`;
   }
   const names = near.map((n) => n.project.name).join('; ');
   return [
@@ -430,16 +440,16 @@ export function publishedProjectRules(
     + 'or expressed as a likelihood. Describe what is delivered and what changes for a resident or a tenant, '
     + 'and stop there.',
     '5. Do NOT rate the area’s infrastructure outlook, pipeline or momentum from this section — not Low, '
-    + 'not Strong, not Favourable, not a score. A register of recorded publications is not a survey of the area, '
+    + 'not Strong, not Favourable, not a score. A list of recorded publications is not a survey of the area, '
     + 'and its coverage is stated with it.',
-    '6. This evidence was recorded from the authority’s own pages rather than retrieved from a register. '
-    + 'Where the section names its basis, name that one.',
+    '6. This evidence was recorded from the authority’s own published pages. Where the section names its basis, '
+    + 'name that one — the authority and its page, never "a register".',
   ].join('\n');
 }
 
 /** What a reader must be told this register does not cover. */
 export const PUBLISHED_PROJECT_COVERAGE: readonly string[] = [
-  'It holds major public projects recorded from the responsible authority’s own published pages, and nothing else.',
-  'It does not reach council capital works programmes, budget papers, private development, or projects an authority has not published a dated page about.',
-  'A project absent from it has not been shown to be absent from the area — it has not been recorded here.',
+  'It includes major public projects recorded from the responsible authority’s own published pages, and nothing else.',
+  'It does not include council capital works programmes, budget papers, private development, or projects an authority has not published a dated page about.',
+  'A project missing from it has not been shown to be absent from the area — it has not been recorded here.',
 ];

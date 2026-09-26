@@ -325,6 +325,22 @@ function unmatchedDwelling(points: ReadonlyArray<EvidencePoint<unknown>>): strin
   }
 }
 
+/**
+ * Where and for which dwellings the growth figures were measured, where that
+ * is not this property's own suburb and dwelling type — or nulls.
+ *
+ * The same two readings the grade caution states, exported so a sentence that
+ * CREDITS the growth names its grain in the same words the caution uses.
+ * `scoringV2Production`'s strength read "Measured capital growth in this
+ * suburb is strong" over a Western Australia all-dwelling series (60 Lawley
+ * Street, 25 Sep 2026): the strength and the caution disagreed about what had
+ * been measured.
+ */
+export function growthEvidenceGrain(growth: GrowthResult): { where: string | null; what: string | null } {
+  const points = growthPoints(growth);
+  return { where: coarseGeography(points), what: unmatchedDwelling(points) };
+}
+
 /** A thin-evidence clause from one confidence factor's own detail, or null. */
 function thinEvidenceClause(key: string, detail: string): string | null {
   if (key === 'sample') {

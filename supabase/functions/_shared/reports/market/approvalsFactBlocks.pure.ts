@@ -61,6 +61,7 @@
  */
 import { MONTHS_SHORT } from '../reportDate.pure.ts';
 import { auDate } from '../../planning/auDate.pure.ts';
+import { REGISTER_CHECKED_EMPTY, REGISTER_NOT_COVERED } from '../adviserVoice.pure.ts';
 import {
   type ApprovalsAreaKind,
   type ApprovalsBuildingType,
@@ -244,7 +245,7 @@ export function summariseApprovals(series: ApprovalsSeries): ApprovalsReading | 
 
 const WEB_SEARCH_HEAD =
   'A news article, a developer’s marketing page, a council media release or a '
-  + 'search result is NOT this register.';
+  + 'search result is NOT this source.';
 
 /**
  * The web-search rule, in the two forms the two branches need.
@@ -261,7 +262,7 @@ export function approvalsWebSearchRule(hasFigures: boolean): string {
       + 'add approvals, completions or project counts from any other source to them.'
     : `${WEB_SEARCH_HEAD} Do not go looking for one to fill the gap: the absence `
       + 'stated above is the finding, and a figure from anywhere else is not this '
-      + 'register answering.';
+      + 'source answering.';
 }
 
 /** The reading branch's form, for the prompt gates and the specs. */
@@ -284,26 +285,30 @@ export const APPROVALS_RATING_PROHIBITION =
  * one place W4.7's test cannot look, because it is prose rather than an
  * identifier.
  *
- * So they are cast as `planningFacts`' own two readings. **Searched, nothing
- * found** is a statement about this area within that register's coverage;
- * **Not searched** is a statement about the retrieval, from which nothing
- * about the area follows. The reader learns what was and was not asked, which
- * is what they need, and learns nothing about how this product is deployed,
- * which is none of their business and reads as an apology.
+ * So they are cast as `planningFacts`' own two readings, which are one pair of
+ * constants for every source the document lists (`adviserVoice.pure.ts`).
+ * **Checked — nothing recorded** is a statement about this area within that
+ * source's coverage; **Not covered by this report** is a statement about the
+ * report, from which nothing about the area follows. The reader learns what
+ * was and was not checked, which is what they need, and learns nothing about
+ * how this product is deployed, which is none of their business and reads as
+ * an apology. (They read "Searched, nothing found." and "Not searched." until
+ * 26 Sep 2026 — the same distinction in the machine room's words.)
  */
 export const ABSENCE_SENTENCE: Record<ApprovalsAbsence, string> = {
   not_loaded:
-    '**Not searched.** The national building-approvals register was not searched for '
-    + 'this report, so nothing about approved supply in this area follows from it.',
+    `**${REGISTER_NOT_COVERED}** Building approvals for this area are not summarised in this report, so `
+    + 'nothing about approved housing supply here follows from their absence. The Australian Bureau of '
+    + 'Statistics publishes them monthly, by region, in Building Approvals, Australia.',
   none_for_area:
-    '**Searched, nothing found.** The national building-approvals register was searched '
+    `**${REGISTER_CHECKED_EMPTY}** The Australian Bureau of Statistics' building approvals series was checked `
     + 'for this area and publishes no figure for it.',
   unavailable:
-    '**Not searched.** The national building-approvals register could not be reached for '
-    + 'this report. That is a fact about this retrieval, not about the area.',
+    `**${REGISTER_NOT_COVERED}** Building approvals for this area could not be checked when this report was `
+    + 'prepared. That is a limit of this report, not a finding about the area.',
   no_area_resolved:
-    '**Not searched.** No council area or statistical area was resolved for this property, '
-    + 'so no question could be put to the building-approvals register.',
+    `**${REGISTER_NOT_COVERED}** The statistical area the property sits in could not be confirmed, so building `
+    + 'approvals for it could not be checked. Nothing about approved housing supply here follows from that.',
 };
 
 /**
@@ -316,10 +321,10 @@ export const ABSENCE_SENTENCE: Record<ApprovalsAbsence, string> = {
  * rather than as a finding about a property.
  */
 export const NO_PLUMBING_IN_THE_PROSE =
-  'State this as what was and was not searched. Do NOT describe this platform’s own '
-  + 'systems to the reader — no deployment, database, table, row, cache, data load, '
+  'State this as what was and was not checked. Do NOT describe how this report was produced '
+  + 'to the reader — no deployment, database, table, row, cache, data load, '
   + 'integration or API is ever mentioned in the report, and no apology is offered for '
-  + 'one. The reader is told which register was asked and what it said.';
+  + 'one. The reader is told which source was checked and what it showed.';
 
 const n = (value: number | null): string =>
   value === null ? '—' : value.toLocaleString('en-AU');
@@ -431,7 +436,7 @@ export function approvalsFactBlocks(
   lines.push(
     '',
     `Source: ${reading.source}. Latest month published: **${monthLabel(reading.latestPeriod) ?? reading.latestPeriod}**`
-    + `${loaded ? `; this register was last loaded ${loaded}` : ''}. Licence: ${reading.licence}.`,
+    + `${loaded ? `; current at ${loaded}` : ''}. Licence: ${reading.licence}.`,
     '',
     'RULES FOR THIS REPORT — approved supply:',
     `1. ${APPROVALS_ARE_NOT_COMPLETIONS}`,

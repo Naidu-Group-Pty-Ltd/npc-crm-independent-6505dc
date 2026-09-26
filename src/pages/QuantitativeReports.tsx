@@ -55,6 +55,7 @@ import {
   AlertTriangle,
   FileText,
 } from "lucide-react";
+import { houseLabel } from '@/lib/houseLabel';
 
 // Lazy load heavy analytics components
 const AdvancedAnalytics = lazy(() =>
@@ -218,7 +219,7 @@ export default function QuantitativeReports() {
           <CardContent className="p-6 md:p-8">
             <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
               <div>
-                <p className="ci-tab-eyebrow">NPC reporting command centre</p>
+                <p className="ci-tab-eyebrow">{houseLabel('NPC reporting command centre', 'Reporting command centre')}</p>
                 <h1 className="mt-1 text-3xl font-bold tracking-tight text-foreground">
                   Reports
                 </h1>

@@ -122,10 +122,11 @@ import {
 } from './shadowScorer.pure.ts';
 import { buildScoreOutput, type ScoreOutput } from './scoreOutputContract.pure.ts';
 import { buildEvidenceStatement, type EvidenceStatement } from './evidenceStatement.pure.ts';
-import { applyEligibility } from './gradeEligibility.pure.ts';
+import { applyEligibility, growthEvidenceGrain } from './gradeEligibility.pure.ts';
 import {
   admissibleInputs,
   claimPermits,
+  LOCATION_MEASURED_AT_AREA_CENTRE,
   LOCATION_PRESENTED_UNVERIFIED,
   NOT_ASSESSED_REASON,
   OVERALL_GRADE_UNAVAILABLE,
@@ -273,6 +274,12 @@ export interface ProductionScoringInput {
   location?: ProductionLocationInput;
   /** Inputs declared verified for this run, in the policy's vocabulary. */
   verifiedInputs?: ReadonlyArray<string>;
+  /**
+   * Why the location readings verified nothing because of the POINT they
+   * were measured from (`locationInputVerification` rule 4) — so the gap says
+   * "measured from the centre of the suburb" rather than blaming a stamp.
+   */
+  locationPointRefusal?: 'measured_at_area_centre' | 'point_precision_unrecorded' | null;
   /**
    * Why no market evidence could be sought at all — no trusted geography, no
    * postcode. Named so the gap can say so rather than "provider unavailable".
@@ -791,6 +798,21 @@ export function describeGaps(
             + 'locationInputVerification.pure.ts).';
         remedy = 'Regenerate the report: the location service re-acquires the enrichment with its '
           + 'acquisition stamp (RF-7.2B), and stamped, stage-proven readings verify automatically.';
+        // Rule 4 of the verification: the readings were measured from the
+        // centre of the suburb, not the property. A different cause with a
+        // different remedy — the stamp is fine, the POINT is not the property.
+        if (presentedLoc.length > 0 && input.locationPointRefusal === 'measured_at_area_centre') {
+          reasonOverride = LOCATION_MEASURED_AT_AREA_CENTRE;
+          detail = `Location readings were presented (${presentedLoc.join(', ')}) but were measured from the `
+            + 'centre of the suburb or postal area: the geocoding chain could place the address no finer than '
+            + 'its area (locationInputVerification.pure.ts, rule 4).';
+          remedy = 'Regenerate the report once the address can be placed on its street: the chain asks its '
+            + 'street-level providers again, and an enrichment measured from the property verifies automatically.';
+        } else if (presentedLoc.length > 0 && input.locationPointRefusal === 'point_precision_unrecorded') {
+          detail = `Location readings were presented (${presentedLoc.join(', ')}) but their acquisition stamp `
+            + 'records no geocode precision, so they cannot be shown to have been measured from the property '
+            + '(locationInputVerification.pure.ts, rule 4).';
+        }
         break;
       }
       case 'risk': {
@@ -966,8 +988,26 @@ function swot(
 
   const g = score('growth');
   if (permits.fromDimensionScore('growth') && g !== null) {
-    if (g >= 70) strengths.push('Measured capital growth in this suburb is strong');
-    else if (g < 45) weaknesses.push('Measured capital growth in this suburb has been limited');
+    /*
+     * The sentence names what was measured. It said "in this suburb" whatever
+     * the evidence was, and on the 60 Lawley Street Compass (25 Sep 2026) that
+     * put "Measured capital growth in this suburb is strong" on the verdict
+     * page over a Western Australia, all-dwelling series. The thresholds are
+     * untouched; only the geography and dwelling type the growth describes
+     * are stated, in the words the grade caution already uses. Where the
+     * evidence IS this suburb's own, the sentence is exactly what it was.
+     */
+    const grain = growthEvidenceGrain(r.growth);
+    const qualifier = [grain.where, grain.what].filter((x): x is string => !!x).join(', ');
+    if (g >= 70) {
+      strengths.push(qualifier
+        ? `Measured capital growth is strong ${qualifier}`
+        : 'Measured capital growth in this suburb is strong');
+    } else if (g < 45) {
+      weaknesses.push(qualifier
+        ? `Measured capital growth has been limited ${qualifier}`
+        : 'Measured capital growth in this suburb has been limited');
+    }
   }
   const y = score('yield');
   if (permits.fromDimensionScore('yield') && y !== null) {

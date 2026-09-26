@@ -22,6 +22,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { requireModulePermission } from '../_shared/authz.ts';
 import { consumeRateLimit, enforceJsonBodyLimit, getTrustedClientIp, requireHumanOrSignedInternal, securityJsonError } from '../_shared/requestSecurity.ts';
 import { callLLM, streamLLM } from '../_shared/llmRouter.ts';
+import { loadWorkspaceIdentity, marketAnalystOpening, type WorkspaceIdentity } from '../_shared/workspaceIdentity.ts';
 import { createCorsHeaders } from '../_shared/auth.ts';
 import { enforceCsrf, csrfDenied } from '../_shared/csrfGuard.ts';
 import { classifyMarketError, logMarketEvent, marketCorrelationId } from '../_shared/marketUpdatesObservability.ts';
@@ -305,6 +306,7 @@ const GROUNDING_RULES = (refusal: string) => `STRICT RULES:
 /** Structured evidence pass — the authority on what was actually used. Its
  *  `used_ids` gate whether the narrative is allowed to reach the user. */
 async function extractEvidence(
+  analyst: WorkspaceIdentity,
   agentKey: string,
   plan: ResearchPlan,
   contextBlock: string,
@@ -316,7 +318,7 @@ async function extractEvidence(
   const result = await callLLM({
     agentKey,
     messages: [
-      { role: 'system', content: `You are the NPC Australian property-market intelligence analyst extracting structured evidence.
+      { role: 'system', content: `${marketAnalystOpening(analyst, 'extracting structured evidence.')}
 ${GROUNDING_RULES(REFUSAL)}
 6. used_ids MUST contain the raw id shown after "id=" on each context item — never the "[[N]]" marker, never the title. Copy it verbatim. Do not fabricate ids.
 7. Put every concrete number (rates, percentages, prices, volumes, dates, budgets) into key_figures with its source id.
@@ -416,12 +418,12 @@ ${GROUNDING_RULES(REFUSAL)}
   };
 }
 
-function narrativeMessages(plan: ResearchPlan, contextBlock: string, coverage: string, history: HistoryTurn[], profile: DepthProfile, depth: DepthMode) {
+function narrativeMessages(analyst: WorkspaceIdentity, plan: ResearchPlan, contextBlock: string, coverage: string, history: HistoryTurn[], profile: DepthProfile, depth: DepthMode) {
   const shape = depth === 'brief'
     ? `Answer directly in at most ${profile.wordBudget} words. No headings.`
     : `Structure the response with "## " markdown headings. Open with a direct answer paragraph (no heading), then use only the sections that the evidence genuinely supports, chosen from: What happened, Why it matters, The numbers, What it means for buyers and investors, Risks and caveats, What to watch. Aim for roughly ${profile.wordBudget} words — never pad a section to reach it.`;
   return [
-    { role: 'system' as const, content: `You are the NPC Australian property-market intelligence analyst writing for property professionals — buyers agents, brokers and investors.
+    { role: 'system' as const, content: `${marketAnalystOpening(analyst, 'writing for property professionals — buyers agents, brokers and investors.')}
 ${GROUNDING_RULES(REFUSAL)}
 6. Cite inline with the [[N]] marker of the context item supporting each claim, e.g. "the contract was worth $225 million [[2]]". Every factual sentence needs a marker.
 7. ${shape}
@@ -589,7 +591,10 @@ Deno.serve(async (req) => {
 
     emit('stage', { stage: 'analysing', label: 'Cross-checking the sources and drafting the analysis', depth });
 
-    const evidencePromise = extractEvidence(evidenceAgentKey, plan, contextBlock, coverage, history, profile);
+    // Who the analyst works for. The prime's persona names NPC as it always
+    // has and reads nothing to do so; a clone's names the clone, or nobody.
+    const analyst = await loadWorkspaceIdentity({ readPrimeName: false });
+    const evidencePromise = extractEvidence(analyst, evidenceAgentKey, plan, contextBlock, coverage, history, profile);
 
     // Narrative pass — real token streaming, gated on the evidence verdict.
     let gateResolve: (ok: boolean) => void = () => {};
@@ -601,7 +606,7 @@ Deno.serve(async (req) => {
       try {
         res = await streamLLM({
           agentKey: 'market_updates_qa_narrative',
-          messages: narrativeMessages(plan, contextBlock, coverage, history, profile, depth),
+          messages: narrativeMessages(analyst, plan, contextBlock, coverage, history, profile, depth),
           maxTokens: profile.narrativeTokens,
         });
       } catch { return ''; }

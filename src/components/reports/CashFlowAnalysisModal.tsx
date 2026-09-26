@@ -5,6 +5,9 @@ import jsPDF from 'jspdf';
 import { logActivityDirect } from '@/hooks/useActivityLogger';
 import { fetchGlobalReportSettings } from '@/hooks/useGlobalReportSettings';
 import { drawJsPDFDisclaimerPage } from '@/utils/pdfDisclaimerPage';
+import { issuerClosingPage, issuerLine, loadLegacyDocumentBrand, rgbObject } from '@/lib/reports/legacyDocumentBrand';
+import { drawLegacyIssuerCover } from '@/lib/reports/legacyIssuerCover';
+import { issuerContactDetails } from '@/lib/reports/issuerIdentity.pure';
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -2264,6 +2267,15 @@ export function CashFlowAnalysisModal({ report, isOpen, onClose, onReportUpdated
       const templateConfig = await loadActiveCashFlowTemplate();
       console.log(`📋 Using Cash Flow template: ${templateConfig.name}`);
 
+      // Whose template this document is printed in: NPC's artwork on the prime,
+      // exactly as it has always been drawn, and the issuer's own on every clone
+      // (`legacyDocumentBrand.ts`). The content is the same either way; on the
+      // prime nothing below is read.
+      const legacyBrand = await loadLegacyDocumentBrand(
+        async () => (await fetchGlobalReportSettings())?.contactDetails?.company_name,
+      );
+      const issuerFamily = legacyBrand.artwork === 'issuer' ? legacyBrand.family : null;
+
       const pdf = new jsPDF('p', 'mm', 'a4'); // Portrait orientation for better fit
       const pageWidth = pdf.internal.pageSize.getWidth();
       const pageHeight = pdf.internal.pageSize.getHeight();
@@ -2276,7 +2288,17 @@ export function CashFlowAnalysisModal({ report, isOpen, onClose, onReportUpdated
       // Use the configured cover template image as background
       const goldColor = { r: 201, g: 165, b: 90 }; // #c9a55a
       
-      try {
+      if (legacyBrand.artwork === 'issuer') {
+        drawLegacyIssuerCover(pdf, {
+          issuerName: legacyBrand.issuer.name,
+          mark: legacyBrand.mark,
+          documentTitle: '10-Year Cash Flow Analysis',
+          subject: report.property_address.replace(/[_\s]?Copy[_\s]?\d*$/i, '').trim(),
+          // A tagline the clone configured is its own; the default is the house's.
+          standfirst: issuerLine(templateConfig.tagline),
+          family: legacyBrand.family,
+        });
+      } else try {
         // Add cover template image as full page background
         const coverImageUrl = '/templates/npc-cashflow-cover.jpg';
         pdf.addImage(coverImageUrl, 'JPEG', 0, 0, pageWidth, pageHeight);
@@ -2308,14 +2330,19 @@ export function CashFlowAnalysisModal({ report, isOpen, onClose, onReportUpdated
       // Add new page for content
       pdf.addPage();
 
-      // Brand colors (gold primary)
-      const primaryColor = { r: 202, g: 138, b: 4 }; // Gold #ca8a04
+      // Brand colors (gold primary). On a clone each role takes the issuer's
+      // brand family: its brand for rules and bars, a legible ink of it for
+      // type, its deep shade where slate carried white type, its wash for the
+      // cream grounds. The greys and the negative red are shared.
+      const primaryColor = issuerFamily ? rgbObject(issuerFamily.accent) : { r: 202, g: 138, b: 4 }; // Gold #ca8a04
+      const primaryInk = issuerFamily ? rgbObject(issuerFamily.accentInk) : primaryColor;
       const darkText = { r: 30, g: 30, b: 30 };
       const grayText = { r: 100, g: 100, b: 100 };
       const lightGray = { r: 248, g: 248, b: 248 };
       const mediumGray = { r: 220, g: 220, b: 220 }; // Slightly darker for better contrast
-      const tableHeaderBg = { r: 45, g: 55, b: 72 }; // Slate gray
-      const sectionBg = { r: 254, g: 249, b: 235 }; // Warmer cream #fef9eb
+      const tableHeaderBg = issuerFamily ? rgbObject(issuerFamily.deep) : { r: 45, g: 55, b: 72 }; // Slate gray
+      const sectionBg = issuerFamily ? rgbObject(issuerFamily.wash) : { r: 254, g: 249, b: 235 }; // Warmer cream #fef9eb
+      const insightInk = issuerFamily ? rgbObject(issuerFamily.bodyInk) : { r: 80, g: 70, b: 50 };
       const negativeRed = { r: 185, g: 28, b: 28 }; // Darker red for negatives #B91C1C
 
       // The export menu's own chart switches decide which charts the legacy
@@ -2816,7 +2843,7 @@ export function CashFlowAnalysisModal({ report, isOpen, onClose, onReportUpdated
           pdf.rect(margin, yPos - 3.5, pageWidth - margin * 2, sectionRowHeight, 'F');
           pdf.setFont('helvetica', 'bold');
           pdf.setFontSize(6.5);
-          pdf.setTextColor(primaryColor.r, primaryColor.g, primaryColor.b);
+          pdf.setTextColor(primaryInk.r, primaryInk.g, primaryInk.b);
           pdf.text(sectionName, margin + 3, yPos + 0.5);
           tableRowCount = 0;
           yPos += sectionRowHeight;
@@ -2963,12 +2990,12 @@ export function CashFlowAnalysisModal({ report, isOpen, onClose, onReportUpdated
       // Section title
       pdf.setFontSize(10);
       pdf.setFont('helvetica', 'bold');
-      pdf.setTextColor(45, 55, 72); // Dark slate text
+      pdf.setTextColor(tableHeaderBg.r, tableHeaderBg.g, tableHeaderBg.b); // Dark slate text
       pdf.text('10-Year Investment Summary', margin, yPos);
       yPos += 6;
 
       // Card styling - dark blue background with white text
-      const darkBlue = { r: 45, g: 55, b: 72 }; // #2d3748 - dark slate blue
+      const darkBlue = tableHeaderBg; // #2d3748 - dark slate blue
       const summaryContentWidth = pageWidth - margin * 2;
       const summaryCardGap = 3;
       const summaryCardWidth = (summaryContentWidth - (summaryCardGap * 3)) / 4;
@@ -3013,14 +3040,14 @@ export function CashFlowAnalysisModal({ report, isOpen, onClose, onReportUpdated
         const boxHeight = lines.length * 3.5 + insightPadding * 2;
         
         // Subtle background with left accent
-        pdf.setFillColor(254, 249, 235); // warm cream
+        pdf.setFillColor(sectionBg.r, sectionBg.g, sectionBg.b); // warm cream
         pdf.roundedRect(xPos, yPos, boxWidth, boxHeight, 1.5, 1.5, 'F');
         pdf.setFillColor(primaryColor.r, primaryColor.g, primaryColor.b);
         pdf.rect(xPos, yPos + 1, 2, boxHeight - 2, 'F');
         
         pdf.setFontSize(6.5);
         pdf.setFont('helvetica', 'italic');
-        pdf.setTextColor(80, 70, 50);
+        pdf.setTextColor(insightInk.r, insightInk.g, insightInk.b);
         pdf.text(lines, xPos + insightPadding + 2, yPos + insightPadding + 2);
         
         yPos += boxHeight + 4;
@@ -3265,7 +3292,7 @@ export function CashFlowAnalysisModal({ report, isOpen, onClose, onReportUpdated
         yPos = 0;
         
         // Professional header bar
-        pdf.setFillColor(45, 55, 72); // Dark slate
+        pdf.setFillColor(tableHeaderBg.r, tableHeaderBg.g, tableHeaderBg.b); // Dark slate
         pdf.rect(0, 0, pageWidth, 14, 'F');
         pdf.setFillColor(primaryColor.r, primaryColor.g, primaryColor.b);
         pdf.rect(0, 14, pageWidth, 1.5, 'F'); // Gold accent line
@@ -3413,7 +3440,27 @@ export function CashFlowAnalysisModal({ report, isOpen, onClose, onReportUpdated
 
       // ========== CONTACT / DISCLAIMER PAGE (Last Page) ==========
       const globalSettings = await fetchGlobalReportSettings();
-      drawJsPDFDisclaimerPage(pdf, globalSettings.contactDetails, globalSettings.disclaimer);
+      if (legacyBrand.artwork === 'issuer') {
+        const closing = issuerClosingPage(legacyBrand, globalSettings);
+        drawJsPDFDisclaimerPage(pdf, closing.contact, closing.disclaimer, closing.palette);
+      } else {
+        drawJsPDFDisclaimerPage(pdf, globalSettings.contactDetails, globalSettings.disclaimer);
+      }
+
+      // The running foot's disclaimer and contact line. On a clone they are the
+      // issuer's: wording or an address that names the house gives way to the
+      // default wording and to the issuer's own contact details, and a line
+      // with nothing to say is not drawn.
+      let footerDisclaimer = templateConfig.disclaimer;
+      let footerContact: string | null = `${templateConfig.contactEmail}  •  ${templateConfig.website}`;
+      if (legacyBrand.artwork === 'issuer') {
+        const own = issuerContactDetails(globalSettings.contactDetails, legacyBrand.issuer, legacyBrand.deployment);
+        footerDisclaimer = issuerLine(templateConfig.disclaimer, defaultCashFlowConfig.disclaimer) ?? '';
+        footerContact = [
+          issuerLine(templateConfig.contactEmail, own.email),
+          issuerLine(templateConfig.website, own.website),
+        ].filter(Boolean).join('  •  ') || null;
+      }
 
       // ========== FOOTER (on content pages only, skip cover and contact pages) ==========
       const totalPages = pdf.getNumberOfPages();
@@ -3438,7 +3485,7 @@ export function CashFlowAnalysisModal({ report, isOpen, onClose, onReportUpdated
           pdf.setFontSize(6.5);
           pdf.setFont('helvetica', 'italic');
           pdf.setTextColor(grayText.r, grayText.g, grayText.b);
-          const disclaimerLinesFooter = pdf.splitTextToSize(templateConfig.disclaimer, pageWidth - margin * 2.5);
+          const disclaimerLinesFooter = pdf.splitTextToSize(footerDisclaimer, pageWidth - margin * 2.5);
           pdf.text(disclaimerLinesFooter, pageWidth / 2, contentMaxY + 8, { align: 'center' });
         }
 
@@ -3447,7 +3494,7 @@ export function CashFlowAnalysisModal({ report, isOpen, onClose, onReportUpdated
         pdf.setFontSize(7);
         pdf.setFont('helvetica', 'normal');
         pdf.setTextColor(darkText.r, darkText.g, darkText.b);
-        pdf.text(`${templateConfig.contactEmail}  •  ${templateConfig.website}`, pageWidth / 2, pageHeight - 6, { align: 'center' });
+        if (footerContact) pdf.text(footerContact, pageWidth / 2, pageHeight - 6, { align: 'center' });
         
         // Page number (content pages start from 1, excluding cover)
         const contentPageNum = i - 1; // Exclude cover page from count

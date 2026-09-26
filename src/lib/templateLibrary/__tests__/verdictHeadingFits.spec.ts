@@ -65,11 +65,17 @@ function verdictSlots(set: readonly unknown[]): Slot[] {
     for (const page of (schema.pages ?? []) as Record<string, any>[]) {
       for (const b of (page.blocks ?? []) as Record<string, any>[]) {
         if (b.name !== 'Verdict') continue;
-        out.push({
+        const slot = {
           template: String(t.name ?? t.key ?? '(unnamed)'),
           size: b.props.headingSize,
           width: b.props.width,
-        });
+        };
+        // Since seed v20 a master draws its verdict on whichever front matter
+        // the tier takes — the dashboard or the summary — from ONE definition,
+        // so the two blocks are the same slot. A second, different slot on one
+        // master would still be counted, and fail the length below.
+        if (out.some((o) => o.template === slot.template && o.size === slot.size && o.width === slot.width)) continue;
+        out.push(slot);
       }
     }
   }

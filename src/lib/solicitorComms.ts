@@ -5,6 +5,7 @@
  * never hand-roll transport or scope strings.
  */
 import { invokeSolicitorFunction } from '@/lib/solicitorPortal';
+import { houseLabel } from './houseLabel';
 
 export const LEGAL_THREAD_SCOPES = [
   'solicitor_npc',
@@ -78,8 +79,8 @@ export interface SolicitorNotificationPref {
 
 export const SCOPE_META: Record<LegalThreadScope, { label: string; description: string }> = {
   solicitor_npc: {
-    label: 'NPC Command Centre',
-    description: 'Direct line to the NPC team managing this transaction.',
+    label: houseLabel('NPC Command Centre', 'Command Centre'),
+    description: houseLabel('Direct line to the NPC team managing this transaction.', 'Direct line to the Command Centre team managing this transaction.'),
   },
   solicitor_client: {
     label: 'Client',
@@ -91,7 +92,7 @@ export const SCOPE_META: Record<LegalThreadScope, { label: string; description: 
   },
   firm_internal: {
     label: 'Firm internal',
-    description: 'Private to your practice. Never visible to NPC, the client or the broker.',
+    description: houseLabel('Private to your practice. Never visible to NPC, the client or the broker.', 'Private to your practice. Never visible to the Command Centre, the client or the broker.'),
   },
 };
 
@@ -145,7 +146,7 @@ export const solicitorComms = {
 export function senderLabel(message: LegalMatterMessage): string {
   if (message.sender_name) return message.sender_name;
   switch (message.sender_type) {
-    case 'staff': return 'NPC Command Centre';
+    case 'staff': return houseLabel('NPC Command Centre', 'Command Centre');
     case 'client': return 'Client';
     case 'finance_partner': return 'Finance partner';
     case 'system': return 'System';

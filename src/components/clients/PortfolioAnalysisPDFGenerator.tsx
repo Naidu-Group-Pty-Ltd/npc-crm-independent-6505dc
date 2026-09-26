@@ -14,6 +14,10 @@ import fontkit from '@pdf-lib/fontkit';
 import { fetchGlobalReportSettings, type GlobalReportSettings } from '@/hooks/useGlobalReportSettings';
 import { drawPdfLibDisclaimerPage } from '@/utils/pdfDisclaimerPage';
 import { drawBorrowingCapacityPdfLib, transformEdgeFunctionBCData } from '@/utils/borrowingCapacityPdfLibSections';
+import { highlightColourFor, issuerClosingPage, loadLegacyDocumentBrand } from '@/lib/reports/legacyDocumentBrand';
+import { drawIssuerCover } from '@/lib/reports/investment/investmentPdfCover';
+import { hexToRgb01 } from '@/lib/reportDesign/color.pure';
+import type { BrandFamily } from '@/lib/reportDesign/brandFamily.pure';
 import {
   Dialog,
   DialogContent,
@@ -257,21 +261,34 @@ let NPC_GOLD_LIGHT = rgb(...NPC_RGB.goldLight); // Light gold for accents
 let NPC_GOLD_DARK = rgb(...NPC_RGB.goldDark);   // Dark gold
 let NPC_GOLD_TINT = rgb(...NPC_RGB.goldTint);   // Very light gold tint
 
-const NPC_NAVY = rgb(0.05, 0.15, 0.30);        // #0d264d - Dark navy
+const HOUSE_NAVY = rgb(0.05, 0.15, 0.30);      // #0d264d - Dark navy
+let NPC_NAVY = HOUSE_NAVY;
 const NPC_DARK_BLUE = rgb(0.07, 0.20, 0.38);   // #113361 - Dark blue
 const NPC_BLACK = rgb(0.04, 0.04, 0.04);       // #0a0a0a - Near black
 const NPC_WHITE = rgb(1, 1, 1);                 // White
 
 // Semantic Colors
 let PRIMARY_COLOR = NPC_GOLD;
-const SECONDARY_COLOR = NPC_NAVY;
+let SECONDARY_COLOR = NPC_NAVY;
 const MUTED_COLOR = rgb(0.5, 0.5, 0.5);
 const SUCCESS_COLOR = rgb(0.09, 0.64, 0.29);   // #16a34a
 const DANGER_COLOR = rgb(0.94, 0.27, 0.27);    // #ef4444
 const WARNING_COLOR = rgb(0.96, 0.62, 0.04);   // #f59e0b
-const HEADER_BG_COLOR = NPC_NAVY;
+let HEADER_BG_COLOR = NPC_NAVY;
 const HEADER_TEXT_COLOR = NPC_WHITE;
 let ACCENT_COLOR = NPC_GOLD_LIGHT;
+
+/**
+ * The deep shade the document is set in: NPC's navy on the prime, exactly as
+ * it has always been, and the issuer's own deep brand shade on a clone
+ * (`legacyDocumentBrand.ts`). Re-applied before each generation, as the gold
+ * ramp below is.
+ */
+function applyDocumentDeep(family: BrandFamily | null) {
+  NPC_NAVY = family ? rgb(...hexToRgb01(family.deep)) : HOUSE_NAVY;
+  SECONDARY_COLOR = NPC_NAVY;
+  HEADER_BG_COLOR = NPC_NAVY;
+}
 
 function applyBrandRgb(brandColorHsl?: string | null) {
   NPC_RGB = getBrandPdfRgb(brandColorHsl);
@@ -505,12 +522,20 @@ export function PortfolioAnalysisPDFGenerator({
     try {
       console.log('📄 Starting Portfolio Analysis PDF generation with pdf-lib...');
 
-      // Re-resolve the brand gold ramp from the active White-Label brand colour.
-      applyBrandRgb(brand.brandColor);
-
       // Fetch global settings for branding
       const globalSettings = await fetchGlobalReportSettings();
       console.log('✓ Global settings fetched');
+
+      // Whose template this document is printed in: NPC's artwork on the prime,
+      // exactly as it has always been drawn, and the issuer's own on every clone
+      // (`legacyDocumentBrand.ts`). The content is the same either way.
+      const legacyBrand = await loadLegacyDocumentBrand(globalSettings?.contactDetails?.company_name);
+      applyDocumentDeep(legacyBrand.artwork === 'issuer' ? legacyBrand.family : null);
+
+      // Re-resolve the brand gold ramp: from the app's accent on the prime, as
+      // always, and on a clone from the colour the rest of this document is
+      // drawn in (`highlightColourFor`).
+      applyBrandRgb(highlightColourFor(legacyBrand, brand.brandColor));
       
       // Create PDF document
       const pdfDoc = await PDFDocument.create();
@@ -529,26 +554,29 @@ export function PortfolioAnalysisPDFGenerator({
       let playfairFont = timesItalic; // Fallback
       let cinzelFont = helveticaBold; // Fallback
 
-      try {
-        const [playfairRes, cinzelRes] = await Promise.all([
-          fetch('/fonts/PlayfairDisplay-Medium.ttf'),
-          fetch('/fonts/Cinzel-Bold.ttf'),
-        ]);
+      // The two display faces are drawn on NPC's cover and nowhere else.
+      if (legacyBrand.artwork === 'house') {
+        try {
+          const [playfairRes, cinzelRes] = await Promise.all([
+            fetch('/fonts/PlayfairDisplay-Medium.ttf'),
+            fetch('/fonts/Cinzel-Bold.ttf'),
+          ]);
 
-        if (!playfairRes.ok) throw new Error(`Playfair font fetch failed: ${playfairRes.status}`);
-        if (!cinzelRes.ok) throw new Error(`Cinzel font fetch failed: ${cinzelRes.status}`);
+          if (!playfairRes.ok) throw new Error(`Playfair font fetch failed: ${playfairRes.status}`);
+          if (!cinzelRes.ok) throw new Error(`Cinzel font fetch failed: ${cinzelRes.status}`);
 
-        const [playfairBytes, cinzelBytes] = await Promise.all([
-          playfairRes.arrayBuffer(),
-          cinzelRes.arrayBuffer(),
-        ]);
+          const [playfairBytes, cinzelBytes] = await Promise.all([
+            playfairRes.arrayBuffer(),
+            cinzelRes.arrayBuffer(),
+          ]);
 
-        playfairFont = await pdfDoc.embedFont(playfairBytes, { subset: true });
-        cinzelFont = await pdfDoc.embedFont(cinzelBytes, { subset: true });
+          playfairFont = await pdfDoc.embedFont(playfairBytes, { subset: true });
+          cinzelFont = await pdfDoc.embedFont(cinzelBytes, { subset: true });
 
-        console.log('✓ Custom fonts embedded (PlayfairDisplay-Medium.ttf, Cinzel-Bold.ttf)');
-      } catch (fontError) {
-        console.warn('Could not load embedded TTF fonts; using fallbacks:', fontError);
+          console.log('✓ Custom fonts embedded (PlayfairDisplay-Medium.ttf, Cinzel-Bold.ttf)');
+        } catch (fontError) {
+          console.warn('Could not load embedded TTF fonts; using fallbacks:', fontError);
+        }
       }
       
       console.log('✓ PDF document created with fonts');
@@ -1315,87 +1343,108 @@ export function PortfolioAnalysisPDFGenerator({
       // ============= BRANDED COVER PAGE (Using PDF Template) =============
       console.log('📝 Creating branded cover page from PDF template...');
 
-      let coverPage: PDFPage;
-      let coverWidth = PAGE_WIDTH;
-      let coverHeight = PAGE_HEIGHT;
+      if (legacyBrand.artwork === 'issuer') {
+        // The issuer's own cover carries the same three facts NPC's does —
+        // the report's title, the client and the date — in the issuer's name.
+        const serifFont = await pdfDoc.embedFont(StandardFonts.TimesRoman);
+        await drawIssuerCover(pdfDoc, {
+          issuerName: legacyBrand.issuer.name,
+          mark: legacyBrand.mark,
+          documentTitle: 'Portfolio Performance Report',
+          standfirst: new Date(analysisData.generatedAt).toLocaleDateString('en-AU', {
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+          }),
+          address: stripEmojis(analysisData.clientName),
+          photograph: null,
+          fonts: { serif: serifFont, italic: timesItalic, sans: helveticaFont },
+          family: legacyBrand.family,
+        });
+        console.log('✓ issuer cover page complete');
+      } else {
+        let coverPage: PDFPage;
+        let coverWidth = PAGE_WIDTH;
+        let coverHeight = PAGE_HEIGHT;
 
-      try {
-        const coverTemplateResponse = await fetch('/templates/NPC_PDF_Template-6.pdf');
-        if (!coverTemplateResponse.ok) {
-          throw new Error(`Cover template fetch failed: ${coverTemplateResponse.status}`);
+        try {
+          const coverTemplateResponse = await fetch('/templates/NPC_PDF_Template-6.pdf');
+          if (!coverTemplateResponse.ok) {
+            throw new Error(`Cover template fetch failed: ${coverTemplateResponse.status}`);
+          }
+
+          const coverTemplateBytes = await coverTemplateResponse.arrayBuffer();
+          const coverTemplateDoc = await PDFDocument.load(coverTemplateBytes);
+          const [templateCoverPage] = await pdfDoc.copyPages(coverTemplateDoc, [0]);
+          coverPage = pdfDoc.addPage(templateCoverPage);
+
+          const size = coverPage.getSize();
+          coverWidth = size.width;
+          coverHeight = size.height;
+
+          console.log('✓ Cover page template imported successfully');
+        } catch (templateError) {
+          console.error('Failed to load cover PDF template, using fallback:', templateError);
+          coverPage = pdfDoc.addPage([PAGE_WIDTH, PAGE_HEIGHT]);
+          coverPage.drawRectangle({
+            x: 0,
+            y: 0,
+            width: PAGE_WIDTH,
+            height: PAGE_HEIGHT,
+            color: NPC_BLACK,
+          });
         }
 
-        const coverTemplateBytes = await coverTemplateResponse.arrayBuffer();
-        const coverTemplateDoc = await PDFDocument.load(coverTemplateBytes);
-        const [templateCoverPage] = await pdfDoc.copyPages(coverTemplateDoc, [0]);
-        coverPage = pdfDoc.addPage(templateCoverPage);
+        // ============= OVERLAY DYNAMIC TEXT ON COVER =============
+        // Template already contains: logo/tagline/line/diamond.
+        // We only add: Report Title, Client Name, Date.
+        // Positioning moved LOWER to match the provided reference.
 
-        const size = coverPage.getSize();
-        coverWidth = size.width;
-        coverHeight = size.height;
-
-        console.log('✓ Cover page template imported successfully');
-      } catch (templateError) {
-        console.error('Failed to load cover PDF template, using fallback:', templateError);
-        coverPage = pdfDoc.addPage([PAGE_WIDTH, PAGE_HEIGHT]);
-        coverPage.drawRectangle({
-          x: 0,
-          y: 0,
-          width: PAGE_WIDTH,
-          height: PAGE_HEIGHT,
-          color: NPC_BLACK,
+        // Report Title (PlayfairDisplay-Medium.ttf)
+        const reportTitle = 'Portfolio Performance Report';
+        const reportTitleSize = 32;
+        const reportTitleY = coverHeight * 0.26; // moved lower (was 0.32)
+        const reportTitleWidth = playfairFont.widthOfTextAtSize(reportTitle, reportTitleSize);
+        coverPage.drawText(reportTitle, {
+          x: (coverWidth - reportTitleWidth) / 2,
+          y: reportTitleY,
+          size: reportTitleSize,
+          font: playfairFont,
+          color: NPC_WHITE,
         });
+
+        // Client Name (Cinzel-Bold.ttf)
+        const clientText = stripEmojis(analysisData.clientName).toUpperCase();
+        const clientNameSize = 18;
+        const clientNameY = reportTitleY - 52;
+        const clientNameWidth = cinzelFont.widthOfTextAtSize(clientText, clientNameSize);
+        coverPage.drawText(clientText, {
+          x: (coverWidth - clientNameWidth) / 2,
+          y: clientNameY,
+          size: clientNameSize,
+          font: cinzelFont,
+          color: NPC_GOLD,
+        });
+
+        // Date (Helvetica)
+        const dateText = new Date(analysisData.generatedAt).toLocaleDateString('en-AU', {
+          day: 'numeric',
+          month: 'long',
+          year: 'numeric',
+        });
+        const dateSize = 14;
+        const dateY = clientNameY - 40;
+        const dateWidth = helveticaFont.widthOfTextAtSize(dateText, dateSize);
+        coverPage.drawText(dateText, {
+          x: (coverWidth - dateWidth) / 2,
+          y: dateY,
+          size: dateSize,
+          font: helveticaFont,
+          color: NPC_WHITE,
+        });
+
+        console.log('✓ branded cover page complete (PDF template)');
       }
-
-      // ============= OVERLAY DYNAMIC TEXT ON COVER =============
-      // Template already contains: logo/tagline/line/diamond.
-      // We only add: Report Title, Client Name, Date.
-      // Positioning moved LOWER to match the provided reference.
-
-      // Report Title (PlayfairDisplay-Medium.ttf)
-      const reportTitle = 'Portfolio Performance Report';
-      const reportTitleSize = 32;
-      const reportTitleY = coverHeight * 0.26; // moved lower (was 0.32)
-      const reportTitleWidth = playfairFont.widthOfTextAtSize(reportTitle, reportTitleSize);
-      coverPage.drawText(reportTitle, {
-        x: (coverWidth - reportTitleWidth) / 2,
-        y: reportTitleY,
-        size: reportTitleSize,
-        font: playfairFont,
-        color: NPC_WHITE,
-      });
-
-      // Client Name (Cinzel-Bold.ttf)
-      const clientText = stripEmojis(analysisData.clientName).toUpperCase();
-      const clientNameSize = 18;
-      const clientNameY = reportTitleY - 52;
-      const clientNameWidth = cinzelFont.widthOfTextAtSize(clientText, clientNameSize);
-      coverPage.drawText(clientText, {
-        x: (coverWidth - clientNameWidth) / 2,
-        y: clientNameY,
-        size: clientNameSize,
-        font: cinzelFont,
-        color: NPC_GOLD,
-      });
-
-      // Date (Helvetica)
-      const dateText = new Date(analysisData.generatedAt).toLocaleDateString('en-AU', {
-        day: 'numeric',
-        month: 'long',
-        year: 'numeric',
-      });
-      const dateSize = 14;
-      const dateY = clientNameY - 40;
-      const dateWidth = helveticaFont.widthOfTextAtSize(dateText, dateSize);
-      coverPage.drawText(dateText, {
-        x: (coverWidth - dateWidth) / 2,
-        y: dateY,
-        size: dateSize,
-        font: helveticaFont,
-        color: NPC_WHITE,
-      });
-
-      console.log('✓ branded cover page complete (PDF template)');
       
       // Define metrics and health score early for TOC page numbers and later use
       const metrics = analysisData.portfolioMetrics;
@@ -2472,6 +2521,18 @@ export function PortfolioAnalysisPDFGenerator({
             font: helveticaFont,
             boldFont: helveticaBold,
             addContentPage,
+            // On a clone the section is set in the issuer's colours: the
+            // document's own gold ramp for its rules, its deep shade for
+            // headings, and the ink that reads on that shade.
+            ...(legacyBrand.artwork === 'issuer'
+              ? {
+                colours: {
+                  gold: NPC_GOLD,
+                  goldOnNavy: rgb(...hexToRgb01(legacyBrand.family.onDeep)),
+                  navy: NPC_NAVY,
+                },
+              }
+              : {}),
           },
           bcPdfData,
           page,
@@ -3055,34 +3116,53 @@ export function PortfolioAnalysisPDFGenerator({
       
       // ============= BRANDED DISCLAIMER & CONTACT PAGE =============
       console.log('📝 Creating branded disclaimer page...');
-      const __issuer = resolveReportIssuer({
-        companyName: globalSettings?.contactDetails?.company_name,
-      });
-      const __disclaimer = resolveReportDisclaimer(__issuer, globalSettings?.disclaimer);
-      drawPdfLibDisclaimerPage(
-        pdfDoc,
-        PAGE_WIDTH,
-        PAGE_HEIGHT,
-        helveticaFont,
-        helveticaBold,
-        // Who this is issued by — resolved by the one module that answers it,
-        // never an invented trading name. See
-        // `_shared/reports/issuerIdentity.pure.ts`.
-        {
-          ...(globalSettings?.contactDetails ?? {
+      if (legacyBrand.artwork === 'issuer') {
+        const closing = issuerClosingPage(legacyBrand, {
+          contactDetails: globalSettings?.contactDetails ?? {
             company_name: '', phone: '', email: '', website: '', address: '', abn: '',
-          }),
-          company_name: __issuer.name,
-        },
-        // The wording follows the issuer. This literal used to be the prime's
-        // own — a licensed buyer's agent describing a service it performs —
-        // printed by any deployment whose settings had not loaded.
-        {
-          text: __disclaimer.text,
-          is_enabled: __disclaimer.text !== '',
-          font_size: globalSettings?.disclaimer?.font_size ?? 'small',
-        },
-      );
+          },
+          disclaimer: globalSettings?.disclaimer ?? { text: '', is_enabled: true },
+        });
+        drawPdfLibDisclaimerPage(
+          pdfDoc,
+          PAGE_WIDTH,
+          PAGE_HEIGHT,
+          helveticaFont,
+          helveticaBold,
+          closing.contact,
+          { ...closing.disclaimer, font_size: globalSettings?.disclaimer?.font_size ?? 'small' },
+          closing.palette,
+        );
+      } else {
+        const __issuer = resolveReportIssuer({
+          companyName: globalSettings?.contactDetails?.company_name,
+        });
+        const __disclaimer = resolveReportDisclaimer(__issuer, globalSettings?.disclaimer);
+        drawPdfLibDisclaimerPage(
+          pdfDoc,
+          PAGE_WIDTH,
+          PAGE_HEIGHT,
+          helveticaFont,
+          helveticaBold,
+          // Who this is issued by — resolved by the one module that answers it,
+          // never an invented trading name. See
+          // `_shared/reports/issuerIdentity.pure.ts`.
+          {
+            ...(globalSettings?.contactDetails ?? {
+              company_name: '', phone: '', email: '', website: '', address: '', abn: '',
+            }),
+            company_name: __issuer.name,
+          },
+          // The wording follows the issuer. This literal used to be the prime's
+          // own — a licensed buyer's agent describing a service it performs —
+          // printed by any deployment whose settings had not loaded.
+          {
+            text: __disclaimer.text,
+            is_enabled: __disclaimer.text !== '',
+            font_size: globalSettings?.disclaimer?.font_size ?? 'small',
+          },
+        );
+      }
       console.log('✓ branded disclaimer page complete');
       
       // ============= PHASE 5: ENHANCED PAGE FOOTERS =============

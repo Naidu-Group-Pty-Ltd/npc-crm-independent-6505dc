@@ -15,6 +15,26 @@ import { createCorsHeaders, createUnauthorizedResponse, verifyAuth } from '../_s
 import { enforceCsrf, csrfDenied } from '../_shared/csrfGuard.ts';
 import { checkPermission } from '../_shared/permissions.ts';
 import { rateLimit } from '../_shared/wp08Guards.ts';
+import { deploymentKind } from '../_shared/emailIdentity.pure.ts';
+import { loadReportWriterIdentity } from '../_shared/reports/writerIdentity.ts';
+import { firmClause } from '../_shared/reports/writerFirm.pure.ts';
+
+/**
+ * The business these templates are designed for, as the prompts name it.
+ *
+ * On the prime, NPC's own name exactly as the prompts have always said it, with
+ * nothing read. On a clone its own business, never the house — or nobody where
+ * it has named none, because a cover the model letters for a business puts that
+ * name on the clone's documents (`writerFirm.pure.ts`).
+ */
+function onPrime(): boolean {
+  return deploymentKind(Deno.env.get('SUPABASE_URL')) === 'prime';
+}
+
+async function designedFor(): Promise<string | null> {
+  if (onPrime()) return 'NPC Property Services';
+  return (await loadReportWriterIdentity()).firm;
+}
 
 const GATEWAY = 'https://ai.gateway.lovable.dev/v1/chat/completions';
 const MODEL = 'google/gemini-2.5-flash';
@@ -89,7 +109,7 @@ async function generateLayout(p: any) {
     ? p.availableBlocks.slice(0, 80)
     : [];
 
-  const system = `You are an expert PDF report layout designer for NPC Property Services.
+  const system = `You are an expert PDF report layout designer${firmClause(await designedFor(), 'for')}.
 Output ONE page worth of blocks for the report template builder.
 Constraints:
 - Page size: ${pageWidth} x ${pageHeight} pt (A4 portrait by default).
@@ -152,7 +172,7 @@ async function suggestBindings(p: any) {
   const target = String(p?.target ?? '').trim(); // e.g. label "Weekly Rent" or current text
   if (!target) throw new Error('Missing target');
   const paths: string[] = Array.isArray(p?.samplePaths) ? p.samplePaths.slice(0, 200) : [];
-  const system = `You map UI labels/copy to data binding paths for an NPC report template.
+  const system = `You map UI labels/copy to data binding paths for ${onPrime() ? 'an NPC report template' : 'a report template'}.
 Choose from the provided paths only. Rank top 5 by relevance.`;
   const user = `Target label/copy:\n${target}\n\nAvailable paths:\n${paths.join('\n')}`;
   const tool = {
@@ -212,8 +232,9 @@ async function generateCover(p: any) {
   const pageHeight = Number(p?.pageHeight ?? 842);
   const tier = String(p?.tier ?? 'pld');
   const brand = p?.brand ?? {};
+  const owner = await designedFor();
 
-  const system = `You design premium magazine-quality cover pages for NPC Property Services investment reports.
+  const system = `You design premium magazine-quality cover pages for ${owner === null ? '' : `${owner} `}investment reports.
 Output a SINGLE cover page composed of blocks AND overlays placed in absolute coordinates.
 Page size: ${pageWidth} x ${pageHeight} pt.
 Layout rules:

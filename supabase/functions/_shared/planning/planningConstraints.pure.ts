@@ -644,6 +644,49 @@ export const buildQldFloodIdentify = (lng: number, lat: number): string =>
 export const buildQldMsesIdentify = (lng: number, lat: number): string =>
   buildIdentifyUrl(`${QLD_BASE}/Environment/MattersOfStateEnvironmentalSignificance/MapServer`, lng, lat, 'all');
 
+// ---------------------------------------------------------------------------
+// WA — designated bush fire prone areas
+// ---------------------------------------------------------------------------
+
+/*
+ * The one Western Australian hazard register this platform may republish, and
+ * the reason licences are read per RESOURCE and never per jurisdiction.
+ *
+ * Western Australia's planning scheme zones (DPLH-071) and the Department of
+ * Water and Environmental Regulation's floodplain mapping (DWER-020, -014,
+ * -018) are published on the state catalogue under "Custom (Active
+ * Acceptance)" terms, and `WA_LICENCE_NOTE` records why nothing from them is
+ * fetched. The Fire and Emergency Services Commissioner's bush fire prone area
+ * map is a different resource from a different publisher, and the catalogue
+ * states it as Creative Commons Attribution 4.0 (read 25 Sep 2026, OBRM-026,
+ * "Gazetted on 13 December 2025", modified 24 Sep 2026). Treating WA as one
+ * licence left a WA report with no bushfire reading at all — the Compass for
+ * 60 Lawley Street, Spalding printed "Bushfire | Not assessed | Not searched"
+ * over a register that answers for every address in the state.
+ *
+ * Layer 23 is OBRM-026, which consolidates and supersedes OBRM-021 to -025.
+ * It is asked by explicit id (`all:23`) because `all` means "all VISIBLE" to
+ * ArcGIS — the NSW Hazard lesson in `buildIdentifyUrl`. Measured the same day
+ * from this repository's sandbox: the point on Lawley Street answered
+ * `{"results":[]}` (no designated area there) and a point 850 m away, inside
+ * the nearest designated polygon, answered the Greater Geraldton feature with
+ * its designation text and its designation date. Whether the PRODUCTION egress
+ * reaches `public-services.slip.wa.gov.au` is unmeasured until the first WA
+ * report after deploy — the same position South Australia's zone read was in.
+ */
+export const WA_BUSHFIRE_MAPSERVER =
+  'https://public-services.slip.wa.gov.au/public/rest/services/SLIP_Public_Services/Bush_Fire_Prone_Areas/MapServer';
+export const WA_BUSHFIRE_LAYER = 23;
+export const WA_BUSHFIRE_SOURCE =
+  'Department of Fire and Emergency Services (WA) — Bush Fire Prone Areas (OBRM-026)';
+export const WA_BUSHFIRE_LICENCE = 'CC BY 4.0';
+/** Who designates, in words that name no section a reader cannot check. */
+export const WA_BUSHFIRE_INSTRUMENT =
+  'Designation of bush fire prone areas by the Fire and Emergency Services Commissioner';
+
+export const buildWaBushfireIdentify = (lng: number, lat: number): string =>
+  buildIdentifyUrl(WA_BUSHFIRE_MAPSERVER, lng, lat, [WA_BUSHFIRE_LAYER]);
+
 /**
  * Parse an identify answer whose layers are named rather than numbered.
  *
@@ -679,6 +722,16 @@ export function parseNamedLayerConstraints(
      * kinds under descriptive names.
      */
     family?: { family: ConstraintFamily; kind: ConstraintKind };
+    /**
+     * The attribute that names what was FOUND, where the layer's display field
+     * names something else. Western Australia's bush fire layer displays the
+     * local government ("GREATER GERALDTON") and states the finding in
+     * `Designation`; a label built from the display field would name the
+     * council and not the designation.
+     */
+    valueAttribute?: string;
+    /** The attribute carrying the feature's own date, where it is not `Version` or `Currency Date`. */
+    dateAttribute?: string;
   },
 ): ConstraintProbeOutcome {
   const base = { asked: opts.asked, source: opts.source, licence: opts.licence };
@@ -688,7 +741,7 @@ export function parseNamedLayerConstraints(
   const readings = out.results.map((r): PlanningConstraintReading => {
     const a = r.attributes ?? {};
     const layerName = attrStr(r.layerName) ?? 'Mapped area';
-    const value = attrStr(r.value);
+    const value = (opts.valueAttribute ? attrStr(a[opts.valueAttribute]) : null) ?? attrStr(r.value);
     const cls = opts.family ?? familyFromLabel(`${layerName} ${value ?? ''}`);
     // The publisher's own word for the instrument's standing. The version
     // rides with it when it is not parseable as a date: `December 2023` is a
@@ -720,7 +773,8 @@ export function parseNamedLayerConstraints(
       value: null,
       instrument: attrStr(a['Plan Name']) ?? opts.instrument ?? layerName,
       clause: null,
-      currencyDate: identifyDateToIso(a['Version']) ?? identifyDateToIso(a['Currency Date']),
+      currencyDate: (opts.dateAttribute ? identifyDateToIso(a[opts.dateAttribute]) : null)
+        ?? identifyDateToIso(a['Version']) ?? identifyDateToIso(a['Currency Date']),
       // `detail` is still the whole join — it is what the register table's
       // "What the register returned" column prints, and it reads correctly
       // there because that column is explicitly a summary of what came back.

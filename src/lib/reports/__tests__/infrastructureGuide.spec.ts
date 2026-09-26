@@ -110,15 +110,15 @@ describe('the guide follows the table', () => {
 
   it('draws the absence entry only where a register was not searched', () => {
     expect(renderInfrastructureOutlook(evidence(['Development application'], true)))
-      .toContain('*A register that was not searched.*');
+      .toContain('*A source this report does not cover.*');
     expect(renderInfrastructureOutlook(evidence(['Development application'], false)))
-      .not.toContain('*A register that was not searched.*');
+      .not.toContain('*A source this report does not cover.*');
   });
 
   it('opens the section even when the absence is the only finding', () => {
     const out = renderInfrastructureOutlook(evidence([], true));
     expect(out).toContain('**What these findings mean, and what to do about them.**');
-    expect(out).toContain('*A register that was not searched.*');
+    expect(out).toContain('*A source this report does not cover.*');
     expect(out).not.toMatch(/\n{3,}/);
   });
 

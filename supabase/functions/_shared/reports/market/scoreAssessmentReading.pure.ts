@@ -744,7 +744,7 @@ export function assessmentPrecisionNote(reading: ScoreAssessmentReading): string
   const sum = reading.compositeExact.toFixed(2);
   const composite = reading.compositeScore;
   const recorded = reading.compositeSource === 'recorded'
-    ? ', the figure the scoring service recorded' : '';
+    ? ', the figure recorded with the grade' : '';
   if (!reading.contributionsFoot) {
     return `The composite is ${composite}${recorded}. The contributions come to ${sum}: they are computed from `
       + 'the adjusted weights the record stores as whole percentages, which do not carry enough precision to '

@@ -3,7 +3,14 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2';
 import { verifyAuth, createCorsHeaders as createAuthCorsHeaders, createUnauthorizedResponse } from '../_shared/auth.ts';
 import { enforceCsrf, csrfDenied } from "../_shared/csrfGuard.ts";
 import { logApiUsage, extractOpenAIUsage } from '../_shared/logApiUsage.ts';
-import { getBrandConfig } from '../_shared/brand-config.ts';
+import {
+  copilotOutboundEmails,
+  copilotSignOff,
+  copilotToneOwner,
+  firmDescribed,
+  firmPhrase,
+  loadWorkspaceIdentity,
+} from '../_shared/workspaceIdentity.ts';
 import { OperatorFacingError, failureResponse } from '../_shared/errorResponse.ts';
 
 const supabaseUrl = Deno.env.get('SUPABASE_URL')!;
@@ -161,8 +168,8 @@ async function describeLlmFailure(r: { status: number; text: () => Promise<strin
 async function handleSummarize(email: EmailData, emailId: string | null, supabase: any, corsHeaders: Record<string, string>): Promise<Response> {
   console.log('[Email Copilot] Generating summary...');
   
-  const _brand = await getBrandConfig();
-  const systemPrompt = `You are an email analysis assistant for ${_brand.companyName}, a property investment advisory company. 
+  const _voice = await loadWorkspaceIdentity({ readPrimeName: true });
+  const systemPrompt = `You are an email analysis assistant for ${firmDescribed(_voice.firm, 'a property investment advisory company')}. 
 Your task is to analyze incoming emails and provide a structured summary.
 
 IMPORTANT: 
@@ -277,18 +284,18 @@ async function handleDraftReply(
     ? `\n\nUSER CONTEXT: The admin has provided the following guidance for the reply:\n"${replyContext}"\n\nIncorporate this context into your draft reply while maintaining professional tone.`
     : '';
 
-  const _brandDr = await getBrandConfig();
-  const systemPrompt = `You are an email drafting assistant for ${_brandDr.companyName}, a professional property investment advisory company.
+  const _voiceDr = await loadWorkspaceIdentity({ readPrimeName: true });
+  const systemPrompt = `You are an email drafting assistant for ${firmDescribed(_voiceDr.firm, 'a professional property investment advisory company')}.
 Your task is to draft a professional, polite, and helpful reply to the given email.
 
 IMPORTANT GUIDELINES:
-- Match ${_brandDr.companyName}' professional, courteous tone
+- Match ${copilotToneOwner(_voiceDr)} professional, courteous tone
 - Be clear, concise, and context-aware
 - Do NOT make any financial commitments or guarantees
 - Do NOT fabricate dates, prices, or specific details
 - If information is missing, acknowledge it and offer to clarify
 - Use proper email formatting with greeting and sign-off
-- Sign off as "${_brandDr.companyName} Team"
+- ${copilotSignOff(_voiceDr.firm)}
 ${propertyContext}
 ${userContextInstruction}
 
@@ -479,7 +486,7 @@ async function handleDraftReplyV2(args: any, supabase: any, corsHeaders: Record<
   const { email, emailId, linkedPropertyAddress, replyContext, tone, length, intent, language, threadEmails, variants } = args;
   console.log(`[Email Copilot V2] Draft reply: tone=${tone}, length=${length}, intent=${intent}, lang=${language}, variants=${variants}`);
 
-  const _brand = await getBrandConfig();
+  const _voice = await loadWorkspaceIdentity({ readPrimeName: true });
   const propertyContext = linkedPropertyAddress
     ? `\n\nProperty Context: This email may relate to ${linkedPropertyAddress}. Reference it only if clearly relevant.`
     : '';
@@ -495,7 +502,7 @@ async function handleDraftReplyV2(args: any, supabase: any, corsHeaders: Record<
     : '';
   const threadCtx = buildThreadContext(threadEmails, email?.body || '');
 
-  const systemPrompt = `You are an elite email drafting assistant for ${_brand.companyName}, a property investment advisory firm.
+  const systemPrompt = `You are an elite email drafting assistant for ${firmDescribed(_voice.firm, 'a property investment advisory firm')}.
 
 VOICE & TONE: ${toneInstr}
 LENGTH: ${lengthInstr}${intentInstr}${langInstr}
@@ -504,7 +511,7 @@ NON-NEGOTIABLES:
 - Never invent prices, dates, rates, or specifics. If unknown, say you'll confirm.
 - Never make financial commitments or guarantees.
 - Use proper email formatting: greeting on its own line, body, sign-off.
-- Sign off as "${_brand.companyName} Team" unless guidance says otherwise.
+- ${copilotSignOff(_voice.firm)} unless guidance says otherwise.
 - Output ONLY the reply body. No preamble, no "Here is your draft", no markdown code fences.${propertyContext}${userCtx}${threadCtx}`;
 
   const userPrompt = `Draft a reply to this email:
@@ -585,11 +592,11 @@ async function handleImproveText(args: any, supabase: any, corsHeaders: Record<s
   const { text, instruction, tone, language } = args;
   if (!text || !instruction) throw new Error('text and instruction are required');
 
-  const _brand = await getBrandConfig();
+  const _voice = await loadWorkspaceIdentity({ readPrimeName: true });
   const toneInstr = tone ? `\nMaintain a ${tone} tone.` : '';
   const langInstr = language && language !== 'en' ? `\nKeep the language as ${language}.` : '';
 
-  const systemPrompt = `You are an expert editor for ${_brand.companyName}'s outbound emails.
+  const systemPrompt = `You are an expert editor for ${copilotOutboundEmails(_voice)}.
 Apply the requested change to the provided text. Preserve the original meaning, names, and any factual claims.
 Output ONLY the rewritten text. No preamble, no quotes, no markdown fences.${toneInstr}${langInstr}`;
 
@@ -634,10 +641,10 @@ async function handleQuickReplies(args: any, supabase: any, corsHeaders: Record<
   const { email, threadEmails } = args;
   if (!email?.body) throw new Error('email is required');
 
-  const _brand = await getBrandConfig();
+  const _voice = await loadWorkspaceIdentity({ readPrimeName: true });
   const threadCtx = buildThreadContext(threadEmails, email.body);
 
-  const systemPrompt = `You generate 3 ultra-short reply suggestions for an email at ${_brand.companyName}.
+  const systemPrompt = `You generate 3 ultra-short reply suggestions for an email${firmPhrase(_voice.firm, 'at')}.
 Each suggestion is 3–6 words, action-oriented, distinct from the others.
 Examples: "Will review and revert", "Schedule a call?", "Thanks, noted".
 Return JSON: { "suggestions": ["...", "...", "..."] }${threadCtx}`;
@@ -683,9 +690,9 @@ Return JSON: { "suggestions": ["...", "...", "..."] }${threadCtx}`;
 async function handleAnalyze(args: any, supabase: any, corsHeaders: Record<string, string>): Promise<Response> {
   const { email, emailId } = args;
   if (!email?.body) throw new Error('email is required');
-  const _brand = await getBrandConfig();
+  const _voice = await loadWorkspaceIdentity({ readPrimeName: true });
 
-  const systemPrompt = `You analyze inbound emails for ${_brand.companyName}, a property investment advisory.
+  const systemPrompt = `You analyze inbound emails for ${firmDescribed(_voice.firm, 'a property investment advisory')}.
 Return ONLY JSON matching:
 {
   "sentiment": "positive" | "neutral" | "negative" | "angry",
@@ -808,7 +815,7 @@ async function handleTranslate(args: any, supabase: any, corsHeaders: Record<str
 async function handleThreadSummary(args: any, supabase: any, corsHeaders: Record<string, string>): Promise<Response> {
   const { email, threadEmails } = args;
   if (!email?.body) throw new Error('email is required');
-  const _brand = await getBrandConfig();
+  const _voice = await loadWorkspaceIdentity({ readPrimeName: true });
 
   const allMessages = [
     ...(Array.isArray(threadEmails) ? threadEmails : []),
@@ -821,7 +828,7 @@ async function handleThreadSummary(args: any, supabase: any, corsHeaders: Record
     return `--- Message ${i + 1} ---\nFrom: ${m.sender}\nDate: ${m.received_at || ''}\nSubject: ${m.subject}\n\n${(m.body || '').slice(0, 1200)}`;
   }).join('\n\n');
 
-  const systemPrompt = `You summarize email threads for ${_brand.companyName}.
+  const systemPrompt = `You summarize email threads${firmPhrase(_voice.firm, 'for')}.
 Return ONLY JSON:
 {
   "tldr": "1-2 sentence summary of the whole thread",

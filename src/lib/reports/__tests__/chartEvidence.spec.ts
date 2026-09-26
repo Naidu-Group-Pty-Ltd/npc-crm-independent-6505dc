@@ -397,7 +397,7 @@ describe('the prose half of the same contract', () => {
     // are families". Removing the drawing and leaving the sentence moves an
     // unsupported figure rather than withdrawing it.
     const rules = claimSupportRules(HELD_NOTHING);
-    expect(rules).toMatch(/NO population or household composition was retrieved/);
+    expect(rules).toMatch(/NO population or household composition is held/);
     expect(rules).toMatch(/not as "roughly", not as "around half", not as "predominantly"/);
     // §3's rule, restated where the sentence is written.
     expect(rules).toMatch(/not the predicted tenant mix\s+of this particular property/);
@@ -461,7 +461,7 @@ describe('the prose half of the same contract', () => {
     const held = { ...HELD_NOTHING, demographics: true, marketData: true, recordedScores: [72, 61] };
     const rules = claimSupportRules(held);
     expect(rules).toMatch(/may be stated only with the dataset, the period and the geography/);
-    expect(rules).toMatch(/The scoring engine recorded 72, 61/);
+    expect(rules).toMatch(/The scores recorded with this report's grade are 72, 61/);
   });
 
   it('a withheld fact may not be re-stated in prose in any form', () => {

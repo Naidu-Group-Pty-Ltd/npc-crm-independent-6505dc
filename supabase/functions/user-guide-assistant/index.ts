@@ -3,7 +3,7 @@ import { verifyAuth, createCorsHeaders, createUnauthorizedResponse } from '../_s
 import { enforceCsrf, csrfDenied } from "../_shared/csrfGuard.ts";
 import { logApiUsage } from '../_shared/logApiUsage.ts';
 import { createUsageTrackingStream } from '../_shared/streamUsageLogger.ts';
-import { getBrandConfig } from '../_shared/brand-config.ts';
+import { firmModifier, loadWorkspaceIdentity } from '../_shared/workspaceIdentity.ts';
 import { internalError } from '../_shared/errorResponse.ts';
 
 const corsHeaders = {
@@ -23,7 +23,7 @@ const corsHeaders = {
 // The knowledge base now carries each section's ID inline, so the rules below
 // describe the FORMAT and the payload supplies the ids. Adding a section to the
 // guide makes it linkable here with no change to this file.
-const buildSystemPrompt = (brandName: string) => `You are a helpful AI assistant for the ${brandName} Property Dashboard. Your role is to guide users through the platform's features and help them understand how to use the dashboard effectively.
+const buildSystemPrompt = (firm: string | null) => `You are a helpful AI assistant for the ${firmModifier(firm)}Property Dashboard. Your role is to guide users through the platform's features and help them understand how to use the dashboard effectively.
 
 IMPORTANT GUIDELINES:
 1. Be concise and helpful - provide clear, actionable answers
@@ -94,8 +94,8 @@ Deno.serve(async (req) => {
     console.log(`Processing user guide assistant request with ${messages.length} messages`);
 
     // Build the full system prompt with knowledge base (brand-aware)
-    const _brand = await getBrandConfig();
-    const fullSystemPrompt = `${buildSystemPrompt(_brand.companyName)}
+    const _voice = await loadWorkspaceIdentity({ readPrimeName: true });
+    const fullSystemPrompt = `${buildSystemPrompt(_voice.firm)}
 
 ---
 

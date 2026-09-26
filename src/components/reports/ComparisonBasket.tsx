@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { format } from 'date-fns';
+import { reportGeneratedAt } from '@/lib/reports/investment/reportGeneratedAt.pure';
 import { BarChart3, ChevronUp, Trash2, X } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -167,7 +168,7 @@ function CompareTrayContent({
   removeReport,
   clearSelection,
 }: {
-  selectedReports: Array<{ id: string; property_address: string; created_at: string }>;
+  selectedReports: Array<{ id: string; property_address: string; created_at: string; generated_at?: string | null }>;
   canCompare: boolean;
   progressPercent: number;
   onCompare: () => void;
@@ -194,7 +195,7 @@ function CompareTrayContent({
               <Badge variant="outline" className="mt-0.5 rounded-full">{index + 1}</Badge>
               <div className="min-w-0 flex-1">
                 <p className="line-clamp-2 text-sm font-semibold leading-tight text-foreground">{report.property_address}</p>
-                <p className="mt-1 text-xs text-muted-foreground">Generated {format(new Date(report.created_at), 'MMM d, yyyy')}</p>
+                <p className="mt-1 text-xs text-muted-foreground">Generated {format(new Date(reportGeneratedAt(report)?.at ?? report.created_at), 'MMM d, yyyy')}</p>
               </div>
               <Button variant="ghost" size="icon" className="h-8 w-8 shrink-0 rounded-full" onClick={() => removeReport(report.id)} title="Remove from comparison">
                 <X className="h-3.5 w-3.5" />

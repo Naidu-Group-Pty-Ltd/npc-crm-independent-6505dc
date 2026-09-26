@@ -20,6 +20,8 @@
  *      token in this system does.
  */
 
+import { deploymentLinkOrigin, PRIME_APP_ORIGIN } from "../emailIdentity.pure.ts";
+
 /**
  * How long a partner has to review and sign before the link lapses.
  *
@@ -48,17 +50,41 @@ export function mintAckToken(): string {
   return `${crypto.randomUUID()}${crypto.randomUUID()}`.replace(/-/g, "");
 }
 
-const APP_ORIGIN_FALLBACK = "https://command-centre.npcservices.com.au";
+function env(name: string): string | null {
+  return (globalThis as any).Deno?.env?.get?.(name) ?? null;
+}
 
 /**
- * The public page. Hard-pinned to the production origin by default for the
- * same reason the portal invites are: a preview URL in a partner's signing
- * link is a link that stops working, on the one document that must not.
+ * The origin this deployment's public AML links open.
+ *
+ * On the prime: `PUBLIC_APP_URL`, else its own production domain, as always.
+ * A preview URL in a partner's signing link is a link that stops working, on
+ * the one document that must not.
+ *
+ * On a clone: the origin Mission Control provisioned, and never the prime's.
+ * The production-domain fallback used to apply everywhere, so a clone with no
+ * `PUBLIC_APP_URL` would have sent its partner to ANOTHER tenant's page. With
+ * no origin provisioned the link is left relative and the gap is logged: a
+ * link that opens nothing is recoverable, one that opens somebody else's page
+ * is not. The rule is `deploymentLinkOrigin`, the same one every email uses.
  */
+function publicLinkOrigin(): string {
+  const origin = deploymentLinkOrigin(
+    {
+      supabaseUrl: env("SUPABASE_URL"),
+      provisionedOrigins: [env("PUBLIC_APP_URL"), env("APP_URL"), env("APP_BASE_URL")],
+    },
+    env("PUBLIC_APP_URL") || PRIME_APP_ORIGIN,
+  );
+  if (!origin) {
+    console.error("[aml-links] No application URL is provisioned for this deployment; the link is relative");
+  }
+  return origin ?? "";
+}
+
+/** The public page a partner signs the agreement on. */
 export function acknowledgementLinkFor(token: string): string {
-  const configured = (globalThis as any).Deno?.env?.get?.("PUBLIC_APP_URL");
-  const origin = String(configured || APP_ORIGIN_FALLBACK).replace(/\/+$/, "");
-  return `${origin}/partner-acknowledgement/${token}`;
+  return `${publicLinkOrigin()}/partner-acknowledgement/${token}`;
 }
 
 /** Is this request still able to be viewed or accepted? */
@@ -146,15 +172,11 @@ export function ackActionFor(status: string, expiresAt: string | null | undefine
  */
 
 /**
- * The public passport page.
- *
- * Pinned to the production origin for the same reason the acknowledgement
- * link is: a preview URL in a partner's email is a link that stops working.
+ * The public passport page, on the same origin as the acknowledgement link
+ * and for the same reasons (see `publicLinkOrigin`).
  */
 export function passportLinkFor(token: string): string {
-  const configured = (globalThis as any).Deno?.env?.get?.("PUBLIC_APP_URL");
-  const origin = String(configured || APP_ORIGIN_FALLBACK).replace(/\/+$/, "");
-  return `${origin}/passport/${token}`;
+  return `${publicLinkOrigin()}/passport/${token}`;
 }
 
 /**

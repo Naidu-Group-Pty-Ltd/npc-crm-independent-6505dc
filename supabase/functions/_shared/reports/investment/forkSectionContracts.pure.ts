@@ -277,7 +277,7 @@ export function riskDashboardContract(body: string, dashboardHeading: string, ch
   if (!isChecklist) return { heading: dashboardHeading, status: null, isChecklist: false, checks: 0 };
   return {
     heading: checklistHeading,
-    status: `_Status: ${imperative} check${imperative === 1 ? '' : 's'} listed, none recorded as completed. Each is an action for the buyer and their advisers before contract; this list records no verification outcome and is not an assessment of the risks themselves._`,
+    status: `_Status: ${imperative} check${imperative === 1 ? '' : 's'} outstanding before contract. Each is an action for the buyer and their advisers; the list records no outcome and is not an assessment of the risks themselves._`,
     isChecklist: true,
     checks: imperative,
   };

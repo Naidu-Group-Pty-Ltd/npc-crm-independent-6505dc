@@ -8,6 +8,7 @@ import { consumeRateLimit, enforceJsonBodyLimit } from "../_shared/requestSecuri
 
 import { createCorsHeaders as __createCorsHeaders } from "../_shared/auth.ts";
 import { meteredFetch } from "../_shared/meteredFetch.ts";
+import { loadWorkspaceIdentity, purchaseFileSummaryTone } from "../_shared/workspaceIdentity.ts";
 // Dynamic per-request CORS (frontend uses credentials: 'include').
 const ALLOW_HEADERS = "authorization, x-client-info, apikey, content-type, x-correlation-id, x-step-up-token, x-finance-session-token";
 const EXPOSE_HEADERS = "x-correlation-id, x-tokens-used, x-tokens-reserved, x-tokens-estimated, x-duration-ms";
@@ -155,7 +156,7 @@ async function summarizePf(supabase: any, pfId: string, userId: string) {
   const ctx = await loadPfContext(supabase, pfId);
   if (!ctx.file) throw new Error("Purchase file not found");
   const result = await callAI(
-    "You are an expert Australian mortgage broker assistant. Produce a concise, executive Purchase File summary in JSON. Tone: factual, actionable, NPC-branded (no AI emojis or filler).",
+    `You are an expert Australian mortgage broker assistant. Produce a concise, executive Purchase File summary in JSON. ${purchaseFileSummaryTone(await loadWorkspaceIdentity({ readPrimeName: false }))}`,
     `Purchase file data:\n${JSON.stringify(ctx, null, 2)}\n\nReturn a tight summary covering current status, outstanding docs, recent decisions, key risks, and next best action.`,
     {
       tool: {

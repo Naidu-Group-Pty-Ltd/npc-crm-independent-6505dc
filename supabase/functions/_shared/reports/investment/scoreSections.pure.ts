@@ -426,6 +426,64 @@ export function composeScoreBreakdownSection(
 }
 
 /**
+ * What the verdict page lists to WATCH, beside what the grade credits.
+ *
+ * The master binds `summary.watch` and the projection filled it from
+ * `weaknesses` alone. A record whose scored dimensions are all strong has
+ * none, so the column was empty on exactly the reports where a reader most
+ * needs the qualification — page 3 of the 60 Lawley Street Compass
+ * (25 Sep 2026) printed an A+ and one strength ("Measured capital growth …
+ * is strong", measured for Western Australia as a whole) with no watch point
+ * at all, while the record held both a risk the scorer had recorded and the
+ * run's own caution that the growth evidence is state-wide.
+ *
+ * Read in the record's own words, in this order, never composed:
+ *
+ *  1. the scorer's weaknesses — unchanged, so every record that had them
+ *     prints exactly what it printed before;
+ *  2. the scorer's risks;
+ *  3. the run's evidence caution, where a grade is published beside it.
+ *
+ * Nothing is invented to fill the column: a record holding none of the three
+ * still draws no watch point.
+ *
+ * **Only a V2 record's risks are read.** The production engine writes market
+ * risks alone — rapid recent growth, extended selling times — whereas the
+ * retired V1 scorer's list carries statements about the purchase ("Significant
+ * negative cash flow requiring ongoing funding"), and the Compass does not
+ * carry the analysis of a purchase. A record with no `v2` block keeps exactly
+ * the column it always had.
+ */
+export function verdictWatchPoints(score: unknown): string[] {
+  if (!isRecord(score)) return [];
+  const list = (v: unknown): string[] =>
+    Array.isArray(v) ? v.map((x) => str(x)).filter((x): x is string => !!x) : [];
+  const weaknesses = list(score.weaknesses);
+  if (weaknesses.length || !isRecord(score.v2)) return weaknesses;
+  const out = [...recordedMarketRisks(score)];
+  const caution = evidenceCautionLine(score);
+  if (caution) out.push(caution);
+  return [...new Set(out)];
+}
+
+/**
+ * The market risks the scorer recorded with a V2 grade, in its own words — or
+ * none.
+ *
+ * One reader for the two places a client meets them: the verdict page's
+ * watch points (above) and the SWOT's Threats (`buildSwot`). The 60 Lawley
+ * Street Compass (25 Sep 2026) printed "Rapid recent price growth may indicate
+ * market cooling ahead" as a consideration on its verdict page and "None
+ * identified" under Threats fifteen pages later, because the SWOT never read
+ * the list the verdict page did. V2 alone, for the reason `verdictWatchPoints`
+ * gives: the retired V1 scorer's list carries statements about a PURCHASE.
+ */
+export function recordedMarketRisks(score: unknown): string[] {
+  if (!isRecord(score) || !isRecord(score.v2) || !Array.isArray(score.risks)) return [];
+  return [...new Set(score.risks.map((x) => str(x)).filter((x): x is string => !!x))];
+}
+
+/**
  * `## <heading>` with the record's own strengths / weaknesses / opportunities
  * / threats lists — groups with nothing recorded are omitted, and a score
  * carrying none of the four produces no section at all.

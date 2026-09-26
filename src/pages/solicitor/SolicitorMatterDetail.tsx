@@ -60,6 +60,7 @@ import {
   type LegalMatterDocument, type LegalMatterRequisition, type LegalMatterSearch,
   type LegalRequisitionStatus, type LegalSearchStatus,
 } from '@/lib/legalDocuments';
+import { houseLabel } from '@/lib/houseLabel';
 
 type PermissionMatrix = Record<string, { view?: boolean; edit?: boolean; delete?: boolean }>;
 
@@ -509,7 +510,7 @@ export default function SolicitorMatterDetail() {
             <ShieldAlert className="mt-0.5 h-5 w-5 text-destructive" aria-hidden />
             <div>
               <p className="text-sm font-medium text-foreground">This matter is flagged at risk</p>
-              <p className="text-sm text-muted-foreground">{matter.risk_notes || 'Contact your NPC coordinator for context.'}</p>
+              <p className="text-sm text-muted-foreground">{matter.risk_notes || houseLabel('Contact your NPC coordinator for context.', 'Contact your coordinator for context.')}</p>
             </div>
           </CardContent>
         </Card>
@@ -882,7 +883,7 @@ export default function SolicitorMatterDetail() {
             <CardHeader>
               <CardTitle className="text-base">Notes</CardTitle>
               <CardDescription>
-                The client summary is shared with NPC and the client. Practice notes never leave this portal.
+                {houseLabel('The client summary is shared with NPC and the client. Practice notes never leave this portal.', 'The client summary is shared with the Command Centre and the client. Practice notes never leave this portal.')}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-4">
@@ -922,7 +923,7 @@ export default function SolicitorMatterDetail() {
         <DialogContent>
           <DialogHeader>
             <DialogTitle>Change matter status</DialogTitle>
-            <DialogDescription>NPC and the client see this change in their portals.</DialogDescription>
+            <DialogDescription>{houseLabel('NPC and the client see this change in their portals.', 'The Command Centre and the client see this change in their portals.')}</DialogDescription>
           </DialogHeader>
           <div className="space-y-4">
             <div className="grid gap-2">

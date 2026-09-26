@@ -9,8 +9,8 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { writeRenderArtifact } from '../../__tests__/renderArtifact';
 import { buildMarketIntelligenceReport } from '../normalise.pure';
-import { audiencePanels, renderMarketIntelligenceFromBrand } from '../render.pure';
-import { audiencePanelCount } from '../payload.pure';
+import { audiencePanels, brandCloseCallouts, renderMarketIntelligenceFromBrand } from '../render.pure';
+import { audiencePanelCount, BRAND_CLOSE_CALLOUTS } from '../payload.pure';
 import { buildReportBrandSnapshot } from '../../../../../supabase/functions/_shared/reportDesign/snapshot.pure';
 import { assertSafeRenderResources } from '../../../../../supabase/functions/_shared/renderResourcePolicy.pure';
 import { REPORT_ARCHETYPES } from '../../../../../supabase/functions/_shared/reportDesign/structure.pure';
@@ -184,6 +184,36 @@ describe('the brand', () => {
 
   it('names the tenant in the brand close', () => {
     expect(render(reportRow()).html).toContain(`Why ${TENANT}?`);
+  });
+
+  it('carries no advisory close on a document issued under the platform', () => {
+    // A deployment that has named nobody issues under the platform, and the
+    // platform is not an advisory: the closing page of that same document says
+    // so. "Why Aurixa Systems? Aurixa Systems is a strategic property advisory"
+    // would contradict it — the rule the browser generator already applies.
+    const { snapshot: unbranded } = buildReportBrandSnapshot({
+      whitelabel: null,
+      contact: {} as never,
+      capturedAt: PREPARED_ON,
+    });
+    const built = buildMarketIntelligenceReport({
+      row: reportRow() as never,
+      preparedOn: PREPARED_ON,
+      brandName: unbranded.company.name,
+    });
+    if (built.ok === false) throw new Error(built.error);
+    const html = renderMarketIntelligenceFromBrand({ report: built.report, snapshot: unbranded }).html;
+    expect(html).toContain('Aurixa Systems');
+    expect(html).not.toContain('Why Aurixa Systems?');
+    expect(html).not.toMatch(/Aurixa Systems<\/?[a-z]*>? is a strategic property advisory|Aurixa Systems is a strategic property advisory/);
+    expect(html).not.toContain('Contact Aurixa Systems');
+    // The model's own call to action still prints under its heading.
+    expect(html).toContain('Your Next Steps');
+  });
+
+  it('counts the close it prints: two for a business, none for the platform', () => {
+    expect(brandCloseCallouts(TENANT)).toBe(BRAND_CLOSE_CALLOUTS);
+    expect(brandCloseCallouts('Aurixa Systems')).toBe(0);
   });
 });
 

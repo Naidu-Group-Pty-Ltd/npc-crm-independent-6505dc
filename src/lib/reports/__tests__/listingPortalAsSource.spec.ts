@@ -73,7 +73,7 @@ describe('a hazard clearance on a listing\'s authority is an ERROR', () => {
   it('names what is wrong and what the permitted form is', () => {
     const f = findingFor(doc(MEASURED), 'portal-sourced-hazard-clearance');
     expect(f?.message).toContain('not a planning authority');
-    expect(f?.message).toContain('Checked and not mapped at this coordinate');
+    expect(f?.message).toContain('Checked and not mapped at the property');
   });
 });
 

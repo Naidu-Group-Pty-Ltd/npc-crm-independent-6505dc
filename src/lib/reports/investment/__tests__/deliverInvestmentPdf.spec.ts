@@ -231,6 +231,7 @@ describe('produceInvestmentDocument', () => {
   it('draws the standard document in the browser when no template applies', async () => {
     tryTemplate.mockResolvedValue(null);
     draw.mockResolvedValue(standardDrawing());
+    invoke.mockResolvedValue({ data: { report: { id: 'r-1' }, photographs: [], floorPlans: [] }, error: null } as never);
 
     const doc = await produceInvestmentDocument('r-1');
 
@@ -239,9 +240,65 @@ describe('produceInvestmentDocument', () => {
     expect(doc.storagePath).toBeNull();
     expect(doc.fileName).toBe('r-1_Cowra_NSW_1.pdf');
     // The row is read through the broker, and the drawing happens here — no
-    // render route is invoked at all.
+    // render route is invoked at all. The one call made is the broker's read
+    // of the property's own pictures, by the reader a template uses.
     expect(loadRow).toHaveBeenCalledWith('r-1');
-    expect(invoke).not.toHaveBeenCalled();
+    expect(invoke.mock.calls.map(([name]) => name)).toEqual(['get-investment-reports']);
+    expect(invoke).toHaveBeenCalledWith(
+      'get-investment-reports',
+      expect.objectContaining({ reportId: 'r-1', photographs: true }),
+    );
+    expect(draw).toHaveBeenCalledWith(expect.objectContaining({ photographs: [], floorPlans: [] }));
+  });
+
+  it("carries the report's own lead photograph and floor plan into the standard document", async () => {
+    tryTemplate.mockResolvedValue(null);
+    draw.mockResolvedValue(standardDrawing());
+    invoke.mockResolvedValue({
+      data: {
+        report: { id: 'r-1' },
+        photographs: [{ url: 'https://storage.test/lead.png' }, { url: 'https://storage.test/second.png' }],
+        floorPlans: [{ url: 'https://storage.test/plan.png' }],
+      },
+      error: null,
+    } as never);
+    const png = new Uint8Array([0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a, 1, 2, 3]);
+    const fetched: string[] = [];
+    vi.stubGlobal('fetch', vi.fn(async (url: string) => {
+      fetched.push(String(url));
+      return {
+        ok: true,
+        headers: new Headers({ 'content-type': 'image/png' }),
+        blob: async () => new Blob([png], { type: 'image/png' }),
+      };
+    }));
+    try {
+      await produceInvestmentDocument('r-1');
+    } finally {
+      vi.unstubAllGlobals();
+    }
+
+    const handed = draw.mock.calls[0][0] as unknown as {
+      photographs: Array<{ format: string; bytes: Uint8Array }>;
+      floorPlans: Array<{ format: string }>;
+    };
+    expect(handed.photographs).toHaveLength(1);
+    expect(handed.photographs[0].format).toBe('png');
+    expect(Array.from(handed.photographs[0].bytes)).toEqual(Array.from(png));
+    expect(handed.floorPlans).toHaveLength(1);
+    // The cover takes the lead photograph alone, so the rest are never fetched.
+    expect(fetched).not.toContain('https://storage.test/second.png');
+  });
+
+  it('a picture that cannot be read never costs the standard document', async () => {
+    tryTemplate.mockResolvedValue(null);
+    draw.mockResolvedValue(standardDrawing());
+    invoke.mockRejectedValue(new Error('broker unreachable'));
+
+    const doc = await produceInvestmentDocument('r-1');
+
+    expect(doc.engine).toBe(BROWSER_PDF_RENDERER);
+    expect(draw).toHaveBeenCalledWith(expect.objectContaining({ photographs: [], floorPlans: [] }));
   });
 
   it('a report that cannot be read is an error, not an empty document', async () => {

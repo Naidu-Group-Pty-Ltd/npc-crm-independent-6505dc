@@ -10,6 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useSecureInvestmentReports } from '@/hooks/useSecureInvestmentReports';
 import { format } from 'date-fns';
+import { reportGeneratedAt } from '@/lib/reports/investment/reportGeneratedAt.pure';
 import { Save, Eye, MapPin, Calendar, FileText, AlertCircle, CheckCircle, Type, Link } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { logActivityDirect } from '@/hooks/useActivityLogger';
@@ -264,7 +265,7 @@ export function InvestmentReportEditor({ report, isOpen, onClose, onSave }: Inve
             </div>
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <Calendar className="h-3 w-3" />
-              {format(new Date(report.created_at), 'PPp')}
+              {format(new Date(reportGeneratedAt(report)?.at ?? report.created_at), 'PPp')}
             </div>
           </div>
         </DialogHeader>

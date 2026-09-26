@@ -33,6 +33,15 @@ import { hexToHsl, hslToHex } from './color.pure.ts';
 import type { ReportPreset } from './brandResolve.pure.ts';
 import type { CompanyContact, CompanyDisclaimer } from './companyBlock.pure.ts';
 import {
+  PLATFORM_DISCLAIMER,
+  WORKSPACE_DEFAULT_DISCLAIMER,
+  isHouseContactRow,
+  isHouseTradingName,
+  namesTheHouse,
+  resolveReportIssuer,
+  type IssuerDeployment,
+} from '../reports/issuerIdentity.pure.ts';
+import {
   resolveReportAsset,
   type BrandAssetMap,
   type AssetRejection,
@@ -127,6 +136,28 @@ export function normalizeBrandColour(value: unknown): string | null {
   return null;
 }
 
+/**
+ * The tenant's brand colour, read off a `whitelabel_settings` row the way every
+ * render route reads it: `theme_config.brandColour`, then the `primary_color`
+ * column the Branding page writes — then normalised, so a colour the routes
+ * would drop is dropped here too.
+ *
+ * Nine render routes spell the precedence inline as
+ * `themeConfig.brandColour ?? whitelabel.primary_color`. It is written here once
+ * for the documents drawn in the browser, which must answer "what is this
+ * tenant's colour?" exactly as the typeset ones do or one tenant prints in two
+ * colours. `??`, not `||`, on purpose: an empty `brandColour` is an answer
+ * ("none"), exactly as it is on the routes.
+ */
+export function whitelabelBrandColour(row: unknown): string | null {
+  if (!row || typeof row !== 'object') return null;
+  const record = row as Record<string, unknown>;
+  const theme = record.theme_config && typeof record.theme_config === 'object'
+    ? record.theme_config as Record<string, unknown>
+    : {};
+  return normalizeBrandColour(theme.brandColour ?? record.primary_color ?? '');
+}
+
 const text = (value: unknown): string => (typeof value === 'string' ? value.trim() : '');
 
 export interface BuildSnapshotInput {
@@ -146,6 +177,14 @@ export interface BuildSnapshotInput {
   document?: Partial<SnapshotDocument> | null;
   /** ISO-8601. Required — see the module comment. */
   capturedAt: string;
+  /**
+   * Which deployment is rendering. On a clone the house's identity is not the
+   * issuer's, whatever a seeded row says (`issuerIdentity.pure.ts`): a name
+   * that is the house's is passed over and a contact field that names it is
+   * left out. On the prime, and wherever it is not given, every value reads as
+   * stored.
+   */
+  deployment?: IssuerDeployment | null;
 }
 
 const PRESETS: readonly ReportPreset[] = [
@@ -175,6 +214,15 @@ export function buildReportBrandSnapshot(input: BuildSnapshotInput): BuildSnapsh
   const wl = input.whitelabel ?? {};
   const contact = input.contact ?? {};
   const assets = wl.assets ?? {};
+  const onClone = Boolean(input.deployment && !input.deployment.prime);
+  /** A company name as a clone may print it: never the house's. */
+  const ownName = (value: string): string => (onClone && isHouseTradingName(value) ? '' : value);
+  /**
+   * A contact value as a clone may print it: never one that names the house,
+   * and none at all from a contact row that is the house's own.
+   */
+  const houseRow = onClone && isHouseContactRow(contact);
+  const ownValue = (value: string): string => (onClone && (houseRow || namesTheHouse(value)) ? '' : value);
 
   const reportMark = resolveReportAsset(assets, 'report');
   const monoMark = resolveReportAsset(assets, 'report-mono');
@@ -188,13 +236,13 @@ export function buildReportBrandSnapshot(input: BuildSnapshotInput): BuildSnapsh
     // The white-label name wins: it is what the tenant configured for their
     // documents. `contact_details.company_name` is the older field and is the
     // fallback rather than the source.
-    name: text(wl.companyName) || text(contact.company_name),
-    tradingName: text(wl.tradingName),
-    abn: text(contact.abn),
-    website: text(contact.website),
-    email: text(contact.email),
-    phone: text(contact.phone),
-    address: text(contact.address),
+    name: ownName(text(wl.companyName)) || ownName(text(contact.company_name)),
+    tradingName: ownName(text(wl.tradingName)),
+    abn: ownValue(text(contact.abn)),
+    website: ownValue(text(contact.website)),
+    email: ownValue(text(contact.email)),
+    phone: ownValue(text(contact.phone)),
+    address: ownValue(text(contact.address)),
   };
 
   const snapshot: ReportBrandSnapshot = {
@@ -208,7 +256,7 @@ export function buildReportBrandSnapshot(input: BuildSnapshotInput): BuildSnapsh
     },
     document: {
       confidentiality: text(input.document?.confidentiality),
-      preparedBy: text(input.document?.preparedBy),
+      preparedBy: ownName(text(input.document?.preparedBy)),
     },
     source: {
       whitelabelSettingId: text(wl.id) || null,
@@ -230,6 +278,29 @@ export function buildReportBrandSnapshot(input: BuildSnapshotInput): BuildSnapsh
   });
 
   return { snapshot, skippedAssets };
+}
+
+/**
+ * The stored disclaimer as a clone's document may print it.
+ *
+ * The house's wording is the house's statement about the house, so on a clone
+ * a disclaimer that names it gives way to the issuer's default: the workspace
+ * wording under the clone's own name, or the platform's where the clone has
+ * named nobody. Anything else — the clone's own words, its choice to print
+ * none — is returned exactly as stored, and on the prime nothing is touched.
+ */
+export function issuerDisclaimerSetting<D extends Record<string, unknown>>(
+  disclaimer: D | null,
+  snapshot: ReportBrandSnapshot,
+  deployment?: IssuerDeployment | null,
+): D | null {
+  if (!disclaimer || !deployment || deployment.prime) return disclaimer;
+  if (disclaimer.is_enabled === false || !namesTheHouse(disclaimer.text)) return disclaimer;
+  const issuer = resolveReportIssuer({ companyName: snapshot.company.name }, deployment);
+  return {
+    ...disclaimer,
+    text: issuer.kind === 'platform' ? PLATFORM_DISCLAIMER : WORKSPACE_DEFAULT_DISCLAIMER,
+  };
 }
 
 /** Deterministic JSON with sorted keys, so the hash does not depend on key order. */

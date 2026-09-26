@@ -61,6 +61,54 @@ function alreadyPresent(address: string, part: string): boolean {
   return haystack.includes(needle);
 }
 
+/** A trailing state or postcode, in any spelling `alreadyPresent` accepts. */
+const LOCALITY_TAIL = /\s*(?:\b(?:nsw|vic|qld|sa|wa|tas|nt|act|new south wales|victoria|queensland|south australia|western australia|tasmania|northern territory|australian capital territory)\b|\b\d{4}\b|\baustralia\b)\s*$/;
+
+/**
+ * Does the address already carry `suburb` AS ITS SUBURB — in the locality
+ * position, after the street line — rather than merely containing the word?
+ *
+ * `alreadyPresent` answers "is the word anywhere", which is right for a state
+ * or a postcode and wrong for a suburb: Australian streets are named after the
+ * suburbs they run through. Measured 24 Sep 2026 on a realestate.com.au
+ * listing — street `93 Schofields Farm Road (tallawong)`, suburb `Schofields`
+ * — the word test found "Schofields" inside the street name, dropped the
+ * suburb, and the report was filed as `93 Schofields Farm Road (tallawong)
+ * NSW 2762`. Nothing downstream could place it: the geocoder took
+ * "(tallawong)" for the suburb, the geography never resolved, and the report
+ * was written with eight evidence sources missing and its grade withheld.
+ *
+ * Each comma-separated part is read with its locality tail set aside one word
+ * at a time — "mount victoria nsw 2786", "mount victoria nsw", "mount
+ * victoria", "mount" — and a part that was nothing but a tail is dropped. The
+ * suburb is carried when a reading of a part AFTER the first is exactly the
+ * suburb, or when a reading of the last part is the suburb or ENDS with it.
+ * "12 Schofields Road" ends with its street type, so the suburb is added;
+ * "12 Smith Street Schofields NSW 2762" and "Unit 3, 12 Smith St Bowral" end
+ * with the suburb, so it is not added twice. Every reading is kept, not only
+ * the last, because a suburb's own name can end in a state's: stripped to the
+ * end, Mount Victoria and Port Victoria lose the word that makes them.
+ */
+function carriesSuburb(address: string, suburb: string): boolean {
+  const normalise = (value: string) =>
+    value.toLowerCase().replace(/\./g, '').replace(/\s+/g, ' ').trim();
+  const readings = (value: string): string[] => {
+    const out = [normalise(value)];
+    for (;;) {
+      const current = out[out.length - 1];
+      const next = current.replace(LOCALITY_TAIL, '').trim();
+      if (next === current) return out;
+      out.push(next);
+    }
+  };
+  const target = normalise(suburb);
+  if (!target) return true;
+  const parts = address.split(',').map(readings).filter((part) => part[part.length - 1] !== '');
+  if (!parts.length) return false;
+  if (parts.slice(1).some((part) => part.includes(target))) return true;
+  return parts[parts.length - 1].some((reading) => reading === target || reading.endsWith(` ${target}`));
+}
+
 /**
  * The full address, from whatever the extractor produced.
  *
@@ -86,8 +134,10 @@ export function composePropertyAddress(parts: ExtractedAddressParts): string {
   let composed = address;
 
   // The suburb joins with a comma; the state and postcode ride together after
-  // it, which is how an Australian address is written.
-  if (suburb && !alreadyPresent(composed, suburb)) {
+  // it, which is how an Australian address is written. The suburb is judged
+  // by POSITION (`carriesSuburb`), never by the word appearing somewhere —
+  // a street named after its suburb is the ordinary case.
+  if (suburb && !carriesSuburb(composed, suburb)) {
     composed = `${composed}, ${suburb}`;
   }
   if (state && !alreadyPresent(composed, state)) {

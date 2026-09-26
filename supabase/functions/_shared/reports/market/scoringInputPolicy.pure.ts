@@ -369,6 +369,15 @@ export const LOCATION_PRESENTED_UNVERIFIED =
   // checked by Deno alone — so it read clean locally and failed CI.
   'Not assessed — the location readings recorded for this property could not be matched to it with the evidence stored alongside them.';
 
+/**
+ * Location's third case: readings WERE presented, and were measured from the
+ * centre of the suburb because the address could be placed no finer. The
+ * readings describe the area, so they are not scored as the property's — and
+ * the reader is told that, not that a stamp was missing.
+ */
+export const LOCATION_MEASURED_AT_AREA_CENTRE =
+  'Not assessed — the address could be placed only at the centre of its suburb, so the location readings describe the suburb rather than this property.';
+
 /** The label a dimension carries where it did score. */
 export const ASSESSED_LABEL = 'Measured' as const;
 

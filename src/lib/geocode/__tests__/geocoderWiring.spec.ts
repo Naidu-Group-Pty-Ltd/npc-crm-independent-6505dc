@@ -76,7 +76,7 @@ describe('one geocoder', () => {
     // The centre-of-the-continent sentinel and "matched the state, not the
     // address" were Google's failure modes; OpenStreetMap has the same ones.
     expect(CHAIN).toContain('assessGeocodeGranularity(result.lat, result.lng, result.types)');
-    for (const provider of ['askNominatim', 'askAbsLocality', 'askGoogle']) {
+    for (const provider of ['askNominatim', 'askPhoton', 'askAbsLocality', 'askGoogle']) {
       const start = CHAIN.indexOf(`async function ${provider}(`);
       const end = CHAIN.indexOf('\n}', start);
       expect(CHAIN.slice(start, end), provider).toContain('return gated(');
@@ -224,8 +224,9 @@ describe('the configuration is declared where an operator looks', () => {
 
   it('documents every name the chain reads, with its default', () => {
     for (const [name, fallback] of [
-      ['GEOCODER_PROVIDERS', 'nominatim,abs_locality'],
+      ['GEOCODER_PROVIDERS', 'gnaf,nominatim,photon,abs_locality'],
       ['GEOCODER_OSM_URL', 'https://nominatim.openstreetmap.org'],
+      ['GEOCODER_PHOTON_URL', 'https://photon.komoot.io'],
       ['OSM_GEOCODING_DAILY_LIMIT', '2000'],
       ['ADDRESS_AUTOCOMPLETE_PROVIDER', 'osm'],
       ['AUTOCOMPLETE_PHOTON_URL', 'https://photon.komoot.io'],

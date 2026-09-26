@@ -15,6 +15,7 @@ import {
   type PdfTableStyle,
 } from "./premiumPdfDesign";
 import { REPORT_DESIGN_CONTROLS_VISIBLE } from "@/lib/reports/designControlsVisibility";
+import { houseLabel } from '@/lib/houseLabel';
 
 interface PremiumPdfDesignPanelProps {
   value: PdfDesignOptions;
@@ -58,7 +59,7 @@ export function PremiumPdfDesignPanel({ value, onChange }: PremiumPdfDesignPanel
           <Select value={value.preset} onValueChange={(preset) => patch({ preset: preset as PdfDesignPreset })}>
             <SelectTrigger className="h-9"><SelectValue /></SelectTrigger>
             <SelectContent>
-              <SelectItem value="signature">NPC Signature Gold</SelectItem>
+              <SelectItem value="signature">{houseLabel('NPC Signature Gold', 'Signature Gold')}</SelectItem>
               <SelectItem value="editorial_navy">Editorial Navy</SelectItem>
               <SelectItem value="minimal_ink">Minimal Ink</SelectItem>
               <SelectItem value="high_contrast">High Contrast</SelectItem>

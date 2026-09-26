@@ -66,6 +66,35 @@ describe('the question', () => {
     expect(streetLineOf({ address: '291 Stone Mason Drive, Kellyville NSW 2155' })).toBe('291 Stone Mason Drive');
     expect(streetLineOf({ address: 'Cobblebank VIC 3338' })).toBeNull();
   });
+
+  it('asks for the STREET when the address has no comma (24 Sep 2026)', () => {
+    // Report 79d677d6 was filed as `93 Schofields Farm Road (tallawong) NSW
+    // 2762`. With no comma the whole string was handed to `street`, and a
+    // bracketed note sat where the suburb is read: Nominatim was asked for a
+    // street called "93 Schofields Farm Road (tallawong) NSW 2762" in a city
+    // called "(tallawong)" and returned zero candidates. The chain strips the
+    // annotation before this is asked (see addressGeography.spec.ts); what is
+    // left must then ask for the street alone.
+    expect(streetLineOf({ address: '93 Schofields Farm Road NSW 2762' })).toBe('93 Schofields Farm Road');
+    expect(streetLineOf({ address: '12 Smith Street Scarborough Western Australia 6019', suburb: 'Scarborough' }))
+      .toBe('12 Smith Street');
+    expect(streetLineOf({ address: '12 Smith Street Kellyville NSW 2155', suburb: 'Kellyville' })).toBe('12 Smith Street');
+    const q = new URL(nominatimSearchUrl('https://nominatim.openstreetmap.org', {
+      address: '93 Schofields Farm Road NSW 2762', street: streetLineOf({ address: '93 Schofields Farm Road NSW 2762' }),
+      state: 'NSW', postcode: '2762',
+    }));
+    expect(q.searchParams.get('street')).toBe('93 Schofields Farm Road');
+    expect(q.searchParams.get('postalcode')).toBe('2762');
+    expect(q.searchParams.has('city')).toBe(false);
+  });
+
+  it('never strips a suburb that would leave no street, and reads a comma address exactly as before', () => {
+    // "Blacktown Road" is a street named after its suburb: removing the
+    // suburb's name would leave nothing that reads as a street.
+    expect(streetLineOf({ address: 'Blacktown Road NSW 2148', suburb: 'Blacktown Road' })).toBe('Blacktown Road');
+    expect(streetLineOf({ address: '291 Stone Mason Drive, Kellyville NSW 2155', suburb: 'Kellyville' })).toBe('291 Stone Mason Drive');
+    expect(streetLineOf({ address: '1408/5 Second Ave, Blacktown NSW 2148', suburb: 'Blacktown' })).toBe('1408/5 Second Ave');
+  });
 });
 
 describe('the choice', () => {
@@ -124,11 +153,11 @@ describe('the shared shape', () => {
   });
 
   it('parses the provider order and defaults to no Google', () => {
-    expect(parseProviderOrder(undefined)).toEqual(['nominatim', 'abs_locality']);
-    expect(parseProviderOrder('')).toEqual(['nominatim', 'abs_locality']);
+    expect(parseProviderOrder(undefined)).toEqual(['gnaf', 'nominatim', 'photon', 'abs_locality']);
+    expect(parseProviderOrder('')).toEqual(['gnaf', 'nominatim', 'photon', 'abs_locality']);
     expect(parseProviderOrder('nominatim, abs_locality, google')).toEqual(['nominatim', 'abs_locality', 'google']);
     expect(parseProviderOrder('google,nominatim,google')).toEqual(['google', 'nominatim']);
-    expect(parseProviderOrder('bing')).toEqual(['nominatim', 'abs_locality']);
+    expect(parseProviderOrder('bing')).toEqual(['gnaf', 'nominatim', 'photon', 'abs_locality']);
   });
 
   it('labels a pin by provider and precision, keeping Google\'s own words for Google', () => {

@@ -58,6 +58,7 @@ const PALETTE_GROUP: Record<string, string> = {
   'Reports & Analysis': 'Reports',
   'Client & CRM': 'Clients & CRM',
   Operations: 'Operations',
+  Portals: 'Portals',
   'Help & Usage': 'Help',
   Administration: 'Admin',
 };

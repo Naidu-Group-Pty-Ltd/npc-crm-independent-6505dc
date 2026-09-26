@@ -698,9 +698,13 @@ that answered *nothing here* from one nobody could ask.
    asked here that holds nothing here; `not_served`, `not_integrated`,
    `licence_restricted` and `unavailable` are four ways of never having asked.
    `RegisterReading` carries the distinction and the page prints
-   **"Searched, nothing found."** or **"Not searched."** accordingly — and the
-   rules name the register in each sentence, so the model cannot describe an
-   unsearchable register as one it searched.
+   **"Checked — nothing recorded."** or **"Not covered by this report."**
+   accordingly — and the rules name the register in each sentence, so the
+   model cannot describe an unsearchable register as one it searched. (They
+   read "Searched, nothing found." and "Not searched." until 26 Sep 2026: the
+   same distinction in the machine room's words. The pair is defined once in
+   `adviserVoice.pure.ts`, because the supply block prints it too — see
+   [`ADVISER_VOICE.md`](./ADVISER_VOICE.md).)
 
 ### 9.3 Where it lives
 
@@ -1377,3 +1381,51 @@ kind through `kindCell`'s amendment suffix and de-duplicates. A separate
 assertion reads every `kind:` literal the evidence builder writes — and every
 value of its `INSTRUMENT_LABEL` map — and fails if one has no guide, so a new
 finding kind cannot ship unexplained.
+
+## 15. Where the registers were asked (24 Sep 2026)
+
+Every rule above is about what a register ANSWERED. None of them could catch a
+register asked at the wrong place. On 24 Sep 2026 the public geocoder refused
+the production egress (see `GEOCODING_WITHOUT_GOOGLE.md` §17) and the chain
+placed `1408/5 SECOND AVE, Blacktown NSW 2148` at the ABS centroid of the whole
+suburb. The NSW zoning layer answered correctly for that point, and the page
+printed:
+
+- **"R2 — Low Density Residential"**, which was the answer for that point;
+- for a fourteenth-floor apartment in the town centre;
+- under the sentence "retrieved automatically at the property's verified
+  coordinate".
+
+Every cell carried its provenance, and every cell was about somebody else's
+lot.
+
+The fault was one stamp. `enrichmentCoordinate` called every enrichment point
+`address`, the only precision `planningCoordinate.pure.ts` says may select a
+parcel control. The geocoder had said `locality`, and the location service
+dropped it.
+
+Three rules now hold.
+
+1. **A register is asked only at the property or on its street.** The
+   enrichment records the precision it was placed at
+   (`enrichmentPoint.pure.ts`), and one rule judges it for both the enrichment
+   and a recovery: `address` and `street` are asked; a suburb or postal-area
+   centre is `too_coarse`. Then the page says, in the rules the prose must
+   follow, that the registers were not asked and why (`pointNotPlaced`), rather
+   than printing no reason, or a zone that belongs to another lot.
+2. **A street reading says it is one.** The owner's decision of 24 Sep 2026 is
+   that a street point reads the registers, because OpenStreetMap holds address
+   points for a fraction of Australian houses, and refusing streets would
+   withhold the zone on most reports until G-NAF is loaded. The price is
+   disclosure:
+   - the answer carries `pointBasis`;
+   - "What this is" reads "at a point on the property's street — the address
+     could be placed on its street but not on its lot";
+   - rule 6a tells the prose never to call it the lot's confirmed zoning.
+3. **A planning answer is reused only where it records its point**
+   (`planningPointIsRecorded`). Every answer stored before this rule records
+   none and is asked again. That is what keeps the Blacktown zone from being
+   served for the thirty days a `cadastral` answer otherwise lives.
+
+The sentence "the property's verified coordinate" is gone from the page.
+Whichever point was asked, the page now says what that point was.

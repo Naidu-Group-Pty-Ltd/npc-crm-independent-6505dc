@@ -28,6 +28,8 @@ import {
 } from '../market/scorePublicationPolicy.pure';
 import { SHADOW_METHODOLOGY_VERSION, SCORING_V2_METHODOLOGY_VERSION } from '../market/shadowScorer.pure';
 import {
+  LOCATION_MEASURED_AT_AREA_CENTRE,
+  LOCATION_PRESENTED_UNVERIFIED,
   NOT_ASSESSED_REASON,
   OVERALL_GRADE_UNAVAILABLE,
   authorityOf,
@@ -467,6 +469,37 @@ describe('Growth is no longer required before a grade is issued', () => {
     expect(record.evidenceStatement!.explanation).toContain('at least 3');
     expect(record.evidenceStatement!.explanation).toMatch(/location and rental yield|rental yield and location/);
     expect(record.recommendation).toBe(OVERALL_GRADE_UNAVAILABLE.explanation);
+  });
+});
+
+describe('Location measured from the centre of the suburb', () => {
+  /*
+   * 24 Sep 2026: with the public geocoder refusing us, Blacktown and
+   * Schofields were measured from the centres of their suburbs, and the walk
+   * score, commute and school count of those centres were counted as the
+   * properties' own. The verification now refuses them (rule 4) — and the gap
+   * the reader sees names that cause, not a missing stamp.
+   */
+  const presented = {
+    walkScore: 90, commuteTimeCBD: 34, schoolsNearby: 10,
+    amenities: [{ category: 'Public Transport', count: 1, distance: 0.72 }],
+  };
+
+  it('is not scored, and the gap says the readings describe the suburb', () => {
+    const record = scoreForProduction(base({
+      location: presented,
+      verifiedInputs: [],
+      locationPointRefusal: 'measured_at_area_centre',
+    }));
+    const gap = record.gradeGaps.find((g) => g.dimension === 'location');
+    expect(gap?.reason).toBe(LOCATION_MEASURED_AT_AREA_CENTRE);
+    expect(gap?.detail).toMatch(/centre of the suburb/);
+    expect(gap?.remedy).toMatch(/placed on its street/);
+  });
+
+  it('keeps the stamp sentence for every other unverified cause', () => {
+    const record = scoreForProduction(base({ location: presented, verifiedInputs: [] }));
+    expect(record.gradeGaps.find((g) => g.dimension === 'location')?.reason).toBe(LOCATION_PRESENTED_UNVERIFIED);
   });
 });
 

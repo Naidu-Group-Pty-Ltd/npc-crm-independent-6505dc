@@ -17,6 +17,9 @@
  *  - Law 2 throughout: a labelled row is a promise a figure follows it.
  */
 
+import { elsewhereOnly, inHomeSection } from './adviserVoice.pure.ts';
+import { readerNote } from '../planning/serviceNote.pure.ts';
+
 interface CellBase { status?: unknown; note?: unknown }
 
 export interface PlanningPromptInput {
@@ -39,10 +42,15 @@ const fmtMoney = (v: number) => `$${Math.round(v).toLocaleString('en-AU')}`;
 
 const ok = (cell: CellBase | undefined): boolean => cell?.status === 'ok';
 
-/** An absent cell's one-line disclosure — the note the service wrote. */
-function absenceLine(label: string, cell: CellBase | undefined): string | null {
+/**
+ * An absent cell's one-line disclosure — the note the service wrote, in a
+ * reader's words (`readerNote`). The service's own words are diagnostics
+ * ("the only such register this report reads is Queensland's"), and a writer
+ * handed one copies it onto the client's page.
+ */
+function absenceLine(label: string, cell: CellBase | undefined, jurisdiction: string | null): string | null {
   if (!cell || ok(cell)) return null;
-  const note = str(cell.note);
+  const note = readerNote(str(cell.note), jurisdiction);
   return note ? `${label}: ${note}` : null;
 }
 
@@ -111,7 +119,7 @@ export function developmentInstrumentsBlock(input: PlanningPromptInput): string 
     return `**State development instruments at this property:**\n\n${lines.join('\n')}`;
   }
   if (cell.status === 'none_at_point') {
-    const note = str(cell.note);
+    const note = readerNote(str(cell.note), str(input.planningData?.jurisdiction));
     return note ? `**State development instruments:** ${note}` : '';
   }
   return '';
@@ -232,7 +240,9 @@ export function developmentActivityBlock(input: PlanningPromptInput): string {
 export function planningStatBlocks(input: PlanningPromptInput): string {
   const pd = input.planningData;
   if (!pd) {
-    return 'No planning lookup is available for this property (no verified coordinate). State that plainly in one sentence if planning is discussed; do not name a zone, and do not invent development activity.';
+    return `Planning controls for this property have not been confirmed for this report. ${inHomeSection('planning')} `
+      + 'say so once, and say that the council\'s planning certificate confirms them. '
+      + `${elsewhereOnly('planning')} Do not name a zone, and do not invent development activity.`;
   }
   const parts = [
     zoningBlock(input),
@@ -241,16 +251,18 @@ export function planningStatBlocks(input: PlanningPromptInput): string {
     developmentActivityBlock(input),
   ].filter((b) => b !== '');
 
+  const jurisdiction = str(pd.jurisdiction);
   const absences = [
-    absenceLine('Zoning', pd.zoning),
-    absenceLine('Parcel attributes', pd.parcel),
-    absenceLine('Development applications', pd.developmentActivity),
+    absenceLine('Zoning', pd.zoning, jurisdiction),
+    absenceLine('Lot details', pd.parcel, jurisdiction),
+    absenceLine('Development applications', pd.developmentActivity, jurisdiction),
   ].filter((l): l is string => l !== null);
   if (absences.length > 0) {
     parts.push(`**Not available for this property, and why:**\n${absences.map((a) => `- ${a}`).join('\n')}`);
   }
 
-  const verification = str(pd.verification);
+  const verification = str(pd.verification)
+    ?.replace(/^A spatial layer is indicative/i, 'A published map is indicative only');
   if (verification) parts.push(verification);
 
   parts.push(

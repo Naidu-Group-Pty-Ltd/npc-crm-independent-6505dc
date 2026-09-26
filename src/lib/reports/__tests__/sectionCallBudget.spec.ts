@@ -63,7 +63,9 @@ describe('the section call budget', () => {
   it('the deadline is the run\'s clock less the post-processing reserve on the closing section', () => {
     expect(GENERATOR).toContain('const sectionDeadlineAt = runStartedAt + SECTION_CALL_HARD_STOP_MS');
     expect(GENERATOR).toContain('- (isLastSection ? POST_PROCESSING_RESERVE_MS : 0);');
-    expect(GENERATOR).toContain('sectionDeadlineAt,\n        );');
+    // The deadline is the call's last timing argument; the correction a
+    // rejected Risk Dashboard earned (`compassSectionContract.ts`) follows it.
+    expect(GENERATOR).toContain('sectionDeadlineAt,\n          sectionCorrection,\n        );');
   });
 
   it('no window is a deferral — a hand-off, never a failed section', () => {

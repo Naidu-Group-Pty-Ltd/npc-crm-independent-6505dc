@@ -17,6 +17,7 @@ import {
   PIPELINE_STAGES, RISK_LEVEL_CLASSES, RISK_LEVEL_LABELS, fetchPipelineBoard,
   formatCompactCurrency, moveMatter, type MatterRiskAssessment,
 } from '@/lib/solicitorIntelligence';
+import { houseLabel } from '@/lib/houseLabel';
 
 const TERMINAL_STATUSES = new Set<LegalMatterStatus>(['settled', 'post_settlement', 'terminated']);
 
@@ -109,7 +110,7 @@ export default function SolicitorPipeline() {
         <SolicitorEmptyState
           icon={<KanbanSquare className="h-6 w-6" aria-hidden />}
           title="No matters on the board"
-          description="Matters appear here as soon as NPC shares a client file with your practice."
+          description={houseLabel('Matters appear here as soon as NPC shares a client file with your practice.', 'Matters appear here as soon as a client file is shared with your practice.')}
           actionLabel="Refresh board"
           onAction={() => void load()}
           secondaryLabel="Back to dashboard"

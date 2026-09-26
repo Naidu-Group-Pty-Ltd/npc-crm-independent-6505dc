@@ -59,7 +59,10 @@ describe('an operator-entered attribute reaches the document', () => {
   it('publishes build size and the car count', () => {
     const p = projectInvestmentReport(ACER as never).property;
     expect(p.buildingArea).toBe(253);
-    expect(p.configuration).toBe('2 car');
+    // The car count reaches the page — and a configuration missing its rooms
+    // says so, rather than reading as the whole configuration (60 Lawley
+    // Street, 25 Sep 2026: "Configuration · 2 car").
+    expect(p.configuration).toBe('2 car · bedrooms and bathrooms not recorded');
   });
 
   it('accepts the alternate spellings production also stores', () => {

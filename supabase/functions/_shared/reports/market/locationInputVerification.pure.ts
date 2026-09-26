@@ -41,6 +41,13 @@
  *   3. the reading itself is a finite number on the object the stamp is
  *      attached to — the stamp vouches for the acquisition, not for a field
  *      somebody deleted.
+ *   4. the point the readings were measured FROM was the property or its
+ *      street (`enrichmentPoint.pure.ts`). On 24 Sep 2026 two reports were
+ *      measured from the centre of their suburbs while the public geocoder
+ *      refused us, and the walk score, the commute and the school count of
+ *      that centre were counted as the property's own. An area's centre
+ *      describes the area; a stamp that records no precision proves nothing
+ *      about which it was. Either verifies nothing, and says which it was.
  *
  * Derived HERE, in the scoring service, rather than accepted from the caller:
  * `verifiedInputs` on a request body would let any caller assert trust, and
@@ -55,14 +62,24 @@ import {
   type EnrichmentAcquisition,
   type EnrichmentSubject,
 } from '../location/locationEnrichmentReuse.pure.ts';
+import { enrichmentPointOf, pointIsAnAreaCentre } from '../location/enrichmentPoint.pure.ts';
 
 export type VerifiableLocationInput = 'walkScore' | 'commuteTimeCBD' | 'schoolsNearby';
+
+/**
+ * Why NOTHING was verified because of the point itself, where that was the
+ * cause — so the grade's gap can say it in the reader's terms rather than
+ * blaming the acquisition stamp.
+ */
+export type LocationPointRefusal = 'measured_at_area_centre' | 'point_precision_unrecorded';
 
 export interface LocationInputVerification {
   /** The inputs this run may count, in the input policy's vocabulary. */
   verified: VerifiableLocationInput[];
   /** Why the rest did not qualify — for the function log, never the client. */
   notes: string[];
+  /** Set where rule 4 refused every reading. */
+  pointRefusal?: LocationPointRefusal;
 }
 
 const NONE = (note: string): LocationInputVerification => ({ verified: [], notes: [note] });
@@ -101,6 +118,27 @@ export function verifiedLocationInputs(
   }
 
   const stages = stamp.stages ?? ({} as EnrichmentAcquisition['stages']);
+
+  // Rule 4 — the point, before any reading taken from it.
+  const point = enrichmentPointOf(record);
+  if (pointIsAnAreaCentre(point.precision)) {
+    return {
+      verified: [],
+      notes: [
+        `the readings were measured from the centre of the ${point.precision === 'postcode' ? 'postal area' : 'suburb'}`
+        + ` (${point.provider ?? 'provider unrecorded'}), not the property — they describe the area`,
+      ],
+      pointRefusal: 'measured_at_area_centre',
+    };
+  }
+  if (!point.recorded) {
+    return {
+      verified: [],
+      notes: ['the acquisition stamp records no geocode precision, so it cannot show the readings were measured from the property'],
+      pointRefusal: 'point_precision_unrecorded',
+    };
+  }
+
   const verified: VerifiableLocationInput[] = [];
   const notes: string[] = [];
 

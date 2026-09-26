@@ -5,6 +5,11 @@ import { PDFDocument, rgb, StandardFonts, PDFPage, PDFFont } from "https://esm.s
 import { verifyAuth, createUnauthorizedResponse } from '../_shared/auth.ts';
 import { enforceCsrf, csrfDenied } from "../_shared/csrfGuard.ts";
 import { getBrandConfig } from '../_shared/brand-config.ts';
+import { loadReportWriterIdentity } from '../_shared/reports/writerIdentity.ts';
+import { firmClause } from '../_shared/reports/writerFirm.pure.ts';
+import { deploymentKind } from '../_shared/emailIdentity.pure.ts';
+import { documentLetterhead } from '../_shared/reports/issuerIdentity.pure.ts';
+import { escapeHtml, getEmailIdentity, resendAddressing } from '../_shared/emailIdentity.ts';
 import { logApiUsage, extractOpenAIUsage } from '../_shared/logApiUsage.ts';
 import { createUsageTrackingStream } from '../_shared/streamUsageLogger.ts';
 import { runAgentLoop, agentLoopHasTools, type AgentLoopProvider } from '../_shared/agent-loop.ts';
@@ -1835,9 +1840,11 @@ Deno.serve(async (req) => {
       // Prepended to every variant so the agent answers as a senior AU property
       // finance strategist — not just a report reader. Reinforces tool-use over
       // estimation, AU localisation, and compliance guardrails.
-      const _brandCfg = await getBrandConfig();
+      // Who the writer works for (`writerFirm.pure.ts`): unchanged on the
+      // prime; on a clone its own business, never the house, or none at all.
+      const _writerQa = await loadReportWriterIdentity();
       const FINANCE_PERSONA = `# ROLE: Senior Australian Property Finance Strategist
-You are a senior property finance strategist for ${_brandCfg.companyName}, combining the lens of a mortgage broker, portfolio strategist, and investment analyst. You advise on real-world decisions, not just report contents.
+You are a senior property finance strategist${firmClause(_writerQa.firm, 'for')}, combining the lens of a mortgage broker, portfolio strategist, and investment analyst. You advise on real-world decisions, not just report contents.
 
 ## DOMAINS OF EXPERTISE
 - **Lending & serviceability**: borrowing capacity, DTI, HEM, LVR tiering, LMI, lender policy nuances, P&I vs IO, offset/redraw, refinance & equity release timing
@@ -1881,7 +1888,7 @@ You are a senior property finance strategist for ${_brandCfg.companyName}, combi
       const isMultiReportContext = isMultiReport || (reportNames && reportNames.length > 1);
       
       if (isMultiReportContext && hasContext) {
-        systemPrompt = FINANCE_PERSONA + `You are an expert Australian investment property analyst and advisor for ${(await getBrandConfig()).companyName}. You have been provided with MULTIPLE investment reports for SIDE-BY-SIDE COMPARISON analysis.
+        systemPrompt = FINANCE_PERSONA + `You are an expert Australian investment property analyst and advisor${firmClause(_writerQa.firm, 'for')}. You have been provided with MULTIPLE investment reports for SIDE-BY-SIDE COMPARISON analysis.
 
 ## YOUR EXPERTISE
 - Deep knowledge of Australian property markets across all states and territories
@@ -1908,7 +1915,7 @@ You MUST structure every answer in this exact order:
 ## REPORT DATA
 ${contextSection}`;
       } else if (hasContext) {
-        systemPrompt = FINANCE_PERSONA + `You are an expert Australian investment property analyst and advisor for ${(await getBrandConfig()).companyName}. You have been provided with investment property report data to analyze.
+        systemPrompt = FINANCE_PERSONA + `You are an expert Australian investment property analyst and advisor${firmClause(_writerQa.firm, 'for')}. You have been provided with investment property report data to analyze.
 
 ## YOUR EXPERTISE
 - Deep knowledge of Australian property markets across all states and territories
@@ -1942,7 +1949,7 @@ ${contextSection}`;
 ${contextSection}`;
       } else if (ragContext) {
         // No reports loaded but we have RAG context from knowledge base
-        systemPrompt = FINANCE_PERSONA + `You are an expert Australian investment property analyst and advisor for ${(await getBrandConfig()).companyName}.
+        systemPrompt = FINANCE_PERSONA + `You are an expert Australian investment property analyst and advisor${firmClause(_writerQa.firm, 'for')}.
 
 ## YOUR EXPERTISE
 - Deep knowledge of Australian property markets across all states and territories
@@ -1970,7 +1977,7 @@ ${contextSection}`;
 ${ragContext}`;
       } else {
         // Open-ended conversation without document context
-        systemPrompt = FINANCE_PERSONA + `You are an expert Australian investment property analyst and advisor for ${(await getBrandConfig()).companyName}, a property investment advisory firm.
+        systemPrompt = FINANCE_PERSONA + `You are an expert Australian investment property analyst and advisor${_writerQa.firm === null ? '' : ` for ${_writerQa.firm}, a property investment advisory firm`}.
 
 ## YOUR EXPERTISE
 - Deep knowledge of Australian property markets across all states and territories (Sydney, Melbourne, Brisbane, Perth, Adelaide, Hobart, Darwin, Canberra, and regional areas)
@@ -3126,8 +3133,12 @@ Be thorough and include ALL specific numbers, percentages, and data points menti
         return `**${role}:**\n${m.content}`;
       }).join('\n\n---\n\n');
 
-      const _brandSum = await getBrandConfig();
-      const summarizePrompt = `You are a professional report writer for ${_brandSum.companyName}, an Australian property investment advisory firm.
+      // The summary names who prepared it; a document issued under the
+      // platform names nobody, because the platform prepared none of it
+      // (`writerFirm.pure.ts`).
+      const _writerSum = await loadReportWriterIdentity();
+      const _preparedBy = _writerSum.firm === null ? '' : `*Prepared by: ${_writerSum.firm}*\n`;
+      const summarizePrompt = `You are a professional report writer${_writerSum.firm === null ? '' : ` for ${_writerSum.firm}, an Australian property investment advisory firm`}.
 
 You have been given a raw Q&A conversation transcript between a property advisor and an AI analyst about investment property reports. Your task is to transform this raw conversation into a polished, structured analytical report suitable for client presentation.
 
@@ -3171,8 +3182,7 @@ Any other relevant information from the conversation.
 ---
 *Reports analyzed: ${(reportNames || []).join(', ') || 'N/A'}*
 *Generated: ${new Date().toLocaleDateString('en-AU', { year: 'numeric', month: 'long', day: 'numeric' })}*
-*Prepared by: ${_brandSum.companyName}*
-
+${_preparedBy}
 ## RAW CONVERSATION TRANSCRIPT
 ${transcript}`;
 
@@ -3682,6 +3692,15 @@ ${transcript}`;
 
       const resend = new Resend(RESEND_API_KEY);
 
+      // Sent as this deployment. The footer used to fall back to the prime's
+      // own mailbox wherever the tenant had configured none, so a clone's
+      // report named another business's address.
+      const identity = await getEmailIdentity(supabase);
+      const contactLine = [
+        identity.contactPhone ? `Phone: ${escapeHtml(identity.contactPhone)}` : null,
+        identity.contactEmail ? `Email: ${escapeHtml(identity.contactEmail)}` : null,
+      ].filter(Boolean).join(' | ');
+
       const htmlContent = `
         <!DOCTYPE html>
         <html>
@@ -3705,18 +3724,17 @@ ${transcript}`;
               <pre>${content}</pre>
             </div>
             <div class="footer">
-              <p>${(await getBrandConfig()).companyName}</p>
-              <p>Phone: ${(await getBrandConfig()).contactPhone || ''} | Email: ${(await getBrandConfig()).contactEmail}</p>
-              <p>Website: ${(await getBrandConfig()).contactWebsite || ''}</p>
+              <p>${escapeHtml(identity.organisationName)}</p>
+              ${contactLine ? `<p>${contactLine}</p>` : ''}
+              ${identity.contactWebsite ? `<p>Website: ${escapeHtml(identity.contactWebsite)}</p>` : ''}
             </div>
           </div>
         </body>
         </html>
       `;
 
-      const _brand = await getBrandConfig();
       const emailResponse = await resend.emails.send({
-        from: _brand.fromHeaderAdmin,
+        ...resendAddressing(identity, 'Admin'),
         to: [to],
         subject: subject || "Investment Report Summary",
         html: htmlContent,
@@ -3935,8 +3953,12 @@ ${cleanContent.length + 500}
           color: lightGray,
         });
         
+        // On a clone the letterhead is the issuer's own, never the house's name
+        // or mailbox the brand configuration falls back to; on the prime it
+        // reads exactly as it always did (`issuerIdentity.pure.ts`).
         const _brandPdf1 = await getBrandConfig();
-        coverPage.drawText(_brandPdf1.companyName, {
+        const _letterhead1 = documentLetterhead(_brandPdf1, { prime: deploymentKind(Deno.env.get('SUPABASE_URL')) === 'prime' });
+        coverPage.drawText(_letterhead1.name, {
           x: 50,
           y: 35,
           size: 10,
@@ -3944,7 +3966,7 @@ ${cleanContent.length + 500}
           color: primaryColor,
         });
         
-        coverPage.drawText(`${_brandPdf1.contactEmail}${_brandPdf1.contactPhone ? ' | ' + _brandPdf1.contactPhone : ''}`, {
+        coverPage.drawText([_letterhead1.email, _letterhead1.phone].filter(Boolean).join(' | '), {
           x: 50,
           y: 20,
           size: 9,
@@ -3995,7 +4017,10 @@ ${cleanContent.length + 500}
       };
 
       // Pre-fetch brand for footer (used inside createContentPage closure)
-      const _brandPdfFooter = await getBrandConfig();
+      const _brandPdfFooter = documentLetterhead(
+        await getBrandConfig(),
+        { prime: deploymentKind(Deno.env.get('SUPABASE_URL')) === 'prime' },
+      );
 
       // Helper function to create a content page with header/footer
       const createContentPage = (pageNum: number): PDFPage => {
@@ -4046,7 +4071,7 @@ ${cleanContent.length + 500}
         });
         
         // Footer text
-        page.drawText(`${_brandPdfFooter.companyName}${_brandPdfFooter.contactEmail ? ' | ' + _brandPdfFooter.contactEmail : ''}`, {
+        page.drawText(`${_brandPdfFooter.name}${_brandPdfFooter.email ? ' | ' + _brandPdfFooter.email : ''}`, {
           x: marginLeft,
           y: 30,
           size: 8,

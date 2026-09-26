@@ -271,7 +271,8 @@ describe('the specification table states facts or omits the row', () => {
     // the rule the rent work established. The model may say an attribute is
     // not recorded, and may discuss the suburb's stock without attributing it.
     const prose = GEN.replace(/\s+/g, ' ');
-    expect(prose).toContain('you may say it is not recorded');
+    expect(prose).toContain('you may say it is to be confirmed');
+    expect(prose).toContain('never call a feature a "recorded attribute"');
     expect(prose).toContain('do not attribute any of it to this property');
   });
 });

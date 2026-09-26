@@ -219,6 +219,18 @@ export function renderVizDirective(
      */
     const rows = all.filter((r) => !isPlaceholderValue(r.value));
     if (!rows.length) return null;
+    /*
+     * A comparison with one side left is not a comparison.
+     *
+     * Page 14 of the 60 Lawley Street Compass (25 Sep 2026) printed "Visible
+     * competing Houses in Spalding" over a one-row table — `Subject — | 3 bed`
+     * — because every competing listing carried a placeholder and only the
+     * subject survived. The heading promised competing stock and the table
+     * showed the subject; the prose around it already says what the listings
+     * are and are not. Where the model named two or more items and fewer than
+     * two survive, the figure declines rather than print half a comparison.
+     */
+    if (all.length >= 2 && rows.length < 2) return null;
     const caption = d.kind === 'bars' || d.kind === 'donut' ? d.title : undefined;
     const html = renderDataTable(
       [{ key: 'label', label: 'Item' }, { key: 'value', label: valueHeading, align: 'right' }],

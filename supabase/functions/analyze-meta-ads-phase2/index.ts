@@ -3,6 +3,7 @@ import { verifyAuth, createCorsHeaders, createUnauthorizedResponse } from '../_s
 import { enforceCsrf, csrfDenied } from "../_shared/csrfGuard.ts";
 import { callLLMRaw } from '../_shared/llmRouter.ts';
 import { internalError } from '../_shared/errorResponse.ts';
+import { loadWorkspaceIdentity } from '../_shared/workspaceIdentity.ts';
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -237,6 +238,11 @@ async function generateAIBudgetAnalysis(
     `- "${a.adset_name}" | CPL: ${a.cpl > 0 ? '$' + a.cpl.toFixed(2) : 'N/A'} | CTR: ${a.ctr.toFixed(2)}% | Perf Index: ${a.performance_index}/100 | ${a.insight}`
   ).join('\n');
 
+  // The worked example names an ad set. The prime's is its own; a clone's
+  // model is never shown the house's, which it would echo into its answer.
+  const exampleAdSet = (await loadWorkspaceIdentity({ readPrimeName: false })).deployment.prime
+    ? 'NPC – Property Strategy'
+    : 'Property Strategy';
   const prompt = `You are a senior performance marketing strategist for an Australian property buyers' agency. Analyze the budget allocation and audience performance data below and provide strategic recommendations.
 
 **Account Overview**: $${totalSpend.toFixed(2)} total spend, ${totalLeads} leads, ${totalLeads > 0 ? '$' + (totalSpend / totalLeads).toFixed(2) : 'N/A'} avg CPL
@@ -266,7 +272,7 @@ ${topAudiences || 'No audience data available.'}
 
 Example:
 :::success
-**Consolidate Spend**: Shift 100% of daily budget into the "NPC – Property Strategy" set for maximum ROI.
+**Consolidate Spend**: Shift 100% of daily budget into the "${exampleAdSet}" set for maximum ROI.
 :::
 
 :::tip

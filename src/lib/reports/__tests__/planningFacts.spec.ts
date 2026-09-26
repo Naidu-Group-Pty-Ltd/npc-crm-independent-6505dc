@@ -97,7 +97,7 @@ describe('what the report may state about planning', () => {
     for (const label of ['Minimum lot size', 'Maximum building height', 'Floor space ratio']) {
       expect(byLabel[label].value, `${label} must carry no figure`).toBeNull();
       expect(byLabel[label].status).toBe('not_published');
-      expect(byLabel[label].note).toMatch(/not published on any layer/);
+      expect(byLabel[label].note).toMatch(/not confirmed in this report/);
     }
     const rendered = renderPlanningControls(facts);
     expect(rendered).not.toMatch(/450\s*m²/);
@@ -116,7 +116,7 @@ describe('what the report may state about planning', () => {
     // finding. Queensland gets its own sentence because the reason is
     // jurisdictional (zoning and overlays are per-council there), and a
     // reader sent to "no integrated layer" would not know to ask the council.
-    expect(rendered).toMatch(/has not been read|none was looked up|was not (read|retrieved|checked)/i);
+    expect(rendered).toMatch(/has not been read|none was looked up|was not (read|retrieved|checked)|not covered by this report/i);
     expect(rendered).toMatch(/nothing here says whether a (council )?overlay applies/i);
     expect(rendered).not.toMatch(/no significant overlays/i);
     expect(rendered).not.toMatch(/no overlays? (apply|applies|identified|were found)/i);
@@ -137,7 +137,7 @@ describe('what the report may state about planning', () => {
     });
     expect(asked.overlays.status).toBe('none_at_point');
     const rendered = renderPlanningControls(asked);
-    expect(rendered).toMatch(/Checked and not mapped at this coordinate/);
+    expect(rendered).toMatch(/Checked and not mapped at the property/);
     expect(rendered).toMatch(/bushfire/);
     expect(rendered).toMatch(/flood/);
     // Still never a clearance: a layer is indicative at its own scale.
@@ -202,7 +202,7 @@ describe('what the report may state about planning', () => {
     });
     expect(facts.overlays.status).toBe('none_at_point');
     expect(facts.overlays.note).toContain('plus 1 strategic designation, listed below');
-    expect(facts.overlays.note).toContain('returned no mapped control');
+    expect(facts.overlays.note).toContain('No mapped control applies to the property');
   });
 
   it('keeps the five absences apart', () => {
@@ -246,7 +246,7 @@ describe('what the report may state about planning', () => {
     const rendered = renderPlanningControls(nsw);
     expect(rendered).toMatch(/NSW Planning Portal/);
     expect(rendered).toMatch(/current at 1 May 2026/);
-    expect(rendered).toMatch(/retrieved 16 Sep 2026/);
+    expect(rendered).toMatch(/accessed 16 Sep 2026/);
     expect(rendered).toMatch(/CC BY 4\.0/);
   });
 });
@@ -261,11 +261,11 @@ describe('an operator who has read the certificate outranks a layer', () => {
     expect(facts.zoning.status).toBe('operator_stated');
     // The layer said R2. The override is not overwritten by it, and it is not
     // dressed up as a published control either.
-    expect(facts.zoning.source).toMatch(/Operator override/);
+    expect(facts.zoning.source).toMatch(/Supplied by the adviser/);
     const lot = facts.controls.find((c) => c.label === 'Minimum lot size')!;
     expect(lot.value).toBe('600 m²');
     expect(lot.status).toBe('operator_stated');
-    expect(renderPlanningControls(facts)).toMatch(/\| Operator record \|/);
+    expect(renderPlanningControls(facts)).toMatch(/\| Supplied by the adviser \|/);
   });
 });
 
@@ -280,8 +280,8 @@ describe('an enrichment that never ran', () => {
 
   it('forbids the whole table rather than inviting a guess', () => {
     const rules = planningFactBlocks(facts);
-    expect(rules).toMatch(/Do NOT print a zoning table/);
-    expect(rules).toMatch(/Do NOT name a planning instrument/);
+    expect(rules).toMatch(/do NOT print a zoning table/i);
+    expect(rules).toMatch(/do NOT name a planning instrument/i);
   });
 });
 
@@ -308,10 +308,10 @@ describe('the rules reach the model, and they are not a section’s rules', () =
 
   it('claims the whole report, not a section', () => {
     const rules = planningFactBlocks(facts);
-    expect(rules).toMatch(/FOR THE WHOLE REPORT/);
+    expect(rules).toMatch(/prohibitions below apply in every section/);
     expect(rules, 'there is no planning section in the Compass list to scope these to')
       .not.toMatch(/RULES FOR THIS SECTION/);
-    expect(planningFactBlocks(buildPlanningFacts({}))).toMatch(/FOR THE WHOLE REPORT/);
+    expect(planningFactBlocks(buildPlanningFacts({}))).toMatch(/In every\s+section/);
   });
 
   it('says a web search is not a retrieval', () => {
@@ -362,7 +362,10 @@ describe('what the generator does with them', () => {
 
   it('puts the two tables in the document rather than asking for them back', () => {
     const append = generator.slice(generator.indexOf('END COMPASS POST-PROCESSOR'));
-    expect(append).toMatch(/## Planning controls and development registers/);
+    // Inside the chapter each is the evidence for, and under the section of
+    // their own only where that chapter is absent (the fallback).
+    expect(append).toContain('`### ${PLANNING_REGISTER_HEADING}');
+    expect(append).toContain('`## ${PLANNING_REGISTER_SECTION}');
     expect(append).toContain('${planningControlsTable}');
     expect(append).toContain('${infrastructureTable}');
     // Property reports only: a suburb report has no parcel to state them about.
@@ -386,7 +389,7 @@ describe('the rule about where a fact goes, not what it may say', () => {
   it('asks for the provenance once, and names where it belongs', () => {
     const r = rules();
     expect(r).toContain('State the provenance ONCE');
-    expect(r).toMatch(/register appended at the end/i);
+    expect(r).toMatch(/belong to the planning section alone/i);
   });
 
   it('does not soften a caveat, and says so', () => {
@@ -398,7 +401,7 @@ describe('the rule about where a fact goes, not what it may say', () => {
     // …and every prohibition it sits beside is still there.
     expect(r).toContain('Never write that no overlay applies');
     expect(r).toContain('An absence may NOT be rated');
-    expect(r).toContain('desktop research');
+    expect(r).toContain('desktop checks');
   });
 
   it('never tells the model to omit a control or its absence', () => {

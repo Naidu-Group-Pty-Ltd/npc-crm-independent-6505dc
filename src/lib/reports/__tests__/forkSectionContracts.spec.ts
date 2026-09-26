@@ -100,7 +100,7 @@ describe('QA-32 — a checklist is named as one, with its status', () => {
     expect(c.isChecklist).toBe(true);
     expect(c.heading).toBe('Property & Location Due Diligence Checklist');
     expect(c.checks).toBe(5);
-    expect(c.status).toContain('5 checks listed, none recorded as completed');
+    expect(c.status).toContain('5 checks outstanding before contract');
   });
   it('keeps the dashboard heading for rated entries', () => {
     const c = riskDashboardContract(REGISTER, 'Property & Location Risk Dashboard', 'Property & Location Due Diligence Checklist');

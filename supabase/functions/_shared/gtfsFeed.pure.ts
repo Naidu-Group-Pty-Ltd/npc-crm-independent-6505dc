@@ -512,10 +512,29 @@ export const GTFS_CANDIDATES: readonly GtfsCandidate[] = [
   },
   {
     key: 'wa_transperth',
-    label: 'Transperth (Western Australia)',
-    url: 'https://www.transperth.wa.gov.au/timetables/general-transit-feed-specification',
-    kind: 'page',
-    sandboxResult: 'page reachable from this repo sandbox but names no archive; data.gov.au returns no Transperth GTFS package',
+    label: 'Public Transport Authority of Western Australia (Transperth and the regional town services)',
+    // The page names no archive (it is a script-driven timetable app); the
+    // archive is addressed directly. Measured from this repo's sandbox on
+    // 25 Sep 2026: HTTP 200, `Accept-Ranges: bytes`, 27,814,548 bytes,
+    // Last-Modified 23 Sep 2026. Its `agency.txt` carries Transperth AND the
+    // regional town services — TransGeraldton, TransBunbury's peers,
+    // TransBroome, TransKarratha and more — so admitting it would cover
+    // regional WA as well as Perth. `stops.txt` is 1,451,393 bytes of a
+    // 162 MB uncompressed archive, and its header is written with a space
+    // after each comma, which `parseGtfsCsv` already trims.
+    //
+    // The terms are the PTA's own licence on its Spatial Data Access page:
+    // use, reproduction and redistribution are granted, provided the product
+    // states the data "is available free of charge from
+    // www.transperth.wa.gov.au", and PTA trademarks "may not be used in
+    // association with Data". How that second clause reads against naming
+    // the publisher on a report page is a licence decision for the owner,
+    // and the probe must still be run from the production egress before the
+    // feed is admitted with a measured stop floor.
+    url: 'https://www.transperth.wa.gov.au/TimetablePDFs/GoogleTransit/Production/google_transit.zip',
+    kind: 'archive',
+    sandboxResult: 'HTTP 200, 27,814,548 bytes, ranges honoured, from this repo sandbox, 2026-09-25; '
+      + 'agency.txt includes TransGeraldton (PTR-GDN) and the other regional town services',
   },
 ];
 

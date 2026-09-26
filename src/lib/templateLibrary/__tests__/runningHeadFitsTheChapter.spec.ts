@@ -150,7 +150,7 @@ describe('every master tells the reader which chapter they are in', () => {
     // The narrowest master is the binding case: if it fits there it fits.
     const narrowest = markers.reduce((a, b) => (
       markerLines(64, a) >= markerLines(64, b) ? a : b));
-    const wraps = (n: number) => chapters.filter((c) => markerLines(n(c.length), narrowest) > 1).length;
+    const wraps = (map: (len: number) => number) => chapters.filter((c) => markerLines(map(c.length), narrowest) > 1).length;
     expect(wraps((n) => n + 'Part 07 · '.length), 'wrapped with the part prefix').toBe(3);
     expect(wraps((n) => n), 'wrap without it').toBe(1);
   });

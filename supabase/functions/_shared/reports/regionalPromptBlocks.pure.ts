@@ -27,6 +27,7 @@ import {
   forwardDemandStatement,
   type ProjectionRegisterRead,
 } from './market/openData/projectionRegister.pure.ts';
+import { elsewhereOnly, inHomeSection } from './adviserVoice.pure.ts';
 
 interface Numericish { [key: string]: unknown }
 
@@ -68,11 +69,77 @@ function growthRow(label: string, w: Numericish | null | undefined, source: stri
   const total = num(w?.['totalPercent']);
   if (!window || annual === null || change === null || total === null) return null;
   const direction = change >= 0 ? '+' : '';
-  // Over one year the annual rate IS the total; repeating it is noise.
+  // Over one year the annual rate IS the total; repeating it is noise. Over
+  // several, the two are different statements and each is named as what it
+  // is — `+1.62% (0.32% a year)` was read as "0.3% between 2020 and 2025" on
+  // the Compass for 60 Lawley Street, Spalding (25 Sep 2026).
   const annualNote = annual === total
     ? `${direction}${total}%`
-    : `${direction}${total}% (${annual}% a year)`;
+    : `${direction}${total}% in total (an average of ${annual}% a year)`;
   return `| ${label} (${window}) | ${direction}${people(change)} people, ${annualNote} | ${source} |`;
+}
+
+/**
+ * How the table above is to be put into a sentence, shown rather than told.
+ *
+ * Measured on the Compass for 60 Lawley Street, Spalding (25 Sep 2026): the
+ * table said `+198 people, +1.62% (0.32% a year)` for 2020 to 2025, and the
+ * document said the population "increased by 0.3% between 2020 and 2025" on
+ * one page, "0.3% … to June 2025" on another and "0.3% in the year to June
+ * 2025" on a third — the yearly rate presented as the five-year change, and
+ * then as a one-year one. Every figure was the register's; the sentences
+ * disagreed with it and with each other. It also wrote "Geraldton's estimated
+ * resident population" for an ABS statistical area whose boundary is not the
+ * city's. A prohibition alone is what a model routes around, so the rule
+ * carries the permitted form, composed from THIS reading's own figures.
+ *
+ * Returns '' where no multi-year window was measured — a one-year row has one
+ * figure and nothing to confuse.
+ */
+export function populationWordingRule(input: RegionalPromptInput): string {
+  const t = input.regionalTrends;
+  const sa2Name = str((t?.['sa2'] as Numericish | undefined)?.['name']);
+  const pop = t?.['population'] as Numericish | undefined;
+  if (!sa2Name || !pop) return '';
+  for (const key of ['fiveYear', 'tenYear']) {
+    const w = pop[key] as Numericish | undefined;
+    const window = str(w?.['window']);
+    const annual = num(w?.['annualPercent']);
+    const change = num(w?.['changePeople']);
+    const total = num(w?.['totalPercent']);
+    const years = window ? /^(\d{4})\s+to\s+(\d{4})$/.exec(window) : null;
+    if (!years || annual === null || change === null || total === null || annual === total) continue;
+    const span = Number(years[2]) - Number(years[1]);
+    const verb = change >= 0 ? 'rose' : 'fell';
+    const area = `the surrounding statistical area (ABS SA2 "${sa2Name}")`;
+    return [
+      `HOW TO STATE THE POPULATION FIGURES. A multi-year row carries two different numbers: the TOTAL change across `
+      + `its window and the AVERAGE RATE A YEAR within it. Write the total with its window — "the population of ${area} `
+      + `${verb} ${Math.abs(total)}% between ${years[1]} and ${years[2]}, by ${people(Math.abs(change))} people" — or the `
+      + `rate with the words "a year" — "an average of ${Math.abs(annual)}% a year over those ${span} years". Never write `
+      + 'the yearly rate as the change between two years, never present a multi-year figure as a one-year one, and '
+      + 'never state a figure without the window it covers.',
+      `Name the area as the statistical area it is. "${sa2Name}" is the name of an ABS Statistical Area Level 2, and its `
+      + 'boundary is not the boundary of the town, suburb or council that shares the name — write "the surrounding '
+      + `statistical area" or "the ${sa2Name} SA2", never "${sa2Name}'s population" as though it were the town's.`,
+    ].join(' ');
+  }
+  return '';
+}
+
+/**
+ * The measured population table and the rule for stating it, for the pinned
+ * context. The table is the AUTHORITY for every population figure a section
+ * may state, and on 25 Sep 2026 it sat in the trimmed middle of the base
+ * prompt: the Lawley Street run kept about half of that prompt and a NSW run
+ * about a ninth, so most sections wrote the figure from whatever was left.
+ * The forward-demand half is pinned separately (`forwardDemandBlocks`), so it
+ * is not repeated here.
+ */
+export function populationTrendPin(input: RegionalPromptInput): string {
+  const block = populationTrendBlock(input);
+  if (block === '') return '';
+  return [block, populationWordingRule(input)].filter((part) => part !== '').join('\n\n');
 }
 
 export function populationTrendBlock(input: RegionalPromptInput): string {
@@ -131,11 +198,11 @@ function forwardDemandInstruction(input: RegionalPromptInput): string[] {
     : forwardDemandCoverageNote(input.forwardDemand ?? { kind: 'not_read' }, input.state ?? null);
   return [
     `**Forward demand — what this report holds:**\n\n${note}`,
-    'Where the analysis touches what the population is expected to do, use the statement above — '
-    + 'verbatim or closely paraphrased — and state no projected population, growth rate or horizon '
-    + 'of your own. Do NOT present the publisher named in it as a source this report consulted: '
-    + 'naming where a figure can be found and claiming to have read it are different statements, '
-    + 'and only the first is true here.',
+    `${inHomeSection('forwardDemand')} where the analysis touches what the population is expected to do, use the `
+    + `statement above — closely paraphrased in your own words. ${elsewhereOnly('forwardDemand')} In every `
+    + 'section: state no projected population, growth rate or horizon of your own, and do NOT present the '
+    + 'publisher named in it as a source this report consulted: naming where a figure can be found and '
+    + 'claiming to have read it are different statements, and only the first is true here.',
   ];
 }
 
@@ -160,8 +227,10 @@ export function regionalTrendBlocks(input: RegionalPromptInput): string {
       REGIONAL_WEB_SEARCH_RULE,
     ].join('\n\n');
   }
+  const wording = populationWordingRule(input);
   return [
     block,
+    ...(wording ? [wording] : []),
     'Discuss only the measured figures above, naming the SA2 and the windows. The SA2 may cover more than the suburb — ' +
     'say "the surrounding area" where they differ. Do NOT state an unemployment rate, ' +
     (projected

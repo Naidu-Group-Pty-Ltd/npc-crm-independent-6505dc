@@ -1,4 +1,9 @@
 import { readFileSync } from 'node:fs';
+import {
+  elsewhereOnly,
+  inHomeSection,
+  platformVocabularyIn,
+} from '../../../../supabase/functions/_shared/reports/adviserVoice.pure';
 import { describe, expect, it } from 'vitest';
 import {
   PUBLISHED_PROJECTS,
@@ -129,20 +134,24 @@ describe('the rendered block', () => {
    * branch — 100 because no coordinate existed at all. The page says which
    * absence it is now, and it still never draws an empty table.
    */
-  it('says the register was searched and holds nothing, where it was', () => {
+  it('says the list was checked and holds nothing nearby, where it was', () => {
     const md0 = renderPublishedProjects([], SEARCHED);
-    expect(md0).toContain('**Searched, nothing recorded.**');
+    expect(md0).toContain('**No major public project recorded nearby.**');
     expect(md0).toContain('within 15 km');
     expect(md0).toMatch(/RECORDED, not a finding about the area/);
     expect(md0).not.toContain('|');
   });
 
-  it('says it was NOT searched, and why, where no coordinate was usable', () => {
+  it('says they were NOT checked where no location was usable — in the reader\'s words', () => {
     const md0 = renderPublishedProjects([], NOT_SEARCHED);
-    expect(md0).toContain('**Not searched.**');
-    expect(md0).toContain(NOT_SEARCHED.reason);
+    expect(md0).toContain('**Major public projects were not checked.**');
     expect(md0).toContain('Nothing follows from that');
     expect(md0).not.toContain('|');
+    // The diagnostic is the operator's (the acquisition ledger records it);
+    // "the register is swept by coordinate" describes how the report was
+    // made, not the property (`adviserVoice.pure.ts`).
+    expect(md0).not.toContain(NOT_SEARCHED.reason);
+    expect(platformVocabularyIn(md0)).toEqual([]);
   });
 
   it('never tells a reader nothing is nearby when nothing was asked', () => {
@@ -234,8 +243,8 @@ describe('the two absences are two different instructions', () => {
   );
 
   it('does not tell the model a search happened when none did', () => {
-    expect(searchedEmpty).toMatch(/is recorded in this/);
-    expect(neverSearched).toMatch(/was NOT consulted/);
+    expect(searchedEmpty).toMatch(/is recorded among the projects we track/);
+    expect(neverSearched).toMatch(/could NOT be checked/);
     expect(neverSearched).not.toMatch(/no major public project near this property is recorded/);
   });
 
@@ -252,7 +261,18 @@ describe('the two absences are two different instructions', () => {
     }
   });
 
-  it('names the reason, so an operator can act on it', () => {
-    expect(neverSearched).toContain('no parcel-grade coordinate resolved.');
+  it('keeps the reason for the operator: the ledger records it and the writer is not handed it', () => {
+    // A model handed "no parcel-grade coordinate resolved" writes it on the
+    // client's page. The operator acts on it from the acquisition ledger.
+    expect(neverSearched).not.toContain('no parcel-grade coordinate resolved.');
+    const generator = readFileSync('supabase/functions/generate-investment-report/index.ts', 'utf8');
+    expect(generator).toMatch(/: publishedProjectSearch\.reason,\s*service: 'published-project-register'/);
+  });
+
+  it('says it once, in the infrastructure chapter, in both absences', () => {
+    for (const rules of [searchedEmpty, neverSearched]) {
+      expect(rules).toContain(inHomeSection('infrastructure'));
+      expect(rules).toContain(elsewhereOnly('infrastructure'));
+    }
   });
 });

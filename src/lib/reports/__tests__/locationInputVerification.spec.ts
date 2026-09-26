@@ -33,10 +33,12 @@ const enrichment = (over: Record<string, unknown> = {}, stampOver: Record<string
   [ENRICHMENT_STAMP]: {
     subjectKey: subjectKeyFor(SUBJECT),
     acquiredAt: '2026-09-16T07:09:12.226Z',
-    matchedAddress: 'Maryborough (Qld), Queensland',
+    matchedAddress: '262 Pallas Street, Maryborough, Queensland, 4650',
     attempt: 1,
     stages: {
       geocode: 'fetched',
+      geocodePrecision: 'address',
+      geocodeProvider: 'nominatim',
       places: 'complete',
       placesUnavailable: [],
       commute: 'measured',
@@ -91,7 +93,7 @@ describe('verifiedLocationInputs', () => {
     // confident-empty reading this platform refuses everywhere — while the
     // commute is its own stage and stands on its own evidence.
     const v = verifiedLocationInputs(enrichment({}, { stages: {
-      geocode: 'fetched', places: 'partial', placesUnavailable: ['healthcare'], commute: 'measured',
+      geocode: 'fetched', geocodePrecision: 'address', places: 'partial', placesUnavailable: ['healthcare'], commute: 'measured',
     } }), SUBJECT);
     expect(v.verified).toEqual(['commuteTimeCBD']);
     expect(v.notes.join(' ')).toContain('partial');
@@ -100,7 +102,7 @@ describe('verifiedLocationInputs', () => {
   it('an unmeasured commute (no_route, destination_unknown) never verifies commuteTimeCBD', () => {
     for (const commute of ['no_route', 'destination_unknown'] as const) {
       const v = verifiedLocationInputs(enrichment({}, { stages: {
-        geocode: 'fetched', places: 'complete', commute,
+        geocode: 'fetched', geocodePrecision: 'street', places: 'complete', commute,
       } }), SUBJECT);
       expect(v.verified, commute).toEqual(['walkScore', 'schoolsNearby']);
     }
@@ -145,5 +147,47 @@ describe('the wiring, at the source', () => {
 
   it('the policy records the wiring event in its version', () => {
     expect(SCORING_INPUT_POLICY_VERSION).toBe('1.1.0');
+  });
+});
+
+describe('rule 4 — the point the readings were measured from', () => {
+  /*
+   * The fixture above is 262 Pallas Street, Maryborough, and the first
+   * version of it carried `matchedAddress: 'Maryborough (Qld), Queensland'`
+   * — the ABS suburb centroid's own name. The enrichment it was modelled on
+   * was measured from the middle of Maryborough, and every one of its
+   * readings verified. On 24 Sep 2026 the same thing happened to Blacktown
+   * and Schofields while the public geocoder refused us.
+   */
+  const atCentre = (precision: 'locality' | 'postcode') => enrichment({}, {
+    matchedAddress: 'Maryborough (Qld), Queensland',
+    stages: {
+      geocode: 'fetched', geocodePrecision: precision, geocodeProvider: 'abs_locality',
+      places: 'complete', commute: 'measured',
+    },
+  });
+
+  it.each(['locality', 'postcode'] as const)('a %s centre verifies nothing, and says why', (precision) => {
+    const v = verifiedLocationInputs(atCentre(precision), SUBJECT);
+    expect(v.verified).toEqual([]);
+    expect(v.pointRefusal).toBe('measured_at_area_centre');
+    expect(v.notes.join(' ')).toMatch(/centre of the (suburb|postal area)/);
+    expect(admissibleInputs('location', ['walkScore', 'commuteTimeCBD', 'schoolsNearby'], v.verified)).toEqual([]);
+  });
+
+  it('a street point still verifies — it is on the property\'s own street', () => {
+    const v = verifiedLocationInputs(enrichment({}, { stages: {
+      geocode: 'fetched', geocodePrecision: 'street', geocodeProvider: 'photon', places: 'complete', commute: 'measured',
+    } }), SUBJECT);
+    expect(v.verified).toEqual(['walkScore', 'commuteTimeCBD', 'schoolsNearby']);
+    expect(v.pointRefusal).toBeUndefined();
+  });
+
+  it('a stamp that records no precision proves nothing about the point', () => {
+    const v = verifiedLocationInputs(enrichment({}, { stages: {
+      geocode: 'fetched', places: 'complete', commute: 'measured',
+    } }), SUBJECT);
+    expect(v.verified).toEqual([]);
+    expect(v.pointRefusal).toBe('point_precision_unrecorded');
   });
 });

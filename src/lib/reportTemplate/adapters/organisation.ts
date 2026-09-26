@@ -31,6 +31,7 @@
  * the postal address came to be missing from every design-system document
  * while the letterhead beside them looked fine.
  */
+import { isPrimeDeployment } from '@/lib/primeDeployment';
 import { supabase } from '@/integrations/supabase/client';
 import { SUPABASE_URL } from '@/integrations/supabase/env';
 import { getAuthenticatedSupabaseClient } from '@/hooks/useAuthenticatedSupabase';
@@ -47,6 +48,7 @@ import {
 import {
   inlineBrandAssets,
 } from '../../../../supabase/functions/_shared/reportDesign/fetchBrandAssets';
+import { whitelabelBrandColour } from '@/lib/reportDesign/snapshot.pure';
 
 let inFlight: Promise<OrganisationRowLike | null> | null = null;
 
@@ -161,7 +163,8 @@ export async function applyOrganisationAndBrand(
   const [row, marks, settings] = await Promise.all([
     loadOrganisation(), loadBrandMarks(), loadReportSettings(),
   ]);
-  return applyOrganisationProjection(data, row, marks, settings);
+  // On a clone the letterhead is never the house's (`issuerIdentity.pure.ts`).
+  return applyOrganisationProjection(data, row, marks, settings, { prime: isPrimeDeployment() });
 }
 
 /**
@@ -252,9 +255,44 @@ export async function loadReportSettings(): Promise<ReportSettingsLike | null> {
   return settingsInFlight;
 }
 
+let colourInFlight: Promise<string | null> | null = null;
+
+/**
+ * The tenant's brand colour, `#RRGGBB`, or null for none.
+ *
+ * Read with the precedence every render route uses (`whitelabelBrandColour`),
+ * so a document drawn in the browser and one typeset on the server print one
+ * tenant in one colour. `whitelabel_settings` is public, so the anon client
+ * reads it, as it reads the wordmark above.
+ *
+ * Never throws; a failure is null (the platform's colours) and is not cached.
+ */
+export async function loadBrandColour(): Promise<string | null> {
+  if (colourInFlight) return colourInFlight;
+  colourInFlight = (async () => {
+    try {
+      const { data, error } = await supabase
+        .from('whitelabel_settings')
+        .select('theme_config, primary_color')
+        .limit(1)
+        .maybeSingle();
+      if (error) {
+        colourInFlight = null;
+        return null;
+      }
+      return whitelabelBrandColour(data);
+    } catch {
+      colourInFlight = null;
+      return null;
+    }
+  })();
+  return colourInFlight;
+}
+
 /** Test seam: drop the memoised row so a spec can change what is returned. */
 export function resetOrganisationCache(): void {
   inFlight = null;
   marksInFlight = null;
   settingsInFlight = null;
+  colourInFlight = null;
 }

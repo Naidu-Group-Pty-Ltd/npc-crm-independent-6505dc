@@ -35,9 +35,19 @@ const BRIDGE_SHAPE =
  *
  * `../reportDate.pure.ts` is the shared date reader, a file in the parent
  * like the others here — eleven routes each carried a private copy.
+ *
+ * `../issuerIdentity.pure.ts` is who a report is issued by, for every format.
+ * The standard cover's NPC-artwork rule and the issuer's own rule have to
+ * name the same business, so the cover reads the one list rather than keeping
+ * a second copy of it.
+ *
+ * `../../reportPhotographs.pure.ts` names the folders a report's photographs
+ * and floor plans are written to. What deleting a report removes
+ * (`reportStorage.pure.ts`) has to be exactly those folders, so it reads the
+ * one definition rather than restating the paths.
  */
 const ALLOWED_IMPORT =
-  /^(?:\.\/[\w.]+\.pure\.ts|\.\.\/\.\.\/reportDesign\/[\w.]+\.(?:pure|generated)\.ts|\.\.\/(?:text|markdown|vizDirectives|vizFigures|reportDate)\.pure\.ts|\.\.\/market\/(?:marketFactBlocks|marketEvidence|scoreAssessmentReading)\.pure\.ts|\.\.\/\.\.\/(?:reportSplitRegistry|compassPostProcessor)\.ts)$/;
+  /^(?:\.\/[\w.]+\.pure\.ts|\.\.\/\.\.\/reportDesign\/[\w.]+\.(?:pure|generated)\.ts|\.\.\/(?:text|markdown|vizDirectives|vizFigures|reportDate|issuerIdentity)\.pure\.ts|\.\.\/market\/(?:marketFactBlocks|marketEvidence|scoreAssessmentReading)\.pure\.ts|\.\.\/\.\.\/(?:reportSplitRegistry|compassPostProcessor)\.ts|\.\.\/\.\.\/reportPhotographs\.pure\.ts)$/;
 
 /**
  * The two market modules a canonical investment module may name, and they may

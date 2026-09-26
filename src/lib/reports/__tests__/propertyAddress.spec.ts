@@ -52,6 +52,60 @@ describe('composePropertyAddress', () => {
       .toBe('1 Bowralton Way, Bowral');
   });
 
+  it('keeps a suburb whose name is also in the street name (24 Sep 2026)', () => {
+    // The realestate.com.au listing behind report 79d677d6: the word test
+    // found "Schofields" inside "Schofields Farm Road", dropped the suburb, and
+    // the report was filed as `93 Schofields Farm Road (tallawong) NSW 2762` —
+    // which no geocoder could place.
+    expect(composePropertyAddress({
+      address: '93 Schofields Farm Road (tallawong)',
+      suburb: 'Schofields',
+      state: 'NSW',
+      postcode: '2762',
+    })).toBe('93 Schofields Farm Road (tallawong), Schofields NSW 2762');
+  });
+
+  it('keeps the suburb for any street named after it', () => {
+    expect(composePropertyAddress({ address: '12 Blacktown Road', suburb: 'Blacktown', state: 'NSW', postcode: '2148' }))
+      .toBe('12 Blacktown Road, Blacktown NSW 2148');
+    expect(composePropertyAddress({ address: '5 Rouse Hill Drive', suburb: 'Rouse Hill', state: 'NSW', postcode: '2155' }))
+      .toBe('5 Rouse Hill Drive, Rouse Hill NSW 2155');
+    // A street-line-plus-state that still lacks the suburb gets it.
+    expect(composePropertyAddress({ address: '93 Schofields Farm Road, NSW 2762', suburb: 'Schofields' }))
+      .toBe('93 Schofields Farm Road, NSW 2762, Schofields');
+  });
+
+  it('still recognises a suburb that sits where a suburb goes', () => {
+    // No comma: the address ENDS with the suburb once the state and postcode
+    // are set aside.
+    expect(composePropertyAddress({ address: '12 Smith Street Schofields NSW 2762', suburb: 'Schofields', state: 'NSW', postcode: '2762' }))
+      .toBe('12 Smith Street Schofields NSW 2762');
+    expect(composePropertyAddress({ address: 'Unit 3, 12 Smith St Bowral', suburb: 'Bowral' }))
+      .toBe('Unit 3, 12 Smith St Bowral');
+    expect(composePropertyAddress({ address: '6 Acer Court Bowral, NSW 2576', suburb: 'Bowral', state: 'NSW', postcode: '2576' }))
+      .toBe('6 Acer Court Bowral, NSW 2576');
+    // A street named after the suburb, WITH the suburb already after it.
+    expect(composePropertyAddress({ address: '12 Schofields Road, Schofields NSW 2762', suburb: 'Schofields', state: 'NSW', postcode: '2762' }))
+      .toBe('12 Schofields Road, Schofields NSW 2762');
+  });
+
+  it('recognises a suburb whose own name ends in a state name', () => {
+    // Stripping the locality tail to the end reads "Mount Victoria NSW 2786"
+    // as "mount", so the suburb would be added a second time.
+    expect(composePropertyAddress({ address: '12 Main Street, Mount Victoria NSW 2786', suburb: 'Mount Victoria', state: 'NSW', postcode: '2786' }))
+      .toBe('12 Main Street, Mount Victoria NSW 2786');
+    expect(composePropertyAddress({ address: '4 Bay Road Port Victoria SA 5573', suburb: 'Port Victoria', state: 'SA', postcode: '5573' }))
+      .toBe('4 Bay Road Port Victoria SA 5573');
+    expect(composePropertyAddress({ address: '12 Main Street', suburb: 'Mount Victoria', state: 'NSW', postcode: '2786' }))
+      .toBe('12 Main Street, Mount Victoria NSW 2786');
+  });
+
+  it('is idempotent over a street named after its suburb', () => {
+    const parts = { address: '93 Schofields Farm Road (tallawong)', suburb: 'Schofields', state: 'NSW', postcode: '2762' };
+    const once = composePropertyAddress(parts);
+    expect(composePropertyAddress({ ...parts, address: once })).toBe(once);
+  });
+
   it('adds only the parts that were extracted', () => {
     expect(composePropertyAddress({ address: '6 Acer Court', suburb: 'Bowral' }))
       .toBe('6 Acer Court, Bowral');

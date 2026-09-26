@@ -18,6 +18,7 @@ import {
   setCelebrationsEnabled, celebrationsEnabled, triggerFinanceCelebration,
 } from '@/lib/finance-portal/celebrate';
 import { resetFinanceTour } from '@/components/finance-portal/FinanceOnboardingTour';
+import { houseLabel } from '@/lib/houseLabel';
 
 const FN = 'finance-portal-batch9-10';
 
@@ -109,7 +110,7 @@ export function UiPreferencesCard() {
                 <Select value={theme} onValueChange={(v) => setTheme(v as FinanceTheme)}>
                   <SelectTrigger><SelectValue /></SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="dark">NPC Dark Gold (default)</SelectItem>
+                    <SelectItem value="dark">{houseLabel('NPC Dark Gold (default)', 'Dark Gold (default)')}</SelectItem>
                     <SelectItem value="midnight">Midnight Indigo</SelectItem>
                     <SelectItem value="graphite">Graphite Neutral</SelectItem>
                   </SelectContent>

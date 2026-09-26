@@ -707,7 +707,7 @@ describe('the acceptance criterion is about the PAGE', () => {
       expect(sentence, `programmeRead=${programmeRead}`).not.toMatch(assertsALevel);
       // And it says whose statement the absence is.
       expect(sentence, `programmeRead=${programmeRead}`)
-        .toMatch(/statement about those registers rather than a finding/i);
+        .toMatch(/not a finding that nothing is planned nearby/i);
     }
   });
 });

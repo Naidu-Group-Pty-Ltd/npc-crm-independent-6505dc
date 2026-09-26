@@ -1,3 +1,5 @@
+import { isPrimeDeployment } from '@/lib/primeDeployment';
+
 export interface OverlayElement {
   id: string;
   type: 'text' | 'image';
@@ -102,3 +104,14 @@ export const DEFAULT_BACKGROUND_IMAGES: Record<string, string> = {
   statewide: PRIMARY_COVER,
   comparison: PRIMARY_COVER,
 };
+
+/**
+ * The picture behind a cover the editor has not been given one for.
+ *
+ * `PRIMARY_COVER` is NPC's own cover artwork — the prime's alone, like every
+ * other piece of NPC's artwork (`legacyDocumentBrand.ts`). A clone designs on
+ * a blank sheet instead of on another business's cover.
+ */
+export function defaultCoverBackground(reportType: string, prime: boolean = isPrimeDeployment()): string {
+  return prime ? DEFAULT_BACKGROUND_IMAGES[reportType] || '' : '';
+}

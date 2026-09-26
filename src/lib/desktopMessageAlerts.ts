@@ -31,6 +31,7 @@
  */
 import { requestPopOutInternalThread, type PopOutThreadHint } from '@/lib/internalMessagingBus';
 import { isPushBlockedInThisContext } from '@/lib/pushNotifications';
+import { houseLabel } from './houseLabel';
 
 const PREF_KEY = 'aurixa.internalMessages.desktopAlerts';
 const SOUND_KEY = 'aurixa.internalMessages.alertSound';
@@ -900,7 +901,7 @@ export async function sendTestDesktopAlert(): Promise<DesktopAlertOutcome> {
   const alert: DesktopMessageAlert = {
     thread_id: 'test',
     title: 'Desktop alerts',
-    sender: 'NPC Command Centre',
+    sender: houseLabel('NPC Command Centre', 'Command Centre'),
     body: 'This is what a new team message looks like.',
     kind: 'direct',
     priority: 'normal',
