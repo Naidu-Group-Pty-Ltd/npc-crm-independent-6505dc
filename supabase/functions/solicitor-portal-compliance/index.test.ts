@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { enforceCsrf } from '../_shared/csrfGuard';
+import { enforceCsrf } from '../_shared/csrfGuard.ts';
 
 const functionSource = readFileSync(new URL('./index.ts', import.meta.url), 'utf8');
 
