@@ -228,7 +228,7 @@ describe('with nothing retrieved', () => {
   });
 
   it('says on the page that the run retrieved none, not that the market has none', () => {
-    expect(renderMarketFacts(none)).toMatch(/a statement about this run rather\s+than about the market/);
+    expect(renderMarketFacts(none)).toMatch(/a limit of this\s+report rather than a finding about the market/);
   });
 });
 

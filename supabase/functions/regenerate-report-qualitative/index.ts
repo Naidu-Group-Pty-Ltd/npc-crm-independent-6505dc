@@ -2,7 +2,6 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { verifyAuth, createCorsHeaders, createUnauthorizedResponse } from '../_shared/auth.ts';
 import { enforceCsrf, csrfDenied } from "../_shared/csrfGuard.ts";
 import { logApiUsage } from '../_shared/logApiUsage.ts';
-import { getBrandConfig } from '../_shared/brand-config.ts';
 import { withReportMetering, resolveUserId, buildIdempotencyKey } from '../_shared/reportMetering.ts';
 import { internalError } from '../_shared/errorResponse.ts';
 // The SAME prompt blocks the generator composes. This path used to render
@@ -34,6 +33,9 @@ import {
   GOVERNED_AUTHORITY_FLAG_TYPE,
 } from '../_shared/reports/contract/governedNarrativeAuthority.pure.ts';
 import { resolveOneReportGeography } from '../_shared/geography/resolveOneReportGeography.ts';
+import { investmentReportMasthead } from '../_shared/reports/issuerIdentity.pure.ts';
+import { loadReportWriterIdentity } from '../_shared/reports/writerIdentity.ts';
+import { firmClause } from '../_shared/reports/writerFirm.pure.ts';
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -1482,8 +1484,10 @@ ${sectionDef.sections.map((s, i) => `${i + 1}. ## ${s}`).join('\n')}
 
   // IMPORTANT: This is a REGENERATION - we generate COMPLETELY FRESH content
   // DO NOT reference original content - this ensures truly new analysis each time
-  const _brandRq = await getBrandConfig();
-  let sectionPrompt = `You are an expert Australian property investment analyst for ${_brandRq.companyName}.
+  // Who the writer works for (`writerFirm.pure.ts`): unchanged on the prime;
+  // on a clone its own business, never the house, or none at all.
+  const _writerRq = await loadReportWriterIdentity();
+  let sectionPrompt = `You are an expert Australian property investment analyst${firmClause(_writerRq.firm, 'for')}.
 You are creating a FRESH, COMPREHENSIVE section for an investment report for: ${propertyAddress}
 
 **SECTION TO CREATE:** ${sectionDef.name}
@@ -1537,13 +1541,13 @@ Generate the ${sectionDef.name} section now:`;
   // MUST match generate-investment-report, with regeneration note added
   // CRITICAL FIX: Removed hardcoded "$1,500 maintenance" instruction - use data-driven values from overrides
   const { resolvePrompt: _resolveRegenPrompt } = await import('../_shared/engine-prompts.ts');
-  const systemMessage = limitPromptContext((await _resolveRegenPrompt('regenerate.qualitative_system', { brand_name: _brandRq.companyName })).text, PERPLEXITY_SAFE_SYSTEM_MESSAGE_BYTES, 'Regeneration system prompt', 'head');
+  const systemMessage = limitPromptContext((await _resolveRegenPrompt('regenerate.qualitative_system', { brand_name: _writerRq.firm })).text, PERPLEXITY_SAFE_SYSTEM_MESSAGE_BYTES, 'Regeneration system prompt', 'head');
   if (byteLength(sectionPrompt) > PERPLEXITY_SAFE_USER_MESSAGE_BYTES) {
     const previousBlock = previousSections
       ? `\n\n**CONTEXT FROM PREVIOUS SECTIONS (tail only for consistency — do not repeat):**\n${sliceTailByBytes(previousSections, 3_500)}\n`
       : '';
     sectionPrompt = limitPromptContext(
-      `You are an expert Australian property investment analyst for ${_brandRq.companyName}.\nCreate a fresh section for: ${propertyAddress}\n\n**SECTION:** ${sectionDef.name}\n**Subsections:** ${sectionDef.sections.join(', ')}\n\n${templateSection}\n\n**LIVE DATA:**\n${enhancedDataContext}\n\n**CLIENT VALUES:**\n${overrideSummary}\n\n${investmentScoreContext}${previousBlock}\n\nGenerate only this section using exact markdown headings and no placeholders.`,
+      `You are an expert Australian property investment analyst${firmClause(_writerRq.firm, 'for')}.\nCreate a fresh section for: ${propertyAddress}\n\n**SECTION:** ${sectionDef.name}\n**Subsections:** ${sectionDef.sections.join(', ')}\n\n${templateSection}\n\n**LIVE DATA:**\n${enhancedDataContext}\n\n**CLIENT VALUES:**\n${overrideSummary}\n\n${investmentScoreContext}${previousBlock}\n\nGenerate only this section using exact markdown headings and no placeholders.`,
       PERPLEXITY_SAFE_USER_MESSAGE_BYTES,
       `Regeneration prompt for ${sectionDef.name}`,
       'head-tail'
@@ -1823,17 +1827,15 @@ const __regenerateQualHandler = async (req: Request): Promise<Response> => {
     console.log('📋 Override summary built:', overrideSummary.split('\n').length, 'lines');
     console.log('📊 Enhanced data sources loaded:', Object.keys(enhancedData).filter(k => enhancedData[k as keyof EnhancedData]).length);
 
-    // Generate report header (only if starting fresh)
-    const _brandHdr = await getBrandConfig();
-    const reportHeader = `# ${_brandHdr.companyNameUpper}
-
-YOUR DEDICATED PROPERTY PARTNER
-
-# Investment Report: ${propertyAddress}
-
----
-
-`;
+    // Generate report header (only if starting fresh). On the prime this is the
+    // block it has always written; on a clone it names the issuer and leaves
+    // out NPC's tagline (`investmentReportMasthead`).
+    const _writerHdr = await loadReportWriterIdentity();
+    const reportHeader = investmentReportMasthead(
+      _writerHdr.issuerName,
+      propertyAddress,
+      _writerHdr.deployment,
+    );
 
     // Use existing content if resuming, otherwise start with header
     let combinedContent = (continueFrom && existingContent.length > 0) ? existingContent : reportHeader;

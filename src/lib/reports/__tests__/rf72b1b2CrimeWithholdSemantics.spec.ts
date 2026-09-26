@@ -96,7 +96,7 @@ describe('RF-7.2B.1B2 §6 — withheld crime evidence degrades honestly', () => 
   it('D — a withheld reading cannot become a qualitative safety conclusion', () => {
     const block = crimeStatBlocks({});
     // It says what it is, and forbids the invention explicitly.
-    expect(block).toContain('No recorded-crime register is integrated for this location');
+    expect(block).toContain('Recorded crime for this area is not covered by this report');
     expect(block).toMatch(/do NOT print a crime table, a safety score, a rating or an estimated rate/);
     // and carries no positive safety CLAIM a reader could lift.
     //

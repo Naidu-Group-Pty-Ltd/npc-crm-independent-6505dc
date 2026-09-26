@@ -4,6 +4,7 @@ import { ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useAmlNavEntry } from '@/hooks/useAmlNavEntry';
 import { useNavigationVisibility } from '@/hooks/useNavigation';
+import { NavItemBadge } from '@/components/layout/NavItemBadge';
 import { AML_NAV_GROUP_TITLE } from '@/lib/navigation/amlEntry';
 import {
   NAVIGATION_GROUP_ORDER,
@@ -38,14 +39,17 @@ export function MobileSidebar({ onNavigate }: MobileSidebarProps) {
     [visibleNavItems],
   );
 
-  const groupedNavItems = useMemo(
-    () =>
-      NAVIGATION_GROUP_ORDER.map((title) => ({
-        title,
-        items: mobileNavItems.filter((item) => item.group === title),
-      })).filter((group) => group.items.length > 0),
-    [mobileNavItems],
-  );
+  const groupedNavItems = useMemo(() => {
+    const portalItems = visibleAdminItems.filter(
+      (item) => item.mobile !== false && item.group === 'Portals',
+    );
+    return NAVIGATION_GROUP_ORDER.map((title) => ({
+      title,
+      items: (title === 'Portals' ? portalItems : mobileNavItems).filter(
+        (item) => item.group === title,
+      ),
+    })).filter((group) => group.items.length > 0);
+  }, [mobileNavItems, visibleAdminItems]);
 
   const amlGroup = useMemo(
     () => (amlEntry ? { title: AML_NAV_GROUP_TITLE, items: [amlEntry] } : null),
@@ -55,7 +59,9 @@ export function MobileSidebar({ onNavigate }: MobileSidebarProps) {
   const groupedAdminItems = useMemo(
     () => ({
       title: 'Administration',
-      items: visibleAdminItems.filter((item) => item.mobile !== false),
+      items: visibleAdminItems.filter(
+        (item) => item.mobile !== false && item.group === 'Administration',
+      ),
     }),
     [visibleAdminItems],
   );
@@ -79,6 +85,7 @@ export function MobileSidebar({ onNavigate }: MobileSidebarProps) {
         >
           <item.icon className="h-4 w-4 shrink-0" />
           <span className="min-w-0 truncate">{item.title}</span>
+          {item.badge ? <NavItemBadge kind={item.badge} /> : null}
         </NavLink>
       </li>
     );

@@ -14,6 +14,7 @@ import {
   MATTER_STATUS_CLASSES, MATTER_STATUS_LABELS, countdownLabel, formatMatterDate,
   formatPropertyAddress, daysUntil, type LegalMatter,
 } from '@/lib/legalMatters';
+import { houseLabel } from '@/lib/houseLabel';
 
 interface MatterStats {
   total: number;
@@ -79,7 +80,7 @@ export default function SolicitorDashboard() {
     <SolicitorPortalShell
       eyebrow="Welcome back"
       title={smartCapitalize(user?.name) || 'Solicitor'}
-      description="Your conveyancing workload across every NPC client shared with your practice."
+      description={houseLabel('Your conveyancing workload across every NPC client shared with your practice.', 'Your conveyancing workload across every client shared with your practice.')}
       actions={
         <Button asChild size="sm">
           <Link to="/solicitor/matters">
@@ -154,7 +155,7 @@ export default function SolicitorDashboard() {
             <CardTitle className="flex items-center gap-2 text-base">
               <AlertTriangle className="h-4 w-4 text-destructive" aria-hidden /> Needs attention
             </CardTitle>
-            <CardDescription>Matters NPC has flagged as at risk.</CardDescription>
+            <CardDescription>{houseLabel('Matters NPC has flagged as at risk.', 'Matters the Command Centre has flagged as at risk.')}</CardDescription>
           </CardHeader>
           <CardContent className="space-y-2">
             {flagged.length === 0 ? (
@@ -168,7 +169,7 @@ export default function SolicitorDashboard() {
                 className="block rounded-lg border border-destructive/30 bg-destructive/5 p-3 transition-colors hover:bg-destructive/10 focus:outline-none focus-visible:ring-2 focus-visible:ring-ring"
               >
                 <p className="truncate text-sm font-medium text-foreground">{m.title}</p>
-                <p className="line-clamp-2 text-xs text-muted-foreground">{m.risk_notes || 'Flagged by NPC.'}</p>
+                <p className="line-clamp-2 text-xs text-muted-foreground">{m.risk_notes || houseLabel('Flagged by NPC.', 'Flagged by the Command Centre.')}</p>
               </Link>
             ))}
           </CardContent>

@@ -1681,12 +1681,22 @@ export function renderTiles(
   const labelChar = unitsPerChar(ctx, w, 'micro', true) + ptToUnits(0.9, w, ctx.widthMm);
   const microChar = unitsPerChar(ctx, w, 'micro');
   const drawn = tiles.map(tileWithItsFigure);
+  /*
+   * The cell grows for its lines; the text is not cut to fit a height nobody
+   * fixed. `fitLines`' own rule — increase the component's space before
+   * shrinking its text — was applied here at two lines, so a phrase value
+   * three lines long lost its end: page 4 of the 60 Lawley Street Compass
+   * (25 Sep 2026) printed TENANT DEMAND over "Established family-oriented…".
+   * The limits are now what a quarter-width tile can carry before it stops
+   * being a tile; a tile whose text already fits is drawn byte-identical, and
+   * the ellipsis stays as the last resort beyond them.
+   */
   const fitted = drawn.map((t) => {
-    const label = fitLines((t.label ?? '').toUpperCase(), inner, labelChar, 2);
+    const label = fitLines((t.label ?? '').toUpperCase(), inner, labelChar, 3);
     const valueText = String(t.value ?? '');
     const asFigure = valueText.length <= Math.floor(inner / unitsPerChar(ctx, w, 'value'));
-    const value = asFigure ? [valueText] : fitLines(valueText, inner, unitsPerChar(ctx, w, 'label'), 2);
-    const sub = t.sub ? fitLines(t.sub, inner, microChar, 2) : [];
+    const value = asFigure ? [valueText] : fitLines(valueText, inner, unitsPerChar(ctx, w, 'label'), 4);
+    const sub = t.sub ? fitLines(t.sub, inner, microChar, 3) : [];
     return { label, value, asFigure, sub };
   });
   const labelStep = 12, valueStep = 18, subStep = 12;

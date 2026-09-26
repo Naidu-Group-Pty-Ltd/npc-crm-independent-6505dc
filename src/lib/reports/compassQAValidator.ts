@@ -57,6 +57,7 @@ import {
   FINANCIAL_ANALYSIS_SECTIONS,
   COMPASS_PAGE_BAND,
   PROTECTED_SECTION_IDS,
+  compassSections,
   type CompassSectionDefinition,
 } from './compassSectionRegistry';
 import { countWords, estimatePages, findEditorialLabels } from './compassPostProcessor';
@@ -70,6 +71,7 @@ import {
 import { findDocumentContradictions } from './investment/documentConsistency.pure';
 import { findFiguresWithoutABasis } from './investment/evidenceClaims.pure';
 import { promotePipedPseudoTables } from './investment/pseudoTables.pure';
+import { platformVocabularyCount, platformVocabularyIn } from './adviserVoice.pure';
 import {
   SECTION_REGISTRY as CANONICAL_SECTIONS,
   sectionIdForHeading,
@@ -97,6 +99,13 @@ const TABLE_PROMISE = /\b(?:table|matrix|grid|schedule)\s+(?:below|that follows|
 const PAIR_HEADING = /^(?:#{2,4}\s+|\*\*)?strengths?\s*(?:and|&)\s*(?:limitations?|weaknesses|considerations|watch[- ]?points)\b/i;
 /** The second half of that pair, as a sub-heading or a bold label. */
 const PAIR_SECOND_LABEL = /^(?:#{3,5}\s+|\*\*)?(?:limitations?|weaknesses|considerations|watch[- ]?points)\b\*{0,2}:?\s*$/i;
+/**
+ * The same label as a RUN-IN lead, with its content on the same line —
+ * `**Watch points:** single bathroom; 1979 construction`. It carries the
+ * second list, and reading only a label on a line of its own reported that
+ * list as missing on a section that had written it.
+ */
+const PAIR_SECOND_LEAD_IN = /^(?:[-*+]\s+)?(?:\*\*)?(?:limitations?|weaknesses|considerations|watch[- ]?points)\b\*{0,2}\s*:\s*\*{0,2}\s*\S/i;
 
 
 /**
@@ -145,6 +154,19 @@ export interface QAReport {
   findings: QAFinding[];
 }
 
+/**
+ * The ANALYSIS of a purchase, which the Compass does not carry.
+ *
+ * Not the price and not the rent. TIER_FRAMEWORK.md Decision E (17 Sep 2026):
+ * "Withholding the modelling is not withholding the price … the asking price
+ * and the indicative rent are facts about the asset in the way its land size
+ * is. What leaves the Compass is the analysis of a PURCHASE — yield, LVR, loan
+ * structure, cash flow, sensitivity, the ten-year series." `/weekly rent/` and
+ * `/purchase price/` predated that decision and kept reporting the facts it
+ * keeps as errors — 9 Hollow Street, 24 Sep 2026, two `financial-exclusion`
+ * errors on a Compass stating its own price and rent. A check that fires on
+ * what the tier is meant to say cannot report what it is meant not to.
+ */
 const FINANCIAL_KEYWORDS = [
   /\bgross yield\b/i,
   /\bnet yield\b/i,
@@ -152,8 +174,6 @@ const FINANCIAL_KEYWORDS = [
   /\bLVR\b/,
   /\bLMI\b/,
   /\bP&I\b/,
-  /\bweekly rent\b/i,
-  /\bpurchase price\b/i,
   /\bstamp duty\b/i,
   /\bloan amount\b/i,
   /\bmonthly repayment/i,
@@ -169,6 +189,11 @@ const FINANCIAL_KEYWORDS = [
   /\bequity after\s+\d+\s+years?\b/i,
   /\bcapital growth (assumption|rate)\b/i,
 ];
+
+/** Protected sections the generator writes — the ones a Compass must carry. */
+export const REQUIRED_PROTECTED_SECTION_IDS: ReadonlySet<string> = new Set(
+  compassSections().map((s) => s.id).filter((id) => PROTECTED_SECTION_IDS.has(id)),
+);
 
 const FORBIDDEN_PLACEHOLDERS = [
   /\[citation\]/i,
@@ -508,11 +533,18 @@ export function runQAValidation(
   }
 
   // 6 — Protected sections must be present (Compass only)
+  //
+  // Only those the generator WRITES. `compass.cover` is Protected (nothing may
+  // trim it) and `includeInCompass: false` (the template draws the cover; the
+  // generator writes no cover section), so requiring every Protected id made
+  // this an error on every Compass ever produced — five of five on 23–24 Sep
+  // 2026 — and a check that always fails can never report a true one. The
+  // required set is DERIVED from the list that is generated, never restated.
   if (tier === 'compass-40') {
     const presentDefs = new Set(
       sections.map((s) => findDef(s.heading, registry)?.id).filter(Boolean),
     );
-    for (const protectedId of PROTECTED_SECTION_IDS) {
+    for (const protectedId of REQUIRED_PROTECTED_SECTION_IDS) {
       if (!presentDefs.has(protectedId)) {
         findings.push({
           rule: 'missing-protected-section',
@@ -561,10 +593,10 @@ export function runQAValidation(
     if (pairAt < 0) continue;
     const rest = lines.slice(pairAt + 1);
     const secondAt = rest.findIndex((l) => PAIR_SECOND_LABEL.test(l.trim()));
-    const secondHasContent = secondAt >= 0 && rest.slice(secondAt + 1).some((l) => {
+    const secondHasContent = (secondAt >= 0 && rest.slice(secondAt + 1).some((l) => {
       const t = l.trim();
       return t && !t.startsWith('#') && !PAIR_SECOND_LABEL.test(t);
-    });
+    })) || rest.some((l) => PAIR_SECOND_LEAD_IN.test(l.trim()));
     if (!secondHasContent) {
       findings.push({
         rule: 'unbalanced-pair',
@@ -694,8 +726,9 @@ export function runQAValidation(
       message: `${clearances.length} sentence${clearances.length === 1 ? '' : 's'} state that a hazard or `
         + 'planning control does NOT apply, on the authority of a listing portal or of neighbouring '
         + 'listings. A listing is not a planning authority, and a neighbouring parcel is not this one. '
-        + 'The only absence this report may repeat is a register that was asked and matched nothing, '
-        + 'stated as "Checked and not mapped at this coordinate" and naming the register.',
+        + 'The only absence this report may repeat is a published map that was checked and shows nothing '
+        + 'over the property, stated as the planning table states it ("Checked and not mapped at the '
+        + 'property") and naming the map.',
     });
   }
   if (portalCitations.length) {
@@ -783,6 +816,30 @@ export function runQAValidation(
         + `${cell.words} words (the register's cells hold ${RISK_REGISTER_CELL_MAX_WORDS}). A register `
         + 'is scanned, not read: put the finding, the evidence, what it means for this purchase and '
         + 'the next check in a detail block under the table, and leave a phrase in the cell.',
+    });
+  }
+
+  /*
+   * ── 17. The document describes how it was made ────────────────────────
+   *
+   * The 60 Lawley Street Compass (25 Sep 2026) said "register" 110 times,
+   * "retrieved" 38 times, "coordinate" 17 and "this platform" 11 — every
+   * sentence true, none of them about the property. The writer is told the
+   * adviser's voice (`adviserVoiceRules`) and the composed blocks are held to
+   * it by a spec; this is the measurement of what reached the page.
+   *
+   * REPORTED, never removed: a phrase cut out of a sentence leaves a sentence
+   * that no longer says what it said.
+   */
+  const machineRoom = platformVocabularyCount(markdown);
+  if (machineRoom > 0) {
+    findings.push({
+      rule: 'platform-vocabulary',
+      severity: 'warning',
+      message: `The document describes how it was produced ${machineRoom} time${machineRoom === 1 ? '' : 's'} `
+        + `(${platformVocabularyIn(markdown).map((p) => `"${p}"`).join(', ')}). A client document speaks as the `
+        + 'adviser, about the property: name a source by its publisher and product, and say how the client confirms '
+        + 'what could not be.',
     });
   }
 

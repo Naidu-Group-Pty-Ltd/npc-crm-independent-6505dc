@@ -21,6 +21,12 @@ describe("comparison gating contracts", () => {
     expect(generatedReports).toContain("tabParam === 'comparisons' && !comparisonsEnabled");
   });
 
+  it("a capability still loading is not a denial: nothing is taken away until it is decided", () => {
+    expect(generatedReports).toContain("const comparisonsDecided = comparisonsCapability.status !== 'loading'");
+    expect(generatedReports).toContain("tabParam === 'comparisons' && !comparisonsEnabled && comparisonsDecided");
+    expect(generatedReports).toContain("comparisonsDecided && !comparisonsEnabled && activeTab === 'comparisons'");
+  });
+
   const cashFlowModal = readFileSync("src/components/reports/CashFlowAnalysisModal.tsx", "utf8");
 
   it("Cash-flow comparison mode cannot activate without the capability", () => {
@@ -32,6 +38,36 @@ describe("comparison gating contracts", () => {
 
   it("the comparison toggle is removed when unavailable", () => {
     expect(controlPanel).toContain("comparisonsAvailable && (");
+  });
+});
+
+describe("Commercial & Industrial report gating contracts", () => {
+  const generatedReports = readFileSync("src/pages/GeneratedReports.tsx", "utf8");
+
+  it("Generated Reports resolves the module capability for its C&I tab", () => {
+    expect(generatedReports).toContain("useCapability('module.commercial_industrial')");
+  });
+
+  it("the C&I read and tab are capability-gated", () => {
+    expect(generatedReports).toContain("useCommercialDocumentsLibrary(commercialEnabled)");
+    expect(generatedReports).toContain("{commercialEnabled && (");
+  });
+
+  it("the ?tab=commercial deep link redirects without the capability", () => {
+    expect(generatedReports).toContain("tabParam === 'commercial' && !commercialEnabled");
+  });
+
+  it("a capability still loading is not a denial: the C&I tab is not taken away until it is decided", () => {
+    expect(generatedReports).toContain("const commercialDecided = commercialCapability.status !== 'loading'");
+    expect(generatedReports).toContain("tabParam === 'commercial' && !commercialEnabled && commercialDecided");
+    expect(generatedReports).toContain("commercialDecided && !commercialEnabled && activeTab === 'commercial'");
+  });
+
+  const inventory = readFileSync("src/hooks/useClientReportInventory.ts", "utf8");
+
+  it("the client Reports tab reads C&I documents only with the module", () => {
+    expect(inventory).toContain("useCapability('client.commercial_industrial')");
+    expect(inventory).toContain("enabled: canFetchReports && commercialIndustrial");
   });
 });
 

@@ -97,7 +97,7 @@ describe('the rules stop a second price', () => {
       'estimated value', 'recent sale price']) {
       expect(rules, shape).toContain(shape);
     }
-    expect(rules).toMatch(/that\s+belief is not a retrieval/);
+    expect(rules).toMatch(/that\s+belief is not a source/);
   });
 
   it('permits a comparison against a SOURCED median, with its limitations', () => {

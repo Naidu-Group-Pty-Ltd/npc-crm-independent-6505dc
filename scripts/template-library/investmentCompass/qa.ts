@@ -29,7 +29,7 @@ import { fileURLToPath } from 'node:url';
 import { chromium, type Browser, type Page } from 'playwright';
 import { renderTemplateToHtml } from '../../../src/lib/reportTemplate/htmlRenderer';
 import { evalConditional } from '../../../src/lib/reportTemplate/bindingResolver';
-import { SAMPLE_REPORT_DATA } from '../../../src/lib/templateLibrary/sampleReportData';
+import { SAMPLE_FLOOR_PLAN, SAMPLE_REPORT_DATA } from '../../../src/lib/templateLibrary/sampleReportData';
 import {
   investmentGeometryDocuments,
   investmentOwnerOccupierGeometryDocuments,
@@ -576,6 +576,24 @@ function withLongestAddress(data: Record<string, unknown>): Record<string, unkno
   return { ...data, property, property_address: LONGEST_SAMPLE_ADDRESS };
 }
 
+/**
+ * Both floor-plan sheets, drawn.
+ *
+ * A floor-plan sheet is conditional on `property.floorPlans[n]`, and no
+ * fixture carries a plan (`SAMPLE_FLOOR_PLAN` says why the preview fixture
+ * does not). Left like that, this gate would measure every page of every
+ * Investment document except the one new page — which is
+ * `WHAT_THE_PAGE_ACTUALLY_DRAWS.md` §5 again: a page the fixture never draws
+ * is a page the gate never measures. Two plans, so the continuation sheet is
+ * laid out as well as the first.
+ */
+function withFloorPlans(data: Record<string, unknown>): Record<string, unknown> {
+  const property = data.property && typeof data.property === 'object'
+    ? { ...(data.property as Record<string, unknown>), floorPlans: [SAMPLE_FLOOR_PLAN, SAMPLE_FLOOR_PLAN] }
+    : data.property;
+  return { ...data, property };
+}
+
 function documentVariants(reportFormat: string): Variant[] {
   if (reportFormat !== 'investment-compass') {
     return [{
@@ -584,7 +602,7 @@ function documentVariants(reportFormat: string): Variant[] {
     }];
   }
   return [...investmentGeometryDocuments(), ...investmentOwnerOccupierGeometryDocuments()]
-    .map((d) => ({ label: d.tier, data: withLongestAddress(d.data) }));
+    .map((d) => ({ label: d.tier, data: withFloorPlans(withLongestAddress(d.data)) }));
 }
 
 /**

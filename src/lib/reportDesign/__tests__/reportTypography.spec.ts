@@ -394,3 +394,104 @@ describe('the OpenType features the sheet asks for', () => {
     expect(selectors).toEqual(['.pull-quote', '.lede']);
   });
 });
+
+/*
+ * The skill file is read too, because a designer reads it and specifies from it.
+ *
+ * `CLAUDE.md` names `REPORT_RULES.md` as the thing to read before touching any
+ * PDF generator, and its §4 had drifted three ways at once: it said **"Cinzel
+ * is not installed yet"** about a family the Dockerfile fails the build without;
+ * it listed **Cormorant Garamond and Fraunces** as shipping, when neither exists
+ * as a Debian binary package and both were removed from the stacks entirely;
+ * and it named **"Cinzel Bold and Playfair Display Medium"** as the display
+ * faces, which are the `public/fonts/` SCREEN copies — the print container
+ * holds Cinzel Regular/SemiBold and Playfair Regular/Italic/SemiBold/Bold and
+ * neither of those two weights.
+ *
+ * That is the same defect the file it documents had: `PRINT_STACK.cover`'s own
+ * comment said Cinzel "ships Bold only" forty lines below the table that
+ * removed Bold. Four statements of one fact. The Dockerfile is already read
+ * here; this reads the fourth.
+ */
+const RULES_DOC = readFileSync(
+  resolve(REPO, '.claude/skills/npc-services-design/reports/REPORT_RULES.md'),
+  'utf8',
+);
+
+/**
+ * The doc on one line per paragraph.
+ *
+ * Markdown wraps prose at ~80 columns, so "**Cinzel is not\ninstalled yet.**"
+ * carries a newline in the middle of the claim. The first version of the test
+ * below matched `[^.\n]{0,40}` and therefore passed over the exact sentence it
+ * was written to forbid — verified by running it against the original text,
+ * which is the only way to know a gate is not vacuous.
+ */
+const RULES_FLAT = RULES_DOC.replace(/\s+/g, ' ');
+
+/** The weight names a designer writes, and what they resolve to. */
+const WEIGHT_WORDS: Readonly<Record<string, number>> = {
+  thin: 100, extralight: 200, light: 300, regular: 400, normal: 400,
+  medium: 500, semibold: 600, bold: 700, extrabold: 800, black: 900,
+};
+
+const escape = (s: string) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+
+describe('the skill file does not contradict the container', () => {
+  const shippedFamilies = [...new Set(
+    Object.values(CONTAINER_FONT_FILES).map((f) => f.family),
+  )].sort();
+
+  it('never says an installed family is not installed', () => {
+    for (const family of CONTAINER_INSTALLED_FAMILIES) {
+      const claim = new RegExp(`${escape(family)}[^.]{0,40}\\bis not installed`, 'i');
+      expect(claim.test(RULES_FLAT), `${family} is installed; the doc says otherwise`).toBe(false);
+    }
+  });
+
+  it('names no font family the image does not have', () => {
+    for (const absent of ['Cormorant Garamond', 'Fraunces']) {
+      const asShipping = new RegExp(
+        `(?:ships?|container|installed|available)[^.]{0,120}${escape(absent)}`, 'i',
+      );
+      expect(asShipping.test(RULES_FLAT), `${absent} is not installed`).toBe(false);
+    }
+  });
+
+  it('names no (family, weight) the print container cannot answer exactly', () => {
+    /*
+     * A mention is excused only by a sentence that says, in terms, that the
+     * weight is not in the PRINT container. The first version excused anything
+     * within 200 characters of the string `public/fonts` — and the offending
+     * sentence was "Cinzel Bold and Playfair Display Medium (`public/fonts/`)
+     * are the display faces", so the excuse sat inside the defect. Verified
+     * against the original text: this catches it and that did not.
+     */
+    const DISCLAIMS = /not in the print container|ships no [A-Za-z]+, deliberately|are the screen copies/i;
+    const offences: string[] = [];
+    for (const family of shippedFamilies) {
+      const weights = new Set(shippedWeights(family));
+      const re = new RegExp(
+        `${escape(family)} \\*{0,2}(${Object.keys(WEIGHT_WORDS).join('|')})\\*{0,2}\\b`, 'gi',
+      );
+      for (const m of RULES_FLAT.matchAll(re)) {
+        if (weights.has(WEIGHT_WORDS[m[1].toLowerCase()])) continue;
+        const at = m.index ?? 0;
+        // The sentence it sits in, not a 460-character window around it.
+        const from = RULES_FLAT.lastIndexOf('.', at) + 1;
+        const to = RULES_FLAT.indexOf('.', at + m[0].length);
+        const sentence = RULES_FLAT.slice(from, to === -1 ? RULES_FLAT.length : to + 1);
+        if (!DISCLAIMS.test(sentence)) offences.push(`${family} ${m[1]}`);
+      }
+    }
+    expect(offences, 'the print container cannot answer these exactly').toEqual([]);
+  });
+
+  it('the cover stack comment gives a reason that does not depend on the image', () => {
+    const source = readFileSync(
+      resolve(REPO, 'supabase/functions/_shared/reportDesign/typography.pure.ts'), 'utf8',
+    );
+    expect(source).not.toMatch(/Cinzel is the brand's cover face and ships Bold only/);
+    expect(shippedWeights('Cinzel')).not.toContain(700);
+  });
+});

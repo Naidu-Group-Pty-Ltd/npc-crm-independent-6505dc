@@ -118,3 +118,50 @@ Nothing here retrieves a new figure. Where a register holds no median for a
 market, the rules forbid every market number and give the permitted form — a
 qualitative market discussion — rather than only a prohibition, which is the
 lesson the Compass document contract already records.
+
+## 6. The published price history, drawn
+
+The 60 Lawley Street Compass (25 Sep 2026) told its reader that the "published
+price history for this market covers 60 periods (Sep 2011 to Jun 2026)", and
+that "a long series is what makes a growth rate a measurement rather than an
+impression". That is a sentence *about* the data, where an adviser would show
+the data. All sixty points were on the record, under an open licence. The market
+row simply wrote them out as their extent and dropped the points themselves.
+
+`MarketFactRow.series` now keeps the points on the price-series row, past the
+same licence gate as every other row. `priceHistoryChart`
+(`strategyPositions.pure.ts`) draws them in the resale section, under the
+entries and above the one source line that covers them all. The drawing is
+eleven bars: the latest quarter of each of the last ten years. Ten years
+because that is the longest window any growth rate in the report is measured
+over, so the chart and that figure describe the same stretch of time.
+
+Four rules carry it.
+
+- **Only the publisher's own figures.** Every value is a point of the stored
+  series, as published. Nothing is smoothed, interpolated or indexed, and no
+  trend line is added. That is the same thing `CHART_IS_A_CLAIM` asks of a
+  model; here it holds by construction, because the chart is composed from
+  the record rather than written by a model.
+- **The same quarter every year.** A quarterly series is sampled at the
+  latest point's own quarter, so no bar is a different season from the one
+  beside it. An annual series, where every point is a December figure (the
+  way a calendar-year median is stored), is labelled by calendar year.
+- **All or nothing.** A missing year inside the window leaves a gap a reader
+  would take for a year in which nothing sold. So the window must be unbroken
+  or nothing is drawn, and fewer than four years is a comparison rather than
+  a history. One unreadable point in the stored series means the row carries
+  no points at all. The table line is unaffected either way.
+- **The title names the geography.** A state series in a suburb's report
+  reads as the suburb's own unless it says otherwise. The source line names
+  the publisher and the measure, because a mean of the dwelling stock is not
+  a median sale price.
+
+`statedNumbers` does not read the points. The market table never prints them,
+so a model's own chart still may not use them. Only the composed drawing does,
+and it is placed after the write-path market-series guard has run.
+
+The chart is a measurement in one unit, so the read-path scrubs, the evidence
+contract and the mixed-unit rule all leave it untouched; each is pinned by
+`priceHistoryChart.spec.ts`. The design-system renderer draws it as a figure.
+The standard presentation sets it as the table its data already is.

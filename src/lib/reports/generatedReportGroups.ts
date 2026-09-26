@@ -1,6 +1,7 @@
 import type { InvestmentReport } from '@/components/reports/library/types';
 import { resolveReportAddress } from './reportAddress';
 import { getReportPackageKey, normalizeReportVariant, REPORT_VARIANT_ORDER } from './reportVariants';
+import { reportGeneratedAt } from './investment/reportGeneratedAt.pure';
 
 export interface GeneratedReportGroup {
   groupId: string;
@@ -23,6 +24,14 @@ const timestamp = (value?: string | null) => {
   return Number.isFinite(time) ? time : 0;
 };
 
+/**
+ * When a report was generated. A regeneration reuses its row, so
+ * `created_at` is the first generation's time and never the latest
+ * (`reportGeneratedAt.pure.ts`).
+ */
+const generatedAt = (report: InvestmentReport): string | null =>
+  reportGeneratedAt(report)?.at ?? report.created_at ?? null;
+
 /** Canonical, defensive package selector shared by the cards and table. */
 export function buildGeneratedReportGroups(reports: readonly InvestmentReport[]): GeneratedReportGroup[] {
   const packages = new Map<string, InvestmentReport[]>();
@@ -33,14 +42,14 @@ export function buildGeneratedReportGroups(reports: readonly InvestmentReport[])
     packages.set(key, [...(packages.get(key) || []), safeReport]);
   }
   return [...packages.entries()].map(([groupId, packageReports]) => {
-    const ordered = [...packageReports].sort((a, b) => timestamp(b.created_at) - timestamp(a.created_at));
+    const ordered = [...packageReports].sort((a, b) => timestamp(generatedAt(b)) - timestamp(generatedAt(a)));
     const latest = ordered[0] || null;
     const archivedCount = ordered.filter(report => report.is_archived === true).length;
     return {
       groupId,
       propertyId: latest?.property_listing_id || null,
       propertyAddress: latest?.property_address || 'Address unavailable',
-      latestGeneratedAt: latest?.created_at || null,
+      latestGeneratedAt: latest ? generatedAt(latest) : null,
       latestStatus: latest?.status || 'Unknown',
       isArchived: ordered.length > 0 && archivedCount === ordered.length,
       isPartiallyArchived: archivedCount > 0 && archivedCount < ordered.length,

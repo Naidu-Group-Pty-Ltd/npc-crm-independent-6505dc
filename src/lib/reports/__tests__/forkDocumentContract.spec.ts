@@ -466,7 +466,12 @@ describe('the resale section, which was routed nowhere', () => {
      * companion note is for — and the Financial copy carries the projection.
      */
     expect(pldd).not.toMatch(/Modelled value|The modelled position/);
-    expect(pldd).toContain('Days on market, time to sell and buyer depth are not measured');
+    // The limit is stated about the registers read, not about the whole
+    // document — a Market Positioning chapter may quote a portal's own figure
+    // (60 Lawley Street, 25 Sep 2026) — and the Due Diligence copy no longer
+    // introduces a projection it does not carry.
+    expect(pldd).toContain('None of the sources checked for this report holds days on market, time to sell or buyer depth');
+    expect(pldd).not.toContain('What the position looks like at a future year');
     // The Financial report carries the projection itself.
     expect(docs.financial.markdown).toContain('Resale Liquidity & Exit Strategy');
     expect(docs.financial.markdown).toMatch(/Modelled value|accepted CGR assumption/);

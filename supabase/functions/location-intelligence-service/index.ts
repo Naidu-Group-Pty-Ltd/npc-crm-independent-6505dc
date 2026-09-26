@@ -44,6 +44,7 @@ import { enforceCsrf, csrfDenied } from "../_shared/csrfGuard.ts";
 import { meteredFetch } from "../_shared/meteredFetch.ts";
 import { consumeGoogleDailyCap, type GoogleCapRefusal } from "../_shared/googleMapsDailyCaps.ts";
 import { geocodeAddress as geocodeThroughChain } from "../_shared/geocode/geocoder.ts";
+import type { GeocodePrecision } from "../_shared/geocode/geocodeResult.pure.ts";
 import { judgeGoogleMapsBody } from "../_shared/googleMapsBody.pure.ts";
 import { assessAuPoint } from "../_shared/auGeoSanity.pure.ts";
 import { buildAuGeocodeQuery } from "../_shared/auGeocodeQuery.pure.ts";
@@ -270,6 +271,11 @@ async function fetchLocationIntelligence(
   // RF-7.2B.1B1 — what the acquisition record will say about this run.
   let geocodeStage: EnrichmentStages['geocode'] = 'fetched';
   let matchedAddress: string | null = null;
+  // What the point IS — the property's own address, its street, or only its
+  // suburb's centre. Null for a supplied coordinate, whose provenance the
+  // caller holds.
+  let geocodePrecision: GeocodePrecision | null = null;
+  let geocodeProvider: string | null = null;
 
   if (Number.isFinite(input.lat) && Number.isFinite(input.lng)) {
     geocodeStage = 'supplied';
@@ -287,6 +293,11 @@ async function fetchLocationIntelligence(
     const geocoded = await geocodeAddress(input, apiKey, db);
     point = geocoded.ok ? { lat: geocoded.lat, lng: geocoded.lng } : null;
     matchedAddress = geocoded.ok ? geocoded.matchedAddress : null;
+    if (geocoded.ok) {
+      geocodePrecision = geocoded.precision;
+      geocodeProvider = geocoded.provider;
+      console.log(`[location-intelligence-service] placed at ${geocoded.precision} precision by ${geocoded.provider}`);
+    }
     // Which of the two it was is decided where the provider's own status is
     // in hand, never re-derived here from the absence of a point.
     reason = geocoded.ok
@@ -553,6 +564,12 @@ async function fetchLocationIntelligence(
     acquiredAt: new Date().toISOString(),
     stages: {
       geocode: geocodeStage,
+      // What every reading below was measured FROM. `enrichmentPoint.pure.ts`
+      // is the one reader: a point that is only a suburb's centre may not
+      // select a planning control, and its readings describe the suburb, not
+      // the property.
+      ...(geocodePrecision ? { geocodePrecision } : {}),
+      ...(geocodeProvider ? { geocodeProvider } : {}),
       // One failed amenity lookup makes the whole set unreusable: a zero that
       // came from an outage reads exactly like a zero that came from a quiet
       // suburb, and only this flag can tell them apart later.
@@ -640,7 +657,22 @@ async function fetchLocationIntelligence(
  * both look like from outside.
  */
 type GeocodeOutcome =
-  | { ok: true; lat: number; lng: number; matchedAddress: string | null }
+  | {
+      ok: true;
+      lat: number;
+      lng: number;
+      matchedAddress: string | null;
+      /**
+       * How finely the chain placed the address, and who placed it. Carried
+       * onto the acquisition stamp because everything measured from this
+       * point inherits it: on 24 Sep 2026 two reports read their planning
+       * zone, their amenities and their commute from a SUBURB CENTROID and
+       * nothing downstream could tell, because this function returned the
+       * point and dropped the one field that said what the point was.
+       */
+      precision: GeocodePrecision;
+      provider: string;
+    }
   // `capped` is separate from `providerRefused` because the two send an
   // operator to opposite remedies — the same reason the Didit broker reads a
   // refusal from a header rather than guessing it from a body. `capReason`
@@ -727,6 +759,8 @@ async function geocodeAddress(
     lat,
     lng,
     matchedAddress: outcome.result.matchedAddress,
+    precision: outcome.result.precision,
+    provider: outcome.result.provider,
   };
 }
 

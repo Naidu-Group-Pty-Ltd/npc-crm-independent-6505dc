@@ -255,51 +255,48 @@ export function forwardDemandCoverageNote(
    */
   const heldRoute = pub
     ? ` The projection is published by ${pub.publisher} as ${pub.product} and can be read at ${pub.url}.`
-    : ' No forward projection publisher is named for this jurisdiction in this report, '
-      + 'which is a limit of this report rather than a finding about the area.';
+    : ' Forward population projections for this state are not covered by this report, which is a limit of '
+      + 'this report rather than a finding about the area.';
   const route = pub && !pub.ingested
-    ? ` Forward projections for this jurisdiction are published by ${pub.publisher} as `
-      + `${pub.product}, which this report does not read; they can be read at ${pub.url}.`
+    ? ` ${pub.publisher} publishes forward projections for this state as ${pub.product}; they are not `
+      + `summarised in this report and can be read at ${pub.url}.`
     : heldRoute;
 
   switch (availability.kind) {
     case 'projected':
-      return `A population projection is held for this area at ${PROJECTION_GRAIN_LABEL[availability.grain]}. `
+      return `A population projection is available for this area at ${PROJECTION_GRAIN_LABEL[availability.grain]}. `
         + A_PROJECTION_IS_NOT_A_MEASUREMENT;
     case 'coarser_than_area':
-      return `The population projection held here describes ${PROJECTION_GRAIN_LABEL[availability.grain]}, `
-        + `which is a region this property sits in rather than its own area, so it is drawn apart from `
+      return `The population projection available describes ${PROJECTION_GRAIN_LABEL[availability.grain]} — `
+        + `a region the property sits in rather than its own area — so it is shown separately from `
         + `figures about the property. ${A_PROJECTION_IS_NOT_A_MEASUREMENT}${route}`;
     case 'grain_not_published':
-      return 'No population projection is held for an area of this size. '
+      return 'No population projection is published for an area this small. '
         + (availability.finest
           ? `The finest geography the national projection publishes is `
             + `${PROJECTION_GRAIN_LABEL[availability.finest]}.`
-          : 'The national projection publishes no geography this report reads.')
+          : 'The national projection is not published at a geography that describes this area.')
         + route;
     case 'not_loaded':
-      return 'No population projection for this jurisdiction has been loaded by this deployment, so '
-        + 'this report states no projected figure for this area. That is a statement about this '
-        + 'deployment rather than about the area.'
+      return 'Forward population projections for this area are not included in this report, so no '
+        + 'projected figure is stated. That is a limit of this report rather than a finding about the area.'
         + route;
     case 'area_not_named':
-      return 'The population projection this deployment holds for this jurisdiction names no area '
-        + 'matching this property\'s, so this report states no projected figure for it. That is a '
-        + 'statement about how the publisher\'s areas line up with this property\'s, not about the area.'
+      return 'The state\'s published population projection does not name an area matching the '
+        + 'property\'s, so no projected figure is stated. That reflects how the publisher\'s areas line up '
+        + 'with the property\'s, not the area itself.'
         + heldRoute;
     case 'no_area_resolved':
-      return 'No population projection could be selected for this property, because its area could '
-        + 'not be resolved from its verified location, so this report states no projected figure for '
-        + 'it. That is a statement about this report\'s inputs rather than about the area.'
+      return 'No population projection could be matched to the property\'s area, so no projected figure '
+        + 'is stated. That is a limit of this report rather than a finding about the area.'
         + route;
     case 'not_read':
-      return 'This report does not read a population projection, so it states no projected figure '
+      return 'This report does not include a population projection, so it states no projected figure '
         + 'for this area.'
         + route;
     case 'unavailable':
-      return 'The population projection could not be read for this report, so no projected '
-        + 'figure appears above. That is a statement about the retrieval rather than about '
-        + 'the area.'
+      return 'The population projection could not be consulted when this report was prepared, so no '
+        + 'projected figure is stated. That is a limit of this report rather than a finding about the area.'
         + route;
   }
 }

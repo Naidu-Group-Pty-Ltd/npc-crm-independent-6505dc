@@ -7,7 +7,7 @@ import { isSessionUsable, resolveUserSessionRow } from "../_shared/sessionHash.t
 import { enforceCsrf, csrfDenied } from "../_shared/csrfGuard.ts";
 import { rotateSession } from "../_shared/sessionRotate.ts";
 import { requireStepUp } from "../_shared/stepUp.ts";
-import { getBrandConfig } from "../_shared/brand-config.ts";
+import { escapeHtml, getEmailIdentity, resendAddressing } from "../_shared/emailIdentity.ts";
 import { reserveSeat, commitSeat, releaseSeat } from "../_shared/missionControlSeats.ts";
 import { releaseDevice } from "../_shared/missionControlDevices.ts";
 
@@ -1528,15 +1528,17 @@ Deno.serve(async (req: Request) => {
 
       const inviteUrl = `${appUrl}/accept-invite?token=${token}`;
 
-      // Send email
-      const brandCfg = await getBrandConfig(supabase);
+      // Send email, as this deployment: its own name, its own sender, and
+      // replies to its own contact address (see emailIdentity.pure.ts).
+      const identity = await getEmailIdentity(supabase);
+      const orgName = escapeHtml(identity.organisationName);
       let emailContent = '';
       if (invite_data.invite_type === 'magic_link') {
         emailContent = `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
             <h1 style="color: #333;">You're Invited!</h1>
             <p>Hello${invite_data.username ? ` ${invite_data.username}` : ''},</p>
-            <p>${adminUser.username} has invited you to join the ${brandCfg.companyName} Dashboard.</p>
+            <p>${adminUser.username} has invited you to join the ${orgName} Dashboard.</p>
             <div style="margin: 30px 0;">
               <a href="${inviteUrl}" style="background: #3b82f6; color: white; padding: 12px 24px; text-decoration: none; border-radius: 6px; font-weight: bold;">
                 Accept Invitation
@@ -1551,9 +1553,9 @@ Deno.serve(async (req: Request) => {
       } else {
         emailContent = `
           <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
-            <h1 style="color: #333;">Your ${brandCfg.companyName} Dashboard Account</h1>
+            <h1 style="color: #333;">Your ${orgName} Dashboard Account</h1>
             <p>Hello${invite_data.username ? ` ${invite_data.username}` : ''},</p>
-            <p>${adminUser.username} has created an account for you on ${brandCfg.companyName} Dashboard.</p>
+            <p>${adminUser.username} has created an account for you on ${orgName} Dashboard.</p>
             <div style="background: #f4f4f4; padding: 20px; border-radius: 8px; margin: 20px 0;">
               <p style="margin: 0;"><strong>Username:</strong> ${invite_data.username || invite_data.email.split('@')[0]}</p>
               <p style="margin: 10px 0 0;"><strong>Temporary Password:</strong> ${tempPassword}</p>
@@ -1570,9 +1572,9 @@ Deno.serve(async (req: Request) => {
       }
 
       const { error: emailError } = await resend.emails.send({
-        from: brandCfg.fromHeaderAdmin,
+        ...resendAddressing(identity, 'Admin'),
         to: [invite_data.email],
-        subject: `You're Invited to ${brandCfg.companyName} Dashboard`,
+        subject: `You're Invited to ${identity.organisationName} Dashboard`,
         html: emailContent,
       });
 

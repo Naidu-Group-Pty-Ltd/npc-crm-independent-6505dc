@@ -141,6 +141,27 @@ describe('what a section costs', () => {
     expect(next.lines).toBe(2 * LINES_PER_CALLOUT);
   });
 
+  it('charges nothing for a close the platform does not print, and draws no empty chapter', () => {
+    const built = buildMarketIntelligenceReport({
+      row: reportRow({ data: { ctaContent: '' } }) as never,
+      preparedOn: PREPARED_ON,
+      brandName: 'Aurixa Systems',
+    });
+    if (built.ok === false) throw new Error(built.error);
+    // No call to action written and no close to print: nothing to put on the page.
+    expect(planSections(built.report, 0).sections.map((s) => s.kind)).not.toContain('next-steps');
+    // A call to action the model wrote still has its page, charged for itself alone.
+    const withCta = buildMarketIntelligenceReport({
+      row: reportRow() as never,
+      preparedOn: PREPARED_ON,
+      brandName: 'Aurixa Systems',
+    });
+    if (withCta.ok === false) throw new Error(withCta.error);
+    const next = planSections(withCta.report, 0).sections.find((s) => s.kind === 'next-steps')!;
+    const named = planSections(withCta.report).sections.find((s) => s.kind === 'next-steps')!;
+    expect(named.lines - next.lines).toBe(2 * LINES_PER_CALLOUT);
+  });
+
   it('keeps the section furniture at what the render measured', () => {
     // 13 was copied from the Report Q&A and over-claimed every document by four
     // to seven pages, because `pagesForLines` already floors each section at one

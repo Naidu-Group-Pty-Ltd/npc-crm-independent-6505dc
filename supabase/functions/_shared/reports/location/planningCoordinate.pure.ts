@@ -37,17 +37,39 @@
  * ## The rule
  *
  * **A coordinate may select property-specific planning controls only where the
- * provider placed it at the address.** The registers answer at a point: a zone
- * is a polygon over many lots and an overlay can follow a creek through one of
- * them, so a street midpoint may be on the road reserve or on the neighbour's
- * lot and a suburb centroid is a different property altogether. `locality` is
+ * provider placed it at the address or on the property's own street — and a
+ * street point says so.** The registers answer at a point: a zone is a polygon
+ * over many lots and an overlay can follow a creek through one of them, so a
+ * suburb centroid is a different property altogether. `locality` is
  * acceptable to `assessGeocodeGranularity` because a suburb centroid is
  * imprecise rather than wrong for a MAP PIN. For a planning control it is
  * wrong: the control is an attribute of the parcel. This is `crimePostcode-
  * Authority`'s rule in another register — where nothing is trusted the answer
  * is withheld rather than risked, and no coarser area is substituted.
  *
- * So recovery resolves a coordinate and then QUALIFIES it. A coarse one is a
+ * A street point is the one judgement call, and the platform owner made it on
+ * 24 Sep 2026. OpenStreetMap holds address points for a fraction of Australian
+ * houses, so most answers the free providers give are the street; refusing
+ * them would withhold the zone on most reports until an address register
+ * (G-NAF) is loaded. So a street point reads the registers and the page says
+ * where it was read — "on the property's street, not its lot" — because a zone
+ * boundary running along the street can put the lot on the other side of it,
+ * and the planning certificate is what settles it (`precision` travels on the
+ * coordinate and on the planning answer for exactly that sentence).
+ *
+ * ## The fault this was extended for
+ *
+ * Until 24 Sep 2026 the enrichment's own coordinate was stamped `address`
+ * whatever the geocoder had actually matched — so when the public Nominatim
+ * refused the production egress and the chain placed `1408/5 SECOND AVE,
+ * Blacktown` at the centre of the suburb, that centroid was read as a parcel
+ * and the report stated "R2 — Low Density Residential" for a fourteenth-floor
+ * apartment. The enrichment now records the precision it was placed at
+ * (`enrichmentPoint.pure.ts`), and it is judged by the same rule as a
+ * recovery. An enrichment that records none proves nothing and is not used;
+ * recovery then geocodes the address and proves it.
+ *
+ * So both routes resolve a coordinate and then QUALIFY it. A coarse one is a
  * named refusal, never a stand-in.
  *
  * ## What the refusals have to keep apart
@@ -58,7 +80,7 @@
  * |---|---|---|
  * | `no_address` | the run was given nothing to geocode | ours |
  * | `no_match` | no geocoder matched this address | the address's |
- * | `too_coarse` | matched, but to a suburb or a street, not a parcel | the address's |
+ * | `too_coarse` | matched, but only to a suburb or postal area, not the property or its street | the address's |
  * | `provider_unavailable` / `provider_refused` / `budget` | this deployment could not ask | ours |
  *
  * And none of them is the fifth thing: a register that WAS asked at the parcel
@@ -70,6 +92,8 @@
  * hands the outcome in, which is what lets every branch be tested without a
  * network.
  */
+
+import { enrichmentPointOf } from './enrichmentPoint.pure.ts';
 
 /** Where a usable coordinate came from. */
 export type SubjectCoordinateSource = 'enrichment' | 'geocode_recovery';
@@ -84,19 +108,30 @@ export type SubjectCoordinateRefusal =
   | 'budget';
 
 /**
- * The only precision that may select a property-specific control.
+ * The precision that places a point ON the parcel.
  *
  * Named rather than inlined so the rule is greppable and so a test can assert
- * that `street`, `locality` and `postcode` are not in it.
+ * that `locality` and `postcode` are not in it.
  */
 export const PARCEL_GRADE_PRECISION = 'address' as const;
+
+/**
+ * Every precision that may ask a planning register: the parcel, or a point on
+ * the property's own street — the second always said on the page. A suburb or
+ * postal-area centre is never in it.
+ */
+export const PLANNING_POINT_PRECISIONS = ['address', 'street'] as const;
+export type PlanningPointPrecision = typeof PLANNING_POINT_PRECISIONS[number];
+
+const isPlanningPoint = (v: unknown): v is PlanningPointPrecision =>
+  (PLANNING_POINT_PRECISIONS as readonly unknown[]).includes(v);
 
 export interface SubjectCoordinate {
   lat: number;
   lng: number;
   source: SubjectCoordinateSource;
-  /** Always `address`; a coarser match never becomes a coordinate. */
-  precision: typeof PARCEL_GRADE_PRECISION;
+  /** `address` (the parcel) or `street` (a point on its street); a coarser match never becomes a coordinate. */
+  precision: PlanningPointPrecision;
   /** The geocoder that answered, for a recovered coordinate. */
   provider: string | null;
   /** The licence line the coordinate travels under. */
@@ -148,15 +183,21 @@ const triedOf = (v: unknown): string[] =>
   Array.isArray(v) ? v.filter((x): x is string => typeof x === 'string') : [];
 
 /**
- * The coordinate this run's own enrichment produced, if it produced one.
+ * The coordinate this run's own enrichment produced, if it produced one AND
+ * it was placed at the property or on its street.
  *
  * Proven by construction: `location-intelligence-service` was asked for THIS
  * address in THIS run, so no subject check is needed. A stored enrichment from
  * an earlier run is deliberately NOT read here — `assessEnrichmentReuse` is the
  * one place that decides whether a persisted object may be trusted to describe
  * this subject, and borrowing its coordinate around that decision would be the
- * same unproven reuse by another route. Where it refuses, recovery geocodes
- * the address instead, which proves the match rather than assuming it.
+ * same unproven reuse by another route.
+ *
+ * What the point IS is read off the enrichment's own acquisition stamp
+ * (`enrichmentPointOf`). A suburb or postal-area centre, and an enrichment
+ * that records no precision at all, yield nothing here — recovery then
+ * geocodes the address and judges what it finds, which proves the match
+ * rather than assuming it.
  */
 export function enrichmentCoordinate(
   locationIntelligence: unknown,
@@ -168,14 +209,18 @@ export function enrichmentCoordinate(
   const lat = finite((coords as Record<string, unknown>).lat);
   const lng = finite((coords as Record<string, unknown>).lng);
   if (lat === null || lng === null) return null;
+  const point = enrichmentPointOf(locationIntelligence);
+  if (!isPlanningPoint(point.precision)) return null;
+  const stamp = (locationIntelligence as Record<string, unknown>)['__acquisition'];
+  const matched = stamp && typeof stamp === 'object' ? strOrNull((stamp as Record<string, unknown>).matchedAddress) : null;
   return {
     lat,
     lng,
     source: 'enrichment',
-    precision: PARCEL_GRADE_PRECISION,
-    provider: null,
+    precision: point.precision,
+    provider: point.provider,
     attribution: null,
-    matchedAddress: null,
+    matchedAddress: matched,
     retrievedAt: now,
   };
 }
@@ -204,14 +249,14 @@ export function recoveredCoordinate(
         tried,
       };
     }
-    if (precision !== PARCEL_GRADE_PRECISION) {
+    if (!isPlanningPoint(precision)) {
       return {
         usable: false,
         refusal: 'too_coarse',
         detail:
           `The address resolved only to ${precision ?? 'an unstated precision'}, and a planning `
-          + 'control is an attribute of the parcel — a street or suburb point may sit on the road '
-          + 'reserve or on another lot, so the register was not asked',
+          + 'control is an attribute of the parcel — a suburb or postal-area centre is a different '
+          + 'property altogether, so the register was not asked',
         tried,
       };
     }
@@ -221,7 +266,7 @@ export function recoveredCoordinate(
         lat,
         lng,
         source: 'geocode_recovery',
-        precision: PARCEL_GRADE_PRECISION,
+        precision,
         provider: strOrNull(outcome.result.provider),
         attribution: strOrNull(outcome.result.attribution),
         matchedAddress: strOrNull(outcome.result.matchedAddress),
@@ -293,16 +338,22 @@ export function ledgerOutcomeFor(refusal: SubjectCoordinateRefusal): LedgerOutco
 /**
  * The provenance line a resolved coordinate carries into the record.
  *
- * `null` for an enrichment coordinate, which has its own acquisition stamp;
- * a recovered one has to say who answered, what they matched and when,
- * because nothing else in the record will.
+ * `null` for an enrichment coordinate at the parcel, which has its own
+ * acquisition stamp; a street point says so whichever route found it, and a
+ * recovered one has to say who answered, what they matched and when, because
+ * nothing else in the record will.
  */
 export function coordinateProvenance(coordinate: SubjectCoordinate): string | null {
-  if (coordinate.source !== 'geocode_recovery') return null;
+  if (coordinate.source !== 'geocode_recovery') {
+    if (coordinate.precision !== 'street') return null;
+    return 'The location enrichment placed this address on its street, not at the property itself'
+      + (coordinate.provider ? `; provider ${coordinate.provider}` : '')
+      + ' — a register asked there reads the street, and a boundary along it can put the lot on the other side';
+  }
   const parts = [`Coordinate recovered by geocoding the report's own address`];
   if (coordinate.provider) parts.push(`provider ${coordinate.provider}`);
   if (coordinate.matchedAddress) parts.push(`matched "${coordinate.matchedAddress}"`);
-  parts.push(`at ${PARCEL_GRADE_PRECISION} precision`);
+  parts.push(`at ${coordinate.precision} precision`);
   parts.push(`retrieved ${coordinate.retrievedAt}`);
   if (coordinate.attribution) parts.push(coordinate.attribution);
   return parts.join('; ');

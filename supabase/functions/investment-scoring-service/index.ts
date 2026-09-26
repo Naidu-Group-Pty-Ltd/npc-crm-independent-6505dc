@@ -271,6 +271,7 @@ function productionInputFrom(rawInput: any, now: Date): ProductionScoringInput {
     // recorded in `scoringInputPolicy.pure.ts` (IPV 1.1.0) and the rule
     // lives in `locationInputVerification.pure.ts`.
     verifiedInputs: locationVerification.verified,
+    locationPointRefusal: locationVerification.pointRefusal ?? null,
     evidenceWithheldReason: str(rawInput.evidenceWithheldReason),
     now,
   };

@@ -145,6 +145,39 @@ export function composePropertySpecs(facts: EffectivePropertyFacts): PropertySpe
 }
 
 /**
+ * The year the generator's table of recorded attributes may print as
+ * "Year Built".
+ *
+ * That table tells the model it holds every physical attribute on record and
+ * forbids a year it does not carry. Its row read `yearBuilt` — the override
+ * screen's Property tab — and nothing else, while a listing or PDF extraction
+ * on the New Report form files the year a listing states under
+ * `constructionYear`, which `property_specs.year_built` already reads. So on
+ * an existing property the stored record held the year and the document was
+ * forbidden to state it (found 25 Sep 2026, before the 60 Lawley Street
+ * regeneration from a listing).
+ *
+ * Two bounds, both the owner's. **A year the row printed before is printed
+ * unchanged**: the stored year is read only where the row would otherwise be
+ * empty. And **a new build or a land lot is untouched**: there
+ * `constructionYear` is the construction programme's year, an input to the
+ * 10 Year Cash Flow's stages and depreciation, not a fact about a building
+ * that stands — so it is never printed here as one.
+ */
+export function attributeTableYearBuilt(input: {
+  buildType: unknown;
+  overrides: unknown;
+  details?: unknown;
+  storedYearBuilt: number | null;
+}): unknown {
+  const o = isRecord(input.overrides) ? input.overrides : {};
+  const d = isRecord(input.details) ? input.details : {};
+  const stated = o.yearBuilt ?? d.yearBuilt ?? null;
+  if (stated !== null && stated !== '') return stated;
+  return input.buildType === 'existing_property' ? input.storedYearBuilt : null;
+}
+
+/**
  * Read the property facts off a stored report, healing the historical rows.
  *
  * Takes both `property_specs` and `manual_overrides` because every caller

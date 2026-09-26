@@ -39,8 +39,10 @@ describe('solicitor pipeline matter status security', () => {
 
     expect(moveMatterBranch).toBeDefined();
     expect(moveMatterBranch).toContain('TERMINAL_STATUSES.has(matter.status)');
+    // The refusal's words are the deployment's (`closedMatterMessage`): the
+    // prime's still read "Contact NPC to reopen it."; a clone names itself.
     expect(moveMatterBranch).toContain(
-      "error: 'This matter is closed. Contact NPC to reopen it.'",
+      'error: closedMatterMessage(await loadWorkspaceIdentity({ readPrimeName: false }))',
     );
     expect(moveMatterBranch).toContain("status === 'settled'");
     expect(moveMatterBranch).toContain('patch.actual_settlement_date');

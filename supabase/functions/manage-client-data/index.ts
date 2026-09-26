@@ -663,7 +663,7 @@ Deno.serve(async (req) => {
         if (data?.notify_email === true) {
           const { resolveClientEmailInfo, sendPortalNotificationEmail } = await import('../_shared/portal-notification-email.ts');
           const emailInfo = await resolveClientEmailInfo(supabase, clientId);
-          if (emailInfo) await sendPortalNotificationEmail({ to: emailInfo.email, clientFirstName: emailInfo.firstName, title: 'New Report Available', message: notificationMessage, type: 'info', category: 'document', actionUrl: '/client/reports', companyName: emailInfo.companyName });
+          if (emailInfo) await sendPortalNotificationEmail({ to: emailInfo.email, clientFirstName: emailInfo.firstName, title: 'New Report Available', message: notificationMessage, type: 'info', category: 'document', actionUrl: '/client/reports' });
         }
       } catch (notificationError) { console.warn('[manage-client-data] Portfolio publication notification failed', { reportId, clientId }); }
       return new Response(JSON.stringify({ success: true, alreadyPublished: false, publication }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
@@ -828,7 +828,6 @@ Deno.serve(async (req) => {
                 type: 'info',
                 category: 'document',
                 actionUrl: '/client/reports',
-                companyName: emailInfo.companyName,
               });
             }
           } catch (notifErr) {
@@ -965,7 +964,6 @@ Deno.serve(async (req) => {
                     type: msg.type,
                     category: 'document',
                     actionUrl: '/client/reports',
-                    companyName: emailInfo.companyName,
                   });
                 }
               }

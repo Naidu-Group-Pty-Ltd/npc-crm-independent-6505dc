@@ -80,7 +80,11 @@ import { buildReportCss } from '../../reportDesign/css.pure.ts';
 import { count, formatMeasure } from '../../reportDesign/measure.pure.ts';
 import type { ResolvedReportPalette } from '../../reportDesign/roles.pure.ts';
 import type { ReportDesignOptions } from '../../reportDesign/options.pure.ts';
-import type { CompanyBlock, CompanyDisclaimer } from '../../reportDesign/companyBlock.pure.ts';
+import {
+  FALLBACK_COMPANY_NAME,
+  type CompanyBlock,
+  type CompanyDisclaimer,
+} from '../../reportDesign/companyBlock.pure.ts';
 import {
   buildSpine,
   contentsEntriesFor,
@@ -94,7 +98,7 @@ import { resolveSnapshotBrand } from '../../reportDesign/documentBrand.pure.ts';
 import { renderMarkdown } from '../markdown.pure.ts';
 import { formatReportDate, formatReportDateShort as shortDate } from '../reportDate.pure.ts';
 
-import type { MarketEvent, MarketIntelligenceReport } from './payload.pure.ts';
+import { BRAND_CLOSE_CALLOUTS, type MarketEvent, type MarketIntelligenceReport } from './payload.pure.ts';
 import { narrativeFor } from './normalise.pure.ts';
 import {
   chaptersFor,
@@ -167,6 +171,22 @@ export function audiencePanels(segment: string): string {
 }
 
 /**
+ * How many callouts the brand's own close prints for this issuer.
+ *
+ * The platform is not an advisory, and the closing page of a document issued
+ * under its name says so. So that document carries neither the advisory's
+ * self-description ("… is a strategic property advisory") nor an invitation to
+ * contact it — the rule the browser generator already applies to the same
+ * close. Every named business gets both, exactly as before.
+ *
+ * The masthead is `mastheadFor`'s answer, and `FALLBACK_COMPANY_NAME` is what
+ * it answers when the workspace has named nobody: the platform's own name.
+ */
+export function brandCloseCallouts(brandName: string): number {
+  return brandName === FALLBACK_COMPANY_NAME ? 0 : BRAND_CLOSE_CALLOUTS;
+}
+
+/**
  * The brand's own close.
  *
  * The two boxes the legacy draws at the end of the CTA section (`:734`, `:760`),
@@ -176,6 +196,7 @@ export function audiencePanels(segment: string): string {
  * model writes one anyway.
  */
 function brandClose(brandName: string): string {
+  if (brandCloseCallouts(brandName) === 0) return '';
   return renderCallout(
     'neutral',
     `Why ${brandName}?`,
@@ -320,7 +341,7 @@ export function renderMarketIntelligenceBody(
 ): MarketIntelligenceRenderPlan {
   const report = input.report;
   const brandName = input.masthead || 'this advisory';
-  const { sections, dropped, charsOmitted } = planSections(report);
+  const { sections, dropped, charsOmitted } = planSections(report, brandCloseCallouts(brandName));
 
   const spine = buildSpine({
     archetype: 'market-intelligence',

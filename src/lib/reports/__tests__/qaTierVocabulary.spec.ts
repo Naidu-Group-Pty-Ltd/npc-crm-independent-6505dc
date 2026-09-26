@@ -177,7 +177,9 @@ describe('the two copies of the validator agree', () => {
      */
     const strip = (src: string) => src
       .replace(/\.ts'/g, "'")
-      .replace(/'\.\/reports\/investment\//g, "'./investment/");
+      // Any module under `reports/`, investment or not — `adviserVoice.pure`
+      // sits beside the domains rather than in one (25 Sep 2026).
+      .replace(/'\.\/reports\//g, "'./");
     expect(strip(read('src/lib/reports/compassQAValidator.ts')))
       .toBe(strip(read('supabase/functions/_shared/compassQAValidator.ts')));
   });

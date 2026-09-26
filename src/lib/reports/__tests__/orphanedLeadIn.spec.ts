@@ -20,7 +20,7 @@ import {
 import { renderInfrastructureOutlook } from '../../../../supabase/functions/_shared/planning/infrastructureEvidence.pure';
 
 const LEAD = `**${INFRASTRUCTURE_GUIDE_LEAD_IN}**`;
-const ENTRY = `*A register that was not searched.* ${ABSENCE_GUIDE.what}`;
+const ENTRY = `*A source this report does not cover.* ${ABSENCE_GUIDE.what}`;
 
 /** The shape the 97 Poole Road document stored. */
 const ORPHANED = [
@@ -78,7 +78,7 @@ describe('a lead-in over its entries', () => {
     expect(composed).toContain(LEAD);
     const read = presentStoredMarkdown(`## Planning controls and development registers\n\n${composed}\n\n## Next\n\nx`);
     expect(read).toContain(INFRASTRUCTURE_GUIDE_LEAD_IN);
-    expect(read).toContain('*A register that was not searched.*');
+    expect(read).toContain('*A source this report does not cover.*');
   });
 
   it('leaves a document that never names one untouched', () => {

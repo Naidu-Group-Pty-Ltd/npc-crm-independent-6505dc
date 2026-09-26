@@ -137,18 +137,126 @@ export interface IssuerInput {
   brandName?: unknown;
 }
 
+// ── The house: NPC's identity belongs to the prime ─────────────────────────
+//
+// This repository ships with one business's identity inside it: Naidu Property
+// Consulting Services, which also trades as NPC Services — its cover artwork,
+// its name and its disclaimer wording. The prime is that business's own
+// deployment; every clone is somebody else's, built from the same tree.
+//
+// A clone's settings rows can still carry the house's values: a row seeded from
+// the prime's, a restored backup, a disclaimer copied across by hand. So "is
+// this the house?" is never answered from a row. The caller says which
+// deployment it is (`IssuerDeployment`, from the backend it talks to), and
+// on a clone the house's name is not an identity and the house's wording is not
+// the issuer's own — the owner's rule, 26 Sep 2026: NPC's artwork, and "the
+// Disclaimer that might be hardcoded as NPC Services or Naidu property
+// consulting services", are available on the prime and hidden on the clone.
+
+/** Which deployment a document is drawn on — the prime, or a clone. */
+export interface IssuerDeployment {
+  /** True only where the backend is the prime's own (never judged from a name). */
+  prime: boolean;
+}
+
+/** The names the house trades under, normalised (`normaliseCompanyName`). */
+const HOUSE_NAMES: ReadonlySet<string> = new Set([
+  'naidu property consulting services',
+  'naidu property consulting',
+  'npc services',
+]);
+
+/** A trailing legal form, which does not change which business a name is. */
+const LEGAL_FORM = /\s+(pty\s+ltd|pty\s+limited|proprietary\s+limited|ltd|limited)$/;
+
+/** A company name reduced to the words that identify it. */
+export function normaliseCompanyName(name: unknown): string {
+  if (typeof name !== 'string') return '';
+  return name
+    .toLowerCase()
+    .replace(/&/g, ' and ')
+    .replace(/[^a-z0-9\s]/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim()
+    .replace(LEGAL_FORM, '')
+    .trim();
+}
+
+/**
+ * Is this the house's own name?
+ *
+ * `NPC` and `NPC Property` alone are not here: they are placeholders
+ * (`NON_IDENTITIES`), which no deployment issues under.
+ */
+export function isHouseName(name: unknown): boolean {
+  return HOUSE_NAMES.has(normaliseCompanyName(name));
+}
+
+/**
+ * The ways running text names the house: its two trading names, its web and
+ * mail domain, and its initials set as a word in capitals.
+ *
+ * "Naidu" alone is a surname and is not enough; "NPC" in lower case is too
+ * ordinary to be a name. Both of those would condemn a stranger's wording.
+ */
+const HOUSE_MENTIONS: readonly RegExp[] = [
+  /\bnaidu\s+property\b/i,
+  /\bnpc\s+services\b/i,
+  /\bnpcservices\b/i,
+  /\bNPC\b/,
+];
+
+/** Does this text name the house? */
+export function namesTheHouse(text: unknown): boolean {
+  if (!isNonEmpty(text)) return false;
+  return HOUSE_MENTIONS.some((re) => re.test(text));
+}
+
+/**
+ * The line NPC's artwork sets under its name, which the generators also used
+ * to print as a fallback cover's tagline and prepend to a report's opening.
+ * It is the house's own words, not a phrase any issuer happens to share.
+ */
+export const HOUSE_TAGLINE = 'YOUR DEDICATED PROPERTY PARTNER';
+
+/** Is this the house's tagline, however it is cased or spaced? */
+export function isHouseTagline(text: unknown): boolean {
+  return typeof text === 'string'
+    && text.replace(/\s+/g, ' ').trim().toUpperCase() === HOUSE_TAGLINE;
+}
+
+/**
+ * Is this company name the house trading under some variation — "NPC Services
+ * Melbourne", "Naidu Property Consulting Services Group"?
+ *
+ * Narrower than `namesTheHouse`: the house's initials alone do not make a
+ * business name the house's, because "NPC Realty" is a stranger's name and a
+ * clone may well belong to one. The two trading names and the domain do.
+ */
+export function isHouseTradingName(name: unknown): boolean {
+  if (!isNonEmpty(name)) return false;
+  return isHouseName(name) || HOUSE_MENTIONS.slice(0, 3).some((re) => re.test(name));
+}
+
 /**
  * Resolve the issuing identity.
  *
  * The contact name outranks the brand name because that is the order every
  * report surface already read them in (`contact.company_name || brandName`);
  * this changes only what happens when both are absent.
+ *
+ * Given the deployment, a clone never issues under the house's name: a row
+ * that says it is NPC is passed over like a placeholder, and the next name —
+ * or the platform — issues instead. Without it, every name reads as it always
+ * did, which is what every caller that has not been told about deployments
+ * relies on.
  */
-export function resolveReportIssuer(input: IssuerInput): ReportIssuer {
+export function resolveReportIssuer(input: IssuerInput, deployment?: IssuerDeployment | null): ReportIssuer {
   for (const candidate of [input.companyName, input.brandName]) {
     if (!isNonEmpty(candidate)) continue;
     const name = candidate.trim();
     if (NON_IDENTITIES.has(name.toLowerCase())) continue;
+    if (deployment && !deployment.prime && isHouseTradingName(name)) continue;
     return { name, kind: 'workspace' };
   }
   return { name: PLATFORM_ISSUER_NAME, kind: 'platform' };
@@ -232,8 +340,75 @@ export interface StoredDisclaimer {
 export interface ResolvedDisclaimer {
   /** The text to print. Empty only when a named issuer switched it off. */
   text: string;
-  /** Where it came from — for logs and tests, never for the page. */
-  source: 'stored' | 'workspace_default' | 'platform' | 'disabled';
+  /**
+   * Where it came from — for logs and tests, never for the page.
+   * `house_withheld` is stored wording that named the house, on a document the
+   * house does not issue.
+   */
+  source: 'stored' | 'workspace_default' | 'platform' | 'disabled' | 'house_withheld';
+}
+
+/**
+ * Is this stored wording the house's, on a document the house does not issue?
+ *
+ * On a clone a disclaimer that names NPC Services is never the clone's own:
+ * the clone is somebody else's business, whatever its rows say. On the prime
+ * nothing is withheld — the prime's documents read every word of its settings
+ * exactly as they always have, which is the owner's rule for the prime ("no
+ * changes of the content"), and the prime's wording is the prime's to write.
+ */
+export function houseWordingWithheld(
+  text: unknown,
+  _issuer: ReportIssuer,
+  deployment: IssuerDeployment,
+): boolean {
+  if (deployment.prime) return false;
+  return namesTheHouse(text);
+}
+
+/** The contact fields a closing page prints, in `global_report_settings.contact_details`. */
+const CONTACT_FIELDS = ['website', 'email', 'phone', 'address', 'abn'] as const;
+
+/**
+ * Is this contact row the house's own — a seeded or restored copy of the
+ * prime's settings?
+ *
+ * Its company name says so, and that is the only way to tell: the house's
+ * phone line, its office address and its ABN are digits and a street, which
+ * name nobody, so no reading of the VALUE can recognise them. A row that names
+ * the house as its company describes the house, so every contact value in it
+ * is the house's — measured on the seeded case, a clone printed NPC's landline,
+ * office and ABN under the platform's name with only the mailbox and website
+ * withheld.
+ */
+export function isHouseContactRow(contact: unknown): boolean {
+  if (!contact || typeof contact !== 'object') return false;
+  return isHouseTradingName((contact as Record<string, unknown>).company_name);
+}
+
+/**
+ * The contact details a document prints under its issuer's name.
+ *
+ * The name is always the issuer's, so the lockup on the closing page and the
+ * cover cannot name two businesses. On a clone a field that belongs to the
+ * house is left out — one that names it (NPC's web address or its mailbox),
+ * and every field of a row that is the house's own (`isHouseContactRow`): it
+ * would send the clone's client to another business. On the prime, and
+ * wherever no deployment is given, every field reads as stored.
+ */
+export function issuerContactDetails<C extends object>(
+  contact: C | null | undefined,
+  issuer: ReportIssuer,
+  deployment?: IssuerDeployment | null,
+): C & { company_name: string } {
+  const details = { ...(contact ?? {}), company_name: issuer.name } as C & { company_name: string };
+  if (!deployment || deployment.prime) return details;
+  const houseRow = isHouseContactRow(contact);
+  const fields = details as unknown as Record<string, unknown>;
+  for (const field of CONTACT_FIELDS) {
+    if (houseRow || namesTheHouse(fields[field])) fields[field] = '';
+  }
+  return details;
 }
 
 /**
@@ -248,9 +423,104 @@ export interface ResolvedDisclaimer {
 export function resolveReportDisclaimer(
   issuer: ReportIssuer,
   stored?: StoredDisclaimer | null,
+  deployment?: IssuerDeployment | null,
 ): ResolvedDisclaimer {
   if (issuer.kind === 'platform') return { text: PLATFORM_DISCLAIMER, source: 'platform' };
   if (stored?.is_enabled === false) return { text: '', source: 'disabled' };
-  if (isNonEmpty(stored?.text)) return { text: stored.text.trim(), source: 'stored' };
+  if (isNonEmpty(stored?.text)) {
+    // The house's wording is the house's statement about the house; under
+    // anybody else's name it is the defect this module was written against.
+    // Given no deployment, stored text reads as it always did.
+    if (deployment && houseWordingWithheld(stored.text, issuer, deployment)) {
+      return { text: WORKSPACE_DEFAULT_DISCLAIMER, source: 'house_withheld' };
+    }
+    return { text: stored.text.trim(), source: 'stored' };
+  }
   return { text: WORKSPACE_DEFAULT_DISCLAIMER, source: 'workspace_default' };
+}
+
+/**
+ * The name and contact line a server-drawn document prints, from the brand
+ * configuration its function reads (`brand-config.ts`).
+ *
+ * That configuration falls back to the house's mailbox where a deployment has
+ * stored none, and to a placeholder name — right for the prime, whose mail it
+ * is, and never right on a clone's document. So on a clone the name is the
+ * issuer the one resolver answers and a contact value that names the house is
+ * left out; on the prime every value reads as it always did.
+ */
+export function documentLetterhead(
+  config: { companyName?: unknown; contactEmail?: unknown; contactPhone?: unknown },
+  deployment: IssuerDeployment,
+): { name: string; email: string; phone: string } {
+  const value = (v: unknown): string => (typeof v === 'string' ? v.trim() : '');
+  if (deployment.prime) {
+    return { name: value(config.companyName), email: value(config.contactEmail), phone: value(config.contactPhone) };
+  }
+  const issuer = resolveReportIssuer({ companyName: config.companyName }, deployment);
+  // A configuration that names the house is the house's, line and mailbox alike.
+  const houseRow = isHouseTradingName(config.companyName);
+  const own = (v: unknown): string => (houseRow || namesTheHouse(v) ? '' : value(v));
+  return { name: issuer.name, email: own(config.contactEmail), phone: own(config.contactPhone) };
+}
+
+/**
+ * The masthead a freshly generated Investment narrative opens with.
+ *
+ * Both generators (`generate-investment-report`, `regenerate-report-qualitative`)
+ * open `report_content` with the brand as a heading, the house's tagline and
+ * the report's title, closed by a rule. On the prime that is the block it has
+ * always written, byte for byte. On a clone the heading is the issuer the one
+ * resolver answers — never the house's name, which a seeded settings row can
+ * still hold — and NPC's tagline is left out, because it is NPC's own words.
+ * The title line stays on both: it is how every reader recognises the block
+ * (`narrativeClean.pure.ts`), and what the document is about is not branding.
+ */
+export function investmentReportMasthead(
+  brandName: string,
+  subject: string,
+  deployment: IssuerDeployment,
+): string {
+  if (deployment.prime) {
+    return `# ${brandName.toUpperCase()}\n\n${HOUSE_TAGLINE}\n\n# Investment Report: ${subject}\n\n---\n\n`;
+  }
+  const issuer = resolveReportIssuer({ companyName: brandName }, deployment);
+  return `# ${issuer.name.toUpperCase()}\n\n# Investment Report: ${subject}\n\n---\n\n`;
+}
+
+/** A line of the masthead read as words: its heading marks removed. */
+const mastheadWords = (line: string): string => line.trim().replace(/^#{1,6}\s+/, '');
+
+/**
+ * A stored narrative as a clone may show it on screen.
+ *
+ * Every renderer already drops the generator's masthead (`stripBakedCover`, and
+ * the section filters of the two older presentations), but the report viewer
+ * shows the stored text, and a clone's reports written before
+ * `investmentReportMasthead` carry NPC's tagline under the clone's name — or
+ * NPC's name itself. So on a clone the tagline, and a heading that is the
+ * house trading under some name, are left out of that opening block. Only the
+ * block: the lines above its closing rule, the way the generator wrote it. A
+ * document that opens with prose, or the same words anywhere below the block,
+ * is returned untouched, and on the prime nothing is.
+ */
+export function withoutHouseMasthead(markdown: string, deployment: IssuerDeployment): string {
+  if (deployment.prime || !markdown) return markdown;
+  const lines = markdown.split('\n');
+  let end = -1;
+  for (let i = 0; i < Math.min(lines.length, 14); i++) {
+    const t = lines[i].trim();
+    if (!t) continue;
+    if (/^---+$/.test(t)) { end = i; break; }
+    if (/^#{1,6}\s+\S/.test(t) || isHouseTagline(t)) continue;
+    return markdown;
+  }
+  if (end < 0) return markdown;
+  const kept = lines.filter((line, i) => {
+    if (i >= end) return true;
+    const words = mastheadWords(line);
+    if (isHouseTagline(words)) return false;
+    return !(/^#{1,6}\s+\S/.test(line.trim()) && isHouseTradingName(words));
+  });
+  return kept.length === lines.length ? markdown : kept.join('\n');
 }

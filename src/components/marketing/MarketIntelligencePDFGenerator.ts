@@ -9,6 +9,8 @@
 import jsPDF from 'jspdf';
 import { fetchGlobalReportSettings } from '@/hooks/useGlobalReportSettings';
 import { drawJsPDFDisclaimerPage } from '@/utils/pdfDisclaimerPage';
+import { issuerClosingPage, loadLegacyDocumentBrand, rgbObject, type IssuerLegacyBrand } from '@/lib/reports/legacyDocumentBrand';
+import type { BrandFamily } from '@/lib/reportDesign/brandFamily.pure';
 
 // ─── Design tokens (matching PixelPerfectPDFGenerator) ───────────────────────
 const NAVY = { r: 13, g: 38, b: 77 };
@@ -24,6 +26,52 @@ const GOLD_LIGHT_BG = { r: 252, g: 249, b: 242 };
 const GREEN_LIGHT_BG = { r: 235, g: 250, b: 240 };
 const RED_LIGHT_BG = { r: 255, g: 240, b: 240 };
 const AMBER_LIGHT_BG = { r: 255, g: 250, b: 235 };
+
+type RGB = { r: number; g: number; b: number };
+
+/**
+ * The colours that say whose report this is.
+ *
+ * On the prime these are NPC's navy and gold, exactly as they have always been
+ * drawn. On a clone the same roles take the issuer's brand family
+ * (`legacyDocumentBrand.ts`): the dark cover takes the family's field and the
+ * brand colour made for it, headings and panels its deep shade, rules and bars
+ * its brand, gold type a legible ink of the brand, and the callout grounds its
+ * wash. The semantic colours — green, red, amber — are shared.
+ */
+interface ReportPalette {
+  coverField: RGB;
+  coverAccent: RGB;
+  navy: RGB;
+  gold: RGB;
+  /** Brand-coloured type on the page. */
+  goldText: RGB;
+  /** Brand-coloured type on a navy panel. */
+  goldOnNavy: RGB;
+  goldLightBg: RGB;
+}
+
+const HOUSE_PALETTE: ReportPalette = {
+  coverField: NAVY,
+  coverAccent: GOLD,
+  navy: NAVY,
+  gold: GOLD,
+  goldText: GOLD,
+  goldOnNavy: GOLD,
+  goldLightBg: GOLD_LIGHT_BG,
+};
+
+function issuerPalette(family: BrandFamily): ReportPalette {
+  return {
+    coverField: rgbObject(family.field),
+    coverAccent: rgbObject(family.accentOnField),
+    navy: rgbObject(family.deep),
+    gold: rgbObject(family.accent),
+    goldText: rgbObject(family.accentInk),
+    goldOnNavy: rgbObject(family.onDeep),
+    goldLightBg: rgbObject(family.wash),
+  };
+}
 
 interface MarketEvent {
   date: string;
@@ -171,13 +219,18 @@ class MarketIntelPDFBuilder {
   private pageNum = 0;
   private brandName: string;
   private brandUpper: string;
+  private P: ReportPalette;
+  /** The clone's issuer; absent on the prime, whose report is drawn as it always was. */
+  private issuer: IssuerLegacyBrand | null;
 
-  constructor(brandName: string = 'Property Consulting') {
+  constructor(brandName: string = 'Property Consulting', issuer: IssuerLegacyBrand | null = null) {
     this.doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
     this.pageWidth = this.doc.internal.pageSize.getWidth();
     this.pageHeight = this.doc.internal.pageSize.getHeight();
     this.brandName = brandName.trim() || 'Property Consulting';
     this.brandUpper = this.brandName.toUpperCase();
+    this.issuer = issuer;
+    this.P = issuer ? issuerPalette(issuer.family) : HOUSE_PALETTE;
   }
 
   private contentWidth() { return this.pageWidth - this.margin * 2; }
@@ -201,7 +254,7 @@ class MarketIntelPDFBuilder {
 
   private drawFooter() {
     const footerY = this.pageHeight - 12;
-    this.doc.setDrawColor(GOLD.r, GOLD.g, GOLD.b);
+    this.doc.setDrawColor(this.P.gold.r, this.P.gold.g, this.P.gold.b);
     this.doc.setLineWidth(0.5);
     this.doc.line(this.margin, footerY - 3, this.pageWidth - this.margin, footerY - 3);
     this.doc.setFontSize(7);
@@ -219,21 +272,21 @@ class MarketIntelPDFBuilder {
     const audienceLabel = AUDIENCE_LABELS[data.audienceSegment || 'general'] || '';
 
     // Navy background
-    this.doc.setFillColor(NAVY.r, NAVY.g, NAVY.b);
+    this.doc.setFillColor(this.P.coverField.r, this.P.coverField.g, this.P.coverField.b);
     this.doc.rect(0, 0, this.pageWidth, this.pageHeight, 'F');
 
     // Gold accent bar at top
-    this.doc.setFillColor(GOLD.r, GOLD.g, GOLD.b);
+    this.doc.setFillColor(this.P.coverAccent.r, this.P.coverAccent.g, this.P.coverAccent.b);
     this.doc.rect(0, 0, this.pageWidth, 4, 'F');
 
     // Company name
-    this.doc.setTextColor(GOLD.r, GOLD.g, GOLD.b);
+    this.doc.setTextColor(this.P.coverAccent.r, this.P.coverAccent.g, this.P.coverAccent.b);
     this.doc.setFont('helvetica', 'bold');
     this.doc.setFontSize(14);
     this.doc.text(this.brandUpper, this.margin, 50);
 
     // Gold divider
-    this.doc.setDrawColor(GOLD.r, GOLD.g, GOLD.b);
+    this.doc.setDrawColor(this.P.coverAccent.r, this.P.coverAccent.g, this.P.coverAccent.b);
     this.doc.setLineWidth(1);
     this.doc.line(this.margin, 58, this.margin + 60, 58);
 
@@ -255,9 +308,9 @@ class MarketIntelPDFBuilder {
 
     // Audience edition badge
     if (audienceLabel) {
-      this.doc.setFillColor(GOLD.r, GOLD.g, GOLD.b);
+      this.doc.setFillColor(this.P.coverAccent.r, this.P.coverAccent.g, this.P.coverAccent.b);
       this.doc.roundedRect(this.margin, titleY, this.doc.getTextWidth(audienceLabel) + 12, 10, 2, 2, 'F');
-      this.doc.setTextColor(NAVY.r, NAVY.g, NAVY.b);
+      this.doc.setTextColor(this.P.coverField.r, this.P.coverField.g, this.P.coverField.b);
       this.doc.setFont('helvetica', 'bold');
       this.doc.setFontSize(9);
       this.doc.text(audienceLabel.toUpperCase(), this.margin + 6, titleY + 7);
@@ -265,13 +318,13 @@ class MarketIntelPDFBuilder {
     }
 
     // Report period
-    this.doc.setTextColor(GOLD.r, GOLD.g, GOLD.b);
+    this.doc.setTextColor(this.P.coverAccent.r, this.P.coverAccent.g, this.P.coverAccent.b);
     this.doc.setFont('helvetica', 'normal');
     this.doc.setFontSize(16);
     this.doc.text(data.reportPeriod.toUpperCase(), this.margin, titleY + 5);
 
     // Gold bar
-    this.doc.setFillColor(GOLD.r, GOLD.g, GOLD.b);
+    this.doc.setFillColor(this.P.coverAccent.r, this.P.coverAccent.g, this.P.coverAccent.b);
     this.doc.rect(this.margin, titleY + 12, 40, 2, 'F');
 
     // Subtitle
@@ -283,7 +336,7 @@ class MarketIntelPDFBuilder {
     this.doc.text(subtitleLines, this.margin, titleY + 24);
 
     // Bottom gold accent
-    this.doc.setFillColor(GOLD.r, GOLD.g, GOLD.b);
+    this.doc.setFillColor(this.P.coverAccent.r, this.P.coverAccent.g, this.P.coverAccent.b);
     this.doc.rect(0, this.pageHeight - 4, this.pageWidth, 4, 'F');
 
     // Date generated
@@ -327,14 +380,14 @@ class MarketIntelPDFBuilder {
     for (const item of tocItems) {
       this.doc.setFont('helvetica', 'bold');
       this.doc.setFontSize(10);
-      this.doc.setTextColor(GOLD.r, GOLD.g, GOLD.b);
+      this.doc.setTextColor(this.P.goldText.r, this.P.goldText.g, this.P.goldText.b);
       this.doc.text(item.num, this.margin, this.y);
 
       this.doc.setFont('helvetica', 'normal');
       this.doc.setTextColor(DARK_TEXT.r, DARK_TEXT.g, DARK_TEXT.b);
       this.doc.text(item.title, this.margin + 15, this.y);
 
-      this.doc.setDrawColor(GOLD.r, GOLD.g, GOLD.b);
+      this.doc.setDrawColor(this.P.gold.r, this.P.gold.g, this.P.gold.b);
       this.doc.setLineDashPattern([1, 2], 0);
       const textWidth = this.doc.getTextWidth(item.title);
       this.doc.line(this.margin + 15 + textWidth + 3, this.y, this.pageWidth - this.margin, this.y);
@@ -348,15 +401,15 @@ class MarketIntelPDFBuilder {
 
   private drawSectionHeader(title: string) {
     this.checkPageBreak(20);
-    this.doc.setFillColor(GOLD.r, GOLD.g, GOLD.b);
+    this.doc.setFillColor(this.P.gold.r, this.P.gold.g, this.P.gold.b);
     this.doc.rect(this.margin, this.y - 5, 3, 14, 'F');
 
     this.doc.setFont('helvetica', 'bold');
     this.doc.setFontSize(16);
-    this.doc.setTextColor(NAVY.r, NAVY.g, NAVY.b);
+    this.doc.setTextColor(this.P.navy.r, this.P.navy.g, this.P.navy.b);
     this.doc.text(title.toUpperCase(), this.margin + 8, this.y + 5);
 
-    this.doc.setDrawColor(GOLD.r, GOLD.g, GOLD.b);
+    this.doc.setDrawColor(this.P.gold.r, this.P.gold.g, this.P.gold.b);
     this.doc.setLineWidth(0.5);
     this.doc.line(this.margin, this.y + 10, this.pageWidth - this.margin, this.y + 10);
 
@@ -382,7 +435,7 @@ class MarketIntelPDFBuilder {
         this.checkPageBreak(14);
         this.doc.setFont('helvetica', 'bold');
         this.doc.setFontSize(level === 1 ? 14 : level === 2 ? 12 : 10);
-        this.doc.setTextColor(NAVY.r, NAVY.g, NAVY.b);
+        this.doc.setTextColor(this.P.navy.r, this.P.navy.g, this.P.navy.b);
         const wrapped = this.doc.splitTextToSize(text, maxW);
         this.doc.text(wrapped, this.margin, this.y);
         this.y += wrapped.length * (level <= 2 ? 6 : 5) + 3;
@@ -395,7 +448,7 @@ class MarketIntelPDFBuilder {
         this.checkPageBreak(10);
         this.doc.setFont('helvetica', 'bold');
         this.doc.setFontSize(9.5);
-        this.doc.setTextColor(NAVY.r, NAVY.g, NAVY.b);
+        this.doc.setTextColor(this.P.navy.r, this.P.navy.g, this.P.navy.b);
         const label = boldMatch[1];
         const value = boldMatch[2] || '';
         
@@ -420,7 +473,7 @@ class MarketIntelPDFBuilder {
         this.doc.setFont('helvetica', 'normal');
         this.doc.setFontSize(9);
         this.doc.setTextColor(DARK_TEXT.r, DARK_TEXT.g, DARK_TEXT.b);
-        this.doc.setFillColor(GOLD.r, GOLD.g, GOLD.b);
+        this.doc.setFillColor(this.P.gold.r, this.P.gold.g, this.P.gold.b);
         this.doc.circle(this.margin + 2, this.y - 1, 1, 'F');
         const wrapped = this.doc.splitTextToSize(bulletText, maxW - 10);
         this.doc.text(wrapped, this.margin + 7, this.y);
@@ -436,7 +489,7 @@ class MarketIntelPDFBuilder {
         const text = stripMarkdown(numMatch[2]);
         this.doc.setFont('helvetica', 'bold');
         this.doc.setFontSize(9);
-        this.doc.setTextColor(GOLD.r, GOLD.g, GOLD.b);
+        this.doc.setTextColor(this.P.goldText.r, this.P.goldText.g, this.P.goldText.b);
         this.doc.text(`${num}.`, this.margin, this.y);
         this.doc.setFont('helvetica', 'normal');
         this.doc.setTextColor(DARK_TEXT.r, DARK_TEXT.g, DARK_TEXT.b);
@@ -476,7 +529,7 @@ class MarketIntelPDFBuilder {
     const colWidth = this.contentWidth() / cells.length;
 
     if (this.isTableHeaderRow) {
-      this.doc.setFillColor(NAVY.r, NAVY.g, NAVY.b);
+      this.doc.setFillColor(this.P.navy.r, this.P.navy.g, this.P.navy.b);
       this.doc.rect(this.margin, this.y - 4, this.contentWidth(), 7, 'F');
       this.doc.setFont('helvetica', 'bold');
       this.doc.setFontSize(8);
@@ -516,14 +569,14 @@ class MarketIntelPDFBuilder {
     const wrappedContent = this.doc.splitTextToSize(stripMarkdown(content), this.contentWidth() - 14);
     const panelHeight = Math.max(20, wrappedContent.length * 4.5 + 12);
     
-    this.doc.setFillColor(GOLD_LIGHT_BG.r, GOLD_LIGHT_BG.g, GOLD_LIGHT_BG.b);
+    this.doc.setFillColor(this.P.goldLightBg.r, this.P.goldLightBg.g, this.P.goldLightBg.b);
     this.doc.roundedRect(this.margin, this.y - 2, this.contentWidth(), panelHeight, 2, 2, 'F');
-    this.doc.setFillColor(GOLD.r, GOLD.g, GOLD.b);
+    this.doc.setFillColor(this.P.gold.r, this.P.gold.g, this.P.gold.b);
     this.doc.rect(this.margin, this.y - 2, 3, panelHeight, 'F');
 
     this.doc.setFont('helvetica', 'bold');
     this.doc.setFontSize(9);
-    this.doc.setTextColor(GOLD.r, GOLD.g, GOLD.b);
+    this.doc.setTextColor(this.P.goldText.r, this.P.goldText.g, this.P.goldText.b);
     this.doc.text(sanitise(title).toUpperCase(), this.margin + 8, this.y + 4);
 
     this.doc.setFont('helvetica', 'normal');
@@ -543,9 +596,9 @@ class MarketIntelPDFBuilder {
     this.drawSectionHeader('Key Insights Snapshot');
 
     // Navy accent box with gold text
-    this.doc.setFillColor(NAVY.r, NAVY.g, NAVY.b);
+    this.doc.setFillColor(this.P.navy.r, this.P.navy.g, this.P.navy.b);
     this.doc.roundedRect(this.margin, this.y - 2, this.contentWidth(), 12, 2, 2, 'F');
-    this.doc.setTextColor(GOLD.r, GOLD.g, GOLD.b);
+    this.doc.setTextColor(this.P.goldOnNavy.r, this.P.goldOnNavy.g, this.P.goldOnNavy.b);
     this.doc.setFont('helvetica', 'bold');
     this.doc.setFontSize(9);
     this.doc.text('YOUR 60-SECOND MARKET BRIEFING', this.pageWidth / 2, this.y + 5, { align: 'center' });
@@ -574,22 +627,22 @@ class MarketIntelPDFBuilder {
       const cardHeight = Math.max(16, wrapped.length * 4.5 + 10);
 
       // Card background — alternating warm tones
-      this.doc.setFillColor(GOLD_LIGHT_BG.r, GOLD_LIGHT_BG.g, GOLD_LIGHT_BG.b);
+      this.doc.setFillColor(this.P.goldLightBg.r, this.P.goldLightBg.g, this.P.goldLightBg.b);
       this.doc.roundedRect(this.margin, this.y - 2, this.contentWidth(), cardHeight, 2, 2, 'F');
       
       // Gold left accent bar
-      this.doc.setFillColor(GOLD.r, GOLD.g, GOLD.b);
+      this.doc.setFillColor(this.P.gold.r, this.P.gold.g, this.P.gold.b);
       this.doc.rect(this.margin, this.y - 2, 3, cardHeight, 'F');
 
       // Gold border outline
-      this.doc.setDrawColor(GOLD.r, GOLD.g, GOLD.b);
+      this.doc.setDrawColor(this.P.gold.r, this.P.gold.g, this.P.gold.b);
       this.doc.setLineWidth(0.5);
       this.doc.roundedRect(this.margin, this.y - 2, this.contentWidth(), cardHeight, 2, 2, 'S');
 
       // Card number badge
-      this.doc.setFillColor(NAVY.r, NAVY.g, NAVY.b);
+      this.doc.setFillColor(this.P.navy.r, this.P.navy.g, this.P.navy.b);
       this.doc.circle(this.margin + 9, this.y + 4, 3.5, 'F');
-      this.doc.setTextColor(GOLD.r, GOLD.g, GOLD.b);
+      this.doc.setTextColor(this.P.goldOnNavy.r, this.P.goldOnNavy.g, this.P.goldOnNavy.b);
       this.doc.setFont('helvetica', 'bold');
       this.doc.setFontSize(8);
       this.doc.text(String(i + 1), this.margin + 9, this.y + 5.2, { align: 'center' });
@@ -656,7 +709,7 @@ class MarketIntelPDFBuilder {
 
       // Determine colour based on heading keywords
       let bgColor = LIGHT_BG;
-      let accentColor = NAVY;
+      let accentColor = this.P.navy;
       let iconChar = '>';
       const headingLower = heading.toLowerCase().replace(/\*\*/g, '');
 
@@ -720,7 +773,7 @@ class MarketIntelPDFBuilder {
     this.drawSectionHeader('Your Next Steps');
 
     // Full-width gold accent box at top
-    this.doc.setFillColor(GOLD.r, GOLD.g, GOLD.b);
+    this.doc.setFillColor(this.P.gold.r, this.P.gold.g, this.P.gold.b);
     this.doc.rect(this.margin, this.y, this.contentWidth(), 1.5, 'F');
     this.y += 8;
 
@@ -730,22 +783,28 @@ class MarketIntelPDFBuilder {
     this.y += 5;
     this.checkPageBreak(35);
     
+    // The platform issues a report for a deployment that has named nobody, and
+    // the platform is not an advisory: its closing page says so. So neither
+    // the advisory's self-description nor an invitation to contact it is set
+    // under the platform's name.
+    if (this.issuer?.issuer.kind === 'platform') return;
+
     // Why <brand> callout panel
     const whyText = `${this.brandName} is a strategic property advisory that delivers data-driven, insight-led guidance — enabling clients to act on opportunities others don't see.`;
     const whyWrapped = this.doc.splitTextToSize(whyText, this.contentWidth() - 20);
     const whyHeight = whyWrapped.length * 4.5 + 14;
     
-    this.doc.setFillColor(GOLD_LIGHT_BG.r, GOLD_LIGHT_BG.g, GOLD_LIGHT_BG.b);
+    this.doc.setFillColor(this.P.goldLightBg.r, this.P.goldLightBg.g, this.P.goldLightBg.b);
     this.doc.roundedRect(this.margin, this.y, this.contentWidth(), whyHeight, 2, 2, 'F');
-    this.doc.setDrawColor(GOLD.r, GOLD.g, GOLD.b);
+    this.doc.setDrawColor(this.P.gold.r, this.P.gold.g, this.P.gold.b);
     this.doc.setLineWidth(0.5);
     this.doc.roundedRect(this.margin, this.y, this.contentWidth(), whyHeight, 2, 2, 'S');
-    this.doc.setFillColor(GOLD.r, GOLD.g, GOLD.b);
+    this.doc.setFillColor(this.P.gold.r, this.P.gold.g, this.P.gold.b);
     this.doc.rect(this.margin, this.y, 3, whyHeight, 'F');
     
     this.doc.setFont('helvetica', 'bold');
     this.doc.setFontSize(9);
-    this.doc.setTextColor(GOLD.r, GOLD.g, GOLD.b);
+    this.doc.setTextColor(this.P.goldText.r, this.P.goldText.g, this.P.goldText.b);
     this.doc.text(`WHY ${this.brandUpper}?`, this.margin + 8, this.y + 6);
     
     this.doc.setFont('helvetica', 'normal');
@@ -757,10 +816,10 @@ class MarketIntelPDFBuilder {
 
     // Contact CTA box
     this.checkPageBreak(30);
-    this.doc.setFillColor(NAVY.r, NAVY.g, NAVY.b);
+    this.doc.setFillColor(this.P.navy.r, this.P.navy.g, this.P.navy.b);
     this.doc.roundedRect(this.margin, this.y, this.contentWidth(), 25, 3, 3, 'F');
     
-    this.doc.setTextColor(GOLD.r, GOLD.g, GOLD.b);
+    this.doc.setTextColor(this.P.goldOnNavy.r, this.P.goldOnNavy.g, this.P.goldOnNavy.b);
     this.doc.setFont('helvetica', 'bold');
     this.doc.setFontSize(11);
     this.doc.text('Ready to Take the Next Step?', this.pageWidth / 2, this.y + 10, { align: 'center' });
@@ -786,7 +845,7 @@ class MarketIntelPDFBuilder {
       this.checkPageBreak(12);
       this.doc.setFont('helvetica', 'bold');
       this.doc.setFontSize(11);
-      this.doc.setTextColor(NAVY.r, NAVY.g, NAVY.b);
+      this.doc.setTextColor(this.P.navy.r, this.P.navy.g, this.P.navy.b);
       this.doc.text('Recent Events', this.margin, this.y);
       this.y += 8;
       for (const event of recent) { this.drawEventCard(event, false); }
@@ -797,7 +856,7 @@ class MarketIntelPDFBuilder {
       this.checkPageBreak(12);
       this.doc.setFont('helvetica', 'bold');
       this.doc.setFontSize(11);
-      this.doc.setTextColor(NAVY.r, NAVY.g, NAVY.b);
+      this.doc.setTextColor(this.P.navy.r, this.P.navy.g, this.P.navy.b);
       this.doc.text('Upcoming Events to Watch', this.margin, this.y);
       this.y += 8;
       for (const event of upcoming) { this.drawEventCard(event, true); }
@@ -812,7 +871,7 @@ class MarketIntelPDFBuilder {
     this.doc.roundedRect(this.margin, this.y - 3, this.contentWidth(), 16, 2, 2, 'F');
 
     if (isUpcoming) {
-      this.doc.setDrawColor(GOLD.r, GOLD.g, GOLD.b);
+      this.doc.setDrawColor(this.P.gold.r, this.P.gold.g, this.P.gold.b);
       this.doc.setLineWidth(0.3);
       this.doc.roundedRect(this.margin, this.y - 3, this.contentWidth(), 16, 2, 2, 'S');
     }
@@ -867,13 +926,13 @@ class MarketIntelPDFBuilder {
       const investorInsight = 'For Investors: Focus on yield-to-growth ratios and supply-demand dynamics in the suburbs identified. Each represents a strategic entry point for portfolio growth with strong rental demand underpinning cash flow.';
       const ownerInsight = 'For Homebuyers: These suburbs offer genuine lifestyle value alongside capital growth potential. Buying in these locations now positions you for long-term wealth building in a less competitive market.';
       
-      this.drawColoredInsightPanel('WHAT THIS MEANS FOR INVESTORS', investorInsight, NAVY, { r: 235, g: 242, b: 255 });
+      this.drawColoredInsightPanel('WHAT THIS MEANS FOR INVESTORS', investorInsight, this.P.navy, { r: 235, g: 242, b: 255 });
       this.drawColoredInsightPanel('WHAT THIS MEANS FOR HOMEBUYERS', ownerInsight, GREEN, GREEN_LIGHT_BG);
     } else if (segment === 'investor') {
       this.drawColoredInsightPanel(
         'WHAT THIS MEANS FOR YOUR PORTFOLIO',
         'These suburbs have been identified based on their yield-to-growth ratio, supply-demand dynamics, and infrastructure pipeline. Each represents a strategic entry point for portfolio growth with strong rental demand underpinning cash flow stability.',
-        NAVY,
+        this.P.navy,
         { r: 235, g: 242, b: 255 }
       );
     } else {
@@ -956,14 +1015,14 @@ class MarketIntelPDFBuilder {
     const cards = [
       {
         title: 'Key Drivers',
-        accent: NAVY,
+        accent: this.P.navy,
         background: { r: 235, g: 242, b: 255 },
         items: analysisDrivers.length ? analysisDrivers : ['AI correlation analysis will appear here once the model returns structured drivers.'],
       },
       {
         title: 'Correlation Signals',
-        accent: GOLD,
-        background: GOLD_LIGHT_BG,
+        accent: this.P.goldText,
+        background: this.P.goldLightBg,
         items: researchHighlights.length ? researchHighlights : ['Live market intelligence findings will appear here when source-backed highlights are available.'],
       },
     ];
@@ -1138,7 +1197,12 @@ class MarketIntelPDFBuilder {
     // Disclaimer
     try {
       const settings = await fetchGlobalReportSettings();
-      drawJsPDFDisclaimerPage(this.doc, settings.contactDetails, settings.disclaimer);
+      if (this.issuer) {
+        const closing = issuerClosingPage(this.issuer, settings);
+        drawJsPDFDisclaimerPage(this.doc, closing.contact, closing.disclaimer, closing.palette);
+      } else {
+        drawJsPDFDisclaimerPage(this.doc, settings.contactDetails, settings.disclaimer);
+      }
     } catch (e) {
       console.error('Failed to add disclaimer page:', e);
     }
@@ -1153,6 +1217,13 @@ export async function generateMarketIntelligencePDF(
   data: MarketIntelligenceReportData
 ): Promise<Blob> {
   const brandSettings = await fetchGlobalReportSettings();
+  // Whose template this report is printed in: NPC's navy and gold on the
+  // prime, exactly as it has always been drawn, and the issuer's own on every
+  // clone (`legacyDocumentBrand.ts`). The content is the same either way.
+  const legacyBrand = await loadLegacyDocumentBrand(brandSettings?.contactDetails?.company_name);
+  if (legacyBrand.artwork === 'issuer') {
+    return new MarketIntelPDFBuilder(legacyBrand.issuer.name, legacyBrand).generate(data);
+  }
   const brandName = (brandSettings?.contactDetails?.company_name || 'Property Consulting').trim();
   const builder = new MarketIntelPDFBuilder(brandName);
   return builder.generate(data);

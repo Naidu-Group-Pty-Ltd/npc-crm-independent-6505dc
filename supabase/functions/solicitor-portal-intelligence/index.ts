@@ -50,6 +50,7 @@ import {
 } from "../_shared/legalIntelligence.ts";
 import { meteredFetch } from "../_shared/meteredFetch.ts";
 import { internalError } from '../_shared/errorResponse.ts';
+import { closedMatterMessage, loadWorkspaceIdentity } from '../_shared/workspaceIdentity.ts';
 
 const MODEL = "google/gemini-3.6-flash";
 const MAX_DOCUMENT_BYTES = 20 * 1024 * 1024;
@@ -196,7 +197,7 @@ Deno.serve(async (req) => {
       const status = cleanEnum(body.status, LEGAL_MATTER_STATUSES);
       if (!status) return json({ error: 'A valid status is required' }, 400);
       if (matter.status !== status && TERMINAL_STATUSES.has(matter.status)) {
-        return json({ error: 'This matter is closed. Contact NPC to reopen it.' }, 400);
+        return json({ error: closedMatterMessage(await loadWorkspaceIdentity({ readPrimeName: false })) }, 400);
       }
       const rawPosition = Number(body.position);
       const position = Number.isFinite(rawPosition)

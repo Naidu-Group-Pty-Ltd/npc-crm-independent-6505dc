@@ -97,7 +97,10 @@ allowance holds only if a repeat costs nothing. `geocode_cache` is keyed by the
 folded address text (case and punctuation folded; spelling variants such as
 `Rd`/`Road` deliberately NOT folded, because a key that guesses equivalence
 serves the wrong cached answer). A wrong answer that was cached is removed by
-deleting its row; nothing expires, because an address does not move.
+deleting its row; a street or address answer never expires, because an address
+does not move. An answer coarser than a street is different (§17): it is never
+remembered while a street-level provider could not be asked, and a remembered
+one is asked again of the street-level providers once it is an hour old.
 
 **The free providers spend no credential, so they are never metered.** They
 are fetched through `fetchWithTimeout`, never `meteredFetch`, and
@@ -227,9 +230,11 @@ geocodes correctly.
 
 | Name | Default | Meaning |
 |---|---|---|
-| `GEOCODER_PROVIDERS` | `nominatim,abs_locality` | The order. Add `google` to make Google a last resort. A misspelt value falls back to the default, never to "no providers". |
+| `GEOCODER_PROVIDERS` | `gnaf,nominatim,photon,abs_locality` | The order. Add `google` to make Google a last resort. A misspelt value falls back to the default, never to "no providers". Photon joined the default on 24 Sep 2026 (§17), and G-NAF leads it wherever a register is configured (§18). |
+| `GEOCODER_GNAF_URL` | unset | The G-NAF register the product's own address service serves (§18) — `https://<app>.fly.dev/<token>/gnaf`, written by the deploy workflow once the service has proved itself. Unset, the `gnaf` provider is skipped without a request. |
 | `GEOCODER_OSM_URL` | `https://nominatim.openstreetmap.org` | A self-hosted Nominatim (§10). |
-| `OSM_GEOCODING_DAILY_LIMIT` | `2000` | The day's Nominatim allowance across the deployment. |
+| `GEOCODER_PHOTON_URL` | `https://photon.komoot.io` | The Photon the chain asks for a street address (§17). Falls back to `AUTOCOMPLETE_PHOTON_URL`, then the public instance — so pointing the address field at a self-hosted copy points the chain at it too. |
+| `OSM_GEOCODING_DAILY_LIMIT` | `2000` | The day's geocoding allowance across the deployment, shared by Nominatim and Photon. |
 | `ADDRESS_AUTOCOMPLETE_PROVIDER` | `osm` | `osm` or `google`. Any other spelling is `osm`. |
 | `AUTOCOMPLETE_PHOTON_URL` | `https://photon.komoot.io` | A self-hosted Photon (§10). |
 | `OSM_AUTOCOMPLETE_DAILY_LIMIT` | `5000` | The day's Photon allowance. |
@@ -615,3 +620,275 @@ the programme remains unverified. One operator note: Mapillary's
 capture dates vary by street (this one is 2019); the panel shows the
 date, and an operator who prefers Google's fresher imagery for a
 deployment simply reorders `STREET_IMAGERY_PROVIDERS`.
+
+## 16. An address the chain could not read (24 Sep 2026)
+
+Report `79d677d6` (93 Schofields Farm Road, created from a realestate.com.au
+listing) was written with its geography unresolved: eight evidence sources
+missing, data completeness 33%, grade withheld. The address never placed, and
+the production log said why in two lines:
+
+```
+07:46:18  [geocoder] location-intelligence-service/geocode: nominatim: 0 candidate(s), none an address
+07:46:18  [geocoder] location-intelligence-service/geocode: abs_locality: no suburb named (tallawong) in NSW
+```
+
+Four faults, stacked:
+
+1. **The composer dropped the suburb** (`src/lib/reports/propertyAddress.pure.ts`).
+   The scrape returned the street `93 Schofields Farm Road (tallawong)`, the
+   suburb `Schofields`, `NSW` and `2762`; "never repeat a part the address
+   already carries" found the word *Schofields* inside the **street name** and
+   left the suburb out. A suburb is now judged by POSITION — a later
+   comma-separated part, or the words the address ends with once its state and
+   postcode are set aside — so a street named after its suburb (Schofields Road,
+   Blacktown Road, Rouse Hill Drive) keeps it.
+2. **A bracketed note sat where the suburb is read.** `(tallawong)` is the
+   listing agent's note of the neighbouring suburb: the development is split,
+   some of it Schofields and some Tallawong (the owner's own reading of the
+   listing). `stripAddressAnnotations` removes a bracketed note before anything
+   reads the address, the cache key included.
+3. **A comma-less address handed Nominatim its state and postcode as the
+   street.** `streetLineOf` sets aside a trailing postcode, state abbreviation
+   (or a full state name followed by a postcode) and country — and the suburb
+   where one is known — from the first part. A state's full name on its own is
+   not stripped: "12 Victoria" is a street line.
+4. **A suburb is a filter the street may not need.** On a development split the
+   listing's suburb and the one OpenStreetMap files the street under can
+   differ, and a structured search with the wrong `city` finds nothing. Where
+   the street and the postal area are both known the plan asks once more
+   WITHOUT the suburb. That question is there to find the STREET, so
+   `suburblessAnswerRefusal` accepts only the house or the street, and only
+   where the answer names the postal area asked: a suburb or postcode centroid
+   is the locality fallback's job under the suburb's own name, a different
+   postal area is a different street of the same name, and an answer naming
+   none cannot show it is on this one. The bracketed place name is kept as
+   the locality fallback's **second** candidate (`annotatedLocalities`), tried
+   only after the first finds nothing.
+
+Where the caller names no state, the plan reads it from the text, and that
+read had its own fault, found alongside these rather than observed: the first
+state name ANYWHERE, so `5 Victoria Street, Brisbane QLD 4000` was asked in
+Victoria. It is now the state word in the locality position
+(`localityStateOf` — followed by nothing but a postcode and the country), the
+same rule the report generator's intake reads by.
+
+What is asked is decided in `geocodePlan.pure.ts` and tested without a network;
+`geocoder.ts` does the I/O and follows the plan. **The suburb a report's
+evidence is keyed on is not decided here at all** — once a point is found the
+report resolves its geography from the point, so a house on either side of a
+split is described by the suburb it actually stands in. Under an ASGS edition
+that predates a new suburb, that is the older suburb, which is what the edition
+says.
+
+The chain was driven against a stubbed Nominatim and ABS (the sandbox reaches
+neither): on the code before this change it asked `street=93 Schofields Farm
+Road (tallawong) NSW 2762 city=(tallawong)` and then the ABS for
+`(TALLAWONG)` — the production failure, reproduced — and after it, the stored
+address resolves at address precision on the first question, the composed one
+on the second, and with OpenStreetMap silent the ABS is asked for Tallawong.
+A second-question answer in another postal area, one that is only the
+postcode's centroid, and one that names no postcode are each refused, and the
+ABS suburb centroid answers instead. An ordinary comma address asks exactly
+the question it asked before, under the same cache key (asserted in
+`geocodePlan.spec.ts`).
+
+**The composer had the mirror-image fault.** Judging the suburb by position
+reads each comma-separated part with its locality tail set aside, and set
+aside to the END, `Mount Victoria NSW 2786` loses the word that makes it
+(`victoria` is a state name) and reads as "mount" — so the suburb would have
+been added a second time. Every reading along the way is kept and compared,
+not only the last (`propertyAddress.spec.ts`, Mount Victoria and Port
+Victoria).
+
+**Not verified until deploy:** that Nominatim itself holds 93 Schofields Farm
+Road. The harness proves the question; the answer is OpenStreetMap's. If it
+does not, the ABS suburb centroid is the floor, which resolves the geography
+at suburb grain.
+
+## 17. The day OpenStreetMap said no (24 Sep 2026)
+
+From **07:51:29 UTC** the public Nominatim answered **HTTP 403** to every
+request from the production egress. Measured from the function logs, the last
+success was at 07:49:25 (`estimate-capital-growth`, `1408/5 SECOND AVE,
+Blacktown NSW 2148`, street precision). The eight minutes before the refusal
+held about a dozen requests, most of them one question asked over and over:
+report `79d677d6`'s continuations re-asked the unfindable `93 Schofields Farm
+Road (tallawong) NSW 2762` every thirty seconds. The six hours before that held
+two. Our functions share outbound addresses with other Supabase customers, and
+Nominatim blocks by address, so **the cause is not established**. The log
+carried `nominatim answered 403` and nothing else, and the refusal page — which
+says why — was discarded unread.
+
+The chain then did exactly what §2 designed it to do. It fell through to the
+ABS suburb centroid, and so it placed two properties in the middle of their
+suburbs. Five faults turned that fallback into wrong reports.
+
+1. **The centroid was remembered as the address.** `geocode_cache` held that "a
+   hit is the answer; nothing expires, because an address does not move". The
+   centroid was written there, so neither a regeneration nor the refusal lifting
+   could ever have placed these two properties again.
+2. **The precision was dropped.** The geocoder's answer said
+   `precision: 'locality'`. `location-intelligence-service` returned the point
+   and discarded that field.
+3. **Every enrichment point was called a parcel.** `enrichmentCoordinate`
+   stamped every enrichment point `address`, the one precision its own module
+   says may select a planning control. So Blacktown's planning registers were
+   asked at the middle of Blacktown. The report stated **"R2 — Low Density
+   Residential" for a fourteenth-floor apartment**, under a sentence calling the
+   point "the property's verified coordinate".
+4. **The centroid's readings scored the property.** Its walk score, commute and
+   school count verified as the property's own and scored Location.
+5. **The planning answer would have been reused.** It carried no record of
+   where it was read. Reuse keeps a `cadastral` answer for thirty days, so every
+   regeneration would have been served the same wrong zone.
+
+What each became:
+
+- **Photon is the chain's second street-level provider**
+  (`photonGeocode.pure.ts`; default order `nominatim,photon,abs_locality`;
+  `GEOCODER_PHOTON_URL`, falling back to `AUTOCOMPLETE_PHOTON_URL`). It reads
+  the same OpenStreetMap data behind a different operator, so one operator's
+  refusal no longer drops the chain to a suburb.
+  - It is held to a stricter match than the address field's suggestions,
+    because nobody chooses between its candidates.
+  - A house is accepted only when its number AND street agree with the ask.
+  - Either way, the answer must stand in the postal area asked (or in the
+    suburb, where no postcode can be compared).
+  - A lot number is never read as a street number.
+- **A refusal pauses the provider that sent it**
+  (`geocodeChainPolicy.pure.ts`: 403 → 30 min, 429 → its `Retry-After` inside
+  1 min–6 h, a failing 5xx → 1 min). The refusal's own first words and its
+  `Retry-After` are logged.
+- **An answer coarser than a street is never remembered while a street-level
+  provider could not be asked** (`cacheVerdict`).
+- **A remembered answer coarser than a street is provisional.** Where the
+  question names a street, the street-level providers are asked again once the
+  row is an hour old.
+  - A finer answer replaces it.
+  - A finer "no such street" re-dates it.
+  - A finer outage leaves it standing.
+
+  That is what repairs the rows the outage wrote, with no migration and no row
+  deleted by hand. A caller that refuses a suburb-level answer (the PDF import)
+  is no longer handed one from the cache.
+- **The point's precision travels with everything measured from it.**
+  - The location service stamps `stages.geocodePrecision` / `geocodeProvider`.
+  - `enrichmentPoint.pure.ts` is the one reader.
+  - `enrichmentCoordinate` and `recoveredCoordinate` share one rule: `address`
+    reads planning; `street` reads it and the page says "at a point on the
+    property's street"; a suburb or postal-area centre is `too_coarse`.
+  - The page then says the registers were not asked, and why, rather than
+    printing a neighbouring zone.
+- **An area centre's readings are neither scored nor stated as the property's.**
+  - `locationInputVerification` has a rule 4, and the grade's gap reads
+    `LOCATION_MEASURED_AT_AREA_CENTRE`.
+  - The amenity and transport blocks open with where the figures were measured
+    from.
+- **Reuse asks what the point was.**
+  - An enrichment with no recorded precision is re-acquired.
+  - One measured at an area centre is reused only within six hours — one
+    generation's continuations.
+  - A planning answer is reused only where it records a point at the property
+    or its street (`planningPointIsRecorded`).
+
+**Migration `20261220090000`** widens `geocode_cache.provider`'s CHECK to admit
+`photon` and `gnaf`. Without it, a Photon answer is served but refused at the
+insert, which is the repeated question this section exists to stop. The code
+ships in either order: a refused cache write logs and the answer still stands.
+
+**What stays unverified until deploy:**
+
+- whether Photon answers the production egress (the address field's own
+  Photon calls do not appear in today's logs);
+- whether it holds `5 Second Avenue` as a house;
+- what the refusal page says. The next 403 will log it.
+
+The durable answer to "a public service can refuse us at any time" is the one
+§10 already names: our own copy of the lookup service, and G-NAF as the
+provider that places every real address on its own block. The owner approved
+both on 24 Sep 2026.
+
+## 18. Our own address service (G-NAF + Photon)
+
+Both durable answers §17 names are built, as one service:
+[`ADDRESS_SERVICE.md`](./ADDRESS_SERVICE.md).
+
+- **G-NAF** is the national address register: 15.9M addresses, 98% of them
+  geocoded at the address itself. It is served as static files, one per postal
+  area, and read by the `gnaf` provider (`gnafShard.pure.ts`), which leads the
+  default order and is skipped without a request where `GEOCODER_GNAF_URL` is
+  unset.
+- **Photon** runs on the same machine over the Australia–Oceania index, behind
+  `GEOCODER_PHOTON_URL` and, where it is unset or already ours,
+  `AUTOCOMPLETE_PHOTON_URL`.
+- **A copy this product runs is never held to the public allowance or the
+  one-a-second turn** (`isPublicPhotonBase`, one rule for the address field
+  and the chain).
+
+The register is **not** in the database, because it would add sixty per cent
+to it, needs a credential the repository does not hold, and would never reach
+a clone. Every build is proved in CI before anything serves it: the register
+checked against itself, the image run in the runner, the real chain asked for
+the owner's addresses. A deploy is a person's dispatch, at ≈ A$19–24 a month
+for one always-on machine.
+
+## 19. The first run through the register, and the street answer it missed (25 Sep 2026)
+
+The owner regenerated three reports at 00:18 UTC, the first production use of
+the register. Read from `function_logs`:
+
+| Report | Placed by | Precision | Zone read there |
+|---|---|---|---|
+| 93 Schofields Farm Road (tallawong), Schofields NSW 2762 | `gnaf` | address | R2 — Low Density Residential |
+| 1408/5 SECOND AVE, Blacktown NSW 2148 | `gnaf` | address | MU1 — Mixed Use, Blacktown (the suburb centroid had read R2) |
+| 60 Lawley Street, Spalding WA 6530 | `nominatim` | street | none — WA zoning is licence restricted |
+
+The first two are rule 2 working as written: `the remembered locality answer
+is provisional — asking the street-level providers again`, then G-NAF.
+
+The third is the defect. There is no `[geocoder]` line for it, because the
+answer came from `geocode_cache`: OpenStreetMap's street point, remembered
+before the outage. Rule 2 re-asks only an answer coarser than a street, on the
+ground that an address does not move. That is true of an address answer. A
+street answer is what a provider gives when it found the street and not the
+lot, and every one in the cache was written before the register existed, so
+the one provider that can see the lot was never asked. The register's own proof
+run (§18) places this address at its property centroid (`PC`).
+
+Three changes, one rule each:
+
+1. **Rule 4** (`geocodeChainPolicy.pure.ts`,
+   `rememberedStreetAnswerIsProvisional`). A remembered street answer is put
+   to the register once it is an hour old, where the ask names a number or a
+   lot, a register is configured, and the operator's `GEOCODER_PROVIDERS`
+   still names it. The register alone is asked. Its address point replaces the
+   street and is remembered; "nothing finer here" re-dates the street answer
+   for an hour; an outage of ours leaves it exactly as it was. A street the
+   register placed itself is never re-asked.
+2. **A stored enrichment measured from a street point stands through the
+   generation that measured from it, and is placed again when the next one
+   starts** (`streetPointIsStale` in `enrichmentPoint.pure.ts`, refused as
+   `street_point_stale`). "Starts" is measured by what the generation has
+   written, not by the clock: a generation that has written sections keeps its
+   point however long it runs, because every section was measured from it,
+   and one that has written nothing asks again unless it placed the point
+   itself in the last hour (`STREET_POINT_REUSE_HOURS`, the hand-off before a
+   first section). Unlike the area-centre refusal, it still stands in when the
+   re-fetch fails: a street reading is sound, and was refused only in the hope
+   of a better one.
+3. **A reused planning answer follows the point** (`planningAnswerFitsPoint`
+   in `acquisitionReuse.pure.ts`). Its `pointBasis` now records the
+   coordinate, and the generator compares it with this run's point before the
+   registers are asked: a different precision, provider or coordinate drops
+   the reused answer and reads the zone again (`withdrawReuse` takes it back
+   from the provenance ledger, which is written last). The clock could not
+   decide this: the stored packet is re-stamped on every invocation while the
+   enrichment keeps the time it was actually placed, so the two would have
+   expired at different moments and a report could have measured its
+   amenities at the property while reading its zone on the street.
+
+The cost is bounded by construction: the register is our own machine, and an
+address it does not hold is asked at most once an hour, and only when something
+geocodes it. Nothing is migrated or deleted; each row is repaired the next time
+it is asked for.

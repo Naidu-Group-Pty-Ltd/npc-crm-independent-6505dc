@@ -23,7 +23,9 @@ import { useModulePermissions } from '@/hooks/useModulePermissions';
 import { cn } from '@/lib/utils';
 import { StockPicture } from '@/components/stock/StockPicture';
 import { readStockEmptyState } from '../../../supabase/functions/_shared/builderStock/mirrorAvailability.pure';
+import { Link } from 'react-router-dom';
 import {
+  builderStockPropertyPath,
   marketplaceStockImageUrl, useMarketplaceBuilderStock, useMarketplaceBuilders,
   useMarketplaceClientSearch, useSelectBuilderStockForClient,
 } from '@/lib/marketplaceBuilderStock';
@@ -310,10 +312,31 @@ function StockCard({
 
   return (
     <Card className="flex flex-col overflow-hidden rounded-2xl border-border/70 bg-card/90 shadow-[0_10px_30px_rgba(15,23,42,0.06)] dark:border-white/10 dark:bg-background/80">
-      <StockCardImage image={image} />
+      {/*
+        The picture and the title open the property's own page. The picture's
+        link is a layer over it rather than a wrapper, because the picture can
+        carry its own "Source" link and an anchor may not hold an anchor; that
+        link and the badge sit above this layer. It is out of the tab order and
+        hidden from assistive technology, so a keyboard or a screen reader
+        meets ONE link per card, on the title.
+      */}
+      <div className="relative">
+        <StockCardImage image={image} />
+        <Link
+          to={builderStockPropertyPath(item.id)}
+          tabIndex={-1}
+          aria-hidden="true"
+          className="absolute inset-0 z-10"
+        />
+      </div>
       <CardContent className="flex flex-1 flex-col gap-3 p-4">
         <div className="min-w-0">
-          <p className="truncate text-sm font-semibold">{stockItemTitle(item)}</p>
+          <Link
+            to={builderStockPropertyPath(item.id)}
+            className="block truncate text-sm font-semibold text-foreground hover:text-primary hover:underline focus-visible:rounded-sm focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+          >
+            {stockItemTitle(item)}
+          </Link>
           {locality ? <p className="truncate text-xs text-muted-foreground">{locality}</p> : null}
         </div>
 
@@ -493,7 +516,7 @@ function StockCardImage({ image }: {
   );
 }
 
-function ActivateBuilderDialog({
+export function ActivateBuilderDialog({
   item, onClose, onSelected,
 }: {
   item: BuilderStockItem | null;

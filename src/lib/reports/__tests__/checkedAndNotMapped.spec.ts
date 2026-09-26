@@ -126,7 +126,7 @@ describe('rule 4a permits exactly one form, with its provenance', () => {
   const rules = planningFactBlocks(factsFor(KELLYVILLE));
 
   it('closes the list to what the register answered', () => {
-    expect(rules).toMatch(/Exactly these layers were asked of a register that answered and matched nothing/);
+    expect(rules).toMatch(/Exactly these published maps were checked and show nothing over the property/);
     for (const layer of ['heritage', 'bushfire', 'flood', 'landslip']) {
       expect(rules, layer).toContain(layer);
     }

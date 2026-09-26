@@ -74,6 +74,7 @@ import { useToast } from '@/hooks/use-toast';
 import { ReportActionMenu } from '@/components/reports/ReportActionMenu';
 import { useReportPreferences, type ReportScope, type ReportTier } from '@/hooks/useReportPreferences';
 import { useNavigate, useSearchParams } from 'react-router-dom';
+import { builderStockPropertyPath } from '@/lib/marketplaceBuilderStock';
 import { ListingRowContextMenu } from '@/components/listings/ListingRowContextMenu';
 import { cn } from '@/lib/utils';
 
@@ -381,7 +382,11 @@ function MarketplaceSectionTabs({
 
 export default function Listings() {
   const { enabled: builderStockEnabled } = useBuilderStockMarketplaceFlag();
-  const [tab, setTab] = useState<MarketplaceTab>('listings');
+  const navigate = useNavigate();
+  // `?section=builder-stock` is where a builder property's page sends "back".
+  const [searchParams] = useSearchParams();
+  const [tab, setTab] = useState<MarketplaceTab>(
+    () => (searchParams.get('section') === 'builder-stock' ? 'builder_stock' : 'listings'));
 
   // A tab that disappears must not leave the page showing nothing. If an
   // administrator switches the feature off while somebody is looking at it,
@@ -398,7 +403,7 @@ export default function Listings() {
     return (
       <ListingsMarketplace
         sectionTabs={sectionTabs}
-        onOpenBuilderStock={() => setTab('builder_stock')}
+        onOpenBuilderStock={(stockItemId) => navigate(builderStockPropertyPath(stockItemId))}
       />
     );
   }
@@ -437,7 +442,7 @@ function ListingsMarketplace({
   onOpenBuilderStock,
 }: {
   sectionTabs?: ReactNode;
-  /** Sends the reader to the Builder Stock tab for a stock pin. */
+  /** Opens a builder property's own page for a stock pin. */
   onOpenBuilderStock?: (stockItemId: string) => void;
 } = {}) {
   const { canEdit: canEditListings, canDelete: canDeleteListings } = useModulePermissions('listings');
@@ -843,10 +848,10 @@ function ListingsMarketplace({
     (listing: PropertyListing) => {
       const stockId = builderStockIdFromMapId(listing.id);
       if (stockId) {
-        // Builder stock has no listing-detail modal — its record lives on the
-        // Builder Stock tab, which owns the enquiry and client-selection
-        // actions. The map hands the reader there rather than opening an
-        // empty modal over a property it cannot describe.
+        // Builder stock has no listing-detail modal — a builder property has
+        // its own page, which carries the builder's figures, photographs,
+        // documents and the Activate action. The map opens that page rather
+        // than an empty modal over a property it cannot describe.
         onOpenBuilderStock?.(stockId);
         return;
       }

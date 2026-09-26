@@ -560,12 +560,74 @@ const MAX_BLOCKS_BETWEEN_TWINS = 6;
 const headingTextKey = (line: string): string =>
   line.replace(/^#{1,6}[ \t]+/, '').replace(/[*_`]/g, '').replace(/\s+/g, ' ').trim().toLowerCase();
 
+/**
+ * A heading written twice in a row, at two depths, is one heading.
+ *
+ * The rule above requires the same depth, and on the 60 Lawley Street Compass
+ * (25 Sep 2026) the risk register grouped its risks under a heading and then
+ * opened each risk with a heading of its own — so where a group held one risk
+ * of the same name the page printed "Crime and personal safety" twice, one line
+ * above the other, and again "Infrastructure timing". At the foot of page 18
+ * the pair was stranded together, because the second was set as a bold line
+ * rather than a heading and the packer keeps only headings with what follows.
+ *
+ * So: where two heading-like lines carry the same words with NOTHING between
+ * them but blank lines, one goes. A real heading outranks a bold line standing
+ * in for one, whichever came first, so the document keeps its structure; of
+ * two real headings the first stays. Nothing else is touched — a single line of
+ * content between them means the second opens something, and it is left.
+ */
+const BOLD_LINE = /^\s*(\*\*|__)([^*_\n]{2,160}?)\1:?\s*$/;
+
+function foldAdjacentTwinHeadings(src: string): { markdown: string; merged: string[] } {
+  const lines = src.split('\n');
+  const drop = new Set<number>();
+  const merged: string[] = [];
+  let fence: string | null = null;
+  // The last heading-like line with only blank lines after it, or null.
+  let prev: { index: number; key: string; heading: boolean } | null = null;
+
+  for (let i = 0; i < lines.length; i++) {
+    const line = lines[i];
+    const open = /^\s*(```|:::)/.exec(line);
+    if (fence) {
+      if (new RegExp(`^\\s*${fence}\\s*$`).test(line)) fence = null;
+      continue;
+    }
+    if (open) { fence = open[1]; prev = null; continue; }
+    if (line.trim() === '') continue;
+
+    const depth = headingDepth(line);
+    const bold = depth ? null : BOLD_LINE.exec(line);
+    if (!depth && !bold) { prev = null; continue; }
+
+    const key = depth ? headingTextKey(line) : bold![2].replace(/\s+/g, ' ').trim().toLowerCase();
+    const isHeading = depth > 0;
+    if (prev && prev.key === key && key !== '') {
+      // One of the two goes: the bold stand-in if there is one, else the second.
+      const loser = !prev.heading && isHeading ? prev.index : i;
+      drop.add(loser);
+      merged.push(lines[loser].trim());
+      if (loser === prev.index) prev = { index: i, key, heading: isHeading };
+      continue;
+    }
+    prev = { index: i, key, heading: isHeading };
+  }
+
+  if (!drop.size) return { markdown: src, merged: [] };
+  const out = lines.filter((_, i) => !drop.has(i)).join('\n');
+  return { markdown: out.replace(/[ \t]*\n(?:[ \t]*\n){2,}/g, '\n\n'), merged };
+}
+
 export function mergeAdjacentDuplicateHeadings(markdown: string): MergedHeadingResult {
-  const src = String(markdown ?? '');
-  if (!src.includes('#')) return { markdown: src, merged: [] };
+  const raw = String(markdown ?? '');
+  if (!raw.includes('#') && !raw.includes('**') && !raw.includes('__')) return { markdown: raw, merged: [] };
+  const twins = foldAdjacentTwinHeadings(raw);
+  const src = twins.markdown;
+  if (!src.includes('#')) return { markdown: src, merged: twins.merged };
 
   const lines = src.split('\n');
-  const merged: string[] = [];
+  const merged: string[] = [...twins.merged];
   const drop = new Set<number>();
   let fence: string | null = null;
   let last: { depth: number; key: string } | null = null;
@@ -603,7 +665,7 @@ export function mergeAdjacentDuplicateHeadings(markdown: string): MergedHeadingR
     blocksSince = 0;
   }
 
-  if (!drop.size) return { markdown: src, merged: [] };
+  if (!drop.size) return { markdown: src, merged };
   const out = lines.filter((_, i) => !drop.has(i)).join('\n');
   return { markdown: out.replace(/[ \t]*\n(?:[ \t]*\n){2,}/g, '\n\n'), merged };
 }

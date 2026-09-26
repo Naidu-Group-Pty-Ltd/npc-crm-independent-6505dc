@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useRef } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 import { format } from 'date-fns';
+import { reportGeneratedAt } from '@/lib/reports/investment/reportGeneratedAt.pure';
 import { invokeSecureFunction } from '@/lib/secureInvoke';
 import type { PixelPerfectPDFGeneratorHandle } from '@/components/reports/PixelPerfectPDFGenerator';
 import { InvestmentReportEditor } from '@/components/reports/InvestmentReportEditor';
@@ -226,7 +227,7 @@ export default function InvestmentReportView() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `investment-report-${report.property_address.replace(/[^a-zA-Z0-9]/g, '-')}-${format(new Date(report.created_at), 'yyyy-MM-dd')}.txt`;
+    a.download = `investment-report-${report.property_address.replace(/[^a-zA-Z0-9]/g, '-')}-${format(new Date(reportGeneratedAt(report)?.at ?? report.created_at), 'yyyy-MM-dd')}.txt`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);

@@ -35,8 +35,9 @@ const GOLDEN_PDF = resolve(REPO, 'reports/golden/borrowing-capacity-snapshot.pdf
 
 // ── The generator's collaborators, stubbed at the boundary ──────────────────
 //
-// Only the three that reach the network. Everything else — the drawing, the
-// layout, the pagination, the colours — is the real code path.
+// Only the three that reach the network, and the deployment the document is
+// drawn for. Everything else — the drawing, the layout, the pagination, the
+// colours — is the real code path.
 
 vi.mock('sonner', () => ({
   toast: { loading: vi.fn(), success: vi.fn(), error: vi.fn(), dismiss: vi.fn() },
@@ -51,6 +52,25 @@ vi.mock('@/hooks/useGlobalReportSettings', async () => {
 
 vi.mock('@/lib/fetchLatestBorrowingCapacity', () => ({
   fetchLatestBorrowingCapacity: async () => null,
+}));
+
+/**
+ * The prime's document, on every deployment that runs this spec.
+ *
+ * Which template a legacy document is drawn in is decided by the backend the
+ * build talks to (`legacyDocumentBrand.ts`): NPC's artwork on the prime, the
+ * issuer's own on a clone. This capture is the prime's, and every clone runs
+ * this spec in its own CI. Unpinned, a clone reads the issuer's settings from
+ * `whitelabel_settings` before it draws anything. The fetch stub below refuses
+ * those reads, and the client retries each refused read at 1, 2 and 4 seconds
+ * before it gives up. A clone makes two rounds of them, one after the other,
+ * so the capture needed fourteen seconds against its hook's ten and failed
+ * every clone's CI without drawing a page. The clone's template is held by
+ * `legacyDocumentBrand.spec.ts`.
+ */
+vi.mock('@/lib/primeDeployment', async (orig) => ({
+  ...((await orig()) as object),
+  isPrimeDeployment: () => true,
 }));
 
 /**

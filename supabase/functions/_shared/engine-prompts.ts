@@ -298,6 +298,7 @@ function substitute(text: string, tokens: Record<string, string | number | undef
 }
 
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.39.3';
+import { withoutFirmToken } from './reports/writerFirm.pure.ts';
 
 let _cachedClient: any = null;
 function getServiceClient() {
@@ -355,6 +356,11 @@ export async function resolvePrompt(
       console.warn(`[resolvePrompt] lookup failed for ${key}:`, (e as any)?.message);
     }
   }
+  // A writer that works for no business — a clone whose documents are issued
+  // under the platform — gets the template with the firm's clauses taken out
+  // rather than filled with a name (`writerFirm.pure.ts`). Only an explicit
+  // null does this: a name, or no `brand_name` at all, substitutes as before.
+  if (tokens.brand_name === null) template = withoutFirmToken(template);
   const text = substitute(template, tokens);
   const source: 'override' | 'default' | 'fallback' = isOverride
     ? 'override'

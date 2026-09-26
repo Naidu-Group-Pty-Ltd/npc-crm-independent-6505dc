@@ -2,7 +2,7 @@ import { Resend } from "https://esm.sh/resend@2.0.0";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { verifyAuth, createCorsHeaders, createUnauthorizedResponse } from '../_shared/auth.ts';
 import { enforceCsrf, csrfDenied } from "../_shared/csrfGuard.ts";
-import { getBrandConfig } from '../_shared/brand-config.ts';
+import { escapeHtml, getEmailIdentity, resendAddressing } from '../_shared/emailIdentity.ts';
 import { internalError } from '../_shared/errorResponse.ts';
 
 const resend = new Resend(Deno.env.get("RESEND_API_KEY"));
@@ -80,9 +80,12 @@ const handler = async (req: Request): Promise<Response> => {
     const alertColor = isPositive ? "#22c55e" : "#ef4444";
     const alertIcon = isPositive ? "✓" : "⚠";
 
-    const brand = await getBrandConfig();
+    // From this deployment's sending address. This used to send FROM the
+    // contact address, which a clone's domain-scoped key cannot use and which
+    // fell back to the prime's own mailbox where no contact was configured.
+    const identity = await getEmailIdentity(supabase);
     const emailResponse = await resend.emails.send({
-      from: `${brand.companyName} Call Alerts <${brand.contactEmail}>`,
+      ...resendAddressing(identity, 'Call Alerts'),
       to: [to],
       subject: `${alertIcon} Call Alert: ${alertName}`,
       html: `
@@ -140,7 +143,7 @@ const handler = async (req: Request): Promise<Response> => {
               <div style="margin-top: 24px; padding-top: 16px; border-top: 1px solid #e2e8f0;">
                 <p style="margin: 0; color: #64748b; font-size: 12px; text-align: center;">
                   Call ID: ${callId}<br>
-                  This is an automated alert from ${brand.companyName} Call Monitoring System.
+                  This is an automated alert from ${escapeHtml(identity.organisationName)} Call Monitoring System.
                 </p>
               </div>
             </div>

@@ -22,6 +22,7 @@ import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { LenderPacketDialog } from './LenderPacketDialog';
 import { AutoRemindersDialog } from './AutoRemindersDialog';
+import { houseLabel } from '@/lib/houseLabel';
 
 
 const CATEGORY_LABEL: Record<string, string> = {
@@ -57,7 +58,7 @@ const STATUS_META: Record<string, { label: string; tone: string; icon: any }> = 
 const OWNER_LABEL: Record<string, string> = {
   client: 'Client',
   finance_partner: 'Finance partner',
-  npc_team: 'NPC team',
+  npc_team: houseLabel('NPC team', 'Command Centre team'),
   legal: 'Legal',
   other: 'Other',
 };

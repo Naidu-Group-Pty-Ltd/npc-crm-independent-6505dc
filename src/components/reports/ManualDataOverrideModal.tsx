@@ -512,6 +512,29 @@ export function ManualDataOverrideModal({ report, isOpen, onClose, onSave }: Man
       originalValue: report?.financial_calculations?.buildSizeSqm || null,
       overrideValue: report?.manual_overrides?.buildSizeSqm || null,
       suffix: 'm²'
+    },
+    // The generator already reads these three from `manual_overrides`, and
+    // nothing else can supply them for a property entered by hand — so a
+    // report on one printed its configuration without them, and the prose
+    // borrowed a listing portal's figures and called them the property's
+    // records. Recording them here is the route the product already has.
+    {
+      key: 'bedrooms',
+      label: 'Bedrooms',
+      originalValue: report?.financial_calculations?.propertySpecs?.bedrooms ?? null,
+      overrideValue: report?.manual_overrides?.bedrooms ?? null
+    },
+    {
+      key: 'bathrooms',
+      label: 'Bathrooms',
+      originalValue: report?.financial_calculations?.propertySpecs?.bathrooms ?? null,
+      overrideValue: report?.manual_overrides?.bathrooms ?? null
+    },
+    {
+      key: 'yearBuilt',
+      label: 'Year Built',
+      originalValue: report?.financial_calculations?.propertySpecs?.yearBuilt ?? null,
+      overrideValue: report?.manual_overrides?.yearBuilt ?? null
     }
   ];
 

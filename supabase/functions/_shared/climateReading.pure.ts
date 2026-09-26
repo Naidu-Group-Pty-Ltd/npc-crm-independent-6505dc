@@ -47,7 +47,7 @@ export const SILO_SOURCE_LABEL =
   'SILO Data Drill (Queensland Government), interpolated from Bureau of Meteorology observations — CC BY 4.0';
 
 export const SILO_BASIS_NOTE =
-  'Interpolated ~5 km grid values at the property coordinate (SILO Data Drill), not a single weather station record.';
+  'Interpolated values for the ~5 km area around the property (SILO Data Drill), not a single weather station\'s record.';
 
 export const NORMAL_FROM = 1991;
 export const NORMAL_TO = 2020;

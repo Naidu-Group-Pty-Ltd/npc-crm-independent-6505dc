@@ -83,6 +83,12 @@ export const ABSENCE_WORDS: readonly string[] = [
   'not measured',
   'unmeasured',
   'not searched',
+  // The adviser's words for the same absences (`adviserVoice.pure.ts`,
+  // 26 Sep 2026). A new document says these, so a guard that knew only the
+  // old ones would stop seeing the confession it exists to catch.
+  'not checked',
+  'not confirmed',
+  'not covered',
   'not retrieved',
   'not recorded',
   'not reported',

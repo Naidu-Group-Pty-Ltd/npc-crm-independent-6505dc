@@ -2,7 +2,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.55.0'
 import { createCorsHeaders, verifyAuth } from "../_shared/auth.ts"
 import { enforceCsrf, csrfDenied } from "../_shared/csrfGuard.ts"
 import { hashPassword } from "../_shared/password.ts"
-import { getBrandConfig } from "../_shared/brand-config.ts"
+import { escapeHtml, getEmailIdentity, linkOrigin, PRIME_APP_ORIGIN, resendAddressing } from "../_shared/emailIdentity.ts"
 import { meteredFetch } from "../_shared/meteredFetch.ts";
 import { internalError } from '../_shared/errorResponse.ts';
 
@@ -34,9 +34,6 @@ Deno.serve(async (req) => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL')!
     const supabaseServiceKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!
     const resendApiKey = Deno.env.get('RESEND_API_KEY')
-    // Hard-pin to the production custom domain. APP_URL env is intentionally
-    // ignored to prevent lovable.app / preview URLs ever leaking into invites.
-    const appUrl = 'https://command-centre.npcservices.com.au'
     const supabase = createClient(supabaseUrl, supabaseServiceKey)
 
     const body = await req.json()
@@ -155,6 +152,22 @@ Deno.serve(async (req) => {
     }
 
     // === SEND INVITE ===
+    // Which application the invitation opens, decided before anything is
+    // written. The prime stays hard-pinned to its own domain, so a preview URL
+    // can never reach an invite there. That pin used to apply on every clone
+    // too, sending a clone's finance partners into the PRIME's portal, where
+    // their token means nothing. A clone's invitation opens the clone Mission
+    // Control provisioned. With no origin provisioned, nothing is created.
+    const identity = await getEmailIdentity(supabase)
+    const appUrl = linkOrigin(identity, PRIME_APP_ORIGIN)
+    if (!appUrl) {
+      console.error('[finance-portal-invite] No application URL is provisioned for this deployment; refusing to build an invite link')
+      return new Response(
+        JSON.stringify({ error: "Could not determine this workspace's application URL (PUBLIC_APP_URL / APP_URL). Nothing was created and no email was sent." }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      )
+    }
+
     if (!finance_contact_id) {
       return new Response(
         JSON.stringify({ error: 'finance_contact_id is required' }),
@@ -216,8 +229,9 @@ Deno.serve(async (req) => {
 
     // Resolve invite mode + temp password
     const useTempPassword = invite_mode === 'temp_password';
-    const brand = await getBrandConfig();
-    const resendFrom = brand.fromHeaderAdmin;
+    const addressing = resendAddressing(identity, 'Admin');
+    const resendFrom = addressing.from;
+    const orgName = escapeHtml(identity.organisationName);
     let tempPasswordPlain: string | null = null;
     let tempPasswordHash: string | null = null;
     if (useTempPassword) {
@@ -308,8 +322,8 @@ Deno.serve(async (req) => {
     const loginLink = `${appUrl}/finance/login`
 
     const subject = useTempPassword
-      ? `Your ${brand.companyName} Finance Portal account is ready`
-      : `You're Invited to the ${brand.companyName} Finance Portal`
+      ? `Your ${identity.organisationName} Finance Portal account is ready`
+      : `You're Invited to the ${identity.organisationName} Finance Portal`
 
     const safeName = String(contact.name || 'there').replace(/[<>]/g, '');
 
@@ -333,7 +347,7 @@ Deno.serve(async (req) => {
         </p>`
       : `
         <p style="margin:0 0 16px;color:#475569;font-size:15px;line-height:1.6;">
-          You've been invited to access the ${brand.companyName} Finance Portal. Click the button below to set your password and activate your account.
+          You've been invited to access the ${orgName} Finance Portal. Click the button below to set your password and activate your account.
         </p>
         <table role="presentation" cellspacing="0" cellpadding="0" border="0" align="center" style="margin:24px auto 20px;">
           <tr><td align="center" bgcolor="#0D264D" style="border-radius:8px;">
@@ -349,14 +363,14 @@ Deno.serve(async (req) => {
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>${subject}</title>
+    <title>${escapeHtml(subject)}</title>
   </head>
   <body style="margin:0;padding:0;background:#f4f5f7;font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,Arial,sans-serif;">
     <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0" style="background:#f4f5f7;padding:32px 12px;">
       <tr><td align="center">
         <table role="presentation" width="560" cellspacing="0" cellpadding="0" border="0" style="max-width:560px;background:#ffffff;border-radius:14px;overflow:hidden;box-shadow:0 1px 3px rgba(15,23,42,0.06);">
           <tr><td style="background:#0D264D;padding:28px 32px;text-align:center;">
-            <div style="font-family:Georgia,'Times New Roman',serif;color:#BF9B50;font-size:13px;letter-spacing:4px;text-transform:uppercase;font-weight:600;">${brand.companyName}</div>
+            <div style="font-family:Georgia,'Times New Roman',serif;color:#BF9B50;font-size:13px;letter-spacing:4px;text-transform:uppercase;font-weight:600;">${orgName}</div>
             <div style="margin-top:6px;color:#ffffff;font-size:20px;font-weight:600;letter-spacing:0.3px;">Finance Partner Portal</div>
           </td></tr>
           <tr><td style="padding:32px;">
@@ -366,7 +380,7 @@ Deno.serve(async (req) => {
           <tr><td style="padding:18px 32px 28px;border-top:1px solid #eef0f3;">
             <p style="margin:0;color:#94a3b8;font-size:12px;line-height:1.5;text-align:center;">
               If you didn't expect this email, you can safely ignore it.<br/>
-              ${brand.companyName} — Property Investment Advisory
+              ${orgName}
             </p>
           </td></tr>
         </table>
@@ -376,8 +390,8 @@ Deno.serve(async (req) => {
 </html>`
 
     const textBody = useTempPassword
-      ? `Hi ${safeName},\n\nYour ${brand.companyName} Finance Portal account is ready.\n\nTemporary password: ${tempPasswordPlain}\n\nSign in here: ${loginLink}\n\nYou'll be asked to change your password on first sign-in.\n\n— ${brand.companyName}`
-      : `Hi ${safeName},\n\nYou've been invited to the ${brand.companyName} Finance Portal.\n\nSet your password and activate your account:\n${inviteLink}\n\nThis invitation expires in ${INVITE_EXPIRY_HOURS} hours.\n\n— ${brand.companyName}`
+      ? `Hi ${safeName},\n\nYour ${identity.organisationName} Finance Portal account is ready.\n\nTemporary password: ${tempPasswordPlain}\n\nSign in here: ${loginLink}\n\nYou'll be asked to change your password on first sign-in.\n\n— ${identity.organisationName}`
+      : `Hi ${safeName},\n\nYou've been invited to the ${identity.organisationName} Finance Portal.\n\nSet your password and activate your account:\n${inviteLink}\n\nThis invitation expires in ${INVITE_EXPIRY_HOURS} hours.\n\n— ${identity.organisationName}`
 
     let emailSent = false;
     let emailError: string | null = null;
@@ -392,14 +406,18 @@ Deno.serve(async (req) => {
             'Authorization': `Bearer ${resendApiKey}`,
           },
           body: JSON.stringify({
-            from: resendFrom,
+            ...addressing,
             to: [normalizedEmail],
             subject,
             html: htmlBody,
             text: textBody,
             headers: {
               'X-Entity-Ref-ID': inviteToken.slice(0, 36),
-              'List-Unsubscribe': `<mailto:${brand.contactEmail}?subject=unsubscribe>`,
+              // Only to a mailbox the tenant configured. The fallback here
+              // used to be the prime's own admin address.
+              ...(identity.contactEmail
+                ? { 'List-Unsubscribe': `<mailto:${identity.contactEmail}?subject=unsubscribe>` }
+                : {}),
             },
             tags: [
               { name: 'category', value: 'finance_portal_invite' },

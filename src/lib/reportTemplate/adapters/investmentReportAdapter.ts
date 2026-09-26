@@ -5,9 +5,16 @@ import { chunkReportContent } from '@/lib/reportTemplate/reportSections';
 import { presentStoredMarkdown } from '@/lib/reports/investment/derivedHygiene.pure';
 import { readEvidenceInventory } from '@/lib/reports/investment/chartEvidence.pure';
 import { investmentReportFileName } from '@/lib/reports/investment/reportFileName.pure';
+import {
+  photographResumeRequest,
+  PHOTOGRAPH_RESUME_TIMEOUT_MS,
+  readPhotographCapture,
+  type PhotographCaptureReading,
+} from '@/lib/reports/urlExtractPhotographs';
 import { applyInvestmentProjection } from '../../../../supabase/functions/_shared/reportBindingProjection.pure';
 import type { BrandContext, ReportListing, ReportTemplateAdapter, RoutingContext, TemplateBindingContext } from './types';
 import { applyOrganisationAndBrand } from './organisation';
+import { inlineReportPhotographs, type SignedPhotograph } from './reportPhotographs';
 
 function flatten(obj: any): Record<string, any> {
   if (!obj || typeof obj !== 'object') return {};
@@ -78,6 +85,63 @@ async function loadInvestmentReport(reportId: string): Promise<any | null> {
   // while reading as though a second route existed.
   if (error) return null;
   return ((resp as any)?.report as any) ?? null;
+}
+
+/**
+ * The report and the property's own photographs, in one read.
+ *
+ * The same broker and the same `reports` permission as `loadInvestmentReport`;
+ * the photographs are an ADDITION the broker never lets fail the read, so a
+ * report with none — or whose photographs could not be read — loads exactly as
+ * it always did. See `reportPhotographs.pure.ts` for which may lead a client's
+ * document.
+ *
+ * A URL-extract report's photographs are captured from its listing page after
+ * the report is created, and an attempt the listing's host did not answer
+ * leaves work over. The broker says so (`pending`), and this document asks for
+ * the rest before it is drawn — waiting a bounded time, and reading again only
+ * if the attempt ran — so it carries what the capture keeps rather than what
+ * the first attempt managed. Nothing about it can fail the read.
+ *
+ * Exported for the standard presentation (`deliverInvestmentPdf.ts`), which
+ * draws the same report's pictures and must read them by the same rule: one
+ * reader, so a report cannot carry a photograph in one presentation that the
+ * other refuses.
+ */
+export async function loadInvestmentReportWithPhotographs(
+  reportId: string,
+): Promise<{ report: any; photographs: SignedPhotograph[]; floorPlans: SignedPhotograph[] } | null> {
+  const first = await readReportAndPhotographs(reportId);
+  if (!first) return null;
+  const resume = photographResumeRequest(first.capture);
+  if (!resume) return first;
+  const { error } = await invokeSecureFunction('listing-images', { ...resume }, { timeoutMs: PHOTOGRAPH_RESUME_TIMEOUT_MS })
+    .catch(() => ({ error: { message: 'unreachable' } }));
+  if (error) return first;
+  return (await readReportAndPhotographs(reportId)) ?? first;
+}
+
+async function readReportAndPhotographs(
+  reportId: string,
+): Promise<{
+  report: any;
+  photographs: SignedPhotograph[];
+  floorPlans: SignedPhotograph[];
+  capture: PhotographCaptureReading | null;
+} | null> {
+  const { data: resp, error } = await invokeSecureFunction('get-investment-reports', {
+    table: 'investment_reports',
+    reportId,
+    photographs: true,
+    listOptions: { select: '*' },
+  } as any);
+  if (error) return null;
+  const report = (resp as any)?.report ?? null;
+  if (!report) return null;
+  const photographs = Array.isArray((resp as any)?.photographs) ? (resp as any).photographs as SignedPhotograph[] : [];
+  // Served apart because they are drawn apart: whole, on a page of their own.
+  const floorPlans = Array.isArray((resp as any)?.floorPlans) ? (resp as any).floorPlans as SignedPhotograph[] : [];
+  return { report, photographs, floorPlans, capture: readPhotographCapture(resp) };
 }
 
 /**
@@ -197,8 +261,9 @@ export const investmentReportAdapter: ReportTemplateAdapter = {
      */
     payload?: Record<string, unknown> | null;
   }): Promise<TemplateBindingContext | null> {
-    const loaded = await loadInvestmentReport(reportId);
-    if (!loaded) return null;
+    const withPhotographs = await loadInvestmentReportWithPhotographs(reportId);
+    if (!withPhotographs) return null;
+    const loaded = withPhotographs.report;
     const presentedContent = typeof payload?.reportContent === 'string'
       ? payload.reportContent
       : null;
@@ -275,6 +340,20 @@ export const investmentReportAdapter: ReportTemplateAdapter = {
     // generated. See `organisationProjection.pure.ts`.
     await applyOrganisationAndBrand(data);
 
+    // The property's own photographs, where its listing holds any a client's
+    // document may carry. `property.images.N` is what the photographic masters
+    // bind — a cover hero on three, full-page plates on five — and every slot
+    // is conditional, so a report with none draws exactly what it drew before.
+    // Set after the projection so nothing above can overwrite it.
+    const [images, floorPlans] = await Promise.all([
+      inlineReportPhotographs(withPhotographs.photographs),
+      // The floor plans, where the brochure or the listing held one: bound
+      // apart as `property.floorPlans`, because every photo slot crops to fill
+      // its frame and a plan is drawn whole, on a page of its own.
+      inlineReportPhotographs(withPhotographs.floorPlans),
+    ]);
+    if (images.length) data.property = { ...(data.property ?? {}), images };
+    if (floorPlans.length) data.property = { ...(data.property ?? {}), floorPlans };
 
     return {
       data,

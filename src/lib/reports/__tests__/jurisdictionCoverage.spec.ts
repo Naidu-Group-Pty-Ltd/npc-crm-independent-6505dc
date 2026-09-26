@@ -173,10 +173,13 @@ describe('a page with no overlay reading names its own jurisdiction', () => {
     const integrated = nothingAsked('NSW');
     const never = nothingAsked('SA');
     expect(integrated).not.toBe(never);
-    expect(integrated).toMatch(/registers this report reads for this jurisdiction returned/i);
+    // The reader's words since 25 Sep 2026: a map that is normally read and
+    // answered nothing "could not be confirmed"; one this report never reads
+    // is "not covered by this report". Still two sentences.
+    expect(integrated).toMatch(/could not be confirmed for the property/i);
     expect(integrated).toMatch(/unchecked rather than clear/i);
-    expect(integrated).not.toMatch(/not yet integrated/i);
-    expect(never).toMatch(/not yet integrated/i);
+    expect(integrated).not.toMatch(/not covered by this report/i);
+    expect(never).toMatch(/not covered by this report/i);
   });
 
   it('an unknown jurisdiction still refuses to state a finding about the land', () => {

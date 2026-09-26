@@ -11,15 +11,18 @@ import { Button } from '@/components/ui/button';
 import { resolveInvestmentGrade } from '@/components/reports/report-view/utils';
 import { InvestmentGradeSummary } from './InvestmentGradeSummary';
 import { resolveReportAddress } from '@/lib/reports/reportAddress';
+import { reportGeneratedAt, reportGeneratedAtMs } from '@/lib/reports/investment/reportGeneratedAt.pure';
 
 type Props = Omit<React.ComponentProps<typeof InvestmentReportCard>, 'report' | 'isSelected' | 'generatingTier' | 'comparisonSelectable' | 'activeComparisonType'> & { reports: InvestmentReport[]; isSelected: (id: string) => boolean; generatingTier: { reportId: string; tier: ReportTier } | null; activeComparisonType: ReportVariant | null; canSelectReport: (report: Pick<InvestmentReport, 'id' | 'report_tier'>) => boolean; onTogglePackageArchive?: (reports: InvestmentReport[]) => void };
 
 export function PropertyReportPackageCard({ reports, isSelected, generatingTier, activeComparisonType, canSelectReport, onTogglePackageArchive, ...cardProps }: Props) {
   const [open, setOpen] = useState(false);
   const contentId = useId();
-  const ordered = [...reports].sort((a, b) => REPORT_VARIANT_ORDER.indexOf(normalizeReportVariant(a)) - REPORT_VARIANT_ORDER.indexOf(normalizeReportVariant(b)) || +new Date(b.created_at) - +new Date(a.created_at));
+  const ordered = [...reports].sort((a, b) => REPORT_VARIANT_ORDER.indexOf(normalizeReportVariant(a)) - REPORT_VARIANT_ORDER.indexOf(normalizeReportVariant(b)) || reportGeneratedAtMs(b) - reportGeneratedAtMs(a));
   const availableVariants = REPORT_VARIANT_ORDER.filter((variant) => ordered.some((report) => resolveInvestmentReportType(report) === variant));
-  const latest = ordered.reduce((newest, item) => new Date(item.created_at) > new Date(newest.created_at) ? item : newest, ordered[0]);
+  // The report generated most recently — not the row inserted most recently:
+  // a regeneration reuses its row, so `created_at` never moves.
+  const latest = ordered.reduce((newest, item) => reportGeneratedAtMs(item) > reportGeneratedAtMs(newest) ? item : newest, ordered[0]);
   const fullAddress = resolveReportAddress(latest);
   const packageArchived = ordered.length > 0 && ordered.every(report => report.is_archived === true);
   const resolvedGrade = resolveInvestmentGrade(ordered as any);
@@ -47,7 +50,7 @@ export function PropertyReportPackageCard({ reports, isSelected, generatingTier,
           <div className="shrink-0 rounded-xl border border-border/60 bg-primary/5 p-2 text-primary"><MapPin className="h-5 w-5" /></div>
           <div className="min-w-0 flex-1">
             <h3 className="break-words text-lg font-semibold leading-snug" title={fullAddress}>{fullAddress}</h3>
-            <p className="mt-1 text-xs text-muted-foreground">Latest {format(new Date(latest.created_at), 'PPp')} · {latest.status || 'completed'}</p>
+            <p className="mt-1 text-xs text-muted-foreground">Latest {format(new Date(reportGeneratedAt(latest)?.at ?? latest.created_at), 'PPp')} · {latest.status || 'completed'}</p>
             <div className="mt-2 flex flex-wrap gap-1.5" aria-label={`${availableVariants.length} available report types`}>{availableVariants.map(variant => <ReportTypeBadge key={variant} type={variant} />)}</div>
             <InvestmentGradeSummary grade={resolvedGrade} variant="compact" />
           </div>

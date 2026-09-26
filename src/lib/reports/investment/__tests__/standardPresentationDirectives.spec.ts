@@ -31,6 +31,13 @@ vi.mock('@/hooks/useGlobalReportSettings', async (orig) => ({
     disclaimer: { text: 'Test disclaimer.', font_size: 'medium', is_enabled: true },
   }),
 }));
+// The issuer's brand is read from the deployment's own settings; here there is
+// none to read, so the document is issued under the contact name above.
+vi.mock('@/lib/reportTemplate/adapters/organisation', async (orig) => ({
+  ...(await orig() as object),
+  loadOrganisation: async () => null,
+  loadBrandMarks: async () => ({}),
+}));
 
 const CHAPTERS = ['Alpha Chapter', 'Beta Chapter', 'Gamma Chapter'];
 
@@ -84,7 +91,9 @@ beforeAll(() => {
 afterAll(() => { globalThis.fetch = realFetch; });
 
 async function drawnText(
-  report: unknown = REPORT, reportTier: 'compass' | 'financial' = 'compass',
+  report: unknown = REPORT,
+  reportTier: 'compass' | 'financial' = 'compass',
+  { fromPage = 1 }: { fromPage?: number } = {},
 ): Promise<string> {
   const { generateInvestmentPdfBlob } = await import('../investmentPdfDocument');
   const { blob } = await generateInvestmentPdfBlob({ report: report as any, reportTier });
@@ -93,7 +102,7 @@ async function drawnText(
     data: new Uint8Array(await blob.arrayBuffer()), useSystemFonts: false,
   }).promise;
   let out = '';
-  for (let i = 1; i <= doc.numPages; i++) {
+  for (let i = fromPage; i <= doc.numPages; i++) {
     const content = await (await doc.getPage(i)).getTextContent();
     out += content.items.map((it: any) => it.str ?? '').join('') + '\n';
   }
@@ -224,6 +233,11 @@ describe('the standard Investment presentation and chart directives', () => {
         + 'gives you a **land-banking angle**: your investment is backed by land.',
         '',
       ].join('\n'),
+    }, 'compass', {
+      // From the page after the cover: the cover sets its name and address in
+      // letter-spaced capitals, which pdf.js reads back a letter at a time
+      // ("S T R E E T ,"), and this rule is about how body copy is set.
+      fromPage: 2,
     });
     const flat = text.replace(/\s+/g, ' ');
     // Nothing has a space before its punctuation…

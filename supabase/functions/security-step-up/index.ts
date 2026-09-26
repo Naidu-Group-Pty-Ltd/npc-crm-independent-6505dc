@@ -28,6 +28,7 @@ import { createEncryptedTotpSecret, verifyEncryptedTotp } from '../_shared/totp.
 import { generateRecoveryCodes, hashRecoveryCode, hashRecoveryCodes, isRecoveryCode, isRecoveryCodeHashConfigured } from '../_shared/recoveryCodes.ts';
 import { consumeRateLimit, getTrustedClientIp } from '../_shared/requestSecurity.ts';
 import { internalError } from '../_shared/errorResponse.ts';
+import { authenticatorIssuer, loadWorkspaceIdentity } from '../_shared/workspaceIdentity.ts';
 import {
   loadWebAuthnConfig,
   buildRegistrationOptions,
@@ -139,7 +140,7 @@ Deno.serve(async (req) => {
       });
       if (insertError) return j({ success: false, error: 'mfa_enrollment_unavailable' }, 503);
       const accountLabel = encodeOtpAuthLabel(auth.username || auth.userId);
-      const issuer = encodeOtpAuthLabel('NPC Property Dashboard');
+      const issuer = encodeOtpAuthLabel(authenticatorIssuer(await loadWorkspaceIdentity({ readPrimeName: false })));
       const otpauthUri = `otpauth://totp/${issuer}:${accountLabel}?secret=${generated.secret}&issuer=${issuer}&algorithm=SHA1&digits=6&period=30`;
       try {
         await admin.from('security_events').insert({ action: 'mfa.totp_enrollment_started', decision: 'allow', actor_type: 'human', actor_id: auth.userId, metadata_redacted: { staff_session_id: staffSession.id } });

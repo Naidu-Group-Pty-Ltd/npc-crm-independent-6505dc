@@ -4,6 +4,7 @@ import { AlertTriangle, FileText, TrendingUp } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { ErrorBoundary } from "@/components/common/ErrorBoundary";
+import { houseLabel } from '@/lib/houseLabel';
 
 const InvestmentReportGenerator = lazy(() =>
   import("@/components/reports/InvestmentReportGenerator").then((m) => ({
@@ -52,7 +53,7 @@ export default function Reports() {
                 <TrendingUp className="h-6 w-6" />
               </span>
               <div>
-                <p className="ci-tab-eyebrow">NPC reporting command centre</p>
+                <p className="ci-tab-eyebrow">{houseLabel('NPC reporting command centre', 'Reporting command centre')}</p>
                 <h1 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">
                   Reports
                 </h1>

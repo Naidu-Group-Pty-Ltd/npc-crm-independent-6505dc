@@ -1,12 +1,14 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.55.0';
 import { verifyAuth, createCorsHeaders, createForbiddenResponse, createUnauthorizedResponse } from '../_shared/auth.ts';
-import { requireModulePermission } from '../_shared/authz.ts';
+import { requireAdmin, requireModulePermission } from '../_shared/authz.ts';
 import { releaseInvestmentReportRunTokens } from '../_shared/reportMetering.ts';
 
 import { enforceCsrf, csrfDenied } from "../_shared/csrfGuard.ts";
 import { internalError } from '../_shared/errorResponse.ts';
 import { applyDisplayOverrides, buildCalculatorInput, overridesAffectModel } from '../_shared/reports/investment/overrides.pure.ts';
 import { healFinanceIdentity } from '../_shared/reports/investment/financialEngine.pure.ts';
+import { refuseFailureStamp } from '../_shared/reports/investment/failureStamp.pure.ts';
+import { BULK_DELETE_BUDGET_MS, removeDeletedReportStorage } from '../_shared/reports/investment/reportStorageRemoval.ts';
 /**
  * CORS comes from `_shared/auth.ts`, like every other function's.
  *
@@ -125,6 +127,56 @@ Deno.serve(async (req) => {
             JSON.stringify({ error: 'reportId and data are required for update' }),
             { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
           );
+        }
+
+        // A failure stamp is a statement about the ROW, so the row decides.
+        //
+        // On 24 Sep 2026 a browser whose final status read hit a three-second
+        // platform 503 stamped 60 Lawley Street failed eight seconds after
+        // the generator had written it `completed` with 16 of 16 sections —
+        // and the release below refunded the finished report as a failed
+        // one. The browser could not read the row; this function can, so it
+        // refuses to record a failure over a document the record shows was
+        // finished, and releases nothing. A row it cannot read is not
+        // stamped either: an unread row is not evidence of a failure, and
+        // the stamp cannot be taken back. See `failureStamp.pure.ts`.
+        if (String(data.status || '').toLowerCase() === 'failed') {
+          const { data: current, error: currentError } = await supabase
+            .from('investment_reports')
+            .select('id, status, last_completed_section, total_sections')
+            .eq('id', reportId)
+            .maybeSingle();
+          if (currentError) {
+            console.warn('[manage-investment-reports] failure stamp not recorded — the row could not be read', {
+              reportId,
+              error: currentError.message,
+            });
+            return new Response(
+              JSON.stringify({
+                error: 'The report could not be read, so it was not marked as failed. Try again in a moment.',
+                code: 'row_unreadable',
+                retryable: true,
+              }),
+              { status: 503, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+            );
+          }
+          const refusal = refuseFailureStamp(current);
+          if (refusal) {
+            console.warn('[manage-investment-reports] failure stamp refused — the report is complete', {
+              reportId,
+              status: current?.status ?? null,
+              lastCompletedSection: current?.last_completed_section ?? null,
+              totalSections: current?.total_sections ?? null,
+            });
+            return new Response(
+              JSON.stringify({
+                error: refusal.message,
+                code: refusal.code,
+                refused: true,
+              }),
+              { status: 409, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+            );
+          }
         }
 
         // A save that carries manual overrides recomputes the financials
@@ -277,10 +329,11 @@ Deno.serve(async (req) => {
           );
         }
 
-        const { error: deleteError } = await supabase
+        const { data: removedRows, error: deleteError } = await supabase
           .from('investment_reports')
           .delete()
-          .eq('id', reportId);
+          .eq('id', reportId)
+          .select('id');
 
         if (deleteError) {
           console.error('Error deleting investment report:', deleteError);
@@ -289,6 +342,12 @@ Deno.serve(async (req) => {
             { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
           );
         }
+
+        // What the report kept in storage goes with it: its photographs, floor
+        // plans and kept document. Only for the row this statement removed, and
+        // never at the cost of the delete (`reportStorage.pure.ts`).
+        const storage = await removeDeletedReportStorage(supabase, removedRows);
+        if (storage.reports > 0) console.log('[manage-investment-reports] report storage removed', { reportId, ...storage });
 
         return new Response(
           JSON.stringify({ success: true, deleted: reportId }),
@@ -306,6 +365,17 @@ Deno.serve(async (req) => {
 
         // Also support status-based bulk delete
         const statusFilter = data?.statusFilter;
+
+        // A status filter deletes every report in that state on the deployment,
+        // whoever made it, so it is an administrator's act — the one
+        // `manage-automation-settings`' "Clear stuck reports" already requires.
+        // A list of ids is unchanged.
+        if (statusFilter && Array.isArray(statusFilter)) {
+          const admin = await requireAdmin(supabase, { userId, authMethod });
+          if (!admin.ok) {
+            return createForbiddenResponse(admin.error || 'Admin privilege required', corsHeaders);
+          }
+        }
         
         let query = supabase.from('investment_reports').delete();
         
@@ -324,6 +394,9 @@ Deno.serve(async (req) => {
             { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
           );
         }
+
+        const bulkStorage = await removeDeletedReportStorage(supabase, deleted, BULK_DELETE_BUDGET_MS);
+        if (bulkStorage.reports > 0) console.log('[manage-investment-reports] report storage removed', bulkStorage);
 
         return new Response(
           JSON.stringify({ success: true, deletedCount: deleted?.length || 0, deleted }),

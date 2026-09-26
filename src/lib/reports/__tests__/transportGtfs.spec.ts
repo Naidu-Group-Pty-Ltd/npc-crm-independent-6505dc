@@ -454,14 +454,24 @@ describe('candidate feeds', () => {
   });
 
   it('distinguishes an archive from a publisher page', () => {
-    // WA is reachable but names no archive; SA/ACT are refused outright.
-    // Collapsing the two would report Transperth as refusing data it has not
-    // been asked for.
+    // SA/ACT are archives refused outright; Tasmania is still a page that
+    // names none. Collapsing the two would report a publisher as refusing
+    // data it has not been asked for.
+    //
+    // WA was a `page` until 25 Sep 2026: the timetable page is script-driven
+    // and names no archive, and the archive was then addressed directly and
+    // measured (27.8 MB, ranges honoured, regional town services included).
+    // A candidate records the best measurement there is, so it is an archive
+    // now — and still a CANDIDATE, because the production egress has not
+    // probed it and the PTA's licence clause is the owner's to read.
     const byKey = Object.fromEntries(GTFS_CANDIDATES.map((c) => [c.key, c]));
     expect(byKey.sa_adelaide.kind).toBe('archive');
     expect(byKey.act_canberra.kind).toBe('archive');
-    expect(byKey.wa_transperth.kind).toBe('page');
     expect(byKey.tas_metro.kind).toBe('page');
+    expect(byKey.wa_transperth.kind).toBe('archive');
+    expect(byKey.wa_transperth.url).toMatch(/^https:\/\/www\.transperth\.wa\.gov\.au\/.+\.zip$/);
+    expect(byKey.wa_transperth.sandboxResult).toMatch(/TransGeraldton/);
+    expect(GTFS_FEEDS.some((f) => f.key === 'wa_transperth')).toBe(false);
   });
 });
 

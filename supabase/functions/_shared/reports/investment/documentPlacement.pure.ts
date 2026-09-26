@@ -197,6 +197,105 @@ export function placeBlocksByDeclaredOrder(
 }
 
 /**
+ * Evidence that belongs INSIDE a section the model wrote, rather than beside it.
+ *
+ * ## The defect this closes
+ *
+ * The retrieved planning and infrastructure registers were placed as a section
+ * of their own at order 89 — after the Final Recommendation. Measured on the
+ * Compass for 60 Lawley Street, Spalding on 25 Sep 2026: the planning chapter
+ * on page 10 said *"Set out in full under 'Planning controls and development
+ * registers'"* and the reader had to go to page 21, past the recommendation
+ * that rests on it, to find the register the chapter was about. The
+ * recommendation was no longer the last substantive thing in the document.
+ *
+ * The registry already knows where each half belongs: the controls are the
+ * substance of `planning`, the project and development registers the substance
+ * of `infrastructure`. So each half is appended to the END of the section it
+ * belongs to, as a sub-section, where the prose that explains it already is.
+ *
+ * ## Rules
+ *
+ * **Appended, never interleaved.** The block lands after everything the model
+ * wrote in that section, so no sentence is separated from the paragraph it
+ * continues and nothing already in the document moves.
+ *
+ * **A section is found by what it IS, not how it is spelled** — through
+ * `sectionIdForHeading`, the same resolution everything else uses.
+ *
+ * **Nowhere to go means the old behaviour, never a lost block.** Where the
+ * section is absent (a truncated document, a heading the registry does not
+ * recognise) the block's `fallback` is placed by declared order, exactly as
+ * before this existed.
+ *
+ * **A block already present is not merged again.** Its own first heading is
+ * the identity: a document that already carries it is returned unchanged.
+ */
+export interface MergeableBlock {
+  /** The registry id of the section this block completes. */
+  readonly into: string;
+  /** The block, opening on its own sub-heading (`###` or deeper). */
+  readonly markdown: string;
+  /** Where that section is absent: placed as a section of its own, by order. */
+  readonly fallback: PlaceableBlock;
+}
+
+const ANY_HEADING = /^#{1,6}[ \t]+(.+?)[ \t]*#*[ \t]*$/;
+const headingKey = (text: string): string =>
+  text.replace(/[*_`]/g, '').replace(/\s+/g, ' ').trim().toLowerCase();
+
+/** The text of a block's first heading, or null. */
+function firstHeadingOf(markdown: string): string | null {
+  for (const line of String(markdown ?? '').split('\n')) {
+    const m = ANY_HEADING.exec(line.trim());
+    if (m) return m[1];
+  }
+  return null;
+}
+
+export function mergeBlocksIntoSections(
+  document: string,
+  blocks: ReadonlyArray<MergeableBlock>,
+  tier: ReportTier,
+): string {
+  const source = String(document ?? '');
+  const wanted = (blocks ?? []).filter((b) => b && String(b.markdown ?? '').trim());
+  if (!wanted.length) return source;
+
+  const present = new Set(
+    source.split('\n')
+      .map((l) => ANY_HEADING.exec(l.trim()))
+      .filter((m): m is RegExpExecArray => !!m)
+      .map((m) => headingKey(m[1])),
+  );
+
+  const segments = cut(source, (h) => declaredOrderFor(h, tier));
+  const merged = segments.map((s) => ({ ...s }));
+  const unplaced: PlaceableBlock[] = [];
+  let changed = false;
+
+  for (const block of wanted) {
+    const own = firstHeadingOf(block.markdown);
+    if (own && present.has(headingKey(own))) continue;
+    const at = merged.findIndex((s) => s.heading !== null && sectionIdForHeading(s.heading) === block.into);
+    if (at === -1) {
+      unplaced.push(block.fallback);
+      continue;
+    }
+    const target = merged[at];
+    merged[at] = { ...target, text: `${target.text.replace(/\s+$/, '')}\n\n${String(block.markdown).trim()}` };
+    changed = true;
+  }
+
+  if (!changed) return unplaced.length ? placeBlocksByDeclaredOrder(source, unplaced, tier) : source;
+  const joined = merged
+    .map((s) => s.text.replace(/\s+$/, ''))
+    .filter((t) => t.trim() !== '')
+    .join('\n\n');
+  return unplaced.length ? placeBlocksByDeclaredOrder(joined, unplaced, tier) : joined;
+}
+
+/**
  * The document's top-level headings, in the order a reader meets them.
  *
  * Exported because asserting a placement means reading the result rather than

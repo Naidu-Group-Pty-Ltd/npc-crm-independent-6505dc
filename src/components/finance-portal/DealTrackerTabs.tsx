@@ -19,6 +19,7 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { houseLabel } from '@/lib/houseLabel';
 
 const fn = 'finance-portal-deal-trackers';
 
@@ -267,7 +268,7 @@ const CONDITION_STATUS: Record<string, { label: string; tone: string }> = {
   waived:      { label: 'Waived',      tone: 'bg-muted text-muted-foreground' },
 };
 const CONDITION_OWNER: Record<string, string> = {
-  client: 'Client', npc_team: 'NPC team', finance_partner: 'Finance partner', legal: 'Legal', other: 'Other',
+  client: 'Client', npc_team: houseLabel('NPC team', 'Command Centre team'), finance_partner: 'Finance partner', legal: 'Legal', other: 'Other',
 };
 
 export function ConditionsTab({ fileId }: { fileId: string }) {

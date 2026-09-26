@@ -10,6 +10,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import {
+  composeGradeMethodology,
   buildMonitorRows,
   buildSwot,
   composeExitOutlook,
@@ -193,7 +194,8 @@ describe('rule 2 — an absence is coverage, never a quadrant entry', () => {
     const swot = buildSwot(rec);
     const quadrants = JSON.stringify([swot.strengths, swot.weaknesses, swot.opportunities, swot.threats]);
     expect(quadrants).not.toContain('transport');
-    expect(swot.coverage.join(' ')).toContain('outside every transport network loaded');
+    expect(swot.coverage.join(' ')).toContain('outside the public transport networks whose stop data this report covers');
+    expect(swot.coverage.join(' ')).toContain('not evidence that the area is poorly served');
   });
 
   it('names an empty quadrant as a statement about the record, never as a clearance', () => {
@@ -225,7 +227,18 @@ describe('rule 3 — the modelling travels only where the tier carries it', () =
   const NUMERIC_FINANCE = [/\$363,537/, /\$926 a week/, /2\.18% net/, /\$1,192,000/, /80% lending/];
 
   it('permits exactly one gross-yield reference on the Compass, inside the grade rationale', () => {
-    const doc = composeSwot(base({ finance: null }), 'SWOT');
+    /*
+     * The grade rationale left the SWOT for the appendix (60 Lawley Street,
+     * 25 Sep 2026: the method ran two of the SWOT's three pages). The
+     * allocation is unchanged — one reference, only in the rationale — and
+     * the SWOT itself now carries none.
+     */
+    const swot = composeSwot(base({ finance: null }), 'SWOT');
+    expect(swot.match(/2\.97%/g) ?? [], 'the SWOT carries no gross-yield figure').toHaveLength(0);
+    // The table is gone; only the pointer to where it now lives remains.
+    expect(swot).not.toContain('### How this grade was reached');
+    expect(swot).toContain('set out in the appendix, under *How this grade was reached*');
+    const doc = composeGradeMethodology(base({ finance: null })) ?? '';
     const hits = doc.match(/2\.97%/g) ?? [];
     expect(hits, 'the allocation permits one gross-yield reference, not several').toHaveLength(1);
     const table = doc.indexOf('How this grade was reached');
@@ -304,8 +317,8 @@ describe('rule 5 — liquidity is measured, equity is modelled', () => {
 });
 
 describe('rule 6 — monitoring names the register and promises nothing', () => {
-  it('says plainly that nothing on this platform watches on the reader’s behalf', () => {
-    expect(composeMonitoringPlan(base(), 'Monitoring')).toContain('watches these on your behalf');
+  it('says plainly that nothing watches these on the reader’s behalf', () => {
+    expect(composeMonitoringPlan(base(), 'Monitoring')).toContain('These are not monitored on your behalf');
   });
 
   it('gives every row a register, a cadence and what a different answer would mean', () => {
@@ -326,7 +339,12 @@ describe('rule 6 — monitoring names the register and promises nothing', () => 
       planning: { zone: null, zoneStatus: 'not_served', zoneSource: null, zoneEffectiveDate: null, council: 'Fraser Coast Regional', verification: null, retrievedAt: null },
     }));
     const planning = rows.find((r) => r.what.includes('planning'));
-    expect(planning?.changesIf).toContain('not a re-check but a first check');
+    expect(planning?.changesIf).toContain('This is a first check, not a re-check');
+    expect(planning?.firstCheck).toBe(true);
+    // "On request" is how a certificate is obtained, not how often a control
+    // changes — the cadence names the event that changes it.
+    expect(planning?.cadence).not.toMatch(/^On request$/);
+    expect(planning?.cadence).toMatch(/amends its planning scheme/);
   });
 });
 
@@ -451,7 +469,8 @@ describe('the monitoring plan is blocks, not a five-column table', () => {
   });
 
   it('keeps the promise it exists to make', () => {
-    expect(plan()).toContain('watches these on your behalf');
-    expect(plan()).toContain('this report does not set one');
+    expect(plan()).toContain('These are not monitored on your behalf');
+    // Events prompt a re-read; the report keeps no schedule of its own.
+    expect(plan()).toContain('rather than a schedule this report keeps');
   });
 });

@@ -48,7 +48,7 @@ describe('a retrieved growth reading that disagrees with the accepted rate', () 
     const rule = growthDivergenceRule(FIXTURE_A_DIVERGENT)!;
     expect(rule).toMatch(/may not replace one with the other/);
     expect(rule).toMatch(/may not average them/);
-    expect(rule).toMatch(/may not present the retrieved reading as a forecast/);
+    expect(rule).toMatch(/may not present the published reading as a forecast/);
     expect(rule).toMatch(/may not quietly use/);
   });
 

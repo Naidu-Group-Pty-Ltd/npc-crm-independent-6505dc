@@ -474,3 +474,74 @@ code and trimming it is never the right answer.
 applies only to the uploaded row, and a test asserts both — including that
 nothing else can set the flag, because an uploaded row claiming it would
 reopen the hole the cap is there to close.
+
+## What a section is told (24 Sep 2026)
+
+The byte cap above was fixed, and the controls it was cutting were then cut by a
+second arithmetic it never saw. `generateReportSection` trims the whole base
+prompt head-tail (62% head, 38% tail) to whatever the pinned evidence and the
+section instructions leave of the 70,000-byte ceiling, and the structure guide
+was **prepended** to that base. As evidence was pinned for §6's reason the pin
+grew to 33–46 KB, and every byte of it came off the base.
+
+### The measurement
+
+`function_logs`, both Compass runs finished on 24 Sep 2026 (05:23–05:32Z): all
+32 section calls logged `trimmed true`, with base budgets of 13,938–18,914
+bytes on a 48.8–49.3 KB base. The head kept the first **8,486–11,571 bytes**
+of an **18,706-byte** guide:
+
+| Offset in the guide | What starts there | Reached the model |
+| --- | --- | --- |
+| 377 – 8,243 | Sections 1–9's own entries | yes, on their own calls |
+| 8,244 – 10,287 | Sections 10–12 (Market Positioning, Supply Pipeline, Property Fit) | on the larger budgets only, some in part |
+| 10,288 – 15,042 | Sections 13–16 — the Risk Dashboard's at **10,288**, 3,202 bytes, where `riskRegisterInstruction()` is composed; then Due Diligence, the Final Recommendation and the Disclaimer | **no**, on any of their own calls |
+| 15,043 | The document's rules: writing style, forbidden labels, the financial-modelling exclusions, the word-ceiling and sub-heading caps, the consistency checks, the Final Recommendation's three labels | **no**, on any call |
+
+And behind the guide sat `compassDocumentContract` (8,928 bytes) — the method
+the Compass is written by — which therefore reached no call either.
+
+That is why **none of the five Compass reports finished on 23–24 Sep carried
+the declared `Risk | Exposure | Evidence` register**: three wrote none, and the
+two that drew a table invented their own columns (`Current finding` and `Action
+before commitment`; `Evidence and investor implication` and `Required
+verification`). The Risk Dashboard's word ceiling went with its instructions:
+7,147–8,601 characters against 4,950.
+
+### The fix
+
+* **The section's own entry and the document's rules travel in the SYSTEM
+  message** (`_shared/compassSectionContract.ts`), budgeted before the operator's
+  system prompt is trimmed and never trimmed themselves, on the full prompt and
+  the emergency compact prompt alike. Not in the user message's pin: that
+  message is full — the pin reached 45,601 bytes on a NSW run, where a 7.4 KB
+  Risk Dashboard contract would have left the final safety trim (which keeps the
+  TAIL) cutting the planning controls table at the head of the pin, §6's defect
+  caused by its own remedy — while the system message used 3.5 KB of its 35 KB.
+* **The base carries an outline** (1,114 bytes: every section, its order, its
+  word ceiling) instead of the guide. The other sections' purposes are not
+  instructions for this call, and they occupied the head of the base, which is
+  the part a trim keeps. The method contract now starts about 2.4 KB in rather
+  than 19.4 KB, so 65–100% of it reaches every call where none did.
+* **A Risk Dashboard without its register cannot pass section validation** —
+  judged after `promotePipedPseudoTables`, because a piped register is repaired
+  on the read path — and its one retry carries a correction naming exactly what
+  was missing. The penalty is 45 so that no other merit can carry such a
+  section past the threshold of 60.
+
+`📏 Prompt size for … (section contract N bytes, never trimmed)` is logged on
+every call, so production can show the contract arrived.
+
+### What the trim still takes
+
+The **evidence pack** — the property as recorded, where it is, the economy,
+who lives there, schools, amenities, transport, environment, crime — follows
+the method contract in the base and is about 20 KB. With the same budgets, the
+head now reaches no further than the start of it and the tail keeps its last
+5.2–7.1 KB: **roughly a quarter to a third of the evidence pack reaches a
+section call, as before this change.** The measured order of fixes, each a
+separate decision: carry the method contract in the system message as well
+(it is rules, and the system message has room), which gives the head of the
+base to the evidence; then decide whether every section needs every pinned
+register table, which is 33–46 KB of the 70 KB. Neither is done here, and
+neither should be done without the same `📏` measurement taken first.

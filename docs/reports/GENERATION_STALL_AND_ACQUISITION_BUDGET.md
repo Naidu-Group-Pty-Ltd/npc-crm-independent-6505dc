@@ -346,6 +346,18 @@ report in fact holds its answer.
 costs the calls again. An optimisation that can stop a document being produced
 is not an optimisation.
 
+**A reused answer carries the version of the question it answered.**
+`planning-data-service` keys its own cache on `PLANNING_ANSWER_VERSION`, so a
+deployment that widens the answer stops serving the narrow rows. This reuse is
+a second cache in front of that one, and on 25 Sep 2026 it defeated it. The
+06:22 UTC regeneration of 60 Lawley Street adopted the planning answer read at
+01:31 under `c6`, so the `c7` bush fire register never reached the document,
+and the thirty-day cadastral shelf life would have kept that answer for a
+month. The generator stamps `answerVersion` on the answer it stores, and
+`planReuse` refuses an answer that records none or another
+(`answer_version_not_recorded`, `answer_version_changed`). Every answer stored
+before this is asked once more, which costs one call to a free register.
+
 ### What this is not
 
 It is **not** "skip acquisition on continuation". That gate would reuse a result

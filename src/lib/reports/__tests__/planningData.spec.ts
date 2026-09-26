@@ -9,6 +9,7 @@
  * for Muswellbrook Shire. Parsers are judged against what the services
  * actually said, never against documentation.
  */
+import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
 import {
   buildNswDaRequest,
@@ -20,8 +21,12 @@ import {
   parseNswZoning,
   parseQldInstrument,
   parseQldParcel,
+  parseSaZoning,
   parseTasZoning,
   parseVicZoning,
+  buildSaZoningQuery,
+  SA_CODE_INSTRUMENT,
+  SA_ZONING_LICENCE,
   VERIFICATION_INSTRUMENT,
 } from '../../../../supabase/functions/_shared/planning/planningSources.pure';
 import {
@@ -197,6 +202,77 @@ describe('jurisdiction parsers read the services’ own fields', () => {
     expect(out.kind).toBe('ok');
     if (out.kind !== 'ok') return;
     expect(out.reading[0]).toMatchObject({ kind: 'priority_development_area', name: 'Caloundra South', status: 'Declared' });
+  });
+});
+
+// South Australia's Planning and Design Code zones — the two answers CI read
+// from `Hosted/Code_Amendment__BaseLayers` layer 3 on 23 Sep 2026
+// (`planning-zone-liveness`, run 35827597400), with the fields the reader asks.
+const SA_VICTORIA_SQUARE = {
+  features: [{ attributes: { name: 'Adelaide Park Lands', value: 'APL', legalstartdate: 1616112000000, legalenddate: null, systemenddate: null } }],
+};
+const SA_PROSPECT = {
+  features: [{ attributes: { name: 'Established Neighbourhood', value: 'EN', legalstartdate: 1616112000000, legalenddate: null, systemenddate: null } }],
+};
+
+describe('South Australia: the Planning and Design Code’s own zone layer', () => {
+  it('reads the Code’s zone code and name, and the day the zone took legal effect', () => {
+    const out = parseSaZoning(SA_PROSPECT);
+    expect(out.kind).toBe('ok');
+    if (out.kind !== 'ok') return;
+    expect(out.reading).toMatchObject({
+      jurisdiction: 'SA',
+      zoneCode: 'EN',
+      zoneLabel: 'Established Neighbourhood',
+      instrument: SA_CODE_INSTRUMENT,
+      lga: null,
+      currencyDate: '2021-03-19',
+      licence: SA_ZONING_LICENCE,
+    });
+    const park = parseSaZoning(SA_VICTORIA_SQUARE);
+    expect(park.kind === 'ok' && park.reading.zoneCode).toBe('APL');
+  });
+
+  it('reads only the zone in force: a replaced zone keeps its row with an end date', () => {
+    const replaced = { features: [
+      { attributes: { name: 'General Neighbourhood', value: 'GN', legalstartdate: 1616112000000, legalenddate: 1700000000000, systemenddate: null } },
+      { attributes: { name: 'Housing Diversity Neighbourhood', value: 'HDN', legalstartdate: 1700000000000, legalenddate: null, systemenddate: null } },
+    ] };
+    const out = parseSaZoning(replaced);
+    expect(out.kind === 'ok' && out.reading.zoneCode).toBe('HDN');
+    // Every feature ended: no zone in force is read here — never the replaced one.
+    const ended = { features: [replaced.features[0]] };
+    expect(parseSaZoning(ended).kind).toBe('empty');
+  });
+
+  it('refuses an error body as a failure, never as a point with no zone', () => {
+    expect(parseSaZoning({ error: { code: 499, message: 'Token Required' } }).kind).toBe('error');
+    expect(parseSaZoning({ features: [] }).kind).toBe('empty');
+  });
+
+  it('asks the measured layer for the point, without geometry', () => {
+    const url = buildSaZoningQuery(138.5982, -34.8864);
+    expect(url).toContain('dpti.geohub.sa.gov.au/server/rest/services/Hosted/Code_Amendment__BaseLayers/FeatureServer/3/query');
+    expect(url).toContain('name%2Cvalue%2Clegalstartdate%2Clegalenddate%2Csystemenddate');
+    expect(url).toContain('returnGeometry=false');
+  });
+
+  it('files the Code’s neighbourhood zones as residential, and nobody else’s centre', () => {
+    expect(deriveZoneFamily('SA', 'EN', 'Established Neighbourhood')).toBe('residential');
+    expect(deriveZoneFamily('SA', 'HDN', 'Housing Diversity Neighbourhood')).toBe('residential');
+    expect(deriveZoneFamily('SA', 'APL', 'Adelaide Park Lands')).toBe('recreation');
+    expect(deriveZoneFamily('SA', 'SAC', 'Suburban Activity Centre')).toBe('commercial');
+    // The rule is SA's alone: NSW's Neighbourhood Centre is a centre.
+    expect(deriveZoneFamily('NSW', 'E1', 'Neighbourhood Centre')).toBe('commercial');
+  });
+
+  it('is probed by the planning service, and a failed read of it is unavailable rather than unintegrated', () => {
+    const service = readFileSync('supabase/functions/planning-data-service/index.ts', 'utf8');
+    expect(service).toMatch(/probe\(buildSaZoningQuery\(lng, lat\), parseSaZoning\)/);
+    expect(service).toMatch(/\['SA', sa\]/);
+    expect(service).toMatch(/jurisdiction === 'SA' && sa\.kind === 'error'[\s\S]{0,400}status: 'unavailable'/);
+    // The integration gap the old note described is no longer the SA zone's status.
+    expect(service).not.toMatch(/zoningCell = \{ status: 'not_integrated', note: jurisdiction === 'SA' \? SA_NOTE/);
   });
 });
 
@@ -451,14 +527,17 @@ describe('planning prompt blocks', () => {
         verification: 'A spatial layer is indicative; what settles the question is the local government planning scheme and PlanWA.',
       },
     });
-    expect(text).toContain('non-commercial');
+    // The service's note reaches the writer in a reader's words (`readerNote`):
+    // a licence bar, never an outage.
+    expect(text).toContain('for personal use only');
+    expect(text).not.toMatch(/could not be (checked|consulted)/);
     expect(text).toContain('Not available for this property, and why');
     expect(text).toContain('Do NOT name a zone');
   });
 
   it('no planning data at all instructs an honest absence, never a guess', () => {
     const text = planningStatBlocks({});
-    expect(text).toContain('do not name a zone');
+    expect(text).toMatch(/do not name a zone/i);
     expect(text).toMatch(/do not invent development activity/i);
   });
 

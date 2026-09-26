@@ -115,7 +115,7 @@ const out = [
   '## Major public projects near this property',
   '',
   renderPublishedProjects(near),
-  `**What this register covers.** ${PUBLISHED_PROJECT_COVERAGE.join(' ')}`,
+  `**What this list covers.** ${PUBLISHED_PROJECT_COVERAGE.join(' ')}`,
   '',
   '---',
   '',

@@ -68,7 +68,7 @@ export function webSearchIsNotARetrieval(subject: string, register: string): str
     + `report, a news page, a listing portal or a government media release is not ${register}: a figure, a `
     + `rate, a ranking or a "low / moderate / average" reading from one of them may not be reported here, `
     + `quoted, attributed to an agency this report did not ask, or used to compare this area with another. `
-    + `Discussing ${subject} qualitatively is fine; naming a figure this report did not retrieve is not, and `
+    + `Discussing ${subject} qualitatively is fine; naming a figure this report did not obtain is not, and `
     + `naming none is the correct answer.`;
 }
 

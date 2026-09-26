@@ -46,31 +46,110 @@ const STATE_WORDS: Array<[RegExp, AuState]> = [
 ];
 
 /**
+ * The address with any bracketed annotation removed.
+ *
+ * A listing writes "93 Schofields Farm Road (Tallawong)" — an agent's note of
+ * a neighbouring or newly gazetted locality — and "(off the plan)", "(Lot
+ * 12)", "[rear]". None of it is part of an address a geocoder can match, and
+ * all of it sat in the position the parse below reads the suburb from: on 24
+ * Sep 2026 `93 Schofields Farm Road (tallawong) NSW 2762` parsed the suburb
+ * `(tallawong)`, Nominatim was asked for a street carrying the state and
+ * postcode and a city called "(tallawong)" and found nothing, the ABS was
+ * asked for a suburb of that name and found nothing, and the report was
+ * written with its geography unresolved. Identity on an address with no
+ * brackets, apart from the whitespace every reader already collapses.
+ */
+export function stripAddressAnnotations(address: string): string {
+  return address
+    .replace(/\s*(?:\([^()]*\)|\[[^[\]]*\]|\{[^{}]*\})/g, ' ')
+    .replace(/\s+,/g, ',')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/** Words a bracketed note uses that are never a place's name. */
+const NOT_A_PLACE = /\b(?:off|plan|lot|unit|rear|front|vacant|land|house|townhouse|villa|apartment|duplex|strata|torrens|sold|leased|under|offer|contract|new|build|construction|estate|stage|display|home|block|corner|approx|approximately|price|guide|auction|tbc|tba)\b/i;
+
+/**
+ * The place names a listing puts in brackets — kept, not thrown away.
+ *
+ * Where a development is split between two suburbs, one street runs through
+ * both, and a listing names the other one in brackets: "93 Schofields Farm
+ * Road (Tallawong)" is filed under Schofields and sits beside, or inside,
+ * the newer suburb of Tallawong (24 Sep 2026, the owner's own reading of the
+ * listing). The note cannot be read as the address, but it is a second
+ * CANDIDATE for the suburb, tried only when the first finds nothing. Only a
+ * note that reads as a name qualifies: letters, at most four words, and none
+ * of the words listings use for everything else.
+ */
+export function annotatedLocalities(address: string): string[] {
+  const out: string[] = [];
+  const bracketed = /[([{]([^()[\]{}]*)[)\]}]/g;
+  let match: RegExpExecArray | null;
+  while ((match = bracketed.exec(address)) !== null) {
+    const inner = match[1].replace(/\s+/g, ' ').trim();
+    if (!/^[A-Za-z][A-Za-z' -]{1,40}$/.test(inner)) continue;
+    if (inner.split(' ').length > 4 || NOT_A_PLACE.test(inner)) continue;
+    if (!out.some((seen) => seen.toLowerCase() === inner.toLowerCase())) out.push(inner);
+  }
+  return out;
+}
+
+/** What may follow an address's state: a postcode, the country, punctuation — nothing else. */
+const AFTER_LOCALITY_STATE = /^[\s,.]*(?:\d{4})?[\s,.]*(?:Australia)?[\s,.]*$/i;
+
+/**
+ * The state an address names: the state word in its LOCALITY position,
+ * followed by nothing but a postcode and the country.
+ *
+ * The first state word anywhere in the text was read before 24 Sep 2026, and
+ * a state's name is an ordinary street and suburb name. `5 Victoria Street,
+ * Brisbane QLD 4000` read VIC, its postcode then contradicted VIC and was
+ * dropped, and the geocoder was asked about a Brisbane street in Victoria;
+ * `12 Main St, Victoria Point QLD 4165` lost its suburb to the same word.
+ */
+export function localityStateOf(text: string): { state: AuState; index: number } | null {
+  let found: { state: AuState; index: number } | null = null;
+  for (const [re, code] of STATE_WORDS) {
+    const every = new RegExp(re.source, 'gi');
+    let match: RegExpExecArray | null;
+    while ((match = every.exec(text)) !== null) {
+      if (!AFTER_LOCALITY_STATE.test(text.slice(match.index + match[0].length))) continue;
+      if (!found || match.index > found.index) found = { state: code, index: match.index };
+    }
+  }
+  return found;
+}
+
+/**
  * What the address text says: the last four-digit token as the postcode,
- * a state word, and the words between the last comma (or the street) and
- * the state as the suburb.
+ * the state word in the locality position (`localityStateOf`), and the words
+ * between the last comma (or the street) and that locality as the suburb. A
+ * bracketed annotation is not read at all.
  */
 export function parseAddressText(address: string): AddressGeography {
   const notes: string[] = [];
-  const text = address.replace(/\s+/g, ' ').trim();
+  const text = stripAddressAnnotations(address);
   if (!text) return { suburb: null, state: null, postcode: null, lga: null, formattedAddress: null, resolvedFrom: 'none', locationType: null, notes: ['no address'] };
   const postcodeMatch = /(?:^|\D)(\d{4})(?!\d)(?=[^0-9]*$)/.exec(text);
   let postcode = postcodeMatch ? normalisePostcode(postcodeMatch[1]) : null;
-  let state: AuState | null = null;
-  for (const [re, code] of STATE_WORDS) {
-    if (re.test(text)) { state = code; break; }
-  }
+  const localityState = localityStateOf(text);
+  let state: AuState | null = localityState?.state ?? null;
   if (postcode && state && stateForPostcode(postcode) !== state) {
     notes.push(`postcode ${postcode} is not in ${state}; the postcode was dropped`);
     postcode = null;
   }
   if (!state && postcode) state = stateForPostcode(postcode);
-  // The suburb: strip the postcode and the state word, then take the last
-  // comma-separated part, or the trailing words after the street number.
-  let body = text;
-  if (postcodeMatch) body = body.replace(postcodeMatch[1], ' ');
-  for (const [re] of STATE_WORDS) body = body.replace(re, ' ');
-  body = body.replace(/\bAustralia\b/i, ' ').replace(/[,\s]+$/, '').replace(/\s+/g, ' ').trim();
+  // The suburb: set aside the locality tail — the state where one is
+  // written, then a trailing postcode and the country — and take the last
+  // comma-separated part, or the trailing words after the street type. Only
+  // the TAIL is set aside: a state's name inside a street or a suburb
+  // ("Victoria Street", "Victoria Point") is part of the address.
+  let body = localityState ? text.slice(0, localityState.index) : text;
+  body = body
+    .replace(/[\s,]*(?:\d{4})?[\s,]*(?:\bAustralia\b)?[\s,]*$/i, '')
+    .replace(/\s+/g, ' ')
+    .trim();
   const parts = body.split(',').map((p) => p.trim()).filter(Boolean);
   let suburb: string | null = parts.length ? parts[parts.length - 1] : null;
   if (suburb && /\d/.test(suburb) && parts.length === 1) {

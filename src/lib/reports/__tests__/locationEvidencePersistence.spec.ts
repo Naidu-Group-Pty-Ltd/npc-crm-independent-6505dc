@@ -78,6 +78,7 @@ const intactEnrichment = () => ({
     matchedAddress: 'Example Street, Sampletown, New South Wales, 2000, Australia',
     stages: {
       geocode: 'fetched',
+      geocodePrecision: 'address',
       places: 'complete',
       placesUnavailable: [],
       commute: 'measured',

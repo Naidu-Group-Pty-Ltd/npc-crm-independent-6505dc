@@ -228,6 +228,61 @@ Both were left exactly as they are.
 
 ---
 
+## The cover photograph on the covers drawn without one (seed v21)
+
+Five of the fifty Investment masters declare photographs (`image_slots`):
+Atelier, Atelier Plate and Grand Folio on the cover and in plates, and
+Frontispiece and Elevation in plates only. The other forty-five declare none.
+So a report holding the property's own photographs
+([`PROPERTY_PHOTOGRAPHS.md`](../reports/PROPERTY_PHOTOGRAPHS.md)) printed
+none of them on those covers. The owner asked for one on 25 Sep 2026.
+
+`withCoverPhotograph` (`blocks.ts`) sets the report's lead photograph
+(`property.images.0`) by the cover's ground, which the catalogue already
+declares through `cover_overlay`:
+
+| Ground | Masters | Where the photograph goes |
+|---|---|---|
+| `field` | 16: Private Banking, Modern Fintech and Dark Executive (all five each), and Terminal | Behind the whole sheet, under two passes of the field colour's 0.55 scrim |
+| `band` | 18: Institutional Research and Wealth Management (all five each), Corporate Advisory's four banded covers, and Data / Analyst's four | Inside the band, above its colour and beneath the mark, wordmark and tagline, under the same two passes |
+| `paper` | 11: Swiss Minimal, the four Architectural Property covers without plates, Advisory Letter and Monograph | Nowhere |
+
+**Why two passes.** The photographic covers (`coverHero`) put one pass of the
+0.55 scrim over their photograph, and their type was designed for it. These
+covers carry small type designed for a flat field: the eyebrow, the tagline,
+the prepared-for line. Over a white facade, measured on the Private Banking
+palette, one pass leaves that type at 3.48:1. Two passes come to about 0.80
+and 7.89:1, clearing the 7:1 floor in REPORT_RULES §2. The photograph stays
+recognisable underneath: this is a ground, and the cover is still the field
+colour's.
+
+Three rules decide the placement:
+
+- **A photograph goes only where nothing moves.** The title grows upward
+  from its rule by as many lines as the address needs, so the only fixed
+  areas on a cover are the whole sheet (behind everything) and the band. A
+  photograph in the paper between the band and the title would sit where a
+  long address sets.
+- **Without a photograph, the cover is exactly what it was.** Every block is
+  conditional. The missing photograph is a dropped *layer*, which
+  `closeDroppedBlocks` leaves in place. The new blocks are built last, so
+  every existing block keeps its id. Measured against v20: 34 of 543 rows
+  differ, each by the same three cover blocks (the photograph and two scrim
+  passes).
+- **A paper cover is a different design problem.** Its type is dark ink. A
+  photograph under it needs a pale wash strong enough to keep that ink
+  legible, which makes a different cover. Monograph is photo-free by the
+  catalogue's own description: *"Editorial typography without image slots."*
+  This choice belongs to the design source.
+
+This is composed in code, keyed on a ground the catalogue declares.
+`source.json` is not edited, so the approved manifests still carry no
+`image_slots` for these families, and the Claude Design catalogue does not
+draw the photograph. If the catalogue should show it, that change is made
+in Claude Design and comes back through the generator.
+
+---
+
 ## Changing the design
 
 1. **A design change** goes to Claude Design, then re-extract `source.json` and

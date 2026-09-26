@@ -24,6 +24,14 @@ import {
 } from '@/lib/reports/generationDriver';
 import { resolveGenerationEngine, type GenerationEngine } from '@/lib/reports/generationEngine.pure';
 import { nextSectionIndex } from '@/lib/reports/investment/runProgress.pure';
+import {
+  isRepeatableFailure,
+  readRunRow,
+  settleRunOutcome,
+  TRANSIENT_RETRY_DELAYS_MS,
+  type RowReadResult,
+} from '@/lib/reports/runRowRead.pure';
+import type { ReportRunRow } from '@/lib/reports/investment/failureStamp.pure';
 
 export type RegenerationPhase = 'idle' | 'generate' | 'condense' | 'qa' | 'done';
 
@@ -53,6 +61,20 @@ interface RegenerationState {
 
 const MAX_RETRIES_PER_SECTION = 2;
 const DEFAULT_TIER = 'compass-40' as const;
+
+/** A status read is ~1.4s; a hung one must not hold the end of a run for a minute. */
+const STATUS_READ_TIMEOUT_MS = 20000;
+const PROGRESS_SELECT = 'status, current_version, last_completed_section, total_sections';
+
+/** One status read of the row, for `readRunRow` to repeat through a blip. */
+function readProgressRow(reportId: string) {
+  return readRunRow<ReportRunRow & { current_version?: unknown }>(() =>
+    invokeSecureFunction('get-investment-reports', {
+      reportId,
+      listOptions: { select: PROGRESS_SELECT },
+    }, { timeoutMs: STATUS_READ_TIMEOUT_MS }),
+  );
+}
 
 export function useChunkedRegeneration() {
   const [state, setState] = useState<RegenerationState>({
@@ -132,20 +154,37 @@ export function useChunkedRegeneration() {
       return;
     }
 
+    /* What this run knows, for the failure path to consult.
+     *
+     * On 24 Sep 2026 60 Lawley Street finished — the generator answered
+     * `isComplete` and wrote the row `completed` — and a three-second
+     * platform 503 on the reads after it was taken as a run in an unknown
+     * state and stamped the finished document failed. The catch below must
+     * know what the server already said, and whether this run ever touched
+     * the row at all. See `failureStamp.pure.ts`. */
+    let serverReportedComplete = false;
+    let wroteNothing = true;
+    /** The run ended with a status nobody could read — not a known failure. */
+    let statusUnknown = false;
+
     try {
       // Fetch current report state — include `report_tier` so we know the section count.
-      const { data: reportData, error: fetchError } = await invokeSecureFunction('get-investment-reports', {
-        reportId,
-        listOptions: {
-          select: 'report_content, manual_overrides, financial_calculations, last_completed_section, status, current_version, property_address, report_scope, report_tier, generation_engine, total_sections'
-        }
-      });
+      // Repeated through a transient failure: a blip at kickoff used to abort
+      // the run before it began.
+      const kickoff = await readRunRow<Record<string, any>>(() =>
+        invokeSecureFunction('get-investment-reports', {
+          reportId,
+          listOptions: {
+            select: 'report_content, manual_overrides, financial_calculations, last_completed_section, status, current_version, property_address, report_scope, report_tier, generation_engine, total_sections'
+          }
+        }),
+      );
 
-      if (fetchError) {
-        throw new Error(fetchError.message || 'Failed to fetch report');
+      if (kickoff.kind === 'unreadable') {
+        throw new Error(kickoff.error.message || 'Failed to fetch report');
       }
 
-      const report = reportData?.report;
+      const report = kickoff.kind === 'row' ? kickoff.row : undefined;
       const tier = normaliseReportTier(report?.report_tier);
       // Prefer the actual chunk count persisted by the edge function (so
       // legacy engine reports show the real number of chunks, not the
@@ -201,6 +240,10 @@ export function useChunkedRegeneration() {
       // DB statement timeout. Retrying keeps the regeneration alive.
       let resetOk = false;
       let resetErr: any = null;
+      // From the first attempt on, the row may have been written — a write
+      // whose answer was lost still landed — so the failure path treats it
+      // as touched.
+      wroteNothing = false;
       for (let attempt = 0; attempt < 3 && !resetOk; attempt++) {
         if (attempt > 0) {
           await new Promise((r) => setTimeout(r, 1500 * attempt));
@@ -217,6 +260,10 @@ export function useChunkedRegeneration() {
       if (!resetOk) {
         throw new Error(`Failed to start regeneration: ${resetErr?.message || 'unknown error'}`);
       }
+      // Every section was already banked when this run began: what is left is
+      // the finishing step, and the document is complete whatever a later
+      // read manages to say about it.
+      if (shouldResumePostProcessing) serverReportedComplete = true;
 
       // The row is now 'processing' server-side. Wake the floating progress
       // widget so the interactive surface — per-report progress, Stop, Pause,
@@ -315,6 +362,7 @@ export function useChunkedRegeneration() {
             console.log('[ChunkedRegeneration] All sections complete');
             sectionSuccess = true;
             allSectionsComplete = true;
+            serverReportedComplete = true;
             break;
           }
 
@@ -426,10 +474,27 @@ export function useChunkedRegeneration() {
          would start a second pump over the top of it. */
       heartbeatGenerationDriver(reportId, driver);
 
-      try {
-        await invokeSecureFunction('condense-investment-report', { reportId, tier }, { timeoutMs: 180000 });
-      } catch (e: any) {
-        console.warn('[ChunkedRegeneration] Condense step soft-failed:', e?.message);
+      /* Soft: the generator's finalisation has already written the document
+         and its status, so a skipped condense leaves a complete report. But
+         `invokeSecureFunction` RETURNS its failures rather than throwing
+         them, so the catch that stood here was never reached, and a blip —
+         the preflight 503 that 60 Lawley Street's run met on 24 Sep — was
+         never tried again. A transient failure is repeated; a timeout is not,
+         because a condense that ran for 180s is not a blip. */
+      for (let attempt = 0; attempt <= TRANSIENT_RETRY_DELAYS_MS.length; attempt++) {
+        if (attempt > 0) await new Promise((r) => setTimeout(r, TRANSIENT_RETRY_DELAYS_MS[attempt - 1]));
+        const { error: condenseError } = await invokeSecureFunction(
+          'condense-investment-report',
+          { reportId, tier },
+          { timeoutMs: 180000 },
+        );
+        if (!condenseError) break;
+        const repeatable = isRepeatableFailure(condenseError);
+        console.warn(
+          `[ChunkedRegeneration] Condense step ${repeatable && attempt < TRANSIENT_RETRY_DELAYS_MS.length ? 'failed, retrying' : 'soft-failed'}:`,
+          condenseError.message,
+        );
+        if (!repeatable) break;
       }
 
       // ── Phase 3: QA validation (server returns qaReport inside condense response;
@@ -440,12 +505,15 @@ export function useChunkedRegeneration() {
       showProgressToast(toastId, 'Running QA checks…');
 
       // Final status check
-      const { data: finalData } = await invokeSecureFunction('get-investment-reports', {
-        reportId,
-        listOptions: { select: 'status, current_version, last_completed_section, total_sections' }
-      });
-
-      const finalReport = finalData?.report;
+      /* A read that FAILED is not a row that is absent.
+       *
+       * This destructured `{ data }` and dropped the error, so a failed read
+       * compared `Number(undefined) >= 16` — `NaN`, false — and threw "the
+       * record holds 0 of 16 sections" about a record it had never seen.
+       * `readRunRow` repeats a transient failure and says which of three
+       * things happened; `settleRunOutcome` lets the generator's own
+       * `isComplete` stand where the row cannot be read. */
+      const finalRead = await readProgressRow(reportId);
 
       /* Completion is the SERVER'S arithmetic, never this client's.
        *
@@ -465,29 +533,52 @@ export function useChunkedRegeneration() {
        * doing the same thing.
        *
        * The row's own `total_sections` wins wherever it is stated — the same
-       * ordering `progress/selectors.pure.ts` already applies for display. */
-      const serverStatedTotal = Number(finalReport?.total_sections) || 0;
-      const requiredSections = serverStatedTotal > 0 ? serverStatedTotal : totalSections;
+       * ordering `progress/selectors.pure.ts` already applies for display.
+       * `settleRunOutcome` is where that ordering now lives. */
+      const outcome = settleRunOutcome(finalRead, { serverReportedComplete, fallbackTotal: totalSections });
 
-      if (Number(finalReport?.last_completed_section) >= requiredSections) {
-        settleProgressToast(
-          toastId,
-          'success',
-          'Report regenerated successfully',
-          `Version ${finalReport.current_version || 'new'} created`,
-        );
+      if (outcome.kind === 'complete') {
+        if (outcome.confirmed) {
+          settleProgressToast(
+            toastId,
+            'success',
+            'Report regenerated successfully',
+            `Version ${outcome.currentVersion || 'new'} created`,
+          );
+        } else {
+          // The generator said the document is complete; the read after it
+          // could not be made. The report is done — say so, and say what is
+          // not yet confirmed, rather than calling a finished run a failure.
+          console.warn(
+            '[ChunkedRegeneration] The run completed; its status could not be re-read afterwards:',
+            finalRead.kind === 'unreadable' ? finalRead.error.message : finalRead.kind,
+          );
+          settleProgressToast(
+            toastId,
+            'success',
+            'Report regenerated',
+            'Every section was written. Its status could not be re-read just now and will refresh on its own.',
+          );
+        }
 
         setState(prev => ({
           ...prev,
           isRegenerating: false,
-          currentSection: requiredSections,
-          totalSections: requiredSections,
+          currentSection: outcome.required,
+          totalSections: outcome.required,
           phase: 'done',
         }));
         onComplete?.();
-      } else {
+      } else if (outcome.kind === 'incomplete') {
         throw new Error(
-          `Report regeneration incomplete — the record holds ${Number(finalReport?.last_completed_section) || 0} of ${requiredSections} sections.`,
+          `Report regeneration incomplete — the record holds ${outcome.done} of ${outcome.required} sections.`,
+        );
+      } else {
+        statusUnknown = outcome.reason === 'unreadable';
+        throw new Error(
+          outcome.reason === 'unreadable'
+            ? `The report's status could not be read after the run (${outcome.error?.message || 'no answer'}), so whether it finished is not known.`
+            : 'The report could not be found after the run.',
         );
       }
 
@@ -497,7 +588,12 @@ export function useChunkedRegeneration() {
 
       setState(prev => ({ ...prev, isRegenerating: false, phase: 'idle', error: errorMessage }));
 
-      settleProgressToast(toastId, 'error', 'Regeneration failed', errorMessage);
+      settleProgressToast(
+        toastId,
+        'error',
+        statusUnknown ? 'Regeneration status unknown' : 'Regeneration failed',
+        errorMessage,
+      );
 
       /* The stamp describes the ROW, never this caller's own run.
        *
@@ -506,27 +602,42 @@ export function useChunkedRegeneration() {
        * a second pump had already carried the same report to 14 of 14 while
        * this one was throwing. Ask the server what the row holds first, and
        * record the failure only where there is one. An unreadable row still
-       * records it: a run that threw with its state unknown must not be left
-       * looking healthy. */
-      let finalRow: unknown = null;
-      try {
-        const { data } = await invokeSecureFunction('get-investment-reports', {
-          reportId,
-          listOptions: { select: 'status, last_completed_section, total_sections' },
-        });
-        finalRow = (data as { report?: unknown } | null)?.report ?? null;
-      } catch (readError: any) {
-        console.warn('[ChunkedRegeneration] Could not read the row before recording a failure:', readError?.message);
-      }
+       * records it — a run that threw with its state unknown must not be left
+       * looking healthy — unless the server already said the document is
+       * complete, or this run never wrote to the row at all (24 Sep 2026,
+       * 60 Lawley Street: a complete document stamped failed over a 3s 503).
+       * `manage-investment-reports` enforces the same rule on its side. */
+      const failedRead: RowReadResult<ReportRunRow> = wroteNothing
+        ? { kind: 'unreadable', error: { message: 'Nothing was written; the row was not read.' } }
+        : await readProgressRow(reportId);
 
-      if (shouldMarkRunFailed(finalRow as any)) {
-        await invokeSecureFunction('manage-investment-reports', {
+      const recordFailure = failedRead.kind === 'absent'
+        ? false
+        : shouldMarkRunFailed(failedRead.kind === 'row' ? failedRead.row : null, {
+            serverReportedComplete,
+            wroteNothing,
+          });
+
+      if (recordFailure) {
+        const { error: stampError } = await invokeSecureFunction('manage-investment-reports', {
           action: 'update',
           reportId,
           data: { status: 'failed' }
         });
+        if (stampError) {
+          console.warn('[ChunkedRegeneration] The failure was not recorded:', stampError.message);
+        }
       } else {
-        console.log('[ChunkedRegeneration] Not recording a failure — the record is complete.');
+        console.log(
+          '[ChunkedRegeneration] Not recording a failure —',
+          wroteNothing
+            ? 'this run wrote nothing to the row.'
+            : failedRead.kind === 'row'
+              ? 'the record is complete.'
+              : failedRead.kind === 'absent'
+                ? 'the report no longer exists.'
+                : 'the server already reported the document complete.',
+        );
       }
 
       onError?.(errorMessage);

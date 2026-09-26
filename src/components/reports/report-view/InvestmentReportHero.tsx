@@ -6,6 +6,7 @@ import type { InvestmentReport } from './types';
 import { getInvestmentGradeTone, getInvestmentScoreSummary, getScoreTone } from './utils';
 import { resolveInvestmentReportType } from '@/lib/reports/reportVariants';
 import { ReportTypeBadge } from '@/components/reports/ReportTypeBadge';
+import { generatedAtLabel, reportGeneratedAt } from '@/lib/reports/investment/reportGeneratedAt.pure';
 
 interface Props {
   report: InvestmentReport;
@@ -30,6 +31,9 @@ export function InvestmentReportHero({
   const gradeTone = getInvestmentGradeTone(scoreSummary.grade);
   const isDerivedVariant = Boolean(report.derived_from_report_id);
   const reportType = resolveInvestmentReportType(report);
+  // When this report was generated — a regeneration reuses the row, so
+  // `created_at` would print the first generation's time.
+  const generated = reportGeneratedAt(report);
 
   return (
     <Card className="overflow-hidden border-primary/10 bg-gradient-to-br from-card via-card to-primary/5 shadow-sm">
@@ -48,7 +52,7 @@ export function InvestmentReportHero({
               <div>
                 <h1 className="text-2xl font-semibold tracking-tight text-foreground md:text-3xl xl:text-4xl">{report.property_address}</h1>
                 <div className="mt-3 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
-                  <span className="inline-flex items-center gap-1.5"><Calendar className="h-4 w-4" /> Generated {format(new Date(report.created_at), 'PPpp')}</span>
+                  <span className="inline-flex items-center gap-1.5"><Calendar className="h-4 w-4" /> {generatedAtLabel(generated?.basis)} {format(new Date(generated?.at ?? report.created_at), 'PPpp')}</span>
                   <span className="inline-flex items-center gap-1.5"><FileText className="h-4 w-4" /> {isClientReport ? 'Client report' : 'Internal report'}</span>
                   {report.status && <span className="inline-flex items-center gap-1.5 capitalize"><CheckCircle2 className="h-4 w-4" /> {reportStatusLabel}</span>}
                 </div>

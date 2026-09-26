@@ -254,7 +254,7 @@ export function projectionTableBlock(reading: PopulationProjectionReading, asOfY
     ...rows,
     '',
     `Source: ${reading.publisher}, ${reading.release}${reading.licence ? `, ${reading.licence}` : ''}. `
-      + `Taken into this platform's register on ${dayOf(reading.loadedAt)}.`,
+      + `Accessed ${dayOf(reading.loadedAt)}.`,
   ];
   if (reading.series.length > 1) {
     lines.push('Each row is one of the publisher\'s own series. None is preferred here, and none may be '

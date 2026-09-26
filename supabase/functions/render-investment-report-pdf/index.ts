@@ -17,7 +17,14 @@ import { dimensionWasScored } from "../_shared/reports/investment/scoreSections.
 import { publishableGrade } from "../_shared/reports/investment/scoreSections.pure.ts";
 import { presentStoredMarkdown } from "../_shared/reports/investment/derivedHygiene.pure.ts";
 import { readEvidenceInventory } from "../_shared/reports/investment/chartEvidence.pure.ts";
-import { PLATFORM_ISSUER_NAME, resolveReportDisclaimer, resolveReportIssuer } from "../_shared/reports/issuerIdentity.pure.ts";
+import {
+  PLATFORM_ISSUER_NAME,
+  issuerContactDetails,
+  resolveReportDisclaimer,
+  resolveReportIssuer,
+  type IssuerDeployment,
+} from "../_shared/reports/issuerIdentity.pure.ts";
+import { deploymentKind } from "../_shared/emailIdentity.pure.ts";
 import { governedAuthorityBlockFromFlags } from "../_shared/reports/contract/governedNarrativeAuthority.pure.ts";
 // Both are called by `wrapInsightSections` below and neither was imported, so
 // every call to `buildHtml` threw `ReferenceError: wrapInsightHeadingSections is
@@ -1835,95 +1842,6 @@ function normaliseShare(value: number | null): number | null {
   return value > 0 && value <= 1 ? value * 100 : value;
 }
 
-function chapterGlanceLabels(title: string): { sym: string; label: string }[] {
-  const lower = title.toLowerCase();
-  if (lower.includes("risk") || lower.includes("safety"))
-    return [{ sym: "✓", label: "Risk register" }, { sym: "⚠", label: "Verify" }, { sym: "▲", label: "Mitigants" }, { sym: "★", label: "Decision lens" }];
-  if (lower.includes("transport") || lower.includes("infrastructure"))
-    return [{ sym: "✓", label: "Access driver" }, { sym: "⚠", label: "Delivery risk" }, { sym: "▲", label: "Pipeline" }, { sym: "★", label: "Location fit" }];
-  if (lower.includes("demographic") || lower.includes("demand"))
-    return [{ sym: "✓", label: "Demand base" }, { sym: "⚠", label: "Cohort watch" }, { sym: "▲", label: "Trend" }, { sym: "★", label: "Tenant fit" }];
-  if (lower.includes("score") || lower.includes("swot"))
-    return [{ sym: "✓", label: "Strength" }, { sym: "⚠", label: "Watch point" }, { sym: "▲", label: "Score driver" }, { sym: "★", label: "Verdict" }];
-  return [{ sym: "✓", label: "Key signal" }, { sym: "⚠", label: "Watch" }, { sym: "▲", label: "Trend" }, { sym: "★", label: "NPC view" }];
-}
-
-function firstSentenceMatching(text: string, re: RegExp, _maxLen = 0): string | null {
-  const sentences = text.split(/(?<=[.!?])\s+/);
-  for (const s of sentences) {
-    const clean = s.trim();
-    if (clean.length < 12) continue;
-    if (re.test(clean)) {
-      return clean.replace(/[.!?]+$/, "");
-    }
-  }
-  return null;
-}
-
-function deriveGlanceValues(title: string, chapterText: string): (string | null)[] {
-  const lower = title.toLowerCase();
-  const text = chapterText.replace(/\s+/g, " ").trim();
-  if (!text) return [null, null, null, null];
-
-  // Signal — first positive/headline sentence (full sentence; cell wraps it)
-  const signal = firstSentenceMatching(text, /\b(outperform|strong|leading|above|rose|grew|growth|robust|resilient|expand|accelerat|surpass|exceed|record|premium)\b/i);
-  // Watch — first risk/caveat sentence
-  const watch = firstSentenceMatching(text, /\b(risk|concern|vacancy|declin|soft|weak|caution|watch|below|under-?perform|exposure|oversupply|headwind|fragile|stretched)\b/i);
-
-  // Trend — strongest pct/movement number
-  let trend: string | null = null;
-  const pctMatches = Array.from(text.matchAll(/([+-]?\d{1,3}(?:\.\d+)?\s?%)\s*(YoY|p\.?a\.?|annual|year|growth|yield|change)?/gi));
-  if (pctMatches.length) {
-    const best = pctMatches.map((m) => ({ raw: m[0], abs: Math.abs(parseFloat(m[1])) })).sort((a, b) => b.abs - a.abs)[0];
-    trend = best.raw.replace(/\s+/g, " ").trim();
-  } else {
-    const dollar = text.match(/\$\s?\d[\d,]*(?:\.\d+)?(?:\s?(?:k|m|million|thousand))?/i);
-    if (dollar) trend = dollar[0];
-  }
-
-  // NPC view — verdict/recommendation if present
-  let view = firstSentenceMatching(text, /\b(verdict|npc view|recommend|our view|conclusion|bottom line|net-net|on balance|suits?|fits?|aligns?|accumulate|hold|pass)\b/i);
-  if (!view) {
-    // fallback to last meaningful sentence in chapter
-    const sentences = text.split(/(?<=[.!?])\s+/).map((s) => s.trim()).filter((s) => s.length > 30);
-    if (sentences.length >= 2) view = sentences[sentences.length - 1].replace(/[.!?]+$/, "");
-  }
-  void lower;
-  return [signal, watch, trend, view];
-}
-
-function chapterGlanceHtmlFromValues(title: string, values: (string | null)[]): string {
-  const labels = chapterGlanceLabels(title);
-  const cells = labels.map((l, i) => ({ ...l, value: values[i] })).filter((c) => c.value && c.value.trim().length > 0);
-  if (cells.length < 2) return "";
-  return `<div class="glance-strip">${cells.map((c) => (
-    `<div class="glance-cell">` +
-      `<span class="glance-sym">${esc(c.sym)}</span>` +
-      `<span class="glance-label">${esc(c.label)}</span>` +
-      `<span class="glance-value">${esc(c.value!)}</span>` +
-    `</div>`
-  )).join("")}</div>`;
-}
-
-function injectChapterGlanceFallbacks(html: string): string {
-  // Split on H2 boundaries so we can read each chapter's body
-  const parts = html.split(/(<h2\b[^>]*>[\s\S]*?<\/h2>)/i);
-  for (let i = 1; i < parts.length; i += 2) {
-    const heading = parts[i];
-    const body = parts[i + 1] ?? "";
-    if (/glance-strip/.test(body.slice(0, 400))) continue; // already has one
-    const titleMatch = heading.match(/<h2\b[^>]*>([\s\S]*?)<\/h2>/i);
-    const title = (titleMatch?.[1] ?? "").replace(/<[^>]+>/g, "").trim();
-    if (!title || /sources|references|disclaimer|table of contents/i.test(title)) continue;
-    const plain = body.replace(/<(script|style)[\s\S]*?<\/\1>/gi, " ").replace(/<[^>]+>/g, " ");
-    const values = deriveGlanceValues(title, plain);
-    const strip = chapterGlanceHtmlFromValues(title, values);
-    if (!strip) continue; // suppress empty
-    parts[i + 1] = `\n${strip}\n${body}`;
-  }
-  return parts.join("");
-}
-
 function addDataSparklinesToParagraphs(html: string): string {
   return html.replace(/<p>([\s\S]*?)<\/p>/gi, (match, inner) => {
     if (/spark-inline|<svg|<img|<table/i.test(inner)) return match;
@@ -2600,7 +2518,12 @@ async function injectTableCharts(html: string): Promise<string> {
   return html.replace(/<table[\s\S]*?<\/table>/gi, () => replacements[i++]);
 }
 
-async function buildFinancialChartsHtml(fin: any): Promise<string> {
+/**
+ * `projectionsBy` names whose projections the captions attribute. The prime's
+ * documents have always said "NPC"; a clone's say the issuer's name, because
+ * NPC's name is the prime's alone (`issuerIdentity.pure.ts`).
+ */
+async function buildFinancialChartsHtml(fin: any, projectionsBy = "NPC"): Promise<string> {
   const rows = projectionRows(fin).slice(0, 10);
   const labels = rows.map((r, i) => String(r?.year ?? r?.label ?? `Year ${i + 1}`).replace(/^year\s*/i, "Yr "));
   const charts: string[] = [];
@@ -2629,7 +2552,7 @@ async function buildFinancialChartsHtml(fin: any): Promise<string> {
           },
         },
       }, CHART_PRESETS.TREND_WIDE.width, CHART_PRESETS.TREND_WIDE.height, "financial:value-equity-debt");
-      if (uri) charts.push(`<div class="chart-wrap financial-chart"><div class="chart-title">10-year value, equity and debt path</div><figure class="auto-chart"><img src="${uri}" alt="10-year value equity and debt chart"/><figcaption>Source: NPC projections, modelled over 10 years.</figcaption></figure></div>`);
+      if (uri) charts.push(`<div class="chart-wrap financial-chart"><div class="chart-title">10-year value, equity and debt path</div><figure class="auto-chart"><img src="${uri}" alt="10-year value equity and debt chart"/><figcaption>Source: ${esc(projectionsBy)} projections, modelled over 10 years.</figcaption></figure></div>`);
     }
 
     const cashFlow = pickSeries(rows, ["cashFlow", "annualNet", "netCashflow", "annualNetCashflow"]);
@@ -2652,7 +2575,7 @@ async function buildFinancialChartsHtml(fin: any): Promise<string> {
           },
         },
       }, CHART_PRESETS.BAR_WIDE.width, CHART_PRESETS.BAR_WIDE.height, "financial:rent-cashflow");
-      if (uri) charts.push(`<div class="chart-wrap financial-chart"><div class="chart-title">Rental income versus net cash flow</div><figure class="auto-chart"><img src="${uri}" alt="Rental income and cash flow chart"/><figcaption>Source: NPC projections, modelled over 10 years.</figcaption></figure></div>`);
+      if (uri) charts.push(`<div class="chart-wrap financial-chart"><div class="chart-title">Rental income versus net cash flow</div><figure class="auto-chart"><img src="${uri}" alt="Rental income and cash flow chart"/><figcaption>Source: ${esc(projectionsBy)} projections, modelled over 10 years.</figcaption></figure></div>`);
     }
   }
 
@@ -2675,7 +2598,7 @@ async function buildFinancialChartsHtml(fin: any): Promise<string> {
         },
       },
     }, CHART_PRESETS.BAR_WIDE.width, CHART_PRESETS.BAR_WIDE.height, "financial:yield-bars");
-    if (uri) charts.push(`<div class="chart-wrap financial-chart"><div class="chart-title">Yield and leverage profile</div><figure class="auto-chart"><img src="${uri}" alt="Yield and leverage chart"/><figcaption>Source: NPC key-metrics snapshot.</figcaption></figure></div>`);
+    if (uri) charts.push(`<div class="chart-wrap financial-chart"><div class="chart-title">Yield and leverage profile</div><figure class="auto-chart"><img src="${uri}" alt="Yield and leverage chart"/><figcaption>Source: ${esc(projectionsBy)} key-metrics snapshot.</figcaption></figure></div>`);
   }
 
   return charts.length ? `<section class="body-page financial-charts"><h2 id="ch-financial-visuals">Financial Visuals</h2>${charts.join("")}</section>` : "";
@@ -2966,17 +2889,33 @@ export async function buildHtml(
     designOptions?: unknown;
     contact?: Record<string, any>;
     disclaimer?: { is_enabled?: boolean; text?: string; font_size?: string };
+    /**
+     * Which deployment is rendering. NPC's identity — its name, its cover
+     * artwork, its contact details and its wording — belongs to the prime; a
+     * clone issues under its own name, or the platform's, whatever a seeded
+     * settings row says. Not given means the prime, which is every document
+     * exactly as it was.
+     */
+    deployment?: IssuerDeployment | null;
   } = {},
 ): Promise<string> {
-  const contact = opts.contact || {};
+  const deployment = opts.deployment ?? null;
+  const onClone = Boolean(deployment && !deployment.prime);
   const disclaimer = opts.disclaimer || {};
   // Who this document is issued BY. Resolved ONCE, here, because four places
   // below used to answer it separately and printed three different businesses
   // on one unbranded report — `NPC` in the watermark, `NPC Property` in the PDF
   // metadata and `PROPERTY CONSULTING` on the back page. See
   // `_shared/reports/issuerIdentity.pure.ts`.
-  const issuer = resolveReportIssuer({ companyName: contact.company_name, brandName });
-  const issuedDisclaimer = resolveReportDisclaimer(issuer, disclaimer);
+  const issuer = resolveReportIssuer({ companyName: opts.contact?.company_name, brandName }, deployment);
+  const issuedDisclaimer = resolveReportDisclaimer(issuer, disclaimer, deployment);
+  // On a clone every line that printed the stored name prints the issuer's,
+  // and a contact field naming the house is left out. The prime reads both as
+  // stored.
+  const contact: Record<string, any> = onClone
+    ? issuerContactDetails(opts.contact || {}, issuer, deployment)
+    : (opts.contact || {});
+  if (onClone) brandName = issuer.name;
   // Keep report-wide advisor attribution initialized before any generated HTML/CSS
   // fragments so later Phase blocks cannot accidentally hit a temporal-dead-zone.
   const advisorLine = contact.name || contact.advisor || issuer.name;
@@ -3099,7 +3038,7 @@ export async function buildHtml(
     ) as string)
     : "";
   const financialChartsHtml = includeCharts && contentPolicy.financialModelling
-    ? await buildFinancialChartsHtml(fin)
+    ? await buildFinancialChartsHtml(fin, onClone ? issuer.name : "NPC")
     : "";
 
   // KPI tiles (with optional sparklines from projection series)
@@ -3307,7 +3246,10 @@ export async function buildHtml(
   // function source, which broke deploys for unrelated functions (see the note
   // at the top of this file). It is a `data:` URI either way by the time the
   // renderer sees it. See `scripts/reportDesign/buildDefaultAssets.ts`.
-  const coverArtSrc = await loadHouseCoverArt();
+  // NPC's artwork is the prime's alone: a clone's cover carries the gradient
+  // and foil treatment without it, exactly as a cover whose artwork failed to
+  // load always has.
+  const coverArtSrc = onClone ? null : await loadHouseCoverArt();
   const coverBgImg = coverArtSrc
     ? `<img class="cover-bg" src="${coverArtSrc}" alt="" />`
     : "";
@@ -5858,6 +5800,7 @@ if (import.meta.main) Deno.serve(async (req) => {
       designOptions,
       contact,
       disclaimer,
+      deployment: { prime: deploymentKind(SUPABASE_URL) === "prime" },
     });
     const safeAddr = String(report.property_address || "report")
       .replace(/[^a-zA-Z0-9]+/g, "-")

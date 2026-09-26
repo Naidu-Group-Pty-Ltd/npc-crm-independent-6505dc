@@ -6,6 +6,10 @@
  * behind it is what put `450 m²` and `8.5 m` into a Queensland property's
  * document under New South Wales instrument names.
  */
+import {
+  REGISTER_CHECKED_EMPTY,
+  REGISTER_NOT_COVERED,
+} from '../../../../supabase/functions/_shared/reports/adviserVoice.pure';
 import { describe, it, expect } from 'vitest';
 import {
   ABSENCE_SENTENCE,
@@ -137,7 +141,10 @@ describe('the block on a reading', () => {
     const out = block();
     expect(out).toContain('Jul 2025 – Jun 2026');
     expect(out).toContain('**Jun 2026**');
-    expect(out).toContain('last loaded 18 Sep 2026');
+    // When the figures were taken, as a citation states it ("current at"),
+    // rather than when this platform loaded them.
+    expect(out).toContain('current at 18 Sep 2026');
+    expect(out).not.toMatch(/\bloaded\b/);
     expect(out).toContain('Creative Commons Attribution 4.0');
   });
 
@@ -235,12 +242,12 @@ describe('the block on an absence', () => {
 
   it('a failed read is ours, and never a statement about the area', () => {
     expect(ABSENCE_SENTENCE.unavailable)
-      .toContain('a fact about this retrieval, not about the area');
+      .toContain('a limit of this report, not a finding about the area');
   });
 
   it('a register never loaded and an area with no row are different sentences', () => {
     expect(ABSENCE_SENTENCE.not_loaded).not.toBe(ABSENCE_SENTENCE.none_for_area);
-    expect(ABSENCE_SENTENCE.not_loaded).toContain('was not searched for this report');
+    expect(ABSENCE_SENTENCE.not_loaded).toContain('not summarised in this report');
     expect(ABSENCE_SENTENCE.none_for_area).toContain('publishes no figure for it');
   });
 
@@ -269,15 +276,16 @@ describe('the block on an absence', () => {
   });
 
   it('uses the planning register\u2019s own two readings, and no third', () => {
-    // "Searched, nothing found." and "Not searched." are what the reader is
-    // already shown for planning layers; a second vocabulary for the same
-    // distinction is how two pages of one document come to disagree.
+    // The two readings the reader is already shown for planning layers and
+    // the infrastructure outlook — ONE pair of constants, because a second
+    // vocabulary for the same distinction is how two pages of one document
+    // come to disagree.
     const leads = Object.values(ABSENCE_SENTENCE).map((x) => x.split('**')[1]);
-    expect([...new Set(leads)].sort()).toEqual(['Not searched.', 'Searched, nothing found.']);
-    // Only the register that WAS asked and answered nothing may say "searched".
-    expect(ABSENCE_SENTENCE.none_for_area).toContain('Searched, nothing found.');
+    expect([...new Set(leads)].sort()).toEqual([REGISTER_CHECKED_EMPTY, REGISTER_NOT_COVERED].sort());
+    // Only the source that WAS checked and answered nothing may say "checked".
+    expect(ABSENCE_SENTENCE.none_for_area).toContain(REGISTER_CHECKED_EMPTY);
     for (const kind of ['not_loaded', 'unavailable', 'no_area_resolved'] as const) {
-      expect(ABSENCE_SENTENCE[kind]).toContain('Not searched.');
+      expect(ABSENCE_SENTENCE[kind]).toContain(REGISTER_NOT_COVERED);
     }
   });
 

@@ -127,8 +127,10 @@ describe('an evidenced negative', () => {
     expect(evidence.items).toEqual([]);
     expect(evidence.anyEvidenced).toBe(false);
     expect(evidence.absences).toHaveLength(2);
-    expect(evidence.absences[0]).toMatch(/no declared priority development area/);
-    expect(evidence.absences[1]).toMatch(/No state-wide development-application feed/);
+    // In the reader's words since 25 Sep 2026 (`serviceNote.pure.ts`): the
+    // distinction per register is kept, the service's diagnostic phrasing is not.
+    expect(evidence.absences[0]).toMatch(/not within a declared priority development area/);
+    expect(evidence.absences[1]).toMatch(/published council by council/);
   });
 
   it('forbids the whole pipeline rather than inviting a plausible one', () => {
@@ -141,7 +143,7 @@ describe('an evidenced negative', () => {
   it('still states coverage, so a short list reads as a short search', () => {
     const rendered = renderInfrastructureOutlook(evidence);
     expect(rendered).toMatch(/council capital works programmes/);
-    expect(rendered).toMatch(/a statement about those registers rather than/);
+    expect(rendered).toMatch(/A short list is therefore not a finding that nothing is planned nearby/);
   });
 });
 
@@ -230,7 +232,7 @@ describe('an enrichment that never ran', () => {
   it('is the same refusal as an empty one, and says so', () => {
     const evidence = buildInfrastructureEvidence({});
     expect(evidence.enrichmentMissing).toBe(true);
-    expect(infrastructureRules(evidence)).toMatch(/nothing was retrieved/);
+    expect(infrastructureRules(evidence)).toMatch(/nothing was identified for this property/);
   });
 });
 
@@ -252,14 +254,16 @@ describe('the rules claim the whole report, and name live search', () => {
    */
   it('on an empty register', () => {
     const rules = infrastructureRules(buildInfrastructureEvidence({ planningData: PALLAS }));
-    expect(rules).toMatch(/FOR THE WHOLE REPORT/);
+    // The prohibitions bind every section; the one sentence that must be
+    // SAID is confined to its home section (`adviserVoice.pure.ts`).
+    expect(rules).toMatch(/prohibitions below bind every section/);
     expect(rules).toMatch(/live web search/);
     expect(rules).toMatch(/budget page, a news article or an agency media release/);
   });
 
   it('on a full one', () => {
     const rules = infrastructureRules(buildInfrastructureEvidence({ planningData: WITH_PROJECTS }));
-    expect(rules).toMatch(/FOR THE WHOLE REPORT/);
+    expect(rules).toMatch(/prohibitions below bind every section/);
     expect(rules).toMatch(/live web search/);
     expect(rules).not.toMatch(/INFRASTRUCTURE RULES — these override/);
   });
@@ -395,7 +399,7 @@ describe('what the brief asks for, per development', () => {
   it('says the register publishes no delivery date, on the row', () => {
     // "Keep unknown timing explicit" — per entry, not once at the foot of the
     // table where a reader scanning rows never reaches it.
-    expect(cell('Delivery timing')).toBe('Not published by this register');
+    expect(cell('Delivery timing')).toBe('Not published');
   });
 
   it('counts the amendments in the entry rather than printing more entries', () => {

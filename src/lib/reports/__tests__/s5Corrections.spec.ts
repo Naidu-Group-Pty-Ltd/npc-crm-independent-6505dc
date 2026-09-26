@@ -125,7 +125,7 @@ describe('correction 1 — the accepted CGR and the observed market rate are sep
     expect(doc).not.toMatch(/taken from .{0,80}the measured rate for this market/i);
     expect(doc).toContain('Accepted CGR assumption used by the financial model');
     expect(doc).toContain('Historical market growth observed in the approved register');
-    expect(doc).toContain('nothing on this record states that the assumption was derived from the measurement');
+    expect(doc).toContain('nothing in this analysis shows that the assumption was derived from the measurement');
   });
 
   it('states both labels where the two differ', () => {
@@ -188,7 +188,7 @@ describe('correction 2 — the transport reading states its own radius', () => {
     const doc = composeSwot(rec(), 'SWOT');
     expect(doc).toContain('Transport for NSW Open Data (CC BY 4.0)');
     expect(doc).toContain('1.6 km');
-    expect(doc).toContain("straight-line distance from this property's verified coordinate");
+    expect(doc).toContain('as straight-line distance from the property');
     expect(doc).toContain('a station and its platforms counted as one place');
     // A feed-load date is not a measurement date. The count was taken when the
     // enrichment ran (2026-09-17); the stop file behind it is current as at the
@@ -197,7 +197,7 @@ describe('correction 2 — the transport reading states its own radius', () => {
     // Both dates, written as a reader writes them (23 Sep 2026: ISO dates
     // left these sections; the two-date rule is unchanged).
     expect(doc).toContain('Counted on 17 Sep 2026');
-    expect(doc).toContain('against a stop file last loaded on 7 Sep 2026');
+    expect(doc).toContain("from the operator's stop data current at 7 Sep 2026");
     expect(doc).not.toMatch(/\b20\d\d-\d\d-\d\d\b/);
     expect(doc).toContain('does not establish mode, service frequency, walking distance or travel time');
   });
@@ -213,7 +213,7 @@ describe('correction 2 — the transport reading states its own radius', () => {
     const doc = composeSwot(
       { ...r, transport: { ...r.transport, feedLoadedAt: null } }, 'SWOT',
     );
-    expect(doc).toContain('When the stop file behind it was loaded is not recorded on this reading');
+    expect(doc).toContain("The date of the operator's stop data behind it is not recorded.");
   });
 
   it('never calls a station-only register count public transport access', () => {
@@ -225,8 +225,8 @@ describe('correction 2 — the transport reading states its own radius', () => {
         nearestKm: null, nearestName: null, sources: [], feedLoadedAt: null, measuredAt: null, notMeasured: [],
       },
     }, 'SWOT');
-    expect(doc).toContain('not read from an operator');
-    expect(doc).toContain('counts one amenity category rather than boarding places');
+    expect(doc).toContain('not measured from an operator');
+    expect(doc).toContain('counts one kind of place rather than boarding points');
     expect(doc).not.toMatch(/\bstops within\b/i);
   });
 
@@ -247,7 +247,7 @@ describe('correction 2 — the transport reading states its own radius', () => {
     expect(legacy.radiusAssumed).toBe(true);
     const r = rec();
     expect(composeSwot({ ...r, transport: { ...r.transport, countReading: legacy } }, 'SWOT'))
-      .toContain('radius is not recorded on this reading');
+      .toContain('The search radius is not recorded for this count; the standard radius is assumed.');
   });
 });
 
@@ -322,7 +322,7 @@ describe('correction 3 — every score statement is fully qualified', () => {
     expect(table).toContain('39.71');
     expect(table).toMatch(/rounded once|rounds once/);
     // …and it is the composite the RECORD holds, not one recomputed here.
-    expect(table).toContain('the figure the scoring service recorded');
+    expect(table).toContain('the figure recorded with the grade');
   });
 
   /*
@@ -379,7 +379,7 @@ describe('correction 3 — every score statement is fully qualified', () => {
 
   it('names the calculation owner', () => {
     const table = composeScoreDimensionTable(rec())!;
-    expect(table).toContain("this platform's investment scoring service");
+    expect(table).toContain('Calculated by the investment scoring method described above');
     expect(table).toContain('No figure in this table is re-derived by this report');
   });
 
@@ -477,7 +477,7 @@ describe('correction 5 — a sales count is not liquidity', () => {
     // 4d — an absence is about the registers THIS report reads, never about
     // what any publisher issues. "No publisher issues them" is a claim about
     // the world that nothing here measured.
-    expect(doc).toMatch(/the registers this report reads did not return them/i);
+    expect(doc).toMatch(/the sources checked for this report do not publish them/i);
     expect(doc).not.toMatch(/no publisher (issues|publishes)/i);
   });
 

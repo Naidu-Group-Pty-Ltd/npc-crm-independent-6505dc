@@ -47,6 +47,12 @@ import { tabulateVizDirectives } from '@/lib/reports/vizDirectiveTables.pure';
 import { rentIsEstablished } from '@/lib/reports/investment/rentalEvidence.pure';
 import { presenceOf } from '../../../../supabase/functions/_shared/reports/contract/visibilityPolicy.pure';
 import { contentPolicyFor } from './tierContent.pure';
+import {
+  drawStandardCoverPhotograph,
+  drawStandardFloorPlanSheet,
+  embedFloorPlan,
+  type InvestmentPdfPicture,
+} from './investmentPdfPictures';
 import { audiencePolicyFor } from './audienceContent.pure';
 import { documentTitleForTier } from '../../../../supabase/functions/_shared/reportBindingProjection.pure';
 import { meaningfulPropertyType } from '@/lib/reports/investment/propertyRecord.pure';
@@ -61,6 +67,13 @@ import {
 import { investmentReportFileName } from '@/lib/reports/investment/reportFileName.pure';
 import { fetchGlobalReportSettings, type GlobalReportSettings } from '@/hooks/useGlobalReportSettings';
 import { drawPdfLibDisclaimerPage } from '@/utils/pdfDisclaimerPage';
+import { issuerContactDetails, resolveReportDisclaimer } from '@/lib/reports/issuerIdentity.pure';
+import { DOCUMENT_IDENTITY } from './tierIdentity.pure';
+import { loadStandardPresentationBrand } from './standardPresentationBrand';
+import { standardDocumentMetadata } from './standardCover.pure';
+import { drawIssuerCover } from './investmentPdfCover';
+import { addIssuerContentPage } from './investmentPdfIssuerPage';
+import { hexToRgb01 } from '@/lib/reportDesign/color.pure';
 
 /**
  * The five tiers this presentation draws. `strategic` was missing, so the
@@ -140,6 +153,14 @@ export interface GenerateInvestmentPdfOptions {
    * hero imagery only once somebody has placed some.
    */
   heroImages?: readonly InvestmentHeroImage[];
+  /**
+   * The property's own photographs, lead first, already fetched by the caller
+   * from the same broker a chosen template reads (`investmentPdfPictures.ts`).
+   * The cover takes the first; an empty list is the cover it always had.
+   */
+  photographs?: readonly InvestmentPdfPicture[];
+  /** The property's floor plans, each drawn whole on a sheet of its own. */
+  floorPlans?: readonly InvestmentPdfPicture[];
 }
 
 /** One placed hero image, already fetched and decoded by the caller. */
@@ -165,6 +186,8 @@ export async function generateInvestmentPdfBlob(
     report,
     reportTier = 'compass',
     heroImages = [],
+    photographs = [],
+    floorPlans = [],
   } = options;
   const presentation = resolvePresentationOptions(options.presentation);
   const { includeSources, includeScoring } = presentation;
@@ -1360,6 +1383,12 @@ export async function generateInvestmentPdfBlob(
         disclaimerEnabled: globalSettings.disclaimer.is_enabled
       });
 
+      // Who issues this document, and so which cover it opens on. Resolved
+      // from the same contact name the closing page reads, so the first and
+      // last pages cannot name two businesses. See `standardCover.pure.ts`.
+      const brand = await loadStandardPresentationBrand(globalSettings.contactDetails?.company_name);
+      console.log('✓ Issuer resolved:', { issuer: brand.issuer.name, kind: brand.issuer.kind, cover: brand.cover });
+
       console.log('📍 Step 1: Extracting suburb and state from address:', report.address);
       const { suburb, state } = extractSuburbState(report.address);
       console.log('✓ Extracted:', { suburb, state });
@@ -1393,25 +1422,68 @@ export async function generateInvestmentPdfBlob(
       
       // Load the template PDF
       console.log('📋 Step 4: Parsing PDF template...');
-      const pdfDoc = await PDFDocument.load(templateBytes);
+      const template = await PDFDocument.load(templateBytes);
       console.log('✓ PDF template parsed successfully');
-      
+
+      // Get the second page from template to use as content template
+      console.log('📑 Step 5: Preparing template pages...');
+      console.log('✓ Template has', template.getPageCount(), 'pages');
+
+      if (template.getPageCount() < 2) {
+        throw new Error('Template must have at least 2 pages');
+      }
+
+      /*
+       * The template's first page is NPC's artwork, so it opens only a
+       * document NPC issues. Any other issuer's document starts from an empty
+       * file and gets a cover drawn for it: starting from the template and
+       * covering the artwork would still carry NPC's name and monogram inside
+       * the file, where a text search or a screen reader finds them. The
+       * content pages are copied from the template either way (their corner
+       * ornament carries no name).
+       */
+      const pdfDoc = brand.cover === 'template' ? template : await PDFDocument.create();
+
       const helveticaFont = await pdfDoc.embedFont(StandardFonts.Helvetica);
       const helveticaBold = await pdfDoc.embedFont(StandardFonts.HelveticaBold);
       console.log('✓ Fonts embedded');
 
-      // Get the second page from template to use as content template
-      console.log('📑 Step 5: Preparing template pages...');
-      const templatePages = pdfDoc.getPages();
-      console.log('✓ Template has', templatePages.length, 'pages');
-      
-      if (templatePages.length < 2) {
-        throw new Error('Template must have at least 2 pages');
-      }
+      if (brand.cover === 'template') {
+        // Remove the original second page since we'll duplicate it as needed
+        pdfDoc.removePage(1); // Remove index 1 (second page)
+        console.log('✓ Template pages configured');
 
-      // Remove the original second page since we'll duplicate it as needed
-      pdfDoc.removePage(1); // Remove index 1 (second page)
-      console.log('✓ Template pages configured');
+        // The property's lead photograph, in the field beneath the cover's
+        // lockup. Without one the cover is exactly the page it always was. See
+        // `investmentPdfPictures.ts` for where it sits and why.
+        if (photographs.length) {
+          const drawn = await drawStandardCoverPhotograph(
+            pdfDoc, pdfDoc.getPage(0), photographs[0], report.address, helveticaFont,
+          );
+          console.log(drawn ? '✓ Cover photograph placed' : '⚠️ Cover photograph could not be embedded; cover left as drawn');
+        }
+      } else {
+        const tierKey = String(reportTier ?? '').trim().toLowerCase();
+        const identity = DOCUMENT_IDENTITY[tierKey] ?? DOCUMENT_IDENTITY.compass;
+        const drawnCover = await drawIssuerCover(pdfDoc, {
+          issuerName: brand.issuer.name,
+          mark: brand.mark,
+          documentTitle: identity.title,
+          standfirst: identity.standfirst,
+          address: report.address,
+          photograph: photographs[0] ?? null,
+          family: brand.family,
+          fonts: {
+            serif: await pdfDoc.embedFont(StandardFonts.TimesRoman),
+            italic: await pdfDoc.embedFont(StandardFonts.TimesRomanItalic),
+            sans: helveticaFont,
+          },
+        });
+        console.log('✓ Issuer cover drawn', {
+          mark: drawnCover.markDrawn,
+          photograph: drawnCover.photographDrawn,
+        });
+      }
 
       // ========================================
       // PAGE BREAK SETTINGS (Global Configuration)
@@ -1422,20 +1494,42 @@ export async function generateInvestmentPdfBlob(
       const topMargin = 75; // Top margin (space for template header)
       const bottomMargin = 65; // Bottom margin
       const lineHeight = 15; // Tighter line spacing for professional look
+      // The gold rule the page-number pass draws above the footer. Named once,
+      // because the floor-plan sheet seats its title block against it.
+      const footerRuleY = 52;
 
-      // ─── Premium Design Tokens (Dark & Gold) ────────────────────────────
-      const GOLD_RGB = rgb(191 / 255, 155 / 255, 80 / 255);     // #BF9B50
+      // ─── The document's colours ─────────────────────────────────────────
+      //
+      // Under NPC's artwork, NPC's house pair — the gold and the navy below,
+      // exactly as they have always been drawn, so the prime's own document
+      // does not move by a byte.
+      //
+      // Every other issuer's pages are drawn in its brand family
+      // (`brandFamily.pure.ts`): its colour for rules and bars, a deep shade of
+      // it where the navy was (headings, table heads), washes of it for the
+      // panels, stripes and hairlines, and its contrast-corrected ink wherever
+      // the gold is set as TYPE. With no colour on the Branding page the
+      // family is the platform's own gold on obsidian.
+      const family = brand.family;
+      const tone = (value: string) => {
+        const [r, g, b] = hexToRgb01(value);
+        return rgb(r, g, b);
+      };
+      const GOLD_RGB = family ? tone(family.accent) : rgb(191 / 255, 155 / 255, 80 / 255);     // #BF9B50
+      /** The gold where it is set as type — an issuer's brand ink, contrast-corrected. */
+      const GOLD_TEXT_RGB = family ? tone(family.accentInk) : GOLD_RGB;
       const GOLD_LIGHT_RGB = rgb(245 / 255, 235 / 255, 210 / 255); // #F5EBD2
-      const NAVY_RGB = rgb(13 / 255, 38 / 255, 77 / 255);       // #0D264D
+      const NAVY_RGB = family ? tone(family.deep) : rgb(13 / 255, 38 / 255, 77 / 255);       // #0D264D
       const DARK_BG_RGB = rgb(20 / 255, 20 / 255, 20 / 255);    // #141414
       const WHITE_RGB = rgb(1, 1, 1);
       const BODY_TEXT_RGB = rgb(55 / 255, 55 / 255, 55 / 255);   // #373737
-      const SECTION_BG_RGB = rgb(250 / 255, 247 / 255, 240 / 255); // Warm off-white for callouts
+      const SECTION_BG_RGB = family ? tone(family.wash) : rgb(250 / 255, 247 / 255, 240 / 255); // Warm off-white for callouts
       const TABLE_HEADER_BG = NAVY_RGB;
       const TABLE_HEADER_TEXT = WHITE_RGB;
-      const TABLE_ALT_ROW = rgb(252 / 255, 249 / 255, 242 / 255); // Very light gold tint
-      const TABLE_BORDER = rgb(210 / 255, 195 / 255, 160 / 255);  // Gold-tinted border
-      const FOOTER_TEXT_RGB = rgb(128 / 255, 128 / 255, 128 / 255);
+      const TABLE_ALT_ROW = family ? tone(family.stripe) : rgb(252 / 255, 249 / 255, 242 / 255); // Very light gold tint
+      const TABLE_BORDER = family ? tone(family.hairline) : rgb(210 / 255, 195 / 255, 160 / 255);  // Gold-tinted border
+      /** Captions and the folio. An issuer's is the palette's muted ink, 7:1 at 7pt. */
+      const FOOTER_TEXT_RGB = family ? tone(family.mutedInk) : rgb(128 / 255, 128 / 255, 128 / 255);
       const titleSize = 14;
       const textSize = 9.5; // Slightly smaller for more content per page
       
@@ -1563,8 +1657,19 @@ export async function generateInvestmentPdfBlob(
           .trim();
       };
 
-      // Helper function to add a new content page by copying from template
+      // Helper function to add a new content page by copying from template —
+      // NPC's page under NPC's artwork, and a page drawn in the issuer's own
+      // colours for everybody else (`investmentPdfIssuerPage.ts`).
       const addContentPage = async () => {
+        if (family) {
+          return addIssuerContentPage(pdfDoc, {
+            issuerName: brand.issuer.name,
+            documentTitle: documentTitleForTier(reportTier),
+            family,
+            font: helveticaFont,
+            margin,
+          });
+        }
         // Load template again to get a fresh page 2
         const freshTemplate = await PDFDocument.load(templateBytes);
         const [copiedPage] = await pdfDoc.copyPages(freshTemplate, [1]);
@@ -1574,14 +1679,22 @@ export async function generateInvestmentPdfBlob(
 
       // Helper function to add a contact/disclaimer page with global settings
       const addContactDisclaimerPage = async (settings: GlobalReportSettings) => {
+        // The issuer the cover names, and the disclaimer that issuer is
+        // entitled to speak (`issuerIdentity.pure.ts`): a deployment that has
+        // not said who it is prints the platform's, never a stored one, and
+        // on a clone stored wording that names the house is the issuer's
+        // default wording instead, and a contact field that names the house is
+        // left out. The prime reads its settings exactly as it always has.
+        const issued = resolveReportDisclaimer(brand.issuer, settings.disclaimer, brand.deployment);
         const page = drawPdfLibDisclaimerPage(
           pdfDoc,
           pageWidth,
           pageHeight,
           helveticaFont,
           helveticaBold,
-          settings.contactDetails,
-          settings.disclaimer,
+          issuerContactDetails(settings.contactDetails, brand.issuer, brand.deployment),
+          { ...settings.disclaimer, text: issued.text, is_enabled: issued.text !== '' },
+          family?.palette,
         );
         console.log('✓ Added contact/disclaimer page with global settings');
         return page;
@@ -2318,7 +2431,7 @@ export async function generateInvestmentPdfBlob(
           y: startY - panelPadding - 2,
           size: 7.5,
           font: helveticaBold,
-          color: GOLD_RGB,
+          color: GOLD_TEXT_RGB,
         });
         
         // Draw the callout text
@@ -3095,6 +3208,40 @@ export async function generateInvestmentPdfBlob(
         console.log(`📑 Step 5.0.5: Skipping TOC (${reportTier} tier does not require TOC)`);
       }
       
+      /*
+       * The property's floor plans, one sheet each, after the contents and
+       * before the report's first page — where the templates put them, so a
+       * report reads the same way in either presentation: the cover shows the
+       * home, the plan shows its layout, the assessment follows.
+       *
+       * Embedded BEFORE a page is added, so a plan that will not embed costs
+       * nothing rather than a page with a heading and no plan under it. Not
+       * listed in the contents, which numbers the report's sections; the sheet
+       * is the page after it.
+       */
+      let floorPlanSheets = 0;
+      for (const plan of floorPlans.slice(0, 2)) {
+        const embedded = await embedFloorPlan(pdfDoc, plan);
+        if (!embedded) continue;
+        const sheet = await addContentPage();
+        drawStandardFloorPlanSheet(sheet, embedded, {
+          geometry: { pageWidth, pageHeight, margin, topMargin, footerRuleY },
+          style: {
+            regular: helveticaFont,
+            bold: helveticaBold,
+            navy: NAVY_RGB,
+            gold: GOLD_RGB,
+            body: BODY_TEXT_RGB,
+            rule: TABLE_BORDER,
+            titleSize,
+          },
+          address: report.address,
+          continued: floorPlanSheets > 0,
+        });
+        floorPlanSheets += 1;
+      }
+      if (floorPlanSheets) console.log(`✓ ${floorPlanSheets} floor plan sheet(s) added`);
+
       // Content rendering starts AFTER TOC pages (if any)
       // The page number display will account for: cover (1) + TOC pages + content pages
       const contentStartPageIndex = pdfDoc.getPageCount();
@@ -3435,7 +3582,7 @@ export async function generateInvestmentPdfBlob(
               y: yPosition - 5,
               size: 7,
               font: helveticaBold,
-              color: GOLD_RGB,
+              color: GOLD_TEXT_RGB,
             });
             yPosition -= 15;
             yPosition = drawKPIBoxes(currentPage, yPosition, kpiMetrics.row2, pageWidth - 2 * margin);
@@ -3981,7 +4128,7 @@ export async function generateInvestmentPdfBlob(
             y: tocY,
             size: fontSize,
             font: fontToUse,
-            color: GOLD_RGB,
+            color: GOLD_TEXT_RGB,
           });
           
           // Calculate number text width for positioning
@@ -4053,8 +4200,8 @@ export async function generateInvestmentPdfBlob(
         
         // Draw gold accent line above footer
         page.drawLine({
-          start: { x: margin, y: 52 },
-          end: { x: pageWidth - margin, y: 52 },
+          start: { x: margin, y: footerRuleY },
+          end: { x: pageWidth - margin, y: footerRuleY },
           thickness: 0.5,
           color: GOLD_RGB,
         });
@@ -4092,11 +4239,13 @@ export async function generateInvestmentPdfBlob(
         const pdfTitle = locationLabel
           ? `${documentTitle} — ${locationLabel}`
           : documentTitle;
+        // Who made it: NPC under NPC's artwork, the issuer under its own cover.
+        const made = standardDocumentMetadata(brand.cover, brand.issuer);
         pdfDoc.setTitle(pdfTitle);
-        pdfDoc.setAuthor('NPC Services');
+        pdfDoc.setAuthor(made.author);
         pdfDoc.setSubject(`${documentTitle} — ${String(report.address || '').trim()}`);
-        pdfDoc.setCreator('NPC Command Centre');
-        pdfDoc.setProducer('NPC Command Centre');
+        pdfDoc.setCreator(made.creator);
+        pdfDoc.setProducer(made.producer);
         pdfDoc.setCreationDate(new Date());
         pdfDoc.setModificationDate(new Date());
       } catch (metaErr) {

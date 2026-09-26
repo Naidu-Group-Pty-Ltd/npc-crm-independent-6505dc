@@ -17,6 +17,8 @@
  */
 
 import { CRIME_WEB_SEARCH_RULE } from './registerAuthority.pure.ts';
+import { elsewhereOnly, inHomeSection } from './adviserVoice.pure.ts';
+import { unratedRiskRow } from './investment/riskRegister.pure.ts';
 
 interface NumericishReading { [key: string]: unknown }
 
@@ -35,14 +37,18 @@ export function crimeStatBlocks(input: CrimePromptInput): string {
   const c = input.crimeStatistics;
   const total = num(c?.['totalLast12Months']);
   if (!c || total === null) {
-    return 'No recorded-crime register is integrated for this location. State that plainly in one sentence; do NOT print a crime table, a safety score, a rating or an estimated rate. '
+    return `Recorded crime for this area is not covered by this report. ${inHomeSection('environment')} say so `
+      + 'once, and say that the state police publish recorded crime by area. '
+      + `${elsewhereOnly('environment')} Anywhere in the report, do NOT print a crime table, a safety score, a `
+      + 'rating or an estimated rate. '
+      + `${unratedRiskRow('crime', 'Not checked', 'this report holds no recorded-crime figures for the area.')} `
       + CRIME_WEB_SEARCH_RULE;
   }
 
   const parts: string[] = [];
   const areaKind = str(c['areaKind']) ?? 'area';
   const area = str(c['area']) ?? '';
-  const source = str(c['source']) ?? 'the state register';
+  const source = str(c['source']) ?? 'the state\'s recorded crime statistics';
   const period = str(c['referencePeriod']) ?? '';
 
   const prior = num(c['totalPrevious12Months']);
@@ -56,7 +62,7 @@ export function crimeStatBlocks(input: CrimePromptInput): string {
   const stateCtx = c['stateContext'] as NumericishReading | null | undefined;
   const statePct = num(stateCtx?.['totalChangePct']);
   if (statePct !== null) {
-    parts.push(`State-wide movement over the same window: ${fmtPct(statePct)} — a count comparison from the same register.`);
+    parts.push(`State-wide movement over the same window: ${fmtPct(statePct)} — a count comparison from the same source.`);
   }
 
   const rate = c['ratePer100k'] as NumericishReading | null | undefined;

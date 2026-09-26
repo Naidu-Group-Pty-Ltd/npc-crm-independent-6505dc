@@ -20,6 +20,8 @@ import { useToast } from '@/hooks/use-toast';
 import { invokeSecureFunction } from '@/lib/secureInvoke';
 import { fetchGlobalReportSettings } from '@/hooks/useGlobalReportSettings';
 import { drawJsPDFDisclaimerPage } from '@/utils/pdfDisclaimerPage';
+import { issuerClosingPage, loadLegacyDocumentBrand } from '@/lib/reports/legacyDocumentBrand';
+import { drawLegacyIssuerCover } from '@/lib/reports/legacyIssuerCover';
 import jsPDF from 'jspdf';
 
 interface Message {
@@ -156,8 +158,22 @@ export function ConversationReportEditor({
 
       // ============= COVER PAGE =============
       // Try to load the QA cover image template
+      // Whose template this export is printed in: NPC's artwork on the prime,
+      // exactly as it has always been drawn, and the issuer's own on every
+      // clone (`legacyDocumentBrand.ts`). The content is the same either way.
+      const legacyBrand = await loadLegacyDocumentBrand(contact.company_name);
       let coverImageLoaded = false;
-      try {
+      if (legacyBrand.artwork === 'issuer') {
+        drawLegacyIssuerCover(doc, {
+          issuerName: legacyBrand.issuer.name,
+          mark: legacyBrand.mark,
+          documentTitle: 'Investment Property Analysis',
+          subject: title,
+          standfirst: new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' }),
+          family: legacyBrand.family,
+        });
+        coverImageLoaded = true;
+      } else try {
         const coverResponse = await fetch('/templates/npc-qa-cover.jpg');
         if (coverResponse.ok) {
           const coverBlob = await coverResponse.blob();
@@ -200,7 +216,7 @@ export function ConversationReportEditor({
       doc.setTextColor(255, 255, 255);
       doc.setFontSize(18);
       doc.setFont('helvetica', 'bold');
-      doc.text(contact.company_name || 'Property Report', margin, 15);
+      doc.text((legacyBrand.artwork === 'issuer' ? legacyBrand.issuer.name : contact.company_name) || 'Property Report', margin, 15);
       doc.setFontSize(9);
       doc.setFont('helvetica', 'normal');
       doc.text('Investment Property Analysis', margin, 22);
@@ -492,11 +508,16 @@ export function ConversationReportEditor({
         i++;
       }
       // ============= DISCLAIMER & CONTACT PAGE =============
-      drawJsPDFDisclaimerPage(doc, contact, disclaimerSettings);
+      if (legacyBrand.artwork === 'issuer') {
+        const closing = issuerClosingPage(legacyBrand, { contactDetails: contact, disclaimer: disclaimerSettings });
+        drawJsPDFDisclaimerPage(doc, closing.contact, closing.disclaimer, closing.palette);
+      } else {
+        drawJsPDFDisclaimerPage(doc, contact, disclaimerSettings);
+      }
 
       // Footer on each page (skip cover page = page 1, skip disclaimer = last page)
       const totalPages = doc.getNumberOfPages();
-      const companyFooterName = contact.company_name || 'Property Report';
+      const companyFooterName = (legacyBrand.artwork === 'issuer' ? legacyBrand.issuer.name : contact.company_name) || 'Property Report';
       for (let i = 1; i <= totalPages; i++) {
         // Skip cover (page 1) and disclaimer (last page)
         if (i === 1 || i === totalPages) continue;

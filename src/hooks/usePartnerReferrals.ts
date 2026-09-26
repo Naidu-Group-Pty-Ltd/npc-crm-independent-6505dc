@@ -1,6 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { invokeSecureFunction } from '@/lib/secureInvoke';
 import { toast } from 'sonner';
+import { houseLabel } from '@/lib/houseLabel';
 
 export type ReferralDirection = 'inbound_property_referral' | 'outbound_finance_referral';
 
@@ -303,8 +304,8 @@ export function usePartnerReferralMutations() {
 }
 
 export const REFERRAL_DIRECTION_LABELS: Record<ReferralDirection, string> = {
-  inbound_property_referral: 'Inbound — partner → NPC (property)',
-  outbound_finance_referral: 'Outbound — NPC → partner (finance)',
+  inbound_property_referral: houseLabel('Inbound — partner → NPC (property)', 'Inbound — partner → Command Centre (property)'),
+  outbound_finance_referral: houseLabel('Outbound — NPC → partner (finance)', 'Outbound — Command Centre → partner (finance)'),
 };
 
 export const REFERRAL_STATUS_LABELS: Record<ReferralStatus, string> = {

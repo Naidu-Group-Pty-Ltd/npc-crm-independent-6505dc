@@ -25,6 +25,8 @@
  * each end is how two ends drift.
  */
 
+import { rowHoldsCompleteDocument, type ReportRunRow } from './investment/failureStamp.pure';
+
 /**
  * A report in THIS tab just went in flight server-side.
  *
@@ -112,21 +114,37 @@ export function cancellationReason(detail: unknown): string {
  * records the failure, because a run that threw with its state unknown must
  * not be left looking healthy — an unreadable row is the one case where the
  * old unconditional behaviour is still the right one.
+ *
+ * Except where the state is NOT unknown. On 24 Sep 2026 60 Lawley Street
+ * finished — the generator's own answer to this run said `isComplete: true`
+ * and it had written the row `completed` — and a three-second platform 503 on
+ * the two reads that followed was taken as "state unknown" and stamped the
+ * finished document failed. An unreadable row is not evidence against what
+ * the server already said, so `context.serverReportedComplete` refuses the
+ * stamp. And a run that failed before it wrote anything — the kickoff read,
+ * the start write — leaves the row exactly as it found it, perhaps mid-run
+ * under a different driver, so `context.wroteNothing` refuses it too.
+ *
+ * The completeness reading is `rowHoldsCompleteDocument`, the rule
+ * `manage-investment-reports` now enforces as well: the browser asks, and the
+ * server, which can always read the row, refuses a stamp over a finished
+ * document whatever a browser — this build or an older one — sends.
  */
+export interface RunFailureContext {
+  /**
+   * The server already said this run's document is complete: the generator
+   * answered `isComplete`, or the kickoff read found every section banked.
+   */
+  serverReportedComplete?: boolean;
+  /** The run failed before it wrote anything to the row. */
+  wroteNothing?: boolean;
+}
+
 export function shouldMarkRunFailed(
-  row:
-    | {
-        status?: string | null;
-        last_completed_section?: number | null;
-        total_sections?: number | null;
-      }
-    | null
-    | undefined,
+  row: ReportRunRow | null | undefined,
+  context: RunFailureContext = {},
 ): boolean {
-  if (!row) return true;
-  if (String(row.status ?? '').toLowerCase() === 'completed') return false;
-  const total = Number(row.total_sections) || 0;
-  const done = Number(row.last_completed_section) || 0;
-  if (total > 0 && done >= total) return false;
-  return true;
+  if (context.wroteNothing) return false;
+  if (row) return !rowHoldsCompleteDocument(row);
+  return !context.serverReportedComplete;
 }

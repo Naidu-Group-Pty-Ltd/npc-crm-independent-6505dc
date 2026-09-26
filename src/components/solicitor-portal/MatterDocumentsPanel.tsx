@@ -22,6 +22,7 @@ import {
   type LegalDocumentCategory, type LegalDocumentOwner, type LegalDocumentStatus,
   type LegalMatterDocument,
 } from '@/lib/legalDocuments';
+import { houseLabel } from '@/lib/houseLabel';
 
 export interface DocumentDraft {
   id: string | null;
@@ -298,7 +299,7 @@ export function MatterDocumentsPanel({
               </div>
               <div className="flex items-center justify-between rounded-md border border-border p-3">
                 <div>
-                  <Label htmlFor="doc-npc">Share with NPC</Label>
+                  <Label htmlFor="doc-npc">{houseLabel('Share with NPC', 'Share with the Command Centre')}</Label>
                   <p className="text-xs text-muted-foreground">Visible to the Command Centre team.</p>
                 </div>
                 <Switch

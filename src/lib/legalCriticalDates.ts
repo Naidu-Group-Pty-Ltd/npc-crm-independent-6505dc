@@ -3,6 +3,8 @@
  * Mirrors `supabase/functions/_shared/legalCriticalDates.ts` — keep in step.
  */
 
+import { houseLabel } from './houseLabel';
+
 export type LegalCriticalDateType =
   | 'contract_date' | 'exchange' | 'cooling_off_expiry' | 'deposit_due' | 'balance_deposit_due'
   | 'finance_approval' | 'building_pest' | 'strata_report' | 'survey' | 'sunset_date'
@@ -125,7 +127,7 @@ export const SETTLEMENT_TASK_STATUS_CLASSES: Record<LegalSettlementTaskStatus, s
 export const DATE_OWNER_LABELS: Record<LegalDateOwner, string> = {
   solicitor: 'Solicitor',
   client: 'Client',
-  npc: 'NPC',
+  npc: houseLabel('NPC', 'Command Centre'),
   lender: 'Lender',
   agent: 'Agent',
   builder: 'Builder',

@@ -61,7 +61,7 @@ const evidenceFor = (stated: number) => buildInfrastructureEvidence({
 });
 
 const pipelineLine = (stated: number) => renderInfrastructureOutlook(evidenceFor(stated))
-  .split('\n').find((l) => l.startsWith("**Dwellings in the register"))!;
+  .split('\n').find((l) => l.startsWith('**Dwellings in the development pipeline'))!;
 
 describe('the walk travels with the totals', () => {
   it('records what was read and what the register stated', () => {
@@ -86,22 +86,24 @@ describe('the walk travels with the totals', () => {
 describe('a partial walk is drawn as a floor', () => {
   it('names both counts and calls each a floor', () => {
     const line = pipelineLine(650);
-    expect(line).toContain('summed from 2 of the 650 applications the register states for this window');
-    expect(line).toMatch(/each is a FLOOR rather than a total/);
-    expect(line).toMatch(/reading the remainder can only raise it/);
+    // Adviser wording since 25 Sep 2026; the two counts and the word "floor"
+    // are what this pins.
+    expect(line).toContain('summed from 2 of the 650 applications the register lists for this period');
+    expect(line).toMatch(/each is a floor rather than a total/i);
+    expect(line).toMatch(/the remainder can only add to it/);
   });
 
   it('says nothing extra on a complete walk', () => {
     // A sentence reading "all of it" on every complete reading is noise, and
     // the figures then mean what they say.
-    expect(pipelineLine(2)).not.toMatch(/FLOOR|summed from/);
+    expect(pipelineLine(2)).not.toMatch(/floor|summed from/i);
   });
 
   it('treats a register that states fewer than were read as complete', () => {
     // The count the register states can lag its own paging. Reading more than
     // it claims is not a partial walk, and must not print a floor caveat
     // saying 2 of 1.
-    expect(pipelineLine(1)).not.toMatch(/FLOOR|summed from/);
+    expect(pipelineLine(1)).not.toMatch(/floor|summed from/i);
   });
 
   it('tells the model to carry the qualification wherever it uses the figure', () => {

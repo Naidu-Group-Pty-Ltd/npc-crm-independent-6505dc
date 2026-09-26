@@ -40,19 +40,60 @@ const asRefusal = (out: SubjectCoordinateOutcome): RefusalOutcome =>
  */
 const NOW = '2026-09-19T08:00:00.000Z';
 
+/** An enrichment as the location service stamps it: the point, and what the point IS. */
+const placed = (coordinates: unknown, geocodePrecision?: string, geocodeProvider = 'nominatim') => ({
+  coordinates,
+  __acquisition: {
+    subjectKey: 'x|y|z',
+    acquiredAt: NOW,
+    matchedAddress: '48 Redfern Street, Cowra, New South Wales, 2794, Australia',
+    stages: {
+      geocode: 'fetched',
+      places: 'complete',
+      commute: 'measured',
+      ...(geocodePrecision ? { geocodePrecision, geocodeProvider } : {}),
+    },
+  },
+});
+
 describe('the coordinate this run already has', () => {
-  it('is used when the enrichment produced one', () => {
-    const c = enrichmentCoordinate({ coordinates: { lat: -33.83, lng: 148.69 } }, NOW);
+  it('is used when the enrichment placed the address itself', () => {
+    const c = enrichmentCoordinate(placed({ lat: -33.83, lng: 148.69 }, 'address'), NOW);
     expect(c).not.toBeNull();
     expect(c!.lat).toBe(-33.83);
     expect(c!.source).toBe('enrichment');
     expect(c!.precision).toBe(PARCEL_GRADE_PRECISION);
+    expect(c!.provider).toBe('nominatim');
+    expect(c!.matchedAddress).toContain('48 Redfern Street');
   });
 
   it('accepts numeric strings, because a stored object is not typed', () => {
-    const c = enrichmentCoordinate({ coordinates: { lat: '-22.006014', lng: '148.0590271' } }, NOW);
+    const c = enrichmentCoordinate(placed({ lat: '-22.006014', lng: '148.0590271' }, 'address'), NOW);
     expect(c?.lat).toBe(-22.006014);
     expect(c?.lng).toBe(148.0590271);
+  });
+
+  it('is used at street precision, and says so', () => {
+    const c = enrichmentCoordinate(placed({ lat: -33.77, lng: 150.91 }, 'street', 'photon'), NOW);
+    expect(c?.precision).toBe('street');
+    expect(coordinateProvenance(c!)).toMatch(/on its street, not at the property itself/);
+    expect(coordinateProvenance(c!)).toContain('photon');
+  });
+
+  /*
+   * 24 Sep 2026: the public Nominatim refused the production egress, the chain
+   * placed `1408/5 SECOND AVE, Blacktown` at the ABS centroid of the whole
+   * suburb, and this function — which stamped every enrichment point
+   * `address` — handed that centroid to the planning registers. The report
+   * stated "R2 — Low Density Residential" for a fourteenth-floor apartment.
+   */
+  it.each(['locality', 'postcode'])('is NOT used when the enrichment could place only a %s centre', (precision) => {
+    expect(enrichmentCoordinate(placed({ lat: -33.774, lng: 150.9036 }, precision, 'abs_locality'), NOW)).toBeNull();
+  });
+
+  it('is NOT used when the enrichment records no precision — it proves nothing about the point', () => {
+    expect(enrichmentCoordinate(placed({ lat: -33.83, lng: 148.69 }), NOW)).toBeNull();
+    expect(enrichmentCoordinate({ coordinates: { lat: -33.83, lng: 148.69 } }, NOW)).toBeNull();
   });
 
   it.each([
@@ -66,8 +107,8 @@ describe('the coordinate this run already has', () => {
     expect(enrichmentCoordinate(input, NOW)).toBeNull();
   });
 
-  it('carries no provenance line, because its own acquisition stamp does', () => {
-    const c = enrichmentCoordinate({ coordinates: { lat: 1, lng: 2 } }, NOW)!;
+  it('carries no provenance line at the parcel, because its own acquisition stamp does', () => {
+    const c = enrichmentCoordinate(placed({ lat: -33.83, lng: 148.69 }, 'address'), NOW)!;
     expect(coordinateProvenance(c)).toBeNull();
   });
 });
@@ -105,13 +146,28 @@ describe('recovery, and the precision it insists on', () => {
    * because a suburb centroid is imprecise rather than wrong; here it is
    * wrong. This is `crimePostcodeAuthority`'s rule in another register.
    */
-  it.each(['street', 'locality', 'postcode'])('refuses a match at %s', (precision) => {
+  it.each(['locality', 'postcode'])('refuses a match at %s', (precision) => {
     const out = recoveredCoordinate(ok(precision), NOW);
     expect(out.usable).toBe(false);
     if (out.usable) return;
     expect(asRefusal(out).refusal).toBe('too_coarse');
     expect(asRefusal(out).detail).toContain(precision);
     expect(asRefusal(out).detail).toMatch(/parcel/i);
+  });
+
+  /*
+   * The owner's decision of 24 Sep 2026. OpenStreetMap holds address points
+   * for a fraction of Australian houses, so a street is what the free
+   * providers usually answer; refusing it would withhold the zone on most
+   * reports. So a street point reads the registers — and says it did, on the
+   * coordinate and on the page.
+   */
+  it('uses a match on the property\'s street, and records that it is the street', () => {
+    const out = recoveredCoordinate(ok('street'), NOW);
+    expect(out.usable).toBe(true);
+    if (!out.usable) return;
+    expect(out.coordinate.precision).toBe('street');
+    expect(coordinateProvenance(out.coordinate)).toContain('at street precision');
   });
 
   it('refuses a match that states no precision at all', () => {

@@ -88,9 +88,13 @@ export function isValidScope(value: unknown): value is LegalThreadScope {
   return typeof value === 'string' && (LEGAL_THREAD_SCOPES as readonly string[]).includes(value);
 }
 
-export function scopeLabel(scope: LegalThreadScope): string {
+/**
+ * A thread's label. The Command Centre's is the deployment's own, so a caller
+ * on a clone passes it (`commandCentreSender`); the default is the prime's.
+ */
+export function scopeLabel(scope: LegalThreadScope, commandCentre = 'NPC Command Centre'): string {
   switch (scope) {
-    case 'solicitor_npc': return 'NPC Command Centre';
+    case 'solicitor_npc': return commandCentre;
     case 'solicitor_client': return 'Client';
     case 'solicitor_finance': return 'Finance partner';
     case 'firm_internal': return 'Firm internal note';

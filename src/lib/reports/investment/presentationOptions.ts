@@ -103,7 +103,16 @@ export const SOURCE_SECTION_PATTERNS: readonly RegExp[] = [
   /sources?$/i,
 ];
 
-/** Section titles the Scoring rule removes. Stated once, for the same reason. */
+/**
+ * Section titles the Scoring rule removes. Stated once, for the same reason.
+ *
+ * `How this grade was reached` is the grade's method — every dimension's
+ * score, weight and contribution, and the composite. It used to be composed
+ * INSIDE the SWOT, where no heading rule could remove it without taking the
+ * SWOT too, so a document with scoring switched off still printed the whole
+ * scoring table. Since 25 Sep 2026 it is a sub-section of its own in the
+ * appendix (`composeGradeMethodology`), and the switch reaches it by name.
+ */
 export const SCORING_SECTION_PATTERNS: readonly RegExp[] = [
   /investment scor/i,
   /score breakdown/i,
@@ -112,6 +121,7 @@ export const SCORING_SECTION_PATTERNS: readonly RegExp[] = [
   /investment rating/i,
   /overall score/i,
   /property score/i,
+  /how this grade was reached/i,
 ];
 
 /** True when a section heading is removed by the options as set. */

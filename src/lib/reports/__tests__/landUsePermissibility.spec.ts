@@ -228,7 +228,7 @@ describe('the sentence the reading supports, and not one word further', () => {
     // and it does not establish that it is not on existing use rights.
     expect(EXISTING_DWELLING_CAVEAT).toMatch(/describes the use class, not this building/);
     expect(EXISTING_DWELLING_CAVEAT).toMatch(/existing use rights/);
-    expect(EXISTING_DWELLING_CAVEAT).toMatch(/nothing retrieved here establishes it/);
+    expect(EXISTING_DWELLING_CAVEAT).toMatch(/nothing in this report establishes it/);
     // and it is emitted wherever the standing is reported
     const facts = readFileSync(
       resolve(__dirname, '../../../../supabase/functions/_shared/planning/planningFacts.pure.ts'),

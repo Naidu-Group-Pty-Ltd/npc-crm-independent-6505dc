@@ -15,6 +15,7 @@ import { strToU8, zipSync } from 'https://esm.sh/fflate@0.8.2';
 import { createCorsHeaders } from '../_shared/auth.ts';
 import { verifyInternal } from '../_shared/auth_v2.ts';
 import { isCorrespondence, mapChannelType } from '../_shared/ghlConversationMap.pure.ts';
+import { exportAuthor, loadWorkspaceIdentity } from '../_shared/workspaceIdentity.ts';
 
 const PAGE_SIZE = 1000;             // pagination page size for messages
 const IN_CHUNK_SIZE = 100;           // max IDs per .in() call (URL length limit)
@@ -78,7 +79,12 @@ function columnName(index: number): string {
   return name;
 }
 
-function buildXlsxBuffer(rows: any[][]): Uint8Array {
+/**
+ * `author` is the business the workbook's properties name, or null to name
+ * none (`exportAuthor`): the prime's export has always named NPC Services, and
+ * a clone's names the clone, never the house.
+ */
+function buildXlsxBuffer(rows: any[][], author: string | null): Uint8Array {
   const allRows = [HEADERS, ...rows];
   const sheetRows = allRows.map((row, rowIndex) => {
     const rowNumber = rowIndex + 1;
@@ -102,7 +108,7 @@ function buildXlsxBuffer(rows: any[][]): Uint8Array {
     '[Content_Types].xml': strToU8('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types"><Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/><Default Extension="xml" ContentType="application/xml"/><Override PartName="/xl/workbook.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet.main+xml"/><Override PartName="/xl/worksheets/sheet1.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.worksheet+xml"/><Override PartName="/xl/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.spreadsheetml.styles+xml"/><Override PartName="/docProps/core.xml" ContentType="application/vnd.openxmlformats-package.core-properties+xml"/><Override PartName="/docProps/app.xml" ContentType="application/vnd.openxmlformats-officedocument.extended-properties+xml"/></Types>'),
     '_rels/.rels': strToU8('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="xl/workbook.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/package/2006/relationships/metadata/core-properties" Target="docProps/core.xml"/><Relationship Id="rId3" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/extended-properties" Target="docProps/app.xml"/></Relationships>'),
     'docProps/app.xml': strToU8('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Properties xmlns="http://schemas.openxmlformats.org/officeDocument/2006/extended-properties" xmlns:vt="http://schemas.openxmlformats.org/officeDocument/2006/docPropsVTypes"><Application>Conversation Export</Application></Properties>'),
-    'docProps/core.xml': strToU8(`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"><dc:creator>NPC Services</dc:creator><cp:lastModifiedBy>NPC Services</cp:lastModifiedBy><dcterms:created xsi:type="dcterms:W3CDTF">${now}</dcterms:created><dcterms:modified xsi:type="dcterms:W3CDTF">${now}</dcterms:modified></cp:coreProperties>`),
+    'docProps/core.xml': strToU8(`<?xml version="1.0" encoding="UTF-8" standalone="yes"?><cp:coreProperties xmlns:cp="http://schemas.openxmlformats.org/package/2006/metadata/core-properties" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:dcterms="http://purl.org/dc/terms/" xmlns:dcmitype="http://purl.org/dc/dcmitype/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">${author === null ? '' : `<dc:creator>${xmlEscape(author)}</dc:creator><cp:lastModifiedBy>${xmlEscape(author)}</cp:lastModifiedBy>`}<dcterms:created xsi:type="dcterms:W3CDTF">${now}</dcterms:created><dcterms:modified xsi:type="dcterms:W3CDTF">${now}</dcterms:modified></cp:coreProperties>`),
     'xl/workbook.xml': strToU8('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><workbook xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main" xmlns:r="http://schemas.openxmlformats.org/officeDocument/2006/relationships"><sheets><sheet name="Message History" sheetId="1" r:id="rId1"/></sheets></workbook>'),
     'xl/_rels/workbook.xml.rels': strToU8('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships"><Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/worksheet" Target="worksheets/sheet1.xml"/><Relationship Id="rId2" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/></Relationships>'),
     'xl/styles.xml': strToU8('<?xml version="1.0" encoding="UTF-8" standalone="yes"?><styleSheet xmlns="http://schemas.openxmlformats.org/spreadsheetml/2006/main"><fonts count="1"><font><sz val="11"/><name val="Arial"/></font></fonts><fills count="1"><fill><patternFill patternType="none"/></fill></fills><borders count="1"><border><left/><right/><top/><bottom/><diagonal/></border></borders><cellStyleXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0"/></cellStyleXfs><cellXfs count="1"><xf numFmtId="0" fontId="0" fillId="0" borderId="0" xfId="0"/></cellXfs></styleSheet>'),
@@ -338,7 +344,7 @@ Deno.serve(async (req) => {
       fileBuffer = new TextEncoder().encode('\uFEFF' + csv);
       contentType = 'text/csv';
     } else {
-      fileBuffer = buildXlsxBuffer(rows);
+      fileBuffer = buildXlsxBuffer(rows, exportAuthor(await loadWorkspaceIdentity({ readPrimeName: false })));
       contentType = 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet';
     }
 

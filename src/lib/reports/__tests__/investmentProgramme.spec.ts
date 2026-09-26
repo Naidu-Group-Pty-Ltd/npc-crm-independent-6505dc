@@ -35,6 +35,8 @@ import {
   buildInfrastructureEvidence,
   coverageLimitsFor,
   renderInfrastructureOutlook,
+  REGISTER_CHECKED_EMPTY,
+  REGISTER_NOT_COVERED,
 } from '@/lib/reports/../../../supabase/functions/_shared/planning/infrastructureEvidence.pure';
 
 const SUBJECT = { lat: -25.5407, lon: 152.7030 }; // 262 Pallas Street, Maryborough QLD
@@ -261,7 +263,7 @@ describe('the reading reaches the page', () => {
         },
       },
     }));
-    expect(empty).toContain('Searched, nothing found');
+    expect(empty).toContain(REGISTER_CHECKED_EMPTY);
     expect(empty).not.toContain('**The forward investment programme.**');
   });
 });
@@ -305,8 +307,8 @@ describe('no jurisdiction is told it has no programme', () => {
         investmentProgramme: { status: 'not_served', note: programmeCoverageNote('NSW') },
       },
     }));
-    expect(nsw).toContain('**Not searched.**');
-    expect(nsw).toContain('nothing about this area follows from it');
+    expect(nsw).toContain(`**${REGISTER_NOT_COVERED}**`);
+    expect(nsw).toContain('nothing about the area follows from its absence here');
   });
 });
 

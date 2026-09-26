@@ -63,6 +63,9 @@
  */
 
 import { auDate } from './auDate.pure.ts';
+import { GNAF_ATTRIBUTION } from '../geocode/gnafShard.pure.ts';
+import { readerNote, uncheckedSentence } from './serviceNote.pure.ts';
+import { elsewhereOnly, inHomeSection } from '../reports/adviserVoice.pure.ts';
 
 import {
   VERIFICATION_INSTRUMENT,
@@ -163,7 +166,11 @@ export interface PlanningFacts {
   /** The residential reading, where a table was retrieved. */
   residential: ResidentialReading | null;
   overlays: PlanningCell;
-  /** Minimum lot size, height and floor space ratio, in that order. */
+  /**
+   * The numeric controls in the jurisdiction's own terms — minimum lot size,
+   * height and floor space ratio almost everywhere; the R-Code, height and
+   * plot ratio in Western Australia (`numericControlSpecs`).
+   */
   controls: PlanningCell[];
   /**
    * Every control, overlay and hazard a register actually returned at this
@@ -213,6 +220,27 @@ export interface PlanningFacts {
   /** The sentence that says what settles the question. */
   verification: string;
   retrievedAt: string | null;
+  /**
+   * Where the registers were asked: at the property itself (`address`), at a
+   * point on its street (`street`), or unrecorded (every answer stored before
+   * 24 Sep 2026). A street reading is stated as one on the page — a zone
+   * boundary along the street can put the lot on the other side of it.
+   */
+  pointPrecision: 'address' | 'street' | null;
+  /**
+   * Who placed that point (`gnaf`, `nominatim`, `photon`, …), off the same
+   * `pointBasis`. G-NAF's licence asks for its attribution wherever material
+   * developed from it is shared, and the page that says where the registers
+   * were asked is where that point is described.
+   */
+  pointProvider: string | null;
+  /**
+   * True where the registers were NOT asked because the address could be
+   * placed only at the centre of its suburb or postal area — a zone read
+   * there describes a different property. Named so the page can say which
+   * absence it is.
+   */
+  pointNotPlaced: boolean;
   /** True when at least one cell carries a value. */
   anyStated: boolean;
   /** True when the enrichment was never reached at all. */
@@ -294,6 +322,12 @@ export interface PlanningFactsInput {
   planningData?: unknown;
   /** The audited manual overrides, which outrank a layer (rule 2). */
   overrides?: PlanningOverrides;
+  /**
+   * The registers were not asked because the only point this run could place
+   * was the centre of the suburb or postal area (`planningCoordinate`'s
+   * `too_coarse`). Absent or false otherwise.
+   */
+  pointNotPlaced?: boolean;
 }
 
 /** `R2 Low Density Residential`, from whichever parts the reading carries. */
@@ -311,13 +345,57 @@ function overrideText(v: unknown): string | null {
   return s.replace(/_/g, ' ').replace(/\s+/g, ' ').trim();
 }
 
+/** Where the zone could not be checked at all. */
+const ZONE_UNCONFIRMED = 'The zone has not been confirmed for this report. A zoning certificate from the local '
+  + 'planning authority confirms it.';
+
+/** Where the development-application register could not be checked at all. */
+const DA_UNCHECKED = uncheckedSentence('Development applications',
+  'The council\u2019s own application tracker shows activity near the property.');
+
+/**
+ * Where the land use table was asked for and the request failed. The block
+ * that prints it closes on what settles the question, so this says only that
+ * the check was not made.
+ */
+const LAND_USE_UNCHECKED = 'What this zone permits could not be checked when this report was prepared.';
+
+/**
+ * A stored land use table, with the note a reader will see.
+ *
+ * `renderLandUseTable` prints the note as the block's first line wherever no
+ * table was read, and the service writes it for the people who maintain it:
+ * "No zone was retrieved for this coordinate, so the instrument's land use
+ * table could not be asked for" reached the 60 Lawley Street Compass under
+ * "What may be built on this land", and a failed request stores its own
+ * diagnostic ("HTTP 503", "unparseable JSON body") in the same field. So the
+ * note is read through `readerNote` like every other planning note \u2014 on the
+ * way to the page, which reaches answers cached before the translation too \u2014
+ * and a failed request never lends the page its diagnostic: the status says
+ * the request failed, whatever the note says. The lists are untouched.
+ */
+function landUseForReader(table: LandUseTable, jurisdiction: string | null): LandUseTable {
+  if (table.status === 'retrieved') return table;
+  const note = table.status === 'unavailable'
+    ? LAND_USE_UNCHECKED
+    : (readerNote(table.note ?? null, jurisdiction) ?? LAND_USE_UNCHECKED);
+  return note === table.note ? table : { ...table, note };
+}
+
+/**
+ * The lead-in of the checked-and-clear line. Exported because the QA
+ * validator recognises it: a sentence the page composes must not be read back
+ * as a claim the prose made.
+ */
+export const CHECKED_NOT_MAPPED_LEAD = 'Checked and not mapped at the property:';
+
 const OPERATOR_NOTE =
-  'Recorded by an operator against this report rather than read from a published layer.';
+  'Supplied by the adviser for this report rather than read from a published planning map.';
 
 function operatorCell(label: string, value: string, retrievedAt: string | null): PlanningCell {
   return {
     label, value, status: 'operator_stated', note: OPERATOR_NOTE,
-    source: 'Operator override recorded against this report',
+    source: 'Supplied by the adviser for this report',
     sourceUrl: null, licence: null, effectiveDate: null,
     retrievedAt, standing: null,
   };
@@ -367,15 +445,14 @@ export function buildPlanningFacts(input: PlanningFactsInput): PlanningFacts {
   if (overrideZone) {
     zoning = operatorCell('Zone', overrideZone, retrievedAt);
   } else if (!data) {
-    zoning = absent('Zone', 'unavailable',
-      'The planning enrichment did not run for this report, so no zone was retrieved.');
+    zoning = absent('Zone', 'unavailable', ZONE_UNCONFIRMED);
   } else if (statusOf(zoningRaw?.status) === 'stated') {
     const line = zoneLine(str(zoningRaw?.zoneCode), str(zoningRaw?.zoneLabel));
     zoning = {
       label: 'Zone',
       value: line,
       status: line ? 'stated' : 'unavailable',
-      note: line ? null : 'The layer answered without a zone code.',
+      note: line ? null : 'The published zoning map shows no zone code for the property. A zoning certificate confirms it.',
       source: str(zoningRaw?.source),
       sourceUrl: portal,
       licence: str(zoningRaw?.licence),
@@ -388,7 +465,7 @@ export function buildPlanningFacts(input: PlanningFactsInput): PlanningFacts {
     };
   } else {
     zoning = absent('Zone', statusOf(zoningRaw?.status),
-      str(zoningRaw?.note) ?? 'No zone was returned for this point.');
+      readerNote(str(zoningRaw?.note), jurisdiction) ?? ZONE_UNCONFIRMED);
   }
 
   // ── the constraint register ───────────────────────────────────────────────
@@ -477,19 +554,18 @@ export function buildPlanningFacts(input: PlanningFactsInput): PlanningFacts {
       }
       : constraintRegisters.answered.length
         ? absent('Overlays, controls and hazards', 'none_at_point',
-          `${constraintRegisters.answered.length} register${constraintRegisters.answered.length === 1 ? '' : 's'} `
-          + `answered at this coordinate and returned no mapped control`
+          `No mapped control applies to the property on the published map${constraintRegisters.answered.length === 1 ? '' : 's'} checked`
           + (contextReadings.length
             ? `${designationTail}, listed below. `
             : '. ')
           + (constraintsAsked.length
-            ? `What was checked: ${constraintsAsked.map((f) => CONSTRAINT_FAMILY_LABEL[f] ?? f).join(', ')}. `
+            ? `Checked: ${constraintsAsked.map((f) => CONSTRAINT_FAMILY_LABEL[f] ?? f).join(', ')}. `
             : '')
-          + 'Anything outside that list was not checked and is not stated either way.')
+          + 'Anything not listed was not checked and is not stated either way.')
         : absent('Overlays, controls and hazards', 'not_integrated',
           (jurisdiction ? NO_STATE_LAYER_NOTE[jurisdiction] : null)
-          ?? 'No overlay register was reached for this point. '
-          + 'Nothing here states that the property carries no overlay — only that none was looked up.');
+          ?? 'Overlays are not covered by this report for this location. '
+          + 'Nothing here states that the property carries no overlay; the planning certificate confirms it.');
 
   // ── the numeric controls ──────────────────────────────────────────────────
   // Minimum lot size, height and floor space ratio: the three the old
@@ -501,14 +577,8 @@ export function buildPlanningFacts(input: PlanningFactsInput): PlanningFacts {
   // operator figure outranks a layer (rule 2, and it says so on the page);
   // below it a RETRIEVED figure now stands where NSW publishes one; below
   // that the cell still states the absence and carries no number.
-  const controlSpecs: Array<{
-    label: string; value: unknown; suffix: string; family: ConstraintFamily;
-  }> = [
-    { label: 'Minimum lot size', value: o.minimumLotSize, suffix: ' m²', family: 'minimumLotSize' },
-    { label: 'Maximum building height', value: o.maximumHeight, suffix: ' m', family: 'height' },
-    { label: 'Floor space ratio', value: o.floorSpaceRatio, suffix: ':1', family: 'floorSpaceRatio' },
-  ];
-  const controls = controlSpecs.map(({ label, value, suffix, family }) => {
+  const controlSpecs = numericControlSpecs(jurisdiction, o);
+  const controls = controlSpecs.map(({ label, value, suffix, family, absenceNote }) => {
     const stated = num(value) ?? (str(value) ? Number(str(value)) : null);
     if (stated !== null && Number.isFinite(stated)) {
       return operatorCell(label, `${stated}${suffix}`, retrievedAt);
@@ -535,10 +605,11 @@ export function buildPlanningFacts(input: PlanningFactsInput): PlanningFacts {
     const asked = constraintsAsked.includes(family);
     return absent(label, 'not_published',
       asked
-        ? 'The register that carries this control answered for this point and published no figure. '
-        + 'Read it from the planning certificate.'
-        : `Set by the ${jurisdiction === 'QLD' ? 'council planning scheme' : 'planning instrument'} and not published on any layer this platform reads. `
-        + 'No figure is stated here; read it from the scheme or the certificate.');
+        ? 'The published map for this control shows no figure for the property. '
+        + 'The planning certificate confirms it.'
+        : absenceNote
+          ?? `Set by the ${jurisdiction === 'QLD' ? 'council planning scheme' : 'planning instrument'}; not confirmed in this report. `
+          + 'The scheme or the planning certificate confirms it.');
   });
 
   // ── state development instruments ─────────────────────────────────────────
@@ -558,7 +629,7 @@ export function buildPlanningFacts(input: PlanningFactsInput): PlanningFacts {
     : [];
   const instruments = !data
     ? absent('State development instruments', 'unavailable',
-      'The planning enrichment did not run for this report.')
+      uncheckedSentence('State-level development designations', 'The planning certificate shows any that apply.'))
     : statusOf(instrumentsRaw?.status) === 'stated'
       ? {
         label: 'State development instruments',
@@ -573,15 +644,15 @@ export function buildPlanningFacts(input: PlanningFactsInput): PlanningFacts {
         standing: 'adopted' as const,
       }
       : absent('State development instruments', statusOf(instrumentsRaw?.status),
-        str(instrumentsRaw?.note) ?? 'No state development instrument reading for this point.');
+        readerNote(str(instrumentsRaw?.note), jurisdiction)
+          ?? uncheckedSentence('State-level development designations', 'The planning certificate shows any that apply.'));
 
   // ── development activity ──────────────────────────────────────────────────
   const activitySummary = isRecord(activityRaw?.summary)
     ? activityRaw!.summary as Record<string, unknown>
     : null;
   const developmentActivity = !data
-    ? absent('Development applications', 'unavailable',
-      'The planning enrichment did not run for this report.')
+    ? absent('Development applications', 'unavailable', DA_UNCHECKED)
     : statusOf(activityRaw?.status) === 'stated' && activitySummary
       ? {
         label: 'Development applications',
@@ -619,7 +690,7 @@ export function buildPlanningFacts(input: PlanningFactsInput): PlanningFacts {
         standing: null,
       }
       : absent('Development applications', statusOf(activityRaw?.status),
-        str(activityRaw?.note) ?? 'No development-application register reading for this jurisdiction.');
+        readerNote(str(activityRaw?.note), jurisdiction) ?? DA_UNCHECKED);
 
   const parcelStated = statusOf(parcelRaw?.status) === 'stated';
   const council = parcelStated ? str(parcelRaw?.lga) : (zoning.status === 'stated' ? str(zoningRaw?.lga) : null);
@@ -633,12 +704,12 @@ export function buildPlanningFacts(input: PlanningFactsInput): PlanningFacts {
    */
   const landUseRaw = isRecord(data?.landUse) ? (data!.landUse as unknown as LandUseTable) : null;
   const landUseTable: LandUseTable = landUseRaw && typeof landUseRaw.status === 'string'
-    ? landUseRaw
+    ? landUseForReader(landUseRaw, jurisdiction)
     : emptyLandUseTable(
       'not_served',
       data
-        ? 'This planning enrichment was acquired before the land use table was retrieved for any property.'
-        : 'No planning enrichment was acquired for this report.',
+        ? 'What may be built here is set by the land use table in the planning instrument, which this report does not include for this property.'
+        : 'What may be built here depends on the zone, which has not been confirmed for this report.',
       zoning.status === 'stated' ? zoning.value : null,
     );
 
@@ -671,14 +742,117 @@ export function buildPlanningFacts(input: PlanningFactsInput): PlanningFacts {
     instrumentList,
     developmentActivity,
     developmentActivitySummary: activitySummary,
-    verification: str(data?.verification)
+    verification: str(data?.verification)?.replace(/^A spatial layer is indicative/i, 'A published map is indicative only')
       ?? (jurisdiction
-        ? `A spatial layer is indicative; what settles the question is ${VERIFICATION_INSTRUMENT[jurisdiction]}.`
-        : 'A spatial layer is indicative; verify with the relevant council or planning authority.'),
+        ? `A published map is indicative only; what settles the question is ${VERIFICATION_INSTRUMENT[jurisdiction]}.`
+        : 'A published map is indicative only; the council or planning authority confirms it.'),
     retrievedAt,
+    pointPrecision: pointPrecisionOf(data),
+    pointProvider: pointProviderOf(data),
+    pointNotPlaced: !data && input.pointNotPlaced === true,
     anyStated: cells.some((c) => c.status === 'stated' || c.status === 'operator_stated'),
     enrichmentMissing: !data,
   };
+}
+
+interface NumericControlSpec {
+  readonly label: string;
+  readonly value: unknown;
+  readonly suffix: string;
+  readonly family: ConstraintFamily;
+  /** The absence sentence in this jurisdiction's own terms; null takes the generic one. */
+  readonly absenceNote: string | null;
+}
+
+/**
+ * The numeric controls, in the vocabulary of the jurisdiction's own instrument.
+ *
+ * The three rows — minimum lot size, maximum building height, floor space
+ * ratio — are how a New South Wales Local Environmental Plan states its
+ * controls, and they were printed for every jurisdiction. The Compass for 60
+ * Lawley Street, Spalding WA (25 Sep 2026) then told a Western Australian
+ * buyer, in three places, that no "floor space ratio" had been retrieved, and
+ * asked them to get one confirmed by the City: Western Australia's schemes do
+ * not use the term. A residential lot there is controlled through its density
+ * code (the R-Code) on the local planning scheme map, which under the
+ * Residential Design Codes sets the site area each dwelling needs, and where a
+ * floor-area control applies it is called a plot ratio.
+ *
+ * So the rows follow the jurisdiction. Only Western Australia is written out,
+ * because it is the one this report measured; every other jurisdiction keeps
+ * the three rows it had, byte for byte. An operator's recorded minimum lot
+ * size is never dropped by the change — a recorded figure outranks a label.
+ */
+function numericControlSpecs(
+  jurisdiction: string | null,
+  o: PlanningOverrides,
+): NumericControlSpec[] {
+  if (jurisdiction === 'WA') {
+    const notConfirmed = 'Not confirmed in this report;';
+    const rows: NumericControlSpec[] = [
+      {
+        label: 'Residential density code (R-Code)',
+        value: null,
+        suffix: '',
+        // A density coding, which is what a register reading one would file
+        // it under — never the lot-size family, whose value is an area.
+        family: 'dwellingDensity',
+        absenceNote: 'Shown on the local planning scheme map. Under the Residential Design Codes of Western '
+          + 'Australia the code sets the site area each dwelling needs, so it — not the land size — decides how '
+          + `many dwellings a lot may carry. ${notConfirmed} the scheme map or the local government\'s written `
+          + 'planning enquiry confirms it.',
+      },
+      {
+        label: 'Maximum building height',
+        value: o.maximumHeight,
+        suffix: ' m',
+        family: 'height',
+        absenceNote: 'Set by the local planning scheme, the Residential Design Codes or a local planning policy. '
+          + `${notConfirmed} the scheme or a planning enquiry confirms it.`,
+      },
+      {
+        label: 'Plot ratio',
+        value: o.floorSpaceRatio,
+        suffix: ':1',
+        family: 'floorSpaceRatio',
+        absenceNote: 'Western Australia\'s floor-area control, which applies only where the scheme or the '
+          + `Residential Design Codes set one. ${notConfirmed} the scheme confirms whether one applies.`,
+      },
+    ];
+    const lot = o.minimumLotSize;
+    const recordedLot = typeof lot === 'number' ? Number.isFinite(lot) : typeof lot === 'string' && lot.trim() !== '';
+    return recordedLot
+      ? [{ label: 'Minimum lot size', value: lot, suffix: ' m²', family: 'minimumLotSize', absenceNote: null }, ...rows]
+      : rows;
+  }
+  return [
+    { label: 'Minimum lot size', value: o.minimumLotSize, suffix: ' m²', family: 'minimumLotSize', absenceNote: null },
+    { label: 'Maximum building height', value: o.maximumHeight, suffix: ' m', family: 'height', absenceNote: null },
+    { label: 'Floor space ratio', value: o.floorSpaceRatio, suffix: ':1', family: 'floorSpaceRatio', absenceNote: null },
+  ];
+}
+
+/** Where the answering registers were asked, off the answer's own `pointBasis`. */
+function pointPrecisionOf(data: Record<string, unknown> | null): 'address' | 'street' | null {
+  const basis = isRecord(data?.pointBasis) ? data!.pointBasis as Record<string, unknown> : null;
+  const p = str(basis?.precision);
+  return p === 'address' || p === 'street' ? p : null;
+}
+
+/** Who placed the point the registers were asked at, off the answer's own `pointBasis`. */
+function pointProviderOf(data: Record<string, unknown> | null): string | null {
+  const basis = isRecord(data?.pointBasis) ? data!.pointBasis as Record<string, unknown> : null;
+  return str(basis?.provider);
+}
+
+/** The sentence under the table that says where the readings were taken. */
+export function pointBasisSentence(facts: Pick<PlanningFacts, 'pointPrecision'>): string {
+  if (facts.pointPrecision === 'street') {
+    return 'checked at a point on the property\u2019s street — the address could be placed on its street but not on '
+      + 'its lot, so where a zone or overlay boundary runs along the street the lot itself may read differently';
+  }
+  if (facts.pointPrecision === 'address') return 'checked at the property\u2019s address';
+  return 'checked at the location this report places the property';
 }
 
 // ---------------------------------------------------------------------------
@@ -701,7 +875,7 @@ export function daActivityLine(summary: Record<string, unknown>): string {
   const amended = rowsOf('amendments');
   const other = rowsOf('unclassified');
   if (fresh === null && amended === null) {
-    return 'The register answered, and stated no application counts.';
+    return 'The council\u2019s register lists no application counts for this period.';
   }
   const bits = [
     `${(fresh ?? 0).toLocaleString('en-AU')} new application${(fresh ?? 0) === 1 ? '' : 's'}`,
@@ -714,7 +888,7 @@ export function daActivityLine(summary: Record<string, unknown>): string {
   const read = num(summary['rowsRead']);
   const total = num(summary['totalInPeriod']);
   const sample = read !== null && total !== null && read < total
-    ? ` (read ${read.toLocaleString('en-AU')} of the ${total.toLocaleString('en-AU')} the register states)`
+    ? ` (from ${read.toLocaleString('en-AU')} of the ${total.toLocaleString('en-AU')} applications the register lists)`
     : '';
   return `${bits.join(', ')}${window}${sample}`;
 }
@@ -729,20 +903,20 @@ const INSTRUMENT_LABEL: Record<string, string> = {
 
 /** The evidence reference a row carries: publisher, currency, retrieval. */
 function evidenceRef(cell: PlanningCell): string {
-  if (cell.status === 'operator_stated') return 'Recorded by operator';
+  if (cell.status === 'operator_stated') return 'Supplied by the adviser';
   if (!cell.source) return '—';
   const bits = [cell.source];
   const effective = auDate(cell.effectiveDate);
   if (effective) bits.push(`current at ${effective}`);
   const got = auDate(cell.retrievedAt);
-  if (got) bits.push(`retrieved ${got}`);
+  if (got) bits.push(`accessed ${got}`);
   if (cell.licence) bits.push(cell.licence);
   return bits.join('; ');
 }
 
 /** What a row prints where it has no value: the absence, in words. */
 function absenceText(cell: PlanningCell): string {
-  return cell.note ?? 'Not retrieved.';
+  return cell.note ?? 'Not confirmed.';
 }
 
 /**
@@ -827,8 +1001,8 @@ export function instrumentCurrencyLine(facts: PlanningFacts): string | null {
   }
   return `The controls above are read from *${c.name}*, as amended by ${amended}`
     + `${commenced ? `, which commenced ${commenced}` : ''}. `
-    + 'That is the instrument in force as this report reads it; a later amendment, and any draft '
-    + 'amendment on exhibition, are published by the council rather than on the layers read here.';
+    + 'That is the instrument in force at the date of this report; a later amendment, and any draft '
+    + 'amendment on exhibition, are published by the council and appear on the planning certificate.';
 }
 
 export function renderConstraintRegister(facts: PlanningFacts): string {
@@ -837,7 +1011,7 @@ export function renderConstraintRegister(facts: PlanningFacts): string {
 
   if (readings.length) {
     lines.push('**What is mapped over this land**', '');
-    lines.push('| Kind | What the register returned | Instrument | Current at |');
+    lines.push('| Kind | What is mapped | Instrument | Current at |');
     lines.push('|---|---|---|---|');
     for (const c of readings) {
       /**
@@ -889,7 +1063,7 @@ export function renderConstraintRegister(facts: PlanningFacts): string {
     if (currency) lines.push(currency, '');
 
     const sources = [...new Set(readings.map((c) => `${c.source}${c.licence ? ` (${c.licence})` : ''}`))];
-    lines.push(`Retrieved from ${sources.join('; ')}${facts.retrievedAt ? ` on ${auDate(facts.retrievedAt)}` : ''}.`, '');
+    lines.push(`Source: ${sources.join('; ')}${facts.retrievedAt ? `, accessed ${auDate(facts.retrievedAt)}` : ''}.`, '');
   }
 
   // Coverage. A short register is only readable beside what was searched —
@@ -899,9 +1073,9 @@ export function renderConstraintRegister(facts: PlanningFacts): string {
     const clear = checkedAndNotMapped(facts);
     if (clear.length) {
       lines.push(
-        `**Checked and not mapped at this coordinate:** ${clear.join(', ')}. `
-        + 'Each of these was asked of a register that answered, and no feature covers this point. '
-        + 'A mapped layer is indicative at the scale it is published; it is not a survey of the lot.',
+        `**${CHECKED_NOT_MAPPED_LEAD}** ${clear.join(', ')}. `
+        + 'The published map for each was checked and shows nothing over the property. '
+        + 'A published map is indicative at its scale; it is not a survey of the lot.',
         '',
       );
     }
@@ -924,14 +1098,15 @@ export function renderConstraintRegister(facts: PlanningFacts): string {
       lines.push(declared, '');
     } else if (facts.overlayCoverage === 'state_layers_read') {
       lines.push(
-        'The overlay and hazard registers this report reads for this jurisdiction returned '
-        + 'nothing for this point, and no register reported an answer, so they are unchecked '
-        + 'rather than clear. Nothing here says whether a control applies.',
+        'The state\u2019s overlay and hazard maps could not be confirmed for the property, so these '
+        + 'controls are unchecked rather than clear. Nothing here says whether a control applies; the '
+        + 'planning certificate does.',
         '',
       );
     } else {
       lines.push(
-        'No overlay or hazard register was reached for this point, so nothing here says whether a control applies.',
+        'The state\u2019s overlay and hazard maps could not be consulted for this report, so nothing here says '
+        + 'whether a control applies; the planning certificate does.',
         '',
       );
     }
@@ -939,16 +1114,16 @@ export function renderConstraintRegister(facts: PlanningFacts): string {
 
   if (facts.constraintRegisters.unavailable.length) {
     lines.push(
-      `**Not reached:** ${facts.constraintRegisters.unavailable.join('; ')}. `
-      + 'These registers could not be read for this report, so their subject matter is unchecked rather than clear.',
+      `**Unavailable when this report was prepared:** ${facts.constraintRegisters.unavailable.join('; ')}. `
+      + 'These could not be consulted, so what they cover is unchecked rather than clear.',
       '',
     );
   }
 
   if (facts.jurisdiction) {
     lines.push(
-      `**What settles every line above:** ${VERIFICATION_DOCUMENT[facts.jurisdiction]} `
-      + 'A spatial layer is published at a scale; a certificate is issued for a lot.',
+      `**What confirms each item above:** ${VERIFICATION_DOCUMENT[facts.jurisdiction]} `
+      + 'A published map is indicative at its scale; a certificate is issued for the lot.',
       '',
     );
   }
@@ -993,7 +1168,7 @@ export function renderLandUseTable(facts: PlanningFacts): string {
   if (t.status !== 'retrieved') {
     lines.push(
       t.note
-        ?? 'The instrument\'s land use table was not retrieved for this property.',
+        ?? 'What may be built here is set by the land use table in the planning instrument, which this report does not include for this property.',
       '',
       'What a zone permits and prohibits is settled by the land use table in the '
       + 'planning instrument itself, and by the planning certificate for this lot.',
@@ -1041,7 +1216,7 @@ export function renderLandUseTable(facts: PlanningFacts): string {
     `Source: ${t.source ?? 'the planning instrument'}`
     + (t.instrument ? `, reading ${t.instrument}` : '')
     + (t.licence ? ` (${t.licence})` : '')
-    + (t.retrievedAt ? `, retrieved ${auDate(t.retrievedAt) ?? t.retrievedAt}` : '')
+    + (t.retrievedAt ? `, accessed ${auDate(t.retrievedAt) ?? t.retrievedAt}` : '')
     + '. A land use table states what is permissible; it does not establish that '
     + 'an existing building was lawfully erected, and it is not consent for anything.',
   );
@@ -1073,12 +1248,12 @@ export function renderPlanningControls(facts: PlanningFacts): string {
   ].filter((l): l is string => l !== null);
   if (where.length) lines.push(where.join(' · '), '');
 
-  lines.push('| Control | Reading | Standing | Evidence |');
+  lines.push('| Control | Finding | Status | Source |');
   lines.push('|---|---|---|---|');
   for (const cell of [facts.zoning, facts.overlays, ...facts.controls]) {
     const reading = cell.value ?? absenceText(cell);
     const standing = cell.status === 'operator_stated'
-      ? 'Operator record'
+      ? 'Supplied by the adviser'
       : cell.standing === 'adopted' ? 'Adopted'
         : cell.standing === 'draft' ? 'Draft — not in force'
           : '—';
@@ -1103,7 +1278,7 @@ export function renderPlanningControls(facts: PlanningFacts): string {
   if (register.trim()) lines.push(register, '');
 
   if (facts.instrumentList.length) {
-    lines.push('**State development instruments covering this point:**', '');
+    lines.push('**State development designations covering the property:**', '');
     lines.push('| Instrument | Name | Status | Gazetted |');
     lines.push('|---|---|---|---|');
     for (const i of facts.instrumentList) {
@@ -1111,7 +1286,7 @@ export function renderPlanningControls(facts: PlanningFacts): string {
     }
     lines.push('', `Source: ${facts.instruments.source ?? 'state planning layers'}${facts.instruments.licence ? ` (${facts.instruments.licence})` : ''}.`, '');
   } else {
-    lines.push(`**State development instruments:** ${absenceText(facts.instruments)}`, '');
+    lines.push(`**State development designations:** ${absenceText(facts.instruments)}`, '');
   }
 
   lines.push(
@@ -1123,10 +1298,14 @@ export function renderPlanningControls(facts: PlanningFacts): string {
 
   // Rules 3 and 6, said on the page rather than left to a reader to infer.
   lines.push(
-    `**What this is.** These readings are desktop research against the jurisdiction's published spatial layers, `
-    + `retrieved automatically at the property's verified coordinate. They are not a planning certificate and do not `
-    + `substitute for one. ${facts.verification}`,
+    `**About these findings.** These are desktop checks of the state's published planning maps, `
+    + `${pointBasisSentence(facts)}. They are not a planning certificate and do not `
+    + `replace one. ${facts.verification}`,
   );
+  if (facts.pointProvider === 'gnaf') {
+    lines.push('');
+    lines.push(`**Address location.** The property was located using the national address file, G-NAF. ${GNAF_ATTRIBUTION}`);
+  }
   lines.push('');
   lines.push(
     '**What a zone is not.** A zone that admits a use is not consent for it. Any development potential described here '
@@ -1136,8 +1315,8 @@ export function renderPlanningControls(facts: PlanningFacts): string {
   if (facts.zoning.status !== 'stated' && facts.zoning.status !== 'operator_stated') {
     lines.push('');
     lines.push(
-      '**No zone was retrieved for this property.** The rows above say which kind of absence each one is. '
-      + 'A blank is not a finding that the control does not apply.',
+      '**The zone is not confirmed.** Each row above says why. An unconfirmed control is not a finding that the '
+      + 'control does not apply.',
     );
   }
   return lines.join('\n');
@@ -1164,12 +1343,12 @@ export function renderPlanningControls(facts: PlanningFacts): string {
 function landUseRule(facts: PlanningFacts): string {
   const r = facts.residential;
   if (facts.landUse.status !== 'retrieved' || !r) {
-    return '5a. The instrument\'s land use table was NOT retrieved for this property, so what may be built here '
+    return '5a. The instrument\'s land use table has NOT been confirmed for this property, so what may be built here '
       + 'is unknown. Do not state that a secondary dwelling, granny flat, dual occupancy, duplex, subdivision, '
       + 'additional dwelling or any other development is possible, likely, permissible or worth exploring — and '
       + 'do not infer it from the land size, the block shape, the street or the zone code. Land size is not a '
       + 'permission. Where the subject comes up, the sentence is that the land use table and the planning '
-      + 'certificate settle it and neither has been read.';
+      + 'certificate settle it and neither has been obtained.';
   }
   const parts: string[] = [
     '5a. The land use table above IS the authority on what may be built here, and it is supplied complete. '
@@ -1202,13 +1381,24 @@ function landUseRule(facts: PlanningFacts): string {
 }
 
 export function planningFactBlocks(facts: PlanningFacts): string {
+  if (facts.enrichmentMissing && facts.pointNotPlaced) {
+    return 'PLANNING — the planning maps were NOT checked for this property: the address could only be placed at '
+      + 'the centre of its suburb, and a zone, overlay or control read there would describe a different lot. '
+      + `${inHomeSection('planning')} say so in one sentence — the zoning and planning controls have not been `
+      + 'confirmed because the property could not be located precisely enough to check them, and the local planning '
+      + `authority or the planning certificate confirms them. ${elsewhereOnly('planning')} In every section: do NOT `
+      + 'print a zoning table, a control table, a minimum lot size, a height limit, a floor space ratio, a setback, a '
+      + 'site coverage figure or an overlay finding; do NOT name a zone or a planning instrument, and do NOT infer '
+      + 'one from the suburb\u2019s character. A figure found by live web search is still a figure this report did '
+      + 'not confirm.';
+  }
   if (facts.enrichmentMissing) {
-    return 'PLANNING RULES FOR THE WHOLE REPORT — no planning enrichment ran. State in one sentence that '
-      + 'zoning and planning controls were not retrieved and must be confirmed with the local planning '
-      + 'authority. Do NOT print a zoning table, a control table, a minimum lot size, a height limit, a '
-      + 'floor space ratio, a setback, a site coverage figure or an overlay finding. Do NOT name a planning '
-      + 'instrument. This holds in every section, and a figure found by live web search is still a figure '
-      + 'this report did not retrieve.';
+    return 'PLANNING — the planning maps were not checked for this report. '
+      + `${inHomeSection('planning')} say in one sentence that the zoning and planning controls have not been `
+      + `confirmed and that the local planning authority confirms them. ${elsewhereOnly('planning')} In every `
+      + 'section: do NOT print a zoning table, a control table, a minimum lot size, a height limit, a floor space '
+      + 'ratio, a setback, a site coverage figure or an overlay finding, and do NOT name a planning instrument. A '
+      + 'figure found by live web search is still a figure this report did not confirm.';
   }
   /*
    * Rule 4a — the one absence the prose MAY repeat, and only with its
@@ -1239,15 +1429,15 @@ export function planningFactBlocks(facts: PlanningFacts): string {
    */
   const clear = checkedAndNotMapped(facts);
   const clearLayerRule = clear.length
-    ? '4a. Exactly these layers were asked of a register that answered and matched nothing at this coordinate: '
+    ? '4a. Exactly these published maps were checked and show nothing over the property: '
       + `${clear.join(', ')}. You may report ONE of those as not mapped, and only in a sentence that names the `
-      + `register (${facts.constraintRegisters.answered.join('; ') || 'the register named in the table'}), says it `
+      + `map (${facts.constraintRegisters.answered.join('; ') || 'the map named in the table'}), says it `
       + 'is indicative at the scale it is published rather than a survey of the lot, and keeps the certificate as '
       + 'what settles it. Do NOT draw it as a tick, a clearance, a reassurance or a strength, do not rate a risk '
       + 'from it (see the risk table\u2019s own rule), and do not name a layer outside that list — anything else '
       + 'falls under rule 4.'
-    : '4a. No layer was asked of an answering register and found clear at this coordinate, so there is no absence '
-      + 'you may report at all. Rule 4 governs every one of them.';
+    : '4a. No published map was checked and found clear for the property, so there is no absence you may report '
+      + 'at all. Rule 4 governs every one of them.';
 
   const instrumentRule = facts.jurisdiction === 'NSW'
     ? '3. This property is in New South Wales, so the Local Environmental Plan, the Development Control Plan and '
@@ -1257,15 +1447,16 @@ export function planningFactBlocks(facts: PlanningFacts): string {
       + 'those are New South Wales instruments and do not exist here. Name only the instrument in the verification '
       + 'sentence.';
   return [
-    'PLANNING RULES FOR THE WHOLE REPORT — they apply in every section, including risk registers, '
-    + 'checklists, summaries and verdicts, and they override any example elsewhere in this prompt AND '
-    + 'anything a live web search returns. A portal, a listing site or a news page is not a retrieval: '
-    + 'if a control is not in the table below, this report did not retrieve it.',
+    'PLANNING — the prohibitions below apply in every section, including risk registers, checklists, summaries '
+    + 'and verdicts, and they override any example elsewhere in this prompt AND '
+    + 'anything a live web search returns. A portal, a listing site or a news page is not a planning source: if a '
+    + 'control is not in the table below, this report has not confirmed it.',
     '1. The planning controls table above is supplied complete. Reproduce it EXACTLY as given. Do not add a row, '
     + 'a column, a figure or a bracketed placeholder to it.',
     '2. Do NOT state a minimum lot size, maximum building height, floor space ratio, site coverage, setback, '
     + 'landscaping percentage, parking minimum or overlay finding that is not in the table. There is no typical '
-    + 'value and no default. If it is not in the table it was not retrieved, and the correct sentence says so.',
+    + 'value and no default. If it is not in the table it has not been confirmed, and the correct sentence says '
+    + 'so once, in the planning section.',
     instrumentRule,
     '4. A layer this report did not reach supports nothing. Never write that no overlay applies, that the property '
     + 'is not heritage listed, or that it is not flood or bushfire affected on the authority of a listing portal, a '
@@ -1287,7 +1478,14 @@ export function planningFactBlocks(facts: PlanningFacts): string {
      * and where there is no table you do not know".
      */
     landUseRule(facts),
-    '6. Say plainly that this is desktop research and that the verification instrument is what settles it.',
+    `6. ${inHomeSection('planning')} say plainly that these are desktop checks of published planning maps and that `
+    + `the verification instrument is what settles them. ${elsewhereOnly('planning')}`,
+    ...(facts.pointPrecision === 'street'
+      ? ['6a. These maps were checked at a point on the property\u2019s STREET, not on its lot — the address could '
+        + 'not be placed more precisely. Wherever you state the zone or a control, say it was read at the street, and '
+        + 'never call it the lot\u2019s confirmed zoning: a boundary along the street can put the lot in a different '
+        + 'zone, and the certificate is what settles it.']
+      : []),
     /*
      * Rule 4 closes the STATEMENT; this closes the RATING.
      *
@@ -1303,12 +1501,12 @@ export function planningFactBlocks(facts: PlanningFacts): string {
      * same error one level up.
      */
     '7. An absence may NOT be rated. Where a risk register, a scorecard, a SWOT table or any other rating has a '
-    + 'row whose evidence is something this report did not retrieve, the rating cell reads "Not assessed" and '
+    + 'row whose evidence is something this report has not confirmed, the rating cell reads "Not assessed" and '
     + 'the row says what has to be obtained to settle it. Never rate it Low, Minimal, Limited, Negligible or '
     + 'Favourable, and never '
-    + 'file it as a strength: not retrieving a control is not evidence that the control is absent or benign. An '
-    + 'inference from the area\u2019s general character is not a retrieval either, and may not carry a rating.',
-    '8. An evidence, confidence or verification note describes the RETRIEVAL and never the conclusion beside it. '
+    + 'file it as a strength: not having confirmed a control is not evidence that the control is absent or benign. '
+    + 'An inference from the area\u2019s general character is not a check either, and may not carry a rating.',
+    '8. An evidence, confidence or verification note describes the CHECK and never the conclusion beside it. '
     + '"Verified" may be written of a table reading and may NOT be written of a rating, an outlook or a '
     + 'recommendation drawn from it.',
     /*
@@ -1341,9 +1539,9 @@ export function planningFactBlocks(facts: PlanningFacts): string {
      * others are prohibitions.
      */
     '9. State the provenance ONCE. Name the zone or the control wherever a section needs it, but the layer it was '
-    + 'read from, its currency date and the day it was retrieved belong to the planning section and to the '
-    + 'register appended at the end of the report — not to every section that mentions the zone. Say what the '
-    + 'control IS; do not re-cite it. This does not soften a caveat: where a control was not retrieved, say so '
-    + 'as rules 2, 4 and 6 require.',
+    + 'read from, its currency date and the day it was checked belong to the planning section alone — not to '
+    + 'every section that mentions the zone. Say what the control IS; do not re-cite it. This does not soften a '
+    + 'caveat: where a control has not been confirmed, the planning section says so as rules 2, 4 and 6 require, '
+    + 'and every other section points to it rather than repeating it.',
   ].join('\n');
 }

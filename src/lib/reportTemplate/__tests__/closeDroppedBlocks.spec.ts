@@ -9,6 +9,8 @@
  * and the editor shows the page as it was built.
  */
 import { describe, expect, it } from 'vitest';
+import { INVESTMENT_COMPASS_TEMPLATES } from '../../../../scripts/template-library/investmentCompass/templates';
+import { SAMPLE_REPORT_DATA } from '@/lib/templateLibrary/sampleReportData';
 import { ROW_MATE_REACH_PT, closeDroppedBlocks } from '../closeDroppedBlocks';
 import { renderTemplateToHtml } from '../htmlRenderer';
 import type { Block } from '../templateSchema';
@@ -143,4 +145,51 @@ describe('the renderer closes the hole a conditional block leaves', () => {
     const editor = renderTemplateToHtml(template('risks && risks[0] && risks[0].risk'), { data: { risks: [] }, editorMode: true });
     expect(topOf(editor.html, 'Recommendation')).toBe(349);
   });
+});
+
+describe('a dropped layer is not a hole', () => {
+  /*
+   * The three photographic masters draw the property's photograph under the
+   * whole cover, then a scrim, then the type. With no photograph both drop,
+   * and closing the "hole" they left lifted every block on the cover by the
+   * distance to the first of them: the brand mark went from 68pt to the page's
+   * top edge and the standfirst from 579pt to 511pt, over the title's last
+   * line. Every render that checked the cover carried a photograph, because
+   * the sample data does, so nothing ever drew this.
+   */
+  it('leaves the column where it is when the dropped block was drawn under it', () => {
+    const photograph = block('photograph', 0, { height: 842 }, { x: 0, width: 595 });
+    const blocks = [photograph, block('mark', 68), block('wordmark', 124), block('standfirst', 579), block('facts', 696)];
+    const out = closeDroppedBlocks(blocks, (b) => b.id === 'photograph', isFurniture);
+    expect(['mark', 'wordmark', 'standfirst', 'facts'].map((id) => yOf(out, id))).toEqual([68, 124, 579, 696]);
+  });
+
+  it('still closes a hole whose declared height ends above the block after it', () => {
+    const blocks = [block('opener', 103), block('register', 185, { height: 150 }), block('recommendation', 349)];
+    const out = closeDroppedBlocks(blocks, (b) => b.id === 'register', isFurniture);
+    expect(yOf(out, 'recommendation')).toBe(185);
+  });
+
+  const coverPositions = (schema: unknown, data: Record<string, unknown>) => {
+    const html = renderTemplateToHtml(schema as never, { data }).html;
+    const start = html.indexOf('class="tpl-page tpl-page-0"');
+    const end = html.indexOf('class="tpl-page tpl-page-1"', start + 1);
+    return [...html.slice(start, end).matchAll(/position:absolute;left:([\d.]+)pt;(top|bottom):([\d.]+)pt;/g)]
+      .map((m) => `${m[2]}:${m[3]}@${m[1]}`);
+  };
+
+  for (const code of ['le-01', 'le-02', 'le-03']) {
+    it(`${code}: every block on the cover stands where it stands beside a photograph`, () => {
+      const master = (INVESTMENT_COMPASS_TEMPLATES as Array<{ slug: string; schema: unknown }>)
+        .find((t) => t.slug.includes(`-${code}-`));
+      expect(master).toBeDefined();
+      const property = { ...(SAMPLE_REPORT_DATA as { property: Record<string, unknown> }).property };
+      delete property.images;
+      const withPhotograph = coverPositions(master!.schema, SAMPLE_REPORT_DATA);
+      const without = coverPositions(master!.schema, { ...SAMPLE_REPORT_DATA, property });
+      // The photograph and its scrim are the two full-page boxes; nothing else may move.
+      expect(withPhotograph.slice(0, 2)).toEqual(['top:0@0', 'top:0@0']);
+      expect(without).toEqual(withPhotograph.slice(2));
+    });
+  }
 });

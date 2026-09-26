@@ -34,6 +34,26 @@
 import { stateCodeFromName } from './geocodeResult.pure.ts';
 
 export const PHOTON_PUBLIC_BASE = 'https://photon.komoot.io';
+
+/**
+ * Is this the public komoot instance, rather than a copy this product runs?
+ *
+ * The daily allowance and the one-a-second turn are the goodwill a PUBLIC
+ * service is owed. A copy this product runs itself (`address-service/`) owes
+ * none, and holding it to the public ceiling would put our own server back
+ * behind the limit it exists to escape. One rule for both callers — the
+ * address field and the geocoding chain — so they cannot disagree about which
+ * server they are talking to. An unreadable base is treated as public: the
+ * conservative side of a ceiling is to keep it.
+ */
+export function isPublicPhotonBase(base: string): boolean {
+  try {
+    return new URL(base).host === new URL(PHOTON_PUBLIC_BASE).host;
+  } catch {
+    return true;
+  }
+}
+
 /** Australia, generously, so nothing overseas is suggested for a bare street name. */
 export const AU_BBOX = '112.9,-43.7,153.7,-10.6';
 

@@ -57,6 +57,7 @@ import {
   summariseThreads,
   type LegalThreadScope,
 } from "../_shared/legalComms.ts";
+import { commandCentreSender, loadWorkspaceIdentity, type WorkspaceIdentity } from "../_shared/workspaceIdentity.ts";
 
 
 
@@ -739,6 +740,13 @@ Deno.serve(async (req) => {
       return data;
     };
 
+    // The name the Command Centre signs and labels its threads with: the
+    // prime's as it always was, a clone's own on a clone. Read once, and only
+    // by a request that needs it.
+    let commandCentreVoice: Promise<WorkspaceIdentity> | null = null;
+    const commandCentreName = async () =>
+      commandCentreSender(await (commandCentreVoice ??= loadWorkspaceIdentity({ readPrimeName: false })));
+
     const ensureStaffThread = async (matter: any, scope: LegalThreadScope) => {
       const { data: existing } = await supabase
         .from('legal_matter_threads').select(THREAD_SELECT)
@@ -750,7 +758,7 @@ Deno.serve(async (req) => {
         client_id: matter.client_id,
         firm_id: matter.firm_id,
         scope,
-        subject: `${matter.matter_reference || matter.title || 'Matter'} — ${scopeLabel(scope)}`,
+        subject: `${matter.matter_reference || matter.title || 'Matter'} — ${scopeLabel(scope, await commandCentreName())}`,
         created_by: staffUserId,
       }).select(THREAD_SELECT).maybeSingle();
       if (error) throw error;
@@ -826,7 +834,7 @@ Deno.serve(async (req) => {
       if (!text) return json({ error: 'A message body is required' }, 400);
       if (text.length > 8000) return json({ error: 'Messages are limited to 8000 characters' }, 400);
 
-      const senderName = String(body.sender_name || 'NPC Command Centre');
+      const senderName = String(body.sender_name || await commandCentreName());
 
       if(CANONICAL_CONVERSATIONS_V2){const canonical=await ensureStaffCanonical(matter);if(canonical&&staffUserId){const {data:message,error}=await supabase.rpc('post_conversation_message',{_conversation_id:canonical.id,_actor_type:'command_user',_actor_id:staffUserId,_body:text,_idempotency_key:String(body.idempotency_key||`command:${staffUserId}:${crypto.randomUUID()}`),_sender_name:senderName,_reply_to:body.reply_to_message_id||null});if(error)throw error;await logStaff('matter_message_sent',{client_id:matter.client_id,legal_matter_id:matter.id,entity_type:'message',entity_id:message?.id??null,metadata:{scope:'npc_solicitor'}});return json({success:true,message:{...message,sender_type:'staff'},thread_id:canonical.id});}return json({error:'Transaction case link required for canonical conversation',code:'CASE_LINK_REQUIRED'},409);}
 

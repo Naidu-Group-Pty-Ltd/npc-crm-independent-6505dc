@@ -775,7 +775,6 @@ Deno.serve(async (req) => {
               type: 'success',
               category: 'document',
               actionUrl: '/client/reports',
-              companyName: emailInfo.companyName,
             });
           }
         } catch (notifErr) {

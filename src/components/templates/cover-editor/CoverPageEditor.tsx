@@ -16,7 +16,7 @@ import {
 } from 'lucide-react';
 
 import type { OverlayElement, CoverPageOverlay } from './types';
-import { REPORT_TYPE_OPTIONS, DEFAULT_BACKGROUND_IMAGES, FONT_WEIGHT_OPTIONS, BUILTIN_FONTS } from './types';
+import { REPORT_TYPE_OPTIONS, defaultCoverBackground, FONT_WEIGHT_OPTIONS, BUILTIN_FONTS } from './types';
 import { useGoogleFonts, ensureFontLoaded } from '@/hooks/useGoogleFonts';
 
 interface CoverPageEditorProps {
@@ -41,7 +41,7 @@ export function CoverPageEditor({ overlay, onSave, onCancel, isSaving }: CoverPa
   const { fonts: googleFonts, searchQuery, setSearchQuery, loadFullList, loadFontCSS, isLoading: fontsLoading } = useGoogleFonts();
 
   const selectedElement = elements.find(e => e.id === selectedElementId);
-  const effectiveBgImage = backgroundImageUrl || DEFAULT_BACKGROUND_IMAGES[reportType] || '';
+  const effectiveBgImage = backgroundImageUrl || defaultCoverBackground(reportType);
 
   // Load fonts for all existing elements on mount
   useEffect(() => {

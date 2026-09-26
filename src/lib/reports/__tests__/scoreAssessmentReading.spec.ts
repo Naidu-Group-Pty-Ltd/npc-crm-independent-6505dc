@@ -265,7 +265,7 @@ describe('the composite is the record\'s, never a recomputation', () => {
 
   it('says what the arithmetic is, and never asserts a rounding that does not happen', () => {
     expect(assessmentPrecisionNote(readScoreAssessment(POOLE_SCORE)))
-      .toContain('the figure the scoring service recorded');
+      .toContain('the figure recorded with the grade');
     expect(assessmentPrecisionNote(readScoreAssessment(ANNABELLE_SCORE)))
       .toContain('rounded once');
     // A record whose stored weights cannot reproduce its total says so rather

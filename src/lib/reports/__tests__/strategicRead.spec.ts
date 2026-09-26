@@ -121,7 +121,7 @@ describe('what it declines to say', () => {
 
   it('says a table was not retrieved rather than implying what may be built', () => {
     const md = composeStrategicRead(record({ site: { landUse: null, pipeline: null } }), HEADING);
-    expect(md).toContain('No land use table was retrieved for this property');
+    expect(md).toContain('The land use table for this property has not been confirmed');
     expect(md).not.toContain('single-dwelling purchase');
     expect(md).not.toContain('What it competes with');
   });

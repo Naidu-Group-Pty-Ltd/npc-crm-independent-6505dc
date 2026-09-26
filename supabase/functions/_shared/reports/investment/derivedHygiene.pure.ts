@@ -31,10 +31,14 @@ import { stripFootnoteDebris } from './footnoteDebris.pure.ts';
 import { promotePipedPseudoTables } from './pseudoTables.pure.ts';
 import { withholdRatedAbsenceCharts } from './ratedAbsence.pure.ts';
 import {
+  INFRASTRUCTURE_REGISTER_HEADING,
+  PLANNING_REGISTER_HEADING,
   PLANNING_REGISTER_SECTION,
+  STORED_REGISTER_HEADINGS,
   dedupeRegisterTables,
   stripHeadingScaffolding,
 } from './registerTables.pure.ts';
+import { stripScaffoldingLabels } from './scaffoldingLabels.pure.ts';
 import {
   dropComposedSectionReproductions,
   foldStraySections,
@@ -247,6 +251,30 @@ export interface EmptySectionResult {
 export function dropEmptySections(markdown: string): EmptySectionResult {
   const HEADING = /^(#{1,6})\s+\S/;
   const levelOf = (line: string): number => (line.match(HEADING)?.[1].length ?? 0);
+  /*
+   * A footnote definition is apparatus, not content under a heading.
+   *
+   * The renderer lifts every `[^id]:` definition out of the body into the
+   * document's Notes list. On the 60 Lawley Street Compass the appendix ended
+   * `### Disclaimer` over nothing but the definition of note 1, so the page
+   * printed "Disclaimer" with no disclaimer under it and the Notes list below
+   * — while the actual disclaimer sat on the document's closing page. The
+   * heading is dropped; the definitions stay exactly where they were, so the
+   * Notes list is unchanged.
+   */
+  const FOOTNOTE_DEF = /^\s{0,3}\[\^[^\]\n]+\]:/;
+  const skipApparatus = (from: number, all: string[]): number => {
+    let j = from;
+    let inDefinition = false;
+    while (j < all.length) {
+      const l = all[j];
+      if (l.trim() === '') { j += 1; continue; }
+      if (FOOTNOTE_DEF.test(l)) { inDefinition = true; j += 1; continue; }
+      if (inDefinition && /^\s{2,}\S/.test(l)) { j += 1; continue; }
+      break;
+    }
+    return j;
+  };
   let lines = (markdown || '').split('\n');
   const dropped: string[] = [];
   for (let pass = 0; pass < 8; pass += 1) {
@@ -256,8 +284,7 @@ export function dropEmptySections(markdown: string): EmptySectionResult {
       const line = lines[i];
       const level = levelOf(line);
       if (level > 0) {
-        let j = i + 1;
-        while (j < lines.length && lines[j].trim() === '') j += 1;
+        const j = skipApparatus(i + 1, lines);
         const empty = j >= lines.length || (levelOf(lines[j]) > 0 && levelOf(lines[j]) <= level);
         if (empty) {
           dropped.push(line.replace(/^#{1,6}\s+/, '').trim());
@@ -729,10 +756,36 @@ function bySection(markdown: string): string[] {
   return out;
 }
 
+/**
+ * The heading a pointer names — the one this document actually carries.
+ *
+ * The registers were one section, `Planning controls and development
+ * registers`, and every stored report still has it, so a pointer in one of
+ * those keeps naming it word for word. A document composed since the registers
+ * moved INSIDE their chapters has no such section, and a pointer to it would
+ * send a reader after a heading that is not there — so it names the
+ * sub-heading the register now sits under, the infrastructure one where the
+ * pointer is about infrastructure.
+ */
+function registerHeadingIn(markdown: string, aboutInfrastructure: boolean): string {
+  const has = (h: string) => new RegExp(`^#{1,6}\\s+${h.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\s*$`, 'mi').test(markdown);
+  if (has(PLANNING_REGISTER_SECTION)) return PLANNING_REGISTER_SECTION;
+  // Today's spelling first, then the one a stored report carries.
+  const infra = [INFRASTRUCTURE_REGISTER_HEADING, STORED_REGISTER_HEADINGS.infrastructure].find(has);
+  const planning = [PLANNING_REGISTER_HEADING, STORED_REGISTER_HEADINGS.planning].find(has);
+  if (aboutInfrastructure && infra) return infra;
+  if (planning) return planning;
+  if (infra) return infra;
+  return PLANNING_REGISTER_SECTION;
+}
+
+const ABOUT_INFRASTRUCTURE = /infrastructure|major public project|development application/i;
+
 export function rewriteScaffoldingPointers(
   markdown: string,
 ): { markdown: string; rewritten: number } {
   let rewritten = 0;
+  const documentText = markdown || '';
   const sectioned = bySection(markdown || '').map((section) => {
     let named = false;
     return section.replace(POINTER_RUN_RE, (whole, punct: string, gap: string, run: string) => {
@@ -744,7 +797,7 @@ export function rewriteScaffoldingPointers(
       // The reference belongs INSIDE the sentence it sources, so the
       // punctuation the run followed is re-emitted after it — otherwise the
       // parenthetical stands alone as a fragment after a full stop.
-      return ` (see *${PLANNING_REGISTER_SECTION}*)${punct}`;
+      return ` (see *${registerHeadingIn(documentText, ABOUT_INFRASTRUCTURE.test(run))}*)${punct}`;
     });
   }).join('\n');
 
@@ -753,9 +806,10 @@ export function rewriteScaffoldingPointers(
     // "See [Zoning & Planning notes]" must not become "See (see …)". Where the
     // sentence already introduces the reference, only the section is named.
     const before = whole.slice(Math.max(0, offset - 12), offset);
+    const target = registerHeadingIn(documentText, ABOUT_INFRASTRUCTURE.test(_whole));
     return /\b(?:see|in|under|per)\s*$/i.test(before)
-      ? `*${PLANNING_REGISTER_SECTION}*`
-      : ` (see *${PLANNING_REGISTER_SECTION}*)`;
+      ? `*${target}*`
+      : ` (see *${target}*)`;
   })
     // The pointer is usually set hard against the sentence it closes —
     // "…resale expectations.[Infrastructure section] The recorded 680…" — so
@@ -880,7 +934,11 @@ export function presentStoredMarkdown(
    * titled "Planning controls table (reproduced exactly)".
    */
   const headings = stripHeadingScaffolding(glance.markdown);
-  const titled = headings.stripped ? headings.markdown : glance.markdown;
+  const headed = headings.stripped ? headings.markdown : glance.markdown;
+  // …and a component identifier or a phrase of the prompt's own printed as a
+  // label or a column name. See `scaffoldingLabels.pure.ts`.
+  const labels = stripScaffoldingLabels(headed);
+  const titled = labels.replaced.length ? labels.markdown : headed;
   const registers = dedupeRegisterTables(titled);
   const printedOnce = registers.replaced.length ? registers.markdown : titled;
   // A column with a header and nothing under it, and a citation bracket with

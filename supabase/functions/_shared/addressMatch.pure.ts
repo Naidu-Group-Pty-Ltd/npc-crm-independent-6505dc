@@ -21,8 +21,12 @@
  * Agents write the same street six ways ("Hillcrest Rd", "Hillcrest Road",
  * "HILLCREST RD."), and the email parser preserves whatever it was given, so the
  * record and the web page rarely agree on the abbreviation.
+ *
+ * Exported so a caller reading free text for an address (a brochure page, in
+ * `reportPhotographs.pure.ts`) collapses the abbreviations exactly as this
+ * module does, rather than keeping a second list that drifts.
  */
-const STREET_TYPES: Record<string, string> = {
+export const STREET_TYPES: Readonly<Record<string, string>> = {
   rd: 'road', road: 'road',
   st: 'street', str: 'street', street: 'street',
   ave: 'avenue', av: 'avenue', avenue: 'avenue',

@@ -1,5 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { verifyAuth, createUnauthorizedResponse, createCorsHeaders, createForbiddenResponse } from "../_shared/auth.ts";
+import { BULK_DELETE_BUDGET_MS, removeDeletedReportStorage } from "../_shared/reports/investment/reportStorageRemoval.ts";
 
 import { enforceCsrf, csrfDenied } from "../_shared/csrfGuard.ts";
 import { internalError } from '../_shared/errorResponse.ts';
@@ -354,6 +355,11 @@ Deno.serve(async (req) => {
           { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
         );
       }
+
+      // Each cleared report's photographs, floor plans and kept document go
+      // with it, and never at the cost of the clear (`reportStorage.pure.ts`).
+      const storage = await removeDeletedReportStorage(supabase, deleted, BULK_DELETE_BUDGET_MS);
+      if (storage.reports > 0) console.log('[manage-automation-settings] report storage removed', storage);
 
       return new Response(
         JSON.stringify({ success: true, deletedCount: deleted?.length || 0 }),

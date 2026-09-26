@@ -970,6 +970,18 @@ function ReportGenerationProgressInner() {
             },
           },
         );
+        if (error?.code === 'report_complete') {
+          // The server refuses to record a finished report as failed (see
+          // `failureStamp.pure.ts`): there was nothing left to stop. It was
+          // not cancelled, so the finished toast must not be suppressed.
+          cancelledIdsRef.current.delete(reportId);
+          if (!opts.silent) {
+            toast.info(r ? `"${r.property_address}" had already finished` : 'The report had already finished', {
+              description: error.message,
+            });
+          }
+          return;
+        }
         if (error) {
           toast.error(`Failed to stop generation: ${error.message || 'Unknown error'}`);
           return;

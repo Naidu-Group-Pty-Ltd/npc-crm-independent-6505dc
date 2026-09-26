@@ -4,6 +4,8 @@
  * Mirrors `_shared/legalDocuments.ts` on the edge side — keep the two in step.
  */
 
+import { houseLabel } from './houseLabel';
+
 export type LegalDocumentCategory =
   | 'contract' | 'title' | 'plan' | 'disclosure_statement' | 'strata_report'
   | 'building_pest' | 'identity_voi' | 'transfer' | 'stamp_duty'
@@ -186,7 +188,7 @@ export const DOCUMENT_STATUS_CLASSES: Record<LegalDocumentStatus, string> = {
 export const DOCUMENT_OWNER_LABELS: Record<LegalDocumentOwner, string> = {
   client: 'Client',
   solicitor: 'Our practice',
-  npc: 'NPC',
+  npc: houseLabel('NPC', 'Command Centre'),
   other_side: 'Other side',
   lender: 'Lender',
   builder: 'Builder',

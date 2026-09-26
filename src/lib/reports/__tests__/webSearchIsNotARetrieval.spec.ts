@@ -108,7 +108,7 @@ describe('the prohibitions it sits beside are untouched', () => {
   it('keeps the crime block’s own refusals', () => {
     const absent = crimeStatBlocks({});
     expect(absent).toContain('do NOT print a crime table, a safety score, a rating or an estimated rate');
-    expect(absent).toContain('No recorded-crime register is integrated');
+    expect(absent).toContain('Recorded crime for this area is not covered by this report');
   });
 
   it('keeps the climate block’s own refusals', () => {

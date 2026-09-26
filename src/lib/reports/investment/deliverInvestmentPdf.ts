@@ -96,6 +96,9 @@ import {
   type InvestmentPresentationOptions,
 } from '@/lib/reports/investment/presentationOptions';
 import { loadInvestmentHeroImages } from '@/lib/reports/investment/investmentHeroImages';
+import { loadInvestmentReportWithPhotographs } from '@/lib/reportTemplate/adapters/investmentReportAdapter';
+import { pdfLibPictures, type PdfLibPicture } from '@/lib/reportTemplate/adapters/reportPhotographs';
+import { REPORT_FLOOR_PLAN_LIMIT } from '../../../../supabase/functions/_shared/reportPhotographs.pure';
 import { applyAudienceToMarkdown, audiencePolicyFor } from '@/lib/reports/investment/audienceContent.pure';
 import { contentPolicyFor } from '@/lib/reports/investment/tierContent.pure';
 import { composeOwnerOccupierLens } from '../../../../supabase/functions/_shared/reports/location/ownerOccupierLens.pure';
@@ -330,11 +333,14 @@ async function produceInvestmentDocumentOnce(
   // because it is where stored financials are healed and an historic row's
   // overrides are overlaid. One transform, one set of numbers.
   const { report, reportTier } = projectRowForPdf(presentedRow);
+  const pictures = await loadStandardPresentationPictures(reportId);
   const drawn = await generateInvestmentPdfBlob({
     report,
     reportTier,
     presentation,
     heroImages,
+    photographs: pictures.photographs,
+    floorPlans: pictures.floorPlans,
   });
   if (!drawn.blob.size) throw new Error('The rendered PDF was empty.');
   const doc: InvestmentDocument = {
@@ -346,6 +352,45 @@ async function produceInvestmentDocumentOnce(
   };
   rememberFinalised(reportId, { fingerprint, doc });
   return doc;
+}
+
+/**
+ * The property's own pictures, for the standard presentation.
+ *
+ * Read by the SAME reader a chosen template uses
+ * (`loadInvestmentReportWithPhotographs`), so the two presentations of one
+ * report carry the same photographs and the same plans, under the same rules:
+ * only the report's own address, only what the server has seen to be a
+ * photograph or a plan, and a URL capture finished before it is drawn.
+ *
+ * Asked for only when this presentation is the one being drawn, and after the
+ * template route has declined, so a templated document costs no second read.
+ * The cover takes the lead photograph alone, so photographs are fetched one at
+ * a time until one arrives rather than all at once.
+ *
+ * Never throws: a picture is not worth a document, so every failure is fewer
+ * pictures.
+ */
+async function loadStandardPresentationPictures(
+  reportId: string,
+): Promise<{ photographs: PdfLibPicture[]; floorPlans: PdfLibPicture[] }> {
+  try {
+    const read = await loadInvestmentReportWithPhotographs(reportId);
+    if (!read) return { photographs: [], floorPlans: [] };
+    let lead: PdfLibPicture | null = null;
+    for (const photograph of read.photographs) {
+      const [picture] = await pdfLibPictures([photograph]);
+      if (picture) {
+        lead = picture;
+        break;
+      }
+    }
+    const floorPlans = await pdfLibPictures(read.floorPlans.slice(0, REPORT_FLOOR_PLAN_LIMIT));
+    return { photographs: lead ? [lead] : [], floorPlans };
+  } catch (err) {
+    console.warn('[deliverInvestmentPdf] the property pictures could not be read', err);
+    return { photographs: [], floorPlans: [] };
+  }
 }
 
 /**

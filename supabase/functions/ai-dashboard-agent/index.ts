@@ -5,7 +5,7 @@ import { verifyInternal } from "../_shared/auth_v2.ts";
 import { authorizeAgentTool, AgentToolAuthzError, type AgentToolAuthzContext } from "../_shared/agentToolAuthz.ts";
 import { actorIsSuperadmin, requireModulePermission } from "../_shared/authz.ts";
 import { logApiUsage, estimateCost, extractOpenAIUsage } from "../_shared/logApiUsage.ts";
-import { getBrandConfig } from "../_shared/brand-config.ts";
+import { firmModifier, firmPhrase, loadWorkspaceIdentity } from "../_shared/workspaceIdentity.ts";
 import { internalError } from '../_shared/errorResponse.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
@@ -7016,7 +7016,7 @@ async function executeToggleGamePlanAction(sb: any, args: any) {
 
 // ============================================================
 
-const buildSystemPrompt = (brandName: string) => `You are Aurixa, the AI operating assistant for the ${brandName} Property Dashboard — a property investment and mortgage brokerage management platform used by ${brandName}.
+const buildSystemPrompt = (firm: string | null) => `You are Aurixa, the AI operating assistant for the ${firmModifier(firm)}Property Dashboard — a property investment and mortgage brokerage management platform${firmPhrase(firm, 'used by')}.
 
 You have access to 200+ specialized tools across 14 domains (clients, deals, reminders_tasks, financial, email, calendar, calls, reports, operations, game_plan, analytics, collaboration, listings, admin).
 
@@ -7739,7 +7739,7 @@ async function handleChat(sb: any, body: any, userId: string, username: string, 
     .eq('conversation_id', conversation_id).order('created_at', { ascending: true }).limit(60);
 
   const messages: any[] = [
-    { role: 'system', content: buildSystemPrompt((await getBrandConfig()).companyName) + `\n\nCurrent user: ${username} (ID: ${userId})\nCurrent conversation_id: ${conversation_id}\nCurrent time: ${new Date().toISOString()}${prefsContext}${semanticContext}${skillOverlay}` },
+    { role: 'system', content: buildSystemPrompt((await loadWorkspaceIdentity({ readPrimeName: true })).firm) + `\n\nCurrent user: ${username} (ID: ${userId})\nCurrent conversation_id: ${conversation_id}\nCurrent time: ${new Date().toISOString()}${prefsContext}${semanticContext}${skillOverlay}` },
   ];
 
   // Build conversation messages from history
@@ -8266,9 +8266,9 @@ async function handleChatStream(
     .select('role, content, tool_calls, tool_results')
     .eq('conversation_id', conversation_id).order('created_at', { ascending: true }).limit(60);
 
-  const brand = await getBrandConfig();
+  const voice = await loadWorkspaceIdentity({ readPrimeName: true });
   const messages: any[] = [
-    { role: 'system', content: buildSystemPrompt(brand.companyName) + `\n\nCurrent user: ${username} (ID: ${userId})\nCurrent conversation_id: ${conversation_id}\nCurrent time: ${new Date().toISOString()}${prefsContext}${semanticContext}${skillOverlay}` },
+    { role: 'system', content: buildSystemPrompt(voice.firm) + `\n\nCurrent user: ${username} (ID: ${userId})\nCurrent conversation_id: ${conversation_id}\nCurrent time: ${new Date().toISOString()}${prefsContext}${semanticContext}${skillOverlay}` },
   ];
 
   const convMessages: any[] = [];

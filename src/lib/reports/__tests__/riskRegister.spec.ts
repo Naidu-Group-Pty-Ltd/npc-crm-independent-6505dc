@@ -47,8 +47,11 @@ describe('exposure and evidence are different questions', () => {
     expect(RISK_EXPOSURE_LEVELS).not.toContain('Favourable');
   });
 
-  it('"Not searched" is an EVIDENCE reading, so a search nobody ran is never a clearance', () => {
-    expect(RISK_EVIDENCE_READINGS).toContain('Not searched');
+  it('"Not checked" is an EVIDENCE reading, so a check nobody made is never a clearance', () => {
+    // It read "Not searched" until 26 Sep 2026: the same absence, in the
+    // machine room's word rather than the adviser's.
+    expect(RISK_EVIDENCE_READINGS).toContain('Not checked');
+    expect(RISK_EVIDENCE_READINGS).not.toContain('Not searched');
     expect(RISK_EVIDENCE_READINGS).not.toContain('Clear');
     expect(RISK_EVIDENCE_READINGS).not.toContain('None');
   });
@@ -220,7 +223,7 @@ describe('the section registry and the module are one declaration', () => {
     expect(text).toContain('MARKDOWN TABLE');
     expect(text).toContain(`| ${RISK_REGISTER_COLUMNS.join(' | ')} |`);
     expect(text).toContain(`| ${RISK_REGISTER_COLUMNS.map(() => '---').join(' | ')} |`);
-    expect(text, 'a worked row').toMatch(/\| Bushfire \| Not assessed \| Not searched \|/);
+    expect(text, 'a worked row').toMatch(/\| Bushfire \| Not assessed \| Not checked \|/);
     expect(text, 'a worked detail block').toContain('- Finding:');
     expect(text).toMatch(/not as a bullet list/);
   });

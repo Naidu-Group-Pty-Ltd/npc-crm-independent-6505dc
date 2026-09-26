@@ -5,7 +5,7 @@
  */
 import { describe, expect, it } from 'vitest';
 
-import { geographyFromGeocode, mergeGeography, parseAddressText } from '@/lib/reports/market/addressGeography.pure';
+import { geographyFromGeocode, localityStateOf, mergeGeography, parseAddressText, stripAddressAnnotations } from '@/lib/reports/market/addressGeography.pure';
 
 describe('parseAddressText', () => {
   it('reads suburb, state and postcode from the usual spellings', () => {
@@ -27,6 +27,52 @@ describe('parseAddressText', () => {
   it('a lot number is never a postcode and an empty address is nothing', () => {
     expect(parseAddressText('Lot 2267 Hunza Road, Truganina VIC').postcode).toBeNull();
     expect(parseAddressText('   ')).toMatchObject({ resolvedFrom: 'none', suburb: null });
+  });
+
+  it('never reads a bracketed annotation as the suburb (24 Sep 2026)', () => {
+    // The stored address of report 79d677d6. The parse took "(tallawong)" as
+    // the suburb, the ABS was asked for a suburb of that name, and the report's
+    // geography never resolved.
+    const stored = parseAddressText('93 Schofields Farm Road (tallawong) NSW 2762');
+    expect(stored.suburb).not.toBe('(tallawong)');
+    expect(stored).toMatchObject({ suburb: null, state: 'NSW', postcode: '2762' });
+    // The same listing composed with its suburb (propertyAddress.pure.ts).
+    expect(parseAddressText('93 Schofields Farm Road (tallawong), Schofields NSW 2762'))
+      .toMatchObject({ suburb: 'Schofields', state: 'NSW', postcode: '2762' });
+  });
+
+  it('a unit number is never the postcode', () => {
+    // Report de783a4b: the intake parse took the FIRST four-digit token.
+    expect(parseAddressText('1408/5 SECOND AVE, Blacktown NSW 2148')).toMatchObject({ suburb: 'Blacktown', state: 'NSW', postcode: '2148' });
+    expect(parseAddressText('1408/5 Second Ave, Blacktown NSW').postcode).toBeNull();
+  });
+});
+
+describe('the state is the one in the locality position', () => {
+  it('never reads a street or a suburb named after a state as the state', () => {
+    // The first state word anywhere was read, so a Victoria Street outside
+    // Victoria was filed under VIC and its postcode dropped as a contradiction.
+    expect(parseAddressText('5 Victoria Street, Brisbane QLD 4000')).toMatchObject({ suburb: 'Brisbane', state: 'QLD', postcode: '4000' });
+    expect(parseAddressText('12 Main St, Victoria Point QLD 4165')).toMatchObject({ suburb: 'Victoria Point', state: 'QLD', postcode: '4165' });
+    expect(parseAddressText('3 Queensland Road, Perth WA 6000')).toMatchObject({ suburb: 'Perth', state: 'WA', postcode: '6000' });
+    // No state written: the postcode says it, the street does not.
+    expect(parseAddressText('5 Victoria Street, Brisbane 4000')).toMatchObject({ suburb: 'Brisbane', state: 'QLD', postcode: '4000' });
+  });
+
+  it('reads the state wherever the locality puts it, and nothing that is not a locality', () => {
+    expect(localityStateOf('Bondi, 2026, NSW')?.state).toBe('NSW');
+    expect(localityStateOf('93 Schofields Farm Road NSW 2762, Australia')?.state).toBe('NSW');
+    expect(localityStateOf('12 Smith Street Scarborough Western Australia 6019')?.state).toBe('WA');
+    expect(localityStateOf('Victoria')?.state).toBe('VIC');
+    expect(localityStateOf('5 Victoria Street, Brisbane')).toBeNull();
+  });
+});
+
+describe('stripAddressAnnotations', () => {
+  it('removes bracketed notes and nothing else', () => {
+    expect(stripAddressAnnotations('93 Schofields Farm Road (tallawong) NSW 2762')).toBe('93 Schofields Farm Road NSW 2762');
+    expect(stripAddressAnnotations('Lot 12 [off the plan] Hunza Road , Truganina')).toBe('Lot 12 Hunza Road, Truganina');
+    expect(stripAddressAnnotations('  291  Stone Mason Drive, Kellyville NSW 2155 ')).toBe('291 Stone Mason Drive, Kellyville NSW 2155');
   });
 });
 

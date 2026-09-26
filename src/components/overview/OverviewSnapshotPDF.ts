@@ -8,6 +8,7 @@
 import jsPDF from 'jspdf';
 import { fetchGlobalReportSettings } from '@/hooks/useGlobalReportSettings';
 import { drawJsPDFDisclaimerPage } from '@/utils/pdfDisclaimerPage';
+import { issuerClosingPage, loadLegacyDocumentBrand, rgbObject } from '@/lib/reports/legacyDocumentBrand';
 
 // ─── Design tokens ───────────────────────────────────────────────────────────
 const NAVY = { r: 13, g: 38, b: 77 };
@@ -90,7 +91,21 @@ export async function generateOverviewSnapshotPDF(data: OverviewSnapshotData): P
 
   // Fetch dynamic brand for footer/cover
   const brandSettings = await fetchGlobalReportSettings();
-  const brandName = (brandSettings?.contactDetails?.company_name || 'Property Consulting').trim();
+
+  // Whose template this report is printed in: NPC's navy and gold on the
+  // prime, exactly as it has always been drawn, and the issuer's own on every
+  // clone (`legacyDocumentBrand.ts`) — its name, its colours, its closing page.
+  const legacyBrand = await loadLegacyDocumentBrand(brandSettings?.contactDetails?.company_name);
+  const issuerFamily = legacyBrand.artwork === 'issuer' ? legacyBrand.family : null;
+  const brandName = legacyBrand.artwork === 'issuer'
+    ? legacyBrand.issuer.name
+    : (brandSettings?.contactDetails?.company_name || 'Property Consulting').trim();
+  const P = {
+    coverField: issuerFamily ? rgbObject(issuerFamily.field) : NAVY,
+    coverAccent: issuerFamily ? rgbObject(issuerFamily.accentOnField) : GOLD,
+    navy: issuerFamily ? rgbObject(issuerFamily.deep) : NAVY,
+    gold: issuerFamily ? rgbObject(issuerFamily.accent) : GOLD,
+  };
 
   // ── Utilities ──
   const addPage = () => {
@@ -104,7 +119,7 @@ export async function generateOverviewSnapshotPDF(data: OverviewSnapshotData): P
 
   const drawFooter = () => {
     const fy = ph - 12;
-    doc.setDrawColor(GOLD.r, GOLD.g, GOLD.b);
+    doc.setDrawColor(P.gold.r, P.gold.g, P.gold.b);
     doc.setLineWidth(0.5);
     doc.line(margin, fy - 3, pw - margin, fy - 3);
     doc.setFontSize(7);
@@ -121,11 +136,11 @@ export async function generateOverviewSnapshotPDF(data: OverviewSnapshotData): P
   const drawSectionHeader = (title: string) => {
     checkBreak(18);
     // Gold accent bar
-    doc.setFillColor(GOLD.r, GOLD.g, GOLD.b);
+    doc.setFillColor(P.gold.r, P.gold.g, P.gold.b);
     doc.rect(margin, y - 1, 3, 10, 'F');
     doc.setFontSize(13);
     doc.setFont('helvetica', 'bold');
-    doc.setTextColor(NAVY.r, NAVY.g, NAVY.b);
+    doc.setTextColor(P.navy.r, P.navy.g, P.navy.b);
     doc.text(title, margin + 7, y + 6);
     y += 16;
   };
@@ -136,7 +151,7 @@ export async function generateOverviewSnapshotPDF(data: OverviewSnapshotData): P
     doc.setFillColor(LIGHT_BG.r, LIGHT_BG.g, LIGHT_BG.b);
     doc.roundedRect(x, y, bw, bh, 2, 2, 'F');
     // Gold top border
-    doc.setFillColor(GOLD.r, GOLD.g, GOLD.b);
+    doc.setFillColor(P.gold.r, P.gold.g, P.gold.b);
     doc.rect(x, y, bw, 1.5, 'F');
     // Label
     doc.setFontSize(7);
@@ -144,7 +159,7 @@ export async function generateOverviewSnapshotPDF(data: OverviewSnapshotData): P
     doc.setTextColor(GRAY_TEXT.r, GRAY_TEXT.g, GRAY_TEXT.b);
     doc.text(label.toUpperCase(), x + 5, y + 10);
     // Value
-    const vc = highlight || NAVY;
+    const vc = highlight || P.navy;
     doc.setFontSize(14);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(vc.r, vc.g, vc.b);
@@ -157,11 +172,11 @@ export async function generateOverviewSnapshotPDF(data: OverviewSnapshotData): P
   addPage();
 
   // Full navy background
-  doc.setFillColor(NAVY.r, NAVY.g, NAVY.b);
+  doc.setFillColor(P.coverField.r, P.coverField.g, P.coverField.b);
   doc.rect(0, 0, pw, ph, 'F');
 
   // Gold accent line
-  doc.setFillColor(GOLD.r, GOLD.g, GOLD.b);
+  doc.setFillColor(P.coverAccent.r, P.coverAccent.g, P.coverAccent.b);
   doc.rect(margin, 70, 50, 2, 'F');
 
   // Title
@@ -174,7 +189,7 @@ export async function generateOverviewSnapshotPDF(data: OverviewSnapshotData): P
   // Subtitle
   doc.setFontSize(14);
   doc.setFont('helvetica', 'normal');
-  doc.setTextColor(GOLD.r, GOLD.g, GOLD.b);
+  doc.setTextColor(P.coverAccent.r, P.coverAccent.g, P.coverAccent.b);
   doc.text('Property Intake Dashboard Report', margin, 130);
 
   // Date & time
@@ -191,7 +206,7 @@ export async function generateOverviewSnapshotPDF(data: OverviewSnapshotData): P
   
   if (activeFilters.length > 0) {
     doc.setFontSize(9);
-    doc.setTextColor(GOLD.r, GOLD.g, GOLD.b);
+    doc.setTextColor(P.coverAccent.r, P.coverAccent.g, P.coverAccent.b);
     doc.text('Active Filters:', margin, 165);
     doc.setTextColor(200, 200, 200);
     doc.text(activeFilters.join('  |  '), margin, 173);
@@ -203,7 +218,7 @@ export async function generateOverviewSnapshotPDF(data: OverviewSnapshotData): P
 
   // Total listings badge at bottom
   doc.setFontSize(11);
-  doc.setTextColor(GOLD.r, GOLD.g, GOLD.b);
+  doc.setTextColor(P.coverAccent.r, P.coverAccent.g, P.coverAccent.b);
   doc.text(`Total Properties: ${data.totalListings.toLocaleString('en-AU')}`, margin, ph - 50);
 
   // Brand
@@ -260,7 +275,7 @@ export async function generateOverviewSnapshotPDF(data: OverviewSnapshotData): P
     doc.setFillColor(230, 230, 230);
     doc.roundedRect(barX, y + 1, barW, barH, 1, 1, 'F');
     const filled = Math.min((stat.value / Math.max(stat.total, 1)) * barW, barW);
-    doc.setFillColor(GOLD.r, GOLD.g, GOLD.b);
+    doc.setFillColor(P.gold.r, P.gold.g, P.gold.b);
     if (filled > 0) doc.roundedRect(barX, y + 1, filled, barH, 1, 1, 'F');
 
     y += 12;
@@ -276,7 +291,7 @@ export async function generateOverviewSnapshotPDF(data: OverviewSnapshotData): P
     const totalPropCount = data.propertyTypeData.reduce((s, d) => s + d.count, 0);
 
     // Table header
-    doc.setFillColor(NAVY.r, NAVY.g, NAVY.b);
+    doc.setFillColor(P.navy.r, P.navy.g, P.navy.b);
     doc.rect(margin, y, cw, 8, 'F');
     doc.setFontSize(8);
     doc.setFont('helvetica', 'bold');
@@ -312,7 +327,7 @@ export async function generateOverviewSnapshotPDF(data: OverviewSnapshotData): P
       doc.setFillColor(230, 230, 230);
       doc.roundedRect(miniBarX, y - 1, miniBarW, 3.5, 1, 1, 'F');
       const miniF = Math.min((item.count / totalPropCount) * miniBarW, miniBarW);
-      doc.setFillColor(GOLD.r, GOLD.g, GOLD.b);
+      doc.setFillColor(P.gold.r, P.gold.g, P.gold.b);
       if (miniF > 0) doc.roundedRect(miniBarX, y - 1, miniF, 3.5, 1, 1, 'F');
 
       y += 8;
@@ -330,7 +345,7 @@ export async function generateOverviewSnapshotPDF(data: OverviewSnapshotData): P
     const maxSuburbCount = data.suburbData[0]?.count || 1;
 
     // Table header
-    doc.setFillColor(NAVY.r, NAVY.g, NAVY.b);
+    doc.setFillColor(P.navy.r, P.navy.g, P.navy.b);
     doc.rect(margin, y, cw, 8, 'F');
     doc.setFontSize(8);
     doc.setFont('helvetica', 'bold');
@@ -365,7 +380,7 @@ export async function generateOverviewSnapshotPDF(data: OverviewSnapshotData): P
       doc.setFillColor(230, 230, 230);
       doc.roundedRect(barX, y - 1, barW, 3.5, 1, 1, 'F');
       const filled = Math.min((item.count / maxSuburbCount) * barW, barW);
-      doc.setFillColor(GOLD.r, GOLD.g, GOLD.b);
+      doc.setFillColor(P.gold.r, P.gold.g, P.gold.b);
       if (filled > 0) doc.roundedRect(barX, y - 1, filled, 3.5, 1, 1, 'F');
 
       y += 8;
@@ -379,7 +394,7 @@ export async function generateOverviewSnapshotPDF(data: OverviewSnapshotData): P
   if (data.agencyData.length > 0) {
     const maxAgencyCount = data.agencyData[0]?.count || 1;
 
-    doc.setFillColor(NAVY.r, NAVY.g, NAVY.b);
+    doc.setFillColor(P.navy.r, P.navy.g, P.navy.b);
     doc.rect(margin, y, cw, 8, 'F');
     doc.setFontSize(8);
     doc.setFont('helvetica', 'bold');
@@ -419,7 +434,7 @@ export async function generateOverviewSnapshotPDF(data: OverviewSnapshotData): P
       doc.setFillColor(230, 230, 230);
       doc.roundedRect(barX, y - 1, barW, 3.5, 1, 1, 'F');
       const filled = Math.min((item.count / maxAgencyCount) * barW, barW);
-      doc.setFillColor(GOLD.r, GOLD.g, GOLD.b);
+      doc.setFillColor(P.gold.r, P.gold.g, P.gold.b);
       if (filled > 0) doc.roundedRect(barX, y - 1, filled, 3.5, 1, 1, 'F');
 
       y += 8;
@@ -434,7 +449,7 @@ export async function generateOverviewSnapshotPDF(data: OverviewSnapshotData): P
     drawSectionHeader('Recent Listings');
 
     // Table header
-    doc.setFillColor(NAVY.r, NAVY.g, NAVY.b);
+    doc.setFillColor(P.navy.r, P.navy.g, P.navy.b);
     doc.rect(margin, y, cw, 8, 'F');
     doc.setFontSize(7);
     doc.setFont('helvetica', 'bold');
@@ -485,7 +500,12 @@ export async function generateOverviewSnapshotPDF(data: OverviewSnapshotData): P
   // ═══════════════════════════════════════════════════════════════════════════
   try {
     const settings = await fetchGlobalReportSettings();
-    drawJsPDFDisclaimerPage(doc, settings.contactDetails, settings.disclaimer);
+    if (legacyBrand.artwork === 'issuer') {
+      const closing = issuerClosingPage(legacyBrand, settings);
+      drawJsPDFDisclaimerPage(doc, closing.contact, closing.disclaimer, closing.palette);
+    } else {
+      drawJsPDFDisclaimerPage(doc, settings.contactDetails, settings.disclaimer);
+    }
   } catch (e) {
     console.warn('Could not load report settings for disclaimer page:', e);
   }

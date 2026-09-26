@@ -211,7 +211,7 @@ describe('after projection', () => {
     SETTINGS,
   );
 
-  it('resolves every binding the catalogue has, bar the photographs', () => {
+  it('resolves every binding the catalogue has, bar the photographs and plans', () => {
     // It began at 1 of 80. The projection took it to 40, and re-pointing the
     // masters off the paths that have no source — a narrative page bound
     // entirely to `market.*`, a three-row register bound to `risks.0..2` when
@@ -219,9 +219,10 @@ describe('after projection', () => {
     const bindings = catalogueBindings();
     const unresolved = bindings.filter((b) => !resolves(data, b));
     expect(bindings.length).toBeGreaterThanOrEqual(70);
-    // Photographs (6). Nothing else — the ABN and the postal address used to be
-    // here and now resolve, from `global_report_settings.contact_details`.
-    expect(unresolved).toHaveLength(6);
+    // Photographs (6) and floor plans (2). Nothing else — the ABN and the
+    // postal address used to be here and now resolve, from
+    // `global_report_settings.contact_details`.
+    expect(unresolved).toHaveLength(8);
   });
 
   it('leaves exactly the bindings that have no source, and no others', () => {
@@ -231,10 +232,15 @@ describe('after projection', () => {
     // say where it came from — or it invented a figure, and this test is the
     // thing standing between that invention and a client's report.
     const expectedAbsent = [
-      // Photographs: no adapter emits them. The plates are page-conditional, so
-      // an unfilled one costs no page rather than an empty one.
+      // Photographs and floor plans: the projection never publishes them. The
+      // Investment adapter fills both at render time from what the report
+      // broker signed (`reportPhotographs.ts`), because a picture is bytes to
+      // be fetched and inlined, not a field of the row. The plates and the
+      // floor-plan sheets are page-conditional, so an unfilled one costs no
+      // page rather than an empty one.
       'property.images.0', 'property.images.1', 'property.images.2',
       'property.images.3', 'property.images.4', 'property.images.5',
+      'property.floorPlans.0', 'property.floorPlans.1',
       // `org.abn` and `org.address` were here, on the finding that
       // `whitelabel_settings` has no ABN column and an empty
       // `email_signature_address`. Both were true, and both were the wrong

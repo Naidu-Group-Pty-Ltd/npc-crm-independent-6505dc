@@ -186,7 +186,14 @@ const proseLines = (markdown: string, idPrefix: string): number =>
  * transcript taught twice over: a character estimate does not know what Markdown
  * costs, and a four-row table is seven printed lines for a hundred characters.
  */
-export function planSections(report: MarketIntelligenceReport): {
+export function planSections(
+  report: MarketIntelligenceReport,
+  /**
+   * The callouts the brand's own close prints (`brandCloseCallouts`): two for
+   * a named business, none for a document issued under the platform.
+   */
+  closeCallouts: number = BRAND_CLOSE_CALLOUTS,
+): {
   sections: PlannedSection[];
   dropped: PlannedSection[];
   charsOmitted: number;
@@ -273,10 +280,13 @@ export function planSections(report: MarketIntelligenceReport): {
   }
 
   // The CTA section exists when the model wrote one *or* when the brand's own
-  // close will be printed, which it always is. A "Next Steps" page carrying only
-  // the brand block is still a next-steps page.
-  push('next-steps', 'mi.next-steps', 'Your Next Steps', report.prose.ctaContent,
-    proseLines(report.prose.ctaContent, 'min') + BRAND_CLOSE_CALLOUTS * LINES_PER_CALLOUT);
+  // close will be printed, which it is for every named business. A "Next Steps"
+  // page carrying only the brand block is still a next-steps page; one carrying
+  // neither would be an empty chapter.
+  if (closeCallouts > 0 || report.prose.ctaContent.length >= MIN_SECTION_CHARS) {
+    push('next-steps', 'mi.next-steps', 'Your Next Steps', report.prose.ctaContent,
+      proseLines(report.prose.ctaContent, 'min') + closeCallouts * LINES_PER_CALLOUT);
+  }
 
   if (report.citations.length) {
     push('sources', 'mi.sources', 'Sources', '',

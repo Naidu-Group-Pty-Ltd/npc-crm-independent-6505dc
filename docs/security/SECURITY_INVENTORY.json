@@ -572,6 +572,7 @@
       "finance-portal-snoozes/index.ts",
       "google-fonts-catalog/index.ts",
       "google-places-autocomplete/index.ts",
+      "hero-image-studio/index.ts",
       "import-clients-from-ghl/index.ts",
       "market-news-archive-v2/index.ts",
       "market-qa-digest-runner/index.ts",

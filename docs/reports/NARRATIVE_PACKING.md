@@ -181,6 +181,20 @@ cannot be crossed either: a flow places each block below the tallest of the
 row before it, so a block that ends inside the dropped block's band would
 already have overlapped it.
 
+**A dropped layer is not a hole** (25 Sep 2026). A block whose declared box
+reaches past the first block below it was drawn *under* that block, not above
+it — the property's photograph beneath a cover's type, and the scrim over the
+photograph. Its absence leaves a bare ground and nothing to close. Before this,
+the three photographic Compass masters (Atelier, Atelier Plate, Grand Folio)
+rendered with no photograph closed that "hole": every block on the cover rose
+by the distance to the first of them, the brand mark to the page's top edge
+(68pt → 0pt) and the standfirst over the title's last line (579pt → 511pt).
+Every check of those covers ran on the sample data, which carries photographs,
+so none of them could see it. Measured over all 543 seeded templates, each
+drawn with full, photograph-less and empty data, the rule changes exactly
+those three covers and nothing else; `closeDroppedBlocks.spec.ts` pins it on
+the rule and on the three masters.
+
 ## 4b. A chart label fits the drawing it belongs to
 
 The same renders found four chart labels set past their drawing: a gauge
