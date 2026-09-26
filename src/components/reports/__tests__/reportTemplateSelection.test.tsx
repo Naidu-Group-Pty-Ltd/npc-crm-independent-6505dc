@@ -29,6 +29,7 @@ Object.defineProperty(globalThis, 'ResizeObserver', { writable: true, value: Tes
 
 import { ReportTemplateSelector } from '../ReportTemplateSelector';
 import { ReportTemplateBindings } from '../ReportTemplateBindings';
+import { DRAWN_DOCUMENTS } from '../../../../supabase/functions/_shared/reports/templateDesignRoute.pure';
 
 const TEMPLATES = [
   {
@@ -114,6 +115,19 @@ describe('choosing a template before generation', () => {
     renderSelector();
     expect(await screen.findByText(/No template chosen — using the default/)).toBeTruthy();
     expect(screen.getByRole('button', { name: 'Choose template' })).toBeTruthy();
+  });
+
+  it('says a held report type keeps its standard design when nothing has been chosen', async () => {
+    const client = new QueryClient({
+      defaultOptions: { queries: { retry: false }, mutations: { retry: false } },
+    });
+    render(
+      <QueryClientProvider client={client}>
+        <ReportTemplateSelector reportType="portfolio" formatLabel="Portfolio Review" />
+      </QueryClientProvider>,
+    );
+    expect(await screen.findByText('No template chosen — Portfolio Review uses its standard design.')).toBeTruthy();
+    expect(screen.queryByText(/using the default/)).toBeNull();
   });
 
   it('offers only the templates for this format, across every spelling', async () => {
@@ -259,8 +273,19 @@ describe('the per-format list', () => {
     renderBindings();
     expect(await screen.findByText('Investment Report')).toBeTruthy();
     expect(screen.getByText('Compass — Dark Executive')).toBeTruthy();
-    // A format nobody has chosen for says how many it is choosing between.
-    expect(screen.getAllByText(/Choosing automatically from/).length).toBeGreaterThan(0);
+    // A held format nobody has chosen for is drawn in its own standard
+    // design, never in whichever template ranks highest
+    // (`templateParity.pure.ts`), and its row says so.
+    expect(screen.getAllByText('Standard design until a template is chosen.').length).toBeGreaterThan(0);
+    expect(screen.queryByText(/Choosing automatically from/)).toBeNull();
+  });
+
+  it('says Investment, with nothing chosen, still goes by the ranking', async () => {
+    renderBindings();
+    await screen.findByText('Investment Report');
+    // Investment is the one released type: it draws the highest-ranked
+    // template's own pages, and no other row makes that claim.
+    expect(screen.getAllByText(/Choosing automatically from 3 active templates/)).toHaveLength(1);
   });
 
   it('marks a preview-only format instead of leaving it out', async () => {
@@ -275,5 +300,25 @@ describe('the per-format list', () => {
     fireEvent.click(screen.getAllByRole('button', { name: 'Choose' })[0]);
     expect(await screen.findByText('Choose a template')).toBeTruthy();
     expect(navigate).not.toHaveBeenCalled();
+  });
+
+  it('names, on the row that lends it, the report that wears its design', async () => {
+    renderBindings();
+    await screen.findByText('Investment Report');
+    const notes = screen.getAllByTestId('template-borrowed-design').map((n) => n.textContent ?? '');
+    expect(notes).toEqual(['Also sets the design of the Cash Flow Comparison, which is made from this report.']);
+  });
+
+  it('names, under the report type they wear, the documents drawn without a template of their own', async () => {
+    renderBindings();
+    await screen.findByText('Investment Report');
+    const notes = screen.getAllByTestId('template-drawn-documents').map((n) => n.textContent ?? '');
+    // One line per report type that dresses something, and every drawn
+    // document named exactly once across them (`DRAWN_DOCUMENTS`).
+    expect(notes).toHaveLength(new Set(DRAWN_DOCUMENTS.map((d) => d.designFrom)).size);
+    for (const doc of DRAWN_DOCUMENTS) {
+      expect(notes.filter((n) => n.includes(doc.label)), doc.label).toHaveLength(1);
+    }
+    expect(notes.join(' ')).not.toMatch(/lender packet/i);
   });
 });

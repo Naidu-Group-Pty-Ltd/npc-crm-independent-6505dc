@@ -117,13 +117,16 @@ Deno.serve(async (req) => {
         propertyNumber: index + 1,
         address: report.property_address,
         
-        // Financial Metrics
-        purchasePrice: mo.purchasePrice || fc.purchasePrice || 0,
-        weeklyRent: mo.weeklyRent || fc.weeklyRent || 0,
-        // IMPORTANT: Do not default to 5% - use researched/overridden value or null
+        // Financial Metrics. A figure the record does not hold is null, never
+        // a default: the model reads what it is handed as THIS property's
+        // figure, so a 5.5% rate or an 80% LVR nobody recorded was stated in
+        // the analysis as fact, and a zero price or rent was read as a free
+        // or an empty property.
+        purchasePrice: mo.purchasePrice || fc.purchasePrice || null,
+        weeklyRent: mo.weeklyRent || fc.weeklyRent || null,
         capitalGrowthRate: mo.capitalGrowth || fc.capitalGrowth || fc.assumptions?.capitalGrowth || null,
-        interestRate: mo.interestRate || fc.interestRate || 5.5,
-        loanToValueRatio: mo.loanToValueRatio || fc.loanToValueRatio || 80,
+        interestRate: mo.interestRate || fc.interestRate || null,
+        loanToValueRatio: mo.loanToValueRatio || fc.loanToValueRatio || null,
         
         // Investment Score
         overallScore: score.totalScore || null,
@@ -179,8 +182,10 @@ that object.
 - **overallRecommendation** — the single best property and why, any property to
   avoid and why, and the scenarios under which a different property would win.
 
-Ground every claim in the figures supplied. Where a property's capital growth
-rate is null it was never researched — say so rather than assuming one.
+Ground every claim in the figures supplied. A null figure (a price, a weekly
+rent, a capital growth rate, an interest rate or an LVR) is one the record does
+not hold: say it is not recorded rather than assuming one, and never state or
+calculate a figure from a value you were not given.
 
 Use exactly this structure:
 ${CASH_FLOW_ANALYSIS_SHAPE}`;

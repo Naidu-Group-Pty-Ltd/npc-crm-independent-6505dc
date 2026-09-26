@@ -175,6 +175,8 @@
     "templates:macro-scan": "tsx scripts/template-library/macroScan.ts",
     "templates:compass:qa": "tsx scripts/template-library/investmentCompass/qa.ts",
     "templates:compass:generate": "tsx scripts/template-library/investmentCompass/generate.ts",
+    "templates:design:generate": "tsx scripts/template-library/investmentCompass/designCatalogue.ts",
+    "templates:design:check": "tsx scripts/template-library/investmentCompass/designCatalogue.ts --check",
     "test:e2e:report-template-picker": "vite build --config tests-e2e/report-template-picker/harness/vite.config.ts && playwright test tests-e2e/report-template-picker",
     "security:fabricated-data": "node scripts/security/check-fabricated-data.mjs",
     "verify:journey": "node scripts/verify/report-journey/run.mjs",

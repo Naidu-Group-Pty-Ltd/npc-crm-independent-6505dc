@@ -8,7 +8,9 @@
 import jsPDF from 'jspdf';
 import { fetchGlobalReportSettings } from '@/hooks/useGlobalReportSettings';
 import { drawJsPDFDisclaimerPage } from '@/utils/pdfDisclaimerPage';
-import { issuerClosingPage, loadLegacyDocumentBrand, rgbObject } from '@/lib/reports/legacyDocumentBrand';
+import { headingFaceFor, issuerClosingPage, loadLegacyDocumentBrand, rgbObject } from '@/lib/reports/legacyDocumentBrand';
+import { drawnDesignFor } from '@/lib/reports/drawnDocumentDesign';
+import { paintDesignCover } from '@/lib/reports/drawnCover';
 
 // ─── Design tokens ───────────────────────────────────────────────────────────
 const NAVY = { r: 13, g: 38, b: 77 };
@@ -94,9 +96,14 @@ export async function generateOverviewSnapshotPDF(data: OverviewSnapshotData): P
 
   // Whose template this report is printed in: NPC's navy and gold on the
   // prime, exactly as it has always been drawn, and the issuer's own on every
-  // clone (`legacyDocumentBrand.ts`) — its name, its colours, its closing page.
-  const legacyBrand = await loadLegacyDocumentBrand(brandSettings?.contactDetails?.company_name);
+  // clone (`legacyDocumentBrand.ts`) — its name, its colours, its closing page —
+  // or, where the person chose a template for Market Intelligence, that
+  // template's design (`drawnDocumentDesign.ts`).
+  const design = await drawnDesignFor('overview_snapshot');
+  const legacyBrand = await loadLegacyDocumentBrand(brandSettings?.contactDetails?.company_name, undefined, design);
   const issuerFamily = legacyBrand.artwork === 'issuer' ? legacyBrand.family : null;
+  const coverDesign = legacyBrand.artwork === 'issuer' ? legacyBrand.design ?? null : null;
+  const headingFace = headingFaceFor(legacyBrand);
   const brandName = legacyBrand.artwork === 'issuer'
     ? legacyBrand.issuer.name
     : (brandSettings?.contactDetails?.company_name || 'Property Consulting').trim();
@@ -139,7 +146,7 @@ export async function generateOverviewSnapshotPDF(data: OverviewSnapshotData): P
     doc.setFillColor(P.gold.r, P.gold.g, P.gold.b);
     doc.rect(margin, y - 1, 3, 10, 'F');
     doc.setFontSize(13);
-    doc.setFont('helvetica', 'bold');
+    doc.setFont(headingFace, 'bold');
     doc.setTextColor(P.navy.r, P.navy.g, P.navy.b);
     doc.text(title, margin + 7, y + 6);
     y += 16;
@@ -171,30 +178,42 @@ export async function generateOverviewSnapshotPDF(data: OverviewSnapshotData): P
   // ═══════════════════════════════════════════════════════════════════════════
   addPage();
 
-  // Full navy background
-  doc.setFillColor(P.coverField.r, P.coverField.g, P.coverField.b);
-  doc.rect(0, 0, pw, ph, 'F');
+  // The cover's ground and inks. Without a design they are what this cover has
+  // always drawn; with one, the design's ground decides them (`drawnCover.ts`) —
+  // a band ends under the filter lines, so the total and the name sit on paper.
+  const painted = coverDesign ? paintDesignCover(doc, coverDesign, { bandBottom: 185 }) : null;
+  const headInk = painted ? painted.head.ink : WHITE;
+  const headAccent = painted ? painted.head.accent : P.coverAccent;
+  const filterInk = painted ? painted.head.ink : { r: 200, g: 200, b: 200 };
+  const footAccent = painted ? painted.foot.accent : P.coverAccent;
+  const footMuted = painted ? painted.foot.muted : { r: 120, g: 120, b: 120 };
+
+  if (!painted) {
+    // Full navy background
+    doc.setFillColor(P.coverField.r, P.coverField.g, P.coverField.b);
+    doc.rect(0, 0, pw, ph, 'F');
+  }
 
   // Gold accent line
-  doc.setFillColor(P.coverAccent.r, P.coverAccent.g, P.coverAccent.b);
+  doc.setFillColor(headAccent.r, headAccent.g, headAccent.b);
   doc.rect(margin, 70, 50, 2, 'F');
 
   // Title
   doc.setFontSize(32);
-  doc.setFont('helvetica', 'bold');
-  doc.setTextColor(WHITE.r, WHITE.g, WHITE.b);
+  doc.setFont(coverDesign ? coverDesign.faces.cover : 'helvetica', 'bold');
+  doc.setTextColor(headInk.r, headInk.g, headInk.b);
   doc.text('OVERVIEW', margin, 95);
   doc.text('SNAPSHOT', margin, 110);
 
   // Subtitle
   doc.setFontSize(14);
   doc.setFont('helvetica', 'normal');
-  doc.setTextColor(P.coverAccent.r, P.coverAccent.g, P.coverAccent.b);
+  doc.setTextColor(headAccent.r, headAccent.g, headAccent.b);
   doc.text('Property Intake Dashboard Report', margin, 130);
 
   // Date & time
   doc.setFontSize(10);
-  doc.setTextColor(WHITE.r, WHITE.g, WHITE.b);
+  doc.setTextColor(headInk.r, headInk.g, headInk.b);
   doc.text(`Generated: ${fmtDate(now)} at ${fmtTime(now)}`, margin, 150);
 
   // Filter context
@@ -206,24 +225,24 @@ export async function generateOverviewSnapshotPDF(data: OverviewSnapshotData): P
   
   if (activeFilters.length > 0) {
     doc.setFontSize(9);
-    doc.setTextColor(P.coverAccent.r, P.coverAccent.g, P.coverAccent.b);
+    doc.setTextColor(headAccent.r, headAccent.g, headAccent.b);
     doc.text('Active Filters:', margin, 165);
-    doc.setTextColor(200, 200, 200);
+    doc.setTextColor(filterInk.r, filterInk.g, filterInk.b);
     doc.text(activeFilters.join('  |  '), margin, 173);
   } else {
     doc.setFontSize(9);
-    doc.setTextColor(200, 200, 200);
+    doc.setTextColor(filterInk.r, filterInk.g, filterInk.b);
     doc.text('All listings — no filters applied', margin, 165);
   }
 
   // Total listings badge at bottom
   doc.setFontSize(11);
-  doc.setTextColor(P.coverAccent.r, P.coverAccent.g, P.coverAccent.b);
+  doc.setTextColor(footAccent.r, footAccent.g, footAccent.b);
   doc.text(`Total Properties: ${data.totalListings.toLocaleString('en-AU')}`, margin, ph - 50);
 
   // Brand
   doc.setFontSize(9);
-  doc.setTextColor(120, 120, 120);
+  doc.setTextColor(footMuted.r, footMuted.g, footMuted.b);
   doc.text(brandName, margin, ph - 25);
 
   // ═══════════════════════════════════════════════════════════════════════════

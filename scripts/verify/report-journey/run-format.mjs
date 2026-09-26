@@ -13,11 +13,19 @@
  *
  * What it checks, for every format: the surface mounts; a template can be
  * chosen where the document is produced and the choice persists through the
- * broker; ONE finalisation asks for ONE render, in final mode, naming the
- * record and drawing the chosen template; a PDF arrives; the PDF measures
- * clean (`measure.mjs` — overlap, off-page text, illegible runs, raw bindings);
- * where the format has a send, the send reuses the finalised document and the
- * portal row names it; and nothing the page asked for went unanswered.
+ * broker; ONE finalisation asks for ONE document; a PDF arrives; where the
+ * format has a send, the send reuses the finalised document and the portal row
+ * names it; and nothing the page asked for went unanswered.
+ *
+ * Every format here keeps its own pages and wears the chosen template as its
+ * DESIGN (`templateParity.pure.ts`, `standardDesign.ts`), so "one document"
+ * means ONE call to the format's own route carrying the chosen template as
+ * `design`, and NO template render. The route's document is drawn by the
+ * deployed function and is proven where it is drawn
+ * (`templateDesignParity.spec.ts`); the double answers it with a stand-in. A
+ * format released to its template's pages would name no `route` and be judged
+ * by the template branch: one final-mode `render-template-pdf` of the chosen
+ * template, measured clean (`measure.mjs`).
  *
  * Usage:
  *   node scripts/verify/report-journey/run-format.mjs --format <cashflow|market_intelligence|comparison|report_qa> --record <id> [--template <id|name>] [--subject structured|transcript]
@@ -61,6 +69,7 @@ const FORMATS = {
   cashflow: {
     label: '10 Year Cash Flow',
     selectionType: 'cashflow',
+    route: 'render-cash-flow-pdf',
     requiresReport: true,
     url: (id) => `/cash-flow-analysis/${id}`,
     stays: (url, id) => url.includes(`/cash-flow-analysis/${id}`),
@@ -86,6 +95,7 @@ const FORMATS = {
   market_intelligence: {
     label: 'Market Intelligence',
     selectionType: 'market_intelligence',
+    route: 'render-market-intelligence-pdf',
     requiresReport: false,
     url: () => '/marketing-analytics',
     stays: (url) => url.includes('/marketing-analytics'),
@@ -151,16 +161,18 @@ const FORMATS = {
       await history.getByRole('button', { name: /^\s*typeset pdf\s*$/i }).first().click();
     },
     afterGenerate: async (page, check) => {
-      // RS-5c.4: the person asked for the stored copy (persist defaults on) and
-      // got their chosen template; the untouched email copy is said out loud.
-      const note = page.getByText(/drawn from your chosen template/i).first();
-      check('the person is told the chosen template was drawn and the stored copy untouched',
-        await note.isVisible().catch(() => false));
+      // The design path writes the stored copy itself, in the chosen design,
+      // so nothing may say the email copy was left in another one (RS-5c.4's
+      // note belongs to a template's pages, which this format never reaches).
+      const note = page.getByText(/not saved for the scheduled email/i).first();
+      check('no note says the stored copy was left in another design',
+        !(await note.isVisible().catch(() => false)));
     },
   },
   comparison: {
     label: 'Property Comparison Analysis',
     selectionType: 'comparison',
+    route: 'render-property-comparison-pdf',
     requiresReport: false,
     // The library's Comparisons tab: every saved comparison is a card with the
     // download this format never had until RS-5c (a menu button, icon only,
@@ -185,10 +197,8 @@ const FORMATS = {
     requiresReport: false,
     url: () => '/report-qa',
     stays: (url) => url.includes('/report-qa'),
-    // The structured write-up is not a templated document (no master binds it;
-    // see `qaAdapter.resolveRoutingContext`), so its journey proves the OTHER
-    // decision: no template render, one call to the format's own route.
-    expectsRoute: SUBJECT === 'structured' ? 'render-report-qa-pdf' : null,
+    // Both subjects go to the format's own route, in the chosen design.
+    route: 'render-report-qa-pdf',
     // The chat's model picker asks for the agent model list on mount.
     answers: {
       'agent-models-read': () => ({ success: true, models: [], data: [] }),
@@ -278,6 +288,8 @@ page.on('download', async (d) => {
 const t0 = Date.now();
 let fatal = null;
 let finalRender = null;
+/** The format's own route call the generate step made, on the design path. */
+let finalRoute = null;
 try {
   console.log(`\n═══ ${spec.label} journey — record ${RECORD_ID} — WeasyPrint ${engine} ═══\n`);
 
@@ -330,14 +342,20 @@ try {
 
   // ── 3. Generate: one finalisation → one final render of the chosen template ──
   const rendersBefore = dbl.state.renders.length;
+  const routeCallsBefore = dbl.state.routeCalls.length;
   await spec.generate(page);
   await page.waitForFunction(() => !document.querySelector('button:has(svg.animate-spin), [role="menuitem"]:has(svg.animate-spin)'), null, { timeout: 180_000 }).catch(() => {});
   await page.waitForTimeout(1500);
   const rendersAfter = dbl.state.renders.length - rendersBefore;
-  if (spec.expectsRoute) {
-    const routeCalls = dbl.log.filter((l) => l.kind === `fn:${spec.expectsRoute}`).length;
-    check(`the subject is produced by its own route (${spec.expectsRoute}), never a template`,
-      rendersAfter === 0 && routeCalls === 1, `${rendersAfter} template render(s) · ${routeCalls} route call(s)`);
+  if (spec.route) {
+    const calls = dbl.state.routeCalls.slice(routeCallsBefore);
+    finalRoute = calls[calls.length - 1] ?? null;
+    check(`one finalisation → one call to the format's own route (${spec.route}), no template render`,
+      rendersAfter === 0 && calls.length === 1 && calls[0].fn === spec.route,
+      `${rendersAfter} template render(s) · ${calls.map((c) => c.fn).join(', ') || 'no route call'}`);
+    check('the route was sent the chosen template as the design to draw in',
+      !!finalRoute && (!chosenValue || finalRoute.design?.templateId === chosenValue),
+      finalRoute ? `design=${JSON.stringify(finalRoute.design)} · chosen ${chosenValue ?? '(none)'}` : 'no route call');
   } else {
     check('one finalisation → one render request', rendersAfter === 1, `${rendersAfter} render-template-pdf call(s)`);
     finalRender = dbl.state.renders[dbl.state.renders.length - 1] ?? null;
@@ -362,16 +380,19 @@ try {
     if (await clientRow.isVisible().catch(() => false)) {
       await clientRow.click();
       const rendersBeforeSend = dbl.state.renders.length;
+      const routeCallsBeforeSend = dbl.state.routeCalls.length;
       const downloadsBeforeSend = downloads.length;
       await sendDialog.getByRole('button', { name: spec.send.button }).first().click();
       await page.waitForFunction(() => !document.querySelector('[role="dialog"] button:has(svg.animate-spin)'), null, { timeout: 180_000 }).catch(() => {});
       await page.waitForTimeout(1500);
       const sent = dbl.state.portalReports[dbl.state.portalReports.length - 1];
       check('send publishes a portal row with a stored document', !!sent?.storage_path, sent ? `storage_path=${String(sent.storage_path).slice(0, 70)}` : 'no client_portal_reports row');
-      const extraRenders = dbl.state.renders.length - rendersBeforeSend;
+      const extraRenders = (dbl.state.renders.length - rendersBeforeSend)
+        + (dbl.state.routeCalls.length - routeCallsBeforeSend);
       check('send reuses the finalised document (no second render)', extraRenders === 0, `${extraRenders} additional render(s)`);
-      check('the portal row names the finalised PDF', !!sent && !!finalRender && sent.storage_path === finalRender.path,
-        `portal=${String(sent?.storage_path).slice(0, 60)} final=${String(finalRender?.path).slice(0, 60)}`);
+      const finalDoc = finalRender ?? finalRoute;
+      check('the portal row names the finalised PDF', !!sent && !!finalDoc && sent.storage_path === finalDoc.path,
+        `portal=${String(sent?.storage_path).slice(0, 60)} final=${String(finalDoc?.path).slice(0, 60)}`);
       check('send did not trigger a browser download', downloads.length === downloadsBeforeSend);
     } else {
       check('the fixture client is offered in the send dialog', false, 'client list empty');
@@ -402,7 +423,7 @@ let measure = null;
 // A route's document is the route's own to judge — the double answers it with
 // a stand-in so the front end's decision can be watched, and that stand-in is
 // not a document to measure.
-if (downloads[0] && !spec.expectsRoute) {
+if (downloads[0] && !spec.route) {
   const jsonOut = path.join(OUT, 'measure.json');
   const label = `${FORMAT}-${RECORD_ID.slice(0, 8)}`;
   try {

@@ -26,6 +26,13 @@
  * the generator this format exists to replace, while telling nobody.
  */
 import { invokeSecureFunction } from '@/lib/secureInvoke';
+import {
+  announceDesignOutcome,
+  type DesignOutcome,
+  designBody,
+  standardDesignFor,
+  type StandardDesignRequest,
+} from '@/lib/reportTemplate/standardDesign';
 import { describeRenderFailure, readRenderFailure } from '@/lib/reports/renderFailure.pure';
 import { looksUndeployed } from '../undeployedRoute';
 
@@ -95,6 +102,12 @@ export interface CashFlowPdfResult {
   storagePath: string | null;
   /** `server` for the new path, `legacy` when the route is not deployed yet. */
   source: 'server' | 'legacy';
+  /**
+   * What became of the design the request sent (`standardDesign.ts`). A
+   * caller that files the document under a key naming the design must not
+   * file a document the design did not reach under it.
+   */
+  design: DesignOutcome;
 }
 
 // The predicate is shared (`../undeployedRoute`). This module carried its own
@@ -132,9 +145,20 @@ export interface CashFlowPdfResult {
  * `cashFlowTemplateRouteGuarded.spec.ts` keeps the guard attached to the call.
  */
 export async function requestCashFlowPdf(
-  request: { reportId: string; projection: WireProjection; edition?: string | null },
+  request: {
+    reportId: string;
+    projection: WireProjection;
+    edition?: string | null;
+    /**
+     * The design to draw the document in. Omit it and the person's own choice
+     * for the format is read (`standardDesign.ts`); `null` asks for the
+     * standard design whatever was chosen. How it looks, never what it says.
+     */
+    design?: StandardDesignRequest | null;
+  },
   legacyFallback?: () => Promise<{ url: string; fileName: string; bytes: number } | null>,
 ): Promise<CashFlowPdfResult> {
+  const design = await standardDesignFor('cashflow', request.design);
   const { data, error } = await invokeSecureFunction<{
     url: string;
     path?: string;
@@ -142,13 +166,16 @@ export async function requestCashFlowPdf(
     bytes: number;
     pageCount: number | null;
     brandGaps: string[];
+    design?: unknown;
   }>('render-cash-flow-pdf', {
     reportId: request.reportId,
     projection: request.projection,
     edition: request.edition ?? null,
+    ...designBody(design),
   }, { timeoutMs: 180_000 });
 
   if (!error && data?.url) {
+    const outcome = announceDesignOutcome(design, data.design);
     return {
       url: String(data.url),
       fileName: String(data.fileName ?? 'Cash_Flow_Analysis.pdf'),
@@ -157,6 +184,7 @@ export async function requestCashFlowPdf(
       brandGaps: Array.isArray(data.brandGaps) ? data.brandGaps.map(String) : [],
       storagePath: typeof data.path === 'string' && data.path ? data.path : null,
       source: 'server',
+      design: outcome,
     };
   }
 
@@ -166,7 +194,10 @@ export async function requestCashFlowPdf(
       + 'generator. Deploy the function and apply migration 20260815000000 to use the new report.',
     );
     const legacy = await legacyFallback();
-    if (legacy) return { ...legacy, pageCount: null, brandGaps: [], storagePath: null, source: 'legacy' };
+    if (legacy) {
+      const outcome = announceDesignOutcome(design, null, { drawnWithoutRoute: true });
+      return { ...legacy, pageCount: null, brandGaps: [], storagePath: null, source: 'legacy', design: outcome };
+    }
   }
 
   // A failure the render service answered arrives classified from the

@@ -22,7 +22,7 @@ describe('parseRenderRequest', () => {
     const parsed = parseRenderRequest({ reportId: REPORT_ID, projection: PROJECTION });
     expect(parsed).toEqual({
       ok: true,
-      request: { reportId: REPORT_ID, projection: PROJECTION, edition: null },
+      request: { reportId: REPORT_ID, projection: PROJECTION, edition: null, design: null },
     });
   });
 
@@ -61,7 +61,9 @@ describe('parseRenderRequest', () => {
       clientName: 'Someone else',
     });
     expect(parsed.ok && Object.keys(parsed.request).sort())
-      .toEqual(['edition', 'projection', 'reportId']);
+      // `design` is how the document looks, never what it says, and it is
+      // validated (`designRequest.spec.ts`), so it is the one other key.
+      .toEqual(['design', 'edition', 'projection', 'reportId']);
   });
 });
 

@@ -28,7 +28,7 @@ describe('parseRenderRequest', () => {
     const parsed = parseRenderRequest({ clientId: CLIENT });
     expect(parsed).toEqual({
       ok: true,
-      request: { clientId: CLIENT, assessmentId: null, scenarioPresets: [], edition: null },
+      request: { clientId: CLIENT, assessmentId: null, scenarioPresets: [], edition: null, design: null },
     });
   });
 
@@ -60,7 +60,9 @@ describe('parseRenderRequest', () => {
       capacity: 9_000_000,
     });
     expect(parsed.ok && Object.keys(parsed.request).sort())
-      .toEqual(['assessmentId', 'clientId', 'edition', 'scenarioPresets']);
+      // `design` is how the document looks, never what it says, and it is
+      // validated (`designRequest.spec.ts`), so it is the one other key.
+      .toEqual(['assessmentId', 'clientId', 'design', 'edition', 'scenarioPresets']);
   });
 
   it('caps the scenario list rather than rendering a hundred rows', () => {

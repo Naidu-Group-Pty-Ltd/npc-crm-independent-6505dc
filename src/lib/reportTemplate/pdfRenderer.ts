@@ -45,6 +45,8 @@ import { sortBlocksForPaint, sortOverlaysForPaint } from './paintOrder';
 import { resolvePageOutputPolicy, resolvePageRenderPlan, shouldRenderPageBackgroundImage } from './rendering/pdfImportPagePolicy';
 import { shouldRenderBlock, shouldRenderOverlay } from './renderVisibility';
 import { applyNarrativePlan, planNarrative } from './narrativePlan';
+import { layoutFlowColumn } from './flowLayout';
+import { flowBlockContext, flowFactsFor } from './flowFacts';
 import { pagesForDocument } from '../../../supabase/functions/_shared/reports/investment/tierPageSequence.pure';
 
 export interface RenderOptions {
@@ -196,7 +198,17 @@ function drawPage(doc: jsPDF, page: Page, ctxBase: ResolveContext) {
   const pdfRenderNativeBlocks = pdfPageRenderPlan.renderNativeBlocks;
   // Blocks
   if (pdfRenderNativeBlocks) {
-    for (const block of sortBlocksForPaint(page.blocks)) {
+    // A flowing page lands its column exactly where the HTML renderer lands it
+    // — the narrative pre-pass sized the report body's first box from the same
+    // placement, so drawing the declared positions here would set that box
+    // lower than the room it was packed for. See `flowLayout.ts`.
+    const laid = (page as { flow?: boolean }).flow === true
+      ? layoutFlowColumn(page.blocks, flowFactsFor(
+        ctxBase,
+        flowBlockContext(ctxBase, page, (ctxBase as any)._allPages ?? [], (ctxBase as any)._slots ?? {}),
+      ))
+      : page.blocks;
+    for (const block of sortBlocksForPaint(laid)) {
       // `hidden`, `conditional` and `visibility` all decide this, and the rule
       // is `renderVisibility`'s so the HTML document and the PDF of the same
       // template cannot contain different blocks.

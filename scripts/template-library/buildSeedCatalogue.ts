@@ -614,17 +614,51 @@ const REPO = resolve(__dirname, '../..');
  * `20261223100000` re-copies the ACTIVE masters from it, by the v15
  * mechanism, unchanged. Run the same one-query check before editing this
  * file: if `20261223090000` is already recorded, the next change needs a v23.
+ *
+ * ## v23 — the cover's tagline is the issuer's, never a literal
+ *
+ * v22 IS recorded: apply-migration runs #110 and #112 applied it and its
+ * refresh on 26 Sep 2026. So this change is a **v23**, and v22's file is not
+ * touched.
+ *
+ * Every one of the 500 family masters set the line under the cover's
+ * wordmark as a literal, "Your dedicated property partner" — the house's own
+ * tagline — so every clone's templated cover carried the house's words under
+ * the clone's name. The owner's rule (26 Sep 2026) is that the house's
+ * identity is a legacy the prime keeps and a clone never sees. The masters
+ * now bind `{{org.tagline}}`, which `organisationProjection.pure.ts`
+ * publishes on the prime alone, with exactly the words the literal carried:
+ * the prime's covers print what they always printed, and a clone's cover
+ * draws no tagline, because a bound text block that resolves to nothing is
+ * not drawn.
+ *
+ * ## What the release is, measured rather than claimed
+ *
+ * Parsed out of the v22 and v23 files and compared row by row, 543 in each:
+ *
+ *   * **500 of 543 differ**: every family master, all ten formats. The 43
+ *     voice templates are byte-identical.
+ *   * In each of the 500 **exactly one block changes**, in `schema` and in
+ *     `preview_schema` alike: the cover's "Tagline" text block, whose `body`
+ *     goes from the literal to `{{org.tagline}}`. Every other page and block,
+ *     their order and their ids are unchanged.
+ *   * Outside those two, one column changes: `required_bindings` gains
+ *     `org.tagline` on all 500.
+ *
+ * `20261225100000` re-copies the ACTIVE masters from it, by the v15
+ * mechanism, unchanged. Run the same one-query check before editing this
+ * file: if `20261225090000` is already recorded, the next change needs a v24.
  */
 /**
  * The identifier this release records against a baseline and against a
  * refreshed master. It is the seed migration's own basename, so a row that
  * says it carries this release names the artefact that put it there.
  */
-const RELEASE_ID = '20261223090000_seed_template_library_v22_floor_plan';
+const RELEASE_ID = '20261225090000_seed_template_library_v23_issuer_tagline';
 
 const MIGRATION = resolve(
   REPO,
-  'supabase/migrations/20261223090000_seed_template_library_v22_floor_plan.sql',
+  'supabase/migrations/20261225090000_seed_template_library_v23_issuer_tagline.sql',
 );
 
 /** Postgres string literal, dollar-quoted so JSON never has to be escaped. */

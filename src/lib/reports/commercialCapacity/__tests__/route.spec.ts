@@ -35,6 +35,9 @@ describe('parseCapacityRequest', () => {
       includeAnalysis: true,
       refreshAnalysis: false,
       edition: null,
+      // How the document looks, never what it says; validated in
+      // `designRequest.spec.ts`. Absent means the standard design.
+      design: null,
     });
     expect(Object.keys(parsed.request)).not.toContain('clientName');
   });

@@ -46,11 +46,17 @@ describe('the structured write-up is not a templated document', () => {
     expect(routing).toBeNull();
   });
 
-  it('still routes the transcript and a single answer', async () => {
+  it('is no longer the only subject that declines', async () => {
+    /*
+     * This asserted that the transcript and a single answer still routed. They
+     * did, and both printed the conversation's FIRST answer whichever one was
+     * chosen, because the adapter is never told which (26 Sep 2026). They
+     * decline now too; `qaTemplateDeclines.spec.ts` carries the reason.
+     */
     const transcript = await qaAdapter.resolveRoutingContext({ reportId: 'conv-1', variant: 'transcript' });
-    expect(transcript?.variant).toBe('transcript');
+    expect(transcript).toBeNull();
     const answer = await qaAdapter.resolveRoutingContext({ reportId: 'conv-1', variant: 'answer' });
-    expect(answer?.variant).toBe('answer');
+    expect(answer).toBeNull();
   });
 
   it('holds exactly while no master binds the write-up', () => {

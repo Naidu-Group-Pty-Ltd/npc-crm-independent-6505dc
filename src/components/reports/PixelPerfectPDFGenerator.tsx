@@ -18,6 +18,7 @@ import { invokeSecureFunction } from '@/lib/secureInvoke';
 import { logActivityDirect } from '@/hooks/useActivityLogger';
 import { secureStorageUpload } from '@/hooks/useSecureStorage';
 import { downloadClientPdf } from '@/lib/reports/clientPdfDownload';
+import { triggerPdfDownload } from '@/lib/pdf/downloadPdf';
 import {
   generateInvestmentPdfBlob,
   type InvestmentReportData,
@@ -107,6 +108,20 @@ export const PixelPerfectPDFGenerator = forwardRef<PixelPerfectPDFGeneratorHandl
     return { blob, publicUrl, suburb, state };
   };
 
+  /**
+   * The document alone, drawn in this tab and stored nowhere.
+   *
+   * What a comparison (`skipDatabaseUpdate`) is handed. A comparison is not an
+   * investment report, and the storage service files the `investment-reports`
+   * bucket against an `investment_reports` row, so it refused the upload for
+   * every caller: the model had already been paid to format the comparison
+   * when the download failed. Nothing about a comparison was ever stored by
+   * this path, so nothing is lost by not storing it.
+   */
+  const drawOnly = () => generateInvestmentPdfBlob({
+    report, reportTier, presentation: { includeSources, includeScoring },
+  });
+
   const handleGenerationError = (error: unknown) => {
     console.error('❌ PDF generation error:', error);
     let errorMessage = 'Failed to generate PDF. ';
@@ -143,6 +158,12 @@ export const PixelPerfectPDFGenerator = forwardRef<PixelPerfectPDFGeneratorHandl
   const generatePixelPerfectPDF = async () => {
     setIsGenerating(true);
     try {
+      if (skipDatabaseUpdate) {
+        const { blob, fileName } = await drawOnly();
+        triggerPdfDownload(blob, fileName);
+        toast.success('PDF downloaded.');
+        return;
+      }
       // Prefer the existing persisted standard client PDF. This is the same
       // flow used by the Generated Reports card and avoids needless renders.
       if (report.pdf_url) {
@@ -208,7 +229,7 @@ export const PixelPerfectPDFGenerator = forwardRef<PixelPerfectPDFGeneratorHandl
           : appearance === 'legacy' ? 'Download (legacy layout)' : 'Download Client PDF'}
       </Button>
       <FlattenPdfIconButton
-        getPdfBlob={async () => (await generateCore()).blob}
+        getPdfBlob={async () => (skipDatabaseUpdate ? (await drawOnly()).blob : (await generateCore()).blob)}
         filename={`${(report as any)?.address || 'investment-report'}.pdf`}
         disabled={isGenerating}
       />

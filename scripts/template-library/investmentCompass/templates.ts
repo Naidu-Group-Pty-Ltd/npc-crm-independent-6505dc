@@ -295,7 +295,8 @@ function buildTemplate(family: DesignFamily, variant: VariantDefinition): Compas
     // literal, every Financial Analysis rendered as an "Investment Compass"
     // on its cover and on every running head and foot.
     wordmarkBottom: '{{report.documentTitle}}',
-    tagline: 'Your dedicated property partner',
+    // The issuer's line, never a literal: see `org.tagline` in organisationProjection.pure.ts.
+    tagline: '{{org.tagline}}',
     marker: '{{report.documentTitle}}',
     eyebrow: '{{report.documentTitle}}',
     title: '{{property.address}}',

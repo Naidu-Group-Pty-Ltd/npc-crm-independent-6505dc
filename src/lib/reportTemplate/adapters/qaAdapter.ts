@@ -155,6 +155,24 @@ export const qaAdapter: ReportTemplateAdapter = {
      * for it), this refusal is the line to remove.
      */
     if (subject === 'structured') return null;
+    /*
+     * Nor are the answer and the transcript, for the same reason (26 Sep 2026).
+     *
+     * Every content page of the Q&A masters draws `qa.answer`, and this
+     * adapter is never told WHICH answer, so `buildBindingContext` fills it
+     * with the conversation's FIRST reply. "This answer" therefore printed the
+     * first answer whichever one was chosen, and the "transcript" carried the
+     * first answer and a table of the other questions with none of their
+     * answers. Both are a different document from the one asked for, and a
+     * finished-looking wrong answer is the worst thing this format can send.
+     *
+     * So all three subjects go to `render-report-qa-pdf`, which is addressed by
+     * message and paginates a transcript of any length. The template path for
+     * this format comes back as a template DESIGN over that route's content
+     * (`docs/reports/TEMPLATE_PARITY.md`), never as these masters' own pages;
+     * `qaTemplateDeclines.spec.ts` holds the line until then.
+     */
+    if (subject === 'answer' || subject === 'transcript') return null;
     return {
       reportId,
       reportType: 'qa',

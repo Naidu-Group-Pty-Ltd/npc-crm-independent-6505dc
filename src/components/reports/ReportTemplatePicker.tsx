@@ -56,7 +56,7 @@ import { Badge } from '@/components/ui/badge';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Alert, AlertDescription, AlertTitle } from '@/components/ui/alert';
-import { CheckCircle2, ChevronDown, Layers, Loader2, TriangleAlert, Wand2 } from 'lucide-react';
+import { CheckCircle2, ChevronDown, Info, Layers, Loader2, TriangleAlert, Wand2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
 import { useReportTemplateSelection } from '@/hooks/useReportTemplateSelection';
@@ -73,6 +73,15 @@ import {
 } from '@/lib/templateLibrary/entryDesign';
 import { ColourwaySwatch } from '@/components/templateLibrary/TemplateColourwayPicker';
 import { ReportTemplateSheet } from '@/components/reports/ReportTemplateSheet';
+import {
+  isTemplateDeliveryHeld,
+  TEMPLATE_DESIGN_NOTICE,
+  templateDesignExplanation,
+} from '../../../supabase/functions/_shared/reports/templateParity.pure.ts';
+import {
+  borrowedDesignNote,
+  drawnDocumentsNote,
+} from '../../../supabase/functions/_shared/reports/templateDesignRoute.pure.ts';
 
 /** The sentinel for "no fixed template" — the resolver's ranking decides. */
 const AUTOMATIC = '__automatic__';
@@ -207,6 +216,12 @@ export function ReportTemplatePicker({ reportType, formatLabel, open, onOpenChan
   const [consentedChoice, setConsentedChoice] = useState<string | null>(null);
 
   const format = normaliseReportType(reportType);
+  /** Whether a choice here sets this format's design rather than its pages. */
+  const held = isTemplateDeliveryHeld(format);
+  /** The documents drawn without a template that wear this choice too. */
+  const drawnNote = drawnDocumentsNote(format);
+  /** The report types that borrow this choice as their own design. */
+  const borrowedNote = borrowedDesignNote(format);
 
   /** The library's production designs for this format, grouped by family. */
   const { families, loose } = useMemo(() => {
@@ -464,6 +479,23 @@ export function ReportTemplatePicker({ reportType, formatLabel, open, onOpenChan
           </Alert>
         ) : (
           <div className="space-y-3 py-1">
+            {held && (
+              // A held report type keeps its own pages and takes its DESIGN
+              // from the template chosen here (`templateParity.pure.ts`,
+              // `standardDesign.ts`). Said before anything is chosen, because
+              // a gallery of full documents otherwise reads as a choice of
+              // pages — and what the person gets is their report, in this look.
+              <Alert variant="default" data-testid="template-design-notice">
+                <Info className="h-4 w-4" />
+                <AlertTitle>{TEMPLATE_DESIGN_NOTICE.title}</AlertTitle>
+                <AlertDescription>
+                  {templateDesignExplanation(formatLabel)}
+                  {drawnNote && <span data-testid="template-drawn-documents"> {drawnNote}</span>}
+                  {borrowedNote && <span data-testid="template-borrowed-design"> {borrowedNote}</span>}
+                </AlertDescription>
+              </Alert>
+            )}
+
             {state?.status === 'unavailable' && (
               // A choice that stopped applying is news, and saying nothing would
               // mean documents quietly changing template under someone.
@@ -489,11 +521,15 @@ export function ReportTemplatePicker({ reportType, formatLabel, open, onOpenChan
                   <span className="min-w-0 flex-1">
                     <span className="flex items-center gap-2 text-sm font-medium">
                       <Wand2 className="h-3.5 w-3.5 text-muted-foreground" aria-hidden="true" />
-                      Choose automatically
+                      {held ? 'Standard design' : 'Choose automatically'}
                     </span>
                     <span className="mt-1 block text-xs text-muted-foreground">
-                      Use whichever active template ranks highest for this format. This is what
-                      happens when nothing is chosen.
+                      {held
+                        // A held report type takes no design unless one is chosen:
+                        // nothing chosen is its own standard document, never the
+                        // template the ranking would have picked.
+                        ? 'Draw these reports in their own standard design. This is what happens when nothing is chosen.'
+                        : 'Use whichever active template ranks highest for this format. This is what happens when nothing is chosen.'}
                     </span>
                   </span>
                 </label>
@@ -747,7 +783,7 @@ export function ReportTemplatePicker({ reportType, formatLabel, open, onOpenChan
                                 {state?.status === 'selected' && state.selectedTemplateId === template.id && (
                                   <Badge className="text-[10px]">Current</Badge>
                                 )}
-                                {!drawn && (
+                                {!drawn && !held && (
                                   // Selectable, and honest: this is what the ranking
                                   // would have picked too, and it produces the legacy
                                   // document either way.
