@@ -8,7 +8,14 @@ import {
   planEnablesSubModule,
   planIncludesModule,
 } from "../planEntitlements";
-import { annualCents, exGstCents, gstComponentCents } from "../gst";
+import {
+  ANNUAL_DISCOUNT,
+  COMMITMENT_DISCOUNT_BPS,
+  annualCents,
+  commitmentDiscountCents,
+  exGstCents,
+  gstComponentCents,
+} from "../gst";
 
 describe("gating fails OPEN, never closed", () => {
   // This is the single most important property here. Denying on an unknown
@@ -127,9 +134,22 @@ describe("GST is contained in the price, not added to it", () => {
     }
   });
 
-  it("discounts twelve months by 10% for annual", () => {
-    expect(annualCents(50400)).toBe(544320);
-    expect(annualCents(201500)).toBe(2176200);
+  it("discounts twelve months by 15% for annual", () => {
+    // Clause 5.1 of the Subscription Agreement: the owner settled the annual
+    // discount at 15% on 25 September 2026, replacing the 10% the product ran
+    // before, and Mission Control mints its annual prices the same way.
+    expect(COMMITMENT_DISCOUNT_BPS).toBe(1500);
+    expect(ANNUAL_DISCOUNT).toBe(0.15);
+    expect(annualCents(50400)).toBe(514080);
+    expect(annualCents(201500)).toBe(2055300);
+  });
+
+  it("takes the discount off each month, to the cent, before adding up twelve", () => {
+    // 15% of $123.45 is $18.5175, charged as $18.52 a month. Discounting the
+    // year in one step would land three cents away from Mission Control.
+    expect(commitmentDiscountCents(12345)).toBe(1852);
+    expect(annualCents(12345)).toBe((12345 - 1852) * 12);
+    expect(annualCents(12345)).not.toBe(Math.round(12345 * 12 * (1 - ANNUAL_DISCOUNT)));
   });
 });
 
