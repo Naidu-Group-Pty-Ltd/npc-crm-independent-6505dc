@@ -83,7 +83,14 @@ export async function deliverReportQaPdf(
   // documents a conversation makes. Passing it is what stops every templated
   // export being a transcript.
   // The FINAL document: drawn by the pinned engine, never the browser's jsPDF (RS-5c).
-  const templated = await tryTemplateDocument('qa', conversationId, { variant: subject, renderer: 'weasyprint' });
+  //
+  // Not when the file is to be ATTACHED to the conversation. Only the flowing
+  // route writes the attachment row; the templated branch below answers
+  // `attachment: null`, and the caller took that as attached and said so, so
+  // "Add to this chat" reported success over a chat that received nothing.
+  const templated = options.attachToConversation === true
+    ? null
+    : await tryTemplateDocument('qa', conversationId, { variant: subject, renderer: 'weasyprint' });
   if (templated) {
     if (options.save !== false) saveToBrowser(templated.blob, templated.fileName);
     return {

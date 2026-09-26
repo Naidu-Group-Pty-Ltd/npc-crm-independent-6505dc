@@ -43,6 +43,7 @@ import {
   normaliseReportType,
   selectionsByFormat,
 } from './templateSelection';
+import { isTemplateDeliveryHeld } from '../../../supabase/functions/_shared/reports/templateParity.pure.ts';
 
 export interface TemplateDocument {
   blob: Blob;
@@ -239,6 +240,17 @@ export async function tryTemplateDocument(
     selectedTemplateId?: string | null;
   },
 ): Promise<TemplateDocument | null> {
+  /*
+   * A held report type never reaches a template's pages. Its standard route is
+   * the caller's next line, and that route draws the report's own pages in the
+   * chosen template's DESIGN (`standardDesign.ts`, `templateDesign.pure.ts`),
+   * so the choice is honoured there — which is why nothing is said here.
+   *
+   * First, before the record or the choice is read, so that no path below can
+   * reach a template's pages for it.
+   */
+  if (isTemplateDeliveryHeld(reportType)) return null;
+
   /*
    * No record, no template — but say so when a choice is being dropped.
    *

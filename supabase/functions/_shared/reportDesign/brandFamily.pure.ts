@@ -47,7 +47,7 @@
  */
 import { contrastRatio, ensureContrast, hexToHsl, hslComponentsToHex, parseHsl } from './color.pure.ts';
 import { resolveReportPalette } from './brandResolve.pure.ts';
-import { PRINT_SURFACE } from './tokens.pure.ts';
+import { CONTRAST_FLOOR, PRINT_SURFACE } from './tokens.pure.ts';
 import type { ResolvedReportPalette } from './roles.pure.ts';
 
 /**
@@ -111,8 +111,11 @@ function tintOf(brandHex: string, tint: { lightness: number; saturation: number 
 }
 
 export interface BrandFamily {
-  /** Whose colour this is: the tenant's, or the platform default. */
-  source: 'tenant' | 'platform';
+  /**
+   * Whose colour this is: the tenant's, the platform default, or a template
+   * design somebody chose (`familyFromDesignPalette`).
+   */
+  source: 'tenant' | 'platform' | 'design';
   /** The brand colour the family was grown from, `#RRGGBB`. */
   brand: string;
   accent: string;
@@ -183,6 +186,66 @@ export function resolveBrandFamily(brandHex: string | null | undefined): BrandFa
     onField: palette.onFieldInk,
     bodyInk: palette.bodyInk,
     mutedInk: palette.mutedInk,
+    palette,
+  };
+}
+
+/**
+ * A chosen template's palette, grown into the family a drawn document takes.
+ *
+ * A typeset document takes a design's palette whole (`templateDesign.pure.ts`).
+ * A drawn document takes it through the same slot a tenant's brand colour
+ * arrives by — this family — so every drawn document that already prints a
+ * family on a clone prints a design the same way, and nothing it does with a
+ * family has to change.
+ *
+ * The design's own colours are kept wherever they hold on the white sheet a
+ * drawn document prints on. A design composed on ivory keeps every colour it
+ * has. A design composed on a DARK paper (the catalogue's night, console and
+ * inverse colourways) cannot print its light inks on white, so each ink is
+ * taken down its own hue until it clears the floor it is used at: the design's
+ * hue, never an ink white cannot carry, and never another colour in its place.
+ *
+ *  - `accent` — the design's brand fill, lifted only as far as a rule must be
+ *    seen on white (`ACCENT_FLOOR`), exactly as a tenant's brand is.
+ *  - `deep` — the design's field, which is also the cover's ground. Every
+ *    catalogue field clears 14:1 on white; a hand-edited one that does not
+ *    clear `DEEP_FLOOR` gives way to a deep shade of the design's accent, and
+ *    failing that to the platform's field.
+ *  - the inks on the field — the design's own, which its audit already holds
+ *    to its field.
+ *  - the washes — tints of the accent, as for a tenant, because a design's
+ *    panel colour is composed for its own paper and not for white.
+ */
+export function familyFromDesignPalette(palette: ResolvedReportPalette): BrandFamily {
+  const brand = palette.accentFill.toUpperCase();
+  const accent = ensureContrast(brand, SHEET, ACCENT_FLOOR);
+  const field = palette.field.toUpperCase();
+  const deep = [field, deepShadeOf(brand, field)].find((c) => contrastRatio(c, SHEET) >= DEEP_FLOOR)
+    ?? resolveBrandFamily(null).deep;
+  const wash = tintOf(accent, TINT.wash);
+  const stripe = tintOf(accent, TINT.stripe);
+  // The washes are the darkest grounds an ink meets on a drawn page, so an ink
+  // that clears its floor on the wash clears it everywhere on the sheet.
+  const onWashes = (hex: string, floor: number) => ensureContrast(ensureContrast(hex, SHEET, floor), wash, floor);
+  return {
+    source: 'design',
+    brand,
+    accent,
+    accentInk: onWashes(palette.accentOnPaper, CONTRAST_FLOOR.micro),
+    accentOnField: ensureContrast(palette.accentOnField, field, CONTRAST_FLOOR.micro),
+    deep,
+    onDeep: ensureContrast(palette.onFieldInk, deep, CONTRAST_FLOOR.body),
+    wash,
+    stripe,
+    hairline: tintOf(accent, TINT.hairline),
+    field,
+    onField: ensureContrast(palette.onFieldInk, field, CONTRAST_FLOOR.body),
+    bodyInk: onWashes(palette.bodyInk, CONTRAST_FLOOR.body),
+    // Held on the wash like the other inks: drawn documents set their quiet
+    // lines on the washes too, and 225 of the 500 designs measured their muted
+    // ink there at 6.33–6.99:1 when it was held to the sheet alone.
+    mutedInk: onWashes(palette.mutedInk, CONTRAST_FLOOR.micro),
     palette,
   };
 }

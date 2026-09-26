@@ -95,6 +95,10 @@ import {
 } from '../../reportDesign/structure.pure.ts';
 import type { ReportBrandSnapshot } from '../../reportDesign/snapshot.pure.ts';
 import { resolveSnapshotBrand } from '../../reportDesign/documentBrand.pure.ts';
+import {
+  withDesignOptions,
+  type ReportTemplateDesign,
+} from '../../reportDesign/templateDesign.pure.ts';
 import { renderMarkdown } from '../markdown.pure.ts';
 import { formatReportDate, formatReportDateShort as shortDate } from '../reportDate.pure.ts';
 
@@ -284,7 +288,7 @@ export interface RenderMarketIntelligenceInput {
   /** The **tenant's** cover art, inlined. Never the house art. */
   heroDataUri?: string | null;
   confidentiality?: string | null;
-  options?: ReportDesignOptions | null;
+  options?: Partial<ReportDesignOptions> | null;
   edition?: string | null;
   reference?: string | null;
 }
@@ -532,9 +536,16 @@ export interface RenderMarketIntelligenceFromBrandInput {
    * first time.
    */
   coverArtDataUri?: string | null;
-  options?: ReportDesignOptions | null;
+  options?: Partial<ReportDesignOptions> | null;
   edition?: string | null;
   reference?: string | null;
+  /**
+   * A chosen template's design (`templateDesign.pure.ts`). Its palette, faces
+   * and page treatment replace the brand's palette; every word on every page is
+   * still this composer's. Absent, and the document is the standard one byte
+   * for byte.
+   */
+  design?: ReportTemplateDesign | null;
 }
 
 export interface MarketIntelligenceRenderResult extends MarketIntelligenceRenderPlan {
@@ -554,13 +565,13 @@ export function renderMarketIntelligenceFromBrand(
 
   const rendered = renderMarketIntelligenceDocument({
     report: input.report,
-    palette: brand.palette,
+    palette: input.design?.palette ?? brand.palette,
     company: brand.company,
     masthead: brand.masthead,
     lockup: brand.lockup,
     heroDataUri: brand.heroDataUri,
     confidentiality: brand.confidentiality,
-    options: input.options ?? null,
+    options: withDesignOptions(input.options, input.design),
     edition: input.edition ?? null,
     reference: input.reference ?? null,
   });

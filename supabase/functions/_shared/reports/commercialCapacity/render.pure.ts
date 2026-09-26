@@ -51,6 +51,10 @@ import type { CompanyBlock, CompanyDisclaimer } from '../../reportDesign/company
 import { contentsEntriesFor, REPORT_ARCHETYPES } from '../../reportDesign/structure.pure.ts';
 import type { ReportBrandSnapshot } from '../../reportDesign/snapshot.pure.ts';
 import { resolveSnapshotBrand } from '../../reportDesign/documentBrand.pure.ts';
+import {
+  withDesignOptions,
+  type ReportTemplateDesign,
+} from '../../reportDesign/templateDesign.pure.ts';
 
 import { formatAmount, formatDelta, formatMeasure, periodLabel } from '../../reportDesign/measure.pure.ts';
 import type {
@@ -842,6 +846,13 @@ export interface RenderCapacityFromBrandInput {
   options?: Partial<ReportDesignOptions> | null;
   edition?: string | null;
   reference?: string | null;
+  /**
+   * A chosen template's design (`templateDesign.pure.ts`). Its palette, faces
+   * and page treatment replace the brand's palette; every word on every page is
+   * still this composer's. Absent, and the document is the standard one byte
+   * for byte.
+   */
+  design?: ReportTemplateDesign | null;
 }
 
 export interface CapacityRenderResult {
@@ -866,13 +877,13 @@ export function renderCapacityFromBrand(input: RenderCapacityFromBrandInput): Ca
   return {
     html: renderCommercialCapacityDocument({
       payload: input.payload,
-      palette: brand.palette,
+      palette: input.design?.palette ?? brand.palette,
       company: brand.company,
       masthead: brand.masthead,
       lockup: brand.lockup,
       heroDataUri: brand.heroDataUri,
       confidentiality: brand.confidentiality,
-      options: input.options ?? null,
+      options: withDesignOptions(input.options, input.design),
       edition: input.edition ?? null,
       reference: input.reference ?? null,
     }),

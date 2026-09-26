@@ -21,6 +21,11 @@
  * those files in their downloads folders. The pattern below is that one with the
  * date appended, not a new one.
  */
+import {
+  readTemplateDesignReference,
+  type DesignEcho,
+  type TemplateDesignReference,
+} from '../../reportDesign/templateDesign.pure.ts';
 
 /** Only this is accepted from the caller; everything else is read server-side. */
 export interface PortfolioRenderRequest {
@@ -36,6 +41,12 @@ export interface PortfolioRenderRequest {
   includeReview: boolean;
   /** `VOL. 2026 · ED. 08`. Cosmetic; the caller may supply it. */
   edition: string | null;
+  /**
+   * The design to draw the document in (`templateDesign.pure.ts`): a catalogue
+   * design or a template row, or null for the standard design. The words,
+   * figures and pages are the report's own whatever is named here.
+   */
+  design: TemplateDesignReference | null;
 }
 
 export type RequestParse =
@@ -59,6 +70,10 @@ export function parseRenderRequest(body: unknown): RequestParse {
   if (!UUID.test(reportId)) return { ok: false, error: 'reportId must be a uuid' };
 
   const edition = typeof b.edition === 'string' ? b.edition.trim().slice(0, 40) : '';
+  // A design is optional, and a malformed one is refused rather than ignored,
+  // so a caller that meant to ask for one is told it did not get it.
+  const design = readTemplateDesignReference(b.design);
+  if (design.ok === false) return { ok: false, error: design.error };
 
   return {
     ok: true,
@@ -68,6 +83,7 @@ export function parseRenderRequest(body: unknown): RequestParse {
       // portfolio review wants, and a caller who wants the thinner one says so.
       includeReview: b.includeReview !== false,
       edition: edition || null,
+      design: design.reference,
     },
   };
 }
@@ -130,4 +146,10 @@ export interface PortfolioRenderResponse {
   /** Whether a review was folded in. The UI says which document it just made. */
   reviewIncluded: boolean;
   durationMs: number;
+  /**
+   * The design the document was drawn in, or why the one asked for was not
+   * used — in that case the document is the standard design. Null when none
+   * was asked for.
+   */
+  design: DesignEcho | null;
 }

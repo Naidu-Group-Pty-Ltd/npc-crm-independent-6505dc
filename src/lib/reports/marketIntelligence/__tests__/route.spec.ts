@@ -23,6 +23,7 @@ describe('parseRenderRequest', () => {
       persist: true,
       edition: null,
       audience: null,
+      design: null,
     });
   });
 
@@ -61,7 +62,9 @@ describe('parseRenderRequest', () => {
     const result = parse({ reportId: REPORT_ID, report_data: { executiveSummary: 'injected' } });
     expect(result.ok).toBe(true);
     expect(Object.keys(result.ok ? result.request : {})).toEqual(
-      ['reportId', 'persist', 'edition', 'audience'],
+      // `design` is how the document looks, never what it says, and it is
+      // validated (`designRequest.spec.ts`), so it is the one other key.
+      ['reportId', 'persist', 'edition', 'audience', 'design'],
     );
   });
 

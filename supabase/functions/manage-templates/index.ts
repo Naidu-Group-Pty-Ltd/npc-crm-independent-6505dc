@@ -4,6 +4,12 @@ import { enforceCsrf, csrfDenied } from "../_shared/csrfGuard.ts";
 import { TemplateSchemaVersionError, validateAndMigrateTemplateSchemaVersion } from '../_shared/templateSchemaVersion.ts';
 import { permForAction, requireModulePermission } from '../_shared/authz.ts';
 import { insertGoesLive, validateReportTemplateInsert } from '../_shared/reportTemplateInsertGuard.pure.ts';
+import {
+  brokerWriteNeedsSuperadmin,
+  superadminWriteRefusal,
+  USER_DIRECTORY_TABLE,
+  vetUserDirectoryRequest,
+} from '../_shared/templateBrokerTablePolicy.pure.ts';
 
 type TableName = 'report_structure_templates' | 'client_branding_profiles' | 'integration_configs' | 'depreciation_comps' | 'depreciation_estimator_runs' | 'charts' | 'chart_analysis' | 'chart_configurations' | 'global_report_settings' | 'finance_agent_contacts' | 'bulk_generation_jobs' | 'property_comparisons' | 'portfolio_analysis_templates' | 'checklist_templates' | 'checklist_template_sections' | 'checklist_template_items' | 'checklist_instances' | 'checklist_instance_items' | 'game_plans' | 'game_plan_phases' | 'game_plan_milestones' | 'game_plan_kpis' | 'game_plan_notes' | 'game_plan_actions' | 'custom_users' | 'cover_page_overlays' | 'report_templates' | 'report_template_versions' | 'report_template_selections' | 'comparison_analysis_templates' | 'workflows' | 'workflow_runs' | 'workflow_run_steps';
 
@@ -275,10 +281,16 @@ async function assertTemplatePermission(
   if (!userId) return createUnauthorizedResponse('Authentication required', corsHeaders);
   // A workflow can invoke any configured integration, so editing one is the same
   // privilege as editing the integrations themselves. Note that a table absent
-  // from this map skips the permission check entirely — see the early return.
+  // from this map skips the permission check entirely — see the early return —
+  // which is why the tables no module covers are narrowed separately
+  // (`templateBrokerTablePolicy.pure.ts`).
+  //
+  // `integration_configs` holds each credential's value in plain text, and
+  // both screens that read or write it (Integrations, Workflow Playground) are
+  // behind the Integrations module, so the broker asks for the same module.
   const moduleKey = table.startsWith('checklist_')
     ? 'checklists'
-    : table.startsWith('workflow')
+    : table.startsWith('workflow') || table === 'integration_configs'
       ? 'integrations'
       : table === 'report_templates' || table === 'report_template_versions'
         ? 'templates'
@@ -573,6 +585,22 @@ Deno.serve(async (req) => {
     const permissionError = await assertTemplatePermission(supabase, userId, authMethod, table, operation, corsHeaders);
     if (permissionError) return permissionError;
 
+    // The tables no module covers are narrowed to what the product sends
+    // (`templateBrokerTablePolicy.pure.ts`): staff accounts are read through
+    // the directory's own columns and never written here, and the two settings
+    // tables the product writes elsewhere take a superadmin to write here.
+    if (brokerWriteNeedsSuperadmin(table, operation)) {
+      const { isSuperadmin } = await getModulePermissionContext(supabase, userId!, 'templates');
+      const refusal = superadminWriteRefusal(table, operation, isSuperadmin);
+      if (refusal) return createForbiddenResponse(refusal.message, corsHeaders);
+    }
+    const userDirectory = table === USER_DIRECTORY_TABLE
+      ? vetUserDirectoryRequest(operation, listOptions)
+      : null;
+    if (userDirectory && !userDirectory.ok) {
+      return createForbiddenResponse(userDirectory.refusal.message, corsHeaders);
+    }
+
     const reportTemplatePermissions = table === 'report_templates'
       ? await getTemplatePermissionContext(supabase, userId!)
       : null;
@@ -639,7 +667,13 @@ Deno.serve(async (req) => {
 
     // Handle list operation
     if (operation === 'list') {
-      const { select = DEFAULT_SELECTS[table], orderBy = 'created_at', orderAsc = false, limit, filters } = listOptions;
+      let { select = DEFAULT_SELECTS[table], orderBy = 'created_at', orderAsc = false, limit, filters } = listOptions;
+      // A staff account is read through the directory's own columns alone.
+      if (userDirectory?.ok) {
+        select = userDirectory.select;
+        filters = userDirectory.filters;
+        orderBy = userDirectory.orderBy ?? 'username';
+      }
       
       let query = supabase.from(table).select(select);
 
@@ -685,7 +719,7 @@ Deno.serve(async (req) => {
     if (operation === 'get' && recordId) {
       let query = supabase
         .from(table)
-        .select('*')
+        .select(userDirectory?.ok ? userDirectory.select : '*')
         .eq('id', recordId);
 
       if (table === 'report_templates') {

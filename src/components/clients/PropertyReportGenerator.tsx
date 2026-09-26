@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type CSSProperties } from 'react';
 import { Button } from '@/components/ui/button';
 import { FlattenPdfIconButton } from '@/components/common/FlattenPdfIconButton';
 import { FileText, Loader2, Download, MapPin, DollarSign, TrendingUp, AlertTriangle } from 'lucide-react';
@@ -17,6 +17,8 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Separator } from '@/components/ui/separator';
+import { drawnDesignFor, type DrawnDocumentDesign } from '@/lib/reports/drawnDocumentDesign';
+import { hexToHsl } from '@/lib/reportDesign/color.pure';
 
 interface ClientProperty {
   id: string;
@@ -83,6 +85,34 @@ const formatCurrency = (value: number | null | undefined): string => {
   return '$' + value.toLocaleString('en-AU', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 };
 
+/**
+ * The report in a chosen design (`drawnDocumentDesign.ts`), as the theme
+ * variables its block reads.
+ *
+ * The report is a picture of the block below, taken with the page's own
+ * colours — so with no design it is in whichever theme the operator has on.
+ * With one, the block's variables are the design's family measured on white
+ * (the block's ground), and the semantic greens, blues and reds are the
+ * design palette's own, which are held to paper: a document a client receives
+ * should not change colour with the theme of the screen it was made on.
+ */
+function designVariables(design: DrawnDocumentDesign): CSSProperties {
+  const f = design.family;
+  const p = f.palette;
+  return {
+    '--primary': hexToHsl(f.accentInk),
+    '--foreground': hexToHsl(f.bodyInk),
+    '--card': hexToHsl(f.stripe),
+    '--card-foreground': hexToHsl(f.bodyInk),
+    '--muted-foreground': hexToHsl(f.mutedInk),
+    '--border': hexToHsl(f.hairline),
+    '--success': hexToHsl(p.positive),
+    '--destructive': hexToHsl(p.negative),
+    '--info': hexToHsl(p.informative),
+    ...(design.faces.heading === 'times' ? { '--font-heading': "Georgia, 'Times New Roman', serif" } : {}),
+  } as CSSProperties;
+}
+
 const getGradeColor = (grade: string): string => {
   switch (grade?.toUpperCase()) {
     case 'A+':
@@ -106,9 +136,13 @@ export function PropertyReportGenerator({
   const [reportData, setReportData] = useState<PropertyReportData | null>(null);
   const [showPreview, setShowPreview] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
+  // The design chosen for the Portfolio Performance Review, read while the
+  // analysis is written; null is the page's own colours, as always.
+  const [design, setDesign] = useState<DrawnDocumentDesign | null>(null);
 
   const generateReport = async () => {
     setIsGenerating(true);
+    void drawnDesignFor('client_property_analysis').then(setDesign);
     
     try {
       // Calculate key metrics from property data
@@ -199,26 +233,14 @@ Provide a comprehensive property investment analysis. Return valid JSON:
         if (jsonMatch) jsonString = jsonMatch[1];
         analysis = JSON.parse(jsonString);
       } catch (parseError) {
+        // A reply that cannot be read is not an analysis. This used to invent
+        // one — a score and a grade from the yield alone, stock strengths and
+        // risks, "Performance aligned with market averages." and a ten-year
+        // projection at 5% — and print it as the model's assessment of this
+        // property. Now it says the analysis failed, and the adviser can ask
+        // again.
         console.error('Parse error:', parseError);
-        // Fallback analysis if AI parsing fails
-        analysis = {
-          investmentScore: Math.round(50 + (grossYield * 5) + (netCashflow > 0 ? 10 : -10)),
-          investmentGrade: grossYield > 5 ? 'B+' : grossYield > 4 ? 'B' : 'C',
-          cashflowStatus: netCashflow > 500 ? 'Strong Positive' : netCashflow > 0 ? 'Positive' : netCashflow > -200 ? 'Neutral' : 'Negative',
-          yieldAnalysis: `This property has a gross yield of ${grossYield.toFixed(2)}% and net yield of ${netYield.toFixed(2)}%.`,
-          equityPosition: lvr < 50 ? 'Strong' : lvr < 70 ? 'Moderate' : lvr < 80 ? 'Weak' : 'Critical',
-          strengths: ['Established property', 'Regular rental income'],
-          concerns: ['Market volatility', 'Interest rate sensitivity'],
-          opportunities: ['Rent review potential', 'Value-add renovations'],
-          risks: ['Vacancy risk', 'Maintenance costs'],
-          recommendations: ['Review rental income annually', 'Consider refinancing options'],
-          marketComparison: 'Performance aligned with market averages.',
-          tenYearProjection: {
-            projectedValue: Math.round(value * Math.pow(1.05, 10)),
-            projectedEquity: Math.round(value * Math.pow(1.05, 10) - loan * 0.7),
-            totalCashflow: Math.round(annualCashflow * 10 * 1.2)
-          }
-        };
+        throw new Error('the analysis could not be read. Try again.');
       }
 
       setReportData({
@@ -355,7 +377,11 @@ Provide a comprehensive property investment analysis. Return valid JSON:
 
           <ScrollArea className="max-h-[calc(90vh-120px)]">
             {reportData && (
-              <div id="property-report-content" className="p-6 bg-white space-y-6">
+              <div
+                id="property-report-content"
+                className="p-6 bg-white space-y-6"
+                style={design ? designVariables(design) : undefined}
+              >
                 {/* Header */}
                 <div className="border-b pb-4">
                   <h1 className="text-2xl font-bold text-primary">Investment Property Analysis</h1>

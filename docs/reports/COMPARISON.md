@@ -364,6 +364,17 @@ The second of those matters most: 3,626 lines of pdf-lib **shared with the
 investment report format**. Retiring or breaking it takes a second, unrelated
 document down with it, and nothing else in the suite would fail.
 
+**One change since (release audit, 26 Sep 2026): the legacy download could not
+download.** `PixelPerfectPDFGenerator` stored every document it drew in the
+`investment-reports` bucket, and `secure-storage` files that bucket against an
+`investment_reports` row. A comparison is not one, so the upload was refused for
+every caller, after `format-comparison-report` had already been paid for. A
+comparison (`skipDatabaseUpdate`) is now drawn and handed straight to the
+browser, as is its flattened copy; nothing about a comparison was ever stored by
+this path. The investment report's own path through the engine is unchanged.
+One defect is recorded rather than fixed: the engine titles every document it
+draws as an Investment Compass, so the legacy comparison PDF's cover says so.
+
 `requestComparisonPdf` takes **no legacy fallback**, and here that is not a choice:
 `ComparisonPDFGenerator` has no importable entry point, and
 `PixelPerfectPDFGenerator` exposes only a ref handle returning a URL. An undeployed

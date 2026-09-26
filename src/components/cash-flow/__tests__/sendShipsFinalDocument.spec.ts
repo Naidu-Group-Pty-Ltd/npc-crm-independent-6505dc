@@ -46,7 +46,12 @@ describe('one producer for the final Cash Flow document', () => {
     // The template choice is read ONCE and travels with the key, so the
     // document filed under a key was rendered under the choice the key names.
     expect(describe_).toContain("selectedTemplateFor('cashflow')");
-    expect(describe_).toMatch(/cashFlowFinalKey\(\{\s*wire,\s*scenario:\s*storedScenario,\s*selectedTemplateId\s*\}\)/);
+    // While the report type is held on its own pages the choice is worn as its
+    // design, which is a different document from the template's pages — so
+    // the key names which of the two it is.
+    expect(describe_).toMatch(/const selectedTemplateId = held \? null : chosen;/);
+    expect(describe_).toMatch(/const designTemplateId = held \? chosen : null;/);
+    expect(describe_).toMatch(/cashFlowFinalKey\(\{\s*wire,\s*scenario:\s*storedScenario,\s*selectedTemplateId,\s*designTemplateId\s*\}\)/);
   });
 
   it('asks the template and the route in exactly one place', () => {

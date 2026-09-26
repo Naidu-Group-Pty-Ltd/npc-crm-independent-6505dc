@@ -23,8 +23,15 @@ import jsPDF from 'jspdf';
 import { format } from 'date-fns';
 import { fetchGlobalReportSettings } from '@/hooks/useGlobalReportSettings';
 import { drawJsPDFDisclaimerPage } from '@/utils/pdfDisclaimerPage';
-import { issuerClosingPage, loadLegacyDocumentBrand, rgbObject, type LegacyDocumentBrand } from '@/lib/reports/legacyDocumentBrand';
+import {
+  headingFaceFor,
+  issuerClosingPage,
+  loadLegacyDocumentBrand,
+  rgbObject,
+  type LegacyDocumentBrand,
+} from '@/lib/reports/legacyDocumentBrand';
 import { drawLegacyIssuerCover } from '@/lib/reports/legacyIssuerCover';
+import { drawnDesignFor } from '@/lib/reports/drawnDocumentDesign';
 import { smartCapitalize } from '@/utils/nameFormatting';
 import type { RationaleReport, RationaleSeverity } from '@/utils/strategyRationaleEngine';
 
@@ -61,9 +68,11 @@ interface DocumentPalette {
   goldOnNavy: RGB;
   /** Headings, figures and badges. */
   navy: RGB;
+  /** The face headings are set in: Helvetica, or Times where a chosen design sets a serif. */
+  headingFace: 'helvetica' | 'times';
 }
 
-const HOUSE_PALETTE: DocumentPalette = { gold: GOLD, goldFill: GOLD, goldOnNavy: GOLD, navy: NAVY };
+const HOUSE_PALETTE: DocumentPalette = { gold: GOLD, goldFill: GOLD, goldOnNavy: GOLD, navy: NAVY, headingFace: 'helvetica' };
 
 function documentPalette(brand: LegacyDocumentBrand): DocumentPalette {
   if (brand.artwork === 'house') return HOUSE_PALETTE;
@@ -73,6 +82,7 @@ function documentPalette(brand: LegacyDocumentBrand): DocumentPalette {
     goldFill: rgbObject(family.accentInk),
     goldOnNavy: rgbObject(family.onDeep),
     navy: rgbObject(family.deep),
+    headingFace: headingFaceFor(brand),
   };
 }
 
@@ -152,7 +162,7 @@ function drawSectionHeader(doc: jsPDF, title: string, y: number, P: DocumentPale
   setFill(doc, P.gold);
   doc.rect(MARGIN, y, CONTENT_W, 0.6, 'F');
   doc.setFontSize(11);
-  doc.setFont('helvetica', 'bold');
+  doc.setFont(P.headingFace, 'bold');
   setColor(doc, P.navy);
   doc.text(title.toUpperCase(), MARGIN, y + 6);
   return y + 11;
@@ -227,8 +237,11 @@ export async function generateStrategyRationalePDF(
 
   // Whose template this brief is printed in: NPC's artwork on the prime,
   // exactly as it has always been drawn, and the issuer's own on every clone
-  // (`legacyDocumentBrand.ts`). The content is the same either way.
-  const legacyBrand = await loadLegacyDocumentBrand(__brand?.company_name);
+  // (`legacyDocumentBrand.ts`) — or, where the person chose a template for
+  // Borrowing Capacity, that template's design (`drawnDocumentDesign.ts`).
+  // The content is the same whichever it is.
+  const design = await drawnDesignFor('strategy_rationale');
+  const legacyBrand = await loadLegacyDocumentBrand(__brand?.company_name, undefined, design);
   const P = documentPalette(legacyBrand);
 
   // ════════════════════════════════════════════════════════════════════════
@@ -242,6 +255,8 @@ export async function generateStrategyRationalePDF(
       subject: displayName,
       standfirst: 'Borrowing Capacity Scenario — Finance Hand-off',
       family: legacyBrand.family,
+      design: legacyBrand.design,
+      paperMark: legacyBrand.paperMark,
     });
   } else try {
     const coverImageUrl = '/templates/npc-cashflow-cover.jpg';
@@ -285,7 +300,7 @@ export async function generateStrategyRationalePDF(
 
   // Client header
   doc.setFontSize(18);
-  doc.setFont('helvetica', 'bold');
+  doc.setFont(P.headingFace, 'bold');
   setColor(doc, P.navy);
   doc.text(displayName, MARGIN, y + 5);
 

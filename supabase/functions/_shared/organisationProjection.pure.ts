@@ -65,6 +65,7 @@
  */
 
 import {
+  HOUSE_COVER_TAGLINE,
   PLATFORM_DISCLAIMER,
   WORKSPACE_DEFAULT_DISCLAIMER,
   isHouseContactRow,
@@ -308,6 +309,19 @@ export function applyOrganisationProjection(
   // module borrows — see the note above on why they are read one at a time.
   const org = { ...projectOrganisation(row), ...projectReportSettings(settings) };
   if (deployment && !deployment.prime) issueAsTheClone(org, row, settings, deployment);
+  /*
+   * The line under the wordmark on every catalogue master's cover.
+   *
+   * It was a literal in all 500 masters, so every clone's templated cover
+   * carried the house's own words under the clone's name. It is the house's
+   * tagline and nobody else's, and no settings row states a tagline of any
+   * other issuer's, so it is published on the prime alone: a clone's cover
+   * draws no tagline (a bound text block that resolves to nothing is not
+   * drawn), rather than a stranger's line or a generic one. With no deployment
+   * stated — the catalogue's own tooling — the masters read as they always
+   * did.
+   */
+  if (!deployment || deployment.prime) put(org, 'tagline', HOUSE_COVER_TAGLINE);
   /*
    * Published only when the bytes exist.
    *

@@ -22,6 +22,12 @@
  * is finished the moment that is true.
  */
 import { invokeSecureFunction } from '@/lib/secureInvoke';
+import {
+  announceDesignOutcome,
+  designBody,
+  standardDesignFor,
+  type StandardDesignRequest,
+} from '@/lib/reportTemplate/standardDesign';
 import { looksUndeployed } from '../undeployedRoute';
 
 export interface SnapshotRequest {
@@ -31,6 +37,12 @@ export interface SnapshotRequest {
   assessmentId?: string | null;
   scenarioPresets?: unknown[];
   edition?: string | null;
+  /**
+   * The design to draw the document in. Omit it and the person's own choice
+   * for the format is read (`standardDesign.ts`); `null` asks for the
+   * standard design whatever was chosen. How it looks, never what it says.
+   */
+  design?: StandardDesignRequest | null;
 }
 
 export interface SnapshotResult {
@@ -77,14 +89,17 @@ export async function requestBorrowingCapacitySnapshot(
   request: SnapshotRequest,
   legacyFallback?: () => Promise<{ url: string; fileName: string; bytes: number } | null>,
 ): Promise<SnapshotResult> {
+  const design = await standardDesignFor('borrowing_capacity', request.design);
   const { data, error } = await invokeSecureFunction('render-borrowing-capacity-pdf', {
     clientId: request.clientId,
     assessmentId: request.assessmentId ?? null,
     scenarioPresets: request.scenarioPresets ?? [],
     edition: request.edition ?? null,
+    ...designBody(design),
   }, { timeoutMs: 180_000 });
 
   if (!error && data?.url) {
+    announceDesignOutcome(design, data.design);
     return {
       url: String(data.url),
       fileName: String(data.fileName ?? 'Borrowing_Capacity_Snapshot.pdf'),
@@ -104,6 +119,7 @@ export async function requestBorrowingCapacitySnapshot(
     );
     const legacy = await legacyFallback();
     if (legacy) {
+      announceDesignOutcome(design, null, { drawnWithoutRoute: true });
       return { ...legacy, pageCount: null, brandGaps: [], storagePath: null, source: 'legacy' };
     }
   }

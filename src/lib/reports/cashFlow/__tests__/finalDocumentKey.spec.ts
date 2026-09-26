@@ -54,6 +54,21 @@ describe('the key a finalised Cash Flow document is filed under', () => {
       .not.toBe(cashFlowFinalKey({ wire: wire(), scenario: null, selectedTemplateId: 'tpl-2' }));
   });
 
+  it('changes with the design a held report is drawn in', () => {
+    expect(cashFlowFinalKey({ wire: wire(), scenario: null, selectedTemplateId: null, designTemplateId: 'tpl-1' }))
+      .not.toBe(cashFlowFinalKey({ wire: wire(), scenario: null, selectedTemplateId: null, designTemplateId: null }));
+  });
+
+  it('tells a template\'s pages from the same template worn as a design — two documents', () => {
+    expect(cashFlowFinalKey({ wire: wire(), scenario: null, selectedTemplateId: 'tpl-1', designTemplateId: null }))
+      .not.toBe(cashFlowFinalKey({ wire: wire(), scenario: null, selectedTemplateId: null, designTemplateId: 'tpl-1' }));
+  });
+
+  it('treats "no design" the same however it is spelled', () => {
+    expect(cashFlowFinalKey({ wire: wire(), scenario: null, selectedTemplateId: null }))
+      .toBe(cashFlowFinalKey({ wire: wire(), scenario: null, selectedTemplateId: null, designTemplateId: null }));
+  });
+
   it('treats "no template" the same however it is spelled', () => {
     expect(cashFlowFinalKey({ wire: wire(), scenario: null, selectedTemplateId: undefined }))
       .toBe(cashFlowFinalKey({ wire: wire(), scenario: null, selectedTemplateId: null }));

@@ -40,9 +40,21 @@ vi.mock('@/lib/ciAssessment/intakePack/sourceDocuments', () => ({
   readSourceDocument: vi.fn(),
 }));
 
+// The download path decides, per deployment, whether the approved file goes
+// out as it is (`packDownload.ts`, pinned by its own tests). Here it answers
+// as the prime with no design does: the approved file, by its approved name.
+const preparePackDownload = vi.fn(async (kind: string) => {
+  const source = packSourceDocument(kind, 'blank');
+  return { href: source.url, fileName: source.fileName, release: vi.fn() };
+});
+vi.mock('@/lib/ciAssessment/intakePack/packDownload', () => ({
+  preparePackDownload: (...args: [string]) => preparePackDownload(...args),
+  DEFAULT_PACK_DOWNLOAD_DEPS: {},
+}));
+
 const { IntakePackPanel } = await import('../IntakePackPanel');
 
-beforeEach(() => { toast.mockReset(); packSourceDocument.mockClear(); });
+beforeEach(() => { toast.mockReset(); packSourceDocument.mockClear(); preparePackDownload.mockClear(); });
 afterEach(cleanup);
 
 function renderPanel(props: { disabled?: boolean; linkedClientId?: string | null; onOpenClient?: () => void } = {}) {
@@ -101,6 +113,30 @@ describe('blank template downloads', () => {
     expect(anchor.download).toBe('CommercialIndustrialFinanceIntakeWorkbook.xlsx');
     // Straight at the inlined source: nothing re-zips or re-saves the bytes.
     expect(anchor.getAttribute('href')).toContain('data:');
+    expect(preparePackDownload).toHaveBeenCalledWith('workbook', expect.anything());
+    create.mockRestore();
+  });
+
+  it("hands over nothing where a clone's pack could not be prepared, and says why", async () => {
+    // The approved file names another business in its consent clause, so a
+    // clone never falls back to it (`packDownload.ts`).
+    preparePackDownload.mockRejectedValueOnce(new Error('The pack could not be prepared with your business details, so it was not downloaded. Try again.'));
+    renderPanel({ disabled: true });
+    const click = vi.fn();
+    const anchor = document.createElement('a');
+    anchor.click = click;
+    const realCreate = document.createElement.bind(document);
+    const create = vi.spyOn(document, 'createElement').mockImplementation(
+      (tag: string, ...rest: unknown[]) => (tag === 'a' ? anchor : realCreate(tag, ...rest as [])),
+    );
+
+    screen.getAllByRole('button', { name: /download blank template/i })[0].click();
+    await waitFor(() => expect(toast).toHaveBeenCalledWith(expect.objectContaining({
+      title: 'Could not start the download',
+      description: expect.stringContaining('could not be prepared with your business details'),
+      variant: 'destructive',
+    })));
+    expect(click).not.toHaveBeenCalled();
     create.mockRestore();
   });
 });

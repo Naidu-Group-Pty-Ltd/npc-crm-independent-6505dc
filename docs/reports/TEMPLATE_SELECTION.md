@@ -4,6 +4,17 @@ Read this before touching `reportTemplateSelection.pure.ts`, the picker, or
 anything in the generation path that decides which `report_templates` row a
 document is drawn from.
 
+> **Since 26 Sep 2026 a template's pages are used only where the report type
+> is released, and that is Investment alone.** For the other nine, a template
+> document did not carry the same information as the standard document, so
+> each is drawn by its own route and the chosen template supplies only its
+> design: typefaces, colourway, cover ground and table rules. The choice is
+> honoured on every document, and the chooser says so before anything is
+> chosen. Which report types are released, what releasing one takes, and how
+> a design reaches a route, is [`TEMPLATE_PARITY.md`](./TEMPLATE_PARITY.md).
+> Everything below still describes how a choice is stored and resolved, and
+> how it reaches a released report type's pages.
+
 ---
 
 ## What did not exist
@@ -547,3 +558,41 @@ renders 30 pages on WeasyPrint 69.0 — the chosen cover, the master's contents,
 dashboard, financial pages and 22 narrative pages in the chosen gold-on-cream
 palette, the method page, and the chosen disclaimer — where the same choice
 had produced five. `templateComposition.spec.ts` pins the rules.
+
+## For nine report types, a choice is a design
+
+From Phase 2 (26 Sep 2026) a choice means two different things, depending on
+the report type. [`TEMPLATE_PARITY.md`](./TEMPLATE_PARITY.md) is the record;
+this is what it means for the choice.
+
+- **Investment**, the one report type whose template pages are released
+  (`TEMPLATE_RELEASED_REPORT_TYPES`), is drawn through the chosen template's
+  pages, as everything above describes.
+- **The other nine** never reach a template's pages. The choice is sent to the
+  report's own route as a design: its typefaces, colourway, cover ground and
+  table rules. The route draws its own standard pages in that design. So the
+  choice is honoured on every document, and the information is the standard
+  document's by construction.
+
+Three rules follow.
+
+**A choice is read in one place and sent from every path.** Every `request*`
+function asks `standardDesignFor` (`standardDesign.ts`). A caller that has
+already read the choice passes it in, so one render never reads it twice. The
+Cash Flow modal needs this: it files a finished document under a key that
+includes the design, and the key and the render must be the same reading.
+
+**The route decides, and says what it drew.** A catalogue design is anybody's.
+A `report_templates` row is honoured only where the Template Builder would list
+it for this person and the chooser would offer it for this report type
+(`templateDesignRoute.pure.ts`), which are the rules this document already
+applies to the choice itself. Whatever cannot be honoured is answered in the
+`DesignEcho` and said beside the file ("Your chosen template was not used for
+this document"). A route that answers nothing about a design is a deployment
+older than designs, and that is said too.
+
+**A choice also dresses the documents drawn without a template.** Nine browser
+documents wear the choice made for the report type they come from
+(`DRAWN_DOCUMENTS`). The chooser names them under that report type ("Also sets
+the design of the Strategy Rationale, which is drawn without a template of its
+own."), and the Template per report format card shows the same note.

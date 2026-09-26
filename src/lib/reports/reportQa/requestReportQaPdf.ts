@@ -28,6 +28,12 @@
  * naming the exports that do.
  */
 import { invokeSecureFunction } from '@/lib/secureInvoke';
+import {
+  announceDesignOutcome,
+  designBody,
+  standardDesignFor,
+  type StandardDesignRequest,
+} from '@/lib/reportTemplate/standardDesign';
 import { looksUndeployed } from '../undeployedRoute';
 
 export type ReportQaSubjectName = 'structured' | 'answer' | 'transcript';
@@ -73,6 +79,12 @@ export interface RequestReportQaOptions {
   /** Post the finished file into the conversation, so it can be emailed. */
   attachToConversation?: boolean;
   edition?: string | null;
+  /**
+   * The design to draw the document in. Omit it and the person's own choice
+   * for the format is read (`standardDesign.ts`); `null` asks for the
+   * standard design whatever was chosen. How it looks, never what it says.
+   */
+  design?: StandardDesignRequest | null;
 }
 
 /**
@@ -107,6 +119,7 @@ export async function requestReportQaPdf(
   subject: ReportQaSubjectName,
   options: RequestReportQaOptions = {},
 ): Promise<ReportQaPdfResult> {
+  const design = await standardDesignFor('qa', options.design);
   const { data, error } = await invokeSecureFunction('render-report-qa-pdf', {
     conversationId,
     subject,
@@ -114,6 +127,7 @@ export async function requestReportQaPdf(
     generateIfMissing: options.generateIfMissing === true,
     attachToConversation: options.attachToConversation === true,
     edition: options.edition ?? null,
+    ...designBody(design),
     // A transcript runs to twenty-nine pages, WeasyPrint is a network hop, and
     // the structured subject may make a gpt-5.2 call on the way. Generous
     // against the worst case rather than the median — the legacy's own cap was
@@ -121,6 +135,7 @@ export async function requestReportQaPdf(
   }, { timeoutMs: 240_000 });
 
   if (!error && data?.url) {
+    announceDesignOutcome(design, data.design);
     const raw = data.attachment as Record<string, unknown> | null | undefined;
     return {
       url: String(data.url),

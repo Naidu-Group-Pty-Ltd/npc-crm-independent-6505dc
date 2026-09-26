@@ -9,6 +9,8 @@ import { useToast } from '@/hooks/use-toast';
 import { Download, FileSpreadsheet, FileText } from 'lucide-react';
 import { format } from 'date-fns';
 import jsPDF from 'jspdf';
+import { drawnDesignFor, type DrawnDocumentDesign } from '@/lib/reports/drawnDocumentDesign';
+import { rgbTriple } from '@/lib/reports/legacyDocumentBrand';
 
 interface CallLog {
   id: string;
@@ -123,29 +125,52 @@ export const CallLogsExport = ({ calls, stats, triggerClassName }: CallLogsExpor
     setOpen(false);
   };
 
-  const buildPdfDoc = () => {
+  /**
+   * The export, in the plain greys it has always used — or, where the person
+   * chose a template for the Client Details form, in that template's design
+   * (`drawnDocumentDesign.ts`): its deep shade for the title and headings, its
+   * inks for the text, its table head and stripe. Every row is the same either
+   * way.
+   */
+  const buildPdfDoc = (design: DrawnDocumentDesign | null = null) => {
     const pdf = new jsPDF();
     const pageWidth = pdf.internal.pageSize.getWidth();
     let yPos = 20;
+    const f = design?.family ?? null;
+    const headingFace = design?.faces.heading === 'times' ? 'times' : 'helvetica';
+    const ink = (hex: string | undefined, grey: [number, number, number]) => (hex ? rgbTriple(hex) : grey);
+    const title = ink(f?.deep, [0, 0, 0]);
+    const body = ink(f?.bodyInk, [0, 0, 0]);
+    const secondary = ink(f?.bodyInk, [60, 60, 60]);
+    const muted = ink(f?.mutedInk, [100, 100, 100]);
 
     pdf.setFontSize(20);
-    pdf.setTextColor(0, 0, 0);
+    pdf.setTextColor(...title);
+    if (design) pdf.setFont(headingFace, 'bold');
     pdf.text('Call Logs Report', pageWidth / 2, yPos, { align: 'center' });
+    if (design) pdf.setFont('helvetica', 'normal');
     yPos += 10;
 
     pdf.setFontSize(10);
-    pdf.setTextColor(100, 100, 100);
+    pdf.setTextColor(...muted);
     pdf.text(`Generated: ${format(new Date(), 'PPpp')}`, pageWidth / 2, yPos, { align: 'center' });
+    if (f) {
+      pdf.setDrawColor(...rgbTriple(f.accent));
+      pdf.setLineWidth(0.6);
+      pdf.line(pageWidth / 2 - 20, yPos + 4, pageWidth / 2 + 20, yPos + 4);
+    }
     yPos += 15;
 
     if (includeAnalytics) {
       pdf.setFontSize(14);
-      pdf.setTextColor(0, 0, 0);
+      pdf.setTextColor(...title);
+      if (design) pdf.setFont(headingFace, 'bold');
       pdf.text('Analytics Summary', 14, yPos);
+      if (design) pdf.setFont('helvetica', 'normal');
       yPos += 8;
 
       pdf.setFontSize(10);
-      pdf.setTextColor(60, 60, 60);
+      pdf.setTextColor(...secondary);
       const analyticsData = [
         ['Total Calls', stats.totalCalls.toString()],
         ['Completed Calls', stats.completedCalls.toString()],
@@ -164,10 +189,10 @@ export const CallLogsExport = ({ calls, stats, triggerClassName }: CallLogsExpor
         const x = 14 + col * colWidth;
         const y = yPos + row * 15;
         pdf.setFontSize(8);
-        pdf.setTextColor(100, 100, 100);
+        pdf.setTextColor(...muted);
         pdf.text(item[0], x, y);
         pdf.setFontSize(12);
-        pdf.setTextColor(0, 0, 0);
+        pdf.setTextColor(...body);
         pdf.text(item[1], x, y + 5);
       });
 
@@ -175,8 +200,10 @@ export const CallLogsExport = ({ calls, stats, triggerClassName }: CallLogsExpor
     }
 
     pdf.setFontSize(14);
-    pdf.setTextColor(0, 0, 0);
+    pdf.setTextColor(...title);
+    if (design) pdf.setFont(headingFace, 'bold');
     pdf.text('Call Details', 14, yPos);
+    if (design) pdf.setFont('helvetica', 'normal');
     yPos += 8;
 
     const headers = ['Customer', 'Phone', 'Agent', 'Direction', 'Outcome', 'Duration', 'Cost'];
@@ -195,17 +222,17 @@ export const CallLogsExport = ({ calls, stats, triggerClassName }: CallLogsExpor
     };
 
     const drawTableHeader = () => {
-      pdf.setFillColor(240, 240, 240);
+      pdf.setFillColor(...ink(f?.deep, [240, 240, 240]));
       pdf.rect(14, yPos - 4, pageWidth - 28, 8, 'F');
       pdf.setFontSize(8);
-      pdf.setTextColor(60, 60, 60);
+      pdf.setTextColor(...ink(f?.onDeep, [60, 60, 60]));
       let headerX = 14;
       headers.forEach((header, i) => {
         pdf.text(header, headerX, yPos);
         headerX += colWidths[i];
       });
       yPos += 8;
-      pdf.setTextColor(0, 0, 0);
+      pdf.setTextColor(...body);
     };
 
     drawTableHeader();
@@ -228,7 +255,7 @@ export const CallLogsExport = ({ calls, stats, triggerClassName }: CallLogsExpor
         `$${call.cost?.toFixed(2) || '0.00'}`,
       ];
       if (index % 2 === 0) {
-        pdf.setFillColor(248, 248, 248);
+        pdf.setFillColor(...ink(f?.stripe, [248, 248, 248]));
         pdf.rect(14, yPos - 4, pageWidth - 28, 7, 'F');
       }
       pdf.setFontSize(7);
@@ -245,8 +272,8 @@ export const CallLogsExport = ({ calls, stats, triggerClassName }: CallLogsExpor
 
   const callLogsPdfFilename = () => `call-logs-${format(new Date(), 'yyyy-MM-dd')}.pdf`;
 
-  const exportToPDF = () => {
-    const pdf = buildPdfDoc();
+  const exportToPDF = async () => {
+    const pdf = buildPdfDoc(await drawnDesignFor('call_log_export'));
     pdf.save(callLogsPdfFilename());
     toast({ title: 'Export Complete', description: `Exported call logs to PDF` });
     setOpen(false);
@@ -256,7 +283,7 @@ export const CallLogsExport = ({ calls, stats, triggerClassName }: CallLogsExpor
     if (exportFormat === 'csv') {
       exportToCSV();
     } else {
-      exportToPDF();
+      void exportToPDF();
     }
   };
 
@@ -338,7 +365,7 @@ export const CallLogsExport = ({ calls, stats, triggerClassName }: CallLogsExpor
             </Button>
             {exportFormat === 'pdf' && (
               <FlattenPdfIconButton
-                getPdfBlob={async () => buildPdfDoc().output('blob')}
+                getPdfBlob={async () => buildPdfDoc(await drawnDesignFor('call_log_export')).output('blob')}
                 filename={callLogsPdfFilename()}
               />
             )}

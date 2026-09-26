@@ -135,7 +135,7 @@ export function createSupabaseDouble(fixtures, opts = {}) {
     selections: [],          // report_template_selections rows this run wrote
     uploads: new Map(),      // storage path → bytes
     renders: [],
-    routeCalls: [],             // every render-template-pdf call, with its HTML
+    routeCalls: [],          // every call to a report type's own route, with the design it was sent
     portalReports: [],       // client_portal_reports rows the send flow wrote
     updates: [],             // every manage-investment-reports update payload
   };
@@ -169,7 +169,52 @@ export function createSupabaseDouble(fixtures, opts = {}) {
     return Buffer.from(out, 'latin1');
   };
 
+  /**
+   * The nine report types' OWN routes.
+   *
+   * Each draws its document in the deployed function, against the real engine
+   * and the real database, and none is reproducible here. A journey watches the
+   * DECISION the front end makes — that it asked the format's own route, once,
+   * carrying the chosen template as the design to draw in (`standardDesign.ts`)
+   * — so each is answered with a stand-in PDF the download path can save, a
+   * stored path a send can point at, and the echo a route gives a design it
+   * applied. What the route then draws is proven where it is drawn
+   * (`templateDesignParity.spec.ts`, and the sample PDFs).
+   */
+  const STANDARD_ROUTES = new Set([
+    'render-borrowing-capacity-pdf', 'render-cash-flow-pdf', 'render-cash-flow-comparison-pdf',
+    'render-client-details-pdf', 'render-commercial-capacity-pdf', 'render-market-intelligence-pdf',
+    'render-portfolio-review-pdf', 'render-property-comparison-pdf', 'render-report-qa-pdf',
+  ]);
+  const standardRoute = (name, body) => {
+    const at = Date.now();
+    const subject = body?.subject ?? null;
+    const stub = standInPdf(`${name}${subject ? ` — ${subject}` : ''} — stand-in`);
+    const storagePath = `route-stand-in/${name}/${at}.pdf`;
+    state.uploads.set(storagePath, stub);
+    const design = body?.design ?? null;
+    state.routeCalls.push({
+      fn: name, design, path: storagePath, subject, conversationId: body?.conversationId ?? null,
+      reportId: body?.reportId ?? null, at,
+    });
+    return json({
+      url: `data:application/pdf;base64,${stub.toString('base64')}`,
+      path: storagePath,
+      storagePath,
+      fileName: `${name.replace(/^render-|-pdf$/g, '')}${subject ? `-${subject}` : ''}.pdf`,
+      bytes: stub.length,
+      pageCount: 1, brandGaps: [], sections: [], dropped: [], emptyLayers: [],
+      persisted: true, reviewIncluded: true, recordComplete: true, missingSections: [],
+      subject: subject ?? 'transcript', turnCount: 0, turnsShown: 0, truncated: false, generated: false,
+      attachment: null,
+      design: design
+        ? { applied: { label: 'Chosen template (stand-in)', code: null, colourway: null }, refusal: null, message: null }
+        : null,
+    });
+  };
+
   async function edge(name, body) {
+    if (STANDARD_ROUTES.has(name)) return standardRoute(name, body);
     switch (name) {
       case 'custom-auth-verify-v2':
         return json({ valid: true, user: FIXTURE_USER, roles: ['superadmin'], access_token: FIXTURE_ACCESS_TOKEN, jwt_unavailable: false });
@@ -305,20 +350,6 @@ export function createSupabaseDouble(fixtures, opts = {}) {
         }
         return json({ success: true, data: { publicUrl: '' } });
       }
-      case 'render-report-qa-pdf': {
-        // The format's own route. Its document is drawn by the deployed
-        // function against the Cloud Run engine and is not reproducible here;
-        // the journey watches that the front end ASKED it (and not a template),
-        // so it is answered with a stand-in PDF the download path can save.
-        const stub = standInPdf(`Report Q&A — ${String(body?.subject ?? 'transcript')} — stand-in`);
-        state.routeCalls.push({ fn: name, subject: body?.subject ?? null, conversationId: body?.conversationId ?? null });
-        return json({
-          url: `data:application/pdf;base64,${stub.toString('base64')}`,
-          fileName: `Q_and_A-${String(body?.subject ?? 'transcript')}.pdf`,
-          pageCount: 1, brandGaps: [], sections: [], subject: body?.subject ?? 'transcript',
-          turnCount: 0, turnsShown: 0, truncated: false, generated: false, attachment: null,
-        });
-      }
       case 'get-user-names':
         // The library resolves author names for its cards; none is a fixture user.
         return json({ success: true, users: [] });
@@ -340,6 +371,11 @@ export function createSupabaseDouble(fixtures, opts = {}) {
       // nothing published answers; the host then draws nothing.
       case 'mission-control-announcements':
         return json({ announcements: [] });
+      // The navigation asks whether the builder stock marketplace is switched
+      // on (`useBuilderStockMarketplaceFlag`) on every dashboard page. No
+      // report journey is about it; off is what a deployment without it says.
+      case 'builder-stock-marketplace':
+        return json({ enabled: false });
       case 'manage-template-library':
         return json({ success: true, records: [], count: 0 });
       case 'authenticated-data':

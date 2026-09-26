@@ -48,6 +48,8 @@ import { getAdapter, listAdapters, type ReportTemplateAdapter } from '@/lib/repo
 import { isSelectableTemplate } from '@/lib/reportTemplate/templateSelection';
 import { measureBindingCoverage } from '@/lib/reportTemplate/templateBindingCoverage.pure';
 import { composeTemplateWithDonor } from '@/lib/reportTemplate/templateComposition.pure';
+import { withIssuerTagline } from '@/lib/reportTemplate/houseTaglineGuard.pure';
+import { isPrimeDeployment } from '@/lib/primeDeployment';
 
 /**
  * Why the templated document was not produced.
@@ -602,6 +604,11 @@ export async function routeReportThroughTemplate(
           + `${composition.bodyPages} body pages; cover from ${composition.coverFrom}`,
         );
       }
+
+      // A clone's cover never carries the house's tagline, whether or not
+      // seed v23 reached this deployment or this master was customised
+      // (`houseTaglineGuard.pure.ts`). The prime's template is untouched.
+      schema = withIssuerTagline(schema, { prime: isPrimeDeployment() });
 
       /*
        * Compatibility is asked of the RENDERER, not of a column.

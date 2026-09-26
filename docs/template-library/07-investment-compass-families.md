@@ -277,9 +277,16 @@ Three rules decide the placement:
 
 This is composed in code, keyed on a ground the catalogue declares.
 `source.json` is not edited, so the approved manifests still carry no
-`image_slots` for these families, and the Claude Design catalogue does not
-draw the photograph. If the catalogue should show it, that change is made
-in Claude Design and comes back through the generator.
+`image_slots` for these families.
+
+The Claude Design catalogue shows the photograph now. On 26 Sep 2026 the owner
+added the photograph cover pages (Private Banking, Modern Fintech, Dark
+Executive, Wealth Management), a band note for the three banded families, and a
+"Floor plan" page in every family, leaving `Template Catalogue.dc.html`
+unchanged. Those pages are the design record, and the generator still composes
+the photograph and the floor-plan sheet from code. A change to either one is
+made in Claude Design first and then brought into the code by hand, because
+`source.json` does not carry pages.
 
 ---
 

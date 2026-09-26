@@ -280,6 +280,17 @@ describe('the producer', () => {
     expect(PRODUCER).not.toMatch(/maxTokens:\s*4000/);
   });
 
+  it('hands the model null for a figure the record does not hold, never a default', () => {
+    // A 5.5% rate and an 80% LVR nobody recorded were stated in the analysis
+    // as the property's own, and a zero price or rent read as a real one.
+    const inputs = PRODUCER.slice(PRODUCER.indexOf('// Financial Metrics'), PRODUCER.indexOf('// Investment Score'));
+    for (const field of ['purchasePrice', 'weeklyRent', 'capitalGrowthRate', 'interestRate', 'loanToValueRatio']) {
+      expect(inputs, field).toMatch(new RegExp(`${field}: [^\\n]*\\|\\| null,`));
+    }
+    expect(inputs).not.toMatch(/\|\| (?:0|5\.5|80),/);
+    expect(PRODUCER).toContain('A null figure (a price, a weekly\nrent, a capital growth rate, an interest rate or an LVR) is one the record does\nnot hold');
+  });
+
   it('numbers the properties in the order the caller sent them', () => {
     // `propertyNumber` is the only handle the model has on a property in five
     // of the eight sections, and it was the order an `.in()` happened to

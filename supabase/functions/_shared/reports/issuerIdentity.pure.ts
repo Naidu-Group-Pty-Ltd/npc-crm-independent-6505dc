@@ -219,6 +219,14 @@ export function namesTheHouse(text: unknown): boolean {
  */
 export const HOUSE_TAGLINE = 'YOUR DEDICATED PROPERTY PARTNER';
 
+/**
+ * The same words as they are set under the wordmark on every catalogue
+ * master's cover, which sets them in sentence case. Published as `org.tagline`
+ * on the prime alone (`organisationProjection.pure.ts`), so the prime's covers
+ * print exactly what they always printed and a clone's print no tagline.
+ */
+export const HOUSE_COVER_TAGLINE = 'Your dedicated property partner';
+
 /** Is this the house's tagline, however it is cased or spaced? */
 export function isHouseTagline(text: unknown): boolean {
   return typeof text === 'string'

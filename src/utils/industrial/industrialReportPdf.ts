@@ -4,6 +4,12 @@
  * Sections: Cover · Executive Summary · Asset Overview · Site Metrics ·
  * Rent Roll · Income & NOI · Yield · Capex Schedule · Serviceability ·
  * Risks · Recommendation · Disclaimer.
+ *
+ * It wears the design the person chose for the C&I Capacity report
+ * (`drawnDocumentDesign.ts`): its colours, its cover's ground and frame, and a
+ * serif design's headings in Times. Every word, figure and page is the
+ * report's own either way; with no design it is drawn exactly as it always
+ * was, in its dark and gold.
  */
 import jsPDF from 'jspdf';
 import { format } from 'date-fns';
@@ -20,6 +26,10 @@ import {
   calcSiteMetrics,
   calculateIndustrialBc,
 } from '@/utils/industrial';
+import { drawnDesignFor, type DrawnDocumentDesign } from '@/lib/reports/drawnDocumentDesign';
+import { GRID_GUTTER, gridRows, tableRowHeight } from '@/lib/reports/drawnGrid';
+import { paintDesignCover } from '@/lib/reports/drawnCover';
+import { rgbObject } from '@/lib/reports/legacyDocumentBrand';
 
 const GOLD = { r: 212, g: 168, b: 67 };
 const DARK_BG = { r: 13, g: 13, b: 13 };
@@ -29,6 +39,40 @@ const LIGHT_GRAY = { r: 245, g: 245, b: 245 };
 const BODY_TEXT = { r: 45, g: 45, b: 45 };
 
 type RGB = { r: number; g: number; b: number };
+
+/**
+ * The colours the report's pages are drawn in, by role, and the face its
+ * headings take: its own dark and gold with no design, the design's family
+ * with one.
+ */
+interface DocumentPalette {
+  gold: RGB;
+  dark: RGB;
+  onDark: RGB;
+  gray: RGB;
+  zebra: RGB;
+  body: RGB;
+  headingFace: 'helvetica' | 'times';
+}
+
+const HOUSE_PALETTE: DocumentPalette = {
+  gold: GOLD, dark: DARK_BG, onDark: WHITE, gray: GRAY, zebra: LIGHT_GRAY, body: BODY_TEXT, headingFace: 'helvetica',
+};
+
+function paletteFor(design: DrawnDocumentDesign | null): DocumentPalette {
+  if (!design) return HOUSE_PALETTE;
+  const f = design.family;
+  return {
+    gold: rgbObject(f.accent),
+    dark: rgbObject(f.deep),
+    onDark: rgbObject(f.onDeep),
+    gray: rgbObject(f.mutedInk),
+    zebra: rgbObject(f.stripe),
+    body: rgbObject(f.bodyInk),
+    headingFace: design.faces.heading === 'times' ? 'times' : 'helvetica',
+  };
+}
+
 const PAGE_W = 210;
 const PAGE_H = 297;
 const MARGIN = 18;
@@ -46,21 +90,21 @@ const fmtDate = (d?: string | null) => d ? format(new Date(d), 'dd MMM yyyy') : 
 const setText = (doc: jsPDF, c: RGB) => doc.setTextColor(c.r, c.g, c.b);
 const setFill = (doc: jsPDF, c: RGB) => doc.setFillColor(c.r, c.g, c.b);
 
-interface State { doc: jsPDF; y: number; pageNum: number; label: string; }
+interface State { doc: jsPDF; y: number; pageNum: number; label: string; P: DocumentPalette; }
 
 function header(s: State) {
-  setFill(s.doc, DARK_BG);
+  setFill(s.doc, s.P.dark);
   s.doc.rect(0, 0, PAGE_W, 10, 'F');
-  setFill(s.doc, GOLD);
+  setFill(s.doc, s.P.gold);
   s.doc.rect(0, 10, PAGE_W, 1.2, 'F');
-  setText(s.doc, WHITE);
+  setText(s.doc, s.P.onDark);
   s.doc.setFont('helvetica', 'bold'); s.doc.setFontSize(9);
   s.doc.text('INDUSTRIAL INVESTMENT REPORT', MARGIN, 6.5);
   s.doc.setFont('helvetica', 'normal'); s.doc.setFontSize(8);
   s.doc.text(s.label, PAGE_W - MARGIN, 6.5, { align: 'right' });
 }
 function footer(s: State) {
-  setText(s.doc, GRAY);
+  setText(s.doc, s.P.gray);
   s.doc.setFont('helvetica', 'normal'); s.doc.setFontSize(8);
   s.doc.text(`Generated ${format(new Date(), 'dd MMM yyyy')}`, MARGIN, FOOTER_Y);
   s.doc.text(`Page ${s.pageNum}`, PAGE_W - MARGIN, FOOTER_Y, { align: 'right' });
@@ -70,10 +114,10 @@ function ensure(s: State, n: number) { if (s.y + n > PAGE_H - 22) newPage(s); }
 
 function section(s: State, num: number, title: string) {
   ensure(s, 18);
-  setFill(s.doc, GOLD);
+  setFill(s.doc, s.P.gold);
   s.doc.rect(MARGIN, s.y, 3, 7, 'F');
-  setText(s.doc, DARK_BG);
-  s.doc.setFont('helvetica', 'bold'); s.doc.setFontSize(13);
+  setText(s.doc, s.P.dark);
+  s.doc.setFont(s.P.headingFace, 'bold'); s.doc.setFontSize(13);
   s.doc.text(`${num}. ${title}`, MARGIN + 6, s.y + 5.5);
   s.y += 11;
 }
@@ -81,7 +125,7 @@ function section(s: State, num: number, title: string) {
 function body(s: State, text: string, bold = false) {
   s.doc.setFont('helvetica', bold ? 'bold' : 'normal');
   s.doc.setFontSize(10);
-  setText(s.doc, BODY_TEXT);
+  setText(s.doc, s.P.body);
   const lines = s.doc.splitTextToSize(text, CONTENT_W);
   ensure(s, lines.length * 4.5);
   s.doc.text(lines, MARGIN, s.y);
@@ -89,19 +133,23 @@ function body(s: State, text: string, bold = false) {
 }
 
 function kv(s: State, items: Array<[string, string]>, cols = 2) {
+  // A value is set inside its own column, wrapped where it is wider, and its
+  // row grows for the extra lines — a long address used to run on into the
+  // next column's value and print over it (`gridRows`).
   const colW = CONTENT_W / cols;
-  const rowH = 9;
-  const rows = Math.ceil(items.length / cols);
-  ensure(s, rows * rowH + 2);
+  s.doc.setFont('helvetica', 'bold'); s.doc.setFontSize(10);
+  const layout = gridRows(items.map((it) => s.doc.splitTextToSize(it[1], colW - GRID_GUTTER)), cols);
+  ensure(s, layout.height + 2);
   items.forEach((it, idx) => {
-    const c = idx % cols, r = Math.floor(idx / cols);
-    const x = MARGIN + c * colW, y = s.y + r * rowH;
-    setText(s.doc, GRAY); s.doc.setFont('helvetica', 'normal'); s.doc.setFontSize(7.5);
+    const c = idx % cols;
+    const x = MARGIN + c * colW, y = s.y + layout.top[Math.floor(idx / cols)];
+    setText(s.doc, s.P.gray); s.doc.setFont('helvetica', 'normal'); s.doc.setFontSize(7.5);
     s.doc.text(it[0].toUpperCase(), x, y);
-    setText(s.doc, BODY_TEXT); s.doc.setFont('helvetica', 'bold'); s.doc.setFontSize(10);
-    s.doc.text(it[1], x, y + 5);
+    setText(s.doc, s.P.body); s.doc.setFont('helvetica', 'bold'); s.doc.setFontSize(10);
+    const lines = layout.lines[idx];
+    s.doc.text(lines.length > 1 ? lines : it[1], x, y + 5);
   });
-  s.y += rows * rowH + 2;
+  s.y += layout.height + 2;
 }
 
 function table(s: State, headers: string[], rows: string[][], widths?: number[], align?: Array<'left' | 'right' | 'center'>) {
@@ -109,9 +157,9 @@ function table(s: State, headers: string[], rows: string[][], widths?: number[],
   const al = align ?? headers.map(() => 'left' as const);
   const rowH = 7;
   ensure(s, rowH + 4);
-  setFill(s.doc, DARK_BG);
+  setFill(s.doc, s.P.dark);
   s.doc.rect(MARGIN, s.y, CONTENT_W, rowH, 'F');
-  setText(s.doc, WHITE); s.doc.setFont('helvetica', 'bold'); s.doc.setFontSize(8.5);
+  setText(s.doc, s.P.onDark); s.doc.setFont('helvetica', 'bold'); s.doc.setFontSize(8.5);
   let x = MARGIN;
   headers.forEach((h, i) => {
     const tx = al[i] === 'right' ? x + w[i] - 2 : al[i] === 'center' ? x + w[i] / 2 : x + 2;
@@ -120,18 +168,22 @@ function table(s: State, headers: string[], rows: string[][], widths?: number[],
   });
   s.y += rowH;
   s.doc.setFont('helvetica', 'normal'); s.doc.setFontSize(8.5);
-  setText(s.doc, BODY_TEXT);
+  setText(s.doc, s.P.body);
   rows.forEach((row, ri) => {
-    ensure(s, rowH);
-    if (ri % 2 === 0) { setFill(s.doc, LIGHT_GRAY); s.doc.rect(MARGIN, s.y, CONTENT_W, rowH, 'F'); }
+    // A cell wider than its column wraps and the row grows; it used to keep
+    // only its first line, so a long tenant name lost its tail with no mark.
+    const cells = row.map((cell, i) => s.doc.splitTextToSize(cell ?? '', w[i] - 4) as string[]);
+    const h = tableRowHeight(rowH, cells);
+    ensure(s, h);
+    if (ri % 2 === 0) { setFill(s.doc, s.P.zebra); s.doc.rect(MARGIN, s.y, CONTENT_W, h, 'F'); }
     let cx = MARGIN;
-    row.forEach((cell, i) => {
+    row.forEach((_cell, i) => {
       const tx = al[i] === 'right' ? cx + w[i] - 2 : al[i] === 'center' ? cx + w[i] / 2 : cx + 2;
-      const t = s.doc.splitTextToSize(cell ?? '', w[i] - 4)[0] ?? '';
+      const t = cells[i].length > 1 ? cells[i] : cells[i][0] ?? '';
       s.doc.text(t, tx, s.y + 4.8, { align: al[i] });
       cx += w[i];
     });
-    s.y += rowH;
+    s.y += h;
   });
   s.y += 3;
 }
@@ -150,19 +202,28 @@ export async function generateIndustrialInvestmentReport(propertyId: string): Pr
   const doc = new jsPDF({ unit: 'mm', format: 'a4' });
   const label = [property.property_name, property.street, property.suburb, property.state, property.postcode]
     .filter(Boolean).join(', ');
-  const s: State = { doc, y: MARGIN + 14, pageNum: 1, label };
+  const design = await drawnDesignFor('industrial_investment_report');
+  const s: State = { doc, y: MARGIN + 14, pageNum: 1, label, P: paletteFor(design) };
 
   // ── Cover
-  setFill(doc, DARK_BG); doc.rect(0, 0, PAGE_W, PAGE_H, 'F');
-  setFill(doc, GOLD); doc.rect(0, 110, PAGE_W, 2, 'F');
-  setText(doc, GOLD); doc.setFont('helvetica', 'bold'); doc.setFontSize(11);
+  // Its own dark and gold, or the design's ground with every word in the inks
+  // that ground carries (`drawnCover.ts`). A band ends under the address, so
+  // the title block sits in it and the prepared date on paper.
+  const painted = design ? paintDesignCover(doc, design, { bandBottom: 140 }) : null;
+  const coverAccent = painted ? painted.head.accent : GOLD;
+  const coverInk = painted ? painted.head.ink : WHITE;
+  const coverFoot = painted ? painted.foot.muted : GRAY;
+  if (!painted) { setFill(doc, DARK_BG); doc.rect(0, 0, PAGE_W, PAGE_H, 'F'); }
+  setFill(doc, coverAccent); doc.rect(0, 110, PAGE_W, 2, 'F');
+  setText(doc, coverAccent); doc.setFont('helvetica', 'bold'); doc.setFontSize(11);
   doc.text('INDUSTRIAL INVESTMENT REPORT', PAGE_W / 2, 60, { align: 'center' });
-  setText(doc, WHITE); doc.setFontSize(28);
+  setText(doc, coverInk); doc.setFontSize(28);
+  if (design) doc.setFont(design.faces.cover, 'bold');
   const titleLines = doc.splitTextToSize(property.property_name || property.street || 'Industrial Asset', CONTENT_W);
   doc.text(titleLines, PAGE_W / 2, 85, { align: 'center' });
   doc.setFont('helvetica', 'normal'); doc.setFontSize(12);
   doc.text(label, PAGE_W / 2, 125, { align: 'center' });
-  doc.setFontSize(10); setText(doc, GRAY);
+  doc.setFontSize(10); setText(doc, coverFoot);
   doc.text(`Prepared ${format(new Date(), 'dd MMMM yyyy')}`, PAGE_W / 2, 280, { align: 'center' });
 
   newPage(s);
@@ -353,7 +414,7 @@ export async function generateIndustrialInvestmentReport(propertyId: string): Pr
 
   // ── 11. Disclaimer
   section(s, 11, 'Disclaimer');
-  setText(s.doc, GRAY); s.doc.setFontSize(8); s.doc.setFont('helvetica', 'italic');
+  setText(s.doc, s.P.gray); s.doc.setFontSize(8); s.doc.setFont('helvetica', 'italic');
   const disc = 'This report is provided for informational purposes only and does not constitute investment, taxation or legal advice. Industrial market conditions, tenant covenants and capex assumptions may shift materially. Independent valuation, structural engineering and legal due diligence should be undertaken prior to any transaction. Figures are indicative and rounded to the nearest dollar.';
   const dl = s.doc.splitTextToSize(disc, CONTENT_W);
   ensure(s, dl.length * 4);
