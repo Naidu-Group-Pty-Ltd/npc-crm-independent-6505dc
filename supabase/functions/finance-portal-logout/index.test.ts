@@ -1,6 +1,6 @@
 import { readFileSync } from 'node:fs';
 import { describe, expect, it } from 'vitest';
-import { extractFinanceSessionToken } from '../_shared/financeSessionToken';
+import { extractFinanceSessionToken } from '../_shared/financeSessionToken.ts';
 
 const functionSource = readFileSync(new URL('./index.ts', import.meta.url), 'utf8');
 
