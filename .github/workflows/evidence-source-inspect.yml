@@ -23,6 +23,7 @@ on:
         options:
           - market
           - infrastructure
+          - hazard
 
 permissions:
   contents: read
@@ -34,6 +35,13 @@ jobs:
     steps:
       # The infrastructure pipeline's publishers: pages, registers and geocodes.
       # See the script's header. Read-only, and the market steps below are skipped.
+      # Bushfire and flood mapping: what each hazard layer covers and answers
+      # at real report addresses. See the script's header. Read-only.
+      - uses: actions/checkout@v4
+        if: inputs.target == 'hazard'
+      - name: Read the hazard mapping publishers
+        if: inputs.target == 'hazard'
+        run: python3 scripts/market/hazard-source-inspect.py
       - uses: actions/checkout@v4
         if: inputs.target == 'infrastructure'
       - name: Read the infrastructure pipeline's publishers
@@ -42,13 +50,13 @@ jobs:
           pip install --quiet pypdf
           python3 scripts/market/infrastructure-source-inspect.py
       - uses: actions/setup-python@v5
-        if: inputs.target != 'infrastructure'
+        if: inputs.target == 'market'
         with:
           python-version: '3.12'
       - run: pip install --quiet openpyxl
-        if: inputs.target != 'infrastructure'
+        if: inputs.target == 'market'
       - name: Fetch and describe each candidate
-        if: inputs.target != 'infrastructure'
+        if: inputs.target == 'market'
         shell: bash
         run: |
           mkdir -p out

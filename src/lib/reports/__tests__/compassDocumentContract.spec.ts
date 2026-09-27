@@ -125,7 +125,7 @@ describe('the evidence pack is what the report may state', () => {
       'regionalTrendBlocks(',
       'macroEconomicBlock(enhancedData)',
       'demographicsStatBlocks(enhancedData)',
-      'climateStatBlocks(enhancedData)',
+      'climateStatBlocks(enhancedData, hazardReadings(planningFacts))',
       'crimeStatBlocks(enhancedData)',
       'reconcileNearestSchool(',
       'reconcileSchoolDistances(',

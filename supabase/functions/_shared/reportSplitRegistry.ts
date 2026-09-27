@@ -180,11 +180,13 @@ export const PLDD_SECTION_ORDER: { ordinal: number; heading: string }[] = [
 ];
 
 // ─── Lens framing strings ───────────────────────────────────────────────────
+// Printed ONCE per document (`lensOnce` in forkSplit), and written as a
+// statement about the document rather than an instruction to its reader.
 export const FIN_LENS_PREAMBLE =
-  '_Reading this through a financial lens — focus on contribution, yield, repayments, serviceability and exit. The full property and locality narrative lives in the **Property & Location Due Diligence Report**._';
+  '_This report reads the purchase in financial terms — contribution, yield, repayments, serviceability and exit. The property and locality narrative is in the **Property & Location Due Diligence Report**._';
 
 export const PLDD_LENS_PREAMBLE =
-  '_Reading this through a property and locality lens — focus on liveability, planning, demand and resale appeal. The full cashflow, lending and projection modelling lives in the **Client Investment Feasibility & Financial Performance Report**._';
+  '_This report reads the property and its locality — liveability, planning, demand and resale appeal. The cash flow, lending and projection modelling are in the **Client Investment Feasibility & Financial Performance Report**._';
 
 // ─── Per-variant footers / disclaimers ──────────────────────────────────────
 export const FIN_FOOTER_DISCLAIMER =

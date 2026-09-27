@@ -28,7 +28,8 @@ import {
 import {
   buildNswHazardIdentify, buildNswPrincipalIdentify, buildNswProtectionIdentify,
   buildQldFloodIdentify, buildQldMsesIdentify, buildQldStatePlanningIdentify,
-  buildTasOverlayQuery, buildVicOverlayQuery, buildWaBushfireIdentify,
+  buildActBpaQuery, buildTasOverlayQuery, buildVicBpaQuery, buildVicOverlayQuery, buildWaBushfireIdentify,
+  ACT_BPA_LICENCE, ACT_BPA_SOURCE, parseActBpa, parseVicBpa, VIC_BPA_LICENCE, VIC_BPA_SOURCE,
   mergeConstraintOutcomes, parseNamedLayerConstraints, parseNswConstraints,
   parseNswInstrument, parseTasOverlays, parseVicOverlays,
   NSW_HAZARD_LAYERS, NSW_HAZARD_SOURCE, NSW_PRINCIPAL_CONTROL_LAYERS,
@@ -606,9 +607,19 @@ Deno.serve(async (req) => {
       // so nothing downstream had any other way to learn it.
       if (principal.ok) instrumentCurrency = parseNswInstrument(principal.body);
     } else if (jurisdiction === 'VIC') {
+      // The overlays are planning controls; the bushfire prone area is the
+      // building designation, a different and far wider instrument on the
+      // same WFS (`VIC_BPA_SOURCE`). Each is its own register, so an outage
+      // of one never reads as an answer from the other.
+      constraintOutcomes.push(...await Promise.all([
+        fetchConstraint(buildVicOverlayQuery(lng, lat), parseVicOverlays, 'Vicmap Planning — plan_overlay', 'CC BY 4.0', []),
+        fetchConstraint(buildVicBpaQuery(lng, lat), parseVicBpa, VIC_BPA_SOURCE, VIC_BPA_LICENCE, []),
+      ]));
+    } else if (jurisdiction === 'ACT') {
+      // The Territory's bushfire prone area — the one ACT overlay read.
+      // `NO_STATE_LAYER_NOTE.ACT` says what is not.
       constraintOutcomes.push(await fetchConstraint(
-        buildVicOverlayQuery(lng, lat), parseVicOverlays,
-        'Vicmap Planning — plan_overlay', 'CC BY 4.0', [],
+        buildActBpaQuery(lng, lat), parseActBpa, ACT_BPA_SOURCE, ACT_BPA_LICENCE, [],
       ));
     } else if (jurisdiction === 'QLD') {
       const [context, flood, mses] = await Promise.all([

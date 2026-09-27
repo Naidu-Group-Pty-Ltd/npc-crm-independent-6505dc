@@ -1626,6 +1626,75 @@ export function composeHoldingStrategy(rec: StrategyRecord, heading: string): st
  * Rule 5. `liquidity` is measured and travels everywhere; `equity` is modelled
  * and travels only with `finance`.
  */
+/**
+ * The Financial report's "Price, Rent & Yield Market Positioning", from the
+ * record.
+ *
+ * The routed copy was the Compass's Demand Drivers and Market Positioning
+ * prose read "through a financial lens": on 37 Bolin Street (27 Sep 2026) it
+ * opened mid-thought ("The same source records 8.5% one-year growth…", the
+ * sentence it followed having been a chart the fork does not carry) and ran
+ * on into population growth, the listing's features and the zone — the
+ * location case, a third time, in the document that exists to carry the
+ * money. What this section owes a reader is where the price and the rent sit
+ * against what the market recorded, and what the rent returns on the price.
+ * Every row below is a recorded figure with its source; a median describes
+ * the whole market, never this dwelling, and the section says so rather than
+ * pronouncing a verdict between them.
+ *
+ * Null where the record carries neither a market figure nor the modelling,
+ * so a document with nothing to state here prints the routed copy as before.
+ */
+export function composeFinancialMarketPosition(rec: StrategyRecord, heading: string): string | null {
+  const f = rec.finance;
+  const cell = (v: string) => v.replace(/\|/g, '/');
+  const rows: string[] = [];
+  const add = (measure: string, figure: string | null | undefined, source: string) => {
+    if (figure) rows.push(`| ${cell(measure)} | ${cell(figure)} | ${cell(source)} |`);
+  };
+  add(rec.price.label || 'Purchase price', rec.price.value !== null ? money(rec.price.value) : null,
+    rec.price.provenance ?? 'recorded for this analysis');
+  const marketRow = (key: EvidenceKey, benchmark = false) =>
+    (benchmark ? benchmarkRow(rec.market, key) : subjectRow(rec.market, key));
+  for (const [key, label] of [
+    ['medianPrice', 'Median sale price, this market'],
+    ['growth1Year', 'Price growth, latest year'],
+    ['growth3YearCagr', 'Price growth, 3 years (a year, compound)'],
+    ['growth5YearCagr', 'Price growth, 5 years (a year, compound)'],
+    ['growth10YearCagr', 'Price growth, 10 years (a year, compound)'],
+    ['salesCount', 'Sales in the latest period'],
+  ] as Array<[EvidenceKey, string]>) {
+    const row = marketRow(key);
+    if (row && row.value) add(label, row.value, citeRow(row));
+  }
+  const bench = marketRow('medianPrice', true);
+  if (bench && bench.value) add('Median sale price, wider benchmark', bench.value, citeRow(bench));
+  if (f && isNum(f.weeklyRent)) add('Weekly rent used in this analysis', money(f.weeklyRent), 'recorded for this analysis');
+  const medianRent = marketRow('medianRent');
+  if (medianRent && medianRent.value) add('Median advertised weekly rent, this market', medianRent.value, citeRow(medianRent));
+  if (f && isNum(f.grossYield)) add('Gross yield on the price', pct(f.grossYield, 2), 'this analysis — rent a year over the price');
+  if (f && isNum(f.netYield)) add('Net yield on the price', pct(f.netYield, 2), 'this analysis — after operating costs, before the loan');
+  if (rows.length < 2) return null;
+  const heldMarket = rec.market.rows.some((r) => !r.benchmark);
+  return [
+    `## ${heading}`,
+    '',
+    'Where the price and the rent sit against what this market recorded, and what the rent returns on the price. A '
+      + 'median is the middle of everything that sold across the geography named, not a valuation of this dwelling, so '
+      + 'the figures are set side by side and nothing here reads a gap between them as an opportunity or a risk.',
+    '',
+    '| Measure | Figure | Source |',
+    '|---|---|---|',
+    ...rows,
+    '',
+    ...(heldMarket ? [] : [
+      'No published market figure for this market is held in the sources checked for this report, so the table '
+        + 'carries the analysis\'s own figures alone.',
+      '',
+    ]),
+  ].join('\n');
+}
+
 export function composeExitOutlook(rec: StrategyRecord, heading: string): string {
   const f = rec.finance;
   const lines: string[] = [`## ${heading}`, ''];
@@ -1755,7 +1824,10 @@ export function composeExitOutlook(rec: StrategyRecord, heading: string): string
     if (isNum(f.loanAmount)) {
       lines.push(
         `The loan balance at those years depends on the structure — ${f.loanStructure ?? 'as recorded'} — and the `
-        + 'year-by-year balance is in the Financial Analysis Report\'s own ledger rather than recomputed here.',
+        // This branch prints only where the modelling travels, which is the
+        // Financial Analysis Report itself: it used to send the reader to "the
+        // Financial Analysis Report's own ledger" from inside that report.
+        + 'year-by-year equity and lending ratio are in the ten-year projection, rather than recomputed here.',
         '',
       );
     }

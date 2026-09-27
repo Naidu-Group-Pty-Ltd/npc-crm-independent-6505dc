@@ -151,3 +151,51 @@ export function dedupeDimensionBasisLists(markdown: string): string {
   }
   return out.join('\n');
 }
+
+// ─── A table printed twice, word for word ───────────────────────────────────
+
+/**
+ * A table repeated EXACTLY is printed once.
+ *
+ * The 37 Bolin Street Due Diligence report (27 Sep 2026) printed the NSW
+ * population projection — `| Series | 2021 (estimated base) | 2026 | … |` over
+ * its one Main series row — under *Dwelling, Suburb Character & Occupier
+ * Appeal* and again, identically, under *Position Within the Locality*, and
+ * the Compass it was forked from carried the same pair. The projection block
+ * is pinned into every section call, and a writer handed a table reproduces
+ * it; `dedupeRegisterTables` cannot see this one, because its header carries
+ * the years it was read for and so is not in any closed set.
+ *
+ * The rule is identity, never likeness: every header cell and every row must
+ * match after whitespace and emphasis are normalised. Two tables that merely
+ * look alike — two years of one series, the same measures for two areas — are
+ * different facts and are untouched. The first copy stands; each later one
+ * becomes a line naming the section that carries it, or goes without a
+ * pointer where it sits in that same section. A document that prints no
+ * table twice is byte-identical.
+ */
+export function dedupeIdenticalTables(markdown: string): PropertyFactDedupeResult {
+  if (!markdown) return { markdown: '', replaced: [] };
+  const lines = markdown.split('\n');
+  const norm = (l: string) => l.trim().replace(/\*\*/g, '').replace(/\s*\|\s*/g, '|').replace(/\s+/g, ' ').toLowerCase();
+  const seen = new Map<string, Table>();
+  const drops: Array<{ table: Table; pointer: string | null }> = [];
+  for (const t of tablesOf(lines)) {
+    if (t.end - t.start < 3) continue;
+    const key = [lines[t.start], ...lines.slice(t.start + 2, t.end)].map(norm).join('\n');
+    const first = seen.get(key);
+    if (!first) { seen.set(key, t); continue; }
+    const home = headingAbove(lines, first.start);
+    const here = headingAbove(lines, t.start);
+    drops.push({
+      table: t,
+      pointer: home && home === here ? null : home ? `*Set out in full under “${home}”.*` : '*Set out in full earlier in this report.*',
+    });
+  }
+  if (!drops.length) return { markdown, replaced: [] };
+  const out = lines.slice();
+  for (const { table, pointer } of [...drops].sort((a, b) => b.table.start - a.table.start)) {
+    out.splice(table.start, table.end - table.start, ...(pointer ? [pointer] : []));
+  }
+  return { markdown: out.join('\n'), replaced: drops.map((d) => d.table.end - d.table.start - 2) };
+}

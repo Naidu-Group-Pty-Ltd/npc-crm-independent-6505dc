@@ -247,7 +247,7 @@ export const NO_STATE_LAYER_NOTE: Partial<Record<PlanningJurisdiction, string>> 
   WA: 'The bush fire prone area designation is read from the Fire and Emergency Services Commissioner’s published map. Western Australia publishes its planning scheme zones, density codes and other overlays, and its floodplain mapping, for personal use only, so they are not covered by this report and nothing here says whether any of them applies. The local government confirms them.',
   SA: 'The zone is read from the Planning and Design Code. The Code’s overlays are not covered by this report, so nothing here says whether one applies; the PlanSA portal confirms them.',
   NT: 'The Northern Territory’s planning scheme overlays are not covered by this report, so nothing here says whether one applies. A zoning certificate from the Northern Territory Planning Commission confirms them.',
-  ACT: 'In the Australian Capital Territory the zone is read from the Territory Plan. Its precinct codes and its bushfire, flood and heritage overlays are not covered by this report, so nothing here says whether one applies. In the ACT the Crown lease’s purpose clause also governs use, and no map carries it.',
+  ACT: 'In the Australian Capital Territory the zone is read from the Territory Plan and the bushfire prone area from the Territory’s published map. Its precinct codes and its flood and heritage overlays are not covered by this report, so nothing here says whether one applies. In the ACT the Crown lease’s purpose clause also governs use, and no map carries it.',
 };
 
 /**
@@ -288,5 +288,5 @@ export const OVERLAY_COVERAGE: Readonly<Record<PlanningJurisdiction, OverlayCove
   WA: 'partial_state_layers_read',
   SA: 'not_read',
   NT: 'not_read',
-  ACT: 'not_read',
+  ACT: 'partial_state_layers_read',
 };

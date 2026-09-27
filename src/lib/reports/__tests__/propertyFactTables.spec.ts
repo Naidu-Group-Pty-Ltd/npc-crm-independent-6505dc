@@ -4,7 +4,7 @@
  */
 import { describe, expect, it } from 'vitest';
 
-import { dedupeDimensionBasisLists, dedupePropertyFactTables } from '../../../../supabase/functions/_shared/reports/investment/propertyFactTables.pure.ts';
+import { dedupeDimensionBasisLists, dedupeIdenticalTables, dedupePropertyFactTables } from '../../../../supabase/functions/_shared/reports/investment/propertyFactTables.pure.ts';
 import { presentStoredMarkdown } from '../../../../supabase/functions/_shared/reports/investment/derivedHygiene.pure.ts';
 
 const CORE = [
@@ -84,5 +84,44 @@ describe('what each dimension rested on, stated once', () => {
   it('runs on the read path', () => {
     const doc = ['## A', '', SHORT, '', '## B', '', FULL].join('\n');
     expect(presentStoredMarkdown(doc).match(/What each dimension rested on\.\*\*/g)).toHaveLength(1);
+  });
+});
+
+describe('a table printed twice, word for word, is printed once', () => {
+  const projection = [
+    '| Series | 2021 (estimated base) | 2026 | 2031 | 2036 | 2041 |',
+    '| --- | ---: | ---: | ---: | ---: | ---: |',
+    '| Main series | 25,363 | 43,335 | 55,100 | 70,576 | 89,174 |',
+  ].join('\n');
+  const doc = [
+    '## Dwelling, Suburb Character & Occupier Appeal', '', 'The Main series projects the SA2:', '', projection, '',
+    '## Position Within the Locality', '', 'The same SA2 is projected:', '', projection, '', 'After.',
+  ].join('\n');
+
+  it('keeps the first copy and points the second at it (37 Bolin Street, 27 Sep 2026)', () => {
+    const out = dedupeIdenticalTables(doc);
+    expect(out.replaced).toEqual([1]);
+    expect(out.markdown.split('| Main series |').length - 1).toBe(1);
+    expect(out.markdown).toContain('*Set out in full under “Dwelling, Suburb Character & Occupier Appeal”.*');
+    expect(out.markdown).toContain('After.');
+  });
+
+  it('runs on the read path', () => {
+    expect(presentStoredMarkdown(doc).split('| Main series |').length - 1).toBe(1);
+  });
+
+  it('leaves a table that merely looks alike, and a document with no repeat, untouched', () => {
+    const other = projection.replace('89,174', '89,175');
+    const alike = doc.replace(/(The same SA2 is projected:\n\n)[\s\S]*?(\n\nAfter\.)/, `$1${other}$2`);
+    expect(dedupeIdenticalTables(alike)).toEqual({ markdown: alike, replaced: [] });
+    const once = doc.slice(0, doc.indexOf('## Position'));
+    expect(dedupeIdenticalTables(once)).toEqual({ markdown: once, replaced: [] });
+  });
+
+  it('drops a repeat inside the same section without a pointer to itself', () => {
+    const same = ['## Population', '', projection, '', 'Between.', '', projection].join('\n');
+    const out = dedupeIdenticalTables(same);
+    expect(out.markdown).not.toMatch(/Set out in full/);
+    expect(out.markdown.split('| Main series |').length - 1).toBe(1);
   });
 });

@@ -59,6 +59,7 @@ import {
 import { compassSections } from '../../../../supabase/functions/_shared/compassSectionRegistry';
 import {
   composeExitOutlook,
+  composeFinancialMarketPosition,
   composeHoldingStrategy,
   composeMonitoringPlan,
   composeStrategicRead,
@@ -295,6 +296,7 @@ const STRATEGY: StrategyRecord = {
 const STRATEGY_COMPOSERS: Record<string, (rec: StrategyRecord, heading: string) => string> = {
   composeSwot, composeSuitability, composeHoldingStrategy, composeExitOutlook, composeMonitoringPlan,
   composeStrategicRead,
+  composeFinancialMarketPosition: (rec, heading) => composeFinancialMarketPosition(rec, heading) ?? '',
 };
 
 const SCORE = {

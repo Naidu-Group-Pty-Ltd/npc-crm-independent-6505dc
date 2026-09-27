@@ -63,6 +63,7 @@
  */
 
 import { auDate } from './auDate.pure.ts';
+import { hazardReadings, hazardRegisterRules } from './hazardReadings.pure.ts';
 import { GNAF_ATTRIBUTION } from '../geocode/gnafShard.pure.ts';
 import { readerNote, uncheckedSentence } from './serviceNote.pure.ts';
 import { elsewhereOnly, inHomeSection } from '../reports/adviserVoice.pure.ts';
@@ -1434,10 +1435,27 @@ export function planningFactBlocks(facts: PlanningFacts): string {
       + `map (${facts.constraintRegisters.answered.join('; ') || 'the map named in the table'}), says it `
       + 'is indicative at the scale it is published rather than a survey of the lot, and keeps the certificate as '
       + 'what settles it. Do NOT draw it as a tick, a clearance, a reassurance or a strength, do not rate a risk '
-      + 'from it (see the risk table\u2019s own rule), and do not name a layer outside that list — anything else '
-      + 'falls under rule 4.'
+      + 'from it (see the risk table\u2019s own rule; bushfire and flood take the rows rule 4b gives), and do not '
+      + 'name a layer outside that list — anything else falls under rule 4.'
     : '4a. No published map was checked and found clear for the property, so there is no absence you may report '
       + 'at all. Rule 4 governs every one of them.';
+
+  /*
+   * Rule 4b — bushfire and flood, as their maps answered at the property.
+   *
+   * 4a lets the prose REPORT a clear map and forbids rating a risk from it.
+   * That is right for a map only some councils publish into, and wrong for a
+   * statutory designation published for the whole state: the NSW Bush Fire
+   * Prone Land map showing nothing over a lot says the lot is not bush fire
+   * prone land, which is what its planning certificate will say. The 37 Bolin
+   * Street suite printed "Not assessed" for bushfire beside a register that
+   * had checked that map. `hazardReadings` decides which absence is which,
+   * and hands the register its two rows in the register's own words.
+   */
+  const hazards = hazardReadings(facts);
+  const hazardRule = hazards.length
+    ? `4b. Bushfire and flood. ${hazards.map((h) => h.sentence).join(' ')} ${hazardRegisterRules(hazards)}`
+    : '';
 
   const instrumentRule = facts.jurisdiction === 'NSW'
     ? '3. This property is in New South Wales, so the Local Environmental Plan, the Development Control Plan and '
@@ -1463,6 +1481,7 @@ export function planningFactBlocks(facts: PlanningFacts): string {
     + 'property data site, a live web search or a register that was not asked — not in prose, not in a risk register '
     + 'row, and not in a checklist. Those report what they hold, not what the council scheme maps.',
     clearLayerRule,
+    ...(hazardRule ? [hazardRule] : []),
     '5. A zone that admits a use is not approval for it. Describe any development potential as conditional and subject '
     + 'to assessment, and never quantify an uplift.',
     /*

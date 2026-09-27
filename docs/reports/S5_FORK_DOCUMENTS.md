@@ -97,6 +97,17 @@ property and locality narrative lives in the Property & Location Due Diligence
 Report."* — and its body is incomes, demand and supply. That is the
 `financial_lens` route working, and it names where the other half is.
 
+> **Superseded 27 Sep 2026.** The 37 Bolin Street Due Diligence report printed
+> its lens line under seven headings, because every lens-routed section opened
+> with it. It was also worded as an instruction ("focus on …"). It is now said
+> once, on the first section that carries it (`lensOnce` in `forkSplit.pure.ts`,
+> matched on the text so an operator's reworded overlay is covered too), and
+> the defaults state what the document is: *"This report reads the property
+> and its locality — liveability, planning, demand and resale appeal. …"*. The
+> same suite printed the NSW population projection table identically in two
+> sections, and the Compass it was forked from did the same.
+> `dedupeIdenticalTables` (read path, identity only) keeps the first copy.
+
 **The Financial report has a projection page AND a projection chapter.** Page
 6 is the master's own dashboard — the equity chart and the assumptions. The
 body chapter is the year-by-year modelling across three scenarios. A summary

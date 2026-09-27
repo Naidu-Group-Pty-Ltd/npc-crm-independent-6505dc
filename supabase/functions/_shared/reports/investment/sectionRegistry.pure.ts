@@ -379,7 +379,7 @@ export const SECTION_REGISTRY: readonly SectionDefinition[] = [
       // CAUTION, HOLD/BUY or BUY — SELL is never issued and CAUTION is never
       // offered, so answering the guide meant changing the verdict.
       snapshot: { depth: 'spine', order: 5, label: 'Investment Score', producer: composedFn('composeVerdictSection') },
-      financial: { depth: 'spine', order: 3, label: 'Client Investment Decision Summary', producer: routed('financial', 1) },
+      financial: { depth: 'spine', order: 3, label: 'Client Investment Decision Summary', producer: composed(1) },
       strategic: { depth: 'spine', order: 3, label: 'Client Property & Location Snapshot', producer: routed('dueDiligence', 1) },
     },
   },
@@ -446,7 +446,7 @@ export const SECTION_REGISTRY: readonly SectionDefinition[] = [
       compass: { depth: 'spine', order: 4, label: 'Property & Locality Snapshot', producer: authored('generator.compass') },
       briefing: { depth: 'spine', order: 4, surface: 'document', producer: projection('property.*') },
       snapshot: { depth: 'spine', order: 3, label: 'Property Summary', producer: authored('condense.snapshot') },
-      financial: { depth: 'spine', order: 4, label: 'Financial Input Snapshot', producer: routed('financial', 2) },
+      financial: { depth: 'spine', order: 4, label: 'Financial Input Snapshot', producer: composed(2) },
       strategic: { depth: 'spine', order: 4, label: 'Core Property Facts & Physical Profile', producer: routed('dueDiligence', 2) },
     },
   },
@@ -585,7 +585,7 @@ export const SECTION_REGISTRY: readonly SectionDefinition[] = [
     tiers: {
       compass: { depth: 'required', order: 12, label: 'Market Positioning', producer: authored('generator.compass') },
       briefing: { depth: 'required', order: 7, label: 'Market Position', producer: authored('condense.briefing') },
-      financial: { depth: 'required', order: 5, label: 'Price, Rent & Yield Market Positioning', producer: routed('financial', 3) },
+      financial: { depth: 'required', order: 5, label: 'Price, Rent & Yield Market Positioning', producer: composedFrom('strategyPositions.pure.ts', 'composeFinancialMarketPosition') },
       // The carrier, not the merged one: on the Compass `supplyPipeline` merges
       // INTO this section, and the strategic tier had the arrow the other way
       // round — so the Due Diligence document declared a supply-pipeline
@@ -697,7 +697,7 @@ export const SECTION_REGISTRY: readonly SectionDefinition[] = [
     tiers: {
       compass: merged('population'),
       briefing: merged('locationCase'),
-      financial: { depth: 'required', order: 9, label: 'Vacancy Risk, Tenant Income & Rent Sustainability', producer: routed('financial', 7) },
+      financial: { depth: 'required', order: 9, label: 'Vacancy Risk, Tenant Income & Rent Sustainability', producer: composed(7) },
       // Merged where the Compass merges it — see `propertyFit`'s strategic placement.
       strategic: merged('population'),
     },
@@ -1138,7 +1138,7 @@ export const SECTION_REGISTRY: readonly SectionDefinition[] = [
     tiers: {
       compass: { depth: 'required', order: 16, label: 'SWOT Analysis', producer: composedFrom('strategyPositions.pure.ts', 'composeSwot') },
       briefing: { depth: 'required', order: 17, label: 'SWOT Analysis', producer: composedFn('composeSwotSection') },
-      financial: { depth: 'required', order: 17, label: 'Financial SWOT: Returns, Risk & Holding Capacity', producer: composed(14) },
+      financial: { depth: 'required', order: 17, label: 'Financial SWOT: Returns, Risk & Holding Capacity', producer: composedFrom('strategyPositions.pure.ts', 'composeSwot') },
     },
   },
   {

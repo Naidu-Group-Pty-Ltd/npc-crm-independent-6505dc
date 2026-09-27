@@ -687,6 +687,140 @@ export const WA_BUSHFIRE_INSTRUMENT =
 export const buildWaBushfireIdentify = (lng: number, lat: number): string =>
   buildIdentifyUrl(WA_BUSHFIRE_MAPSERVER, lng, lat, [WA_BUSHFIRE_LAYER]);
 
+// ---------------------------------------------------------------------------
+// VIC and ACT — the statutory bushfire prone area designations
+// ---------------------------------------------------------------------------
+
+/*
+ * The designation maps, read beside the planning overlays and never instead of
+ * them. Victoria's Bushfire Management Overlay is a PLANNING control and is
+ * already read with every other overlay; its bushfire prone area is a
+ * different instrument — the area the Minister for Planning gazettes for the
+ * building regulations, far wider than the overlay — and it sits on the same
+ * WFS as the overlays, one typeName different. The ACT publishes its 2026
+ * bushfire prone area on the same ArcGIS organisation its Territory Plan zones
+ * are read from.
+ *
+ * Measured from CI on 27 Sep 2026 (`hazard-source-inspect.py`, round 3), each
+ * at points whose answer is known both ways:
+ *
+ *   VIC  Belgrave, Kinglake          inside   (Yarra Ranges LEGL./25-138;
+ *                                             Murrindindi LEGL./21-587)
+ *        Melbourne CBD, Golden Square outside
+ *   ACT  Tharwa, Stromlo, Orroral     inside   (hazard categories 1 and 2)
+ *        Braddon                      outside
+ *
+ * The Victorian query is written exactly as the overlay query is — SRID named,
+ * longitude first — because the same round measured that form against the
+ * other two: latitude-first without an SRID also answers, and longitude-first
+ * without one answers NOTHING at every point, inside or out. A wrong axis on a
+ * designation map reads as "not designated" everywhere, which is the one
+ * failure a map a report calls complete must never have.
+ *
+ * The gazettal date is carried as the publisher prints it (`10/07/2025`) and
+ * never parsed into a currency date: `identifyDateToIso` reads a slashed date
+ * month-first, as ArcGIS does, and a Victorian date written day-first would
+ * come out a different month with nothing to say so.
+ */
+export const VIC_BPA_SOURCE = 'Vicmap — Bushfire Prone Area (opendata.maps.vic.gov.au WFS)';
+export const VIC_BPA_LICENCE = 'CC BY 4.0';
+export const VIC_BPA_INSTRUMENT = 'Bushfire prone area designated by the Minister for Planning (Victoria)';
+
+export function buildVicBpaQuery(lng: number, lat: number): string {
+  const p = new URLSearchParams({
+    service: 'WFS',
+    version: '2.0.0',
+    request: 'GetFeature',
+    typeNames: 'open-data-platform:bushfire_prone_area',
+    outputFormat: 'application/json',
+    count: '5',
+    propertyName: 'lga_name,plan_number,gazettal_date',
+    CQL_FILTER: `INTERSECTS(geom,SRID=4326;POINT(${lng} ${lat}))`,
+  });
+  return `https://opendata.maps.vic.gov.au/geoserver/wfs?${p}`;
+}
+
+export function parseVicBpa(body: unknown): ConstraintProbeOutcome {
+  const base = { asked: ['bushfire'] as ConstraintFamily[], source: VIC_BPA_SOURCE, licence: VIC_BPA_LICENCE };
+  const b = body as WfsResponse | null;
+  if (!b || typeof b !== 'object' || !Array.isArray(b.features)) {
+    return { ...base, status: 'unavailable', readings: [], note: 'no features array in WFS response' };
+  }
+  const readings = b.features.map((f): PlanningConstraintReading => {
+    const p = f.properties ?? {};
+    const plan = attrStr(p['plan_number']);
+    const gazetted = attrStr(p['gazettal_date']);
+    return {
+      family: 'bushfire',
+      kind: 'hazard',
+      sourceLayer: null,
+      label: 'Bushfire Prone Area',
+      code: null,
+      value: null,
+      instrument: VIC_BPA_INSTRUMENT,
+      clause: plan,
+      currencyDate: null,
+      detail: [plan ? `Plan ${plan}` : null, gazetted ? `gazettal date ${gazetted}` : null].filter(Boolean).join(', ') || null,
+      standingLabel: 'Gazetted',
+      region: attrStr(p['lga_name']),
+      source: VIC_BPA_SOURCE,
+      licence: VIC_BPA_LICENCE,
+    };
+  });
+  return { ...base, status: readings.length ? 'ok' : 'none_at_point', readings, note: null };
+}
+
+export const ACT_BPA_SOURCE = 'ACTmapi — Bushfire Prone Area 2026 (services1.arcgis.com/E5n4f1VY84i0xSjy)';
+/** The ACT's catalogue licence — the service states none (`copyrightText: ''`). */
+export const ACT_BPA_LICENCE = 'CC BY 4.0';
+export const ACT_BPA_INSTRUMENT = 'ACT Bushfire Prone Area 2026';
+
+export function buildActBpaQuery(lng: number, lat: number): string {
+  const base = 'https://services1.arcgis.com/E5n4f1VY84i0xSjy/arcgis/rest/services/Bushfire_Prone_Area_Details_2026/FeatureServer/0/query';
+  const p = new URLSearchParams({
+    geometry: `${lng},${lat}`,
+    geometryType: 'esriGeometryPoint',
+    inSR: '4326',
+    spatialRel: 'esriSpatialRelIntersects',
+    outFields: 'Hazard_Category',
+    returnGeometry: 'false',
+    f: 'json',
+  });
+  return `${base}?${p}`;
+}
+
+export function parseActBpa(body: unknown): ConstraintProbeOutcome {
+  const base = { asked: ['bushfire'] as ConstraintFamily[], source: ACT_BPA_SOURCE, licence: ACT_BPA_LICENCE };
+  const b = body as { features?: Array<{ attributes?: Record<string, unknown> }>; error?: unknown } | null;
+  if (!b || typeof b !== 'object' || b.error || !Array.isArray(b.features)) {
+    return { ...base, status: 'unavailable', readings: [], note: 'no features array in query response' };
+  }
+  const categories = [...new Set(b.features.map((f) => attrStr(f.attributes?.['Hazard_Category'])).filter((c): c is string => !!c))].sort();
+  if (!b.features.length) return { ...base, status: 'none_at_point', readings: [], note: null };
+  return {
+    ...base,
+    status: 'ok',
+    note: null,
+    readings: [{
+      family: 'bushfire',
+      kind: 'hazard',
+      sourceLayer: 0,
+      label: 'Bushfire Prone Area',
+      code: null,
+      value: null,
+      instrument: ACT_BPA_INSTRUMENT,
+      clause: null,
+      currencyDate: null,
+      // The publisher's own category, as a label and never as a rating.
+      detail: categories.length ? `Hazard category ${categories.join(' and ')}` : null,
+      standingLabel: null,
+      region: null,
+      source: ACT_BPA_SOURCE,
+      licence: ACT_BPA_LICENCE,
+    }],
+  };
+}
+
 /**
  * Parse an identify answer whose layers are named rather than numbered.
  *
