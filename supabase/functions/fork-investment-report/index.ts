@@ -40,7 +40,7 @@ import { variantScoreUnderPolicy } from '../_shared/reports/market/variantScoreP
 import { internalError } from '../_shared/errorResponse.ts';
 import { readPropertyFacts } from '../_shared/reports/investment/propertyRecord.pure.ts';
 import { readStrategyRecord } from '../_shared/reports/investment/strategyPositions.pure.ts';
-import { strategySiteFrom } from '../_shared/reports/location/strategySite.pure.ts';
+import { strategySiteFrom, strategyOutlookFrom } from '../_shared/reports/location/strategySite.pure.ts';
 import { ENRICHMENT_STAMP } from '../_shared/reports/location/locationEnrichmentReuse.pure.ts';
 import { transportCountReading } from '../_shared/transportReading.pure.ts';
 import { buildMarketFacts } from '../_shared/reports/market/marketFactBlocks.pure.ts';
@@ -453,6 +453,9 @@ Deno.serve(async (req) => {
         // The land use standing and the development pipeline the row already
         // stores — for the Due Diligence document's strategic read.
         site: strategySiteFrom(parent.location_intelligence),
+        // The public projects the parent's infrastructure chapter named, so
+        // this document's SWOT cannot say "no opportunity" beside them.
+        outlook: strategyOutlookFrom(parent.location_intelligence),
       },
     );
 

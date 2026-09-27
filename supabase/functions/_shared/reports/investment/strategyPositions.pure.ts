@@ -363,7 +363,50 @@ export interface StrategyRecord {
    * is what keeps every composer that does not read it byte-identical.
    */
   site?: StrategySite | null;
+  /**
+   * The published public projects near the property, read by the caller.
+   * Optional and absent on every record built before it existed, which keeps
+   * every composer that does not read it byte-identical.
+   */
+  outlook?: StrategyOutlook | null;
 }
+
+/**
+ * A public project a PUBLISHER named near the property — the national
+ * investment programme, a state programme, or the recorded register of the
+ * responsible authority's own pages.
+ *
+ * Read by the caller for the same reason `site` is: a canonical investment
+ * module may not import `_shared/planning`. Every field is already a sentence
+ * fragment in the publisher's words, so nothing here re-words a status.
+ *
+ * It exists because the 37 Bolin Street Compass (27 Sep 2026) printed "None
+ * identified: no recorded figure supports one" under Opportunities while the
+ * infrastructure chapter of the same document named a $910m hospital under
+ * construction within four kilometres and a new high school on track to open
+ * in 2027. Both were true of what each read; the SWOT simply read neither.
+ */
+export interface StrategyOutlookProject {
+  /** The project's own name. */
+  name: string;
+  /** Who published it — the responsible authority or the programme. */
+  publisher: string;
+  /** The publisher's own status words, verbatim. */
+  status: string | null;
+  /** Where, as a phrase: "3.4 km from the property, straight-line". */
+  where: string | null;
+  /** The figure and what it is: "$910 million stated investment". */
+  cost: string | null;
+  /** The publisher's own words on timing — an expectation, never a completion. */
+  timing: string | null;
+}
+
+export interface StrategyOutlook {
+  projects: StrategyOutlookProject[];
+}
+
+/** How many named projects the Opportunities quadrant carries before it points at the chapter. */
+export const OUTLOOK_PROJECT_CAP = 4;
 
 /** How a land use table treats a use — `landUsePermissibility`'s own words. */
 export type StrategyStanding =
@@ -736,6 +779,61 @@ export function buildSwot(rec: StrategyRecord): Swot {
       basis: 'Recorded with the grade as a market risk. It describes the market, not this dwelling, and it is not '
         + 'a forecast.',
     });
+  }
+
+  /*
+   * The resident population, where the ABS series was read at the property's
+   * own SA2. A measurement of the past, filed by its SIGN alone — growth is a
+   * strength and decline a threat, and no threshold nobody published decides
+   * how much growth "counts". It is a driver of demand and never a measure of
+   * it, and the basis says so, because `demandScoring` refuses to let it carry
+   * the Demand dimension for exactly that reason.
+   */
+  const population = subjectRow(rec.market, 'populationGrowth');
+  const popValue = population?.value ?? null;
+  // A value may be written with a typographic minus; read it as the sign it is.
+  const popRate = popValue ? parseFloat(popValue.replace(/\u2212/g, '-').replace(/[^0-9.+-]/g, '')) : NaN;
+  if (population && popValue && Number.isFinite(popRate) && popRate !== 0) {
+    (popRate > 0 ? s : t).push({
+      claim: popRate > 0
+        ? `The area's resident population grew by ${popValue} a year.`
+        : `The area's resident population fell by ${popValue.replace(/^[-\u2212]/, '')} a year.`,
+      basis: `${citeRow(population)}. Population is a driver of housing demand, not a measure of it, and this `
+        + 'describes the years measured rather than a forecast.',
+    });
+  }
+
+  /*
+   * The public projects a publisher named near the property.
+   *
+   * An Opportunity in the one sense the record supports: a publisher has
+   * committed to, funded or begun something nearby. It is never a statement
+   * about this property's value, rent or demand, and every entry says so —
+   * the claim a reader wants ("this will lift prices") is one nothing here
+   * supports. Nearest first, capped, and the rest pointed at the chapter that
+   * lists them all.
+   */
+  const projects = rec.outlook?.projects ?? [];
+  for (const p of projects.slice(0, OUTLOOK_PROJECT_CAP)) {
+    const facts = [
+      p.status ? `${p.publisher} states its status as “${p.status.replace(/[.\s]+$/, '')}”` : `Named by ${p.publisher}`,
+      p.where,
+      p.cost,
+      p.timing ? `timing, as the publisher states it: ${p.timing.replace(/[.\s]+$/, '')}` : null,
+    ].filter((x): x is string => !!x);
+    const said = facts.join('; ');
+    o.push({
+      claim: `A published public project nearby: ${p.name.replace(/[.\s]+$/, '')}.`,
+      basis: `${said.charAt(0).toUpperCase()}${said.slice(1)}. It is named because its publisher recorded it; a date a `
+        + 'publisher expects is not a completion, and nothing here measures any effect on this property\'s value, rent '
+        + 'or demand.',
+    });
+  }
+  if (projects.length > OUTLOOK_PROJECT_CAP) {
+    coverage.push(
+      `${projects.length - OUTLOOK_PROJECT_CAP} further published ${projects.length - OUTLOOK_PROJECT_CAP === 1 ? 'project is' : 'projects are'} `
+      + 'listed with the infrastructure outlook; the nearest are named above.',
+    );
   }
 
   // ── The dwelling itself ──
@@ -2043,6 +2141,12 @@ export interface StrategyRowOptions {
    * read uses it; absent, nothing changes.
    */
   site?: StrategySite | null;
+  /**
+   * The public projects publishers named near the property, read by the
+   * caller from the infrastructure evidence and the published project
+   * register. Absent, nothing changes.
+   */
+  outlook?: StrategyOutlook | null;
 }
 
 const rec = (v: unknown): Record<string, unknown> | null =>
@@ -2201,6 +2305,7 @@ export function readStrategyRecord(row: StrategyRowInput, opts: StrategyRowOptio
     // Only where the caller read it, so a record built without it carries no
     // key at all and every composer that ignores it stays byte-identical.
     ...(opts.site ? { site: opts.site } : {}),
+    ...(opts.outlook ? { outlook: opts.outlook } : {}),
   };
 }
 

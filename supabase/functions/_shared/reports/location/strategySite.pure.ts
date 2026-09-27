@@ -25,7 +25,11 @@ import {
   type LandUseTable,
 } from '../../planning/landUsePermissibility.pure.ts';
 import { infrastructureEvidenceFrom, planningEvidenceFrom } from './planningEvidenceRecord.pure.ts';
-import type { StrategySite } from '../investment/strategyPositions.pure.ts';
+import type { StrategyOutlook, StrategySite } from '../investment/strategyPositions.pure.ts';
+import type { InfrastructureItem } from '../../planning/infrastructureEvidence.pure.ts';
+import { projectsNear } from '../../planning/publishedProjectRegister.pure.ts';
+import { strategyOutlookProjects } from '../../planning/strategyOutlook.pure.ts';
+import { enrichmentCoordinate } from './planningCoordinate.pure.ts';
 
 const isRecord = (v: unknown): v is Record<string, unknown> =>
   typeof v === 'object' && v !== null && !Array.isArray(v);
@@ -70,4 +74,25 @@ export function strategySiteFrom(locationIntelligence: unknown): StrategySite | 
     : null;
 
   return landUse || pipeline ? { landUse, pipeline } : null;
+}
+
+/**
+ * The public projects the SWOT may name, from a STORED row.
+ *
+ * The Financial and Due Diligence forks compose their SWOT from the parent
+ * row, never from a live enrichment — so this reads the infrastructure
+ * evidence the row recorded, and sweeps the recorded project register at the
+ * row's own coordinate only where `enrichmentCoordinate` accepts it (parcel
+ * or address grade; never a suburb centroid). A row that carries neither
+ * answers null, and the SWOT is exactly what it was.
+ */
+export function strategyOutlookFrom(locationIntelligence: unknown): StrategyOutlook | null {
+  const infra = infrastructureEvidenceFrom(locationIntelligence);
+  const items = isRecord(infra) && Array.isArray(infra.items)
+    ? (infra.items.filter(isRecord) as unknown as InfrastructureItem[])
+    : [];
+  const at = enrichmentCoordinate(locationIntelligence, new Date(0).toISOString());
+  const near = at ? projectsNear(at.lat, at.lng, 15) : [];
+  const projects = strategyOutlookProjects({ items }, near);
+  return projects.length ? { projects } : null;
 }

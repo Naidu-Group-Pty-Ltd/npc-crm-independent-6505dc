@@ -765,3 +765,50 @@ contents, which numbers the report's sections.
   colour at all were drawn and looked at; every other colour is held to the
   print floors by `brandFamily.spec.ts`, not by a render. No clone's own colour
   has been drawn. PENDING, with the clone renders above.
+
+## 11. The cover shows the photograph whole (27 Sep 2026)
+
+The owner's report on the 37 Bolin Street Compass: the one photograph
+attached to the listing was *"cut halfway and not pushing through in its
+entirety"* on the cover. Both presentations were cropping it, for the same
+reason — the lead photograph was drawn as a `cover` fill of a box whose aspect
+ratio is not the photograph's, so a landscape listing photograph on a portrait
+ground lost both sides.
+
+**Rule: the lead photograph on a cover is shown whole.** A cover photograph is
+the reader's first look at the property, and a crop decides for them which
+half of it they see.
+
+### The template masters (seed v24)
+
+`coverPlates(ground)` in `investmentCompass/blocks.ts` gives each field and
+band master one or more PLATES — `image` blocks with `fit: 'contain'` placed in
+the clear space the cover's own text leaves. That space depends on how many
+lines the title (the address) sets, so each plate carries its own address
+length bounds, measured with the family's display face
+(`COVER_DISPLAY_ADVANCE`, per face, from the pinned fonts; an unmeasured face
+is charged wider), and `plateChoice` draws exactly one plate — or none, where
+the address is longer than any plate allows, in which case the old full-bleed
+layer is drawn as the fallback. Paper covers are unchanged.
+
+Two things only a render found:
+
+- **Wide display faces collided.** The first plate bounds assumed one average
+  advance; Cinzel and IBM Plex Mono set wider and the title ran into the plate.
+  The advance is now per face with a 0.72 wrap allowance, and
+  `npm run templates:compass:cover-qa` renders every plate master in Chromium
+  at five address wordings per plate plus one past the deepest (expecting no
+  plate): 34 masters, 694 covers, no collision.
+- **A dropped plate lifted the title.** `closeDroppedBlocks` treats a dropped
+  block as a hole and moves the column beneath it up — so the Chancery cover's
+  title jumped when its plate's conditional was false. A block may now declare
+  `layer: true`, which exempts it; every plate does.
+
+Measured on the seed: 34 of 543 rows differ between v23 and v24, all
+Investment Compass masters.
+
+### The standard presentation
+
+`coverPhotographPlacement` replaces `coverFit` and is a `containFit` into the
+band: the photograph is set whole and centred on the cover's ground rather
+than cropped to fill it.

@@ -192,6 +192,122 @@ export const PUBLISHED_PROJECTS: readonly PublishedProject[] = [
     ],
     recordedAt: '2026-09-19',
   },
+  /*
+   * North-west Sydney, recorded 27 Sep 2026 for 37 Bolin Street, Tallawong,
+   * whose Compass said "no major public project within 15 km". Every fact
+   * below was read from the publisher's own page or PDF by a GitHub runner
+   * (`scripts/market/infrastructure-source-inspect.py`, rounds 1 and 4) — the
+   * development container cannot reach a .gov.au host.
+   *
+   * The owner remembered the hospital as due in 2027. No page or construction
+   * update Health Infrastructure has published states an opening date: the
+   * three 2026 construction updates describe EARLY works (Lendlease on site
+   * since February 2026; bulk excavation complete by 1 August; foundation
+   * piles next) and the 1 May release says the main construction contract is
+   * "expected to be awarded later this year". So no opening year is recorded,
+   * and the row says so rather than supplying one.
+   */
+  {
+    name: 'Rouse Hill Hospital',
+    authority: 'Health Infrastructure NSW',
+    partners: ['Australian Government', 'Western Sydney Local Health District'],
+    // Named on the project page as "Builder", and engaged, in the publisher's
+    // own words, as the Early Works Contractor. The main works contract had
+    // not been awarded when last checked, so no head contractor is recorded.
+    contractor: null,
+    investment: { amount: 910_000_000, currency: 'AUD', statedAs: '$910 million' },
+    // The project page's own map link (Windsor Rd & Commercial Rd, Rouse Hill).
+    latitude: -33.6904259,
+    longitude: 150.9207919,
+    locality: 'Rouse Hill',
+    state: 'NSW',
+    stages: [
+      {
+        stage: 'Planning approval (State Significant Development Application)',
+        publishedStatus: 'April 2026 State Significant Development Application determination',
+        statusDate: '2026-08-28',
+        timing: 'April 2026',
+        sourceUrl: 'https://www.rousehillhospital.health.nsw.gov.au/',
+        published: '2026-08-28',
+      },
+      {
+        stage: 'Early works, by Lendlease as the Early Works Contractor',
+        publishedStatus: 'Early works for the construction of the new Rouse Hill Hospital is underway',
+        statusDate: '2026-08-01',
+        timing: 'Started on site February 2026; as at 1 August 2026 bulk excavation of the hospital footprint was complete and hospital foundation piles were to commence',
+        sourceUrl: 'https://www.nsw.gov.au/sites/default/files/noindex/2026-08/construction-update-august-2026.pdf',
+        published: '2026-08-01',
+      },
+      {
+        stage: 'Main works construction contract',
+        publishedStatus: 'the construction contract is expected to be awarded later this year',
+        statusDate: '2026-05-01',
+        timing: 'Later in 2026 — the publisher\u2019s expectation as at 1 May 2026',
+        sourceUrl: 'https://www.nsw.gov.au/ministerial-releases/new-rouse-hill-hospital-moves-from-planning-to-delivery',
+        published: '2026-05-01',
+      },
+    ],
+    delivers: [
+      'An emergency department',
+      'Comprehensive birthing services including birthing rooms and a maternity inpatient unit',
+      'Inpatient beds and day surgery services',
+      'Short stay medical assessment services',
+      'Pathology, pharmacy and medical imaging services',
+      'Outpatient and ambulatory care services including paediatrics, renal dialysis, and antenatal and postnatal services',
+      'Virtual care and hospital in the home services',
+      'Prehabilitation, rehabilitation and lifestyle medicine',
+    ],
+    disruption: [
+      'Out-of-hours deliveries of piling rigs and a crawler crane by oversize vehicles before 5.00am, stated in the August 2026 construction update',
+    ],
+    doesNotEstablish: [
+      'Any effect on property values, rents or demand near Rouse Hill — no such effect is claimed and none is measured here',
+      'An opening date: no page or construction update Health Infrastructure has published states when the hospital will open, and none is stated here',
+      'The final scope: the publisher states it "will be determined through the planning process"',
+      'Who will build the main works: that contract had not been awarded when the publisher last reported on it',
+    ],
+    recordedAt: '2026-09-27',
+  },
+  {
+    name: 'New high school in Tallawong',
+    authority: 'NSW Department of Education',
+    partners: [],
+    contractor: null,
+    // The release states the North-West programme's total ($1.5 billion across
+    // many schools) and not this school's own cost, so none is recorded.
+    investment: null,
+    // The publisher gives the address (201 Guntawong Road) and no coordinate.
+    // This is Guntawong Road as OpenStreetMap places it; see doesNotEstablish.
+    latitude: -33.6825535,
+    longitude: 150.8892935,
+    locality: 'Tallawong',
+    state: 'NSW',
+    stages: [
+      {
+        stage: 'Construction of the new high school, on a four-hectare site at 201 Guntawong Road',
+        publishedStatus: 'construction now underway on the first brand new high school in Tallawong',
+        statusDate: '2025-12-02',
+        timing: 'On track to open Day 1 Term 1 2027',
+        sourceUrl: 'https://www.nsw.gov.au/ministerial-releases/construction-officially-underway-on-first-new-high-school-tallawong',
+        published: '2025-12-02',
+      },
+    ],
+    delivers: [
+      'Places for 1,000 students in more than 50 classrooms',
+      'Specialist workshops for science, food technology, and wood and metal work',
+      'A library, a covered outdoor learning area and a multipurpose hall',
+      'An Aboriginal cultural learning hub',
+      'Sports courts and playing fields',
+    ],
+    disruption: [],
+    doesNotEstablish: [
+      'Any effect on property values, rents or demand in Tallawong or Schofields — no such effect is claimed and none is measured here',
+      'That the school opened when planned: "on track to open Day 1 Term 1 2027" was the publisher\u2019s statement on 2 December 2025, and no later statement was read',
+      'Which addresses fall inside the school\u2019s intake area, which the Department sets and this report does not state',
+      'The site\u2019s exact position: the publisher states the street address and not a map position, so the distance is measured to Guntawong Road as mapped and is approximate',
+    ],
+    recordedAt: '2026-09-27',
+  },
 ];
 
 // ---------------------------------------------------------------------------
@@ -258,9 +374,12 @@ export function readProjectState(project: PublishedProject): ProjectReading {
   const open = said.some((s) => /\bopen(ed|ing)?\b|\boperating\b/.test(s));
   const scheduled = said.some((s) => /\bscheduled\b|\bwill\b|\bto deliver\b/.test(s));
   const built = said.some((s) => /\bcomplete\b/.test(s));
+  // Work the publisher says has started: "construction now underway", "Early
+  // works … is underway". Rouse Hill Hospital read as `announced` without it.
+  const started = said.some((s) => /\bunder ?way\b|\bconstruction (?:has )?start(?:ed|s)\b/.test(s));
   if (open && scheduled) return 'operational_with_works_continuing';
   if (open) return 'operational';
-  if (built || scheduled) return 'under_way';
+  if (built || scheduled || started) return 'under_way';
   return 'announced';
 }
 
@@ -334,12 +453,19 @@ export function renderPublishedProjects(
         '',
       ].join('\n');
     }
+    /*
+     * About THIS record, and said so. Since the national investment programme
+     * is read at every coordinate, the infrastructure outlook beside this can
+     * list a $520 million road upgrade four kilometres away; a heading that
+     * read "No major public project recorded nearby" over it contradicted the
+     * page it sat on (37 Bolin Street, Tallawong, 27 Sep 2026).
+     */
     return [
-      `**No major public project recorded nearby.** None of the major public projects we track lies within `
-      + `${search.radiusKm} km of the property.`,
+      `**No project from the recorded list lies nearby.** None of the major public projects we record from the `
+      + `responsible authorities\u2019 own pages lies within ${search.radiusKm} km of the property.`,
       '',
-      'That describes what has been RECORDED, not a finding about the area — what these records cover is set '
-      + 'out below.',
+      'That describes what has been RECORDED, not a finding about the area. Government investment programmes read '
+      + 'for this property are listed with the infrastructure outlook, and what these records cover is set out below.',
       '',
     ].join('\n');
   }

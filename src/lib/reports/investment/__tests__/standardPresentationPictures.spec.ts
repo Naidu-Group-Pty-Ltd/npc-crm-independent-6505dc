@@ -6,7 +6,7 @@ import { PDFDocument, PDFName, StandardFonts } from 'pdf-lib';
 import {
   standardCoverBand,
   containFit,
-  coverFit,
+  coverPhotographPlacement,
   fitCoverAddress,
   fitLine,
   floorPlanSheetLayout,
@@ -205,15 +205,18 @@ async function templateCoverBox() {
 }
 
 describe('the geometry', () => {
-  it('fills the cover band, cropping evenly, and never leaves a bar', async () => {
+  it('draws the lead photograph WHOLE on the cover band — never cropped', async () => {
+    // A listing photograph is 4:3 or 3:2 and the band is 2.3:1, so filling the
+    // band cut away 40% of the picture's height (37 Bolin Street, 27 Sep 2026).
     const band = standardCoverBand(await templateCoverBox());
-    const wide = coverFit({ width: 3000, height: 1000 }, band);
-    expect(wide.height).toBeCloseTo(band.height, 6);
-    expect(wide.width).toBeGreaterThanOrEqual(band.width);
-    expect(wide.x + wide.width / 2).toBeCloseTo(band.x + band.width / 2, 6);
-    const tall = coverFit({ width: 1000, height: 3000 }, band);
-    expect(tall.width).toBeCloseTo(band.width, 6);
-    expect(tall.height).toBeGreaterThanOrEqual(band.height);
+    for (const image of [{ width: 4000, height: 3000 }, { width: 3000, height: 2000 }, { width: 3000, height: 1000 }, { width: 1000, height: 3000 }]) {
+      const placed = coverPhotographPlacement(image, band);
+      expect(placed.width).toBeLessThanOrEqual(band.width + 1e-9);
+      expect(placed.height).toBeLessThanOrEqual(band.height + 1e-9);
+      expect(placed.width / placed.height).toBeCloseTo(image.width / image.height, 9);
+      expect(Math.max(placed.width / band.width, placed.height / band.height)).toBeCloseTo(1, 9);
+      expect(placed.x + placed.width / 2).toBeCloseTo(band.x + band.width / 2, 6);
+    }
   });
 
   it('draws a plan whole, centred, touching the box on one axis', () => {

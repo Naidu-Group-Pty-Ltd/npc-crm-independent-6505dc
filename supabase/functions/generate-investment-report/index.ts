@@ -37,6 +37,7 @@ import {
   type RegisterSearch,
   PUBLISHED_PROJECT_COVERAGE,
 } from '../_shared/planning/publishedProjectRegister.pure.ts';
+import { strategyOutlookProjects } from '../_shared/planning/strategyOutlook.pure.ts';
 import { withPlanningEvidence } from '../_shared/reports/location/planningEvidenceRecord.pure.ts';
 import { crimeStatBlocks } from '../_shared/reports/crimePromptBlocks.pure.ts';
 import { climateStatBlocks } from '../_shared/reports/climatePromptBlocks.pure.ts';
@@ -4707,6 +4708,10 @@ const __investmentReportHandler = async (req: Request): Promise<Response> => {
           && typeof enhancedData.planningData?.parcel?.lga === 'string'
           ? enhancedData.planningData.parcel.lga.trim() || null
           : null,
+        trustedSa2: {
+          code: typeof subjectGeography?.sa2_code === 'string' ? subjectGeography.sa2_code : null,
+          name: typeof subjectGeography?.sa2_name === 'string' ? subjectGeography.sa2_name : null,
+        },
       });
       console.log(
         `[approvals] ${approvals.kind === 'series'
@@ -5144,6 +5149,10 @@ const __investmentReportHandler = async (req: Request): Promise<Response> => {
       cashRateTarget: (enhancedData as any)?.economics?.cashRateTarget ?? null,
       cashRateMonthlyAverage: null,
       capturedAt: new Date().toISOString(),
+      // The subject the enrichment was acquired for — `enrichmentSubject`'s
+      // own three fields, restated because that binding is not in scope here.
+      // A commute the stamp proves for it reaches the Transport section.
+      locationSubject: { address: formattedInput, postcode, state },
     });
     // Kept BEFORE the assignment below: `safeGeneration.enhancedData` is the
     // narrative input, and from here on `enhancedData.locationIntelligence` is
@@ -5155,6 +5164,9 @@ const __investmentReportHandler = async (req: Request): Promise<Response> => {
       `🛡️ Client-Safe Gate active (${safeGeneration.snapshot.assuranceVersion}) — `
       + `${removedForNarrative.length} disowned fact(s) withheld from the narrative`
       + (removedForNarrative.length ? `: ${removedForNarrative.map((r) => r.path).join(', ')}` : '')
+      + (safeGeneration.admitted.length
+        ? `; admitted on the acquisition stamp: ${safeGeneration.admitted.map((a) => a.path).join(', ')}`
+        : '')
       + `; demographics ${safeGeneration.demographicsKept ? 'retained' : 'withheld'}.`,
     );
 
@@ -6127,6 +6139,11 @@ Produce a comprehensive statewide investment analysis following the structure ab
         transport: transportCountReading(
           (measuredLocationIntelligence ?? enhancedData.locationIntelligence)?.transport,
         ),
+        // The public projects publishers named near the property — the same
+        // two readings the infrastructure chapter prints, so the SWOT cannot
+        // say "no opportunity identified" beside a chapter naming a hospital
+        // under construction four kilometres away (37 Bolin Street).
+        outlook: { projects: strategyOutlookProjects(infrastructure, nearbyPublishedProjects) },
       },
     );
     /*

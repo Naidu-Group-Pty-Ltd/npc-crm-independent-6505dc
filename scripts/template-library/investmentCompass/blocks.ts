@@ -814,19 +814,21 @@ const COVER_BAND_NAME = 'Cover band';
  * it is placed against the fact band. Laying it out downward from a fixed title
  * top is what put a gold hairline through the second line of a two-line address.
  */
-export function cover(opts: CoverOptions): PageDef {
+/**
+ * Where everything on the cover goes, computed once.
+ *
+ * `cover()` draws from it, and so does `withCoverPhotograph`, whose plate has
+ * to stop short of a title that grows upward by as many lines as the address
+ * needs. Two copies of this arithmetic is how the plate and the title would
+ * come to disagree about where the title starts.
+ */
+export function coverGeometry() {
   const c = ctx();
   const plan = c.cover;
-  const onField = plan.ground === 'field';
 
   const inset = plan.frame ? 16 : 0;
   const left = c.margin + inset + (plan.rail ? RAIL_LANE : 0);
   const width = PAGE.width - (c.margin + inset) * 2 - (plan.rail ? RAIL_LANE : 0);
-
-  // On a banded cover the head sits on the field and everything else on paper.
-  const headInk = onField || plan.ground === 'band' ? 'token:text' : 'token:ink';
-  const bodyInk = onField ? 'token:text' : 'token:ink';
-  const mutedInk = onField ? 'token:mutedOnField' : 'token:mutedInk';
 
   const factsHeight = c.density === 'spacious' ? 92 : c.density === 'compact' ? 68 : 78;
   const factsTop = PAGE.height - c.margin - inset - factsHeight;
@@ -868,6 +870,62 @@ export function cover(opts: CoverOptions): PageDef {
   const titleTop = ruleY - 14 - titleHeight - eyebrowHeight;
   const titleFoot = ruleY - 14;
 
+  // The mark's box and its clear space; `cover()` explains the numbers.
+  const MARK_H = 40;
+  const MARK_W = 50;
+  const MARK_CLEAR = 16;
+  const headTop = c.margin + inset + MARK_H + MARK_CLEAR;
+
+  /*
+   * The title, at whichever of two sizes the address needs — see the title
+   * block in `cover()` for why both sizes are derived rather than chosen.
+   */
+  const titleWidth = plan.bleed ? width : Math.round(width * 0.86);
+  // The tagline is the lowest thing in the head, at `headTop + 46`; the title
+  // may grow up to just clear of it. 12pt is the tagline's own line, 18 the
+  // clear space beneath it. (`headTop` is declared with the mark, above.)
+  const titleCeiling = headTop + 46 + 12 + 18;
+  const titleRoom = titleFoot - titleCeiling - eyebrowHeight;
+  /** How many characters fit above the rule at `size`, at this measure. */
+  const titleCharsAt = (size: number): number => {
+    const perLine = Math.max(1, Math.floor(titleWidth / (size * 0.5)));
+    const lines = Math.max(1, Math.floor(titleRoom / (size * 1.12)));
+    return perLine * lines;
+  };
+  // The step-down size is the first that fits `LONGEST_ADDRESS`, so no stored
+  // address can overrun it. See that constant for the measurement.
+  const fullChars = titleCharsAt(c.scale.coverTitle);
+  let smallSize = c.scale.coverTitle;
+  while (smallSize > 12 && titleCharsAt(smallSize) < LONGEST_ADDRESS) smallSize = Math.round((smallSize - 1) * 10) / 10;
+
+  return {
+    inset, left, width,
+    factsHeight, factsTop, locationsHeight, locationsTop, standfirstHeight, standfirstTop, ruleY,
+    titleHeight, eyebrowHeight, titleTop, titleFoot,
+    MARK_H, MARK_W, MARK_CLEAR, headTop,
+    titleWidth, titleCeiling, titleRoom, fullChars, smallSize,
+  };
+}
+
+export function cover(opts: CoverOptions): PageDef {
+  const c = ctx();
+  const plan = c.cover;
+  const onField = plan.ground === 'field';
+
+  const {
+    inset, left, width,
+    factsHeight, factsTop, locationsTop, standfirstTop, ruleY,
+    titleTop, titleFoot,
+    MARK_H, MARK_W, headTop,
+    titleWidth, fullChars, smallSize,
+  } = coverGeometry();
+
+  // On a banded cover the head sits on the field and everything else on paper.
+  const headInk = onField || plan.ground === 'band' ? 'token:text' : 'token:ink';
+  const bodyInk = onField ? 'token:text' : 'token:ink';
+  const mutedInk = onField ? 'token:mutedOnField' : 'token:mutedInk';
+
+
   const blocks: BlockDef[] = [];
 
   /*
@@ -880,10 +938,6 @@ export function cover(opts: CoverOptions): PageDef {
    * away from it. `contain` means a tenant lockup of another shape letterboxes
    * inside the box instead of cropping.
    */
-  const MARK_H = 40;
-  const MARK_W = 50;
-  const MARK_CLEAR = 16;
-  const headTop = c.margin + inset + MARK_H + MARK_CLEAR;
 
   // ── Ground ───────────────────────────────────────────────────────────────
   if (plan.ground === 'band') {
@@ -999,23 +1053,6 @@ export function cover(opts: CoverOptions): PageDef {
    * scale changes. `titleCharsAt` is the same character-advance model
    * `textHeight` uses and is read slightly wide, which is the safe direction.
    */
-  const titleWidth = plan.bleed ? width : Math.round(width * 0.86);
-  // The tagline is the lowest thing in the head, at `headTop + 46`; the title
-  // may grow up to just clear of it. 12pt is the tagline's own line, 18 the
-  // clear space beneath it. (`headTop` is declared with the mark, above.)
-  const titleCeiling = headTop + 46 + 12 + 18;
-  const titleRoom = titleFoot - titleCeiling - eyebrowHeight;
-  /** How many characters fit above the rule at `size`, at this measure. */
-  const titleCharsAt = (size: number): number => {
-    const perLine = Math.max(1, Math.floor(titleWidth / (size * 0.5)));
-    const lines = Math.max(1, Math.floor(titleRoom / (size * 1.12)));
-    return perLine * lines;
-  };
-  // The step-down size is the first that fits `LONGEST_ADDRESS`, so no stored
-  // address can overrun it. See that constant for the measurement.
-  const fullChars = titleCharsAt(c.scale.coverTitle);
-  let smallSize = c.scale.coverTitle;
-  while (smallSize > 12 && titleCharsAt(smallSize) < LONGEST_ADDRESS) smallSize = Math.round((smallSize - 1) * 10) / 10;
 
   const titleBlock = (size: number, when?: string) => {
     const b = block('text-block', {
@@ -2654,67 +2691,185 @@ function scrim(height: number, name: string): BlockDef {
 
 const FIELD_PHOTOGRAPH_BRIEF = 'Drop the cover photograph — the dwelling or its streetscape';
 const BAND_PHOTOGRAPH_BRIEF = 'Drop the masthead photograph — the dwelling or its streetscape';
+const PLATE_PHOTOGRAPH_BRIEF = 'Cover photograph — the lead photograph, shown whole';
+
+/** Clear space between the plate and the head above it or the title below it. */
+export const COVER_PLATE_CLEAR = 24;
+/** A plate shallower than this is a strip, which is the defect the plate replaces. */
+export const COVER_PLATE_MIN_HEIGHT = 130;
+/** Title depths, in lines at the display size, that a plate is laid out for. */
+export const COVER_PLATE_MAX_LINES = 4;
+/**
+ * The advance of each cover display face, in ems per character, over addresses.
+ *
+ * Measured 27 Sep 2026 in Chromium with the faces installed (the render
+ * container's files), as the widest of five real addresses set at 100px:
+ * Cinzel 0.561, IBM Plex Mono 0.600, Inter 0.518, Noto Serif 0.514, Roboto
+ * 0.481, Lato 0.479. Each is rounded UP to the next hundredth. The title's own
+ * model (`titleCharsAt`) reads every face at 0.5em, which is wide for Lato and
+ * Roboto and narrow for Cinzel — Cinzel is a capitals face and sets 12% wider
+ * — so a plate laid out from it collided with the title on the Private
+ * Banking covers. A face not measured here is read at 0.6em, the widest
+ * measured, so an unknown face gets a smaller plate rather than a collision.
+ */
+export const COVER_DISPLAY_ADVANCE: Readonly<Record<string, number>> = {
+  Cinzel: 0.57,
+  'IBM Plex Mono': 0.6,
+  Inter: 0.52,
+  'Noto Serif': 0.52,
+  Roboto: 0.49,
+  Lato: 0.48,
+};
+const UNMEASURED_DISPLAY_ADVANCE = 0.6;
 
 /**
- * The report's lead photograph, on a cover the catalogue drew without one.
+ * The share of a line's character capacity a plate relies on.
+ *
+ * A title wraps at WORDS, so a line breaks early by up to one word: "37 Bolin
+ * Street (Tallawong), Schofields NSW 2762" is 48 characters and the break
+ * falls before "2762", not after "NS". The plate is sized for a title of L
+ * lines, so reading the capacity at full value would let an address that fills
+ * L lines by count set L + 1 by words and run the last line up into the
+ * photograph. Checked in Chromium over every plate at the length where each
+ * one ends, in five wordings (`coverPlateQa`).
+ */
+export const COVER_PLATE_WRAP_ALLOWANCE = 0.72;
+
+export interface CoverPlate {
+  /** The longest address, in characters, this plate is laid out for. */
+  maxChars: number;
+  /** The shortest, exclusive. 0 for the first plate. */
+  minChars: number;
+  lines: number;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+}
+
+/**
+ * The plates a cover can carry, one per title depth.
+ *
+ * The title's FOOT is pinned and it grows upward by as many lines as the
+ * address needs (`cover`), so the room above it depends on the address. A
+ * plate is therefore laid out once per depth and chosen by the address's
+ * length, exactly as the title chooses its own size (`oneOf`, and the
+ * step-down title in `cover`). Past the deepest plate there is no plate: the
+ * address is long enough that the title needs the room, and the photograph
+ * goes back to the layer it was before (`withCoverPhotograph`).
+ */
+export function coverPlates(ground: CoverPlan['ground']): CoverPlate[] {
+  const c = ctx();
+  const g = coverGeometry();
+  const size = c.scale.coverTitle;
+  // The head's lowest line is the tagline at `headTop + 46`, 12pt deep. A
+  // banded cover's head sits inside the band, which is deeper than the head.
+  const headFoot = g.headTop + 46 + 12;
+  const top = (ground === 'band' ? Math.max(COVER_BAND_HEIGHT, headFoot) : headFoot) + COVER_PLATE_CLEAR;
+  const advance = COVER_DISPLAY_ADVANCE[c.type.display] ?? UNMEASURED_DISPLAY_ADVANCE;
+  const perLine = Math.max(1, Math.floor(Math.floor(g.titleWidth / (size * advance)) * COVER_PLATE_WRAP_ALLOWANCE));
+  const plates: CoverPlate[] = [];
+  for (let lines = 1; lines <= COVER_PLATE_MAX_LINES; lines += 1) {
+    const maxChars = Math.min(perLine * lines, g.fullChars);
+    const minChars = plates.length ? plates[plates.length - 1].maxChars : 0;
+    if (maxChars <= minChars) break;
+    const titleTopAtDepth = g.titleFoot - g.eyebrowHeight - lines * size * 1.12;
+    const height = Math.floor(titleTopAtDepth - COVER_PLATE_CLEAR - top);
+    if (height < COVER_PLATE_MIN_HEIGHT) break;
+    plates.push({ maxChars, minChars, lines, x: g.left, y: top, width: g.width, height });
+  }
+  return plates;
+}
+
+/** The condition under which the plate laid out for `plate` is the one drawn. */
+function plateChoice(index: number, plate: CoverPlate): string {
+  const lead = plateConditional(index);
+  const longer = `property.address && property.address.length > ${plate.maxChars}`;
+  return plate.minChars === 0
+    ? `${lead} && !(${longer})`
+    : `${lead} && property.address && property.address.length > ${plate.minChars} && !(${longer})`;
+}
+
+/**
+ * The report's lead photograph on a cover the catalogue drew without one —
+ * shown WHOLE, on a plate of its own between the head and the title.
  *
  * Five of the fifty Investment masters were designed around photographs
  * (`image_slots`). The other forty-five had nowhere to put one, so a report
  * holding the property's own photographs printed none of them, and a dark
  * cover left an empty field where a reader expected the house. The owner asked
- * for a photograph on those covers (25 Sep 2026). The cover's ground decides
- * where one can go:
+ * for a photograph on those covers (25 Sep 2026), and seed v21 put it behind
+ * the whole sheet on a field cover and inside the 176pt band on a banded one.
  *
- *   - `field`: behind the whole sheet, under the photographic covers' own
- *     scrim (`coverHero`) and a second pass of it. The type is already
- *     reversed out of the field colour, and the scrim is that colour, so the
- *     type reads over a photograph as it reads over the field.
- *   - `band`: inside the band and nowhere else. The band is the one part of a
- *     banded cover with a fixed extent. The title below it grows upward from
- *     its rule by as many lines as the address needs (`cover`), so a
- *     photograph anywhere on the paper would sit where a long address sets.
- *     In the band it lies behind the mark, the wordmark and the tagline, which
- *     never move, under the same two passes.
- *   - `paper`: unchanged. Type on paper is dark ink, and a photograph under it
- *     needs a pale wash strong enough to keep that ink legible. That makes a
- *     different cover, not this cover with a picture added. One of the eleven,
- *     Monograph, is photo-free by the catalogue's own design. This is a
- *     decision for the design source, not something to derive here.
+ * Both of those CROPPED it, and the owner's next read of a real report was
+ * that the photograph "has been cut halfway and it's not pushing through in its
+ * entirety" (37 Bolin Street, 27 Sep 2026). That was exactly what the geometry
+ * does: a 4:3 listing photograph set `cover` into a 595×176 band keeps about 40%
+ * of its height — the brick ground floor and a garage door, no roof and no
+ * upper storey — and set `cover` behind a portrait sheet keeps about 42% of its
+ * width under two passes of scrim. A photograph a client is shown to recognise
+ * their property by has to be the photograph.
  *
- * The scrim is laid TWICE, which the photographic covers' own is not. Their
- * design sets its small type over one 0.55 pass of the field colour. Over a
- * white facade or a pale sky, the commonest ground in a listing photograph,
- * that leaves the tagline and the fact labels at about 3.5:1 (measured on
- * Private Banking's palette over pure white), half the 7:1 print floor
- * `REPORT_RULES.md` §2 sets for small type. Two passes darken by
- * 1 − 0.45² ≈ 0.80 and bring the same worst case to about 7.9:1. The house
- * stays plainly visible: rendered over a pale-sky, white-facade stand-in, the
- * roof line, the windows and the lawn all read. The renderer's tint opacity is
- * one fixed value, so the second pass is a second block, not a new property.
+ * So the photograph is a PLATE: `contain`, in the empty field between the head
+ * and the title, which is where a designer puts the picture on a magazine
+ * cover and where nothing else is drawn. `contain` letterboxes onto the cover's
+ * own ground rather than cropping, so a portrait photograph stands narrow and a
+ * panorama lies wide, and neither loses a pixel. No scrim: no type sits on it,
+ * so it prints at full strength.
  *
- * Every block is conditional on the photograph, so a report without one
- * draws exactly the cover it drew before. The missing photograph is a dropped
- * LAYER, which `closeDroppedBlocks` leaves in place rather than closing.
- * Call this after the rest of the master is built: the new blocks then take
- * the last ids, and every existing block keeps its own.
+ * The plate stops short of the title, whose depth depends on the address, so it
+ * is laid out once per depth and chosen by length (`coverPlates`). Where an
+ * address is too long for any plate to leave the title its room, the cover
+ * falls back to the v21 layer, which never collides because it is UNDER the
+ * type: behind the field, or inside the band. That is 1% of addresses or fewer
+ * (p99 61 characters) and is the only place a crop remains.
+ *
+ * A PAPER cover is unchanged. Monograph is photo-free by the catalogue's own
+ * design, and whether the other paper covers should carry a plate is a design
+ * decision for the source, not something to derive here.
+ *
+ * Every block is conditional on the photograph, so a report without one draws
+ * exactly the cover it drew before. A missing photograph is a dropped LAYER or
+ * a dropped plate, which `closeDroppedBlocks` leaves in place rather than
+ * closing: nothing is below either in the column.
  */
 export function withCoverPhotograph(
   coverPage: PageDef,
   index: number,
   ground: CoverPlan['ground'],
 ): PageDef {
+  if (ground !== 'field' && ground !== 'band') return coverPage;
+  const plates = coverPlates(ground);
+  const plateBlocks: BlockDef[] = plates.map((plate) => ({
+    ...block('image', {
+      src: plateSrc(index),
+      fit: 'contain',
+      placeholder: false,
+      alt: 'Photograph of the property',
+      // Positioned, not flowed: when this copy is not the one chosen, nothing
+      // below it may close up into its place (`closeDroppedBlocks`).
+      layer: true,
+      x: plate.x, y: plate.y, width: plate.width, height: plate.height,
+    }, PLATE_PHOTOGRAPH_BRIEF),
+    conditional: plateChoice(index, plate),
+  }));
+  // The layer beneath the type, for an address no plate leaves room for.
+  const longest = plates.length ? plates[plates.length - 1].maxChars : 0;
+  const layerWhen = plates.length
+    ? `${plateConditional(index)} && property.address && property.address.length > ${longest}`
+    : plateConditional(index);
+
   if (ground === 'field') {
-    const photograph = [
+    const layer = [
       ...coverHero(index, FIELD_PHOTOGRAPH_BRIEF),
-      { ...scrim(PAGE.height, 'Cover scrim, second pass'), conditional: plateConditional(index) },
-    ];
-    return { ...coverPage, blocks: [...photograph, ...coverPage.blocks] };
+      scrim(PAGE.height, 'Cover scrim, second pass'),
+    ].map((b) => ({ ...b, conditional: layerWhen }));
+    return { ...coverPage, blocks: [...layer, ...coverPage.blocks, ...plateBlocks] };
   }
-  if (ground !== 'band') return coverPage;
   const band = coverPage.blocks.findIndex((b) => b.name === COVER_BAND_NAME);
   if (band < 0) throw new Error(`A banded cover with no "${COVER_BAND_NAME}" block: ${coverPage.name}`);
   // Above the band's colour, beneath the head's type: blocks paint in order.
-  const photograph = [
+  const layer = [
     block('image', {
       src: plateSrc(index),
       fit: 'cover',
@@ -2723,10 +2878,10 @@ export function withCoverPhotograph(
     }, BAND_PHOTOGRAPH_BRIEF),
     scrim(COVER_BAND_HEIGHT, 'Band scrim'),
     scrim(COVER_BAND_HEIGHT, 'Band scrim, second pass'),
-  ].map((b) => ({ ...b, conditional: plateConditional(index) }));
+  ].map((b) => ({ ...b, conditional: layerWhen }));
   return {
     ...coverPage,
-    blocks: [...coverPage.blocks.slice(0, band + 1), ...photograph, ...coverPage.blocks.slice(band + 1)],
+    blocks: [...coverPage.blocks.slice(0, band + 1), ...layer, ...coverPage.blocks.slice(band + 1), ...plateBlocks],
   };
 }
 

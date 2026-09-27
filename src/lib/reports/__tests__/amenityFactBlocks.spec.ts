@@ -55,8 +55,10 @@ const enrichment = (over: Record<string, unknown> = {}) => ({
 
 describe('the fields the record actually publishes', () => {
   it('asks for no supermarket count, because no supermarket lookup is taken', () => {
+    // Transit and schools are rows since 27 Sep 2026: their nearest place and
+    // its distance are measured and were reaching the grade and not the prose.
     expect(AMENITY_FIELDS.map((f) => f.key)).toEqual(
-      ['healthcare', 'shopping', 'recreation', 'restaurants'],
+      ['transit', 'schools', 'healthcare', 'shopping', 'recreation', 'restaurants'],
     );
     expect(JSON.stringify(AMENITY_FIELDS)).not.toMatch(/supermarket/i);
   });
@@ -132,7 +134,8 @@ describe('a count names the register that produced it', () => {
     const out = amenityFactBlocks(enrichment({
       lifestyle: { shoppingCenters: 3, parks: 11, nearestShopping: 'Lansell Square' },
     }));
-    expect(out).toContain('Not assessed for this property: restaurants and cafés');
+    expect(out).toContain('Not assessed for this property:');
+    expect(out).toMatch(/Not assessed for this property:[^.]*restaurants and cafés/);
     expect(out).toContain('not as absent, not as adequate');
   });
 
@@ -263,5 +266,56 @@ describe('the small readers', () => {
     expect(stagesOf({})).toEqual({});
     expect(stagesOf(null)).toEqual({});
     expect(stagesOf('nonsense')).toEqual({});
+  });
+});
+
+describe('the measured distances reach the table (37 Bolin Street, 27 Sep 2026)', () => {
+  /** The shape the service writes, with the `amenities[]` rows the grade reads its distances from. */
+  const bolin = () => enrichment({
+    amenities: [
+      { category: 'Public Transport', count: 2, nearest: 'Tallawong Station', distance: 1.7, score: 40 },
+      { category: 'Schools', count: 10, nearest: 'Schofields Public School', distance: 0.9, score: 100 },
+      { category: 'Healthcare', count: 10, nearest: 'Rouse Hill Medical', distance: 2.2, score: 100 },
+      { category: 'Shopping', count: 4, nearest: 'Tallawong Village', distance: 1.6, score: 48 },
+      { category: 'Recreation', count: 10, nearest: 'Schofields Park', distance: 0.5, score: 80 },
+    ],
+    healthcare: { nearestHospital: 'Rouse Hill Medical', distanceToHospital: 2.2, facilitiesWithin5km: 10 },
+    schools: { nearestSchool: 'Schofields Public School', distanceToSchool: 0.9 },
+    lifestyle: {
+      shoppingCenters: 4, parks: 10, restaurants: 24,
+      nearestShopping: 'Tallawong Village', nearestPark: 'Schofields Park',
+    },
+  });
+
+  it('draws transit and schools, and every distance the grade prints', () => {
+    const out = amenityFactBlocks(bolin());
+    expect(out).toContain('| Transit stations | Tallawong Station | 1.7 km |');
+    expect(out).toContain('| Schools | Schofields Public School | 900 m |');
+    expect(out).toContain('| Shopping centres | Tallawong Village | 1.6 km |');
+    expect(out).toContain('| Parks and recreation | Schofields Park | 500 m |');
+    expect(out).toContain('| Healthcare facilities | Rouse Hill Medical | 2.2 km |');
+    // The instruction that the section may not fall back to "to be confirmed".
+    expect(out).toContain('never write that a distance is "to be confirmed"');
+  });
+
+  it('writes a count at the lookup cap as a floor, over the radius the provider actually searched', () => {
+    const out = amenityFactBlocks(bolin());
+    // Register: parks over 2 km, healthcare over 5 km.
+    expect(out).toContain('| 10 or more within 2 km |');
+    expect(out).toContain('| 10 or more within 5 km |');
+    expect(out).toContain('| 2 within 2 km |');
+    expect(out).not.toMatch(/Count within 5 km/);
+  });
+
+  it('never publishes the school count the Client-Safe Gate disowns', () => {
+    const row = amenityRows(bolin()).find((r) => r.key === 'schools');
+    expect(row?.count).toBeNull();
+    expect(amenityFactBlocks(bolin())).toContain('| Schools | Schofields Public School | 900 m | nearest only — not counted here |');
+  });
+
+  it('a category reached and found empty names no place and no distance', () => {
+    const li = bolin();
+    (li.amenities as Array<Record<string, unknown>>)[0] = { category: 'Public Transport', count: 0, nearest: null, distance: null };
+    expect(amenityFactBlocks(li)).toContain('| Transit stations | not named | not measured | none within 2 km |');
   });
 });

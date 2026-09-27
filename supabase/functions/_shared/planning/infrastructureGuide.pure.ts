@@ -106,6 +106,18 @@ export const FINDING_GUIDE: Readonly<Record<string, FindingGuide>> = {
       + 'contractually committed has passed the point where it is likely to happen. The agency’s '
       + 'project page carries the business-case stage in the meantime.',
   },
+  'Federally funded transport project': {
+    what: 'A road or rail project the Australian Government funds through its Infrastructure Investment Program. '
+      + 'The Department publishes its status, its estimated cost, the Commonwealth’s share of it, and the start '
+      + 'and end it expects.',
+    limits: 'An expected end is an expectation, and large projects are re-staged and re-scoped. The estimated cost '
+      + 'is the whole project’s and the Commonwealth figure is only its share. The distance is to the nearest part '
+      + 'of the works as drawn on the Department’s map, which for a corridor may be a long way from where '
+      + 'construction is happening now.',
+    next: 'Open the project on the Department’s Infrastructure Investment Program site, and the delivering state '
+      + 'agency’s own project page, where staging, road closures and community updates are published. If the '
+      + 'works pass close to the property, the construction notices say when and for how long.',
+  },
   'Priority development area': {
     what: 'An area the state has declared for coordinated development, where the state rather than the '
       + 'council usually sets what may be built and assesses applications against a scheme of its own.',

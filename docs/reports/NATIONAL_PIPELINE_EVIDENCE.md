@@ -421,3 +421,92 @@ defect in its general form.
 - **The ACT's overlay registers are still not integrated.** What changed is
   that an ACT reader is told so, in the territory's own terms, with the Crown
   lease named. Integrating them is W3.4's work.
+
+## 10 · The national investment programme — read at every coordinate (27 Sep 2026)
+
+§9's first bullet is no longer the whole picture. The owner's report of
+27 Sep 2026 was that the 37 Bolin Street, Tallawong Compass said it had no
+specific infrastructure beside Rouse Hill Hospital, and asked that every
+locality carry its ten-year project pipeline. The Priority List is still not a
+feed (§§1-7 stand); what answered instead is the **Australian Government's own
+Infrastructure Investment Program register**, which is a feed.
+
+### 10.1 · What was measured, from CI (`evidence-source-inspect.yml`, target `infrastructure`)
+
+`spatial.infrastructure.gov.au/server/rest/services/iPAMS-DB/` publishes three
+ArcGIS layers — `AuslinkGIS_Line_web` (61,762 features), `AuslinkGIS_Point_web`
+(1,134) and `AuslinkGIS_Poly_web` (59) — under the catalogue's `cc-by`
+licence, keyless, answering the production-shaped egress. Every feature
+carries `ProjectName`, `ProjectStatus`, `SubProgram`, `TransportMode`,
+`EstimatedProjectCost`, `AGC` (the Australian Government's contribution),
+`ExpectedStartDate`, `ExpectedEndDate`, `State` and `URL`. The status
+vocabulary is the Department's own: *Completed, Underway, Under Construction,
+In Planning, Not Started, Not Currently Proceeding*. The dashboard itself
+carries a caveat that entries may be missing or out of date, and the report
+carries it too.
+
+Queried within 15 km of five real report addresses (NSW, VIC, QLD, WA) with
+`ProjectStatus <> 'Completed'`, every one answered. At Tallawong: Richmond Road
+M7–Townson Road ($520m, Under Construction, Early 2026 → Late 2028), Garfield
+Road East ($440m, In Planning, Early 2027 → Late 2029), the New Richmond
+Bridge ($500m) and more.
+
+### 10.2 · How it reaches a report
+
+`nationalInvestmentProgramme.pure.ts` builds the query and reads the answer;
+`planning-data-service` asks it for EVERY jurisdiction and stores it as
+`nationalProgramme` on the planning answer (cache key version `c8`, because
+the answer widened); `infrastructureEvidence.pure.ts` turns each MAJOR project
+(an estimated cost of $10m or more, and not a Roads to Recovery or Black Spot
+line) into an item of kind *Federally funded transport project*. Four rules:
+
+- **A cost is the publisher's ESTIMATE and the federal share is its own
+  figure.** `costBasis: 'estimated_project_cost'`; the Australian Government's
+  contribution is printed beside it and the balance is said to be unattributed,
+  never presented as federal money.
+- **An expected end is an expectation.** `ExpectedEndDate` is carried verbatim
+  ("Late 2028") into `statedDelivery` and the ten-year horizon table, which is
+  titled *as the publishers date it* and never reads as a completion.
+- **Minor works are counted, not itemised**, so the chapter names the projects
+  a reader would recognise and says how many smaller ones there are.
+- **Distance is to the nearest part of the works**, because a road upgrade is
+  a line, and the page says so.
+
+§9's "no per-report call" remains true of the Priority List. The programme is
+read per planning answer because a project list is keyed on a coordinate and
+changes with each budget; the planning answer cache already bounds how often
+it is asked.
+
+### 10.3 · The recorded register, and what "2027" turned out to be
+
+Two rows were added to `publishedProjectRegister.pure.ts`, each from the
+responsible authority's own pages, read from CI:
+
+- **Rouse Hill Hospital** — $910 million, Health Infrastructure NSW. Status
+  words: *"Early works for the construction of the new Rouse Hill Hospital is
+  underway"* (construction update, 1 Aug 2026), SSDA determination April
+  2026, main works contract *"expected to be awarded later this year"*
+  (1 May 2026). **No page, release or construction update read publishes an
+  opening date.** The owner's recollection of 2027 is not stated anywhere
+  Health Infrastructure publishes, so the report states status and stages and
+  says, in `doesNotEstablish`, that no opening date has been published.
+  `readProjectState` gained the *under way* reading the hospital needed.
+- **New high school in Tallawong** — NSW Department of Education, 201
+  Guntawong Road: *"On track to open Day 1 Term 1 2027"* (release of
+  2 Dec 2025). That IS a published date and is carried verbatim, as the
+  publisher's expectation.
+
+### 10.4 · The SWOT reads the same projects
+
+The same Compass printed *"None identified: no recorded figure supports one"*
+under Opportunities while its infrastructure chapter named both. `buildSwot`
+now takes an optional `outlook` — `strategyOutlook.pure.ts` turns the
+recorded register and the programme items into plain data, never a
+development application, never an entry marked as a possible duplicate — and
+files each as *A published public project nearby*, with the publisher's status
+verbatim and a basis saying that nothing measures any effect on the
+property's value, rent or demand. Capped at four; the rest are pointed at the
+chapter. The resident population's measured growth is filed by its sign. The
+Financial and Due Diligence forks read the same projects off the stored row
+(`strategyOutlookFrom`), and the Financial SWOT is now this composer with the
+modelling on, replacing the scorer's four free-text lists.

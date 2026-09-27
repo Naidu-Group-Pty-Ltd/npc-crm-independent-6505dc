@@ -353,7 +353,7 @@ export function condensedRecommendationContract(
  */
 const COMPONENT_DESCRIPTION: Readonly<Record<string, string>> = {
   amenityMatrix: 'a table of nearby amenities, each with its distance and how that distance was measured',
-  attributeTable: 'a short two-column table of the property\'s features (Feature | Detail)',
+  attributeTable: 'a short two-column table (Item | Detail) of the facts THIS section rests on — never the property\'s type, land size, bedrooms, bathrooms or parking again, which the property section states once',
   chart: 'one chart of measured figures',
   confidenceChip: 'one closing line on how far the evidence goes, opening with the word "Confidence:"',
   dueDiligenceChecklist: 'a checklist of the checks still owed, in the order they are owed',

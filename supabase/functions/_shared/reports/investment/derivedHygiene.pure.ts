@@ -19,6 +19,7 @@
  *    declares; anything else the model volunteered is dropped and named.
  */
 
+import { dedupeDimensionBasisLists, dedupePropertyFactTables } from './propertyFactTables.pure.ts';
 import { enforceChartEvidence, type EvidenceInventory } from './chartEvidence.pure.ts';
 import { alignChartScales } from './chartScale.pure.ts';
 import { tabulateMixedUnitCharts } from './chartUnits.pure.ts';
@@ -940,7 +941,20 @@ export function presentStoredMarkdown(
   const labels = stripScaffoldingLabels(headed);
   const titled = labels.replaced.length ? labels.markdown : headed;
   const registers = dedupeRegisterTables(titled);
-  const printedOnce = registers.replaced.length ? registers.markdown : titled;
+  const registeredOnce = registers.replaced.length ? registers.markdown : titled;
+  /*
+   * The property's features, stated once. Thirteen section definitions ask
+   * for an attribute table and the model filled each with the same five rows
+   * (37 Bolin Street, 27 Sep 2026: four copies in one Due Diligence report).
+   * Only a table made ENTIRELY of core facts after the first is replaced; a
+   * document that states them once is byte-identical.
+   * See `propertyFactTables.pure.ts`.
+   */
+  const facts = dedupePropertyFactTables(registeredOnce);
+  const factsOnce = facts.replaced.length ? facts.markdown : registeredOnce;
+  // And the grade's per-dimension basis, which the Financial report printed
+  // twice with a different number of dimensions in each copy.
+  const printedOnce = dedupeDimensionBasisLists(factsOnce);
   // A column with a header and nothing under it, and a citation bracket with
   // nothing in it — both were on the documents supplied for acceptance, both
   // are a promise the record could not keep, and neither is prose.

@@ -136,7 +136,8 @@ describe('the rendered block', () => {
    */
   it('says the list was checked and holds nothing nearby, where it was', () => {
     const md0 = renderPublishedProjects([], SEARCHED);
-    expect(md0).toContain('**No major public project recorded nearby.**');
+    expect(md0).toContain('**No project from the recorded list lies nearby.**');
+    expect(md0).toContain('Government investment programmes read for this property are listed with the infrastructure outlook');
     expect(md0).toContain('within 15 km');
     expect(md0).toMatch(/RECORDED, not a finding about the area/);
     expect(md0).not.toContain('|');
@@ -274,5 +275,29 @@ describe('the two absences are two different instructions', () => {
       expect(rules).toContain(inHomeSection('infrastructure'));
       expect(rules).toContain(elsewhereOnly('infrastructure'));
     }
+  });
+});
+
+describe('north-west Sydney, recorded for 37 Bolin Street, Tallawong (27 Sep 2026)', () => {
+  const BOLIN = { lat: -33.6903115, lon: 150.8816157 };
+  const near = projectsNear(BOLIN.lat, BOLIN.lon, 15);
+
+  it('finds the hospital and the new high school the Compass said did not exist', () => {
+    expect(near.map((n) => n.project.name)).toEqual(['New high school in Tallawong', 'Rouse Hill Hospital']);
+    const hospital = near.find((n) => n.project.name === 'Rouse Hill Hospital')!;
+    expect(hospital.distanceKm).toBeGreaterThan(3.4);
+    expect(hospital.distanceKm).toBeLessThan(3.8);
+  });
+
+  it('reads both as under way, from the publishers\u2019 own words', () => {
+    for (const n of near) expect(readProjectState(n.project), n.project.name).toBe('under_way');
+  });
+
+  it('records no opening date for the hospital, because no publisher page states one', () => {
+    const hospital = PUBLISHED_PROJECTS.find((p) => p.name === 'Rouse Hill Hospital')!;
+    expect(JSON.stringify(hospital.stages)).not.toMatch(/\bopen(s|ing)?\b.*20\d\d/i);
+    expect(hospital.doesNotEstablish.join(' ')).toContain('no page or construction update Health Infrastructure has published states when the hospital will open');
+    expect(renderPublishedProjects(near, { searched: true, radiusKm: 15, coordinateSource: 'enrichment' }))
+      .toContain('$910 million');
   });
 });

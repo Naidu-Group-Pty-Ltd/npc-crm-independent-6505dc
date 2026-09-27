@@ -15,6 +15,14 @@ on:
         description: Why this inspection is being run
         required: false
         default: ''
+      target:
+        description: Which candidates to read — market workbooks, or the infrastructure pipeline's publishers
+        required: false
+        default: market
+        type: choice
+        options:
+          - market
+          - infrastructure
 
 permissions:
   contents: read
@@ -24,11 +32,23 @@ jobs:
     runs-on: ubuntu-latest
     timeout-minutes: 15
     steps:
+      # The infrastructure pipeline's publishers: pages, registers and geocodes.
+      # See the script's header. Read-only, and the market steps below are skipped.
+      - uses: actions/checkout@v4
+        if: inputs.target == 'infrastructure'
+      - name: Read the infrastructure pipeline's publishers
+        if: inputs.target == 'infrastructure'
+        run: |
+          pip install --quiet pypdf
+          python3 scripts/market/infrastructure-source-inspect.py
       - uses: actions/setup-python@v5
+        if: inputs.target != 'infrastructure'
         with:
           python-version: '3.12'
       - run: pip install --quiet openpyxl
+        if: inputs.target != 'infrastructure'
       - name: Fetch and describe each candidate
+        if: inputs.target != 'infrastructure'
         shell: bash
         run: |
           mkdir -p out
