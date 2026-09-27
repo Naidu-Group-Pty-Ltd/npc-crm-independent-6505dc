@@ -41,7 +41,7 @@ import { resolveBrandFamily, type BrandFamily } from '@/lib/reportDesign/brandFa
 import { hexToRgb01 } from '@/lib/reportDesign/color.pure';
 import {
   containFit,
-  coverFit,
+  coverPhotographPlacement,
   drawTracked,
   fitCoverAddress,
   winAnsiTypographic,
@@ -260,7 +260,7 @@ export async function drawIssuerCover(pdfDoc: PDFDocument, input: IssuerCoverInp
 
   const photo = await embedPhotograph(pdfDoc, input.photograph);
   if (photo) {
-    const placed = coverFit({ width: photo.width, height: photo.height }, layout.band);
+    const placed = coverPhotographPlacement({ width: photo.width, height: photo.height }, layout.band);
     page.pushOperators(
       pushGraphicsState(),
       rectangle(layout.band.x, layout.band.y, layout.band.width, layout.band.height),

@@ -38,10 +38,21 @@
  *  - **The whole `commute` block goes, not just its duration.** The measured
  *    defect was destination routing, and the live service has since fixed it —
  *    but a resumed run, a stored blob and a fresh call are the same shape, so
- *    nothing at this boundary can tell a repaired value from a legacy one.
- *    Blocking all of them cannot under-block; admitting the shape can. The
- *    cost is that a genuinely measured commute is not narrated, which is a
- *    loss of detail rather than a loss of accuracy.
+ *    nothing at this boundary could tell a repaired value from a legacy one.
+ *    Blocking all of them cannot under-block; admitting the shape can.
+ *
+ *    That stopped being true with RF-7.2B: every fresh enrichment carries an
+ *    acquisition stamp naming the address it describes, the precision of the
+ *    point it was measured from and whether the commute stage actually
+ *    routed, and since IPV 1.1.0 the SCORER admits a commute on exactly that
+ *    proof (`verifiedLocationInputs`). So the report GRADED the property on
+ *    "44 minutes to Sydney" and printed that line in its own grade basis,
+ *    while its Transport section — handed this object — said "no measured
+ *    commute or car-travel time is held for the property" (37 Bolin Street,
+ *    Tallawong, 27 Sep 2026). The same proof now admits it here, and only it:
+ *    a stampless, mismatched, area-centre or unrouted commute is disowned
+ *    exactly as before. The caller names the subject (`locationSubject`); a
+ *    caller that names none gets the old, whole-block refusal.
  *
  * ## What is NOT removed
  *
@@ -71,6 +82,8 @@ import {
   type CashRateTargetReading,
 } from './safeMarketFacts.pure.ts';
 import { isCensusProjectionSource } from '../../absCensusProjection.pure.ts';
+import { verifiedLocationInputs } from '../market/locationInputVerification.pure.ts';
+import type { EnrichmentSubject } from '../location/locationEnrichmentReuse.pure.ts';
 
 export const SAFE_GENERATION_VERSION = '1.0.0';
 
@@ -206,6 +219,12 @@ export interface SafeGenerationInput {
   readonly geographyProvenance?: GeographyProvenance | null;
   /** ISO timestamp the caller is generating at — passed so this stays pure. */
   readonly capturedAt: string;
+  /**
+   * The property the enrichment must describe for a measured reading to be
+   * admitted — the same subject the scorer checks the stamp against. Omitted,
+   * nothing is admitted and the Location paths are disowned whole.
+   */
+  readonly locationSubject?: EnrichmentSubject | null;
 }
 
 export interface GeographyProvenance {
@@ -259,6 +278,8 @@ export interface SafeGenerationResult {
   readonly enhancedData: Record<string, unknown>;
   readonly facts: readonly SafeFact<unknown>[];
   readonly removed: readonly RemovedFact[];
+  /** Location paths kept because the acquisition stamp proves them for this subject. */
+  readonly admitted: readonly { path: string; basis: string }[];
   readonly snapshot: MarketFactSnapshot;
   readonly demographicsKept: boolean;
   readonly demographicsRuling: string;
@@ -390,10 +411,27 @@ export function activateSafeGenerationInputs(
     : {};
 
   // --- Location: disown the four, wherever they sit -------------------------
+  // …except a reading the acquisition stamp PROVES for this subject. Only the
+  // commute qualifies: the walk score is disowned for its label, whatever
+  // measured it, and the school count for sitting at the lookup's cap.
+  const admitted: { path: string; basis: string }[] = [];
   const location = next['locationIntelligence'];
+  const verification = isRecord(location) && input.locationSubject
+    ? verifiedLocationInputs(location, input.locationSubject)
+    : null;
+  const admissible = new Set<string>(
+    verification?.verified.includes('commuteTimeCBD') ? ['commute'] : [],
+  );
   if (isRecord(location)) {
     let loc: Record<string, unknown> = location;
     for (const path of DISOWNED_LOCATION_PATHS) {
+      if (admissible.has(path)) {
+        admitted.push({
+          path: `locationIntelligence.${path}`,
+          basis: 'Routed from the property\'s own point and stamped as measured for this address (RF-7.2B).',
+        });
+        continue;
+      }
       const result = withoutPath(loc, path);
       loc = result.next;
       const reason = DISOWNED_LOCATION_REASONS[path] ?? 'Disowned by the Client-Safe Gate.';
@@ -616,6 +654,7 @@ export function activateSafeGenerationInputs(
     enhancedData: next,
     facts,
     removed,
+    admitted,
     demographicsKept,
     demographicsRuling,
     snapshot: {

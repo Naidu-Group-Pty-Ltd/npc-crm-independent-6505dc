@@ -563,3 +563,18 @@ describe('a fork may lose a heading; it may never lose a body', () => {
     expect(a.financial.markdown).toBe(b.financial.markdown);
   });
 });
+
+describe('the Financial SWOT is composed from the record, not the scorer’s free-text lists', () => {
+  it('replaces the chapter under the same heading, once', async () => {
+    const docs = await compose({
+      strategy: strategyRecord(),
+      financialScore: { totalScore: 61, strengths: ['Measured demand in this market is soft'] },
+    });
+    const md = docs.financial.markdown;
+    const heading = '## Financial SWOT: Returns, Risk & Holding Capacity';
+    expect(md.split(heading)).toHaveLength(2);
+    const swot = md.slice(md.indexOf(heading)).split(/\n## /)[0];
+    expect(swot).toContain('### What this rests on');
+    expect(swot).not.toContain('Measured demand in this market is soft');
+  });
+});

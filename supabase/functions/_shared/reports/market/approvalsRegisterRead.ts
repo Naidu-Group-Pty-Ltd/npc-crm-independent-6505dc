@@ -64,6 +64,19 @@ export interface ApprovalsRegisterQuery {
   trustedSuburb: string | null;
   /** The council area named by the cadastre or the planning register. */
   cadastreLga: string | null;
+  /**
+   * The ABS Statistical Area Level 2 the verified coordinate falls in, as the
+   * geography resolver recorded it (`report_geography.sa2_code` / `sa2_name`).
+   *
+   * The register files SA2 rows under the ABS's own nine-digit code and the
+   * SA2's own name — "Schofields - East", "Riverstone - Marsden Park". Asking
+   * the SA2 rung with the SUBURB ("Tallawong") can never match one, and on 37
+   * Bolin Street, Tallawong (27 Sep 2026) the supply section said the series
+   * "publishes no figure for this area" while the register held Schofields -
+   * East, the SA2 the same report's population section named twice. The code
+   * is asked first because a name is spelt; a code is not.
+   */
+  trustedSa2?: { code: string | null; name: string | null } | null;
 }
 
 export type ApprovalsRegisterRead =
@@ -141,6 +154,29 @@ async function grainHasRows(supabase: any, areaKind: ApprovalsAreaKind): Promise
   return (count ?? 0) > 0;
 }
 
+/** One question put to the register: by the ABS's own code, or by a token. */
+interface Ask { token?: string; code?: string; label: string }
+
+/**
+ * What each rung of the ladder is asked with, given the trusted inputs —
+ * finest and most exact first. An SA2 is asked by its code, then its own
+ * name, then (the older convention) the resolved suburb.
+ */
+function asksFor(areaKind: ApprovalsAreaKind, query: ApprovalsRegisterQuery): Ask[] {
+  if (areaKind !== 'sa2') {
+    const one = askFor(areaKind, query);
+    return one ? [one] : [];
+  }
+  const asks: Ask[] = [];
+  const code = query.trustedSa2?.code?.trim();
+  const name = query.trustedSa2?.name?.trim();
+  if (code && /^\d{9}$/.test(code)) asks.push({ code, label: name || code });
+  if (name) asks.push({ token: salesAreaToken('suburb', name), label: name });
+  const suburb = askFor('sa2', query);
+  if (suburb && !asks.some((a) => a.token === suburb.token)) asks.push(suburb);
+  return asks;
+}
+
 /** What each rung of the ladder is asked with, given the trusted inputs. */
 function askFor(
   areaKind: ApprovalsAreaKind,
@@ -175,8 +211,7 @@ export async function readApprovalsRegister(
   query: ApprovalsRegisterQuery,
 ): Promise<ApprovalsRegisterRead> {
   const rungs = APPROVALS_READ_LADDER
-    .map((areaKind) => ({ areaKind, ask: askFor(areaKind, query) }))
-    .filter((r): r is { areaKind: ApprovalsAreaKind; ask: { token: string; label: string } } => r.ask !== null);
+    .flatMap((areaKind) => asksFor(areaKind, query).map((ask) => ({ areaKind, ask })));
   if (rungs.length === 0) return { kind: 'absent', absence: 'no_area_resolved', askedAt: null };
 
   try {
@@ -184,8 +219,10 @@ export async function readApprovalsRegister(
       let filtered = supabase
         .from('market_building_approvals')
         .select(SELECT)
-        .eq('area_kind', rung.areaKind)
-        .eq('area_token', rung.ask.token);
+        .eq('area_kind', rung.areaKind);
+      filtered = rung.ask.code
+        ? filtered.eq('area_code', rung.ask.code)
+        : filtered.eq('area_token', rung.ask.token);
       // The state narrows a token that could collide across jurisdictions —
       // there are several Springfields. A row the publisher left stateless is
       // deliberately still reachable at state grain, where the state IS the

@@ -53,6 +53,17 @@ import {
   programmeCoverageNote,
   type ProgrammeInvestment,
 } from '../_shared/planning/investmentProgramme.pure.ts';
+import {
+  IPAMS_CAVEAT,
+  IPAMS_LAYERS,
+  IPAMS_LICENCE,
+  IPAMS_SOURCE,
+  NATIONAL_PROGRAMME_RADIUS_KM,
+  ipamsQuery,
+  mergeProjects,
+  parseIpamsAnswer,
+  type NationalProject,
+} from '../_shared/planning/nationalInvestmentProgramme.pure.ts';
 import { planningCacheKey } from '../_shared/planning/planningAnswerVersion.pure.ts';
 import {
   buildNswPermissibilityRequest,
@@ -477,6 +488,65 @@ Deno.serve(async (req) => {
       };
     }
 
+    /*
+     * ── the national investment programme ───────────────────────────────
+     *
+     * The Australian Government's Infrastructure Investment Program is the
+     * one forward register that reaches EVERY locality: the Department of
+     * Infrastructure publishes each federally funded road and rail project
+     * with its alignment, status, cost, the Commonwealth's share and an
+     * expected start and end, from its own keyless ArcGIS server under the
+     * licence its own catalogue states. Measured from a runner on 27 Sep
+     * 2026 (`nationalInvestmentProgramme.pure.ts`): at 37 Bolin Street,
+     * Tallawong it named the $520 million Richmond Road upgrade under
+     * construction 4 km away while the report said no major project was
+     * within 15 km. Read here for every jurisdiction, the two place-based
+     * layers in parallel, and cached with everything else.
+     */
+    let nationalProgrammeCell: Cell<{
+      projects: NationalProject[];
+      radiusKm: number;
+      truncated: boolean;
+      source: string;
+      licence: string;
+      caveat: string;
+    }>;
+    {
+      const answers = await Promise.all(
+        IPAMS_LAYERS.map((layer) => fetchJson(ipamsQuery(layer, lat, lng, NATIONAL_PROGRAMME_RADIUS_KM))),
+      );
+      const parsed = answers.map((a) => (a.ok ? parseIpamsAnswer(a.body, { lat, lon: lng }) : { ok: false as const, reason: a.message }));
+      const failed = parsed.filter((p): p is { ok: false; reason: string } => !p.ok);
+      if (failed.length) {
+        // One layer unread is a partial answer, and a partial answer read as
+        // complete would say "none nearby" about a project on the other layer.
+        anyTransportFailure = true;
+        nationalProgrammeCell = {
+          status: 'unavailable',
+          note: `the Australian Government's Infrastructure Investment Program could not be read (${failed.map((f) => f.reason).join('; ')})`,
+        };
+      } else {
+        const ok = parsed.filter((p): p is Extract<typeof p, { ok: true }> => p.ok);
+        const projects = mergeProjects(...ok.map((p) => p.projects));
+        nationalProgrammeCell = projects.length
+          ? {
+            status: 'ok',
+            projects,
+            radiusKm: NATIONAL_PROGRAMME_RADIUS_KM,
+            truncated: ok.some((p) => p.truncated),
+            source: IPAMS_SOURCE,
+            licence: IPAMS_LICENCE,
+            caveat: IPAMS_CAVEAT,
+          }
+          : {
+            status: 'none_at_point',
+            note: `The Australian Government's Infrastructure Investment Program was read for ${NATIONAL_PROGRAMME_RADIUS_KM} km `
+              + 'around this property and lists no federally funded transport project there that is planned, not yet '
+              + 'started or under way.',
+          };
+      }
+    }
+
     // ── the constraint register ──────────────────────────────────────────
     // What is MAPPED OVER the land: heritage, bushfire, flood, landslip, acid
     // sulfate soils, riparian corridors, height and floor space limits, the
@@ -642,7 +712,7 @@ Deno.serve(async (req) => {
     ];
     const developmentOutcomes: ProviderOutcome[] = [
       { provider: 'da_register', answered: activityCell.status === 'ok' },
-      { provider: 'major_projects', answered: programmeCell.status === 'ok' },
+      { provider: 'major_projects', answered: programmeCell.status === 'ok' || nationalProgrammeCell.status === 'ok' },
     ];
     const providers = {
       planning: {
@@ -689,6 +759,7 @@ Deno.serve(async (req) => {
       developmentInstruments: instrumentsCell,
       developmentActivity: activityCell,
       investmentProgramme: programmeCell,
+      nationalProgramme: nationalProgrammeCell,
       verification: jurisdiction
         ? `A spatial layer is indicative; what settles the question is ${VERIFICATION_INSTRUMENT[jurisdiction]}.`
         : 'A spatial layer is indicative; verify with the relevant council or planning authority.',

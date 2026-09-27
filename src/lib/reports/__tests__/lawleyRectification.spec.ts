@@ -898,7 +898,7 @@ describe('Western Australia\'s bush fire prone areas are read (the page said "Bu
     expect(service).toContain("} else if (jurisdiction === 'WA') {");
     expect(service).toContain('buildWaBushfireIdentify(lng, lat)');
     expect(service).toContain("valueAttribute: 'Designation'");
-    expect(PLANNING_ANSWER_VERSION).toBe('c7');
+    expect(PLANNING_ANSWER_VERSION).toBe('c8');
   });
 
   it('coverage says what is read and what is still not, in one sentence per jurisdiction', () => {

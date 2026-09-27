@@ -143,12 +143,19 @@ const COVER_RIGHT_BORDER = Object.freeze({
   bottom: [200, 153, 53] as const,
 });
 
-/** Scale a picture to FILL a box; the caller clips what overhangs. Centred. */
-export function coverFit(image: { width: number; height: number }, box: Box): Box {
-  const scale = Math.max(box.width / image.width, box.height / image.height);
-  const width = image.width * scale;
-  const height = image.height * scale;
-  return { x: box.x + (box.width - width) / 2, y: box.y + (box.height - height) / 2, width, height };
+/**
+ * Where the lead photograph goes on a cover: WHOLE, centred in the band.
+ *
+ * It used to FILL the band and clip what overhung. The
+ * band is a wide strip (569×252pt on the standard cover, 2.3:1) and a listing
+ * photograph is 4:3 or 3:2, so filling it cut away 40% of the picture's height
+ * — the owner's read of a real report (37 Bolin Street, 27 Sep 2026) was that
+ * the photograph "has been cut halfway and it's not pushing through in its
+ * entirety". A photograph a client recognises their property by has to be the
+ * photograph: it is contained, and the cover's own ground shows either side.
+ */
+export function coverPhotographPlacement(image: { width: number; height: number }, band: Box): Box {
+  return containFit(image, band);
 }
 
 /** Scale a picture to fit WHOLLY inside a box. Centred. */
@@ -334,7 +341,7 @@ export async function drawStandardCoverPhotograph(
 
   const visible = cover.getCropBox();
   const band = standardCoverBand(visible);
-  const placed = coverFit({ width: image.width, height: image.height }, band);
+  const placed = coverPhotographPlacement({ width: image.width, height: image.height }, band);
   cover.pushOperators(
     pushGraphicsState(),
     rectangle(band.x, band.y, band.width, band.height),

@@ -231,43 +231,125 @@ export function provenanceSentence(
 export interface AmenityRow {
   readonly key: string;
   readonly label: string;
-  readonly count: number;
+  /** How many the lookup found inside its radius, or null where it was not counted here. */
+  readonly count: number | null;
   readonly nearest: string | null;
+  /** Straight-line kilometres to `nearest`, as the lookup measured it. */
+  readonly distanceKm: number | null;
+  /** The radius the category was searched over, for the provider that answered it. */
+  readonly radiusKm: number | null;
 }
 
 /**
- * The four published amenity categories, in the order a reader meets them.
+ * The most results one lookup reports — both providers' own cap
+ * (`AMENITY_RESULT_CAP` in the register, the Google path's `slice(0, 10)`).
+ * A count AT the cap means "at least this many", and is written so.
+ */
+export const AMENITY_LOOKUP_CAP = 10;
+
+/**
+ * The radius each category was searched over, per provider.
+ *
+ * Stated per row because they differ: the register searches transit and parks
+ * over 2 km and schools over 3 km; the Google path searches parks over 2 km,
+ * schools over 3 km and everything else over 5 km. The table used to head
+ * every count "within 5 km" — true of three rows and false of the rest.
+ */
+export const AMENITY_RADIUS_KM: Readonly<Record<string, Readonly<Record<string, number>>>> = {
+  register: { transit: 2, schools: 3, healthcare: 5, shopping: 5, recreation: 2, restaurants: 5 },
+  google: { transit: 5, schools: 3, healthcare: 5, shopping: 5, recreation: 2, restaurants: 5 },
+};
+
+/**
+ * The published amenity categories, in the order a reader meets them.
  *
  * `supermarkets` is deliberately absent: `PLACES_CATEGORIES` holds six —
  * transit, schools, healthcare, shopping, recreation, restaurants — and no
  * supermarket lookup is taken anywhere. The old block asked for one, which is
  * a labelled row promising a figure the platform cannot produce.
+ *
+ * ## Why transit and schools are rows now, with distances
+ *
+ * The Compass for 37 Bolin Street, Tallawong (27 Sep 2026) printed, in its own
+ * grade basis, "nearest transit station 1.7 km away; nearest shopping 1.6 km
+ * away; nearest recreation 500 m away; nearest healthcare 2.2 km away" — and
+ * its Amenity & Access section printed "Distance to be confirmed" against the
+ * park, the town centre, the schools and the health services. The distances
+ * are measured by `location-intelligence-service` and stored on
+ * `amenities[].distance`, which is where the grade reads them; this table
+ * carried the counts and a name and no distance at all, and had no transit or
+ * school row. The measurement reached the score and not the section that
+ * describes it — this platform's recurring defect, one module along.
+ *
+ * `amenitiesCategory` is the row's name in `amenities[]`; `countPath` and
+ * `nearestPath` are the older, category-specific fields every stored record
+ * carries. `schools` publishes no count here: the Client-Safe Gate disowns the
+ * school COUNT for sitting at the lookup's cap, and a named school with its
+ * distance says more than "at least 10" does.
  */
 export const AMENITY_FIELDS: ReadonlyArray<{
-  key: string; label: string; countPath: [string, string]; nearestPath: [string, string] | null;
+  key: string;
+  label: string;
+  amenitiesCategory: string | null;
+  countPath: [string, string] | null;
+  nearestPath: [string, string] | null;
+  distancePath: [string, string] | null;
 }> = [
-  { key: 'healthcare', label: 'Healthcare facilities', countPath: ['healthcare', 'facilitiesWithin5km'], nearestPath: ['healthcare', 'nearestHospital'] },
-  { key: 'shopping', label: 'Shopping centres', countPath: ['lifestyle', 'shoppingCenters'], nearestPath: ['lifestyle', 'nearestShopping'] },
-  { key: 'recreation', label: 'Parks and recreation', countPath: ['lifestyle', 'parks'], nearestPath: ['lifestyle', 'nearestPark'] },
-  { key: 'restaurants', label: 'Restaurants and cafés', countPath: ['lifestyle', 'restaurants'], nearestPath: null },
+  { key: 'transit', label: 'Transit stations', amenitiesCategory: 'Public Transport', countPath: null, nearestPath: null, distancePath: null },
+  { key: 'schools', label: 'Schools', amenitiesCategory: 'Schools', countPath: null, nearestPath: ['schools', 'nearestSchool'], distancePath: ['schools', 'distanceToSchool'] },
+  { key: 'healthcare', label: 'Healthcare facilities', amenitiesCategory: 'Healthcare', countPath: ['healthcare', 'facilitiesWithin5km'], nearestPath: ['healthcare', 'nearestHospital'], distancePath: ['healthcare', 'distanceToHospital'] },
+  { key: 'shopping', label: 'Shopping centres', amenitiesCategory: 'Shopping', countPath: ['lifestyle', 'shoppingCenters'], nearestPath: ['lifestyle', 'nearestShopping'], distancePath: null },
+  { key: 'recreation', label: 'Parks and recreation', amenitiesCategory: 'Recreation', countPath: ['lifestyle', 'parks'], nearestPath: ['lifestyle', 'nearestPark'], distancePath: null },
+  { key: 'restaurants', label: 'Restaurants and cafés', amenitiesCategory: null, countPath: ['lifestyle', 'restaurants'], nearestPath: null, distancePath: null },
 ];
+
+/** The `amenities[]` row for a category, or null. */
+function amenitiesRow(o: Record<string, unknown>, category: string | null): Record<string, unknown> | null {
+  if (!category || !Array.isArray(o['amenities'])) return null;
+  return (o['amenities'] as unknown[]).map(rec).find((r) => r?.['category'] === category) ?? null;
+}
 
 /** The rows a stored enrichment can actually fill. */
 export function amenityRows(li: unknown): AmenityRow[] {
   const o = rec(li) ?? {};
+  const sources = rec(stagesOf(li)['amenitySources']) ?? {};
   const rows: AmenityRow[] = [];
   for (const f of AMENITY_FIELDS) {
-    const block = rec(o[f.countPath[0]]);
-    const count = num(block?.[f.countPath[1]]);
+    const listed = amenitiesRow(o, f.amenitiesCategory);
+    const at = (path: [string, string] | null) => (path ? rec(o[path[0]])?.[path[1]] : undefined);
     // `absent is never zero` — a failed category stores null, a reached and
     // empty one stores 0, and only a number is a measurement.
-    if (count === null) continue;
-    const nearest = f.nearestPath
-      ? text(rec(o[f.nearestPath[0]])?.[f.nearestPath[1]])
-      : null;
-    rows.push({ key: f.key, label: f.label, count, nearest });
+    const count = f.key === 'schools' ? null : (num(at(f.countPath)) ?? num(listed?.['count']));
+    const nearest = text(at(f.nearestPath)) ?? text(listed?.['nearest']);
+    const distanceKm = num(at(f.distancePath)) ?? num(listed?.['distance']);
+    const counted = f.key === 'schools' ? num(listed?.['count']) : count;
+    // A row needs a measurement: a count, or a named place with its distance.
+    if (counted === null && distanceKm === null) continue;
+    // A category the lookup reached and found empty has no nearest place.
+    const empty = counted === 0;
+    const provider = text(sources[f.key]);
+    rows.push({
+      key: f.key,
+      label: f.label,
+      count,
+      nearest: empty ? null : nearest,
+      distanceKm: empty ? null : distanceKm,
+      radiusKm: provider ? AMENITY_RADIUS_KM[provider]?.[f.key] ?? null : null,
+    });
   }
   return rows;
+}
+
+/** `1.7 km` or `500 m`, as the grade basis prints it. */
+export function distanceLabel(km: number): string {
+  return km < 1 ? `${Math.round(km * 1000)} m` : `${(Math.round(km * 10) / 10).toFixed(1)} km`;
+}
+
+function countCell(r: AmenityRow): string {
+  if (r.count === null) return 'nearest only — not counted here';
+  const within = r.radiusKm !== null ? ` within ${r.radiusKm} km` : ' within the search radius';
+  if (r.count === 0) return `none${within}`;
+  return r.count >= AMENITY_LOOKUP_CAP ? `${AMENITY_LOOKUP_CAP} or more${within}` : `${r.count}${within}`;
 }
 
 /** The block. Absent everywhere means one honest paragraph and a prohibition. */
@@ -288,9 +370,10 @@ export function amenityFactBlocks(li: unknown): string {
   }
 
   const table = [
-    '| Category | Count within 5 km | Nearest |',
-    '|---|---|---|',
-    ...rows.map((r) => `| ${r.label} | ${r.count} | ${r.nearest ?? 'not named'} |`),
+    '| Category | Nearest | Straight-line distance | Found nearby |',
+    '|---|---|---|---|',
+    ...rows.map((r) => `| ${r.label} | ${r.nearest ?? 'not named'} | `
+      + `${r.distanceKm !== null ? distanceLabel(r.distanceKm) : 'not measured'} | ${countCell(r)} |`),
   ].join('\n');
 
   const unmeasured = AMENITY_FIELDS
@@ -301,14 +384,19 @@ export function amenityFactBlocks(li: unknown): string {
     areaCentreDisclosure(enrichmentPointOf(li).precision),
     table,
     provenanceSentence(sources, rows.map((r) => r.key), loadedAt),
+    'These are measured readings: use them. Where this table names a place and a distance, state that '
+    + 'place and that distance — never write that a distance is "to be confirmed" when it is stated here. '
+    + 'Every distance is straight-line from the property, and a road or walking journey is longer, so say '
+    + '"straight-line" or "about" wherever you use one. A lookup reports at most '
+    + `${AMENITY_LOOKUP_CAP} places, so "${AMENITY_LOOKUP_CAP} or more" is a floor and must not be written as an exact count.`,
     'A count of zero here is a measurement and may be reported as one — a rural address with no '
     + 'hospital within five kilometres is a fact worth printing.',
     unmeasured.length
       ? `Not assessed for this property: ${unmeasured.join(', ')}. A category absent from the table must `
         + 'not be described either way — not as absent, not as adequate.'
       : null,
-    'Name the publisher wherever you use one of these counts. Do not convert them into a walkability '
-    + 'score, a rating, a ranking or an "excellent / limited" reading: the count is the measurement.',
+    'Name the publisher wherever you use one of these readings. Do not convert them into a walkability '
+    + 'score, a rating, a ranking or an "excellent / limited" reading: the reading is the measurement.',
     AMENITY_WEB_SEARCH_RULE,
   ]).join('\n\n');
 }

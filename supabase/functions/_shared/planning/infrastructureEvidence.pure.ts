@@ -146,6 +146,15 @@ import { ABSENCE_GUIDE, INFRASTRUCTURE_GUIDE_LEAD_IN, guidesForKinds } from './i
 import { auDate } from './auDate.pure.ts';
 import { readerNote, uncheckedSentence } from './serviceNote.pure.ts';
 import { NATIONAL_PIPELINE_COVERAGE_PHRASE } from './nationalPipeline.pure.ts';
+import {
+  HORIZON_LABEL,
+  NATIONAL_PROGRAMME_RADIUS_KM,
+  horizonOf,
+  readNationalProgramme,
+  timingSentence,
+  type Horizon,
+  type NationalProject,
+} from './nationalInvestmentProgramme.pure.ts';
 import { DISCLOSURE_HOMES, REGISTER_CHECKED_EMPTY, REGISTER_NOT_COVERED, elsewhereOnly, inHomeSection } from '../reports/adviserVoice.pure.ts';
 
 const isRecord = (v: unknown): v is Record<string, unknown> =>
@@ -207,7 +216,8 @@ export function readDeliveryStanding(raw: string | null): DeliveryStanding | nul
  */
 export interface RegisterReading {
   /** Which register, in words a reader can match to the sentence. */
-  register: 'development instruments' | 'development applications' | 'forward investment programme';
+  register: 'development instruments' | 'development applications' | 'forward investment programme'
+    | 'national investment programme';
   /**
    * `searched_empty` — the register was asked at this location and answered
    * that it holds nothing here. Within that register's own coverage, that is
@@ -270,7 +280,19 @@ export interface InfrastructureItem {
    * development, `committed_budget` for a government's committed funding.
    * Null where there is no figure.
    */
-  costBasis: 'application' | 'committed_budget' | null;
+  costBasis: 'application' | 'committed_budget' | 'estimated_project_cost' | null;
+  /**
+   * The Australian Government's own contribution, where the national
+   * programme states one. Its own figure, never the whole cost, and the whole
+   * cost is never presented as federal money (`nationalInvestmentProgramme`
+   * rule 4).
+   */
+  federalContribution?: number | null;
+  /**
+   * The publisher's own expected end, verbatim ("Late 2028"), where it states
+   * one. An EXPECTATION, and the only thing the ten-year horizon is built from.
+   */
+  expectedEnd?: string | null;
   /**
    * A cost BAND, where the publisher gives one instead of a figure.
    *
@@ -377,6 +399,12 @@ export interface InfrastructureEvidence {
    * "Searched, nothing found." over it.
    */
   programmeStatement: string | null;
+  /**
+   * What the Australian Government's Infrastructure Investment Program was
+   * asked, and what it holds besides the itemised projects — set only where it
+   * answered with entries, on the same terms as `programmeStatement`.
+   */
+  nationalProgrammeStatement: string | null;
   retrievedAt: string | null;
   /** True when at least one register answered with something. */
   anyEvidenced: boolean;
@@ -434,11 +462,18 @@ export { REGISTER_CHECKED_EMPTY, REGISTER_NOT_COVERED };
  * programme reading does not close stay — a state programme is not a council
  * capital works programme and is not an agency announcement.
  */
-export function coverageLimitsFor(programmeRead: boolean): string[] {
-  if (!programmeRead) return [...INFRASTRUCTURE_COVERAGE_LIMITS];
-  return INFRASTRUCTURE_COVERAGE_LIMITS
-    .filter((l) => l !== 'state and federal budget infrastructure programmes')
-    .concat('federal budget programmes, and state programmes outside transport and roads');
+export function coverageLimitsFor(programmeRead: boolean, nationalRead = false): string[] {
+  if (!programmeRead && !nationalRead) return [...INFRASTRUCTURE_COVERAGE_LIMITS];
+  const rest = INFRASTRUCTURE_COVERAGE_LIMITS.filter((l) => l !== 'state and federal budget infrastructure programmes');
+  if (programmeRead && nationalRead) {
+    return rest.concat('federal programmes other than land transport, and state programmes outside transport and roads');
+  }
+  if (nationalRead) {
+    // The federal land transport programme was read; the state's own budget
+    // programme, and federal programmes other than land transport, were not.
+    return rest.concat('the state budget infrastructure programme, and federal programmes other than land transport');
+  }
+  return rest.concat('federal budget programmes, and state programmes outside transport and roads');
 }
 
 export interface InfrastructureEvidenceInput {
@@ -1008,6 +1043,92 @@ export function buildInfrastructureEvidence(input: InfrastructureEvidenceInput):
     });
   }
 
+  /*
+   * ── the national investment programme ─────────────────────────────────────
+   *
+   * The Australian Government's Infrastructure Investment Program, read at
+   * the property's coordinate for every jurisdiction
+   * (`nationalInvestmentProgramme.pure.ts`). It contributes entries on the
+   * same terms as the state programme above — the publisher's own name, its
+   * own status word verbatim, its own reference — and two things of its own:
+   * a distance MEASURED to the nearest part of the works, and an expected
+   * start and end the Department itself publishes, which go in
+   * `statedDelivery` as an expectation and never in a date column (rule 3).
+   * Maintenance and safety works are counted as a class, never itemised.
+   */
+  const national = isRecord(data?.nationalProgramme) ? data!.nationalProgramme : null;
+  let nationalProgrammeStatement: string | null = null;
+  if (national?.status === 'ok' && Array.isArray(national.projects)) {
+    const source = str(national.source) ?? 'the Australian Government\u2019s Infrastructure Investment Program';
+    const licence = str(national.licence);
+    const radiusKm = num(national.radiusKm) ?? NATIONAL_PROGRAMME_RADIUS_KM;
+    const projects = national.projects.filter(isRecord) as unknown as NationalProject[];
+    const reading = readNationalProgramme(projects);
+    for (const p of reading.major) {
+      items.push({
+        name: p.name,
+        reference: p.id,
+        kind: 'Federally funded transport project',
+        statedStatus: p.status,
+        standing: readDeliveryStanding(p.status),
+        dateLabel: null,
+        date: null,
+        where: [
+          p.distanceKm === null ? null : `${p.distanceKm.toFixed(1)} km from the property, to the nearest part of the works`,
+          p.mode ? `${p.mode}` : null,
+        ].filter(Boolean).join(' · ') || null,
+        address: null,
+        statedCost: p.estimatedCost,
+        costBasis: p.estimatedCost === null ? null : 'estimated_project_cost',
+        statedCostRange: null,
+        fundingPartners: [],
+        federalContribution: p.australianGovernmentContribution,
+        expectedEnd: p.expectedEnd,
+        statedDelivery: timingSentence(p),
+        applications: null,
+        source,
+        licence,
+        retrievedAt,
+      });
+    }
+    const extra: string[] = [];
+    if (reading.majorNotItemised) {
+      extra.push(`${reading.majorNotItemised} further project${reading.majorNotItemised === 1 ? '' : 's'} of this kind lie further `
+        + 'away inside the same radius and are not listed.');
+    }
+    if (reading.minorWorks) {
+      extra.push(`It also lists ${reading.minorWorks} smaller road maintenance and safety item${reading.minorWorks === 1 ? '' : 's'} `
+        + '(the Roads to Recovery and Black Spot programmes) inside the radius; these are resurfacing, patching and '
+        + 'intersection works rather than new infrastructure, and are counted rather than listed.');
+    }
+    if (national.truncated === true) {
+      extra.push('The register returned more features than one answer carries, so this list may be incomplete.');
+    }
+    nationalProgrammeStatement = `${source} was read for federally funded road and rail projects within `
+      + `${radiusKm} km of the property that are planned, not yet started or under way. `
+      + 'Each status is the Department\u2019s own word, its estimated cost is the whole project\u2019s and its '
+      + 'Australian Government figure is the Commonwealth\u2019s share only; expected dates are the Department\u2019s '
+      + 'expectation and are not completion dates. '
+      + `${extra.join(' ')}${extra.length ? ' ' : ''}${str(national.caveat) ?? ''}`.trim();
+    if (reading.major.length === 0) {
+      readings.push({
+        register: 'national investment programme',
+        reading: 'searched_empty',
+        note: `${source} was read for ${radiusKm} km around this property and lists no federally funded transport `
+          + 'project above maintenance scale there that is planned, not yet started or under way.'
+          + (extra.length ? ` ${extra.join(' ')}` : ''),
+      });
+      nationalProgrammeStatement = null;
+    }
+  } else if (national) {
+    readings.push({
+      register: 'national investment programme',
+      reading: str(national.status) === 'none_at_point' ? 'searched_empty' : 'not_searched',
+      note: readerNote(str(national.note), jurisdiction)
+        ?? uncheckedSentence('The Australian Government\u2019s Infrastructure Investment Program', 'Its project map lists every federally funded road and rail project.'),
+    });
+  }
+
   return {
     items,
     pipelineDwellings,
@@ -1017,8 +1138,12 @@ export function buildInfrastructureEvidence(input: InfrastructureEvidenceInput):
     absences: readings.map((r) => r.note),
     readings,
     registerWalk,
-    coverageLimits: coverageLimitsFor(programme?.status === 'ok'),
+    coverageLimits: coverageLimitsFor(
+      programme?.status === 'ok',
+      national?.status === 'ok' || national?.status === 'none_at_point',
+    ),
     programmeStatement,
+    nationalProgrammeStatement,
     retrievedAt,
     anyEvidenced: items.length > 0 || pipelineDwellings !== null,
     enrichmentMissing: !data,
@@ -1042,6 +1167,14 @@ const money = (v: number): string => `$${Math.round(v).toLocaleString('en-AU')}`
  * it.
  */
 function fundingCell(item: InfrastructureItem): string {
+  // The national programme states the Commonwealth's own share. Rule 4: it is
+  // that share, never the whole cost, and the balance is not attributed here.
+  if (item.costBasis === 'estimated_project_cost' || item.federalContribution != null) {
+    if (item.federalContribution == null) return 'Australian Government funded; its share is not stated on this entry';
+    const whole = item.statedCost !== null && item.federalContribution < item.statedCost;
+    return `Australian Government ${money(item.federalContribution)}`
+      + (whole ? '; the balance is not attributed in this register' : '');
+  }
   // A programme entry names its contributors; a DA entry names nobody, and
   // the figure beside it is the applicant's own cost rather than investment.
   if (item.fundingPartners.length) {
@@ -1064,6 +1197,7 @@ function fundingCell(item: InfrastructureItem): string {
  */
 function costCell(item: InfrastructureItem): string {
   if (item.statedCost !== null) {
+    if (item.costBasis === 'estimated_project_cost') return `${money(item.statedCost)} estimated project cost`;
     return item.costBasis === 'committed_budget'
       ? `${money(item.statedCost)} committed`
       : money(item.statedCost);
@@ -1103,6 +1237,42 @@ function walkNote(walk: InfrastructureEvidence['registerWalk']): string {
   const n = (v: number) => v.toLocaleString('en-AU');
   return `Both totals were summed from ${n(walk.rowsRead)} of the ${n(walk.totalStated)} applications the register `
     + 'lists for this period, so each is a floor rather than a total: the remainder can only add to it. ';
+}
+
+/**
+ * The next ten years, as the publishers themselves date it.
+ *
+ * The owner asked for every locality's infrastructure over the next ten years
+ * "as a projection". The honest projection is the publishers' own: each
+ * project's expected end, in the words it was published in, grouped by how
+ * far ahead that falls from the year this reading was taken. Nothing here is
+ * forecast by this report — an entry with no stated end ("TBC") is listed as
+ * having none rather than being placed — and the table says so in its title.
+ * Drawn only where at least one entry states an end.
+ */
+export function horizonTable(evidence: InfrastructureEvidence): string | null {
+  const dated = evidence.items.filter((i) => i.expectedEnd);
+  if (!dated.length) return null;
+  const year = Number((evidence.retrievedAt ?? '').slice(0, 4)) || new Date().getUTCFullYear();
+  const groups = new Map<Horizon | 'unstated', string[]>();
+  for (const i of evidence.items.filter((x) => x.costBasis === 'estimated_project_cost' || x.expectedEnd)) {
+    const h = horizonOf(i.expectedEnd ?? null, year) ?? 'unstated';
+    const list = groups.get(h) ?? [];
+    list.push(`${i.name}${i.expectedEnd ? ` (expected end ${i.expectedEnd}` : ' (no end date published'}${i.statedStatus ? `; ${i.statedStatus}` : ''})`);
+    groups.set(h, list);
+  }
+  const order: Array<Horizon | 'unstated'> = ['next_two_years', 'three_to_five_years', 'six_to_ten_years', 'beyond_ten_years', 'unstated'];
+  const rows = order.filter((h) => groups.has(h)).map((h) =>
+    `| ${h === 'unstated' ? 'No end date published' : `${HORIZON_LABEL[h]}`} | ${groups.get(h)!.join('; ')} |`);
+  return [
+    `**The next ten years, as the publishers date it (from ${year}).** Each project is placed by the expected end its `
+    + 'publisher states. These are the publishers\u2019 expectations, not forecasts made by this report, and an '
+    + 'expected end is not a completion.',
+    '',
+    '| Horizon | Projects, by the publisher\u2019s expected end |',
+    '|---|---|',
+    ...rows,
+  ].join('\n');
 }
 
 /**
@@ -1173,6 +1343,11 @@ export function renderInfrastructureOutlook(evidence: InfrastructureEvidence): s
     if (evidence.programmeStatement) {
       lines.push(`**The forward investment programme.** ${evidence.programmeStatement}`, '');
     }
+    if (evidence.nationalProgrammeStatement) {
+      lines.push(`**The national investment programme.** ${evidence.nationalProgrammeStatement}`, '');
+    }
+    const horizon = horizonTable(evidence);
+    if (horizon) lines.push(horizon, '');
 
     /*
      * How to count this table, said on the page.

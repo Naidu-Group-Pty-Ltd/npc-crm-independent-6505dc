@@ -209,3 +209,40 @@ describe('the generator reads it, and stops guessing the absence', () => {
     expect(GENERATOR).toContain('enhancedData.buildingApprovals?.kind === \'absent\'');
   });
 });
+
+describe('the SA2 rung is asked by the property’s own SA2 (37 Bolin Street, Tallawong, 27 Sep 2026)', () => {
+  const schofieldsEast = row({
+    area: 'Schofields - East', area_kind: 'sa2', area_code: '115021297', area_token: 'EAST SCHOFIELDS',
+    state: 'NSW', dwelling_units: 64,
+  });
+  const nsw = row({ area: 'New South Wales', area_kind: 'state', area_code: '1', area_token: 'NSW', state: 'NSW' });
+  const query = {
+    state: 'NSW' as const, trustedSuburb: 'Tallawong', cadastreLga: null,
+    trustedSa2: { code: '115021297', name: 'Schofields - East' },
+  };
+
+  it('finds the SA2 by its ABS code where the suburb could never match it', async () => {
+    const read = await readApprovalsRegister(fakeSupabase([schofieldsEast, nsw]), query);
+    expect(read.kind).toBe('series');
+    if (read.kind !== 'series') return;
+    expect(read.askedAt).toBe('sa2');
+    expect(read.series.area).toBe('Schofields - East');
+  });
+
+  it('without the SA2, the suburb misses and the read falls to the state — the defect this closes', async () => {
+    const read = await readApprovalsRegister(fakeSupabase([schofieldsEast, nsw]), { ...query, trustedSa2: null });
+    expect(read.kind === 'series' && read.askedAt).toBe('state');
+  });
+
+  it('never takes an SA2 code that is not nine digits', async () => {
+    const read = await readApprovalsRegister(
+      fakeSupabase([schofieldsEast, nsw]),
+      { ...query, trustedSa2: { code: '1150', name: null } },
+    );
+    expect(read.kind === 'series' && read.askedAt).toBe('state');
+  });
+
+  it('the generator hands the read the resolved SA2', () => {
+    expect(GENERATOR).toMatch(/trustedSa2: \{\s*code: typeof subjectGeography\?\.sa2_code === 'string'/);
+  });
+});

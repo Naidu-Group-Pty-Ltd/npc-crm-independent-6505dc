@@ -648,17 +648,46 @@ const REPO = resolve(__dirname, '../..');
  * `20261225100000` re-copies the ACTIVE masters from it, by the v15
  * mechanism, unchanged. Run the same one-query check before editing this
  * file: if `20261225090000` is already recorded, the next change needs a v24.
+ *
+ * ## v24 — the cover photograph is shown whole
+ *
+ * v23 IS recorded (listed on the production ledger 27 Sep 2026, beside its
+ * refresh `20261225100000`), so this change is a **v24** and v23's file is not
+ * touched.
+ *
+ * The owner's report of 27 Sep 2026: the one photograph attached to 37 Bolin
+ * Street was "cut halfway" on the Compass cover. The field and band families
+ * drew the lead photograph as a full-bleed `cover` fill, which crops whatever
+ * does not share the ground's aspect ratio — a landscape listing photograph on
+ * a portrait field loses both sides. `coverPlates` now gives every field and
+ * band master one or more PLATES: a `contain` image block, the photograph
+ * shown whole, in the clear space the cover's own text leaves, each drawn only
+ * where the address is short enough for the title to leave that space
+ * (`plateChoice`). The old full-bleed layer stays as the fallback, drawn only
+ * where the address is longer than any plate allows. Paper covers are
+ * unchanged. A plate is a `layer`, so `closeDroppedBlocks` never lifts the
+ * title into a dropped plate's space. Measured: 34 masters draw a plate, and
+ * 694 covers across five address wordings each set with no collision
+ * (`npm run templates:compass:cover-qa`).
+ *
+ * Parsed out of the v23 and v24 files and compared row by row, 543 in each:
+ * **34 of 543 differ**, every one an Investment Compass master — the field
+ * and band covers that draw a plate. The other 509 are byte-identical.
+ *
+ * `20261227100000` re-copies the ACTIVE masters from it, by the v15
+ * mechanism, unchanged. Run the same one-query check before editing this
+ * file: if `20261227090000` is already recorded, the next change needs a v25.
  */
 /**
  * The identifier this release records against a baseline and against a
  * refreshed master. It is the seed migration's own basename, so a row that
  * says it carries this release names the artefact that put it there.
  */
-const RELEASE_ID = '20261225090000_seed_template_library_v23_issuer_tagline';
+const RELEASE_ID = '20261227090000_seed_template_library_v24_whole_cover_photograph';
 
 const MIGRATION = resolve(
   REPO,
-  'supabase/migrations/20261225090000_seed_template_library_v23_issuer_tagline.sql',
+  'supabase/migrations/20261227090000_seed_template_library_v24_whole_cover_photograph.sql',
 );
 
 /** Postgres string literal, dollar-quoted so JSON never has to be escaped. */

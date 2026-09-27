@@ -505,6 +505,18 @@ export function composeForkDocuments(input: {
       { id: 'exitStrategy', heading: finHeading(input.registry, 'Resale Liquidity') },
       { id: 'suitability', heading: finHeading(input.registry, 'Investor Suitability Profile') },
       { id: 'holdingStrategy', heading: finHeading(input.registry, 'Holding Strategy') },
+      /*
+       * The SWOT is the record's, not the scorer's four free-text lists.
+       *
+       * `composeFinancialChapters` printed `score.strengths` & co. under this
+       * heading — lists `buildSwot` refuses as quadrant entries because they
+       * name no figure — and on the 37 Bolin Street Financial report
+       * (27 Sep 2026) that was the thinnest section in the document, beside a
+       * modelling record carrying the yield, the weekly position, the lending
+       * ratio and the CGR assumption. The same composer the Compass uses,
+       * with the modelling on, replaces it.
+       */
+      { id: 'swot', heading: finHeading(input.registry, 'Financial SWOT') },
     ]).flatMap((section: StrategySection) => {
       const entry = input.registry.finSectionOrder.find((e) => e.heading === section.heading);
       // A heading the loaded order does not carry has no place to sort to, so
@@ -513,9 +525,12 @@ export function composeForkDocuments(input: {
     })
     : [];
 
+  // A section composed from the strategy record replaces the chapter of the
+  // same heading, never sits beside it.
+  const strategyHeadings = new Set(strategySections.map((c) => c.heading));
   const mergedFinancial = mergeComposedChapters(
     routedFinancialSections,
-    [...composedChapters, ...strategySections],
+    [...composedChapters.filter((c) => !strategyHeadings.has(c.heading)), ...strategySections],
   );
 
   /*
