@@ -584,8 +584,11 @@ export function foldConstantTableColumns(markdown: string): ConstantColumnResult
     for (const row of body) out.push(`| ${keep(row).join(' | ')} |`);
     // The value, once, under the table it came out of. A run-in label, which
     // `limitEmphasis` keeps, because it is a heading sharing a line.
-    out.push('');
+    // Each note is its own paragraph: two on consecutive lines are one
+    // paragraph in Markdown, and printed as "Type: … Date recorded: …" run
+    // together on the 37 Bolin Street Compass (27 Sep 2026).
     for (const n of notes) {
+      out.push('');
       out.push(n.header ? `**${n.header}:** ${n.value}` : n.value);
     }
     tableIndex += 1;

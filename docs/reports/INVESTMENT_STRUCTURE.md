@@ -545,3 +545,33 @@ separate decision: carry the method contract in the system message as well
 base to the evidence; then decide whether every section needs every pinned
 register table, which is 33–46 KB of the 70 KB. Neither is done here, and
 neither should be done without the same `📏` measurement taken first.
+
+## Each section is handed its own evidence (27 Sep 2026)
+
+The second of those decisions, taken on the measurement it asked for. The 37
+Bolin Street Compass (27 Sep 2026) logged `pinned 61,060B` and
+`base 41,964B (budget ~1,800B, trimmed true)` on every one of its sixteen
+section calls: about **four per cent** of the evidence pack reached the model.
+The recorded-crime block was in the other ninety-six, so the Environment
+section — handed the rule about crime evidence and none of the evidence —
+wrote that "the supplied record does not provide a verified local incident
+total" over a register that had answered for its postcode on every invocation,
+and then described the publisher's release from a web search, because the trim
+notice told it to "request fresh web research for missing details".
+
+The pin is now composed as tagged groups (`pinGroup`) and narrowed per section
+by `pinForSection` (`_shared/reports/sectionPin.pure.ts`). Three rules.
+
+* **A section keeps the groups its subject owns**, plus the recorded
+  attributes and the document rules; the verdict, the risk register and the
+  recommendation keep everything. `SECTION_PIN_HOMES` is the one map.
+* **A group left out is NAMED, with a prohibition** — a section that does not
+  know an authority exists will look for one, so it is told the figure belongs
+  to another section and that it may neither state it nor look it up.
+* **A section the map does not name keeps everything it kept before** (every
+  Financial-tier section, and any id added later), so nothing that worked
+  changes by omission. The new `environment` group — crime, climate and the
+  hazard maps, pinned for the first time — goes only to its homes.
+
+The trim notice now says to use only the figures in front of the section and to
+leave out one that is not there, rather than to search for it.

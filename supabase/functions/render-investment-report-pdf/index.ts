@@ -16,6 +16,7 @@ import { statCardHasValue } from "../_shared/reports/investment/blockHygiene.pur
 import { dimensionWasScored } from "../_shared/reports/investment/scoreSections.pure.ts";
 import { publishableGrade } from "../_shared/reports/investment/scoreSections.pure.ts";
 import { presentStoredMarkdown } from "../_shared/reports/investment/derivedHygiene.pure.ts";
+import { restoreGradeMethodology } from "../_shared/reports/investment/gradeMethodologyOnRead.pure.ts";
 import { readEvidenceInventory } from "../_shared/reports/investment/chartEvidence.pure.ts";
 import {
   PLATFORM_ISSUER_NAME,
@@ -2980,7 +2981,8 @@ export async function buildHtml(
   const mdRaw = escapeRawHtmlInMarkdown(
     cleanReportMarkdown(
       presentStoredMarkdown(
-        String(report.report_content || ""),
+        // The grade's method, re-composed from the record (`gradeMethodologyOnRead`).
+        restoreGradeMethodology(String(report.report_content || ""), (report as Record<string, unknown>).investment_score).markdown,
         readEvidenceInventory(report as Record<string, unknown>),
       ),
       address,

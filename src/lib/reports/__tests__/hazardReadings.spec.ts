@@ -209,3 +209,24 @@ describe('Victoria and the ACT: the designation map, not the planning overlay', 
     expect(NO_STATE_LAYER_NOTE.ACT).toMatch(/flood and heritage overlays are not covered/);
   });
 });
+
+describe('the planning register says which hazard map is partial', () => {
+  const planningData = {
+    jurisdiction: 'NSW',
+    fetchedAt: '2026-09-27T10:24:53Z',
+    zoning: { status: 'stated', value: 'R2 — Low Density Residential', source: 'NSW Planning Portal' },
+    constraintsAsked: ['heritage', 'bushfire', 'flood'],
+    constraintRegisters: { answered: NSW_REGISTERS, unavailable: [] },
+    constraints: [],
+  };
+
+  it('the clear list is followed by the flood map\'s own sentence, and the bushfire designation needs none', async () => {
+    const { buildPlanningFacts, renderConstraintRegister } = await import('../../../../supabase/functions/_shared/planning/planningFacts.pure');
+    const line = renderConstraintRegister(buildPlanningFacts({ planningData, overrides: {} }))
+      .split('\n').find((l) => l.startsWith('**Checked and not mapped'));
+    expect(line).toBeTruthy();
+    expect(line).toMatch(/Flood: That map holds the flood planning areas councils have published into it/);
+    expect(line).toMatch(/not a finding that the lot is free of flooding/);
+    expect(line).not.toMatch(/Bushfire: /);
+  });
+});

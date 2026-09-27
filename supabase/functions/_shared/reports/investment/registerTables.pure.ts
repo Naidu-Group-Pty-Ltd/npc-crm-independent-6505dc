@@ -108,6 +108,8 @@ export const REGISTER_TABLE_HEADERS: readonly string[] = [
   'instrument|name|status|gazetted',
   // renderInfrastructureOutlook — the project register.
   'reference|project or instrument|type|status|date recorded|where|stated cost|funding|delivery timing',
+  // …and the same register where no entry carries a date, so the column is not drawn.
+  'reference|project or instrument|type|status|where|stated cost|funding|delivery timing',
 ];
 
 const HEADERS = new Set(REGISTER_TABLE_HEADERS);

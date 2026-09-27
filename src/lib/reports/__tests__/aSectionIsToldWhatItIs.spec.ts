@@ -213,8 +213,12 @@ describe('the generator sends it where nothing can trim it', () => {
      * message over its 70,000-byte ceiling, and the final safety trim keeps
      * the TAIL — cutting the planning controls table at the head of the pin.
      */
+    // The pin is narrowed to the section's own groups (sectionPin.pure.ts),
+    // and nothing else is added to it.
+    const scopeLine = body.split('\n').find((l) => /const sectionPin = /.test(l)) ?? '';
+    expect(scopeLine).toMatch(/pinForSection\(pinnedContext, sectionDef\.registryId\)/);
     const pinLine = body.split('\n').find((l) => /const pinnedBlock = /.test(l)) ?? '';
-    expect(pinLine).toMatch(/pinnedContext\.trim\(\)/);
+    expect(pinLine).toMatch(/sectionPin\.trim\(\)/);
     expect(pinLine).not.toMatch(/contract|correction/);
   });
 

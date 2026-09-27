@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { OVERALL_GRADE_UNAVAILABLE } from '@/lib/reports/market/scoringInputPolicy.pure';
 import { presentStoredMarkdown } from '@/lib/reports/investment/derivedHygiene.pure';
+import { restoreGradeMethodology } from '@/lib/reports/investment/gradeMethodologyOnRead.pure';
 import { readEvidenceInventory } from '@/lib/reports/investment/chartEvidence.pure';
 import { withoutHouseMasthead } from '@/lib/reports/issuerIdentity.pure';
 import { isPrimeDeployment } from '@/lib/primeDeployment';
@@ -202,15 +203,17 @@ export function InvestmentReportViewer({ report, isOpen, onClose, onReportUpdate
   // tagline and a heading naming NPC: the renderers already drop that block,
   // and the screen was the one place a clone's operator saw the house's words
   // above their own report (`withoutHouseMasthead`). The prime is untouched.
+  const storedScore = (report as { investment_score?: unknown }).investment_score;
   const presentedContent = useMemo(
     () => withoutHouseMasthead(
       presentStoredMarkdown(
-        report.report_content,
+        // The grade's method, re-composed from the record (`gradeMethodologyOnRead`).
+        restoreGradeMethodology(String(report.report_content ?? ''), storedScore).markdown,
         readEvidenceInventory(report as unknown as Record<string, unknown>),
       ),
       { prime: isPrimeDeployment() },
     ),
-    [report.report_content],
+    [report.report_content, storedScore],
   );
 
   // Inject override badges into report content

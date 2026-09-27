@@ -20,6 +20,7 @@ import { invokeSecureFunction } from '@/lib/secureInvoke';
 import { reconcileStoredFinancials } from '@/lib/reports/investment/financialEngine.pure';
 import { overlayOverridesForHistoricRow } from '@/lib/reports/investment/overrides.pure';
 import { presentStoredMarkdown } from '@/lib/reports/investment/derivedHygiene.pure';
+import { restoreGradeMethodology } from '@/lib/reports/investment/gradeMethodologyOnRead.pure';
 import { readEvidenceInventory } from '@/lib/reports/investment/chartEvidence.pure';
 import { normalizeReportType } from '@/lib/reports/reportVariants';
 import type {
@@ -79,7 +80,11 @@ export function projectRowForPdf(row: StoredInvestmentReportRow): ProjectedInves
       // renderer applies — see `presentStoredMarkdown`. A derived report
       // stored before the write-path hygiene carries its "N/A" cells verbatim,
       // and this projection is where both presentations read the prose.
-      content: presentStoredMarkdown(row.report_content, readEvidenceInventory(row as unknown as Record<string, unknown>)),
+      content: presentStoredMarkdown(
+        // The grade's method, re-composed from the record (`gradeMethodologyOnRead`).
+        restoreGradeMethodology(String(row.report_content ?? ''), row.investment_score).markdown,
+        readEvidenceInventory(row as unknown as Record<string, unknown>),
+      ),
       created_at: row.created_at || new Date().toISOString(),
       pdf_url: row.pdf_url,
       enhanced_data: {

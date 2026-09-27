@@ -108,9 +108,19 @@ describe('the page surfaces staleness with the repair beside it', () => {
   it('the notice refreshes only children that already exist', () => {
     const notice = read('src/components/reports/report-view/InvestmentReportFamilyNotice.tsx');
     expect(notice).toContain('staleChildren');
-    expect(notice).toContain('generateSubReport(');
-    // Renders nothing when nothing is stale — a warning on every page
-    // teaches people to ignore the real one.
-    expect(notice).toMatch(/if \(!staleHere\.length\) return null;/);
+    // Several reports at once run in parallel through one preparer.
+    expect(notice).toContain('prepareReportFamily(');
+    // No WARNING when nothing is stale — a warning on every page teaches
+    // people to ignore the real one. A Compass with nothing stale renders
+    // nothing; a sub-report renders a neutral line offering to regenerate it,
+    // because its page is where that act now lives (the header buttons open
+    // documents rather than producing them).
+    expect(notice).toMatch(/const regenerateOnly = !staleHere\.length;/);
+    // On a Compass with nothing stale, the only thing drawn is the quiet
+    // "not prepared yet" line, and only where a report is actually missing.
+    expect(notice).toMatch(/if \(regenerateOnly && !ownVariant\) return missingBar;/);
+    expect(notice).toMatch(/const missingBar = plan && plan\.missing\.length \?/);
+    const neutral = notice.slice(notice.indexOf('if (regenerateOnly) {'), notice.indexOf('<Alert'));
+    expect(neutral).not.toMatch(/warning|Alert/);
   });
 });

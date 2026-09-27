@@ -137,7 +137,7 @@ const READER_SENTENCES: readonly ReaderSentence[] = [
   {
     match: /^No state-wide development-application feed exists/i,
     say: (where) => `Development applications in ${where} are published council by council, so none are summarised `
-      + 'here. The council’s own application tracker shows activity near the property.',
+      + 'here. The council’s own application tracker lists any applications near the property.',
   },
   // ── the forward investment programme ─────────────────────────────────────
   {

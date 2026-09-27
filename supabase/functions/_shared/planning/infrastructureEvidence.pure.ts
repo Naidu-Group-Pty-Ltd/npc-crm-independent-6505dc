@@ -938,7 +938,7 @@ export function buildInfrastructureEvidence(input: InfrastructureEvidenceInput):
       });
     }
   } else if (act) {
-    note('development applications', act, uncheckedSentence('Development applications', 'The council’s own application tracker shows activity near the property.'));
+    note('development applications', act, uncheckedSentence('Development applications', 'The council’s own application tracker lists any applications near the property.'));
   }
 
   /*
@@ -1073,10 +1073,12 @@ export function buildInfrastructureEvidence(input: InfrastructureEvidenceInput):
         standing: readDeliveryStanding(p.status),
         dateLabel: null,
         date: null,
-        where: [
-          p.distanceKm === null ? null : `${p.distanceKm.toFixed(1)} km from the property, to the nearest part of the works`,
-          p.mode ? `${p.mode}` : null,
-        ].filter(Boolean).join(' · ') || null,
+        // One phrase that reads in a table cell and in a sentence alike: the
+        // mode used to follow a " · ", which the SWOT printed mid-sentence.
+        where: p.distanceKm === null
+          ? (p.mode ? `${p.mode.toLowerCase()} works` : null)
+          : `${p.distanceKm.toFixed(1)} km from the property, to the nearest part of the works`
+            + (p.mode ? ` (${p.mode.toLowerCase()})` : ''),
         address: null,
         statedCost: p.estimatedCost,
         costBasis: p.estimatedCost === null ? null : 'estimated_project_cost',
@@ -1173,7 +1175,7 @@ function fundingCell(item: InfrastructureItem): string {
     if (item.federalContribution == null) return 'Australian Government funded; its share is not stated on this entry';
     const whole = item.statedCost !== null && item.federalContribution < item.statedCost;
     return `Australian Government ${money(item.federalContribution)}`
-      + (whole ? '; the balance is not attributed in this register' : '');
+      + (whole ? '; the Department does not say who funds the balance' : '');
   }
   // A programme entry names its contributors; a DA entry names nobody, and
   // the figure beside it is the applicant's own cost rather than investment.
@@ -1292,13 +1294,27 @@ export function renderInfrastructureOutlook(evidence: InfrastructureEvidence): s
     // nothing in it could be looked up. Funding and timing get columns of
     // their own precisely BECAUSE no register read here publishes either:
     // an absence stated in a footnote is an absence most readers never see.
-    lines.push('| Reference | Project or instrument | Type | Status | Date recorded | Where | Stated cost | Funding | Delivery timing |');
-    lines.push('|---|---|---|---|---|---|---|---|---|');
+    // The date column is drawn only where some entry carries a date. On a
+    // table of national programme entries alone (the 37 Bolin Street Compass,
+    // 27 Sep 2026) every cell read "No date stated" beside a delivery column
+    // that states the Department's own expected start and end — and the
+    // writer, handed the table, copied that column into a table of its own
+    // headed "Recorded milestone", saying no project had a date.
+    const dated = evidence.items.some((i) => i.date);
+    // Two literal pushes each, so `aRegisterIsPrintedOnce.spec.ts` can read
+    // both spellings of the header this module draws.
+    if (dated) {
+      lines.push('| Reference | Project or instrument | Type | Status | Date recorded | Where | Stated cost | Funding | Delivery timing |');
+      lines.push('|---|---|---|---|---|---|---|---|---|');
+    } else {
+      lines.push('| Reference | Project or instrument | Type | Status | Where | Stated cost | Funding | Delivery timing |');
+      lines.push('|---|---|---|---|---|---|---|---|');
+    }
     for (const i of evidence.items) {
       const when = i.date ? `${i.dateLabel ?? 'Recorded'} ${auDate(i.date)}` : 'No date stated';
       const where = i.address ?? i.where ?? '—';
       lines.push(
-        `| ${i.reference ?? '—'} | ${i.name} | ${kindCell(i)} | ${statusCell(i)} | ${when} | ${where} | `
+        `| ${i.reference ?? '—'} | ${i.name} | ${kindCell(i)} | ${statusCell(i)} | ${dated ? `${when} | ` : ''}${where} | `
         + `${costCell(i)} | ${fundingCell(i)} | `
         + `${i.statedDelivery ?? 'Not published'} |`,
       );

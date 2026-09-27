@@ -1390,8 +1390,10 @@ export function composeSuitability(rec: StrategyRecord, heading: string): string
     if (isNum(f.upfront)) {
       reqs.push({
         claim: `${money(f.upfront)} of capital at settlement.`,
+        // Printed in the Financial Analysis itself, so it names the schedule,
+        // not the report the reader is holding.
         basis: 'Deposit plus the recorded acquisition costs — stamp duty, legal and the rest of the upfront schedule '
-          + 'in the Financial Analysis Report.',
+          + 'under Purchase Costs.',
       });
     }
     if (isNum(f.weeklyNet) && f.weeklyNet < 0) {
@@ -1726,7 +1728,11 @@ export function composeExitOutlook(rec: StrategyRecord, heading: string): string
      * and it is what the reader needs: no register this assessment reads holds
      * such a measure, and a portal's own figure is not one.
      */
-    'Neither answers *how easily this sells*. None of the sources checked for this report holds days on market, time '
+    // "Neither" only where two things were introduced: on a document with no
+    // projection the paragraph above names one (the Bolin Due Diligence
+    // report, 27 Sep 2026, read "Neither" after a single sentence).
+    `${projects ? 'Neither answers' : 'It does not answer'} *how easily this sells*. `
+    + 'None of the sources checked for this report holds days on market, time '
     + 'to sell or buyer depth for this market. A figure a listing portal reports, where the report quotes one, is that '
     + 'portal\'s own statistic, not a measurement from those sources, and no figure below should be read as standing '
     + 'in for any of them.',
