@@ -307,6 +307,17 @@ const activationsKey = (reader: Reader) => [...privateRoot(reader), 'portal-acti
 const acknowledgementCountKey = (reader: Reader) => [...privateRoot(reader), 'acknowledgement-count'] as const;
 
 /**
+ * What a builder message that has just landed makes stale for its reader: the
+ * conversation it arrived in, and every one of the reader's conversation
+ * lists. The new-message popup's check uses these as the open thread's
+ * doorbell, so a thread on screen shows the message within one check instead
+ * of on its own ten-second cadence.
+ */
+export function builderMessageArrivalKeys(reader: Reader, conversationId: string) {
+  return [conversationKey(reader, conversationId), conversationListRoot(reader)] as const;
+}
+
+/**
  * A refusal says the reader may no longer see this conversation: signed out,
  * Listings access withdrawn, or the feature switched off. Unlike a transient
  * failure, what was read before must not stay on screen after it.

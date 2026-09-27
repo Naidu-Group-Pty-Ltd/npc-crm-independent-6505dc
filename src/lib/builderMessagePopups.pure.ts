@@ -41,5 +41,9 @@ export function builderMessagePopup(message: NewBuilderMessage): BuilderMessageP
   };
 }
 
-/** How often an open, visible Command Centre asks for new builder messages. */
-export const BUILDER_MESSAGE_POPUP_POLL_MS = 10_000;
+/**
+ * How often an open, visible Command Centre asks for new builder messages. The
+ * same read tells an open conversation to re-read itself, so this is also how
+ * soon a message appears in a thread that is already on screen.
+ */
+export const BUILDER_MESSAGE_POPUP_POLL_MS = 5_000;

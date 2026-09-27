@@ -1,9 +1,12 @@
 import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { invokeSecureFunction } from '@/lib/secureInvoke';
 import { useModulePermissions } from '@/hooks/useModulePermissions';
+import { useAuthUserIdOptional } from '@/hooks/useAuth';
 import { playMessagePing } from '@/lib/desktopMessageAlerts';
+import { builderMessageArrivalKeys } from '@/lib/marketplaceBuilderStock';
 import {
   BUILDER_MESSAGE_POPUP_POLL_MS, builderMessagePopup, type NewBuilderMessage,
 } from '@/lib/builderMessagePopups.pure';
@@ -13,16 +16,25 @@ import {
  * Command Centre when a builder writes in one of their conversations.
  *
  * It asks `list_new_builder_messages` for what arrived after its cursor, every
- * ten seconds while the tab is in view and at once when the tab comes back.
+ * five seconds while the tab is in view and at once when the tab comes back.
  * The first read only takes the cursor, so opening the Command Centre never
  * replays messages from before. The server lists only conversations the
  * reader is in; a refused read stops asking rather than retrying for ever.
+ *
+ * The same answer tells the conversation it names, and the reader's
+ * conversation lists, to re-read themselves at once: a thread already on
+ * screen shows the message within one check instead of on its own ten-second
+ * cadence. It is still polling; nothing is pushed.
  */
 export function BuilderMessagePopups() {
   const { canView, loading } = useModulePermissions('listings');
   const navigate = useNavigate();
   const navigateRef = useRef(navigate);
   useEffect(() => { navigateRef.current = navigate; }, [navigate]);
+  const queryClient = useQueryClient();
+  const reader = useAuthUserIdOptional();
+  const readerRef = useRef(reader);
+  useEffect(() => { readerRef.current = reader; }, [reader]);
 
   useEffect(() => {
     if (loading || !canView) return undefined;
@@ -49,6 +61,12 @@ export function BuilderMessagePopups() {
         if (firstRead) return;
         const fresh = (data?.messages ?? []).filter((m) => !shown.has(m.message_id));
         if (!fresh.length) return;
+        // The popup's check is the open thread's doorbell.
+        for (const conversationId of new Set(fresh.map((m) => m.conversation_id))) {
+          for (const queryKey of builderMessageArrivalKeys(readerRef.current, conversationId)) {
+            void queryClient.invalidateQueries({ queryKey });
+          }
+        }
         playMessagePing();
         for (const message of fresh) {
           shown.add(message.message_id);
@@ -78,7 +96,7 @@ export function BuilderMessagePopups() {
       document.removeEventListener('visibilitychange', onVisible);
       window.removeEventListener('focus', onVisible);
     };
-  }, [canView, loading]);
+  }, [canView, loading, queryClient]);
 
   return null;
 }

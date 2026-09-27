@@ -102,6 +102,12 @@ History is read from every conversation the property has held with its builder, 
 
 On both sides the sender is the session's user, and the request names no user or organisation. The thread re-reads itself every 10 seconds while the page is visible. Polling is the whole transport, and nothing depends on realtime.
 
+**The new-message check (27 Sep 2026).**
+- Each portal raises a "New message from …" popup. The Command Centre's reads `list_new_builder_messages`; the Builder Portal's reads `list_new_agency_messages`.
+- Each asks every 5 seconds while the tab is in view.
+- When a message from the other side lands, the check tells that conversation and the reader's conversation lists to re-read at once, so a thread already on screen shows the message within one check rather than on its own 10 second cadence.
+- It is still polling. Nothing is pushed.
+
 ## 7. Proof
 
 | Where | What |
