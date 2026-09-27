@@ -7,6 +7,12 @@ import { condensedVoiceRules } from '../_shared/reports/adviserVoice.pure.ts';
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.55.0";
 import { verifyAuth, createCorsHeaders, createUnauthorizedResponse } from '../_shared/auth.ts';
 import { enforceCsrf, csrfDenied } from "../_shared/csrfGuard.ts";
+import {
+  CHILD_OWNED_ELSEWHERE,
+  mayRegenerateChild,
+  ownerForNewChild,
+  ownerForRegeneratedChild,
+} from '../_shared/reports/subReportOwnership.pure.ts';
 import { loadReportWriterIdentity } from '../_shared/reports/writerIdentity.ts';
 import { internalError } from '../_shared/errorResponse.ts';
 
@@ -430,12 +436,23 @@ Deno.serve(async (req) => {
       throw new Error(`Failed to resolve existing ${TIER_CONFIG[targetTier].name}: ${existingTierError.message}`);
     }
 
-    if (existingTier && !await canAccessInvestmentReport(supabase, existingTier, userId!)) {
+    // The child is the parent's own derivative, found by its parent link, and
+    // the caller has just passed the parent's check. It is regenerated in place
+    // unless it is another adviser's document (`subReportOwnership.pure.ts`) —
+    // the check used to demand the caller own the CHILD, and every child this
+    // function created carried no owner, so the first Briefing of a Compass was
+    // the only one that could ever be written.
+    if (existingTier && !mayRegenerateChild(
+      existingTier,
+      parentReport,
+      userId!,
+      await canAccessInvestmentReport(supabase, existingTier, userId!),
+    )) {
       return new Response(JSON.stringify({
-        error: 'Parent Compass report not found',
+        error: CHILD_OWNED_ELSEWHERE,
         success: false,
       }), {
-        status: 404,
+        status: 403,
         headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
     }
@@ -450,6 +467,8 @@ Deno.serve(async (req) => {
           status: 'processing',
           error_message: null,
           updated_at: new Date().toISOString(),
+          // A child written before ownership was stamped is healed here.
+          generated_by: ownerForRegeneratedChild(existingTier, parentReport, userId!),
           // A refreshed child carries the parent's CURRENT record, not the
           // copy taken when the child was first created. Regeneration used to
           // rewrite the prose and leave these columns as they were — fresh
@@ -486,6 +505,9 @@ Deno.serve(async (req) => {
         report_tier: targetTier,
         report_variant: reportVariant,
         parent_report_id: parentReportId,
+        // The parent's owner, as `fork-investment-report` stamps it. Left
+        // unwritten, the child had no owner and its own regeneration was refused.
+        generated_by: ownerForNewChild(parentReport, userId),
         // Both linkage columns, so the family is one lookup for every reader.
         // History split them: fork children carried derived_from_report_id,
         // condense children carried parent_report_id, and the two engines

@@ -113,8 +113,10 @@ export function describeSubjectPrice(input: SubjectPriceInput): SubjectPrice {
       basis: 'accepted_input',
       value: accepted,
       label: 'Purchase price this analysis is modelled on',
-      provenance: 'recorded by the adviser for this assessment — it is the figure every '
-        + 'projection, the loan and the lending ratio in the Financial Analysis Report are built on',
+      // No document is named: the same row prints in the Compass and in the
+      // Financial Analysis itself, where naming it reads as another report.
+      provenance: 'recorded by the adviser for this assessment — the figure every projection, '
+        + 'the loan and the lending ratio are built on',
     };
   }
   const listed = positive(input.listingPrice);

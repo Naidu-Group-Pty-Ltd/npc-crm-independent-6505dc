@@ -893,7 +893,13 @@ function applyFootnoteRefs(html: string): string {
       // model's escaped marker — `[^\*graceSchools]` reached a client's page
       // verbatim on 14 Sep 2026 — is the same citation with a stray escape,
       // so the shape is judged with escapes and asterisks removed.
-      if (!/^[A-Za-z][A-Za-z0-9_]{1,39}$/.test(id.replace(/[\\*]/g, ''))) return m;
+      //
+      // A NUMBERED marker strips only where the document defines footnotes of
+      // its own: then `[^6]` is a note the writer cited and never wrote, not an
+      // array slice. The 37 Bolin Street Compass and Due Diligence reports
+      // (27 Sep 2026) printed "no opening date stated.[^6]" beside notes 1–3.
+      const numberedBesideNotes = /^\d{1,3}$/.test(id) && reg.defs.size > 0;
+      if (!numberedBesideNotes && !/^[A-Za-z][A-Za-z0-9_]{1,39}$/.test(id.replace(/[\\*]/g, ''))) return m;
       reg.notices.footnoteRefsDropped++;
       return '';
     }

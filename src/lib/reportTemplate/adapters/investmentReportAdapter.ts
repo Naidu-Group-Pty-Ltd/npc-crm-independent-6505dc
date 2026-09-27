@@ -3,6 +3,7 @@ import { invokeSecureFunction } from '@/lib/secureInvoke';
 import { extractStructureHeadings, selectStructureTemplate } from '@/lib/reportTemplate/cascadeMap';
 import { chunkReportContent } from '@/lib/reportTemplate/reportSections';
 import { presentStoredMarkdown } from '@/lib/reports/investment/derivedHygiene.pure';
+import { restoreGradeMethodology } from '@/lib/reports/investment/gradeMethodologyOnRead.pure';
 import { readEvidenceInventory } from '@/lib/reports/investment/chartEvidence.pure';
 import { investmentReportFileName } from '@/lib/reports/investment/reportFileName.pure';
 import {
@@ -291,7 +292,13 @@ export const investmentReportAdapter: ReportTemplateAdapter = {
     const row = {
       ...loaded,
       report_content: presentStoredMarkdown(
-        presentedContent === null ? loaded.report_content : presentedContent,
+        // The grade's method is the record's, re-composed on every read
+        // (`gradeMethodologyOnRead.pure.ts`): a stored copy that lost its tail
+        // is never what a client's document prints.
+        restoreGradeMethodology(
+          String((presentedContent === null ? loaded.report_content : presentedContent) ?? ''),
+          (loaded as { investment_score?: unknown }).investment_score,
+        ).markdown,
         readEvidenceInventory(loaded as unknown as Record<string, unknown>),
       ),
       ...(includeScoring ? {} : { investment_score: null }),

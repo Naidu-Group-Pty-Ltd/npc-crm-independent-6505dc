@@ -257,6 +257,7 @@ export default function InvestmentReportView() {
     <div className="flex-1 flex flex-col h-full overflow-hidden">
       <InvestmentReportCommandHeader
         report={report}
+        family={family}
         clientInfo={clientInfo}
         isClientReport={isClientReport}
         onBack={() => (fromCashFlowAnalysis ? navigateBackToCashFlowAnalysis(navigate, location) : navigate(-1))}

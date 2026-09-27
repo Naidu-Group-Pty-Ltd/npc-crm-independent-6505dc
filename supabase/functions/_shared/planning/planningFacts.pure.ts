@@ -352,7 +352,7 @@ const ZONE_UNCONFIRMED = 'The zone has not been confirmed for this report. A zon
 
 /** Where the development-application register could not be checked at all. */
 const DA_UNCHECKED = uncheckedSentence('Development applications',
-  'The council\u2019s own application tracker shows activity near the property.');
+  'The council\u2019s own application tracker lists any applications near the property.');
 
 /**
  * Where the land use table was asked for and the request failed. The block
@@ -1073,10 +1073,18 @@ export function renderConstraintRegister(facts: PlanningFacts): string {
   if (facts.constraintsAsked.length) {
     const clear = checkedAndNotMapped(facts);
     if (clear.length) {
+      // A hazard map that is not the complete designation says nothing where
+      // it did not reach, and the list above would otherwise read as clear on
+      // it. Its own sentence follows, from the reading the Environment section
+      // states, so the register and the section cannot disagree about it.
+      const partial = hazardReadings(facts)
+        .filter((r) => r.state === 'not_mapped' && !r.designation.complete)
+        .map((r) => `${r.label}: ${r.designation.absence}`);
       lines.push(
         `**${CHECKED_NOT_MAPPED_LEAD}** ${clear.join(', ')}. `
         + 'The published map for each was checked and shows nothing over the property. '
-        + 'A published map is indicative at its scale; it is not a survey of the lot.',
+        + 'A published map is indicative at its scale; it is not a survey of the lot.'
+        + (partial.length ? ` ${partial.join(' ')}` : ''),
         '',
       );
     }

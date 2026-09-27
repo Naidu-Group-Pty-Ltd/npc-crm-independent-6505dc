@@ -8,6 +8,7 @@
  * stand-in placed where each project runs.
  */
 import { describe, expect, it } from 'vitest';
+import { registerHeaderKey } from '../../../../supabase/functions/_shared/reports/investment/registerTables.pure';
 
 import {
   IPAMS_LAYERS,
@@ -185,11 +186,18 @@ describe('the outlook a client reads (37 Bolin Street, Tallawong)', () => {
   const evidence = buildInfrastructureEvidence({ planningData });
   const page = renderInfrastructureOutlook(evidence);
 
+  it('draws no date column where no entry carries a date, so no copy of it can say a project is undated', () => {
+    const header = page.split('\n').find((l) => l.startsWith('| Reference |')) ?? '';
+    expect(header).toBe('| Reference | Project or instrument | Type | Status | Where | Stated cost | Funding | Delivery timing |');
+    expect(page).not.toContain('No date stated');
+    expect(registerHeaderKey(header)).not.toBeNull();
+  });
+
   it('names the Richmond Road upgrade with its status, cost, federal share and expected dates', () => {
     expect(page).toContain('Richmond Road Upgrade, M7 Motorway to Townson Road');
     expect(page).toContain('Under Construction');
     expect(page).toContain('$520,000,000 estimated project cost');
-    expect(page).toContain('Australian Government $260,000,000; the balance is not attributed in this register');
+    expect(page).toContain('Australian Government $260,000,000; the Department does not say who funds the balance');
     expect(page).toContain('Expected start Early 2026; expected end Late 2028');
     expect(page).toMatch(/4\.0 km from the property, to the nearest part of the works/);
   });

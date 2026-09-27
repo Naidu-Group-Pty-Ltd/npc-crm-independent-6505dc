@@ -13,9 +13,12 @@ import { ReportVariantControls } from '@/components/reports/ReportVariantControl
 import type { ClientInfo, InvestmentReport } from './types';
 import { resolveInvestmentReportType } from '@/lib/reports/reportVariants';
 import { ReportTypeBadge } from '@/components/reports/ReportTypeBadge';
+import type { ReportFamily } from '@/lib/reports/subReports';
 
 interface Props {
   report: InvestmentReport;
+  /** The Compass family the report belongs to — what the report buttons open. */
+  family?: ReportFamily | null;
   clientInfo: ClientInfo | null;
   isClientReport: boolean;
   onBack: () => void;
@@ -45,6 +48,7 @@ interface Props {
 
 export function InvestmentReportCommandHeader({
   report,
+  family = null,
   clientInfo,
   isClientReport,
   onBack,
@@ -99,8 +103,9 @@ export function InvestmentReportCommandHeader({
         <div className="order-3 flex w-full flex-wrap items-center gap-2 lg:order-2 lg:w-auto lg:flex-1 lg:justify-center">
           <div className="rounded-lg border bg-card/70 p-1 shadow-sm">
             <ReportVariantControls
-              compositeReportId={report.derived_from_report_id || report.parent_report_id || report.id}
-              reportVariant={report.report_variant}
+              currentReportId={report.id}
+              compositeReportId={family?.parentId || report.derived_from_report_id || report.parent_report_id || report.id}
+              family={family}
               onNavigate={onNavigateToReport}
             />
           </div>

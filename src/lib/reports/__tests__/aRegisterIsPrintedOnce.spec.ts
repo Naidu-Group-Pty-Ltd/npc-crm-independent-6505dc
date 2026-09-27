@@ -196,8 +196,9 @@ describe('what it must not do', () => {
 
   it('names every header from the module that composes them', () => {
     // Five tables; two of them in the spelling stored reports carry as well
-    // as today's (the headers moved into an adviser's words on 26 Sep 2026).
-    expect(REGISTER_TABLE_HEADERS).toHaveLength(7);
+    // as today's (the headers moved into an adviser's words on 26 Sep 2026),
+    // and the project register with and without its date column (27 Sep 2026).
+    expect(REGISTER_TABLE_HEADERS).toHaveLength(8);
     for (const h of REGISTER_TABLE_HEADERS) expect(h).toBe(h.toLowerCase());
     expect(registerHeaderKey('| Control | Reading | Standing | Evidence |'))
       .toBe('control|reading|standing|evidence');
@@ -253,8 +254,9 @@ describe('every table a composer draws is one the dedupe recognises', () => {
         if (header && rule) drawn.push(header[1]);
       });
     }
-    // All five tables, each found — the scan itself can see them.
-    expect(drawn).toHaveLength(5);
+    // All five tables, each found — the scan itself can see them — and the
+    // project register's second spelling, drawn where no entry is dated.
+    expect(drawn).toHaveLength(6);
     for (const header of drawn) expect(registerHeaderKey(header), header).not.toBeNull();
   });
 });

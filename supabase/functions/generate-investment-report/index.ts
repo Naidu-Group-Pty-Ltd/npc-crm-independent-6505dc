@@ -42,6 +42,7 @@ import { withPlanningEvidence } from '../_shared/reports/location/planningEviden
 import { crimeStatBlocks } from '../_shared/reports/crimePromptBlocks.pure.ts';
 import { climateStatBlocks } from '../_shared/reports/climatePromptBlocks.pure.ts';
 import { hazardReadings } from '../_shared/planning/hazardReadings.pure.ts';
+import { pinForSection, pinGroup } from '../_shared/reports/sectionPin.pure.ts';
 import { amenityFactBlocks, transportFactBlocks } from '../_shared/reports/location/amenityFactBlocks.pure.ts';
 import { approvalsFactBlocks, summariseApprovals } from '../_shared/reports/market/approvalsFactBlocks.pure.ts';
 import { parseAddressText } from '../_shared/reports/market/addressGeography.pure.ts';
@@ -150,6 +151,7 @@ import {
   readStrategyRecord,
   strategySectionRules,
 } from '../_shared/reports/investment/strategyPositions.pure.ts';
+import { restoreGradeMethodology } from '../_shared/reports/investment/gradeMethodologyOnRead.pure.ts';
 import {
   headingSequence,
   mergeBlocksIntoSections,
@@ -1782,7 +1784,11 @@ function limitPromptContext(value: string, maxBytes: number, label: string, mode
   const originalBytes = byteLength(compacted);
   if (originalBytes <= maxBytes) return compacted;
 
-  const notice = `\n\n[${label} truncated from ${originalBytes.toLocaleString()} bytes to stay within Perplexity's ${PERPLEXITY_MESSAGE_HARD_LIMIT_BYTES / 1000}KB message limit. Prioritise extracted specifications and request fresh web research for missing details.]\n\n`;
+  // A figure trimmed from the record is not a figure to go and find: a web
+  // search is not a retrieval, and this notice used to send the model to one
+  // (the Environment section of 37 Bolin Street described BOCSAR's release
+  // from the web over a register that had answered).
+  const notice = `\n\n[${label} truncated from ${originalBytes.toLocaleString()} bytes to stay within Perplexity's ${PERPLEXITY_MESSAGE_HARD_LIMIT_BYTES / 1000}KB message limit. Use only the figures in front of you; where one this section needs is not here, leave it out rather than look for it.]\n\n`;
   const remaining = Math.max(0, maxBytes - byteLength(notice));
   let text: string;
   if (mode === 'head') {
@@ -1921,7 +1927,11 @@ Generate the ${sectionDef.name} sections now:`;
   // base prompt is measured, and it is concatenated after the trim rather than
   // inside it. See the parameter's own note for what reached a client document
   // when this block was merely early in the base prompt.
-  const pinnedBlock = pinnedContext.trim() ? `\n\n---\n\n${pinnedContext.trim()}\n` : '';
+  // Only the registers this section's subject needs (`sectionPin.pure.ts`):
+  // handed all of them, the pin filled the budget and the evidence pack reached
+  // the model at about four per cent of its size.
+  const sectionPin = pinForSection(pinnedContext, sectionDef.registryId);
+  const pinnedBlock = sectionPin.trim() ? `\n\n---\n\n${sectionPin.trim()}\n` : '';
   const pinnedBytes = byteLength(pinnedBlock);
   const sectionInstructionBytes = byteLength(sectionInstructions);
   const basePromptBudget = Math.max(0, PERPLEXITY_SAFE_USER_MESSAGE_BYTES - sectionInstructionBytes - pinnedBytes - 2_000);
@@ -6330,12 +6340,12 @@ the listing and the building inspection.
 
     const pinnedPlanningContext = [
       // The attributes on record ride the pin: see `recordedAttributesBlock`.
-      '# The property — every physical attribute on record',
+      pinGroup('attributes', '# The property — every physical attribute on record'),
       recordedAttributesBlock,
-      '# Zoning & Planning Analysis — the planning controls for this property',
+      pinGroup('planning', '# Zoning & Planning Analysis — the planning controls for this property'),
       planningControlsTable,
       planningSectionRules,
-      '# Infrastructure & Development Outlook — what the published sources show',
+      pinGroup('infrastructure', '# Infrastructure & Development Outlook — what the published sources show'),
       infrastructureTable,
       infrastructureSectionRules,
       /*
@@ -6366,14 +6376,14 @@ the listing and the building inspection.
        * The four absences are four different sentences and only the read
        * knows which one is true.
        */
-      approvalsFactBlocks(
+      pinGroup('approvals', approvalsFactBlocks(
         enhancedData.buildingApprovals?.kind === 'series'
           ? summariseApprovals(enhancedData.buildingApprovals.series)
           : null,
         enhancedData.buildingApprovals?.kind === 'absent'
           ? enhancedData.buildingApprovals.absence
           : 'not_loaded',
-      ),
+      )),
       /*
        * Forward demand rides the pin for the same reason: a held projection
        * is the AUTHORITY for every projected figure the report may state, and
@@ -6383,7 +6393,7 @@ the listing and the building inspection.
        * sentence that may be written instead. One composer
        * (`forwardDemandBlocks`) for the section and the pin.
        */
-      '# Forward demand — the population projection this report holds',
+      pinGroup('forwardDemand', '# Forward demand — the population projection this report holds'),
       forwardDemandBlocks({
         state: trustedStateForForwardDemand(subjectGeography, abbreviateState),
         forwardDemandProjection: enhancedData.forwardDemandProjection ?? null,
@@ -6403,20 +6413,20 @@ the listing and the building inspection.
       ...(() => {
         const population = populationTrendPin(enhancedData);
         return population
-          ? ['# Population — the measured trend for the surrounding statistical area', population]
+          ? [pinGroup('population', '# Population — the measured trend for the surrounding statistical area'), population]
           : [];
       })(),
-      '# Getting about — the transport reading this report holds',
+      pinGroup('transport', '# Getting about — the transport reading this report holds'),
       transportFactBlocks(enhancedData.locationIntelligence),
       // Recorded from official publications rather than retrieved from a
       // register, and pinned for the same reason everything else here is:
       // it is the AUTHORITY for a set of figures and dates, and a rule that
       // survives while its evidence is trimmed is the §6 defect.
       ...(publishedProjectBlock
-        ? ['# Major public projects near this property — recorded from their publisher\'s own pages',
+        ? [pinGroup('publishedProjects', '# Major public projects near this property — recorded from their publisher\'s own pages'),
           publishedProjectBlock]
         : []),
-      publishedProjectSectionRules,
+      pinGroup('publishedProjects', publishedProjectSectionRules),
       // The market evidence rides the same pin, for the same reason: the base
       // prompt measured 92,129 bytes on 262 Pallas Street and every section
       // trimmed it to ~52,830, so anything that is the AUTHORITY for a figure
@@ -6424,14 +6434,24 @@ the listing and the building inspection.
       // concatenated after the trim. A rule that survives while its evidence
       // is cut is the §6 defect, and it produced a report that named no source
       // because it had none to name.
-      '# Market Evidence — the published figures for this market',
+      pinGroup('market', '# Market Evidence — the published figures for this market'),
       marketTable,
       marketSectionRules,
+      /*
+       * Recorded crime, the climate readings and the hazard maps, handed to the
+       * sections that state them (`sectionPin.pure.ts`). They were in the base
+       * prompt alone, and on 37 Bolin Street the base prompt reached the model
+       * at about four per cent of its size, so the Environment section wrote
+       * that no local crime total was held over a register that had answered.
+       */
+      pinGroup('environment', '# Environment — recorded crime, climate and the hazard maps'),
+      crimeStatBlocks(enhancedData),
+      climateStatBlocks(enhancedData, hazardReadings(planningFacts)),
       // The subject's own price rides the same pin as the market's figures,
       // for the same reason: it is the authority for a number, and an
       // authority that `limitPromptContext` can cut while its rule survives is
       // §6's defect.
-      subjectPriceSectionRules,
+      pinGroup('rules', subjectPriceSectionRules),
       /*
        * The strategy sections are composed and appended to the document, so
        * the model never writes them — but it does write the sections AROUND
@@ -8645,6 +8665,22 @@ This report should feel like a polished advisory document that inspires confiden
         `Merged ${mergeableBlocks.length} evidence block(s) into their chapters `
         + `(${before} -> ${after.length} sections; closes on ${after[after.length - 1] ?? 'nothing'})`,
       );
+    }
+    /*
+     * The grade's method is the record's, whatever the document already held.
+     *
+     * `mergeBlocksIntoSections` skips a block whose heading is already present,
+     * so a section carrying "How this grade was reached" from anywhere else
+     * kept that copy and the composed one never landed. The stored document is
+     * written with the complete section the record composes, the same rule
+     * every reader applies on the way out (`gradeMethodologyOnRead.pure.ts`).
+     */
+    {
+      const method = restoreGradeMethodology(reportContent, enhancedData.investmentScore);
+      if (method.restored) {
+        reportContent = method.markdown;
+        console.log('Grade method restored from the record');
+      }
     }
 
 

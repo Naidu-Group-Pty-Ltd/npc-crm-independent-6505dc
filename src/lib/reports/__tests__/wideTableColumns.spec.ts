@@ -119,3 +119,15 @@ describe('the three bounds that keep it off a table that was already right', () 
     expect(foldConstantTableColumns(prose)).toEqual({ markdown: prose, folded: [] });
   });
 });
+
+describe('two folded columns are two notes, not one run-on line', () => {
+  it('puts a blank line between the notes so neither reads as part of the other', () => {
+    const out = foldConstantTableColumns(REGISTER).markdown;
+    const lines = out.split('\n');
+    const funding = lines.findIndex((l) => l.startsWith('**Funding:**'));
+    const timing = lines.findIndex((l) => l.startsWith('**Delivery timing:**'));
+    expect(funding).toBeGreaterThan(0);
+    expect(timing).toBe(funding + 2);
+    expect(lines[funding + 1]).toBe('');
+  });
+});
