@@ -69,7 +69,22 @@ export const RISK_DETAIL_PARTS = ['Finding', 'Evidence', 'Implication', 'Next ch
  * Exposure vocabulary. `Not assessed` is a level and never a reassurance —
  * §9 of `PLANNING_CONTROLS_IN_THE_REPORT.md` pays for that in full.
  */
-export const RISK_EXPOSURE_LEVELS = ['Low', 'Moderate', 'High', 'Not assessed'] as const;
+export const RISK_EXPOSURE_LEVELS = ['Low', 'Moderate', 'High', 'Not assessed', 'Mapped', 'Not mapped'] as const;
+
+/**
+ * The two hazard words, which say what a statutory map SHOWED rather than
+ * rating anything.
+ *
+ * "Not mapped" is permitted only for a hazard whose map is the complete
+ * statutory designation for the jurisdiction (`HAZARD_DESIGNATION` in
+ * `_shared/planning/hazardReadings.pure.ts`) — the NSW Bush Fire Prone Land
+ * map, certified by the RFS Commissioner under s. 146(2) of the EP&A Act, is
+ * the case that forced it: the 37 Bolin Street suite printed bushfire "Not
+ * assessed" beside a planning register that had checked that map at the lot.
+ * Neither word is a position on a scale, so like "Not assessed" neither draws
+ * a severity bar or a place on a chart.
+ */
+export const HAZARD_MAP_LEVELS = ['Mapped', 'Not mapped'] as const;
 
 /**
  * The level that is not a position.
@@ -283,6 +298,9 @@ export function riskRegisterInstruction(): string {
     'cannot find.',
     // ── The two vocabularies ───────────────────────────────────────────────
     `EXPOSURE (${RISK_EXPOSURE_LEVELS.join(' / ')}) describes the risk.`,
+    `${HAZARD_MAP_LEVELS.map((l) => `"${l}"`).join(' and ')} are for a natural hazard alone and say what its`,
+    'statutory map showed at the property; use them only where the planning rules hand you that row, and never',
+    'as a rating or on a chart.',
     `EVIDENCE (${RISK_EVIDENCE_READINGS.join(' / ')}) states EVIDENCE HELD, never reassurance:`,
     '"Verified" only where a dated, parcel-level source is cited; "Unverified" while the required',
     'check is still to be done; "Conflicting" where sources disagree (say which); "Not checked"',

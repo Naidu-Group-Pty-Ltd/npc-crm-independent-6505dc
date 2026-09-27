@@ -100,14 +100,16 @@ describe('a rating the register does recognise still colours', () => {
 });
 
 describe('the exposure vocabulary and the renderer agree', () => {
-  it('Not assessed is the only level that scores nothing, and it reads as an absence', () => {
+  it('Not assessed and the two hazard-map words score nothing, and read in the muted ink', () => {
     const unscored = RISK_EXPOSURE_LEVELS.filter((l) => severityFromRating(l) === null);
-    expect(unscored).toEqual(['Not assessed']);
-    expect(render('Not assessed')).toContain(`color:${MUTED}`);
+    // "Mapped" and "Not mapped" say what a statutory hazard map showed; like
+    // an absence, neither is a position on the severity scale.
+    expect(unscored).toEqual(['Not assessed', 'Mapped', 'Not mapped']);
+    for (const level of unscored) expect(render(level), level).toContain(`color:${MUTED}`);
   });
 
   it('every other level draws a bar', () => {
-    for (const level of RISK_EXPOSURE_LEVELS.filter((l) => l !== 'Not assessed')) {
+    for (const level of RISK_EXPOSURE_LEVELS.filter((l) => severityFromRating(l) !== null)) {
       expect(render(level), level).toMatch(/height:4pt;background:/);
     }
   });

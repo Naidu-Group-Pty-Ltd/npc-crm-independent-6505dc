@@ -1429,3 +1429,72 @@ Three rules now hold.
 
 The sentence "the property's verified coordinate" is gone from the page.
 Whichever point was asked, the page now says what that point was.
+
+## 16. Bushfire and flood: what an answered hazard map says (27 Sep 2026)
+
+The 37 Bolin Street suite printed bushfire and flood as **Not assessed** in
+every risk register, and its Environment section said *"a specific flood or
+bushfire risk level has not been established"*. Yet the NSW Planning Portal's
+hazard maps had been asked at the lot and had answered: nothing mapped. Two
+things were lost between that answer and the page.
+
+- **The Environment section read the wrong source.** Its hazard table was
+  fed only by `risk-assessment-service`. The generator calls that service
+  without the property's coordinate, so it answers `Unknown` by construction
+  and the table never drew. The planning answer sat one module away, unread.
+- **The register could not tell two absences apart.** A statutory
+  designation published for the whole state that shows nothing over a lot says
+  the lot is not designated. A map that only some councils publish into says
+  nothing about the councils that did not. Both became "Not assessed".
+
+Measured from CI before anything was built (`scripts/market/hazard-source-inspect.py`,
+`evidence-source-inspect.yml` with target `hazard`, three rounds):
+
+| Map | What it is | Reading |
+| --- | --- | --- |
+| NSW Hazard layer 229 | Bush Fire Prone Land, *certified by the Commissioner of NSW RFS under section 146(2)*. It is the statewide designation. | complete |
+| NSW Hazard layer 230 | Flood planning map carrying ten named councils; Blacktown is not among them. | partial |
+| WA OBRM-026 | Bush fire prone areas designated by the FES Commissioner (§ Lawley). | complete |
+| VIC `bushfire_prone_area` | Gazetted by the Minister for Planning for the building regulations. It is a different instrument from the BMO overlay and far wider. Answered inside at Belgrave and Kinglake, outside at the Melbourne CBD and Golden Square. | complete, **new** |
+| ACT Bushfire Prone Area 2026 | 4,879 features across the Territory. Answered inside at Tharwa, Stromlo and Orroral, outside at Braddon. | complete, **new** |
+| TAS SES flood mapping, SA flooding v15, ACT flood extent | Study areas and code overlays, not complete designations. | not read |
+
+The Victorian axis order was settled against known points in three spellings,
+because a wrong axis answers "nothing here" everywhere. That is the one
+failure a map this report calls complete must never have. Longitude-first
+with the SRID named (the overlay query's own form) answers correctly.
+Longitude-first without the SRID answers nothing at every point, inside or
+out.
+
+Three rules, in `_shared/planning/hazardReadings.pure.ts`:
+
+1. **A reading is what the map answered, at this point.**
+   - `mapped` carries the publisher's own label.
+   - `not_mapped` is a map that was asked and answered nothing.
+   - `not_checked` is a map never asked, or asked at a point off the lot. It
+     is evidence of nothing.
+2. **An absence is a finding only where the map IS the designation, and only
+   where that designation's own register answered.** Victoria's BMO also asks
+   "bushfire", and its silence says nothing about the gazetted area. So
+   `HAZARD_DESIGNATION` names the register, and `designationFor` falls back to
+   the generic partial reading when that register did not answer.
+3. **Nothing here rates a hazard.** The register reads **Mapped** or
+   **Not mapped**. These are words the vocabulary now holds
+   (`RISK_EXPOSURE_LEVELS`), they are drawn muted like "Not assessed", and
+   neither may be drawn on a chart. A partial map's silence stays
+   "Not assessed" with evidence "Unverified", and the reason is given in words.
+
+The Environment section now draws the hazard-map table first. It uses the
+older service's row only for a hazard no map answered, and rule 4b of
+`planningFactBlocks` hands the register its two words.
+`PLANNING_ANSWER_VERSION` is `c9`, because a `c8` row holds no designation
+register for Victoria or the ACT. The ACT's overlay coverage is
+`partial_state_layers_read` now, and its note says which part is read.
+
+Two things are unmeasured until the first report after deploy, the same
+position South Australia's zone read was in:
+
+- whether the production egress reaches the ACT's hosted layer (it already
+  reaches the same organisation for the zone);
+- whether it reaches Victoria's `bushfire_prone_area` (it already reaches the
+  same WFS for the overlays).

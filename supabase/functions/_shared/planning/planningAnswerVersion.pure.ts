@@ -56,8 +56,9 @@
  * | `c6` | South Australia's zone, read from the Planning and Design Code's own layer (`parseSaZoning`, shipped 23 Sep 2026, W3.4's third half). No key is added — `zoning` has always been there — but a `c5` row at a South Australian coordinate says the zone is `not_integrated` where the Code's layer now answers, so serving one withholds the zone for seven days on exactly the properties this adds it for. The shape did not widen; its CONTENT did, which is the same fault by another route. |
  * | `c7` | Western Australia's designated bush fire prone areas, read from the Fire and Emergency Services Commissioner's own layer (OBRM-026, CC BY 4.0, shipped 25 Sep 2026). No key is added, but a `c6` row at a Western Australian coordinate carries no constraint register at all, so serving one would print "Bushfire — Not searched" for seven days over a register that now answers. The same fault as `c6`, one state along. |
  * | `c8` | the Australian Government's Infrastructure Investment Program at the coordinate — `nationalProgramme` (shipped 27 Sep 2026). The one forward register that reaches every jurisdiction. A `c7` row was cached before it was read, so serving one would print "no major public project within 15 km" beside a $520 million road upgrade under construction 4 km away, which is what 37 Bolin Street, Tallawong printed. |
+ * | `c9` | the statutory bushfire prone area designations of Victoria and the ACT, read beside the overlays (shipped 27 Sep 2026). A `c8` row holds no designation register for either, so serving one would keep a Victorian or Canberra report at "Bushfire — Not assessed" for seven days over a designation map that now answers. |
  */
-export const PLANNING_ANSWER_VERSION = 'c8' as const;
+export const PLANNING_ANSWER_VERSION = 'c9' as const;
 
 /** Every top-level key the answer of this version carries. */
 export const PLANNING_ANSWER_KEYS: readonly string[] = [

@@ -41,6 +41,7 @@ import { strategyOutlookProjects } from '../_shared/planning/strategyOutlook.pur
 import { withPlanningEvidence } from '../_shared/reports/location/planningEvidenceRecord.pure.ts';
 import { crimeStatBlocks } from '../_shared/reports/crimePromptBlocks.pure.ts';
 import { climateStatBlocks } from '../_shared/reports/climatePromptBlocks.pure.ts';
+import { hazardReadings } from '../_shared/planning/hazardReadings.pure.ts';
 import { amenityFactBlocks, transportFactBlocks } from '../_shared/reports/location/amenityFactBlocks.pure.ts';
 import { approvalsFactBlocks, summariseApprovals } from '../_shared/reports/market/approvalsFactBlocks.pure.ts';
 import { parseAddressText } from '../_shared/reports/market/addressGeography.pure.ts';
@@ -6595,7 +6596,7 @@ ${transportFactBlocks(enhancedData.locationIntelligence)}
 
 ## Environment and climate
 
-${climateStatBlocks(enhancedData)}
+${climateStatBlocks(enhancedData, hazardReadings(planningFacts))}
 
 ---
 

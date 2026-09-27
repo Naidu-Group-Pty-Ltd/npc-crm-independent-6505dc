@@ -109,7 +109,7 @@ describe('the Financial chapters are composed from the record', () => {
   );
 
   it('produces the missing chapters in FIN ordinal order, never a placeholder', () => {
-    expect(chapters.map((c) => c.ordinal)).toEqual([4, 5, 6, 8, 9, 11, 12, 14] /* 11: the Financial Risk Dashboard, composed from the record since QA-31 */);
+    expect(chapters.map((c) => c.ordinal)).toEqual([1, 2, 4, 5, 6, 7, 8, 9, 11, 12, 14] /* 11: the Financial Risk Dashboard, composed from the record since QA-31 */);
     const all = chapters.map((c) => c.markdown).join('\n');
     expect(all).not.toMatch(/N\/A|TBD/i);
     expect((all.match(/\$/g) ?? []).length).toBeGreaterThan(30);
