@@ -20,6 +20,12 @@
  * outstanding.
  */
 import { invokeSecureFunction } from '@/lib/secureInvoke';
+import {
+  announceDesignOutcome,
+  designBody,
+  standardDesignFor,
+  type StandardDesignRequest,
+} from '@/lib/reportTemplate/standardDesign';
 
 export interface CapacityReportRequest {
   assessmentId: string;
@@ -28,6 +34,12 @@ export interface CapacityReportRequest {
   /** Discard any stored analysis and write a new one. */
   refreshAnalysis?: boolean;
   edition?: string | null;
+  /**
+   * The design to draw the document in. Omit it and the person's own choice
+   * for the format is read (`standardDesign.ts`); `null` asks for the
+   * standard design whatever was chosen. How it looks, never what it says.
+   */
+  design?: StandardDesignRequest | null;
 }
 
 export interface CapacityReportResult {
@@ -75,14 +87,17 @@ const NOT_DEPLOYED = [
 export async function requestCapacityReport(
   request: CapacityReportRequest,
 ): Promise<CapacityReportResult> {
+  const design = await standardDesignFor('commercial_capacity', request.design);
   const { data, error } = await invokeSecureFunction('render-commercial-capacity-pdf', {
     assessmentId: request.assessmentId,
     includeAnalysis: request.includeAnalysis !== false,
     refreshAnalysis: request.refreshAnalysis === true,
     edition: request.edition ?? null,
+    ...designBody(design),
   }, { timeoutMs: TIMEOUT_MS });
 
   if (!error && data?.url) {
+    announceDesignOutcome(design, data.design);
     return {
       url: String(data.url),
       fileName: String(data.fileName ?? 'Commercial_Capacity_Report.pdf'),

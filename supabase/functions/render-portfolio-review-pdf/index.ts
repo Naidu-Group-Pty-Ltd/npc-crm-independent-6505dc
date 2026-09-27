@@ -64,8 +64,10 @@ import { withRequestOrigin } from '../_shared/corsOrigin.ts';
 import { countPdfPagesAsync, renderPdf, weasyPrintConfig } from '../_shared/weasyprintClient.ts';
 import {
   buildReportBrandSnapshot,
+  issuerDisclaimerSetting,
   REPORT_SNAPSHOT_VERSION,
 } from '../_shared/reportDesign/snapshot.pure.ts';
+import { deploymentKind } from '../_shared/emailIdentity.pure.ts';
 import { inlineAsset } from '../_shared/reportDesign/assets.pure.ts';
 import { inlineBrandAssets } from '../_shared/reportDesign/fetchBrandAssets.ts';
 import {
@@ -73,6 +75,7 @@ import {
   PortfolioPayloadError,
 } from '../_shared/reports/portfolio/normalise.pure.ts';
 import { renderPortfolioFromBrand } from '../_shared/reports/portfolio/render.pure.ts';
+import { resolveRequestedDesign } from '../_shared/reports/templateDesignRead.ts';
 import { enforceCsrf, csrfDenied } from "../_shared/csrfGuard.ts";
 import {
   parseRenderRequest,
@@ -266,7 +269,12 @@ const __corsWrappedHandler = (async (req: Request): Promise<Response> => {
       );
     }
 
+    // A clone never prints the house's name, contact details or wording,
+    // whatever its settings rows say; the prime reads them as stored
+    // (`issuerIdentity.pure.ts`).
+    const reportDeployment = { prime: deploymentKind(Deno.env.get('SUPABASE_URL')) === 'prime' };
     const { snapshot, skippedAssets } = buildReportBrandSnapshot({
+      deployment: reportDeployment,
       whitelabel: whitelabel
         ? {
             id: String(whitelabel.id ?? ''),
@@ -313,12 +321,24 @@ const __corsWrappedHandler = (async (req: Request): Promise<Response> => {
     // two company names on one page.
     const coverArt = inlineAsset(logoConfig.cover ?? null);
 
+    // The design the caller chose, if any. The words, figures and pages are
+    // the report's own whatever it names; a design that cannot be honoured is
+    // answered with the standard one and a sentence saying why, never with a
+    // failed document (`templateDesignRead.ts`).
+    const { design, echo: designEcho } = await resolveRequestedDesign(supabase, {
+      reference: request.design,
+      reportType: 'portfolio',
+      actor: actor,
+      route: 'render-portfolio-review-pdf',
+    });
+
     const { html, gaps } = renderPortfolioFromBrand({
       review: portfolio,
       snapshot,
-      disclaimer: settings.disclaimer as never,
+      disclaimer: issuerDisclaimerSetting(settings.disclaimer, snapshot, reportDeployment) as never,
       coverArtDataUri: coverArt.ok ? coverArt.asset.dataUri : null,
       edition: request.edition,
+      design,
     });
 
     assertSafeRenderResources(html, Deno.env.get('SUPABASE_URL') || '');
@@ -398,6 +418,7 @@ const __corsWrappedHandler = (async (req: Request): Promise<Response> => {
       brandGaps: gaps,
       reviewIncluded: Boolean(portfolio.review),
       durationMs,
+      design: designEcho,
     };
     return json(response);
   } catch (e) {

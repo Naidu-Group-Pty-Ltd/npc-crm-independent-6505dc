@@ -10,6 +10,7 @@
 import { useState } from 'react';
 import { toast } from 'sonner';
 import { deliverReportQaPdf } from '@/lib/reports/reportQa/deliverReportQaPdf';
+import { saveTemplateDocument } from '@/lib/reportTemplate/templateDocument';
 import type { ReportQaSubjectName } from '@/lib/reports/reportQa/requestReportQaPdf';
 
 export function useReportQaDelivery(args: {
@@ -42,7 +43,22 @@ export function useReportQaDelivery(args: {
       });
 
       if (options.email) onAttachToEmail?.(result.blob, result.fileName);
-      if (options.attach) onAttached?.();
+      if (options.attach) {
+        // Attached means a chat message now carries the file, and only the
+        // route's own answer says that. The route keeps a document it made
+        // even when the chat message could not be written, so an absent
+        // attachment is a real outcome: the file goes to downloads rather than
+        // nowhere, and the person is told which of the two happened.
+        if (!result.attachment) {
+          saveTemplateDocument({ blob: result.blob, fileName: result.fileName });
+          toast.warning('The document could not be added to this chat', {
+            description: `${result.fileName} was saved to your downloads instead. `
+              + 'Try adding it to the chat again, or attach it to an email from there.',
+          });
+          return;
+        }
+        onAttached?.();
+      }
 
       const notes: string[] = [];
       if (result.pageCount) notes.push(`${result.pageCount} pages`);

@@ -59,6 +59,17 @@ for it, and the `answers` its page needs on mount (vendor and model calls the
 double would otherwise leave unfulfilled). Artefacts land in
 `.verify/out/journey/<format>-<record8>-<template8>/`.
 
+Every format this runner drives keeps its own pages and wears the chosen
+template as its **design** (`templateParity.pure.ts`, `standardDesign.ts`), so
+its generate step is judged on the design path: exactly ONE call to the
+format's own route (`route` in `FORMATS`), carrying the chosen template as
+`design`, and NO `render-template-pdf`. The double answers each of the nine own
+routes with a stand-in PDF and a stored path, records the design it was sent,
+and echoes it back as applied — what the route then draws is proven where it is
+drawn (`templateDesignParity.spec.ts`), not here. A format released to its
+template's pages would name no `route` and fall back to the template branch
+(one final-mode render of the chosen template, measured clean).
+
 Fixture rows for these formats are arrays under the record's directory:
 
 ```

@@ -593,6 +593,13 @@ insufficient verified evidence" is gone from A's and C's cover and dashboard.
 
 ## §9 — RS-5c (14 Sep 2026): the nine other formats onto the fixed pattern
 
+> Since 26 Sep 2026 the nine are held from a template's pages
+> ([`TEMPLATE_PARITY.md`](./TEMPLATE_PARITY.md)): `tryTemplateDocument`
+> declines for them before it reads the choice, and each route draws its own
+> document in the chosen template's design. This section is the record of
+> RS-5c. Its rules still hold for Investment, and for any report type that is
+> released later.
+
 The inventory first (`RS-5b`, measured on the repository and the production
 ledgers). Every one of the nine formats — Borrowing Capacity, Portfolio,
 Property Comparison, 10 Year Cash Flow, Cash Flow Comparison, Client Details,

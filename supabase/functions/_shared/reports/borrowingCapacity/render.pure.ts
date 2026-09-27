@@ -45,6 +45,10 @@ import { REPORT_ARCHETYPES } from '../../reportDesign/structure.pure.ts';
 import type { ReportBrandSnapshot } from '../../reportDesign/snapshot.pure.ts';
 import type { CompanyDisclaimer } from '../../reportDesign/companyBlock.pure.ts';
 import { resolveSnapshotBrand } from '../../reportDesign/documentBrand.pure.ts';
+import {
+  withDesignOptions,
+  type ReportTemplateDesign,
+} from '../../reportDesign/templateDesign.pure.ts';
 
 import type { Measure } from '../../reportDesign/measure.pure.ts';
 import { formatAmount, formatDelta, formatMeasure, periodLabel } from '../../reportDesign/measure.pure.ts';
@@ -575,6 +579,13 @@ export interface RenderSnapshotFromBrandInput {
   options?: Partial<ReportDesignOptions> | null;
   edition?: string | null;
   reference?: string | null;
+  /**
+   * A chosen template's design (`templateDesign.pure.ts`). Its palette, faces
+   * and page treatment replace the brand's palette; every word on every page is
+   * still this composer's. Absent, and the document is the standard one byte
+   * for byte.
+   */
+  design?: ReportTemplateDesign | null;
 }
 
 /**
@@ -599,13 +610,13 @@ export function renderSnapshotFromBrand(input: RenderSnapshotFromBrandInput): Sn
   return {
     html: renderBorrowingCapacityDocument({
       payload: input.payload,
-      palette: brand.palette,
+      palette: input.design?.palette ?? brand.palette,
       company: brand.company,
       masthead: brand.masthead,
       lockup: brand.lockup,
       heroDataUri: brand.heroDataUri,
       confidentiality: brand.confidentiality,
-      options: input.options ?? null,
+      options: withDesignOptions(input.options, input.design),
       edition: input.edition ?? null,
       reference: input.reference ?? null,
     }),

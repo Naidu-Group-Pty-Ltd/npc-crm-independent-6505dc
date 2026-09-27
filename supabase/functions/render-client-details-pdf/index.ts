@@ -55,8 +55,10 @@ import { withRequestOrigin } from '../_shared/corsOrigin.ts';
 import { countPdfPagesAsync, renderPdf, weasyPrintConfig } from '../_shared/weasyprintClient.ts';
 import {
   buildReportBrandSnapshot,
+  issuerDisclaimerSetting,
   REPORT_SNAPSHOT_VERSION,
 } from '../_shared/reportDesign/snapshot.pure.ts';
+import { deploymentKind } from '../_shared/emailIdentity.pure.ts';
 import { inlineAsset } from '../_shared/reportDesign/assets.pure.ts';
 import { inlineBrandAssets } from '../_shared/reportDesign/fetchBrandAssets.ts';
 import {
@@ -64,6 +66,7 @@ import {
   ClientDetailsPayloadError,
 } from '../_shared/reports/clientDetails/normalise.pure.ts';
 import { renderClientDetailsFromBrand } from '../_shared/reports/clientDetails/render.pure.ts';
+import { resolveRequestedDesign } from '../_shared/reports/templateDesignRead.ts';
 import { clientDetailsSections } from '../_shared/reports/clientDetails/sections.pure.ts';
 import { enforceCsrf, csrfDenied } from "../_shared/csrfGuard.ts";
 import {
@@ -253,7 +256,12 @@ const __corsWrappedHandler = (async (req: Request): Promise<Response> => {
       );
     }
 
+    // A clone never prints the house's name, contact details or wording,
+    // whatever its settings rows say; the prime reads them as stored
+    // (`issuerIdentity.pure.ts`).
+    const reportDeployment = { prime: deploymentKind(Deno.env.get('SUPABASE_URL')) === 'prime' };
     const { snapshot, skippedAssets } = buildReportBrandSnapshot({
+      deployment: reportDeployment,
       whitelabel: whitelabel
         ? {
             id: String(whitelabel.id ?? ''),
@@ -311,13 +319,25 @@ const __corsWrappedHandler = (async (req: Request): Promise<Response> => {
     const coverArt = inlineAsset(logoConfig.cover ?? null);
     const reference = clientDetailsReference(request.clientId);
 
+    // The design the caller chose, if any. The words, figures and pages are
+    // the report's own whatever it names; a design that cannot be honoured is
+    // answered with the standard one and a sentence saying why, never with a
+    // failed document (`templateDesignRead.ts`).
+    const { design, echo: designEcho } = await resolveRequestedDesign(supabase, {
+      reference: request.design,
+      reportType: 'client_details',
+      actor: { userId: auth.userId, authMethod: auth.authMethod },
+      route: 'render-client-details-pdf',
+    });
+
     const { html, gaps } = renderClientDetailsFromBrand({
       details,
       snapshot,
-      disclaimer: settings.disclaimer as never,
+      disclaimer: issuerDisclaimerSetting(settings.disclaimer, snapshot, reportDeployment) as never,
       coverArtDataUri: coverArt.ok ? coverArt.asset.dataUri : null,
       edition: request.edition,
       reference,
+      design,
     });
 
     // The guard runs on HTML this function built, deliberately: the assets in it
@@ -400,6 +420,7 @@ const __corsWrappedHandler = (async (req: Request): Promise<Response> => {
       sections,
       propertyCount: details.meta.propertyCount,
       durationMs,
+      design: designEcho,
     };
     return json(response);
   } catch (e) {

@@ -46,7 +46,12 @@ vi.mock('../pdfRenderer', () => ({ renderTemplateToBlob: mocks.renderTemplateToB
 vi.mock('../templateSchema', () => ({ parseTemplate: (input: unknown) => input }));
 vi.mock('../rendering/productionTemplateGuard', () => ({ refuseUnboundReconstruction: () => null }));
 vi.mock('@/lib/secureInvoke', () => ({ invokeSecureFunction: vi.fn() }));
-vi.mock('@/integrations/supabase/env', () => ({ SUPABASE_URL: 'https://example.supabase.co' }));
+// The route asks which deployment it is on (`isPrimeDeployment`, for the cover
+// tagline guard), so the mock names the project its URL does.
+vi.mock('@/integrations/supabase/env', () => ({
+  SUPABASE_URL: 'https://example.supabase.co',
+  SUPABASE_PROJECT_REF: 'example',
+}));
 
 import { RenderServiceError } from '../weasyRenderClient';
 import {

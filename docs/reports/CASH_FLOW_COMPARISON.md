@@ -324,6 +324,16 @@ ids it was sent**: `propertyNumber` is the only handle the model has on a
 property in five of the eight sections, and it was the position of a row in an
 `.in()` result, an order the server never promises.
 
+**The model was handed figures nobody recorded** (release audit, 26 Sep 2026).
+A property with no stored interest rate or LVR went to the model as 5.5% and
+80%, and a missing price or weekly rent as 0, while the capital growth rate
+beside them was already sent as `null` "rather than assuming one". The model
+reads what it is handed as that property's own figure, so the analysis could
+state a rate and an LVR nobody had set. Every one of the five is now `null`
+when the record does not hold it, and the prompt says a null figure is one the
+record does not hold, to be named as not recorded and never computed from.
+`analysisRequest.spec.ts` pins both halves.
+
 ### There is still no salvager
 
 The natural reading of `COMPARISON.md` is "model output → build a salvage

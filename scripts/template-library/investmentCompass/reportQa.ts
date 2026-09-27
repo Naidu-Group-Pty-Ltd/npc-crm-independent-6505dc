@@ -130,7 +130,8 @@ function buildTemplate(family: DesignFamily, variant: VariantDefinition): Compas
   pages.push(cover({
     wordmarkTop: '{{org.name}}',
     wordmarkBottom: 'Report Q&A',
-    tagline: 'Your dedicated property partner',
+    // The issuer's line, never a literal: see `org.tagline` in organisationProjection.pure.ts.
+    tagline: '{{org.tagline}}',
     marker: 'Report Q&A',
     eyebrow: 'Report Q&A',
     // `coverTitle`, not `title`: a conversation's title is its first question,

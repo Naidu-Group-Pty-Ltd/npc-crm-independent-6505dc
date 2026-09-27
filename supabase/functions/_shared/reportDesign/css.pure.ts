@@ -30,7 +30,7 @@
  * Pure: sibling `.pure` imports only, no I/O, deterministic output for a given
  * input — which is what makes `reportGolden.spec.ts` possible.
  */
-import { hexToRgb01 } from './color.pure.ts';
+import { alpha, pt } from './cssUnits.pure.ts';
 import {
   DENSITY_METRICS,
   intensity,
@@ -55,6 +55,14 @@ import {
   PRINT_STACK,
   PROSE_NUMERIC_FEATURES,
 } from './typography.pure.ts';
+import {
+  designLayerOf,
+  UNIT_TYPE_FIT,
+  type ReportTypeFit,
+  type ReportTypography,
+  type TemplateDesignLayer,
+} from './templateDesign.pure.ts';
+import { templateDesignCss } from './templateDesignCss.pure.ts';
 
 export interface ReportCssInput {
   /** From `resolveReportPalette()` — or from the report's brand snapshot. */
@@ -69,13 +77,15 @@ export interface ReportCssInput {
    * every white-label tenant's report carry our name.
    */
   masthead: string;
-}
-
-/** `#RRGGBB` → `rgba(r,g,b,a)`, so a palette role can carry a tint. */
-function alpha(hex: string, a: number): string {
-  const [r, g, b] = hexToRgb01(hex);
-  const to255 = (v: number) => Math.round(v * 255);
-  return `rgba(${to255(r)},${to255(g)},${to255(b)},${Math.min(1, Math.max(0, a))})`;
+  /**
+   * A chosen template's design (`templateDesign.pure.ts`).
+   *
+   * Absent on every standard document, and then the sheet is byte for byte
+   * what it always was. When absent here it is read from the palette, which is
+   * where a design resolved by `resolveCatalogueDesign` carries it — so a
+   * renderer that passes its palette through unchanged needs no other change.
+   */
+  design?: TemplateDesignLayer | null;
 }
 
 /**
@@ -114,11 +124,6 @@ function cssString(value: string): string {
  */
 const COVER_ROW_WIDTH_MM = PAGE_SIZE.widthMm - 44;
 
-/** Trim `10.50pt` to `10.5pt`; keeps the golden readable and the output small. */
-function pt(value: number): string {
-  return `${Number(value.toFixed(2))}pt`;
-}
-
 /**
  * The `@page` block for one named page, expressed as its difference from the
  * base rule. `body` is the base and is emitted separately.
@@ -151,6 +156,8 @@ function pageRules(
   masthead: string,
   type: Record<string, number>,
   pressMarks: boolean,
+  S: ReportTypography,
+  F: ReportTypeFit,
 ): string {
   const base = marginsFor('body');
 
@@ -196,7 +203,7 @@ function pageRules(
 ${press}
     @top-left {
       content: string(chapter-eyebrow);
-      font-family: ${PRINT_STACK.mono};
+      font-family: ${S.mono};
       font-size: ${pt(type.micro)};
       letter-spacing: ${PRINT_TRACKING.widest};
       text-transform: uppercase;
@@ -207,14 +214,14 @@ ${press}
     }
     @top-right {
       content: string(chapter-title);
-      font-family: ${PRINT_STACK.accent};
+      font-family: ${S.accent};
       font-style: italic;
-      font-size: ${pt(type.caption)};
+      font-size: ${pt(type.caption * F.accent)};
       color: ${palette.mutedInk};
     }
     @bottom-left {
       content: ${cssString(masthead)};
-      font-family: ${PRINT_STACK.mono};
+      font-family: ${S.mono};
       font-size: ${pt(type.micro)};
       letter-spacing: ${PRINT_TRACKING.widest};
       text-transform: uppercase;
@@ -230,7 +237,7 @@ ${press}
     }
     @bottom-right {
       content: counter(page, decimal-leading-zero) " / " counter(pages, decimal-leading-zero);
-      font-family: ${PRINT_STACK.mono};
+      font-family: ${S.mono};
       font-size: ${pt(type.micro)};
       letter-spacing: ${PRINT_TRACKING.wide};
       color: ${palette.bodyInk};
@@ -262,6 +269,7 @@ function tableRules(
   palette: ResolvedReportPalette,
   options: ReportDesignOptions,
   type: Record<string, number>,
+  S: ReportTypography,
 ): string {
   const d = DENSITY_METRICS[options.density];
   const padY = pt(d.cellPadPt);
@@ -288,7 +296,7 @@ function tableRules(
   table.data caption {
     caption-side: top;
     text-align: left;
-    font-family: ${PRINT_STACK.mono};
+    font-family: ${S.mono};
     font-size: ${pt(type.micro)};
     letter-spacing: ${PRINT_TRACKING.eyebrow};
     text-transform: uppercase;
@@ -296,7 +304,7 @@ function tableRules(
     padding-bottom: 6pt;
   }
   table.data th {
-    font-family: ${PRINT_STACK.mono};
+    font-family: ${S.mono};
     font-size: ${pt(type.micro)};
     letter-spacing: ${PRINT_TRACKING.eyebrow};
     text-transform: uppercase;
@@ -313,7 +321,7 @@ function tableRules(
   /* The first cell of a row is a header cell — that is what makes the table
      navigable in a tagged PDF — but it must not look like the column head. */
   table.data th[scope="row"] {
-    font-family: ${PRINT_STACK.body};
+    font-family: ${S.body};
     font-size: inherit;
     font-weight: 500;
     letter-spacing: ${PRINT_TRACKING.normal};
@@ -392,6 +400,8 @@ function chapterRules(
   palette: ResolvedReportPalette,
   options: ReportDesignOptions,
   type: Record<string, number>,
+  S: ReportTypography,
+  F: ReportTypeFit,
 ): string {
   const d = DENSITY_METRICS[options.density];
   const i = intensity(options);
@@ -414,7 +424,7 @@ function chapterRules(
   .chapter-header { margin-bottom: ${pt(d.blockGapPt + 4)}; }
   .chapter-header .chapter-no {
     display: ${options.showSectionNumbers ? 'block' : 'none'};
-    font-family: ${PRINT_STACK.mono};
+    font-family: ${S.mono};
     font-size: ${pt(type.caption)};
     letter-spacing: ${PRINT_TRACKING.widest};
     line-height: 1;
@@ -422,16 +432,16 @@ function chapterRules(
     margin: 0 0 ${pt(d.blockGapPt)} 0;
   }
   .chapter-header h1 {
-    font-size: ${pt(type.h1)};
+    font-size: ${pt(type.h1 * F.display)};
     line-height: 1.18;
     max-width: 150mm;
     margin: 0;
   }
   .chapter-header .chapter-dek {
     margin-top: ${pt(d.paragraphGapPt + 5)};
-    font-family: ${PRINT_STACK.accent};
+    font-family: ${S.accent};
     font-style: italic;
-    font-size: ${pt(type.h3)};
+    font-size: ${pt(type.h3 * F.accent)};
     line-height: 1.35;
     color: ${palette.mutedInk};
     max-width: 140mm;
@@ -473,6 +483,7 @@ function coverRules(
   palette: ResolvedReportPalette,
   options: ReportDesignOptions,
   type: Record<string, number>,
+  S: ReportTypography,
 ): string {
   const i = intensity(options);
   // The hero sits under the type, so its opacity has a floor: at intensity 0 the
@@ -523,7 +534,7 @@ function coverRules(
        document for ours. */
     table-layout: fixed;
     width: ${COVER_ROW_WIDTH_MM}mm;
-    font-family: ${PRINT_STACK.mono};
+    font-family: ${S.mono};
     font-size: ${pt(type.micro + 0.5)};
     letter-spacing: ${PRINT_TRACKING.widest};
     text-transform: uppercase;
@@ -553,7 +564,7 @@ function coverRules(
     border-top: 1pt solid ${palette.accentOnField};
   }
   .report-cover .cover-eyebrow {
-    font-family: ${PRINT_STACK.mono};
+    font-family: ${S.mono};
     font-size: ${pt(type.caption)};
     letter-spacing: ${PRINT_TRACKING.widest};
     text-transform: uppercase;
@@ -573,7 +584,7 @@ function coverRules(
      public/fonts/Cinzel_Playfair_Display.zip, the same archive the Bold came
      from, the whole time. */
   .report-cover h1.cover-title {
-    font-family: ${PRINT_STACK.cover};
+    font-family: ${S.cover};
     font-weight: 400;
     font-size: ${pt(type.coverTitle)};
     line-height: 1.02;
@@ -600,7 +611,7 @@ function coverRules(
   .report-cover .cover-title em {
     display: block;
     margin-top: 3mm;
-    font-family: ${PRINT_STACK.accent};
+    font-family: ${S.accent};
     font-style: italic;
     font-weight: 400;
     font-size: 0.66em;
@@ -624,7 +635,7 @@ function coverRules(
     display: table;
     border-spacing: 7mm 5mm;
     margin-left: -7mm;
-    font-family: ${PRINT_STACK.mono};
+    font-family: ${S.mono};
     font-size: ${pt(type.micro + 0.5)};
     letter-spacing: ${PRINT_TRACKING.eyebrow};
     text-transform: uppercase;
@@ -640,7 +651,7 @@ function coverRules(
     letter-spacing: ${PRINT_TRACKING.widest};
   }
   .report-cover .cover-meta .val {
-    font-family: ${PRINT_STACK.body};
+    font-family: ${S.body};
     font-size: ${pt(type.body)};
     letter-spacing: ${PRINT_TRACKING.normal};
     text-transform: none;
@@ -655,7 +666,7 @@ function coverRules(
        reference printed as one run on the cover this fixes. */
     table-layout: fixed;
     width: ${COVER_ROW_WIDTH_MM}mm;
-    font-family: ${PRINT_STACK.mono};
+    font-family: ${S.mono};
     font-size: ${pt(type.micro)};
     letter-spacing: ${PRINT_TRACKING.widest};
     text-transform: uppercase;
@@ -713,11 +724,17 @@ function coverRules(
 export function buildReportCss(input: ReportCssInput): string {
   const palette = input.palette;
   const options = normalizeReportDesignOptions(input.options);
+  const layer = input.design ?? designLayerOf(palette);
+  // The five type roles: the design's where there is one, the house's otherwise.
+  const S: ReportTypography = layer?.typography ?? PRINT_STACK;
+  // Each display role's size against the house's; 1 throughout without a
+  // design, so every size below is the number it always was.
+  const F: ReportTypeFit = layer?.fit ?? UNIT_TYPE_FIT;
   const type = scaledType(options);
   const d = DENSITY_METRICS[options.density];
   const i = intensity(options);
 
-  return `${pageRules(palette, input.masthead, type, options.pressMarks)}
+  return `${pageRules(palette, input.masthead, type, options.pressMarks, S, F)}
 
   /* ── Foundation ─────────────────────────────────────────────────────── */
   html, body {
@@ -725,7 +742,7 @@ export function buildReportCss(input: ReportCssInput): string {
     padding: 0;
     background: ${palette.paper};
     color: ${palette.bodyInk};
-    font-family: ${PRINT_STACK.body};
+    font-family: ${S.body};
     font-size: ${pt(type.body)};
     line-height: ${d.leading};
     font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
@@ -805,7 +822,7 @@ export function buildReportCss(input: ReportCssInput): string {
 
   /* ── Typography ─────────────────────────────────────────────────────── */
   h1, h2, h3 {
-    font-family: ${PRINT_STACK.display};
+    font-family: ${S.display};
     color: ${palette.bodyInk};
     font-weight: 600;
     letter-spacing: ${PRINT_TRACKING.snug};
@@ -813,7 +830,7 @@ export function buildReportCss(input: ReportCssInput): string {
     margin: 0;
     page-break-after: avoid;
   }
-  h1 { font-size: ${pt(type.h1)}; }
+  h1 { font-size: ${pt(type.h1 * F.display)}; }
   /* ── A subhead is a different object from a chapter title ──────────────
      h1 and h2 shared face, colour, weight, tracking and line-height, and
      differed only in size and margin — so an h2 was a chapter title set
@@ -837,11 +854,11 @@ export function buildReportCss(input: ReportCssInput): string {
      system that moves it moves it. It stays above 14pt at every bodyScale,
      which keeps it in the display contrast band (see tokens.pure.ts). */
   h2 {
-    font-size: ${pt(type.subhead)};
+    font-size: ${pt(type.subhead * F.display)};
     font-weight: 500;
     margin: ${pt(d.blockGapPt + 12)} 0 ${pt(d.paragraphGapPt + 3)};
   }
-  h3 { font-size: ${pt(type.h3)}; margin: ${pt(d.blockGapPt)} 0 ${pt(d.paragraphGapPt - 1)}; }
+  h3 { font-size: ${pt(type.h3 * F.display)}; margin: ${pt(d.blockGapPt)} 0 ${pt(d.paragraphGapPt - 1)}; }
   /* ── Why there is no keep-together beyond the heading ──────────────────
      A subhead can still open a section in the last inch of a page:
      page-break-after:avoid promises only the *next* box, and when every
@@ -859,7 +876,7 @@ export function buildReportCss(input: ReportCssInput): string {
   /* h4 is the mono micro-label, not a smaller heading — it is the same object
      as .eyebrow and shares its colour so the two never drift apart. */
   h4 {
-    font-family: ${PRINT_STACK.mono};
+    font-family: ${S.mono};
     text-transform: uppercase;
     letter-spacing: ${PRINT_TRACKING.eyebrow};
     font-size: ${pt(type.caption)};
@@ -916,7 +933,7 @@ export function buildReportCss(input: ReportCssInput): string {
 
   strong { font-weight: 600; color: ${palette.bodyInk}; }
   em {
-    font-family: ${PRINT_STACK.accent};
+    font-family: ${S.accent};
     font-style: italic;
     font-size: 1.05em;
     /* Pinned, because only the 400 italic of the accent face ships.
@@ -974,7 +991,7 @@ ${options.showDropCaps
      face, and an initial in front of it reads as a mistake. */
   .chapter-body > p:first-of-type:not(.lede)::first-letter,
   .chapter-body > .lede + p::first-letter {
-    font-family: ${PRINT_STACK.display};
+    font-family: ${S.display};
     font-size: 2.1em;
     line-height: 1;
     padding-right: 1pt;
@@ -984,7 +1001,7 @@ ${options.showDropCaps
     : ''}
   /* ── Eyebrow — the brand's typographic signature ────────────────────── */
   .eyebrow {
-    font-family: ${PRINT_STACK.mono};
+    font-family: ${S.mono};
     font-size: ${pt(type.caption)};
     letter-spacing: ${PRINT_TRACKING.widest};
     text-transform: uppercase;
@@ -1007,7 +1024,7 @@ ${options.showDropCaps
   }
   .stat-card .stat-label {
     display: block;
-    font-family: ${PRINT_STACK.mono};
+    font-family: ${S.mono};
     font-size: ${pt(type.micro)};
     letter-spacing: ${PRINT_TRACKING.eyebrow};
     text-transform: uppercase;
@@ -1015,8 +1032,8 @@ ${options.showDropCaps
     margin-bottom: 3pt;
   }
   .stat-card .stat-value {
-    font-family: ${PRINT_STACK.display};
-    font-size: ${pt(type.h2 + 8)};
+    font-family: ${S.display};
+    font-size: ${pt((type.h2 + 8) * F.display)};
     line-height: 1.1;
     font-weight: 700;
     color: ${palette.bodyInk};
@@ -1032,9 +1049,9 @@ ${options.showDropCaps
   .stat-card .stat-headline { margin: 4pt 0 0; }
 
   .pull-quote {
-    font-family: ${PRINT_STACK.display};
+    font-family: ${S.display};
     font-style: italic;
-    font-size: ${pt(type.pullQuote)};
+    font-size: ${pt(type.pullQuote * F.display)};
     line-height: 1.25;
     ${EDITORIAL_NUMERIC_FEATURES}
     /* Same reason as em: pin the cut that ships rather than inherit a weight
@@ -1050,7 +1067,7 @@ ${options.showDropCaps
   .pull-quote cite {
     display: block;
     margin-top: ${pt(d.paragraphGapPt - 1)};
-    font-family: ${PRINT_STACK.mono};
+    font-family: ${S.mono};
     font-style: normal;
     font-size: ${pt(type.caption)};
     letter-spacing: ${PRINT_TRACKING.eyebrow};
@@ -1076,7 +1093,7 @@ ${options.showDropCaps
   }
   .kpi-strip .kpi:last-child { border-right: 0; }
   .kpi .kpi-label {
-    font-family: ${PRINT_STACK.mono};
+    font-family: ${S.mono};
     font-size: ${pt(type.micro)};
     letter-spacing: ${PRINT_TRACKING.eyebrow};
     text-transform: uppercase;
@@ -1084,8 +1101,8 @@ ${options.showDropCaps
     margin-bottom: 6pt;
   }
   .kpi .kpi-value {
-    font-family: ${PRINT_STACK.display};
-    font-size: ${pt(type.h2 + 2)};
+    font-family: ${S.display};
+    font-size: ${pt((type.h2 + 2) * F.display)};
     /* Not 1. A KPI value is usually a figure on one line, where a leading of
        exactly the em is the right tight setting — but table-layout: fixed
        divides the strip evenly, so a six-cell strip gives each value about
@@ -1099,7 +1116,7 @@ ${options.showDropCaps
   }
   /* Five or more cells — see KPI_DENSE_FROM. The step down is what stops a
      28mm cell breaking "House" into "Hous / e". */
-  .kpi-strip.dense .kpi-value { font-size: ${pt(type.subhead)}; }
+  .kpi-strip.dense .kpi-value { font-size: ${pt(type.subhead * F.display)}; }
   .kpi-strip.dense .kpi { padding: ${pt(d.cellPadPt + 4)} ${pt(d.cellPadPt + 4)}; }
   .kpi .kpi-value.pos { color: ${palette.positive}; }
   .kpi .kpi-value.neg { color: ${palette.negative}; }
@@ -1159,7 +1176,7 @@ ${(Object.entries(GRID_SPANS) as Array<[string, number]>)
   }
   .sidenote .sidenote-label {
     display: block;
-    font-family: ${PRINT_STACK.mono};
+    font-family: ${S.mono};
     font-size: ${pt(type.micro)};
     letter-spacing: ${PRINT_TRACKING.eyebrow};
     text-transform: uppercase;
@@ -1180,7 +1197,7 @@ ${(Object.entries(GRID_SPANS) as Array<[string, number]>)
   }
   .callout .callout-label {
     display: block;
-    font-family: ${PRINT_STACK.mono};
+    font-family: ${S.mono};
     font-size: ${pt(type.micro)};
     letter-spacing: ${PRINT_TRACKING.eyebrow};
     text-transform: uppercase;
@@ -1221,7 +1238,7 @@ ${(Object.entries(GRID_SPANS) as Array<[string, number]>)
   }
   .glance .glance-label {
     display: block;
-    font-family: ${PRINT_STACK.mono};
+    font-family: ${S.mono};
     font-size: ${pt(type.micro)};
     letter-spacing: ${PRINT_TRACKING.eyebrow};
     text-transform: uppercase;
@@ -1248,7 +1265,7 @@ ${(Object.entries(GRID_SPANS) as Array<[string, number]>)
     position: absolute;
     left: 0;
     top: 0.1em;
-    font-family: ${PRINT_STACK.mono};
+    font-family: ${S.mono};
     font-size: ${pt(type.micro)};
     letter-spacing: ${PRINT_TRACKING.eyebrow};
     text-transform: uppercase;
@@ -1271,7 +1288,7 @@ ${(Object.entries(GRID_SPANS) as Array<[string, number]>)
   }
   .decision-box .decision-label {
     display: block;
-    font-family: ${PRINT_STACK.mono};
+    font-family: ${S.mono};
     font-size: ${pt(type.micro)};
     letter-spacing: ${PRINT_TRACKING.widest};
     text-transform: uppercase;
@@ -1310,7 +1327,7 @@ ${(Object.entries(GRID_SPANS) as Array<[string, number]>)
   }
   .contents .toc-no {
     width: 12%;
-    font-family: ${PRINT_STACK.mono};
+    font-family: ${S.mono};
     font-size: ${pt(type.micro)};
     letter-spacing: ${PRINT_TRACKING.wide};
     color: ${palette.accentOnPaper};
@@ -1324,7 +1341,7 @@ ${(Object.entries(GRID_SPANS) as Array<[string, number]>)
   .contents .toc-page {
     width: 8%;
     text-align: right;
-    font-family: ${PRINT_STACK.mono};
+    font-family: ${S.mono};
     font-size: ${pt(type.micro)};
     color: ${palette.mutedInk};
     ${NUMERIC_FEATURES}
@@ -1338,7 +1355,7 @@ ${(Object.entries(GRID_SPANS) as Array<[string, number]>)
     display: table-cell;
     vertical-align: middle;
     padding-left: 4mm;
-    font-family: ${PRINT_STACK.mono};
+    font-family: ${S.mono};
     font-size: ${pt(type.micro + 0.5)};
     letter-spacing: ${PRINT_TRACKING.widest};
     text-transform: uppercase;
@@ -1363,7 +1380,7 @@ ${(Object.entries(GRID_SPANS) as Array<[string, number]>)
     page-break-before: always;
   }
   .company-page .company-name {
-    font-family: ${PRINT_STACK.cover};
+    font-family: ${S.cover};
     /* SemiBold, and stating it is not decoration: an unstated weight is a 400
        request, and a request the image cannot answer exactly is how a face gets
        synthesised.
@@ -1372,7 +1389,7 @@ ${(Object.entries(GRID_SPANS) as Array<[string, number]>)
        wordmark set smaller than the title and it has to hold the page on its
        own, where the title has a whole sheet of furniture around it. */
     font-weight: 600;
-    font-size: ${pt(type.h1 - 4)};
+    font-size: ${pt((type.h1 - 4) * F.cover)};
     line-height: 1.05;
     color: ${palette.accentOnField};
     margin: 0 0 ${pt(d.blockGapPt + 6)};
@@ -1380,7 +1397,7 @@ ${(Object.entries(GRID_SPANS) as Array<[string, number]>)
   }
   .company-page .company-name .tail {
     display: block;
-    font-family: ${PRINT_STACK.mono};
+    font-family: ${S.mono};
     font-size: ${pt(type.h3 - 1)};
     letter-spacing: ${PRINT_TRACKING.widest};
     text-transform: uppercase;
@@ -1392,7 +1409,7 @@ ${(Object.entries(GRID_SPANS) as Array<[string, number]>)
   .company-page .contact-row > * { display: table-cell; padding: ${pt(d.cellPadPt)} 0; }
   .company-page .contact-label {
     width: 26mm;
-    font-family: ${PRINT_STACK.mono};
+    font-family: ${S.mono};
     font-size: ${pt(type.micro)};
     letter-spacing: ${PRINT_TRACKING.eyebrow};
     text-transform: uppercase;
@@ -1432,7 +1449,7 @@ ${(Object.entries(GRID_SPANS) as Array<[string, number]>)
   .chart-figure.chart-compact { width: 60.5%; }
   .chart-figure figcaption {
     margin-top: 6pt;
-    font-family: ${PRINT_STACK.mono};
+    font-family: ${S.mono};
     font-size: ${pt(type.micro)};
     letter-spacing: ${PRINT_TRACKING.eyebrow};
     text-transform: uppercase;
@@ -1447,9 +1464,9 @@ ${(Object.entries(GRID_SPANS) as Array<[string, number]>)
   .num { ${NUMERIC_FEATURES} }
   .muted { color: ${palette.mutedInk}; }
   .lede {
-    font-family: ${PRINT_STACK.accent};
+    font-family: ${S.accent};
     font-style: italic;
-    font-size: ${pt(type.bodyLg + 1)};
+    font-size: ${pt((type.bodyLg + 1) * F.accent)};
     line-height: 1.4;
     ${EDITORIAL_NUMERIC_FEATURES}
     font-weight: 400;
@@ -1457,11 +1474,11 @@ ${(Object.entries(GRID_SPANS) as Array<[string, number]>)
     margin-bottom: ${pt(d.blockGapPt)};
     text-align: left;
   }
-${tableRules(palette, options, type)}
-${chapterRules(palette, options, type)}
-${coverRules(palette, options, type)}
+${tableRules(palette, options, type, S)}
+${chapterRules(palette, options, type, S, F)}
+${coverRules(palette, options, type, S)}
 ${raisedRules(palette, options, type)}
-`;
+${templateDesignCss(layer, palette, options, type)}`;
 }
 
 /**

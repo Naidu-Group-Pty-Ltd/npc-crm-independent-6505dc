@@ -24,6 +24,12 @@
  * it says so, naming the buttons that do.
  */
 import { invokeSecureFunction } from '@/lib/secureInvoke';
+import {
+  announceDesignOutcome,
+  designBody,
+  standardDesignFor,
+  type StandardDesignRequest,
+} from '@/lib/reportTemplate/standardDesign';
 import { looksUndeployed } from '../undeployedRoute';
 
 export interface ClientDetailsPdfResult {
@@ -53,16 +59,21 @@ const UNDEPLOYED_MESSAGE =
 export async function requestClientDetailsPdf(
   clientId: string,
   edition?: string | null,
+  /** The design to draw in (`standardDesign.ts`); omitted, the person's own choice is read. */
+  options: { design?: StandardDesignRequest | null } = {},
 ): Promise<ClientDetailsPdfResult> {
+  const design = await standardDesignFor('client_details', options.design);
   const { data, error } = await invokeSecureFunction('render-client-details-pdf', {
     clientId,
     edition: edition ?? null,
+    ...designBody(design),
     // The largest real record runs to 26 pages across nine tables and WeasyPrint
     // is a network hop; generous against the worst case rather than the median.
     // The legacy's own cap was two minutes and it was reached.
   }, { timeoutMs: 180_000 });
 
   if (!error && data?.url) {
+    announceDesignOutcome(design, data.design);
     return {
       url: String(data.url),
       fileName: String(data.fileName ?? 'Client_Details.pdf'),

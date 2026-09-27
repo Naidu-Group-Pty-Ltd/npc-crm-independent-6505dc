@@ -6,6 +6,11 @@
  * four reads, a render, an upload and two writes, none of which a unit test can
  * reach.
  */
+import {
+  readTemplateDesignReference,
+  type DesignEcho,
+  type TemplateDesignReference,
+} from '../../reportDesign/templateDesign.pure.ts';
 import { MAX_COMPARED_PROPERTIES, MIN_COMPARED_PROPERTIES } from './payload.pure.ts';
 
 /** One property, as the caller sends it. */
@@ -34,6 +39,12 @@ export interface ComparisonRenderRequest {
   analysis: unknown;
   /** `VOL. 2026 · ED. 08`. Cosmetic; the caller may supply it. */
   edition: string | null;
+  /**
+   * The design to draw the document in (`templateDesign.pure.ts`): a catalogue
+   * design or a template row, or null for the standard design. The words,
+   * figures and pages are the report's own whatever is named here.
+   */
+  design: TemplateDesignReference | null;
 }
 
 export type RequestParse =
@@ -98,6 +109,10 @@ export function parseRenderRequest(body: unknown): RequestParse {
     ? b.investorProfile.trim().slice(0, 40)
     : '';
   const edition = typeof b.edition === 'string' ? b.edition.trim().slice(0, 40) : '';
+  // A design is optional, and a malformed one is refused rather than ignored,
+  // so a caller that meant to ask for one is told it did not get it.
+  const design = readTemplateDesignReference(b.design);
+  if (design.ok === false) return { ok: false, error: design.error };
 
   return {
     ok: true,
@@ -109,6 +124,7 @@ export function parseRenderRequest(body: unknown): RequestParse {
       // not generate one. `toAnalysis` returns null for each.
       analysis: b.analysis ?? null,
       edition: edition || null,
+      design: design.reference,
     },
   };
 }
@@ -180,4 +196,10 @@ export interface ComparisonRenderResponse {
   /** Which of the eight model sections did not arrive. Empty with no analysis. */
   missingSections: string[];
   durationMs: number;
+  /**
+   * The design the document was drawn in, or why the one asked for was not
+   * used — in that case the document is the standard design. Null when none
+   * was asked for.
+   */
+  design: DesignEcho | null;
 }

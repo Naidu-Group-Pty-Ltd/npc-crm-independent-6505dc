@@ -150,6 +150,28 @@ export async function loadIssuerLook(
   return { mark, family };
 }
 
+/**
+ * The issuer's marks alone, for a document whose colours come from somewhere
+ * else — a template design somebody chose (`legacyDocumentBrand.ts`).
+ *
+ * `onPaper` is the mark for a light ground: the Branding page's full-colour
+ * mark, or the platform's emblem. The knockout mark a dark ground takes is
+ * drawn for a dark field, and on paper it can be a white shape on a white
+ * sheet — so a cover drawn on paper asks for this one, and a cover with no
+ * paper does not read it at all.
+ */
+export async function loadIssuerMarks(
+  issuer: ReportIssuer,
+  deps: StandardPresentationBrandDeps = DEFAULT_DEPS,
+  want: { onPaper: boolean } = { onPaper: false },
+): Promise<{ mark: InvestmentPdfPicture | null; paperMark: InvestmentPdfPicture | null }> {
+  const [mark, paperMark] = await Promise.all([
+    issuerMark(issuer, deps),
+    want.onPaper ? issuerPaperMark(issuer, deps) : Promise.resolve(null),
+  ]);
+  return { mark, paperMark };
+}
+
 /** Whether this build is the prime's, read safely — the rule `isPrimeDeployment` states. */
 export function isPrimeBuild(deps: StandardPresentationBrandDeps = DEFAULT_DEPS): boolean {
   return isPrime(deps);
@@ -190,6 +212,20 @@ async function issuerMark(
     return marks.markMono ? await deps.picture(marks.markMono) : null;
   } catch (err) {
     console.warn('[standardPresentationBrand] the issuer mark could not be read', err);
+    return null;
+  }
+}
+
+async function issuerPaperMark(
+  issuer: ReportIssuer,
+  deps: StandardPresentationBrandDeps,
+): Promise<InvestmentPdfPicture | null> {
+  try {
+    if (issuer.kind === 'platform') return await deps.staticPicture(PLATFORM_COVER_MARK);
+    const marks = await deps.loadBrandMarks();
+    return marks.mark ? await deps.picture(marks.mark) : null;
+  } catch (err) {
+    console.warn('[standardPresentationBrand] the issuer mark for paper could not be read', err);
     return null;
   }
 }

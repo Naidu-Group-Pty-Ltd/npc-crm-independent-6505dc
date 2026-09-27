@@ -7,6 +7,11 @@
  * path a file lands at are testable, and they are the parts with a contract to
  * keep.
  */
+import {
+  readTemplateDesignReference,
+  type DesignEcho,
+  type TemplateDesignReference,
+} from '../../reportDesign/templateDesign.pure.ts';
 
 /**
  * Only these are accepted from the caller. Everything else is read server-side.
@@ -37,6 +42,12 @@ export interface CapacityRenderRequest {
   refreshAnalysis: boolean;
   /** `VOL. 2026 · ED. 08`. Cosmetic; the caller may supply it. */
   edition: string | null;
+  /**
+   * The design to draw the document in (`templateDesign.pure.ts`): a catalogue
+   * design or a template row, or null for the standard design. The words,
+   * figures and pages are the report's own whatever is named here.
+   */
+  design: TemplateDesignReference | null;
 }
 
 export type RequestParse =
@@ -53,6 +64,10 @@ export function parseCapacityRequest(body: unknown): RequestParse {
   if (!UUID.test(assessmentId)) return { ok: false, error: 'assessmentId must be a uuid' };
 
   const edition = typeof b.edition === 'string' ? b.edition.trim().slice(0, 40) : '';
+  // A design is optional, and a malformed one is refused rather than ignored,
+  // so a caller that meant to ask for one is told it did not get it.
+  const design = readTemplateDesignReference(b.design);
+  if (design.ok === false) return { ok: false, error: design.error };
 
   return {
     ok: true,
@@ -63,6 +78,7 @@ export function parseCapacityRequest(body: unknown): RequestParse {
       includeAnalysis: b.includeAnalysis !== false,
       refreshAnalysis: b.refreshAnalysis === true,
       edition: edition || null,
+      design: design.reference,
     },
   };
 }
@@ -143,4 +159,10 @@ export interface CapacityRenderResponse {
    */
   analysisNote: string | null;
   durationMs: number;
+  /**
+   * The design the document was drawn in, or why the one asked for was not
+   * used — in that case the document is the standard design. Null when none
+   * was asked for.
+   */
+  design: DesignEcho | null;
 }

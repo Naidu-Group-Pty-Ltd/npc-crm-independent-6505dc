@@ -29,6 +29,19 @@
  * never a name a settings row can hold: a clone seeded from the prime's rows
  * holds NPC's name, and must still not print it.
  *
+ * ## A template design somebody chose
+ *
+ * Some of these documents have no template of their own and wear the design
+ * chosen for the report type they are made from (`drawnDocumentDesign.ts`).
+ * A design is a choice to leave the house artwork: NPC's cover is a finished
+ * picture in NPC's gold and navy, and no colourway can be applied to it. So a
+ * document given a design is drawn in the issuer's template on EVERY
+ * deployment, the prime included, with the design's colours in place of the
+ * brand's and its cover's ground, frame and faces. On the prime the issuer is
+ * still the house — its name, its contact details, its disclaimer — because a
+ * design changes how a document looks and never whose it is. With no design,
+ * nothing here changes: the prime draws its artwork and reads nothing.
+ *
  * Never throws: a read that fails is an unset setting, a mark that cannot be
  * read is a cover without one.
  */
@@ -36,6 +49,7 @@ import {
   DEFAULT_DEPS,
   isPrimeBuild,
   loadIssuerLook,
+  loadIssuerMarks,
   type StandardPresentationBrandDeps,
 } from './investment/standardPresentationBrand';
 import type { InvestmentPdfPicture } from './investment/investmentPdfPictures';
@@ -49,6 +63,7 @@ import {
   type ReportIssuer,
 } from './issuerIdentity.pure';
 import type { BrandFamily } from '@/lib/reportDesign/brandFamily.pure';
+import { isLightGround, lockupGround, type DrawnDocumentDesign } from '@/lib/reportDesign/drawnDesign.pure';
 import { toRgb255 } from '@/lib/reportDesign/brandFamily.pure';
 import { hexToHsl } from '@/lib/reportDesign/color.pure';
 import type { ResolvedReportPalette } from '@/lib/reportDesign/roles.pure';
@@ -59,14 +74,22 @@ export interface HouseLegacyBrand {
   deployment: IssuerDeployment;
 }
 
-/** A clone: the issuer's own template for the same document. */
+/** A clone, or any document given a design: the issuer's own template for the same document. */
 export interface IssuerLegacyBrand {
   artwork: 'issuer';
   deployment: IssuerDeployment;
   issuer: ReportIssuer;
+  /** The issuer's brand family — or, with a design, the design's (`familyFromDesignPalette`). */
   family: BrandFamily;
   /** The issuer's mark for a dark ground, or the platform's emblem; null where there is none. */
   mark: InvestmentPdfPicture | null;
+  /**
+   * The template design the document is drawn in; absent for the issuer's own
+   * brand. The cover takes its ground, frame and faces.
+   */
+  design?: DrawnDocumentDesign | null;
+  /** The issuer's mark for a light ground — read only where a design sets the lockup on one. */
+  paperMark?: InvestmentPdfPicture | null;
 }
 
 export type LegacyDocumentBrand = HouseLegacyBrand | IssuerLegacyBrand;
@@ -84,18 +107,54 @@ export type LegacyDocumentBrand = HouseLegacyBrand | IssuerLegacyBrand;
 export async function loadLegacyDocumentBrand(
   contactCompanyName: unknown | (() => Promise<unknown>),
   deps: StandardPresentationBrandDeps = DEFAULT_DEPS,
+  design: DrawnDocumentDesign | null = null,
 ): Promise<LegacyDocumentBrand> {
   const deployment: IssuerDeployment = { prime: isPrimeBuild(deps) };
-  if (deployment.prime) return { artwork: 'house', deployment };
+  if (deployment.prime && !design) return { artwork: 'house', deployment };
+  const issuer = await readIssuer(contactCompanyName, deps, deployment);
+  if (!design) {
+    const { mark, family } = await loadIssuerLook(issuer, deps);
+    return { artwork: 'issuer', deployment, issuer, family, mark };
+  }
+  // The design supplies the colours, so the brand colour is not read.
+  const { mark, paperMark } = await loadIssuerMarks(issuer, deps, { onPaper: isLightGround(lockupGround(design)) });
+  return { artwork: 'issuer', deployment, issuer, family: design.family, mark, design, paperMark };
+}
+
+/** The issuer, from the contact company name and the Branding page's name, in that order. */
+async function readIssuer(
+  contactCompanyName: unknown | (() => Promise<unknown>),
+  deps: StandardPresentationBrandDeps,
+  deployment: IssuerDeployment,
+): Promise<ReportIssuer> {
   const [companyName, brandName] = await Promise.all([
     typeof contactCompanyName === 'function'
       ? Promise.resolve().then(contactCompanyName as () => Promise<unknown>).catch(() => null)
       : contactCompanyName,
     deps.loadOrganisation().then((row) => row?.company_name ?? null, () => null),
   ]);
-  const issuer = resolveReportIssuer({ companyName, brandName }, deployment);
-  const { mark, family } = await loadIssuerLook(issuer, deps);
-  return { artwork: 'issuer', deployment, issuer, family, mark };
+  return resolveReportIssuer({ companyName, brandName }, deployment);
+}
+
+/**
+ * The business a clone's document names, for a document that carries its
+ * issuer's NAME and nothing else of the issuer's template — the intake pack,
+ * whose approved files name the house (`packPresentation.ts`).
+ *
+ * `undefined` on the prime, which reads nothing: the house names itself, as
+ * it always has. On a clone, the business the clone's settings name — the same
+ * resolver, in the same order, as every other document's issuer — or null
+ * where they name nobody. Never the platform: Aurixa issues an unbranded
+ * document, but it is not a party to anybody's client form. Never throws; a
+ * setting that cannot be read is one that names nobody.
+ */
+export async function loadCloneIssuerName(
+  contactCompanyName: unknown | (() => Promise<unknown>),
+  deps: StandardPresentationBrandDeps = DEFAULT_DEPS,
+): Promise<string | null | undefined> {
+  if (isPrimeBuild(deps)) return undefined;
+  const issuer = await readIssuer(contactCompanyName, deps, { prime: false });
+  return issuer.kind === 'workspace' ? issuer.name : null;
 }
 
 /**
@@ -177,6 +236,18 @@ export function issuerSectionColours(family: BrandFamily): {
     goldOnNavy: toRgb255(family.onDeep),
     navy: toRgb255(family.deep),
   };
+}
+
+/**
+ * The face a document's headings are set in.
+ *
+ * Helvetica, as every one of these documents has always set them — on the
+ * prime and on a clone alike — unless a design sets its headings in a serif,
+ * when they are set in Times (`drawnDesign.pure.ts`). Never Courier: a heading
+ * is placed for Helvetica's widths, and Courier is wider.
+ */
+export function headingFaceFor(brand: LegacyDocumentBrand): 'helvetica' | 'times' {
+  return brand.artwork === 'issuer' && brand.design?.faces.heading === 'times' ? 'times' : 'helvetica';
 }
 
 /** A family colour as the `[r, g, b]` triple jsPDF's colour setters spread. */

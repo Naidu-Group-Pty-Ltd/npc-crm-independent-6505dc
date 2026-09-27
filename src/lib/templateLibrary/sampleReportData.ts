@@ -1191,6 +1191,15 @@ export const SAMPLE_REPORT_DATA: Record<string, unknown> = {
 
   org: {
     name: 'Meridian Property Advisory',
+    /*
+     * The line every master's cover sets under the wordmark. The masters bind
+     * it rather than carrying the house's own words (`org.tagline` in
+     * `organisationProjection.pure.ts`), so the preview needs a producer like
+     * every other bound path. Meridian's own line, never the house's, and one
+     * character longer than the only tagline a real document carries, so the
+     * geometry gate measures a cover at least as full as any that prints.
+     */
+    tagline: 'Independent advice for investors',
     abn: '42 618 305 774',
     address: 'Level 8, 120 Sussex Street, Sydney NSW 2000',
     phone: '(02) 8005 4120',

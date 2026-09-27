@@ -32,6 +32,7 @@ import { contrastRatio, hexToRgb01, mixHex } from './color.pure.ts';
 import type { ResolvedReportPalette } from './roles.pure.ts';
 import { CONTRAST_FLOOR, PRINT_SCALE } from './tokens.pure.ts';
 import { PRINT_STACK } from './typography.pure.ts';
+import { designLayerOf, type ReportTypeFit, type ReportTypography } from './templateDesign.pure.ts';
 import { contentWidthMm, spanWidthMm, type GridSpan } from './page.pure.ts';
 
 // ── Geometry and the size problem ───────────────────────────────────────────
@@ -159,13 +160,43 @@ export interface ChartContext {
   palette: ChartPalette;
   /** Printed width, for the point conversion. Defaults to the body measure. */
   widthMm: number;
+  /**
+   * The type roles a chosen design sets (`templateDesign.pure.ts`).
+   *
+   * Absent on every standard document, which then sets its labels in the house
+   * stacks exactly as before. Read from the palette, where a design carries it,
+   * so a chart drawn inside a designed document speaks in that document's
+   * faces rather than in the house's.
+   */
+  stack?: ReportTypography;
+  /**
+   * Each display role's size against the house's, from the same design. A
+   * chart's title and hero figure are display type, and a wider display face
+   * set at the house size overruns the advance this module budgets for it.
+   */
+  fit?: ReportTypeFit;
+}
+
+/** The palette's colours for a chart, and the design's faces where it has one. */
+function contextFor(palette: ResolvedReportPalette, widthMm: number): ChartContext {
+  const layer = designLayerOf(palette);
+  return layer
+    ? { palette: chartPalette(palette), widthMm, stack: layer.typography, fit: layer.fit }
+    : { palette: chartPalette(palette), widthMm };
+}
+
+/** The size factor for text set in one stack. 1 for body and mono, and everywhere without a design. */
+function fitOf(ctx: ChartContext, stack: keyof typeof PRINT_STACK): number {
+  const fit = ctx.fit;
+  if (!fit) return 1;
+  return stack === 'display' || stack === 'accent' || stack === 'cover' ? fit[stack] : 1;
 }
 
 export function chartContext(
   palette: ResolvedReportPalette,
   widthMm: number = CHART_TARGET_WIDTH_MM,
 ): ChartContext {
-  return { palette: chartPalette(palette), widthMm };
+  return contextFor(palette, widthMm);
 }
 
 /**
@@ -181,7 +212,7 @@ export function chartContextForSpan(
   palette: ResolvedReportPalette,
   span: GridSpan,
 ): ChartContext {
-  return { palette: chartPalette(palette), widthMm: spanWidthMm(span) };
+  return contextFor(palette, spanWidthMm(span));
 }
 
 // ── Guards ──────────────────────────────────────────────────────────────────
@@ -360,12 +391,12 @@ function text(
   },
   content: string,
 ): string {
-  const size = ptToUnits(CHART_TEXT_PT[opts.pt], vb, ctx.widthMm);
+  const size = ptToUnits(CHART_TEXT_PT[opts.pt] * fitOf(ctx, opts.stack ?? 'body'), vb, ctx.widthMm);
   const attrs = [
     `x="${opts.x.toFixed(1)}"`,
     `y="${opts.y.toFixed(1)}"`,
     opts.anchor ? `text-anchor="${opts.anchor}"` : '',
-    `font-family="${PRINT_STACK[opts.stack ?? 'body']}"`,
+    `font-family="${(ctx.stack ?? PRINT_STACK)[opts.stack ?? 'body']}"`,
     `font-size="${size}"`,
     opts.weight ? `font-weight="${opts.weight}"` : '',
     opts.tracking ? `letter-spacing="${ptToUnits(opts.tracking, vb, ctx.widthMm)}"` : '',

@@ -18,6 +18,7 @@ import { describe, expect, it, vi } from 'vitest';
 import {
   highlightColourFor,
   issuerClosingPage,
+  loadCloneIssuerName,
   loadLegacyDocumentBrand,
   rgbObject,
   rgbTriple,
@@ -369,5 +370,32 @@ describe("the issuer's cover, drawn in jsPDF", () => {
     const { ops } = draw({ issuerName: PLATFORM_ISSUER_NAME, family: resolveBrandFamily(null) });
     expect(ops).toContain('(AURIXA SYSTEMS) Tj');
     expect(ops).not.toMatch(/NAIDU|NPC SERVICES/);
+  });
+});
+
+describe("a clone's business, for a document that carries only its issuer's name", () => {
+  // The intake pack (`packPresentation.ts`): its approved files name the house,
+  // and a clone's copy names the clone's business there instead — or nobody.
+  it('is nothing to decide on the prime, which names itself and reads nothing', async () => {
+    const prime = deps({ prime: () => true });
+    const read = vi.fn(async () => 'Coastline Realty');
+    expect(await loadCloneIssuerName(read, prime)).toBeUndefined();
+    expect(read).not.toHaveBeenCalled();
+    expect(prime.loadOrganisation).not.toHaveBeenCalled();
+  });
+
+  it('is the business the clone names, in the order every issuer is read', async () => {
+    expect(await loadCloneIssuerName('Coastline Realty', deps())).toBe('Coastline Realty');
+    const branded = deps({ loadOrganisation: vi.fn(async () => ({ company_name: 'Harbour & Vine' })) });
+    expect(await loadCloneIssuerName('', branded)).toBe('Harbour & Vine');
+    expect(await loadCloneIssuerName(async () => 'Coastline Realty', branded)).toBe('Coastline Realty');
+  });
+
+  it('is nobody — never the house and never the platform — where the clone names nobody', async () => {
+    for (const name of ['', 'Naidu Property Consulting Services', 'NPC Services', 'Property Consulting']) {
+      expect(await loadCloneIssuerName(name, deps())).toBeNull();
+    }
+    const failing = deps({ loadOrganisation: vi.fn(async () => { throw new Error('offline'); }) });
+    expect(await loadCloneIssuerName(async () => { throw new Error('offline'); }, failing)).toBeNull();
   });
 });

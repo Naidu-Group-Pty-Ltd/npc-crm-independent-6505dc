@@ -280,9 +280,12 @@ a photograph that no record says is of the report's address.
 - **A real capture has not run.** It needs the function deployed and an
   extraction of a live listing. It is PENDING until someone does that and reads
   the PDF: the cover should be the listing's lead photograph.
-- **Photographs are not removed when a report is deleted.** The folder stays,
-  as the image library's files do; at about 4 MB a report it is recorded rather
-  than built.
+- **Deleting a report now removes its photographs.** Since #2780 (merged and
+  published 26 Sep 2026), deleting a report removes its photographs, plans and
+  kept document. It never removes the rendered PDF, which a client portal may
+  hold. The rules are in `WHITE_LABEL_DOCUMENTS.md` §14. Folders left by
+  reports deleted before then remain; clearing them is a destructive sweep and
+  waits for the owner's decision.
 - **How many existing listing reports rule 4 withholds photographs from.** A
   report whose address was written in a form `isSameProperty` cannot match to
   its listing loses its photographs, on the conservative side. Measuring that
@@ -334,13 +337,25 @@ no picture of a similar house. The binding has no fallback.
 
 ### Not verified
 
-- **A real report drawn through one of these covers.** It needs the two
-  migrations applied (`20261222090000` seed, then `20261222100000`
-  refresh, through the reviewed workflow), a report whose photographs pass
-  §3, and the PDF read. PENDING.
-- **The Claude Design catalogue does not draw it.** The slot is composed in
-  code from a ground the catalogue declares. `source.json` is untouched, so
-  the Design file still shows these covers without a photograph.
+- **A real report drawn through one of these covers.** Both migrations
+  (`20261222090000` seed, then `20261222100000` refresh) have been applied
+  through the reviewed workflow. What remains is a report whose photographs
+  pass §3, and reading its PDF. PENDING (close-out step 1.1).
+- **The Claude Design catalogue, read from here.** The slot is composed in
+  code from a ground the catalogue declares, and `source.json` is untouched.
+  On 26 Sep 2026 the owner reported the catalogue updated to match:
+  - Private Banking, Modern Fintech, Dark Executive and Wealth Management each
+    have an "A · Cover — with the report's photograph" page with an empty
+    image slot.
+  - Institutional Research, Corporate Advisory and Data / Analyst carry a
+    one-line note that the photograph sits inside the band.
+  - Every family has a "Floor plan" page (§9).
+  - `Template Catalogue.dc.html` is unchanged.
+
+  That is the owner's report. It was not read from this repository: the
+  project is not a design-system project, so the design-sync tool cannot list
+  it. The catalogue is the design record. The generator still composes the
+  photograph from code.
 
 ## 8. A report made from a PDF brochure
 
@@ -602,8 +617,11 @@ Parsed out of the v21 and v22 seed files, 543 rows each:
 
 ### Not verified
 
-- **v22 is not applied.** The seed and the refresh go through the reviewed
-  "Apply a migration" workflow after merge. PENDING.
+- **v22 is applied.** The seed and its refresh ran through the reviewed "Apply
+  a migration" workflow after merge, as v21's did (runs #110 and #112). A
+  customised active master is deferred by a refresh and does not take the
+  floor-plan sheet; which ones, if any, is read from production (close-out
+  step 5.4).
 - **A real filing of a plan has not run**, for the same reason as §8's. PENDING.
 - **A listing page's plan has not been fetched from realestate.com.au.** The
   owner's rule is that no outside picture is used for testing, so the plan
