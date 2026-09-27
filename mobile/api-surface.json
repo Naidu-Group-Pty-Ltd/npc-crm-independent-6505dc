@@ -5,9 +5,9 @@
     "supabase/config.toml"
   ],
   "counts": {
-    "staff": 237,
+    "staff": 234,
     "public": 37,
-    "server-only": 76,
+    "server-only": 59,
     "portal": 59
   },
   "functions": [
@@ -100,6 +100,12 @@
       "exposure_class": "authenticated-staff",
       "mobileScope": "staff",
       "verify_jwt": false
+    },
+    {
+      "name": "amenity-register-ingest",
+      "exposure_class": "internal-service",
+      "mobileScope": "server-only",
+      "verify_jwt": true
     },
     {
       "name": "aml-access",
@@ -307,12 +313,6 @@
     },
     {
       "name": "backfill-notes-to-ghl",
-      "exposure_class": "cron-worker",
-      "mobileScope": "server-only",
-      "verify_jwt": false
-    },
-    {
-      "name": "backfill-opportunity-mappings",
       "exposure_class": "cron-worker",
       "mobileScope": "server-only",
       "verify_jwt": false
@@ -528,6 +528,24 @@
       "verify_jwt": false
     },
     {
+      "name": "crm-calendar",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
+      "name": "crm-inbound-message",
+      "exposure_class": "webhook-secret",
+      "mobileScope": "server-only",
+      "verify_jwt": false
+    },
+    {
+      "name": "crm-send-message",
+      "exposure_class": "human-authenticated",
+      "mobileScope": "staff",
+      "verify_jwt": false
+    },
+    {
       "name": "cross-portal-outbox-worker",
       "exposure_class": "cron-worker",
       "mobileScope": "server-only",
@@ -632,6 +650,12 @@
     {
       "name": "enrich-lead-attributions",
       "exposure_class": "authenticated-or-service",
+      "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "estimate-capital-growth",
+      "exposure_class": "human-authenticated",
       "mobileScope": "staff",
       "verify_jwt": true
     },
@@ -1122,12 +1146,6 @@
       "verify_jwt": false
     },
     {
-      "name": "ghl-account-preview",
-      "exposure_class": "human-authenticated",
-      "mobileScope": "staff",
-      "verify_jwt": false
-    },
-    {
       "name": "ghl-calendar",
       "exposure_class": "human-authenticated",
       "mobileScope": "staff",
@@ -1152,135 +1170,9 @@
       "verify_jwt": false
     },
     {
-      "name": "ghl-legacy-backfill-gaps",
-      "exposure_class": "cron-worker",
-      "mobileScope": "server-only",
-      "verify_jwt": false
-    },
-    {
-      "name": "ghl-legacy-wipe-orchestrator",
-      "exposure_class": "internal-service",
-      "mobileScope": "server-only",
-      "verify_jwt": false
-    },
-    {
-      "name": "ghl-legacy-wipe-worker",
-      "exposure_class": "cron-worker",
-      "mobileScope": "server-only",
-      "verify_jwt": false
-    },
-    {
-      "name": "ghl-marketing-dump-enqueue",
-      "exposure_class": "internal-service",
-      "mobileScope": "server-only",
-      "verify_jwt": false
-    },
-    {
-      "name": "ghl-marketing-dump-export",
-      "exposure_class": "human-authenticated",
-      "mobileScope": "staff",
-      "verify_jwt": false
-    },
-    {
-      "name": "ghl-marketing-dump-worker",
-      "exposure_class": "cron-worker",
-      "mobileScope": "server-only",
-      "verify_jwt": false
-    },
-    {
-      "name": "ghl-marketing-raw-dump",
-      "exposure_class": "human-authenticated",
-      "mobileScope": "staff",
-      "verify_jwt": false
-    },
-    {
-      "name": "ghl-migrate-bookings-worker",
-      "exposure_class": "cron-worker",
-      "mobileScope": "server-only",
-      "verify_jwt": false
-    },
-    {
-      "name": "ghl-migrate-calendar-groups-worker",
-      "exposure_class": "cron-worker",
-      "mobileScope": "server-only",
-      "verify_jwt": false
-    },
-    {
-      "name": "ghl-migrate-calendars-worker",
-      "exposure_class": "cron-worker",
-      "mobileScope": "server-only",
-      "verify_jwt": false
-    },
-    {
-      "name": "ghl-migrate-contacts-worker",
-      "exposure_class": "cron-worker",
-      "mobileScope": "server-only",
-      "verify_jwt": false
-    },
-    {
-      "name": "ghl-migrate-conversations-replay-worker",
-      "exposure_class": "cron-worker",
-      "mobileScope": "server-only",
-      "verify_jwt": false
-    },
-    {
-      "name": "ghl-migrate-conversations-reset-phantoms",
-      "exposure_class": "internal-service",
-      "mobileScope": "server-only",
-      "verify_jwt": false
-    },
-    {
-      "name": "ghl-migrate-conversations-worker",
-      "exposure_class": "cron-worker",
-      "mobileScope": "server-only",
-      "verify_jwt": false
-    },
-    {
-      "name": "ghl-migrate-notes-worker",
-      "exposure_class": "cron-worker",
-      "mobileScope": "server-only",
-      "verify_jwt": false
-    },
-    {
-      "name": "ghl-migrate-opportunities-worker",
-      "exposure_class": "cron-worker",
-      "mobileScope": "server-only",
-      "verify_jwt": false
-    },
-    {
-      "name": "ghl-migrate-workflow-enrollments-worker",
-      "exposure_class": "cron-worker",
-      "mobileScope": "server-only",
-      "verify_jwt": false
-    },
-    {
-      "name": "ghl-migrate-workflow-reenroll-worker",
-      "exposure_class": "cron-worker",
-      "mobileScope": "server-only",
-      "verify_jwt": false
-    },
-    {
-      "name": "ghl-migrate-workflows-snapshot-worker",
-      "exposure_class": "cron-worker",
-      "mobileScope": "server-only",
-      "verify_jwt": false
-    },
-    {
-      "name": "ghl-test-credentials",
-      "exposure_class": "human-authenticated",
-      "mobileScope": "staff",
-      "verify_jwt": false
-    },
-    {
       "name": "ghl-webhook-receiver",
       "exposure_class": "webhook-secret",
       "mobileScope": "server-only",
-      "verify_jwt": false
-    },
-    {
-      "name": "ghl-workflow-visualizer",
-      "exposure_class": "human-authenticated",
-      "mobileScope": "staff",
       "verify_jwt": false
     },
     {
@@ -1602,6 +1494,12 @@
       "verify_jwt": false
     },
     {
+      "name": "market-sales-ingest",
+      "exposure_class": "internal-service",
+      "mobileScope": "server-only",
+      "verify_jwt": true
+    },
+    {
       "name": "market-source-probe",
       "exposure_class": "human-authenticated",
       "mobileScope": "staff",
@@ -1692,31 +1590,7 @@
       "verify_jwt": true
     },
     {
-      "name": "migration-dispatcher",
-      "exposure_class": "cron-worker",
-      "mobileScope": "server-only",
-      "verify_jwt": false
-    },
-    {
-      "name": "migration-job-control",
-      "exposure_class": "internal-service",
-      "mobileScope": "server-only",
-      "verify_jwt": false
-    },
-    {
-      "name": "migration-job-status",
-      "exposure_class": "human-authenticated",
-      "mobileScope": "staff",
-      "verify_jwt": false
-    },
-    {
-      "name": "migration-orchestrator",
-      "exposure_class": "internal-service",
-      "mobileScope": "server-only",
-      "verify_jwt": false
-    },
-    {
-      "name": "migration-upload-source",
+      "name": "mission-control-announcements",
       "exposure_class": "human-authenticated",
       "mobileScope": "staff",
       "verify_jwt": false
@@ -2445,6 +2319,12 @@
       "name": "update-stamp-duty-rates",
       "exposure_class": "human-authenticated",
       "mobileScope": "staff",
+      "verify_jwt": true
+    },
+    {
+      "name": "urban-centre-register-ingest",
+      "exposure_class": "internal-service",
+      "mobileScope": "server-only",
       "verify_jwt": true
     },
     {

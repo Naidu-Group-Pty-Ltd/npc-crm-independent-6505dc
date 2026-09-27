@@ -1,7 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 
 import { PRIME_BACKEND_REF, isPrimeDeployment } from '../primeDeployment';
+import { TREE_IS_PRIME } from '../testSupport/primeTree';
+import { isPrimeOnlyPath } from '../../../scripts/lib/primeOnlyFeatures.mjs';
 
 describe('isPrimeDeployment', () => {
   it('recognises the prime by the backend it talks to', () => {
@@ -40,11 +42,17 @@ describe('isPrimeDeployment', () => {
  */
 describe('the GHL migration route is internal tooling', () => {
   const app = readFileSync('src/App.tsx', 'utf8');
+  const routeLine = app.split('\n').find((l) => l.includes('integrations/ghl-migration'));
+  const PAGE = 'src/pages/admin/GhlMigration.tsx';
 
-  it('is wrapped in the internal tooling guard', () => {
-    const line = app.split('\n').find((l) => l.includes('integrations/ghl-migration'));
-    expect(line, 'the ghl-migration route is missing entirely').toBeDefined();
-    expect(line).toContain('InternalToolingGuard');
+  /*
+   * The page is the prime's alone (scripts/lib/primeOnlyFeatures.mjs). A clone
+   * that has shed it has nothing to guard; one that still holds it guards it
+   * exactly as the prime does.
+   */
+  it.runIf(existsSync(PAGE))('is wrapped in the internal tooling guard wherever the page is', () => {
+    expect(routeLine, 'the ghl-migration route is missing entirely').toBeDefined();
+    expect(routeLine).toContain('InternalToolingGuard');
   });
 
   /*
@@ -52,7 +60,23 @@ describe('the GHL migration route is internal tooling', () => {
    * closed while being open to exactly the wrong person.
    */
   it('does not rely on ModuleGuard alone', () => {
-    const line = app.split('\n').find((l) => l.includes('integrations/ghl-migration')) ?? '';
+    const line = routeLine ?? '';
     expect(line.includes('ModuleGuard') && !line.includes('InternalToolingGuard')).toBe(false);
+  });
+
+  /*
+   * No clone carries the page, and a static import() of a file that is not
+   * there fails the build. The prime's App.tsx is the one every clone's is
+   * reconciled from, so it finds the page through import.meta.glob, which
+   * answers an empty record for a missing file, and draws the route only
+   * where the glob found it.
+   */
+  it.runIf(TREE_IS_PRIME)('finds the page through import.meta.glob, so a tree without it still builds', () => {
+    expect(isPrimeOnlyPath(PAGE)).toBe(true);
+    expect(existsSync(PAGE)).toBe(true);
+    expect(app).toMatch(/import\.meta\.glob(<.*?>)?\(\s*['"]\.\/pages\/admin\/GhlMigration\.tsx['"]\s*\)/);
+    expect(app).not.toMatch(/import\(\s*["'`]\.\/pages\/admin\/GhlMigration/);
+    expect(app).not.toMatch(/from\s+["']\.\/pages\/admin\/GhlMigration/);
+    expect(routeLine?.trimStart().startsWith('{GhlMigration && <Route ')).toBe(true);
   });
 });
