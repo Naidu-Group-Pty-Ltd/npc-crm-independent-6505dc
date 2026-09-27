@@ -317,6 +317,17 @@ export function useAmlCaseSummary(
     void load();
   }, [enabled, caseId, load]);
 
+  // A wave still in flight when the component unmounts belongs to nobody, so
+  // it must land as stale and set no state. Otherwise it lands on a component
+  // that has gone. Under test, one that lands after the file's jsdom is
+  // disposed makes React read `window`, and Vitest fails the run.
+  useEffect(
+    () => () => {
+      seq.current += 1;
+    },
+    [],
+  );
+
   // A case that has not loaded yet still gets a coherent (empty) reading, so
   // nothing downstream has to special-case `null`.
   const fallbackCase: AmlWorkspaceCaseFacts = { status: "draft" };

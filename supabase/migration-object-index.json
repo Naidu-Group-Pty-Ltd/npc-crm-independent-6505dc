@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "migration_files": 1047,
+  "migration_files": 1048,
   "created": [
     "function:aml.aml_touch_updated_at",
     "function:aml.apply_partner_material_change",
@@ -2258,6 +2258,7 @@
     "table:public.template_library_instantiations",
     "table:public.template_library_release_baselines",
     "table:public.template_master_refresh_decisions",
+    "table:public.template_master_refresh_repairs",
     "table:public.template_render_jobs",
     "table:public.template_share_links",
     "table:public.token_audit_log",
@@ -3020,6 +3021,8 @@
     "index:public.market_updates_lending_tags_gin",
     "table:_builder_release_premigration",
     "table:_cross_portal_premigration_counts",
+    "table:_early_refresh_classified",
+    "table:_early_refresh_releases",
     "table:_portal_terms_premigration_counts",
     "table:_v15_classified",
     "table:_v16_classified",

@@ -31,6 +31,49 @@ vi.mock("@/lib/aml/amlTransactionsApi", () => ({ amlTransactionsApi: {} }));
 vi.mock("@/lib/aml/amlMonitoringApi", () => ({
   amlMonitoringApi: { caseMonitoringSummary: () => Promise.resolve({ monitoring: null }) },
 }));
+/*
+ * Every other read the Overview's evidence wave makes. Unstubbed, these went
+ * to the network: one run of this file sent 363 requests to a real backend
+ * (`custom-auth-verify-v2`, `aml-reliance`, `aml-verification`, `aml-risk`,
+ * `aml-entities`, `client-portal-invite`). They failed, as an unauthenticated
+ * call must, so every one of them read as "not available", which is what this
+ * suite expects. But they failed on the network's clock rather than the test's.
+ * One that answered after the file had finished made React read a `window`
+ * that Vitest had already disposed. Vitest then failed the run with every test
+ * green. That happened on `npc-client-dashboard`'s main branch on 25 Sep 2026.
+ *
+ * So each API object answers with an immediate rejection, the same outcome
+ * those calls always reached. Everything else the modules export is kept.
+ */
+const { offline } = vi.hoisted(() => ({
+  offline: (api: string) =>
+    new Proxy({}, {
+      get: (_target, operation) =>
+        typeof operation === "string" && operation !== "then"
+          ? () => Promise.reject(new Error(`${api}.${operation} is not stubbed in this suite`))
+          : undefined,
+    }),
+}));
+vi.mock("@/lib/aml/amlVerificationApi", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/aml/amlVerificationApi")>()),
+  amlVerificationApi: offline("amlVerificationApi"),
+}));
+vi.mock("@/lib/aml/amlRiskApi", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/aml/amlRiskApi")>()),
+  amlRiskApi: offline("amlRiskApi"),
+}));
+vi.mock("@/lib/aml/amlEntitiesApi", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/aml/amlEntitiesApi")>()),
+  amlEntitiesApi: offline("amlEntitiesApi"),
+}));
+vi.mock("@/lib/aml/amlRelianceApi", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/aml/amlRelianceApi")>()),
+  amlRelianceApi: offline("amlRelianceApi"),
+}));
+vi.mock("@/lib/aml/clientPortalAccessApi", async (importOriginal) => ({
+  ...(await importOriginal<typeof import("@/lib/aml/clientPortalAccessApi")>()),
+  readClientPortalAccess: () => Promise.reject(new Error("readClientPortalAccess is not stubbed in this suite")),
+}));
 // Section bodies are heavy trees with their own data models — replace with
 // labelled stubs; this suite is about the workspace shell.
 vi.mock("@/components/aml/VerificationSection", () => ({
