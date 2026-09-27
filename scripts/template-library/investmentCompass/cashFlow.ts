@@ -208,7 +208,8 @@ function buildTemplate(family: DesignFamily, variant: VariantDefinition): Compas
   pages.push(cover({
     wordmarkTop: '{{org.name}}',
     wordmarkBottom: 'Cash Flow',
-    tagline: 'Your dedicated property partner',
+    // The issuer's line, never a literal: see `org.tagline` in organisationProjection.pure.ts.
+    tagline: '{{org.tagline}}',
     marker: 'Cash Flow',
     eyebrow: 'Ten year cash flow analysis',
     title: '{{cashflow.property.address}}',

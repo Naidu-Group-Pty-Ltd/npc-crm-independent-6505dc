@@ -6,9 +6,11 @@
  * template has been chosen it stays chosen — this states it and offers one way
  * to change it, which opens a picker rather than the Template Builder.
  *
- * It never blocks generation. A format with nothing chosen resolves exactly as
- * it always has (highest-ranked active template, then the legacy generator),
- * and this says so instead of demanding a decision before the button works.
+ * It never blocks generation. With nothing chosen, an Investment report
+ * resolves exactly as it always has (highest-ranked active template, then the
+ * legacy generator) and every other report type is its own standard document
+ * (`templateParity.pure.ts`), and this says which instead of demanding a
+ * decision before the button works.
  */
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -17,6 +19,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { FileStack, TriangleAlert } from 'lucide-react';
 import { ReportTemplatePicker } from '@/components/reports/ReportTemplatePicker';
 import { useReportTemplateSelection } from '@/hooks/useReportTemplateSelection';
+import { isTemplateDeliveryHeld } from '../../../supabase/functions/_shared/reports/templateParity.pure.ts';
 
 interface Props {
   /** Any spelling of the format; normalised before anything is stored. */
@@ -29,6 +32,9 @@ interface Props {
 export function ReportTemplateSelector({ reportType, formatLabel, className }: Props) {
   const [pickerOpen, setPickerOpen] = useState(false);
   const { state, isLoading, error } = useReportTemplateSelection(reportType);
+  // A held report type takes a chosen template as its design and nothing else,
+  // so with nothing chosen it is its own standard document (`templateParity.pure.ts`).
+  const held = isTemplateDeliveryHeld(reportType);
 
   const body = (() => {
     if (isLoading) return <Skeleton className="h-4 w-40" />;
@@ -45,7 +51,7 @@ export function ReportTemplateSelector({ reportType, formatLabel, className }: P
       return (
         <span className="flex flex-wrap items-center gap-2">
           <span className="truncate text-sm font-medium">{state.template?.name}</span>
-          {!state.rendersThroughDesignSystem && (
+          {!state.rendersThroughDesignSystem && !held && (
             <Badge variant="outline" className="gap-1 text-[10px]">
               <TriangleAlert className="h-3 w-3 text-warning" aria-hidden="true" />
               Standard generator
@@ -58,13 +64,17 @@ export function ReportTemplateSelector({ reportType, formatLabel, className }: P
       return (
         <span className="flex items-start gap-1.5 text-xs text-muted-foreground">
           <TriangleAlert className="mt-0.5 h-3 w-3 shrink-0 text-warning" aria-hidden="true" />
-          Your chosen template is no longer available — using the default until you pick another.
+          {held
+            ? 'Your chosen template is no longer available — using the standard design until you pick another.'
+            : 'Your chosen template is no longer available — using the default until you pick another.'}
         </span>
       );
     }
     return (
       <span className="text-xs text-muted-foreground">
-        No template chosen — using the default for {formatLabel}.
+        {held
+          ? `No template chosen — ${formatLabel} uses its standard design.`
+          : `No template chosen — using the default for ${formatLabel}.`}
       </span>
     );
   })();

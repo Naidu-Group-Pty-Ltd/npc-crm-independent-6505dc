@@ -23,6 +23,12 @@
  * Free, and the same twice.
  */
 import { invokeSecureFunction } from '@/lib/secureInvoke';
+import {
+  announceDesignOutcome,
+  designBody,
+  standardDesignFor,
+  type StandardDesignRequest,
+} from '@/lib/reportTemplate/standardDesign';
 import { looksUndeployed } from '../undeployedRoute';
 
 export interface ComparisonPdfRequest {
@@ -30,6 +36,12 @@ export interface ComparisonPdfRequest {
   comparisonId: string;
   /** `VOL. 2026 · ED. 08`. Cosmetic. */
   edition?: string | null;
+  /**
+   * The design to draw the document in. Omit it and the person's own choice
+   * for the format is read (`standardDesign.ts`); `null` asks for the
+   * standard design whatever was chosen. How it looks, never what it says.
+   */
+  design?: StandardDesignRequest | null;
 }
 
 export interface ComparisonPdfResult {
@@ -66,15 +78,18 @@ const UNDEPLOYED_MESSAGE =
 export async function requestComparisonPdf(
   request: ComparisonPdfRequest,
 ): Promise<ComparisonPdfResult> {
+  const design = await standardDesignFor('comparison', request.design);
   const { data, error } = await invokeSecureFunction('render-property-comparison-pdf', {
     comparisonId: request.comparisonId,
     edition: request.edition ?? null,
+    ...designBody(design),
     // A five-property comparison with every section runs to 26 pages and
     // WeasyPrint is a network hop; this is generous against the worst case
     // rather than against the median.
   }, { timeoutMs: 180_000 });
 
   if (!error && data?.url) {
+    announceDesignOutcome(design, data.design);
     return {
       url: String(data.url),
       fileName: String(data.fileName ?? 'Property_Comparison.pdf'),

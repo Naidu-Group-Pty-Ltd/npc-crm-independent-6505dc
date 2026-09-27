@@ -12,6 +12,11 @@
  * legacy path, which regenerates the whole PDF in the browser from a payload it
  * casts without validating (`MarketIntelligenceHistoryModal.tsx:70`).
  */
+import {
+  readTemplateDesignReference,
+  type DesignEcho,
+  type TemplateDesignReference,
+} from '../../reportDesign/templateDesign.pure.ts';
 
 /** Only this is accepted from the caller; everything else is read server-side. */
 export interface MarketIntelligenceRenderRequest {
@@ -45,6 +50,12 @@ export interface MarketIntelligenceRenderRequest {
    * produce the report it names.
    */
   audience: string | null;
+  /**
+   * The design to draw the document in (`templateDesign.pure.ts`): a catalogue
+   * design or a template row, or null for the standard design. The words,
+   * figures and pages are the report's own whatever is named here.
+   */
+  design: TemplateDesignReference | null;
 }
 
 /** The editions the document knows how to set. */
@@ -76,10 +87,16 @@ export function parseRenderRequest(body: unknown): RequestParse {
 
   const asked = typeof b.audience === 'string' ? b.audience.trim().toLowerCase() : '';
   const audience = (AUDIENCE_SEGMENTS as readonly string[]).includes(asked) ? asked : null;
+  // A design is optional, and a malformed one is refused rather than ignored,
+  // so a caller that meant to ask for one is told it did not get it.
+  const design = readTemplateDesignReference(b.design);
+  if (design.ok === false) return { ok: false, error: design.error };
 
   return {
     ok: true,
-    request: { reportId, persist: b.persist !== false, edition: edition || null, audience },
+    request: {
+      reportId, persist: b.persist !== false, edition: edition || null, audience, design: design.reference,
+    },
   };
 }
 
@@ -151,4 +168,10 @@ export interface MarketIntelligenceRenderResponse {
   persisted: boolean;
   storagePath: string | null;
   durationMs: number;
+  /**
+   * The design the document was drawn in, or why the one asked for was not
+   * used — in that case the document is the standard design. Null when none
+   * was asked for.
+   */
+  design: DesignEcho | null;
 }

@@ -23,6 +23,12 @@
  * refused to do, and here we do not even have the option.
  */
 import { invokeSecureFunction } from '@/lib/secureInvoke';
+import {
+  announceDesignOutcome,
+  designBody,
+  standardDesignFor,
+  type StandardDesignRequest,
+} from '@/lib/reportTemplate/standardDesign';
 import { looksUndeployed } from '../undeployedRoute';
 import { PORTFOLIO_REPORT_LABEL } from './label';
 
@@ -39,6 +45,12 @@ export interface PortfolioReviewRequest {
   includeReview?: boolean;
   /** `VOL. 2026 · ED. 08`. Cosmetic. */
   edition?: string | null;
+  /**
+   * The design to draw the document in. Omit it and the person's own choice
+   * for the format is read (`standardDesign.ts`); `null` asks for the
+   * standard design whatever was chosen. How it looks, never what it says.
+   */
+  design?: StandardDesignRequest | null;
 }
 
 export interface PortfolioReviewResult {
@@ -74,16 +86,19 @@ const UNDEPLOYED_MESSAGE =
 export async function requestPortfolioReview(
   request: PortfolioReviewRequest,
 ): Promise<PortfolioReviewResult> {
+  const design = await standardDesignFor('portfolio', request.design);
   const { data, error } = await invokeSecureFunction('render-portfolio-review-pdf', {
     reportId: request.reportId,
     includeReview: request.includeReview !== false,
     edition: request.edition ?? null,
+    ...designBody(design),
     // A portfolio of thirty properties is a long document and WeasyPrint is a
     // network hop; the measured range is 18 to 26 pages and this is generous
     // against the worst case rather than against the median.
   }, { timeoutMs: 180_000 });
 
   if (!error && data?.url) {
+    announceDesignOutcome(design, data.design);
     return {
       url: String(data.url),
       fileName: String(data.fileName ?? 'Portfolio_Analysis.pdf'),

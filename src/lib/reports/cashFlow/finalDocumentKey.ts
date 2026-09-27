@@ -9,9 +9,9 @@
  * changed since it opened, and the render carries those years across the wire
  * (`requestCashFlowPdf`). So "the document for this report" is not one thing.
  * It is the document for THIS series, under THIS scenario label, in THIS
- * template.
+ * template — drawn through its pages, or worn as this report's design.
  *
- * The key folds those three into one string, so a document produced by one
+ * The key folds those into one string, so a document produced by one
  * exit ("Generate PDF") can be reused by another ("Send to Client") exactly
  * while it is still the document the adviser is looking at — and never once
  * an override has moved. RS-2 keyed the Investment finalisation on (content,
@@ -31,8 +31,16 @@ export interface CashFlowFinalKeyInput {
   wire: WireProjection;
   /** The stored scenario the series proves, or null for an adviser-reviewed series. */
   scenario: string | null;
-  /** The person's template choice for the format at this moment, or null for none. */
+  /** The template the document is drawn THROUGH — its own pages — or null for none. */
   selectedTemplateId: string | null | undefined;
+  /**
+   * The template whose DESIGN the standard document is drawn in, or null.
+   *
+   * Kept apart from `selectedTemplateId` because one template drawn the two
+   * ways is two different documents: one is its pages, the other is this
+   * report's own pages in its typefaces and colours (`standardDesign.ts`).
+   */
+  designTemplateId?: string | null;
 }
 
 /**
@@ -65,6 +73,7 @@ function fnv1a(text: string): string {
 export function cashFlowFinalKey(input: CashFlowFinalKeyInput): string {
   const body = canonical({
     template: input.selectedTemplateId ?? null,
+    design: input.designTemplateId ?? null,
     scenario: input.scenario ?? null,
     wire: input.wire,
   });

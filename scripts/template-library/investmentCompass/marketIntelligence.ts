@@ -286,7 +286,8 @@ function buildTemplate(family: DesignFamily, variant: VariantDefinition): Compas
   pages.push(cover({
     wordmarkTop: '{{org.name}}',
     wordmarkBottom: 'Market Intelligence',
-    tagline: 'Your dedicated property partner',
+    // The issuer's line, never a literal: see `org.tagline` in organisationProjection.pure.ts.
+    tagline: '{{org.tagline}}',
     marker: DOCUMENT_LABEL,
     eyebrow: '{{marketIntel.meta.reportTypeLabel}}',
     title: '{{marketIntel.meta.reportPeriod}}',

@@ -45,10 +45,38 @@ describe('the server path', () => {
   it('sends only what the server does not already know', async () => {
     invokeSecureFunction.mockResolvedValue({ data: { url: 'u', fileName: 'f' }, error: null });
     await requestBorrowingCapacitySnapshot({ ...REQUEST, scenarioPresets: [{ id: 's' }] });
-    const [name, body] = invokeSecureFunction.mock.calls[0];
+    // The person's template choice is read first (`standardDesign.ts`); the
+    // render is the call that names the route.
+    const [name, body] = invokeSecureFunction.mock.calls
+      .find(([fn]) => fn === 'render-borrowing-capacity-pdf')!;
     expect(name).toBe('render-borrowing-capacity-pdf');
+    // Nothing chosen, so no design is sent: the body is what it always was.
     expect(Object.keys(body as object).sort())
       .toEqual(['assessmentId', 'clientId', 'edition', 'scenarioPresets']);
+  });
+
+  it('sends the chosen template as the design to draw in, and nothing else', async () => {
+    invokeSecureFunction.mockImplementation(async (fn: string) => (fn === 'manage-templates'
+      ? { data: { records: [{ id: 's1', report_type: 'borrowing_capacity', template_id: 'tpl-1' }] }, error: null }
+      : {
+        data: {
+          url: 'u', fileName: 'f',
+          design: { applied: { label: 'Private Banking — Chancery', code: 'pb-01', colourway: null }, refusal: null, message: null },
+        },
+        error: null,
+      }));
+    await requestBorrowingCapacitySnapshot({ ...REQUEST, scenarioPresets: [{ id: 's' }] });
+    const [, body] = invokeSecureFunction.mock.calls
+      .find(([fn]) => fn === 'render-borrowing-capacity-pdf')!;
+    expect(Object.keys(body as object).sort())
+      .toEqual(['assessmentId', 'clientId', 'design', 'edition', 'scenarioPresets']);
+    expect((body as Record<string, unknown>).design).toEqual({ templateId: 'tpl-1' });
+  });
+
+  it('reads nothing when the caller has already decided the design', async () => {
+    invokeSecureFunction.mockResolvedValue({ data: { url: 'u', fileName: 'f' }, error: null });
+    await requestBorrowingCapacitySnapshot({ ...REQUEST, design: null });
+    expect(invokeSecureFunction.mock.calls.map(([fn]) => fn)).toEqual(['render-borrowing-capacity-pdf']);
   });
 });
 

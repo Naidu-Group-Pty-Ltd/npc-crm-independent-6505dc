@@ -530,3 +530,51 @@ Three things it does not do:
 - None of this is an acceptance of the live application. **PENDING:** a real
   clone using the tools, reading the portals and deleting a report, after the
   functions and the frontend are deployed.
+
+## 16. The intake pack and the quantitative report
+
+Two documents still named the house on a clone after §§1–15. Both are closed by
+Phase 2 of the template programme
+([`TEMPLATE_PARITY.md`](./TEMPLATE_PARITY.md)).
+
+**The Commercial and Industrial intake pack** is a pair of files the owner
+approved: a Word form and an Excel workbook. They are pinned by checksum and
+handed over as supplied. Both name the house, including in the consent clause a
+client signs. `packPresentation.ts` presents a copy at download time, and the
+stored files and their checksums are untouched.
+
+- **The prime** with no design chosen receives the approved file exactly as
+  supplied. Nothing is read or re-zipped.
+- **A clone** receives a copy that names the clone's business. Where the clone
+  has named no business, the copy uses the pack's own placeholders ("Company
+  Name", "(Company/Business Name)"), never the platform's name, because
+  Aurixa is not a party to the client's consent. The file's `lastModifiedBy`
+  is cleared.
+- **A copy that still names the house after that is refused**
+  (`PackStillNamesTheHouse`). The person is asked to try again. The document
+  is never handed over with another business's name in its consent clause.
+- **The name is read by `loadCloneIssuerName`.** It answers `undefined` on the
+  prime, the clone's own name on a clone, and `null` where the clone has named
+  nobody. Unlike the document issuer, it never answers Aurixa, because this
+  name goes into a clause the client signs.
+
+**The quantitative market report** printed the Report Settings name on every
+deployment. On a clone it now prints the issuer, as every other legacy document
+does (§1): the clone's own business, or Aurixa Systems where it has named none.
+On the prime nothing changes.
+
+## 17. Verified and not verified (Phase 2)
+
+- `packPresentation.test.ts` (512 tests) covers:
+  - every catalogue design's colours against the approved ones for legibility;
+  - the Word and Excel parts round-tripping through the parser;
+  - that only the parts named change, and that a clone's copy never names the
+    house.
+- `packDownload.test.ts` covers the three answers: the approved file, a
+  presented copy, and a refused one.
+- `intakePackDownloads.test.tsx` drives the panel's download through all three.
+- The quantitative report was rendered from a pipeline-shaped row on the prime
+  and on a clone that has named nobody. The prime's cover and running head read
+  "NAIDU PROPERTY CONSULTING SERVICES"; the clone's read "AURIXA SYSTEMS".
+- **PENDING:** a real clone downloading the intake pack and the quantitative
+  report, after the frontend is published.

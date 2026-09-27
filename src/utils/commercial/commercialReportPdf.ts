@@ -11,6 +11,14 @@
  *
  * Self-contained — pulls live commercial data and runs the engines in
  * `src/utils/commercial/*`. No edge function dependency for v1.
+ *
+ * ## In a chosen design
+ *
+ * The report wears the design the person chose for the C&I Capacity report
+ * (`drawnDocumentDesign.ts`): its colours, its cover's ground and frame, and a
+ * serif design's headings in Times. Every word, figure and page is the
+ * report's own either way; with no design it is drawn exactly as it always
+ * was, in its dark and gold.
  */
 import jsPDF from 'jspdf';
 import { format } from 'date-fns';
@@ -25,6 +33,10 @@ import {
   calculateCommercialBc,
   runDcf,
 } from '@/utils/commercial';
+import { drawnDesignFor, type DrawnDocumentDesign } from '@/lib/reports/drawnDocumentDesign';
+import { GRID_GUTTER, gridRows, tableRowHeight } from '@/lib/reports/drawnGrid';
+import { paintDesignCover } from '@/lib/reports/drawnCover';
+import { rgbObject } from '@/lib/reports/legacyDocumentBrand';
 
 
 // ─── Design tokens (parity with StrategyRationalePDF) ──────────────────────
@@ -39,6 +51,46 @@ const RED = { r: 220, g: 38, b: 38 };
 const AMBER = { r: 217, g: 119, b: 6 };
 
 type RGB = { r: number; g: number; b: number };
+
+/**
+ * The colours the report's pages are drawn in, by the role each plays, and the
+ * face its headings are set in. Its own dark and gold with no design; the
+ * design's family with one — the semantic greens, ambers and reds are the
+ * report's whatever the design, because a design cannot make a risk look safe.
+ */
+interface DocumentPalette {
+  /** Accent bars, rules and the running header's underline. */
+  gold: RGB;
+  /** The running header band, section titles and table heads. */
+  dark: RGB;
+  /** Words set on `dark`. */
+  onDark: RGB;
+  /** Labels, captions and the footer. */
+  gray: RGB;
+  /** Alternate table rows. */
+  zebra: RGB;
+  /** Body copy and figures. */
+  body: RGB;
+  headingFace: 'helvetica' | 'times';
+}
+
+const HOUSE_PALETTE: DocumentPalette = {
+  gold: GOLD, dark: DARK_BG, onDark: WHITE, gray: GRAY, zebra: LIGHT_GRAY, body: BODY_TEXT, headingFace: 'helvetica',
+};
+
+function paletteFor(design: DrawnDocumentDesign | null): DocumentPalette {
+  if (!design) return HOUSE_PALETTE;
+  const f = design.family;
+  return {
+    gold: rgbObject(f.accent),
+    dark: rgbObject(f.deep),
+    onDark: rgbObject(f.onDeep),
+    gray: rgbObject(f.mutedInk),
+    zebra: rgbObject(f.stripe),
+    body: rgbObject(f.bodyInk),
+    headingFace: design.faces.heading === 'times' ? 'times' : 'helvetica',
+  };
+}
 
 const PAGE_W = 210;
 const PAGE_H = 297;
@@ -67,6 +119,7 @@ interface RenderState {
   y: number;
   pageNum: number;
   propertyLabel: string;
+  P: DocumentPalette;
 }
 
 function newPage(state: RenderState) {
@@ -82,12 +135,12 @@ function ensureSpace(state: RenderState, needed: number) {
 }
 
 function drawHeader(state: RenderState) {
-  const { doc } = state;
-  setFill(doc, DARK_BG);
+  const { doc, P } = state;
+  setFill(doc, P.dark);
   doc.rect(0, 0, PAGE_W, 10, 'F');
-  setFill(doc, GOLD);
+  setFill(doc, P.gold);
   doc.rect(0, 10, PAGE_W, 1.2, 'F');
-  setText(doc, WHITE);
+  setText(doc, P.onDark);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(9);
   doc.text('COMMERCIAL INVESTMENT REPORT', MARGIN, 6.5);
@@ -97,21 +150,22 @@ function drawHeader(state: RenderState) {
 }
 
 function drawFooter(state: RenderState) {
-  const { doc } = state;
-  setText(doc, GRAY);
+  const { doc, P } = state;
+  setText(doc, P.gray);
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(8);
   doc.text(`Generated ${format(new Date(), 'dd MMM yyyy')}`, MARGIN, FOOTER_Y);
-  doc.text(`Page ${state.pageNum}`, PAGE_W - MARGIN, FOOTER_Y, { align: 'right' });
+  // The page number is set once the page count is known (at the end), and
+  // only there: setting it here as well printed two numbers in one place.
 }
 
 function sectionTitle(state: RenderState, num: number, title: string) {
   ensureSpace(state, 18);
-  const { doc } = state;
-  setFill(doc, GOLD);
+  const { doc, P } = state;
+  setFill(doc, P.gold);
   doc.rect(MARGIN, state.y, 3, 7, 'F');
-  setText(doc, DARK_BG);
-  doc.setFont('helvetica', 'bold');
+  setText(doc, P.dark);
+  doc.setFont(P.headingFace, 'bold');
   doc.setFontSize(13);
   doc.text(`${num}. ${title}`, MARGIN + 6, state.y + 5.5);
   state.y += 11;
@@ -121,7 +175,7 @@ function bodyText(state: RenderState, text: string, opts: { size?: number; bold?
   const { doc } = state;
   doc.setFont('helvetica', opts.bold ? 'bold' : 'normal');
   doc.setFontSize(opts.size ?? 10);
-  setText(doc, opts.color ?? BODY_TEXT);
+  setText(doc, opts.color ?? state.P.body);
   const lines = doc.splitTextToSize(text, CONTENT_W);
   ensureSpace(state, lines.length * 4.5);
   doc.text(lines, MARGIN, state.y);
@@ -131,24 +185,29 @@ function bodyText(state: RenderState, text: string, opts: { size?: number; bold?
 function kvGrid(state: RenderState, items: Array<[string, string]>, cols = 2) {
   const { doc } = state;
   const colW = CONTENT_W / cols;
-  const rowH = 9;
-  const rows = Math.ceil(items.length / cols);
-  ensureSpace(state, rows * rowH + 2);
+  // A value is set inside its own column, wrapped where it is wider, and its
+  // row grows for the extra lines, rather than running on into the next
+  // column's value (`gridRows`).
+  doc.setFont('helvetica', 'bold');
+  doc.setFontSize(10);
+  const layout = gridRows(items.map((item) => doc.splitTextToSize(item[1], colW - GRID_GUTTER)), cols);
+  ensureSpace(state, layout.height + 2);
   items.forEach((item, idx) => {
     const col = idx % cols;
     const row = Math.floor(idx / cols);
     const x = MARGIN + col * colW;
-    const y = state.y + row * rowH;
-    setText(doc, GRAY);
+    const y = state.y + layout.top[row];
+    setText(doc, state.P.gray);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(7.5);
     doc.text(item[0].toUpperCase(), x, y);
-    setText(doc, BODY_TEXT);
+    setText(doc, state.P.body);
     doc.setFont('helvetica', 'bold');
     doc.setFontSize(10);
-    doc.text(item[1], x, y + 5);
+    const lines = layout.lines[idx];
+    doc.text(lines.length > 1 ? lines : item[1], x, y + 5);
   });
-  state.y += rows * rowH + 2;
+  state.y += layout.height + 2;
 }
 
 function table(
@@ -164,9 +223,9 @@ function table(
   ensureSpace(state, rowH + 4);
 
   // Header
-  setFill(doc, DARK_BG);
+  setFill(doc, state.P.dark);
   doc.rect(MARGIN, state.y, CONTENT_W, rowH, 'F');
-  setText(doc, WHITE);
+  setText(doc, state.P.onDark);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(8.5);
   let x = MARGIN;
@@ -181,22 +240,26 @@ function table(
   // Body
   doc.setFont('helvetica', 'normal');
   doc.setFontSize(8.5);
-  setText(doc, BODY_TEXT);
+  setText(doc, state.P.body);
   rows.forEach((row, ri) => {
-    ensureSpace(state, rowH);
+    // A cell wider than its column wraps and the row grows; it used to keep
+    // only its first line, so a long tenant name lost its tail with no mark.
+    const cells = row.map((cell, i) => doc.splitTextToSize(cell ?? '', colWidths[i] - 4) as string[]);
+    const h = tableRowHeight(rowH, cells);
+    ensureSpace(state, h);
     if (ri % 2 === 0) {
-      setFill(doc, LIGHT_GRAY);
-      doc.rect(MARGIN, state.y, CONTENT_W, rowH, 'F');
+      setFill(doc, state.P.zebra);
+      doc.rect(MARGIN, state.y, CONTENT_W, h, 'F');
     }
     let cx = MARGIN;
-    row.forEach((cell, i) => {
+    row.forEach((_cell, i) => {
       const w = colWidths[i];
       const tx = align[i] === 'right' ? cx + w - 2 : align[i] === 'center' ? cx + w / 2 : cx + 2;
-      const text = doc.splitTextToSize(cell ?? '', w - 4)[0] ?? '';
+      const text = cells[i].length > 1 ? cells[i] : cells[i][0] ?? '';
       doc.text(text, tx, state.y + 4.8, { align: align[i] });
       cx += w;
     });
-    state.y += rowH;
+    state.y += h;
   });
   state.y += 3;
 }
@@ -258,21 +321,30 @@ export async function generateCommercialInvestmentReport(propertyId: string): Pr
   const propertyLabel = [property.address, property.suburb, property.state, property.postcode]
     .filter(Boolean).join(', ');
 
-  const state: RenderState = { doc, y: MARGIN + 14, pageNum: 1, propertyLabel };
+  const design = await drawnDesignFor('commercial_investment_report');
+  const state: RenderState = { doc, y: MARGIN + 14, pageNum: 1, propertyLabel, P: paletteFor(design) };
 
   // ── 1. COVER ───────────────────────────────────────────────────────────
-  setFill(doc, DARK_BG);
-  doc.rect(0, 0, PAGE_W, PAGE_H, 'F');
-  setFill(doc, GOLD);
+  // Its own dark and gold, or the design's ground with the cover's words in
+  // the inks that ground carries (`drawnCover.ts`); the band ends under the
+  // generated date, so every word of the cover sits in it.
+  const painted = design ? paintDesignCover(doc, design, { bandBottom: 168 }) : null;
+  const coverAccent = painted ? painted.head.accent : GOLD;
+  const coverInk = painted ? painted.head.ink : WHITE;
+  if (!painted) {
+    setFill(doc, DARK_BG);
+    doc.rect(0, 0, PAGE_W, PAGE_H, 'F');
+  }
+  setFill(doc, coverAccent);
   doc.rect(0, 130, PAGE_W, 1.5, 'F');
 
-  setText(doc, GOLD);
+  setText(doc, coverAccent);
   doc.setFont('helvetica', 'bold');
   doc.setFontSize(11);
   doc.text('COMMERCIAL INVESTMENT REPORT', MARGIN, 80);
 
-  setText(doc, WHITE);
-  doc.setFont('helvetica', 'bold');
+  setText(doc, coverInk);
+  doc.setFont(design ? design.faces.cover : 'helvetica', 'bold');
   doc.setFontSize(26);
   const titleLines = doc.splitTextToSize(property.address, CONTENT_W);
   doc.text(titleLines, MARGIN, 100);
@@ -281,12 +353,12 @@ export async function generateCommercialInvestmentReport(propertyId: string): Pr
   doc.setFontSize(12);
   if (property.suburb) doc.text(`${property.suburb}, ${property.state ?? ''} ${property.postcode ?? ''}`.trim(), MARGIN, 120);
 
-  setText(doc, GOLD);
+  setText(doc, coverAccent);
   doc.setFontSize(10);
   doc.setFont('helvetica', 'bold');
   doc.text(property.asset_class.replace('_', ' ').toUpperCase(), MARGIN, 142);
   doc.setFont('helvetica', 'normal');
-  setText(doc, WHITE);
+  setText(doc, coverInk);
   doc.text(`Tenure: ${property.tenure}`, MARGIN, 150);
   doc.text(`Generated: ${format(new Date(), 'dd MMMM yyyy')}`, MARGIN, 157);
 
@@ -512,7 +584,7 @@ export async function generateCommercialInvestmentReport(propertyId: string): Pr
   const waleRisk = rentRoll.wale.waleByIncome < 2 ? RED : rentRoll.wale.waleByIncome < 4 ? AMBER : GREEN;
   const covRisk = coverage.icr < 1.25 ? RED : coverage.icr < 1.5 ? AMBER : GREEN;
   const yLabel = state.y;
-  setText(state.doc, BODY_TEXT);
+  setText(state.doc, state.P.body);
   state.doc.setFont('helvetica', 'bold');
   state.doc.setFontSize(9);
   state.doc.text('Risk indicators:', MARGIN, yLabel);
@@ -571,8 +643,9 @@ export async function generateCommercialInvestmentReport(propertyId: string): Pr
   const total = (doc as any).internal.getNumberOfPages();
   for (let p = 2; p <= total; p++) {
     doc.setPage(p);
-    // header/footer already drawn on newPage; just make sure footer reflects total
-    setText(doc, GRAY);
+    // The header and the footer's date were drawn by newPage; the page number
+    // is set here, once the count is known.
+    setText(doc, state.P.gray);
     doc.setFont('helvetica', 'normal');
     doc.setFontSize(8);
     doc.text(`Page ${p - 1} of ${total - 1}`, PAGE_W - MARGIN, FOOTER_Y, { align: 'right' });

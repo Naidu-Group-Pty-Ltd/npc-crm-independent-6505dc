@@ -87,6 +87,10 @@ import {
 } from '../../reportDesign/structure.pure.ts';
 import type { ReportBrandSnapshot } from '../../reportDesign/snapshot.pure.ts';
 import { resolveSnapshotBrand } from '../../reportDesign/documentBrand.pure.ts';
+import {
+  withDesignOptions,
+  type ReportTemplateDesign,
+} from '../../reportDesign/templateDesign.pure.ts';
 
 import type { QaCitation, ReportQaDocument } from './payload.pure.ts';
 import { renderMarkdown, type MarkdownResult } from './markdown.pure.ts';
@@ -229,7 +233,7 @@ export interface RenderReportQaInput {
   /** The **tenant's** cover art, inlined. Never the house art — see the header. */
   heroDataUri?: string | null;
   confidentiality?: string | null;
-  options?: ReportDesignOptions | null;
+  options?: Partial<ReportDesignOptions> | null;
   edition?: string | null;
   reference?: string | null;
 }
@@ -480,9 +484,16 @@ export interface RenderReportQaFromBrandInput {
    * than the tenant's.
    */
   coverArtDataUri?: string | null;
-  options?: ReportDesignOptions | null;
+  options?: Partial<ReportDesignOptions> | null;
   edition?: string | null;
   reference?: string | null;
+  /**
+   * A chosen template's design (`templateDesign.pure.ts`). Its palette, faces
+   * and page treatment replace the brand's palette; every word on every page is
+   * still this composer's. Absent, and the document is the standard one byte
+   * for byte.
+   */
+  design?: ReportTemplateDesign | null;
 }
 
 export interface ReportQaRenderResult extends ReportQaRenderPlan {
@@ -502,13 +513,13 @@ export function renderReportQaFromBrand(
 
   const rendered = renderReportQaDocument({
     document: input.document,
-    palette: brand.palette,
+    palette: input.design?.palette ?? brand.palette,
     company: brand.company,
     masthead: brand.masthead,
     lockup: brand.lockup,
     heroDataUri: brand.heroDataUri,
     confidentiality: brand.confidentiality,
-    options: input.options ?? null,
+    options: withDesignOptions(input.options, input.design),
     edition: input.edition ?? null,
     reference: input.reference ?? null,
   });

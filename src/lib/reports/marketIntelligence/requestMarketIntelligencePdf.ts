@@ -27,6 +27,12 @@
  * naming the button that does.
  */
 import { invokeSecureFunction } from '@/lib/secureInvoke';
+import {
+  announceDesignOutcome,
+  designBody,
+  standardDesignFor,
+  type StandardDesignRequest,
+} from '@/lib/reportTemplate/standardDesign';
 import { looksUndeployed } from '../undeployedRoute';
 
 export interface MarketIntelligencePdfResult {
@@ -70,6 +76,12 @@ export interface RequestMarketIntelligenceOptions {
    * the row rather than failing.
    */
   audience?: string | null;
+  /**
+   * The design to draw the document in. Omit it and the person's own choice
+   * for the format is read (`standardDesign.ts`); `null` asks for the
+   * standard design whatever was chosen. How it looks, never what it says.
+   */
+  design?: StandardDesignRequest | null;
 }
 
 // The predicate is shared (`../undeployedRoute`). Every one of the nine
@@ -88,16 +100,19 @@ export async function requestMarketIntelligencePdf(
   reportId: string,
   options: RequestMarketIntelligenceOptions = {},
 ): Promise<MarketIntelligencePdfResult> {
+  const design = await standardDesignFor('market_intelligence', options.design);
   const { data, error } = await invokeSecureFunction('render-market-intelligence-pdf', {
     reportId,
     persist: options.persist !== false,
     edition: options.edition ?? null,
     audience: options.audience ?? null,
+    ...designBody(design),
     // Twenty-four pages of prose through a network hop to WeasyPrint. Generous
     // against the worst case rather than the median.
   }, { timeoutMs: 240_000 });
 
   if (!error && data?.url) {
+    announceDesignOutcome(design, data.design);
     return {
       url: String(data.url),
       fileName: String(data.fileName ?? 'Market_Intelligence_Report.pdf'),

@@ -40,6 +40,8 @@ import type {
  * off the wire for everyone who never opens the intake pack step.
  */
 const loadSourceDocuments = () => import('@/lib/ciAssessment/intakePack/sourceDocuments');
+/** The download path, which reads the documents, a clone's name and a chosen design. */
+const loadPackDownload = () => import('@/lib/ciAssessment/intakePack/packDownload');
 import type { AssessmentPayload } from '@/lib/ciAssessment/types';
 
 /** Extensions we will parse. Anything else is kept as a supporting document. */
@@ -47,6 +49,8 @@ const PACK_EXTENSIONS = ['.xlsx', '.xlsm', '.xls'];
 const PACK_MIME_HINTS = ['spreadsheetml', 'ms-excel', 'excel'];
 const MAX_PACK_BYTES = 15 * 1024 * 1024;
 const MAX_SUPPORTING_BYTES = 25 * 1024 * 1024;
+/** How long a downloaded pack's object URL is kept before it is released. */
+const PACK_URL_GRACE_MS = 1500;
 
 /**
  * The two documents, each offered two ways.
@@ -171,25 +175,37 @@ export function IntakePackPanel({
   const counter = useRef(0);
 
   /**
-   * Hand over the approved file itself.
+   * Hand over the approved file.
    *
-   * The bytes are not rebuilt, re-zipped or re-saved on the way out — the
-   * anchor points straight at the inlined source and carries its approved file
-   * name, so what lands in Downloads is the document that was signed off.
+   * On the prime with no design chosen the bytes are not rebuilt, re-zipped or
+   * re-saved on the way out — the anchor points straight at the inlined source
+   * and carries its approved file name, so what lands in Downloads is the
+   * document that was signed off. A clone's pack names the clone's business
+   * where the approved file names the house, and a chosen design recolours its
+   * brand colours (`packDownload.ts`); the file name is the approved one either
+   * way.
    */
   const downloadBlank = useCallback(async (kind: PackDocumentKind) => {
     setDownloading(kind);
     try {
-      const { packSourceDocument } = await loadSourceDocuments();
-      const source = packSourceDocument(kind, 'blank');
+      const { preparePackDownload, DEFAULT_PACK_DOWNLOAD_DEPS } = await loadPackDownload();
+      const pack = await preparePackDownload(kind, {
+        ...DEFAULT_PACK_DOWNLOAD_DEPS,
+        notify: (title, description) => toast({ title, description }),
+      });
       const anchor = document.createElement('a');
-      anchor.href = source.url;
-      anchor.download = source.fileName;
+      anchor.href = pack.href;
+      anchor.download = pack.fileName;
       document.body.appendChild(anchor);
       anchor.click();
       document.body.removeChild(anchor);
+      // An object URL revoked before the browser has started reading it
+      // cancels the download (Safari does, on the next turn), so it is
+      // released after the same grace the PDF downloads give theirs
+      // (`triggerPdfDownload`).
+      setTimeout(pack.release, PACK_URL_GRACE_MS);
       toast({
-        title: `${source.fileName} downloaded`,
+        title: `${pack.fileName} downloaded`,
         description: kind === 'workbook'
           ? 'Fill it in with the client in Excel, then drop it back here to populate the assessment.'
           : 'A printable question guide for the meeting. Use the workbook for the data that comes back in.',

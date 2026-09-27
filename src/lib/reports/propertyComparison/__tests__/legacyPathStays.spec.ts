@@ -75,6 +75,18 @@ describe('the legacy path still exists', () => {
     expect(source).toContain('formattedContent');
   });
 
+  it('hands a comparison its document without filing it as an investment report', () => {
+    // The storage service files `investment-reports` against an
+    // `investment_reports` row and refused a comparison's upload for every
+    // caller, after the formatter had been paid. The comparison's download and
+    // its flatten now draw the document and hand it over.
+    const source = code(ENGINE);
+    const download = source.slice(source.indexOf('const generatePixelPerfectPDF'), source.indexOf('useImperativeHandle('));
+    expect(download).toMatch(/if \(skipDatabaseUpdate\) \{\s*const \{ blob, fileName \} = await drawOnly\(\);\s*triggerPdfDownload\(blob, fileName\);/);
+    expect(download.indexOf('if (skipDatabaseUpdate)')).toBeLessThan(download.indexOf('generateCore()'));
+    expect(source).toContain('getPdfBlob={async () => (skipDatabaseUpdate ? (await drawOnly()).blob : (await generateCore()).blob)}');
+  });
+
   it.each(MOUNT_SITES)('%s still mounts the legacy wrapper', (path) => {
     expect(read(path)).toContain('<ComparisonPDFGenerator');
   });

@@ -83,7 +83,7 @@ import {
   readAcknowledgements,
   ACKNOWLEDGEMENTS_INCOMPLETE_ERROR,
 } from "../_shared/portalAgreement.ts";
-import { getBrandConfig } from "../_shared/brand-config.ts";
+import { escapeHtml, getEmailIdentity, resendAddressing } from "../_shared/emailIdentity.ts";
 import { meteredFetch } from "../_shared/meteredFetch.ts";
 import { buildPassportView } from "../_shared/aml/passport/passportView.pure.ts";
 import { derivePassportState } from "../_shared/aml/passport/passportState.pure.ts";
@@ -1974,7 +1974,9 @@ const __corsWrappedHandler = (async (req: Request): Promise<Response> => {
         .eq("token_hash", tokenHash).maybeSingle();
       if (!ack) return jr({ error: "Invalid link" }, 401);
 
-      const brandCfg = await getBrandConfig();
+      // The organisation named on the page this link opens: the same one the
+      // email that carried the link names (see emailIdentity.pure.ts).
+      const identity = await getEmailIdentity(admin);
       const { data: terms } = await admin.from("portal_terms_versions")
         .select("id, version, title, content_markdown, document_hash")
         .eq("id", ack.terms_version_id).maybeSingle();
@@ -2000,7 +2002,7 @@ const __corsWrappedHandler = (async (req: Request): Promise<Response> => {
         // was recorded rather than only that something was.
         accepted_by_name: ack.accepted_by_name,
         declined_at: ack.declined_at,
-        issuer_name: brandCfg.companyName,
+        issuer_name: identity.organisationName,
         // The instrument itself, exactly as stored — never re-typed here.
         terms: terms
           ? { version: terms.version, title: terms.title, content_markdown: terms.content_markdown }
@@ -3332,7 +3334,10 @@ const __corsWrappedHandler = (async (req: Request): Promise<Response> => {
             return jr({ error: "deliver_to must be a valid email address" }, 400);
           }
           const resendApiKey = Deno.env.get("RESEND_API_KEY");
-          const brandCfg = await getBrandConfig();
+          // Sent as this deployment: its name, its sender, replies to its own contact.
+          const identity = await getEmailIdentity(admin);
+          const orgName = identity.organisationName;
+          const orgHtml = escapeHtml(orgName);
           const orgLabel = String(agreement.partner_org_name).replace(/[<>]/g, "");
           const expiryLabel = new Date(grant.expires_at).toLocaleDateString("en-AU");
           /* The second route to the same record, in the email itself — this
@@ -3344,9 +3349,9 @@ const __corsWrappedHandler = (async (req: Request): Promise<Response> => {
              because the request here is the Command Centre's. */
           const handoff = await resolvePortalHandoff(
             admin, grant, agreement, passportLink.replace(/\/passport\/.*$/, ""));
-          const subject = `${brandCfg.companyName} — Compliance Passport access for ${orgLabel}`;
+          const subject = `${orgName} — Compliance Passport access for ${orgLabel}`;
           const textBody = [
-            `Your organisation has been given access to a Compliance Passport issued by ${brandCfg.companyName}.`,
+            `Your organisation has been given access to a Compliance Passport issued by ${orgName}.`,
             "",
             "No account or password is needed — open the link below:",
             passportLink,
@@ -3360,13 +3365,13 @@ const __corsWrappedHandler = (async (req: Request): Promise<Response> => {
               : []),
             `This access expires on ${expiryLabel}. If the link stops working, you can request a new one from the page itself.`,
             "",
-            `— ${brandCfg.companyName}`,
+            `— ${orgName}`,
           ].join("\n");
           const htmlBody = `
             <div style="font-family:Arial,Helvetica,sans-serif;max-width:560px;margin:0 auto;">
               <p style="color:#475569;font-size:15px;line-height:1.6;">
                 <strong>${orgLabel}</strong> has been given access to a Compliance Passport issued by
-                ${brandCfg.companyName}. It describes the customer identification procedures that were
+                ${orgHtml}. It describes the customer identification procedures that were
                 performed — it does not contain their risk assessment.
               </p>
               <p style="color:#475569;font-size:15px;line-height:1.6;">
@@ -3388,7 +3393,7 @@ const __corsWrappedHandler = (async (req: Request): Promise<Response> => {
                 This access expires on ${expiryLabel}. If the link stops working, you can request a new
                 one from the page itself.
               </p>
-              <p style="color:#64748b;font-size:13px;">— ${brandCfg.companyName}</p>
+              <p style="color:#64748b;font-size:13px;">— ${orgHtml}</p>
             </div>`;
           if (resendApiKey) {
             try {
@@ -3396,7 +3401,7 @@ const __corsWrappedHandler = (async (req: Request): Promise<Response> => {
                 method: "POST",
                 headers: { "Content-Type": "application/json", "Authorization": `Bearer ${resendApiKey}` },
                 body: JSON.stringify({
-                  from: brandCfg.fromHeaderAdmin, to: [deliverTo],
+                  ...resendAddressing(identity, "Admin"), to: [deliverTo],
                   subject, html: htmlBody, text: textBody,
                   tags: [{ name: "category", value: "aml_passport_link" }],
                 }),
@@ -3962,27 +3967,30 @@ const __corsWrappedHandler = (async (req: Request): Promise<Response> => {
         }
 
         const link = acknowledgementLinkFor(token);
-        const brandCfg = await getBrandConfig();
+        // Sent as this deployment: its name, its sender, replies to its own contact.
+        const identity = await getEmailIdentity(admin);
+        const orgName = identity.organisationName;
+        const orgHtml = escapeHtml(orgName);
         const resendApiKey = Deno.env.get("RESEND_API_KEY");
         const safeName = recipientName.replace(/[<>]/g, "");
-        const subject = `${brandCfg.companyName} — AML/CTF Compliance Passport Agreement for your acceptance`;
+        const subject = `${orgName} — AML/CTF Compliance Passport Agreement for your acceptance`;
         const textBody = [
           `Hi ${safeName},`,
           "",
-          `${brandCfg.companyName} has asked you to review and accept the AML/CTF Compliance Passport Agreement on behalf of ${org.legal_name}.`,
+          `${orgName} has asked you to review and accept the AML/CTF Compliance Passport Agreement on behalf of ${org.legal_name}.`,
           "",
           "You do not need an account. Open the link below to read the agreement and accept it:",
           link,
           "",
           `This link expires in ${ACK_LINK_TTL_DAYS} days. If it lapses, ask us to send a new one.`,
           "",
-          `— ${brandCfg.companyName}`,
+          `— ${orgName}`,
         ].join("\n");
         const htmlBody = `
           <div style="font-family:Arial,Helvetica,sans-serif;max-width:560px;margin:0 auto;">
             <p style="color:#0f172a;font-size:16px;">Hi ${safeName},</p>
             <p style="color:#475569;font-size:15px;line-height:1.6;">
-              ${brandCfg.companyName} has asked you to review and accept the
+              ${orgHtml} has asked you to review and accept the
               <strong>AML/CTF Compliance Passport Agreement</strong> on behalf of
               <strong>${String(org.legal_name).replace(/[<>]/g, "")}</strong>.
             </p>
@@ -3997,7 +4005,7 @@ const __corsWrappedHandler = (async (req: Request): Promise<Response> => {
             <p style="color:#64748b;font-size:13px;line-height:1.6;">
               This link expires in ${ACK_LINK_TTL_DAYS} days. If it lapses, ask us to send a new one.
             </p>
-            <p style="color:#64748b;font-size:13px;">— ${brandCfg.companyName}</p>
+            <p style="color:#64748b;font-size:13px;">— ${orgHtml}</p>
           </div>`;
 
         let emailSent = false;
@@ -4008,7 +4016,7 @@ const __corsWrappedHandler = (async (req: Request): Promise<Response> => {
               method: "POST",
               headers: { "Content-Type": "application/json", "Authorization": `Bearer ${resendApiKey}` },
               body: JSON.stringify({
-                from: brandCfg.fromHeaderAdmin, to: [recipientEmail],
+                ...resendAddressing(identity, "Admin"), to: [recipientEmail],
                 subject, html: htmlBody, text: textBody,
                 tags: [{ name: "category", value: "aml_partner_acknowledgement" }],
               }),

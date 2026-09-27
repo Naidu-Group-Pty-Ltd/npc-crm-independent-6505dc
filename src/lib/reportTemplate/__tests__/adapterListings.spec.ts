@@ -434,14 +434,20 @@ describe('routing declines what binding would decline', () => {
     expect(counted?.eq).toEqual([['conversation_id', 'q1'], ['role', 'assistant']]);
   });
 
-  it('report q&a routes a conversation that has one', async () => {
+  it('report q&a declines a conversation that has one too', async () => {
+    /*
+     * This asserted that a conversation with an answer routed to a template.
+     * It did, and the template printed the conversation's FIRST answer
+     * whichever was chosen, because the adapter is never told which
+     * (26 Sep 2026). Every subject now goes to the route that is addressed by
+     * message; `qaTemplateDeclines.spec.ts` carries the reason.
+     */
     harness.rows.report_qa_conversations = [{ id: 'q2', title: 'Answered', created_at: '2026-08-04' }];
     harness.rows.report_qa_messages = [
       { id: 'm1', conversation_id: 'q2', role: 'user', content: 'What about Newtown?' },
       { id: 'm2', conversation_id: 'q2', role: 'assistant', content: 'Here is the answer.' },
     ];
-    const routing = await getAdapter('qa')!.resolveRoutingContext({ reportId: 'q2' });
-    expect(routing?.title).toBe('Answered');
+    expect(await getAdapter('qa')!.resolveRoutingContext({ reportId: 'q2' })).toBeNull();
   });
 
   it('report q&a refuses the structured subject when none is stored', async () => {
@@ -452,9 +458,10 @@ describe('routing declines what binding would decline', () => {
       { id: 'q3', title: 'Answered', structured_report: null, created_at: '2026-08-04' },
     ];
     const qa = getAdapter('qa')!;
-    // The transcript is there to render; the structured report is not.
+    // Neither routes: the structured report is not stored, and the transcript
+    // is drawn by the route addressed by message (see the case above).
     expect(await qa.resolveRoutingContext({ reportId: 'q3', variant: 'structured' })).toBeNull();
-    expect(await qa.resolveRoutingContext({ reportId: 'q3', variant: 'transcript' })).toBeTruthy();
+    expect(await qa.resolveRoutingContext({ reportId: 'q3', variant: 'transcript' })).toBeNull();
   });
 
   it('market intelligence refuses a report the normaliser would refuse', async () => {

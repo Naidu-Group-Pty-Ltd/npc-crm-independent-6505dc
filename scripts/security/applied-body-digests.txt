@@ -16,9 +16,9 @@
 #
 # Format: <64-hex sha256>  <filename>
 #
-# 707 file(s) recorded of 1043 in the corpus; 698 distinct bodies in the digests read.
-# Matched 636 byte-identical, 56 identical but for trailing whitespace, 15 identical in what executes.
-# 21 file(s) past 262144 bytes were not digested.
+# 708 file(s) recorded of 1046 in the corpus; 699 distinct bodies in the digests read.
+# Matched 637 byte-identical, 56 identical but for trailing whitespace, 15 identical in what executes.
+# 22 file(s) past 262144 bytes were not digested.
 7dba85d6808e9d07f53c7ca984851f965fb3de11568f596711851fc5622f144b  20250827173834_c6923655-f82f-42ad-8561-6e348ff74015.sql
 1808b48be5adb59877cd3bb538b227f43c7e56d1394dc811a5a5ac476b15a4bb  20250827173907_18e662c9-baec-432b-b617-8eb7ec18c522.sql
 f8b5e42420c272757d807a24aa04dfc219011fd9633984cae6a0e8a4bc1470da  20250831091525_eafc9d31-fc67-474b-8924-c82e64771733.sql
@@ -726,3 +726,4 @@ aaf2e67badb90c2d619f74467a6feb390e18980e681286d83e233c21d4ac026c  20261221110000
 0772f6b5db6630cf9b1ca50a127ba57abdc1fc4ba55391f01c7d8e614511b60d  20261221120000_an_agency_and_a_builder_talk_over_the_network.sql
 553eccf484525fd22b8e19b0e5aef7038f1d3b42ffb9309f39cfcab07d235221  20261222100000_refresh_active_masters_from_library_v21.sql
 063755f12dd7161507695d18ac6aa29eb38f2649a30aee8229f23ba5410c9170  20261223100000_refresh_active_masters_from_library_v22.sql
+adea8acda8496d8c8827d5860a9112543bd2d8c1cf92dbd71eb8eda1580e22ef  20261225100000_refresh_active_masters_from_library_v23.sql

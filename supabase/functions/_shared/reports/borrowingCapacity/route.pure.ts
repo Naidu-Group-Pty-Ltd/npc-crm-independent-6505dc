@@ -13,6 +13,11 @@
  * (`BORROWING_CAPACITY.md` §5). A migration that quietly renames the file
  * renames it in the client's downloads folder too.
  */
+import {
+  readTemplateDesignReference,
+  type DesignEcho,
+  type TemplateDesignReference,
+} from '../../reportDesign/templateDesign.pure.ts';
 
 /** Only these are accepted from the caller; everything else is read server-side. */
 export interface SnapshotRenderRequest {
@@ -23,6 +28,12 @@ export interface SnapshotRenderRequest {
   scenarioPresets: unknown[];
   /** `VOL. 2026 · ED. 08`. Cosmetic; the caller may supply it. */
   edition: string | null;
+  /**
+   * The design to draw the document in (`templateDesign.pure.ts`): a catalogue
+   * design or a template row, or null for the standard design. The words,
+   * figures and pages are the report's own whatever is named here.
+   */
+  design: TemplateDesignReference | null;
 }
 
 export type RequestParse =
@@ -58,6 +69,10 @@ export function parseRenderRequest(body: unknown): RequestParse {
   }
 
   const edition = typeof b.edition === 'string' ? b.edition.trim().slice(0, 40) : '';
+  // A design is optional, and a malformed one is refused rather than ignored,
+  // so a caller that meant to ask for one is told it did not get it.
+  const design = readTemplateDesignReference(b.design);
+  if (design.ok === false) return { ok: false, error: design.error };
 
   return {
     ok: true,
@@ -66,6 +81,7 @@ export function parseRenderRequest(body: unknown): RequestParse {
       assessmentId: rawAssessment || null,
       scenarioPresets: presets,
       edition: edition || null,
+      design: design.reference,
     },
   };
 }
@@ -131,4 +147,10 @@ export interface SnapshotRenderResponse {
    */
   brandGaps: string[];
   durationMs: number;
+  /**
+   * The design the document was drawn in, or why the one asked for was not
+   * used — in that case the document is the standard design. Null when none
+   * was asked for.
+   */
+  design: DesignEcho | null;
 }

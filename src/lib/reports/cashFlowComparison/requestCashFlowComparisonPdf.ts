@@ -24,6 +24,12 @@
  * on a column of someone's financial projection is not a display preference.
  */
 import { invokeSecureFunction } from '@/lib/secureInvoke';
+import {
+  announceDesignOutcome,
+  designBody,
+  standardDesignFor,
+  type StandardDesignRequest,
+} from '@/lib/reportTemplate/standardDesign';
 import { looksUndeployed } from '../undeployedRoute';
 import type { WireComparison } from './toWireComparison';
 
@@ -55,16 +61,21 @@ const UNDEPLOYED_MESSAGE =
 export async function requestCashFlowComparisonPdf(
   comparison: WireComparison,
   edition?: string | null,
+  /** The design to draw in (`standardDesign.ts`); omitted, the person's own choice is read. */
+  options: { design?: StandardDesignRequest | null } = {},
 ): Promise<ComparisonPdfResult> {
+  const design = await standardDesignFor('cash_flow_comparison', options.design);
   const { data, error } = await invokeSecureFunction('render-cash-flow-comparison-pdf', {
     ...comparison,
     edition: edition ?? null,
+    ...designBody(design),
     // Five properties with every model section runs to 27 pages and WeasyPrint
     // is a network hop; this is generous against the worst case rather than
     // against the median.
   }, { timeoutMs: 180_000 });
 
   if (!error && data?.url) {
+    announceDesignOutcome(design, data.design);
     return {
       url: String(data.url),
       fileName: String(data.fileName ?? 'Cash_Flow_Comparison.pdf'),
