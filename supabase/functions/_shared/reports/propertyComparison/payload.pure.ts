@@ -234,18 +234,20 @@ export interface Recommendations {
   alternativeScenarios: readonly AlternativeScenario[];
 }
 
-// ── Two sections only a salvaged record can carry ───────────────────────────
+// ── Timing and advantages ───────────────────────────────────────────────────
 
 /**
- * `marketTiming` and `competitiveAdvantages` are written by the producer and
- * have **no column to live in**. On the 23 rows whose response parsed, the writer
- * destructured what it recognised into seven columns and dropped these two on the
- * floor. On the 27 rows whose response did not parse, the raw text was kept — so
- * the damaged rows carry more of the analysis than the intact ones do.
+ * `marketTiming` and `competitiveAdvantages` are written by the producer and,
+ * until 28 Sep 2026, had **no column to live in**. On the rows whose response
+ * parsed, the writer destructured what it recognised into seven columns and
+ * dropped these two on the floor; on the rows whose response did not parse, the
+ * raw text was kept — so the damaged rows carried more of the analysis than the
+ * intact ones did.
  *
- * Recovered on 23 and 10 of the 27 respectively. Rendered when present, absent
- * otherwise, and the contract document explains the inversion so nobody reads a
- * richer salvaged document as a mistake.
+ * They have columns now (`market_timing`, `competitive_advantages`), filled by
+ * the producer from the answer it already asked for — the prompt and the model
+ * are unchanged. A row written before that keeps the old inversion: rendered
+ * when present, absent otherwise (`COMPARISON.md` §14).
  */
 export interface HoldingPeriod {
   property: PropertyRef | null;
@@ -253,9 +255,16 @@ export interface HoldingPeriod {
   reason: string;
 }
 
+/** How the analysis suggests leaving a property. Asked for since the first prompt; never printed before §14. */
+export interface ExitStrategy {
+  property: PropertyRef | null;
+  strategy: string;
+}
+
 export interface MarketTiming {
   buyFirst: NamedProperty | null;
   holdingPeriods: readonly HoldingPeriod[];
+  exitStrategies: readonly ExitStrategy[];
 }
 
 export interface CompetitiveAdvantage {

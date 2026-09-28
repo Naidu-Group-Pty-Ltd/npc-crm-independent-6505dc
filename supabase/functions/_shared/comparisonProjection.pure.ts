@@ -36,10 +36,10 @@
  * published with its denominator beside it (`ranked.0.outOf`) rather than as a
  * bare figure, because 8.5 means two different things on the two scales.
  *
- * `marketTiming` and `competitiveAdvantages` are published where they exist,
- * which is **only on the damaged rows**: the writer that destructures a
- * successful response into seven columns has no column for them and drops them.
- * A salvaged document carries more of the analysis than an intact one. (This
+ * `marketTiming` and `competitiveAdvantages` are published where they exist.
+ * Until 28 Sep 2026 that was **only on the damaged rows**, because the writer
+ * that destructures a successful response into seven columns had no column for
+ * them; they have their own columns now. (This
  * paragraph was aspiration for a while — the code below dropped both on the
  * floor until the binding audit compared it against the payload. They are
  * published now, with the truncation note beside them, because half the stored
@@ -251,13 +251,11 @@ export function projectComparisonModel(model: PropertyComparison): ProjectedComp
     basis.weights = model.basis.weights.map((w) => ({ ...w }));
   }
 
-  // ── the two sections only a damaged record carries ────────────────────────
-  // `marketTiming` and `competitiveAdvantages` have no column to live in: the
-  // writer that destructures a successful response into seven columns drops
-  // them, and only the salvage path reads them back — 23 and 10 of the 27
-  // salvaged rows respectively. The projection header always claimed these
-  // were published; until now it was wrong, and the richest sections of the
-  // richest records reached no template.
+  // ── timing and advantages ─────────────────────────────────────────────────
+  // Until 28 Sep 2026 `marketTiming` and `competitiveAdvantages` had no column
+  // to live in, so only the salvage path read them back — 23 and 10 of the 27
+  // salvaged rows respectively. They are stored now (`market_timing`,
+  // `competitive_advantages`) and reach every template from either shape.
   if (model.timing) {
     const t: Record<string, unknown> = {};
     if (model.timing.buyFirst) {
@@ -272,6 +270,14 @@ export function projectComparisonModel(model: PropertyComparison): ProjectedComp
         out.winner = h.property ? h.property.shortAddress : 'Across the comparison';
         put(out, 'period', h.period);
         put(out, 'reason', h.reason);
+        return out;
+      });
+    }
+    if (model.timing.exitStrategies.length) {
+      t.exits = model.timing.exitStrategies.map((e) => {
+        const out: Record<string, unknown> = {};
+        out.winner = e.property ? e.property.shortAddress : 'Across the comparison';
+        put(out, 'strategy', e.strategy);
         return out;
       });
     }
