@@ -18,6 +18,7 @@
  * types here say nothing about how it should look.
  */
 
+import type { RationaleAdvisorSection } from './strategyRationale.pure.ts';
 import type { Measure } from '../../reportDesign/measure.pure.ts';
 import type { AuditCategory, Direction } from './audit.pure.ts';
 
@@ -119,6 +120,12 @@ export interface ScenarioRow {
   adjustments: string[];
   /** Strategy actions, purchase power, capital flow. */
   details: string[];
+  /**
+   * The Strategy Advisor's reasoning, where the scenario was saved from one of
+   * its cards (`advisorRationale` in the preset). Absent otherwise, so a
+   * scenario built by hand reads exactly as it always has.
+   */
+  advisor?: RationaleAdvisorSection;
 }
 
 export interface LmiSection {

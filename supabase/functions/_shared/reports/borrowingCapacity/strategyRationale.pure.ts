@@ -94,6 +94,36 @@ export interface RationaleContextInput {
     totalPoolDebt: number;
     poolReleaseAmount: number;
   } | null;
+  /**
+   * The Strategy Advisor's own account of the scenario it proposed, where the
+   * levers on screen came from one of its cards. Absent for a scenario the
+   * adviser built by hand, and the brief then prints exactly what it printed
+   * before this field existed.
+   */
+  advisor?: RationaleAdvisorInput | null;
+}
+
+/**
+ * What the Strategy Advisor wrote for the scenario that was applied — the
+ * client-specific explanation its system prompt tells it to write "as if it
+ * will be quoted directly into a finance handoff (because it will)".
+ *
+ * Its `estimatedImpact` is deliberately not carried: it is the model's guess
+ * at the uplift, and the brief already prints the engine's own figure in the
+ * capacity boxes. Two capacity figures for one scenario is how a finance team
+ * comes to ask which one to believe.
+ */
+export interface RationaleAdvisorInput {
+  scenarioName: string;
+  reasoning: string;
+  executionRisk?: 'low' | 'medium' | 'high' | null;
+  evidenceRequired?: string[];
+  rejectedLevers?: Array<{ lever: string; reason: string }>;
+  /**
+   * The levers were changed after the card was applied, so the reasoning
+   * describes the scenario as the advisor proposed it rather than as modelled.
+   */
+  adjustedSince?: boolean;
 }
 
 // ── The document ────────────────────────────────────────────────────────────
@@ -134,6 +164,23 @@ export interface RationaleLegLine {
   unallocated: boolean;
 }
 
+export interface RationaleAdvisorSection {
+  title: string;
+  /** `Scenario: …` */
+  scenarioLine: string;
+  /** The reasoning, one paragraph per entry. */
+  paragraphs: string[];
+  /** `Execution risk: MEDIUM`, or null where the advisor gave none. */
+  riskLine: string | null;
+  risk: 'low' | 'medium' | 'high' | null;
+  evidenceTitle: string;
+  evidence: string[];
+  rejectedTitle: string;
+  rejected: string[];
+  /** Who wrote this, and — where the levers moved — what it now describes. */
+  notes: string[];
+}
+
 export interface StrategyRationaleDocument {
   /** `28 September 2026, 20:15`, formatted by the caller. */
   generatedLabel: string;
@@ -163,6 +210,8 @@ export interface StrategyRationaleDocument {
   } | null;
   valuations: { title: string; note: string; lines: string[] } | null;
   crossCollat: { title: string; text: string } | null;
+  /** The Strategy Advisor's reasoning, where the scenario is one of its cards. */
+  advisor?: RationaleAdvisorSection | null;
 }
 
 // ── Formatting, as the jsPDF generator formats ─────────────────────────────
@@ -197,6 +246,63 @@ const BASIS_LABEL: Record<string, string> = {
   comparable_sales: 'Comp sales',
   manual: 'Manual',
 };
+
+export const ADVISOR_SECTION_TITLE = 'Strategy Advisor — why this scenario';
+export const ADVISOR_PROVENANCE_NOTE =
+  'Written by the Strategy Advisor (AI) for this client\'s position. Every figure elsewhere in this brief is the calculation engine\'s own.';
+export const ADVISOR_ADJUSTED_NOTE =
+  'The levers were changed after this scenario was applied, so this reasoning describes the scenario as the advisor proposed it; the figures in this brief are for the levers as they now stand.';
+
+/**
+ * A paragraph the model wrote, as a line of print: its Markdown emphasis
+ * marks removed (the brief is not Markdown) and its whitespace closed up.
+ */
+function plainParagraph(t: string): string {
+  return t
+    .replace(/\*\*(.+?)\*\*/g, '$1')
+    .replace(/__(.+?)__/g, '$1')
+    .replace(/^\s*(?:[-*•]|#{1,6})\s+/, '')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+/** The reasoning as paragraphs: split on blank lines, never merged or reworded. */
+export function advisorParagraphs(reasoning: string): string[] {
+  return reasoning
+    .split(/\n\s*\n/)
+    .map(plainParagraph)
+    .filter(Boolean);
+}
+
+/**
+ * The advisor's part of the brief, or null where there is nothing of its to
+ * print. Shared by the typeset brief, the jsPDF brief and the panel's copied
+ * text, so the three cannot word it differently.
+ */
+export function composeAdvisorSection(advisor: RationaleAdvisorInput | null | undefined): RationaleAdvisorSection | null {
+  if (!advisor) return null;
+  const paragraphs = advisorParagraphs(advisor.reasoning ?? '');
+  if (paragraphs.length === 0) return null;
+  const risk = advisor.executionRisk === 'low' || advisor.executionRisk === 'medium' || advisor.executionRisk === 'high'
+    ? advisor.executionRisk
+    : null;
+  const evidence = (advisor.evidenceRequired ?? []).map(plainParagraph).filter(Boolean);
+  const rejected = (advisor.rejectedLevers ?? [])
+    .filter((r) => r && (r.lever || r.reason))
+    .map((r) => [plainParagraph(r.lever ?? ''), plainParagraph(r.reason ?? '')].filter(Boolean).join(' — '));
+  return {
+    title: ADVISOR_SECTION_TITLE,
+    scenarioLine: `Scenario: ${plainParagraph(advisor.scenarioName || '') || 'Suggested scenario'}`,
+    paragraphs,
+    riskLine: risk ? `Execution risk: ${risk.toUpperCase()}` : null,
+    risk,
+    evidenceTitle: `Evidence required before submission (${plural(evidence.length, 'item')})`,
+    evidence,
+    rejectedTitle: `Levers considered and set aside (${plural(rejected.length, 'lever')})`,
+    rejected,
+    notes: [ADVISOR_PROVENANCE_NOTE, ...(advisor.adjustedSince ? [ADVISOR_ADJUSTED_NOTE] : [])],
+  };
+}
 
 /**
  * The document, from the engine's report and the panel's context.
@@ -320,6 +426,7 @@ export function composeStrategyRationale(
     capitalFlow,
     valuations,
     crossCollat,
+    advisor: composeAdvisorSection(context.advisor),
   };
 }
 
@@ -335,6 +442,10 @@ export const RATIONALE_LIMITS = {
   caveats: 40,
   legs: 40,
   valuationLines: 40,
+  advisorText: 12_000,
+  advisorParagraphs: 24,
+  evidence: 30,
+  rejected: 30,
 } as const;
 
 type Rec = Record<string, unknown>;
@@ -446,6 +557,29 @@ export function readStrategyRationale(raw: unknown): RationaleRead {
       }
     : null;
 
+  const advRaw = isRec(raw.advisor) ? raw.advisor : null;
+  const advParagraphs = advRaw ? list(advRaw.paragraphs, L.advisorParagraphs, (t) => text(t, L.advisorText)) : [];
+  const advRisk = advRaw && (advRaw.risk === 'low' || advRaw.risk === 'medium' || advRaw.risk === 'high') ? advRaw.risk : null;
+  const advisor: RationaleAdvisorSection | null = advRaw && advParagraphs.length > 0
+    ? {
+        title: text(advRaw.title, L.shortText) ?? ADVISOR_SECTION_TITLE,
+        scenarioLine: text(advRaw.scenarioLine, L.shortText) ?? '',
+        paragraphs: advParagraphs,
+        riskLine: advRisk ? `Execution risk: ${advRisk.toUpperCase()}` : null,
+        risk: advRisk,
+        evidenceTitle: text(advRaw.evidenceTitle, L.shortText) ?? '',
+        evidence: list(advRaw.evidence, L.evidence, (t) => text(t, L.longText)),
+        rejectedTitle: text(advRaw.rejectedTitle, L.shortText) ?? '',
+        rejected: list(advRaw.rejected, L.rejected, (t) => text(t, L.longText)),
+        // Always the provenance line, whatever arrived: a brief that quotes a
+        // model must say so, and the request cannot talk it out of that.
+        notes: [
+          ADVISOR_PROVENANCE_NOTE,
+          ...list(advRaw.notes, 4, (t) => text(t, L.longText)).filter((n) => n === ADVISOR_ADJUSTED_NOTE),
+        ],
+      }
+    : null;
+
   const ccRaw = isRec(raw.crossCollat) ? raw.crossCollat : null;
   const crossCollat = ccRaw && text(ccRaw.title, L.shortText) && text(ccRaw.text, L.longText)
     ? { title: text(ccRaw.title, L.shortText)!, text: text(ccRaw.text, L.longText)! }
@@ -472,6 +606,7 @@ export function readStrategyRationale(raw: unknown): RationaleRead {
       capitalFlow,
       valuations,
       crossCollat,
+      advisor,
     },
   };
 }

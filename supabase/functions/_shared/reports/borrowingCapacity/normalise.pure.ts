@@ -16,6 +16,7 @@
  * document without rendering one.
  */
 
+import { composeAdvisorSection } from './strategyRationale.pure.ts';
 import type { Measure } from '../../reportDesign/measure.pure.ts';
 import {
   aud,
@@ -474,6 +475,28 @@ function toScenarioRow(raw: unknown, baseCapacity: number | null, baseInputs: un
     details.push(`Purchase power: max ${formatMeasure(aud(maxPurchase))}.`);
   }
 
+  // The advisor's reasoning, read through the same composer the Strategy
+  // Rationale uses so the Snapshot and the brief word it identically. A
+  // preset is a browser payload, so the fields are read defensively.
+  const advisorRaw = asRec(preset.advisorRationale);
+  const advisor = isBase ? null : composeAdvisorSection(
+    typeof advisorRaw.reasoning === 'string'
+      ? {
+          scenarioName: firstText(advisorRaw.scenarioName) ?? firstText(preset.name) ?? 'Scenario',
+          reasoning: advisorRaw.reasoning,
+          executionRisk: advisorRaw.executionRisk === 'low' || advisorRaw.executionRisk === 'medium' || advisorRaw.executionRisk === 'high'
+            ? advisorRaw.executionRisk
+            : null,
+          evidenceRequired: asArray(advisorRaw.evidenceRequired).filter((e): e is string => typeof e === 'string'),
+          rejectedLevers: asArray(advisorRaw.rejectedLevers).map((r) => {
+            const rec = asRec(r);
+            return { lever: firstText(rec.lever) ?? '', reason: firstText(rec.reason) ?? '' };
+          }),
+          adjustedSince: advisorRaw.adjustedSince === true,
+        }
+      : null,
+  );
+
   return {
     name: firstText(preset.name) ?? 'Scenario',
     capacity: aud(capacity),
@@ -482,6 +505,7 @@ function toScenarioRow(raw: unknown, baseCapacity: number | null, baseInputs: un
     change,
     adjustments: isBase ? [] : describeAdjustments(baseInputs, preset.adjustedInputs),
     details,
+    ...(advisor ? { advisor } : {}),
   };
 }
 

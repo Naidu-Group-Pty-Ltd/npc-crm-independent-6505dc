@@ -27,6 +27,7 @@ import { formatMeasure } from '@/lib/reportDesign/measure.pure';
 import { fetchLatestBorrowingCapacity } from '@/lib/fetchLatestBorrowingCapacity';
 import { format } from 'date-fns';
 import { smartCapitalize } from '@/utils/nameFormatting';
+import { composeAdvisorSection } from '@/lib/reports/borrowingCapacity/strategyRationale.pure';
 
 // ─── Design tokens ───────────────────────────────────────────────────────────
 const GOLD = { r: 191, g: 155, b: 80 };
@@ -1267,6 +1268,33 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
         setColor(doc, BODY_TEXT);
         scenarioDetails.forEach((line) => {
           const wrapped = doc.splitTextToSize(`• ${line}`, CONTENT_W - 8);
+          sy = checkPageBreak(doc, sy, wrapped.length * 4 + 2, pageNum, P);
+          doc.text(wrapped, MARGIN + 4, sy);
+          sy += wrapped.length * 4 + 1;
+        });
+        sy += 2;
+      }
+
+      // The Strategy Advisor's reasoning, for a scenario saved from one of its
+      // cards — worded by the same composer as the Strategy Rationale and the
+      // typeset Snapshot, so the three cannot disagree.
+      const advisor = composeAdvisorSection(sc.advisorRationale ?? null);
+      if (advisor) {
+        const advisorLines: Array<{ text: string; style: 'bold' | 'normal' | 'italic' }> = [
+          { text: advisor.title, style: 'bold' },
+          ...advisor.paragraphs.map((t) => ({ text: t, style: 'normal' as const })),
+          ...(advisor.riskLine ? [{ text: advisor.riskLine, style: 'bold' as const }] : []),
+          ...(advisor.evidence.length ? [{ text: advisor.evidenceTitle, style: 'bold' as const }] : []),
+          ...advisor.evidence.map((t) => ({ text: `• ${t}`, style: 'normal' as const })),
+          ...(advisor.rejected.length ? [{ text: advisor.rejectedTitle, style: 'bold' as const }] : []),
+          ...advisor.rejected.map((t) => ({ text: `• ${t}`, style: 'normal' as const })),
+          ...advisor.notes.map((t) => ({ text: t, style: 'italic' as const })),
+        ];
+        advisorLines.forEach(({ text, style }) => {
+          doc.setFontSize(7);
+          doc.setFont('helvetica', style);
+          setColor(doc, style === 'italic' ? GRAY : style === 'bold' ? P.navy : BODY_TEXT);
+          const wrapped = doc.splitTextToSize(text, CONTENT_W - 8);
           sy = checkPageBreak(doc, sy, wrapped.length * 4 + 2, pageNum, P);
           doc.text(wrapped, MARGIN + 4, sy);
           sy += wrapped.length * 4 + 1;

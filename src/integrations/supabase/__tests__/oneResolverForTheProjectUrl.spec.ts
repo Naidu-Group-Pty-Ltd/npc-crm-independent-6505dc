@@ -46,13 +46,17 @@
  * a string is listed too, and the remedy is to say so here rather than to
  * narrow the rule, because the opposite mistake is the silent one.
  *
- * ## Why a ratchet rather than a ban
+ * ## It was a ratchet, and the last three cost a feature
  *
- * Three call sites still read it raw, and each is a separate behaviour change
- * with its own blast radius — two build Edge Function URLs and one is a
- * clipboard affordance. They are named here so they cannot grow, and so the
- * next person fixing one finds the reason written down. Removing a file from
- * this list is the fix; adding one requires deciding to.
+ * Three call sites were left reading it raw, named here so they could not
+ * grow — two built Edge Function URLs and one was a clipboard affordance. On
+ * this deployment no Supabase variable is set (`.env` left the repository on
+ * 21 Jul 2026), so all three read `undefined`, and the first of them was the
+ * Borrowing Capacity Strategy Advisor: on 28 Sep 2026 it showed the broker's
+ * question and nothing else, and production logs held no browser request to
+ * `bc-scenario-agent` at all while the rest of the screen worked. Market
+ * Updates Q&A was dead the same way. All three read `SUPABASE_URL` now, so
+ * the list is empty and the ratchet is a ban: `env.ts` is the only reader.
  */
 import { describe, expect, it } from 'vitest';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
@@ -125,16 +129,8 @@ function sourceFiles(dir: string, found: string[] = []): string[] {
   return found;
 }
 
-/**
- * The reader that IS the resolver, plus the three that have not been moved.
- * Paths are `src/`-relative with forward slashes.
- */
+/** The reader that IS the resolver. Paths are `src/`-relative with forward slashes. */
 const RESOLVER = 'integrations/supabase/env.ts';
-const NOT_YET_MOVED = [
-  'components/borrowing-capacity/scenarios/BCScenarioAgent.tsx',
-  'components/market-updates/MarketSourcesAdminDialog.tsx',
-  'services/marketUpdatesService.ts',
-];
 
 describe('one resolver for the project URL', () => {
   const raw = sourceFiles(SRC)
@@ -142,8 +138,8 @@ describe('one resolver for the project URL', () => {
     .map((file) => relative(SRC, file).split(sep).join('/'))
     .sort();
 
-  it('is read raw only by env.ts and the three sites named here', () => {
-    expect(raw).toEqual([RESOLVER, ...NOT_YET_MOVED].sort());
+  it('is read raw by env.ts and nothing else', () => {
+    expect(raw).toEqual([RESOLVER]);
   });
 
   it('recognises every spelling a raw read has taken in this tree', () => {

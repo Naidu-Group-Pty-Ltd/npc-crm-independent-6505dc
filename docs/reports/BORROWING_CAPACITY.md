@@ -1169,3 +1169,56 @@ reworded.
   Borrowing Capacity choice the brief is drawn in. The file keeps its name,
   `Strategy_Rationale_<Name>_<yyyy-MM-dd>.pdf`, dated in the adviser's own time
   zone, as is the "Generated" line.
+
+## 18. The Strategy Advisor's reasoning travels with its scenario (28 Sep 2026)
+
+The What-If tab's Strategy Advisor proposes three scenarios for the client's
+own position, each with a paragraph of client-specific reasoning, an execution
+risk, the evidence a lender will ask for and the levers it considered and set
+aside. Its system prompt tells it to write that reasoning "as if it will be
+quoted directly into a finance handoff (because it will)". Nothing quoted it.
+"Apply Scenario" moved the card's levers into the modeller, and the Strategy
+Rationale then described those levers lever by lever while saying nothing of
+why this client should use them. The explanation stayed on the card.
+
+Two faults sat in front of that. For a while the advisor answered nothing at
+all: its request was addressed through a build-time variable no build sets, so
+it went to the web app's own host and came back as the app's HTML under a 200.
+Nothing parsed, and the prompt sat unanswered. Market Updates Q&A and the
+source-feed copy button had the same fault, and all three now read the one
+resolved project URL (`integrations/supabase/env.ts`). And the rationale had no
+field to carry the reasoning in.
+
+Now, applying a card carries its reasoning with its levers:
+
+- **One composer.** `composeAdvisorSection` (`strategyRationale.pure.ts`) words
+  the section once. The panel, its "Copy brief" text, the typeset brief, the
+  jsPDF brief, the typeset Snapshot and the jsPDF Snapshot all print what it
+  returns, so they cannot word it differently.
+- **Where it sits.** In the brief it comes under the capacity figures and
+  before "What we propose & why". It is the WHY of the whole scenario; the
+  levers below it are the engine's account of each part.
+- **The model's own estimate is not carried.** A card's `estimatedImpact` is
+  the model's guess at the uplift, and the brief already prints the engine's
+  figure. Two capacity figures for one scenario is how a finance team comes to
+  ask which one to believe.
+- **It says who wrote it, always.** Every copy carries "Written by the Strategy
+  Advisor (AI) for this client's position. Every figure elsewhere in this brief
+  is the calculation engine's own." The server's read restores that line
+  whatever the request sent.
+- **It follows the levers.** Once an apply has settled, the modeller takes a
+  signature of the levers. The settle matters because effects normalise the
+  levers for a render or two afterwards. If the broker moves a lever after
+  that, the section says the reasoning describes the scenario as the advisor
+  proposed it. Reset clears it. Loading a saved scenario does not bring it
+  back into the modeller, because a load restores the calculator inputs and
+  not the card's lever set.
+- **It is saved with the scenario.** `advisorRationale` rides inside the
+  preset's payload (a JSONB column, so no migration). It reaches every
+  scenario saved, applied to the calculator or sent to the Snapshot, and the
+  Snapshot's scenario pages print it under that scenario's name.
+- **Without an advisor, nothing changes.** A scenario built by hand prints
+  exactly what it printed before. That is pinned by comparing the rendered
+  brief with and without the field.
+
+`strategyRationaleAdvisor.spec.ts` carries the rules.

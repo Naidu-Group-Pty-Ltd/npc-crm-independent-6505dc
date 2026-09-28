@@ -7,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { cn } from '@/lib/utils';
+import { SUPABASE_URL } from '@/integrations/supabase/env';
 import {
   clearMarketSourceError,
   fetchMarketSourceAdminSnapshot,
@@ -102,7 +103,7 @@ export function MarketSourcesAdminDialog({ open, onOpenChange, onChanged }: { op
       setBusyId(null);
     }
   };
-  const copyFeedUrl = () => navigator.clipboard.writeText(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/market-updates-feed`);
+  const copyFeedUrl = () => navigator.clipboard.writeText(`${SUPABASE_URL}/functions/v1/market-updates-feed`);
 
   const displayedSources = useMemo(() => (view === 'canonical'
     ? sources

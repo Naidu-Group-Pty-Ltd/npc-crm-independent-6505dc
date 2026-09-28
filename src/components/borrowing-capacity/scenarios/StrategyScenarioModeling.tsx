@@ -64,6 +64,8 @@ import { PurchasePowerHeadline, type LeverAttribution } from './PurchasePowerHea
 import { StrategyRationalePanel } from './StrategyRationalePanel';
 import { SnapshotDownloadButton } from '../SnapshotDownloadButton';
 import { buildStrategyRationale } from '@/utils/strategyRationaleEngine';
+import type { RationaleAdvisorInput } from '@/lib/reports/borrowingCapacity/strategyRationale.pure';
+import { advisorRationaleFromCard } from './advisorRationale.pure';
 import { CapacityMathInspector } from './CapacityMathInspector';
 import { CapitalFlowCanvas, type CapitalAllocation } from './CapitalFlowCanvas';
 import { SolutionOptionCards } from './SolutionOptionCards';
@@ -172,6 +174,14 @@ const DEFAULT_ACQUISITION: AcquisitionState = {
 
 // ── Scenario Preset Types ──────────────────────────────
 
+/**
+ * How long the lever state must hold still after an advisor card lands before
+ * its signature is taken. The apply is followed by a render or two of effects
+ * normalising the levers; this is comfortably past them and well under a
+ * person's next click.
+ */
+const ADVISOR_SETTLE_MS = 400;
+
 export interface ScenarioPreset {
   id: string;
   name: string;
@@ -202,6 +212,13 @@ export interface ScenarioPreset {
   acquisition?: AcquisitionState;
   /** Phase 3 — replayable/auditable scenario payload with base snapshot hashes. */
   replayAudit?: PersistedBcScenarioV2;
+  /**
+   * The Strategy Advisor's reasoning for the card this scenario came from.
+   * Stored inside the preset's payload (no column), so a saved scenario, a
+   * scenario applied to the calculator and the Snapshot's scenario pages all
+   * carry the client-specific explanation with the figures it explains.
+   */
+  advisorRationale?: RationaleAdvisorInput | null;
 }
 
 interface StrategyScenarioModelingProps {
@@ -315,6 +332,15 @@ export function StrategyScenarioModeling({
 
   const [presets, setPresets] = useState<ScenarioPreset[]>(externalPresets);
   const [scenarioName, setScenarioName] = useState('');
+  /**
+   * The advisor card whose levers are live, with the lever signature taken
+   * once the apply has settled. Cleared by Reset; replaced by the next card or
+   * a loaded scenario that carries its own.
+   */
+  const [advisorApplied, setAdvisorApplied] = useState<{
+    rationale: RationaleAdvisorInput;
+    signature: string | null;
+  } | null>(null);
   const [showSaveInput, setShowSaveInput] = useState(false);
 
   useEffect(() => {
@@ -1244,6 +1270,36 @@ export function StrategyScenarioModeling({
    * answer different questions — so the menu says which is which rather than
    * picking for the adviser.
    */
+  // ── The advisor's reasoning follows the levers it explains ─────────────────
+  // What the modeller computes from the levers, as one comparable string. The
+  // signature is taken once an apply has SETTLED — the lever state is
+  // normalised by effects for a render or two after a card lands, and a
+  // signature taken on the first render would call the advisor's own scenario
+  // "changed since". After that, any difference means the broker moved a
+  // lever, and the reasoning is then labelled as describing the scenario as
+  // proposed rather than as modelled.
+  const leverSignature = useMemo(
+    () => JSON.stringify({ deltas: appliedDeltas, acquisition: acquisition.enabled ? acquisition : null }),
+    [appliedDeltas, acquisition],
+  );
+  // Every lever change re-runs this and restarts the timer, so the signature
+  // is the one the levers hold still at.
+  useEffect(() => {
+    if (!advisorApplied || advisorApplied.signature !== null) return;
+    const timer = setTimeout(() => {
+      setAdvisorApplied((prev) => (prev && prev.signature === null
+        ? { ...prev, signature: leverSignature }
+        : prev));
+    }, ADVISOR_SETTLE_MS);
+    return () => clearTimeout(timer);
+  }, [advisorApplied, leverSignature]);
+
+  const advisorRationale = useMemo<RationaleAdvisorInput | null>(() => {
+    if (!advisorApplied) return null;
+    const adjustedSince = advisorApplied.signature !== null && advisorApplied.signature !== leverSignature;
+    return { ...advisorApplied.rationale, adjustedSince };
+  }, [advisorApplied, leverSignature]);
+
   const buildScenarioPresetsForExport = (): ScenarioPreset[] => {
     const transientName = scenarioName.trim() || 'Current What-If Scenario';
     const transientCreatedAt = new Date().toISOString();
@@ -1265,11 +1321,13 @@ export function StrategyScenarioModeling({
       incomeComponents,
       currentLenderProfileId,
       hemBenchmark,
+      advisorRationale,
     };
     return [...presets, ...(presets.some((p) => p.id === transient.id) ? [] : [transient])];
   };
 
   const hasBlockingValidationIssues = blockingValidationIssues.length > 0;
+
 
   const hasAnyStrategy = strategy.consolidatedLiabilities.size > 0 ||
     strategy.refinancedToIO.size > 0 ||
@@ -1303,6 +1361,7 @@ export function StrategyScenarioModeling({
     });
     setAcquisition(DEFAULT_ACQUISITION);
     setCapitalAllocations([]);
+    setAdvisorApplied(null);
   }, []);
 
   const handleSavePreset = useCallback(() => {
@@ -1332,6 +1391,7 @@ export function StrategyScenarioModeling({
         incomeComponents,
         currentLenderProfileId,
         hemBenchmark,
+        advisorRationale,
       };
       const updated = [...presets, newPreset];
       setPresets(updated);
@@ -1347,7 +1407,7 @@ export function StrategyScenarioModeling({
       console.error('[StrategyScenarioModeling] Save scenario failed:', err);
       toast.error(err?.message || 'Failed to save scenario');
     }
-  }, [scenarioName, hasBlockingValidationIssues, scenarioInputs, scenarioResult, presets, onPresetsChange, totalAccessibleEquity, acquisition, acquisitionCapacity, appliedDeltas, validationIssues, capitalLedger, capitalAllocations, buildReplayAudit, incomeComponents, currentLenderProfileId, hemBenchmark]);
+  }, [scenarioName, hasBlockingValidationIssues, scenarioInputs, scenarioResult, presets, onPresetsChange, totalAccessibleEquity, acquisition, acquisitionCapacity, appliedDeltas, validationIssues, capitalLedger, capitalAllocations, buildReplayAudit, incomeComponents, currentLenderProfileId, hemBenchmark, advisorRationale]);
 
   const handleDeletePreset = useCallback((id: string) => {
     const updated = presets.filter(p => p.id !== id);
@@ -1372,6 +1432,10 @@ export function StrategyScenarioModeling({
         setStrategy(prev => ({ ...prev, consolidatedLiabilities: payoffIds }));
       }
     }
+    // A load restores the payoffs above, not the advisor card's full lever
+    // set, so the modeller's rationale does not claim the card's reasoning
+    // (handleReset cleared it). The preset still carries `advisorRationale`
+    // to the calculator and the Snapshot, beside the figures it explains.
     // Apply the preset's inputs to the main calculator
     onApplyScenario?.(preset.adjustedInputs, preset.accessibleEquity ?? 0, preset);
   }, [handleReset, onApplyScenario]);
@@ -1614,6 +1678,11 @@ export function StrategyScenarioModeling({
           }));
 
           setScenarioName(scenario.name || 'Suggested Scenario');
+
+          // The card's reasoning travels with its levers into the Strategy
+          // Rationale, its PDF and any scenario saved or applied from here.
+          const rationale = advisorRationaleFromCard(scenario);
+          setAdvisorApplied(rationale ? { rationale, signature: null } : null);
 
           // Phase E (L1): Reconcile AI's estimatedImpact against engine truth.
           // React state updates above are asynchronous, so reading the local
@@ -2690,6 +2759,7 @@ export function StrategyScenarioModeling({
             })}
             formatCurrency={formatCurrency}
             clientId={clientId}
+            advisor={advisorRationale}
             pdfContext={clientName ? {
               clientName,
               baseCapacity: baseResult.borrowingCapacity,
@@ -2972,6 +3042,7 @@ export function StrategyScenarioModeling({
                             incomeComponents,
                             currentLenderProfileId,
                             hemBenchmark,
+                            advisorRationale,
                           });
                         } catch (err: any) {
                           console.error('[StrategyScenarioModeling] Apply scenario failed:', err);

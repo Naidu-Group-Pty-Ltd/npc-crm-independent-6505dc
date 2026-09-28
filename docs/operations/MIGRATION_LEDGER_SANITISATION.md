@@ -193,7 +193,11 @@ step 4.
   This is the only binding version of the ref gate.
 - Backfilling bodies into the 130 body-less prime rows. It is a ledger write,
   and it is not done.
-- Porting `native_crm_tables` to the CRM clone.
+- ~~Porting `native_crm_tables` to the CRM clone.~~ Decided 28 Sep 2026: it is
+  written at the prime as `20261229090000_native_crm_tables.sql`, the draft's
+  text renumbered above the applied high-water mark, because the drain sends a
+  clone only what the prime has run. It reaches every clone that way and stays
+  empty wherever the CRM provider is GoHighLevel.
 - The 31 sent replies that `20261219030000` took off the authenticated
   surface: repair them (backfill `original_email_id`, or set
   `owner_user_id`) or leave them to the service role.
