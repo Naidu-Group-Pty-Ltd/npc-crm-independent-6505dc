@@ -152,6 +152,7 @@ import {
   strategySectionRules,
 } from '../_shared/reports/investment/strategyPositions.pure.ts';
 import { restoreGradeMethodology } from '../_shared/reports/investment/gradeMethodologyOnRead.pure.ts';
+import { readConditionRecordsForReport } from '../_shared/reports/risk/conditionRecordRead.ts';
 import {
   headingSequence,
   mergeBlocksIntoSections,
@@ -4766,6 +4767,19 @@ const __investmentReportHandler = async (req: Request): Promise<Response> => {
 
       // Calculate investment score - property OR area scoring
       if (!isAreaReport && effectivePurchasePrice > 0) {
+        /*
+         * The building half of Property Risk: the condition records this
+         * property holds (`property_condition_records`), judged by the scoring
+         * service with `assessConditionRecord`. Read here because the service
+         * has no database handle of its own; an empty list, a table not yet
+         * applied or a failed read leaves the building question unanswered
+         * exactly as before, and never fails the report.
+         */
+        const conditionEvidence = await readConditionRecordsForReport(supabase, reportId);
+        console.log(
+          `🏠 Condition records: ${conditionEvidence.records.length}`
+          + (conditionEvidence.note ? ` (${conditionEvidence.note})` : ''),
+        );
         // Property-specific scoring
         try {
           console.log('📊 Investment scoring inputs (using effective values):');
@@ -4816,6 +4830,13 @@ const __investmentReportHandler = async (req: Request): Promise<Response> => {
               // Location's inputs may count. The service derives the
               // verification itself; nothing here asserts trust.
               locationSubject: enrichmentSubject,
+              // Property Risk (activated 28 Sep 2026): what the planning and
+              // hazard registers returned at this property, and the condition
+              // records it holds. The service judges both; nothing here
+              // asserts a score.
+              planningData: enhancedData.planningData ?? null,
+              conditionRecords: conditionEvidence.records,
+              conditionSubject: conditionEvidence.subject,
             })
           }, 'local', 'investment-scoring-service');
           

@@ -28,6 +28,9 @@ import {
 // enrichment's own RF-7.2B acquisition stamp, in this service, never read
 // from a request field a caller could assert.
 import { verifiedLocationInputs } from '../_shared/reports/market/locationInputVerification.pure.ts';
+// Risk (28 Sep 2026) — the building category is answered by a condition
+// record filed against the property, judged here by the one method module.
+import { bestReadingForSubject } from '../_shared/reports/risk/conditionRecordSubmission.pure.ts';
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type, x-correlation-id, x-step-up-token',
@@ -273,8 +276,39 @@ function productionInputFrom(rawInput: any, now: Date): ProductionScoringInput {
     verifiedInputs: locationVerification.verified,
     locationPointRefusal: locationVerification.pointRefusal ?? null,
     evidenceWithheldReason: str(rawInput.evidenceWithheldReason),
+    // Risk's two categories. The site category is answered from the planning
+    // registers the generator already acquired; the building category from a
+    // condition record the operator filed. Neither is ever inferred: absent
+    // either, Risk stays unscored exactly as before.
+    planning: rawInput.planningData ?? null,
+    condition: conditionReadingFrom(rawInput, now),
     now,
   };
+}
+
+/**
+ * The best admissible condition record for the property being scored, judged
+ * against the subject the GENERATOR read from the report row — never a
+ * caller's say-so about which property a record describes.
+ */
+// deno-lint-ignore no-explicit-any
+function conditionReadingFrom(rawInput: any, now: Date) {
+  const records = Array.isArray(rawInput?.conditionRecords) ? rawInput.conditionRecords : [];
+  const subject = rawInput?.conditionSubject && typeof rawInput.conditionSubject === 'object'
+    ? rawInput.conditionSubject
+    : null;
+  if (!records.length || !subject || typeof subject.propertyAddress !== 'string') return null;
+  const reading = bestReadingForSubject(
+    records,
+    {
+      propertyAddress: subject.propertyAddress,
+      propertyId: typeof subject.propertyId === 'string' ? subject.propertyId : null,
+      reportId: typeof subject.reportId === 'string' ? subject.reportId : null,
+    },
+    now.toISOString(),
+  );
+  console.log(`🏠 Condition reading: ${records.length} record(s), ${reading?.admissible ? `admissible (${reading.observation ?? 'no observation'})` : `not admissible${reading?.refusal ? ` — ${reading.refusal}` : ''}`}`);
+  return reading;
 }
 
 
