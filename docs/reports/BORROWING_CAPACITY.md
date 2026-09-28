@@ -1189,6 +1189,19 @@ source-feed copy button had the same fault, and all three now read the one
 resolved project URL (`integrations/supabase/env.ts`). And the rationale had no
 field to carry the reasoning in.
 
+**The address fix exposed a second fault behind the first.** Once the request
+reached `bc-scenario-agent`, the function refused both of the owner's
+attempts (28 Sep 2026, 15:21 and 15:22 UTC) with 401 "Authentication
+required". The advisor opened its own fetch with credentials omitted and the
+access-token Bearer alone. That Bearer is the carrier a browser can no longer
+reliably hold (`secureInvoke.ts`), while `verifyAuth` reads the session from
+the HttpOnly cookie. The function was already wrapped in `withRequestOrigin`,
+which answers the exact origin with credentials, so the cookie was all it
+needed. The advisor now opens its stream through `openSecureStream`, the
+transport `streamSecureFunction` uses: the cookie, the Bearer, and one refresh
+and retry on an auth refusal. It still reads its own OpenAI-style deltas.
+`bcScenarioAgentStream.test.ts` forbids a fetch of its own in the component.
+
 Now, applying a card carries its reasoning with its levers:
 
 - **One composer.** `composeAdvisorSection` (`strategyRationale.pure.ts`) words

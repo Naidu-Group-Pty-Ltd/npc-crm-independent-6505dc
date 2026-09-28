@@ -13,8 +13,7 @@ import ReactMarkdown from 'react-markdown';
 import type { BorrowingCapacityInput, BorrowingCapacityResult } from '@/utils/borrowingCapacityCalculations';
 import type { LiabilityItem, PropertyItem } from './StrategyScenarioModeling';
 import { toast } from 'sonner';
-import { resolveAuthBearer } from '@/lib/secureInvoke';
-import { SUPABASE_URL } from '@/integrations/supabase/env';
+import { openSecureStream } from '@/lib/streamSecureFunction';
 import { agentStreamRefusal, emptyAgentAnswerMessage } from './bcScenarioAgentStream.pure';
 import { runScenarioWithInputs, type ScenarioContext } from '@/utils/scenarioDeltaEngine';
 import type { ScenarioDelta } from '@/utils/borrowingCapacityTypes';
@@ -362,68 +361,44 @@ export function BCScenarioAgent({
     setIsLoading(true);
 
     try {
-      // WP-11B/C cookie-only: this endpoint uses wildcard CORS (no cookies),
-      // so it authenticates via the access-token JWT Bearer (verifyAuth JWT
-      // path). The raw session token is no longer read or sent.
+      // Opened through the one secure streaming transport (`openSecureStream`):
+      // the HttpOnly session cookie AND the access-token Bearer, with one
+      // refresh and one retry on an auth refusal.
       //
-      // Resolved rather than read: the access token lives in tab-scoped
-      // `sessionStorage`, so a second tab has a perfectly good session — its
-      // HttpOnly cookie — and no token to send with it. Reading storage
-      // directly sends the ANON key instead and the agent answers
-      // "Authentication required" to a signed-in person. Same defect, same
-      // fix, as the Report Q&A chat.
-      const { token: accessToken } = await resolveAuthBearer({ refreshIfMissing: true });
-
-      // The project URL comes from the one module that resolves it. This read
-      // was `import.meta.env.VITE_SUPABASE_URL`, which is `undefined` on a
-      // build that sets no Supabase variables (this deployment, since `.env`
-      // left the repository on 21 Jul 2026): the address became
-      // `undefined/functions/v1/…`, a RELATIVE url, so the request went to the
-      // app's own host, which answers any path with its HTML shell and a 200.
-      // Nothing reached the function — production logs show no browser request
-      // to it at all — and the reader below found no `data:` lines in the HTML,
-      // so the chat showed the question, no answer and no error.
-      // `internalMessageAttachments.ts` records the same defect.
-      const resp = await fetch(
-        `${SUPABASE_URL}/functions/v1/bc-scenario-agent`,
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${accessToken}`,
-          },
-          credentials: 'omit',
-          body: JSON.stringify({
-            messages: updatedMessages,
-            clientContext: {
-              baseInputs,
-              baseResult,
-              liabilities,
-              properties,
-              // Phase I1/I2 — propagate so the server preview re-shades and
-              // floors expenses identically to the client engine.
-              incomeComponents,
-              currentLenderProfileId,
-              hemBenchmark,
-            },
-            // Phase J1 — give the model an explicit memory of the prior run
-            // so refinement requests reference real numbers, not re-derived ones.
-            priorScenarios: scenarios.length > 0
-              ? scenarios.slice(0, 3).map(s => ({
-                  name: s.name,
-                  adjustments: s.adjustments,
-                  engineValidation: s.engineValidation,
-                  executionRisk: s.executionRisk,
-                }))
-              : undefined,
-          }),
-        }
-      );
-
-      if (!resp.ok) {
-        const err = await resp.json().catch(() => ({ error: 'Request failed' }));
-        throw new Error(err.error || `HTTP ${resp.status}`);
-      }
+      // Two faults sat here, one behind the other. The address was built from
+      // the `VITE_SUPABASE_URL` build variable, which no build sets, so the request
+      // went to the app's own host and came back as its HTML shell (fixed by
+      // reading the resolved `SUPABASE_URL`). With that fixed, the request
+      // reached the function and was refused 401 "Authentication required":
+      // it was sent with credentials omitted and the Bearer alone, and
+      // `verifyAuth` reads the session from the cookie. Production logs show
+      // both of the owner's first requests after the address fix answered 401.
+      // `withRequestOrigin` already answers the exact origin with credentials,
+      // so the cookie is all the function needed.
+      const resp = await openSecureStream('bc-scenario-agent', {
+        messages: updatedMessages,
+        clientContext: {
+          baseInputs,
+          baseResult,
+          liabilities,
+          properties,
+          // Phase I1/I2 — propagate so the server preview re-shades and
+          // floors expenses identically to the client engine.
+          incomeComponents,
+          currentLenderProfileId,
+          hemBenchmark,
+        },
+        // Phase J1 — give the model an explicit memory of the prior run
+        // so refinement requests reference real numbers, not re-derived ones.
+        priorScenarios: scenarios.length > 0
+          ? scenarios.slice(0, 3).map(s => ({
+              name: s.name,
+              adjustments: s.adjustments,
+              engineValidation: s.engineValidation,
+              executionRisk: s.executionRisk,
+            }))
+          : undefined,
+      });
 
       if (!resp.body) throw new Error('No response body');
       // A 200 that is not the agent's stream is not an answer: said out loud
