@@ -1235,3 +1235,52 @@ Now, applying a card carries its reasoning with its levers:
   brief with and without the field.
 
 `strategyRationaleAdvisor.spec.ts` carries the rules.
+
+## 19. The Strategy Advisor says what it is doing (28 Sep 2026)
+
+A request to the advisor takes 20–90 seconds. It makes one model call, makes
+a second when the borrowing engine rejects enough of the first set, and checks
+every scenario against the engine. For all of that the chat drew one spinning
+circle, so a broker could not tell a slow answer from a stalled one.
+
+The advisor now reports each stage on the stream it already sends, as
+`data: {"progress": {stage, detail, mode}}`:
+
+1. **Reading** the client's position: capacity today and the constraint that
+   limits it. The prompt uses the same classification, `bindingConstraintOf`,
+   and keeps its own wording for each constraint.
+2. **Drafting**, aimed at the purchase price where one was detected. A question
+   about the cards already on screen is `mode: 'answer'` and reads "Writing
+   the answer".
+3. **Engine check** of the drafted scenarios.
+4. **Revising**, only when the engine flagged two or more scenarios and there
+   is budget for a second call.
+5. **Finishing**, set by the browser as the answer arrives and the cards are
+   re-checked against the live calculator.
+
+The bubble (`AdvisorProgressBubble`) draws:
+
+- the stage headline;
+- the server's detail line;
+- the time since sending;
+- the steps, with the done ones ticked;
+- while the model works, one line at a time from the brief, prefixed
+  **In the brief**.
+
+The words live in `_shared/advisorProgress.pure.ts`, which the server and the
+browser both read. Three rules bite.
+
+- **A stage is reported only when it is reached.** The clock ticks; the
+  headline changes only on a report.
+- **The rotating line is a fact the browser sent, never a thought.** Nothing
+  says what the model is weighing at a given second, so the line reads
+  "Money Me, $10,000 balance, $862/mo", never "Considering paying out Money
+  Me". A test refuses verbs of deliberation in it.
+- **Either end may be older.** An older browser reads only `error` and
+  `choices`, so it passes over the event. A newer browser moves itself to
+  "reading" when the stream opens, and to "drafting" if an older server
+  reports nothing within 2.5 s. The stage never moves backwards.
+
+Past 40 seconds, the bubble says a full set can take up to a minute and a
+half. A revision says it adds up to 45 seconds. Both figures are the
+function's own budgets (`FIRST_CALL_TIMEOUT_MS`, `REVISION_TIMEOUT_MS`).

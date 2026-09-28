@@ -1,11 +1,11 @@
-import { useState, useRef, useEffect, useCallback } from 'react';
+import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { Badge } from '@/components/ui/badge';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import {
-  Bot, Send, ChevronDown, ChevronUp, Sparkles, Loader2,
+  Bot, Send, ChevronDown, ChevronUp, Sparkles,
   TrendingUp, CheckCircle2, Zap, Trash2,
 } from 'lucide-react';
 import { VoiceToTextButton } from '@/components/ui/VoiceToTextButton';
@@ -15,6 +15,16 @@ import type { LiabilityItem, PropertyItem } from './StrategyScenarioModeling';
 import { toast } from 'sonner';
 import { openSecureStream } from '@/lib/streamSecureFunction';
 import { agentStreamRefusal, emptyAgentAnswerMessage } from './bcScenarioAgentStream.pure';
+import { AdvisorProgressBubble } from './AdvisorProgressBubble';
+import {
+  advanceProgress,
+  briefFacts,
+  initialProgress,
+  LOCAL_DRAFTING_AFTER_MS,
+  readProgressEvent,
+  type AdvisorProgressEvent,
+  type AdvisorProgressState,
+} from '@/lib/advisorProgress.pure';
 import { runScenarioWithInputs, type ScenarioContext } from '@/utils/scenarioDeltaEngine';
 import type { ScenarioDelta } from '@/utils/borrowingCapacityTypes';
 
@@ -324,6 +334,8 @@ export function BCScenarioAgent({
   const [messages, setMessages] = useState<ChatMessage[]>(initialState?.messages ?? []);
   const [input, setInput] = useState('');
   const [isLoading, setIsLoading] = useState(false);
+  // What the advisor is doing while it works; null when it is not working.
+  const [progress, setProgress] = useState<AdvisorProgressState | null>(null);
   const [scenarios, setScenarios] = useState<AIScenario[]>(initialState?.scenarios ?? []);
   const [appliedIndex, setAppliedIndex] = useState<number | null>(initialState?.appliedIndex ?? null);
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -348,7 +360,16 @@ export function BCScenarioAgent({
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [messages, progress?.stage]);
+
+  // The figures the advisor is handed, one line each, for the progress bubble.
+  const progressFacts = useMemo(() => briefFacts({
+    capacity: baseResult?.borrowingCapacity,
+    monthlySurplus: baseResult?.monthlySurplus,
+    dtiRatio: baseResult?.dtiRatio,
+    liabilities,
+    properties,
+  }), [baseResult, liabilities, properties]);
 
   const sendMessage = useCallback(async () => {
     const trimmed = input.trim();
@@ -359,6 +380,11 @@ export function BCScenarioAgent({
     setMessages(updatedMessages);
     setInput('');
     setIsLoading(true);
+    setProgress(initialProgress(Date.now()));
+    const advance = (event: AdvisorProgressEvent) =>
+      setProgress((p) => (p ? advanceProgress(p, event, Date.now()) : p));
+    // An older server reports no stages; this moves the bubble on anyway.
+    let localDrafting: ReturnType<typeof setTimeout> | null = null;
 
     try {
       // Opened through the one secure streaming transport (`openSecureStream`):
@@ -406,6 +432,9 @@ export function BCScenarioAgent({
       const refusal = agentStreamRefusal(resp.headers.get('content-type'));
       if (refusal) throw new Error(refusal);
 
+      advance({ stage: 'reading' });
+      localDrafting = setTimeout(() => advance({ stage: 'drafting' }), LOCAL_DRAFTING_AFTER_MS);
+
       // Stream SSE
       const reader = resp.body.getReader();
       const decoder = new TextDecoder();
@@ -452,7 +481,16 @@ export function BCScenarioAgent({
               break;
             }
 
+            // A stage the server has reached (`_shared/advisorProgress.pure.ts`).
+            const reached = readProgressEvent(parsed);
+            if (reached) {
+              if (localDrafting) { clearTimeout(localDrafting); localDrafting = null; }
+              advance(reached);
+              continue;
+            }
+
             const delta = parsed.choices?.[0]?.delta;
+            if (delta?.content || delta?.tool_calls) advance({ stage: 'finishing' });
 
             // Text content
             if (delta?.content) {
@@ -590,6 +628,8 @@ export function BCScenarioAgent({
       toast.error(err.message || 'Failed to get AI response');
       // Remove loading state but keep messages
     } finally {
+      if (localDrafting) clearTimeout(localDrafting);
+      setProgress(null);
       setIsLoading(false);
     }
   }, [input, isLoading, messages, baseInputs, baseResult, liabilities, properties, scenarios, incomeComponents, currentLenderProfileId, hemBenchmark]);
@@ -724,12 +764,8 @@ export function BCScenarioAgent({
                 </div>
               ))}
 
-              {isLoading && (
-                <div className="flex justify-start">
-                  <div className="bg-muted rounded-lg px-3 py-2">
-                    <Loader2 className="h-4 w-4 animate-spin text-muted-foreground" />
-                  </div>
-                </div>
+              {isLoading && progress && (
+                <AdvisorProgressBubble progress={progress} facts={progressFacts} />
               )}
             </div>
 

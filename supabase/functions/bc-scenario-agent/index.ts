@@ -11,6 +11,15 @@ import {
   extractAcquisitionHints,
   type AIScenario,
 } from "./aiScenarioPreview.ts";
+import {
+  bindingConstraintOf,
+  draftingDetail,
+  progressEvent,
+  readingDetail,
+  revisingDetail,
+  validatingDetail,
+  type BindingConstraint,
+} from "../_shared/advisorProgress.pure.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -429,6 +438,9 @@ const __corsWrappedHandler = async (req: Request) => {
 
     // Build context summary from client data
     let contextBlock = "";
+    // What the progress line says once the position is read (see
+    // `_shared/advisorProgress.pure.ts`). Null where no position was sent.
+    let readingDetailText: string | null = null;
     if (clientContext) {
       const { baseInputs, baseResult, liabilities, properties } = clientContext;
 
@@ -444,10 +456,17 @@ const __corsWrappedHandler = async (req: Request) => {
         : 1;
       const surplus = Number(baseResult?.monthlySurplus || 0);
 
-      let bindingConstraint = "surplus (serviceability)";
-      if (dtiCapEnabled && dtiHeadroom < 0.05) bindingConstraint = `DTI cap (${dtiCap}x gross income — capacity is hard-capped here, income-growth and debt-payoff levers help most)`;
-      else if (surplus < 500) bindingConstraint = "monthly surplus (expense reduction or income growth move the needle most)";
-      else if (capacity < 100000) bindingConstraint = "low absolute capacity — focus on commitment reduction";
+      // The classification is shared with the progress line; the prompt's
+      // wording for each class is unchanged.
+      const constraintKey: BindingConstraint = bindingConstraintOf({ dtiCapEnabled, dtiHeadroom, surplus, capacity });
+      const CONSTRAINT_PROMPT: Record<BindingConstraint, string> = {
+        dti_cap: `DTI cap (${dtiCap}x gross income — capacity is hard-capped here, income-growth and debt-payoff levers help most)`,
+        monthly_surplus: "monthly surplus (expense reduction or income growth move the needle most)",
+        low_capacity: "low absolute capacity — focus on commitment reduction",
+        serviceability: "surplus (serviceability)",
+      };
+      const bindingConstraint = CONSTRAINT_PROMPT[constraintKey];
+      readingDetailText = readingDetail({ capacity, constraint: constraintKey, dtiCap });
 
       contextBlock = `\n\n## Client Financial Snapshot
 **Current Borrowing Capacity**: $${capacity.toLocaleString()}
@@ -560,8 +579,13 @@ ${(properties || []).map((p: any) => `- [${p.id}] ${p.address} (${p.property_typ
         const ping = () => enqueue(encoder.encode(`: keepalive\n\n`));
         ping(); // flush first bytes so the gateway opens the response immediately
         const keepalive = setInterval(ping, 10_000);
+        const progressMode = clarificationMode ? 'answer' : 'scenarios';
 
         try {
+          // Each stage is reported as it is reached, so the broker sees what
+          // the advisor is doing rather than one spinning circle.
+          send(progressEvent('reading', readingDetailText, progressMode));
+          send(progressEvent('drafting', draftingDetail({ mode: progressMode, targetPrice: inferredTargetPrice ?? null }), progressMode));
           const response = await callAI(aiMessages, FIRST_CALL_TIMEOUT_MS);
 
           if (!response.ok) {
@@ -596,6 +620,7 @@ ${(properties || []).map((p: any) => `- [${p.id}] ${p.address} (${p.property_typ
         const rawArgs = toolCalls[0]?.function?.arguments ?? '{}';
         const parsed = typeof rawArgs === 'string' ? JSON.parse(rawArgs) : rawArgs;
         if (parsed?.scenarios && Array.isArray(parsed.scenarios)) {
+          send(progressEvent('validating', validatingDetail(parsed.scenarios.length)));
           validatedScenarios = validateAIScenarios(parsed.scenarios as AIScenario[], clientContext, inferredTargetPrice);
           console.log('[bc-scenario-agent] Validated', validatedScenarios.length, 'scenarios via engine (pass 1)');
 
@@ -632,6 +657,7 @@ ${(properties || []).map((p: any) => `- [${p.id}] ${p.address} (${p.property_typ
           if (SHOULD_REVISE) {
             revisionAttempts = 1;
             console.log('[bc-scenario-agent] Triggering revision pass — failures:', failures);
+            send(progressEvent('revising', revisingDetail(failures.length, validatedScenarios.length)));
             const revisionInstruction = `\n\n## ⚠️ ENGINE FEEDBACK — REVISE\nYour previous tool call produced scenarios that did NOT pass engine validation:\n${failures.map(f => `- ${f}`).join('\n')}\n\nRegenerate exactly 3 scenarios that EACH:\n1. Produce a strictly POSITIVE \`capacityChange\` (the engine will recompute — be defensible).\n2. Avoid the listed engine errors.\n3. Either CLEAR the target purchase price or shrink the shortfall to <15% of the target. If neither is achievable for this client given current data, say so explicitly in \`reasoning\` and recommend a smaller target.\n4. Each scenario must address the binding constraint (see snapshot above) — do not propose dead levers.\n\nRespond ONLY by calling generate_scenarios with the corrected payload.`;
             const revisedMessages = [
               ...aiMessages,
