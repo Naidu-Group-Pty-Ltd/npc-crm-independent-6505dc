@@ -154,9 +154,15 @@ leaves a client waiting for a reply nobody sent.
   refusing when the deployment is not `native`.
 - `_shared/crm/nativeInbound.pure.ts` — verify, then place, then write,
   with the order asserted rather than assumed.
-- `20261205000000_native_crm_tables.sql` — nine `crm_*` tables, RLS on all of
+- `20261229090000_native_crm_tables.sql` — nine `crm_*` tables, RLS on all of
   them, executed against a real PostgreSQL 16: 9 tables, 36 policies, 0
   unindexed foreign keys, 8 bad-row cases refused, idempotent on re-run.
+  It was drafted here as `20261205000000_native_crm_tables.sql`, which no
+  database ever ran: Mission Control sends a clone only what the prime's own
+  ledger records, so a migration written on a clone never reaches its
+  database. The same text was written at the prime (prime #2802), applied
+  there on 28 Sep 2026, and drained to every clone, this one included. The
+  draft is deleted, so the two cannot both be offered to one database.
 - 158 tests across six files, several of them source contracts — the
   guarantees here are ORDERINGS and ABSENCES, which no unit test sees.
 
