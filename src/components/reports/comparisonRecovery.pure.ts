@@ -76,7 +76,8 @@ export function analysisFromComparisonRow(row: Record<string, any>): RecoveredCo
     locationComparison: row.location_comparison,
     riskComparison: row.risk_comparison,
     investorMatches: row.investor_matches,
-    // Not stored separately; a stored row has no competitiveAdvantages column.
+    // Stored since 28 Sep 2026; absent (undefined) on every row before it.
+    competitiveAdvantages: row.competitive_advantages,
     redFlags: row.red_flags,
     finalRecommendation: row.recommendations,
   });

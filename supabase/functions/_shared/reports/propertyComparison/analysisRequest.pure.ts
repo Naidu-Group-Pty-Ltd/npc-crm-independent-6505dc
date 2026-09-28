@@ -48,12 +48,11 @@ import {
 /**
  * The eight sections the producer has a column for.
  *
- * `marketTiming` and `competitiveAdvantages` are asked for and then discarded by
- * the writer, which destructures a successful response into seven jsonb columns
- * and `executive_summary`. They exist only on the damaged rows, where the raw
- * response is kept whole — an inversion `COMPARISON.md` records. Judging
- * completeness against all ten would therefore report a failure for something
- * the storage throws away on purpose, so this list is the one that decides.
+ * `marketTiming` and `competitiveAdvantages` are asked for too, and since
+ * 28 Sep 2026 stored in columns of their own by a separate, best-effort write
+ * (`COMPARISON.md` §14). They are deliberately NOT in this list: this list
+ * decides whether the model is asked again, and making the two required would
+ * change the generation itself, which the owner ruled out.
  */
 export const STORABLE_SECTIONS: readonly string[] = [
   'executiveSummary',

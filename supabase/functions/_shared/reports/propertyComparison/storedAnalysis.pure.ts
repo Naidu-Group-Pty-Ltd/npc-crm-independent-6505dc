@@ -7,7 +7,8 @@
  * A comparison is stored one of two ways and always has been:
  *
  *   **columns**   the seven jsonb columns are populated and `executive_summary`
- *                 is short prose. 23 of the first 50 rows.
+ *                 is short prose. 23 of the first 50 rows. Since 28 Sep 2026
+ *                 `market_timing` and `competitive_advantages` ride with them.
  *   **salvaged**  all seven columns are NULL and `executive_summary` holds the
  *                 model's whole raw response, cut off or mis-bracketed. 30 of
  *                 the 53 rows in the table today.
@@ -49,6 +50,48 @@ export const STRUCTURED_COLUMNS = [
   'recommendations',
   'red_flags',
 ] as const;
+
+/**
+ * Two sections with a column of their own since 28 Sep 2026, read on the
+ * columns path beside the seven.
+ *
+ * They do NOT decide the shape. The producer fills them only when it fills the
+ * seven, so a row holding one of these and none of the seven cannot be written
+ * — and if one were, reading it as `columns` would lose the salvage of a raw
+ * response sitting in `executive_summary`. Every row written before the
+ * migration holds neither (or, before it is applied, has no such key at all),
+ * and reads exactly as it did.
+ */
+export const SUPPLEMENTARY_COLUMNS = [
+  'market_timing',
+  'competitive_advantages',
+] as const;
+
+export interface SupplementaryColumns {
+  market_timing: Record<string, unknown> | null;
+  competitive_advantages: unknown[] | null;
+}
+
+/**
+ * What the producer writes into the two supplementary columns, or `null` when
+ * there is nothing to write.
+ *
+ * The model's own sections, stored as it gave them: nothing is re-read,
+ * re-worded or validated beyond "is it the shape the column says". An empty
+ * section is not written, so an absent answer stays NULL rather than becoming
+ * `{}` — which is what lets `section()` treat both the same way.
+ */
+export function supplementaryColumnsFor(analysis: Record<string, unknown>): SupplementaryColumns | null {
+  const timing = isRecord(analysis.marketTiming) && Object.keys(analysis.marketTiming).length
+    ? analysis.marketTiming
+    : null;
+  const advantages = Array.isArray(analysis.competitiveAdvantages) && analysis.competitiveAdvantages.length
+    ? analysis.competitiveAdvantages
+    : null;
+  return timing || advantages
+    ? { market_timing: timing, competitive_advantages: advantages }
+    : null;
+}
 
 export interface StoredAnalysis {
   /** Empty when the row could be read; the reason it could not, otherwise. */
@@ -99,6 +142,8 @@ export function readStoredAnalysis(row: Record<string, unknown>): StoredAnalysis
         locationComparison: row.location_comparison,
         riskComparison: row.risk_comparison,
         investorMatches: row.investor_matches,
+        marketTiming: row.market_timing,
+        competitiveAdvantages: row.competitive_advantages,
         recommendations: row.recommendations,
         redFlags: row.red_flags,
       },

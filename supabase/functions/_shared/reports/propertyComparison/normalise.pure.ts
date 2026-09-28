@@ -35,11 +35,13 @@
  *
  * ## A curiosity worth knowing
  *
- * `marketTiming` and `competitiveAdvantages` can only ever appear on a *salvaged*
- * document. The producer writes them, but the writer that destructures a
- * successful response into columns has nowhere to put them, so on the 23 intact
- * rows they were discarded at write time. The damaged rows carry more of the
- * analysis than the intact ones do.
+ * Until 28 Sep 2026 `marketTiming` and `competitiveAdvantages` could only ever
+ * appear on a *salvaged* document: the producer wrote them, but the writer that
+ * destructures a successful response into columns had nowhere to put them, so
+ * on the intact rows they were discarded at write time. They have columns now
+ * (`market_timing`, `competitive_advantages`), and `readStoredAnalysis` reads
+ * them on the columns path too — a row written before that still carries none,
+ * and prints without the two sections exactly as it always did.
  */
 import type { Measure } from '../../reportDesign/measure.pure.ts';
 import { count as countOf, NO_MEASURE, percent } from '../../reportDesign/measure.pure.ts';
@@ -49,6 +51,7 @@ import type {
   AxisWinner,
   CompetitiveAdvantage,
   ComparisonBasis,
+  ExitStrategy,
   HoldingPeriod,
   MarketTiming,
   InvestorMatch,
@@ -441,8 +444,17 @@ function toTiming(raw: unknown, properties: readonly PropertyRef[]): MarketTimin
       reason: text(h.reason),
     }))
     .filter((h) => h.period || h.reason);
+  const exitStrategies: ExitStrategy[] = (Array.isArray(raw.exitStrategies) ? raw.exitStrategies : [])
+    .filter(isRecord)
+    .map((e) => ({
+      property: propertyAt(e.propertyNumber, properties),
+      strategy: text(e.strategy),
+    }))
+    .filter((e) => e.strategy);
   const buyFirst = toNamed(raw.buyFirst, properties);
-  return buyFirst || holdingPeriods.length ? { buyFirst, holdingPeriods } : null;
+  return buyFirst || holdingPeriods.length || exitStrategies.length
+    ? { buyFirst, holdingPeriods, exitStrategies }
+    : null;
 }
 
 function toAdvantages(raw: unknown, properties: readonly PropertyRef[]): CompetitiveAdvantage[] {

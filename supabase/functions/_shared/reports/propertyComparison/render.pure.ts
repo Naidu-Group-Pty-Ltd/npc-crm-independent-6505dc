@@ -418,7 +418,7 @@ function matchesSection(cf: PropertyComparison): string {
     .join('');
 }
 
-/** What sets each apart. Salvaged records only — see `payload.pure.ts`. */
+/** What sets each apart. Stored since 28 Sep 2026, salvaged before — see `payload.pure.ts`. */
 function advantagesSection(cf: PropertyComparison): string {
   return cf.advantages
     .map((a) => subhead(a.property ? a.property.address : 'Across the comparison')
@@ -426,7 +426,13 @@ function advantagesSection(cf: PropertyComparison): string {
     .join('');
 }
 
-/** Which to buy first, and how long to hold each. Salvaged records only. */
+/**
+ * Which to buy first, how long to hold each, and how to leave it.
+ *
+ * The exit strategies are the analysis's own words, one paragraph a property:
+ * the producer has asked for them since its first prompt and no surface had
+ * printed them.
+ */
 function timingSection(cf: PropertyComparison): string {
   const t = cf.timing;
   if (!t) return '';
@@ -446,7 +452,13 @@ function timingSection(cf: PropertyComparison): string {
       .map((h) => subhead(h.property ? h.property.shortAddress : 'Across the comparison') + p(h.reason))
       .join('')
     : '';
-  return namedBlock('Buy first', t.buyFirst) + periods;
+  const exits = t.exitStrategies.length
+    ? subhead('Exit strategies')
+      + t.exitStrategies
+        .map((e) => `<p>${e.property ? `<strong>${escapeHtml(e.property.address)}</strong>. ` : ''}${escapeHtml(e.strategy)}</p>`)
+        .join('')
+    : '';
+  return namedBlock('Buy first', t.buyFirst) + periods + exits;
 }
 
 /** The pick, the runners-up, what to avoid, and the what-ifs. */
@@ -484,15 +496,17 @@ function planSection(cf: PropertyComparison): string {
  */
 function basisSection(cf: PropertyComparison): string {
   const b = cf.basis;
+  // A setting the record does not hold is omitted, never printed as a dash:
+  // "an absence is omitted, never worded" (RUNTIME_CONSOLIDATION.md §8).
   const rows: TableRow[] = [
-    { item: 'Compared on', value: formatReportDate(cf.meta.analysedOn) || EMPTY },
+    { item: 'Compared on', value: formatReportDate(cf.meta.analysedOn) },
     { item: 'Properties', value: String(cf.properties.length) },
-    { item: 'Time horizon', value: b.timeHorizon || EMPTY },
-    { item: 'Risk tolerance', value: b.riskTolerance || EMPTY },
-    { item: 'Investor profile', value: b.investorProfile || EMPTY },
-    { item: 'Depth', value: b.depth || EMPTY },
-    { item: 'Analysed by', value: b.model || EMPTY },
-  ];
+    { item: 'Time horizon', value: b.timeHorizon },
+    { item: 'Risk tolerance', value: b.riskTolerance },
+    { item: 'Investor profile', value: b.investorProfile },
+    { item: 'Depth', value: b.depth },
+    { item: 'Analysed by', value: b.model },
+  ].filter((r) => Boolean(r.value));
 
   const weights = b.weights.length
     ? renderDataTable(

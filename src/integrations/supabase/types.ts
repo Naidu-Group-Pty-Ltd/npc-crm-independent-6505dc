@@ -28874,6 +28874,7 @@ export type Database = {
           analysis_depth: string | null
           analysis_summary: string | null
           comparison_type: string | null
+          competitive_advantages: Json | null
           created_at: string
           created_by: string | null
           executive_summary: string | null
@@ -28883,6 +28884,7 @@ export type Database = {
           investor_profile: string | null
           is_archived: boolean
           location_comparison: Json | null
+          market_timing: Json | null
           model_used: string | null
           processing_time_ms: number | null
           property_addresses: string[] | null
@@ -28901,6 +28903,7 @@ export type Database = {
           analysis_depth?: string | null
           analysis_summary?: string | null
           comparison_type?: string | null
+          competitive_advantages?: Json | null
           created_at?: string
           created_by?: string | null
           executive_summary?: string | null
@@ -28910,6 +28913,7 @@ export type Database = {
           investor_profile?: string | null
           is_archived?: boolean
           location_comparison?: Json | null
+          market_timing?: Json | null
           model_used?: string | null
           processing_time_ms?: number | null
           property_addresses?: string[] | null
@@ -28928,6 +28932,7 @@ export type Database = {
           analysis_depth?: string | null
           analysis_summary?: string | null
           comparison_type?: string | null
+          competitive_advantages?: Json | null
           created_at?: string
           created_by?: string | null
           executive_summary?: string | null
@@ -28937,6 +28942,7 @@ export type Database = {
           investor_profile?: string | null
           is_archived?: boolean
           location_comparison?: Json | null
+          market_timing?: Json | null
           model_used?: string | null
           processing_time_ms?: number | null
           property_addresses?: string[] | null
