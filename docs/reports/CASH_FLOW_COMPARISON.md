@@ -635,3 +635,31 @@ this one rendered as its own source.
 See [`../template-library/07-investment-compass-families.md`](../template-library/07-investment-compass-families.md)
 for the design system these 50 masters are drawn in.
 
+
+## 13 · Choose template, Export PDF, and fewer sheets (28 Sep 2026)
+
+This is the same treatment as the Property Comparison (`COMPARISON.md` §13).
+
+**Controls.** Both surfaces in the Cash Flow Analysis now read:
+- **Choose template**. The comparison is drawn in the Cash Flow's template
+  (`DESIGN_BORROWED_FROM`), and the button says so.
+- **Export PDF**, the typeset document. It used to be labelled "Typeset
+  comparison" and "Typeset".
+- **Legacy layout**, the jsPDF export. It used to be labelled "Export PDF
+  (legacy layout)", so the screen showed two buttons named Export PDF.
+
+**Name.**
+- File: `Cash Flow Comparison - <the properties> - 28 Sep 2026.pdf`. It used to
+  be `Cash_Flow_Comparison_<n>_Properties_<date>_<ref>.pdf`.
+- Cover title: the properties, where it used to read "3 properties, 10 years".
+  The term moves to the cover's meta.
+
+**Pages.** Measured on three properties over the 50 designs: 22 sheets became
+15–19.
+- **Section 3 and section 4** each open the long edge with their heading and
+  both matrices on one landscape sheet. `renderBandedMatrix` gave every matrix
+  a sheet of its own, which put a heading alone on a portrait page and then one
+  three-row table per landscape sheet.
+- **The other sections run on.**
+- **"Why capital in matters more than price"** is bound to the short table
+  before it. It had turned a page alone.

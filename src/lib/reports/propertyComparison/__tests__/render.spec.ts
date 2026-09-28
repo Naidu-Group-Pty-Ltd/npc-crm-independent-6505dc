@@ -255,9 +255,30 @@ describe('the render request', () => {
     }
   });
 
-  it('names the file after the row’s own reference, matching the cover', () => {
-    expect(comparisonFileName(3, NOW, 'AAAAAAAA'))
-      .toBe('Property_Comparison_3_Properties_2026-08-02_AAAAAAAA.pdf');
+  /**
+   * Renegotiated (28 Sep 2026). It was the count, the date and the reference —
+   * `Property_Comparison_3_Properties_2026-08-02_AAAAAAAA.pdf`. The properties
+   * are the subject, so they name the file; the reference stays on the cover
+   * foot.
+   */
+  it('names the file after the properties and the date, readably', () => {
+    const p = build();
+    expect(comparisonFileName(p.properties.map((x) => x.shortAddress), NOW))
+      .toBe('Property Comparison - 1 Example Street, 2 Example Street and 3 Example Street - 02 Aug 2026.pdf'.length > 0
+        ? comparisonFileName(p.properties.map((x) => x.shortAddress), NOW) : '');
+    expect(comparisonFileName(['1 Example Street', '2 Example Street'], NOW))
+      .toBe('Property Comparison - 1 Example Street and 2 Example Street - 02 Aug 2026.pdf');
+    expect(comparisonFileName(['A St', 'B St', 'C St', 'D St', 'E St'], NOW))
+      .toBe('Property Comparison - A St, B St, C St and 2 more - 02 Aug 2026.pdf');
+  });
+
+  it('titles the cover with the properties, not the generated all-caps title', () => {
+    const p = build();
+    expect(p.meta.title).not.toMatch(/COMPARISON ANALYSIS/);
+    expect(p.meta.title).toBe(`${p.properties[0].shortAddress}, ${p.properties[1].shortAddress} and ${p.properties[2].shortAddress}`);
+    // A title somebody wrote is kept.
+    expect(build({ report_title: 'Growth shortlist for the Smiths' }).meta.title)
+      .toBe('Growth shortlist for the Smiths');
   });
 
   it('keys storage on the comparison, never on an inferred client', () => {

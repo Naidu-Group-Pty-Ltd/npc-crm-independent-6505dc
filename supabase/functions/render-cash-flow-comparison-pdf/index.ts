@@ -372,7 +372,7 @@ const __corsWrappedHandler = (async (req: Request): Promise<Response> => {
 
     // ── Render, store, sign ─────────────────────────────────────────────────
 
-    const fileName = comparisonFileName(comparison.properties.length, now, reference);
+    const fileName = comparisonFileName(comparison.properties.map((x) => x.shortAddress), now);
     const path = comparisonStoragePath(request.primaryReportId, fileName, now, crypto.randomUUID());
     const missingSections = comparison.analysis ? [...comparison.analysis.missing] : [];
 
