@@ -96,6 +96,16 @@ jobs:
       - name: A clone's tools and labels speak for the clone
         run: npx vitest run src/lib/__tests__/workspaceIdentity.spec.ts src/lib/__tests__/houseLabelsGuard.spec.ts
 
+      # What the prime keeps for itself: scripts/lib/primeOnlyFeatures.mjs, and
+      # docs/operations/PRIME_ONLY_FEATURES.md. No clone holds the GoHighLevel
+      # account migration, so a static import of any part of it breaks every
+      # clone's build, and an invocation of one of its functions answers 404
+      # there, while the prime's own build, where the feature is present, can
+      # see neither. The spec sits in `src/lib/__tests__/`, which no directory
+      # path here reaches, so it is named or it never runs.
+      - name: Nothing a clone receives reaches into what the prime keeps
+        run: npx vitest run src/lib/__tests__/primeOnlyFeatures.spec.ts
+
       # Every build-time variable is read in the one form the bundler replaces.
       #
       # Vite substitutes the literal `import.meta.env.VITE_X` and nothing else.
