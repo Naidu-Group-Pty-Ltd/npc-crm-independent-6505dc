@@ -32,7 +32,7 @@ const BRIDGE_SHAPE =
  * `../reportDate.pure.ts` is the shared date reader, a file in the parent
  * like the others here — eleven routes each carried a private copy.
  */
-const ALLOWED_IMPORT = /^(?:\.\/[\w.]+\.pure\.ts|\.\.\/\.\.\/reportDesign\/[\w.]+\.(?:pure|generated)\.ts|\.\.\/reportDate\.pure\.ts)$/;
+const ALLOWED_IMPORT = /^(?:\.\/[\w.]+\.pure\.ts|\.\.\/\.\.\/reportDesign\/[\w.]+\.(?:pure|generated)\.ts|\.\.\/(?:reportDate|readableFileName)\.pure\.ts)$/;
 
 describe('property comparison — single source of truth', () => {
   it('has at least one canonical module', () => {

@@ -650,3 +650,44 @@ parse failure it returns a 500 rather than storing a row. Its fence regex has th
 same flaw, and it cannot bite — a response short enough to be fenced whole is
 matched, and one that was cut off would not parse either way. The legacy PDF path
 (§8) stays as it was, for the reasons recorded there.
+
+## 13 · Choose template, Export PDF, and a comparison that reads as one document (28 Sep 2026)
+
+This applies the Intelligence Hub treatment (`QA.md` §13) to both comparisons.
+The owner asked for it for "the investment reports for the Compass and the cash
+flow analysis specifically".
+
+**The controls.**
+- The split button reads **Export PDF**. It used to read "Download comparison".
+- **Choose template** (`ChooseTemplateButton`) sits beside it as its own
+  button, where it had been the foot of the caret menu. The card's single-icon
+  menu keeps it in the menu, because a card footer has room for one icon.
+- The typeset route has always honoured the choice as a design
+  (`resolveRequestedDesign`, report type `comparison`). What was missing was
+  the choice on the surface beside the act.
+
+**The name.**
+- Filename: `Property Comparison - <the properties> - 28 Sep 2026.pdf`, through
+  `readableFileName.pure.ts`. It used to be
+  `Property_Comparison_3_Properties_<date>_<REF8>.pdf`.
+- Cover title: every stored title was the producer's all-caps
+  `INVESTMENT COMPARISON ANALYSIS - 3 PROPERTIES, NSW, WA`, printed under an
+  eyebrow that already said the same. The cover now names the properties
+  (`comparisonCoverTitle`). A title somebody wrote is kept.
+- The reference stays on the cover foot. The storage key stays URL-safe.
+
+**The pages.** Measured on a three-property comparison through WeasyPrint 69.0
+over the 50 designs and the standard layout: 17 sheets became 13–15.
+- **Sections run on** (`RUN_ON_CHAPTER_CLASS`, the shared primitive the Hub
+  memo now uses too). A page a section left half of them part empty.
+- **The category matrix is portrait**, headed by street names in equal
+  columns. It opened a landscape sheet of its own "for consistency" with the
+  Portfolio, and held one table and two-thirds white space.
+- **Tables are kept whole.** The ranking table broke after its first row.
+
+**Not changed.** The AI-written legacy report is untouched. It is still the
+"Download (legacy layout)" button beside Export PDF, and the menu's second item.
+
+**Found and not fixed.** The producer asks the model for `marketTiming` and
+`competitiveAdvantages` and stores neither: the structured-columns insert has
+no column for them. Adding columns is a migration for the owner to approve.

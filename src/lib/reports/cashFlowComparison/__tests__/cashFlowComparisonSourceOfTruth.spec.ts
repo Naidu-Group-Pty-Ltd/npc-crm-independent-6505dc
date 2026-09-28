@@ -45,7 +45,7 @@ const BRIDGE_SHAPE =
  * like the others here — eleven routes each carried a private copy.
  */
 const ALLOWED_IMPORT =
-  /^(?:\.\/[\w.]+\.pure\.ts|\.\.\/\.\.\/reportDesign\/[\w.]+\.(?:pure|generated)\.ts|\.\.\/cashFlow\/[\w.]+\.pure\.ts|\.\.\/text\.pure\.ts|\.\.\/reportDate\.pure\.ts)$/;
+  /^(?:\.\/[\w.]+\.pure\.ts|\.\.\/\.\.\/reportDesign\/[\w.]+\.(?:pure|generated)\.ts|\.\.\/cashFlow\/[\w.]+\.pure\.ts|\.\.\/text\.pure\.ts|\.\.\/(?:reportDate|readableFileName)\.pure\.ts)$/;
 
 describe('cash flow comparison — single source of truth', () => {
   it('has at least one canonical module', () => {

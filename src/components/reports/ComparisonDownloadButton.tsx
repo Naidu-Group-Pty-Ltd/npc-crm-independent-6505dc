@@ -15,7 +15,15 @@
  * only a ref handle returning a URL.
  *
  * So the second item opens the viewer where that button already lives, and it
- * **states what pressing it costs**. That is not decoration: the legacy path asks
+ * **states what pressing it costs**.
+ *
+ * ## The choice beside the act (28 Sep 2026)
+ *
+ * The split appearance draws "Choose template" as a button of its own before
+ * "Export PDF" (`ChooseTemplateButton`), the way the Intelligence Hub's export
+ * does: the template is the one decision a person makes before exporting, so it
+ * is on the surface rather than at the foot of a menu. The menu appearance — a
+ * card footer with room for one icon — keeps it in its menu. That is not decoration: the legacy path asks
  * a model to rewrite the stored analysis on every single download, so it spends
  * report credits and the wording differs each time. Someone choosing between the
  * two deserves to know that before they choose, and the sub-label is the only
@@ -28,6 +36,7 @@ import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { useReportTemplateMenu } from '@/components/reports/useReportTemplateMenu';
+import { ChooseTemplateButton } from '@/components/reports/ChooseTemplateButton';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -71,7 +80,7 @@ export interface ComparisonDownloadButtonProps {
 
 export function ComparisonDownloadButton({
   comparisonId,
-  label = 'Download comparison',
+  label = 'Export PDF',
   onOpenLegacy,
   variant = 'outline',
   size = 'sm',
@@ -129,9 +138,9 @@ export function ComparisonDownloadButton({
       >
         <FileText className="mr-2 h-4 w-4 text-primary" />
         <div className="flex flex-col">
-          <span>{label} (typeset)</span>
+          <span>{label}</span>
           <span className="text-xs text-muted-foreground">
-            Typeset from the saved analysis, on your branding. Free, and the same every time.
+            In your chosen template, from the saved analysis. Free, and the same every time.
           </span>
         </div>
       </DropdownMenuItem>
@@ -150,7 +159,7 @@ export function ComparisonDownloadButton({
           </span>
         </div>
       </DropdownMenuItem>
-      {template.section}
+      {appearance === 'menu' && template.section}
     </DropdownMenuContent>
   );
 
@@ -180,7 +189,15 @@ export function ComparisonDownloadButton({
   }
 
   return (
-    <div className={cn('inline-flex items-stretch', className)}>
+    <div className={cn('inline-flex flex-wrap items-stretch gap-2', className)}>
+      <ChooseTemplateButton
+        reportType="comparison"
+        formatLabel="Property Comparison"
+        size={size}
+        variant={variant}
+        disabled={disabled || running}
+      />
+      <div className="inline-flex items-stretch">
       <Button
         variant={variant}
         size={size}
@@ -208,7 +225,7 @@ export function ComparisonDownloadButton({
         </DropdownMenuTrigger>
         {choices}
       </DropdownMenu>
-      {template.dialog}
+      </div>
     </div>
   );
 }

@@ -421,6 +421,15 @@ function chapterRules(
        only, which is exactly the intent. */
     padding-top: ${marginsFor('chapter-opener').top - marginsFor('body').top}mm;
   }
+  /* A run-on chapter (RUN_ON_CHAPTER_CLASS) keeps its header and running head
+     and loses only the page break; a named page still breaks. */
+  section.chapter.run-on {
+    page-break-before: auto;
+    break-before: auto;
+    padding-top: 9mm;
+  }
+  .run-on .chapter-header { break-after: avoid; break-inside: avoid; }
+  .keep-together { break-inside: avoid; }
   .chapter-header { margin-bottom: ${pt(d.blockGapPt + 4)}; }
   .chapter-header .chapter-no {
     display: ${options.showSectionNumbers ? 'block' : 'none'};

@@ -30,7 +30,7 @@ import {
   hubDocumentTopic,
 } from '@/lib/reports/reportQa/documentIdentity.pure';
 
-import { ChooseTemplateButton, chosenTemplateLine } from './ChooseTemplateButton';
+import { ChooseTemplateButton, chosenTemplateLine } from '@/components/reports/ChooseTemplateButton';
 import { useReportQaDelivery } from './useReportQaDelivery';
 
 /** Today as `YYYY-MM-DD` on the reader's own calendar, for a filename. */
@@ -785,7 +785,7 @@ export function ConversationReportEditor({
             </Button>
             {/* The choice, then the act — as in the single-answer editor. */}
             {conversationId && (
-              <ChooseTemplateButton disabled={isGenerating || isExporting || typeset.busy} />
+              <ChooseTemplateButton reportType="qa" formatLabel={HUB_DOCUMENT_NAME} disabled={isGenerating || isExporting || typeset.busy} />
             )}
             <Button 
               size="sm"

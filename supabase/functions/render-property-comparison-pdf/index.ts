@@ -379,7 +379,7 @@ const __corsWrappedHandler = (async (req: Request): Promise<Response> => {
 
     // ── Render, store, sign ─────────────────────────────────────────────────
 
-    const fileName = comparisonFileName(comparison.properties.length, now, comparison.meta.reference);
+    const fileName = comparisonFileName(comparison.properties.map((p) => p.shortAddress), now);
     const path = comparisonStoragePath(request.comparisonId, fileName, now, crypto.randomUUID());
 
     const { data: renderRow } = await supabase

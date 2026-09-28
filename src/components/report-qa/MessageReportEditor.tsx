@@ -28,7 +28,7 @@ import {
   hubDocumentTopic,
 } from '@/lib/reports/reportQa/documentIdentity.pure';
 
-import { ChooseTemplateButton, chosenTemplateLine } from './ChooseTemplateButton';
+import { ChooseTemplateButton, chosenTemplateLine } from '@/components/reports/ChooseTemplateButton';
 import { useReportQaDelivery } from './useReportQaDelivery';
 
 /** Today as `YYYY-MM-DD` on the reader's own calendar, for a filename. */
@@ -811,7 +811,7 @@ export function MessageReportEditor({
               the one document, in the template chosen here.
             */}
             {conversationId && (
-              <ChooseTemplateButton disabled={isExporting || typeset.busy} />
+              <ChooseTemplateButton reportType="qa" formatLabel={HUB_DOCUMENT_NAME} disabled={isExporting || typeset.busy} />
             )}
             <Button 
               size="sm"

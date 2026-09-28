@@ -55,6 +55,7 @@ import {
   describeMissingSections,
 } from '@/lib/reports/cashFlowComparison/analysisRequest.pure';
 import { CashFlowComparisonDownloadButton } from '@/components/cash-flow/modal/CashFlowComparisonDownloadButton';
+import { ChooseTemplateButton } from '@/components/reports/ChooseTemplateButton';
 import { toWireInputs, toWireProjection } from '@/lib/reports/cashFlow/toWireProjection';
 import {
   buildConstructionSchedule,
@@ -4978,6 +4979,13 @@ export function CashFlowAnalysisModal({ report, isOpen, onClose, onReportUpdated
                           and prints eight metric rows. They are different
                           documents and both are worth having.
                         */}
+                        {/* The choice, then the act (`ChooseTemplateButton`): the
+                            comparison is drawn in the Cash Flow's template. */}
+                        <ChooseTemplateButton
+                          reportType="cashflow"
+                          formatLabel="10 Year Cash Flow"
+                          note="Comparisons use the Cash Flow's template."
+                        />
                         <CashFlowComparisonDownloadButton
                           build={buildWireComparison}
                           unavailableReason={comparisonUnavailableReason}
@@ -4989,7 +4997,7 @@ export function CashFlowAnalysisModal({ report, isOpen, onClose, onReportUpdated
                           className="gap-2 text-muted-foreground"
                         >
                           <FileText className="h-4 w-4" />
-                          Export PDF (legacy layout)
+                          Legacy layout
                         </Button>
                         <FlattenPdfIconButton
                           getPdfBlob={async () => {
@@ -5311,10 +5319,14 @@ export function CashFlowAnalysisModal({ report, isOpen, onClose, onReportUpdated
                               the three that carries both the prose and the
                               figures it was written from.
                             */}
+                            <ChooseTemplateButton
+                              reportType="cashflow"
+                              formatLabel="10 Year Cash Flow"
+                              note="Comparisons use the Cash Flow's template."
+                            />
                             <CashFlowComparisonDownloadButton
                               build={buildWireComparison}
                               unavailableReason={comparisonUnavailableReason}
-                              label="Typeset"
                             />
                             <Button
                               size="sm"
@@ -5323,7 +5335,7 @@ export function CashFlowAnalysisModal({ report, isOpen, onClose, onReportUpdated
                               className="gap-1 text-muted-foreground"
                             >
                               <Download className="h-3 w-3" />
-                              Export PDF (legacy layout)
+                              Legacy layout
                             </Button>
                             <FlattenPdfIconButton
                               getPdfBlob={async () => {
