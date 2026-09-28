@@ -295,6 +295,8 @@ export function toInputs(raw: unknown): CashFlowInputs | null {
 
   return {
     isNewBuild: r.isNewBuild === true,
+    // Only a new build can be a planned one.
+    plannedBuild: r.isNewBuild === true && r.plannedBuild === true,
     purchasePrice: bounded(r, 'purchasePrice', where),
     weeklyRent: bounded(r, 'weeklyRent', where, 1e7),
     landPrice: nullablePrice('landPrice'),
@@ -531,6 +533,7 @@ export function buildProjection(input: BuildProjectionInput): CashFlowProjection
     expenditure,
     construction,
     showConstructionSchedule,
+    plannedBuild: Boolean(construction && inputs?.plannedBuild),
     settlement,
     yearOne,
     years,

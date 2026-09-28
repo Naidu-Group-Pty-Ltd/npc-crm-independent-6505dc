@@ -352,3 +352,66 @@ the schedule with its footnote each land on exactly one page. A 24-month build
 tighten; re-measured, 50 of 50 on one page. The `cf-` selectors outrank a
 design's `table.data` rules, so a chosen template restyles colour and rules and
 never the row height this page depends on.
+
+## 10. A build planned on a land-only purchase (28 Sep 2026)
+
+A land-only report had no route to a construction schedule. The build price
+was offered only to a report recorded as a new build, and the cash flow staged
+a contract only where `buildType === 'new_build'`. So an adviser whose client
+bought a lot and meant to build on it had to re-enter the case as a different
+kind of property to see the drawdown, the interest carried during
+construction, or a projection of the finished home.
+
+The owner's rule: on a land-only report, a switch in the **Cash Flow
+Analysis** says whether the client is going ahead with a build. Switched on,
+it adds the construction payment schedule. The switch is
+`CashFlowPlannedBuildPanel`, drawn only on a land-only report. It takes the
+build contract price, the build duration and the weekly rent once built. It
+drives the analysis live and is written to the report on **Save**, like every
+other edit in that workspace.
+
+`plannedBuild.pure.ts` is the one statement of what the switch means, and it
+adds **no second method**. `withPlannedBuild` re-reads the case as the new
+build it becomes and hands it to the same `readBaseFinancials`,
+`buildConstructionSchedule`, `acquisitionExpenditure` and projection every new
+build uses:
+
+- **Land** is the stated land price, else the price paid for the lot.
+- **Total project** is the land plus the build contract. It is what the
+  projection starts from, as a house-and-land package does.
+- **Value today** is the land's recorded current value plus the build.
+- **The loan is re-sized** to the whole project at the case's LVR. A lot
+  loan carried over would leave the build contract financed by nobody.
+- **Stamp duty stays the land's.**
+
+Measured against the legacy export for Lot 1639 Corridale Estate, Lara VIC
+3212, the same lot bought as land with the same build planned on it produces:
+
+- the same schedule, row for row;
+- $20,570 of construction interest;
+- $87,974 up front;
+- $743,534 overall;
+- a $455,579 capital gain.
+
+`plannedBuild.spec.ts` pins both halves.
+
+Three rules bite.
+
+- **No build price, no build.** Switched on with no contract price, the land
+  stays land (QA-13). With the switch off, every report is returned as the
+  same object, so nothing downstream recomputes.
+- **The planned build never re-describes the land.** Its figures live under
+  their own keys (`plannedBuildPrice`, `plannedBuildDurationMonths`,
+  `plannedBuildWeeklyRent`), never `buildPrice`. The investment report
+  prints a stored `buildPrice` into its prompt whatever the build type, and
+  the report is about the land that was bought.
+- **The document says it is planned.** The Input Summary reads "Total
+  project (land + build)" and "Build price … (planned)", and the schedule's
+  chapter is "The build planned on this land". Rendered in WeasyPrint 69.0
+  over the standard document and all 50 designs, the projection and the
+  schedule are each on one page, as §9 requires.
+
+The stage percentages come from the report's construction settings, which the
+override editor now offers on a land-only report with a build planned. The
+timing comes from the schedule mode in the cash flow, which is saved with the
+planned build.

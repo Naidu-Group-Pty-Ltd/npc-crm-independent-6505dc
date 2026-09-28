@@ -50,8 +50,10 @@ export function cashFlowSections(p: CashFlowProjection): CashFlowSection[] {
   if (p.construction && p.showConstructionSchedule) {
     sections.push({
       id: 'construction',
-      title: 'The construction schedule',
-      note: `How the build contract is drawn over ${p.construction.durationMonths} months, and what the interest comes to while it is built.`,
+      title: p.plannedBuild ? 'The build planned on this land' : 'The construction schedule',
+      note: p.plannedBuild
+        ? `How the build planned on this land is drawn over ${p.construction.durationMonths} months, and what the interest comes to while it is built.`
+        : `How the build contract is drawn over ${p.construction.durationMonths} months, and what the interest comes to while it is built.`,
       pageBudget: 1,
       wide: true,
     });
