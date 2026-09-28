@@ -57,6 +57,7 @@ import {
 import { scaledType, type ReportDesignOptions } from '@/lib/reportDesign/options.pure';
 import type { ResolvedReportPalette } from '@/lib/reportDesign/roles.pure';
 import { auditPaletteContrast } from '@/lib/reportDesign/brandResolve.pure';
+import { houseLabel } from '../houseLabel';
 
 export interface BrandSpecimen {
   id: string;
@@ -193,7 +194,7 @@ export const BRAND_SPECIMENS: readonly BrandSpecimen[] = [
     name: 'The section eyebrow',
     subtitle: 'The strongest typographic signature of the brand',
     viewport: { w: 900, h: 260 },
-    note: 'A wide uppercase eyebrow over a tight-tracked title is how every NPC surface '
+    note: houseLabel('A wide uppercase eyebrow over a tight-tracked title is how every NPC surface ', 'A wide uppercase eyebrow over a tight-tracked title is how every surface of the brand ')
       + 'announces itself, on screen and on paper. It is set in the accent corrected for the '
       + 'worst ground it can land on — at 8.5pt an uncorrected brand gold is unreadable.',
     tokenLine: (o) => `body ${o.bodyScale}% · section numbers ${o.showSectionNumbers ? 'on' : 'off'}`,

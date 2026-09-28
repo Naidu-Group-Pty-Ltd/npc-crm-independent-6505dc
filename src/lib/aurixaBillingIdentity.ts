@@ -59,23 +59,27 @@
  *
  * The **pairing check** is the fallback for a clone that was never published
  * to, and it is only as good as `SUPABASE_PROJECT_REF`. That value comes from
- * `integrations/supabase/env.ts`, which in THIS repository still reads through
+ * `integrations/supabase/env.ts`, which until 23 Sep 2026 read through
  * `readEnv(key)` — `import.meta?.env?.[key]` — a form no bundler replaces, so
- * it resolves to the built-in fallback on every deployment including a
- * correctly configured clone. `npc-crm-independent` fixed that in its own copy
- * (`supabaseTarget.pure.ts` + `buildTimeEnvReads.spec.ts`); the prime has not,
- * and a clone-side fix to a file the prime also holds is what the next cascade
- * reverts. Until it is ported here, the pairing check cannot tell the prime
- * apart from a clone whose environment was dropped — which is the same thing
- * that module's own header says about the browser generally:
+ * every deployment resolved to its built-in fallback however its environment
+ * was set. `npc-crm-independent` fixed its own copy first, and the fix could
+ * not travel: cascades run from the prime outward, so the prime's broken copy
+ * was the one they kept delivering. It reads statically here now
+ * (`supabaseTarget.pure.ts` holds the per-deployment pair,
+ * `buildTimeEnvReads.spec.ts` refuses any read a bundler cannot see through).
+ *
+ * One case is still invisible from here: a clone whose variables were dropped
+ * AND whose built-in pair still names the prime resolves to the prime's
+ * project, and so to the prime's identity. `shippedBackendIdentity.spec.ts` is
+ * what keeps that pair the deployment's own — the same thing `env.ts`'s own
+ * header says about the browser generally:
  *
  *     "Nothing in the browser can tell those apart, which is why the guarantee
  *      that a clone's build carries its OWN project belongs to the
  *      provisioner."
  *
- * So the pairing check is kept, because it is correct the moment the read is
- * fixed and it costs nothing meanwhile; and nothing here is written as though
- * it were already the guarantee.
+ * So the pairing check is the fallback it was always meant to be, and nothing
+ * here is written as though it were the guarantee.
  */
 import { SUPABASE_PROJECT_REF } from "@/integrations/supabase/env";
 
