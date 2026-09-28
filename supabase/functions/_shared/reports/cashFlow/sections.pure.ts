@@ -24,6 +24,8 @@ export interface CashFlowSection {
   pageBudget: number;
   /** Opens the landscape page. Only the matrix does. */
   wide?: boolean;
+  /** Set to fit ONE portrait page — its opener is shallower and its blocks are held whole. */
+  onePage?: boolean;
 }
 
 /**
@@ -75,7 +77,9 @@ export function cashFlowSections(p: CashFlowProjection): CashFlowSection[] {
       id: 'growth',
       title: 'Value, debt and equity',
       note: 'What the position looks like as the loan is paid and the value moves.',
-      pageBudget: 2,
+      // One page: both charts on one year axis, with the figures they explain.
+      pageBudget: 1,
+      onePage: true,
     },
   );
 
