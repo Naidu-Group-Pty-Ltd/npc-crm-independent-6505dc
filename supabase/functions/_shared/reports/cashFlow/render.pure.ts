@@ -454,8 +454,19 @@ function growthSection(cf: CashFlowProjection, palette: ResolvedReportPalette): 
         + 'growth line above it, and both belong in the decision.'),
     );
 
+  // ONE page (the owner's rule, 28 Sep 2026): the figures, the two charts on
+  // one year axis, then the end of the term beside what it means. It ran to two
+  // pages — the table and the cash chart overleaf from the equity chart they
+  // explain — and each block is now held whole so the page cannot split them.
+  // The table foots value − loan = equity; the cumulative cash flow is the
+  // strip's third figure and is not printed twice.
   return renderKpiStrip(kpis)
+    + '<div class="cf-growth-charts">'
     + equityBuildChart(cf, palette)
+    + cashPositionChart(cf, palette)
+    + '</div>'
+    + '<div class="cf-growth-end">'
+    + '<div class="cf-growth-end-table">'
     + renderDataTable(
       [{ key: 'item', label: 'At the end of the term', align: 'left' },
         { key: 'value', label: 'Amount', align: 'right' }],
@@ -464,12 +475,12 @@ function growthSection(cf: CashFlowProjection, palette: ResolvedReportPalette): 
         { item: 'Loan balance', value: formatMeasure(o.endingLoanBalance) },
         { item: 'Equity', value: formatMeasure(o.endingEquity), __total: true },
         { item: 'Capital growth over the term', value: formatMeasure(o.capitalGain) },
-        { item: 'Cumulative cash flow after tax', value: formatMeasure(o.cumulativeAfterTax) },
       ],
-      { caption: 'Where the projection ends', signedKeys: ['value'] },
+      { signedKeys: ['value'] },
     )
-    + cashPositionChart(cf, palette)
-    + breakEven;
+    + '</div>'
+    + `<div class="cf-growth-end-note">${breakEven}</div>`
+    + '</div>';
 }
 
 function assumptionsSection(cf: CashFlowProjection): string {
@@ -559,7 +570,8 @@ export function renderCashFlowBody(input: RenderCashFlowInput): string {
         + `<div class="chapter-body">${body}</div>`
         + closeChapter();
     }
-    return openChapter(DOCUMENT_NAME, number, section.title)
+    const opener = openChapter(DOCUMENT_NAME, number, section.title);
+    return (section.onePage ? opener.replace('class="chapter ', 'class="chapter cf-onepage ') : opener)
       + renderChapterHeader({
         number,
         title: section.title,
@@ -670,6 +682,23 @@ export function cashFlowCss(palette: ResolvedReportPalette): string {
   .cf-compact .table-block { margin-bottom: 3.5mm; break-inside: avoid; }
   .cf-inputs table.data tbody td,
   .cf-inputs table.data tbody th[scope="row"] { padding-top: 1.6pt; padding-bottom: 1.6pt; }
+  /* Value, debt and equity: one page. The chapter opener's deep top padding
+     is what pushed the cash chart overleaf, so this section opens higher, and
+     each block is held whole so no chart is parted from its caption. */
+  .chapter.cf-onepage { padding-top: 6mm; }
+  .cf-onepage .chapter-header { margin-bottom: 4mm; }
+  .cf-onepage .kpi-strip { margin-bottom: 3mm; break-inside: avoid; }
+  .cf-growth-charts figure { margin: 0 0 2.5mm; break-inside: avoid; }
+  .cf-growth-charts figure figcaption { margin-top: 1mm; }
+  .cf-growth-end { display: grid; grid-template-columns: 1.15fr 1fr; column-gap: 6mm;
+    align-items: start; break-inside: avoid; }
+  .cf-growth-end .table-block { margin: 0; }
+  .cf-growth-end table.data { font-size: 8.4pt; }
+  .cf-growth-end table.data thead th,
+  .cf-growth-end table.data tbody td,
+  .cf-growth-end table.data tbody th[scope="row"] { padding-top: 2.4pt; padding-bottom: 2.4pt; }
+  .cf-growth-end-note .callout { margin: 0; padding-top: 2.5mm; padding-bottom: 2.5mm; }
+  .cf-growth-end-note .callout p { font-size: 8.4pt; line-height: 1.35; text-align: left; hyphens: manual; }
   .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
 `;
 }
