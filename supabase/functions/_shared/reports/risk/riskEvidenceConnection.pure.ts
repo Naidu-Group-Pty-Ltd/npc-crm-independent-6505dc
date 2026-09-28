@@ -58,6 +58,8 @@
  */
 
 import type { ConstraintFamily, ConstraintKind } from '../../planning/planningConstraints.pure.ts';
+import { scoreSiteConstraints, SITE_CONSTRAINT_SEVERITY_VERSION } from './siteConstraintSeverity.pure.ts';
+import type { ConditionReading } from './conditionRecord.pure.ts';
 
 /** How a register answered for one subject. Five outcomes, never collapsed. */
 export type RegisterOutcome =
@@ -184,7 +186,13 @@ export interface RiskEvidenceConnection {
   readonly anyRegisterCompleted: boolean;
 }
 
-export const RISK_EVIDENCE_CONNECTION_VERSION = '1.0.0' as const;
+export const RISK_EVIDENCE_CONNECTION_VERSION = '2.0.0' as const;
+
+/** What the building question says where no condition record is held. */
+export const CONDITION_NOT_RECORDED =
+  'No building inspection, strata report, building certificate or vendor\'s statement has been '
+  + 'recorded for this property, so its condition is not assessed. Recording one on the report page '
+  + 'lets the next generation assess it.';
 
 /**
  * Which question each retrieved family could inform, if a conversion existed.
@@ -211,19 +219,50 @@ export const FAMILY_TO_QUESTION: Readonly<Partial<Record<ConstraintFamily, strin
   airportNoise: 'planning_constraints',
 };
 
+/** An approved, versioned conversion from what the registers returned to a 0–100 answer. */
+export interface RiskConversion {
+  /** The method's own version, stored with the answer so a record names its basis. */
+  readonly version: string;
+  /** Who decided, and when. Activation is a decision, never a default. */
+  readonly approvedOn: string;
+  readonly decidedBy: string;
+  /** The answer from the findings that intersected, or null where there are none. */
+  readonly evaluate: (findings: readonly RiskEvidenceFinding[]) => { answer: number; basis: string } | null;
+}
+
+/**
+ * The site conversion: what a register RETURNED at the point, scored by
+ * `siteConstraintSeverity.pure.ts` — approved 20 Sep 2026 against the
+ * demonstration in `SCORING_V2_METHODOLOGY.md`, and activated by the platform
+ * owner on 28 Sep 2026 together with the condition record, because a site
+ * reading alone is one category and can never make Risk score by itself.
+ *
+ * It reads findings and nothing else, so "asked and found nothing" is not
+ * representable here: an empty set is null, never a safe site.
+ */
+const SITE_CONVERSION: RiskConversion = Object.freeze({
+  version: SITE_CONSTRAINT_SEVERITY_VERSION,
+  approvedOn: '2026-09-28',
+  decidedBy: 'platform owner',
+  evaluate: (findings: readonly RiskEvidenceFinding[]) => {
+    const result = scoreSiteConstraints(findings.map((f) => ({ family: f.family, kind: f.kind, label: f.label })));
+    return result ? { answer: result.answer, basis: result.basis } : null;
+  },
+});
+
 /**
  * Approved conversions from retrieved evidence to a 0–100 answer.
  *
- * **Deliberately empty.** A conversion is a methodology decision with a
- * document behind it and a version on it, and none has been approved. An entry
- * here is what activation looks like; writing one without that approval is the
- * invented scale this module exists to prevent.
- *
- * `riskEvidenceConnection.spec.ts` asserts this stays empty until a named,
- * versioned method is approved, so activation is a visible act rather than a
- * quiet commit.
+ * An entry here is what activation looks like, and it is a decision with a
+ * document behind it: `docs/reports/RISK_METHOD_RECOMMENDATION.md` records
+ * both. The building half (`condition_and_maintenance`) is not a register
+ * reading and arrives through the condition record instead
+ * (`connectRiskEvidence`'s `condition` option).
  */
-export const CONVERSIONS: Readonly<Record<string, never>> = Object.freeze({});
+export const CONVERSIONS: Readonly<Record<string, RiskConversion>> = Object.freeze({
+  site_hazard_exposure: SITE_CONVERSION,
+  planning_constraints: SITE_CONVERSION,
+});
 
 const asked = (r: RiskEvidenceReading) =>
   r.outcome === 'answered_with_intersection' || r.outcome === 'answered_no_intersection';
@@ -304,9 +343,20 @@ const STATEMENTS: Readonly<Record<AnswerRefusal, string>> = {
  * rather than derived, because the schema owns which questions apply and this
  * module owns only how evidence reaches them.
  */
+export interface ConnectOptions {
+  /**
+   * The condition record's reading for this property
+   * (`conditionRecord.pure.ts`). Its `observation` is non-null only where the
+   * record is admissible AND the method is activated, and it is the only way
+   * `condition_and_maintenance` is ever answered.
+   */
+  readonly condition?: ConditionReading | null;
+}
+
 export function connectRiskEvidence(
   questionIds: readonly string[],
   readings: readonly RiskEvidenceReading[],
+  options: ConnectOptions = {},
 ): RiskEvidenceConnection {
   const byQuestion = new Map<string, RiskEvidenceReading[]>();
   for (const id of questionIds) byQuestion.set(id, []);
@@ -325,18 +375,43 @@ export function connectRiskEvidence(
   const answers: Record<string, number> = {};
   const questions: RiskQuestionConnection[] = questionIds.map((questionId) => {
     const qReadings = byQuestion.get(questionId) ?? [];
-    // An approved conversion would resolve here. None exists, by design.
-    const conversion = (CONVERSIONS as Record<string, unknown>)[questionId];
-    if (conversion !== undefined) {
-      // Unreachable while CONVERSIONS is empty; kept so activation is a data
-      // change rather than a control-flow change.
-      throw new Error(
-        `A conversion is declared for "${questionId}" but this module has no approved evaluator. `
-        + 'Activation must ship its evaluator, its version and its validation together.',
-      );
+    const coverage = coverageOf(qReadings);
+
+    // The building half: a condition record, never a register.
+    if (questionId === 'condition_and_maintenance') {
+      const reading = options.condition ?? null;
+      if (reading && reading.admissible && typeof reading.observation === 'number') {
+        answers[questionId] = reading.observation;
+        return {
+          questionId, answer: reading.observation, refusal: null, readings: qReadings, coverage,
+          statement: reading.statement,
+        };
+      }
+      return {
+        questionId, answer: null, refusal: 'not_acquired', readings: qReadings, coverage,
+        statement: reading?.statement ?? CONDITION_NOT_RECORDED,
+      };
+    }
+
+    // An approved conversion answers from what intersected, and only that.
+    const conversion = CONVERSIONS[questionId];
+    if (conversion) {
+      const findings = qReadings
+        .filter((r) => r.outcome === 'answered_with_intersection')
+        .flatMap((r) => r.findings)
+        .filter((f) => FAMILY_TO_QUESTION[f.family] === questionId);
+      const converted = findings.length ? conversion.evaluate(findings) : null;
+      if (converted) {
+        answers[questionId] = converted.answer;
+        return {
+          questionId, answer: converted.answer, refusal: null, readings: qReadings, coverage,
+          statement: coverage.consulted > 0 && !coverage.complete
+            ? `${converted.basis} Coverage is incomplete: ${coverage.incomplete.join(', ')} did not complete.`
+            : converted.basis,
+        };
+      }
     }
     const refusal = refusalFor(qReadings);
-    const coverage = coverageOf(qReadings);
     // The verdict is one sentence; incomplete coverage is a second fact and is
     // appended rather than folded in, so a reader always sees which registers
     // did not complete even when the verdict was chosen for another reason.
@@ -394,6 +469,98 @@ export function readStoredRiskReadings(stored: unknown): RiskEvidenceReading[] {
       findings: Array.isArray(r.findings) ? (r.findings as RiskEvidenceFinding[]) : [],
       retrievedAt: typeof r.retrievedAt === 'string' ? r.retrievedAt : null,
       failureDetail: typeof r.failureDetail === 'string' ? r.failureDetail : null,
+    });
+  }
+  return out;
+}
+
+
+/**
+ * The registers a planning answer consulted, as risk readings.
+ *
+ * `planning-data-service` returns the constraints that intersected the point
+ * (`constraints`, each naming the register it came from as `source`), the
+ * families the answering registers were asked (`constraintsAsked`), and which
+ * registers answered and which did not (`constraintRegisters`). This is the
+ * one reader that turns that answer into the readings `connectRiskEvidence`
+ * judges, so a stored planning answer and a fresh one are read identically.
+ *
+ * A register that answered with nothing at the point is
+ * `answered_no_intersection` — a completed query about a POINT, never a
+ * clearance. A register that did not answer claims no family, because an
+ * outage must never read as coverage.
+ */
+export function riskReadingsFromPlanning(planning: unknown): RiskEvidenceReading[] {
+  if (!planning || typeof planning !== 'object') return [];
+  const p = planning as Record<string, unknown>;
+  const jurisdiction = typeof p.jurisdiction === 'string' ? p.jurisdiction : '';
+  const retrievedAt = typeof p.fetchedAt === 'string' ? p.fetchedAt : null;
+  const asked = Array.isArray(p.constraintsAsked)
+    ? (p.constraintsAsked as unknown[]).filter((f): f is ConstraintFamily => typeof f === 'string')
+    : [];
+  const constraints = Array.isArray(p.constraints)
+    ? (p.constraints as unknown[]).filter((c): c is Record<string, unknown> => !!c && typeof c === 'object')
+    : [];
+  const registers = p.constraintRegisters && typeof p.constraintRegisters === 'object'
+    ? p.constraintRegisters as { answered?: unknown; unavailable?: unknown }
+    : {};
+  const answered = Array.isArray(registers.answered)
+    ? (registers.answered as unknown[]).filter((r): r is string => typeof r === 'string')
+    : [];
+  const unavailable = Array.isArray(registers.unavailable)
+    ? (registers.unavailable as unknown[]).filter((r): r is string => typeof r === 'string')
+    : [];
+
+  const findingOf = (c: Record<string, unknown>): RiskEvidenceFinding | null => {
+    if (typeof c.family !== 'string' || typeof c.kind !== 'string') return null;
+    return {
+      family: c.family as ConstraintFamily,
+      kind: c.kind as ConstraintKind,
+      label: typeof c.label === 'string' ? c.label : String(c.family),
+      instrument: typeof c.instrument === 'string' ? c.instrument : null,
+      clause: typeof c.clause === 'string' ? c.clause : null,
+      currencyDate: typeof c.currencyDate === 'string' ? c.currencyDate : null,
+      value: typeof c.value === 'string' ? c.value : null,
+    };
+  };
+
+  const out: RiskEvidenceReading[] = [];
+  const named = new Set<string>();
+  for (const register of answered) {
+    named.add(register);
+    const findings = constraints
+      .filter((c) => c.source === register)
+      .map(findingOf)
+      .filter((f): f is RiskEvidenceFinding => f !== null);
+    const licence = constraints.find((c) => c.source === register && typeof c.licence === 'string')?.licence;
+    out.push({
+      register,
+      jurisdiction,
+      licence: typeof licence === 'string' ? licence : null,
+      outcome: findings.length ? 'answered_with_intersection' : 'answered_no_intersection',
+      // Findings name their own families; the families the answering registers
+      // were asked cover the question even where nothing intersected.
+      families: [...new Set([...findings.map((f) => f.family), ...asked])],
+      findings,
+      retrievedAt,
+    });
+  }
+  // A finding from a register the answered list does not name is still a
+  // finding: it came back, so it is kept rather than dropped.
+  const orphans = constraints.filter((c) => typeof c.source === 'string' && !named.has(c.source as string));
+  for (const source of [...new Set(orphans.map((c) => c.source as string))]) {
+    const findings = orphans.filter((c) => c.source === source).map(findingOf)
+      .filter((f): f is RiskEvidenceFinding => f !== null);
+    if (!findings.length) continue;
+    out.push({
+      register: source, jurisdiction, licence: null, outcome: 'answered_with_intersection',
+      families: [...new Set(findings.map((f) => f.family))], findings, retrievedAt,
+    });
+  }
+  for (const register of unavailable) {
+    out.push({
+      register, jurisdiction, licence: null, outcome: 'request_failed',
+      families: [], findings: [], retrievedAt, failureDetail: register,
     });
   }
   return out;

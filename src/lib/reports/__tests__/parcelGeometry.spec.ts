@@ -163,8 +163,11 @@ describe('positive, completed negative, incomplete — never collapsed', () => {
 });
 
 describe('nothing here scores', () => {
-  it('the conversion table stays frozen empty', () => {
-    expect(Object.keys(CONVERSIONS)).toHaveLength(0);
+  it('the parcel sweep adds no conversion of its own', () => {
+    // The only approved conversions are the point-grain site conversion
+    // (positives only) activated 28 Sep 2026; the parcel sweep's verdicts
+    // remain statements, never scores.
+    expect(Object.keys(CONVERSIONS).sort()).toEqual(['planning_constraints', 'site_hazard_exposure']);
     expect(Object.isFrozen(CONVERSIONS)).toBe(true);
   });
 

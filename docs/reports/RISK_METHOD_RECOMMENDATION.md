@@ -9,7 +9,43 @@ that date; nothing is estimated.
 
 ---
 
-## 0. Status — the building half is DEFERRED from this release (S5/S6 §1)
+## 0. Status — ACTIVATED, 28 September 2026
+
+**This supersedes the deferral recorded below.** On 28 September 2026 the
+platform owner chose the condition-record option (*"proceed with the condition
+record option … integrate everything in which we can proceed moving forward
+without … domain package"*), which is Approvals A and B of §7 together.
+
+| part | state |
+| --- | --- |
+| **Approval A** — the evidence path | **Built.** `20261228090000_property_condition_records.sql` (the probed 20261204000000 file, renumbered above the applied high-water mark, plus `document_path`); `manage-investment-reports` ops `requestConditionDocumentUpload`, `submitConditionRecord`, `getConditionRecords`, `getConditionDocumentUrl`; `ConditionEvidencePanel` on the report page. |
+| **Approval B** — the building conversion | **Active.** `CONDITION_METHOD_ACTIVATION` is `{ approved: true, approvedOn: '2026-09-28', decidedBy: 'platform owner' }`. |
+| the **site** conversion (§6a) | **Active.** `CONVERSIONS` names `site_hazard_exposure` and `planning_constraints`, both answered by `siteConstraintSeverity` v1.0.0 from the planning registers the generator already acquires (`riskReadingsFromPlanning`). |
+
+How it reaches a grade, end to end:
+
+1. An operator attaches the inspection report on the report page and records
+   what it says. The server validates with the same module the form renders,
+   checks the upload exists under **this report's own folder**
+   (`listing-images/condition-documents/<report>/…`, private), and stores the
+   row. A transcription with no document is evidence and never an observation.
+2. The next Compass generation reads the register for the report and its
+   property key (`conditionRecordRead.ts`) and hands the records, with the
+   subject read from the report row, to the scoring service.
+3. `investment-scoring-service` picks the best record that binds to the
+   property (`bestReadingForSubject`) and passes the reading and the planning
+   answer to `scoreForProduction`. Risk scores **only** where both categories
+   answered; either alone leaves it excluded exactly as before
+   (`riskScoresInProduction.spec.ts`).
+
+Two limits stand. **The deduction magnitudes are uncalibrated** (§6): the
+first records are the first evidence they meet, so the first few graded Risk
+readings should be read by a person. And **nothing re-grades a stored
+report**: a record moves a grade on the next generation, never retroactively.
+
+---
+
+## 0a. History — the building half was DEFERRED from the 18 Sep release (S5/S6 §1)
 
 **Read this before anything below.** On 18 September 2026 the platform owner
 narrowed the release scope: *"Exclude the new ConditionEvidencePanel,

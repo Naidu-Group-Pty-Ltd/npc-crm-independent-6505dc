@@ -25,6 +25,7 @@ import { logActivityDirect } from '@/hooks/useActivityLogger';
 import { deliverInvestmentPdf, publishInvestmentPdf } from '@/lib/reports/investment/deliverInvestmentPdf';
 import { readReportAudience, type ReportAudience } from '@/lib/reports/investment/audienceContent.pure';
 import { InvestmentReportFamilyNotice } from '@/components/reports/report-view/InvestmentReportFamilyNotice';
+import { ConditionEvidencePanel } from '@/components/reports/report-view/ConditionEvidencePanel';
 import { fetchReportFamily, type ReportFamily } from '@/lib/reports/subReports';
 import { toast } from 'sonner';
 import {
@@ -333,6 +334,13 @@ export default function InvestmentReportView() {
               <InvestmentReportCoverageNote
                 dataSources={report.data_sources}
                 validationFlags={report.validation_flags}
+              />
+
+              {/* Filed against the Compass a variant came from: the Compass is
+                  the generation that scores Property Risk. */}
+              <ConditionEvidencePanel
+                reportId={report.derived_from_report_id || report.parent_report_id || report.id}
+                propertyAddress={report.property_address}
               />
 
               {hasOverrides && (
