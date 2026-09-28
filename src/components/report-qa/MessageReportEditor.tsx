@@ -21,8 +21,21 @@ import { drawJsPDFDisclaimerPage } from '@/utils/pdfDisclaimerPage';
 import { issuerClosingPage, loadLegacyDocumentBrand } from '@/lib/reports/legacyDocumentBrand';
 import { drawLegacyIssuerCover } from '@/lib/reports/legacyIssuerCover';
 import jsPDF from 'jspdf';
+import { useReportTemplateSelection } from '@/hooks/useReportTemplateSelection';
+import {
+  HUB_DOCUMENT_NAME,
+  hubDocumentFileName,
+  hubDocumentTopic,
+} from '@/lib/reports/reportQa/documentIdentity.pure';
 
-import { ReportQaDownloadButton } from './ReportQaDownloadButton';
+import { ChooseTemplateButton, chosenTemplateLine } from './ChooseTemplateButton';
+import { useReportQaDelivery } from './useReportQaDelivery';
+
+/** Today as `YYYY-MM-DD` on the reader's own calendar, for a filename. */
+const localIsoDate = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
 
 interface MessageReportEditorProps {
   isOpen: boolean;
@@ -31,7 +44,12 @@ interface MessageReportEditorProps {
   messageId: string;
   /** Needed by the typeset export, which reads the answer from the record. */
   conversationId?: string | null;
-  title: string;
+  /**
+   * The caller's label for the export. No longer printed: the document names
+   * itself from its own heading (`documentIdentity.pure.ts`). Kept so callers
+   * need not change.
+   */
+  title?: string;
   reportNames: string[];
 }
 
@@ -41,7 +59,6 @@ export function MessageReportEditor({
   content: originalContent, 
   messageId,
   conversationId,
-  title, 
   reportNames 
 }: MessageReportEditorProps) {
   const [reportContent, setReportContent] = useState('');
@@ -51,6 +68,13 @@ export function MessageReportEditor({
   const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
   const initialContent = useRef('');
+  // The typeset route: the answer as stored, drawn by the pinned engine in the
+  // template chosen beside the button (`ChooseTemplateButton`).
+  const typeset = useReportQaDelivery({ conversationId: conversationId ?? null, messageId });
+  const templateChoice = useReportTemplateSelection('qa');
+  // What this answer is about — its own heading, else the reports it drew on —
+  // for the filename and the legacy cover (`documentIdentity.pure.ts`).
+  const topic = () => hubDocumentTopic({ body: reportContent, conversationTitle: reportNames.join(', ') });
 
   // Load content: use persisted edited_content if available, otherwise use original
   useEffect(() => {
@@ -92,15 +116,24 @@ export function MessageReportEditor({
     setHasEdited(value !== initialContent.current);
   };
 
-  const saveEditedContent = async () => {
+  /**
+   * Keep the edits, and say whether they were kept.
+   *
+   * The PDF is drawn from the stored answer, so an export after a failed save
+   * would print the words the person had just replaced. The result is returned
+   * rather than swallowed, and the returned `error` is read: the call answers a
+   * refusal in its value, not by throwing, and was reported as "Saved" either way.
+   */
+  const saveEditedContent = async (): Promise<boolean> => {
     setIsSaving(true);
     try {
-      await invokeSecureFunction('manage-client-data', {
+      const { error } = await invokeSecureFunction('manage-client-data', {
         operation: 'update',
         table: 'report_qa_messages',
         id: messageId,
         data: { edited_content: reportContent }
       });
+      if (error) throw new Error(error.message || 'Could not save your edits');
 
       initialContent.current = reportContent;
       setHasEdited(false);
@@ -109,6 +142,7 @@ export function MessageReportEditor({
         title: 'Saved',
         description: 'Your edits have been saved.',
       });
+      return true;
     } catch (err: any) {
       console.error('Failed to save edited content:', err);
       toast({
@@ -116,6 +150,7 @@ export function MessageReportEditor({
         description: err.message || 'Failed to save edits',
         variant: 'destructive',
       });
+      return false;
     } finally {
       setIsSaving(false);
     }
@@ -126,7 +161,28 @@ export function MessageReportEditor({
     setHasEdited(originalContent !== initialContent.current);
   };
 
-  // ========== PDF EXPORT (mirrors the deleted QAPDFGenerator template) ==========
+  /**
+   * Export PDF — the answer, typeset, in the chosen template.
+   *
+   * The same route every other report type's final document goes through: the
+   * server reads the stored answer (the edits win over the original), draws it
+   * with the pinned engine and the template chosen beside this button, and hands
+   * back one file. Edits are saved first, and a failed save stops the export
+   * rather than printing the words the person replaced.
+   *
+   * The in-browser layout below remains only for an answer with no
+   * conversation behind it, which the route cannot read.
+   */
+  const exportPdf = async () => {
+    if (!conversationId) {
+      await exportAsLegacyPDF();
+      return;
+    }
+    if (hasEdited && !(await saveEditedContent())) return;
+    await typeset.run('answer');
+  };
+
+  // ========== LEGACY PDF (mirrors the deleted QAPDFGenerator template) ==========
   const sanitizeForPDF = (text: string): string => {
     let clean = text.replace(/\*\*(.*?)\*\*/g, '$1').replace(/\*(.*?)\*/g, '$1');
     clean = clean.replace(/%æ\s*/g, '- ');
@@ -148,13 +204,11 @@ export function MessageReportEditor({
     return clean;
   };
 
-  const exportAsPDF = async () => {
+  const exportAsLegacyPDF = async () => {
     setIsExporting(true);
     try {
       // Save edits first if changed
-      if (hasEdited) {
-        await saveEditedContent();
-      }
+      if (hasEdited && !(await saveEditedContent())) return;
 
       const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
       const pageWidth = doc.internal.pageSize.getWidth();
@@ -184,8 +238,8 @@ export function MessageReportEditor({
         drawLegacyIssuerCover(doc, {
           issuerName: legacyBrand.issuer.name,
           mark: legacyBrand.mark,
-          documentTitle: 'Investment Property Analysis',
-          subject: reportNames.join(', ') || null,
+          documentTitle: HUB_DOCUMENT_NAME,
+          subject: topic() || reportNames.join(', ') || null,
           standfirst: new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' }),
           family: legacyBrand.family,
         });
@@ -227,10 +281,10 @@ export function MessageReportEditor({
       doc.setTextColor(255, 255, 255);
       doc.setFontSize(18);
       doc.setFont('helvetica', 'bold');
-      doc.text((legacyBrand.artwork === 'issuer' ? legacyBrand.issuer.name : contact.company_name) || 'Property Report', margin, 15);
+      doc.text((legacyBrand.artwork === 'issuer' ? legacyBrand.issuer.name : contact.company_name) || HUB_DOCUMENT_NAME, margin, 15);
       doc.setFontSize(9);
       doc.setFont('helvetica', 'normal');
-      doc.text('Investment Property Analysis', margin, 22);
+      doc.text(HUB_DOCUMENT_NAME, margin, 22);
       doc.text(`Generated: ${dateStr}`, margin, 28);
       
       yPos = 45;
@@ -541,7 +595,7 @@ export function MessageReportEditor({
 
       // Footer on each page (skip cover = page 1, skip disclaimer = last page)
       const totalPages = doc.getNumberOfPages();
-      const companyFooterName = (legacyBrand.artwork === 'issuer' ? legacyBrand.issuer.name : contact.company_name) || 'Property Report';
+      const companyFooterName = (legacyBrand.artwork === 'issuer' ? legacyBrand.issuer.name : contact.company_name) || HUB_DOCUMENT_NAME;
       for (let p = 1; p <= totalPages; p++) {
         if (p === 1 || p === totalPages) continue;
         doc.setPage(p);
@@ -556,10 +610,10 @@ export function MessageReportEditor({
         );
       }
 
-      const fileName = reportNames.length > 0 
-        ? `Summary - ${reportNames.join(', ')}.pdf`
-        : `Q&A Summary - ${new Date().toLocaleDateString('en-AU')}.pdf`;
-      
+      // `Intelligence Hub Summary - <topic> - 28 Sep 2026.pdf` — the name the
+      // typeset route gives the same answer, so the two sort together.
+      const fileName = hubDocumentFileName(topic(), localIsoDate());
+
       doc.save(fileName);
 
       toast({
@@ -583,7 +637,7 @@ export function MessageReportEditor({
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${title.replace(/[^a-z0-9]/gi, '_').substring(0, 50)}_message.md`;
+    a.download = hubDocumentFileName(topic(), localIsoDate(), { extension: 'md' });
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -658,10 +712,10 @@ export function MessageReportEditor({
         <DialogHeader className="flex-shrink-0 px-5 pb-3 pt-5 pr-14 sm:px-6 sm:pb-4 sm:pt-6 sm:pr-16">
           <DialogTitle className="flex items-center gap-2">
             <FileText className="h-5 w-5" />
-            Export Message as PDF
+            Export as {HUB_DOCUMENT_NAME}
           </DialogTitle>
           <DialogDescription>
-            Review and edit the message content before exporting as a professional PDF report.
+            Review and edit the answer, choose a template, then export it as a PDF.
           </DialogDescription>
         </DialogHeader>
 
@@ -710,6 +764,11 @@ export function MessageReportEditor({
             <span className="text-xs text-muted-foreground">
               {reportContent.length} chars
             </span>
+            {conversationId && (
+              <span className="text-xs text-muted-foreground" aria-live="polite">
+                · {chosenTemplateLine(templateChoice.state)}
+              </span>
+            )}
           </div>
           
           <div className="flex flex-wrap justify-end gap-2">
@@ -745,22 +804,21 @@ export function MessageReportEditor({
               Markdown
             </Button>
             {/*
-              Beside the jsPDF export, not in place of it. This one reads the
-              answer back out of `report_qa_messages` and typesets it through
-              WeasyPrint, so what a broker receives is selectable text.
+              The choice, then the act. "Typeset PDF" used to sit here as a
+              second PDF button — the only one that honoured the template —
+              beside an Export PDF that drew the old in-browser layout whatever
+              was chosen. Choosing is its own control now, and Export PDF makes
+              the one document, in the template chosen here.
             */}
-            <ReportQaDownloadButton
-              conversationId={conversationId ?? null}
-              only="answer"
-              messageId={messageId}
-              label="Typeset PDF"
-            />
+            {conversationId && (
+              <ChooseTemplateButton disabled={isExporting || typeset.busy} />
+            )}
             <Button 
               size="sm"
-              onClick={exportAsPDF}
-              disabled={!reportContent || isExporting}
+              onClick={() => void exportPdf()}
+              disabled={!reportContent || isExporting || isSaving || typeset.busy}
             >
-              {isExporting ? (
+              {isExporting || typeset.busy ? (
                 <Loader2 className="h-3 w-3 mr-1 animate-spin" />
               ) : (
                 <Download className="h-3 w-3 mr-1" />

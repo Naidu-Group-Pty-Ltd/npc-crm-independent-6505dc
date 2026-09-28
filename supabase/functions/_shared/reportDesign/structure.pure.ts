@@ -385,7 +385,11 @@ export const REPORT_ARCHETYPES: Record<ReportArchetypeId, ReportArchetype> = {
   },
   'report-qa': {
     id: 'report-qa',
-    documentName: 'Report Q&A',
+    // What the product calls the page these documents come from. Spelled once
+    // for the renderer in `reportQa/documentIdentity.pure.ts` (HUB_DOCUMENT_NAME)
+    // and asserted equal there — this file sits below the formats and imports
+    // none of them.
+    documentName: 'Intelligence Hub Summary',
     chapterLabel: 'Section',
     slots: FULL_SLOTS,
     // Three documents under one archetype, and the band has to hold all three.

@@ -378,7 +378,7 @@ describe('each lister reads its own table', () => {
     ];
     const rows = await getAdapter('qa')!.listRecentReports!();
     expect(rows.map((r) => r.label))
-      .toEqual(['Questions about the Newtown report', 'Report Q&A']);
+      .toEqual(['Questions about the Newtown report', 'Intelligence Hub Summary']);
   });
 
   it('commercial capacity offers only what the render route would accept', async () => {
