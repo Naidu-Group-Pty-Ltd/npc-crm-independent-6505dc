@@ -19,7 +19,14 @@
  *    the same thing, so nothing is converted here — which is the only reason
  *    that is safe to say.
  */
-import type { WireAcquisition, WireProjection, WireProjectionYear } from './requestCashFlowPdf';
+import type { WireAcquisition, WireInputs, WireProjection, WireProjectionYear } from './requestCashFlowPdf';
+import { landBuildSplit } from './readBaseFinancials';
+import {
+  scheduleDuration,
+  stageMonthsFor,
+  stagePercentsFrom,
+  type SchedulePreset,
+} from './constructionSchedule.pure';
 
 /** The fields this mapper reads off one of the modal's projected years. */
 export interface ModalProjectionYear {
@@ -42,6 +49,8 @@ export interface ModalProjectionYear {
   taxEffect?: number;
   landTax: number;
   afterTaxCashFlowPA: number;
+  totalDeductions?: number;
+  netProfitLoss?: number;
 }
 
 /** The fields this mapper reads off the modal's `baseFinancialData`. */
@@ -92,6 +101,10 @@ function toYear(row: ModalProjectionYear, calendarYear: number | null): WireProj
     // printing a zero refund beside a cash flow that fell.
     taxEffect: row.taxEffect === undefined ? finite(row.taxRefund) : finite(row.taxEffect),
     landTax: finite(row.landTax),
+    // The legacy table's two summary lines, as the engine computed them. The
+    // server derives them by the same definition where a caller omits them.
+    ...(row.totalDeductions === undefined ? {} : { totalDeductions: finite(row.totalDeductions) }),
+    ...(row.netProfitLoss === undefined ? {} : { netProfitLoss: finite(row.netProfitLoss) }),
     capitalGrowth: finite(row.capitalGrowthRate),
     cpiGrowth: finite(row.cpiGrowthRate),
   };
@@ -145,6 +158,91 @@ function toAssumptions(base: ModalBaseFinancials): Array<{ label: string; value:
   ];
 }
 
+/** The extra fields the Input Summary reads off `baseFinancialData`. */
+export interface ModalInputFinancials extends ModalBaseFinancials {
+  landPrice: number;
+  buildPrice: number;
+  councilRates: number;
+  waterRates: number;
+  propertyManagementFees: number;
+  buildingLandlordInsurance: number;
+  lettingFees: number;
+  repairsMaintenance: number;
+  bodyCorporateFees: number;
+  agentFee: number;
+  interestOnlyPeriodYears: number;
+  constructionDurationMonths: number;
+  loanToValueRatio: number;
+  assumedInputs: readonly string[];
+  caseFingerprint: string;
+}
+
+export interface ToWireInputsOptions {
+  /** `manual_overrides.buildType === 'new_build'`. */
+  isNewBuild: boolean;
+  /** The report's manual overrides — the stage percentages live there. */
+  overrides: Record<string, unknown> | null | undefined;
+  schedulePreset: SchedulePreset;
+  customStageMonths: Record<number, number>;
+  /** The adviser's "include the construction schedule in the export" switch. */
+  showConstructionSchedule: boolean;
+}
+
+/**
+ * Every input the projection ran on, as numbers. No arithmetic here beyond
+ * reading the land/build split the way every surface reads it.
+ */
+export function toWireInputs(base: ModalInputFinancials, opts: ToWireInputsOptions): WireInputs {
+  const split = landBuildSplit(base);
+  const durationMonths = scheduleDuration(base.constructionDurationMonths);
+  return {
+    isNewBuild: opts.isNewBuild,
+    purchasePrice: finite(base.purchasePrice),
+    weeklyRent: finite(base.weeklyRent),
+    landPrice: split.landPrice,
+    buildPrice: split.buildPrice,
+    buildDerived: split.derived,
+    // The deposit the legacy tables print: the recorded one, else the price
+    // less the loan the LVR implies.
+    deposit: finite(base.depositValue)
+      || finite(base.purchasePrice) * (1 - (finite(base.loanToValueRatio) || 80) / 100),
+    loanAmount: finite(base.loanAmount),
+    interestRate: finite(base.interestRate),
+    capitalGrowth: finite(base.capitalGrowth),
+    cpiGrowth: finite(base.cpiGrowthRate),
+    taxRate: finite(base.taxRate),
+    depreciation: base.includeDepreciationInCashFlow ? finite(base.depreciation) : 0,
+    councilRates: finite(base.councilRates),
+    waterRates: finite(base.waterRates),
+    managementFeePercent: finite(base.propertyManagementFees),
+    landlordInsurance: finite(base.buildingLandlordInsurance),
+    lettingFees: finite(base.lettingFees),
+    repairsMaintenance: finite(base.repairsMaintenance),
+    bodyCorporate: finite(base.bodyCorporateFees),
+    stampDuty: finite(base.stampDuty),
+    solicitorFees: finite(base.solicitorFees),
+    inspectionFees: finite(base.inspectionFees),
+    agentFee: finite(base.agentFee),
+    lmiAmount: finite(base.lmiAmount),
+    occupancyWeeks: finite(base.occupancyRate) || 52,
+    loanType: String(base.loanType ?? ''),
+    interestOnlyYears: finite(base.interestOnlyPeriodYears),
+    loanTermYears: finite(base.loanTermYears) || 30,
+    assumed: [...(base.assumedInputs ?? [])],
+    caseFingerprint: base.caseFingerprint || null,
+    // Staged only for a new build whose record states a build contract.
+    construction: opts.isNewBuild && split.buildPrice !== null
+      ? {
+        durationMonths,
+        preset: opts.schedulePreset,
+        stagePercents: stagePercentsFrom(opts.overrides),
+        stageMonths: stageMonthsFor(opts.schedulePreset, durationMonths, opts.customStageMonths),
+      }
+      : null,
+    showConstructionSchedule: opts.showConstructionSchedule,
+  };
+}
+
 export interface ToWireProjectionInput {
   /** All eleven rows, year 0 first, exactly as the modal computed them. */
   projections: readonly ModalProjectionYear[];
@@ -153,6 +251,8 @@ export interface ToWireProjectionInput {
   firstCalendarYear?: number | null;
   /** Anything the adviser should have said out loud on the page. */
   notes?: readonly string[];
+  /** The Input Summary and the construction staging (`toWireInputs`). */
+  inputs?: WireInputs;
 }
 
 export function toWireProjection(input: ToWireProjectionInput): WireProjection {
@@ -163,10 +263,18 @@ export function toWireProjection(input: ToWireProjectionInput): WireProjection {
 
   const first = input.firstCalendarYear ?? null;
 
+  // Year 0 IS the settlement position — not a projected year, but exactly the
+  // "Today" column the legacy table printed beside year one.
+  const today = input.projections.find((row) => finite(row.year) === 0);
+
   return {
     acquisition: toAcquisition(input.base),
     years: projected.map((row, i) => toYear(row, first === null ? null : first + i)),
     assumptions: toAssumptions(input.base),
     notes: [...(input.notes ?? [])],
+    ...(input.inputs ? { inputs: input.inputs } : {}),
+    ...(today
+      ? { settlement: { propertyValue: finite(today.propertyMarketValue), loanBalance: finite(today.loanAmount) } }
+      : {}),
   };
 }

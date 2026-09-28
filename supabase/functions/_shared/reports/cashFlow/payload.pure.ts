@@ -26,6 +26,9 @@
  * of `NaN` printed on company letterhead is worse than an error.
  */
 import type { Measure } from '../../reportDesign/measure.pure.ts';
+import type { ConstructionSchedule } from './constructionSchedule.pure.ts';
+import type { AcquisitionExpenditure } from './expenditure.pure.ts';
+import type { InputSummaryLine } from './inputSummary.pure.ts';
 
 /** One year of the projection, as the modal computed it. */
 export interface ProjectionYear {
@@ -63,6 +66,10 @@ export interface ProjectionYear {
   /** `taxRefund - taxPayable`. Negative in a year the rental profit is taxed. */
   taxEffect: Measure;
   landTax: Measure;
+  /** Expenses, interest, depreciation and land tax — what the rent is taxed against. */
+  totalDeductions?: Measure;
+  /** Rent less the total deductions: the rental profit or loss for tax. */
+  netProfitLoss?: Measure;
 
   // Growth applied this year
   capitalGrowth: Measure;
@@ -120,6 +127,19 @@ export interface OutcomeBlock {
   breakEvenYear: number | null;
 }
 
+/**
+ * The position at settlement — the "Today" column of the projection table,
+ * as the legacy export printed it beside year one.
+ */
+export interface SettlementBlock {
+  propertyValue: Measure;
+  purchasePrice: Measure;
+  loanBalance: Measure;
+  equity: Measure;
+  lvr: Measure;
+  weeklyRent: Measure;
+}
+
 /** An assumption, as a row. */
 export interface AssumptionRow {
   label: string;
@@ -141,6 +161,19 @@ export interface CashFlowProjection {
   /** Two or three sentences framing the table. Built, not free text. */
   narrative: string;
   acquisition: AcquisitionBlock;
+  /**
+   * Every input the projection ran on, laid out as the legacy Input Summary.
+   * Empty when the caller predates it; the purchase table is printed instead.
+   */
+  inputs?: readonly InputSummaryLine[];
+  /** Upfront costs and the overall expenditure to completion, or null when not sent. */
+  expenditure?: AcquisitionExpenditure | null;
+  /** A new build's staged contract. Null on an established property. */
+  construction?: ConstructionSchedule | null;
+  /** Whether the schedule table is printed (the adviser's export switch). */
+  showConstructionSchedule?: boolean;
+  /** Absent on a projection built before it existed; the renderer reads the acquisition. */
+  settlement?: SettlementBlock;
   yearOne: YearOneBlock;
   years: readonly ProjectionYear[];
   outcome: OutcomeBlock;

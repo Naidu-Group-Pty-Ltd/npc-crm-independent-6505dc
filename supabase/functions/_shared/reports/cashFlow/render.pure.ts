@@ -48,9 +48,12 @@ import {
   withDesignOptions,
   type ReportTemplateDesign,
 } from '../../reportDesign/templateDesign.pure.ts';
-import { formatAmount, formatMeasure, periodLabel } from '../../reportDesign/measure.pure.ts';
+import { audPerYear, formatAmount, formatMeasure, periodLabel } from '../../reportDesign/measure.pure.ts';
+import { toSettlement } from './normalise.pure.ts';
 
-import type { CashFlowProjection, ProjectionYear } from './payload.pure.ts';
+import type { CashFlowProjection, ProjectionYear, SettlementBlock } from './payload.pure.ts';
+import type { ExpenditureTable } from './expenditure.pure.ts';
+import { formatCents, formatDollars } from './inputSummary.pure.ts';
 import { cashFlowSections, validateCashFlowSpine } from './sections.pure.ts';
 import { cashPositionChart, equityBuildChart } from './charts.pure.ts';
 import { formatReportDate as formatPreparedOn } from '../reportDate.pure.ts';
@@ -134,7 +137,7 @@ function positionSection(cf: CashFlowProjection): string {
     { item: 'Weekly rent', value: formatMeasure(a.weeklyRent) },
   ];
 
-  const costs = a.costs.length
+  const costs = !cf.expenditure && a.costs.length
     ? renderDataTable(
       [{ key: 'item', label: 'Acquisition cost', align: 'left' },
         { key: 'value', label: 'Amount', align: 'right' }],
@@ -153,26 +156,168 @@ function positionSection(cf: CashFlowProjection): string {
     { item: 'Cash flow after tax', value: formatAmount(y1.afterTaxAnnual), __total: true },
   ];
 
-  return renderLede(cf.narrative)
-    + renderKpiStrip(kpis)
-    + renderDataTable(
+  // The Input Summary supersedes the purchase table where the caller sent it:
+  // it carries every line the purchase table does and the twenty the purchase
+  // table never printed. An older caller still gets the purchase table.
+  const purchaseOrInputs = cf.inputs?.length
+    ? inputSummaryTable(cf)
+    : renderDataTable(
       [{ key: 'item', label: 'Term', align: 'left' }, { key: 'value', label: 'Value', align: 'right' }],
       purchase,
       { caption: 'The purchase' },
-    )
+    );
+
+  return renderLede(cf.narrative)
+    + renderKpiStrip(kpis)
+    + purchaseOrInputs
+    + '<div class="cf-compact">'
     + costs
+    + expenditureTables(cf)
     + subhead('Year one, line by line')
     + renderDataTable(
       [{ key: 'item', label: 'Line', align: 'left' }, { key: 'value', label: `Amount ${perYear}`, align: 'right' }],
       yearOne,
       { caption: 'Year one cash flow', signedKeys: ['value'] },
     )
+    + '</div>'
     + renderSidenote(
       'Weekly, after tax',
       p(`${formatMeasure(y1.afterTaxWeekly)} is the year-one figure divided by 52. `
         + 'It is the number most investors budget against, and it moves every year — '
         + 'the projection overleaf shows how.'),
     );
+}
+
+/**
+ * The Input Summary, two pairs to a line, as the legacy export lays it out.
+ * Four columns with no header row: the caption names the table and every
+ * label names its value.
+ */
+function inputSummaryTable(cf: CashFlowProjection): string {
+  const rows: TableRow[] = (cf.inputs ?? []).map((line) => ({
+    l1: line.left?.label ?? '',
+    v1: line.left?.value ?? '',
+    l2: line.right?.label ?? '',
+    v2: line.right?.value ?? '',
+  }));
+  return `<div class="cf-inputs">${renderDataTable(
+    [
+      { key: 'l1', label: '', align: 'left' },
+      { key: 'v1', label: '', align: 'right' },
+      { key: 'l2', label: '', align: 'left' },
+      { key: 'v2', label: '', align: 'right' },
+    ],
+    rows,
+    { caption: 'Input summary' },
+  )}</div>`;
+}
+
+function expenditureTable(caption: string, t: ExpenditureTable, totalLabel: string): string {
+  if (!t.rows.length) return '';
+  const rows: TableRow[] = [
+    ...t.rows.map((r) => ({ item: r.label, value: formatDollars(r.amount) })),
+    { item: totalLabel, value: formatDollars(t.total), __total: true },
+  ];
+  return renderDataTable(
+    [{ key: 'item', label: 'Item', align: 'left' }, { key: 'value', label: 'Amount', align: 'right' }],
+    rows,
+    { caption },
+  );
+}
+
+/**
+ * "Total Upfront Costs" and "Total Overall Expenditure to Completion", as the
+ * legacy export prints them — for a new build, the land and build deposits,
+ * the build contract and the interest carried during construction.
+ */
+function expenditureTables(cf: CashFlowProjection): string {
+  const e = cf.expenditure;
+  if (!e) return '';
+  return expenditureTable('Total upfront costs', e.upfront, 'Total upfront costs')
+    + expenditureTable(
+      'Total overall expenditure to completion',
+      e.overall,
+      'Total overall expenditure to completion',
+    );
+}
+
+/**
+ * The construction progress payment schedule of a new build.
+ *
+ * Every figure is `constructionSchedule.pure.ts`'s, computed on the server from
+ * the inputs — the same module the on-screen analysis draws. Interest is shown
+ * to the cent because the footer is the sum of the printed rows, and rounding
+ * each row to a dollar would print a footer that does not add up.
+ */
+/** Past this many rows (the total included) the schedule is set compact. */
+export const LONG_SCHEDULE_ROWS = 15;
+
+function constructionSection(cf: CashFlowProjection): string {
+  const s = cf.construction;
+  if (!s) return '';
+  const kpis: KpiCell[] = [
+    { label: 'Land cost', value: formatDollars(s.landPrice) },
+    { label: 'Build contract', value: formatDollars(s.buildPrice) },
+    { label: 'Total project', value: formatDollars(s.totalProject) },
+    {
+      label: 'Interest during construction',
+      value: formatDollars(s.totals.totalCombinedRepayment),
+      foot: `${s.durationMonths} months at ${s.interestRate}% p.a.`,
+    },
+  ];
+  const stagedPercent = s.stages.reduce((sum, r) => sum + r.percentage, 0);
+  const rows: TableRow[] = [
+    ...s.stages.map((r) => ({
+      month: String(r.month),
+      stage: r.stage,
+      description: r.description,
+      pct: r.percentage > 0 ? `${r.percentage}%` : '',
+      pricing: r.buildAmount > 0 ? formatDollars(r.buildAmount) : '',
+      land: formatCents(r.landInterest),
+      build: r.buildInterest > 0 ? formatCents(r.buildInterest) : '',
+      combined: formatCents(r.totalMonthlyInterest),
+    })),
+    {
+      month: '',
+      stage: 'Total',
+      description: '',
+      pct: `${Math.round(stagedPercent * 100) / 100}%`,
+      pricing: formatDollars(s.totalProject),
+      land: formatCents(s.totals.landInterest),
+      build: formatCents(s.totals.buildInterest),
+      combined: formatCents(s.totals.totalCombinedRepayment),
+      __total: true,
+    },
+  ];
+  // A long build — up to 24 months, and a row a month — does not fit under the
+  // KPI strip on one landscape page, so the four figures become the legacy
+  // export's one summary line and the rows tighten. Measured: at 25 rows the
+  // strip pushed the table to a page of its own under every catalogue design.
+  const long = rows.length > LONG_SCHEDULE_ROWS;
+  const summary = long
+    ? `<p class="cf-schedule-summary">${kpis.map((k) =>
+      `<span><span class="cf-k">${escapeHtml(k.label)}</span> ${escapeHtml(String(k.value))}</span>`).join(' · ')}</p>`
+    : renderKpiStrip(kpis);
+  return summary
+    + `<div class="cf-schedule${long ? ' cf-schedule-long' : ''}">${renderDataTable(
+      [
+        { key: 'month', label: 'Month', align: 'left' },
+        { key: 'stage', label: 'Stage', align: 'left' },
+        { key: 'description', label: 'Description', align: 'left' },
+        { key: 'pct', label: '%', align: 'right' },
+        { key: 'pricing', label: 'Stage pricing', align: 'right' },
+        { key: 'land', label: 'Land interest', align: 'right' },
+        { key: 'build', label: 'Build interest', align: 'right' },
+        { key: 'combined', label: 'Monthly interest', align: 'right' },
+      ],
+      rows,
+      { caption: `Construction progress payment schedule — ${s.durationMonths}-month build` },
+    )}<p class="cf-footnote">${escapeHtml(
+      `Interest is calculated at ${s.interestRate}% p.a. The land is financed in full from month 1, so its `
+      + 'interest is constant; build interest grows as each stage is drawn. The deposit stage is paid from your '
+      + 'own funds and attracts no interest. The land and build deposits and this interest are counted in the '
+      + 'upfront costs.',
+    )}</p></div>`;
 }
 
 /**
@@ -191,46 +336,92 @@ function positionSection(cf: CashFlowProjection): string {
  * the two groups answer different questions, and a reader was already scanning
  * for the boundary between them.
  */
+/** The Today column: the settlement position, or the acquisition's where none was built. */
+function settlementOf(cf: CashFlowProjection): SettlementBlock {
+  return cf.settlement ?? toSettlement(null, cf.acquisition);
+}
+
 function projectionSection(cf: CashFlowProjection): string {
-  const periods = cf.years.map((y) => (y.calendarYear ? `Y${y.year} · ${y.calendarYear}` : `Year ${y.year}`));
-  const line = (label: string, pick: (y: ProjectionYear) => string, total = false) => ({
-    label,
-    values: cf.years.map(pick),
-    total,
-  });
+  const periods = cf.years.map((y) => `Yr ${y.year}`);
+  const st = settlementOf(cf);
+  const blank = cf.years.map(() => '');
+  // The two summary lines, derived by the engine's definition wherever the
+  // projection predates them.
+  const deductions = (y: ProjectionYear) => y.totalDeductions
+    ?? audPerYear(y.expenses.value + y.interest.value + y.depreciation.value + y.landTax.value);
+  const profit = (y: ProjectionYear) => y.netProfitLoss
+    ?? audPerYear(y.rentalIncome.value - deductions(y).value);
+  type Line = { label: string; today: string; values: string[]; signed?: boolean; total?: boolean };
+  type Band = { band: string };
+  const line = (
+    label: string,
+    today: string,
+    pick: (y: ProjectionYear) => string,
+    opts: { signed?: boolean; total?: boolean } = {},
+  ): Line => ({ label, today, values: cf.years.map(pick), ...opts });
 
-  const position = renderBandedMatrix(
-    'Position',
-    periods,
-    [
-      line('Property value', (y) => formatMeasure(y.propertyValue)),
-      line('Loan balance', (y) => formatMeasure(y.loanBalance)),
-      line('Equity', (y) => formatMeasure(y.equity), true),
-      line('LVR', (y) => formatMeasure(y.lvr)),
-      line('Capital growth applied', (y) => formatMeasure(y.capitalGrowth)),
-    ],
-    { caption: `Value, debt and equity at the end of each year — years 1 to ${cf.meta.termYears}` },
-  );
+  // The legacy table's rows, in its order and under its four headings, with a
+  // Today column for the position at settlement. Units live in the cells
+  // rather than in the labels, as everywhere else in this document.
+  const rows: Array<Line | Band> = [
+    line('Capital growth', '', (y) => formatMeasure(y.capitalGrowth)),
+    line('CPI growth', '', (y) => formatMeasure(y.cpiGrowth)),
+    line('Property value', formatMeasure(st.propertyValue), (y) => formatMeasure(y.propertyValue)),
+    { label: 'Purchase price', today: formatMeasure(st.purchasePrice), values: blank },
+    line('Loan amount', formatMeasure(st.loanBalance), (y) => formatMeasure(y.loanBalance)),
+    { band: 'Statistics' },
+    line('Equity', formatMeasure(st.equity), (y) => formatMeasure(y.equity), { total: true }),
+    line('LVR', formatMeasure(st.lvr), (y) => formatMeasure(y.lvr)),
+    line('Rental income', formatMeasure(st.weeklyRent), (y) => formatAmount(y.rentalIncome)),
+    line('Gross yield', '', (y) => formatMeasure(y.grossYield)),
+    line('Net yield', '', (y) => formatMeasure(y.netYield)),
+    { band: 'Cash deductions' },
+    line('Property expenses', '', (y) => formatAmount(y.expenses)),
+    line('Land tax', '', (y) => formatAmount(y.landTax)),
+    line('Interest rate', '', (y) => formatMeasure(y.interestRate)),
+    line('Interest payments', '', (y) => formatAmount(y.interest)),
+    line('Principal payments', '', (y) => formatAmount(y.principal)),
+    line('Pre-tax cash flow p/a', '', (y) => formatAmount(y.preTaxAnnual), { signed: true }),
+    line('Pre-tax cash flow p/w', '', (y) => formatAmount(y.preTaxWeekly), { signed: true }),
+    { band: 'Non-cash deductions' },
+    line('Depreciation', '', (y) => formatAmount(y.depreciation)),
+    { band: 'Summary' },
+    line('Total deductions', '', (y) => formatAmount(deductions(y))),
+    line('Net profit / (loss)', '', (y) => formatAmount(profit(y)), { signed: true }),
+    line('Tax refund / (payable)', '', (y) => formatAmount(y.taxEffect), { signed: true }),
+    line('After-tax cash flow p/a', '', (y) => formatAmount(y.afterTaxAnnual), { signed: true, total: true }),
+    line('After-tax cash flow p/w', '', (y) => formatAmount(y.afterTaxWeekly), { signed: true, total: true }),
+  ];
 
-  const cashflow = renderBandedMatrix(
-    'Cash flow',
-    periods,
-    [
-      line('Rental income', (y) => formatAmount(y.rentalIncome)),
-      line('Gross yield', (y) => formatMeasure(y.grossYield)),
-      line('Property expenses', (y) => formatAmount(y.expenses)),
-      line('Interest', (y) => formatAmount(y.interest)),
-      line('Principal', (y) => formatAmount(y.principal)),
-      line('Before tax', (y) => formatAmount(y.preTaxAnnual)),
-      line('Depreciation', (y) => formatAmount(y.depreciation)),
-      line('Tax refund / (payable)', (y) => formatAmount(y.taxEffect)),
-      line('After tax', (y) => formatAmount(y.afterTaxAnnual), true),
-      line('After tax, per week', (y) => formatAmount(y.afterTaxWeekly), true),
-    ],
-    { caption: 'Dollars per year unless the row says otherwise; the weekly figure is the annual one divided by 52' },
-  );
+  const span = periods.length + 2;
+  const cell = (value: string, signed?: boolean) => {
+    const neg = signed && /^-/.test(value) ? ' neg' : '';
+    return `<td class="num${neg}">${escapeHtml(value)}</td>`;
+  };
+  // Two lines a heading — "Yr 1" over its calendar year — so eleven columns of
+  // figures keep their width: on one line, "Y10 · 2036" in the tracked
+  // heading face ran into its neighbours and off the page edge.
+  const head = `<tr><th scope="col"><span class="sr-only">Line</span></th>`
+    + `<th scope="col" class="num">Today</th>`
+    + cf.years.map((y) => `<th scope="col" class="num">Yr ${y.year}`
+      + (y.calendarYear ? `<span class="cf-cal">${y.calendarYear}</span>` : '') + '</th>').join('')
+    + '</tr>';
+  const body = rows.map((r) => {
+    if ('band' in r) {
+      return `<tr class="band"><th scope="colgroup" colspan="${span}">${escapeHtml(r.band)}</th></tr>`;
+    }
+    return `<tr${r.total ? ' class="total"' : ''}><th scope="row">${escapeHtml(r.label)}</th>`
+      + cell(r.today)
+      + r.values.map((v) => cell(v, r.signed)).join('')
+      + '</tr>';
+  }).join('');
 
-  return position + cashflow;
+  return '<div class="table-block cf-matrix-block"><table class="data cf-matrix">'
+    + `<caption>${escapeHtml(
+      `Years 1 to ${cf.meta.termYears} — dollars per year unless the line says per week; `
+      + 'the weekly figures are the annual ones divided by 52',
+    )}</caption>`
+    + `<thead>${head}</thead><tbody>${body}</tbody></table></div>`;
 }
 
 function growthSection(cf: CashFlowProjection, palette: ResolvedReportPalette): string {
@@ -309,6 +500,7 @@ const SECTION_BODY: Record<
   (cf: CashFlowProjection, palette: ResolvedReportPalette) => string
 > = {
   position: positionSection,
+  construction: constructionSection,
   projection: projectionSection,
   growth: growthSection,
   assumptions: assumptionsSection,
@@ -356,6 +548,17 @@ export function renderCashFlowBody(input: RenderCashFlowInput): string {
   const sections = cashFlowSections(cf).map((section, index) => {
     const body = SECTION_BODY[section.id]?.(cf, input.palette) ?? '';
     const number = String(index + 1).padStart(2, '0');
+    // A wide section OPENS on its landscape page, header and table together.
+    // Opened on the portrait page it used to print its header alone on a page
+    // of its own, with the table overleaf — a blank sheet in front of the one
+    // page this document exists to deliver.
+    if (section.wide) {
+      return openChapter(DOCUMENT_NAME, number, section.title, 'landscape-table')
+          .replace('class="chapter page-landscape-table"', 'class="chapter page-landscape-table cf-wide"')
+        + renderChapterHeader({ number, title: section.title, label: ARCHETYPE.chapterLabel })
+        + `<div class="chapter-body">${body}</div>`
+        + closeChapter();
+    }
     return openChapter(DOCUMENT_NAME, number, section.title)
       + renderChapterHeader({
         number,
@@ -396,9 +599,79 @@ export function renderCashFlowDocument(input: RenderCashFlowInput): string {
       palette: input.palette,
       options: input.options ?? null,
       masthead: input.masthead,
-    }),
+    }) + cashFlowCss(input.palette),
     bodyHtml: renderCashFlowBody(input),
   });
+}
+
+// ── This document's own rules ───────────────────────────────────────────────
+
+/**
+ * The one-page projection and the schedule, set at a compact row height.
+ *
+ * Twenty-eight lines — a header, twenty-three figures and four headings — go
+ * on ONE landscape page. At the standard row height that is two pages, which
+ * is why the table used to be split; the owner's rule is that the projection
+ * is read on one page, so the matrix, not the page, gives way. The selectors
+ * carry the `cf-` class as well as `table.data`, so a chosen template's design
+ * (which rules and pads `table.data`) restyles the colours and the rules and
+ * never the row height this page depends on. `pageFitsOnOne.py`-style
+ * measurement is in `docs/reports/CASH_FLOW.md` §9.
+ */
+export function cashFlowCss(palette: ResolvedReportPalette): string {
+  return `
+  /* The deep top padding a chapter opener carries is for a portrait page read
+     from the top; on the one landscape page it is the room the table needs. */
+  .chapter.cf-wide { padding-top: 0; }
+  .cf-wide .chapter-header { margin: 0 0 3mm; break-inside: avoid; break-after: avoid; }
+  .cf-wide .chapter-header h1 { font-size: 16pt; line-height: 1.1; margin: 1mm 0 0; }
+  .cf-wide .chapter-header .chapter-no { margin: 0; }
+  table.data.cf-matrix { width: 100%; table-layout: fixed; font-size: 7.4pt; line-height: 1.12; }
+  table.data.cf-matrix caption { font-size: 6.9pt; padding-bottom: 1.5mm; }
+  table.data.cf-matrix thead th,
+  table.data.cf-matrix tbody td,
+  table.data.cf-matrix tbody th[scope="row"] {
+    padding-top: 2.2pt; padding-bottom: 2.2pt; padding-left: 3pt; padding-right: 3pt;
+    white-space: nowrap;
+  }
+  table.data.cf-matrix thead th {
+    letter-spacing: 0.04em; font-size: 6.4pt; vertical-align: bottom; line-height: 1.15;
+  }
+  table.data.cf-matrix thead th .cf-cal { display: block; letter-spacing: 0.02em; font-size: 6pt; }
+  table.data.cf-matrix thead th:first-child,
+  table.data.cf-matrix tbody th[scope="row"] { width: 17%; text-align: left; }
+  table.data.cf-matrix tbody tr.band th {
+    padding-top: 2.6pt; padding-bottom: 1.4pt; padding-left: 3pt;
+    font-size: 6.2pt; letter-spacing: 0.08em; text-transform: uppercase;
+    color: ${palette.accentOnPaper}; background: ${palette.paperAlt}; text-align: left;
+  }
+  table.data.cf-matrix td.neg { color: ${palette.negative}; }
+  .cf-matrix-block, table.data.cf-matrix { break-inside: avoid; }
+  .cf-schedule table.data { font-size: 7.2pt; line-height: 1.15; }
+  .cf-schedule table.data thead th,
+  .cf-schedule table.data tbody td,
+  .cf-schedule table.data tbody th[scope="row"] {
+    padding-top: 2pt; padding-bottom: 2pt; padding-left: 3pt; padding-right: 3pt;
+  }
+  .cf-schedule, .cf-schedule table.data { break-inside: avoid; }
+  .cf-footnote { font-size: 7.5pt; color: ${palette.mutedInk}; margin-top: 2mm; }
+  .cf-schedule-long table.data { font-size: 6.6pt; line-height: 1.1; }
+  .cf-schedule-long table.data thead th,
+  .cf-schedule-long table.data tbody td,
+  .cf-schedule-long table.data tbody th[scope="row"] { padding-top: 1.3pt; padding-bottom: 1.3pt; }
+  .cf-schedule-summary { font-size: 8.5pt; margin: 0 0 3mm; }
+  .cf-schedule-summary .cf-k { color: ${palette.mutedInk}; }
+  .cf-inputs, .cf-inputs table.data { break-inside: avoid; }
+  .cf-inputs table.data { font-size: 7.8pt; line-height: 1.15; }
+  .cf-compact table.data { font-size: 8.4pt; }
+  .cf-compact table.data thead th,
+  .cf-compact table.data tbody td,
+  .cf-compact table.data tbody th[scope="row"] { padding-top: 2.4pt; padding-bottom: 2.4pt; }
+  .cf-compact .table-block { margin-bottom: 3.5mm; break-inside: avoid; }
+  .cf-inputs table.data tbody td,
+  .cf-inputs table.data tbody th[scope="row"] { padding-top: 1.6pt; padding-bottom: 1.6pt; }
+  .sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+`;
 }
 
 // ── Driven from a brand snapshot ────────────────────────────────────────────
