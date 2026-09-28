@@ -146,7 +146,9 @@ export function comparisonSections(p: PropertyComparison): ComparisonSection[] {
     sections.push({
       id: 'timing',
       title: 'Timing and holding',
-      note: 'Which to buy first, and how long to hold each.',
+      note: p.timing.exitStrategies.length
+        ? 'Which to buy first, how long to hold each, and how to exit.'
+        : 'Which to buy first, and how long to hold each.',
       pageBudget: 1,
     });
   }

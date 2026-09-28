@@ -828,6 +828,44 @@ Format your response as valid JSON with this structure:
       console.error('Insert error details:', JSON.stringify(insertError, null, 2));
     }
 
+    // ── The two sections the seven columns never held ─────────────────────
+    //
+    // `marketTiming` and `competitiveAdvantages` have been asked for since the
+    // first prompt and were dropped here on every intact row, so the document
+    // printed them only when the response had been cut off. They are the
+    // model's own answer, stored as it gave them — nothing here asks for them
+    // differently or re-reads them.
+    //
+    // A separate write, never part of the insert above, and it can fail
+    // without costing the comparison: until the migration that adds the two
+    // columns has reached a deployment, PostgREST refuses the update
+    // (`PGRST204`), and folding them into the insert would lose the whole
+    // row to that refusal. On the raw path they are left NULL, as the seven
+    // are, because the raw response already carries them for salvage.
+    if (!storeRaw && comparisonData?.id) {
+      try {
+        const { supplementaryColumnsFor } = await import(
+          '../_shared/reports/propertyComparison/storedAnalysis.pure.ts'
+        );
+        const supplementary = supplementaryColumnsFor(analysis);
+        if (supplementary) {
+          const { error: supplementaryError } = await supabase
+            .from('property_comparisons')
+            .update(supplementary)
+            .eq('id', comparisonData.id);
+          if (supplementaryError) {
+            console.warn(
+              '[comparison] market timing / competitive advantages not stored — the comparison '
+              + `is saved without them: ${supplementaryError.code ?? ''} ${supplementaryError.message ?? ''}`.trim(),
+            );
+          }
+        }
+      } catch (supplementaryErr) {
+        // Never the comparison's failure: the row above is saved and returned.
+        console.warn('[comparison] supplementary sections not stored:', supplementaryErr);
+      }
+    }
+
     console.log(`Comparison completed in ${processingTime}ms`);
 
     // `incomplete` / `missingSections` rather than `isComplete: false`: the
