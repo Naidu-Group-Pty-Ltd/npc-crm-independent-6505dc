@@ -415,3 +415,56 @@ The stage percentages come from the report's construction settings, which the
 override editor now offers on a land-only report with a build planned. The
 timing comes from the schedule mode in the cash flow, which is saved with the
 planned build.
+
+## 11. Value, debt and equity is read on one page (28 Sep 2026)
+
+The owner read the two delivered cash flows for 37 Bolin Street and Lot 33
+Kanuka Drive and asked for one change: section three's two charts together on
+one page, rather than the equity build on one page and the after-tax cash flow
+overleaf. The section ran to two pages because:
+
+- the chapter opener's deep top padding came first;
+- the equity chart was 300 units tall;
+- a five-row table sat between the two charts;
+- the cash position was a column of ten horizontal bars.
+
+So the table and the second chart landed on a page of their own, which was
+two-thirds empty.
+
+The section is now **one page**: the three figures, the equity build, the cash
+position, then the end of the term beside what it means. Six changes carry it:
+
+- **The two charts share one year axis.** `columnGeometry` gives both the same
+  column slots, so year 3's cash column sits under year 3's equity column and
+  the pair reads as one picture. The cash position is a column chart about a
+  zero line (the break-even line), no longer a list of horizontal bars.
+- **Every year is labelled** ("Yr 1" … "Yr 10"); the equity chart used to skip
+  every other one.
+- **The value axis steps on round figures** (`niceScale`: 1, 2, 2.5 or 5 of a
+  power of ten). It used to step on quarters of the maximum, which printed
+  ticks such as "$799k" that name no figure anyone would say.
+- **Each figure sits at its column's end**: inside the column, in the paper
+  colour, where the column can hold it; just beyond it where the column is
+  short. Printed outside a long loss column, the figure landed on the year
+  labels beneath the plot.
+- **The key names only what is drawn.** A term with no positive year has no
+  "Pays the owner" swatch.
+- **Nothing is printed twice.** The cumulative cash flow is the strip's third
+  figure and left the end-of-term table, which now foots value less loan to
+  equity, plus the capital growth.
+
+One page is a measurement. The layout was rendered in WeasyPrint 69.0 over the
+standard document and all 50 catalogue designs, in four cases:
+
+- established;
+- new build;
+- a land-only purchase with a planned build;
+- a term that turns cash-positive.
+
+That is 204 documents, and in every one the section header, both charts, the
+table and the verdict land on the same page. Every document is also one page
+shorter than before. The one-page chapter opens at 6 mm instead of the
+opener's full padding (`cf-onepage`), and each block is held whole
+(`break-inside: avoid`). A change to either chart's height, or to what the
+section holds, has to be re-measured in WeasyPrint rather than assumed.
+`growthOnePage.spec.ts` pins the markup the measurement depends on.
