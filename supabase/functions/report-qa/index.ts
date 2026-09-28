@@ -556,6 +556,7 @@ function decodePdfStringFast(str: string): string {
 // CORS headers sourced from shared helper (uses ALLOWED_ORIGINS env var with safe legacy fallback).
 import { createCorsHeaders } from '../_shared/auth.ts';
 import { internalError } from '../_shared/errorResponse.ts';
+import { HUB_DOCUMENT_NAME, hubDocumentFileName, hubDocumentTopic } from '../_shared/reports/reportQa/documentIdentity.pure.ts';
 
 /**
  * Decode base64 to Uint8Array - simple and reliable approach
@@ -3906,7 +3907,7 @@ ${cleanContent.length + 500}
         });
         
         // Title
-        coverPage.drawText('Q&A Conversation Export', {
+        coverPage.drawText(HUB_DOCUMENT_NAME, {
           x: 50,
           y: 725,
           size: 24,
@@ -4045,7 +4046,7 @@ ${cleanContent.length + 500}
         });
         
         // Header text
-        page.drawText('Q&A Conversation Export', {
+        page.drawText(HUB_DOCUMENT_NAME, {
           x: marginLeft,
           y: pageHeight - 30,
           size: 12,
@@ -4342,6 +4343,13 @@ ${cleanContent.length + 500}
       // Save PDF
       const pdfBytes = await pdfDoc.save();
       const fileName = `qa-export-${conversationId}-${Date.now()}.pdf`;
+      // What the person is handed is named for what it is and what it covers
+      // (`documentIdentity.pure.ts`); the storage key above stays a key.
+      const displayFileName = hubDocumentFileName(
+        hubDocumentTopic({ conversationTitle: typeof title === 'string' ? title : '' }),
+        new Date().toISOString(),
+        { kind: 'transcript' },
+      );
       
       console.log(`[report-qa] PDF generated: ${pdfBytes.length} bytes, ${pageCount + 1} pages`);
       
@@ -4398,7 +4406,7 @@ ${cleanContent.length + 500}
         url: fileUrl,
         storagePath: fileName,
         storageBucket: 'qa_exports',
-        fileName: fileName,
+        fileName: displayFileName,
         fileSize: pdfBytes.length,
         createdAt: new Date().toISOString(),
         conversationId: conversationId,

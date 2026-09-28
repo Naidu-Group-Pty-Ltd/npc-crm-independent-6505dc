@@ -12,6 +12,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { invokeSecureFunction } from '@/lib/secureInvoke';
 import { Mail, FileText, Send, Loader2, X, Paperclip, CheckCircle2, AlertCircle, ChevronDown, ChevronUp } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { HUB_DOCUMENT_NAME, hubEmailSubject } from '@/lib/reports/reportQa/documentIdentity.pure';
 
 interface PDFAttachment {
   url: string;
@@ -108,13 +109,13 @@ export const InPlaceEmailCompose: React.FC<InPlaceEmailComposeProps> = ({
       // Set subject
       const subject = context.reportNames 
         ? `Property Analysis: ${context.reportNames.substring(0, 50)}${context.reportNames.length > 50 ? '...' : ''}`
-        : `Q&A Conversation Export - ${attachment.fileName}`;
+        : hubEmailSubject(attachment.fileName);
       setEmailSubject(subject);
 
       // Build email body
       const bodyParts: string[] = [];
       bodyParts.push(`Hi,\n`);
-      bodyParts.push(`Please find attached the Q&A conversation summary regarding ${context.reportNames || 'the property analysis'}.`);
+      bodyParts.push(`Please find attached the ${HUB_DOCUMENT_NAME} regarding ${context.reportNames || 'the property analysis'}.`);
       
       if (context.messageCount) {
         bodyParts.push(`\nThis document contains a comprehensive summary of our ${context.messageCount}-message discussion.`);
@@ -286,7 +287,7 @@ export const InPlaceEmailCompose: React.FC<InPlaceEmailComposeProps> = ({
             Send PDF via Email
           </DialogTitle>
           <DialogDescription>
-            Compose and send your Q&A conversation export directly from here.
+            Compose and send your {HUB_DOCUMENT_NAME} directly from here.
           </DialogDescription>
         </DialogHeader>
 

@@ -602,3 +602,58 @@ now declines the structured subject; `deliverReportQaPdf` falls through to
 `qaStructuredNotTemplated.spec.ts` holds the refusal exactly while no master
 binds the write-up. `docs/reports/RUNTIME_CONSOLIDATION.md` §9 RS-5c.5b carries
 the measurement.
+
+## 13 · The Intelligence Hub Summary (28 Sep 2026)
+
+The owner exported a suburb shortlist from the Intelligence Hub's "Export as
+PDF" dialog. It came out in the legacy in-browser layout, with three faults:
+
+- the file was named `QA_Summary_-_28_09_2026_1.pdf`;
+- it printed "Investment Property Analysis" as the document's heading;
+- the blockquotes printed as a raw `>`.
+
+The template they had chosen was ignored because the dialog had two PDF
+buttons. "Typeset PDF" honoured the chosen template. "Export PDF" was the
+jsPDF generator, which never read it.
+
+**The choice and the act are separate controls now.**
+
+- "Choose template" (`ChooseTemplateButton.tsx`) only chooses. It opens the
+  Template Library's own picker and names the current choice in the footer.
+- Export PDF is the one thing that makes a file. It goes through
+  `render-report-qa-pdf` in that choice. A single answer uses the `answer`
+  subject; the conversation write-up uses `structured`.
+
+As for every report type but Investment, a template dresses the standard pages
+rather than re-paging them (`TEMPLATE_PARITY.md`). The route reads the stored
+answer, with `edited_content` winning, so the editor's text is written first.
+A write that fails stops the export. The call answers a refusal in its value,
+and the old save reported "Saved" either way. The jsPDF layout remains only for
+an editor with no conversation behind it, which the route cannot read.
+
+**One name, and the topic.** `documentIdentity.pure.ts` holds three things:
+
+- `HUB_DOCUMENT_NAME` ("Intelligence Hub Summary"), which is also the
+  archetype's `documentName`, asserted equal;
+- the topic, which is the answer's own first heading, else a conversation title
+  somebody gave, else the question;
+- the filename, `Intelligence Hub Summary - <topic> - 28 Sep 2026.pdf`.
+
+Every Hub download uses them: the typeset route, both editors' fallback
+layouts, the chat toolbar's pdf-lib transcript and the raw `.txt`/`.md`/
+`.csv`/`.json` exports. Email subjects use `hubEmailSubject`. The storage key
+stays URL-safe (`storageSafeFileName`), because the readable name is what a
+person is handed and the key is where the bytes live.
+
+**The memo runs on.** Measured on the owner's answer across all 50 designs and
+the standard layout, the document went from 11 sheets to 7–8. Three fixes:
+
+- The answer's own `#` title was also its first section, holding only the
+  "Asked" callout. It is now on the cover alone (`withoutLeadingTitle`).
+- Every `##` opened a page. For `answer` and `structured` the sections now run
+  on (`qa-run-on`), each keeping its numbered header, contents entry and running
+  head. A transcript keeps a page per exchange.
+- The closing disclaimer stood alone on the last content page in 29 of 50
+  designs. It is now bound to the block before it (`qa-keep-tail`), and only
+  when it is short. `break-before: avoid` changed nothing in WeasyPrint 69.0; a
+  wrapper that may not break inside is honoured.

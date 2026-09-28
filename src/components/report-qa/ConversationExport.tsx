@@ -12,6 +12,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useReportTemplateMenu } from '@/components/reports/useReportTemplateMenu';
 import { ConversationReportEditor } from './ConversationReportEditor';
 import { useReportQaDelivery } from './useReportQaDelivery';
+import { hubDocumentFileName, hubDocumentTopic } from '@/lib/reports/reportQa/documentIdentity.pure';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -46,7 +47,7 @@ export function ConversationExport({ messages, title, reportNames, conversationI
     }).join('\n\n---\n\n');
 
     const blob = new Blob([header + content], { type: 'text/plain' });
-    downloadBlob(blob, `${sanitizeFilename(title)}.txt`);
+    downloadBlob(blob, rawFileName('txt'));
     
     toast({
       title: 'Exported',
@@ -64,7 +65,7 @@ export function ConversationExport({ messages, title, reportNames, conversationI
     }).join('\n\n---\n\n');
 
     const blob = new Blob([header + content], { type: 'text/markdown' });
-    downloadBlob(blob, `${sanitizeFilename(title)}.md`);
+    downloadBlob(blob, rawFileName('md'));
     
     toast({
       title: 'Exported',
@@ -85,7 +86,7 @@ export function ConversationExport({ messages, title, reportNames, conversationI
     };
 
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
-    downloadBlob(blob, `${sanitizeFilename(title)}.json`);
+    downloadBlob(blob, rawFileName('json'));
     
     toast({
       title: 'Exported',
@@ -118,7 +119,7 @@ export function ConversationExport({ messages, title, reportNames, conversationI
       .join('\n');
 
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-    downloadBlob(blob, `${sanitizeFilename(title)}.csv`);
+    downloadBlob(blob, rawFileName('csv'));
 
     toast({
       title: 'Exported',
@@ -137,8 +138,19 @@ export function ConversationExport({ messages, title, reportNames, conversationI
     URL.revokeObjectURL(url);
   };
 
-  const sanitizeFilename = (name: string) => {
-    return name.replace(/[^a-z0-9]/gi, '_').substring(0, 50);
+  /**
+   * `Intelligence Hub Summary - Transcript - <topic> - 28 Sep 2026.<ext>` —
+   * the same name the PDFs carry, so a conversation's files sort together.
+   */
+  const rawFileName = (extension: string) => {
+    const d = new Date();
+    const today = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+    const firstQuestion = messages.find((m) => m.role === 'user')?.content ?? '';
+    return hubDocumentFileName(
+      hubDocumentTopic({ conversationTitle: title, question: firstQuestion }),
+      today,
+      { kind: 'transcript', extension },
+    );
   };
 
   if (messages.length === 0) return null;
@@ -166,20 +178,20 @@ export function ConversationExport({ messages, title, reportNames, conversationI
                 {typeset.running === 'structured'
                   ? <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                   : <Sparkles className="h-4 w-4 mr-2 text-primary" />}
-                Typeset Report (WeasyPrint, AI)
+                Summary report PDF (AI)
               </DropdownMenuItem>
               <DropdownMenuItem disabled={typeset.busy} onClick={() => void typeset.run('transcript')}>
                 {typeset.running === 'transcript'
                   ? <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                   : <MessageSquareText className="h-4 w-4 mr-2" />}
-                Typeset Transcript (WeasyPrint)
+                Transcript PDF
               </DropdownMenuItem>
               <DropdownMenuSeparator />
             </>
           )}
           <DropdownMenuItem onClick={() => setEditorOpen(true)}>
             <Sparkles className="h-4 w-4 mr-2 text-primary" />
-            Export as Structured Report (AI)
+            Edit summary, then export (AI)
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem onClick={exportAsText}>

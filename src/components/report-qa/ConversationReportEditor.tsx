@@ -23,6 +23,21 @@ import { drawJsPDFDisclaimerPage } from '@/utils/pdfDisclaimerPage';
 import { issuerClosingPage, loadLegacyDocumentBrand } from '@/lib/reports/legacyDocumentBrand';
 import { drawLegacyIssuerCover } from '@/lib/reports/legacyIssuerCover';
 import jsPDF from 'jspdf';
+import { useReportTemplateSelection } from '@/hooks/useReportTemplateSelection';
+import {
+  HUB_DOCUMENT_NAME,
+  hubDocumentFileName,
+  hubDocumentTopic,
+} from '@/lib/reports/reportQa/documentIdentity.pure';
+
+import { ChooseTemplateButton, chosenTemplateLine } from './ChooseTemplateButton';
+import { useReportQaDelivery } from './useReportQaDelivery';
+
+/** Today as `YYYY-MM-DD` on the reader's own calendar, for a filename. */
+const localIsoDate = () => {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+};
 
 interface Message {
   role: 'user' | 'assistant';
@@ -54,6 +69,11 @@ export function ConversationReportEditor({
   const [hasEdited, setHasEdited] = useState(false);
   const { toast } = useToast();
   const initialContent = useRef('');
+  // The typeset route draws the conversation's STORED write-up in the chosen
+  // template, so the editor's text is stored before it is drawn.
+  const typeset = useReportQaDelivery({ conversationId: conversationId ?? null });
+  const templateChoice = useReportTemplateSelection('qa');
+  const topic = () => hubDocumentTopic({ body: reportContent, conversationTitle: title });
 
   useEffect(() => {
     if (isOpen && messages.length > 0) {
@@ -134,7 +154,47 @@ export function ConversationReportEditor({
     setHasEdited(value !== initialContent.current);
   };
 
-  const exportAsPDF = async () => {
+  /**
+   * Export PDF — the write-up, typeset, in the chosen template.
+   *
+   * The route reads `report_qa_conversations.structured_report`, so what is in
+   * the editor is written there first; a failed write stops the export rather
+   * than printing the stored version the person has since edited. Nothing is
+   * generated on the way: the text is already here.
+   *
+   * The in-browser layout remains only for a conversation that was never
+   * saved, which the route cannot read.
+   */
+  const exportPdf = async () => {
+    if (!conversationId) {
+      await exportAsLegacyPDF();
+      return;
+    }
+    setIsExporting(true);
+    try {
+      const { error } = await invokeSecureFunction('manage-client-data', {
+        operation: 'update',
+        table: 'report_qa_conversations',
+        id: conversationId,
+        data: { structured_report: reportContent },
+      });
+      if (error) throw new Error(error.message || 'Could not save the report before exporting');
+      initialContent.current = reportContent;
+      setHasEdited(false);
+    } catch (err: any) {
+      toast({
+        title: 'Export stopped',
+        description: `${err?.message || 'Could not save the report'}. Nothing was exported.`,
+        variant: 'destructive',
+      });
+      setIsExporting(false);
+      return;
+    }
+    setIsExporting(false);
+    await typeset.run('structured');
+  };
+
+  const exportAsLegacyPDF = async () => {
     setIsExporting(true);
     try {
       const doc = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
@@ -167,8 +227,8 @@ export function ConversationReportEditor({
         drawLegacyIssuerCover(doc, {
           issuerName: legacyBrand.issuer.name,
           mark: legacyBrand.mark,
-          documentTitle: 'Investment Property Analysis',
-          subject: title,
+          documentTitle: HUB_DOCUMENT_NAME,
+          subject: topic() || title,
           standfirst: new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' }),
           family: legacyBrand.family,
         });
@@ -216,10 +276,10 @@ export function ConversationReportEditor({
       doc.setTextColor(255, 255, 255);
       doc.setFontSize(18);
       doc.setFont('helvetica', 'bold');
-      doc.text((legacyBrand.artwork === 'issuer' ? legacyBrand.issuer.name : contact.company_name) || 'Property Report', margin, 15);
+      doc.text((legacyBrand.artwork === 'issuer' ? legacyBrand.issuer.name : contact.company_name) || HUB_DOCUMENT_NAME, margin, 15);
       doc.setFontSize(9);
       doc.setFont('helvetica', 'normal');
-      doc.text('Investment Property Analysis', margin, 22);
+      doc.text(HUB_DOCUMENT_NAME, margin, 22);
       doc.text(`Generated: ${dateStr}`, margin, 28);
       
       yPos = 45;
@@ -517,7 +577,7 @@ export function ConversationReportEditor({
 
       // Footer on each page (skip cover page = page 1, skip disclaimer = last page)
       const totalPages = doc.getNumberOfPages();
-      const companyFooterName = (legacyBrand.artwork === 'issuer' ? legacyBrand.issuer.name : contact.company_name) || 'Property Report';
+      const companyFooterName = (legacyBrand.artwork === 'issuer' ? legacyBrand.issuer.name : contact.company_name) || HUB_DOCUMENT_NAME;
       for (let i = 1; i <= totalPages; i++) {
         // Skip cover (page 1) and disclaimer (last page)
         if (i === 1 || i === totalPages) continue;
@@ -533,8 +593,7 @@ export function ConversationReportEditor({
         );
       }
 
-      const sanitizedTitle = title.replace(/[^a-z0-9]/gi, '_').substring(0, 50);
-      doc.save(`${sanitizedTitle}_report.pdf`);
+      doc.save(hubDocumentFileName(topic(), localIsoDate()));
 
       toast({
         title: 'PDF exported',
@@ -557,7 +616,7 @@ export function ConversationReportEditor({
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${title.replace(/[^a-z0-9]/gi, '_').substring(0, 50)}_report.md`;
+    a.download = hubDocumentFileName(topic(), localIsoDate(), { extension: 'md' });
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -630,7 +689,7 @@ export function ConversationReportEditor({
         <DialogHeader className="flex-shrink-0">
           <DialogTitle className="flex items-center gap-2">
             <FileText className="h-5 w-5" />
-            Export Conversation Report
+            Export as {HUB_DOCUMENT_NAME}
           </DialogTitle>
           <p className="text-sm text-muted-foreground">
             AI has structured your conversation into a professional report. Review, edit, then export.
@@ -698,6 +757,11 @@ export function ConversationReportEditor({
             <span className="text-xs text-muted-foreground">
               {reportContent.length} chars • {messages.length} messages processed
             </span>
+            {conversationId && (
+              <span className="text-xs text-muted-foreground" aria-live="polite">
+                · {chosenTemplateLine(templateChoice.state)}
+              </span>
+            )}
           </div>
           
           <div className="flex gap-2">
@@ -719,12 +783,16 @@ export function ConversationReportEditor({
               <Download className="h-3 w-3 mr-1" />
               Markdown
             </Button>
+            {/* The choice, then the act — as in the single-answer editor. */}
+            {conversationId && (
+              <ChooseTemplateButton disabled={isGenerating || isExporting || typeset.busy} />
+            )}
             <Button 
               size="sm"
-              onClick={exportAsPDF}
-              disabled={!reportContent || isGenerating || isExporting}
+              onClick={() => void exportPdf()}
+              disabled={!reportContent || isGenerating || isExporting || typeset.busy}
             >
-              {isExporting ? (
+              {isExporting || typeset.busy ? (
                 <Loader2 className="h-3 w-3 mr-1 animate-spin" />
               ) : (
                 <Download className="h-3 w-3 mr-1" />

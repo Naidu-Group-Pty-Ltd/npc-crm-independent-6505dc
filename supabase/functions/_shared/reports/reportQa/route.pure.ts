@@ -16,6 +16,7 @@ import {
 } from '../../reportDesign/templateDesign.pure.ts';
 
 import type { ReportQaSubject } from './payload.pure.ts';
+import { HUB_DOCUMENT_NAME, hubDocumentFileName, storageSafeFileName } from './documentIdentity.pure.ts';
 
 export interface ReportQaRenderRequest {
   /** The `report_qa_conversations` row to typeset. */
@@ -109,31 +110,28 @@ export function parseRenderRequest(body: unknown): RequestParse {
 }
 
 /**
- * The filename.
+ * The filename: `Intelligence Hub Summary - <topic> - 28 Sep 2026.pdf`.
  *
- * **A deliberate divergence from all three legacy conventions**, which are:
+ * `title` is the document's cover title, which `normalise.pure.ts` already made
+ * the TOPIC — the answer's own heading, a title somebody gave the conversation,
+ * or the question (`documentIdentity.pure.ts`). Where nothing said what the
+ * document covers the cover carries the product's name, and the filename then
+ * carries it once rather than twice.
  *
- *  - `Summary - ${reportNames.join(', ')}.pdf` (`QAPDFGenerator.tsx:431` and,
- *    byte for byte, `MessageReportEditor.tsx:533`). Unsanitised, so the commas
- *    land in the filename; and when there are no report names it falls back to
- *    `Q&A Summary - ${new Date().toLocaleDateString()}.pdf`, which with no
- *    locale argument produces `8/2/2026` — **slashes in a filename**.
- *  - `${sanitizedTitle}_report.pdf` (`ConversationReportEditor.tsx:515`).
- *  - `${sanitizedTitle}_message.pdf` (`MessageReportEditor.tsx:534`).
- *
- * One name, and it says what the document is and which of the three it is. The
- * `[^a-zA-Z0-9] → _` rule the legacy uses is kept exactly, so the old and new
- * files sort together in a downloads folder.
+ * This replaces `Q_and_A_${kind}_${title}_${date}.pdf`, which named the file
+ * after a feature the page no longer calls itself and underscored the one line
+ * of the document somebody reads before opening it. The three legacy
+ * conventions it replaced are recorded in `documentIdentity.pure.ts`.
  */
 export function reportQaFileName(
   title: string,
   subject: ReportQaSubject,
   isoDate: string,
 ): string {
-  const safe = (title || 'Conversation').replace(/[^a-zA-Z0-9]/g, '_').slice(0, 80);
-  const date = /^\d{4}-\d{2}-\d{2}/.exec(isoDate)?.[0] ?? '';
-  const kind = subject === 'answer' ? 'Answer' : subject === 'structured' ? 'Report' : 'Transcript';
-  return `Q_and_A_${kind}_${safe}_${date}.pdf`;
+  const topic = (title || '').trim() === HUB_DOCUMENT_NAME ? '' : (title || '');
+  return hubDocumentFileName(topic, isoDate, {
+    kind: subject === 'transcript' ? 'transcript' : 'summary',
+  });
 }
 
 /** The first eight characters of the conversation id, uppercased, for the cover foot. */
@@ -160,7 +158,9 @@ export function reportQaStoragePath(
   uniqueId: string,
 ): string {
   const day = /^\d{4}-\d{2}-\d{2}/.exec(isoDate)?.[0] ?? 'undated';
-  return `report-qa/${conversationId}/${day}/${uniqueId}-${fileName}`;
+  // The readable name is what a person is handed; the key keeps to characters
+  // no URL encoder rewrites.
+  return `report-qa/${conversationId}/${day}/${uniqueId}-${storageSafeFileName(fileName)}`;
 }
 
 /** The bucket. Private, and shared with the legacy server path. */
