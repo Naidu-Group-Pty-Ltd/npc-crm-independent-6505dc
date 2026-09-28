@@ -30,11 +30,19 @@ import {
 } from '../../reportDesign/measure.pure.ts';
 import type { AuditCategory, RawAuditEntry } from './audit.pure.ts';
 import { auditDelta, auditDirection, auditMeasures, isKnownAuditAction } from './audit.pure.ts';
+import { HIGH_INTEREST_DEBT, presentAdviceList } from './advice.pure.ts';
+import {
+  afterTaxIncomeFrom,
+  curateBasis,
+  dtiDenominatorFrom,
+  stressIncrementFrom,
+} from './basis.pure.ts';
 import type {
   AuditRow,
   AuditSection,
   Band,
   BorrowingCapacitySnapshot,
+  DebtToIncome,
   ExplanationSection,
   IncomeRow,
   LedgerRow,
@@ -183,11 +191,72 @@ export function toIncomeRow(raw: unknown): IncomeRow | null {
   const shaded = firstNum(r.shadedAmount, r.shaded_amount) ?? gross * shadingRate;
 
   return {
-    label: firstText(r.component, r.source_name, r.label, r.source_type) ?? 'Income',
+    label: incomeLabel(firstText(r.component, r.source_name, r.label, r.source_type) ?? 'Income'),
     gross: audPerYear(gross),
     shading: rate(shadingRate),
     shaded: audPerYear(shaded),
   };
+}
+
+/**
+ * The width the engine cuts a property address to in an income label.
+ *
+ * `calculateIncomeBreakdown` writes `Positive Cash Flow (${address.substring(0, 30)}...)`
+ * — the ellipsis appended whether or not anything was cut — and the page
+ * printed it as written: "Positive Cash Flow (37 Fairview Street Gunnedah, 2...)",
+ * a postcode's first digit and three dots, in the first column of the table a
+ * client reads their income from.
+ */
+export const ENGINE_ADDRESS_CUT = 30;
+
+const POSITIVE_CASH_FLOW = /^Positive Cash Flow \((.*?)(\.\.\.|…)?\)$/;
+
+/**
+ * An income component's label, as a reader reads it.
+ *
+ * Only the engine's property label is rewritten; every other label is the
+ * record's own words. The address keeps what the engine kept — nothing is
+ * looked up. A label is taken to have been CUT only when it carries the
+ * engine's ellipsis and exactly `ENGINE_ADDRESS_CUT` characters of address
+ * (a shorter one carried the ellipsis with nothing removed); then the partial
+ * last segment — "2", the first digit of a postcode — is dropped at the last
+ * comma, or failing that the last space, so what prints is a whole place name
+ * rather than a fragment of one. The engine writes the whole address since
+ * 28 Sep 2026, with no ellipsis, and that label is left whole.
+ */
+export function incomeLabel(raw: string): string {
+  const m = POSITIVE_CASH_FLOW.exec(raw.trim());
+  if (!m) return raw;
+  let address = m[1].trim();
+  const cut = Boolean(m[2]) && m[1].length === ENGINE_ADDRESS_CUT;
+  if (cut) {
+    const comma = address.lastIndexOf(',');
+    const space = address.lastIndexOf(' ');
+    const at = comma > 0 ? comma : space > 0 ? space : address.length;
+    address = address.slice(0, at).trim();
+  }
+  address = address.replace(/[\s,]+$/, '');
+  return address && address !== 'Property'
+    ? `Property cash flow — ${address}`
+    : 'Property cash flow';
+}
+
+/**
+ * The expense method, named for a reader.
+ *
+ * The engine stores `hem`, `declared_higher` (declared, because it was above
+ * the benchmark) and `declared` (an amount entered with the assessment), and
+ * rows older than it hold `hybrid`. "HEM" alone on a client's page is an
+ * acronym with no noun.
+ */
+export function expenseMethodLabel(stored: string | null): string {
+  switch ((stored ?? '').toLowerCase()) {
+    case 'hem': return 'HEM benchmark';
+    case 'declared_higher': return 'Declared (above HEM)';
+    case 'declared': return 'Declared';
+    case '': return 'HEM benchmark';
+    default: return titleCase(stored ?? '');
+  }
 }
 
 /** One liability. `balance` stays `null` when there is none — a $0 balance is a fact. */
@@ -474,9 +543,17 @@ export function buildSnapshot(source: SnapshotSource): BorrowingCapacitySnapshot
   // the What-If path builds a synthetic row by hand and sets it directly.
   const assessmentRate = num(a.assessment_rate) ?? interestRate + bufferRate;
   const loanTermYears = num(a.loan_term_years) ?? 30;
-  const dti = num(a.dti_ratio);
+  const storedDti = num(a.dti_ratio);
   const stressTested = num(a.stress_tested_capacity);
   const band = toBand(a.serviceability_band);
+
+  // No income on the record. The engine still answers — capacity $0, DTI 0.0x,
+  // a band — and a document that prints those as an assessment tells a client
+  // they were assessed and found wanting, when nothing was assessed.
+  const incomeRecorded = grossIncome > 0 || shadedIncome > 0;
+  // A ratio over zero income is undefined, not 0.0x (the engine returns 0 when
+  // its denominator is 0).
+  const dti = incomeRecorded ? storedDti : null;
 
   const incomeRows = asArray(a.income_breakdown)
     .map(toIncomeRow)
@@ -510,23 +587,52 @@ export function buildSnapshot(source: SnapshotSource): BorrowingCapacitySnapshot
         }
       : null;
 
-  const ledger: LedgerRow[] = [
-    { label: 'Gross Annual Income', amount: audPerYear(grossIncome), emphasis: 'normal', direction: 'favourable' },
-    { label: 'Shaded Annual Income', amount: audPerYear(shadedIncome), emphasis: 'normal', direction: 'favourable' },
-    // A deduction is adverse whatever sign it is printed with. The shipping
-    // report prints these in red because the numbers are negated, and prints a
-    // HEM increase in green because its delta is positive — the same event,
-    // two colours (F6).
-    { label: 'Living Expenses', amount: audPerMonth(-livingExpenses), emphasis: 'normal', direction: 'adverse' },
-    { label: 'Existing Commitments', amount: audPerMonth(-commitments), emphasis: 'normal', direction: 'adverse' },
-    { label: 'Monthly Surplus', amount: audPerMonth(surplus), emphasis: 'normal', direction: surplus >= 0 ? 'favourable' : 'adverse' },
-    { label: 'Assessment Rate Applied', amount: percent(assessmentRate), emphasis: 'normal', direction: 'neutral' },
-    { label: 'Loan Term', amount: years(loanTermYears), emphasis: 'normal', direction: 'neutral' },
-    { label: 'Maximum Borrowing Capacity', amount: aud(capacity), emphasis: 'total', direction: 'neutral' },
-  ];
+  // ── What the engine recorded about itself ─────────────────────────────────
+  const assumptionsRec = asRec(a.assumptions);
+  const assumptionItems = assumptionItemsOf(a.assumptions);
+  const calculationMode = firstText(assumptionsRec.calculationMode);
+  const afterTaxAnnual = afterTaxIncomeFrom(assumptionItems);
+  const stressIncrement = stressIncrementFrom(assumptionItems);
 
-  const assumptions = toAssumptions(a.assumptions);
-  const lenderName = firstText(asRec(a.assumptions).selectedLenderName);
+  const ledger = buildLedger({
+    grossIncome,
+    shadedIncome,
+    afterTaxAnnual,
+    livingExpenses,
+    commitments,
+    surplus,
+    capacity,
+    assessmentRate,
+    loanTermYears,
+    calculationMode,
+  });
+
+  const debtToIncome = buildDebtToIncome({
+    dti,
+    capacity,
+    denominator: dtiDenominatorFrom(assumptionItems) ?? (grossIncome > 0 ? grossIncome : null),
+    listedDebt: liabilityRows.reduce((sum, l) => sum + (l.balance?.value ?? 0), 0),
+  });
+
+  const assumptions = assumptionItems.length
+    ? curateBasis(assumptionItems, {
+        grossIncome,
+        calculationMode,
+        hasCreditCard: liabilityRows.some((l) => /credit/i.test(l.kind)),
+        hasPropertyIncome: incomeRows.some((r) => /property|rent/i.test(r.label)),
+        showsDti: dti !== null,
+      }, titleCase)
+    : [];
+  const lenderName = firstText(assumptionsRec.selectedLenderName);
+
+  const adviceFacts = {
+    grossIncome,
+    commitmentsMonthly: commitments,
+    liabilityCount: liabilityRows.length,
+    hasHighInterestDebt: liabilityRows.some((l) => HIGH_INTEREST_DEBT.test(l.kind)),
+    dti,
+    surplusMonthly: surplus,
+  };
 
   return {
     meta: {
@@ -539,7 +645,9 @@ export function buildSnapshot(source: SnapshotSource): BorrowingCapacitySnapshot
       capacity: aud(capacity),
       monthlySurplus: audPerMonth(surplus),
       band,
-      stressTested: stressTested === null ? null : aud(stressTested),
+      // A stress test of a $0 capacity is a second $0, not a finding.
+      stressTested: stressTested === null || capacity <= 0 ? null : aud(stressTested),
+      stressRate: stressIncrement === null || capacity <= 0 ? null : percent(assessmentRate + stressIncrement),
       dti: dti === null ? null : ratio(dti),
       assessmentRate: percent(assessmentRate),
       interestRate: percent(interestRate),
@@ -554,6 +662,8 @@ export function buildSnapshot(source: SnapshotSource): BorrowingCapacitySnapshot
       surplus,
       dti,
       band,
+      incomeRecorded,
+      livingExpenses,
       utilisation,
       lmi,
     }),
@@ -564,28 +674,172 @@ export function buildSnapshot(source: SnapshotSource): BorrowingCapacitySnapshot
       gross: audPerYear(grossIncome),
       shaded: audPerYear(shadedIncome),
       rows: incomeRows,
+      recorded: incomeRecorded,
     },
+    debtToIncome,
     expenses: {
-      method: titleCase(firstText(a.expense_method) ?? 'hem'),
+      method: expenseMethodLabel(firstText(a.expense_method)),
       monthlyLiving: audPerMonth(livingExpenses),
       monthlyCommitments: audPerMonth(commitments),
       liabilities: liabilityRows,
     },
     ledger,
-    recommendations: asStringList(a.recommendations),
-    warnings: asStringList(a.warnings),
+    recommendations: presentAdviceList(asStringList(a.recommendations), adviceFacts, { leadWithIncome: true }),
+    warnings: presentAdviceList(asStringList(a.warnings), adviceFacts),
     explanation: toExplanationSection(source.explanation),
     audit: toAuditSection(source.auditTrail),
     scenarios: toScenarioRows(source.scenarioPresets),
   };
 }
 
+/** The stored `{ key, value }` list, in either of the two shapes the column has held. */
+function assumptionItemsOf(raw: unknown): { key: string; value: string }[] {
+  const source = Array.isArray(raw) ? raw : asArray(asRec(raw).items);
+  return source
+    .map((item) => {
+      const r = asRec(item);
+      const key = firstText(r.key, r.label);
+      const value = firstText(r.value) ?? (num(r.value) !== null ? String(num(r.value)) : null);
+      return key && value ? { key, value } : null;
+    })
+    .filter((i): i is { key: string; value: string } => i !== null);
+}
+
+// ── The working ─────────────────────────────────────────────────────────────
+
+/**
+ * From income to capacity, in lines that add up.
+ *
+ * The first version of this table printed gross income, shaded income, living
+ * expenses, commitments and the surplus — and the lines did not reach the
+ * surplus. On a production assessment: $192,378 of income, less $2,511 and
+ * $2,800 a month, printed beside a surplus of $4,791, which is $5,929 a month
+ * short of what those lines imply. Two things were missing, and both are the
+ * engine's own arithmetic (`calculateBorrowingCapacity`):
+ *
+ *  - **Tax.** The surplus is built from after-tax income. The row does not
+ *    store it as a number, only inside the assumption the engine writes
+ *    ("After-Tax Income Used — $137,462.8/yr"), so it is read from there
+ *    (`afterTaxIncomeFrom`) and never recomputed against today's tax table.
+ *  - **Property costs.** The engine adds the negative cash flow of properties
+ *    held to living expenses (`totalLivingExpenses = livingExpenses +
+ *    negativePropertyCashFlows`) and stores only the base figure. In bank mode
+ *    that is the whole of the difference, so it is printed as that line.
+ *
+ * So every line is monthly and the rows foot to the surplus; the capacity is
+ * then the surplus as a repayment, with the rate and term in its label rather
+ * than as two more rows of a money column. A conservative-mode assessment
+ * applies a multiplier and floors, so the difference there is named as the
+ * policy's adjustment. Where the after-tax figure was never recorded, or the
+ * difference runs the wrong way, nothing is invented: the table falls back to
+ * the figures the record holds, which do not claim to add up.
+ */
+function buildLedger(p: {
+  grossIncome: number;
+  shadedIncome: number;
+  afterTaxAnnual: number | null;
+  livingExpenses: number;
+  commitments: number;
+  surplus: number;
+  capacity: number;
+  assessmentRate: number;
+  loanTermYears: number;
+  calculationMode: string | null;
+}): LedgerRow[] {
+  const capacityLine: LedgerRow = {
+    label: `Maximum borrowing capacity (the surplus, repaid at ${formatMeasure(percent(p.assessmentRate))} over ${p.loanTermYears} years)`,
+    amount: aud(p.capacity),
+    emphasis: 'total',
+    direction: 'neutral',
+  };
+  const surplusLine: LedgerRow = {
+    label: 'Monthly surplus',
+    amount: audPerMonth(p.surplus),
+    emphasis: 'subtotal',
+    direction: p.surplus >= 0 ? 'favourable' : 'adverse',
+  };
+
+  const monthly = (annual: number) => Math.round(annual / 12);
+  const assessedMonthly = monthly(p.shadedIncome);
+
+  if (p.afterTaxAnnual !== null) {
+    const afterTaxMonthly = monthly(p.afterTaxAnnual);
+    const taxMonthly = assessedMonthly - afterTaxMonthly;
+    const residual = afterTaxMonthly - p.livingExpenses - p.commitments - p.surplus;
+    // Rounding the annual figures to whole months can leave a dollar either way.
+    const foots = residual >= -2;
+    if (foots) {
+      const rows: LedgerRow[] = [
+        { label: 'Assessed income, a month', amount: audPerMonth(assessedMonthly), emphasis: 'normal', direction: 'favourable' },
+      ];
+      if (taxMonthly > 0) {
+        rows.push({ label: 'Less income tax and Medicare levy', amount: audPerMonth(-taxMonthly), emphasis: 'normal', direction: 'adverse' });
+      }
+      rows.push(
+        { label: 'After-tax income', amount: audPerMonth(afterTaxMonthly), emphasis: 'subtotal', direction: 'favourable' },
+        { label: 'Less living expenses', amount: audPerMonth(-p.livingExpenses), emphasis: 'normal', direction: 'adverse' },
+        { label: 'Less existing commitments', amount: audPerMonth(-p.commitments), emphasis: 'normal', direction: 'adverse' },
+      );
+      if (residual > 2) {
+        rows.push({
+          label: p.calculationMode === 'conservative'
+            ? 'Less the conservative policy’s adjustments'
+            : 'Less property costs not covered by rent',
+          amount: audPerMonth(-residual),
+          emphasis: 'normal',
+          direction: 'adverse',
+        });
+      }
+      rows.push(surplusLine, capacityLine);
+      return rows;
+    }
+  }
+
+  // The record cannot show its working: the figures it holds, stated as such.
+  return [
+    { label: 'Gross annual income', amount: audPerYear(p.grossIncome), emphasis: 'normal', direction: 'favourable' },
+    { label: 'Assessed (shaded) annual income', amount: audPerYear(p.shadedIncome), emphasis: 'normal', direction: 'favourable' },
+    { label: 'Living expenses', amount: audPerMonth(-p.livingExpenses), emphasis: 'normal', direction: 'adverse' },
+    { label: 'Existing commitments', amount: audPerMonth(-p.commitments), emphasis: 'normal', direction: 'adverse' },
+    { ...surplusLine, label: 'Monthly surplus, after tax' },
+    capacityLine,
+  ];
+}
+
+/** The ratio's working, when there is a ratio to explain. */
+function buildDebtToIncome(p: {
+  dti: number | null;
+  capacity: number;
+  denominator: number | null;
+  listedDebt: number;
+}): DebtToIncome | null {
+  if (p.dti === null || p.dti <= 0 || p.denominator === null || p.denominator <= 0) return null;
+  // The ratio is stored to two decimals, so the debt behind it is known to
+  // within half a cent of income per dollar — about ±$1,000 on a $200,000
+  // income. Rounded to $10,000 and labelled "about", never stated to the dollar.
+  const total = p.dti * p.denominator;
+  const existing = Math.max(0, total - p.capacity);
+  const rounded = Math.round(existing / 10_000) * 10_000;
+  return {
+    ratio: ratio(p.dti),
+    income: audPerYear(p.denominator),
+    capacity: aud(p.capacity),
+    existingDebt: rounded > 0 ? aud(rounded) : null,
+    // More than the listed liabilities by a margin rounding cannot explain: the
+    // engine also counts the loans on properties held, which that table omits.
+    includesPropertyLoans: existing - p.listedDebt > 20_000,
+  };
+}
+
 /**
  * The executive-summary paragraph.
  *
- * Kept close to the sentences the shipping report writes, so Phase 5's golden
- * diff compares typography and layout rather than wording. The figures inside
- * it go through `formatMeasure`, so the rate reads `8.65%` and not `$9`.
+ * It opens as the shipping report always has, so Phase 5's golden diff compares
+ * typography and layout rather than wording — and then says what the figures
+ * mean together: that the capacity is the loan the surplus repays, and, where
+ * the rating is limited with a positive surplus, that the ratio is what limited
+ * it. The figures inside go through `formatMeasure`, so the rate reads `8.65%`
+ * and not `$9`.
  */
 function buildNarrative(p: {
   clientName: string;
@@ -595,25 +849,53 @@ function buildNarrative(p: {
   surplus: number;
   dti: number | null;
   band: Band;
+  incomeRecorded: boolean;
+  livingExpenses: number;
   utilisation: UtilisationSection | null;
   lmi: LmiSection | null;
 }): string {
+  if (!p.incomeRecorded) {
+    return `No income is recorded for ${p.clientName}, so this assessment cannot produce a borrowing capacity. `
+      + `It applied living expenses of ${formatMeasure(aud(p.livingExpenses))} a month against no income, which is `
+      + 'why the capacity reads $0. Recording the household’s income and recalculating is what produces a figure.';
+  }
+
   const bandWord = p.band === 'strong' ? 'strong' : p.band === 'moderate' ? 'moderate' : 'limited';
-  const parts = [
-    `Based on the financial information provided, ${p.clientName} has an estimated maximum `
-      + `borrowing capacity of ${formatMeasure(aud(p.capacity))}.`,
-    `This assessment was conducted using an assessment rate of ${formatMeasure(percent(p.assessmentRate))} `
-      + `over a ${p.loanTermYears}-year loan term, resulting in a monthly surplus of `
-      + `${formatMeasure(audPerMonth(p.surplus))}`
-      + (p.dti === null ? '.' : ` and a debt-to-income ratio of ${formatMeasure(ratio(p.dti))}.`),
-    `The overall serviceability position is assessed as ${bandWord}.`,
-  ];
+  const rateAndTerm = `an assessment rate of ${formatMeasure(percent(p.assessmentRate))} over ${p.loanTermYears} years`;
+  const parts: string[] = [];
+
+  if (p.surplus > 0 && p.capacity > 0) {
+    parts.push(
+      `Based on the financial information provided, ${p.clientName} has an estimated maximum `
+        + `borrowing capacity of ${formatMeasure(aud(p.capacity))}: the loan a monthly surplus of `
+        + `${formatMeasure(aud(p.surplus))} repays at ${rateAndTerm}.`,
+    );
+  } else {
+    parts.push(
+      `Based on the financial information provided, ${p.clientName} has an estimated maximum `
+        + `borrowing capacity of ${formatMeasure(aud(p.capacity))}. Assessed at ${rateAndTerm}, `
+        + `the monthly surplus is ${formatMeasure(aud(p.surplus))}, which leaves nothing to repay a new loan.`,
+    );
+  }
+
+  const dtiText = p.dti === null ? '' : formatMeasure(ratio(p.dti));
+  if (p.band === 'limited' && p.surplus > 0 && p.dti !== null) {
+    // The engine rates a position limited when the surplus is nil or the ratio
+    // is at or above its threshold. With a positive surplus, the ratio is the
+    // reason — and a reader seeing "Limited" beside a healthy surplus is owed it.
+    parts.push(`Serviceability is assessed as limited because the debt-to-income ratio is ${dtiText}; the surplus itself is positive.`);
+  } else {
+    parts.push(
+      `Serviceability is assessed as ${bandWord}`
+        + (p.dti === null ? '.' : `, with a debt-to-income ratio of ${dtiText}.`),
+    );
+  }
 
   if (p.utilisation) {
     parts.push(
-      `The proposed loan of ${formatMeasure(p.utilisation.proposedLoan)} represents `
-        + `${formatMeasure(p.utilisation.share)} of the available capacity and `
-        + `${p.utilisation.withinCapacity ? 'falls within' : 'exceeds'} the assessed borrowing limit.`,
+      `The proposed loan of ${formatMeasure(p.utilisation.proposedLoan)} is `
+        + `${formatMeasure(p.utilisation.share)} of the assessed capacity and `
+        + `${p.utilisation.withinCapacity ? 'falls within' : 'exceeds'} the limit.`,
     );
   }
 

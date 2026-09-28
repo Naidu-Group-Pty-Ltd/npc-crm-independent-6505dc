@@ -2689,6 +2689,7 @@ export function StrategyScenarioModeling({
               capitalLedger,
             })}
             formatCurrency={formatCurrency}
+            clientId={clientId}
             pdfContext={clientName ? {
               clientName,
               baseCapacity: baseResult.borrowingCapacity,

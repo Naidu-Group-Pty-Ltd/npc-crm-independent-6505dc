@@ -266,6 +266,7 @@ describe('the document', () => {
       'How this was calculated',
       'Audit trail',
       'Scenario comparison',
+      'On what basis',
     ]);
     // The running head's eyebrow is the document, not the section number that
     // the chapter header prints 150px below it.
