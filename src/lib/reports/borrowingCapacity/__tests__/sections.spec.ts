@@ -33,9 +33,9 @@ describe('sections', () => {
     expect(snapshotSections(minimal).map((s) => s.id)).toEqual(['capacity', 'income', 'ledger']);
   });
 
-  it('adds the conditional three when their data exists', () => {
+  it('adds the conditional four when their data exists', () => {
     expect(snapshotSections(full).map((s) => s.id)).toEqual([
-      'capacity', 'income', 'ledger', 'explanation', 'audit', 'scenarios',
+      'capacity', 'income', 'ledger', 'explanation', 'audit', 'scenarios', 'basis',
     ]);
   });
 
@@ -88,12 +88,15 @@ describe('spine', () => {
 
   /**
    * The budgets are not decoration: a real render of the full fixture through
-   * WeasyPrint is eleven pages, and the spine claims eleven. The golden diff
+   * WeasyPrint is ten pages — in the standard design and in all fifty
+   * catalogue designs, measured 28 Sep 2026 — and the spine claims ten. The
+   * sections run on under one another since §16, so a budget is the share of
+   * a page run a section takes, not a page count of its own. The golden diff
    * pins the actual count; this pins the claim, so the two can disagree
    * loudly rather than silently.
    */
-  it('claims the eleven pages the full fixture actually renders', () => {
-    expect(spinePageBudget(snapshotSpine(full))).toBe(11);
+  it('claims the ten pages the full fixture actually renders', () => {
+    expect(spinePageBudget(snapshotSpine(full))).toBe(10);
   });
 
   it('reports a problem rather than throwing on a spine that breaks its archetype', () => {

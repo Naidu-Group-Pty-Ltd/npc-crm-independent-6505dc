@@ -74,7 +74,7 @@ describe('every section survived the migration', () => {
     ['the income breakdown', 'PAYG salary — applicant 1'],
     ['the shading rates', '80%'],
     ['the liabilities', 'Example Bank'],
-    ['the capacity ledger', 'Maximum Borrowing Capacity'],
+    ['the capacity ledger', 'Maximum borrowing capacity'],
     ['the recommendations', 'Clear the credit card limit before application'],
     ['the warnings', 'DTI of 5.4 is above the 5.0 threshold'],
     ['the calculation explanation', 'Shade the income'],
@@ -183,9 +183,15 @@ withGolden('and against the captured golden', () => {
 });
 
 describe('what the new document adds', () => {
-  /** Two pictures the tables cannot draw, and one comparison spread over two pages. */
+  /**
+   * A picture the tables cannot draw, and one comparison spread over two pages.
+   *
+   * The utilisation bullet is gone from the Snapshot (§16): its three shaded
+   * bands carried no labels, and the headroom bars beside the answer draw the
+   * same comparison — capacity, stress-tested capacity, proposed loan — with
+   * each figure on its bar.
+   */
   it.each([
-    ['a utilisation bullet', 'Proposed loan against the assessed limit'],
     ['an income composition', 'Assessed income by component'],
     ['a headroom comparison', 'Capacity and headroom'],
   ])('adds %s', (_label, caption) => {

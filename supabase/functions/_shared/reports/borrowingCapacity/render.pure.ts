@@ -21,6 +21,7 @@ import type { BrandLockupProps } from '../../reportDesign/primitives.pure.ts';
 import {
   closeChapter,
   escapeHtml,
+  KEEP_TOGETHER_CLASS,
   openChapter,
   renderCallout,
   renderChapterHeader,
@@ -51,7 +52,7 @@ import {
 } from '../../reportDesign/templateDesign.pure.ts';
 
 import type { Measure } from '../../reportDesign/measure.pure.ts';
-import { formatAmount, formatDelta, formatMeasure, periodLabel } from '../../reportDesign/measure.pure.ts';
+import { aud, formatAmount, formatDelta, formatMeasure, periodLabel } from '../../reportDesign/measure.pure.ts';
 import type { Direction } from './audit.pure.ts';
 import type {
   AuditRow,
@@ -63,7 +64,7 @@ import type {
   ScenarioRow,
 } from './payload.pure.ts';
 import { snapshotSections, validateSnapshotSpine } from './sections.pure.ts';
-import { headroomChart, incomeMixChart, utilisationChart } from './charts.pure.ts';
+import { headroomChart, incomeMixChart } from './charts.pure.ts';
 import { formatReportDate as formatAssessedOn } from '../reportDate.pure.ts';
 
 const ARCHETYPE = REPORT_ARCHETYPES['borrowing-capacity'];
@@ -164,16 +165,25 @@ function renderList(items: readonly string[]): string {
 function capacitySection(s: BorrowingCapacitySnapshot, palette: ResolvedReportPalette): string {
   const band = BAND[s.headline.band];
 
+  const capacityFoot = !s.income.recorded
+    ? 'No income recorded'
+    : s.headline.stressTested && s.headline.stressRate
+      ? `At ${formatMeasure(s.headline.stressRate)}: ${formatMeasure(s.headline.stressTested)}`
+      : s.headline.stressTested
+        ? `Stress tested ${formatMeasure(s.headline.stressTested)}`
+        : undefined;
+
   const kpis: KpiCell[] = [
     {
       label: 'Borrowing capacity',
       value: formatMeasure(s.headline.capacity),
-      foot: s.headline.stressTested ? `Stress tested ${formatMeasure(s.headline.stressTested)}` : undefined,
+      foot: capacityFoot,
     },
     {
       label: 'Monthly surplus',
       value: formatMeasure(s.headline.monthlySurplus),
       tone: s.headline.monthlySurplus.value >= 0 ? 'positive' : 'negative',
+      foot: 'After tax and commitments',
     },
     {
       label: 'Serviceability',
@@ -188,7 +198,7 @@ function capacitySection(s: BorrowingCapacitySnapshot, palette: ResolvedReportPa
     { item: 'Servicing buffer', value: formatMeasure(s.headline.bufferRate) },
     { item: 'Assessment rate', value: formatMeasure(s.headline.assessmentRate) },
     { item: 'Loan term', value: formatMeasure(s.headline.loanTerm) },
-    { item: 'Expense method', value: s.expenses.method },
+    { item: 'Living expenses', value: s.expenses.method },
   ];
   if (s.meta.lenderName) terms.push({ item: 'Lender policy', value: s.meta.lenderName });
 
@@ -198,14 +208,28 @@ function capacitySection(s: BorrowingCapacitySnapshot, palette: ResolvedReportPa
     { caption: 'Assessment terms' },
   );
 
+  // The chart and the sentence that reads it are one statement: the first
+  // production render put the assessment terms between them, and the sentence
+  // landed on the next page, alone at its head.
+  //
+  // The chart is the headroom bars — capacity, stress-tested capacity and the
+  // proposed loan, each labelled with its figure — and not the utilisation
+  // bullet it replaces here. The bullet's three shaded bands carried no labels
+  // and meant nothing a reader could name, and the bars said the same thing
+  // again two pages later: one picture, where the answer is, with its numbers
+  // on it.
+  const headroom = headroomChart(s, palette);
   const utilisation = s.utilisation
-    ? renderSidenote(
-        'Proposed loan',
-        p(`${formatMeasure(s.utilisation.proposedLoan)} of ${formatMeasure(s.utilisation.capacity)}`
-          + ` — ${formatMeasure(s.utilisation.share)} of the assessed capacity, which`
-          + ` ${s.utilisation.withinCapacity ? 'falls within' : 'exceeds'} the limit.`),
+    ? keepTogether(
+        headroom
+        + renderSidenote(
+          'Proposed loan',
+          p(`${formatMeasure(s.utilisation.proposedLoan)} of ${formatMeasure(s.utilisation.capacity)}`
+            + ` — ${formatMeasure(s.utilisation.share)} of the assessed capacity, which`
+            + ` ${s.utilisation.withinCapacity ? 'falls within' : 'exceeds'} the limit.`),
+        ),
       )
-    : '';
+    : headroom;
 
   const lmi = s.lmi
     ? renderCallout(
@@ -227,27 +251,35 @@ function capacitySection(s: BorrowingCapacitySnapshot, palette: ResolvedReportPa
       )
     : '';
 
-  const assumptions = s.assumptions.length
-    ? renderDataTable(
-        [{ key: 'item', label: 'Assumption', align: 'left' }, { key: 'value', label: 'Basis', align: 'right' }],
-        s.assumptions.map((a) => ({ item: a.label, value: a.value })),
-        { caption: 'Additional assumptions' },
-      )
-    : '';
-
   // Deliberately not a two-column grid. `renderGrid12` lays out as a CSS table,
   // and a table cell cannot be split across pages — so when one column fits at
   // the foot of a page and the other does not, WeasyPrint moves that column
   // whole and the layout tears in half. The first render of this document put
   // the assessment terms on the page after the sidenote they were beside.
+  //
+  // The settings the engine recorded are not here any more: seventeen rows of
+  // them opened the document and ran onto a page of their own. They are the
+  // last section, "On what basis", read in the report's words (`basis.pure.ts`).
   return renderLede(s.narrative)
     + renderKpiStrip(kpis)
-    + utilisationChart(s, palette)
-    + termsTable
     + utilisation
-    + lmi
-    + assumptions;
+    + keepTogether(termsTable)
+    + lmi;
 }
+
+/**
+ * Binds a short block to one page.
+ *
+ * Used only around things a reader takes in at once — a table of five rows, a
+ * chart and its sentence, the advice at the end — never around a long table,
+ * which would move whole and leave a hole (`KEEP_TOGETHER_CLASS`).
+ */
+function keepTogether(html: string): string {
+  return html ? `<div class="${KEEP_TOGETHER_CLASS}">${html}</div>` : '';
+}
+
+/** A short table stays whole; a long one may break, and repeats its head. */
+const SHORT_TABLE_ROWS = 12;
 
 function incomeSection(s: BorrowingCapacitySnapshot, palette: ResolvedReportPalette): string {
   // The period belongs in the header, once, rather than repeated down every
@@ -308,9 +340,23 @@ function incomeSection(s: BorrowingCapacitySnapshot, palette: ResolvedReportPale
       )
     : '';
 
-  return renderDataTable(incomeCols, incomeRows, { caption: 'Income, before and after shading' })
-    + incomeMixChart(s, palette)
-    + shadingNote
+  // No income recorded: a table holding nothing but "Total $0 $0" says the
+  // same thing worse. Said once, and what to do about it.
+  const incomeBlock = s.income.recorded
+    ? (incomeRows.length <= SHORT_TABLE_ROWS ? keepTogether : (h: string) => h)(
+        renderDataTable(incomeCols, incomeRows, { caption: 'Income, before and after shading' }),
+      )
+      + incomeMixChart(s, palette)
+      + shadingNote
+    : renderCallout(
+        'caution',
+        'No income recorded',
+        p('This assessment holds no income for the household, so there is nothing to assess a loan '
+          + 'against. The living expenses below are what the assessment applied; recording the income '
+          + 'and recalculating is what produces a borrowing capacity.'),
+      );
+
+  return incomeBlock
     + subhead('Expenses and commitments')
     // Short labels on purpose. A KPI label that wraps to two lines pushes its
     // own value down while its neighbours stay put, and the strip's baselines
@@ -320,15 +366,31 @@ function incomeSection(s: BorrowingCapacitySnapshot, palette: ResolvedReportPale
       { label: 'Commitments', value: formatMeasure(s.expenses.monthlyCommitments) },
       { label: 'Method', value: s.expenses.method },
     ])
-    + renderDataTable(liabilityCols, liabilityRows, { caption: 'Existing liabilities' });
+    + (liabilityRows.length <= SHORT_TABLE_ROWS ? keepTogether : (h: string) => h)(
+      renderDataTable(liabilityCols, liabilityRows, { caption: 'Existing liabilities' }),
+    );
 }
 
-function ledgerSection(s: BorrowingCapacitySnapshot, palette: ResolvedReportPalette): string {
+function ledgerSection(s: BorrowingCapacitySnapshot, _palette: ResolvedReportPalette): string {
   const rows: TableRow[] = s.ledger.map((r: LedgerRow) => ({
     line: r.label,
     amount: formatMeasure(r.amount),
     __total: r.emphasis === 'total',
   }));
+
+  const dti = s.debtToIncome;
+  const dtiNote = dti
+    ? renderSidenote(
+        'The debt-to-income ratio',
+        p(`${formatMeasure(dti.ratio)} is every debt the assessment counted, divided by `
+          + `${formatMeasure(aud(dti.income.value))} of annual income. `
+          + (dti.existingDebt
+            ? `That is about ${formatMeasure(dti.existingDebt)} already owed`
+              + (dti.includesPropertyLoans ? ', including the loans on properties held,' : '')
+              + ` plus the ${formatMeasure(dti.capacity)} of new borrowing assessed here.`
+            : `The debt counted is the ${formatMeasure(dti.capacity)} of new borrowing assessed here.`)),
+      )
+    : '';
 
   const recommendations = s.recommendations.length
     ? renderCallout('positive', 'What would move this', renderList(s.recommendations))
@@ -337,14 +399,33 @@ function ledgerSection(s: BorrowingCapacitySnapshot, palette: ResolvedReportPale
     ? renderCallout('caution', 'Worth knowing', renderList(s.warnings))
     : '';
 
-  return headroomChart(s, palette)
-    + renderDataTable(
-      [{ key: 'line', label: 'Line', align: 'left' }, { key: 'amount', label: 'Value', align: 'right' }],
+  return keepTogether(renderDataTable(
+      [{ key: 'line', label: 'Monthly working', align: 'left' }, { key: 'amount', label: 'Amount', align: 'right' }],
       rows,
-      { caption: 'From gross income to maximum capacity', signedKeys: ['amount'] },
-    )
-    + recommendations
-    + warnings;
+      { caption: 'From income to maximum capacity', signedKeys: ['amount'] },
+    ))
+    + keepTogether(dtiNote)
+    // Each callout whole, but not bound to each other: bound, the pair moved
+    // as one and left a third of a page empty above it. "Worth knowing" alone
+    // at the head of a page — what the first production render did — cannot
+    // happen now, because "On what basis" follows it.
+    + keepTogether(recommendations)
+    + keepTogether(warnings);
+}
+
+/**
+ * The settings the assessment was run under, last.
+ *
+ * They are the answer to "on what basis?", which a reader asks after the
+ * figures and not before them.
+ */
+function basisSection(s: BorrowingCapacitySnapshot): string {
+  if (!s.assumptions.length) return '';
+  return keepTogether(renderDataTable(
+    [{ key: 'item', label: 'Setting', align: 'left' }, { key: 'value', label: 'As applied', align: 'right' }],
+    s.assumptions.map((a) => ({ item: a.label, value: a.value })),
+    { caption: 'The policy this assessment was run under' },
+  ));
 }
 
 function explanationSection(s: BorrowingCapacitySnapshot): string {
@@ -474,6 +555,7 @@ const SECTION_BODY: Record<
   explanation: explanationSection,
   audit: auditSection,
   scenarios: scenarioSection,
+  basis: (s) => basisSection(s),
 };
 
 // ── The document ────────────────────────────────────────────────────────────
@@ -514,7 +596,10 @@ export function renderSnapshotBody(input: RenderSnapshotInput): string {
     // The running head's eyebrow is the document, not `Section 01` — the page
     // prints that immediately below in the chapter header, and the two sat
     // 150px apart in the first render.
-    return openChapter(DOCUMENT_NAME, number, section.title)
+    // Sections run on under one another (`RUN_ON_CHAPTER_CLASS`): each opened a
+    // page, and a two-page answer printed on six to eight sheets — a page
+    // holding one liabilities total, another one "Worth knowing" callout.
+    return openChapter(DOCUMENT_NAME, number, section.title, 'body', { runOn: index > 0 })
       + renderChapterHeader({
         number,
         title: section.title,

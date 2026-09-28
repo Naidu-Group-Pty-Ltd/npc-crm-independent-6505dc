@@ -21,7 +21,8 @@ export type SnapshotSectionId =
   | 'ledger'
   | 'explanation'
   | 'audit'
-  | 'scenarios';
+  | 'scenarios'
+  | 'basis';
 
 export interface SnapshotSection extends ChapterInput {
   id: SnapshotSectionId;
@@ -48,17 +49,17 @@ export function snapshotSections(payload: BorrowingCapacitySnapshot): SnapshotSe
     {
       id: 'income',
       title: 'Income and commitments',
-      // Two: the income table and its note fill the first, the liabilities
-      // table opens the second.
-      pageBudget: 2,
+      // One since the sections run on (§16): the income table, its note and
+      // the liabilities share the page run with the answer before them.
+      pageBudget: 1,
       note: 'Every income component with its shading, and every liability with its servicing.',
     },
     {
       id: 'ledger',
       title: 'How the capacity is built',
-      // Two since the headroom chart joined it: the chart and the ledger fill
-      // the first, the recommendations and warnings open the second.
-      pageBudget: 2,
+      // One: the working, the ratio's note and the advice. The headroom chart
+      // moved to the answer it illustrates (§16).
+      pageBudget: 1,
       note: 'The arithmetic from gross income to maximum capacity.',
     },
   ];
@@ -87,6 +88,15 @@ export function snapshotSections(payload: BorrowingCapacitySnapshot): SnapshotSe
       title: 'Scenario comparison',
       pageBudget: 1,
       note: 'What changes to income, commitments or rates would do to the result.',
+    });
+  }
+
+  if (payload.assumptions.length) {
+    sections.push({
+      id: 'basis',
+      title: 'On what basis',
+      pageBudget: 1,
+      note: 'The lender policy and settings this assessment was run under.',
     });
   }
 

@@ -54,8 +54,11 @@ export interface LiabilityRow {
 export interface LedgerRow {
   label: string;
   amount: Measure;
-  /** `total` is the final line; renderers may treat it differently. */
-  emphasis: 'normal' | 'total';
+  /**
+   * `total` is the final line; `subtotal` is a line the rows above it add up
+   * to (after-tax income, the monthly surplus). Renderers may rule them.
+   */
+  emphasis: 'normal' | 'subtotal' | 'total';
   /**
    * Whether this line helps or hurts the client. A deduction is `adverse`
    * whatever the sign of the number printed next to it (F6).
@@ -136,6 +139,33 @@ export interface UtilisationSection {
   withinCapacity: boolean;
 }
 
+/**
+ * The debt-to-income ratio, shown with its working.
+ *
+ * The engine divides every debt balance it counted — liabilities AND the loans
+ * on properties held — plus the new capacity by an APS 220 income figure. The
+ * Snapshot printed the ratio alone beside a liabilities table that lists only
+ * the liabilities, so 10.7x sat next to a single $455,000 mortgage and could
+ * not be checked. The row stores the ratio and the denominator, not the debt,
+ * so the existing debt is derived back from them and stated as the approximation
+ * it is (`existingDebt` is rounded to the nearest $10,000, because the ratio is
+ * stored to two decimals).
+ */
+export interface DebtToIncome {
+  ratio: Measure;
+  /** The income divided by: APS 220's adjusted figure where recorded, else gross. */
+  income: Measure;
+  /** The new loan the ratio includes — the assessed capacity. */
+  capacity: Measure;
+  /** Every existing debt the engine counted, approximately. Null when it cannot be derived. */
+  existingDebt: Measure | null;
+  /**
+   * True when the debt counted is clearly more than the liabilities listed —
+   * the loans on properties held, which the liabilities table does not show.
+   */
+  includesPropertyLoans: boolean;
+}
+
 export interface BorrowingCapacitySnapshot {
   meta: {
     clientName: string;
@@ -151,6 +181,9 @@ export interface BorrowingCapacitySnapshot {
     monthlySurplus: Measure;
     band: Band;
     stressTested: Measure | null;
+    /** The rate the stress test ran at: the assessment rate plus the increment. */
+    stressRate: Measure | null;
+    /** Null when no income is recorded: a ratio over zero income is undefined, not 0.0x. */
     dti: Measure | null;
     assessmentRate: Measure;
     interestRate: Measure;
@@ -164,13 +197,26 @@ export interface BorrowingCapacitySnapshot {
   utilisation: UtilisationSection | null;
   lmi: LmiSection | null;
 
+  /**
+   * The settings the assessment ran under, curated (`basis.pure.ts`): read in
+   * the report's words, tidied, and without the figures the document states
+   * elsewhere.
+   */
   assumptions: { label: string; value: string }[];
 
   income: {
     gross: Measure;
     shaded: Measure;
     rows: IncomeRow[];
+    /**
+     * False when the record holds no income at all. The engine still returns a
+     * capacity ($0), a DTI (0.0x) and a band for it; the document says what is
+     * missing instead of presenting those as an assessment.
+     */
+    recorded: boolean;
   };
+
+  debtToIncome: DebtToIncome | null;
 
   expenses: {
     /** `hem`, `declared`, `hybrid` — as recorded, title-cased for display. */

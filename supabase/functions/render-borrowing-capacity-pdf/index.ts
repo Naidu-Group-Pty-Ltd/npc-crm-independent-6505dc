@@ -26,6 +26,15 @@
  *  5. **Every attempt leaves a row.** A failure writes its reason to
  *     `borrowing_capacity_renders`, which is the difference between "the client
  *     says the PDF never arrived" and an answer.
+ *
+ * It draws a second document too: the What-If modeller's **Strategy Rationale
+ * Brief** (`document: 'strategy_rationale'`, BORROWING_CAPACITY.md §17). The
+ * brief is a scenario being modelled in the browser and stored nowhere, so its
+ * words arrive in the request — read against the composer's shape by
+ * `parseRenderRequest` — while everything else is exactly the Snapshot's: the
+ * same auth, the client's name read here, the same brand, the Borrowing
+ * Capacity design, the same bucket and the same ledger (with no assessment,
+ * and the brief's file name telling the two apart).
  */
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 import { createClient } from 'jsr:@supabase/supabase-js@2';
@@ -51,6 +60,8 @@ import { inlineAsset } from '../_shared/reportDesign/assets.pure.ts';
 import { inlineBrandAssets } from '../_shared/reportDesign/fetchBrandAssets.ts';
 import { buildSnapshot } from '../_shared/reports/borrowingCapacity/normalise.pure.ts';
 import { renderSnapshotFromBrand } from '../_shared/reports/borrowingCapacity/render.pure.ts';
+import { strategyRationaleFileName } from '../_shared/reports/borrowingCapacity/strategyRationale.pure.ts';
+import { renderStrategyRationaleFromBrand } from '../_shared/reports/borrowingCapacity/strategyRationaleRender.pure.ts';
 import { resolveRequestedDesign } from '../_shared/reports/templateDesignRead.ts';
 import { enforceCsrf, csrfDenied } from "../_shared/csrfGuard.ts";
 import {
@@ -179,9 +190,13 @@ const __corsWrappedHandler = (async (req: Request): Promise<Response> => {
       .select('*')
       .eq('client_id', request.clientId);
 
+    // The brief is not drawn from a stored assessment, so none is read for it.
+    const isBrief = request.document === 'strategy_rationale';
     const [clientRes, assessmentRes, whitelabelRes, settingsRes] = await Promise.all([
       supabase.from('clients').select(CLIENT_NAME_COLUMNS).eq('id', request.clientId).maybeSingle(),
-      request.assessmentId
+      isBrief
+        ? Promise.resolve({ data: null, error: null })
+        : request.assessmentId
         ? assessmentQuery.eq('id', request.assessmentId).maybeSingle()
         : assessmentQuery.order('created_at', { ascending: false }).limit(1).maybeSingle(),
       supabase.from('whitelabel_settings').select('*').limit(1).maybeSingle(),
@@ -202,11 +217,11 @@ const __corsWrappedHandler = (async (req: Request): Promise<Response> => {
     }
 
     if (!clientRes.data) return json({ error: 'not found' }, 404);
-    if (!assessmentRes.data) {
+    if (!isBrief && !assessmentRes.data) {
       return json({ error: 'no borrowing capacity assessment for this client' }, 409);
     }
 
-    const assessment = assessmentRes.data as Record<string, unknown>;
+    const assessment = (assessmentRes.data ?? {}) as Record<string, unknown>;
     // `clientDisplayName` returns '' for a row with no name on it, so the cover
     // and the filename decide what to do about that rather than the reader. On
     // this document they say "Client", which is what the filename has always
@@ -277,7 +292,7 @@ const __corsWrappedHandler = (async (req: Request): Promise<Response> => {
 
     // ── Build the document ──────────────────────────────────────────────────
 
-    const payload = buildSnapshot({
+    const payload = isBrief ? null : buildSnapshot({
       clientName,
       assessment,
       // Persisted since migration 20260814000000. Before it, both are null and
@@ -305,15 +320,26 @@ const __corsWrappedHandler = (async (req: Request): Promise<Response> => {
       route: 'render-borrowing-capacity-pdf',
     });
 
-    const { html, gaps } = renderSnapshotFromBrand({
-      payload,
-      snapshot,
-      disclaimer: issuerDisclaimerSetting(settings.disclaimer, snapshot, reportDeployment) as never,
-      coverArtDataUri: coverArt.ok ? coverArt.asset.dataUri : null,
-      edition: request.edition,
-      reference: String(assessment.id ?? '').slice(0, 8).toUpperCase() || null,
-      design,
-    });
+    const disclaimer = issuerDisclaimerSetting(settings.disclaimer, snapshot, reportDeployment) as never;
+    const coverArtDataUri = coverArt.ok ? coverArt.asset.dataUri : null;
+    const { html, gaps } = isBrief
+      ? renderStrategyRationaleFromBrand({
+          document: request.rationale!,
+          clientName,
+          snapshot,
+          disclaimer,
+          coverArtDataUri,
+          design,
+        })
+      : renderSnapshotFromBrand({
+          payload: payload!,
+          snapshot,
+          disclaimer,
+          coverArtDataUri,
+          edition: request.edition,
+          reference: String(assessment.id ?? '').slice(0, 8).toUpperCase() || null,
+          design,
+        });
 
     // The guard runs on HTML this function built, deliberately. The assets in
     // it came from a tenant's settings form; the boundary is where the check
@@ -323,7 +349,7 @@ const __corsWrappedHandler = (async (req: Request): Promise<Response> => {
     // ── Render, store, sign ─────────────────────────────────────────────────
 
     const now = new Date().toISOString();
-    const fileName = snapshotFileName(clientName, now);
+    const fileName = isBrief ? strategyRationaleFileName(clientName, now) : snapshotFileName(clientName, now);
     const path = snapshotStoragePath(request.clientId, fileName, now, crypto.randomUUID());
 
     const { data: renderRow } = await supabase
@@ -350,7 +376,7 @@ const __corsWrappedHandler = (async (req: Request): Promise<Response> => {
       // See `DocumentProvenance` — a delivered file could not be traced
       // back to the render that produced it.
       provenance: {
-        format: 'borrowing-capacity',
+        format: isBrief ? 'strategy-rationale' : 'borrowing-capacity',
         renderId: renderId,
         sourceId: String(assessment.id ?? '') || null,
         renderedAt: now,
@@ -394,6 +420,7 @@ const __corsWrappedHandler = (async (req: Request): Promise<Response> => {
       brandGaps: gaps,
       durationMs,
       design: designEcho,
+      document: request.document,
     };
     return json(response);
   } catch (e) {
