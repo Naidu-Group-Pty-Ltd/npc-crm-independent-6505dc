@@ -3,8 +3,9 @@
  *
  * Portal-facing pipeline board, portfolio KPIs, at-risk detection and the AI
  * contract analyser. Every operation resolves the caller's session, their
- * assigned clients AND their firm before touching a row, then gates on the
- * merged permission matrix ('matters' for the board/KPIs, 'contract' for the
+ * firm and their access to each matter before touching a row, through the
+ * shared resolvers in `_shared/solicitorPortalAuth.ts`, then gates on that
+ * matter's permission matrix ('matters' for the board/KPIs, 'contract' for the
  * analyser). No financial-position or AML-restricted data is ever selected.
  *
  * AI output is always stored as a DRAFT and must be confirmed by a human before
@@ -22,9 +23,7 @@ import {
   solicitorGovernanceError,
   resolveSolicitorMatterAccess,
   resolveMatterPermissions,
-  resolveClientPermissions,
   listAccessibleMatterIds,
-  listAssignedClientIds,
   logSolicitorActivity,
   requestIp,
   can,
@@ -91,8 +90,6 @@ Deno.serve(async (req) => {
     const ip = requestIp(req);
     const userAgent = req.headers.get('user-agent');
 
-    const accessibleMatterIds = await listAccessibleMatterIds(supabase, me.id, me.firm_id, 'contract');
-
     /** Load a matter and confirm this solicitor may see it. */
     const loadMatter = async (matterId: string): Promise<
       { ok: true; matter: any; perms: PermissionMatrix } | { ok: false; status: number; error: string }
@@ -119,49 +116,45 @@ Deno.serve(async (req) => {
     };
 
     /**
-     * All matters this solicitor may see, with client display names attached.
+     * Every matter this solicitor may see, with client display names attached,
+     * for the pipeline board, the portfolio KPIs and the at-risk list.
      *
-     * Two independent checks, deliberately, in this order:
+     * The list is `listAccessibleMatterIds` under `matters`: the answer
+     * `loadMatter` gives one matter at a time, read from the practice's own
+     * access mode, its grants or assignments, and their denials. It used to be
+     * the list under `contract`, the analyser's key, ANDed with a per-client
+     * permission matrix (WP-16). That second check was there because the
+     * list's legacy path ignored permissions. It honours them now, and the
+     * per-client matrix emptied the board and the KPIs for every solicitor on
+     * the per-matter grants, whose matters need no client assignment at all.
      *
-     *  1. the **client** assignment matrix must grant `matters.view`, resolved
-     *     per client via `resolveClientPermissions`;
-     *  2. the matter must be in `accessibleMatterIds`, i.e. matter-level access.
-     *
-     * The second alone is not enough. `listAccessibleMatterIds` only applies a
-     * permission filter on its `SOLICITOR_MATTER_ACCESS_V1` path; its legacy
-     * fallback (flag set to `false`) returns every matter of every assigned
-     * client with no permission check at all, so a solicitor assigned to a
-     * client but denied `matters.view` would read the whole portfolio. Resolving
-     * the client matrix here keeps that fallback closed, and matches the
-     * repo-wide rule that a single access source is never the sole gate.
+     * A read that fails is an error here, never an empty list: an empty board
+     * says this solicitor has no matters, which a failed read does not know.
+     * `listAccessibleMatterIds` throws on one, and the client names, read in
+     * the same breath, are held to the same rule.
      */
     const loadVisibleMatters = async () => {
-      if (!accessibleMatterIds.length) return [] as any[];
+      const visibleMatterIds = await listAccessibleMatterIds(supabase, me.id, me.firm_id, 'matters');
+      if (!visibleMatterIds.length) return [] as any[];
 
-      const assignedClientIds = await listAssignedClientIds(supabase, me.id);
-      const visibleClientIds: string[] = [];
-      for (const clientId of assignedClientIds) {
-        const permissions = await resolveClientPermissions(supabase, me.id, clientId);
-        if (permissions && can(permissions, 'matters', 'view')) visibleClientIds.push(clientId);
+      const rows: any[] = [];
+      for (let i = 0; i < visibleMatterIds.length; i += 100) {
+        const { data, error } = await supabase
+          .from('legal_matters')
+          .select(MATTER_SELECT)
+          .in('id', visibleMatterIds.slice(i, i + 100))
+          .eq('firm_id', me.firm_id);
+        if (error) throw error;
+        rows.push(...(data || []));
       }
-      if (!visibleClientIds.length) return [] as any[];
-
-      const { data, error } = await supabase
-        .from('legal_matters')
-        .select(MATTER_SELECT)
-        .in('id', accessibleMatterIds)
-        .in('client_id', visibleClientIds)
-        .eq('firm_id', me.firm_id)
-        .limit(1000);
-      if (error) throw error;
-      const rows = data || [];
       const clientIds = Array.from(new Set(rows.map((r: any) => r.client_id).filter(Boolean)));
       const clientMap = new Map<string, string>();
-      if (clientIds.length) {
-        const { data: clients } = await supabase
+      for (let i = 0; i < clientIds.length; i += 100) {
+        const { data: clients, error: clientsError } = await supabase
           .from('clients')
           .select('id, primary_first_name, primary_surname')
-          .in('id', clientIds);
+          .in('id', clientIds.slice(i, i + 100));
+        if (clientsError) throw clientsError;
         for (const c of clients || []) {
           clientMap.set(c.id, [c.primary_first_name, c.primary_surname].filter(Boolean).join(' '));
         }

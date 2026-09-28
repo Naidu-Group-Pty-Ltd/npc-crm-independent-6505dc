@@ -5,9 +5,10 @@
  * surfaces (Command Centre, Client Portal, Finance Portal), plus the solicitor
  * notification inbox and per-user notification preferences.
  *
- * Every operation is scoped by session → firm → client assignment → merged
- * permission matrix. `firm_internal` threads never leave the solicitor portal;
- * no financial-position or AML-restricted field is ever selected.
+ * Every operation is scoped by session → firm → matter access → permission
+ * matrix, through the shared resolvers in `_shared/solicitorPortalAuth.ts`.
+ * `firm_internal` threads never leave the solicitor portal; no
+ * financial-position or AML-restricted field is ever selected.
  *
  * Operations
  *   list_threads | get_thread | ensure_thread | post_message | mark_thread_read
@@ -113,20 +114,35 @@ Deno.serve(async (req) => {
       return { ok: true, matter, perms };
     };
 
-    const permissionCache = new Map<string, PermissionMatrix | null>();
+    /*
+     * Whether a notification in the legacy inbox may be shown or marked read.
+     *
+     * The MATTER it is about decides, through the same access list every other
+     * read here uses: `messages` for a message notification, `matters` for
+     * anything else. The CLIENT used to decide, through a list of assigned
+     * clients and a per-client permission matrix. A merge on 30 Jul 2026
+     * (cea3d88) deleted the list and the import of the matrix resolver while
+     * keeping the code that used them, so every list, summary and mark-read on
+     * this path threw a ReferenceError. A per-client check could not have
+     * answered for a practice on the per-matter grants in any case.
+     *
+     * The only writer, `notifySolicitors` from `legal-matters-admin`, names the
+     * matter on every row. A row naming no matter can be checked against
+     * nothing, so it is shown only when it names no client either: a notice
+     * about the solicitor's own account. A notice about a client must not
+     * outlive the access it describes.
+     */
+    const messagesViewable = new Set(accessibleMatterIds);
+    let mattersViewable: Promise<Set<string>> | null = null;
     const canViewNotification = async (notification: any): Promise<boolean> => {
-      const clientId = notification.client_id;
-      if (clientId && !assignedClientIds.includes(clientId)) return false;
-      if (notification.notification_type !== 'message_received') return true;
-      if (!clientId) return false;
-
-      if (!permissionCache.has(clientId)) {
-        permissionCache.set(
-          clientId,
-          await resolveClientPermissions(supabase, me.id, clientId),
-        );
+      const matterId = notification.legal_matter_id ? String(notification.legal_matter_id) : null;
+      if (!matterId) {
+        return notification.notification_type !== 'message_received' && !notification.client_id;
       }
-      return can(permissionCache.get(clientId) ?? null, 'messages', 'view');
+      if (notification.notification_type === 'message_received') return messagesViewable.has(matterId);
+      mattersViewable ??= listAccessibleMatterIds(supabase, me.id, me.firm_id, 'matters')
+        .then((ids) => new Set(ids));
+      return (await mattersViewable).has(matterId);
     };
 
     const filterViewableNotifications = async (notifications: any[]) => {
@@ -414,7 +430,7 @@ Deno.serve(async (req) => {
               .in('legal_matter_id', accessibleMatterIds).eq('firm_id', me.firm_id).eq('is_archived', false)
           : Promise.resolve({ data: [] as any[] }),
         supabase.from('solicitor_portal_notifications')
-          .select('id, client_id, notification_type')
+          .select('id, client_id, legal_matter_id, notification_type')
           .eq('solicitor_user_id', me.id).eq('is_read', false),
       ]);
       const viewableUnread = await filterViewableNotifications(unreadNotifications || []);
@@ -453,12 +469,12 @@ Deno.serve(async (req) => {
        * `solicitorPortalNotificationAuthz.security.test.ts` asks for was absent
        * from the code as well as from the run. The check is the same
        * `canViewNotification` the list and summary use, so a `message_received`
-       * notification for a client whose `messages`/`view` permission this
+       * notification for a matter whose `messages`/`view` permission this
        * solicitor lacks answers 404 rather than being silently mutated.
        */
       const { data: notification } = await supabase
         .from('solicitor_portal_notifications')
-        .select('id, client_id, notification_type')
+        .select('id, client_id, legal_matter_id, notification_type')
         .eq('id', String(body.notification_id || ''))
         .eq('solicitor_user_id', me.id)
         .maybeSingle();
@@ -481,7 +497,7 @@ Deno.serve(async (req) => {
       // discarded its result, then filtered an identifier that did not exist.
       const { data: unreadNotifications } = await supabase
         .from('solicitor_portal_notifications')
-        .select('id, client_id, notification_type')
+        .select('id, client_id, legal_matter_id, notification_type')
         .eq('solicitor_user_id', me.id)
         .eq('is_read', false);
       const viewable = await filterViewableNotifications(unreadNotifications || []);

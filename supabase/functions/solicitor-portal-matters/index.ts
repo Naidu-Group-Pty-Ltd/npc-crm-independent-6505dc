@@ -91,19 +91,6 @@ Deno.serve(async (req) => {
       }
     }
 
-    /** Assigned clients for which the merged permission matrix allows matter visibility. */
-    const listViewableClientIds = async (): Promise<string[]> => {
-      const permissions = await Promise.all(
-        assignedClientIds.map(async (clientId) => ({
-          clientId,
-          matrix: await resolveClientPermissions(supabase, me.id, clientId),
-        })),
-      );
-      return permissions
-        .filter(({ matrix }) => can(matrix, 'matters', 'view'))
-        .map(({ clientId }) => clientId);
-    };
-
     /** Load a matter and confirm this solicitor may see it. */
     const loadMatter = async (matterId: string): Promise<
       { ok: true; matter: any; perms: PermissionMatrix } | { ok: false; status: number; error: string }
