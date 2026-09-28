@@ -22,7 +22,6 @@ import {
   closeChapter,
   escapeHtml,
   openChapter,
-  renderBandedMatrix,
   renderCallout,
   renderChapterHeader,
   renderCompanyPage,
@@ -237,6 +236,42 @@ function truncationCallout(cf: PropertyComparison): string {
 }
 
 /**
+ * The category matrix on the page the section is already on.
+ *
+ * It opened a landscape page of its own "for consistency" with the Portfolio's
+ * holdings matrix, which is a different table: two to five properties and ten
+ * categories fit the portrait measure comfortably, and a landscape sheet in the
+ * middle of the comparison held one table and two-thirds white space. Measured
+ * over the 50 designs at five properties: every column fits. The property
+ * columns share the width equally, so the tick for the second property is not
+ * squeezed between two wide neighbours.
+ */
+function portraitMatrix(
+  rowLabel: string,
+  columns: string[],
+  rows: Array<{ label: string; values: string[] }>,
+  opts: { caption?: string } = {},
+): string {
+  const table = renderDataTable(
+    [
+      { key: 'label', label: rowLabel, align: 'left' },
+      ...columns.map((c, i) => ({ key: `p${i}`, label: c, align: 'right' as const })),
+    ],
+    rows.map((r) => {
+      const row: Record<string, string> = { label: r.label };
+      r.values.forEach((v, i) => { row[`p${i}`] = v; });
+      return row;
+    }),
+    { caption: opts.caption },
+  );
+  // Equal property columns: the category takes what a label needs and the
+  // properties split the rest.
+  const share = Math.floor(64 / Math.max(columns.length, 1));
+  const cols = `<colgroup><col style="width:36%">${columns.map(() => `<col style="width:${share}%">`).join('')}</colgroup>`;
+  return table.replace('<table class="data">', `<table class="data">${cols}`);
+}
+
+/**
  * The scorecard — every category, and which property took it.
  *
  * Landscape, and the reason is consistency rather than geometry. With two to five
@@ -262,7 +297,9 @@ function scorecardSection(cf: PropertyComparison, palette: ResolvedReportPalette
     { caption: 'The properties, numbered as they appear overleaf' },
   );
 
-  const columns = cf.properties.map((prop) => String(prop.number));
+  // Headed by the street, with the number the key above gives it, so a reader
+  // does not have to look up which property "2" is.
+  const columns = cf.properties.map((prop) => `${prop.number}. ${prop.shortAddress || `Property ${prop.number}`}`);
   // Positive axes only. A tick in this matrix means "won this category", and
   // `highestRisk` names the property that came off worst — ticking it asserts
   // the opposite of what it means. It keeps its own row in the risk section,
@@ -283,7 +320,7 @@ function scorecardSection(cf: PropertyComparison, palette: ResolvedReportPalette
 
   const undecided = positive.filter((w) => !w.property).length;
   const matrix = rows.length
-    ? renderBandedMatrix('Category', columns, rows, {
+    ? portraitMatrix('Category', columns, rows, {
       caption: 'A tick marks the property the analysis named on that category. '
         + (undecided
           ? `${undecided} ${undecided === 1 ? 'category' : 'categories'} named no property and `
@@ -568,7 +605,11 @@ export function renderComparisonBody(input: RenderComparisonInput): string {
       ? placeholderSection(section.placeholderFor)
       : SECTION_BODY[section.id]?.(cf, input.palette) ?? '';
     const number = String(index + 1).padStart(2, '0');
-    return openChapter(DOCUMENT_NAME, number, section.title)
+    // A comparison is ten short sections — most run to a table and a few
+    // paragraphs — and a page each printed seventeen sheets for three
+    // properties, half of them part empty. They run on under one another now,
+    // each keeping its numbered header and running head (`RUN_ON_CHAPTER_CLASS`).
+    return openChapter(DOCUMENT_NAME, number, section.title, 'body', { runOn: index > 0 })
       + renderChapterHeader({
         number,
         title: section.title,
@@ -586,6 +627,16 @@ export function renderComparisonBody(input: RenderComparisonInput): string {
 
   return cover + contents + body + closing;
 }
+
+/**
+ * A comparison's tables are short — one row per property, or one per category —
+ * and one split across a page reads as two tables. Measured on a three-property
+ * comparison: the ranking broke after its first row, leaving two rows alone at
+ * the head of the next page. A table longer than a page still breaks: `avoid`
+ * is a preference WeasyPrint gives up rather than overflow.
+ */
+const COMPARISON_CSS = `
+  .table-block { break-inside: avoid; }`;
 
 /**
  * The whole document, ready to POST to the render service.
@@ -608,7 +659,7 @@ export function renderComparisonDocument(input: RenderComparisonInput): string {
       palette: input.palette,
       options: input.options ?? null,
       masthead: input.masthead,
-    }),
+    }) + COMPARISON_CSS,
     bodyHtml: renderComparisonBody(input),
   });
 }

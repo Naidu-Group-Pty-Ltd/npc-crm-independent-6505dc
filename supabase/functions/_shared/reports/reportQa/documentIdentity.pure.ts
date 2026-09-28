@@ -29,7 +29,18 @@
  *
  * Pure: no clock, no I/O.
  */
-import { formatReportDateShort } from '../reportDate.pure.ts';
+import {
+  clipAtWord,
+  fileSafe,
+  MAX_FILE_TOPIC_CHARS,
+  readableFileName,
+  storageSafeFileName,
+} from '../readableFileName.pure.ts';
+
+// The generic filename rules moved to `readableFileName.pure.ts` when the
+// comparison reports took the same naming; re-exported so every caller of this
+// module keeps working.
+export { clipAtWord, fileSafe, MAX_FILE_TOPIC_CHARS, storageSafeFileName };
 
 /** What the product calls these documents, on the cover and in the filename. */
 export const HUB_DOCUMENT_NAME = 'Intelligence Hub Summary';
@@ -37,8 +48,6 @@ export const HUB_DOCUMENT_NAME = 'Intelligence Hub Summary';
 /** The longest topic a cover title carries. A title, not a sentence. */
 export const MAX_TOPIC_CHARS = 90;
 
-/** The longest topic a filename carries, cut at a word. */
-export const MAX_FILE_TOPIC_CHARS = 60;
 
 /**
  * Conversation titles that say nothing about the conversation — what a new chat
@@ -76,15 +85,6 @@ function asTitle(text: string): string {
     .replace(/^(?:section\s+\d+(?:\.\d+)*[.):]?|\d+(?:\.\d+)*[.):])\s+/i, '')
     .replace(/[\s:;,.–—-]+$/u, '')
     .trim();
-}
-
-/** Clip at a word, never mid-word, and say nothing about the cut. */
-export function clipAtWord(text: string, max: number): string {
-  if (text.length <= max) return text;
-  const cut = text.slice(0, max + 1);
-  const space = cut.lastIndexOf(' ');
-  const clipped = (space > max * 0.5 ? cut.slice(0, space) : text.slice(0, max)).trim();
-  return clipped.replace(/[\s:;,.–—&-]+$/u, '');
 }
 
 /**
@@ -140,31 +140,6 @@ export function hubDocumentTopic(sources: TopicSources): string {
   return '';
 }
 
-/** Characters no common filesystem accepts in a name, and the ones that trip mail clients. */
-const UNSAFE_FILE_CHARS = /[\\/:*?"<>|#%{}^~[\]`\u0000-\u001f]/g;
-
-/** A topic made safe to sit inside a filename. */
-export function fileSafe(text: string): string {
-  return text
-    .replace(/&/g, 'and')
-    .replace(/[‘’]/g, "'")
-    .replace(/[“”]/g, '')
-    .replace(/[–—]/g, '-')
-    .replace(UNSAFE_FILE_CHARS, ' ')
-    .replace(/\s+/g, ' ')
-    .trim();
-}
-
-/**
- * `2026-09-28T…` → `28 Sep 2026`, through the one date reader
- * (`reportDate.pure.ts`). An unreadable date is left out of the name rather
- * than printed as whatever was passed.
- */
-function fileDate(isoDate: string): string {
-  const short = formatReportDateShort(isoDate ?? '');
-  return short && short !== isoDate ? short : '';
-}
-
 export type HubDocumentKind = 'summary' | 'transcript';
 
 /**
@@ -174,34 +149,21 @@ export type HubDocumentKind = 'summary' | 'transcript';
  * somebody reads before they open it — in a downloads folder, an email's
  * attachment row, a portal's list. A transcript says so, since it is a record of
  * the conversation rather than a summary of it. With no topic the name is the
- * document's name and the date, never a placeholder word.
+ * document's name and the date, never a placeholder word
+ * (`readableFileName.pure.ts`).
  */
 export function hubDocumentFileName(
   topic: string,
   isoDate: string,
   options: { kind?: HubDocumentKind; extension?: string } = {},
 ): string {
-  const kind = options.kind ?? 'summary';
-  const extension = (options.extension ?? 'pdf').replace(/^\./, '');
-  const safeTopic = clipAtWord(fileSafe(topic), MAX_FILE_TOPIC_CHARS);
-  const parts = [
-    HUB_DOCUMENT_NAME,
-    ...(kind === 'transcript' ? ['Transcript'] : []),
-    ...(safeTopic ? [safeTopic] : []),
-    ...(fileDate(isoDate) ? [fileDate(isoDate)] : []),
-  ];
-  return `${parts.join(' - ')}.${extension}`;
-}
-
-/**
- * The same name as a storage key segment.
- *
- * Object keys travel in URLs, signed and otherwise, so the key keeps to
- * characters no encoder rewrites. The readable name is what a person is handed;
- * this is where the bytes live.
- */
-export function storageSafeFileName(fileName: string): string {
-  return fileName.replace(/[^A-Za-z0-9._-]+/g, '_').replace(/_+/g, '_');
+  return readableFileName({
+    name: HUB_DOCUMENT_NAME,
+    qualifier: (options.kind ?? 'summary') === 'transcript' ? 'Transcript' : null,
+    topic,
+    isoDate,
+    extension: options.extension,
+  });
 }
 
 /**

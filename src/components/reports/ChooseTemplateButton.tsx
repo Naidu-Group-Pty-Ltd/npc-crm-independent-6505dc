@@ -1,19 +1,22 @@
 /**
  * "Choose template" — the one decision beside the button that makes the PDF.
  *
- * The Hub's export dialogs used to offer two PDF buttons: "Typeset PDF", which
- * drew the answer through the design system in whatever template had been
- * chosen, and "Export PDF", which ignored the choice and drew the old
+ * The export surfaces used to offer two PDF buttons: one that drew the document
+ * in the chosen template, and one that ignored the choice and drew the old
  * in-browser layout. Two buttons that each make a PDF, only one of which
  * honours the template, is how a person chooses a template and receives the
- * legacy document.
+ * legacy document — which is what the owner reported from the Intelligence Hub
+ * on 28 Sep 2026.
  *
- * So the choice and the act are separate controls now: this one only chooses —
- * it opens the same picker the Template Library uses and names what is chosen —
- * and Export PDF is the only thing that makes a file, in the choice made here.
- * The picker says before anything is chosen that a template dresses this
- * document rather than re-paging it (`TEMPLATE_DESIGN_NOTICE`), which is how
- * every report type but Investment honours a template.
+ * So the choice and the act are separate controls: this one only chooses — it
+ * opens the same picker the Template Library uses and names what is chosen —
+ * and the Export PDF beside it is the one thing that makes a file, in the
+ * choice made here. The picker says before anything is chosen that a template
+ * dresses these documents rather than re-paging them (`TEMPLATE_DESIGN_NOTICE`),
+ * which is how every report type but Investment honours a template.
+ *
+ * Used by the Intelligence Hub's two editors, the Property Comparison and the
+ * Cash Flow Comparison.
  */
 import { useState } from 'react';
 import { FileStack, TriangleAlert } from 'lucide-react';
@@ -21,11 +24,21 @@ import { FileStack, TriangleAlert } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { ReportTemplatePicker } from '@/components/reports/ReportTemplatePicker';
 import { useReportTemplateSelection } from '@/hooks/useReportTemplateSelection';
-import { HUB_DOCUMENT_NAME } from '@/lib/reports/reportQa/documentIdentity.pure';
 
 export interface ChooseTemplateButtonProps {
+  /** The format whose choice this is — `qa`, `comparison`, `cashflow`. */
+  reportType: string;
+  /** What the picker calls the format. */
+  formatLabel: string;
+  /**
+   * Said in the tooltip before the current choice, where the choice is another
+   * format's: the Cash Flow Comparison is drawn in the Cash Flow's template.
+   */
+  note?: string;
   disabled?: boolean;
   className?: string;
+  size?: 'default' | 'sm' | 'lg' | 'icon';
+  variant?: 'default' | 'outline' | 'ghost' | 'secondary';
 }
 
 /** What the button says the export will come out in, for its accessible name and tooltip. */
@@ -36,17 +49,25 @@ export function chosenTemplateLine(state: ReturnType<typeof useReportTemplateSel
   return 'No template chosen — the standard design is used';
 }
 
-export function ChooseTemplateButton({ disabled, className }: ChooseTemplateButtonProps) {
+export function ChooseTemplateButton({
+  reportType,
+  formatLabel,
+  note,
+  disabled,
+  className,
+  size = 'sm',
+  variant = 'outline',
+}: ChooseTemplateButtonProps) {
   const [open, setOpen] = useState(false);
-  const { state } = useReportTemplateSelection('qa');
-  const line = chosenTemplateLine(state);
+  const { state } = useReportTemplateSelection(reportType);
+  const line = note ? `${note} ${chosenTemplateLine(state)}` : chosenTemplateLine(state);
 
   return (
     <>
       <Button
         type="button"
-        variant="outline"
-        size="sm"
+        variant={variant}
+        size={size}
         className={className}
         disabled={disabled}
         onClick={() => setOpen(true)}
@@ -59,8 +80,8 @@ export function ChooseTemplateButton({ disabled, className }: ChooseTemplateButt
         Choose template
       </Button>
       <ReportTemplatePicker
-        reportType="qa"
-        formatLabel={HUB_DOCUMENT_NAME}
+        reportType={reportType}
+        formatLabel={formatLabel}
         open={open}
         onOpenChange={setOpen}
       />

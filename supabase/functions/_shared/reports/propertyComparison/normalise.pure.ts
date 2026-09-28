@@ -67,6 +67,7 @@ import type {
 } from './payload.pure.ts';
 import { COMPARISON_SECTIONS } from './salvage.pure.ts';
 import { readStoredAnalysis } from './storedAnalysis.pure.ts';
+import { joinPlaces } from '../readableFileName.pure.ts';
 
 /** The producer accepts 2–5; more than this is a data fault, not a comparison. */
 export const MAX_PROPERTIES = 12;
@@ -526,6 +527,27 @@ export function describeComparison(
 
 // ── Entry ───────────────────────────────────────────────────────────────────
 
+/**
+ * What the cover calls the comparison.
+ *
+ * Every stored title the producer wrote is the same sentence with different
+ * numbers — `INVESTMENT COMPARISON ANALYSIS - 3 PROPERTIES, NSW, WA` — printed in
+ * capitals under an eyebrow that already says "Property Comparison Analysis".
+ * The subject of a comparison is the properties, so a generated title is
+ * replaced by their street lines ("97 Poole Road, 37 Bolin Street and 60 Lawley
+ * Street"). A title somebody actually wrote is kept as they wrote it.
+ */
+const GENERATED_TITLE = /^(?:[a-z_ -]+ )?comparison analysis\s*[-—–]\s*\d+\s+propert/i;
+
+export function comparisonCoverTitle(
+  storedTitle: string,
+  properties: readonly { shortAddress: string }[],
+): string {
+  const places = joinPlaces(properties.map((p) => p.shortAddress), 3);
+  if (storedTitle && !GENERATED_TITLE.test(storedTitle)) return storedTitle;
+  return places || storedTitle || `Property Comparison — ${properties.length} properties`;
+}
+
 export interface BuildComparisonInput {
   /** The `property_comparisons` row. */
   row: Record<string, unknown>;
@@ -611,8 +633,7 @@ export function buildPropertyComparison(input: BuildComparisonInput): PropertyCo
 
   return {
     meta: {
-      title: text(row.report_title, 160)
-        || `Property Comparison — ${properties.length} properties`,
+      title: comparisonCoverTitle(text(row.report_title, 160), properties),
       clientName: text(input.clientName, 120),
       analysedOn: text(row.created_at, 40),
       preparedOn: input.now,

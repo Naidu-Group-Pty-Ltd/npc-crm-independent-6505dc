@@ -326,6 +326,32 @@ export function renderContentsPage(
 // ── Chapters ────────────────────────────────────────────────────────────────
 
 /**
+ * A chapter that runs on under the one before rather than opening a page.
+ *
+ * Every chapter opens a page by default (`.chapter { page-break-before:
+ * always }`), which is right for a report whose sections run to pages and wrong
+ * for a memo whose sections run to paragraphs: the Intelligence Hub summary of
+ * nine short sections printed eleven sheets, three of them a heading and a
+ * callout, and a three-property comparison printed seventeen, half of them part
+ * empty. A run-on chapter keeps everything a chapter is — its numbered header,
+ * its contents entry, its running head — and loses only the page break; its
+ * header never sits at the foot of a page without the words it introduces.
+ * A named page (landscape, disclaimer) still breaks, because the page changes.
+ */
+export const RUN_ON_CHAPTER_CLASS = 'run-on';
+
+/**
+ * Binds the blocks inside it to one page.
+ *
+ * For a document's last words: a short closing note that would otherwise turn
+ * the page alone. WeasyPrint 69.0 ignores `break-before: avoid` between two
+ * blocks there and honours `break-inside: avoid` on a wrapper, so this is the
+ * wrapper. Only ever around something short — bound together, two long blocks
+ * move a half-page table and leave a hole instead.
+ */
+export const KEEP_TOGETHER_CLASS = 'keep-together';
+
+/**
  * Open a chapter.
  *
  * The `data-*` attributes are read by `string-set` in the stylesheet and become
@@ -344,8 +370,9 @@ export function openChapter(
   chapterNo: string,
   chapterTitle: string,
   page: NamedPage = 'body',
+  opts: { runOn?: boolean } = {},
 ): string {
-  return `<section class="chapter page-${page}"`
+  return `<section class="chapter${opts.runOn ? ` ${RUN_ON_CHAPTER_CLASS}` : ''} page-${page}"`
     + ` data-eyebrow="${escapeHtml(eyebrow)}"`
     + ` data-chapter-no="${escapeHtml(chapterNo)}"`
     + ` data-chapter-title="${escapeHtml(chapterTitle)}">`;

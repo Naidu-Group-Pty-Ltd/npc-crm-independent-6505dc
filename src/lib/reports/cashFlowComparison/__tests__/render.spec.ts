@@ -255,11 +255,19 @@ describe('the request and where the file lands', () => {
     }).ok).toBe(false);
   });
 
-  it('names the file after the count, the date and the cover reference', () => {
-    const reference = comparisonReference(A);
-    expect(comparisonFileName(2, NOW, reference))
-      .toBe('Cash_Flow_Comparison_2_Properties_2026-08-02_11111111.pdf');
-    expect(reference).toBe('11111111');
+  /**
+   * Renegotiated (28 Sep 2026). It was the count, the date and the reference —
+   * `Cash_Flow_Comparison_2_Properties_2026-08-02_11111111.pdf` — which says
+   * nothing about which comparison a file is. The properties are the subject,
+   * so they name it; the reference stays on the cover foot, and the storage key
+   * stays URL-safe.
+   */
+  it('names the file after the properties and the date, readably', () => {
+    expect(comparisonFileName(['12 Example Street', '9 Sample Road'], NOW))
+      .toBe('Cash Flow Comparison - 12 Example Street and 9 Sample Road - 02 Aug 2026.pdf');
+    expect(comparisonReference(A)).toBe('11111111');
+    expect(comparisonStoragePath(A, 'Cash Flow Comparison - 12 Example Street.pdf', NOW, 'u'))
+      .toBe(`cash-flow-comparison/${A}/2026-08-02/u-Cash_Flow_Comparison_-_12_Example_Street.pdf`);
   });
 
   /** Keyed by the primary report: the properties may belong to different clients. */

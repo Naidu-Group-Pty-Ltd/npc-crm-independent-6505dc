@@ -62,6 +62,7 @@ import type { BrandLockupProps } from '../../reportDesign/primitives.pure.ts';
 import {
   closeChapter,
   escapeHtml,
+  KEEP_TOGETHER_CLASS,
   openChapter,
   renderCallout,
   renderChapterHeader,
@@ -328,13 +329,13 @@ export function planReportQa(document: ReportQaDocument): {
     const opener = parsed.headings.find((h) => h.blockIndex === from);
     const start = opener && opener.text === c.title ? from + 1 : from;
     const blocks = parsed.blocks.slice(start, to).map((b) => b.html);
-    // The document's last words never turn a page alone (`reportQaCss`): a
+    // The document's last words never turn a page alone (`KEEP_TOGETHER_CLASS`): a
     // short closing block — the disclaimer an answer so often ends on — is
     // bound to the block before it. Only when it IS short: binding two long
     // blocks would move a half-page table to leave a hole instead.
     const last = blocks[blocks.length - 1] ?? '';
     const body = idx === plan.chapters.length - 1 && blocks.length >= 2 && visibleLength(last) <= SHORT_TAIL_CHARS
-      ? blocks.slice(0, -2).join('') + `<div class="${KEEP_TAIL_CLASS}">${blocks.slice(-2).join('')}</div>`
+      ? blocks.slice(0, -2).join('') + `<div class="${KEEP_TOGETHER_CLASS}">${blocks.slice(-2).join('')}</div>`
       : blocks.join('');
     // The single-answer document prints the question that produced it. The
     // legacy exports it with a title hardcoded at the call site —
@@ -372,42 +373,23 @@ export function withoutLeadingTitle(body: string, title: string): string {
 }
 
 /**
- * Sections that run on rather than each opening a page.
+ * Sections that run on rather than each opening a page (`RUN_ON_CHAPTER_CLASS`).
  *
  * A single answer or a write-up is a memo — the owner's shortlist is nine
- * sections of one to two thousand characters — and the design system's
- * chapter opens every section on a new page with a deep top margin. Drawn that
- * way it was eleven sheets, three of them a heading and a callout, against the
- * ten continuous pages of the in-browser export it replaces. Each section keeps
- * its numbered header, its contents entry and its running head; only the page
- * break goes, and a header is never left at the foot of a page without the
- * words it introduces. A transcript keeps a page per exchange: there the break
- * is where one question ends and the next begins.
+ * sections of one to two thousand characters — and drawn a page a section it
+ * was eleven sheets, three of them a heading and a callout, against the ten
+ * continuous pages of the in-browser export it replaces. A transcript keeps a
+ * page per exchange: there the break is where one question ends and the next
+ * begins.
  */
-export const RUN_ON_CLASS = 'qa-run-on';
-export const KEEP_TAIL_CLASS = 'qa-keep-tail';
+const runsOn = (subject: ReportQaDocument['meta']['subject'], index: number): boolean =>
+  index > 0 && subject !== 'transcript';
 
 /** A closing block this short is a tail, not a section of its own. */
 const SHORT_TAIL_CHARS = 600;
 
 const visibleLength = (html: string): number =>
   html.replace(/<[^>]*>/g, '').replace(/&[a-z#0-9]+;/gi, ' ').replace(/\s+/g, ' ').trim().length;
-
-export function reportQaCss(): string {
-  return `
-  section.chapter.${RUN_ON_CLASS} {
-    page-break-before: auto;
-    break-before: auto;
-    padding-top: 9mm;
-  }
-  .${RUN_ON_CLASS} .chapter-header { break-after: avoid; break-inside: avoid; }
-  /* The document's last words never turn a page alone. Measured on the owner's
-     shortlist: its closing disclaimer (a two-line note) was the only thing on
-     the last content page in 29 of 50 designs. break-before: avoid on the
-     note changed nothing in WeasyPrint 69.0; a wrapper that may not break
-     inside is honoured. */
-  .${KEEP_TAIL_CLASS} { break-inside: avoid; }`;
-}
 
 export function renderReportQaBody(input: RenderReportQaInput): ReportQaRenderPlan {
   const doc = input.document;
@@ -491,9 +473,9 @@ export function renderReportQaBody(input: RenderReportQaInput): ReportQaRenderPl
     const opening = index === 0
       ? renderLede(narrative) + grounded + cut
       : '';
-    const opener = openChapter(DOCUMENT_NAME, number, chapter.title);
-    const runsOn = index > 0 && doc.meta.subject !== 'transcript';
-    return (runsOn ? opener.replace('class="chapter ', `class="chapter ${RUN_ON_CLASS} `) : opener)
+    return openChapter(DOCUMENT_NAME, number, chapter.title, 'body', {
+      runOn: runsOn(doc.meta.subject, index),
+    })
       + renderChapterHeader({
         number,
         title: chapter.title,
@@ -534,7 +516,7 @@ export function renderReportQaDocument(input: RenderReportQaInput): ReportQaRend
         palette: input.palette,
         options: input.options ?? null,
         masthead: input.masthead,
-      }) + reportQaCss(),
+      }),
       bodyHtml: plan.bodyHtml,
     }),
   };

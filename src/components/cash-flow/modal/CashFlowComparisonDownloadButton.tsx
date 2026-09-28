@@ -46,7 +46,9 @@ export interface CashFlowComparisonDownloadButtonProps {
 
 export function CashFlowComparisonDownloadButton({
   build,
-  label = 'Typeset comparison',
+  // What a person is doing, in the words every export in the product uses; the
+  // template it comes out in is chosen beside it (`ChooseTemplateButton`).
+  label = 'Export PDF',
   unavailableReason,
   variant = 'outline',
   size = 'sm',
