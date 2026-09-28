@@ -67,6 +67,22 @@ jobs:
       - name: This deployment ships its own backend identity
         run: npx vitest run src/lib/__tests__/shippedBackendIdentity.spec.ts
 
+      # This deployment's CRM is its own. `src/lib/crm/crmProvider.ts` routes
+      # messaging and the calendar to `crm-send-message` and `crm-calendar`, and
+      # takes the GoHighLevel sync controls off a deployment with no
+      # GoHighLevel to sync from. A cascade has copied the prime's four
+      # GoHighLevel-bound files back over that switch twice (`7ca563c` and
+      # `2fc9c46`, both 20 Sep 2026), and the second revert stood for eight
+      # days, because the specs that assert the switch sit in `src/lib/crm` and
+      # `src/pages/__tests__`, which no step in this workflow reached.
+      #
+      # Asked here, a cascade that reverts it turns its own pull request red,
+      # and Mission Control does not auto-merge a red one. This file is held on
+      # this clone -- a module-scoped clone keeps its own judging workflow --
+      # so the step is not itself cascaded away.
+      - name: This deployment's CRM routes to its own functions
+        run: npx vitest run src/lib/crm src/pages/__tests__/crmConversations.spec.ts
+
       # The edge-function secret allowlist and status map are generated from
       # src/lib/integrations/registry.ts. Both live under supabase/functions/, which
       # none of the test paths below reach, so without this step the generated module

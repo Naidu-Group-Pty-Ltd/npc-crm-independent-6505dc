@@ -2,6 +2,11 @@ import { useState, useEffect, useRef, useMemo } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { invokeSecureFunction } from '@/lib/secureInvoke';
+import {
+  crmFunction,
+  ghlAffordancesAvailable,
+  vendorReconciliationFunction,
+} from '@/lib/crm/crmProvider';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -208,8 +213,14 @@ export function ClientConversationsTab({ clientId, clientName, clientEmail, ghlC
   // Trigger sync
   const syncMutation = useMutation({
     mutationFn: async () => {
+      // Null on a CRM-independent deployment: the thread already lives in this
+      // deployment's own Postgres, so there is no upstream to pull it from and
+      // nothing to do. Both controls that reach here are absent on such a
+      // deployment; this is what makes that true of the mutation too.
+      const pullThread = vendorReconciliationFunction('conversationSync');
+      if (!pullThread) return { conversations_synced: 0, messages_synced: 0 };
       if (!ghlContactId) throw new Error('No GHL contact linked');
-      const { data, error } = await invokeSecureFunction('sync-ghl-conversations', {
+      const { data, error } = await invokeSecureFunction(pullThread, {
         mode: 'contact',
         ghlContactId,
         clientId,
@@ -247,7 +258,7 @@ export function ClientConversationsTab({ clientId, clientName, clientEmail, ghlC
       }
       
       // SMS/WhatsApp: route through GHL
-      const { data, error } = await invokeSecureFunction('send-ghl-message', {
+      const { data, error } = await invokeSecureFunction(crmFunction('sendMessage'), {
         conversationId,
         message,
         type,
@@ -393,6 +404,8 @@ export function ClientConversationsTab({ clientId, clientName, clientEmail, ghlC
               <Badge variant="secondary" className="text-xs">{conversations.length}</Badge>
             )}
           </h3>
+          {/* Absent, not disabled, where there is no GoHighLevel to sync from. */}
+          {ghlAffordancesAvailable() && (
           <Button
             variant="outline"
             size="sm"
@@ -407,6 +420,7 @@ export function ClientConversationsTab({ clientId, clientName, clientEmail, ghlC
             )}
             Sync
           </Button>
+          )}
         </div>
 
         {/* Search */}
@@ -516,6 +530,7 @@ export function ClientConversationsTab({ clientId, clientName, clientEmail, ghlC
           <p className="text-sm font-medium truncate">{clientName}</p>
           <p className="text-[10px] text-muted-foreground capitalize">{normalizedSelectedChannel.replace('_', ' ')}</p>
         </div>
+        {ghlAffordancesAvailable() && (
         <Button
           variant="ghost"
           size="sm"
@@ -528,6 +543,7 @@ export function ClientConversationsTab({ clientId, clientName, clientEmail, ghlC
         >
           <RefreshCw className={cn('h-3.5 w-3.5', syncMutation.isPending && 'animate-spin')} />
         </Button>
+        )}
       </div>
 
       {/* Messages area */}
