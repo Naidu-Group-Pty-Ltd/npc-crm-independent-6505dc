@@ -36,6 +36,7 @@ import {
   verifyAuth, createCorsHeaders, createUnauthorizedResponse, createForbiddenResponse,
 } from '../_shared/auth.ts';
 import { requireModulePermission } from '../_shared/authz.ts';
+import { canAccessClient, clientScopeOf } from '../_shared/clientAccess.ts';
 import { builderNetworkEnabled } from '../_shared/builderNetwork.ts';
 import { enforceCsrf, csrfDenied } from '../_shared/csrfGuard.ts';
 import { internalError } from '../_shared/errorResponse.ts';
@@ -62,6 +63,15 @@ import {
 import {
   isMissingRankingRelation, type MirrorSource,
 } from '../_shared/builderStock/mirrorAvailability.pure.ts';
+
+/**
+ * The Clients module, by the key it is REGISTERED under (migration
+ * `20260128022619`, route `/clients`) — the key `_shared/permissions.ts` maps
+ * the `clients` table to. This door used to ask for `clients`, which no
+ * deployment registers, and `requireModulePermission` denies an unregistered
+ * module to everyone but a superadmin: no grant could open activation.
+ */
+const CLIENTS_MODULE = 'client_management';
 
 const FEATURE_FLAG_KEY = 'builder_stock_marketplace';
 const IMAGE_URL_TTL_SECONDS = 300;
@@ -382,8 +392,11 @@ Deno.serve(async (req) => {
       const item = await loadReadableItem(cleanText(body.stock_item_id, 64));
       if (!item) return json({ error: 'Property not found' }, 404);
       const [record] = await decorate(supabase, [item]);
-      const clientsView = await requireModulePermission(supabase, actor, 'clients', 'can_view');
-      const detail = await readPropertyDetail(supabase, item, { includeClients: clientsView.ok });
+      const clientsView = await requireModulePermission(supabase, actor, CLIENTS_MODULE, 'can_view');
+      // A client is named only where this reader may act for them — their own
+      // and assigned clients, a superadmin's every client (`clientScopeOf`).
+      const clientScope = clientsView.ok ? await clientScopeOf(supabase, actor) : null;
+      const detail = await readPropertyDetail(supabase, item, { includeClients: clientsView.ok, clientScope });
       return json({ success: true, record, ...detail });
     }
 
@@ -505,25 +518,45 @@ Deno.serve(async (req) => {
       // The picker for "select for a client". Gated on the CLIENTS module, not
       // on listings — a user who may see the marketplace is not thereby
       // entitled to a directory of clients. Two columns and no more.
-      const clientsView = await requireModulePermission(supabase, actor, 'clients', 'can_view');
+      const clientsView = await requireModulePermission(supabase, actor, CLIENTS_MODULE, 'can_view');
       if (!clientsView.ok) {
         return createForbiddenResponse(clientsView.error || 'Client access required', corsHeaders);
       }
+      // Only the clients this caller may act for, as `get-client-data` holds
+      // the same module: their own and assigned, or every client for a
+      // superadmin. One query per side of that rule, so no filter is composed
+      // from the caller's id.
+      const clientScope = await clientScopeOf(supabase, actor);
       const search = cleanText(body.search, 80);
-      let query = supabase
-        .from('clients')
-        .select('id, primary_first_name, primary_surname, primary_email')
-        .order('primary_surname', { ascending: true })
-        .limit(25);
-      if (search) {
-        const escaped = search.replace(/[%,()]/g, ' ');
-        query = query.or(
-          ['primary_first_name', 'primary_surname', 'primary_email']
-            .map((column) => `${column}.ilike.%${escaped}%`).join(','),
-        );
+      const searchQuery = (scope?: { column: string; userId: string }) => {
+        let query = supabase
+          .from('clients')
+          .select('id, primary_first_name, primary_surname, primary_email')
+          .order('primary_surname', { ascending: true })
+          .limit(25);
+        if (scope) query = query.eq(scope.column, scope.userId);
+        if (search) {
+          const escaped = search.replace(/[%,()]/g, ' ');
+          query = query.or(
+            ['primary_first_name', 'primary_surname', 'primary_email']
+              .map((column) => `${column}.ilike.%${escaped}%`).join(','),
+          );
+        }
+        return query;
+      };
+      if (!clientScope) {
+        const { data } = await searchQuery();
+        return json({ success: true, records: data ?? [] });
       }
-      const { data } = await query;
-      return json({ success: true, records: data ?? [] });
+      if (!actor.userId) return json({ success: true, records: [] });
+      const reads = await Promise.all(['created_by', 'assigned_team_user_id']
+        .map((column) => searchQuery({ column, userId: actor.userId as string })));
+      const byId = new Map<string, any>();
+      for (const read of reads) for (const row of read.data ?? []) byId.set(row.id, row);
+      const records = [...byId.values()]
+        .sort((a, b) => String(a.primary_surname ?? '').localeCompare(String(b.primary_surname ?? '')))
+        .slice(0, 25);
+      return json({ success: true, records });
     }
 
     if (operation === 'list_selections') {
@@ -532,7 +565,7 @@ Deno.serve(async (req) => {
       // Command Centre's `internal_notes`. `listings.can_view` alone was
       // enough to reach all three, which let a user with Marketplace access
       // but no Clients access read both.
-      const clientsView = await requireModulePermission(supabase, actor, 'clients', 'can_view');
+      const clientsView = await requireModulePermission(supabase, actor, CLIENTS_MODULE, 'can_view');
       if (!clientsView.ok) {
         return createForbiddenResponse(clientsView.error || 'Client access required', corsHeaders);
       }
@@ -541,17 +574,41 @@ Deno.serve(async (req) => {
       const clientId = cleanText(body.client_id, 64);
       const stockItemId = cleanText(body.stock_item_id, 64);
 
-      let query = supabase
-        .from('builder_stock_selections')
-        .select(COMMAND_SELECTION_SELECT, { count: 'exact' });
-      if (clientId) query = query.eq('client_id', clientId);
-      if (stockItemId) query = query.eq('stock_item_id', stockItemId);
-
-      const { data, count } = await query
-        .order('selected_at', { ascending: false })
-        .range(from, to);
-
-      const selections = data ?? [];
+      // Only activations for clients this caller may act for (`clientScopeOf`).
+      // A superadmin's list is paged by the database as before; a scoped list
+      // is read per client — a staff member's own clients are few — and paged
+      // here, so no request carries an unbounded list of ids.
+      const clientScope = await clientScopeOf(supabase, actor);
+      let selections: any[] = [];
+      let count = 0;
+      if (!clientScope) {
+        let query = supabase
+          .from('builder_stock_selections')
+          .select(COMMAND_SELECTION_SELECT, { count: 'exact' });
+        if (clientId) query = query.eq('client_id', clientId);
+        if (stockItemId) query = query.eq('stock_item_id', stockItemId);
+        const read = await query
+          .order('selected_at', { ascending: false })
+          .range(from, to);
+        selections = read.data ?? [];
+        count = read.count ?? 0;
+      } else {
+        const inScope = [...clientScope].filter((id) => !clientId || id === clientId);
+        const chunks: string[][] = [];
+        for (let at = 0; at < inScope.length; at += 100) chunks.push(inScope.slice(at, at + 100));
+        const reads = await Promise.all(chunks.map((chunk) => {
+          let query = supabase
+            .from('builder_stock_selections')
+            .select(COMMAND_SELECTION_SELECT)
+            .in('client_id', chunk);
+          if (stockItemId) query = query.eq('stock_item_id', stockItemId);
+          return query;
+        }));
+        const all = reads.flatMap((read: any) => read.data ?? [])
+          .sort((a: any, b: any) => String(b.selected_at).localeCompare(String(a.selected_at)));
+        count = all.length;
+        selections = all.slice(from, to + 1);
+      }
       const itemIds = Array.from(new Set(selections.map((row: any) => row.stock_item_id)));
       const clientIds = Array.from(new Set(selections.map((row: any) => row.client_id)));
       const organisationIds = Array.from(new Set(selections.map((row: any) => row.organisation_id)));
@@ -826,7 +883,7 @@ Deno.serve(async (req) => {
     // =====================================================================
 
     if (operation === 'select_for_client') {
-      const clientsEdit = await requireModulePermission(supabase, actor, 'clients', 'can_edit');
+      const clientsEdit = await requireModulePermission(supabase, actor, CLIENTS_MODULE, 'can_edit');
       if (!clientsEdit.ok) {
         return createForbiddenResponse(
           clientsEdit.error || 'Client edit access required', corsHeaders);
@@ -849,6 +906,12 @@ Deno.serve(async (req) => {
         .eq('id', clientId)
         .maybeSingle();
       if (!client) return json({ error: 'Client not found' }, 404);
+      // And it must be a client this caller may act for — their own or
+      // assigned, or any for a superadmin. Not found rather than refused, so
+      // the door is not an oracle for which client ids exist.
+      if (!await canAccessClient(supabase, actor, client.id)) {
+        return json({ error: 'Client not found' }, 404);
+      }
 
       // A live selection already exists for this pair.
       const { data: existing } = await supabase
@@ -901,7 +964,7 @@ Deno.serve(async (req) => {
     }
 
     if (operation === 'set_selection_status') {
-      const clientsEdit = await requireModulePermission(supabase, actor, 'clients', 'can_edit');
+      const clientsEdit = await requireModulePermission(supabase, actor, CLIENTS_MODULE, 'can_edit');
       if (!clientsEdit.ok) {
         return createForbiddenResponse(
           clientsEdit.error || 'Client edit access required', corsHeaders);
@@ -915,10 +978,14 @@ Deno.serve(async (req) => {
       const selectionId = cleanText(body.selection_id, 64);
       const { data: selection } = await supabase
         .from('builder_stock_selections')
-        .select('id, status')
+        .select('id, status, client_id')
         .eq('id', selectionId)
         .maybeSingle();
       if (!selection) return json({ error: 'Selection not found' }, 404);
+      // Another agent's client's activation is not this caller's to change.
+      if (!await canAccessClient(supabase, actor, selection.client_id)) {
+        return json({ error: 'Selection not found' }, 404);
+      }
 
       const { data, error } = await supabase
         .from('builder_stock_selections')

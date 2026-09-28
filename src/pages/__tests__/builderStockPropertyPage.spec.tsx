@@ -140,6 +140,19 @@ describe('what the page states', () => {
     expect(screen.getByText(/four-bedroom home on a corner lot/)).toBeTruthy();
   });
 
+  it('says when the property was LAST synced — the latest revision applied, not when it first arrived', async () => {
+    // Measured 28 September 2026 on the live mirror: `last_seen_at` is set when
+    // a property first arrives and never again, while every applied revision
+    // stamps `updated_at` — a price changed today read "Last synced" last week.
+    const stamp = (iso: string) => new Intl.DateTimeFormat('en-AU', { dateStyle: 'medium', timeStyle: 'short' })
+      .format(new Date(iso));
+    detail = { ...baseDetail(), record: { ...record, last_seen_at: '2026-09-01T02:00:00Z',
+      updated_at: '2026-09-25T05:30:00Z' } as typeof record };
+    await renderAt('/listings/builder-stock/stock-1');
+    expect(screen.getByText(`Last synced ${stamp('2026-09-25T05:30:00Z')}.`)).toBeTruthy();
+    expect(screen.queryByText(`Last synced ${stamp('2026-09-01T02:00:00Z')}.`)).toBeNull();
+  });
+
   it('the documents, as typed links that open the builder\'s own file', async () => {
     await renderAt('/listings/builder-stock/stock-1');
     const list = screen.getByRole('list', { name: /documents/i });

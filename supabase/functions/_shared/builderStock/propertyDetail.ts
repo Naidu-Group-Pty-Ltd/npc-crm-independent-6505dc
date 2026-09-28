@@ -17,7 +17,15 @@ const ACTIVATION_SELECT = 'id, status, selected_at, acknowledged_at, withdrawn_a
 export async function readPropertyDetail(
   supabase: any,
   item: { id: string; organisation_id: string },
-  options: { includeClients: boolean },
+  options: {
+    includeClients: boolean;
+    /**
+     * The clients this reader may act for (`clientScopeOf`); `null` or absent
+     * for every client. An activation for anybody else's client is listed
+     * without its client's name.
+     */
+    clientScope?: ReadonlySet<string> | null;
+  },
 ): Promise<PropertyDetail> {
   const quietly = async <T>(label: string, run: () => PromiseLike<{ data: T | null; error: any }>) => {
     try {
@@ -63,7 +71,8 @@ export async function readPropertyDetail(
   const userIds = Array.from(new Set((selections ?? [])
     .map((row: any) => row.selected_by_user_id).filter(Boolean)));
   const clientIds = Array.from(new Set((selections ?? [])
-    .map((row: any) => row.client_id).filter(Boolean)));
+    .map((row: any) => row.client_id).filter(Boolean)))
+    .filter((id) => !options.clientScope || options.clientScope.has(id));
 
   const [users, clients] = await Promise.all([
     userIds.length
