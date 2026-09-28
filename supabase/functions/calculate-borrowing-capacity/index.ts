@@ -848,7 +848,12 @@ function calculateIncomeBreakdown(incomeRecords: any[], properties: any[], incom
       const shadedAmount = annualPositiveCashflow * rule.rate;
       shadedTotal += shadedAmount;
       breakdown.push({
-        component: `Positive Cash Flow (${property.address?.substring(0, 30) || 'Property'}...)`,
+        // The whole address. It was cut to thirty characters with "..." after
+        // it, which printed "37 Fairview Street Gunnedah, 2..." in a client's
+        // income table; the report reads older rows back through
+        // `incomeLabel`. The prefix is what `startsWith('Positive Cash Flow')`
+        // below keys on, and it is unchanged.
+        component: `Positive Cash Flow (${property.address || 'Property'})`,
         grossAmount: annualPositiveCashflow,
         shadingRate: rule.rate,
         shadedAmount,

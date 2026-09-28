@@ -1,5 +1,5 @@
 import { assert, assertEquals } from 'https://deno.land/std@0.224.0/assert/mod.ts';
-import { consumeRateLimit, enforceBase64Limit, enforceJsonBodyLimit, enforceRawBodyLimit, getTrustedClientIp, securityJsonError, verifyRequiredCronSecret, verifyRequiredWebhookSecret, verifySignedInternal } from '../requestSecurity.ts';
+import { consumeRateLimit, enforceBase64Limit, enforceJsonBodyLimit, enforceRawBodyLimit, getTrustedClientIp, securityJsonError, verifyHuman, verifyRequiredCronSecret, verifyRequiredWebhookSecret, verifySignedInternal } from '../requestSecurity.ts';
 import { signInternalRequest } from '../auth_v2.ts';
 import { getClientIp } from '../publicAbuseControls.ts';
 

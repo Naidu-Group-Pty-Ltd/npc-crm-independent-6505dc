@@ -24,22 +24,39 @@ describe('finance portal client communications authorization', () => {
     }
   });
 
+  it('refuses a client without a messages permission on the caller\'s own assignment', () => {
+    const helper = functionSource('authorizeClientMessages', 'validatePurchaseFileScope');
+    expect(helper).toContain(".from('finance_portal_client_assignments')");
+    expect(helper).toContain(".eq('finance_user_id', partner.id)");
+    expect(helper).toContain(".eq('client_id', clientId)");
+    expect(helper).toContain("if (!assignment) return json({ error: 'client_access_denied' }, 403)");
+    expect(helper).toContain("hasFinancePortalPermission(partner.global_permissions, assignment.permissions, 'messages', action, true)");
+  });
+
+  // The operations used to call `canAccessFinanceClient` directly; they call
+  // `authorizeClientMessages` now, which also demands the messages permission
+  // for the act. The anchor followed the stricter check.
   it.each([
-    ['listInbox', 'sendMessage'],
-    ['sendMessage', 'translate'],
-  ])('checks the caller assignment before %s accesses client data', (name, nextName) => {
+    ['listInbox', 'sendMessage', "authorizeClientMessages(supabase, partner, clientId, 'view', json)", ".from('client_portal_messages')"],
+    ['sendMessage', 'translate', "authorizeClientMessages(supabase, partner, client_id, 'edit', json)", ".from('clients')"],
+  ])('checks the caller assignment before %s accesses client data', (name, nextName, check, firstRead) => {
     const operation = functionSource(name, nextName);
-    expect(operation).toContain('canAccessFinanceClient(supabase, partner.id');
-    expect(operation.indexOf('canAccessFinanceClient')).toBeLessThan(operation.indexOf(".from('clients')") === -1
-      ? operation.indexOf(".from('client_portal_messages')")
-      : operation.indexOf(".from('clients')"));
+    const authorised = operation.indexOf(check);
+    const refused = operation.indexOf('if (denied) return denied;');
+    const read = operation.indexOf(firstRead);
+    expect(authorised).toBeGreaterThan(-1);
+    expect(refused).toBeGreaterThan(authorised);
+    expect(read).toBeGreaterThan(refused);
   });
 
   it('resolves and authorizes a message client before marking it read', () => {
     const operation = functionSource('markRead', 'crossClientInbox');
     expect(operation).toContain(".select('client_id')");
-    expect(operation).toContain('canAccessFinanceClient(supabase, partner.id, message.client_id)');
-    expect(operation.indexOf('canAccessFinanceClient')).toBeLessThan(operation.indexOf('.update('));
+    const authorised = operation.indexOf("authorizeClientMessages(supabase, partner, message.client_id, 'edit', json)");
+    const refused = operation.indexOf('if (denied) return denied;');
+    expect(authorised).toBeGreaterThan(-1);
+    expect(refused).toBeGreaterThan(authorised);
+    expect(operation.indexOf('.update(')).toBeGreaterThan(refused);
     expect(operation).toContain(".eq('client_id', message.client_id)");
   });
 });

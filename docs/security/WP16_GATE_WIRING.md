@@ -64,6 +64,23 @@ scopes the query with `.in('client_id', visibleClientIds)` **in addition to**
 the matter-level filter. Two independent checks, which is the repo's standing
 rule that one access source is never the sole gate (`AGENTS.md` §3).
 
+> **Correction, 28 Sep 2026.** The finding was right and the fix was not.
+>
+> - The per-client AND answered for the wrong model. The per-matter grants are
+>   every practice's default mode, and they need no client assignment. So
+>   the board, the KPIs and the at-risk list were empty for every solicitor on
+>   them.
+> - The description of the list above is also wrong. The legacy path is chosen
+>   by each practice's own rollout mode, not only by the environment flag. The
+>   list read the flag alone, so it could disagree with the check that opens a
+>   single matter.
+> - The rule cited is about row-level security being additive. It is not about
+>   ANDing two application checks that answer for different models.
+>
+> The permission check now lives in the list itself, on both paths, and a test
+> proves the list agrees with the single-matter check. See
+> [`SOLICITOR_MATTER_ACCESS_LIST.md`](./SOLICITOR_MATTER_ACCESS_LIST.md).
+
 ### 3. Borrowing-capacity authorization — gate drift, not a defect
 
 `check-client-portfolio-authz.mjs` asserts the exact call

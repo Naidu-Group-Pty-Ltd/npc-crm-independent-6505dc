@@ -31,11 +31,6 @@ supabase/functions/finance-portal-batch6/index.ts::canAccessPurchaseFileResource
 supabase/functions/finance-portal-batch9-10/index.ts::hasFinancePortalPermission
 supabase/functions/finance-portal-briefing-runner/index.ts::CRON_SECRET
 supabase/functions/finance-portal-briefing-runner/index.ts::verifyRequiredCronSecret
-supabase/functions/solicitor-portal-comms/index.ts::assignedClientIds
-supabase/functions/solicitor-portal-comms/index.ts::resolveClientPermissions
-supabase/functions/solicitor-portal-compliance/index.ts::assignedClientIds
-supabase/functions/solicitor-portal-matters/index.ts::assignedClientIds
-supabase/functions/solicitor-portal-matters/index.ts::resolveClientPermissions
 supabase/functions/template-analytics/index.ts::actorId
 supabase/functions/template-analytics/index.ts::actorName
 

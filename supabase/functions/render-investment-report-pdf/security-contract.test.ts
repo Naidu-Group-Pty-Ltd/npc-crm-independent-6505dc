@@ -17,21 +17,44 @@ describe('render-investment-report-pdf resource limits', () => {
 });
 
 describe('render-investment-report-pdf authorization contract', () => {
+  /**
+   * Who may render a report is who may READ it, and the report library decides
+   * that: `get-investment-reports` admits any caller holding `reports.can_view`
+   * to every report, so this renderer asks exactly that and nothing looser.
+   *
+   * This contract used to pin an owner check (the report's author, or the
+   * owner of its client), added by #1557 on 27 Jul 2026. #1558 fixed a second
+   * finding in the same file sixteen minutes later with the module check, and
+   * its merge kept only its own copy, so the owner check has not run since. It
+   * is not restored here on its own: the library would still hand the same
+   * caller the full report, and the PDF alone would refuse it. Whether reports
+   * are owner-scoped is one decision for both paths, recorded as open in
+   * prime PR #2790.
+   */
   it('authorizes object access before loading report content', () => {
-    const authResult = functionSource.indexOf('const { error: authError, userId, authMethod }');
-    const accessLookup = functionSource.indexOf('.select("generated_by, client_property_id")', authResult);
-    const ownershipCheck = functionSource.indexOf('reportAccess?.generated_by === userId', accessLookup);
-    const clientOwnershipCheck = functionSource.indexOf('.eq("created_by", userId)', ownershipCheck);
-    const denial = functionSource.indexOf('if (!canAccessReport)', clientOwnershipCheck);
+    const authResult = functionSource.indexOf('const auth = await verifyAuth(supabase, req.headers, body);');
+    const unauthenticated = functionSource.indexOf('if (auth.error || !auth.userId) return createUnauthorizedResponse(', authResult);
+    const permission = functionSource.indexOf('const permission = await requireModulePermission(', unauthenticated);
+    const denial = functionSource.indexOf('if (!permission.ok) {', permission);
     const contentLookup = functionSource.indexOf('"id, property_address, report_content', denial);
 
-    expect(functionSource).toContain('authMethod !== "service_role"');
     expect(authResult).toBeGreaterThan(-1);
-    expect(accessLookup).toBeGreaterThan(authResult);
-    expect(ownershipCheck).toBeGreaterThan(accessLookup);
-    expect(clientOwnershipCheck).toBeGreaterThan(ownershipCheck);
-    expect(denial).toBeGreaterThan(clientOwnershipCheck);
+    expect(unauthenticated).toBeGreaterThan(authResult);
+    expect(permission).toBeGreaterThan(unauthenticated);
+    expect(functionSource.slice(permission, denial)).toMatch(/"reports",\s*"can_view",/);
+    expect(denial).toBeGreaterThan(permission);
+    expect(functionSource.slice(denial, denial + 200)).toContain('return createForbiddenResponse(');
     expect(contentLookup).toBeGreaterThan(denial);
+    // Nothing reads a report row before the caller has been admitted.
+    expect(functionSource.indexOf('.from("investment_reports")', authResult)).toBeGreaterThan(denial);
+  });
+
+  it('admits no one the report library would refuse', () => {
+    const librarySource = readFileSync(new URL('../get-investment-reports/index.ts', import.meta.url), 'utf8');
+    expect(librarySource).toContain(
+      "requireModulePermission(supabase, { userId: auth.userId, authMethod: auth.authMethod }, table === 'generated_reports' ? 'generated_reports' : 'reports', 'can_view')",
+    );
+    expect(functionSource).toMatch(/requireModulePermission\(\s*supabase,\s*\{ userId: auth\.userId, authMethod: auth\.authMethod \},\s*"reports",\s*"can_view",\s*\)/);
   });
 
   it('escapes watermark text before embedding it in the SVG data URI', () => {

@@ -2,9 +2,9 @@
  * Solicitor Portal — Compliance, Audit & Hardening (Phase 8)
  *
  * Portal-facing compliance control plane. Every operation resolves the caller's
- * session, confirms the matter belongs to their firm AND an assigned client,
- * then gates on the merged permission matrix (`audit` for the trail/export,
- * `matters` for conflict checks and closure).
+ * session, confirms the matter belongs to their firm and that they hold access
+ * to it, then gates on that matter's permission matrix (`audit` for the
+ * trail/export, `matters` for conflict checks and closure).
  *
  * Tri-portal separation: nothing here is reachable from the Client Portal or
  * Finance Portal. Audit rows and conflict-check results never leak restricted
@@ -20,12 +20,14 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2.55.0";
 import { createCorsHeaders } from "../_shared/auth.ts";
 import { enforceCsrf, csrfDenied } from "../_shared/csrfGuard.ts";
 import { internalError } from '../_shared/errorResponse.ts';
+import { conflictHit, conflictOutcome, conflictSearchTerms } from '../_shared/conflictSearch.pure.ts';
 import {
   resolveSolicitorSession,
   solicitorGovernanceError,
   resolveSolicitorMatterAccess,
   resolveMatterPermissions,
   listAccessibleMatterIds,
+  readAccessibleMatterIds,
   logSolicitorActivity,
   requestIp,
   can,
@@ -56,8 +58,11 @@ const text = (v: unknown, max = 500): string | null => {
   return t ? t.slice(0, max) : null;
 };
 
-const conflictTerm = (v: unknown): string =>
-  String(v).replace(/[%_(),]/g, '').trim();
+/** Matches kept on the record. `match_count` is always the full number found. */
+const CONFLICT_STORED_MATCHES = 200;
+/** UUIDs per `.in()` filter, and PostgREST's ceiling on rows per request. */
+const CONFLICT_ID_CHUNK = 100;
+const CONFLICT_PAGE = 1000;
 
 Deno.serve(async (req) => {
   const origin = req.headers.get('origin');
@@ -219,70 +224,103 @@ Deno.serve(async (req) => {
         return json({ error: 'You do not have permission to run conflict checks' }, 403);
       }
 
-      // Terms: explicit list plus every party recorded on this matter.
-      const explicit = Array.isArray(body.terms)
-        ? body.terms.map(conflictTerm).filter((t: string) => t.length >= 3).slice(0, 25)
-        : [];
-      const { data: parties } = await supabase
+      /*
+       * The search, and what it may and may not conclude.
+       *
+       * Until 28 Sep 2026 this operation threw on every call that had
+       * something to search for: it scoped the search by `assignedClientIds`,
+       * which a merge had deleted. A matter with no parties searched nothing
+       * and recorded "clear", which is the only call that ever succeeded. And
+       * the query behind it could not be trusted even when it ran: a filter
+       * composed as a string, a read error discarded, and a term normalised on
+       * one side of the comparison only. Each of the three reported absence
+       * rather than failure. Now:
+       *
+       * - Nothing to search for is refused, and nothing is recorded. A matter
+       *   with no parties has not been checked against anything.
+       * - The scope is every other matter this solicitor may see, and whose
+       *   parties they may see, through the same resolver that opens a single
+       *   matter. A read that fails fails the check. It does not narrow it.
+       * - No other matter in scope records `pending`, never `clear`. A search
+       *   over nothing is not a clearance, and a person has to decide.
+       * - Parties are read in pages and matched here by `conflictHit`, both
+       *   sides normalised by `conflictKey`, so no term is ever spliced into a
+       *   filter. `_shared/conflictSearch.pure.ts` holds those rules, and its
+       *   spec runs them.
+       *
+       * The scope is deliberately NOT the whole practice. Party data on a
+       * matter this solicitor cannot open is not theirs to read, and returning
+       * it as a match would disclose it. Whether a practice-wide check should
+       * report hits it cannot show is a decision for the owner. The screen says
+       * which matters were searched rather than claiming the practice.
+       */
+      const { data: parties, error: partiesError } = await supabase
         .from('legal_matter_parties')
-        .select('name, organisation, role')
+        .select('name, organisation')
         .eq('legal_matter_id', loaded.matter.id);
-      const partyTerms = (parties || [])
-        .flatMap((p: any) => [p.name, p.organisation])
-        .filter(Boolean)
-        .map(conflictTerm);
+      if (partiesError) throw partiesError;
+      const searched = conflictSearchTerms(body.terms, parties || []);
+      if (searched.length === 0) {
+        return json({
+          error: 'Record the parties on this matter before running a conflict check. There is nothing to search for yet.',
+          code: 'NO_TERMS',
+        }, 422);
+      }
+      const terms = searched.map(([, term]) => term);
 
-      const terms = Array.from(new Set([...explicit, ...partyTerms]))
-        .filter((t) => t.length >= 3)
-        .slice(0, 40);
+      const scope = await readAccessibleMatterIds(supabase, me.id, me.firm_id, ['matters', 'parties']);
+      if (!scope.ok) throw new Error(`The matters to search could not be read: ${scope.error}`);
+      const otherMatterIds = scope.ids.filter((id) => id !== loaded.matter.id);
 
-      const matches: any[] = [];
-      if (terms.length) {
-        // Search parties only on OTHER matters belonging to clients assigned to
-        // this solicitor. The service-role client bypasses RLS, so both firm and
-        // client scopes must be applied explicitly before party data is loaded.
-        const { data: firmMatters } = await supabase
+      const matterMap = new Map<string, any>();
+      for (let i = 0; i < otherMatterIds.length; i += CONFLICT_ID_CHUNK) {
+        const { data: rows, error: mattersError } = await supabase
           .from('legal_matters')
           .select('id, matter_reference, title, status, client_id')
-          .eq('firm_id', me.firm_id)
-          .in('client_id', assignedClientIds)
-          .neq('id', loaded.matter.id)
-          .limit(1000);
-        const matterMap = new Map((firmMatters || []).map((m: any) => [m.id, m]));
-        const matterIds = Array.from(matterMap.keys());
+          .in('id', otherMatterIds.slice(i, i + CONFLICT_ID_CHUNK))
+          .eq('firm_id', me.firm_id);
+        if (mattersError) throw mattersError;
+        for (const m of rows || []) matterMap.set(m.id, m);
+      }
+      const matterIds = Array.from(matterMap.keys());
 
-        if (matterIds.length) {
-          const orFilter = terms
-            .map((t) => `name.ilike.%${t}%,organisation.ilike.%${t}%`)
-            .join(',');
-          const { data: hits } = await supabase
+      const matches: any[] = [];
+      for (let i = 0; i < matterIds.length; i += CONFLICT_ID_CHUNK) {
+        const chunk = matterIds.slice(i, i + CONFLICT_ID_CHUNK);
+        for (let from = 0; ; from += CONFLICT_PAGE) {
+          const { data: rows, error: partiesReadError } = await supabase
             .from('legal_matter_parties')
             .select('id, legal_matter_id, name, organisation, role')
-            .in('legal_matter_id', matterIds)
-            .or(orFilter)
-            .limit(200);
-
-          for (const hit of hits || []) {
-            const m: any = matterMap.get(hit.legal_matter_id);
-            const matchedTerm = terms.find((t) =>
-              [hit.name, hit.organisation].some((v) => v && String(v).toLowerCase().includes(t.toLowerCase())));
+            .in('legal_matter_id', chunk)
+            .order('id', { ascending: true })
+            .range(from, from + CONFLICT_PAGE - 1);
+          if (partiesReadError) throw partiesReadError;
+          for (const party of rows || []) {
+            const hit = conflictHit(searched, party);
+            if (!hit) continue;
+            const m = matterMap.get(party.legal_matter_id);
             matches.push({
-              party_id: hit.id,
-              party_name: hit.name,
-              party_organisation: hit.organisation,
-              party_role: hit.role,
-              matched_term: matchedTerm ?? null,
-              matter_id: hit.legal_matter_id,
+              party_id: party.id,
+              party_name: party.name,
+              party_organisation: party.organisation,
+              party_role: party.role,
+              matched_term: hit[1],
+              matter_id: party.legal_matter_id,
               matter_reference: m?.matter_reference ?? null,
               matter_title: m?.title ?? null,
               matter_status: m?.status ?? null,
               same_client: m?.client_id === loaded.matter.client_id,
             });
           }
+          if ((rows || []).length < CONFLICT_PAGE) break;
         }
       }
+      matches.sort((a, b) => Number(b.same_client) - Number(a.same_client)
+        || String(a.matter_reference ?? '').localeCompare(String(b.matter_reference ?? ''))
+        || String(a.party_name ?? a.party_organisation ?? '').localeCompare(String(b.party_name ?? b.party_organisation ?? '')));
 
-      const outcome = matches.length === 0 ? 'clear' : 'potential_conflict';
+      const mattersSearched = matterIds.length;
+      const outcome = conflictOutcome(mattersSearched, matches.length);
       const { data: inserted, error } = await supabase
         .from('legal_conflict_checks')
         .insert({
@@ -291,7 +329,7 @@ Deno.serve(async (req) => {
           client_id: loaded.matter.client_id,
           searched_terms: terms,
           outcome,
-          matches,
+          matches: matches.slice(0, CONFLICT_STORED_MATCHES),
           match_count: matches.length,
           notes: text(body.notes, 2000),
           created_by_type: 'solicitor_user',
@@ -310,10 +348,10 @@ Deno.serve(async (req) => {
         .eq('id', loaded.matter.id);
 
       await audit(loaded.matter, 'conflict', 'conflict_check_run', {
-        severity: matches.length ? 'warning' : 'info',
+        severity: outcome === 'potential_conflict' ? 'warning' : outcome === 'pending' ? 'notice' : 'info',
         target_type: 'legal_conflict_check',
         target_id: inserted?.id ?? null,
-        metadata: { outcome, match_count: matches.length, term_count: terms.length },
+        metadata: { outcome, match_count: matches.length, term_count: terms.length, matters_searched: mattersSearched },
       });
       await logSolicitorActivity(supabase, {
         solicitor_user_id: me.id,
@@ -323,12 +361,18 @@ Deno.serve(async (req) => {
         legal_matter_id: loaded.matter.id,
         entity_type: 'legal_conflict_check',
         entity_id: inserted?.id ?? null,
-        metadata: { outcome, match_count: matches.length },
+        metadata: { outcome, match_count: matches.length, matters_searched: mattersSearched },
         ip_address: ip,
         user_agent: userAgent,
       });
 
-      return json({ success: true, record: inserted, outcome, match_count: matches.length });
+      return json({
+        success: true,
+        record: inserted,
+        outcome,
+        match_count: matches.length,
+        matters_searched: mattersSearched,
+      });
     }
 
     if (operation === 'conflict_clear') {

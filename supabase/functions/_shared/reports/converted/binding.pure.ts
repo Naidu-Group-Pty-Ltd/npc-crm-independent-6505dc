@@ -84,6 +84,7 @@ export const FORMAT_CHAPTERS: Partial<Record<ReportArchetypeId, readonly string[
     'How this was calculated',
     'Audit trail',
     'Scenario comparison',
+    'On what basis',
   ],
   // `cashFlow/sections.pure.ts › cashFlowSections`
   'cash-flow-projection': [

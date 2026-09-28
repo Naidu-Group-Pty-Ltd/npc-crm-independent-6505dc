@@ -223,6 +223,15 @@ export function mergePermissions(
  * Resolve the effective permission matrix for one solicitor + client pair, and
  * confirm the client is actually assigned to them. Returns `null` when the
  * solicitor has no assignment for that client (treat as 403).
+ *
+ * No function in this repository calls it any more, and it must not be used
+ * to decide what a solicitor may see: a practice on the matter-access cutover
+ * is governed by per-matter grants, which a per-client matrix cannot express,
+ * and calling it there is how the board, the KPIs and the notifications came
+ * to answer for the wrong model. `readAccessibleMatterIds` is that decision.
+ * It stays exported because a clone receives this module and its callers by
+ * cascade, and a clone whose functions arrived a cascade later would fail to
+ * boot on a missing export.
  */
 export async function resolveClientPermissions(
   supabase: any,
@@ -286,14 +295,41 @@ export function resolveTriStatePermissions(
   return result;
 }
 
+/**
+ * Which access model governs one practice's solicitors right now:
+ * `rollback` whenever SOLICITOR_MATTER_ACCESS_V1 is off, otherwise the
+ * practice's own rollout mode, and `cutover` where it has none.
+ *
+ * The per-matter check and the matter list both read it from here. Until
+ * 28 Sep 2026 the list read the environment flag alone, so a practice its
+ * rollout row held on the legacy assignments had its lists built from grants
+ * it was not governed by. A matter could be listed that would not open, or
+ * open while no list named it.
+ *
+ * `error` is the lookup's own failure. The per-matter check reads a failed
+ * lookup as `cutover`, as it always has, which refuses a legacy practice's
+ * matters rather than widening anybody's. The list reports it instead.
+ */
+async function readMatterAccessMode(
+  supabase: any,
+  solicitorFirmId: string,
+): Promise<{ mode: string; error: string | null }> {
+  if (!isMatterAccessV1Enabled()) return { mode: 'rollback', error: null };
+  const { data: modeValue, error } = await supabase.rpc('resolve_cross_portal_feature_mode', { _firm_id: solicitorFirmId, _feature_key: 'solicitor_matter_access_v2' });
+  return { mode: String(modeValue || 'cutover'), error: error ? (error.message ?? String(error)) : null };
+}
+
+export async function matterAccessMode(supabase: any, solicitorFirmId: string): Promise<string> {
+  return (await readMatterAccessMode(supabase, solicitorFirmId)).mode;
+}
+
 export async function resolveSolicitorMatterAccess(
   supabase: any,
   solicitorUserId: string,
   solicitorFirmId: string,
   legalMatterId: string,
 ): Promise<SolicitorMatterAccess | null> {
-  const { data: modeValue } = await supabase.rpc('resolve_cross_portal_feature_mode', { _firm_id: solicitorFirmId, _feature_key: 'solicitor_matter_access_v2' });
-  const mode = isMatterAccessV1Enabled() ? String(modeValue || 'cutover') : 'rollback';
+  const mode = await matterAccessMode(supabase, solicitorFirmId);
   const { data: matter } = await supabase.from('legal_matters').select('id,client_id,firm_id').eq('id',legalMatterId).maybeSingle();
   if (!matter || !matter.firm_id || matter.firm_id !== solicitorFirmId) return null;
   const [{ data: target }, { data: assignment }] = await Promise.all([
@@ -333,37 +369,162 @@ export async function resolveMatterPermissions(
   return resolved;
 }
 
+/** Which matters a solicitor may see, or why that could not be read. */
+export type AccessibleMatterRead =
+  | { ok: true; ids: string[] }
+  | { ok: false; error: string };
+
+/** UUIDs per `.in()` filter, so a request URL stays well inside the gateway's limit. */
+const MATTER_ID_CHUNK = 100;
+/** PostgREST answers at most this many rows to one request, whatever was asked. */
+const MATTER_PAGE = 1000;
+
+function chunked<T>(values: readonly T[], size: number): T[][] {
+  const out: T[][] = [];
+  for (let i = 0; i < values.length; i += size) out.push(values.slice(i, i + size));
+  return out;
+}
+
+/**
+ * Every row a query answers, one page at a time. `page` must order by a
+ * unique column, or two pages can overlap and a third miss a row.
+ *
+ * The grants and the assignments were read in one request each until
+ * 28 Sep 2026, and PostgREST answers at most a thousand rows to one request,
+ * so a solicitor past a thousand lost the rest without a word. Grants reach
+ * that sooner than it sounds: an expired grant is still an unrevoked row, and
+ * the window is judged after the read.
+ */
+async function readAllPages<T>(
+  page: (from: number, to: number) => PromiseLike<{ data: T[] | null; error: any }>,
+): Promise<{ ok: true; rows: T[] } | { ok: false; error: string }> {
+  const rows: T[] = [];
+  for (let from = 0; ; from += MATTER_PAGE) {
+    const { data, error } = await page(from, from + MATTER_PAGE - 1);
+    if (error) return { ok: false, error: error.message ?? String(error) };
+    const batch = data || [];
+    rows.push(...batch);
+    if (batch.length < MATTER_PAGE) return { ok: true, rows };
+  }
+}
+
+/** `legal_matters.id` of every matter in the practice whose `column` is one of `values`. */
+async function mattersInPractice(
+  supabase: any,
+  solicitorFirmId: string,
+  column: 'id' | 'client_id',
+  values: readonly string[],
+): Promise<AccessibleMatterRead> {
+  const ids = new Set<string>();
+  for (const part of chunked(values, MATTER_ID_CHUNK)) {
+    const read = await readAllPages<{ id: string }>((from, to) => supabase.from('legal_matters').select('id')
+      .in(column, part).eq('firm_id', solicitorFirmId)
+      .order('id', { ascending: true }).range(from, to));
+    if (!read.ok) return { ok: false, error: `matters: ${read.error}` };
+    read.rows.forEach((row) => ids.add(row.id));
+  }
+  return { ok: true, ids: [...ids] };
+}
+
+/**
+ * Every matter this solicitor may VIEW under each of `permissionKeys`.
+ *
+ * It decides the way `resolveSolicitorMatterAccess` and
+ * `resolveMatterPermissions` decide for one matter: the same mode, the same
+ * grants or assignments, the same baseline, the same practice. So a matter a
+ * list names is a matter that opens, and the reverse. On the legacy model that
+ * includes the assignment's own denials. The list used to return every matter
+ * of every assigned client whatever the key, so a solicitor whose assignment
+ * denied `messages` still had the client's threads listed.
+ *
+ * A read that fails is reported, never answered as an empty list. "We could
+ * not read your access" and "you have access to nothing" are different
+ * answers, and the conflict search records the second as a clear.
+ */
+export async function readAccessibleMatterIds(
+  supabase: any,
+  solicitorUserId: string,
+  solicitorFirmId: string,
+  permissionKeys: string | readonly string[] = 'matters',
+): Promise<AccessibleMatterRead> {
+  const keys = typeof permissionKeys === 'string' ? [permissionKeys] : [...permissionKeys];
+  if (keys.length === 0) return { ok: false, error: 'no permission key was named' };
+  const allowsEvery = (matrix: PermissionMatrix) => keys.every((key) => can(matrix, key, 'view'));
+  try {
+    const modeRead = await readMatterAccessMode(supabase, solicitorFirmId);
+    if (modeRead.error) return { ok: false, error: `access mode: ${modeRead.error}` };
+    const mode = modeRead.mode;
+    const { data: baselineRow, error: baselineError } = await supabase
+      .from('solicitor_portal_default_permissions').select('permissions')
+      .eq('solicitor_user_id', solicitorUserId).maybeSingle();
+    if (baselineError) return { ok: false, error: `baseline permissions: ${baselineError.message ?? String(baselineError)}` };
+    const baseline = baselineRow?.permissions ?? null;
+
+    if (mode === 'cutover') {
+      const grants = await readAllPages<any>((from, to) => supabase
+        .from('solicitor_matter_access')
+        .select('id, legal_matter_id, permissions, valid_from, valid_until')
+        .eq('solicitor_user_id', solicitorUserId)
+        .eq('firm_id', solicitorFirmId)
+        .is('revoked_at', null)
+        .order('id', { ascending: true }).range(from, to));
+      if (!grants.ok) return { ok: false, error: `matter grants: ${grants.error}` };
+      const now = Date.now();
+      const granted = [...new Set(grants.rows
+        .filter((row: any) => row.valid_from && new Date(row.valid_from).getTime() <= now
+          && (!row.valid_until || new Date(row.valid_until).getTime() > now))
+        .filter((row: any) => allowsEvery(resolveTriStatePermissions(baseline, row.permissions ?? null)))
+        .map((row: any) => row.legal_matter_id as string))];
+      // A grant does not outlive the matter's practice: the per-matter check
+      // refuses a matter outside it, so the list does too.
+      return await mattersInPractice(supabase, solicitorFirmId, 'id', granted);
+    }
+
+    const assignments = await readAllPages<any>((from, to) => supabase
+      .from('solicitor_portal_client_assignments')
+      .select('id, client_id, permissions')
+      .eq('solicitor_user_id', solicitorUserId)
+      .order('id', { ascending: true }).range(from, to));
+    if (!assignments.ok) return { ok: false, error: `client assignments: ${assignments.error}` };
+    const clientIds = [...new Set(assignments.rows
+      .filter((row: any) => row.client_id && allowsEvery(mergePermissions(baseline, row.permissions ?? null)))
+      .map((row: any) => row.client_id as string))];
+    return await mattersInPractice(supabase, solicitorFirmId, 'client_id', clientIds);
+  } catch (e) {
+    return { ok: false, error: e instanceof Error ? e.message : String(e) };
+  }
+}
+
+/**
+ * `readAccessibleMatterIds` for a caller that scopes what it shows with the
+ * answer: the matters page, the documents, the threads, the board. A failed
+ * read THROWS, and the caller's handler answers it as an error.
+ *
+ * It used to answer an empty list, and before 28 Sep 2026 it did not read the
+ * errors at all, so a lost connection drew "no matters", "no documents" and
+ * "no messages" as statements about the solicitor. An empty list is still
+ * the safe side for what a page SHOWS, but it is not the true side for what
+ * a page SAYS. A caller that phrases the failure itself calls
+ * `readAccessibleMatterIds` instead.
+ */
 export async function listAccessibleMatterIds(
   supabase: any,
   solicitorUserId: string,
   solicitorFirmId: string,
-  permissionKey: string = 'matters',
+  permissionKeys: string | readonly string[] = 'matters',
 ): Promise<string[]> {
-  if (!isMatterAccessV1Enabled()) {
-    const clientIds = await listAssignedClientIds(supabase, solicitorUserId);
-    if (!clientIds.length) return [];
-    const { data: matters } = await supabase.from('legal_matters').select('id')
-      .in('client_id', clientIds).eq('firm_id', solicitorFirmId);
-    return (matters || []).map((row: any) => row.id);
-  }
-  const { data } = await supabase
-    .from('solicitor_matter_access')
-    .select('id, legal_matter_id, access_role, permissions, valid_from, valid_until')
-    .eq('solicitor_user_id', solicitorUserId)
-    .eq('firm_id', solicitorFirmId)
-    .is('revoked_at', null);
-  const { data: baseline } = await supabase
-    .from('solicitor_portal_default_permissions').select('permissions')
-    .eq('solicitor_user_id', solicitorUserId).maybeSingle();
-  const now = Date.now();
-  return (data || [])
-    .filter((row: any) => row.valid_from && new Date(row.valid_from).getTime() <= now
-      && (!row.valid_until || new Date(row.valid_until).getTime() > now))
-    .filter((row: any) => can(resolveTriStatePermissions(baseline?.permissions ?? null, row.permissions), permissionKey, 'view'))
-    .map((row: any) => row.legal_matter_id);
+  const read = await readAccessibleMatterIds(supabase, solicitorUserId, solicitorFirmId, permissionKeys);
+  if (read.ok) return read.ids;
+  throw new Error(`The matters this solicitor can see could not be read: ${read.error}`);
 }
 
-/** List every client_id this solicitor is assigned to. */
+/**
+ * List every client_id this solicitor is assigned to.
+ *
+ * Like `resolveClientPermissions`, this has no caller here and stays exported
+ * only for clones mid-cascade. An assignment list is not an access list: it
+ * ignores the practice's rollout mode and the assignment's own denials.
+ */
 export async function listAssignedClientIds(
   supabase: any,
   solicitorUserId: string,

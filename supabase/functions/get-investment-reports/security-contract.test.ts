@@ -5,18 +5,30 @@ const functionSource = readFileSync(new URL('./index.ts', import.meta.url), 'utf
 
 describe('get-investment-reports authorization contract', () => {
   it('requires report view permission before dispatching service-role reads', () => {
-    const permissionGate = functionSource.indexOf('const permission = await requireModulePermission(');
-    const singleRead = functionSource.indexOf('// Single report fetch', permissionGate);
-    const multipleRead = functionSource.indexOf('// Multiple reports fetch by IDs', permissionGate);
-    const listRead = functionSource.indexOf('// List mode - fetch reports with filters', permissionGate);
+    // The three read modes used to be marked by three comments below the gate.
+    // They are one comment above it now and one query below it, so the
+    // contract is anchored on the reads themselves rather than on prose.
+    const handler = functionSource.indexOf('Deno.serve(');
+    const permissionGate = functionSource.indexOf('const permission = await requireModulePermission(', handler);
+    const refusal = functionSource.indexOf("if (!permission.ok) return failure('FORBIDDEN'", permissionGate);
+    const firstRead = functionSource.indexOf('.from(', handler);
+    const firstRpc = functionSource.indexOf('.rpc(', handler);
+    const singleRead = functionSource.indexOf("if (body.reportId) query = query.eq('id', body.reportId);", refusal);
+    const multipleRead = functionSource.indexOf("query = query.in('id', body.reportIds);", refusal);
+    const listRead = functionSource.indexOf('query = query.range((page - 1) * pageSize, page * pageSize - 1);', refusal);
 
     expect(functionSource).toContain("table === 'generated_reports' ? 'generated_reports' : 'reports'");
     expect(functionSource).toContain("'can_view'");
-    expect(functionSource).toContain("return failure('FORBIDDEN'");
-    expect(permissionGate).toBeGreaterThan(-1);
-    expect(singleRead).toBeGreaterThan(permissionGate);
-    expect(multipleRead).toBeGreaterThan(permissionGate);
-    expect(listRead).toBeGreaterThan(permissionGate);
+    expect(handler).toBeGreaterThan(-1);
+    expect(permissionGate).toBeGreaterThan(handler);
+    expect(refusal).toBeGreaterThan(permissionGate);
+    // Nothing in the handler reads a table, a bucket or a function before the
+    // caller has been refused or admitted.
+    expect(firstRead).toBeGreaterThan(refusal);
+    if (firstRpc !== -1) expect(firstRpc).toBeGreaterThan(refusal);
+    expect(singleRead).toBeGreaterThan(refusal);
+    expect(multipleRead).toBeGreaterThan(refusal);
+    expect(listRead).toBeGreaterThan(refusal);
   });
 
   it('owns lightweight projections and returns structured paginated responses', () => {

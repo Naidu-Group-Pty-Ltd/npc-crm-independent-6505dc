@@ -31,14 +31,14 @@ describe('finance portal cross-client inbox permissions', () => {
     expect(source).toContain(".from('finance_portal_client_assignments')");
     expect(source).toContain(".eq('finance_user_id', partner.id)");
     expect(source).toContain("hasFinancePortalPermission(partner.global_permissions, assignment.permissions, 'messages', action, true)");
-    expect(source).toContain("authorizeClientMessages(supabase, partner, clientId, 'view')");
-    expect(source).toContain("authorizeClientMessages(supabase, partner, client_id, 'edit')");
-    expect(source).toContain("authorizeClientMessages(supabase, partner, message.client_id, 'edit')");
+    expect(source).toContain("authorizeClientMessages(supabase, partner, clientId, 'view', json)");
+    expect(source).toContain("authorizeClientMessages(supabase, partner, client_id, 'edit', json)");
+    expect(source).toContain("authorizeClientMessages(supabase, partner, message.client_id, 'edit', json)");
   });
 
   it('resolves indirect object ids before allowing access', () => {
-    expect(source).toContain("validatePurchaseFileScope(supabase, body.purchase_file_id, clientId)");
-    expect(source).toContain("validatePurchaseFileScope(supabase, purchase_file_id, client_id)");
+    expect(source).toContain("validatePurchaseFileScope(supabase, body.purchase_file_id, clientId, json)");
+    expect(source).toContain("validatePurchaseFileScope(supabase, purchase_file_id, client_id, json)");
     expect(source).toContain("supabase.from(table).select('client_id').eq('id', id).maybeSingle()");
   });
 });

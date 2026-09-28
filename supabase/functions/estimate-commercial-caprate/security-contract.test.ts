@@ -3,9 +3,18 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
 const source = readFileSync(fileURLToPath(new URL('./index.ts', import.meta.url)), 'utf8');
-const upstreamCall = source.indexOf("fetch('https://ai.gateway.lovable.dev/v1/chat/completions'");
+// The paid call goes through `meteredFetch`, which bills the credential it
+// spends; the anchor followed it there. An anchor that goes missing reads as
+// -1 and makes every "before the paid call" ordering below meaningless, so its
+// presence is asserted first.
+const upstreamCall = source.indexOf("meteredFetch('https://ai.gateway.lovable.dev/v1/chat/completions'");
 
 describe('estimate-commercial-caprate security contract', () => {
+  it('reaches the paid AI gateway through the metering wrapper', () => {
+    expect(upstreamCall).toBeGreaterThan(-1);
+    expect(source).not.toMatch(/(?<![A-Za-z])fetch\('https:\/\/ai\.gateway\.lovable\.dev/);
+  });
+
   it('bounds and validates caller-controlled input before the paid AI call', () => {
     expect(source).toContain('enforceJsonBodyLimit');
     expect(source).toContain('MAX_REQUEST_BYTES');

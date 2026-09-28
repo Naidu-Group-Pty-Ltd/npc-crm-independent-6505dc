@@ -262,11 +262,14 @@ describe('the whole snapshot', () => {
    */
   it('marks deductions adverse regardless of how they are signed', () => {
     const byLabel = Object.fromEntries(s.ledger.map((r) => [r.label, r]));
-    expect(byLabel['Living Expenses'].direction).toBe('adverse');
-    expect(byLabel['Existing Commitments'].direction).toBe('adverse');
-    expect(byLabel['Shaded Annual Income'].direction).toBe('favourable');
-    expect(byLabel['Assessment Rate Applied'].direction).toBe('neutral');
-    expect(byLabel['Maximum Borrowing Capacity'].emphasis).toBe('total');
+    expect(byLabel['Living expenses'].direction).toBe('adverse');
+    expect(byLabel['Existing commitments'].direction).toBe('adverse');
+    expect(byLabel['Assessed (shaded) annual income'].direction).toBe('favourable');
+    // The rate and term are in the capacity line's label now, not rows of a
+    // money column (§16); the capacity is still the total.
+    const total = s.ledger[s.ledger.length - 1];
+    expect(total.label).toBe('Maximum borrowing capacity (the surplus, repaid at 8.65% over 30 years)');
+    expect(total.emphasis).toBe('total');
   });
 
   it('carries the zero-shaded income row through to the document', () => {

@@ -59,11 +59,29 @@
  * one, all naming the prime, and rewriting settled history would be a larger
  * and riskier change than the defect. `cron-hardcoded-identity.txt` freezes
  * what is there so a new one fails.
+ *
+ * ## What the prime keeps for itself
+ *
+ * `migration-dispatcher-15s` invokes `migration-dispatcher`, a function of the
+ * GoHighLevel account migration, which exists on the prime alone
+ * (`scripts/lib/primeOnlyFeatures.mjs`). Its migrations travel with the rest
+ * of the schema, because a withheld migration is a ledger hole, so every clone
+ * replays the `cron.schedule` while holding no function for it to call.
+ *
+ * A target that is registered as prime-only AND absent from this tree is
+ * therefore not a failure: it is the one case where "this repository does not
+ * contain it" is the intended state. Mission Control unschedules the job on
+ * every clone after an apply. Where the function IS present — the prime, or a
+ * clone that has not yet shed the feature — the job is judged exactly as every
+ * other one, and `primeOnlyFeatures.spec.ts` fails the prime if the register
+ * names a function the prime does not hold, so the exemption cannot hide one
+ * that went missing there.
  */
 
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { isPrimeOnlyFunction } from '../lib/primeOnlyFeatures.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const MIGRATIONS = join(ROOT, 'supabase', 'migrations');
@@ -297,6 +315,8 @@ const frozen = new Set(
 const failures = [];
 let checked = 0;
 const identitySeen = [];
+/** Invocations of a prime-only function this tree does not hold, by job. */
+const primeOnlyAbsent = [];
 
 for (const [jobname, { file, invocations, body }] of [...live.entries()].sort()) {
   for (const kind of hardcodedIdentityIn(body ?? '')) {
@@ -315,6 +335,12 @@ for (const [jobname, { file, invocations, body }] of [...live.entries()].sort())
     const where = `${jobname} (${file})`;
     const entry = join(FUNCTIONS, inv.target, 'index.ts');
     if (!existsSync(entry)) {
+      // The prime's own feature, on a tree that does not carry it: the
+      // intended state on a clone, and unscheduled there by Mission Control.
+      if (isPrimeOnlyFunction(inv.target)) {
+        primeOnlyAbsent.push(`${jobname} -> ${inv.target}`);
+        continue;
+      }
       failures.push(
         `${where}\n  schedules '${inv.target}', which this repository does not contain.`,
       );
@@ -357,7 +383,12 @@ if (stale.length) {
   process.exit(1);
 }
 
+const primeOnlyNote = primeOnlyAbsent.length
+  ? `; ${primeOnlyAbsent.length} ${primeOnlyAbsent.length === 1 ? 'invokes' : 'invoke'} ` +
+    `the prime's own feature, which this tree does not hold ` +
+    `(${primeOnlyAbsent.join(', ')})`
+  : '';
 console.log(
   `Cron caller-name check passed (${checked} scheduled invocations across ${live.size} jobs; ` +
-    `${identitySeen.length} frozen hardcoded-identity entries).`,
+    `${identitySeen.length} frozen hardcoded-identity entries${primeOnlyNote}).`,
 );

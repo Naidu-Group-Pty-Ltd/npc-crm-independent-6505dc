@@ -178,8 +178,13 @@ export const solicitorCompliance = {
       'conflict_list', { matter_id },
     ),
 
+  /**
+   * `matters_searched` is how many OTHER matters the search covered: the ones
+   * this solicitor may see and whose parties they may see. It is never the
+   * whole practice, and at zero the outcome is `pending`, not `clear`.
+   */
   conflictRun: (matter_id: string, terms: string[] = [], notes?: string) =>
-    call<{ record: LegalConflictCheck; outcome: ConflictOutcome; match_count: number }>(
+    call<{ record: LegalConflictCheck; outcome: ConflictOutcome; match_count: number; matters_searched: number }>(
       'conflict_run', { matter_id, terms, notes },
     ),
 
