@@ -67,6 +67,63 @@ jobs:
       - name: This deployment ships its own backend identity
         run: npx vitest run src/lib/__tests__/shippedBackendIdentity.spec.ts
 
+      # This deployment's CRM is its own. `src/lib/crm/crmProvider.ts` routes
+      # messaging and the calendar to `crm-send-message` and `crm-calendar`, and
+      # takes the GoHighLevel sync controls off a deployment with no
+      # GoHighLevel to sync from. A cascade has copied the prime's four
+      # GoHighLevel-bound files back over that switch twice (`7ca563c` and
+      # `2fc9c46`, both 20 Sep 2026), and the second revert stood for eight
+      # days, because the specs that assert the switch sit in `src/lib/crm` and
+      # `src/pages/__tests__`, which no step in this workflow reached.
+      #
+      # Asked here, a cascade that reverts it turns its own pull request red,
+      # and Mission Control does not auto-merge a red one. This file is held on
+      # this clone -- a module-scoped clone keeps its own judging workflow --
+      # so the step is not itself cascaded away.
+      - name: This deployment's CRM routes to its own functions
+        run: npx vitest run src/lib/crm src/pages/__tests__/crmConversations.spec.ts
+
+      # The identity every non-recovery email is sent under. The contract spec
+      # classifies every Resend send site and fails on one it cannot classify,
+      # so it only guards anything if it runs here.
+      - name: A clone's email is sent as the clone
+        run: npx vitest run src/lib/__tests__/emailIdentity.spec.ts src/lib/__tests__/emailIdentityRead.spec.ts src/lib/__tests__/emailIdentity.contract.spec.ts
+
+      # Who a deployment's assistants, portal labels and staff screens speak
+      # for (WHITE_LABEL_DOCUMENTS.md §12-§13). Both specs sit in
+      # `src/lib/__tests__/`, which no directory path here reaches, so they are
+      # named or they never run.
+      - name: A clone's tools and labels speak for the clone
+        run: npx vitest run src/lib/__tests__/workspaceIdentity.spec.ts src/lib/__tests__/houseLabelsGuard.spec.ts
+
+      # What the prime keeps for itself: scripts/lib/primeOnlyFeatures.mjs, and
+      # docs/operations/PRIME_ONLY_FEATURES.md. No clone holds the GoHighLevel
+      # account migration, so a static import of any part of it breaks every
+      # clone's build, and an invocation of one of its functions answers 404
+      # there, while the prime's own build, where the feature is present, can
+      # see neither. The spec sits in `src/lib/__tests__/`, which no directory
+      # path here reaches, so it is named or it never runs.
+      - name: Nothing a clone receives reaches into what the prime keeps
+        run: npx vitest run src/lib/__tests__/primeOnlyFeatures.spec.ts
+
+      # Every build-time variable is read in the one form the bundler replaces.
+      #
+      # Vite substitutes the literal `import.meta.env.VITE_X` and nothing else.
+      # `import.meta?.env?.[key]` is a property read on the browser's real
+      # `import.meta`, which has no `env`, so it is `undefined` in every
+      # production bundle however the environment is set. `env.ts` read that
+      # way, and so did four other modules, and each absence looked like the
+      # feature merely being off. This repository fixed its own copies on
+      # 19 Sep 2026 and the cascade of 20 Sep reverted two of them, because the
+      # broken copies were the ones the prime kept delivering.
+      #
+      # Named by path for the step above's reason: nothing else in this
+      # workflow reaches `src/integrations/supabase/__tests__`, so these guards
+      # had never been asked anything. No network, a few seconds, so it runs
+      # early.
+      - name: Build-time variables are read in the form the bundler replaces
+        run: npx vitest run src/integrations/supabase/__tests__
+
       # The edge-function secret allowlist and status map are generated from
       # src/lib/integrations/registry.ts. Both live under supabase/functions/, which
       # none of the test paths below reach, so without this step the generated module
@@ -103,8 +160,51 @@ jobs:
       # red from the WP-28 shim without anything reporting it.
       #
       # Every gate in the `security` job reads source. These run it.
+      #
+      # `src/security` is the older half of the same idea: 57 authorization
+      # contracts, cited as evidence by the AML baseline report, which no
+      # workflow had ever run. Five had gone stale by 28 Sep 2026, and three of
+      # those asserted lines that could not execute: a merge on 30 Jul 2026
+      # (cea3d88) deleted the names they used, so the Solicitor Portal's
+      # notifications and conflict search threw on every call while their specs
+      # matched the source.
       - name: Security invariant suites (WP-29)
-        run: npx vitest run src/lib/security
+        run: npx vitest run src/lib/security src/security
+
+      # The specs for the migration tooling itself ran in no workflow: the
+      # applied-body manifest, the drift reporter and the withdrawals manifest
+      # each had a spec, and CI names its vitest paths one by one, so none of
+      # them was named. An unrun spec guards nothing.
+      #
+      # The prime's step also names `migrationSeedSkeletons.spec.ts`. Its
+      # subject, `supabase/migration-seed-skeletons.json`, is written on the
+      # prime and is not on this repository, so that spec is not carried here.
+      - name: Migration tooling suites
+        run: npx vitest run src/lib/deploy src/lib/ops
+
+      # The Edge Function specs that import vitest. `vitest.config.ts` includes
+      # `src/**` alone, so none of these ran in any workflow until 28 Sep 2026,
+      # and 8 of the 42 files were red on their first run. One was a live
+      # defect: `solicitor-portal-logout` had lost its POST-only and CSRF guards
+      # in a merge two months earlier, while its spec kept asserting both. The
+      # other seven were contracts whose guard had moved or become stricter.
+      # `vitest.functions.config.ts` picks the files by what they import, so a
+      # new spec joins without an edit here.
+      - name: Edge Function specs (vitest)
+        run: npx vitest run --config vitest.functions.config.ts
+
+      # The portal contracts are `node --test` suites, and `package.json` has
+      # named them since they were written while no workflow ever ran them.
+      # Five of the partner-agreement assertions had gone stale when they were
+      # first run, each naming a guard by a spelling the code had since
+      # changed, so a contract nobody runs asserts nothing about today.
+      # The Solicitor Portal's 133 were never run either, and three had gone
+      # stale the same way when they first were.
+      # They read files and nothing else, so they need no install.
+      - name: Portal contract suites (node --test)
+        run: |
+          npm run test:cross-portal-contracts
+          npm run test:solicitor-portal
 
       # The Workflow Playground's step catalog is derived from the same registry,
       # and its templates reference catalog ids by hand — both rot silently when an
@@ -158,10 +258,35 @@ jobs:
       - name: Report asset drift check
         run: npm run reportkit:assets:check
 
+      # Three more generated artefacts that had a `:check` mode and no runner.
+      #
+      # Found 21 Sep 2026 while looking for what seed v19 might have left
+      # stale: `migrations:index:check` caught that one in CI, and a sweep of
+      # every `*:check` script against every workflow found three more that
+      # nothing invoked. `mobile:api:check` was FAILING at the time, on the PR
+      # base as well as the branch, so `mobile/api-surface.json` had drifted
+      # from the security registry with nothing to say so -- for however long.
+      #
+      # `CLAUDE.md` says both mobile artefacts "must never be hand-edited" and
+      # that "both have `:check` drift modes", so being checked is the stated
+      # intent. This is the same defect as a component nothing renders and a
+      # test nothing invokes, one level up: a gate nothing runs.
+      - name: Brand icon drift check
+        run: npm run brand:icons:check
+
+      - name: Mobile design-token drift check
+        run: npm run mobile:tokens:check
+
+      - name: Mobile API-surface drift check
+        run: npm run mobile:api:check
+
       # Enforces the single-source contract (bridges are re-exports only) and
       # the print contrast floors for every preset x tenant-brand combination.
+      # `src/lib/brandDesign` resolves an imported design system into the same
+      # palette. It ran nowhere, so a spec there stayed red after the floors
+      # were corrected and nothing reported it.
       - name: Unit tests (report design system)
-        run: npx vitest run src/lib/reportDesign
+        run: npx vitest run src/lib/reportDesign src/lib/brandDesign
 
       # Renders the shipping generator and pins page count, sections, typeface
       # and the cover's identity. This is the reference the migration is
@@ -189,6 +314,30 @@ jobs:
       # through.
       - name: Unit tests (every report format)
         run: npx vitest run src/lib/reports src/lib/geocode src/lib/openLocation
+
+      # The template-design release's guarantees that live outside every
+      # folder named above, so they passed locally and were asked nothing on a
+      # runner. Found in the audit before it shipped (26 Sep 2026):
+      #
+      # - the design catalogue the render routes resolve is the one the
+      #   masters publish (`templateDesignCatalogue.spec.ts`);
+      # - no master's cover carries the house's tagline, and the prime's
+      #   covers print what they always printed (`coverTaglineIsTheIssuers`);
+      # - a clone's intake pack never names the house, and the prime's is the
+      #   approved file exactly (`src/lib/ciAssessment/intakePack`);
+      # - with nothing chosen, the 10-year print keeps the house's sheet
+      #   (`tenYearCashFlowPrintStyle.test.ts`);
+      # - the chooser says what a template does for each report type
+      #   (`reportTemplateSelection.test.tsx`).
+      - name: Unit tests (template designs, the cover tagline, the intake pack)
+        run: >-
+          npx vitest run
+          src/lib/templateLibrary/__tests__/templateDesignCatalogue.spec.ts
+          src/lib/templateLibrary/__tests__/coverTaglineIsTheIssuers.spec.ts
+          src/lib/ciAssessment/intakePack
+          src/components/commercial/assessment/__tests__/intakePackDownloads.test.tsx
+          src/utils/commercial/__tests__/tenYearCashFlowPrintStyle.test.ts
+          src/components/reports/__tests__/reportTemplateSelection.test.tsx
 
       # The measurer owns the pixels the critique rubric judges, and two of its
       # three page-level judgements were wrong at once — a trim band derived
@@ -251,8 +400,23 @@ jobs:
       # without being on it". A list that has to be edited to stay correct will
       # be wrong again, so there is no list. Vitest matches these positionally
       # as path substrings, which is why a bare prefix picks up every file.
+      #
+      # The property page's specs sit beside the components and pages they
+      # pin, so their prefixes are named here too — again as prefixes. The
+      # media converger's spec starts a throwaway Postgres from the runner's
+      # own server binaries and refuses to skip in CI.
       - name: Unit tests (Builder Stock images)
-        run: npx vitest run src/lib/__tests__/builderStock
+        run: npx vitest run src/lib/__tests__/builderStock src/components/listings/__tests__/builderStock src/pages/__tests__/builderStock
+
+      # The listing photographs' tests sit directly in `src/lib`, where no other
+      # step's filter reaches them — so the thresholds `listingImageVision.test.ts`
+      # calls "the measurement, not an illustration of it" were never measured
+      # here, and neither was the guard that stops one oversized floor plan from
+      # killing the `analyse` sweep on every run (`listingImageDecode.test.ts`).
+      # A bare prefix, for the reason given above: a new test beside them is
+      # picked up without editing this line.
+      - name: Unit tests (listing photographs)
+        run: npx vitest run src/lib/listingImage
 
       # The style contracts live directly in `src/styles` (never under a
       # `__tests__/`), so no other step's filter reaches them. The Builder /
@@ -435,6 +599,24 @@ jobs:
       # data services must keep answering "unavailable" rather than inventing.
       - name: Fabricated-data gate
         run: node scripts/security/check-fabricated-data.mjs
+
+      # The Edge Function specs written for Deno (`Deno.test`), which vitest
+      # cannot collect. Twenty-one files ran nowhere until 28 Sep 2026, and two
+      # were red: one named a helper it never imported, and one pinned an owner
+      # filter that had since become unconditional. `--no-check` because these
+      # are behavioural contracts: the functions' types are the job of
+      # `check-edge-functions.mjs` above, which baselines what is known. The
+      # files are chosen by what they call, and an empty list fails rather than
+      # letting `deno test` fall back to discovering tests on its own.
+      - name: Edge Function specs (deno test)
+        run: |
+          mapfile -t specs < <(grep -rlE 'Deno\.test\(' supabase/functions --include='*.test.ts' | sort)
+          if [ "${#specs[@]}" -eq 0 ]; then
+            echo "::error::no Deno test file found under supabase/functions; the selector is wrong"
+            exit 1
+          fi
+          echo "Running ${#specs[@]} Deno test files"
+          deno test --no-check --allow-read --allow-env "${specs[@]}"
 
       # Guards the save below. An EMPTY cache must never be banked: a cache key
       # can be written once, and an exact hit does not consult `restore-keys` —
@@ -964,9 +1146,15 @@ jobs:
             printf '%s' "$EMBEDDED" | grep -q "$face" \
               || { echo "$face not embedded in the report"; exit 1; }
           done
-          # The document the fixture describes is twelve pages. A migration
+          # The document the fixture describes is ten pages. A migration
           # that drops the audit trail changes nothing a unit test sees, and
           # changes this.
+          #
+          # Twelve until BORROWING_CAPACITY.md §16 (28 Sep 2026): the sections
+          # after the first run on rather than each opening a page, and the
+          # short tables and callouts are kept whole, so the pages that held
+          # only a liabilities total or a single callout are gone. The basis
+          # section it added is on a page that was already open.
           #
           # Eleven until the subheads moved from `h3` to `h2` to satisfy PDF/UA
           # clause 7.4.2. `h2` is the design system's subhead and carries 3pt
@@ -974,7 +1162,7 @@ jobs:
           # each invented for themselves, which is a page across a document of
           # this length. Recorded because the next person to see this number
           # move should know whether it moved for a reason.
-          pdfinfo /tmp/bc.pdf | grep -E '^Pages: +12$' || {
+          pdfinfo /tmp/bc.pdf | grep -E '^Pages: +10$' || {
             echo "unexpected page count:"; pdfinfo /tmp/bc.pdf | grep Pages; exit 1;
           }
 
@@ -1025,6 +1213,104 @@ jobs:
           pdfinfo /tmp/cc.pdf | grep -E '^Pages: +17$' || {
             echo "unexpected page count:"; pdfinfo /tmp/cc.pdf | grep Pages; exit 1;
           }
+
+  # Does the ABS answer, and does our reader accept what it actually sends?
+  #
+  # `absBuildingApprovals.pure.ts` is verified against the SDMX-CSV FORMAT --
+  # every test behind it runs on synthetic bodies -- because the development
+  # egress cannot reach the Bureau: the gateway answers 403 to CONNECT for
+  # `data.api.abs.gov.au`, a policy denial in the network allowlist. So the
+  # reader has never seen the publisher's own bytes, and "verified against the
+  # format" is not "verified". A runner has open internet and closes that gap
+  # here, before anything is merged, deployed or scheduled.
+  #
+  # It writes nothing anywhere: no database, no Supabase, no credential.
+  #
+  # It runs on EVERY CI run, and the first version did not -- it was gated on
+  # `github.event.head_commit.message`, which does not exist on a
+  # `pull_request` event (that is a push-event field), and on an `ABS` in the
+  # PR title, which was not there. It reported `skipped`. A check written to
+  # verify a register against reality, gated on a condition that is false, is
+  # this repository's own recurring defect committed by the person cataloguing
+  # it.
+  #
+  # Unconditional is also the better design on its merits. Running only when
+  # OUR files change could never catch a change on THEIRS -- the ABS can
+  # reissue a dataflow version, rename a flow or restructure a column at any
+  # time, and the first symptom would be a 404 at 03:45 that reads like an
+  # outage. Asserted by effect, never by configuration.
+  #
+  # The exit code is the design. The ABS being unreachable REPORTS and passes
+  # -- a compliance product must not have its build decided by another party's
+  # uptime, which is this repository's own rule. What fails is the case that is
+  # ours: the ABS answered and our discovery or parser refused what it sent.
+  abs-register-liveness:
+    runs-on: ubuntu-latest
+    # Seven probes share this ceiling. The two that describe files and walk
+    # directories — state projections and SA/WA/NT zones — each spend a
+    # wall-clock budget of their own (11 and 6 minutes) and NAME what they did
+    # not reach, so the ceiling is sized to their budgets plus the other five
+    # (about 3 minutes measured) rather than to a hope. A job killed by its
+    # timeout is red for a reason that is ours, and the probes after the cut
+    # never run.
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v7
+        with:
+          persist-credentials: false
+
+      - name: Set up Node
+        uses: actions/setup-node@v7
+        with:
+          node-version: 20
+          cache: npm
+
+      - name: Install dependencies
+        run: npm ci --no-audit --no-fund
+
+      - name: Ask the ABS what it publishes, and read it
+        run: npx tsx scripts/market/abs-approvals-liveness.ts
+
+      # `!cancelled()` so the registers are independent signals sharing one
+      # install. Without it, a reader bug against the ABS would hide the
+      # national pipeline's measurement entirely, and a skipped probe reads in
+      # the log exactly like a probe that reached nothing.
+      #
+      # Never `always()`. An `always()` step is not interrupted when the run is
+      # cancelled, so a push that superseded this run left the probes running
+      # to the end of their budgets (about fifteen minutes) while the next run
+      # waited behind them in the concurrency group — and the header's promise
+      # that the probes after a timeout never run was false. `!cancelled()`
+      # keeps the first property and restores the second.
+      - name: Ask the Commonwealth catalogue for the national pipeline, and read it
+        if: ${{ !cancelled() }}
+        run: npx tsx scripts/market/national-pipeline-liveness.ts
+
+      - name: Ask the ABS what it projects, and at what grain
+        if: ${{ !cancelled() }}
+        run: npx tsx scripts/market/abs-projection-liveness.ts
+
+      - name: Ask SA, WA, NT and ACT what they publish, and under what licence
+        if: ${{ !cancelled() }}
+        run: npx tsx scripts/market/jurisdiction-layer-liveness.ts
+
+      - name: Ask ACT, NT, TAS and WA whether they count residential sales
+        if: ${{ !cancelled() }}
+        run: npx tsx scripts/market/sales-volume-liveness.ts
+
+      # The per-jurisdiction projection registers forward demand needs: what
+      # each state publishes, and what its files hold, before a loader is
+      # written against them. Writes nothing.
+      - name: Ask each state what it publishes as its own population projection
+        if: ${{ !cancelled() }}
+        run: npx tsx scripts/market/state-projection-liveness.ts
+
+      # The zone layer for SA, WA and the NT: which layer, its fields and terms,
+      # and one point question per capital, so a parser is verified against a
+      # real answer. Writes nothing.
+      - name: Ask SA, WA and NT which layer is the zone, and what it says at a point
+        if: ${{ !cancelled() }}
+        run: npx tsx scripts/market/planning-zone-liveness.ts
 
   # The geometry gate, which nothing ran.
   #
@@ -1126,6 +1412,23 @@ jobs:
         env:
           BACKEND_DEPLOYED_BY: ${{ vars.BACKEND_DEPLOYED_BY }}
         run: npm run templates:library:seed:check
+
+      # Seed v21 put the report's lead photograph on 34 covers, and made two
+      # promises a client would see broken: without a photograph the cover is
+      # exactly what it was, and beside one nothing on the cover moves. This
+      # spec renders all 34 both ways through the production renderer. No job
+      # runs `src/lib/templateLibrary` as a folder, so the spec is named here.
+      - name: The cover photograph moves nothing, and without one the cover is unchanged
+        if: ${{ !cancelled() }}
+        run: npx vitest run src/lib/templateLibrary/__tests__/investmentCompassCoverPhotograph.spec.ts
+
+      # Seed v22 put a new build's floor plan on a sheet of its own in all 50
+      # Investment masters. Its promise: without a plan every master draws
+      # exactly what it drew before, and with one the plan is printed whole.
+      # This spec renders all 50 both ways through the production renderer.
+      - name: The floor plan is printed whole, and without one nothing changes
+        if: ${{ !cancelled() }}
+        run: npx vitest run src/lib/templateLibrary/__tests__/investmentCompassFloorPlan.spec.ts
 
       # The renders themselves, when it fails: a reviewer should be able to
       # look at the page rather than read a coordinate.

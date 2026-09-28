@@ -35,6 +35,19 @@ describe('closeDroppedBlocks', () => {
     expect(yOf(blocks, 'recommendation')).toBe(349);
   });
 
+  it('never closes up into a block that says it is a layer', () => {
+    // The cover photograph plate: positioned in an empty field, laid out once
+    // per title depth, and at most one copy draws. Read as a hole, a dropped
+    // copy lifted the title and the fact band up the sheet by its height.
+    const blocks = [block('head', 100), block('plate', 200, { layer: true, height: 280 }), block('title', 560), block('facts', 700)];
+    const out = closeDroppedBlocks(blocks, (b) => b.id === 'plate', isFurniture);
+    expect(yOf(out, 'title')).toBe(560);
+    expect(yOf(out, 'facts')).toBe(700);
+    // Without the marker the same drop is closed — the marker is what decides.
+    const unmarked = [block('head', 100), block('plate', 200, { height: 280 }), block('title', 560)];
+    expect(yOf(closeDroppedBlocks(unmarked, (b) => b.id === 'plate', isFurniture), 'title')).toBe(200);
+  });
+
   it('closes two holes on one page, each by its own distance', () => {
     const blocks = [block('a', 100), block('b', 200), block('c', 300), block('d', 400), block('e', 500)];
     const out = closeDroppedBlocks(blocks, (b) => b.id === 'b' || b.id === 'd', isFurniture);

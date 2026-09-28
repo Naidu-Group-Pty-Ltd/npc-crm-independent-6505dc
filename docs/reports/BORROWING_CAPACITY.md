@@ -990,3 +990,182 @@ a family contributes five variants and an operator picks whichever they like, so
 the reference variant passing means nothing on its own. The eyebrow was measured
 in Chromium across the ten families with a name 24 characters longer than the
 longest in production: one line, 8.3pt tall, 6pt clear of the heading beneath it.
+
+## 16. Two production documents, read page by page (28 Sep 2026)
+
+The owner sent two Snapshots issued that day and asked for every chink found and
+the flow made premium. One client had **no income recorded**; the other was
+**limited by the DTI with a healthy surplus**. No fixture had either shape, so
+`__tests__/fixtures/productionShapes.ts` now carries both. It keeps
+production's keys, engine strings and address cut, with invented figures.
+Everything below was read off the two PDFs and traced to a cause before it was
+changed.
+
+**What was wrong.**
+
+- **The working did not add up.** "How the capacity is built" printed income,
+  living expenses, commitments and a surplus, and the lines did not reach the
+  surplus: $192,378 of income less $2,511 and $2,800 a month, beside a surplus
+  of $4,791. Two of the engine's own steps were missing.
+  - **Tax.** The surplus is built from after-tax income, which the row stores
+    only inside an assumption string ("After-Tax Income Used —
+    $137,462.8/yr").
+  - **Negative property cash flow.** The engine adds it to living expenses
+    (`totalLivingExpenses = livingExpenses + negativePropertyCashFlows`) and
+    stores only the base figure.
+- **A ratio nobody could check.** 10.7x printed beside one $455,000 mortgage.
+  The engine's DTI counts the loans on properties held too, which the
+  liabilities table never lists.
+- **"Limited" with no reason**, in red, beside a positive surplus and a loan
+  inside the limit. The engine rates red when the surplus is nil or the DTI is
+  past its threshold. With a positive surplus, the DTI is the reason.
+- **An assessment of nothing.** With no income the engine still returns $0,
+  0.0x and a band. The document presented them as a finding:
+  - "Stress tested $0";
+  - an income table holding only "Total $0 $0";
+  - advice to "pay down high-interest debts" to a client with none.
+- **The machine room on the page.** Seventeen engine assumption strings were
+  printed verbatim, for example:
+  - "After-Tax of SHADED (assessable) income";
+  - "DTI Denominator (APS 220)";
+  - "$192,378.24/yr";
+  - "$1000/mo (zeroed below)" on a bank-mode assessment, where no floor
+    applied.
+  
+  The buffer, rate and term printed twice, a table apart.
+- **Advice as the engine wrote it.**
+  - "Limited borrowing capacity - focus on strengthening financial position":
+    an ASCII hyphen, and a restatement of the band above it.
+  - "Consider accelerating portfolio growth while rates are favorable": a claim
+    about the market the record does not hold.
+- **"Positive Cash Flow (37 Fairview Street Gunnedah, 2...)".** The engine
+  cuts the address to thirty characters and appends "..." whether or not it
+  cut anything.
+- **Eight pages for a two-page answer.** Every section opened a page. One page
+  held only a liabilities total, another only a "Worth knowing" callout, and a
+  third opened with a single row of a table torn from the page before.
+
+**What it does now.**
+
+- **A working that foots** (`buildLedger`). All lines are monthly:
+  1. assessed income;
+  2. less tax;
+  3. after-tax income;
+  4. less living expenses;
+  5. less commitments;
+  6. less property costs not covered by rent (in conservative mode, "the
+     conservative policy's adjustments");
+  7. the surplus;
+  8. the capacity, labelled with the rate and term it was repaid at.
+  
+  After-tax income is **read** from the engine's own string
+  (`afterTaxIncomeFrom`) and never recomputed against today's tax table. Where
+  it was never recorded, or the difference runs the wrong way, the table falls
+  back to the figures the record holds, and does not claim they add up.
+- **The ratio with its working** (`DebtToIncome`). The ratio, the APS 220
+  income it divides by, and the existing debt derived back from both. That
+  debt is rounded to $10,000 and said "about", because the ratio is stored to
+  two decimals. Where the debt clearly exceeds the listed liabilities, the note
+  says it includes the loans on properties held. The narrative says when the
+  ratio is what limited the band.
+- **No income, said once.**
+  - The narrative, the income callout and a single piece of advice ("Record the
+    household's income and recalculate") replace the presentation of $0.
+  - DTI and stress are `null`: a ratio over zero income is undefined, not 0.0x.
+- **The basis, curated and moved last** (`basis.pure.ts`, "On what basis").
+  - Every engine key has a reading and a rule for when it applies. Money is
+    rounded and grouped by hand (no ICU).
+  - A figure the document states elsewhere is not repeated.
+  - An unknown key prints title-cased rather than being lost.
+- **Advice in the report's words** (`advice.pure.ts`). Every engine string has
+  a wording, and advice the record contradicts is dropped:
+  - debt advice needs consumer debt, because a mortgage is not "high-interest
+    debt";
+  - with no income, nothing but recording it applies.
+  
+  `advice.spec.ts` reads the engine's source and fails on any `push` it does
+  not know. The engine's strings are unchanged: they also feed the calculator
+  screen.
+- **The flow.**
+  - Sections run on (`RUN_ON_CHAPTER_CLASS`).
+  - The chart and its sentence are one block, as are short tables and each
+    callout (`KEEP_TOGETHER_CLASS`).
+  - The headroom bars moved to the answer and replaced the utilisation bullet,
+    whose three shaded bands carried no labels.
+  - The KPI foot reads "At 10.50%: $405,510", where it read "Stress tested".
+- **The label.** `incomeLabel` reads "Property cash flow — 37 Fairview Street
+  Gunnedah". It cuts back to the last comma only when the engine's ellipsis and
+  exactly thirty characters show that it cut. From now on the engine writes the
+  whole address, with no ellipsis. `startsWith('Positive Cash Flow')`, the one
+  reader of the label, is unaffected.
+
+**Measured.** Through WeasyPrint 69.0 over the standard design and all fifty
+catalogue designs: no near-empty page and no overflowing text on any of the
+three cases.
+
+| Case | Pages |
+| --- | --- |
+| DTI-limited | 7 (6 in one of the 51 designs) |
+| No income | 6 (5 in one of the 51 designs) |
+| Full fixture | 10 (was 11), with the working and the basis added |
+
+**Not changed, and why.**
+
+- **The engine's rules, and what it stores.** Every figure and decision is
+  its own.
+- **Assessments made before 14 Aug 2026 carry no stored audit trail or
+  explanation (F12).** The two documents reviewed were such assessments, which
+  is why neither had "How this was calculated". Recalculating one produces
+  both pages.
+- **"Primary Pea Body"** on the second document is the income source's name as
+  it was typed into the record, most likely a transcription of "PAYG". It is
+  data, and the document prints it as recorded; the remedy is to correct the
+  income source.
+
+## 17. The Strategy Rationale Brief, typeset in the chosen template (28 Sep 2026)
+
+The What-If tab's **Download PDF** (Borrowing Capacity → What-If → Strategy
+Rationale) drew the brief in the browser with jsPDF
+(`StrategyRationalePDF.ts`). A chosen template could reach it only as a
+palette (`drawnDesignFor('strategy_rationale')`). The owner's instruction for
+moving it was exact: the content "is predominantly just a transition of that
+information into the new template structure". Nothing is added and nothing is
+reworded.
+
+- **One statement of what the brief prints.** `strategyRationale.pure.ts` turns
+  the engine's report and the panel's context into the strings the jsPDF brief
+  prints, string for string: the KPI boxes and their feet, the section titles
+  with their counts, the empty-scenario lines, the severity and capacity
+  labels, "Cash-flow:", the capital flow, the valuation lines and the
+  cross-collateral method. It runs in the browser, because the scenario is
+  being modelled there and is stored nowhere. `strategyRationale.spec.ts` reads
+  the generator's source for its literals, and reproduces the Samuel Lavis
+  baseline brief of 28 Sep 2026 line for line.
+- **The route is the Snapshot's.** `render-borrowing-capacity-pdf` draws a
+  second document when asked (`document: 'strategy_rationale'`):
+  - The brief's words arrive in the request. `readStrategyRationale` keeps only
+    the composer's shape, bounds every string, and refuses a brief with no
+    headline.
+  - Everything else is the Snapshot's: the same auth and client check, the
+    client's name read from the record, the same brand snapshot, the design
+    chosen for Borrowing Capacity, the same bucket and the same ledger. The
+    ledger row carries no assessment, and the brief's file name tells the two
+    apart.
+  - A body naming no document is the Snapshot, exactly as before. A document
+    the route does not draw is refused.
+- **It is one memo.** The brief is a single chapter whose parts are subheads,
+  each kept with its opening block. Drawn as chapters, a baseline scenario put
+  "No levers applied" under a 30pt heading and ran a page longer than the jsPDF
+  brief. Measured in WeasyPrint over the standard design and all 50 catalogue
+  designs, with no overflow and no stub page:
+  - the baseline brief is 3 pages in every design;
+  - a four-lever brief with capital flow, a valuation and a pool is 5 or 6.
+- **The echo is required.** The route answers `document`, and the browser
+  saves the typeset file only when it says `strategy_rationale`: a deployment
+  older than this ignores the field and draws a Snapshot. Either that answer or
+  an absent route falls back to the jsPDF brief, and the person is told.
+- **Both layouts stay.** "Download PDF" is the typeset brief. The caret beside
+  it offers "Download (legacy layout)", and "Choose template" sets the
+  Borrowing Capacity choice the brief is drawn in. The file keeps its name,
+  `Strategy_Rationale_<Name>_<yyyy-MM-dd>.pdf`, dated in the adviser's own time
+  zone, as is the "Generated" line.

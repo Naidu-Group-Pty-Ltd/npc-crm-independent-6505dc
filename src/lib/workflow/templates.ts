@@ -10,6 +10,7 @@
  */
 
 import type { WorkflowGraph } from './types';
+import { houseLabel } from '../houseLabel';
 
 /**
  * Grouped by the job, not by the integration. Someone arriving here knows what
@@ -351,7 +352,7 @@ export const WORKFLOW_TEMPLATES: WorkflowTemplate[] = [
           position: at(3),
           config: {
             to: '{{trigger.email}}',
-            subject: 'Welcome to NPC Services',
+            subject: houseLabel('Welcome to NPC Services', 'Welcome aboard'),
             html: 'Hi {{trigger.firstName}}, welcome aboard. Your discovery call is in the diary — details are in the invitation.',
           },
         },

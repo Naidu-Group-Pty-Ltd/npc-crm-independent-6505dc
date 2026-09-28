@@ -36,8 +36,17 @@ import {
   FileDown,
   Loader2,
   Wallet,
+  ChevronDown,
 } from 'lucide-react';
 import { toast } from 'sonner';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { ChooseTemplateButton } from '@/components/reports/ChooseTemplateButton';
+import { requestStrategyRationale } from '@/lib/reports/borrowingCapacity/deliverStrategyRationale';
 import type { RationaleReport, RationaleSeverity, RationaleCapitalFlowEntry } from '@/utils/strategyRationaleEngine';
 import { generateStrategyRationalePDF, type RationalePDFContext } from './StrategyRationalePDF';
 
@@ -48,6 +57,24 @@ interface StrategyRationalePanelProps {
   /** Context required to render a finance-ready PDF brief. When omitted the
    *  PDF download button is hidden (e.g. preview surfaces without client info). */
   pdfContext?: RationalePDFContext;
+  /**
+   * The client the brief is about. With it, "Download PDF" is typeset by the
+   * Borrowing Capacity route in the template chosen for Borrowing Capacity
+   * (BORROWING_CAPACITY.md §17); without it, the jsPDF brief is the only one.
+   */
+  clientId?: string;
+}
+
+/** Hand a blob to the browser as a saved file. */
+function saveBlob(blob: Blob, fileName: string): void {
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 1_000);
 }
 
 // Map severity → semantic-token-aware Tailwind classes (no raw colors)
@@ -156,7 +183,7 @@ function buildPlainTextBrief(report: RationaleReport, fmt: (n: number) => string
   return lines.join('\n');
 }
 
-export function StrategyRationalePanel({ report, formatCurrency, pdfContext }: StrategyRationalePanelProps) {
+export function StrategyRationalePanel({ report, formatCurrency, pdfContext, clientId }: StrategyRationalePanelProps) {
   const [copied, setCopied] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const briefText = useMemo(() => buildPlainTextBrief(report, formatCurrency), [report, formatCurrency]);
@@ -172,25 +199,38 @@ export function StrategyRationalePanel({ report, formatCurrency, pdfContext }: S
     }
   };
 
-  const handleDownloadPDF = async () => {
-    if (!pdfContext) return;
+  /**
+   * The brief as a file. `typeset` asks the route for it in the chosen
+   * template, falling back to the jsPDF brief only where the route cannot draw
+   * it; `legacy` is a person choosing the layout this brief has always had.
+   * The words are the same either way (`strategyRationale.pure.ts`).
+   */
+  const produceBrief = async (which: 'typeset' | 'legacy') => {
+    const legacy = () => generateStrategyRationalePDF(report, pdfContext!);
+    if (which === 'legacy' || !clientId) return { ...(await legacy()), source: 'legacy' as const };
+    return requestStrategyRationale(
+      { clientId, clientName: pdfContext!.clientName, report, context: pdfContext! },
+      legacy,
+    );
+  };
+
+  const handleDownloadPDF = async (which: 'typeset' | 'legacy' = 'typeset') => {
+    if (!pdfContext || downloading) return;
     setDownloading(true);
     const toastId = 'rationale-pdf';
     toast.loading('Generating Strategy Rationale PDF…', { id: toastId });
     try {
-      const { blob, fileName } = await generateStrategyRationalePDF(report, pdfContext);
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = fileName;
-      document.body.appendChild(a);
-      a.click();
-      document.body.removeChild(a);
-      URL.revokeObjectURL(url);
-      toast.success('Strategy Rationale PDF downloaded', { id: toastId });
+      const { blob, fileName, source } = await produceBrief(which);
+      saveBlob(blob, fileName);
+      toast.success(
+        which === 'typeset' && clientId && source === 'legacy'
+          ? 'Strategy Rationale PDF downloaded in the legacy layout — the typeset brief is not available on this deployment yet'
+          : 'Strategy Rationale PDF downloaded',
+        { id: toastId },
+      );
     } catch (e) {
       console.error('Rationale PDF generation failed', e);
-      toast.error('Could not generate PDF — see console', { id: toastId });
+      toast.error(e instanceof Error ? e.message : 'Could not generate PDF', { id: toastId });
     } finally {
       setDownloading(false);
     }
@@ -236,27 +276,63 @@ export function StrategyRationalePanel({ report, formatCurrency, pdfContext }: S
             </Button>
             {pdfContext && (
               <>
-                <Button
-                  type="button"
-                  variant="default"
-                  size="sm"
-                  onClick={handleDownloadPDF}
-                  disabled={downloading}
-                >
-                  {downloading ? (
-                    <>
-                      <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
-                      Generating…
-                    </>
-                  ) : (
-                    <>
-                      <FileDown className="h-3.5 w-3.5 mr-1.5" />
-                      Download PDF
-                    </>
+                {clientId && (
+                  <ChooseTemplateButton
+                    reportType="borrowing_capacity"
+                    formatLabel="Borrowing Capacity"
+                    note="The Strategy Rationale uses the Borrowing Capacity's template."
+                    disabled={downloading}
+                  />
+                )}
+                <div className="inline-flex items-stretch">
+                  <Button
+                    type="button"
+                    variant="default"
+                    size="sm"
+                    onClick={() => handleDownloadPDF('typeset')}
+                    disabled={downloading}
+                    className={clientId ? 'rounded-r-none' : undefined}
+                  >
+                    {downloading ? (
+                      <>
+                        <Loader2 className="h-3.5 w-3.5 mr-1.5 animate-spin" />
+                        Generating…
+                      </>
+                    ) : (
+                      <>
+                        <FileDown className="h-3.5 w-3.5 mr-1.5" />
+                        Download PDF
+                      </>
+                    )}
+                  </Button>
+                  {clientId && (
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button
+                          type="button"
+                          variant="default"
+                          size="sm"
+                          disabled={downloading}
+                          className="rounded-l-none border-l border-primary-foreground/20 px-1.5"
+                          aria-label="More download options"
+                        >
+                          <ChevronDown className="h-3.5 w-3.5" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-64">
+                        <DropdownMenuItem onClick={() => handleDownloadPDF('legacy')} className="cursor-pointer">
+                          <FileDown className="mr-2 h-4 w-4 text-muted-foreground" />
+                          <div className="flex flex-col">
+                            <span>Download (legacy layout)</span>
+                            <span className="text-xs text-muted-foreground">The layout this brief has always used</span>
+                          </div>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
                   )}
-                </Button>
+                </div>
                 <FlattenPdfIconButton
-                  getPdfBlob={async () => (await generateStrategyRationalePDF(report, pdfContext!)).blob}
+                  getPdfBlob={async () => (await produceBrief('typeset')).blob}
                   filename={`strategy-rationale.pdf`}
                   disabled={downloading}
                 />

@@ -150,6 +150,17 @@ property of the file rather than a promise about how it is called.
 statement the lane composes and against six shapes it must refuse; four mutants
 of the expression are caught.
 
+It also refuses when it cannot name the project it is about. The project is
+`PROJECT_REF`, or else the `project_id` in this checkout's own
+`supabase/config.toml`, read by `scripts/lib/projectRef.mjs`. It is never a
+literal, and the same applies to `builder-network-sync-state` and
+`builder-stock-mirror-state`. Until 28 September 2026 all three fell back to the
+prime's ref, and their workflows pass none. These files are on every clone's
+repository, so a dispatch there with a token would have read the prime's
+database, and the re-point would have written to it.
+`scriptProjectRef.spec.ts` holds the rule: no lane under `.github/scripts`
+carries a project ref.
+
 ## Rules
 
 1. **A pipeline with nothing to carry is indistinguishable from a broken one.**

@@ -217,7 +217,7 @@ describe('binding to a report format', () => {
   it('binds our own report to every chapter it has, and to nothing else', () => {
     // The acceptance case. A Borrowing Capacity Snapshot put back through the
     // converter must land on the three chapters the renderer always prints,
-    // leave the three conditional ones unfilled, and send nothing to an
+    // leave the conditional ones unfilled, and send nothing to an
     // appendix. The run that prompted this work managed 3 bound, 4 unfilled and
     // 3 in the appendix — against a chapter list that was invented.
     const s = extractStructure(SNAPSHOT, 'BC Snapshot');
@@ -231,7 +231,9 @@ describe('binding to a report format', () => {
       expect(b.confidence, chapter).toBeGreaterThanOrEqual(WEAK_MATCH);
     }
     expect(p.unbound).toEqual([]);
-    expect(p.unfilled).toEqual(['How this was calculated', 'Audit trail', 'Scenario comparison']);
+    // "On what basis" is conditional on the assessment carrying its assumptions
+    // (BORROWING_CAPACITY.md §16), and this Snapshot's text has none.
+    expect(p.unfilled).toEqual(['How this was calculated', 'Audit trail', 'Scenario comparison', 'On what basis']);
   });
 
   it('matches a foreign template where the wording genuinely overlaps', () => {

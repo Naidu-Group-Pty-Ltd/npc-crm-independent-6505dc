@@ -457,10 +457,14 @@ this repository, which is what surfaced the third live defect: the
 truthy Promise and sixty-a-minute was enforced on nobody.
 
 A spec about machinery this clone does not run is **not** an omission.
-`builderNetworkRemapGuard.spec.ts` reads
+`builderNetworkRemapGuard.spec.ts` was the example: it reads
 `.github/scripts/builder-network-connection-remap.mjs` to extract that lane's
-own allow-list, and neither the script nor its workflow exists here; it is
-excluded rather than satisfied by importing a lane nobody asked for.
+own allow-list, and until 28 Sep 2026 neither the script nor its workflow was
+here, so the spec was left out rather than satisfied by importing a lane
+nobody asked for. Mission Control now cascades `.github/scripts/**` to a
+module-scoped clone together with the workflows that run them, the lane
+arrived with the `prime@ae7b707` cascade (#44), and the spec is carried with
+it: a spec and its subject travel together.
 
 ## What the API gateway checks (`verify_jwt`)
 Read [`docs/security/VERIFY_JWT.md`](./docs/security/VERIFY_JWT.md) before

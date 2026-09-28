@@ -9,6 +9,11 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { invokeSecureFunction } from "@/lib/secureInvoke";
+import {
+  crmFunction,
+  ghlAffordancesAvailable,
+  vendorReconciliationFunction,
+} from "@/lib/crm/crmProvider";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -276,13 +281,21 @@ const GHL_SYNC_TIMEOUT_MS = 120_000;
  * here for ever.
  */
 async function triggerGhlSync(onProgress?: (done: number, total: number) => void) {
+  // Null on a CRM-independent deployment: the threads already live in this
+  // deployment's own Postgres — nothing wrote them anywhere else — so there is
+  // no upstream to pull from and the sync is COMPLETE rather than failed. The
+  // button that reaches here is not drawn on such a deployment; this guard is
+  // what makes that true of the function as well as of the control.
+  const syncFunction = vendorReconciliationFunction("conversationSync");
+  if (!syncFunction) return { conversations_synced: 0, messages_synced: 0, done: true };
+
   const MAX_LEGS = 40;
   let cursor: number | null = 0;
   let conversations = 0;
   let messages = 0;
 
   for (let leg = 0; leg < MAX_LEGS; leg++) {
-    const { data, error } = await invokeSecureFunction("sync-ghl-conversations", {
+    const { data, error } = await invokeSecureFunction(syncFunction, {
       mode: "incremental",
       cursor,
     }, { timeoutMs: GHL_SYNC_TIMEOUT_MS });
@@ -564,7 +577,7 @@ export default function Conversations() {
         }
         return data;
       }
-      const { data, error } = await invokeSecureFunction("send-ghl-message", {
+      const { data, error } = await invokeSecureFunction(crmFunction("sendMessage"), {
         conversationId,
         message,
         channel,
@@ -1172,6 +1185,16 @@ export default function Conversations() {
               </DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
+          {/*
+            Drawn only where there is something to sync FROM. On a
+            CRM-independent deployment the threads are already local, so this
+            control is ABSENT rather than disabled: a disabled button claims
+            the act exists and is briefly unavailable, and here it can never
+            become available. (The "Retry sync" button below needs no guard —
+            it lives inside a banner only a sync FAILURE draws, and under
+            `native` the sync returns complete without running.)
+          */}
+          {ghlAffordancesAvailable() && (
           <Button
             variant="outline"
             size="sm"
@@ -1204,6 +1227,7 @@ export default function Conversations() {
                 ? "Loading…"
                 : "Sync"}
           </Button>
+          )}
         </div>
       </DashboardThemeFrame>
 

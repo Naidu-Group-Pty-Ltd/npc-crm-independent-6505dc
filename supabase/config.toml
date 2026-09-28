@@ -841,74 +841,6 @@ verify_jwt = false
 [functions.analytics-query]
 verify_jwt = false
 
-[functions.ghl-account-preview]
-verify_jwt = false
-request_timeout = 120
-
-[functions.migration-orchestrator]
-verify_jwt = false
-request_timeout = 60
-
-[functions.migration-job-status]
-verify_jwt = false
-request_timeout = 30
-
-[functions.ghl-migrate-contacts-worker]
-verify_jwt = false
-request_timeout = 400
-
-[functions.ghl-migrate-opportunities-worker]
-verify_jwt = false
-request_timeout = 400
-
-[functions.ghl-migrate-conversations-worker]
-verify_jwt = false
-request_timeout = 400
-
-[functions.ghl-migrate-notes-worker]
-verify_jwt = false
-request_timeout = 400
-
-[functions.ghl-migrate-conversations-replay-worker]
-verify_jwt = false
-request_timeout = 400
-
-[functions.ghl-migrate-calendar-groups-worker]
-verify_jwt = false
-request_timeout = 400
-
-[functions.ghl-migrate-calendars-worker]
-verify_jwt = false
-request_timeout = 400
-
-[functions.ghl-migrate-bookings-worker]
-verify_jwt = false
-request_timeout = 400
-
-[functions.ghl-test-credentials]
-verify_jwt = false
-request_timeout = 30
-
-[functions.migration-dispatcher]
-verify_jwt = false
-request_timeout = 30
-
-[functions.ghl-legacy-backfill-gaps]
-verify_jwt = false
-request_timeout = 400
-
-[functions.ghl-marketing-dump-enqueue]
-verify_jwt = false
-request_timeout = 120
-
-[functions.ghl-marketing-dump-worker]
-verify_jwt = false
-request_timeout = 400
-
-[functions.ghl-marketing-dump-export]
-verify_jwt = false
-request_timeout = 300
-
 [functions.mission-control-webhook]
 verify_jwt = false
 
@@ -1317,9 +1249,6 @@ verify_jwt = false
 [functions.backfill-message-directions]
 verify_jwt = true
 
-[functions.backfill-opportunity-mappings]
-verify_jwt = false
-
 [functions.bc-scenario-agent]
 verify_jwt = false
 
@@ -1430,30 +1359,6 @@ verify_jwt = false
 [functions.get-user-names]
 verify_jwt = false
 
-[functions.ghl-legacy-wipe-orchestrator]
-verify_jwt = false
-
-[functions.ghl-legacy-wipe-worker]
-verify_jwt = false
-
-[functions.ghl-marketing-raw-dump]
-verify_jwt = false
-
-[functions.ghl-migrate-conversations-reset-phantoms]
-verify_jwt = false
-
-[functions.ghl-migrate-workflow-enrollments-worker]
-verify_jwt = false
-
-[functions.ghl-migrate-workflow-reenroll-worker]
-verify_jwt = false
-
-[functions.ghl-migrate-workflows-snapshot-worker]
-verify_jwt = false
-
-[functions.ghl-workflow-visualizer]
-verify_jwt = false
-
 [functions.healthcheck-ping]
 verify_jwt = false
 
@@ -1497,12 +1402,6 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.market-source-relay]
-verify_jwt = false
-
-[functions.migration-job-control]
-verify_jwt = false
-
-[functions.migration-upload-source]
 verify_jwt = false
 
 [functions.notifications-feed]

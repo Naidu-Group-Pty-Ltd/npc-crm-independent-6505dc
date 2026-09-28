@@ -20,6 +20,28 @@ const registry = JSON.parse(read('supabase/functions-registry/SECURITY_REGISTRY.
 const config = read('supabase/config.toml');
 
 /**
+ * The operations the CSRF guard names, read from its own condition. The first
+ * form of these tests matched the condition's text, so a third operation
+ * joining the guard failed two of them while every operation was still
+ * guarded.
+ */
+function csrfGuardedOperations() {
+  const guard = fn.match(/if \(((?:operation === '[a-z_]+'\s*(?:\|\|\s*)?)+)\) \{\s*\n\s*const csrf = enforceCsrf\(req\)/);
+  assert.ok(guard, 'the CSRF guard must be a condition over named operations');
+  return [...guard[1].matchAll(/operation === '([a-z_]+)'/g)].map((m) => m[1]);
+}
+
+/** One operation's branch of the handler, up to the next operation's. */
+function branch(name) {
+  const start = fn.indexOf(`if (operation === '${name}') {`);
+  assert.ok(start > -1, `the handler must have a branch for ${name}`);
+  const next = fn.indexOf("if (operation === '", start + 1);
+  const unknown = fn.indexOf("return json({ error: 'Unknown operation' }", start);
+  const end = next > -1 && next < unknown ? next : unknown;
+  return fn.slice(start, end);
+}
+
+/**
  * The executed copy of a Partner Portal Agreement.
  *
  * An acceptance row is a fact about a document; it is not the document. These
@@ -34,8 +56,12 @@ test('the copy contains the agreement, not a summary of it', () => {
   assert.match(doc, /<div class="chapter-body agreement">\$\{agreementHtml\}/);
   // Rendered by the programme's one Markdown renderer rather than a second one.
   assert.match(fn, /import \{ renderMarkdown \} from '\.\.\/_shared\/reports\/markdown\.pure\.ts'/);
-  // And a clipped legal document is refused rather than stored.
-  assert.match(fn, /if \(markdown\.truncated\)/);
+  // And a clipped legal document is refused rather than stored. The
+  // renderer's content-loss flag is `degraded`. This guard read `truncated`
+  // until 11 Aug 2026 (#2017), a field the result has never had, so it was
+  // `undefined` on every render and this test pinned the defect.
+  assert.match(read('supabase/functions/_shared/reports/markdown.pure.ts'), /\n  degraded: boolean;\n\}/);
+  assert.match(fn, /if \(markdown\.degraded\) \{/);
   assert.match(fn, /would have been clipped/);
 });
 
@@ -53,7 +79,14 @@ test('both parties and the execution detail are on the document', () => {
   // Only the acknowledgments this acceptance actually asserted. An older
   // acceptance that recorded none must not be printed as though it asserted all.
   assert.match(fn, /const asserted = new Set<string>\(Array\.isArray\(record\.acknowledgements\) \? record\.acknowledgements : \[\]\)/);
-  assert.match(fn, /PORTAL_TERMS_ACKNOWLEDGEMENTS\.filter\(\(item\) => asserted\.has\(item\.key\)\)/);
+  // Each channel prints the wording its signer saw (#2316): the portal
+  // statements for a portal acceptance, the direct ones for a partner who
+  // acknowledged through an emailed link. The keys are the same.
+  assert.match(fn, /acknowledgementsForChannel\(String\(record\.portal\)\)\s*\.filter\(\(item\) => asserted\.has\(item\.key\)\)/);
+  assert.match(
+    read('supabase/functions/_shared/portalAgreement.ts'),
+    /return portal === 'direct' \? DIRECT_TERMS_ACKNOWLEDGEMENTS : PORTAL_TERMS_ACKNOWLEDGEMENTS;/,
+  );
 
   // The fingerprints are hashes and stay hashes.
   assert.match(doc, /source address \(hashed\)/);
@@ -92,7 +125,7 @@ test('the copy is written once and never replaced', () => {
   assert.match(migration, /num_nonnulls\(agreement_storage_path, agreement_generated_at\) IN \(0, 2\)/);
 });
 
-test('only the Command Centre reaches these, and only for its own portal', () => {
+test('only the Command Centre reaches these: a portal\'s records for its own portal, a direct copy for an AML role', () => {
   // A staff session, never a portal cookie.
   assert.match(fn, /verifyAuth\(supabase, req\.headers/);
   assert.doesNotMatch(fn, /resolveSolicitorSession|resolveBuilderSession|extractFinanceSessionToken/);
@@ -106,16 +139,29 @@ test('only the Command Centre reaches these, and only for its own portal', () =>
 
   // The portal of a download is read from the record, not from the request: a
   // browser-supplied portal would otherwise choose which permission is checked.
-  const download = fn.slice(fn.indexOf("operation === 'download_record'"), fn.indexOf('return json({ error: \'Unknown operation\' }'));
+  const download = branch('download_record');
   assert.match(download, /from\('partner_agreement_records'\)[\s\S]{0,200}\.eq\('acceptance_id', acceptanceId\)/);
   assert.ok(
     download.indexOf('MODULE_BY_PORTAL[record.portal') < download.indexOf('createSignedUrl'),
     'the permission check must precede the signed URL',
   );
 
-  // Writing is a mutation and the staff session is cookie-carried. Both
-  // operations that produce and store bytes pass the same guard.
-  assert.match(fn, /operation === 'download_record'[\s\S]{0,80}\) \{\s*\n\s*const csrf = enforceCsrf\(req\)/);
+  // A partner outside the portals has no portal, so no portal permission can
+  // gate their copy (#2315). The gate is an AML role, the authority that sends
+  // the agreement, and it comes before the row is read or a URL is signed.
+  const direct = branch('download_direct_acknowledgement');
+  const roleCheck = direct.indexOf("supabase.rpc('has_any_aml_role'");
+  assert.ok(roleCheck > -1, 'a direct copy must be gated on an AML role');
+  assert.match(direct, /if \(!hasAmlRole\) \{\s*\n\s*return createForbiddenResponse\('AML role required'/);
+  assert.ok(roleCheck < direct.indexOf(".from('direct_partner_acknowledgements')"), 'the role check must precede the read');
+  assert.ok(roleCheck < direct.indexOf('createSignedUrl'), 'the role check must precede the signed URL');
+
+  // Writing is a mutation and the staff session is cookie-carried. Every
+  // operation that produces and stores bytes passes the same guard.
+  const guarded = csrfGuardedOperations();
+  for (const operation of ['download_record', 'save_missing_copies', 'download_direct_acknowledgement']) {
+    assert.ok(guarded.includes(operation), `${operation} must pass the CSRF guard`);
+  }
   // Downloading an executed agreement is an access event on a legal record.
   assert.match(fn, /action: 'partner_agreement_downloaded'/);
 });
@@ -224,7 +270,7 @@ test('a copy is saved without waiting for someone to click Download', () => {
   assert.match(fn, /failed\.push\(\{ acceptance_id: record\.acceptance_id/);
 
   // And it is a mutation, so it passes the CSRF guard.
-  assert.match(fn, /operation === 'download_record' \|\| operation === 'save_missing_copies'\) \{\s*\n\s*const csrf = enforceCsrf\(req\)/);
+  assert.ok(csrfGuardedOperations().includes('save_missing_copies'), 'saving copies must pass the CSRF guard');
 
   // The panel says which rows are saved rather than leaving it implied.
   assert.match(panel, /Not saved yet/);
@@ -248,9 +294,11 @@ test('the Command Centre can tell when the service is older than the app', () =>
   assert.match(doc, /export \{[\s\S]{0,200}AGREEMENT_DOCUMENT_REVISION[\s\S]{0,200}\} from '\.\/partnerAgreementRevision\.pure\.ts'/);
   assert.doesNotMatch(doc, /const AGREEMENT_DOCUMENT_REVISION = /);
 
-  // Reported on both paths a copy can be produced through.
-  assert.match(fn, /document_revision: AGREEMENT_DOCUMENT_REVISION/);
-  assert.equal(fn.match(/document_revision: AGREEMENT_DOCUMENT_REVISION/g).length, 2);
+  // Reported by the listing and by every path a copy is produced through: the
+  // portal download and, since #2315, a direct partner's copy.
+  for (const operation of ['list_records', 'download_record', 'download_direct_acknowledgement']) {
+    assert.match(branch(operation), /document_revision: AGREEMENT_DOCUMENT_REVISION/, `${operation} must report the revision it renders`);
+  }
 
   // A function that reports nothing is a function deployed before this existed,
   // which is precisely the state worth naming — so it reads as 1, not as

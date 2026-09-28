@@ -103,10 +103,11 @@ describe('F-02 — the operator backfills require a JWT', () => {
     // against a function slipping in undeclared; check-verify-jwt-declared.mjs
     // enforces the rule itself.
     // Reconciled by the cascade. This deployment declares 3 edge function(s) the prime
-    // does not — crm-calendar, crm-inbound-message, crm-send-message — so the prime's
-    // number counts a different repository. The count below is this one's, taken from the
-    // config this same pass composed.
-    expect(declared.length).toBe(417);
+    // does not — crm-calendar, crm-inbound-message, crm-send-message — and does not
+    // declare the GoHighLevel account migration (all 28 functions), which the prime keeps
+    // for itself, so the prime's number counts a different repository. The count below is
+    // this one's, taken from the config this same pass composed.
+    expect(declared.length).toBe(389);
   });
 });
 

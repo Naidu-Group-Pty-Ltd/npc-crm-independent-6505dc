@@ -43,6 +43,15 @@ export function declaredProjectRef(configToml: string): string {
   return match[1];
 }
 
+/**
+ * The largest file the cascade writes into a clone: 40 MiB, Mission Control's
+ * `CASCADE_STREAM_MAX_FILE_BYTES`. Measured on the seeds: v19, at 41,773,244
+ * bytes, is carried, and GitHub refuses v20, at 42,195,218. Any file over this
+ * is on the prime's tree alone, so a spec that reads one must stand down
+ * elsewhere. `primeTree.spec.ts` holds every spec to that.
+ */
+export const CASCADE_FILE_LIMIT_BYTES = 40 * 1024 * 1024;
+
 /** True only on the prime's own tree. */
 export const TREE_IS_PRIME =
   declaredProjectRef(readFileSync(resolve(__dirname, '../../../supabase/config.toml'), 'utf8')) ===

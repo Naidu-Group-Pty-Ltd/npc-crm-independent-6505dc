@@ -18,6 +18,19 @@ import {
   type DesignEcho,
   type TemplateDesignReference,
 } from '../../reportDesign/templateDesign.pure.ts';
+import { readStrategyRationale, type StrategyRationaleDocument } from './strategyRationale.pure.ts';
+
+/**
+ * Which document this route draws.
+ *
+ * The Snapshot is the route's own document and the default, so every caller
+ * written before the brief existed is answered exactly as it was. The Strategy
+ * Rationale Brief is the What-If modeller's hand-off (`strategyRationale.pure.ts`):
+ * it takes the Borrowing Capacity design (`DRAWN_DOCUMENTS`), it is about the
+ * same client, and it is authorised, branded, stored and ledgered the same way —
+ * so it is a second document of this route rather than a second route.
+ */
+export type BorrowingCapacityDocument = 'snapshot' | 'strategy_rationale';
 
 /** Only these are accepted from the caller; everything else is read server-side. */
 export interface SnapshotRenderRequest {
@@ -34,6 +47,16 @@ export interface SnapshotRenderRequest {
    * figures and pages are the report's own whatever is named here.
    */
   design: TemplateDesignReference | null;
+  /** Absent in the body means the Snapshot. */
+  document: BorrowingCapacityDocument;
+  /**
+   * The brief's words, as the modeller composed them, when `document` is
+   * `strategy_rationale`; null otherwise. The brief is a scenario the adviser is
+   * modelling in the browser and is stored nowhere, so it is the one thing this
+   * route takes from the caller — read against the composer's own shape and
+   * bounded (`readStrategyRationale`). The client's name is still read here.
+   */
+  rationale: StrategyRationaleDocument | null;
 }
 
 export type RequestParse =
@@ -74,6 +97,20 @@ export function parseRenderRequest(body: unknown): RequestParse {
   const design = readTemplateDesignReference(b.design);
   if (design.ok === false) return { ok: false, error: design.error };
 
+  // A document the route does not draw is refused rather than answered with a
+  // Snapshot, so a caller asking for something new is told it did not get it.
+  const document = b.document === undefined || b.document === null || b.document === 'snapshot'
+    ? 'snapshot'
+    : b.document === 'strategy_rationale' ? 'strategy_rationale' : null;
+  if (!document) return { ok: false, error: 'unknown document' };
+
+  let rationale: StrategyRationaleDocument | null = null;
+  if (document === 'strategy_rationale') {
+    const read = readStrategyRationale(b.rationale);
+    if (read.ok === false) return { ok: false, error: read.error };
+    rationale = read.document;
+  }
+
   return {
     ok: true,
     request: {
@@ -82,6 +119,8 @@ export function parseRenderRequest(body: unknown): RequestParse {
       scenarioPresets: presets,
       edition: edition || null,
       design: design.reference,
+      document,
+      rationale,
     },
   };
 }
@@ -153,4 +192,11 @@ export interface SnapshotRenderResponse {
    * was asked for.
    */
   design: DesignEcho | null;
+  /**
+   * Which document was drawn. A caller asking for the brief requires this
+   * echo: a deployment older than the brief ignores `document` and answers with
+   * a Snapshot, and saving that under the brief's name would hand an adviser the
+   * wrong document without a word.
+   */
+  document: BorrowingCapacityDocument;
 }

@@ -28,7 +28,12 @@ describe('parseRenderRequest', () => {
     const parsed = parseRenderRequest({ clientId: CLIENT });
     expect(parsed).toEqual({
       ok: true,
-      request: { clientId: CLIENT, assessmentId: null, scenarioPresets: [], edition: null, design: null },
+      // A body naming no document is the Snapshot, as it was before the
+      // Strategy Rationale Brief shared this route (BORROWING_CAPACITY.md §17).
+      request: {
+        clientId: CLIENT, assessmentId: null, scenarioPresets: [], edition: null, design: null,
+        document: 'snapshot', rationale: null,
+      },
     });
   });
 
@@ -61,8 +66,11 @@ describe('parseRenderRequest', () => {
     });
     expect(parsed.ok && Object.keys(parsed.request).sort())
       // `design` is how the document looks, never what it says, and it is
-      // validated (`designRequest.spec.ts`), so it is the one other key.
-      .toEqual(['assessmentId', 'clientId', 'design', 'edition', 'scenarioPresets']);
+      // validated (`designRequest.spec.ts`). `document` names which of the
+      // route's two documents is drawn, and `rationale` is null unless the
+      // brief was asked for — the brief's words are read against their own
+      // shape (`strategyRationale.spec.ts`). None of them is a figure.
+      .toEqual(['assessmentId', 'clientId', 'design', 'document', 'edition', 'rationale', 'scenarioPresets']);
   });
 
   it('caps the scenario list rather than rendering a hundred rows', () => {

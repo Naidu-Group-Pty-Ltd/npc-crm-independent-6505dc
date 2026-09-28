@@ -85,6 +85,17 @@ describe("navigation registry — one source, capability-filtered", () => {
     }
   });
 
+  it("keeps portal administration gated in a dedicated ordered group", () => {
+    const portals = ADMIN_NAVIGATION_ITEMS.filter((item) => item.group === "Portals");
+    expect(portals.map((item) => item.title)).toEqual([
+      "Finance Portal",
+      "Builder Portal",
+      "Solicitor Portal",
+      "Client Portal",
+    ]);
+    expect(NAVIGATION_GROUP_ORDER.slice(-3)).toEqual(["Operations", "Portals", "Help & Usage"]);
+  });
+
   it("keeps Commercial / Industrial active across nested and /industrial routes", () => {
     const ci = NAVIGATION_ITEMS.find((i) => i.title === "Commercial / Industrial")!;
     for (const path of ["/commercial", "/commercial/calculators", "/industrial", "/industrial/123"]) {

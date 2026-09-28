@@ -3,7 +3,8 @@
  *
  * Three stacked cards inside the matter Deal Room:
  *   1. Audit trail — hash-chained, append-only event timeline + chain verification.
- *   2. Conflict of interest — firm-wide party search with outcome resolution.
+ *   2. Conflict of interest — a party search across the other matters this
+ *      solicitor can see, with outcome resolution.
  *   3. Closure & retention — checklist, blockers, retention class, close/reopen.
  *
  * All data is fetched through `solicitor-portal-compliance`, which enforces
@@ -111,11 +112,15 @@ export function MatterCompliancePanel({ matterId, matterReference, canEdit }: Pr
     setRunningConflict(true);
     try {
       const res = await solicitorCompliance.conflictRun(matterId);
-      toast[res.match_count ? 'warning' : 'success'](
-        res.match_count
-          ? `${res.match_count} potential conflict${res.match_count === 1 ? '' : 's'} found`
-          : 'No conflicts found across the practice',
-      );
+      const searched = res.matters_searched ?? 0;
+      const scope = `${searched} other matter${searched === 1 ? '' : 's'} you can access`;
+      if (res.outcome === 'pending') {
+        toast.warning('There are no other matters you can access to search. Record the outcome once you have checked.');
+      } else if (res.match_count) {
+        toast.warning(`${res.match_count} potential conflict${res.match_count === 1 ? '' : 's'} found among the ${scope}`);
+      } else {
+        toast.success(`No conflicts found among the ${scope}`);
+      }
       await load();
     } catch (e) {
       toast.error((e as Error).message || 'Conflict check failed');
@@ -226,7 +231,7 @@ export function MatterCompliancePanel({ matterId, matterReference, canEdit }: Pr
               <FileSearch className="h-4 w-4 text-primary" aria-hidden /> Conflict of interest
             </CardTitle>
             <CardDescription>
-              Searches every party name and organisation on this matter against all other matters in your practice.
+              Searches every party name and organisation on this matter against the other matters you can access in your practice.
             </CardDescription>
           </div>
           <div className="flex items-center gap-2">

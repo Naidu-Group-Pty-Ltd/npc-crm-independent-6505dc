@@ -28,7 +28,7 @@ import {
   tokenValueToHex,
   type ImportedToken,
 } from '../import.pure';
-import { PRINT_BRAND, PRINT_INK, PRINT_SURFACE } from '@/lib/reportDesign/tokens.pure';
+import { PRINT_BRAND, PRINT_INK, PRINT_SEMANTIC, PRINT_SURFACE } from '@/lib/reportDesign/tokens.pure';
 import { auditBrandDesignSystem } from '../system.pure';
 import { readReportNeutrals, resolveReportPalette } from '@/lib/reportDesign/brandResolve.pure';
 
@@ -36,6 +36,17 @@ const MANIFEST = JSON.parse(readFileSync(
   resolve(__dirname, '../../../../scripts/brandDesign/claudeDesign/npc-services.manifest.json'),
   'utf8',
 ));
+
+/** Hue in degrees, so a lightness-only correction can be told from a hue change. */
+const hueOf = (hex: string): number => {
+  const [r, g, b] = [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16) / 255);
+  const max = Math.max(r, g, b);
+  const min = Math.min(r, g, b);
+  if (max === min) return 0;
+  const d = max - min;
+  const h = max === r ? ((g - b) / d) % 6 : max === g ? (b - r) / d + 2 : (r - g) / d + 4;
+  return ((h * 60) + 360) % 360;
+};
 
 describe('the real NPC Services Design System, imported', () => {
   const read = readDesignSystemManifest(MANIFEST);
@@ -341,13 +352,25 @@ describe('an imported system reaches the renderer', () => {
 
   it('still spreads Category B last, unreachable from the import', () => {
     if (imported.ok === false) return;
-    const palette = resolveReportPalette({
-      neutrals: { ...imported.result.neutrals, paper: '#FFFFFF' },
+    const neutrals = { ...imported.result.neutrals, paper: '#FFFFFF' };
+    const palette = resolveReportPalette({ neutrals, brandHex: '#2F5D50' });
+    // A tenant cannot make risk green by importing a design system.
+    //
+    // This pinned `#D31212` and `#157A3A`, the frozen constants, and went stale
+    // when the print floors were corrected to 7 (a7f6f054f): the semantics are
+    // now darkened for the stock they print on, lightness only, so the bytes
+    // move while the guarantee holds. `printContrast.spec.ts` was renegotiated
+    // the same way; this file sits outside the paths CI runs and was missed.
+    // What is asserted is the guarantee: the import cannot reach Category B,
+    // and each semantic keeps its frozen hue.
+    const smuggled = resolveReportPalette({
+      neutrals: { ...neutrals, negative: '#00FF00', positive: '#FF0000' } as typeof neutrals,
       brandHex: '#2F5D50',
     });
-    // A tenant cannot make risk green by importing a design system.
-    expect(palette.negative).toBe('#D31212');
-    expect(palette.positive).toBe('#157A3A');
+    expect(smuggled.negative).toBe(palette.negative);
+    expect(smuggled.positive).toBe(palette.positive);
+    expect(Math.abs(hueOf(palette.negative) - hueOf(PRINT_SEMANTIC.negative))).toBeLessThan(2);
+    expect(Math.abs(hueOf(palette.positive) - hueOf(PRINT_SEMANTIC.positive))).toBeLessThan(2);
   });
 
   it('corrects the accent against the imported grounds, not ours', () => {

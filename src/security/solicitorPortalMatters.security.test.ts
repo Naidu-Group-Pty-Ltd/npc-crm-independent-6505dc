@@ -1,6 +1,7 @@
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { describe, expect, it } from 'vitest';
+import { withoutComments } from './sourceCode';
 
 const functionSource = readFileSync(
   resolve(process.cwd(), 'supabase/functions/solicitor-portal-matters/index.ts'),
@@ -10,26 +11,43 @@ const sharedSource = readFileSync(
   resolve(process.cwd(), 'supabase/functions/_shared/legalMatters.ts'),
   'utf8',
 );
+const authSource = readFileSync(
+  resolve(process.cwd(), 'supabase/functions/_shared/solicitorPortalAuth.ts'),
+  'utf8',
+);
 
 describe('solicitor portal matter list security contract', () => {
   /**
-   * The scoping moved from client ids to matter ids.
+   * The scoping moved from client ids to matter ids, and the permission check
+   * moved into the list.
    *
-   * This asserted `.in('client_id', viewableClientIds)` twice. The function now
-   * resolves `listAccessibleMatterIds(...)` — which reads
-   * `solicitor_matter_access` under the matter-access-v1 flag and falls back to
-   * the assigned-client set otherwise — and filters `.in('id',
-   * accessibleMatterIds)`. Narrower, not looser: it is the matters the
-   * solicitor may see rather than every matter of every client they touch.
-   * `can(matrix, 'matters', 'view')` still gates the client-level path.
+   * This asserted `.in('client_id', viewableClientIds)` twice, and then
+   * `can(matrix, 'matters', 'view')`, which lived in a `listViewableClientIds`
+   * helper that nothing called and that named a client list a merge had
+   * deleted (cea3d88). The helper is gone. The function resolves
+   * `listAccessibleMatterIds(supabase, me.id, me.firm_id)` and filters
+   * `.in('id', accessibleMatterIds)`. The list follows the practice's own
+   * rollout mode, per-matter grants under `cutover` and assigned clients
+   * otherwise, and passes each through the permission matrix for
+   * `matters`/`view`, the key it defaults to. Narrower, not looser: it is the
+   * matters the solicitor may see rather than every matter of every client they
+   * touch. `_shared/solicitorPortalAuth.test.ts` proves the list agrees with
+   * the single-matter check by running both.
    */
   it('scopes list and stats queries to the matters this solicitor may view', () => {
-    expect(functionSource).toContain("can(matrix, 'matters', 'view')");
-    expect(functionSource).toContain('listAccessibleMatterIds(');
+    expect(functionSource).toContain(
+      'const accessibleMatterIds = await listAccessibleMatterIds(supabase, me.id, me.firm_id);',
+    );
+    // With no key named, the list is asked for `matters`.
+    expect(authSource.match(/permissionKeys: string \| readonly string\[\] = 'matters',/g)?.length ?? 0)
+      .toBe(2);
     expect(functionSource.match(/\.in\('id', accessibleMatterIds\)/g)?.length ?? 0)
       .toBeGreaterThanOrEqual(1);
     // And the firm boundary is still applied alongside it.
     expect(functionSource).toContain(".eq('firm_id', me.firm_id)");
+    // A single matter needs the same permission the list applies.
+    expect(functionSource).toContain("if (!perms || !can(perms, 'matters', 'view'))");
+    expect(withoutComments(functionSource)).not.toMatch(/listViewableClientIds|assignedClientIds|resolveClientPermissions/);
   });
 
   it('keeps the reduced list projection free of staff-only and detail fields', () => {

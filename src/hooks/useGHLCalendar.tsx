@@ -1,5 +1,6 @@
 import { useState, useCallback, useRef } from 'react';
 import { invokeSecureFunction } from '@/lib/secureInvoke';
+import { crmFunction } from '@/lib/crm/crmProvider';
 import { useToast } from '@/hooks/use-toast';
 import { useNotifications } from '@/contexts/NotificationsContext';
 import { formatInSydney, formatDateInSydney } from '@/lib/timezoneUtils';
@@ -190,7 +191,7 @@ export function useGHLCalendar() {
     setError(null);
 
     try {
-      const { data, error: fetchError } = await invokeSecureFunction<CalendarData>('ghl-calendar', {
+      const { data, error: fetchError } = await invokeSecureFunction<CalendarData>(crmFunction('calendar'), {
         action: 'all', startTime, endTime, calendarId,
       });
 
@@ -264,7 +265,7 @@ export function useGHLCalendar() {
     setError(null);
 
     try {
-      const { data, error: fetchError } = await invokeSecureFunction('ghl-calendar', {
+      const { data, error: fetchError } = await invokeSecureFunction(crmFunction('calendar'), {
         action: 'events', startTime, endTime, calendarId,
       });
 
@@ -296,7 +297,7 @@ export function useGHLCalendar() {
 
   const fetchCalendarGroups = useCallback(async () => {
     try {
-      const { data, error: fetchError } = await invokeSecureFunction('ghl-calendar', {
+      const { data, error: fetchError } = await invokeSecureFunction(crmFunction('calendar'), {
         action: 'groups',
       });
 
@@ -338,7 +339,7 @@ export function useGHLCalendar() {
       // it. `update` has always accepted the field.
       if (options?.notes !== undefined) payload.notes = options.notes;
 
-      const { data, error: updateError } = await invokeSecureFunction('ghl-calendar', payload);
+      const { data, error: updateError } = await invokeSecureFunction(crmFunction('calendar'), payload);
 
       if (updateError) {
         throw new Error(updateError.message);
@@ -376,7 +377,7 @@ export function useGHLCalendar() {
         // Return undo function if original times were provided
         const undoFn = originalStartTime && originalEndTime
           ? async () => {
-              const { data: undoData, error: undoError } = await invokeSecureFunction('ghl-calendar', {
+              const { data: undoData, error: undoError } = await invokeSecureFunction(crmFunction('calendar'), {
                 action: 'update',
                 eventId,
                 newStartTime: originalStartTime,
@@ -431,7 +432,7 @@ export function useGHLCalendar() {
     setIsUpdating(true);
 
     try {
-      const { data, error: updateError } = await invokeSecureFunction('ghl-calendar', {
+      const { data, error: updateError } = await invokeSecureFunction(crmFunction('calendar'), {
         action: 'update', eventId, ...updates,
       });
 
@@ -471,7 +472,7 @@ export function useGHLCalendar() {
     setIsUpdating(true);
 
     try {
-      const { data, error: deleteError } = await invokeSecureFunction('ghl-calendar', {
+      const { data, error: deleteError } = await invokeSecureFunction(crmFunction('calendar'), {
         action: 'delete', eventId,
       });
 
@@ -521,7 +522,7 @@ export function useGHLCalendar() {
     }
 
     try {
-      const { data, error: fetchError } = await invokeSecureFunction('ghl-calendar', {
+      const { data, error: fetchError } = await invokeSecureFunction(crmFunction('calendar'), {
         action: 'contact', contactId,
       });
 
@@ -552,7 +553,7 @@ export function useGHLCalendar() {
 
   const searchContacts = useCallback(async (query: string, limit = 10): Promise<GHLContact[]> => {
     try {
-      const { data, error: searchError } = await invokeSecureFunction('ghl-calendar', {
+      const { data, error: searchError } = await invokeSecureFunction(crmFunction('calendar'), {
         action: 'searchContacts', query, limit,
       });
 
@@ -586,7 +587,7 @@ export function useGHLCalendar() {
     setIsUpdating(true);
 
     try {
-      const { data, error: blockError } = await invokeSecureFunction('ghl-calendar', {
+      const { data, error: blockError } = await invokeSecureFunction(crmFunction('calendar'), {
         action: 'blockSlot', ...payload,
       });
 
@@ -623,7 +624,7 @@ export function useGHLCalendar() {
     timezone = 'Australia/Sydney'
   ): Promise<GHLFreeSlot[]> => {
     try {
-      const { data, error: fetchError } = await invokeSecureFunction('ghl-calendar', {
+      const { data, error: fetchError } = await invokeSecureFunction(crmFunction('calendar'), {
         action: 'freeSlots', calendarId, startDate, endDate, timezone,
       });
 
@@ -663,7 +664,7 @@ export function useGHLCalendar() {
     setIsUpdating(true);
 
     try {
-      const { data, error: createError } = await invokeSecureFunction('ghl-calendar', {
+      const { data, error: createError } = await invokeSecureFunction(crmFunction('calendar'), {
         action: 'create', ...payload,
       });
 

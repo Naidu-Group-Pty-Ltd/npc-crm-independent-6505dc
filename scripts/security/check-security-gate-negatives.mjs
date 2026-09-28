@@ -313,12 +313,30 @@ const CASES = [
     find: 'if (!await canAccessClient(supabase, actor, clientId)) {',
     replace: 'if (false) {',
   },
+  // Re-pointed 28 Sep 2026: the per-client matrix these cases used to remove
+  // was ANDed onto the board and emptied it for every practice on per-matter
+  // grants. The permission check now lives where the matter list is built, on
+  // both of its paths, so those are the controls removed here.
   {
     gate: 'check-solicitor-intelligence-authz.mjs',
     file: 'supabase/functions/solicitor-portal-intelligence/index.ts',
-    what: 'portfolio matter reads stop resolving the per-client permission matrix',
-    find: "        if (permissions && can(permissions, 'matters', 'view')) visibleClientIds.push(clientId);",
-    replace: '        visibleClientIds.push(clientId);',
+    what: "the portfolio board reads the matter list under the analyser's key instead of matters",
+    find: "listAccessibleMatterIds(supabase, me.id, me.firm_id, 'matters')",
+    replace: "listAccessibleMatterIds(supabase, me.id, me.firm_id, 'contract')",
+  },
+  {
+    gate: 'check-solicitor-intelligence-authz.mjs',
+    file: 'supabase/functions/_shared/solicitorPortalAuth.ts',
+    what: 'the legacy assignments list every client again whatever the permission (WP-16 §2)',
+    find: 'row.client_id && allowsEvery(mergePermissions(baseline, row.permissions ?? null))',
+    replace: 'row.client_id',
+  },
+  {
+    gate: 'check-solicitor-intelligence-authz.mjs',
+    file: 'supabase/functions/_shared/solicitorPortalAuth.ts',
+    what: 'the per-matter grants list a matter whatever the permission',
+    find: '.filter((row: any) => allowsEvery(resolveTriStatePermissions(baseline, row.permissions ?? null)))',
+    replace: '',
   },
 
   // ── WP-17: the database's own gate ───────────────────────────────────────

@@ -290,8 +290,10 @@ describe('the legacy document, restated through its own normaliser', () => {
     expect(data.summary.narrative).toContain(
       'Jane Smith has an estimated maximum borrowing capacity of $1,180,000',
     );
-    expect(data.summary.narrative).toContain('assessment rate of 9.14% over a 30-year loan term');
-    expect(data.summary.narrative).toContain('The overall serviceability position is assessed as moderate.');
+    // The capacity is stated as what it is — the loan the surplus repays at the
+    // assessment rate over the term (BORROWING_CAPACITY.md §16).
+    expect(data.summary.narrative).toContain('the loan a monthly surplus of $1,290 repays at an assessment rate of 9.14% over 30 years');
+    expect(data.summary.narrative).toContain('Serviceability is assessed as moderate, with a debt-to-income ratio of 5.6x.');
   });
 
   it('says "the applicant" when no client resolves, not the legacy "Client"', () => {
@@ -326,15 +328,18 @@ describe('the legacy document, restated through its own normaliser', () => {
     // travels formatted. The gap before "pa" is the engine's own no-break
     // space, asserted as such — a unit that wraps away from its figure at a
     // line end misreads.
+    //
+    // This row records no after-tax income, so the working cannot foot and the
+    // ledger states the figures the record holds instead (§16); the rate and
+    // term ride in the capacity line's label rather than as rows of a money
+    // column.
     expect(data.ledger.rows.map((r: any) => [r.label, r.amountLabel])).toEqual([
-      ['Gross Annual Income', '$245,000\u00A0pa'],
-      ['Shaded Annual Income', '$228,320\u00A0pa'],
-      ['Living Expenses', '-$6,420/mo'],
-      ['Existing Commitments', '-$1,840/mo'],
-      ['Monthly Surplus', '$1,290/mo'],
-      ['Assessment Rate Applied', '9.14%'],
-      ['Loan Term', '30 years'],
-      ['Maximum Borrowing Capacity', '$1,180,000'],
+      ['Gross annual income', '$245,000\u00A0pa'],
+      ['Assessed (shaded) annual income', '$228,320\u00A0pa'],
+      ['Living expenses', '-$6,420/mo'],
+      ['Existing commitments', '-$1,840/mo'],
+      ['Monthly surplus, after tax', '$1,290/mo'],
+      ['Maximum borrowing capacity (the surplus, repaid at 9.14% over 30 years)', '$1,180,000'],
     ]);
     expect(data.ledger.rows[2].direction).toBe('adverse');
   });
@@ -354,14 +359,18 @@ describe('the legacy document, restated through its own normaliser', () => {
   });
 
   it('reads assumptions from both shapes the column has held', () => {
-    // 57 rows store an object with `items`; 86 store the bare array.
-    expect(data.assumptions.rows).toHaveLength(4);
-    expect(data.assumptions.rows[1]).toEqual({ label: 'Buffer Rate', value: '3%' });
+    // 57 rows store an object with `items`; 86 store the bare array. The basis
+    // is curated (`basis.pure.ts`): buffer, rate and term are the assessment
+    // terms' and are not printed twice, and each engine key is read in the
+    // report's words.
+    expect(data.assumptions.rows).toEqual([
+      { label: 'Serviceability', value: 'After tax, on the income a lender counts' },
+    ]);
     const bare: any = applyBorrowingCapacityProjection({}, {
       ...ROW,
-      assumptions: [{ key: 'Buffer Rate', value: '3%' }],
+      assumptions: [{ key: 'Policy Profile', value: 'Example Bank policy' }],
     });
-    expect(bare.assumptions.rows).toEqual([{ label: 'Buffer Rate', value: '3%' }]);
+    expect(bare.assumptions.rows).toEqual([{ label: 'Lender policy', value: 'Example Bank policy' }]);
   });
 
   it('publishes none of it for a row with no capacity figure', () => {
