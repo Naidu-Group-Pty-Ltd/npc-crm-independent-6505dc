@@ -457,6 +457,7 @@
     "permissions.ts": [
       "_shared/authz.ts",
       "airtable-proxy/index.ts",
+      "builder-stock-marketplace/index.ts",
       "create-advanced-client/index.ts",
       "estimate-commercial-caprate/index.ts",
       "get-call-recording/index.ts",

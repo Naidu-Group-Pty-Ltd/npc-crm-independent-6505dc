@@ -99,7 +99,9 @@ describe('the edge read', () => {
   });
 
   it('asks the Clients module before any client is named', () => {
-    expect(op).toMatch(/requireModulePermission\(supabase, actor, 'clients', 'can_view'\)/);
+    // By the key it is registered under — `clients` is registered nowhere, and
+    // asking for it refused everyone but a superadmin (builderStockClientsModuleKey.spec.ts).
+    expect(op).toMatch(/requireModulePermission\(supabase, actor, CLIENTS_MODULE, 'can_view'\)/);
     expect(op).toMatch(/includeClients:\s*clientsView\.ok/);
   });
 

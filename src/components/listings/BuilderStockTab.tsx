@@ -78,7 +78,7 @@ const SURFACE = 'min-w-0 rounded-[1.5rem] border border-border/60 bg-card/65 p-4
 
 export function BuilderStockTab() {
   const { toast } = useToast();
-  const { canEdit: canEditClients } = useModulePermissions('clients');
+  const { canEdit: canEditClients } = useModulePermissions('client_management');
 
   const [search, setSearch] = useState('');
   const [organisationId, setOrganisationId] = useState('all');

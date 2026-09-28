@@ -85,3 +85,28 @@ export async function canAccessAllClients(
     actor.userId === 'service_role' ||
     Boolean(actor.userId && await actorIsSuperadmin(supabase, actor.userId));
 }
+
+/**
+ * The clients a staff member may act for — their own and those assigned to
+ * them, `canAccessClient`'s rule for many ids at once — or `null` for a reader
+ * who may act for every client (a superadmin, or an internal call).
+ *
+ * Read as two equality queries, so no filter is composed as a string and no
+ * request grows with the number of clients. A failed read is NO access, as in
+ * `canAccessAllOf`. Each read is capped at 1,000 rows (the API's ceiling); a
+ * staff member holding more is under-scoped, which refuses rather than
+ * reaches.
+ */
+export async function clientScopeOf(
+  supabase: any,
+  actor: { userId: string | null; authMethod?: string | null },
+): Promise<ReadonlySet<string> | null> {
+  if (await canAccessAllClients(supabase, actor)) return null;
+  if (!actor.userId) return new Set();
+  const [created, assigned] = await Promise.all([
+    supabase.from('clients').select('id').eq('created_by', actor.userId).limit(1000),
+    supabase.from('clients').select('id').eq('assigned_team_user_id', actor.userId).limit(1000),
+  ]);
+  if (created.error || assigned.error) return new Set();
+  return new Set([...(created.data ?? []), ...(assigned.data ?? [])].map((row: { id: string }) => row.id));
+}
