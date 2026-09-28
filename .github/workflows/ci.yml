@@ -1096,9 +1096,15 @@ jobs:
             printf '%s' "$EMBEDDED" | grep -q "$face" \
               || { echo "$face not embedded in the report"; exit 1; }
           done
-          # The document the fixture describes is twelve pages. A migration
+          # The document the fixture describes is ten pages. A migration
           # that drops the audit trail changes nothing a unit test sees, and
           # changes this.
+          #
+          # Twelve until BORROWING_CAPACITY.md §16 (28 Sep 2026): the sections
+          # after the first run on rather than each opening a page, and the
+          # short tables and callouts are kept whole, so the pages that held
+          # only a liabilities total or a single callout are gone. The basis
+          # section it added is on a page that was already open.
           #
           # Eleven until the subheads moved from `h3` to `h2` to satisfy PDF/UA
           # clause 7.4.2. `h2` is the design system's subhead and carries 3pt
@@ -1106,7 +1112,7 @@ jobs:
           # each invented for themselves, which is a page across a document of
           # this length. Recorded because the next person to see this number
           # move should know whether it moved for a reason.
-          pdfinfo /tmp/bc.pdf | grep -E '^Pages: +12$' || {
+          pdfinfo /tmp/bc.pdf | grep -E '^Pages: +10$' || {
             echo "unexpected page count:"; pdfinfo /tmp/bc.pdf | grep Pages; exit 1;
           }
 
