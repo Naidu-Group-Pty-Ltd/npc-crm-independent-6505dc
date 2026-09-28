@@ -9,6 +9,22 @@ import { applyDisplayOverrides, buildCalculatorInput, overridesAffectModel } fro
 import { healFinanceIdentity } from '../_shared/reports/investment/financialEngine.pure.ts';
 import { refuseFailureStamp } from '../_shared/reports/investment/failureStamp.pure.ts';
 import { BULK_DELETE_BUDGET_MS, removeDeletedReportStorage } from '../_shared/reports/investment/reportStorageRemoval.ts';
+import {
+  CONDITION_DOCUMENT_BUCKET,
+  CONDITION_DOCUMENT_MAX_BYTES,
+  CONDITION_DOCUMENT_TYPES,
+  TABLE_NOT_APPLIED,
+  bestReadingForSubject,
+  conditionDocumentExtension,
+  conditionDocumentPath,
+  decideConditionSubmission,
+  isConditionDocumentPathFor,
+  isMissingTableError,
+  parseConditionSubmission,
+  recordFromRow,
+  rowFromRecord,
+} from '../_shared/reports/risk/conditionRecordSubmission.pure.ts';
+import { assessConditionRecord } from '../_shared/reports/risk/conditionRecord.pure.ts';
 /**
  * CORS comes from `_shared/auth.ts`, like every other function's.
  *
@@ -38,7 +54,8 @@ const isRecord = (v: unknown): v is Record<string, any> =>
   typeof v === 'object' && v !== null && !Array.isArray(v);
 
 interface RequestBody {
-  action: 'insert' | 'update' | 'delete' | 'archive' | 'unarchive' | 'archivePackage' | 'unarchivePackage' | 'bulkDelete' | 'getVersion';
+  action: 'insert' | 'update' | 'delete' | 'archive' | 'unarchive' | 'archivePackage' | 'unarchivePackage' | 'bulkDelete' | 'getVersion'
+    | 'requestConditionDocumentUpload' | 'submitConditionRecord' | 'getConditionRecords' | 'getConditionDocumentUrl';
   reportId?: string;
   reportIds?: string[];
   data?: Record<string, any>;
@@ -80,7 +97,10 @@ Deno.serve(async (req) => {
     // Updates run through a service-role client and can trigger billing side
     // effects (including releasing a failed report's token reservation), so
     // authentication alone is not sufficient authorization.
-    if (action === 'update' || action === 'archivePackage' || action === 'unarchivePackage') {
+    if (
+      action === 'update' || action === 'archivePackage' || action === 'unarchivePackage'
+      || action === 'requestConditionDocumentUpload' || action === 'submitConditionRecord'
+    ) {
       const permission = await requireModulePermission(
         supabase,
         { userId, authMethod },
@@ -92,7 +112,246 @@ Deno.serve(async (req) => {
       }
     }
 
+    // A condition document is a third party's report about somebody's
+    // dwelling: reading the register needs the same module a reader of the
+    // report itself holds, never authentication alone.
+    if (action === 'getConditionRecords' || action === 'getConditionDocumentUrl') {
+      const permission = await requireModulePermission(
+        supabase,
+        { userId, authMethod },
+        'generated_reports',
+        'can_view',
+      );
+      if (!permission.ok) {
+        return createForbiddenResponse(permission.error || 'Generated reports view permission required', corsHeaders);
+      }
+    }
+
+    const json = (payload: unknown, status = 200) => new Response(
+      JSON.stringify(payload),
+      { status, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+    );
+
+    /** The report a condition record is filed against, read once. */
+    const readConditionSubject = async (id: string) => {
+      const { data: row, error } = await supabase
+        .from('investment_reports')
+        .select('id, property_address, canonical_property_key, client_property_id')
+        .eq('id', id)
+        .maybeSingle();
+      if (error) {
+        console.error('Condition record subject read failed:', error);
+        return { response: json({ error: 'The report this record is for could not be read. Retry.' }, 503), row: null };
+      }
+      if (!row) return { response: json({ error: 'Report not found' }, 404), row: null };
+      return { response: null, row };
+    };
+
     switch (action) {
+      // ── Condition records (Risk's `building` category) ─────────────────
+      //
+      // One rule, rendered and enforced: the panel validates with the same
+      // pure module this refuses with, and a refusal carries the validator's
+      // own sentence. Nothing on this path writes a score, a grade or an
+      // activation — the next generation reads the register and decides.
+      case 'requestConditionDocumentUpload': {
+        if (!reportId || !isRecord(data)) return json({ error: 'reportId and data are required' }, 400);
+        const ext = conditionDocumentExtension(data.fileName);
+        if (!ext) {
+          return json({ error: `Upload the document as ${Object.keys(CONDITION_DOCUMENT_TYPES).join(', ').toUpperCase()}.` }, 422);
+        }
+        const declared = Number(data.fileSize);
+        if (!Number.isFinite(declared) || declared <= 0 || declared > CONDITION_DOCUMENT_MAX_BYTES) {
+          return json({ error: `The document must be under ${Math.round(CONDITION_DOCUMENT_MAX_BYTES / 1024 / 1024)} MB.` }, 422);
+        }
+        const subject = await readConditionSubject(reportId);
+        if (subject.response) return subject.response;
+        // Refuse before the bytes move where the register cannot hold the
+        // record they belong to.
+        const probe = await supabase.from('property_condition_records').select('id').limit(1);
+        if (probe.error) {
+          if (isMissingTableError(probe.error)) return json({ error: TABLE_NOT_APPLIED, tableApplied: false }, 409);
+          console.error('Condition register probe failed:', probe.error);
+          return json({ error: 'The condition register could not be read. Retry.' }, 503);
+        }
+        const path = conditionDocumentPath(reportId, crypto.randomUUID(), data.fileName);
+        if (!path) return json({ error: 'Report not found' }, 404);
+        const { data: ticket, error: ticketError } = await supabase.storage
+          .from(CONDITION_DOCUMENT_BUCKET)
+          .createSignedUploadUrl(path);
+        if (ticketError || !ticket) {
+          console.error('Condition document upload ticket failed:', ticketError);
+          return json({ error: 'The upload could not be prepared. Retry.' }, 503);
+        }
+        return json({
+          success: true,
+          bucket: CONDITION_DOCUMENT_BUCKET,
+          path,
+          token: ticket.token,
+          contentType: CONDITION_DOCUMENT_TYPES[ext],
+        });
+      }
+
+      case 'submitConditionRecord': {
+        if (!reportId || !isRecord(data)) return json({ error: 'reportId and data are required for submitConditionRecord' }, 400);
+        // `recorded_by` is the record's provenance; a submission with no
+        // resolved identity is refused rather than attributed to nobody.
+        if (!userId || userId === 'service_role') return createUnauthorizedResponse('Authentication required', corsHeaders);
+
+        const subject = await readConditionSubject(reportId);
+        if (subject.response) return subject.response;
+        const subjectRow = subject.row!;
+
+        const parsed = parseConditionSubmission(data, {
+          reportId,
+          propertyId: subjectRow.client_property_id,
+        });
+        if (!parsed.ok) return json({ error: parsed.refusal.statement, reason: parsed.refusal.reason }, 422);
+
+        const expectedSubject = {
+          propertyAddress: subjectRow.property_address,
+          propertyId: subjectRow.client_property_id,
+          reportId,
+        };
+        const decision = decideConditionSubmission(parsed.record, expectedSubject, new Date().toISOString());
+        if (!decision.storable) {
+          return json({ error: decision.refusal!.statement, reason: decision.refusal!.reason, reading: decision.reading }, 422);
+        }
+
+        // A held-document claim is checked against the store, never taken on
+        // the caller's word: the path must be one issued for THIS report and
+        // the object must exist.
+        const documentPath = typeof data.documentPath === 'string' && data.documentPath.trim()
+          ? data.documentPath.trim()
+          : null;
+        if (documentPath) {
+          if (!isConditionDocumentPathFor(documentPath, reportId)) {
+            return json({ error: 'The attached document was not uploaded against this report. Upload it again from this page.' }, 422);
+          }
+          const folder = documentPath.slice(0, documentPath.lastIndexOf('/'));
+          const leaf = documentPath.slice(documentPath.lastIndexOf('/') + 1);
+          const listed = await supabase.storage.from(CONDITION_DOCUMENT_BUCKET).list(folder, { search: leaf, limit: 10 });
+          if (listed.error) {
+            console.error('Condition document check failed:', listed.error);
+            return json({ error: 'The uploaded document could not be checked. Retry.' }, 503);
+          }
+          if (!(listed.data ?? []).some((o: { name?: string }) => o?.name === leaf)) {
+            return json({ error: 'The document upload did not finish, so the record was not stored. Attach it again.' }, 422);
+          }
+        }
+        const fileId = typeof data.fileId === 'string' && data.fileId.trim() ? data.fileId.trim() : null;
+
+        const { data: storedRecord, error: conditionInsertError } = await supabase
+          .from('property_condition_records')
+          .insert(rowFromRecord(parsed.record, {
+            reportId,
+            canonicalPropertyKey: subjectRow.canonical_property_key,
+            clientPropertyId: subjectRow.client_property_id,
+            fileId,
+            documentPath,
+            recordedBy: userId,
+          }))
+          .select()
+          .single();
+
+        if (conditionInsertError) {
+          if (isMissingTableError(conditionInsertError)) return json({ error: TABLE_NOT_APPLIED, tableApplied: false }, 409);
+          if (conditionInsertError.code === '23503') {
+            return json({ error: 'The attached file or the report this record names no longer exists, so the record was not stored.' }, 422);
+          }
+          if (conditionInsertError.code === '23514') {
+            return json({ error: 'The record breaks one of the register\'s rules (a date in the future, or a held document with no file), so it was not stored.' }, 422);
+          }
+          console.error('Condition record insert failed:', conditionInsertError);
+          return json({ error: 'Failed to store the condition record' }, 500);
+        }
+
+        return json({ success: true, record: storedRecord, reading: decision.reading });
+      }
+
+      case 'getConditionRecords': {
+        if (!reportId) return json({ error: 'reportId is required for getConditionRecords' }, 400);
+        const subject = await readConditionSubject(reportId);
+        if (subject.response) return subject.response;
+        const subjectRow = subject.row!;
+
+        // A condition record describes the PROPERTY, so the register is read
+        // by the report's linkage AND by the property key — two plain
+        // equality queries merged by id, never a composed .or() string.
+        const byReport = await supabase
+          .from('property_condition_records')
+          .select('*')
+          .eq('report_id', reportId)
+          .order('created_at', { ascending: false });
+        if (byReport.error) {
+          if (isMissingTableError(byReport.error)) {
+            // The honest state, not an empty register.
+            return json({ success: true, tableApplied: false, reason: TABLE_NOT_APPLIED, records: [], bestReading: null });
+          }
+          console.error('Condition record read failed:', byReport.error);
+          return json({ error: 'The condition records could not be read. Retry.' }, 503);
+        }
+        const rows = new Map<string, Record<string, unknown>>();
+        for (const row of byReport.data ?? []) rows.set(String(row.id), row);
+        if (subjectRow.canonical_property_key) {
+          const byProperty = await supabase
+            .from('property_condition_records')
+            .select('*')
+            .eq('canonical_property_key', subjectRow.canonical_property_key)
+            .order('created_at', { ascending: false });
+          if (!byProperty.error) for (const row of byProperty.data ?? []) rows.set(String(row.id), row);
+        }
+
+        const asOf = new Date().toISOString();
+        const expectedSubject = {
+          propertyAddress: subjectRow.property_address,
+          propertyId: subjectRow.client_property_id,
+          reportId,
+        };
+        const stored = [...rows.values()];
+        const records = stored.map((row) => ({
+          id: row.id,
+          documentKind: row.document_kind,
+          issuer: row.issuer,
+          issuedOn: row.issued_on,
+          inspectedOn: row.inspected_on,
+          scopeCoverage: row.scope_coverage,
+          conclusion: row.conclusion,
+          findings: row.findings,
+          verification: row.verification,
+          hasDocument: Boolean(row.document_path || row.file_id),
+          recordedAt: row.recorded_at,
+          reading: assessConditionRecord(recordFromRow(row), asOf, { expectedSubject }),
+        }));
+        // The same choice scoring makes, so the panel and the grade agree.
+        const bestReading = bestReadingForSubject(stored.map(recordFromRow), expectedSubject, asOf);
+        return json({ success: true, tableApplied: true, records, bestReading });
+      }
+
+      case 'getConditionDocumentUrl': {
+        const recordId = isRecord(data) && typeof data.recordId === 'string' ? data.recordId : null;
+        if (!reportId || !recordId) return json({ error: 'reportId and data.recordId are required' }, 400);
+        const subject = await readConditionSubject(reportId);
+        if (subject.response) return subject.response;
+        const { data: row, error } = await supabase
+          .from('property_condition_records')
+          .select('id, document_path, report_id, canonical_property_key')
+          .eq('id', recordId)
+          .maybeSingle();
+        if (error) {
+          if (isMissingTableError(error)) return json({ error: TABLE_NOT_APPLIED, tableApplied: false }, 409);
+          return json({ error: 'The record could not be read. Retry.' }, 503);
+        }
+        // Only a record this report can see: filed against it, or against
+        // the same property.
+        const visible = row && (row.report_id === reportId
+          || (row.canonical_property_key && row.canonical_property_key === subject.row!.canonical_property_key));
+        if (!visible || !row.document_path) return json({ error: 'No document is held for this record.' }, 404);
+        const signed = await supabase.storage.from(CONDITION_DOCUMENT_BUCKET).createSignedUrl(row.document_path, 300);
+        if (signed.error || !signed.data?.signedUrl) return json({ error: 'The document could not be opened. Retry.' }, 503);
+        return json({ success: true, url: signed.data.signedUrl });
+      }
+
       case 'insert': {
         if (!data) {
           return new Response(

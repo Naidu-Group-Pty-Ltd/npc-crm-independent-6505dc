@@ -125,11 +125,12 @@ describe('it is reproducible and it names its basis', () => {
   });
 });
 
-describe('it is not wired', () => {
-  it('nothing in the shipped pipeline imports it yet', async () => {
+describe('it is wired, and only where it was approved', () => {
+  it('answers the two site questions through the connection (activated 28 Sep 2026)', async () => {
     const { CONVERSIONS } = await import(
       '../../../../supabase/functions/_shared/reports/risk/riskEvidenceConnection.pure'
     );
-    expect(Object.keys(CONVERSIONS)).toHaveLength(0);
+    expect(Object.keys(CONVERSIONS).sort()).toEqual(['planning_constraints', 'site_hazard_exposure']);
+    expect(CONVERSIONS.planning_constraints.evaluate([])).toBeNull();
   });
 });

@@ -101,8 +101,10 @@
 import {
   connectRiskEvidence,
   readStoredRiskReadings,
+  riskReadingsFromPlanning,
   type RiskEvidenceConnection,
 } from '../risk/riskEvidenceConnection.pure.ts';
+import type { ConditionReading } from '../risk/conditionRecord.pure.ts';
 import {
   type EvidenceKey,
   type EvidencePoint,
@@ -134,7 +136,7 @@ import {
   type ScoredDimension,
 } from './scoringInputPolicy.pure.ts';
 import { dwellingTypeFor } from './domainEvidence.pure.ts';
-import { riskRemedyFor } from '../risk/propertyRiskSchema.pure.ts';
+import { resolveAssetClass, riskRemedyFor, scoreableQuestions } from '../risk/propertyRiskSchema.pure.ts';
 import { measuredVolumeNote, volumeRemedyClause } from './openData/salesVolumePublishers.pure.ts';
 import {
   MIN_VALID_DIMENSIONS_TO_PUBLISH,
@@ -292,7 +294,23 @@ export interface ProductionScoringInput {
    * nothing — `connectRiskEvidence` keeps the two apart.
    */
   riskEvidence?: unknown;
-  /** The questions the subject's asset class actually asks, from the schema. */
+  /**
+   * The planning answer for this assessment, as `planning-data-service`
+   * returned it. Read by `riskReadingsFromPlanning` where no stored
+   * `riskEvidence` block is handed in — the two are one fact in two shapes.
+   */
+  planning?: unknown;
+  /**
+   * The condition record's reading for this property
+   * (`assessConditionRecord`), where one is recorded. The only way the
+   * building question is ever answered.
+   */
+  condition?: ConditionReading | null;
+  /**
+   * The questions the subject's asset class actually asks. Derived from the
+   * schema and the stored property type where absent — a caller that names
+   * none must not silently ask none.
+   */
   riskQuestionIds?: readonly string[];
   now: Date;
 }
@@ -626,9 +644,14 @@ export function assembleEvidence(subject: EvidenceSubject, market: ProductionMar
  * dimension off the page with nothing reporting it.
  */
 export function riskConnection(input: ProductionScoringInput): RiskEvidenceConnection {
+  const assetClass = resolveAssetClass(input.property.propertyType);
+  const questionIds = input.riskQuestionIds
+    ?? (assetClass ? scoreableQuestions(assetClass).map((q) => q.id) : []);
+  const stored = readStoredRiskReadings(input.riskEvidence);
   return connectRiskEvidence(
-    input.riskQuestionIds ?? [],
-    readStoredRiskReadings(input.riskEvidence),
+    questionIds,
+    stored.length ? stored : riskReadingsFromPlanning(input.planning),
+    { condition: input.condition ?? null },
   );
 }
 

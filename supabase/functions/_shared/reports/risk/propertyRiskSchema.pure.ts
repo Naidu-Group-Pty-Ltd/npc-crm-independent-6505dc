@@ -379,6 +379,15 @@ export function riskRemedyFor(cls: AssetClass | null): string {
       `Evidence this deployment does not hold: ${list(unretrieved)}.`,
     );
   }
+  // Since 28 Sep 2026 the condition question has a route: a building
+  // inspection report recorded against the property is read by the next
+  // generation (`conditionRecord.pure.ts`, `CONDITION_METHOD_ACTIVATION`).
+  if (unretrieved.some((q) => q.id === CONDITION.id)) {
+    parts.push(
+      'The condition question is answered by a building inspection report recorded against the property '
+      + 'on its report page; the next report generated reads it.',
+    );
+  }
   if (retrieved.length) {
     const one = retrieved.length === 1;
     parts.push(

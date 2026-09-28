@@ -96,9 +96,12 @@ const PALLAS: RiskEvidenceReading[] = [
 ];
 
 describe('the connection replaces the hardcoded empty answer set', () => {
-  it('produces no answer while no conversion is approved, and says so per question', () => {
+  it('answers what intersected, and only that — a hazard asked and not found stays unanswered', () => {
+    // Activated 28 Sep 2026 (the site conversion, `siteConstraintSeverity`):
+    // Annabelle's height (6) and minimum lot size (6, at half weight) come to
+    // 91 — a normal lot reading as a normal lot.
     const c = connectRiskEvidence(HOUSE_QUESTIONS, ANNABELLE);
-    expect(c.answers).toEqual({});
+    expect(c.answers).toEqual({ planning_constraints: 91 });
     const hazard = c.questions.find((q) => q.questionId === 'site_hazard_exposure')!;
     // Asked at the point, nothing intersected. That is evidence, not a clearance.
     expect(hazard.refusal).toBe('registers_answered_no_intersection');
@@ -109,7 +112,8 @@ describe('the connection replaces the hardcoded empty answer set', () => {
     const held = connectRiskEvidence(HOUSE_QUESTIONS, ANNABELLE)
       .questions.find((q) => q.questionId === 'planning_constraints')!;
     // NSW returned a height control and a minimum lot size at this point.
-    expect(held.refusal).toBe('evidence_held_no_approved_conversion');
+    expect(held.refusal).toBeNull();
+    expect(held.answer).toBe(91);
 
     const nothingRun = connectRiskEvidence(HOUSE_QUESTIONS, [])
       .questions.find((q) => q.questionId === 'planning_constraints')!;
@@ -123,8 +127,10 @@ describe('the connection replaces the hardcoded empty answer set', () => {
     const annabelle = connectRiskEvidence(HOUSE_QUESTIONS, ANNABELLE)
       .questions.find((q) => q.questionId === 'site_hazard_exposure')!;
 
-    expect(pallas.refusal).toBe('evidence_held_no_approved_conversion');
+    // A flood designation returned at the point deducts 35.
+    expect(pallas.answer).toBe(65);
     expect(annabelle.refusal).toBe('registers_answered_no_intersection');
+    expect(annabelle.answer).toBeNull();
     expect(pallas.readings.flatMap((r) => r.findings).map((f) => f.label)).toContain('Lower Mary River');
     expect(annabelle.readings.flatMap((r) => r.findings)).toHaveLength(0);
   });
@@ -155,10 +161,16 @@ describe('the connection replaces the hardcoded empty answer set', () => {
 });
 
 describe('activation is a visible act', () => {
-  it('declares no approved conversion', () => {
+  it('declares exactly the approved site conversion, with its version and its decision', () => {
     // A conversion here is a methodology decision with a document behind it.
-    // This assertion is what makes adding one impossible to do quietly.
-    expect(Object.keys(CONVERSIONS)).toHaveLength(0);
+    // This assertion is what makes adding another impossible to do quietly.
+    expect(Object.keys(CONVERSIONS).sort()).toEqual(['planning_constraints', 'site_hazard_exposure']);
+    expect(Object.isFrozen(CONVERSIONS)).toBe(true);
+    for (const c of Object.values(CONVERSIONS)) {
+      expect(c.version).toMatch(/^\d+\.\d+\.\d+$/);
+      expect(c.approvedOn).toBe('2026-09-28');
+      expect(c.decidedBy).toBe('platform owner');
+    }
   });
 
   it('carries a version, so a stored assessment names its basis', () => {
@@ -239,7 +251,7 @@ describe('one answered register must not conceal one that failed', () => {
       hazardOnly('request_failed', 'QLD Landslide'),
     ]).questions.find((x) => x.questionId === 'site_hazard_exposure')!;
 
-    expect(q.refusal).toBe('evidence_held_no_approved_conversion');
+    expect(q.answer).toBe(65);
     expect(q.coverage.complete).toBe(false);
     expect(q.statement).toContain('Coverage is incomplete');
     expect(q.statement).toContain('QLD Landslide');
@@ -273,7 +285,6 @@ describe('one answered register must not conceal one that failed', () => {
     expect(hazard.coverage.complete).toBe(true);
 
     const pallas = connectRiskEvidence(HOUSE_QUESTIONS, PALLAS);
-    expect(pallas.questions.find((q) => q.questionId === 'site_hazard_exposure')!.refusal)
-      .toBe('evidence_held_no_approved_conversion');
+    expect(pallas.questions.find((q) => q.questionId === 'site_hazard_exposure')!.answer).toBe(65);
   });
 });
