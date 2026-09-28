@@ -28,14 +28,25 @@ export interface StreamOptions {
 }
 
 /**
- * Async iterator over SSE events from an edge function.
- * Throws on non-2xx responses. Aborts cleanly when the signal fires.
+ * Open a streaming POST to an edge function, authenticated as every secure call
+ * is: the HttpOnly session cookie (`credentials: 'include'`) plus the
+ * access-token Bearer, with one refresh and one retry on an auth refusal.
+ * Resolves with the response once it is OK; throws otherwise, with the auth
+ * guidance a person can act on where the refusal was about the session.
+ *
+ * Exported for the callers that read a stream of their own shape (the Strategy
+ * Advisor reads OpenAI-style deltas and tool calls) so they share the
+ * TRANSPORT and cannot drift from it. The Advisor used to open its own fetch
+ * with `credentials: 'omit'` and the Bearer alone — and the Bearer is the
+ * carrier a browser can no longer reliably hold (`secureInvoke.ts`), while
+ * `verifyAuth` reads the session from the cookie. Every request it sent was
+ * answered 401 "Authentication required" to a signed-in person.
  */
-export async function* streamSecureFunction(
+export async function openSecureStream(
   functionName: string,
   body: Record<string, any>,
   options: StreamOptions = {},
-): AsyncGenerator<StreamEvent, void, unknown> {
+): Promise<Response> {
   // WP-11B/C cookie-only: authenticate via the HttpOnly session cookie
   // (`credentials: 'include'`) plus the access-token JWT Bearer. No raw session
   // token is read from storage or sent in the body/headers.
@@ -86,10 +97,35 @@ export async function* streamSecureFunction(
     }
 
     if (!response.ok) {
-      const guidance = describeAuthError(detail);
-      throw new Error(guidance ?? `Stream request failed: ${response.status} ${detail}`.trim());
+      const named = serverError(detail);
+      const guidance = describeAuthError(named ?? detail);
+      throw new Error(guidance ?? named ?? `Stream request failed: ${response.status} ${detail}`.trim());
     }
   }
+
+  return response;
+}
+
+/** The `error` a function's JSON refusal names, or null where the body is not one. */
+function serverError(detail: string): string | null {
+  try {
+    const parsed = JSON.parse(detail);
+    return typeof parsed?.error === "string" && parsed.error.trim() ? parsed.error.trim() : null;
+  } catch {
+    return null;
+  }
+}
+
+/**
+ * Async iterator over SSE events from an edge function.
+ * Throws on non-2xx responses. Aborts cleanly when the signal fires.
+ */
+export async function* streamSecureFunction(
+  functionName: string,
+  body: Record<string, any>,
+  options: StreamOptions = {},
+): AsyncGenerator<StreamEvent, void, unknown> {
+  const response = await openSecureStream(functionName, body, options);
 
   if (!response.body) throw new Error(`Stream request failed: ${response.status} (no response body)`);
 
