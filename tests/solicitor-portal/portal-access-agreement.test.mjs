@@ -146,7 +146,14 @@ test('the consent wall renders the stored agreement rather than a copy of it', (
   assert.match(consentWall, /<ReactMarkdown/);
   // The wall itself is shared with the Builder and Finance portals.
   assert.match(termsPage, /<PortalAgreementConsent/);
-  assert.match(consentWall, /PORTAL_TERMS_ACKNOWLEDGEMENTS\.map/);
+  // The statements became a prop when the link channel needed its own words
+  // for the same keys, so the wall maps whatever it is handed. What keeps the
+  // Solicitor Portal on the portal wording is the default, and the page not
+  // overriding it.
+  assert.match(consentWall, /acknowledgements = PORTAL_TERMS_ACKNOWLEDGEMENTS,/);
+  assert.match(consentWall, /\{acknowledgements\.map\(\(item, index\) =>/);
+  const wallElement = termsPage.slice(termsPage.indexOf('<PortalAgreementConsent'));
+  assert.doesNotMatch(wallElement.slice(0, wallElement.indexOf('/>')), /\sacknowledgements=/);
   assert.match(consentWall, /PORTAL_AGREEMENT_ACCEPT_LABEL/);
   assert.match(consentWall, /PORTAL_AGREEMENT_ACCEPTANCE_NOTICE/);
   // The page shows which document it is asking about.

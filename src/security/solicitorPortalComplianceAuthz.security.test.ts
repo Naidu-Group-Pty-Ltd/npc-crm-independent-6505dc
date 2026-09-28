@@ -1,6 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
 import { verifyLegalAuditChain } from '../../supabase/functions/_shared/legalAudit';
+import { withoutComments } from './sourceCode';
 
 const source = readFileSync('supabase/functions/solicitor-portal-compliance/index.ts', 'utf8');
 const audit = readFileSync('supabase/functions/_shared/legalAudit.ts', 'utf8');
@@ -31,14 +32,56 @@ describe('solicitor-portal-compliance authorization', () => {
     expect(source.match(/can\(loaded\.perms, 'matters', 'edit'\)/g)?.length).toBeGreaterThanOrEqual(4);
   });
 
-  it('limits conflict searches to assigned clients', () => {
-    expect(source).toContain(".in('client_id', assignedClientIds)");
+  /**
+   * The conflict search reads only the matters this solicitor may open, and a
+   * read that fails fails the check.
+   *
+   * This asserted `.in('client_id', assignedClientIds)`. The source matched and
+   * the operation threw on every call with anything to search for: a merge on
+   * 30 Jul 2026 (cea3d88) had deleted `assignedClientIds`, so the one call that
+   * ever succeeded was a matter with no parties, which searched nothing and
+   * recorded "clear". The scope is the shared matter list under `matters` AND
+   * `parties` now, because a match discloses party data, and the outcome comes
+   * from `conflictOutcome`, which never clears a search over nothing.
+   */
+  it('searches only matters whose parties this solicitor may see', () => {
+    const run = source.slice(
+      source.indexOf("operation === 'conflict_run'"),
+      source.indexOf("operation === 'conflict_clear'"),
+    );
+    expect(run).toContain("readAccessibleMatterIds(supabase, me.id, me.firm_id, ['matters', 'parties'])");
+    expect(run).toContain('if (!scope.ok) throw new Error(');
+    expect(run).toContain('scope.ids.filter((id) => id !== loaded.matter.id)');
+    expect(run).toContain(".eq('firm_id', me.firm_id)");
+    expect(run).toContain('const outcome = conflictOutcome(mattersSearched, matches.length);');
+    // The access list is resolved before any other matter is read.
+    expect(run.indexOf('readAccessibleMatterIds(')).toBeLessThan(run.indexOf(".from('legal_matters')"));
+    expect(withoutComments(source)).not.toMatch(/assignedClientIds/);
   });
 
-  it('sanitizes conflict terms before enforcing the minimum length', () => {
-    expect(source).toContain("String(v).replace(/[%_(),]/g, '').trim()");
-    expect(source).toContain('body.terms.map(conflictTerm).filter((t: string) => t.length >= 3)');
-    expect(source).not.toContain("t.replace(/[%,()]/g, '')");
+  /**
+   * A term is compared in code, never spliced into a filter.
+   *
+   * This asserted the characters a term was stripped of before it went into an
+   * ILIKE string. Stripping one side only meant a term copied from a party
+   * ("ACME (Aust) Pty Ltd") could not find that party. The judgement lives in
+   * `_shared/conflictSearch.pure.ts` now, both sides normalised by one function,
+   * and `conflictSearch.pure.test.ts` runs it; what is asserted here is that
+   * this operation uses it and composes no filter from a term.
+   */
+  it('matches conflict terms in code rather than in a filter string', () => {
+    const run = source.slice(
+      source.indexOf("operation === 'conflict_run'"),
+      source.indexOf("operation === 'conflict_clear'"),
+    );
+    expect(source).toContain(
+      "import { conflictHit, conflictOutcome, conflictSearchTerms } from '../_shared/conflictSearch.pure.ts';",
+    );
+    expect(run).toContain('const searched = conflictSearchTerms(body.terms, parties || []);');
+    expect(run).toContain('const hit = conflictHit(searched, party);');
+    // Nothing to search for is refused rather than recorded.
+    expect(run).toContain("code: 'NO_TERMS'");
+    expect(withoutComments(run)).not.toMatch(/\.or\(`|\.ilike\(|\.or\([^)]*\$\{/);
   });
 
   it('never selects restricted financial or AML data into the compliance pack', () => {

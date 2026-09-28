@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { readFileSync } from 'node:fs';
+import { withoutComments } from './sourceCode';
 
 const source = readFileSync('supabase/functions/solicitor-portal-comms/index.ts', 'utf8');
 
@@ -13,7 +14,15 @@ describe('solicitor-portal-comms authorization', () => {
    * list filters `.in('legal_matter_id', accessibleMatterIds)` and the
    * `messages`/`view` check moved onto the per-matter path
    * (`resolveSolicitorMatterAccess` → `resolveMatterPermissions`) and onto
-   * `canViewNotification`, which caches a client permission matrix per client.
+   * `canViewNotification`, which checks a notification against the same matter
+   * list the threads are read from.
+   *
+   * `canViewNotification` used a per-client matrix until 28 Sep 2026, and that
+   * code could not run: a merge on 30 Jul 2026 (cea3d88) deleted
+   * `assignedClientIds` and the `resolveClientPermissions` import while keeping
+   * the lines that used them, so every notification list, summary and
+   * mark-read threw a ReferenceError. This test asserted those exact lines, and
+   * it went on passing because it read the source rather than running it.
    *
    * The property is unchanged and asserted below: a solicitor's global list is
    * bounded by what they may access AND by their firm, a matter thread needs
@@ -39,9 +48,28 @@ describe('solicitor-portal-comms authorization', () => {
   it('filters message notifications by the same permission', () => {
     expect(source).toContain('canViewNotification');
     expect(source).toContain('filterViewableNotifications');
-    expect(source).toContain("can(permissionCache.get(clientId) ?? null, 'messages', 'view')");
-    // A notification for a client this solicitor is not assigned to never
-    // reaches the permission check at all.
-    expect(source).toContain('if (clientId && !assignedClientIds.includes(clientId)) return false;');
+    // The list the threads are read from, under `messages`, is the list a
+    // message notification is checked against.
+    expect(source).toContain(
+      "const accessibleMatterIds = await listAccessibleMatterIds(supabase, me.id, me.firm_id, 'messages');",
+    );
+    expect(source).toContain('const messagesViewable = new Set(accessibleMatterIds);');
+    expect(source).toContain(
+      "if (notification.notification_type === 'message_received') return messagesViewable.has(matterId);",
+    );
+    // Any other notification about a matter follows that matter's own view
+    // permission.
+    expect(source).toContain("listAccessibleMatterIds(supabase, me.id, me.firm_id, 'matters')");
+    // A notification that names no matter can be checked against nothing, so
+    // it is shown only when it names no client either.
+    expect(source).toContain(
+      "return notification.notification_type !== 'message_received' && !notification.client_id;",
+    );
+    // Every read that feeds the check selects the fields the check reads.
+    expect(
+      source.match(/\.select\('id, client_id, legal_matter_id, notification_type'\)/g)?.length ?? 0,
+    ).toBeGreaterThanOrEqual(3);
+    // The per-client names cea3d88 deleted must not come back half-wired.
+    expect(withoutComments(source)).not.toMatch(/assignedClientIds|permissionCache|resolveClientPermissions/);
   });
 });
