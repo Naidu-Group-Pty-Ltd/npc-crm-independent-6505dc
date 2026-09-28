@@ -63,6 +63,14 @@ import {
   stagePercentsFrom,
 } from '@/lib/reports/cashFlow/constructionSchedule.pure';
 import { acquisitionExpenditure } from '@/lib/reports/cashFlow/expenditure.pure';
+import {
+  PLANNED_BUILD_KEYS,
+  PLANNED_BUILD_OVERRIDE,
+  plannedBuildFigures,
+  plannedBuildRequested,
+  withPlannedBuild,
+} from '@/lib/reports/cashFlow/plannedBuild.pure';
+import { CashFlowPlannedBuildPanel, type PlannedBuildDraft } from '@/components/cash-flow/modal/CashFlowPlannedBuildPanel';
 import { matchStoredScenario } from '@/lib/reports/cashFlow/storedSeriesMatch';
 import {
   saveTemplateDocument,
@@ -426,9 +434,57 @@ export function CashFlowAnalysisModal({ report, isOpen, onClose, onReportUpdated
     5: 7, // Practical Completion
   });
 
+  // A land-only report carries one switch here: "we are going ahead and
+  // building on it". The draft is what the adviser has typed; it drives the
+  // analysis live and is written to the report only on Save, like every other
+  // edit in this workspace.
+  const isLandOnly = report?.manual_overrides?.buildType === 'land_only';
+  const [plannedBuildDraft, setPlannedBuildDraft] = useState<PlannedBuildDraft>({
+    enabled: false, buildPrice: '', durationMonths: '', weeklyRent: '',
+  });
+  const plannedBuildOverrides = useMemo(() => {
+    if (!isLandOnly) return null;
+    const n = (v: string) => { const x = Number(v); return Number.isFinite(x) && x > 0 ? x : null; };
+    return {
+      [PLANNED_BUILD_OVERRIDE]: plannedBuildDraft.enabled,
+      [PLANNED_BUILD_KEYS.price]: n(plannedBuildDraft.buildPrice),
+      [PLANNED_BUILD_KEYS.durationMonths]: n(plannedBuildDraft.durationMonths),
+      [PLANNED_BUILD_KEYS.weeklyRent]: n(plannedBuildDraft.weeklyRent),
+    };
+  }, [isLandOnly, plannedBuildDraft]);
+  const handlePlannedBuildChange = useCallback((next: PlannedBuildDraft) => {
+    setPlannedBuildDraft(next);
+    setHasChanges(true);
+  }, []);
+
+  // The case as the cash flow reads it. A land-only purchase with a build
+  // planned on it is costed as the new build it becomes — land plus the build
+  // contract, staged by the same schedule every new build uses
+  // (`plannedBuild.pure.ts`). Every other report is the same object, so
+  // nothing downstream recomputes. Saving still writes to `report`.
+  const cashFlowReport = useMemo(() => {
+    if (!report) return report;
+    if (!plannedBuildOverrides) return report;
+    return withPlannedBuild({
+      ...report,
+      manual_overrides: { ...(report.manual_overrides || {}), ...plannedBuildOverrides },
+    });
+  }, [report, plannedBuildOverrides]);
+  const plannedFigures = useMemo(() => {
+    if (!report || !plannedBuildOverrides) return null;
+    return plannedBuildFigures({
+      ...report,
+      manual_overrides: { ...(report.manual_overrides || {}), ...plannedBuildOverrides },
+    });
+  }, [report, plannedBuildOverrides]);
+  /** A land-only report the cash flow is costing as the build planned on it. */
+  const isPlannedBuild = isLandOnly && plannedFigures !== null;
+
   // Get build type from report (defaults to 'existing_property')
-  const buildType = report?.manual_overrides?.buildType || 'existing_property';
+  const buildType = cashFlowReport?.manual_overrides?.buildType || 'existing_property';
   const isNewBuild = buildType === 'new_build';
+  /** How the case is named on the screen and in the export. */
+  const buildCaseLabel = isPlannedBuild ? 'Land + Planned Build' : isNewBuild ? 'New Build' : 'Existing Property';
 
   // Comparison chart colors for up to 5 properties
   /**
@@ -497,6 +553,16 @@ export function CashFlowAnalysisModal({ report, isOpen, onClose, onReportUpdated
       
       // Load land tax exclusion setting
       setExcludeLandTaxFromCashFlow(report.manual_overrides?.excludeLandTaxFromCashFlow || false);
+
+      // Load the land-only report's planned build, if one was saved.
+      const mo = report.manual_overrides || {};
+      const asText = (v: unknown) => (typeof v === 'number' && v > 0 ? String(v) : typeof v === 'string' ? v : '');
+      setPlannedBuildDraft({
+        enabled: plannedBuildRequested(mo),
+        buildPrice: asText(mo[PLANNED_BUILD_KEYS.price] ?? mo.buildPrice),
+        durationMonths: asText(mo[PLANNED_BUILD_KEYS.durationMonths]),
+        weeklyRent: asText(mo[PLANNED_BUILD_KEYS.weeklyRent]),
+      });
     }
   }, [report, isOpen]);
 
@@ -743,7 +809,7 @@ export function CashFlowAnalysisModal({ report, isOpen, onClose, onReportUpdated
    */
   const allComparisonProjections = useMemo(() => {
     return comparisonReports.map(compReport => {
-      const compBase = readBaseFinancials(compReport, new Date().getFullYear());
+      const compBase = readBaseFinancials(withPlannedBuild(compReport), new Date().getFullYear());
       const mo = compReport.manual_overrides || {};
 
       // A generated depreciation schedule is authoritative for a peer too, so
@@ -797,8 +863,8 @@ export function CashFlowAnalysisModal({ report, isOpen, onClose, onReportUpdated
    * passed in.
    */
   const baseFinancialData = useMemo(
-    () => (report ? readBaseFinancials(report, new Date().getFullYear()) : null),
-    [report],
+    () => (cashFlowReport ? readBaseFinancials(cashFlowReport, new Date().getFullYear()) : null),
+    [cashFlowReport],
   );
 
   // Generate the 10-year loan schedule. `buildLoanSchedule` is shared with the
@@ -871,6 +937,14 @@ export function CashFlowAnalysisModal({ report, isOpen, onClose, onReportUpdated
         ...existingOverrides,
         cashFlowYearlyOverrides: yearlyOverrides,
         excludeLandTaxFromCashFlow: excludeLandTaxFromCashFlow,
+        // A land-only report's planned build, and — while one is planned —
+        // how its stages are timed, so the schedule reopens as it was left.
+        // Written once the switch has been used; a land-only report nobody
+        // planned a build on keeps the overrides it had.
+        ...(plannedBuildOverrides && (plannedBuildDraft.enabled || PLANNED_BUILD_OVERRIDE in existingOverrides)
+          ? plannedBuildOverrides
+          : {}),
+        ...(isLandOnly && plannedBuildDraft.enabled ? { schedulePreset, customStageMonths } : {}),
       };
 
       const { data: updateResult, error } = await invokeSecureFunction('manage-investment-reports', {
@@ -987,7 +1061,7 @@ export function CashFlowAnalysisModal({ report, isOpen, onClose, onReportUpdated
 
   const allComparisonMetrics = useMemo(() => {
     return allComparisonProjections.map(({ report: compReport, projections: compProjs }) => {
-      const compBase = readBaseFinancials(compReport, new Date().getFullYear());
+      const compBase = readBaseFinancials(withPlannedBuild(compReport), new Date().getFullYear());
       const read = deriveInvestmentMetrics(compProjs, compBase);
       let metrics: InvestmentMetrics | null = null;
       let unavailable: MetricsUnavailable | null = null;
@@ -1038,7 +1112,7 @@ export function CashFlowAnalysisModal({ report, isOpen, onClose, onReportUpdated
     return {
       ...entry,
       ...seriesStyleAt(index + 1),
-      inputs: readBaseFinancials(entry.report, new Date().getFullYear()),
+      inputs: readBaseFinancials(withPlannedBuild(entry.report), new Date().getFullYear()),
     };
   }, [detailPropertyId, report, allComparisonMetrics, seriesStyleAt]);
 
@@ -3382,6 +3456,7 @@ export function CashFlowAnalysisModal({ report, isOpen, onClose, onReportUpdated
       // modal draws, so the document and the screen cannot disagree.
       inputs: toWireInputs(baseFinancialData, {
         isNewBuild,
+        plannedBuild: isPlannedBuild,
         overrides: report.manual_overrides,
         schedulePreset,
         customStageMonths,
@@ -3410,7 +3485,7 @@ export function CashFlowAnalysisModal({ report, isOpen, onClose, onReportUpdated
       designTemplateId,
       key: cashFlowFinalKey({ wire, scenario: storedScenario, selectedTemplateId, designTemplateId }),
     };
-  }, [report, baseFinancialData, projections, isNewBuild, schedulePreset, customStageMonths, includeConstructionScheduleInExport]);
+  }, [report, baseFinancialData, projections, isNewBuild, isPlannedBuild, schedulePreset, customStageMonths, includeConstructionScheduleInExport]);
 
   const produceFinalCashFlowDocument = useCallback(async (
     reviewed: ReviewedProjection,
@@ -3745,7 +3820,7 @@ export function CashFlowAnalysisModal({ report, isOpen, onClose, onReportUpdated
         ${includeInputsSummaryInExport ? `
         <!-- Summary -->
         <div class="summary" style="margin-bottom: 24px;">
-          <h3 style="margin-bottom: 4px; text-align: center; font-size: 16px; font-weight: bold; border-bottom: 2px solid #ccc; padding-bottom: 6px;">${isNewBuild ? 'New Build' : 'Existing Property'}</h3>
+          <h3 style="margin-bottom: 4px; text-align: center; font-size: 16px; font-weight: bold; border-bottom: 2px solid #ccc; padding-bottom: 6px;">${buildCaseLabel}</h3>
           <h4 style="margin-bottom: 12px; text-align: center; font-size: 14px; font-weight: bold; letter-spacing: 1px;">SUMMARY</h4>
           <table style="margin-bottom: 0; font-size: 11px;">
             <tbody>
@@ -4039,7 +4114,7 @@ export function CashFlowAnalysisModal({ report, isOpen, onClose, onReportUpdated
 
     printWindow.document.write(html);
     printWindow.document.close();
-  }, [report, baseFinancialData, projections, includeInputsSummaryInExport, includeConstructionScheduleInExport, constructionProgressSchedule, isNewBuild, toast]);
+  }, [report, baseFinancialData, projections, includeInputsSummaryInExport, includeConstructionScheduleInExport, constructionProgressSchedule, isNewBuild, buildCaseLabel, toast]);
 
   if (!report || !baseFinancialData) return null;
 
@@ -4056,6 +4131,7 @@ export function CashFlowAnalysisModal({ report, isOpen, onClose, onReportUpdated
             backLabel={backLabel}
             propertyAddress={report.property_address}
             isNewBuild={isNewBuild}
+            caseLabel={buildCaseLabel}
             hasChanges={hasChanges}
             hasOverrides={Object.keys(yearlyOverrides).length > 0}
             isSaving={isSaving}
@@ -5453,7 +5529,7 @@ export function CashFlowAnalysisModal({ report, isOpen, onClose, onReportUpdated
                     <CardTitle className="text-base flex items-center justify-between">
                       <span className="flex items-center gap-2">
                         {inputsSummaryOpen ? <ChevronDown className="h-4 w-4" /> : <ChevronRight className="h-4 w-4" />}
-                        {isNewBuild ? 'New Build' : 'Existing Property'} - SUMMARY
+                        {buildCaseLabel} - SUMMARY
                       </span>
                       <div className="flex items-center gap-2" onClick={(e) => e.stopPropagation()}>
                         <label className="flex items-center gap-2 text-xs font-normal text-muted-foreground cursor-pointer">
@@ -5686,6 +5762,14 @@ export function CashFlowAnalysisModal({ report, isOpen, onClose, onReportUpdated
                 </CollapsibleContent>
               </Card>
             </Collapsible>
+            )}
+
+            {isLandOnly && (
+              <CashFlowPlannedBuildPanel
+                draft={plannedBuildDraft}
+                onChange={handlePlannedBuildChange}
+                figures={plannedFigures}
+              />
             )}
 
             <CashFlowConstructionPanel active={isNewBuild && !!constructionProgressSchedule && constructionProgressSchedule.buildPrice > 0}>

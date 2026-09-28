@@ -178,8 +178,10 @@ export interface ModalInputFinancials extends ModalBaseFinancials {
 }
 
 export interface ToWireInputsOptions {
-  /** `manual_overrides.buildType === 'new_build'`. */
+  /** `manual_overrides.buildType === 'new_build'`, or a land-only purchase re-read as one. */
   isNewBuild: boolean;
+  /** The new build is a build planned on a land-only purchase (`plannedBuild.pure.ts`). */
+  plannedBuild?: boolean;
   /** The report's manual overrides — the stage percentages live there. */
   overrides: Record<string, unknown> | null | undefined;
   schedulePreset: SchedulePreset;
@@ -197,6 +199,7 @@ export function toWireInputs(base: ModalInputFinancials, opts: ToWireInputsOptio
   const durationMonths = scheduleDuration(base.constructionDurationMonths);
   return {
     isNewBuild: opts.isNewBuild,
+    plannedBuild: opts.isNewBuild && opts.plannedBuild === true,
     purchasePrice: finite(base.purchasePrice),
     weeklyRent: finite(base.weeklyRent),
     landPrice: split.landPrice,

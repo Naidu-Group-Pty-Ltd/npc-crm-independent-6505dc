@@ -172,6 +172,8 @@ export interface CashFlowProjection {
   construction?: ConstructionSchedule | null;
   /** Whether the schedule table is printed (the adviser's export switch). */
   showConstructionSchedule?: boolean;
+  /** The build is PLANNED on a land-only purchase (`plannedBuild.pure.ts`). */
+  plannedBuild?: boolean;
   /** Absent on a projection built before it existed; the renderer reads the acquisition. */
   settlement?: SettlementBlock;
   yearOne: YearOneBlock;

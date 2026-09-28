@@ -10,6 +10,8 @@ import type { CashFlowPresentation } from './types';
 interface CashFlowCommandHeaderProps {
   propertyAddress: string;
   isNewBuild: boolean;
+  /** Names the case where it is not the plain new/existing split (a build planned on land). */
+  caseLabel?: string;
   hasChanges: boolean;
   hasOverrides: boolean;
   isSaving: boolean;
@@ -28,6 +30,7 @@ interface CashFlowCommandHeaderProps {
 export function CashFlowCommandHeader({
   propertyAddress,
   isNewBuild,
+  caseLabel,
   hasChanges,
   hasOverrides,
   isSaving,
@@ -78,7 +81,7 @@ export function CashFlowCommandHeader({
               variant={isNewBuild ? 'default' : 'secondary'}
               className="rounded-full px-3 py-1 text-xs font-medium"
             >
-              {isNewBuild ? 'New Build' : 'Existing Property'}
+              {caseLabel ?? (isNewBuild ? 'New Build' : 'Existing Property')}
             </Badge>
           </Title>
           <Description className="truncate text-sm text-muted-foreground md:text-base">

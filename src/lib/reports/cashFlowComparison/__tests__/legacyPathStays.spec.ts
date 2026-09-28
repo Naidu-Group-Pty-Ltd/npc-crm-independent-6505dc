@@ -227,7 +227,12 @@ describe('one implementation reads a report\'s position', () => {
    */
   it('the modal calls the shared reader rather than inlining the cascade', () => {
     const source = read(MODAL);
-    expect(source).toContain('readBaseFinancials(report, new Date().getFullYear())');
+    // The subject is read through the planned-build view of the report
+    // (`plannedBuild.pure.ts`): a land-only purchase with a build planned on it
+    // is the new build it becomes, and every other report is the same object.
+    // Still ONE reader — only what it is handed changed.
+    expect(source).toContain('readBaseFinancials(cashFlowReport, new Date().getFullYear())');
+    expect(source).toMatch(/withPlannedBuild\(\{\s*\.\.\.report,/);
     // And the version it replaced is gone, not merely unused.
     expect(source).not.toContain('const baseFinancialData = useMemo(() => {');
   });
@@ -256,7 +261,8 @@ describe('one implementation reads a report\'s position', () => {
     expect(peerBlock).toBeTruthy();
 
     // One reader, and one engine, for the peers as well as the subject.
-    expect(peerBlock).toContain('readBaseFinancials(compReport, new Date().getFullYear())');
+    // A peer is read through the same planned-build view as the subject.
+    expect(peerBlock).toContain('readBaseFinancials(withPlannedBuild(compReport), new Date().getFullYear())');
     expect(peerBlock).toContain('buildProjection(');
     expect(peerBlock).toContain('fixedExpenseBase(compBase)');
 
