@@ -62,6 +62,10 @@ export interface WireProjectionYear {
    */
   taxEffect?: number;
   landTax: number;
+  /** Expenses + interest + depreciation + land tax. Optional: the server derives it where absent. */
+  totalDeductions?: number;
+  /** Rent less `totalDeductions`. Optional: the server derives it where absent. */
+  netProfitLoss?: number;
   capitalGrowth: number;
   cpiGrowth: number;
 }
@@ -78,11 +82,27 @@ export interface WireAcquisition {
   costs: Array<{ label: string; amount: number }>;
 }
 
+/**
+ * Every input the projection ran on — the legacy Input Summary, the land/build
+ * split and, for a new build, how the contract is staged. The server lays out
+ * the summary and COMPUTES the schedule and the expenditure tables from these
+ * with the same modules the modal draws (`inputSummary`, `constructionSchedule`,
+ * `expenditure`); it never accepts a table of figures.
+ */
+export type WireInputs = import('./inputSummary.pure').CashFlowInputs & {
+  /** The adviser's "include the construction schedule in the export" switch. */
+  showConstructionSchedule?: boolean;
+};
+
 export interface WireProjection {
   acquisition: WireAcquisition;
   years: WireProjectionYear[];
   assumptions: Array<{ label: string; value: string }>;
   notes: string[];
+  /** Optional so a client that predates them still renders. */
+  inputs?: WireInputs;
+  /** The position at settlement — the projection table's "Today" column. */
+  settlement?: { propertyValue: number; loanBalance: number };
 }
 
 export interface CashFlowPdfResult {

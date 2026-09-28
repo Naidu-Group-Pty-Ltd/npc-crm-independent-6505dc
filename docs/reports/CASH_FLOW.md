@@ -49,8 +49,9 @@ sentence a client reads first cannot disagree with the table under it.
 | Section | Slot | Pages | Content |
 | --- | --- | --- | --- |
 | Cover | `cover` | 1 | Property as the title, client in the meta, tenant's mark |
-| The purchase and the first year | `chapter` | 2 | Lede, KPI strip, purchase table, acquisition costs, year-one lines |
-| The *n*-year projection | `wide-table` | 2 | Two landscape matrices — position, then cash flow |
+| The purchase and the first year | `chapter` | 2–3 | Lede, KPI strip, the legacy **Input Summary**, **Total upfront costs**, **Total overall expenditure to completion**, year-one lines |
+| The construction schedule | `wide-table` | 1 | New builds only: land, build, total project, interest during construction, and the staged progress-payment table (§9) |
+| The *n*-year projection | `wide-table` | **1** | ONE landscape table — the legacy rows under the legacy headings, with a Today column (§9) |
 | Value, debt and equity | `chapter` | 2 | Outcome KPIs, equity-build chart, ending table, cash-position chart |
 | What this assumes | `chapter` | 1 | Assumptions, notes, the projection caveat |
 | Contact & disclaimer | `closing` | 1 | The tenant's company block |
@@ -58,7 +59,7 @@ sentence a client reads first cannot disagree with the table under it.
 The `assumptions` section appears only when there is something to say; the spine
 validator would otherwise fail a document that claimed a section it did not have.
 
-### Why the matrix is two tables
+### Why the matrix was two tables (superseded — see §9)
 
 Fourteen lines is **one row more than a landscape page holds**. The first render
 of this document put "After tax, per week" alone on a page of its own. Splitting
@@ -297,3 +298,57 @@ and the template's own schema. Neither is optional and neither is this record.
 The proved scenario travels with the payload so the honest labelling survives:
 a matched series still prints "Moderate", and only a hand-shaped one is
 labelled "Adviser-reviewed".
+
+---
+
+## 9. Legacy parity, the construction schedule and the one-page projection (28 Sep 2026)
+
+The owner's rule: the typeset document follows the legacy export's process
+exactly, a new build carries its **construction schedule**, and the ten-year
+projection is read **on one page**. Measured against the two 37 Bolin Street
+documents of 28 Sep 2026, the typeset one had printed nine of the legacy's thirty
+inputs, neither expenditure table, no construction schedule on any report, and a
+projection split over two landscape pages behind a header page of its own.
+
+**One implementation, three readers.** The schedule, the two expenditure tables
+and the Input Summary are pure modules beside the composer —
+`constructionSchedule.pure.ts`, `expenditure.pure.ts`, `inputSummary.pure.ts` —
+and the modal's on-screen view, its jsPDF export and the typeset document all
+read them. The schedule is the modal's old inline `useMemo` MOVED:
+`constructionSchedule.spec.ts` runs the pre-refactor algorithm verbatim against
+the module over 3,000 generated cases, row for row and to the cent. The
+upfront/overall tables were written three times inside the modal and had
+drifted (the on-screen copy left inspections out); they are one call now.
+
+**The browser sends the case; the server derives the tables.** `WireProjection`
+carries `inputs` (every figure the summary prints, the land/build split and, for
+a new build, the six stage percentages and months) and `settlement` (year 0 —
+the Today column). `normalise.pure.ts` computes the schedule and the tables from
+those with the same modules; it never accepts a table of figures. Both are
+optional, so an older client still renders the purchase table as before.
+
+Three rules bite.
+
+- **Only a new build with a build contract is staged.** `isNewBuild` and a build
+  price the record states (or land lets it be derived) — never the purchase
+  price (QA-13). The adviser's export switch hides the table and keeps the
+  construction interest in the costs, as the legacy did.
+- **Every total is the sum of its own printed rows**, and a zero row is left out
+  rather than printed as `$0`. The schedule's interest is printed to the cent
+  because its footer is the sum of rounded rows.
+- **Capital growth over the term is measured from TODAY.** It was year ten less
+  year ONE, which dropped a year of growth: $1,094,495 printed on Bolin where the
+  legacy's (correct) figure is $1,177,745.
+
+**One page is a measurement, not a promise.** The matrix — a header, twenty-three
+lines and four headings — is set at a compact row height on the landscape page,
+opened with its own section header (the chapter opener's deep top padding is
+removed there, and the header is kept with the table). Rendered in WeasyPrint
+69.0 over the standard document and all 50 catalogue designs, established and
+new build (102 documents): the header, the whole table, and — for a new build —
+the schedule with its footnote each land on exactly one page. A 24-month build
+(the longest the schedule allows) did not fit under the KPI strip, so past
+`LONG_SCHEDULE_ROWS` the strip becomes the legacy's one summary line and the rows
+tighten; re-measured, 50 of 50 on one page. The `cf-` selectors outrank a
+design's `table.data` rules, so a chosen template restyles colour and rules and
+never the row height this page depends on.

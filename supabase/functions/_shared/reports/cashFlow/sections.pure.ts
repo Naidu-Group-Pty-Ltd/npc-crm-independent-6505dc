@@ -37,16 +37,36 @@ export function cashFlowSections(p: CashFlowProjection): CashFlowSection[] {
     {
       id: 'position',
       title: 'The purchase and the first year',
-      note: 'What was bought, how it was funded, and what it does in year one.',
-      pageBudget: 2,
+      note: 'What was bought, what it rests on, what it costs, and what it does in year one.',
+      // The Input Summary and the two expenditure tables are a page of their
+      // own before year one's lines.
+      pageBudget: (p.inputs?.length ?? 0) > 0 || p.expenditure ? 3 : 2,
     },
+  ];
+
+  // A new build's staged contract, before the projection it finances. Only
+  // where the record states a build contract and the adviser left the
+  // schedule in the export — an established property has no build to stage.
+  if (p.construction && p.showConstructionSchedule) {
+    sections.push({
+      id: 'construction',
+      title: 'The construction schedule',
+      note: `How the build contract is drawn over ${p.construction.durationMonths} months, and what the interest comes to while it is built.`,
+      pageBudget: 1,
+      wide: true,
+    });
+  }
+
+  sections.push(
     {
       id: 'projection',
       title: `The ${p.meta.termYears}-year projection`,
-      note: 'Every year, in full. These two tables are the report.',
-      // Two landscape pages: the position, then the cash flow. One table of all
-      // fourteen lines is one row taller than a landscape page holds.
-      pageBudget: 2,
+      note: 'Every year, in full, on one page.',
+      // ONE landscape page. The table used to be split in two because fourteen
+      // lines at the standard row height were one row more than a landscape
+      // page holds; the owner's rule is that the projection is read on one
+      // page, so the matrix is set at a compact row height instead.
+      pageBudget: 1,
       wide: true,
     },
     {
@@ -55,7 +75,7 @@ export function cashFlowSections(p: CashFlowProjection): CashFlowSection[] {
       note: 'What the position looks like as the loan is paid and the value moves.',
       pageBudget: 2,
     },
-  ];
+  );
 
   if (p.assumptions.length || p.notes.length) {
     sections.push({

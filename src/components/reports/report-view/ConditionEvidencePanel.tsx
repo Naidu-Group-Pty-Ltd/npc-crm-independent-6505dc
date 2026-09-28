@@ -186,7 +186,7 @@ export function ConditionEvidencePanel({ reportId, propertyAddress }: Props) {
   const draftDecision = useMemo(() => {
     const draft = file ? { ...payload, fileId: 'pending-upload' } : payload;
     const parsed = parseConditionSubmission(draft, { reportId });
-    if (!parsed.ok) return { statement: parsed.refusal.statement, blocked: true, admissible: false };
+    if ('refusal' in parsed) return { statement: parsed.refusal.statement, blocked: true, admissible: false };
     const decision = decideConditionSubmission(
       parsed.record,
       { propertyAddress, reportId },
