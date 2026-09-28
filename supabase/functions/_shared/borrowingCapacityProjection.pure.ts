@@ -296,6 +296,7 @@ function bandLabel(band: string | undefined): string | undefined {
 function expenseMethodLabel(method: string | undefined): string | undefined {
   switch (method) {
     case 'declared': return 'Declared living expenses';
+    case 'declared_higher': return 'Declared living expenses (above HEM)';
     case 'hem': return 'HEM benchmark';
     default: return undefined;
   }

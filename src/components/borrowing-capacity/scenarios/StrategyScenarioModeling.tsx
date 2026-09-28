@@ -175,6 +175,16 @@ const DEFAULT_ACQUISITION: AcquisitionState = {
 // ── Scenario Preset Types ──────────────────────────────
 
 /**
+ * A property as a lever label names it: the street line, whole. The labels
+ * cut the address at 25 characters, which printed "17 Cahill Street, Innisfa"
+ * in the Strategy Rationale and the Snapshot.
+ */
+function propertyShortName(address: string | null | undefined): string {
+  const street = (address ?? '').split(',')[0]?.trim();
+  return street || 'property';
+}
+
+/**
  * How long the lever state must hold still after an advisor card lands before
  * its signature is taken. The apply is followed by a render or two of effects
  * normalising the levers; this is comfortably past them and well under a
@@ -569,7 +579,7 @@ export function StrategyScenarioModeling({
         if (saving > 0) refinanceSaving += saving;
         deltas.push({
           id: prop.id,
-          label: `Refinance ${prop.address?.slice(0, 25) || 'property'} to IO${Number.isFinite(ioPeriodYears as number) && (ioPeriodYears as number) > 0 ? ` (${ioPeriodYears}yr IO)` : ''}`,
+          label: `Refinance ${propertyShortName(prop.address)} to IO${Number.isFinite(ioPeriodYears as number) && (ioPeriodYears as number) > 0 ? ` (${ioPeriodYears}yr IO)` : ''}`,
           type: 'property_refinance',
           value: 0,
           unit: 'absolute',
@@ -678,7 +688,7 @@ export function StrategyScenarioModeling({
         const manualRepayment = strategy.equityReleaseManualRepayments.get(propId);
         deltas.push({
           id: prop.id,
-          label: `Equity release ${prop.address?.slice(0, 25) || 'property'} → ${(targetLVR * 100).toFixed(0)}% LVR (deploy ${(deploymentPercent * 100).toFixed(0)}%, ${repaymentType === 'interest_only' ? 'IO' : 'P&I'})`,
+          label: `Equity release ${propertyShortName(prop.address)} → ${(targetLVR * 100).toFixed(0)}% LVR (deploy ${(deploymentPercent * 100).toFixed(0)}%, ${repaymentType === 'interest_only' ? 'IO' : 'P&I'})`,
           type: 'equity_release',
           // targetLVR is a RATIO (e.g. 0.80) — `unit: 'ratio'` so the engine reads
           // it as 0.80, not 0.80/100. 'percent' silently shrank the release to
@@ -751,13 +761,13 @@ export function StrategyScenarioModeling({
         if (Math.abs(newRate - oldRate) < 0.01) return;
         deltas.push({
           id: prop.id,
-          label: `Reprice ${prop.address?.slice(0, 25) || 'property'} → ${newRate.toFixed(2)}%`,
+          label: `Reprice ${propertyShortName(prop.address)} → ${newRate.toFixed(2)}%`,
           type: 'property_rate_change',
           value: newRate,
           unit: 'rate_points',
         });
         impacts.push({
-          label: `Reprice ${prop.address?.slice(0, 25) || 'property'}: ${oldRate.toFixed(2)}% → ${newRate.toFixed(2)}%`,
+          label: `Reprice ${propertyShortName(prop.address)}: ${oldRate.toFixed(2)}% → ${newRate.toFixed(2)}%`,
           monthlySaving: 0,
           type: 'info',
         });
@@ -772,7 +782,7 @@ export function StrategyScenarioModeling({
         if (Math.abs(override.newValue - (prop.current_value || 0)) < 1) return;
         deltas.push({
           id: prop.id,
-          label: `Revalue ${prop.address?.slice(0, 25) || 'property'} → ${formatCurrency(override.newValue)}`,
+          label: `Revalue ${propertyShortName(prop.address)} → ${formatCurrency(override.newValue)}`,
           type: 'property_value_change',
           value: override.newValue,
           unit: 'absolute',
@@ -782,7 +792,7 @@ export function StrategyScenarioModeling({
           },
         });
         impacts.push({
-          label: `Revalue ${prop.address?.slice(0, 25) || 'property'}: ${formatCurrency(prop.current_value || 0)} → ${formatCurrency(override.newValue)} (${override.basis})`,
+          label: `Revalue ${propertyShortName(prop.address)}: ${formatCurrency(prop.current_value || 0)} → ${formatCurrency(override.newValue)} (${override.basis})`,
           monthlySaving: 0,
           type: 'info',
         });
@@ -795,7 +805,7 @@ export function StrategyScenarioModeling({
       const memberIds = Array.from(pool.propertyIds);
       deltas.push({
         id: 'pool-default',
-        label: `Cross-collat pool → ${(pool.blendedTargetLVR * 100).toFixed(0)}% blended LVR (${memberIds.length} security)`,
+        label: `Cross-collat pool → ${(pool.blendedTargetLVR * 100).toFixed(0)}% blended LVR (${memberIds.length} ${memberIds.length === 1 ? 'security' : 'securities'})`,
         type: 'portfolio_lvr_release',
         value: pool.blendedTargetLVR,
         unit: 'ratio',

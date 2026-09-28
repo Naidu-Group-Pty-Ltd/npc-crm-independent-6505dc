@@ -1284,3 +1284,81 @@ browser both read. Three rules bite.
 Past 40 seconds, the bubble says a full set can take up to a minute and a
 half. A revision says it adds up to 45 seconds. Both figures are the
 function's own budgets (`FIRST_CALL_TIMEOUT_MS`, `REVISION_TIMEOUT_MS`).
+
+## 20. Why every advisor scenario read as a loss, and what the brief says now (28 Sep 2026)
+
+Masline Nyawo's What-If Strategy Rationale and Borrowing Capacity Snapshot were
+read line by line. All three advisor scenarios read as losses of $300k–$590k,
+for three separate reasons, each fixed at its cause.
+
+**1. The Calculator assessed her living costs at $0.** On every calculation for
+her, `calculate-borrowing-capacity` logged
+`HEM=$3360, Declared=$0, Base=$0 (declared)`. The Calculator sends the living
+costs its chosen method produces as an explicit override. The server then
+stamped the saved assessment `expense_method: 'declared'`, whatever had been
+chosen. The modal restored that stamp as if the adviser had chosen Declared,
+and a client with no declared expenses on file is $0 on Declared. The next save
+stamped it again, so it never corrected itself.
+
+The scenario engine floors living costs at HEM, as lenders do, and landed on
+the Snapshot's $856,932. The Calculator said $1,258,615. The difference is
+exactly $3,360 a month repaid at 9.44% over 30 years. Every scenario was
+measured against the inflated base.
+
+`_shared/borrowingCapacityExpenseMethod.pure.ts` holds the rule:
+- The browser sends the method it chose.
+- The server records it in `assumptions.expenseMethod`, beside the lender
+  settings already restored from there.
+- The `expense_method` column records what was applied: `hem`, `declared` or
+  `declared_higher`.
+- Only a recorded choice is restored. A row without one opens on the default,
+  the higher of HEM or declared.
+
+An older browser sends no choice, and the column then says what it always did.
+
+**2. The advisor switched a DTI cap ON to "clear the DTI constraint".**
+`dtiCapOverride` turns the cap on at the stated multiple. For a client the
+Calculator assesses with no cap, "10x non-bank" added a ceiling and cut
+capacity to exactly 10.00x on two of the three cards.
+`_shared/advisorDtiOverride.pure.ts` withholds a proposal that would tighten
+the assessment:
+- It does so on the server before the engine measures the scenario, and again
+  in the browser for a card kept from an earlier session.
+- It keeps the lender the proposal named, because re-shading income to that
+  lender's policy is a separate lever.
+- The card says why the cap was not applied.
+
+The prompt now tells the model not to propose the lever where no cap is
+enforced.
+
+**3. Capacity and purchase power were printed side by side with no reading.**
+A scenario that releases equity lowers capacity, because the released equity
+is new debt the lender services, and raises purchase power. The brief now says
+so under the figures (`rationaleReadingNote`), wherever capacity falls and
+purchase power is reported. The equity sentence is added only where equity is
+released.
+
+The brief also sets the choice beside the alternatives. The agent carries
+every card from the same answer with the one applied, and the advisor section
+lists them with the engine's figures:
+- capacity and purchase power;
+- whether each clears the target or falls short, and by how much;
+- the advisor's risk rating;
+- which option was applied.
+
+It also quotes the advisor's own guardrails ("DTI cap of 10x not applied…")
+under *What the calculation engine flagged*. The engine's working figures
+(`Honest DTI 10.60× … Numerator $…`) stay on the card. All of it goes through
+`composeAdvisorSection`, so the panel, both briefs and both Snapshots say it
+the same way.
+
+**The jsPDF brief** printed every `→` as `!’`, because the built-in font carries
+WinAnsi only (`src/lib/pdf/standardFontText.ts` now guards the brief and the
+legacy Snapshot). It also printed "2 securityies" and cut an address to
+"Innisfa"; lever labels now name a property by its whole street line. And the
+brief wrapped a lever's text to full width under its CAUTION chip, so the two
+overlapped.
+
+Measured: Masline's brief on 29 Sep was the jsPDF fallback. The browser's
+preflight to `render-borrowing-capacity-pdf` answered 200 and no POST
+followed. The Snapshot's call two minutes later reached the function.

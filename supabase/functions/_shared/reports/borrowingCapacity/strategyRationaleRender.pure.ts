@@ -53,6 +53,7 @@ import type { ReportBrandSnapshot } from '../../reportDesign/snapshot.pure.ts';
 import { resolveSnapshotBrand } from '../../reportDesign/documentBrand.pure.ts';
 import { withDesignOptions, type ReportTemplateDesign } from '../../reportDesign/templateDesign.pure.ts';
 import {
+  ADVISOR_OPTIONS_NOTE,
   STRATEGY_RATIONALE_NAME,
   STRATEGY_RATIONALE_STANDFIRST,
   type RationaleSeverity,
@@ -99,6 +100,8 @@ function sectionsOf(d: StrategyRationaleDocument): Section[] {
       renderLede(d.headline),
       p(d.subHeadline),
       renderKpiStrip(d.kpis.map((k) => ({ label: k.label, value: k.value, foot: k.foot || undefined, tone: k.tone }))),
+      // How to read the two figures, where they seem to disagree.
+      d.readingNote ? unlabelledCallout('informative', p(d.readingNote)) : '',
     ],
   });
 
@@ -124,6 +127,32 @@ function sectionsOf(d: StrategyRationaleDocument): Section[] {
         a.rejected.length
           ? keepTogether(`<p><strong>${escapeHtml(a.rejectedTitle)}</strong></p>`
             + `<ul>${a.rejected.map((e) => `<li>${escapeHtml(e)}</li>`).join('')}</ul>`)
+          : '',
+        a.cautions.length
+          ? keepTogether(`<p><strong>${escapeHtml(a.cautionsTitle)}</strong></p>`
+            + `<ul>${a.cautions.map((e) => `<li>${escapeHtml(e)}</li>`).join('')}</ul>`)
+          : '',
+        // The options the advisor put forward, the applied one marked: a
+        // decision is between options, and the brief used to name only one.
+        a.options.length
+          ? keepTogether(`<p><strong>${escapeHtml(a.optionsTitle)}</strong></p>`
+            + renderDataTable(
+              [
+                { key: 'name', label: 'Option', align: 'left' },
+                { key: 'capacity', label: 'Capacity', align: 'right' },
+                { key: 'purchasePower', label: 'Purchase power', align: 'right' },
+                { key: 'target', label: 'Target', align: 'right' },
+                { key: 'risk', label: 'Risk', align: 'right' },
+              ],
+              a.options.map((o): TableRow => ({
+                name: o.applied ? `${o.name} (applied)` : o.name,
+                capacity: o.capacity,
+                purchasePower: o.purchasePower,
+                target: o.target,
+                risk: o.risk,
+              })),
+            )
+            + `<p><em>${escapeHtml(ADVISOR_OPTIONS_NOTE)}</em></p>`)
           : '',
         ...a.notes.map((n) => `<p><em>${escapeHtml(n)}</em></p>`),
       ],

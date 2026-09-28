@@ -26,6 +26,7 @@ import {
 // amortisation formula used everywhere else in the app.
 
 import { getTaxBreakdown } from './tax.ts';
+import { withholdTighteningDtiOverride } from '../_shared/advisorDtiOverride.pure.ts';
 
 interface BcParams {
   grossAnnualIncome: number;
@@ -517,6 +518,16 @@ export function validateAIScenarios(
         };
       }
 
+      // A DTI cap the advisor proposes may relax the assessment, never
+      // tighten it (`_shared/advisorDtiOverride.pure.ts`). Withheld BEFORE the
+      // deltas are built, and written back so the browser's Apply uses the
+      // same levers the engine measured.
+      const dtiGuard = withholdTighteningDtiOverride(scenario.adjustments, {
+        dtiCapEnabled: !!client.baseInputs?.dtiCapEnabled,
+        dtiCapLimit: Number(client.baseInputs?.dtiCapLimit || 6),
+      });
+      if (dtiGuard.note) scenario.adjustments = dtiGuard.adjustments;
+
       const ctx = buildScenarioContext(client, acq);
       const deltas = adjustmentsToDeltas(scenario.adjustments);
       const { inputs, effect, issues } = aggregateDeltas(scenario.name, deltas, ctx);
@@ -524,6 +535,9 @@ export function validateAIScenarios(
       // Phase J1: detect soft-cap clamps and surface as validation notes so
       // the broker sees inline that the model overshot a guardrail.
       const clampIssues: typeof issues = [];
+      if (dtiGuard.note) {
+        clampIssues.push({ deltaId: 'dti-cap', deltaType: 'dti_cap_change', severity: 'warning', message: dtiGuard.note });
+      }
       const a = scenario.adjustments || ({} as AIAdjustments);
       if (typeof a.incomeGrowthPercent === 'number' && a.incomeGrowthPercent > 25) {
         clampIssues.push({ deltaId: 'income_change', deltaType: 'income_change', severity: 'warn', message: `Income growth clamped to 25% (model proposed ${a.incomeGrowthPercent}%) — needs payslip evidence to defend higher.` });

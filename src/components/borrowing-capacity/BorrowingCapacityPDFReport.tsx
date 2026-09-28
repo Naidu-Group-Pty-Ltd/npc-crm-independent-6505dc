@@ -27,7 +27,12 @@ import { formatMeasure } from '@/lib/reportDesign/measure.pure';
 import { fetchLatestBorrowingCapacity } from '@/lib/fetchLatestBorrowingCapacity';
 import { format } from 'date-fns';
 import { smartCapitalize } from '@/utils/nameFormatting';
-import { composeAdvisorSection } from '@/lib/reports/borrowingCapacity/strategyRationale.pure';
+import { guardStandardFontText } from '@/lib/pdf/standardFontText';
+import {
+  ADVISOR_OPTIONS_NOTE,
+  advisorOptionLine,
+  composeAdvisorSection,
+} from '@/lib/reports/borrowingCapacity/strategyRationale.pure';
 
 // ─── Design tokens ───────────────────────────────────────────────────────────
 const GOLD = { r: 191, g: 155, b: 80 };
@@ -258,7 +263,9 @@ export interface BorrowingCapacityPDFOverrides {
 }
 
 export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExportData): Promise<{ blob: Blob; fileName: string } | undefined> {
-  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+  // The lever labels carry arrows the built-in font cannot draw
+  // (`standardFontText.ts`).
+  const doc = guardStandardFontText(new jsPDF({ unit: 'mm', format: 'a4' }));
   const pageNum = { value: 1 };
   const a = data.assessment;
 
@@ -1288,6 +1295,11 @@ export async function generateBorrowingCapacityPDF(data: BorrowingCapacityExport
           ...advisor.evidence.map((t) => ({ text: `• ${t}`, style: 'normal' as const })),
           ...(advisor.rejected.length ? [{ text: advisor.rejectedTitle, style: 'bold' as const }] : []),
           ...advisor.rejected.map((t) => ({ text: `• ${t}`, style: 'normal' as const })),
+          ...(advisor.cautions.length ? [{ text: advisor.cautionsTitle, style: 'bold' as const }] : []),
+          ...advisor.cautions.map((t) => ({ text: `• ${t}`, style: 'normal' as const })),
+          ...(advisor.options.length ? [{ text: advisor.optionsTitle, style: 'bold' as const }] : []),
+          ...advisor.options.map((o) => ({ text: `• ${advisorOptionLine(o)}`, style: 'normal' as const })),
+          ...(advisor.options.length ? [{ text: ADVISOR_OPTIONS_NOTE, style: 'italic' as const }] : []),
           ...advisor.notes.map((t) => ({ text: t, style: 'italic' as const })),
         ];
         advisorLines.forEach(({ text, style }) => {

@@ -49,7 +49,10 @@ import {
 import { ChooseTemplateButton } from '@/components/reports/ChooseTemplateButton';
 import { requestStrategyRationale } from '@/lib/reports/borrowingCapacity/deliverStrategyRationale';
 import {
+  ADVISOR_OPTIONS_NOTE,
+  advisorOptionLine,
   composeAdvisorSection,
+  rationaleReadingNote,
   type RationaleAdvisorInput,
   type RationaleAdvisorSection,
 } from '@/lib/reports/borrowingCapacity/strategyRationale.pure';
@@ -135,6 +138,7 @@ function buildPlainTextBrief(
   report: RationaleReport,
   fmt: (n: number) => string,
   advisor: RationaleAdvisorSection | null,
+  readingNote: string | null = null,
 ): string {
   const lines: string[] = [];
   lines.push('STRATEGY RATIONALE — Borrowing Capacity Scenario');
@@ -144,6 +148,10 @@ function buildPlainTextBrief(
   if (report.subHeadline) {
     lines.push('');
     lines.push(report.subHeadline);
+  }
+  if (readingNote) {
+    lines.push('');
+    lines.push(readingNote);
   }
   lines.push('');
   if (advisor) {
@@ -167,6 +175,17 @@ function buildPlainTextBrief(
     if (advisor.rejected.length) {
       lines.push(advisor.rejectedTitle);
       advisor.rejected.forEach((r) => lines.push(`• ${r}`));
+      lines.push('');
+    }
+    if (advisor.cautions.length) {
+      lines.push(advisor.cautionsTitle);
+      advisor.cautions.forEach((c) => lines.push(`• ${c}`));
+      lines.push('');
+    }
+    if (advisor.options.length) {
+      lines.push(advisor.optionsTitle);
+      advisor.options.forEach((o) => lines.push(`• ${advisorOptionLine(o)}`));
+      lines.push(ADVISOR_OPTIONS_NOTE);
       lines.push('');
     }
     advisor.notes.forEach((n) => lines.push(n));
@@ -235,9 +254,10 @@ export function StrategyRationalePanel({ report, formatCurrency, pdfContext, cli
   const [copied, setCopied] = useState(false);
   const [downloading, setDownloading] = useState(false);
   const advisorSection = useMemo(() => composeAdvisorSection(advisor), [advisor]);
+  const readingNote = useMemo(() => (pdfContext ? rationaleReadingNote(pdfContext) : null), [pdfContext]);
   const briefText = useMemo(
-    () => buildPlainTextBrief(report, formatCurrency, advisorSection),
-    [report, formatCurrency, advisorSection],
+    () => buildPlainTextBrief(report, formatCurrency, advisorSection, readingNote),
+    [report, formatCurrency, advisorSection, readingNote],
   );
 
   const handleCopy = async () => {
@@ -402,6 +422,11 @@ export function StrategyRationalePanel({ report, formatCurrency, pdfContext, cli
           {report.subHeadline && (
             <p className="text-xs text-muted-foreground leading-relaxed">{report.subHeadline}</p>
           )}
+          {readingNote && (
+            <p className="text-xs text-muted-foreground leading-relaxed border-l-2 border-l-primary pl-2">
+              {readingNote}
+            </p>
+          )}
         </div>
 
         {/* ── Strategy Advisor: why this scenario ──────────────────── */}
@@ -439,6 +464,49 @@ export function StrategyRationalePanel({ report, formatCurrency, pdfContext, cli
                       <li key={i} className="text-[11px] text-muted-foreground leading-relaxed">{r}</li>
                     ))}
                   </ul>
+                </div>
+              )}
+              {advisorSection.cautions.length > 0 && (
+                <div className="pt-1">
+                  <p className="text-[11px] font-semibold">{advisorSection.cautionsTitle}</p>
+                  <ul className="mt-1 space-y-1 list-disc pl-4">
+                    {advisorSection.cautions.map((c, i) => (
+                      <li key={i} className="text-[11px] text-muted-foreground leading-relaxed">{c}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {advisorSection.options.length > 0 && (
+                <div className="pt-1">
+                  <p className="text-[11px] font-semibold">{advisorSection.optionsTitle}</p>
+                  <div className="mt-1 overflow-x-auto">
+                    <table className="w-full text-[11px]">
+                      <thead>
+                        <tr className="text-muted-foreground">
+                          <th scope="col" className="text-left font-medium py-1 pr-2">Option</th>
+                          <th scope="col" className="text-right font-medium py-1 px-2">Capacity</th>
+                          <th scope="col" className="text-right font-medium py-1 px-2">Purchase power</th>
+                          <th scope="col" className="text-right font-medium py-1 px-2">Target</th>
+                          <th scope="col" className="text-right font-medium py-1 pl-2">Risk</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {advisorSection.options.map((o, i) => (
+                          <tr key={i} className={`border-t ${o.applied ? 'font-semibold' : 'text-muted-foreground'}`}>
+                            <td className="py-1 pr-2">
+                              {o.name}
+                              {o.applied && <span className="ml-1 font-normal text-primary">(applied)</span>}
+                            </td>
+                            <td className="text-right py-1 px-2 tabular-nums">{o.capacity}</td>
+                            <td className="text-right py-1 px-2 tabular-nums">{o.purchasePower}</td>
+                            <td className="text-right py-1 px-2">{o.target}</td>
+                            <td className="text-right py-1 pl-2">{o.risk}</td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                  <p className="mt-1 text-[10px] italic text-muted-foreground">{ADVISOR_OPTIONS_NOTE}</p>
                 </div>
               )}
               {advisorSection.notes.map((n, i) => (

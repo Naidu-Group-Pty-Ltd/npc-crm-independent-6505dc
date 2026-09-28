@@ -204,7 +204,7 @@ function whyForDelta(
       const blended = (d.value * 100).toFixed(0);
       const ids = Array.isArray(d.meta?.propertyIds) ? (d.meta!.propertyIds as string[]) : [];
       const strategy = (d.meta?.allocationStrategy as string) ?? 'highest_equity_first';
-      return `Pools ${ids.length} security${ids.length === 1 ? '' : 'ies'} into a cross-collateralised facility at a ${blended}% blended LVR (${strategy.replace(/_/g, ' ')}). Equity-rich properties subsidise equity-poor ones, unlocking cash that standalone per-security releases would floor at $0. Capacity impact: ${capacityImpact >= 0 ? '+' : ''}${fmt(capacityImpact)}.`;
+      return `Pools ${ids.length} ${ids.length === 1 ? 'security' : 'securities'} into a cross-collateralised facility at a ${blended}% blended LVR (${strategy.replace(/_/g, ' ')}). Equity-rich properties subsidise equity-poor ones, unlocking cash that standalone per-security releases would floor at $0. Capacity impact: ${capacityImpact >= 0 ? '+' : ''}${fmt(capacityImpact)}.`;
     }
     default:
       return `Capacity impact in isolation: ${capacityImpact >= 0 ? '+' : ''}${fmt(capacityImpact)}.`;

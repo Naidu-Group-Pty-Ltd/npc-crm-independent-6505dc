@@ -490,7 +490,8 @@ ${(properties || []).map((p: any) => `- [${p.id}] ${p.address} (${p.property_typ
 ## Scenario Discipline (Phase E)
 - The binding constraint above tells you which lever moves capacity most. Prioritise it.
 - Cap any single 'incomeGrowthPercent' at 25 and 'expenseReductionPercent' at 30 unless the user explicitly pushes higher.
-- Always justify the assumption in 'reasoning' with concrete numbers from the snapshot.`;
+- Always justify the assumption in 'reasoning' with concrete numbers from the snapshot.${dtiCapEnabled ? '' : `
+- The DTI cap is NOT enforced in this assessment. Do NOT set 'dtiCapOverride': switching a cap on here LOWERS capacity (it will be withheld). If the debt-to-income ratio is a concern, address it with debt reduction or income, and name in 'reasoning' the lender policy that must accept the ratio.`}`;
     }
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");

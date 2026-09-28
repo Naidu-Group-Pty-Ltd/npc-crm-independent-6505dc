@@ -1,5 +1,6 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 import { verifyAuth, createCorsHeaders, createUnauthorizedResponse } from '../_shared/auth.ts';
+import { readExpenseMethodChoice, recordedExpenseMethod } from '../_shared/borrowingCapacityExpenseMethod.pure.ts';
 import { requireWorkspaceCapability, entitlementDeniedResponse } from '../_shared/entitlements.ts';
 import { canAccessClient } from '../_shared/clientAccess.ts';
 import { enforceCsrf, csrfDenied } from "../_shared/csrfGuard.ts";
@@ -1567,7 +1568,20 @@ Deno.serve(async (req) => {
       ? 'declared'
       : (totalDeclaredExpenses > hemBenchmark ? 'declared_higher' : 'hem');
 
-    console.log(`[calculate-borrowing-capacity] Expenses: HEM=$${hemBenchmark}, Declared=$${totalDeclaredExpenses}, Base=$${livingExpenses}, NegCF=$${negativePropertyCashFlows} (${expenseMethodUsed})`);
+    // The method the adviser CHOSE (HEM / Declared / higher of the two). The
+    // override above is only the figure it produced, so without this the
+    // stored assessment said 'declared' whatever was chosen, and the modal
+    // reopened on Declared: $0 for a client with no declared expenses. See
+    // `_shared/borrowingCapacityExpenseMethod.pure.ts`.
+    const expenseMethodChoice = readExpenseMethodChoice(overrides?.expenseMethod);
+    const expenseMethodRecorded = recordedExpenseMethod({
+      choice: expenseMethodChoice,
+      hemBenchmark,
+      declaredExpenses: totalDeclaredExpenses,
+      fallback: expenseMethodUsed,
+    });
+
+    console.log(`[calculate-borrowing-capacity] Expenses: HEM=$${hemBenchmark}, Declared=$${totalDeclaredExpenses}, Base=$${livingExpenses}, NegCF=$${negativePropertyCashFlows} (${expenseMethodUsed}; chosen ${expenseMethodChoice ?? 'not sent'})`);
 
     // Total living expenses = base living expenses + negative property cash flows
     // (counted exactly ONCE, regardless of whether the override already had them).
@@ -1942,6 +1956,9 @@ Deno.serve(async (req) => {
       taxBreakdown: currentCapacity.taxBreakdown,
       assumptions: {
         items: assumptionItems,
+        // The adviser's living-expense method, restored when the Calculator
+        // is reopened. Null where an older browser did not send it.
+        expenseMethod: expenseMethodChoice,
         calculationMode: effectiveCalcMode,
         dtiCapEnabled: effectiveDtiCapEnabled,
         dtiCapLimit: effectiveDtiCapLimit,
@@ -2050,7 +2067,7 @@ Deno.serve(async (req) => {
           shaded_annual_income: effectiveShadedIncome,
           income_breakdown: incomeBreakdown,
           living_expenses_monthly: livingExpenses,
-          expense_method: expenseMethodUsed,
+          expense_method: expenseMethodRecorded,
           expense_breakdown: { hemBenchmark, declaredExpenses: totalDeclaredExpenses },
           existing_commitments_monthly: effectiveCommitments,
           liability_breakdown: liabilityBreakdown,
