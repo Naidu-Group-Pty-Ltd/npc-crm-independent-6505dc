@@ -14,6 +14,8 @@ import type { BorrowingCapacityInput, BorrowingCapacityResult } from '@/utils/bo
 import type { LiabilityItem, PropertyItem } from './StrategyScenarioModeling';
 import { toast } from 'sonner';
 import { resolveAuthBearer } from '@/lib/secureInvoke';
+import { SUPABASE_URL } from '@/integrations/supabase/env';
+import { agentStreamRefusal, emptyAgentAnswerMessage } from './bcScenarioAgentStream.pure';
 import { runScenarioWithInputs, type ScenarioContext } from '@/utils/scenarioDeltaEngine';
 import type { ScenarioDelta } from '@/utils/borrowingCapacityTypes';
 
@@ -372,8 +374,18 @@ export function BCScenarioAgent({
       // fix, as the Report Q&A chat.
       const { token: accessToken } = await resolveAuthBearer({ refreshIfMissing: true });
 
+      // The project URL comes from the one module that resolves it. This read
+      // was `import.meta.env.VITE_SUPABASE_URL`, which is `undefined` on a
+      // build that sets no Supabase variables (this deployment, since `.env`
+      // left the repository on 21 Jul 2026): the address became
+      // `undefined/functions/v1/…`, a RELATIVE url, so the request went to the
+      // app's own host, which answers any path with its HTML shell and a 200.
+      // Nothing reached the function — production logs show no browser request
+      // to it at all — and the reader below found no `data:` lines in the HTML,
+      // so the chat showed the question, no answer and no error.
+      // `internalMessageAttachments.ts` records the same defect.
       const resp = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/bc-scenario-agent`,
+        `${SUPABASE_URL}/functions/v1/bc-scenario-agent`,
         {
           method: 'POST',
           headers: {
@@ -414,6 +426,10 @@ export function BCScenarioAgent({
       }
 
       if (!resp.body) throw new Error('No response body');
+      // A 200 that is not the agent's stream is not an answer: said out loud
+      // rather than read as an empty one.
+      const refusal = agentStreamRefusal(resp.headers.get('content-type'));
+      if (refusal) throw new Error(refusal);
 
       // Stream SSE
       const reader = resp.body.getReader();
@@ -489,6 +505,12 @@ export function BCScenarioAgent({
       // mirroring the pre-stream non-200 handling above.
       if (streamError) {
         throw new Error(streamError);
+      }
+
+      // A stream that carried no prose, no scenarios and no error is a
+      // non-answer. It used to end the turn in silence.
+      if (!assistantText.trim() && !(hasToolCall && toolCallArgs)) {
+        throw new Error(emptyAgentAnswerMessage());
       }
 
       // Parse tool call result for scenarios

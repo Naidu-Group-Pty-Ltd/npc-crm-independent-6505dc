@@ -8,6 +8,7 @@
  *   1. Cover page — branded template image, falls back to dark/gold splash
  *   2. Header — client name + scenario timestamp + capacity headline
  *   3. Headline + sub-headline (target framing)
+ *   3a. The Strategy Advisor's reasoning, where the scenario is its card
  *   4. What & Why bullets (per lever, sorted by material impact)
  *   5. Reconciliation paragraph
  *   6. Recommended execution sequence (numbered, owner-coded)
@@ -34,6 +35,10 @@ import { drawLegacyIssuerCover } from '@/lib/reports/legacyIssuerCover';
 import { drawnDesignFor } from '@/lib/reports/drawnDocumentDesign';
 import { smartCapitalize } from '@/utils/nameFormatting';
 import type { RationaleReport, RationaleSeverity } from '@/utils/strategyRationaleEngine';
+import {
+  composeAdvisorSection,
+  type RationaleAdvisorInput,
+} from '@/lib/reports/borrowingCapacity/strategyRationale.pure';
 
 // ─── Design tokens (matched to BorrowingCapacityPDFReport for brand parity) ──
 const GOLD = { r: 191, g: 155, b: 80 };
@@ -217,6 +222,12 @@ export interface RationalePDFContext {
     totalPoolDebt: number;
     poolReleaseAmount: number;
   } | null;
+  /**
+   * The Strategy Advisor's reasoning for the card that was applied. Its words
+   * are composed once (`composeAdvisorSection`), so this brief, the typeset
+   * brief and the copied text say the same thing.
+   */
+  advisor?: RationaleAdvisorInput | null;
 }
 
 export async function generateStrategyRationalePDF(
@@ -402,6 +413,82 @@ export async function generateStrategyRationalePDF(
     );
   }
   y += boxH + 12;
+
+  // ════════════════════════════════════════════════════════════════════════
+  // SECTION: STRATEGY ADVISOR — the client-specific reasoning for its card
+  // ════════════════════════════════════════════════════════════════════════
+  const advisor = composeAdvisorSection(context.advisor);
+  if (advisor) {
+    y = ensureSpace(doc, y, 30, pageNum);
+    y = drawSectionHeader(doc, advisor.title, y, P);
+
+    doc.setFontSize(9);
+    doc.setFont('helvetica', 'bold');
+    setColor(doc, P.navy);
+    y = drawWrappedText(doc, advisor.scenarioLine, MARGIN, y, CONTENT_W, 4.5) + 2;
+
+    doc.setFontSize(8.5);
+    doc.setFont('helvetica', 'normal');
+    setColor(doc, BODY_TEXT);
+    for (const para of advisor.paragraphs) {
+      const lines: string[] = doc.splitTextToSize(para, CONTENT_W);
+      for (const line of lines) {
+        y = ensureSpace(doc, y, 5, pageNum);
+        doc.setFontSize(8.5);
+        doc.setFont('helvetica', 'normal');
+        setColor(doc, BODY_TEXT);
+        doc.text(line, MARGIN, y);
+        y += 4;
+      }
+      y += 2;
+    }
+
+    if (advisor.riskLine) {
+      const riskColor = advisor.risk === 'high' ? RED : advisor.risk === 'medium' ? AMBER : GREEN;
+      y = ensureSpace(doc, y, 8, pageNum);
+      doc.setFontSize(8);
+      doc.setFont('helvetica', 'bold');
+      setColor(doc, riskColor);
+      doc.text(advisor.riskLine, MARGIN, y + 1);
+      y += 7;
+    }
+
+    const drawList = (title: string, items: string[], bar: RGB) => {
+      if (items.length === 0) return;
+      y = ensureSpace(doc, y, 14, pageNum);
+      doc.setFontSize(8.5);
+      doc.setFont('helvetica', 'bold');
+      setColor(doc, P.navy);
+      doc.text(title, MARGIN, y);
+      y += 5;
+      for (const item of items) {
+        doc.setFontSize(8.5);
+        doc.setFont('helvetica', 'normal');
+        const lines: string[] = doc.splitTextToSize(item, CONTENT_W - 8);
+        const blockH = lines.length * 4 + 3;
+        y = ensureSpace(doc, y, blockH + 1, pageNum);
+        setFill(doc, bar);
+        doc.rect(MARGIN, y + 1, 1.2, blockH - 2, 'F');
+        setColor(doc, BODY_TEXT);
+        doc.text(lines, MARGIN + 5, y + 4);
+        y += blockH;
+      }
+      y += 3;
+    };
+    drawList(advisor.evidenceTitle, advisor.evidence, P.gold);
+    drawList(advisor.rejectedTitle, advisor.rejected, GRAY);
+
+    for (const note of advisor.notes) {
+      doc.setFontSize(7.5);
+      doc.setFont('helvetica', 'italic');
+      const lines: string[] = doc.splitTextToSize(note, CONTENT_W);
+      y = ensureSpace(doc, y, lines.length * 3.6 + 2, pageNum);
+      setColor(doc, GRAY);
+      doc.text(lines, MARGIN, y);
+      y += lines.length * 3.6 + 2;
+    }
+    y += 6;
+  }
 
   // ════════════════════════════════════════════════════════════════════════
   // SECTION: WHAT & WHY (per-lever bullets)

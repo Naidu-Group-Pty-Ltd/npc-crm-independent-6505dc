@@ -9,7 +9,8 @@
  * the chapter numbers.
  *
  * The layout follows the jsPDF brief's order exactly — cover; the brief with
- * its headline and capacity figures; what we propose and why; how the maths
+ * its headline and capacity figures; the Strategy Advisor's reasoning where
+ * the scenario is one of its cards; what we propose and why; how the maths
  * reconciles; the execution sequence; caveats; then the capital flow,
  * valuation assumptions and cross-collateral method where the scenario has
  * them; the issuer's closing page.
@@ -73,6 +74,13 @@ const SEVERITY_TONE: Record<RationaleSeverity, CalloutTone> = {
   info: 'informative',
 };
 
+/** How hard the advisor judged the scenario to execute, as the tone that says it. */
+const ADVISOR_RISK_TONE: Record<'low' | 'medium' | 'high', CalloutTone> = {
+  low: 'positive',
+  medium: 'caution',
+  high: 'negative',
+};
+
 interface Section {
   title: string;
   dek?: string;
@@ -93,6 +101,34 @@ function sectionsOf(d: StrategyRationaleDocument): Section[] {
       renderKpiStrip(d.kpis.map((k) => ({ label: k.label, value: k.value, foot: k.foot || undefined, tone: k.tone }))),
     ],
   });
+
+  // ── The Strategy Advisor's reasoning, where the scenario is its card ─────
+  // Directly under the figures it explains and before the per-lever account,
+  // because it is the client-specific WHY of the whole scenario; the levers
+  // below are the engine's account of each part of it.
+  if (d.advisor) {
+    const a = d.advisor;
+    const risk = a.riskLine && a.risk
+      ? unlabelledCallout(ADVISOR_RISK_TONE[a.risk], `<p><strong>${escapeHtml(a.riskLine)}</strong></p>`)
+      : '';
+    out.push({
+      title: a.title,
+      blocks: [
+        `<p><strong>${escapeHtml(a.scenarioLine)}</strong></p>`,
+        ...a.paragraphs.map((t) => p(t)),
+        risk,
+        a.evidence.length
+          ? keepTogether(`<p><strong>${escapeHtml(a.evidenceTitle)}</strong></p>`
+            + `<ul>${a.evidence.map((e) => `<li>${escapeHtml(e)}</li>`).join('')}</ul>`)
+          : '',
+        a.rejected.length
+          ? keepTogether(`<p><strong>${escapeHtml(a.rejectedTitle)}</strong></p>`
+            + `<ul>${a.rejected.map((e) => `<li>${escapeHtml(e)}</li>`).join('')}</ul>`)
+          : '',
+        ...a.notes.map((n) => `<p><em>${escapeHtml(n)}</em></p>`),
+      ],
+    });
+  }
 
   // ── What we propose and why ──────────────────────────────────────────────
   out.push({

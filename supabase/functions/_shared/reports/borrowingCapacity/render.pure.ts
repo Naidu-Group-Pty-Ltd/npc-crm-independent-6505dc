@@ -17,6 +17,7 @@
  * payload and printed **in words** — see `AUDIT_EFFECT` below.
  */
 
+import type { RationaleAdvisorSection } from './strategyRationale.pure.ts';
 import type { BrandLockupProps } from '../../reportDesign/primitives.pure.ts';
 import {
   closeChapter,
@@ -504,6 +505,23 @@ function categoryCaption(category: string): string {
   return CATEGORY_CAPTION[category] ?? category;
 }
 
+/**
+ * The Strategy Advisor's reasoning for a scenario saved from one of its cards,
+ * worded by `composeAdvisorSection` exactly as the Strategy Rationale words it.
+ */
+function advisorBlock(a: RationaleAdvisorSection): string {
+  const para = (t: string) => `<p>${escapeHtml(t)}</p>`;
+  const labelled = (title: string, items: string[]) => (items.length
+    ? `<p><strong>${escapeHtml(title)}</strong></p>` + renderList(items)
+    : '');
+  return `<p><strong>${escapeHtml(a.title)}</strong></p>`
+    + a.paragraphs.map(para).join('')
+    + (a.riskLine ? `<p><strong>${escapeHtml(a.riskLine)}</strong></p>` : '')
+    + labelled(a.evidenceTitle, a.evidence)
+    + labelled(a.rejectedTitle, a.rejected)
+    + a.notes.map((n) => `<p><em>${escapeHtml(n)}</em></p>`).join('');
+}
+
 function scenarioSection(s: BorrowingCapacitySnapshot): string {
   const rows = s.scenarios;
   if (!rows) return '';
@@ -528,11 +546,13 @@ function scenarioSection(s: BorrowingCapacitySnapshot): string {
   // "Commitments -$240/mo" breaks after the hyphen and the figure lands on its
   // own line. It has room here, beside the rest of the scenario's detail.
   const details = rows
-    .filter((r) => r.adjustments.length || r.details.length)
-    .map((r) => subhead(r.name) + renderList([
-      ...(r.adjustments.length ? [`Changed: ${r.adjustments.join(' · ')}`] : []),
-      ...r.details,
-    ]))
+    .filter((r) => r.adjustments.length || r.details.length || r.advisor)
+    .map((r) => subhead(r.name)
+      + ((r.adjustments.length || r.details.length) ? renderList([
+        ...(r.adjustments.length ? [`Changed: ${r.adjustments.join(' · ')}`] : []),
+        ...r.details,
+      ]) : '')
+      + (r.advisor ? advisorBlock(r.advisor) : ''))
     .join('');
 
   return renderDataTable(cols, tableRows, { caption: 'Modelled scenarios', signedKeys: ['change'] })

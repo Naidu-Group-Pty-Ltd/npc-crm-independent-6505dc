@@ -37,6 +37,7 @@ import {
   Loader2,
   Wallet,
   ChevronDown,
+  Bot,
 } from 'lucide-react';
 import { toast } from 'sonner';
 import {
@@ -47,6 +48,11 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { ChooseTemplateButton } from '@/components/reports/ChooseTemplateButton';
 import { requestStrategyRationale } from '@/lib/reports/borrowingCapacity/deliverStrategyRationale';
+import {
+  composeAdvisorSection,
+  type RationaleAdvisorInput,
+  type RationaleAdvisorSection,
+} from '@/lib/reports/borrowingCapacity/strategyRationale.pure';
 import type { RationaleReport, RationaleSeverity, RationaleCapitalFlowEntry } from '@/utils/strategyRationaleEngine';
 import { generateStrategyRationalePDF, type RationalePDFContext } from './StrategyRationalePDF';
 
@@ -63,6 +69,12 @@ interface StrategyRationalePanelProps {
    * (BORROWING_CAPACITY.md §17); without it, the jsPDF brief is the only one.
    */
   clientId?: string;
+  /**
+   * The Strategy Advisor's reasoning for the card whose levers are live. It is
+   * shown here, copied with the brief and printed in both PDFs; absent for a
+   * scenario built by hand, and the panel is then exactly as it was.
+   */
+  advisor?: RationaleAdvisorInput | null;
 }
 
 /** Hand a blob to the browser as a saved file. */
@@ -101,6 +113,12 @@ const SEVERITY_CLASSES: Record<RationaleSeverity, { badge: string; ring: string;
   },
 };
 
+const ADVISOR_RISK_BADGE: Record<'low' | 'medium' | 'high', string> = {
+  low: 'bg-success/10 text-success border-success/30',
+  medium: 'bg-brand-500/10 text-brand-700 border-brand-500/30 dark:text-brand-400',
+  high: 'bg-destructive/10 text-destructive border-destructive/30',
+};
+
 const OWNER_LABEL: Record<'broker' | 'finance' | 'client', string> = {
   broker: 'Broker',
   finance: 'Finance',
@@ -113,7 +131,11 @@ const OWNER_BADGE: Record<'broker' | 'finance' | 'client', string> = {
   client: 'bg-accent/10 text-accent border-accent/30 dark:text-accent',
 };
 
-function buildPlainTextBrief(report: RationaleReport, fmt: (n: number) => string): string {
+function buildPlainTextBrief(
+  report: RationaleReport,
+  fmt: (n: number) => string,
+  advisor: RationaleAdvisorSection | null,
+): string {
   const lines: string[] = [];
   lines.push('STRATEGY RATIONALE — Borrowing Capacity Scenario');
   lines.push('━'.repeat(60));
@@ -124,6 +146,32 @@ function buildPlainTextBrief(report: RationaleReport, fmt: (n: number) => string
     lines.push(report.subHeadline);
   }
   lines.push('');
+  if (advisor) {
+    lines.push(advisor.title.toUpperCase());
+    lines.push('─'.repeat(60));
+    lines.push(advisor.scenarioLine);
+    lines.push('');
+    advisor.paragraphs.forEach((para) => {
+      lines.push(para);
+      lines.push('');
+    });
+    if (advisor.riskLine) {
+      lines.push(advisor.riskLine);
+      lines.push('');
+    }
+    if (advisor.evidence.length) {
+      lines.push(advisor.evidenceTitle);
+      advisor.evidence.forEach((e) => lines.push(`• ${e}`));
+      lines.push('');
+    }
+    if (advisor.rejected.length) {
+      lines.push(advisor.rejectedTitle);
+      advisor.rejected.forEach((r) => lines.push(`• ${r}`));
+      lines.push('');
+    }
+    advisor.notes.forEach((n) => lines.push(n));
+    lines.push('');
+  }
   lines.push('WHAT WE PROPOSE & WHY');
   lines.push('─'.repeat(60));
   if (report.bullets.length === 0) {
@@ -183,10 +231,14 @@ function buildPlainTextBrief(report: RationaleReport, fmt: (n: number) => string
   return lines.join('\n');
 }
 
-export function StrategyRationalePanel({ report, formatCurrency, pdfContext, clientId }: StrategyRationalePanelProps) {
+export function StrategyRationalePanel({ report, formatCurrency, pdfContext, clientId, advisor }: StrategyRationalePanelProps) {
   const [copied, setCopied] = useState(false);
   const [downloading, setDownloading] = useState(false);
-  const briefText = useMemo(() => buildPlainTextBrief(report, formatCurrency), [report, formatCurrency]);
+  const advisorSection = useMemo(() => composeAdvisorSection(advisor), [advisor]);
+  const briefText = useMemo(
+    () => buildPlainTextBrief(report, formatCurrency, advisorSection),
+    [report, formatCurrency, advisorSection],
+  );
 
   const handleCopy = async () => {
     try {
@@ -206,10 +258,11 @@ export function StrategyRationalePanel({ report, formatCurrency, pdfContext, cli
    * The words are the same either way (`strategyRationale.pure.ts`).
    */
   const produceBrief = async (which: 'typeset' | 'legacy') => {
-    const legacy = () => generateStrategyRationalePDF(report, pdfContext!);
+    const context = { ...pdfContext!, advisor: advisor ?? null };
+    const legacy = () => generateStrategyRationalePDF(report, context);
     if (which === 'legacy' || !clientId) return { ...(await legacy()), source: 'legacy' as const };
     return requestStrategyRationale(
-      { clientId, clientName: pdfContext!.clientName, report, context: pdfContext! },
+      { clientId, clientName: pdfContext!.clientName, report, context },
       legacy,
     );
   };
@@ -350,6 +403,50 @@ export function StrategyRationalePanel({ report, formatCurrency, pdfContext, cli
             <p className="text-xs text-muted-foreground leading-relaxed">{report.subHeadline}</p>
           )}
         </div>
+
+        {/* ── Strategy Advisor: why this scenario ──────────────────── */}
+        {advisorSection && (
+          <section className="space-y-2" aria-label={advisorSection.title}>
+            <div className="flex items-center gap-2 flex-wrap">
+              <Bot className="h-4 w-4 text-primary" />
+              <h4 className="text-sm font-semibold">{advisorSection.title}</h4>
+              {advisorSection.risk && (
+                <Badge variant="outline" className={`text-[10px] ${ADVISOR_RISK_BADGE[advisorSection.risk]}`}>
+                  {advisorSection.riskLine}
+                </Badge>
+              )}
+            </div>
+            <div className="rounded-md border border-l-2 border-l-primary bg-muted/30 p-3 space-y-2">
+              <p className="text-xs font-medium">{advisorSection.scenarioLine}</p>
+              {advisorSection.paragraphs.map((para, i) => (
+                <p key={i} className="text-xs text-muted-foreground leading-relaxed">{para}</p>
+              ))}
+              {advisorSection.evidence.length > 0 && (
+                <div className="pt-1">
+                  <p className="text-[11px] font-semibold">{advisorSection.evidenceTitle}</p>
+                  <ul className="mt-1 space-y-1 list-disc pl-4">
+                    {advisorSection.evidence.map((e, i) => (
+                      <li key={i} className="text-[11px] text-muted-foreground leading-relaxed">{e}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {advisorSection.rejected.length > 0 && (
+                <div className="pt-1">
+                  <p className="text-[11px] font-semibold">{advisorSection.rejectedTitle}</p>
+                  <ul className="mt-1 space-y-1 list-disc pl-4">
+                    {advisorSection.rejected.map((r, i) => (
+                      <li key={i} className="text-[11px] text-muted-foreground leading-relaxed">{r}</li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              {advisorSection.notes.map((n, i) => (
+                <p key={i} className="text-[10px] italic text-muted-foreground leading-relaxed">{n}</p>
+              ))}
+            </div>
+          </section>
+        )}
 
         {/* ── What & Why ──────────────────────────────────────────── */}
         <section className="space-y-2">

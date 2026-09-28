@@ -1,4 +1,5 @@
 import { supabase } from '@/integrations/supabase/client';
+import { SUPABASE_ANON_KEY, SUPABASE_URL } from '@/integrations/supabase/env';
 import { invokeSecureFunction, isAuthFailureResponse, resolveAuthBearer } from '@/lib/secureInvoke';
 import {
   classifyMarketFailure, marketFailureIsRetryable, resolveIssueMessage,
@@ -382,7 +383,10 @@ export async function streamMarketUpdateQuestion(
     signal?: AbortSignal;
   } = {},
 ): Promise<MarketQAMessage> {
-  const url = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/market-updates-qa`;
+  // From the one module that resolves the project: the inline
+  // `import.meta.env` read was `undefined` on a build that sets no Supabase
+  // variables, which sent this request to the app's own host.
+  const url = `${SUPABASE_URL}/functions/v1/market-updates-qa`;
   // Cookie-authenticated path (ES256 remediation). This block hand-rolled the
   // same storage → native-session → publishable-key ladder that
   // `resolveAuthBearer` already owns, and its final `||` was a silent anon
@@ -408,7 +412,7 @@ export async function streamMarketUpdateQuestion(
       headers: {
         'content-type': 'application/json',
         'authorization': `Bearer ${bearer}`,
-        'apikey': import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string,
+        'apikey': SUPABASE_ANON_KEY,
       },
       body: JSON.stringify({
         question,
