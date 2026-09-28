@@ -100,10 +100,15 @@ describe('the cash flow document', () => {
    * The matrix is the artefact. On a portrait page twelve columns get 42pt
    * each, which is what made the legacy export unreadable.
    */
-  it('puts both projection matrices on the landscape page', () => {
+  // RENEGOTIATED 28 Sep 2026 — the owner's rule: "the 10-year projection
+  // should all be in one page for easy read". This asserted TWO matrices on
+  // two landscape pages, which was the split being removed; the projection is
+  // now one table on ONE landscape page, opened with its own section header.
+  it('puts the whole projection on ONE landscape page, header and table together', () => {
     const html = render();
-    const landscape = html.match(/class="page-landscape-table"/g) ?? [];
-    expect(landscape).toHaveLength(2);
+    const landscape = html.match(/class="chapter page-landscape-table cf-wide"/g) ?? [];
+    expect(landscape).toHaveLength(1);
+    expect(html.match(/<table class="data cf-matrix">/g) ?? []).toHaveLength(1);
   });
 
   it('carries the tenant on the cover and the closing page, and us nowhere', () => {

@@ -87,7 +87,7 @@ describe('parseConditionSubmission — the whitelist and its refusals', () => {
   ])('refuses %s', (_name, over, reason) => {
     const parsed = parseConditionSubmission(validPayload(over as never), SUBJECT);
     expect(parsed.ok).toBe(false);
-    if (parsed.ok) return;
+    if (!('refusal' in parsed)) return;
     expect(parsed.refusal.reason).toBe(reason);
     expect(parsed.refusal.statement.length).toBeGreaterThan(20);
   });
@@ -96,7 +96,7 @@ describe('parseConditionSubmission — the whitelist and its refusals', () => {
 describe('storability is not admissibility', () => {
   const decide = (over: Record<string, unknown> = {}) => {
     const parsed = parseConditionSubmission(validPayload(over), SUBJECT);
-    if (!parsed.ok) throw new Error(`fixture refused: ${parsed.refusal.statement}`);
+    if ('refusal' in parsed) throw new Error(`fixture refused: ${parsed.refusal.statement}`);
     return decideConditionSubmission(parsed.record, EXPECTED, ASOF);
   };
 
