@@ -81,7 +81,9 @@ export function ReportQaDownloadButton({
   messageId,
   onAttachToEmail,
   onAttached,
-  label = 'Typeset PDF',
+  // What the toolbar calls it. "Typeset PDF" named the machinery; the page
+  // hands people an Intelligence Hub Summary (`documentIdentity.pure.ts`).
+  label = 'Summary PDF',
   variant = 'outline',
   size = 'sm',
   className,
@@ -159,7 +161,7 @@ export function ReportQaDownloadButton({
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-72">
-        <DropdownMenuLabel>Typeset document</DropdownMenuLabel>
+        <DropdownMenuLabel>Intelligence Hub Summary</DropdownMenuLabel>
         {(['structured', 'transcript'] as const).map((subject) => (
           <DropdownMenuItem
             key={subject}

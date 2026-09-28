@@ -56,6 +56,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { format, formatDistanceToNow, isToday, isYesterday } from 'date-fns';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
+import { HUB_DOCUMENT_NAME, hubEmailSubject } from '@/lib/reports/reportQa/documentIdentity.pure';
 
 interface EmailSummary {
   tldr: string;
@@ -414,19 +415,19 @@ export default function EmailCopilot() {
             setShowComposeModal(true);
             
             // Compose dynamic email draft based on conversation context
-            let emailSubject = `Q&A Conversation Export - ${attachment.fileName}`;
-            let emailBody = `Please find attached the Q&A conversation export.\n\nBest regards`;
+            let emailSubject = hubEmailSubject(attachment.fileName);
+            let emailBody = `Please find attached the ${HUB_DOCUMENT_NAME}.\n\nBest regards`;
             
             if (context) {
               // Enhanced subject with report names
               emailSubject = context.reportNames 
                 ? `Property Analysis: ${context.reportNames}`
-                : `Q&A Conversation Export - ${context.title || attachment.fileName}`;
+                : hubEmailSubject(context.title || attachment.fileName);
               
               // Build dynamic email body
               const bodyParts: string[] = [];
               bodyParts.push(`Hi,\n`);
-              bodyParts.push(`Please find attached the Q&A conversation summary regarding ${context.reportNames || 'the property analysis'}.`);
+              bodyParts.push(`Please find attached the ${HUB_DOCUMENT_NAME} regarding ${context.reportNames || 'the property analysis'}.`);
               
               if (context.messageCount) {
                 bodyParts.push(`\nThis document contains a comprehensive summary of our ${context.messageCount}-message discussion.`);
@@ -1692,7 +1693,7 @@ export default function EmailCopilot() {
           }
         } catch (pdfError) {
           console.error('Failed to fetch QA PDF attachment:', pdfError);
-          toast.error('Failed to attach Q&A PDF. Sending email without it.');
+          toast.error('Failed to attach the Intelligence Hub PDF. Sending email without it.');
         }
       }
 
@@ -3739,7 +3740,7 @@ export default function EmailCopilot() {
                           <div className="flex items-center gap-2 min-w-0">
                             <p className="min-w-0 flex-1 truncate font-medium text-sm" title={qaPDFAttachment.fileName}>{qaPDFAttachment.fileName}</p>
                             <Badge variant="outline" className="text-[10px] h-4 px-1.5 border-primary/30 text-primary flex-shrink-0">
-                              From Q&A
+                              From Intelligence Hub
                             </Badge>
                           </div>
                           <p className="text-xs text-muted-foreground truncate">

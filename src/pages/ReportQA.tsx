@@ -78,6 +78,7 @@ import { ConversationTags } from '@/components/report-qa/ConversationTags';
 import { type Theme } from '@/components/report-qa/ChatThemeSelector';
 import { ConversationExport } from '@/components/report-qa/ConversationExport';
 import { ReportQaDownloadButton } from '@/components/report-qa/ReportQaDownloadButton';
+import { hubEmailSubject } from '@/lib/reports/reportQa/documentIdentity.pure';
 import { MessageThreading, useMessageThreads } from '@/components/report-qa/MessageThreading';
 import { AutoSummarize } from '@/components/report-qa/AutoSummarize';
 import { PinConversation, usePinnedConversations } from '@/components/report-qa/PinConversation';
@@ -3903,7 +3904,7 @@ export default function ReportQA() {
                 <div className="p-3 bg-muted/50 rounded-md text-sm">
                   {uploadedReports.length > 0
                     ? `Property Analysis: ${uploadedReports.map(r => r.name.replace('.pdf', '')).join(', ').substring(0, 50)}${uploadedReports.map(r => r.name.replace('.pdf', '')).join(', ').length > 50 ? '...' : ''}`
-                    : `Q&A Conversation Export - ${pendingPDFAttachment.fileName}`
+                    : hubEmailSubject(pendingPDFAttachment.fileName)
                   }
                 </div>
               </div>

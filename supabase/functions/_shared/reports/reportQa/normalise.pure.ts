@@ -24,6 +24,7 @@ import {
 } from './payload.pure.ts';
 import { CHARS_PER_LINE, markdownToPlainText, sanitiseGlyphs } from './markdown.pure.ts';
 import { neutraliseUrls } from '../text.pure.ts';
+import { HUB_DOCUMENT_NAME, hubDocumentTopic } from './documentIdentity.pure.ts';
 
 /** A row from `report_qa_messages`, as the route reads it. */
 export interface MessageRow {
@@ -297,7 +298,7 @@ export function narrativeFor(
     : '';
 
   if (subject === 'answer') {
-    return `One answer from a Report Q&A conversation grounded in ${grounded}.${answered}`;
+    return `One answer from an Intelligence Hub conversation grounded in ${grounded}.${answered}`;
   }
   if (subject === 'structured') {
     const from = turnCount === 1 ? 'a single exchange' : `${turnCount} exchanges`;
@@ -307,7 +308,7 @@ export function narrativeFor(
   const shown = turnsShown === turnCount
     ? `all ${turnCount} ${turnCount === 1 ? 'exchange' : 'exchanges'}`
     : `${turnsShown} of ${turnCount} exchanges`;
-  return `The Report Q&A conversation as it happened — ${shown}, grounded in ${grounded}.${answered}`;
+  return `The Intelligence Hub conversation as it happened — ${shown}, grounded in ${grounded}.${answered}`;
 }
 
 const uuidLike = (v: unknown): string => {
@@ -329,7 +330,13 @@ export function buildReportQaDocument(input: BuildInput): BuildResult {
   const conversationId = uuidLike(input.conversation?.id);
   if (!conversationId) return { ok: false, error: 'conversation id missing' };
 
-  const title = clean(input.conversation?.title, 160) || 'Report Q&A';
+  // The cover's title is what the document is ABOUT (`documentIdentity.pure.ts`):
+  // the answer's own heading where it wrote one, else a conversation title
+  // somebody gave, else the question. The product's name is the eyebrow above
+  // it, and stands in only where nothing says what the document covers.
+  const conversationTitle = clean(input.conversation?.title, 160);
+  const titleFor = (body: string, question: string) =>
+    clean(hubDocumentTopic({ body, conversationTitle, question }), 160) || HUB_DOCUMENT_NAME;
   const rawNames = Array.isArray(input.conversation?.report_names)
     ? input.conversation.report_names as unknown[]
     : [];
@@ -351,6 +358,7 @@ export function buildReportQaDocument(input: BuildInput): BuildResult {
     const body = edited || str(row.content);
     if (!body.trim()) return { ok: false, error: 'that answer is empty' };
     const turn = allTurns.find((t) => t.answer === body);
+    const title = titleFor(body, turn?.question ?? '');
     const citations = toCitations(row.citations);
     const models = clean(row.model_provider, 40) && clean(row.model_provider, 40) !== 'system'
       ? [clean(row.model_provider, 40)]
@@ -387,6 +395,7 @@ export function buildReportQaDocument(input: BuildInput): BuildResult {
       return { ok: false, error: 'this conversation has no structured report stored' };
     }
     const models = modelsOf(allTurns);
+    const title = titleFor(body, allTurns[0]?.question ?? '');
     return {
       ok: true,
       document: {
@@ -416,6 +425,9 @@ export function buildReportQaDocument(input: BuildInput): BuildResult {
     ? { kept: [...allTurns], charsOmitted: 0 }
     : applyBudget(allTurns);
   const models = modelsOf(kept);
+  // A transcript has no one body to name it; the conversation's title or its
+  // first question does.
+  const title = titleFor('', allTurns[0]?.question ?? '');
   return {
     ok: true,
     document: {

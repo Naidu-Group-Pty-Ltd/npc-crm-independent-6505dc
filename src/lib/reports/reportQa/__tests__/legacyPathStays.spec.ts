@@ -96,9 +96,27 @@ describe('the new control is additive', () => {
   it.each([
     ['the chat toolbar', REPORT_QA_PAGE],
     ['the export dropdown', CONVERSATION_EXPORT],
-    ['the message editor', MESSAGE_EDITOR],
   ])('mounts beside the legacy on %s', (_label, path) => {
     expect(read(path)).toContain('ReportQaDownloadButton');
+  });
+
+  /**
+   * Renegotiated (28 Sep 2026). The two editors used to carry the typeset
+   * control BESIDE their own Export PDF — two PDF buttons, only one of which
+   * honoured the chosen template — and the owner chose a template and received
+   * the legacy layout. In the editors the choice is its own control now
+   * ("Choose template") and Export PDF drives the typeset route; the jsPDF
+   * layout stays, named, for the one case the route cannot read (no
+   * conversation behind the editor).
+   */
+  it.each([
+    ['the message editor', MESSAGE_EDITOR],
+    ['the conversation editor', CONVERSATION_EDITOR],
+  ])('%s offers the choice and drives the typeset route', (_label, path) => {
+    const source = read(path);
+    expect(source).toContain('<ChooseTemplateButton');
+    expect(source).toContain('useReportQaDelivery(');
+    expect(source).toMatch(/if \(!conversationId\) \{\s*await exportAsLegacyPDF\(\);/);
   });
 
   it('leaves the toolbar Export PDF button calling generate-qa-pdf', () => {
@@ -109,7 +127,7 @@ describe('the new control is additive', () => {
 
   it('leaves both editors exporting their own PDF and markdown', () => {
     for (const path of [CONVERSATION_EDITOR, MESSAGE_EDITOR]) {
-      expect(read(path)).toContain('exportAsPDF');
+      expect(read(path)).toContain('exportAsLegacyPDF');
       expect(read(path)).toContain('exportAsMarkdown');
     }
   });

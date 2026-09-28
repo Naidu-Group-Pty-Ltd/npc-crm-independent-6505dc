@@ -9,6 +9,7 @@ import type {
   ReportQaSubject,
 } from '../../../../supabase/functions/_shared/reports/reportQa/payload.pure';
 import { applyReportQaProjection } from '../../../../supabase/functions/_shared/reportQaProjection.pure';
+import { HUB_DOCUMENT_NAME } from '../../../../supabase/functions/_shared/reports/reportQa/documentIdentity.pure';
 import { applyOrganisationAndBrand } from './organisation';
 
 /*
@@ -99,10 +100,12 @@ async function loadMessages(conversationId: string) {
 
 export const qaAdapter: ReportTemplateAdapter = {
   reportType: 'qa',
-  label: 'Report Q&A',
+  // What the Hub's documents are called wherever the format is named — the
+  // template chooser, the Library list (`documentIdentity.pure.ts`).
+  label: HUB_DOCUMENT_NAME,
   supportsProduction: true,
   legacyFallback: {
-    label: 'Report Q&A flowing export',
+    label: `${HUB_DOCUMENT_NAME} flowing export`,
     route: 'render-report-qa-pdf',
     reason:
       'The flowing route paginates a conversation of any length. A template is a '
@@ -123,7 +126,7 @@ export const qaAdapter: ReportTemplateAdapter = {
       // filtering here would cost a message count per row.
       return (data as Record<string, any>[]).map((row) => ({
         id: String(row.id),
-        label: (row.title as string) || 'Report Q&A',
+        label: (row.title as string) || HUB_DOCUMENT_NAME,
         savedAt: (row.created_at as string) ?? null,
       }));
     } catch {
@@ -178,7 +181,7 @@ export const qaAdapter: ReportTemplateAdapter = {
       reportType: 'qa',
       variant: subject,
       tier: null,
-      title: (conversation.title as string) || 'Report Q&A',
+      title: (conversation.title as string) || HUB_DOCUMENT_NAME,
       fileLabel: 'report-qa',
       sourceTable: 'report_qa_conversations',
       legacyFallback: qaAdapter.legacyFallback,
