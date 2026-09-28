@@ -134,7 +134,7 @@ describe('the brief says what the jsPDF brief says', () => {
       'Release equity', 'CAUTION', 'Order a valuation — Desktop.', 'BROKER',
       'Capital allocation flow (1 leg)', 'Equity → Deposit', '+$812/mo', '+$120,000 debt', 'At 6.4%.',
       'Valuation assumptions (1 override)', '14 Wattle Grove: $700,000 → $780,000 (+$80,000) — basis: Desktop val · source: CoreLogic',
-      'Pool of 2 securityies (A; B).', 'Pool release: $234,000.',
+      'Pool of 2 securities (A; B).', 'Pool release: $234,000.',
     ]) {
       expect(body, s).toContain(s);
     }

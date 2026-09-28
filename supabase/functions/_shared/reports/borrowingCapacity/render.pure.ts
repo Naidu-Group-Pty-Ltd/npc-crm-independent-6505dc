@@ -17,7 +17,11 @@
  * payload and printed **in words** — see `AUDIT_EFFECT` below.
  */
 
-import type { RationaleAdvisorSection } from './strategyRationale.pure.ts';
+import {
+  ADVISOR_OPTIONS_NOTE,
+  advisorOptionLine,
+  type RationaleAdvisorSection,
+} from './strategyRationale.pure.ts';
 import type { BrandLockupProps } from '../../reportDesign/primitives.pure.ts';
 import {
   closeChapter,
@@ -519,6 +523,10 @@ function advisorBlock(a: RationaleAdvisorSection): string {
     + (a.riskLine ? `<p><strong>${escapeHtml(a.riskLine)}</strong></p>` : '')
     + labelled(a.evidenceTitle, a.evidence)
     + labelled(a.rejectedTitle, a.rejected)
+    + labelled(a.cautionsTitle, a.cautions)
+    + (a.options.length
+      ? labelled(a.optionsTitle, a.options.map(advisorOptionLine)) + `<p><em>${escapeHtml(ADVISOR_OPTIONS_NOTE)}</em></p>`
+      : '')
     + a.notes.map((n) => `<p><em>${escapeHtml(n)}</em></p>`).join('');
 }
 

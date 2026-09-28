@@ -17,6 +17,8 @@ interface BorrowingCapacityOverrides {
   shadedAnnualIncome?: number;
   additionalIncome?: number;
   livingExpenses?: number;
+  /** The living-expense method the adviser chose; recorded with the assessment. */
+  expenseMethod?: 'hem' | 'declared' | 'hybrid';
   existingCommitments?: number;
   additionalLiabilities?: number;
   totalDebtBalances?: number;

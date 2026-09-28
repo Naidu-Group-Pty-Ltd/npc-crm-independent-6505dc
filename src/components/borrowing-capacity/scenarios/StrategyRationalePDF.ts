@@ -35,8 +35,11 @@ import { drawLegacyIssuerCover } from '@/lib/reports/legacyIssuerCover';
 import { drawnDesignFor } from '@/lib/reports/drawnDocumentDesign';
 import { smartCapitalize } from '@/utils/nameFormatting';
 import type { RationaleReport, RationaleSeverity } from '@/utils/strategyRationaleEngine';
+import { guardStandardFontText } from '@/lib/pdf/standardFontText';
 import {
+  ADVISOR_OPTIONS_NOTE,
   composeAdvisorSection,
+  rationaleReadingNote,
   type RationaleAdvisorInput,
 } from '@/lib/reports/borrowingCapacity/strategyRationale.pure';
 
@@ -234,7 +237,9 @@ export async function generateStrategyRationalePDF(
   report: RationaleReport,
   context: RationalePDFContext,
 ): Promise<{ blob: Blob; fileName: string }> {
-  const doc = new jsPDF({ unit: 'mm', format: 'a4' });
+  // Every string passes through the built-in font's character set: an arrow
+  // printed as `!’` on every lever label (`standardFontText.ts`).
+  const doc = guardStandardFontText(new jsPDF({ unit: 'mm', format: 'a4' }));
   const pageNum = { value: 1 };
   const displayName = smartCapitalize(context.clientName) || 'Client';
   const generatedDate = format(new Date(report.generatedAt), 'dd MMMM yyyy, HH:mm');
@@ -414,6 +419,22 @@ export async function generateStrategyRationalePDF(
   }
   y += boxH + 12;
 
+  // How to read capacity beside purchase power, where the scenario lowers one
+  // and reports the other (`rationaleReadingNote`, shared with the typeset brief).
+  const readingNote = rationaleReadingNote(context);
+  if (readingNote) {
+    doc.setFontSize(8.5);
+    doc.setFont('helvetica', 'normal');
+    const lines: string[] = doc.splitTextToSize(readingNote, CONTENT_W - 8);
+    const blockH = lines.length * 4 + 4;
+    y = ensureSpace(doc, y, blockH + 4, pageNum);
+    setFill(doc, P.gold);
+    doc.rect(MARGIN, y - 1, 1.2, blockH, 'F');
+    setColor(doc, BODY_TEXT);
+    doc.text(lines, MARGIN + 5, y + 2.5);
+    y += blockH + 6;
+  }
+
   // ════════════════════════════════════════════════════════════════════════
   // SECTION: STRATEGY ADVISOR — the client-specific reasoning for its card
   // ════════════════════════════════════════════════════════════════════════
@@ -477,6 +498,63 @@ export async function generateStrategyRationalePDF(
     };
     drawList(advisor.evidenceTitle, advisor.evidence, P.gold);
     drawList(advisor.rejectedTitle, advisor.rejected, GRAY);
+    drawList(advisor.cautionsTitle, advisor.cautions, AMBER);
+
+    // The options the advisor put forward, the applied one marked: a decision
+    // is between options, and the brief used to name only one.
+    if (advisor.options.length > 0) {
+      const cols = [
+        { head: 'OPTION', w: CONTENT_W * 0.36, align: 'left' as const },
+        { head: 'CAPACITY', w: CONTENT_W * 0.15, align: 'right' as const },
+        { head: 'PURCHASE POWER', w: CONTENT_W * 0.17, align: 'right' as const },
+        { head: 'TARGET', w: CONTENT_W * 0.2, align: 'right' as const },
+        { head: 'RISK', w: CONTENT_W * 0.12, align: 'right' as const },
+      ];
+      y = ensureSpace(doc, y, 14 + advisor.options.length * 9, pageNum);
+      doc.setFontSize(8.5);
+      doc.setFont('helvetica', 'bold');
+      setColor(doc, P.navy);
+      doc.text(advisor.optionsTitle, MARGIN, y);
+      y += 5;
+      const cellX = (i: number) => MARGIN + cols.slice(0, i).reduce((a, c) => a + c.w, 0);
+      const drawCell = (i: number, value: string, rowY: number) => {
+        const c = cols[i];
+        doc.text(value, c.align === 'right' ? cellX(i) + c.w - 1 : cellX(i) + 1, rowY, { align: c.align });
+      };
+      doc.setFontSize(6.5);
+      doc.setFont('helvetica', 'bold');
+      setColor(doc, GRAY);
+      cols.forEach((c, i) => drawCell(i, c.head, y));
+      y += 2;
+      setDraw(doc, GRAY);
+      doc.setLineWidth(0.2);
+      doc.line(MARGIN, y, MARGIN + CONTENT_W, y);
+      y += 4;
+      for (const o of advisor.options) {
+        doc.setFontSize(8);
+        doc.setFont('helvetica', o.applied ? 'bold' : 'normal');
+        const nameLines: string[] = doc.splitTextToSize(o.applied ? `${o.name} (applied)` : o.name, cols[0].w - 2);
+        const rowH = Math.max(1, nameLines.length) * 3.8 + 2;
+        y = ensureSpace(doc, y, rowH + 1, pageNum);
+        setColor(doc, o.applied ? P.navy : BODY_TEXT);
+        doc.text(nameLines, cellX(0) + 1, y);
+        drawCell(1, o.capacity, y);
+        drawCell(2, o.purchasePower, y);
+        drawCell(3, o.target, y);
+        drawCell(4, o.risk, y);
+        y += rowH;
+        setDraw(doc, { r: 225, g: 225, b: 225 });
+        doc.line(MARGIN, y - 1.5, MARGIN + CONTENT_W, y - 1.5);
+        y += 1;
+      }
+      doc.setFontSize(7.5);
+      doc.setFont('helvetica', 'italic');
+      setColor(doc, GRAY);
+      const noteLines: string[] = doc.splitTextToSize(ADVISOR_OPTIONS_NOTE, CONTENT_W);
+      y = ensureSpace(doc, y, noteLines.length * 3.6 + 2, pageNum);
+      doc.text(noteLines, MARGIN, y + 1);
+      y += noteLines.length * 3.6 + 4;
+    }
 
     for (const note of advisor.notes) {
       doc.setFontSize(7.5);
@@ -506,13 +584,25 @@ export async function generateStrategyRationalePDF(
     for (const b of report.bullets) {
       const sevColor = severityColor(b.severity);
 
+      // The pill and the severity word sit in the right-hand column, so the
+      // text wraps short of it: wrapped to the full width, "properties" ran
+      // into "CAUTION" on the delivered brief.
+      doc.setFontSize(7);
+      doc.setFont('helvetica', 'bold');
+      const pillReserve = b.capacityImpact !== 0
+        ? doc.getTextWidth(`${fmtSigned(b.capacityImpact)} capacity`) + 6
+        : 0;
+      doc.setFontSize(6);
+      const labelReserve = doc.getTextWidth(severityLabel(b.severity));
+      const textW = CONTENT_W - 12 - Math.max(pillReserve, labelReserve) - 4;
+
       // Estimate height needed
       doc.setFontSize(9);
       doc.setFont('helvetica', 'bold');
-      const whatLines: string[] = doc.splitTextToSize(b.what, CONTENT_W - 12);
+      const whatLines: string[] = doc.splitTextToSize(b.what, textW);
       doc.setFontSize(8.5);
       doc.setFont('helvetica', 'normal');
-      const whyLines: string[] = doc.splitTextToSize(b.why, CONTENT_W - 12);
+      const whyLines: string[] = doc.splitTextToSize(b.why, textW);
       const cashLineHeight = b.cashflowNote ? 5 : 0;
       const blockHeight =
         whatLines.length * 4.5 + whyLines.length * 4 + cashLineHeight + 6;
@@ -533,7 +623,7 @@ export async function generateStrategyRationalePDF(
       // Capacity impact pill (right-aligned)
       if (b.capacityImpact !== 0) {
         const pillText = `${fmtSigned(b.capacityImpact)} capacity`;
-        const pillW = doc.getTextWidth(pillText) + 6;
+        const pillW = pillReserve;
         const pillX = MARGIN + CONTENT_W - pillW;
         setFill(doc, sevColor);
         doc.roundedRect(pillX, y + 1, pillW, 5, 1, 1, 'F');
@@ -819,7 +909,7 @@ export async function generateStrategyRationalePDF(
       ? ((pool.totalPoolDebt + pool.poolReleaseAmount) / pool.totalPoolValue) * 100
       : 0;
     const lines: string[] = doc.splitTextToSize(
-      `Pool of ${pool.propertyAddresses.length} security${pool.propertyAddresses.length === 1 ? '' : 'ies'} (${pool.propertyAddresses.join('; ')}). ` +
+      `Pool of ${pool.propertyAddresses.length} ${pool.propertyAddresses.length === 1 ? 'security' : 'securities'} (${pool.propertyAddresses.join('; ')}). ` +
       `Total pool value: ${fmtAud(pool.totalPoolValue)}. Existing pool debt: ${fmtAud(pool.totalPoolDebt)}. ` +
       `Target blended LVR: ${(pool.blendedTargetLVR * 100).toFixed(0)}% (achieved ${blendedActual.toFixed(1)}%). ` +
       `Per-security cap: ${(pool.lenderMaxLVR * 100).toFixed(0)}%. Allocation: ${pool.allocationStrategy.replace(/_/g, ' ')}. ` +

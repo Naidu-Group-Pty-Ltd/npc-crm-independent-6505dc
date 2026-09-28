@@ -42,6 +42,7 @@ import { BankRateComparisonModal } from './BankRateComparisonModal';
 import { LmiSection } from './sections/LmiSection';
 import { classifyIncomeLabel } from '@/utils/incomeComponentMapping';
 import { useBcScenarios } from '@/hooks/useBcScenarios';
+import { restorableExpenseMethod } from '@/lib/borrowingCapacityExpenseMethod.pure';
 
 // Secure data fetching via HttpOnly cookies
 async function fetchBorrowingCapacityData(clientId: string) {
@@ -519,15 +520,15 @@ export function BorrowingCapacityModal({
     if (assessment.buffer_rate != null) {
       setBufferEnabled(assessment.buffer_rate > 0);
     }
-    if (assessment.expense_method) {
-      const method = assessment.expense_method as 'hem' | 'declared' | 'hybrid';
-      if (['hem', 'declared', 'hybrid'].includes(method)) {
-        setExpenseMethod(method);
-      }
-    }
-
     // Restore advanced settings from assumptions JSON
     const assumptions = assessment.assumptions as Record<string, any> | null;
+
+    // The living-expense method is restored only where the adviser's choice
+    // was recorded. The `expense_method` column read 'declared' on every
+    // assessment the Calculator saved, whatever was chosen, and restoring it
+    // assessed a client with no declared expenses at $0 a month
+    // (`_shared/borrowingCapacityExpenseMethod.pure.ts`).
+    setExpenseMethod(restorableExpenseMethod(assumptions));
     if (assumptions) {
       if (assumptions.calculationMode) {
         setCalculationMode(assumptions.calculationMode as CalculationMode);
@@ -768,6 +769,7 @@ export function BorrowingCapacityModal({
         grossAnnualIncome: effectiveGrossIncomeForCalc,
         shadedAnnualIncome: effectiveShadedIncomeForCalc,
         livingExpenses: effectiveExpensesForCalc,
+        expenseMethod,
         existingCommitments: effectiveCommitmentsForCalc,
         interestRate: effectiveInterestRateForCalc,
         bufferRate: effectiveBufferRateForCalc,
@@ -794,7 +796,7 @@ export function BorrowingCapacityModal({
     } finally {
       if (generation === calcGenerationRef.current) setIsLocalCalculating(false);
     }
-  }, [quickCalculate, effectiveGrossIncomeForCalc, effectiveShadedIncomeForCalc, effectiveCommitmentsForCalc, effectiveExpensesForCalc, effectiveInterestRateForCalc, effectiveBufferRateForCalc, effectiveLoanTermYearsForCalc, effectiveTotalDebtBalancesForCalc, effectiveCalculationModeForCalc, effectiveDtiCapEnabledForCalc, effectiveDtiCapLimitForCalc, proposedLoanAmount, selectedLenderName, lmiMode, lmiEstimate, lmiPropertyValue, lmiDepositAmount, isFirstHomeBuyer, activeScenario, baseCalculatorInputs]);
+  }, [quickCalculate, effectiveGrossIncomeForCalc, effectiveShadedIncomeForCalc, effectiveCommitmentsForCalc, effectiveExpensesForCalc, effectiveInterestRateForCalc, effectiveBufferRateForCalc, effectiveLoanTermYearsForCalc, effectiveTotalDebtBalancesForCalc, effectiveCalculationModeForCalc, effectiveDtiCapEnabledForCalc, effectiveDtiCapLimitForCalc, expenseMethod, proposedLoanAmount, selectedLenderName, lmiMode, lmiEstimate, lmiPropertyValue, lmiDepositAmount, isFirstHomeBuyer, activeScenario, baseCalculatorInputs]);
 
   // Auto-calculate on mount and when key inputs change — but ONLY for the base
   // case. While a scenario is applied, the displayed capacity is the scenario's
@@ -839,6 +841,7 @@ export function BorrowingCapacityModal({
               grossAnnualIncome: effectiveGrossIncomeForCalc,
               shadedAnnualIncome: effectiveShadedIncomeForCalc,
               livingExpenses: effectiveExpensesForCalc,
+              expenseMethod,
               existingCommitments: effectiveCommitmentsForCalc,
               interestRate: effectiveInterestRateForCalc,
               bufferRate: effectiveBufferRateForCalc,

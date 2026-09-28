@@ -16,6 +16,7 @@ import { toast } from 'sonner';
 import { openSecureStream } from '@/lib/streamSecureFunction';
 import { agentStreamRefusal, emptyAgentAnswerMessage } from './bcScenarioAgentStream.pure';
 import { AdvisorProgressBubble } from './AdvisorProgressBubble';
+import { withholdTighteningDtiOverride } from '@/lib/advisorDtiOverride.pure';
 import {
   advanceProgress,
   briefFacts,
@@ -116,6 +117,23 @@ export interface AIScenario {
   executionRisk?: 'low' | 'medium' | 'high';
   /** Phase J2: Concrete evidence the broker must collect before submission. */
   evidenceRequired?: string[];
+  /**
+   * Every card in the same answer, with its engine figures, carried with the
+   * card that is applied so the Strategy Rationale can set the choice beside
+   * the alternatives (`advisorRationale.pure.ts`).
+   */
+  advisorOptions?: AdvisorOptionFigures[];
+}
+
+export interface AdvisorOptionFigures {
+  name: string;
+  applied: boolean;
+  capacity?: number | null;
+  purchasePower?: number | null;
+  targetPrice?: number | null;
+  meetsTarget?: boolean | null;
+  shortfall?: number | null;
+  executionRisk?: 'low' | 'medium' | 'high' | null;
 }
 
 interface ChatMessage {
@@ -371,6 +389,18 @@ export function BCScenarioAgent({
     properties,
   }), [baseResult, liabilities, properties]);
 
+  // A DTI cap the advisor proposes may relax the assessment, never tighten it
+  // (`_shared/advisorDtiOverride.pure.ts`). The server withholds it already;
+  // this covers a card kept in the browser from before, so Apply cannot put
+  // a cap on a client the Calculator assesses without one.
+  const withholdTighteningDti = useCallback((scenario: AIScenario): AIScenario => {
+    const guard = withholdTighteningDtiOverride(scenario.adjustments, {
+      dtiCapEnabled: !!baseInputs?.dtiCapEnabled,
+      dtiCapLimit: Number(baseInputs?.dtiCapLimit || 6),
+    });
+    return guard.note ? { ...scenario, adjustments: guard.adjustments } : scenario;
+  }, [baseInputs]);
+
   const sendMessage = useCallback(async () => {
     const trimmed = input.trim();
     if (!trimmed || isLoading) return;
@@ -558,7 +588,7 @@ export function BCScenarioAgent({
               hemBenchmark,
             };
             const locallyValidated = (parsed.scenarios as AIScenario[]).map((rawScenario) => {
-              const scenario = normalizeAIScenario(rawScenario);
+              const scenario = withholdTighteningDti(normalizeAIScenario(rawScenario));
               try {
                 const acq = scenario.adjustments?.acquisition;
                 const runCtx: ScenarioContext = acq
@@ -632,7 +662,7 @@ export function BCScenarioAgent({
       setProgress(null);
       setIsLoading(false);
     }
-  }, [input, isLoading, messages, baseInputs, baseResult, liabilities, properties, scenarios, incomeComponents, currentLenderProfileId, hemBenchmark]);
+  }, [input, isLoading, messages, baseInputs, baseResult, liabilities, properties, scenarios, incomeComponents, currentLenderProfileId, hemBenchmark, withholdTighteningDti]);
 
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === 'Enter' && !e.shiftKey) {
@@ -642,13 +672,25 @@ export function BCScenarioAgent({
   };
 
   const handleApply = (scenario: AIScenario, index: number) => {
-    const safeScenario = normalizeAIScenario(scenario);
+    const safeScenario = withholdTighteningDti(normalizeAIScenario(scenario));
     try {
       setAppliedIndex(index);
       setScenarios(prev => prev.map((s, i) => i === index ? safeScenario : s));
+      // The other cards travel with the applied one, so the Strategy Rationale
+      // can set the choice beside the alternatives the advisor offered.
+      const advisorOptions: AdvisorOptionFigures[] = scenarios.map((s, i) => ({
+        name: s.name,
+        applied: i === index,
+        capacity: s.engineValidation?.borrowingCapacity ?? null,
+        purchasePower: s.engineValidation?.maxPurchasePrice ?? null,
+        targetPrice: s.engineValidation?.targetPurchasePrice ?? null,
+        meetsTarget: s.engineValidation?.meetsTarget ?? null,
+        shortfall: s.engineValidation?.shortfallToTarget ?? null,
+        executionRisk: s.executionRisk ?? null,
+      }));
       // Phase E (L1): callback may return engine-reconciled impact string —
       // update the badge so users see verified math, not just AI estimate.
-      const maybe = onApplyScenario(safeScenario) as unknown;
+      const maybe = onApplyScenario({ ...safeScenario, advisorOptions }) as unknown;
       Promise.resolve(maybe as Promise<string | void> | string | void).then((reconciled) => {
         if (typeof reconciled === 'string' && reconciled.length > 0) {
           setScenarios(prev => prev.map((s, i) => i === index ? { ...s, reconciledImpact: reconciled } : s));

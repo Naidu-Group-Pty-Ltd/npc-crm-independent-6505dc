@@ -124,6 +124,28 @@ export interface RationaleAdvisorInput {
    * describes the scenario as the advisor proposed it rather than as modelled.
    */
   adjustedSince?: boolean;
+  /**
+   * Every option the advisor put forward in the same answer, the applied one
+   * marked, with the calculation engine's own figures for each as proposed.
+   * A decision is between options, and the brief used to name only one.
+   */
+  options?: RationaleAdvisorOptionInput[];
+  /**
+   * What the calculation engine said about the proposal as it measured it:
+   * a clamp, a lever it withheld. Engine wording, chosen by the caller.
+   */
+  cautions?: string[];
+}
+
+export interface RationaleAdvisorOptionInput {
+  name: string;
+  applied: boolean;
+  capacity?: number | null;
+  purchasePower?: number | null;
+  targetPrice?: number | null;
+  meetsTarget?: boolean | null;
+  shortfall?: number | null;
+  executionRisk?: 'low' | 'medium' | 'high' | null;
 }
 
 // ── The document ────────────────────────────────────────────────────────────
@@ -177,8 +199,27 @@ export interface RationaleAdvisorSection {
   evidence: string[];
   rejectedTitle: string;
   rejected: string[];
+  /** `Options the advisor put forward (3)`, or '' where it offered one. */
+  optionsTitle: string;
+  options: RationaleAdvisorOption[];
+  /** `What the calculation engine flagged`, or '' where it flagged nothing. */
+  cautionsTitle: string;
+  cautions: string[];
   /** Who wrote this, and — where the levers moved — what it now describes. */
   notes: string[];
+}
+
+/** One option as a row of print: every figure already formatted. */
+export interface RationaleAdvisorOption {
+  name: string;
+  applied: boolean;
+  /** `$856,932`, or '' where the engine measured none. */
+  capacity: string;
+  purchasePower: string;
+  /** `Clears $900,000`, `Short by $56,107`, or '' where no target was set. */
+  target: string;
+  /** `LOW`, `MEDIUM`, `HIGH`, or ''. */
+  risk: string;
 }
 
 export interface StrategyRationaleDocument {
@@ -210,6 +251,12 @@ export interface StrategyRationaleDocument {
   } | null;
   valuations: { title: string; note: string; lines: string[] } | null;
   crossCollat: { title: string; text: string } | null;
+  /**
+   * How to read the capacity figure beside the purchase-power figure, where
+   * the scenario lowers capacity and still reports purchase power. Null
+   * otherwise.
+   */
+  readingNote?: string | null;
   /** The Strategy Advisor's reasoning, where the scenario is one of its cards. */
   advisor?: RationaleAdvisorSection | null;
 }
@@ -250,6 +297,36 @@ const BASIS_LABEL: Record<string, string> = {
 export const ADVISOR_SECTION_TITLE = 'Strategy Advisor — why this scenario';
 export const ADVISOR_PROVENANCE_NOTE =
   'Written by the Strategy Advisor (AI) for this client\'s position. Every figure elsewhere in this brief is the calculation engine\'s own.';
+export const ADVISOR_OPTIONS_NOTE =
+  'Each option\'s figures are the calculation engine\'s, for the option as the advisor proposed it.';
+export const ADVISOR_CAUTIONS_TITLE = 'What the calculation engine flagged';
+
+/**
+ * Borrowing capacity and purchase power answer different questions, and a
+ * scenario that releases equity moves them in opposite directions. The brief
+ * printed both figures side by side and said nothing about that, so a
+ * scenario that lifted purchase power read as a loss.
+ */
+export const CAPACITY_READING_NOTE =
+  'Borrowing capacity is what a lender would lend on this income and these commitments. '
+  + 'Purchase power is what could be paid for a property once cash and released equity are added and purchase costs are taken off.';
+export const EQUITY_RELEASE_READING_NOTE =
+  'Released equity is new debt the lender has to service, so capacity falls while the cash it frees raises purchase power. '
+  + 'Judge this scenario by its purchase power against the target.';
+
+/**
+ * The note beside the capacity figures, or null. Said where the scenario
+ * lowers capacity and purchase power is reported, because that is where the
+ * two figures seem to disagree; the equity sentence only where equity is
+ * released, because that is the one cause it names.
+ */
+export function rationaleReadingNote(context: RationaleContextInput): string | null {
+  if (!(context.scenarioCapacity < context.baseCapacity) || context.effectivePurchasePower == null) return null;
+  const pool = context.crossCollatPool;
+  const releases = Boolean(pool && pool.enabled && pool.poolReleaseAmount > 0);
+  return [CAPACITY_READING_NOTE, ...(releases ? [EQUITY_RELEASE_READING_NOTE] : [])].join(' ');
+}
+
 export const ADVISOR_ADJUSTED_NOTE =
   'The levers were changed after this scenario was applied, so this reasoning describes the scenario as the advisor proposed it; the figures in this brief are for the levers as they now stand.';
 
@@ -290,6 +367,8 @@ export function composeAdvisorSection(advisor: RationaleAdvisorInput | null | un
   const rejected = (advisor.rejectedLevers ?? [])
     .filter((r) => r && (r.lever || r.reason))
     .map((r) => [plainParagraph(r.lever ?? ''), plainParagraph(r.reason ?? '')].filter(Boolean).join(' — '));
+  const options = advisorOptions(advisor.options);
+  const cautions = (advisor.cautions ?? []).map(plainParagraph).filter(Boolean);
   return {
     title: ADVISOR_SECTION_TITLE,
     scenarioLine: `Scenario: ${plainParagraph(advisor.scenarioName || '') || 'Suggested scenario'}`,
@@ -300,8 +379,53 @@ export function composeAdvisorSection(advisor: RationaleAdvisorInput | null | un
     evidence,
     rejectedTitle: `Levers considered and set aside (${plural(rejected.length, 'lever')})`,
     rejected,
+    optionsTitle: options.length > 0 ? `Options the advisor put forward (${options.length})` : '',
+    options,
+    cautionsTitle: cautions.length > 0 ? ADVISOR_CAUTIONS_TITLE : '',
+    cautions,
     notes: [ADVISOR_PROVENANCE_NOTE, ...(advisor.adjustedSince ? [ADVISOR_ADJUSTED_NOTE] : [])],
   };
+}
+
+/** An option as one line of print, where a table does not fit (a list, copied text). */
+export function advisorOptionLine(o: RationaleAdvisorOption): string {
+  const figures = [
+    o.capacity && `capacity ${o.capacity}`,
+    o.purchasePower && `purchase power ${o.purchasePower}`,
+    o.target,
+    o.risk && `${o.risk} risk`,
+  ].filter(Boolean).join(' · ');
+  return `${o.name}${o.applied ? ' (applied)' : ''}${figures ? ` — ${figures}` : ''}`;
+}
+
+const RISK_WORD: Record<string, string> = { low: 'LOW', medium: 'MEDIUM', high: 'HIGH' };
+const money = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) ? fmtAud(v) : '');
+
+/**
+ * The options as rows. Offered only where there was a choice: one option is
+ * the scenario itself, and a table of one says nothing the brief does not.
+ */
+function advisorOptions(input: RationaleAdvisorOptionInput[] | undefined): RationaleAdvisorOption[] {
+  const rows = (input ?? [])
+    .filter((o) => o && typeof o.name === 'string' && plainParagraph(o.name))
+    .map((o) => {
+      const target = typeof o.targetPrice === 'number' && o.targetPrice > 0
+        ? o.meetsTarget === true
+          ? `Clears ${fmtAud(o.targetPrice)}`
+          : o.meetsTarget === false && typeof o.shortfall === 'number' && o.shortfall > 0
+            ? `Short by ${fmtAud(o.shortfall)}`
+            : ''
+        : '';
+      return {
+        name: plainParagraph(o.name),
+        applied: o.applied === true,
+        capacity: money(o.capacity),
+        purchasePower: money(o.purchasePower),
+        target,
+        risk: RISK_WORD[o.executionRisk ?? ''] ?? '',
+      };
+    });
+  return rows.length >= 2 ? rows : [];
 }
 
 /**
@@ -398,7 +522,7 @@ export function composeStrategyRationale(
           const blendedActual = pool.totalPoolValue > 0
             ? ((pool.totalPoolDebt + pool.poolReleaseAmount) / pool.totalPoolValue) * 100
             : 0;
-          return `Pool of ${pool.propertyAddresses.length} security${pool.propertyAddresses.length === 1 ? '' : 'ies'} (${pool.propertyAddresses.join('; ')}). `
+          return `Pool of ${pool.propertyAddresses.length} ${pool.propertyAddresses.length === 1 ? 'security' : 'securities'} (${pool.propertyAddresses.join('; ')}). `
             + `Total pool value: ${fmtAud(pool.totalPoolValue)}. Existing pool debt: ${fmtAud(pool.totalPoolDebt)}. `
             + `Target blended LVR: ${(pool.blendedTargetLVR * 100).toFixed(0)}% (achieved ${blendedActual.toFixed(1)}%). `
             + `Per-security cap: ${(pool.lenderMaxLVR * 100).toFixed(0)}%. Allocation: ${pool.allocationStrategy.replace(/_/g, ' ')}. `
@@ -426,6 +550,7 @@ export function composeStrategyRationale(
     capitalFlow,
     valuations,
     crossCollat,
+    readingNote: rationaleReadingNote(context),
     advisor: composeAdvisorSection(context.advisor),
   };
 }
@@ -446,6 +571,8 @@ export const RATIONALE_LIMITS = {
   advisorParagraphs: 24,
   evidence: 30,
   rejected: 30,
+  options: 6,
+  cautions: 12,
 } as const;
 
 type Rec = Record<string, unknown>;
@@ -571,6 +698,23 @@ export function readStrategyRationale(raw: unknown): RationaleRead {
         evidence: list(advRaw.evidence, L.evidence, (t) => text(t, L.longText)),
         rejectedTitle: text(advRaw.rejectedTitle, L.shortText) ?? '',
         rejected: list(advRaw.rejected, L.rejected, (t) => text(t, L.longText)),
+        optionsTitle: text(advRaw.optionsTitle, L.shortText) ?? '',
+        options: list(advRaw.options, L.options, (o): RationaleAdvisorOption | null => {
+          if (!isRec(o)) return null;
+          const name = text(o.name, L.shortText);
+          if (!name) return null;
+          const risk = typeof o.risk === 'string' && ['LOW', 'MEDIUM', 'HIGH'].includes(o.risk) ? o.risk : '';
+          return {
+            name,
+            applied: o.applied === true,
+            capacity: text(o.capacity, L.shortText) ?? '',
+            purchasePower: text(o.purchasePower, L.shortText) ?? '',
+            target: text(o.target, L.shortText) ?? '',
+            risk,
+          };
+        }),
+        cautionsTitle: text(advRaw.cautionsTitle, L.shortText) ?? '',
+        cautions: list(advRaw.cautions, L.cautions, (t) => text(t, L.longText)),
         // Always the provenance line, whatever arrived: a brief that quotes a
         // model must say so, and the request cannot talk it out of that.
         notes: [
@@ -606,6 +750,7 @@ export function readStrategyRationale(raw: unknown): RationaleRead {
       capitalFlow,
       valuations,
       crossCollat,
+      readingNote: text(raw.readingNote, L.longText),
       advisor,
     },
   };
