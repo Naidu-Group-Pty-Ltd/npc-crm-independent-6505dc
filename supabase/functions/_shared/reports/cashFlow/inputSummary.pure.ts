@@ -30,6 +30,11 @@ import type { SchedulePreset } from './constructionSchedule.pure.ts';
 export interface CashFlowInputs {
   /** The report is recorded as a new build (`manual_overrides.buildType`). */
   isNewBuild: boolean;
+  /**
+   * The new build is a build PLANNED on a land-only purchase
+   * (`plannedBuild.pure.ts`). Optional: a caller that predates it sends none.
+   */
+  plannedBuild?: boolean;
   purchasePrice: number;
   weeklyRent: number;
   landPrice: number | null;
@@ -128,7 +133,7 @@ export function inputSummaryLines(i: CashFlowInputs): InputSummaryLine[] {
   const land = i.landPrice === null ? 'Not stated' : formatDollars(i.landPrice);
   const build = i.buildPrice === null
     ? 'Not stated'
-    : `${formatDollars(i.buildPrice)}${i.buildDerived ? ' (price less land)' : ''}`;
+    : `${formatDollars(i.buildPrice)}${i.plannedBuild ? ' (planned)' : i.buildDerived ? ' (price less land)' : ''}`;
   const ioYears = i.loanType === 'interest_only' ? i.interestOnlyYears : 0;
   const structure = ioYears > 0
     ? `Interest only ${ioYears} yr${ioYears === 1 ? '' : 's'}${assumed.has('interestOnlyPeriodYears') ? ' (assumed)' : ''}, `
@@ -136,7 +141,8 @@ export function inputSummaryLines(i: CashFlowInputs): InputSummaryLine[] {
     : `Principal & interest (${i.loanTermYears} yr term)`;
 
   const lines: InputSummaryLine[] = [
-    { left: cell('Purchase price', formatDollars(i.purchasePrice)), right: cell('Weekly rent', formatDollars(i.weeklyRent)) },
+    // A planned build's "purchase" is the lot plus the contract to build on it.
+    { left: cell(i.plannedBuild ? 'Total project (land + build)' : 'Purchase price', formatDollars(i.purchasePrice)), right: cell('Weekly rent', formatDollars(i.weeklyRent)) },
     { left: cell('Land price', land), right: cell('Gross rental yield (on purchase)', purchaseYield) },
     { left: cell('Build price', build), right: cell('Council rates (p.a.)', cost(i.councilRates)) },
     { left: cell('Deposit amount', formatDollars(i.deposit)), right: cell('Water rates (p.a.)', cost(i.waterRates)) },
