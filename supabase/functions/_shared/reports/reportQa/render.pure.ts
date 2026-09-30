@@ -60,8 +60,10 @@
 
 import type { BrandLockupProps } from '../../reportDesign/primitives.pure.ts';
 import {
+  BRIEF_CLASS,
   closeChapter,
   escapeHtml,
+  FINE_PRINT_CLASS,
   KEEP_TOGETHER_CLASS,
   openChapter,
   renderCallout,
@@ -73,6 +75,7 @@ import {
   renderDocument,
   renderLede,
   renderSidenote,
+  SUBHEAD_CLASS,
 } from '../../reportDesign/primitives.pure.ts';
 import { buildReportCss } from '../../reportDesign/css.pure.ts';
 import type { ResolvedReportPalette } from '../../reportDesign/roles.pure.ts';
@@ -98,7 +101,7 @@ import { renderMarkdown, type MarkdownResult } from './markdown.pure.ts';
 import { narrativeFor } from './normalise.pure.ts';
 import { fitTranscript, planFromMarkdown, sourcesChapter, type SectionPlan } from './sections.pure.ts';
 import { formatReportDate } from '../reportDate.pure.ts';
-import { firstHeadingOf } from './documentIdentity.pure.ts';
+import { clipAtWord, firstHeadingOf } from './documentIdentity.pure.ts';
 
 const ARCHETYPE = REPORT_ARCHETYPES['report-qa'];
 
@@ -175,18 +178,17 @@ function sourcesSection(citations: readonly QaCitation[]): string {
 // ── Turn rendering ──────────────────────────────────────────────────────────
 
 /**
- * How an answer was produced, as one line under the question.
- *
- * Printed because it is the thing the exporters drop and the thing a reader
- * three months later actually needs: an answer from `perplexity` and an answer
- * from `openai` are not the same kind of claim, and an answer a human edited is
- * not the model's words any more.
+ * How an answer came to be on the page, as one line under the question in a
+ * transcript: whether a person edited it before export, what it cites, and
+ * when it was asked. An edited answer is not what the Hub first said, and a
+ * reader three months later needs to know that.
  */
 function provenance(turn: ReportQaDocument['turns'][number]): string {
+  // Which system answered is not printed. `model_provider` holds the Hub's
+  // own agent key (`report_qa`) and `model_version` a vendor's model id —
+  // the machine room's vocabulary, not a fact a reader can use
+  // (`ADVISER_VOICE.md` rule 1). The ledger keeps both.
   const parts: string[] = [];
-  if (turn.modelProvider && turn.modelProvider !== 'system') {
-    parts.push(turn.modelVersion ? `${turn.modelProvider} · ${turn.modelVersion}` : turn.modelProvider);
-  }
   if (turn.answerWasEdited) parts.push('edited before export');
   if (turn.citations.length) {
     parts.push(`${turn.citations.length} source${turn.citations.length === 1 ? '' : 's'}`);
@@ -196,9 +198,18 @@ function provenance(turn: ReportQaDocument['turns'][number]): string {
   return parts.length ? `<p class="lede">${escapeHtml(parts.join(' — '))}</p>` : '';
 }
 
-/** One exchange: what was asked, how it was answered, and the answer itself. */
+/**
+ * One exchange: what was asked, how it was answered, and the answer itself.
+ *
+ * The question comes back apart from the rest, because an exchange whose
+ * section is titled by the whole question does not print it again
+ * (`turnTitle`). The answer is set by the same block rules as a finished
+ * answer — tables kept whole or grouped, long labels as sentences, a label on
+ * its own line — so the three documents read alike.
+ */
 function turnBody(turn: ReportQaDocument['turns'][number], idPrefix: string): {
-  html: string;
+  asked: string;
+  rest: string;
   lines: number;
 } {
   const asked = turn.question
@@ -208,7 +219,8 @@ function turnBody(turn: ReportQaDocument['turns'][number], idPrefix: string): {
     // A question with no answer under it. Kept rather than dropped, because a
     // transcript that quietly omits an exchange is not a transcript.
     return {
-      html: asked + renderCallout('caution', 'No answer', '<p>This question has no answer recorded against it.</p>'),
+      asked,
+      rest: renderCallout('caution', 'No answer', '<p>This question has no answer recorded against it.</p>'),
       lines: 6,
     };
   }
@@ -220,8 +232,16 @@ function turnBody(turn: ReportQaDocument['turns'][number], idPrefix: string): {
   // level 2 anywhere in the document, and PDF/UA 7.4.2 failed on five checks
   // for a skipped level. The visual difference is a subhead set at the size
   // the design system drew a subhead at.
-  const parsed = renderMarkdown(turn.answer, { idPrefix: `${idPrefix}t${turn.index}`, baseHeadingLevel: 2 });
-  return { html: asked + provenance(turn) + parsed.html, lines: parsed.lines + 6 };
+  const parsed = renderMarkdown(turn.answer, {
+    idPrefix: `${idPrefix}t${turn.index}`,
+    baseHeadingLevel: 2,
+    labelLineBreaks: true,
+  });
+  return {
+    asked,
+    rest: provenance(turn) + parsed.blocks.map((b) => presentedBlock(b)).join(''),
+    lines: parsed.lines + 6,
+  };
 }
 
 // ── The document ────────────────────────────────────────────────────────────
@@ -304,7 +324,13 @@ export function planReportQa(document: ReportQaDocument): {
     const chapters = plan.chapters.map((c, idx) => {
       const from = plan.starts[idx];
       const to = idx + 1 < plan.starts.length ? plan.starts[idx + 1] : turnsKept;
-      return { title: c.title, note: c.note, html: bodies.slice(from, to).map((b) => b.html).join('') };
+      const html = bodies.slice(from, to).map((b, k) => {
+        // A section titled by the whole question has already printed it.
+        const turn = document.turns[from + k];
+        const titledByIt = k === 0 && Boolean(turn?.question) && c.title === turn.question.trim();
+        return (titledByIt ? '' : b.asked) + b.rest;
+      }).join('');
+      return { title: c.title, note: c.note, html };
     });
     const charsOmitted = document.turns
       .slice(turnsKept)
@@ -312,39 +338,47 @@ export function planReportQa(document: ReportQaDocument): {
     return { plan, chapters, degraded: false, turnsShown: turnsKept, charsOmitted };
   }
 
+  // A finished answer is drawn from under its own title block — the letterhead,
+  // title, subtitle and front matter are the cover's (`readTitleBlock`). A
+  // document built before the block was read falls back to the one rule that
+  // existed then.
+  const presentation = document.presentation ?? null;
   const parsed: MarkdownResult = renderMarkdown(
-    withoutLeadingTitle(document.body, document.meta.title),
-    { idPrefix },
+    presentation ? presentation.body : withoutLeadingTitle(document.body, document.meta.title),
+    { idPrefix, labelLineBreaks: true },
   );
-  const plan = planFromMarkdown(parsed, document.meta.title || 'The report', idPrefix);
+  const plan = planFromMarkdown(parsed, document.meta.title || 'The report', idPrefix, { continuous: true });
+  const blockHtml = parsed.blocks.map((b) => presentedBlock(b));
+  const finePrintFrom = finePrintStart(parsed);
   const chapters = plan.chapters.map((c, idx) => {
     const from = plan.starts[idx];
     const to = idx + 1 < plan.starts.length ? plan.starts[idx + 1] : parsed.blocks.length;
     // The heading that opened this chapter is already printed by
-    // `renderChapterHeader`, so the block carrying it is dropped rather than set
-    // twice. Matched on the heading that gave the chapter its title, not on
-    // "the first block is a heading" — a chapter of content written before the
-    // first top-level heading legitimately opens on a *deeper* heading, and
-    // dropping that one would delete a section title from the page.
-    const opener = parsed.headings.find((h) => h.blockIndex === from);
-    const start = opener && opener.text === c.title ? from + 1 : from;
-    const blocks = parsed.blocks.slice(start, to).map((b) => b.html);
+    // `renderChapterHeader`, so the block carrying it is dropped rather than
+    // set twice — found by its index, because the printed title may have lost
+    // the section number the heading carried.
+    const heading = plan.headingBlocks?.[idx] ?? -1;
+    const indices: number[] = [];
+    for (let i = from; i < to; i++) if (i !== heading) indices.push(i);
+    // The document's own closing caveat, set as the fine print it is.
+    const main = indices.filter((i) => finePrintFrom < 0 || i < finePrintFrom);
+    const fine = indices.filter((i) => finePrintFrom >= 0 && i >= finePrintFrom);
+    const blocks = main.map((i) => blockHtml[i]);
+    const finePrint = fine.length
+      ? `<div class="${FINE_PRINT_CLASS}${visibleLength(fine.map((i) => blockHtml[i]).join('')) <= FINE_PRINT_KEEP_CHARS ? ` ${KEEP_TOGETHER_CLASS}` : ''}">${fine.map((i) => blockHtml[i]).join('')}</div>`
+      : '';
     // The document's last words never turn a page alone (`KEEP_TOGETHER_CLASS`): a
-    // short closing block — the disclaimer an answer so often ends on — is
-    // bound to the block before it. Only when it IS short: binding two long
-    // blocks would move a half-page table to leave a hole instead.
+    // short closing block is bound to the block before it. Only when it IS
+    // short: binding two long blocks would move a half-page table to leave a
+    // hole instead. The fine print is its own unit and binds nothing.
     const last = blocks[blocks.length - 1] ?? '';
-    const body = idx === plan.chapters.length - 1 && blocks.length >= 2 && visibleLength(last) <= SHORT_TAIL_CHARS
+    const body = idx === plan.chapters.length - 1 && !finePrint && blocks.length >= 2 && visibleLength(last) <= SHORT_TAIL_CHARS
       ? blocks.slice(0, -2).join('') + `<div class="${KEEP_TOGETHER_CLASS}">${blocks.slice(-2).join('')}</div>`
       : blocks.join('');
-    // The single-answer document prints the question that produced it. The
-    // legacy exports it with a title hardcoded at the call site —
-    // 'Property Comparison Summary' / 'Investment Report Summary' by report
-    // count (`ReportQA.tsx:3868`) — so what was actually asked appears nowhere.
-    const asked = idx === 0 && document.meta.subject === 'answer' && document.turns[0]?.question
-      ? renderCallout('informative', 'Asked', `<p>${escapeHtml(document.turns[0].question)}</p>`)
-      : '';
-    return { title: c.title, note: c.note, html: asked + body };
+    // The brief the answer set under its title — the front matter the cover
+    // does not carry — opens the first section.
+    const brief = idx === 0 ? briefTable(presentation) : '';
+    return { title: c.title, note: c.note, html: brief + body + finePrint };
   });
   return {
     plan,
@@ -353,6 +387,146 @@ export function planReportQa(document: ReportQaDocument): {
     turnsShown: document.meta.turnsShown,
     charsOmitted: 0,
   };
+}
+
+/** A label longer than this is a sentence, and is set as one (`SUBHEAD_CLASS`). */
+export const LONG_LABEL_CHARS = 48;
+
+/** A fine-print caveat this short is kept on one page. */
+const FINE_PRINT_KEEP_CHARS = 1_400;
+
+/**
+ * A heading that introduces the document's own caveat, not its analysis.
+ *
+ * Read from the heading alone, as structure: the words under it are never
+ * inspected, only set smaller. The last heading of the document, and only
+ * when it says it is a disclaimer, a warning or important information.
+ */
+const CAVEAT_HEADING = /^(?:important\s+)?(?:disclaimer|disclaimers|general advice warning|important (?:information|notice|note)|limitations? of (?:this )?(?:report|advice))\.?:?$/i;
+
+/** Where the closing caveat starts, as a block index, or -1. */
+export function finePrintStart(parsed: MarkdownResult): number {
+  const last = parsed.headings[parsed.headings.length - 1];
+  if (!last || !CAVEAT_HEADING.test(last.text.trim())) return -1;
+  // A caveat heading is the document's last heading, over prose alone.
+  const after = parsed.blocks.slice(last.blockIndex + 1);
+  if (!after.length || after.some((b) => b.kind !== 'paragraph' && b.kind !== 'list')) return -1;
+  return last.blockIndex;
+}
+
+/**
+ * A short table is one object on one page; a long one never leaves a single
+ * row stranded.
+ *
+ * The owner's export split a five-row table three and two across a page, and
+ * left one row of an eight-row table alone under its head at the foot of
+ * another. Row-level keeps do nothing in WeasyPrint 69.0 once rows are
+ * unbreakable (`templateDesignCss.pure.ts` records that measurement), so two
+ * structures the engine does honour carry the rule instead, both measured on
+ * the pinned engine before they were written here:
+ *
+ *  - a short table (`KEEP_WHOLE_TABLE_LINES`) is wrapped in a block that may
+ *    not break inside, and moves whole;
+ *  - a longer one is set as three row groups — the first row, the middle,
+ *    and the last two — where the first may not be followed by a break and
+ *    the last may not break inside. A page can then end after the second row
+ *    at the earliest and before the second-last at the latest; every other
+ *    break is where it would have been. The striping reads `nth-child`, which
+ *    counts within a group, so a group that begins on an even row opens with
+ *    one undisplayed parity row (`tr.parity`, `display: none` — no box, no
+ *    tag, no text) and every row keeps the band it had.
+ *
+ * "Short" is a HEIGHT, and it is estimated rather than counted. A table kept
+ * whole that does not fit moves to the next page and leaves the rest of this
+ * one blank, so the question is how much blank it can leave. The first cut
+ * asked for six rows and 1,200 characters, and measured across all fifty
+ * designs that admitted a five-row, four-column table standing 35–47% of a
+ * page tall: a third of a page left empty in front of it on ten designs. Rows
+ * and characters are both poor proxies — five one-line rows and five
+ * three-line rows are one count and three heights — so the estimate wraps each
+ * cell at its share of the measure (`estimatedTableLines`) and a table is kept
+ * whole to `KEEP_WHOLE_TABLE_LINES`, which measured at no more than ~26% of a
+ * page in the tallest design. A table of three rows or fewer is kept whole
+ * whatever its height: no split of it leaves two rows on both sides.
+ */
+export const KEEP_WHOLE_TABLE_LINES = 7;
+
+/**
+ * Characters a table sets across the full measure, for the estimate below.
+ * Calibrated against the pinned engine, not derived: at ~20px of height per
+ * estimated line it matches every table of the owner's answer in all fifty
+ * designs to within a line.
+ */
+export const TABLE_MEASURE_CHARS = 100;
+
+type TableMeta = NonNullable<MarkdownResult['blocks'][number]['table']>;
+
+/** Lines a table is estimated to set — each row as tall as its longest cell. */
+export function estimatedTableLines(table: TableMeta): number {
+  const cols = table.cols;
+  const perCell = Math.max(8, TABLE_MEASURE_CHARS / Math.max(1, cols.length));
+  const rowLines = (cells: string[]) =>
+    Math.max(1, ...cells.map((c) => Math.ceil(c.replace(/\s+/g, ' ').trim().length / perCell)));
+  const head = cols.some((c) => String(c.label ?? '').trim()) ? rowLines(cols.map((c) => String(c.label ?? ''))) : 0;
+  return head + table.rows.reduce(
+    (n, row) => n + rowLines(cols.map((c) => (typeof row[c.key] === 'string' ? row[c.key] as string : ''))),
+    0,
+  );
+}
+
+const PARITY_ROW = '<tr class="parity"></tr>';
+
+/** A long table's rows as lead, middle and tail groups. Unchanged if it cannot be read. */
+export function groupTableRows(html: string): string {
+  const body = /<tbody>([\s\S]*?)<\/tbody>/.exec(html);
+  if (!body) return html;
+  const rows = body[1].match(/<tr[\s>][\s\S]*?<\/tr>/g) ?? [];
+  if (rows.length < 4 || rows.join('') !== body[1]) return html;
+  const n = rows.length;
+  // Global (1-based) row where the tail begins; the last two rows travel together.
+  const tailFrom = n - 1;
+  const middle = rows.slice(1, tailFrom - 1);
+  const groups = `<tbody class="lead">${rows[0]}</tbody>`
+    + (middle.length ? `<tbody>${PARITY_ROW}${middle.join('')}</tbody>` : '')
+    + `<tbody class="tail">${tailFrom % 2 === 0 ? PARITY_ROW : ''}${rows.slice(tailFrom - 1).join('')}</tbody>`;
+  return html.replace(body[0], groups);
+}
+
+/**
+ * A block as the memo prints it: a long `h4` label becomes a sentence-case
+ * subhead, and a table is kept whole or grouped (see above).
+ */
+function presentedBlock(block: MarkdownResult['blocks'][number]): string {
+  if (block.kind === 'table' && block.table) {
+    if (block.table.rows.length <= 3 || estimatedTableLines(block.table) <= KEEP_WHOLE_TABLE_LINES) {
+      return block.html.replace(/^<div class="table-block">/, `<div class="table-block ${KEEP_TOGETHER_CLASS}">`);
+    }
+    return groupTableRows(block.html);
+  }
+  if (block.kind !== 'heading' || !block.html.startsWith('<h4 ')) return block.html;
+  return visibleLength(block.html) > LONG_LABEL_CHARS
+    ? block.html.replace(/^<h4 /, `<h4 class="${SUBHEAD_CLASS}" `)
+    : block.html;
+}
+
+/**
+ * The answer's front matter the cover does not carry, as a two-column brief.
+ *
+ * "Investment Budget" and "Purpose" are what the document is FOR, and a label
+ * over a sentence is a key and a value, so they are set as the rows of a
+ * headless table at the head of the first section — the answer's own words,
+ * placed where the answer put them.
+ */
+function briefTable(presentation: ReportQaDocument['presentation'] | null): string {
+  const facts = presentation?.facts ?? [];
+  if (!facts.length) return '';
+  return renderDataTable(
+    [
+      { key: 'label', label: '', align: 'left' },
+      { key: 'value', label: '', align: 'left' },
+    ],
+    facts.map((f) => ({ label: f.label, value: f.value })),
+  ).replace(/^<div class="table-block">/, `<div class="table-block ${BRIEF_CLASS}">`);
 }
 
 /**
@@ -388,6 +562,22 @@ const runsOn = (subject: ReportQaDocument['meta']['subject'], index: number): bo
 /** A closing block this short is a tail, not a section of its own. */
 const SHORT_TAIL_CHARS = 600;
 
+/**
+ * The running head is one line.
+ *
+ * It carries the section's title, and a transcript's section is titled by a
+ * question: at the owner's 221 characters it set in three lines at the head of
+ * every page and pushed the document's name beside it onto two. The head is a
+ * finding aid, so it is cut at a word with an ellipsis; the section's own title
+ * and the contents keep what they had.
+ */
+export const RUNNING_HEAD_CHARS = 72;
+
+export function runningHeadFor(title: string): string {
+  const clipped = clipAtWord(title.replace(/…$/, '').trim(), RUNNING_HEAD_CHARS);
+  return clipped === title ? title : `${clipped}…`;
+}
+
 const visibleLength = (html: string): number =>
   html.replace(/<[^>]*>/g, '').replace(/&[a-z#0-9]+;/gi, ' ').replace(/\s+/g, ' ').trim().length;
 
@@ -408,15 +598,18 @@ export function renderReportQaBody(input: RenderReportQaInput): ReportQaRenderPl
   const spine = buildSpine({ archetype: 'report-qa', chapters: allChapters });
   const problems = validateSpine('report-qa', spine);
 
-  const cover = renderCover({
-    eyebrow: DOCUMENT_NAME,
-    // The conversation's own title, not the format's. The legacy covers print
-    // either nothing at all (`QAPDFGenerator` draws the template image and no
-    // overlay text) or the literal string 'Q&A Conversation Export'.
-    title: doc.meta.title,
-    masthead: input.masthead,
-    edition: input.edition ?? null,
-    meta: [
+  // What the cover states. A transcript is a record of an exchange, so its
+  // cover says which document it is and how many exchanges it carries. A
+  // finished answer is the adviser's report: its cover carries the facts of
+  // the report — when, and for and by whom where the answer said so — and
+  // nothing about the Hub that produced it. "Document: Single answer" and
+  // "Exchanges: 3" were the first facts a client read on the owner's export.
+  const presentation = doc.meta.subject === 'transcript' ? null : doc.presentation ?? null;
+  const reportsLine = doc.grounding.reportCount
+    ? `${doc.grounding.reportCount} report${doc.grounding.reportCount === 1 ? '' : 's'}`
+    : '';
+  const coverMeta = doc.meta.subject === 'transcript'
+    ? [
       { label: 'Prepared on', value: formatReportDate(doc.meta.preparedOn) },
       { label: 'Document', value: SUBJECT_LABEL[doc.meta.subject] },
       ...(doc.meta.turnCount
@@ -427,7 +620,25 @@ export function renderReportQaBody(input: RenderReportQaInput): ReportQaRenderPl
       ...(doc.grounding.reportCount
         ? [{ label: 'Reports', value: String(doc.grounding.reportCount) }]
         : []),
-    ].filter((m) => m.value),
+    ]
+    : [
+      { label: 'Prepared on', value: formatReportDate(doc.meta.preparedOn) },
+      { label: 'Prepared for', value: presentation?.preparedFor ?? '' },
+      { label: 'Prepared by', value: presentation?.preparedBy ?? '' },
+      { label: 'Draws on', value: reportsLine },
+    ];
+
+  const cover = renderCover({
+    eyebrow: DOCUMENT_NAME,
+    // What the document is about, not the format's name — the answer's own
+    // title where it wrote one (`readTitleBlock`), under the letterhead it set
+    // above it. The legacy covers printed either nothing at all or the literal
+    // string 'Q&A Conversation Export'.
+    title: doc.meta.title,
+    subtitle: presentation?.subtitle || undefined,
+    masthead: input.masthead,
+    edition: input.edition ?? null,
+    meta: coverMeta.filter((m) => m.value),
     lockup: input.lockup ?? null,
     heroDataUri: input.heroDataUri ?? null,
     footerLeft: input.confidentiality ?? 'Private and confidential',
@@ -443,7 +654,7 @@ export function renderReportQaBody(input: RenderReportQaInput): ReportQaRenderPl
   // introduction between the contents page and the first chapter header prints
   // on a page of its own, which is a page of one sentence.
   const grounded = doc.grounding.reportNames.length
-    ? renderSidenote('Grounded in', `<p>${escapeHtml(doc.grounding.reportNames.join(' · '))}</p>`)
+    ? renderSidenote('Draws on', `<p>${escapeHtml(doc.grounding.reportNames.join(' · '))}</p>`)
     : '';
 
   // Said on the page, not only in the ledger. A document that quietly stops
@@ -471,10 +682,11 @@ export function renderReportQaBody(input: RenderReportQaInput): ReportQaRenderPl
   const body = allBodies.map((chapter, index) => {
     const number = String(index + 1).padStart(2, '0');
     const opening = index === 0
-      ? renderLede(narrative) + grounded + cut
+      ? (narrative ? renderLede(narrative) : '') + grounded + cut
       : '';
-    return openChapter(DOCUMENT_NAME, number, chapter.title, 'body', {
+    return openChapter(DOCUMENT_NAME, number, runningHeadFor(chapter.title), 'body', {
       runOn: runsOn(doc.meta.subject, index),
+      memo: true,
     })
       + renderChapterHeader({
         number,

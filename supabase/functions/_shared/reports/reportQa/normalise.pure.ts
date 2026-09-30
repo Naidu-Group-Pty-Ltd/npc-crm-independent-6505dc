@@ -24,7 +24,8 @@ import {
 } from './payload.pure.ts';
 import { CHARS_PER_LINE, markdownToPlainText, sanitiseGlyphs } from './markdown.pure.ts';
 import { neutraliseUrls } from '../text.pure.ts';
-import { HUB_DOCUMENT_NAME, hubDocumentTopic } from './documentIdentity.pure.ts';
+import { HUB_DOCUMENT_NAME, hubDocumentTopic, readTitleBlock } from './documentIdentity.pure.ts';
+import type { QaPresentation } from './payload.pure.ts';
 
 /** A row from `report_qa_messages`, as the route reads it. */
 export interface MessageRow {
@@ -69,6 +70,12 @@ export interface BuildInput {
    * already bounded (`MAX_QUESTION_CHARS`), so nothing here is unbounded.
    */
   keepAllTurns?: boolean;
+  /**
+   * The issuer's names — the brand snapshot's company and trading name. A
+   * first heading that is one of them is the answer's letterhead, not its
+   * title (`readTitleBlock`). Absent, nothing is read as a letterhead.
+   */
+  issuerNames?: readonly (string | null | undefined)[];
 }
 
 export type BuildResult =
@@ -279,36 +286,39 @@ function citationsOf(turns: ReportQaDocument['turns']): QaCitation[] {
  * callout built from the second, reading "19 of 20 exchanges" over "This
  * document carries 13 of 20 exchanges". Found by looking at the page, which is
  * the only way that class of defect is ever found.
+ *
+ * ## A finished answer has no framing sentence (30 Sep 2026)
+ *
+ * The single answer and the write-up used to open on "One answer from an
+ * Intelligence Hub conversation grounded in no attached reports. Answers came
+ * from report_qa." — the first words a client read, on the owner's export.
+ * Every clause was true and none was about the property: `report_qa` is the
+ * Hub's own agent key (`model_provider` records `modelAssignment.agent_key`),
+ * "grounded in no attached reports" describes how the answer was made, and
+ * "the model's" names the machine room (`ADVISER_VOICE.md` rule 1). A report
+ * the adviser is handing over speaks for itself, so those two subjects carry
+ * none. A transcript is a record of the exchange and keeps one sentence that
+ * says so — with the reports it draws on where there are any, and nothing
+ * about which system answered.
  */
 export function narrativeFor(
   subject: ReportQaSubject,
   turnsShown: number,
   turnCount: number,
   reportNames: readonly string[],
-  models: readonly string[],
+  _models: readonly string[],
 ): string {
-  const grounded = reportNames.length === 0
-    ? 'no attached reports'
+  if (subject === 'answer' || subject === 'structured') return '';
+  const drawsOn = reportNames.length === 0
+    ? ''
     : reportNames.length === 1
-      ? `one report, ${reportNames[0]}`
-      : `${reportNames.length} reports`;
-
-  const answered = models.length
-    ? ` Answers came from ${models.join(', ')}.`
-    : '';
-
-  if (subject === 'answer') {
-    return `One answer from an Intelligence Hub conversation grounded in ${grounded}.${answered}`;
-  }
-  if (subject === 'structured') {
-    const from = turnCount === 1 ? 'a single exchange' : `${turnCount} exchanges`;
-    return `A structured write-up of ${from}, grounded in ${grounded}. `
-      + `The wording is the model's; the exchanges it was drawn from are in the conversation itself.${answered}`;
-  }
+      ? ` It draws on one report, ${reportNames[0]}.`
+      : ` It draws on ${reportNames.length} reports.`;
+  // "all 1 exchange" is not a phrase anybody writes.
   const shown = turnsShown === turnCount
-    ? `all ${turnCount} ${turnCount === 1 ? 'exchange' : 'exchanges'}`
+    ? (turnCount === 1 ? 'its one exchange' : `all ${turnCount} exchanges`)
     : `${turnsShown} of ${turnCount} exchanges`;
-  return `The Intelligence Hub conversation as it happened — ${shown}, grounded in ${grounded}.${answered}`;
+  return `The Intelligence Hub conversation as it happened — ${shown}.${drawsOn}`;
 }
 
 const uuidLike = (v: unknown): string => {
@@ -335,8 +345,25 @@ export function buildReportQaDocument(input: BuildInput): BuildResult {
   // somebody gave, else the question. The product's name is the eyebrow above
   // it, and stands in only where nothing says what the document covers.
   const conversationTitle = clean(input.conversation?.title, 160);
+  const issuerNames = input.issuerNames ?? [];
   const titleFor = (body: string, question: string) =>
-    clean(hubDocumentTopic({ body, conversationTitle, question }), 160) || HUB_DOCUMENT_NAME;
+    clean(hubDocumentTopic({ body, conversationTitle, question, issuerNames }), 160) || HUB_DOCUMENT_NAME;
+  // A finished answer's own title block, placed: its letterhead is the
+  // issuer's, its title and subtitle go on the cover, its front matter becomes
+  // the cover's facts and the document's brief (`readTitleBlock`).
+  const presentationOf = (body: string): QaPresentation => {
+    const block = readTitleBlock(body, { issuerNames });
+    return {
+      body: block.body,
+      subtitle: clean(block.subtitle, 160),
+      preparedFor: clean(block.preparedFor, 120),
+      preparedBy: clean(block.preparedBy, 120),
+      facts: block.facts
+        .map((f) => ({ label: clean(f.label, 60), value: clean(f.value, 400) }))
+        .filter((f) => f.label && f.value),
+      omitted: block.omitted.map((label) => clean(label, 60)).filter(Boolean),
+    };
+  };
   const rawNames = Array.isArray(input.conversation?.report_names)
     ? input.conversation.report_names as unknown[]
     : [];
@@ -380,11 +407,14 @@ export function buildReportQaDocument(input: BuildInput): BuildResult {
         grounding: { reportNames, reportCount: rawNames.length },
         narrative: narrativeFor('answer', 1, allTurns.length, reportNames, models),
         body,
-        // The question is kept as the answer's own turn so the document can
-        // print what was asked above what was said. One turn, not a transcript.
+        // The question is kept as the answer's own turn — for the ledger and
+        // the templated masters. The flowing document no longer prints it:
+        // what was asked of the Hub is an instruction to it, not a line of
+        // the report (`render.pure.ts`).
         turns: turn ? [turn] : [],
         citations,
         models,
+        presentation: presentationOf(body),
       },
     };
   }
@@ -416,6 +446,7 @@ export function buildReportQaDocument(input: BuildInput): BuildResult {
         turns: [],
         citations: citationsOf(allTurns),
         models,
+        presentation: presentationOf(body),
       },
     };
   }

@@ -42,6 +42,7 @@ import {
   GRID_GUTTER_MM,
   GRID_SPANS,
   NAMED_PAGES,
+  PAGE_MARGIN,
   PAGE_SIZE,
   marginsFor,
   type NamedPage,
@@ -123,6 +124,41 @@ function cssString(value: string): string {
  * 44 is the two 22mm cover margins. A number no version can misread.
  */
 const COVER_ROW_WIDTH_MM = PAGE_SIZE.widthMm - 44;
+
+/** The short centred rule the running foot draws between masthead and folio. */
+const FOOTER_RULE_PT = 18;
+
+/** Points in a millimetre. */
+const PT_PER_MM = 72 / 25.4;
+
+/**
+ * The tracking that sets the running foot's masthead on one line.
+ *
+ * The foot sets the masthead in tracked capitals in the `@bottom-left` box,
+ * and a centre box that draws anything (the short rule) leaves each side half
+ * of what is left of the measure — 237pt on A4. At the widest tracking a
+ * character of the 7.5pt mono costs 7.05pt, so a masthead of 34 characters or
+ * more wrapped: "NAIDU PROPERTY CONSULTING SERVICES" printed as "NAIDU
+ * PROPERTY CONSULTING / SERVICES" at the foot of every page of every report
+ * that tenant issued (measured on the owner's exports, 30 Sep 2026). The
+ * tracking steps down — widest, then wide, then none — until the name fits,
+ * and a masthead that fits at the widest is byte-identical. A name too long
+ * even untracked keeps the untracked setting and wraps as it always did.
+ * Estimated from the mono face's fixed advance, 0.6em: every design's mono
+ * role is a monospace face.
+ */
+export function footerMastheadTracking(masthead: string, microPt: number): string {
+  const measurePt = (PAGE_SIZE.widthMm - PAGE_MARGIN.left - PAGE_MARGIN.right) * PT_PER_MM;
+  // Half of what the centre rule leaves, less a little air either side of it.
+  const slotPt = (measurePt - FOOTER_RULE_PT) / 2 - 4;
+  const chars = [...String(masthead ?? '')].length;
+  const advancePt = 0.6 * microPt;
+  for (const step of ['widest', 'wide', 'normal'] as const) {
+    const em = Number.parseFloat(PRINT_TRACKING[step]) || 0;
+    if (chars * (advancePt + em * microPt) <= slotPt) return PRINT_TRACKING[step];
+  }
+  return PRINT_TRACKING.normal;
+}
 
 /**
  * The `@page` block for one named page, expressed as its difference from the
@@ -223,7 +259,7 @@ ${press}
       content: ${cssString(masthead)};
       font-family: ${S.mono};
       font-size: ${pt(type.micro)};
-      letter-spacing: ${PRINT_TRACKING.widest};
+      letter-spacing: ${footerMastheadTracking(masthead, type.micro)};
       text-transform: uppercase;
       font-feature-settings: "kern" 1, "case" 1;
       color: ${palette.mutedInk};
@@ -231,7 +267,7 @@ ${press}
     @bottom-center {
       content: "";
       border-top: 0.4pt solid ${palette.rule};
-      width: 18pt;
+      width: ${FOOTER_RULE_PT}pt;
       height: 0;
       margin: 0 auto;
     }
@@ -260,8 +296,14 @@ ${adjacency}`;
 const CELL = 'table.data tbody td, table.data tbody th[scope="row"]';
 const BAND_CELL = 'table.data tbody tr:nth-child(even) td, '
   + 'table.data tbody tr:nth-child(even) th[scope="row"]';
-const LAST_ROW_CELL = 'table.data tbody tr:last-child td, '
-  + 'table.data tbody tr:last-child th[scope="row"]';
+/*
+ * The table's last row — of its last row group. A table set as several groups
+ * (the memo's lead, middle and tail) has a last-child row in each, and only
+ * the table's own last row gives its rule to the table's bottom rule. Identical
+ * for every table of one group, which is every table but the memo's long ones.
+ */
+const LAST_ROW_CELL = 'table.data tbody:last-child tr:last-child td, '
+  + 'table.data tbody:last-child tr:last-child th[scope="row"]';
 const TOTAL_CELL = 'table.data tbody tr.total td, table.data tbody tr.total th[scope="row"]';
 
 /** Table rules for the selected `tableStyle`. Only the chosen variant is emitted. */
@@ -395,6 +437,17 @@ function tableRules(
   }`;
 }
 
+/**
+ * A memo section's title against a chapter title (`MEMO_CHAPTER_CLASS`).
+ *
+ * One modular step above the section's own subheads rather than the
+ * chapter-opener size: 0.62 of the chapter title is 21pt in the house design
+ * over its 14pt subheads, 19.3pt over 12.8pt in Institutional Research and
+ * 15.7pt over 10.4pt in Dark Executive — 1.5× in each, where the chapter size
+ * was 2.4×.
+ */
+export const MEMO_TITLE_RATIO = 0.62;
+
 /** Chapter-header rules for the selected `chapterStyle`. */
 function chapterRules(
   palette: ResolvedReportPalette,
@@ -430,6 +483,42 @@ function chapterRules(
   }
   .run-on .chapter-header { break-after: avoid; break-inside: avoid; }
   .keep-together { break-inside: avoid; }
+  /* A memo section (MEMO_CHAPTER_CLASS): a section of one continuous
+     document, not a chapter. Its title is one modular step above its
+     subheads (MEMO_TITLE_RATIO), and the drop that seats a chapter title low
+     on its opening page is a small lead instead. More specific than every
+     chapter-header rule a style or a design sets, so it holds under all of
+     them. */
+  section.chapter.memo { padding-top: 8mm; }
+  section.chapter.memo.run-on { padding-top: 6mm; }
+  .memo .chapter-header { margin-bottom: ${pt(d.blockGapPt)}; }
+  .memo .chapter-header .chapter-no { margin-bottom: ${pt(Math.max(4, d.paragraphGapPt - 2))}; }
+  .memo .chapter-header h1 {
+    font-size: ${pt(type.h1 * MEMO_TITLE_RATIO * F.display)};
+    line-height: 1.2;
+    max-width: 165mm;
+  }
+  /* A memo's long table is three row groups (render.pure.ts groupTableRows):
+     no break straight after the first row, none inside the last two, and a
+     parity row that holds the striping's count and draws nothing. */
+  .memo table.data tbody.lead { break-after: avoid; page-break-after: avoid; }
+  .memo table.data tbody.tail { break-inside: avoid; page-break-inside: avoid; }
+  .memo table.data tr.parity { display: none; }
+  /* The brief under an answer's title (BRIEF_CLASS): a key/value table whose
+     labels are set on one line, kept on one page. */
+  .memo .table-block.brief { break-inside: avoid; page-break-inside: avoid; }
+  .memo .table-block.brief th[scope="row"] { white-space: nowrap; }
+  /* A label past a label's length is set as the sentence it is
+     (SUBHEAD_CLASS): the body face, sentence case, a subhead's weight —
+     the same h4, the same colour, the same place in the outline. */
+  .memo h4.subhead {
+    font-family: ${S.body};
+    font-size: ${pt(type.body)};
+    font-weight: 600;
+    text-transform: none;
+    letter-spacing: ${PRINT_TRACKING.normal};
+    line-height: 1.3;
+  }
   .chapter-header { margin-bottom: ${pt(d.blockGapPt + 4)}; }
   .chapter-header .chapter-no {
     display: ${options.showSectionNumbers ? 'block' : 'none'};
@@ -900,6 +989,29 @@ export function buildReportCss(input: ReportCssInput): string {
     orphans: 3;
     widows: 3;
     ${options.justifyText ? 'text-align: justify;' : 'text-align: left;'}
+  }
+  /* The document's own closing caveat (FINE_PRINT_CLASS): kept, and set as
+     the fine print it is — under a hairline, at caption size, in the muted
+     ink every caption uses — rather than at the size of the analysis above
+     it. Nothing in it is reworded or dropped. */
+  .fine-print {
+    margin-top: ${pt(d.blockGapPt)};
+    padding-top: ${pt(d.paragraphGapPt)};
+    border-top: 0.4pt solid ${palette.rule};
+  }
+  .fine-print h1, .fine-print h2, .fine-print h3, .fine-print h4 {
+    font-family: ${S.mono};
+    font-size: ${pt(type.micro)};
+    font-weight: 500;
+    letter-spacing: ${PRINT_TRACKING.eyebrow};
+    text-transform: uppercase;
+    color: ${palette.mutedInk};
+    margin: 0 0 4pt;
+  }
+  .fine-print p, .fine-print li {
+    font-size: ${pt(type.caption)};
+    line-height: 1.45;
+    color: ${palette.mutedInk};
   }
   /* Figures in a sentence are not figures in a column. Tabular figures set
      every digit on the same advance, so a year or a percentage inside a

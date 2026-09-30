@@ -8,6 +8,8 @@
  *
  * The request is a conversation id, a subject, and — for one answer — a message
  * id. Nothing else, because everything this document says is already a row.
+ * The one exception is a preview, which may carry the editor's draft and keeps
+ * nothing (`applyPreviewDraft`); a document that is kept is always the record.
  */
 import {
   readTemplateDesignReference,
@@ -48,6 +50,19 @@ export interface ReportQaRenderRequest {
    * figures and pages are the report's own whatever is named here.
    */
   design: TemplateDesignReference | null;
+  /**
+   * Draw the document and keep nothing (`PREVIEW` below): no file, no ledger
+   * row, no brand-snapshot row, no attachment, no model call. The bytes go
+   * back to the export dialog, which draws the pages.
+   */
+  preview: boolean;
+  /**
+   * For a preview only: the text in the editor, drawn in place of the stored
+   * answer (the `answer` subject) or the stored write-up (`structured`). A
+   * delivered document is always drawn from the record; a draft is what lets
+   * somebody see their edit in the chosen template before they keep it.
+   */
+  draft: string | null;
 }
 
 export type RequestParse =
@@ -55,6 +70,13 @@ export type RequestParse =
   | { ok: false; error: string };
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-9a-f][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+/**
+ * The longest draft a preview draws. Three times the longest answer the owner
+ * has exported (20,136 characters) with room to spare, and past the Markdown
+ * renderer's own bound, which says on the page what it did not draw.
+ */
+export const MAX_PREVIEW_DRAFT_CHARS = 150_000;
 
 const SUBJECTS: readonly ReportQaSubject[] = ['structured', 'answer', 'transcript'];
 
@@ -95,18 +117,77 @@ export function parseRenderRequest(body: unknown): RequestParse {
   const design = readTemplateDesignReference(b.design);
   if (design.ok === false) return { ok: false, error: design.error };
 
+  // A preview keeps nothing, so it can neither post a file into the
+  // conversation nor spend tokens writing a missing write-up.
+  const preview = b.preview === true;
+  let draft: string | null = null;
+  if (b.draft !== undefined && b.draft !== null) {
+    if (typeof b.draft !== 'string') return { ok: false, error: 'draft must be text' };
+    if (!preview) return { ok: false, error: 'a draft is drawn only in a preview' };
+    if (subject === 'transcript') return { ok: false, error: 'a transcript is drawn from the record, never a draft' };
+    if (!b.draft.trim()) return { ok: false, error: 'draft is empty' };
+    if (b.draft.length > MAX_PREVIEW_DRAFT_CHARS) {
+      return { ok: false, error: `draft is longer than ${MAX_PREVIEW_DRAFT_CHARS.toLocaleString('en-AU')} characters` };
+    }
+    draft = b.draft;
+  }
+
   return {
     ok: true,
     request: {
       conversationId,
       subject,
       messageId,
-      generateIfMissing: b.generateIfMissing === true,
-      attachToConversation: b.attachToConversation === true,
+      generateIfMissing: !preview && b.generateIfMissing === true,
+      attachToConversation: !preview && b.attachToConversation === true,
       edition: edition || null,
       design: design.reference,
+      preview,
+      draft,
     },
   };
+}
+
+/**
+ * The record with the draft in place of what it stands in for.
+ *
+ * The answer's draft becomes that message's `edited_content`, which the
+ * normaliser already prefers over the original — the same slot the editor's
+ * Save writes, so a preview draws exactly what saving would draw. The
+ * write-up's draft becomes the conversation's `structured_report`. Nothing is
+ * mutated: the rows the route read are left as they were.
+ */
+export function applyPreviewDraft<C extends Record<string, unknown>, M extends Record<string, unknown>>(
+  conversation: C,
+  messages: readonly M[],
+  request: Pick<ReportQaRenderRequest, 'subject' | 'messageId' | 'draft'>,
+): { conversation: C; messages: M[] } {
+  if (request.draft === null) return { conversation, messages: [...messages] };
+  if (request.subject === 'structured') {
+    return { conversation: { ...conversation, structured_report: request.draft }, messages: [...messages] };
+  }
+  if (request.subject === 'answer') {
+    return {
+      conversation,
+      messages: messages.map((m) => (m.id === request.messageId ? { ...m, edited_content: request.draft } : m)),
+    };
+  }
+  return { conversation, messages: [...messages] };
+}
+
+/**
+ * A PDF as base64, for the preview's JSON answer.
+ *
+ * In slices, because `String.fromCharCode(...bytes)` on a whole document
+ * overflows the argument limit well before a sixteen-page report.
+ */
+export function pdfToBase64(bytes: Uint8Array): string {
+  let binary = '';
+  const SLICE = 0x8000;
+  for (let i = 0; i < bytes.length; i += SLICE) {
+    binary += String.fromCharCode(...bytes.subarray(i, i + SLICE));
+  }
+  return btoa(binary);
 }
 
 /**
@@ -168,6 +249,29 @@ export const STORAGE_BUCKET = 'qa_exports';
 
 /** How long a returned link lives. Long enough to email, short enough to expire. */
 export const SIGNED_URL_TTL_SECONDS = 60 * 60 * 24 * 7;
+
+/**
+ * What a preview answers: the document's own bytes and what the dialog needs
+ * to draw and navigate them. No url, no render id, no snapshot id — nothing
+ * was kept, so there is nothing to point at.
+ */
+export interface ReportQaPreviewResponse {
+  preview: true;
+  /** The PDF, base64. */
+  pdf: string;
+  fileName: string;
+  bytes: number;
+  pageCount: number | null;
+  brandGaps: string[];
+  /** Section titles in printed order — the contents page, and the navigator. */
+  sections: string[];
+  subject: ReportQaSubject;
+  turnCount: number;
+  turnsShown: number;
+  truncated: boolean;
+  durationMs: number;
+  design: DesignEcho | null;
+}
 
 export interface ReportQaRenderResponse {
   url: string;

@@ -600,6 +600,33 @@ export interface MarkdownOptions {
    * instruction to the renderer and not something to show a client either way.
    */
   renderInlineSpark?: (values: number[]) => string | null;
+
+  /**
+   * Keep the line break after a line that is nothing but a bold label.
+   *
+   * A model writes a numbered plan as a label over its explanation:
+   *
+   *     3. **Select two priority markets**
+   *        A practical starting point is Perth plus Adelaide, …
+   *
+   * CommonMark joins those two lines with a space, so the page read "Select
+   * two priority markets A practical starting point is …" — the label run into
+   * its sentence with nothing between them (the owner's export, 30 Sep 2026,
+   * items 3–6 of "Next Steps"). With this on, a line that is only a strong span
+   * (`**Label**`, `**Label:**`) keeps its break, in a paragraph and inside a
+   * list item, and a list item also keeps a GFM hard break (two trailing
+   * spaces or a backslash), which it used to drop. Structure only: no word is
+   * added, removed or reordered.
+   *
+   * Off by default, so every format that does not ask for it — the fitted
+   * Compass and Market Intelligence pages among them — is byte-identical.
+   */
+  labelLineBreaks?: boolean;
+}
+
+/** A line that is one strong span and nothing else: `**Label**`, `**Label:**`. */
+function isLabelOnly(line: string): boolean {
+  return /^(\*\*|__)[^*_\n]{1,120}?\1:?$/.test(line.trim());
 }
 
 /**
@@ -964,6 +991,8 @@ function drawSparks(part: string, notices?: MarkdownNotices, opts?: InlineMarkdo
 /** What the inline pass needs from the caller. A subset of `MarkdownOptions`. */
 export interface InlineMarkdownOptions {
   renderInlineSpark?: (values: number[]) => string | null;
+  /** See `MarkdownOptions.labelLineBreaks`. */
+  labelLineBreaks?: boolean;
 }
 
 export function renderInlineMarkdown(
@@ -1588,9 +1617,17 @@ export function renderMarkdown(source: string, options: MarkdownOptions = {}): M
       while (i < lines.length) {
         const m = /^(\s*)([-*+]|\d{1,9}[.)])\s+(.*)$/.exec(lines[i]);
         if (!m) {
-          // A plain continuation line belongs to the item above it.
+          // A plain continuation line belongs to the item above it — on a
+          // line of its own where the line above ended in a hard break or was
+          // only a bold label, when the caller asks (`labelLineBreaks`).
           if (items.length && lines[i].trim() && /^\s{2,}\S/.test(lines[i])) {
-            items[items.length - 1].text += ` ${lines[i].trim()}`;
+            const item = items[items.length - 1];
+            const lastLine = item.text.slice(item.text.lastIndexOf('\n') + 1);
+            const hard = options.labelLineBreaks === true
+              && (/(?: {2,}|\\)$/.test(lastLine) || isLabelOnly(lastLine));
+            item.text = hard
+              ? `${item.text.replace(/(?: {2,}|\\)$/, '')}\n${lines[i].trim()}`
+              : `${item.text} ${lines[i].trim()}`;
             i++;
             continue;
           }
@@ -1946,11 +1983,18 @@ function paragraphHtml(block: string, notices: MarkdownNotices, opts?: InlineMar
     .join('');
 }
 
-/** Two trailing spaces or a trailing backslash is a hard break; a bare newline is a space. */
+/**
+ * Two trailing spaces or a trailing backslash is a hard break; a bare newline
+ * is a space — unless the line is only a bold label and the caller keeps
+ * those breaks (`labelLineBreaks`).
+ */
 function inlineWithBreaks(paragraph: string, notices: MarkdownNotices, opts?: InlineMarkdownOptions): string {
   return paragraph
     .split('\n')
-    .map((l) => ({ text: l.replace(/(?: {2,}|\\)$/, ''), hard: /(?: {2,}|\\)$/.test(l) }))
+    .map((l) => ({
+      text: l.replace(/(?: {2,}|\\)$/, ''),
+      hard: /(?: {2,}|\\)$/.test(l) || (opts?.labelLineBreaks === true && isLabelOnly(l)),
+    }))
     .map((l, idx, all) => renderInlineMarkdown(l.text.trim(), notices, opts) + (idx < all.length - 1 ? (l.hard ? '<br>' : ' ') : ''))
     .join('');
 }
@@ -2006,7 +2050,11 @@ function listHtml(items: readonly ListItem[], ordered: boolean, notices: Markdow
       }
       if (itemOpen) { out += '</li>'; itemOpen = false; }
     }
-    out += `<li>${renderInlineMarkdown(item.text, notices, opts)}`;
+    // A break kept inside an item (`labelLineBreaks`) is the only way a
+    // newline reaches an item's text, so every other list is byte-identical.
+    out += `<li>${item.text.includes('\n')
+      ? item.text.split('\n').map((part) => renderInlineMarkdown(part.trim(), notices, opts)).join('<br>')
+      : renderInlineMarkdown(item.text, notices, opts)}`;
     itemOpen = true;
   }
   while (stack.length > 1) {

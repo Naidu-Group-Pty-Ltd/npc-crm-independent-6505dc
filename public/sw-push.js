@@ -86,6 +86,33 @@ async function openInternalThread(data) {
   );
 }
 
+// A builder's message is notified from the page too, and opens a page of the
+// dashboard — its conversation. Like a team thread, an open window is sent
+// there by postMessage (the page routes it without a reload), and a window is
+// opened at that page only when none is open. The path is this origin's own:
+// anything else is refused rather than opened.
+const OPEN_PAGE_KIND = 'open-page';
+const OPEN_PAGE_MESSAGE = 'aurixa:open-page';
+
+function isSameOriginPath(path) {
+  return typeof path === 'string' && path.charAt(0) === '/' && path.charAt(1) !== '/' && path.charAt(1) !== '\\';
+}
+
+async function openPage(path) {
+  const clients = await sameOriginClients();
+  const ordered = clients.sort((a, b) => (b.focused ? 1 : 0) - (a.focused ? 1 : 0));
+  for (const client of ordered) {
+    try {
+      await client.focus();
+    } catch (e) {
+      /* focus can be refused; the postMessage is still worth sending */
+    }
+    client.postMessage({ type: OPEN_PAGE_MESSAGE, url: path });
+    return;
+  }
+  await self.clients.openWindow(path);
+}
+
 self.addEventListener('notificationclick', (event) => {
   const data = event.notification.data || {};
   event.notification.close();
@@ -95,6 +122,11 @@ self.addEventListener('notificationclick', (event) => {
 
   if (data.kind === INTERNAL_MESSAGE_KIND && data.thread_id) {
     event.waitUntil(openInternalThread(data));
+    return;
+  }
+
+  if (data.kind === OPEN_PAGE_KIND) {
+    if (isSameOriginPath(data.url)) event.waitUntil(openPage(data.url));
     return;
   }
 

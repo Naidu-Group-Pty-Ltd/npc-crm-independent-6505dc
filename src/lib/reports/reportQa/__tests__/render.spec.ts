@@ -240,14 +240,63 @@ describe('what the reader is told', () => {
     expect(render().bodyHtml).not.toContain('Not the whole conversation');
   });
 
-  it('prints the question above a single answer', () => {
+  /**
+   * What was typed to the Hub is an instruction to it, not a line of the
+   * report. The owner's export of 30 Sep 2026 opened its first section on an
+   * "Asked" callout carrying three sentences of instructions — "make it into a
+   * very forefronting property consulting reporting manner" — above the report
+   * those instructions produced. The ledger keeps the question; the finished
+   * answer does not print it.
+   */
+  it('does not print the question typed to the Hub above a finished answer', () => {
     const out = render({ subject: 'answer', messageId: mid(1) });
-    expect(out.bodyHtml).toContain('Asked');
-    expect(out.bodyHtml).toContain(QUESTIONS[0]);
+    expect(out.bodyHtml).not.toContain('>Asked<');
+    expect(out.bodyHtml).not.toContain(QUESTIONS[0]);
   });
 
-  it('prints how each answer was produced', () => {
-    expect(render().bodyHtml).toContain('openai · gpt-5.2');
+  it('keeps every question in a transcript, which is the record of the exchange', () => {
+    const out = render({ messages: Array.from({ length: QUESTIONS.length }, (_, i) => pair(i)).flat() });
+    for (const question of QUESTIONS) expect(out.bodyHtml).toContain(question);
+  });
+
+  /**
+   * A question short enough to title its section is printed there, and not
+   * again under an "Asked" label beneath it. One clipped to title its section
+   * (`turnTitle`, 90 characters) is printed whole under "Asked", so no
+   * question is lost and none is printed twice.
+   */
+  it('prints each question once — as its section title, or whole under "Asked" where the title was clipped', () => {
+    const titled = render();
+    expect(titled.bodyHtml).not.toContain('>Asked<');
+    expect(titled.bodyHtml).toContain(QUESTIONS[0]);
+
+    const long = 'Given the guide, the body corporate schedule and a further 1% on rates, is 12 Mariners Quay '
+      + 'still worth pursuing for a buyer who intends to hold it for ten years?';
+    const [question, answer] = pair(0);
+    const clipped = render({ messages: [{ ...question, content: long }, answer] });
+    expect(clipped.sections[0].endsWith('…')).toBe(true);
+    expect(clipped.bodyHtml).toContain('>Asked<');
+    expect(clipped.bodyHtml).toContain(long);
+  });
+
+  /**
+   * `model_provider` records the Hub's own agent key (`report_qa`) and
+   * `model_version` a vendor's model id. Neither is a fact a reader can use,
+   * and the first was printed on the owner's export as though it were one
+   * (ADVISER_VOICE.md rule 1). What stays is how the answer came to be on the
+   * page: edited or not, what it cites, when it was asked.
+   */
+  it('says how an answer came to be on the page, and never which system answered', () => {
+    const edited = render({ messages: pair(0, ANSWER, { edited_content: `${ANSWER}\n\nChecked by the adviser.` }) });
+    expect(edited.bodyHtml).toContain('edited before export');
+    expect(edited.bodyHtml).toContain(formatReportDate(at(0)));
+    expect(edited.bodyHtml).not.toContain('openai');
+    expect(edited.bodyHtml).not.toContain('gpt-5.2');
+    const agent = render({
+      messages: pair(0, ANSWER, { model_provider: 'report_qa', model_version: 'google/gemini-2.5-pro' }),
+    });
+    expect(agent.bodyHtml).not.toContain('report_qa');
+    expect(agent.bodyHtml).not.toContain('gemini');
   });
 
   it('prints the sources when there are any, and no empty section when not', () => {

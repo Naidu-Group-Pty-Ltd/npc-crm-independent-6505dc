@@ -103,16 +103,18 @@ function formatReportDate(iso: string): string {
 }
 
 /**
- * How an answer was produced, as one line — `render.pure.ts`'s `provenance`,
- * word for word: provider · version, whether a human edited it, how many
- * sources it cited, and when it was asked, joined with em-dash separators.
- * The line the legacy prints under every question and the exporters drop.
+ * How an answer came to be on the page, as one line — `render.pure.ts`'s
+ * `provenance`, word for word: whether a human edited it, how many sources it
+ * cited, and when it was asked, joined with em-dash separators.
+ *
+ * Which system answered is not in it (30 Sep 2026). `model_provider` holds the
+ * Hub's own agent key (`report_qa`) and `model_version` a vendor's model id,
+ * and the flowing document printed the first as though a reader could use it
+ * (`ADVISER_VOICE.md` rule 1). `model` below keeps both for anything that
+ * needs the record.
  */
 function provenanceLine(turn: QaTurn): string | undefined {
   const parts: string[] = [];
-  if (turn.modelProvider && turn.modelProvider !== 'system') {
-    parts.push(turn.modelVersion ? `${turn.modelProvider} · ${turn.modelVersion}` : turn.modelProvider);
-  }
   if (turn.answerWasEdited) parts.push('edited before export');
   if (turn.citations.length) {
     parts.push(`${turn.citations.length} source${turn.citations.length === 1 ? '' : 's'}`);

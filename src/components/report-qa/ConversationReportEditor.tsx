@@ -4,7 +4,6 @@ import remarkGfm from 'remark-gfm';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
-import { ScrollArea } from '@/components/ui/scroll-area';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { 
@@ -14,7 +13,8 @@ import {
   Type, 
   FileText, 
   Sparkles, 
-  RefreshCw 
+  RefreshCw,
+  Columns2,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { invokeSecureFunction } from '@/lib/secureInvoke';
@@ -32,6 +32,13 @@ import {
 
 import { ChooseTemplateButton, chosenTemplateLine } from '@/components/reports/ChooseTemplateButton';
 import { useReportQaDelivery } from './useReportQaDelivery';
+import { useBreakpoint } from '@/hooks/use-breakpoint';
+import { cn } from '@/lib/utils';
+import { PlaceholderNotice } from './PlaceholderNotice';
+import { HubDocumentPreview } from './HubDocumentPreview';
+import { useHubDocumentPreview } from './useHubDocumentPreview';
+import { revealInTextarea } from './revealInTextarea';
+import { findSectionHeading } from '@/lib/reports/reportQa/sections.pure';
 
 /** Today as `YYYY-MM-DD` on the reader's own calendar, for a filename. */
 const localIsoDate = () => {
@@ -66,14 +73,77 @@ export function ConversationReportEditor({
   const [isGenerating, setIsGenerating] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
   const [activeTab, setActiveTab] = useState('edit');
+  // The editor beside its pages needs a desktop's width. Below it the tab is
+  // not drawn at all — a class that hides it loses to the app's phone rule
+  // setting every tab to flex — and the side-by-side view reads as the pages.
+  const sideBySide = useBreakpoint() === 'desktop';
+  const tab = !sideBySide && activeTab === 'split' ? 'preview' : activeTab;
   const [hasEdited, setHasEdited] = useState(false);
   const { toast } = useToast();
   const initialContent = useRef('');
+  // What the conversation holds, as far as this editor knows — written only
+  // once a read or a write has said so. The generated write-up is cached in
+  // the background, so until that write answers the preview sends the text as
+  // a draft rather than draw a stored version it has not reached.
+  const [storedReport, setStoredReport] = useState<string | null>(null);
   // The typeset route draws the conversation's STORED write-up in the chosen
   // template, so the editor's text is stored before it is drawn.
   const typeset = useReportQaDelivery({ conversationId: conversationId ?? null });
   const templateChoice = useReportTemplateSelection('qa');
-  const topic = () => hubDocumentTopic({ body: reportContent, conversationTitle: title });
+  // The Preview is the write-up as the export will make it, in the chosen
+  // template (`HubDocumentPreview`), as in the single-answer editor.
+  const [showTextPreview, setShowTextPreview] = useState(false);
+  const templateKey = templateChoice.state
+    ? `${templateChoice.state.status}:${templateChoice.state.selectedTemplateId ?? ''}`
+    : '';
+  const documentPreview = useHubDocumentPreview({
+    conversationId: conversationId ?? null,
+    subject: 'structured',
+    text: reportContent,
+    edited: reportContent !== (storedReport ?? ''),
+    templateKey,
+    visible: isOpen && !isGenerating && Boolean(reportContent.trim())
+      && (tab === 'preview' || tab === 'split') && !templateChoice.isLoading && !showTextPreview,
+  });
+  // Held as state, not refs: a tab's content mounts a render after the tab
+  // changes, so the selection is applied once the textarea is really there.
+  const [editArea, setEditArea] = useState<HTMLTextAreaElement | null>(null);
+  const [splitArea, setSplitArea] = useState<HTMLTextAreaElement | null>(null);
+  // What "Edit this section" asked to select, applied once the textarea is
+  // there; the counter is what asks.
+  const pendingSelection = useRef<{ start: number; end: number } | null>(null);
+  const [selectionAsked, setSelectionAsked] = useState(0);
+  const editSection = (sectionTitle: string, index: number) => {
+    const at = findSectionHeading(reportContent, sectionTitle);
+    // The first section may be the opening before any heading, which starts
+    // where the text does.
+    if (!at && index > 0) {
+      toast({ title: 'That section has no heading in the text', description: 'Find it in the editor by its words.' });
+      return;
+    }
+    if (tab !== 'split') setActiveTab('edit');
+    pendingSelection.current = at ?? { start: 0, end: 0 };
+    setSelectionAsked((n) => n + 1);
+  };
+  useEffect(() => {
+    const wanted = pendingSelection.current;
+    if (!wanted) return;
+    const textarea = tab === 'split' ? splitArea : editArea;
+    if (!textarea) return;
+    revealInTextarea(textarea, wanted.start, wanted.end);
+    pendingSelection.current = null;
+  }, [selectionAsked, tab, editArea, splitArea]);
+  const onEditorKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === 'Enter' && (event.ctrlKey || event.metaKey) && documentPreview.available) {
+      event.preventDefault();
+      void documentPreview.refresh();
+    }
+  };
+  // What the write-up is about, for the filename and the legacy cover. Given
+  // the issuer's name, a first heading that is the firm's own reads as the
+  // letterhead it is (`documentIdentity.pure.ts`).
+  const topic = (issuerNames: readonly string[] = []) =>
+    hubDocumentTopic({ body: reportContent, conversationTitle: title, issuerNames });
 
   useEffect(() => {
     if (isOpen && messages.length > 0) {
@@ -92,6 +162,7 @@ export function ConversationReportEditor({
         if (!error && data?.records?.length > 0 && data.records[0].structured_report) {
           setReportContent(data.records[0].structured_report);
           initialContent.current = data.records[0].structured_report;
+          setStoredReport(data.records[0].structured_report);
           setHasEdited(false);
           setActiveTab('edit');
           return;
@@ -130,7 +201,12 @@ export function ConversationReportEditor({
           table: 'report_qa_conversations',
           id: conversationId,
           data: { structured_report: data.structuredReport }
-        }).catch(err => console.warn('Failed to cache structured report:', err));
+        })
+          .then(({ error: cacheError }) => {
+            if (cacheError) console.warn('Failed to cache structured report:', cacheError);
+            else setStoredReport(data.structuredReport);
+          })
+          .catch(err => console.warn('Failed to cache structured report:', err));
       }
 
       toast({
@@ -180,6 +256,7 @@ export function ConversationReportEditor({
       });
       if (error) throw new Error(error.message || 'Could not save the report before exporting');
       initialContent.current = reportContent;
+      setStoredReport(reportContent);
       setHasEdited(false);
     } catch (err: any) {
       toast({
@@ -228,7 +305,7 @@ export function ConversationReportEditor({
           issuerName: legacyBrand.issuer.name,
           mark: legacyBrand.mark,
           documentTitle: HUB_DOCUMENT_NAME,
-          subject: topic() || title,
+          subject: topic([contact.company_name]) || title,
           standfirst: new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' }),
           family: legacyBrand.family,
         });
@@ -593,7 +670,7 @@ export function ConversationReportEditor({
         );
       }
 
-      doc.save(hubDocumentFileName(topic(), localIsoDate()));
+      doc.save(hubDocumentFileName(topic([contact.company_name]), localIsoDate()));
 
       toast({
         title: 'PDF exported',
@@ -611,12 +688,15 @@ export function ConversationReportEditor({
     }
   };
 
-  const exportAsMarkdown = () => {
+  const exportAsMarkdown = async () => {
+    // Read on the click, as the single-answer editor does: only this download
+    // needs the issuer's name.
+    const { contactDetails } = await fetchGlobalReportSettings();
     const blob = new Blob([reportContent], { type: 'text/markdown' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = hubDocumentFileName(topic(), localIsoDate(), { extension: 'md' });
+    a.download = hubDocumentFileName(topic([contactDetails.company_name]), localIsoDate(), { extension: 'md' });
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -635,6 +715,7 @@ export function ConversationReportEditor({
     setReportContent('');
     setHasEdited(false);
     initialContent.current = '';
+    setStoredReport(null);
     onClose();
   };
 
@@ -711,8 +792,8 @@ export function ConversationReportEditor({
           </div>
         ) : (
           <div className="flex-1 flex flex-col overflow-hidden min-h-0">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="flex-1 flex flex-col overflow-hidden min-h-0 h-0">
-              <TabsList className="grid w-full grid-cols-2 mb-4 flex-shrink-0">
+            <Tabs value={tab} onValueChange={setActiveTab} className="flex-1 flex flex-col overflow-hidden min-h-0 h-0">
+              <TabsList className={cn('mb-4 grid w-full flex-shrink-0', sideBySide ? 'grid-cols-3' : 'grid-cols-2')}>
                 <TabsTrigger value="edit" className="flex items-center gap-2">
                   <Type className="h-4 w-4" />
                   Edit Report
@@ -721,27 +802,80 @@ export function ConversationReportEditor({
                   <Eye className="h-4 w-4" />
                   Preview
                 </TabsTrigger>
+                {sideBySide && (
+                  <TabsTrigger value="split" className="flex items-center gap-2">
+                    <Columns2 className="h-4 w-4" />
+                    Side by side
+                  </TabsTrigger>
+                )}
               </TabsList>
 
-              <TabsContent value="edit" className="flex-1 overflow-hidden mt-0 min-h-0 data-[state=active]:flex flex-col">
-                <ScrollArea className="flex-1 border rounded-md">
-                  <Textarea
-                    value={reportContent}
-                    onChange={(e) => handleContentChange(e.target.value)}
-                    placeholder="Report content will appear here..."
-                    className="w-full min-h-[500px] resize-none border-0 focus-visible:ring-0 p-4 font-mono text-sm"
-                  />
-                </ScrollArea>
+              <TabsContent value="edit" className="mt-0 min-h-0 flex-1 flex-col overflow-hidden data-[state=active]:flex">
+                <Textarea
+                  ref={setEditArea}
+                  aria-label="Report editor"
+                  value={reportContent}
+                  onChange={(e) => handleContentChange(e.target.value)}
+                  onKeyDown={onEditorKeyDown}
+                  placeholder="Report content will appear here..."
+                  className="h-full min-h-0 w-full resize-none overflow-y-auto whitespace-pre-wrap break-words rounded-md p-4 font-mono text-sm focus-visible:ring-1"
+                />
               </TabsContent>
 
-              <TabsContent value="preview" className="flex-1 overflow-hidden mt-0 min-h-0 data-[state=active]:flex flex-col">
-                <div className="flex-1 border rounded-md overflow-y-auto">
-                  <div className="p-6">
+              <TabsContent value="preview" className="mt-0 min-h-0 flex-1 flex-col overflow-hidden data-[state=active]:flex">
+                {documentPreview.available && !showTextPreview ? (
+                  <HubDocumentPreview
+                    state={documentPreview}
+                    templateLine={chosenTemplateLine(templateChoice.state)}
+                    onEditSection={editSection}
+                    onShowText={() => setShowTextPreview(true)}
+                  />
+                ) : (
+                  <div className="flex min-h-0 flex-1 flex-col gap-2">
+                    {documentPreview.available && (
+                      <button
+                        type="button"
+                        className="self-start rounded-sm text-xs text-primary underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                        onClick={() => setShowTextPreview(false)}
+                      >
+                        Back to the preview in your chosen template
+                      </button>
+                    )}
+                    <div className="flex-1 overflow-y-auto rounded-md border">
+                      <div className="p-6">
+                        <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
+                          {reportContent}
+                        </ReactMarkdown>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </TabsContent>
+
+              <TabsContent value="split" className="mt-0 min-h-0 flex-1 overflow-hidden data-[state=active]:grid data-[state=active]:grid-cols-2 data-[state=active]:gap-4">
+                <Textarea
+                  ref={setSplitArea}
+                  aria-label="Report editor, beside its preview"
+                  value={reportContent}
+                  onChange={(e) => handleContentChange(e.target.value)}
+                  onKeyDown={onEditorKeyDown}
+                  placeholder="Report content will appear here..."
+                  className="h-full min-h-0 w-full resize-none overflow-y-auto whitespace-pre-wrap break-words rounded-md p-4 font-mono text-sm focus-visible:ring-1"
+                />
+                {documentPreview.available ? (
+                  <HubDocumentPreview
+                    state={documentPreview}
+                    templateLine={chosenTemplateLine(templateChoice.state)}
+                    onEditSection={editSection}
+                    compact
+                  />
+                ) : (
+                  <div className="min-h-0 overflow-y-auto rounded-md border p-6">
                     <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
                       {reportContent}
                     </ReactMarkdown>
                   </div>
-                </div>
+                )}
               </TabsContent>
             </Tabs>
           </div>
@@ -757,6 +891,7 @@ export function ConversationReportEditor({
             <span className="text-xs text-muted-foreground">
               {reportContent.length} chars • {messages.length} messages processed
             </span>
+            <PlaceholderNotice content={reportContent} />
             {conversationId && (
               <span className="text-xs text-muted-foreground" aria-live="polite">
                 · {chosenTemplateLine(templateChoice.state)}
@@ -777,7 +912,7 @@ export function ConversationReportEditor({
             <Button 
               variant="outline" 
               size="sm"
-              onClick={exportAsMarkdown}
+              onClick={() => void exportAsMarkdown()}
               disabled={!reportContent || isGenerating}
             >
               <Download className="h-3 w-3 mr-1" />

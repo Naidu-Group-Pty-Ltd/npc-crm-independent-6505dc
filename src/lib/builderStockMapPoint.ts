@@ -1,5 +1,7 @@
-import type { BuilderStockItem } from '@/lib/builderStock';
-import { builderStockAddress } from '../../supabase/functions/_shared/builderStockAddress.pure';
+import { describesConfigurationOnly, stockItemSuburb, type BuilderStockItem } from '@/lib/builderStock';
+import {
+  builderStockAddress, parseBuilderAddressLine, splitAddressFields,
+} from '../../supabase/functions/_shared/builderStockAddress.pure';
 import type { PropertyListing } from '@/lib/airtable';
 
 /**
@@ -77,9 +79,24 @@ export function isPlottableBuilderStock(item: BuilderStockItem): boolean {
  * and the lot/unit qualifies it.
  */
 export function builderStockTitle(item: BuilderStockItem): string {
+  /*
+   * THE LOT AND THE DESIGN THE LINE STATES, where the columns are empty. A
+   * Notion list writes `Lot 52 Tweed Heads · Bravo 217 · Best Price` and fills
+   * no lot or design column, so all eight Sandpiper pins read the estate alone
+   * (measured 30 September 2026). The lot is taken only where the line NAMES
+   * it — a bare leading number is not one — and the design only where it is a
+   * name rather than a bed count.
+   */
+  const named = /^\s*(lot|unit)\s*\.?\s*([0-9]+[a-z]?)\b/i.exec(item.address_line ?? '');
+  const lot = item.lot_number || (named && named[1].toLowerCase() === 'lot' ? named[2] : null);
+  const unitNumber = item.unit_number || (named && named[1].toLowerCase() === 'unit' ? named[2] : null);
+  const designName = parseBuilderAddressLine(item.address_line).designName;
+  const design = (item as { house_design?: string | null }).house_design
+    || (designName && !describesConfigurationOnly(designName) ? designName : null);
   const unit = [
-    item.lot_number ? `Lot ${item.lot_number}` : null,
-    item.unit_number ? `Unit ${item.unit_number}` : null,
+    lot ? `Lot ${lot}` : null,
+    unitNumber ? `Unit ${unitNumber}` : null,
+    unitNumber || lot ? design : null,
   ]
     .filter(Boolean)
     .join(' · ');
@@ -87,7 +104,7 @@ export function builderStockTitle(item: BuilderStockItem): string {
   if (development && unit) return `${development} — ${unit}`;
   if (development) return development;
   if (unit) return unit;
-  return item.address_line || item.suburb || 'Builder stock';
+  return splitAddressFields(item.address_line).address || stockItemSuburb(item.suburb) || 'Builder stock';
 }
 
 const trimmed = (value: string | null | undefined): string | undefined => {
@@ -111,7 +128,7 @@ export function builderStockToMapListing(item: BuilderStockItem): PropertyListin
     id: builderStockMapId(item.id),
     title,
     price: typeof item.price === 'number' && item.price > 0 ? item.price : null,
-    location: trimmed(item.suburb) ?? null,
+    location: stockItemSuburb(item.suburb),
     bedrooms: item.bedrooms ?? null,
     bathrooms: item.bathrooms ?? null,
     propertyType: trimmed(item.property_type) ?? null,
@@ -133,9 +150,11 @@ export function builderStockToMapListing(item: BuilderStockItem): PropertyListin
     // `undefined` rather than becoming `null`: the projection's own rule is
     // that a missing field must not be a value, and the two are distinguished
     // by callers.
-    address: trimmed(composed.street) ?? trimmed(item.address_line),
+    // And where no street was parsed, the builder's address FIELD — never the
+    // design and tags a list writes after it, which no geocoder can place.
+    address: trimmed(composed.street) ?? trimmed(splitAddressFields(item.address_line).address),
     addressPrecision: composed.precision,
-    suburb: trimmed(composed.parsed.suburb) ?? trimmed(item.suburb),
+    suburb: trimmed(composed.parsed.suburb) ?? stockItemSuburb(item.suburb) ?? undefined,
     state: trimmed(composed.parsed.state) ?? trimmed(item.state),
     // 93 of 124 rows carry a postcode inside the text and 2 have it in the
     // column. The postcode is what stops `Donnybrook` resolving to WA.

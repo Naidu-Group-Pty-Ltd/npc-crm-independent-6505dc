@@ -18,6 +18,9 @@ import { render, screen } from '@testing-library/react';
 import { describe, expect, it } from 'vitest';
 
 import { Dialog, DialogContent, DialogTitle } from '../dialog';
+import {
+  AlertDialog, AlertDialogContent, AlertDialogDescription, AlertDialogTitle,
+} from '../alert-dialog';
 
 function classesFor(className?: string): string {
   render(
@@ -81,5 +84,22 @@ describe('the default dialog treatment', () => {
       const scrolls = /overflow-(?:y-)?(?:auto|scroll|hidden|clip)/.test(classes);
       expect(bounded && !scrolls, `bounded with no scroll: ${className}`).toBe(false);
     }
+  });
+});
+
+describe('the confirmation dialog', () => {
+  it('carried the same default until 30 Sep 2026, and scrolls inside its own height now', () => {
+    render(
+      <AlertDialog open>
+        <AlertDialogContent>
+          <AlertDialogTitle>Delete this record?</AlertDialogTitle>
+          <AlertDialogDescription>This cannot be undone.</AlertDialogDescription>
+        </AlertDialogContent>
+      </AlertDialog>,
+    );
+    const classes = screen.getByRole('alertdialog').className;
+    expect(classes).toContain('sm:max-h-[85dvh]');
+    expect(classes).toContain('sm:overflow-y-auto');
+    expect(classes).not.toContain('sm:overflow-visible');
   });
 });

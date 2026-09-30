@@ -192,7 +192,10 @@ function sectionRules(
     letter-spacing: 0.02em;
     line-height: 1.1;
     color: ${p.accentOnPaper};
-  }`;
+  }
+  /* Over a memo section's smaller title (MEMO_CHAPTER_CLASS) the figure
+     steps down with it, so it still announces rather than competes. */
+  .memo .chapter-header .chapter-no { font-size: ${pt(type.h3 * 0.8 * layer.fit.display)}; }`;
     case 'standfirst':
       return `
   /* Standfirst — the italic line under the heading carries the section. */

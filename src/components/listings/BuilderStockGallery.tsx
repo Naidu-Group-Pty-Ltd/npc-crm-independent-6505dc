@@ -69,7 +69,11 @@ export function BuilderStockGallery({
           image={current?.image ?? null}
           resolveUrl={marketplaceStockImageUrl}
           alt={count > 1 ? `${alt} — photograph ${selected + 1} of ${count}` : alt}
-          aspectClassName="aspect-[4/3] sm:aspect-[16/9]"
+          /* One frame at every width, the one `cardPictureFit` measures
+             against. At 4:3 on a phone the fit was still decided for 16:9,
+             so a picture chosen to fill the frame lost a third of its
+             width on exactly the screen with the least of it. */
+          aspectClassName="aspect-[16/9]"
           emptyLabel="No photograph from the builder yet"
         />
         {count > 1 ? (
@@ -123,7 +127,9 @@ export function BuilderStockGallery({
                     alt=""
                     loading="lazy"
                     referrerPolicy="no-referrer"
-                    className="h-full w-full object-cover"
+                    // Whole, like the picture it selects: a thumbnail that
+                    // crops is a different view of the same photograph.
+                    className="h-full w-full object-contain"
                   />
                 ) : null}
               </button>

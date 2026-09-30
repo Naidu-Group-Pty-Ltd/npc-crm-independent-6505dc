@@ -123,4 +123,19 @@ describe('the export dialog', () => {
     open({ conversationId: null });
     expect(screen.queryByRole('button', { name: /Choose template/ })).toBeNull();
   });
+
+  /**
+   * The owner's export printed "Prepared for: [Client Name]" and "Date:
+   * [Insert Date]" on its cover. A slot in the opening details is left off
+   * the page now; one inside a sentence prints as written, so the dialog says
+   * what is still to fill in before the PDF exists.
+   */
+  it('names the placeholders still to fill in, and says nothing when there are none', async () => {
+    open({ content: `${ANSWER}\n\nPrepared for [Client Name] on [Insert Date].` });
+    expect(await screen.findByText(/2 placeholders to fill in: \[Client Name\], \[Insert Date\]/)).toBeTruthy();
+    cleanup();
+    open();
+    await screen.findByLabelText('PDF report content editor');
+    expect(screen.queryByText(/to fill in/)).toBeNull();
+  });
 });

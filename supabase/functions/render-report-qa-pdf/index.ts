@@ -56,12 +56,23 @@
  *
  * If WeasyPrint fails, this fails. A silent downgrade to the raster path would
  * send somebody a document nobody chose.
+ *
+ * ## A preview draws a draft and keeps nothing (30 Sep 2026)
+ *
+ * The export dialog's Preview draws the document the export would make, in the
+ * chosen template, before anything is made (`preview: true`). It is the same
+ * record, brand, design and engine — and it writes nothing: no ledger row, no
+ * file, no brand-snapshot row, no attachment, no model call. The bytes go back
+ * in the answer. It may carry the editor's unsaved text (`draft`), drawn in
+ * place of the stored answer or write-up; a draft is an edit shown, so it takes
+ * the rights the edit's Save takes. The document somebody keeps is still drawn
+ * from the record, after the dialog has saved the edit.
  */
 import 'jsr:@supabase/functions-js/edge-runtime.d.ts';
 import { createClient } from 'jsr:@supabase/supabase-js@2';
 import { verifyAuthOrNativeUser } from '../_shared/auth.ts';
 import { actorIsSuperadmin, requireModulePermission } from '../_shared/authz.ts';
-import { resolveReportQaAccess } from '../_shared/reportQaAccess.ts';
+import { canWrite, resolveReportQaAccess } from '../_shared/reportQaAccess.ts';
 import { assertSafeRenderResources } from '../_shared/renderResourcePolicy.pure.ts';
 import { withRequestOrigin } from '../_shared/corsOrigin.ts';
 import { countPdfPagesAsync, renderPdf, weasyPrintConfig } from '../_shared/weasyprintClient.ts';
@@ -79,12 +90,15 @@ import { renderReportQaFromBrand } from '../_shared/reports/reportQa/render.pure
 import { resolveRequestedDesign } from '../_shared/reports/templateDesignRead.ts';
 import { enforceCsrf, csrfDenied } from "../_shared/csrfGuard.ts";
 import {
+  applyPreviewDraft,
   parseRenderRequest,
+  pdfToBase64,
   reportQaFileName,
   reportQaReference,
   reportQaStoragePath,
   SIGNED_URL_TTL_SECONDS,
   STORAGE_BUCKET,
+  type ReportQaPreviewResponse,
   type ReportQaRenderResponse,
 } from '../_shared/reports/reportQa/route.pure.ts';
 
@@ -314,6 +328,25 @@ const __corsWrappedHandler = (async (req: Request): Promise<Response> => {
       return json({ error: 'You do not have access to this conversation' }, 403);
     }
 
+    // A draft is an edit, drawn. Showing it takes the right to make it: the
+    // same two answers the editor's Save needs — this conversation may be
+    // written to, and Q&A may be edited. A preview of the record as it stands
+    // needs only what reading it needs.
+    if (request.draft !== null) {
+      if (!canWrite(access.role)) {
+        return json({ error: 'Previewing an edit needs permission to edit this conversation' }, 403);
+      }
+      const editing = await requireModulePermission(
+        supabase,
+        { userId: auth.userId, authMethod: auth.authMethod },
+        'report_qa',
+        'can_edit',
+      );
+      if (!editing.ok) {
+        return json({ error: editing.error || 'Report Q&A edit permission required' }, 403);
+      }
+    }
+
     const weasyprint = weasyPrintConfig((key) => Deno.env.get(key));
     if (!weasyprint) {
       // Checked before the reads: a misconfigured environment should say so, not
@@ -356,8 +389,13 @@ const __corsWrappedHandler = (async (req: Request): Promise<Response> => {
     }
     if (!conversationRes.data) return json({ error: 'not found' }, 404);
 
-    const conversation = conversationRes.data as Record<string, unknown>;
-    const messages = (messagesRes.data ?? []) as Record<string, unknown>[];
+    // A preview's draft stands in for the stored text it edits; nothing read is
+    // changed (`applyPreviewDraft`). Without a draft this is the record.
+    const { conversation, messages } = applyPreviewDraft(
+      conversationRes.data as Record<string, unknown>,
+      (messagesRes.data ?? []) as Record<string, unknown>[],
+      request,
+    );
 
     // ── The brand, frozen ───────────────────────────────────────────────────
 
@@ -455,20 +493,29 @@ const __corsWrappedHandler = (async (req: Request): Promise<Response> => {
       subject: request.subject,
       messageId: request.messageId,
       preparedOn: now,
+      // The firm's own names. An answer asked to read as the firm's report
+      // opens on the firm's name as a heading; that is its letterhead, which
+      // the masthead already carries, and never the document's title. Not the
+      // configured preparer, who may be a person the cover should name.
+      issuerNames: [snapshot.company.name, snapshot.company.tradingName],
     });
     // A refusal here is about what the record holds, not about this function —
     // "no structured report stored" is something the caller can act on.
     if (!built.ok) return json({ error: built.error }, 400);
     const document = built.document;
 
-    const { data: brandSnapshotId } = await supabase.rpc('upsert_report_brand_snapshot', {
-      _fingerprint: snapshot.fingerprint,
-      _snapshot_version: REPORT_SNAPSHOT_VERSION,
-      _payload: snapshot,
-      _company_name: snapshot.company.name,
-      _brand_hex: snapshot.brandHex,
-      _source_whitelabel_setting_id: snapshot.source.whitelabelSettingId,
-    });
+    // The frozen brand is recorded against a document somebody keeps, so a
+    // preview records none.
+    const { data: brandSnapshotId } = request.preview
+      ? { data: null }
+      : await supabase.rpc('upsert_report_brand_snapshot', {
+        _fingerprint: snapshot.fingerprint,
+        _snapshot_version: REPORT_SNAPSHOT_VERSION,
+        _payload: snapshot,
+        _company_name: snapshot.company.name,
+        _brand_hex: snapshot.brandHex,
+        _source_whitelabel_setting_id: snapshot.source.whitelabelSettingId,
+      });
 
     // The tenant's own cover asset and nowhere else. Three of the four legacy
     // generators hardcode `/templates/npc-qa-cover.jpg`, and the fourth copies
@@ -508,9 +555,46 @@ const __corsWrappedHandler = (async (req: Request): Promise<Response> => {
     // boundary is where the check belongs.
     assertSafeRenderResources(rendered.html, Deno.env.get('SUPABASE_URL') || '');
 
+    const fileName = reportQaFileName(document.meta.title, request.subject, now);
+
+    // ── Preview: draw it and hand it back ───────────────────────────────────
+    //
+    // The same record, brand, design and engine as the document the export
+    // keeps — which is the whole point: the export dialog draws these pages so
+    // the person sees the chosen template before anything is made. And it
+    // keeps nothing: no ledger row, no file, no signed link, no attachment,
+    // and (above) no brand-snapshot row and no model call.
+    if (request.preview) {
+      const pdf = await renderPdf(weasyprint, rendered.html, {
+        variant: 'pdf/ua-1',
+        tagged: true,
+        provenance: {
+          format: 'report-qa',
+          renderId: null,
+          sourceId: request.messageId,
+          renderedAt: now,
+        },
+      });
+      const preview: ReportQaPreviewResponse = {
+        preview: true,
+        pdf: pdfToBase64(pdf),
+        fileName,
+        bytes: pdf.length,
+        pageCount: await countPdfPagesAsync(pdf),
+        brandGaps: rendered.gaps,
+        sections: rendered.sections,
+        subject: request.subject,
+        turnCount: document.meta.turnCount,
+        turnsShown: rendered.turnsShown,
+        truncated: rendered.truncated,
+        durationMs: Date.now() - started,
+        design: designEcho,
+      };
+      return json(preview);
+    }
+
     // ── Render, store, sign ─────────────────────────────────────────────────
 
-    const fileName = reportQaFileName(document.meta.title, request.subject, now);
     const path = reportQaStoragePath(id, fileName, now, crypto.randomUUID());
 
     const { data: renderRow } = await supabase

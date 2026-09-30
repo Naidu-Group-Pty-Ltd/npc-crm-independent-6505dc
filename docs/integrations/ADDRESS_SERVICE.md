@@ -324,12 +324,54 @@ lettered prefix on its number (`L1 Ikartuka Terrace`, `M508 Longs Hill Road`),
 which the matcher does not read as a street number. The run then failed on the
 index's lock files, as §5 records.
 
+**Measured by the third run (24 Sep 2026, after the lock fix).** With the
+index's seven lock files deleted in its own layer (listed in the build log),
+the image was healthy **10 s** after it started in the runner. Every door
+answered as §5 describes. The chain proof ran against the register built from
+the real release, and **every one of the owner's eight report addresses came
+back from G-NAF at the address itself**:
+
+| Address | Matched | G-NAF's word |
+|---|---|---|
+| 1408/5 SECOND AVE, Blacktown NSW 2148 | 5 Second Avenue, Blacktown NSW 2148 (the building) | `PC` |
+| 93 Schofields Farm Road (tallawong), Schofields NSW 2762 | 93 Schofields Farm Road, **Tallawong** NSW 2762 | `PC` |
+| 60 Lawley Street, Spalding WA 6530 | 60 Lawley Street, Spalding WA 6530 | `PC` |
+| 9 Hollow Street, Golden Square VIC 3555 | 9 Hollow Street, Golden Square VIC 3555 | `FCS` |
+| 97 Poole Road, Kellyville NSW 2155 | 97 Poole Road, Kellyville NSW 2155 | `PC` |
+| 18 Annabelle Crescent, Kellyville NSW 2155 | 18 Annabelle Crescent, Kellyville NSW 2155 | `PC` |
+| 262 Pallas Street, Maryborough QLD 4650 | 262 Pallas Street, Maryborough QLD 4650 | `PC` |
+| 291 Stone Mason Drive, Kellyville NSW 2155 | 291 Stone Mason Drive, Kellyville NSW 2155 | `BC` |
+
+The one test address that is not a report, **10 Leakes Road, Truganina VIC
+3029**, is not in G-NAF (*"no number 10 on leakes road in this postal area"*),
+and Photon placed it on the street, which the chain reports as `street`.
+
+**Deployed (24 Sep 2026, run 36009586032, on the owner's approval).** The
+dispatch rebuilt and re-proved the image from `main` and created the app
+`aurixa-address-service` in the `personal` organisation. It pushed that image
+and deployed one machine (`78111d62a60168`, `syd`) at 14:15 UTC. The door
+checks and the chain proof then passed against `https://aurixa-address-service.fly.dev`
+with the same answers as the runner. Timings, measured from a GitHub runner in
+the United States:
+
+- G-NAF answered in 2 ms to 1.4 s (the manifest's first read is the slow one);
+- the first Photon answer on the new machine took **7.1 s**. That is past the
+  chain's 6 s allowance for a provider, so the first lookups after a restart
+  can time out and fall to the next provider until the page cache warms.
+
+The repoint wrote `GEOCODER_GNAF_URL`, `GEOCODER_PHOTON_URL` and
+`AUTOCOMPLETE_PHOTON_URL`. The last was unset, so the address field now asks
+this Photon too. There was no `GEOCODER_PROVIDERS` warning: the project sets
+no explicit order, so the default (`gnaf` first) applies.
+
 **Still unverified:**
 
-- Photon's start and its first answers on the **real** index. The CI run after
-  the lock fix decides it.
+- A **report** placed by the register in production. The first regeneration
+  after 14:21 UTC decides it. Look for `placed at address precision by gnaf`
+  in `location-intelligence-service`.
+- Answer times from the edge functions, which run near the machine, rather
+  than from a runner abroad; and whether the first Photon lookups after a
+  restart fit inside 6 s.
 - Whether 2 GB of memory holds the page cache for a 2.4 GB index comfortably.
   The first week of answer times decides whether it should be 4 GB.
 - Fly's **`syd` price** after 1 Oct 2026.
-- How many of the owner's addresses the register holds. The chain proof's
-  table is the answer.

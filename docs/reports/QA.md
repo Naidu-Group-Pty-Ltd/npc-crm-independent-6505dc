@@ -657,3 +657,333 @@ the standard layout, the document went from 11 sheets to 7–8. Three fixes:
   designs. It is now bound to the block before it (`qa-keep-tail`), and only
   when it is short. `break-before: avoid` changed nothing in WeasyPrint 69.0; a
   wrapper that may not break inside is honoured.
+
+## 14 · The adviser's report, not an export of a chat (30 Sep 2026)
+
+The owner exported one Hub answer in two designs — Institutional Research ·
+Exhibit (`ir-01`) and Dark Executive · Obsidian (`de-01`) — and asked for the
+layout to be finished: smaller subheadings, a flow that reads as one document,
+and whatever else a careful reader would find. Everything the answer said had
+reached the page. How it was set had not been designed for a report the adviser
+hands over.
+
+Both files were reproduced exactly before anything changed: the same composer
+and the pinned engine (WeasyPrint 69.0, the service's own render options) set
+every heading at the position the delivered PDFs carry. The answer's Markdown
+was reconstructed from the delivered PDF — heading levels from the sizes the
+renderer set for each level — which makes it a measuring fixture, not the
+stored row.
+
+### What the export showed
+
+1. **The firm's name was the title.** The answer opened on
+   `# NAIDU PROPERTY CONSULTING SERVICES`, then
+   `## Strategic Investment Acquisition Report`. The first heading won, so the
+   cover, the running foot and the file were all named after the issuer.
+2. **The first facts were about the chat.** "Document: Single answer" and
+   "Exchanges: 3" led the cover; the answer's own "Investment Budget" and
+   "Purpose" were printed inside the body, beside "Prepared for: [Client Name]"
+   and "Date: [Insert Date]".
+3. **The first sentence was the machine room's.** "One answer from an
+   Intelligence Hub conversation grounded in no attached reports. Answers came
+   from report_qa." — `report_qa` is the Hub's own agent key, which is what
+   `model_provider` records.
+4. **The instructions were printed.** An "Asked" callout carried three sentences
+   typed to the Hub — "make it into a very forefronting property consulting
+   reporting manner" — above the report they produced.
+5. **Two numberings.** The contents read `01  1. EXECUTIVE SUMMARY`, and the
+   answer wrote `## 1.` a level deeper than `# 2.` to `# 10.`.
+6. **Chapter-sized section titles.** 31pt titles, each under a 13pt
+   "SECTION 02", stood over 12.8pt subheads — a 2.4× step with nothing
+   between, and a heading block a third of a page tall between sections.
+7. **Labels shouting.** "STRATEGIC RATIONALE: BALANCED GROWTH, RENTAL DEMAND AND
+   HOUSE ACCESSIBILITY" set in two lines of tracked capitals.
+8. **A step's label ran into its sentence.** `3. **Select two priority
+   markets**` and the line under it printed as one line.
+9. **Tables split to a row.** A five-row table broke three and two; one row of
+   an eight-row table sat alone under its head at the foot of a page.
+10. **The answer's own disclaimer at body size**, as though it were analysis.
+11. **The masthead wrapped at the foot of every page** — "NAIDU PROPERTY
+    CONSULTING / SERVICES".
+
+### What the page does now
+
+**The title block is read, and every part of it placed**
+(`readTitleBlock`, `documentIdentity.pure.ts`).
+
+- A first heading that names the issuer is the **letterhead**. The masthead
+  already carries it, so it is not printed again. The route passes the firm's
+  names from the brand snapshot (`issuerNames`); nothing guesses a letterhead
+  from the page.
+- The heading under it is the **title**, and a deeper one the **subtitle** —
+  but only where front matter or a rule closes the block. A heading with prose
+  straight under it heads that prose.
+- The **front matter** is placed. "Prepared for" and "Prepared by" go on the
+  cover, and the firm's own name as the preparer is dropped. A date is dropped,
+  because the cover carries "Prepared on". A slot (`[Client Name]`, `TBC`, a
+  dash) is omitted rather than printed. Every other fact becomes the brief at
+  the head of section 01 (`BRIEF_CLASS`), labels on one line.
+- A **section's name is not a document's title** (`isGenericSectionHeading`).
+  An answer that opens on "## Executive summary" keeps it as its first section.
+  The cover takes the conversation's title, which the Hub writes after the
+  first exchange. The section's name stands only where nothing better exists,
+  and ahead of the question.
+
+**Nothing about the chat reaches a finished answer.**
+
+- An `answer` or `structured` document has no framing sentence (`narrativeFor`).
+- It has no question above it.
+- Its cover facts are the report's: Prepared on, for, by, and the reports it
+  draws on.
+- A transcript keeps one sentence ("… as it happened — its one exchange").
+- No document prints which system answered. The provenance line keeps
+  "edited before export", the source count and the date, and so does the
+  master's projection, which restates it.
+
+**One numbering, one level** (`planFromMarkdown(…, { continuous: true })`).
+
+- A numbered heading written one level deeper, beside a consecutive sequence at
+  the chapter level, is promoted into it.
+- The number is taken off the title only where the numbers run consecutively
+  from 1 in step with the sections themselves. The design system numbers them.
+
+**A memo section, not a chapter** (`MEMO_CHAPTER_CLASS`, all three subjects).
+
+- The title is one modular step above the section's subheads
+  (`MEMO_TITLE_RATIO` = 0.62 of a chapter title): 19.3pt over 12.8pt in
+  Institutional Research, 15.7pt over 10.4pt in Dark Executive.
+- The drop that seats a chapter title low on its page is a small lead instead.
+
+**Labels, steps and caveats.**
+
+- An `h4` longer than `LONG_LABEL_CHARS` (48) is set as a sentence
+  (`SUBHEAD_CLASS`): same element, same outline level.
+- A line that is only a bold label keeps its line break (`labelLineBreaks`).
+  That is a Markdown option, off by default, so every other format is
+  byte-identical.
+- The answer's closing caveat is set as fine print under a hairline
+  (`finePrintStart`). It is read from the heading alone — the last heading, and
+  only when it names a disclaimer or warning — and its words are never touched.
+
+**A table moves whole only when it is short in HEIGHT** (`presentedBlock`).
+
+- Row-level keeps do nothing once rows are unbreakable in WeasyPrint 69.0. So a
+  table of three rows or fewer, or one estimated at `KEEP_WHOLE_TABLE_LINES`
+  (7) lines or fewer, is kept whole.
+- Anything longer is three row groups (`groupTableRows`). The first row may not
+  be followed by a break, and the last two may not break inside. Undisplayed
+  parity rows keep the striping, and `LAST_ROW_CELL` reads the table's own last
+  group, so the ledger style's rules stay between groups.
+- The first cut asked for six rows and 1,200 characters. Measured across the
+  fifty designs, that admitted a five-row, four-column table standing 35–47% of
+  a page tall, so a third of a page stood empty in front of it on ten designs.
+- `estimatedTableLines` wraps each cell at its share of `TABLE_MEASURE_CHARS`
+  (100), which was calibrated at ~20px per estimated line against every table
+  of the owner's answer. That bounds the gap a whole table can leave to about a
+  quarter of a page.
+
+**The page furniture.**
+
+- The masthead's tracking steps down until it fits its half of the foot
+  (`footerMastheadTracking`). A masthead that fits at the widest is
+  byte-identical.
+- The running head is one line (`runningHeadFor`, 72 characters, cut at a word).
+  A transcript's section title is its question clipped at a word to 90
+  characters (`turnTitle`). The full question is printed under it only where
+  it was clipped, so a question is printed once.
+
+**Before export.** Both editors name the slots still in the text
+(`PlaceholderNotice`, from `findPlaceholders`). A slot in a sentence cannot be
+taken out without rewording it. The editors' own filenames (Markdown and the
+no-conversation layout) are read with the issuer's name too.
+
+### Measured
+
+The owner's answer was drawn in all fifty catalogue designs and the standard
+layout, before and after, and measured from WeasyPrint's own box tree (CSS px;
+content height 956px):
+
+| | before | after |
+| --- | ---: | ---: |
+| Pages across the 51 documents | 866 | 812 |
+| Table split leaving one row alone at a page foot | 61 | 0 |
+| Table split carrying one row alone onto a page | 10 | 0 |
+| Tables split at all | 279 | 27 (each with ≥ 2 rows on both sides, head repeated) |
+| Running-foot boxes set on two lines | 614 | 0 |
+| Body pages ending more than 25% short | 13 | 0 |
+| Worst body-page gap | 28.5% | 24.4% |
+| Lines past the measure | 0 | 0 |
+
+A kept-whole table still moves to the next page when it does not fit, and the
+body pages ending 15–25% short rose from 29 to 74. That is the price of never
+stranding a row, and it is bounded: the worst is the acquisition-structure
+table moving whole, and nothing leaves a quarter page.
+
+The transcript, in all 51 designs, sets no running head or foot on two lines.
+Four designs were sampled before the change, and between them they carried 152
+wrapped boxes. The structured write-up carries no stranded row, and its foot
+wraps went from 45 to 0 across the four designs sampled.
+
+### Not verified here
+
+- **PDF/UA-1 validation.** veraPDF is not installed in the environment this was
+  built in. The structure is unchanged in kind: `h4.subhead` is still an `h4`,
+  and a parity row has no box, no tag and no text. The claim still rests on CI.
+- **The deployed route.** `render-report-qa-pdf` changes with the edge deploy
+  and the editors with the frontend publish. The proof is the owner re-exporting
+  the same answer in both designs.
+- **`deno check` of the function itself.** The environment cannot reach
+  `deno.land`. The ten shared modules it imports were checked, and the function
+  is checked by CI's edge gate.
+
+## 15 · The Preview is the document (30 Sep 2026)
+
+The owner sent a screenshot of the export dialog, open on the Dark Executive ·
+Obsidian design, and asked to see "the entirety of how the document's layout
+will be" in the chosen template, and to edit it there before downloading. The
+Preview tab used to render the editor's Markdown as a web page: the app's
+typeface, no cover, no contents page, no running head, none of the template.
+Whichever design was chosen, what was previewed was never what was exported.
+
+### What it is now
+
+- **The Preview draws every page of the export**: cover, contents, each
+  section and the closing page. It uses the same route
+  (`render-report-qa-pdf`), the same record, the same brand snapshot and the
+  same design resolution (`standardDesignFor('qa')`) as Export PDF. Nothing on
+  the Preview's side knows about templates, so it is right for all fifty
+  catalogue designs and the standard layout by construction.
+- **A preview keeps nothing** (`preview: true`).
+  - It writes no `report_qa_renders` row, stores no file, signs no link and
+    attaches nothing. `generateIfMissing` and `attachToConversation` are
+    forced off, so it spends no tokens either.
+  - It skips the frozen brand snapshot, because a snapshot records a document
+    that was kept.
+  - The PDF comes back in the answer as base64: 103–151 KB across the 54
+    renders measured in §14.
+  - The browser draws it with the build-pinned PDF.js, one page at a time,
+    as images (`PdfPageStack`).
+- **An unsaved edit is previewed as it would print** (`draft`). The route puts
+  the draft where Save would write it — the answer's `edited_content`, or the
+  conversation's `structured_report` — on its own copy of what it read, and
+  draws that (`applyPreviewDraft`). Nothing read is changed.
+- **A draft needs the same rights as the edit it shows.**
+  - Only a writer with `report_qa` `can_edit` may send one; anyone else gets
+    403.
+  - A stored record can be previewed by anyone who can read it, so the editors
+    send their text only when it differs from what is stored.
+  - The write-up editor counts text as stored only once a write has answered,
+    not when it is generated. The generated text is cached in the background,
+    and until that write returns, the text is sent as a draft.
+- **Bounds** (`parseRenderRequest`): a draft is accepted only in a preview,
+  never for a transcript, never empty, and at most
+  `MAX_PREVIEW_DRAFT_CHARS` (150,000) characters.
+
+### How it behaves
+
+- **It is drawn when useful, never on a keystroke** (`useHubDocumentPreview`):
+  - the first time the Preview is shown;
+  - when the chosen template changes while it is shown;
+  - when it comes back into view after an edit.
+- An edit made with the pages on screen (Side by side) marks them "Edited
+  since this preview". The person redraws with the button, or with Ctrl/⌘ +
+  Enter in the editor.
+- A failure is shown with Try again and is never retried in a loop.
+- Updating keeps the old pages on screen until the new document's first page
+  is drawn.
+- **Page by page, or every page at a glance.** The overview sets the whole
+  document side by side (`PdfPageStack` `layout: 'grid'`), which is where a
+  section's start, a page left short and the flow of the design are seen at
+  once. A thumbnail opens its page in place.
+- **A page names every section it carries** (`previewSections.ts`).
+  - The document's own bookmarks say where each section starts: the page,
+    and how far down it (`/XYZ`).
+  - A page whose top ends one section and whose middle opens the next names
+    both.
+  - Every bookmark ends what came before it, so the closing page is nobody's
+    section.
+  - Choosing a section lands on its heading, not the top of its page.
+- **Each section leads back to its words.**
+  - "Edit this section" selects the section's heading in the editor
+    (`findSectionHeading`). It reads a heading by the parser's rules: `#` and
+    underlined headings, emphasis, links and closing hashes, with the
+    section's own number optional and a clipped title matched by how it
+    begins.
+  - The first section, when it is the opening before any heading, opens the
+    text at its start.
+- **Side by side is a desktop's view.** Below 1024px the tab is not drawn at
+  all (`useBreakpoint`), because the app's phone rule sets every
+  `[role="tab"]` to `display: flex` and so beats a `hidden` class. The zoom
+  steps leave the phone toolbar, which pinches instead.
+- **A template the route did not use is said on the Preview**, in the words
+  the export would use (`DESIGN_NOT_USED_TITLE`).
+- **The rendered text is still there**:
+  - for an answer with no conversation behind it, which the route cannot
+    read;
+  - as "Show the text instead" when the service cannot draw, with a way back
+    to the pages.
+
+### Two rules
+
+- **A preview is never assembled in the browser.** A second renderer is how
+  what you see and what you get come to differ. There is one route and one
+  engine.
+- **An older route's answer is never shown as a preview.** A route deployed
+  before previews ignores `preview` and makes an ordinary export of the
+  STORED record. Showing that would present the words the person replaced as
+  the words they typed, so the client refuses it and says what is missing
+  (`PREVIEW_UNSUPPORTED_MESSAGE`).
+
+### Deploy order
+
+The edge function ships first, then the frontend. Merging deploys the edge
+functions, and the frontend is published afterwards, so no preview reaches the
+old route. If one did, the old route reads `attachToConversation` and
+`generateIfMissing` as false unless sent `true`. It would neither attach nor
+spend tokens, but it would store an ordinary export: a ledger row and a file.
+
+### What the tests and the browser found
+
+- **The section jump did nothing.** Radix mounts a tab's content one render
+  after the tab changes, so the effect that applied the selection ran while
+  the textarea did not exist, and it never ran again. The textareas are now
+  held in state rather than refs, so the selection is applied once the
+  textarea is really there. `MessageReportEditorPreview.spec.tsx` drives it
+  through the real tabs.
+- **A page was credited to the wrong section.** The real dialog in Chromium
+  showed it, drawing the owner's answer through the production composer and
+  WeasyPrint 69.0. Page 9 opens on the end of the suburb shortlist, and the
+  financial framework starts halfway down it. The caption and the list named
+  only the framework, so "Edit this section" beside the shortlist's own table
+  led to the wrong words. `previewSections.spec.ts` pins the rule on that
+  document's bookmarks.
+- **A phone showed a clipped "Side by side" tab**, and the preview toolbar ran
+  off the sheet.
+- **The phone sheet sat 32px left of centre.** That was this dialog's own
+  width classes on the shared bottom sheet, and it predates the preview;
+  `mx-auto` centres it at every width.
+
+Measured in that browser, against a local render rather than the service:
+
+- 16 pages were on screen 9–10 seconds after the Preview was opened, the local
+  composer and engine run included.
+- The design was redrawn by itself on a change of template.
+- An edit was marked stale, and Ctrl + Enter redrew it.
+- There was no console error.
+- No request to Supabase was attempted: the harness blocked them and counted
+  none.
+
+Tests: `preview.spec.ts` (the route's rules, and the order of the preview's
+return before every write), `requestReportQaPreview.spec.ts`,
+`useHubDocumentPreview.spec.tsx`, `MessageReportEditorPreview.spec.tsx`,
+`ConversationReportEditorPreview.spec.tsx`, `previewSections.spec.ts` and
+`sectionHeading.spec.ts`.
+
+### Not verified here
+
+- **The deployed route answering a preview.** That needs the edge deploy. The
+  proof is effect-based: after the deploy and the publish, the Preview draws in
+  the chosen design, and neither Generated Reports nor the conversation gains a
+  file.
+- **Draw time against the deployed service.** A preview costs one engine
+  render, the same as an export.

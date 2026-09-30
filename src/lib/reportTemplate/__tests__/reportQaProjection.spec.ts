@@ -233,7 +233,7 @@ describe('what the legacy document says, restated', () => {
 });
 
 describe('provenance — the line every exporter dropped', () => {
-  it('composes provider, sources and date exactly as the legacy renders them', () => {
+  it('composes sources and date exactly as the flowing document renders them — and never the system that answered', () => {
     const { qa } = projectReportQa(doc({
       turns: [turn(1, {
         citations: [
@@ -245,7 +245,10 @@ describe('provenance — the line every exporter dropped', () => {
     // The date half comes from the renderer's own exported `formatReportDate`,
     // so a drift between the restated formatter and the real one fails here
     // rather than on a page.
-    expect(qa.provenanceLine).toBe(`openai · gpt-5 — 2 sources — ${formatReportDate('2026-08-01T00:00:00.000Z')}`);
+    // `model_provider` holds the Hub's agent key and `model_version` a vendor's
+    // model id — neither is printed (render.pure.ts `provenance`, 30 Sep 2026).
+    expect(qa.provenanceLine).toBe(`2 sources — ${formatReportDate('2026-08-01T00:00:00.000Z')}`);
+    expect(String(qa.provenanceLine)).not.toContain('openai');
     expect((qa.turns as any[])[0].provenanceLine).toBe(qa.provenanceLine);
   });
 
