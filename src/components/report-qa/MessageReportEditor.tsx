@@ -12,7 +12,8 @@ import {
   Eye, 
   Type, 
   FileText, 
-  RefreshCw 
+  RefreshCw,
+  Columns2,
 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { invokeSecureFunction } from '@/lib/secureInvoke';
@@ -30,6 +31,13 @@ import {
 
 import { ChooseTemplateButton, chosenTemplateLine } from '@/components/reports/ChooseTemplateButton';
 import { useReportQaDelivery } from './useReportQaDelivery';
+import { useBreakpoint } from '@/hooks/use-breakpoint';
+import { cn } from '@/lib/utils';
+import { PlaceholderNotice } from './PlaceholderNotice';
+import { HubDocumentPreview } from './HubDocumentPreview';
+import { useHubDocumentPreview } from './useHubDocumentPreview';
+import { revealInTextarea } from './revealInTextarea';
+import { findSectionHeading } from '@/lib/reports/reportQa/sections.pure';
 
 /** Today as `YYYY-MM-DD` on the reader's own calendar, for a filename. */
 const localIsoDate = () => {
@@ -64,6 +72,11 @@ export function MessageReportEditor({
   const [reportContent, setReportContent] = useState('');
   const [isExporting, setIsExporting] = useState(false);
   const [activeTab, setActiveTab] = useState('edit');
+  // The editor beside its pages needs a desktop's width. Below it the tab is
+  // not drawn at all — a class that hides it loses to the app's phone rule
+  // setting every tab to flex — and the side-by-side view reads as the pages.
+  const sideBySide = useBreakpoint() === 'desktop';
+  const tab = !sideBySide && activeTab === 'split' ? 'preview' : activeTab;
   const [hasEdited, setHasEdited] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const { toast } = useToast();
@@ -72,9 +85,68 @@ export function MessageReportEditor({
   // template chosen beside the button (`ChooseTemplateButton`).
   const typeset = useReportQaDelivery({ conversationId: conversationId ?? null, messageId });
   const templateChoice = useReportTemplateSelection('qa');
+  // The Preview is the document itself, in the chosen template, drawn by the
+  // service the export uses (`HubDocumentPreview`). The rendered text is kept
+  // for an answer with no conversation behind it, and as the way out when the
+  // service cannot draw.
+  const [showTextPreview, setShowTextPreview] = useState(false);
+  const templateKey = templateChoice.state
+    ? `${templateChoice.state.status}:${templateChoice.state.selectedTemplateId ?? ''}`
+    : '';
+  // Nothing is drawn while the choice is still loading — it would be drawn
+  // twice, once in the house design — but a choice that could not be read
+  // draws as the export would: the export resolves it again for itself.
+  const documentPreview = useHubDocumentPreview({
+    conversationId: conversationId ?? null,
+    subject: 'answer',
+    messageId,
+    text: reportContent,
+    edited: hasEdited,
+    templateKey,
+    visible: isOpen && (tab === 'preview' || tab === 'split') && !templateChoice.isLoading && !showTextPreview,
+  });
+  // Held as state, not refs: a tab's content mounts a render after the tab
+  // changes, so the selection is applied once the textarea is really there.
+  const [editArea, setEditArea] = useState<HTMLTextAreaElement | null>(null);
+  const [splitArea, setSplitArea] = useState<HTMLTextAreaElement | null>(null);
+  // What "Edit this section" asked to select, applied once the textarea is
+  // there; the counter is what asks.
+  const pendingSelection = useRef<{ start: number; end: number } | null>(null);
+  const [selectionAsked, setSelectionAsked] = useState(0);
+  // From a page of the preview to the words that made it.
+  const editSection = (title: string, index: number) => {
+    const at = findSectionHeading(reportContent, title);
+    // The first section may be the opening before any heading, which starts
+    // where the text does.
+    if (!at && index > 0) {
+      toast({ title: 'That section has no heading in the text', description: 'Find it in the editor by its words.' });
+      return;
+    }
+    if (tab !== 'split') setActiveTab('edit');
+    pendingSelection.current = at ?? { start: 0, end: 0 };
+    setSelectionAsked((n) => n + 1);
+  };
+  useEffect(() => {
+    const wanted = pendingSelection.current;
+    if (!wanted) return;
+    const textarea = tab === 'split' ? splitArea : editArea;
+    if (!textarea) return;
+    revealInTextarea(textarea, wanted.start, wanted.end);
+    pendingSelection.current = null;
+  }, [selectionAsked, tab, editArea, splitArea]);
+  // Ctrl/⌘ + Enter redraws the preview from the editor.
+  const onEditorKeyDown = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    if (event.key === 'Enter' && (event.ctrlKey || event.metaKey) && documentPreview.available) {
+      event.preventDefault();
+      void documentPreview.refresh();
+    }
+  };
   // What this answer is about — its own heading, else the reports it drew on —
-  // for the filename and the legacy cover (`documentIdentity.pure.ts`).
-  const topic = () => hubDocumentTopic({ body: reportContent, conversationTitle: reportNames.join(', ') });
+  // for the filename and the legacy cover (`documentIdentity.pure.ts`). Given
+  // the issuer's name, a first heading that is the firm's own reads as the
+  // letterhead it is and the title under it names the file.
+  const topic = (issuerNames: readonly string[] = []) =>
+    hubDocumentTopic({ body: reportContent, conversationTitle: reportNames.join(', '), issuerNames });
 
   // Load content: use persisted edited_content if available, otherwise use original
   useEffect(() => {
@@ -239,7 +311,7 @@ export function MessageReportEditor({
           issuerName: legacyBrand.issuer.name,
           mark: legacyBrand.mark,
           documentTitle: HUB_DOCUMENT_NAME,
-          subject: topic() || reportNames.join(', ') || null,
+          subject: topic([contact.company_name]) || reportNames.join(', ') || null,
           standfirst: new Date().toLocaleDateString('en-AU', { day: 'numeric', month: 'long', year: 'numeric' }),
           family: legacyBrand.family,
         });
@@ -612,7 +684,7 @@ export function MessageReportEditor({
 
       // `Intelligence Hub Summary - <topic> - 28 Sep 2026.pdf` — the name the
       // typeset route gives the same answer, so the two sort together.
-      const fileName = hubDocumentFileName(topic(), localIsoDate());
+      const fileName = hubDocumentFileName(topic([contact.company_name]), localIsoDate());
 
       doc.save(fileName);
 
@@ -632,12 +704,15 @@ export function MessageReportEditor({
     }
   };
 
-  const exportAsMarkdown = () => {
+  const exportAsMarkdown = async () => {
+    // Read on the click rather than on mount: an editor is mounted for every
+    // message, and only this download needs the issuer's name.
+    const { contactDetails } = await fetchGlobalReportSettings();
     const blob = new Blob([reportContent], { type: 'text/markdown' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = hubDocumentFileName(topic(), localIsoDate(), { extension: 'md' });
+    a.download = hubDocumentFileName(topic([contactDetails.company_name]), localIsoDate(), { extension: 'md' });
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -708,7 +783,7 @@ export function MessageReportEditor({
 
   return (
     <Dialog open={isOpen} onOpenChange={handleClose}>
-      <DialogContent className="flex h-[min(92dvh,calc(100dvh-2rem))] max-h-[calc(100dvh-2rem)] w-[min(92vw,1500px)] max-w-[calc(100vw-2rem)] flex-col gap-0 overflow-hidden p-0 sm:max-w-[min(92vw,1500px)] sm:p-0 sm:max-h-[calc(100dvh-3rem)] sm:h-[min(92dvh,calc(100dvh-3rem))]">
+      <DialogContent className="mx-auto flex h-[min(92dvh,calc(100dvh-2rem))] max-h-[calc(100dvh-2rem)] w-[min(92vw,1500px)] max-w-[calc(100vw-2rem)] flex-col gap-0 overflow-hidden p-0 sm:max-w-[min(92vw,1500px)] sm:p-0 sm:max-h-[calc(100dvh-3rem)] sm:h-[min(92dvh,calc(100dvh-3rem))]">
         <DialogHeader className="flex-shrink-0 px-5 pb-3 pt-5 pr-14 sm:px-6 sm:pb-4 sm:pt-6 sm:pr-16">
           <DialogTitle className="flex items-center gap-2">
             <FileText className="h-5 w-5" />
@@ -720,8 +795,8 @@ export function MessageReportEditor({
         </DialogHeader>
 
         <div className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden px-5 sm:px-6">
-          <Tabs value={activeTab} onValueChange={setActiveTab} className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
-            <TabsList className="grid w-full flex-shrink-0 grid-cols-2">
+          <Tabs value={tab} onValueChange={setActiveTab} className="flex min-h-0 min-w-0 flex-1 flex-col overflow-hidden">
+            <TabsList className={cn('grid w-full flex-shrink-0', sideBySide ? 'grid-cols-3' : 'grid-cols-2')}>
               <TabsTrigger value="edit" className="flex items-center gap-2">
                 <Type className="h-4 w-4" />
                 Edit Content
@@ -730,26 +805,83 @@ export function MessageReportEditor({
                 <Eye className="h-4 w-4" />
                 Preview
               </TabsTrigger>
+              {/* The two together, on a screen wide enough to hold both. */}
+              {sideBySide && (
+                <TabsTrigger value="split" className="flex items-center gap-2">
+                  <Columns2 className="h-4 w-4" />
+                  Side by side
+                </TabsTrigger>
+              )}
             </TabsList>
 
             <TabsContent value="edit" className="mt-4 min-h-0 min-w-0 flex-1 overflow-hidden data-[state=active]:flex data-[state=active]:flex-col">
               <Textarea
+                ref={setEditArea}
                 aria-label="PDF report content editor"
                 value={reportContent}
                 onChange={(e) => handleContentChange(e.target.value)}
+                onKeyDown={onEditorKeyDown}
                 placeholder="Message content will appear here..."
                 className="h-full min-h-0 w-full min-w-0 resize-none overflow-y-auto whitespace-pre-wrap break-words rounded-md p-4 font-mono text-sm leading-relaxed focus-visible:ring-1 sm:p-5 sm:text-[15px]"
               />
             </TabsContent>
 
             <TabsContent value="preview" className="mt-4 min-h-0 min-w-0 flex-1 overflow-hidden data-[state=active]:flex data-[state=active]:flex-col">
-              <div aria-label="PDF report preview" className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden rounded-md border bg-muted/20 p-4 sm:p-6">
-                <div className="mx-auto w-full max-w-5xl min-w-0 rounded-md bg-background p-5 shadow-sm sm:p-8 [&_*]:max-w-full [&_a]:break-words [&_td]:break-words [&_th]:break-words">
-                  <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
-                    {reportContent}
-                  </ReactMarkdown>
+              {documentPreview.available && !showTextPreview ? (
+                <HubDocumentPreview
+                  state={documentPreview}
+                  templateLine={chosenTemplateLine(templateChoice.state)}
+                  onEditSection={editSection}
+                  onShowText={() => setShowTextPreview(true)}
+                />
+              ) : (
+                <div className="flex min-h-0 flex-1 flex-col gap-2">
+                  {documentPreview.available && (
+                    <button
+                      type="button"
+                      className="self-start rounded-sm text-xs text-primary underline-offset-2 hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring"
+                      onClick={() => setShowTextPreview(false)}
+                    >
+                      Back to the preview in your chosen template
+                    </button>
+                  )}
+                  <div aria-label="PDF report preview" className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden rounded-md border bg-muted/20 p-4 sm:p-6">
+                    <div className="mx-auto w-full max-w-5xl min-w-0 rounded-md bg-background p-5 shadow-sm sm:p-8 [&_*]:max-w-full [&_a]:break-words [&_td]:break-words [&_th]:break-words">
+                      <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
+                        {reportContent}
+                      </ReactMarkdown>
+                    </div>
+                  </div>
                 </div>
-              </div>
+              )}
+            </TabsContent>
+
+            <TabsContent value="split" className="mt-4 min-h-0 min-w-0 flex-1 overflow-hidden data-[state=active]:grid data-[state=active]:grid-cols-2 data-[state=active]:gap-4">
+              <Textarea
+                ref={setSplitArea}
+                aria-label="PDF report content editor, beside its preview"
+                value={reportContent}
+                onChange={(e) => handleContentChange(e.target.value)}
+                onKeyDown={onEditorKeyDown}
+                placeholder="Message content will appear here..."
+                className="h-full min-h-0 w-full min-w-0 resize-none overflow-y-auto whitespace-pre-wrap break-words rounded-md p-4 font-mono text-sm leading-relaxed focus-visible:ring-1"
+              />
+              {documentPreview.available ? (
+                <HubDocumentPreview
+                  state={documentPreview}
+                  templateLine={chosenTemplateLine(templateChoice.state)}
+                  onEditSection={editSection}
+                  compact
+                />
+              ) : (
+                <div className="min-h-0 overflow-y-auto rounded-md border bg-muted/20 p-4">
+                  <div className="rounded-md bg-background p-5 shadow-sm [&_*]:max-w-full">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]} components={markdownComponents}>
+                      {reportContent}
+                    </ReactMarkdown>
+                  </div>
+                </div>
+              )}
             </TabsContent>
           </Tabs>
         </div>
@@ -764,6 +896,7 @@ export function MessageReportEditor({
             <span className="text-xs text-muted-foreground">
               {reportContent.length} chars
             </span>
+            <PlaceholderNotice content={reportContent} />
             {conversationId && (
               <span className="text-xs text-muted-foreground" aria-live="polite">
                 · {chosenTemplateLine(templateChoice.state)}
@@ -797,7 +930,7 @@ export function MessageReportEditor({
             <Button 
               variant="outline" 
               size="sm"
-              onClick={exportAsMarkdown}
+              onClick={() => void exportAsMarkdown()}
               disabled={!reportContent}
             >
               <Download className="h-3 w-3 mr-1" />

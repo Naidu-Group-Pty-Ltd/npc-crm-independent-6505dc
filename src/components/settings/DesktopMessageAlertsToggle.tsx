@@ -75,7 +75,7 @@ export function DesktopMessageAlertsToggle() {
         toast({
           title: "Desktop alerts enabled",
           description:
-            "New team messages will reach your desktop while the dashboard is in another tab, page or module.",
+            "New team and builder messages will reach your desktop while the dashboard is in another tab, page or module.",
         });
       } else if (result === "denied") {
         toast({
@@ -96,7 +96,7 @@ export function DesktopMessageAlertsToggle() {
     toast({
       title: next ? "Desktop alerts on" : "Desktop alerts off",
       description: next
-        ? "You will be notified on your desktop when a team message arrives."
+        ? "You will be notified on your desktop when a team or builder message arrives."
         : "Messages will still appear in the dashboard with an unread badge — only the desktop notification is switched off.",
     });
   };
@@ -184,11 +184,11 @@ export function DesktopMessageAlertsToggle() {
       <CardHeader className="space-y-2">
         <CardTitle className="flex min-w-0 items-center gap-2 text-lg md:text-xl">
           <MessageSquare className="h-4 w-4" />
-          Team Message Alerts
+          Message Alerts
         </CardTitle>
         <CardDescription className="max-w-3xl break-words leading-6">
-          Get a desktop notification the moment a colleague messages you —
-          showing who sent it and a short preview — while you are working in
+          Get a desktop notification the moment a colleague or a builder
+          messages you — showing who sent it — while you are working in
           another tab, page or module. Clicking it takes you straight to the
           conversation.
         </CardDescription>
@@ -211,7 +211,7 @@ export function DesktopMessageAlertsToggle() {
                 htmlFor="desktop-message-alerts"
                 className="min-w-0 cursor-pointer break-words leading-5"
               >
-                Desktop alerts for new team messages
+                Desktop alerts for new team and builder messages
               </Label>
               <Switch
                 id="desktop-message-alerts"

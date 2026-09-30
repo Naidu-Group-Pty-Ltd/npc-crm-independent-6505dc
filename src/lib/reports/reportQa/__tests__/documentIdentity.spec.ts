@@ -161,7 +161,13 @@ describe('the typeset document', () => {
     if (!built.ok) return;
     expect(built.document.body).toBe(SHORTLIST);
     expect(built.document.meta.title).toBe('Investment Property Suburb Shortlist Report');
-    expect(built.document.narrative).toContain('Intelligence Hub conversation');
+    // A finished answer opens on itself: no framing sentence about the Hub.
+    expect(built.document.narrative).toBe('');
+    // Its title block is placed rather than printed twice: the subtitle and
+    // the addressee go on the cover, and the body starts at its first section.
+    expect(built.document.presentation?.subtitle).toBe('Budget: Up to $750,000 Purchase Price');
+    expect(built.document.presentation?.preparedFor).toBe('Client Presentation');
+    expect(built.document.presentation?.body.trim().startsWith('## 1. Executive recommendation')).toBe(true);
     expect(reportQaFileName(built.document.meta.title, 'answer', '2026-09-28T05:00:00Z'))
       .toBe('Intelligence Hub Summary - Investment Property Suburb Shortlist Report - 28 Sep 2026.pdf');
   });

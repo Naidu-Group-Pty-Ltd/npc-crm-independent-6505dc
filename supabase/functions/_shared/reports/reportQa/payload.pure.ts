@@ -150,6 +150,29 @@ export const MAX_QUESTION_CHARS = 240;
 /** Citations printed per document. Beyond this the list is the document. */
 export const MAX_CITATIONS = 40;
 
+/**
+ * How a finished answer presents itself, read off its own title block
+ * (`documentIdentity.pure.ts` `readTitleBlock`).
+ *
+ * Set for `answer` and `structured`; a transcript is a record of an exchange,
+ * not a report, and has none. Every field is the answer's own words — nothing
+ * here is written, only placed.
+ */
+export interface QaPresentation {
+  /** The Markdown under the title block: what the sections are drawn from. */
+  body: string;
+  /** The line the answer set under its title. `''` when it wrote none. */
+  subtitle: string;
+  /** "Prepared for", when it names somebody rather than a slot. */
+  preparedFor: string;
+  /** "Prepared by", when it names a person rather than the issuer. */
+  preparedBy: string;
+  /** The rest of the front matter, as label and plain value. */
+  facts: ReadonlyArray<{ label: string; value: string }>;
+  /** Front-matter labels whose value was only a placeholder, left off the page. */
+  omitted: readonly string[];
+}
+
 /** What the conversation was grounded in. */
 export interface QaGrounding {
   /** File names from `report_qa_conversations.report_names`. */
@@ -194,6 +217,13 @@ export interface ReportQaDocument {
   turns: readonly QaTurn[];
   /** Deduplicated across every turn shown, in first-seen order. */
   citations: readonly QaCitation[];
-  /** Which providers answered. `openai, perplexity` — printed once, in the foot. */
+  /**
+   * Which providers answered, as recorded. Kept on the payload for the ledger;
+   * never printed, because what `report_qa_messages.model_provider` holds is
+   * the Hub's own agent key (`report_qa`), which is the machine room's
+   * vocabulary rather than a fact a reader can use.
+   */
   models: readonly string[];
+  /** The answer's own title block, placed. Absent for a transcript. */
+  presentation?: QaPresentation;
 }

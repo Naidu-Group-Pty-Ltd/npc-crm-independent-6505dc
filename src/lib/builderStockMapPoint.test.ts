@@ -194,3 +194,28 @@ describe('builderStockMapListings', () => {
     expect(builderStockMapListings([])).toEqual([]);
   });
 });
+
+describe('a Notion row on the map', () => {
+  const notion = {
+    development_name: 'Sandpiper Estate Tweed Heads South NSW', suburb: 'Tweed Heads', state: 'NSW',
+    address_line: 'Lot 52 Tweed Heads · Bravo 217 · Best Price',
+  };
+
+  it('names the lot and the design the line states', () => {
+    expect(builderStockTitle(item(notion))).toBe('Sandpiper Estate Tweed Heads South NSW — Lot 52 · Bravo 217');
+    expect(builderStockTitle(item({ ...notion, address_line: 'Lot 43 Tweed Heads · Echo 255 · Best Yield' })))
+      .toBe('Sandpiper Estate Tweed Heads South NSW — Lot 43 · Echo 255');
+  });
+
+  it('never asks the geocoder for the design or the tag', () => {
+    const mapped = builderStockToMapListing(item(notion));
+    expect(mapped.address).toBe('Lot 52 Tweed Heads');
+    expect(mapped.lotNumber).toBe('52');
+    expect(mapped.suburb).toBe('Tweed Heads');
+  });
+
+  it('does not read a bare leading number as a lot in the title', () => {
+    expect(builderStockTitle(item({ development_name: null, project_name: null, address_line: '9 Kerr St' })))
+      .toBe('9 Kerr St');
+  });
+});

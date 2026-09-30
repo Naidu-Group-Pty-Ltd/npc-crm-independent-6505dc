@@ -69,6 +69,14 @@ export const INTERNAL_THREAD_DEEPLINK_PARAM = 'internalThread';
 export const SW_OPEN_THREAD_MESSAGE = 'aurixa:open-internal-thread';
 /** Notification `data.kind` marking a bubble the service worker must route. */
 export const INTERNAL_NOTIFICATION_KIND = 'internal-message';
+/**
+ * Notification `data.kind` for a bubble that opens a page of the dashboard —
+ * a builder's message opens its conversation. The service worker sends an open
+ * tab there by postMessage, as it does for a team thread.
+ */
+export const PAGE_NOTIFICATION_KIND = 'open-page';
+/** postMessage type the service worker uses to send an open tab to a page. */
+export const SW_OPEN_PAGE_MESSAGE = 'aurixa:open-page';
 
 export type DesktopAlertStatus = 'unsupported' | 'default' | 'denied' | 'granted';
 
@@ -230,7 +238,10 @@ let claimSyncWired = false;
 function newerThan(candidate: string, existing: string): boolean {
   const a = Date.parse(candidate);
   const b = Date.parse(existing);
-  if (Number.isFinite(a) && Number.isFinite(b)) return a > b;
+  // `Date.parse` keeps milliseconds and the database stamps microseconds, so
+  // two messages in one millisecond parse equal; the stamps themselves still
+  // order them.
+  if (Number.isFinite(a) && Number.isFinite(b) && a !== b) return a > b;
   return candidate > existing;
 }
 
@@ -358,25 +369,50 @@ export function resetMessageAlertClaims() {
 let baseTitle: string | null = null;
 let flashTimer: ReturnType<typeof setInterval> | null = null;
 let flashOn = false;
+/**
+ * The two titles the flash alternates between. The timer reads these rather
+ * than capturing them, so a later count is never flashed back to an earlier
+ * one.
+ */
+let flashPrimary = '';
+let flashAlt = '';
+
+/** Team messages publish their unread count under this source. */
+export const TEAM_BADGE_SOURCE = 'team';
+/** Builder messages publish theirs under this one. */
+export const BUILDER_BADGE_SOURCE = 'builder';
+
+/**
+ * Each kind of message publishes its own count and the tab shows the sum.
+ * One title has two writers — team messages and builder messages — and without
+ * this each would overwrite the other, and one finding nothing would clear the
+ * other's badge.
+ */
+const badgeSources = new Map<string, { count: number; label?: string; at: number }>();
+let badgeClock = 0;
 
 function stopFlashing() {
   if (flashTimer) {
     clearInterval(flashTimer);
     flashTimer = null;
   }
+  // Put the page's own title back, and forget it: the page may title itself
+  // differently by the time the next badge is raised.
   if (baseTitle !== null) document.title = baseTitle;
+  baseTitle = null;
   flashOn = false;
 }
 
-/**
- * Reflect the pending unread count in the tab title and on the favicon,
- * alternating with a "New message" flash so a background tab is noticeable in
- * the tab strip. Requires no notification permission — this is the signal that
- * always works.
- */
-export function setTabUnreadBadge(count: number, label?: string) {
+function renderTabBadge() {
   if (typeof document === 'undefined') return;
-  if (baseTitle === null) baseTitle = document.title;
+
+  let count = 0;
+  let latest: { source: string; label?: string; at: number } | null = null;
+  for (const [source, entry] of badgeSources) {
+    if (entry.count <= 0) continue;
+    count += entry.count;
+    if (!latest || entry.at > latest.at) latest = { source, label: entry.label, at: entry.at };
+  }
 
   setFaviconBadge(count);
 
@@ -385,21 +421,55 @@ export function setTabUnreadBadge(count: number, label?: string) {
     return;
   }
 
+  if (baseTitle === null) baseTitle = document.title;
   const badge = `(${count > 99 ? '99+' : count})`;
-  const alt = `${badge} ${label ? `${label} sent a message` : 'New team message'}`;
-  const primary = `${badge} ${baseTitle}`;
+  const fallback = latest?.source === TEAM_BADGE_SOURCE ? 'New team message' : 'New message';
+  flashAlt = `${badge} ${latest?.label ? `${latest.label} sent a message` : fallback}`;
+  flashPrimary = `${badge} ${baseTitle}`;
 
-  document.title = primary;
+  document.title = flashPrimary;
+  flashOn = false;
   if (flashTimer) return;
   flashTimer = setInterval(() => {
     flashOn = !flashOn;
-    document.title = flashOn ? alt : primary;
+    document.title = flashOn ? flashAlt : flashPrimary;
   }, 1600);
 }
 
+/**
+ * Publish one source's unread count. The tab title and the favicon carry the
+ * sum of every source, and the flash names whoever wrote most recently.
+ */
+export function setSourceUnreadBadge(source: string, count: number, label?: string) {
+  const next = Math.max(0, Math.floor(Number.isFinite(count) ? count : 0));
+  const previous = badgeSources.get(source);
+  if (next <= 0) {
+    badgeSources.delete(source);
+  } else {
+    // Only a rise, or a new name, makes this source the one the flash names.
+    const moved = !previous || next > previous.count || label !== previous.label;
+    badgeSources.set(source, { count: next, label, at: moved ? ++badgeClock : previous.at });
+  }
+  renderTabBadge();
+}
+
+/** Clear one source's count, leaving any other source's badge standing. */
+export function clearSourceUnreadBadge(source: string) {
+  setSourceUnreadBadge(source, 0);
+}
+
+/**
+ * Reflect the pending unread count in the tab title and on the favicon,
+ * alternating with a "New message" flash so a background tab is noticeable in
+ * the tab strip. Requires no notification permission — this is the signal that
+ * always works. This is the team messages' count; see `setSourceUnreadBadge`.
+ */
+export function setTabUnreadBadge(count: number, label?: string) {
+  setSourceUnreadBadge(TEAM_BADGE_SOURCE, count, label);
+}
+
 export function clearTabUnreadBadge() {
-  stopFlashing();
-  setFaviconBadge(0);
+  clearSourceUnreadBadge(TEAM_BADGE_SOURCE);
 }
 
 /* ------------------------------------------------------------ brand artwork */
@@ -798,20 +868,176 @@ export function dismissDesktopMessageAlert(threadId: string) {
   })();
 }
 
-/** Close every internal-message bubble (sign-out, alerts switched off). */
+/** Close every message bubble we raised (sign-out, alerts switched off). */
 export function closeAllDesktopMessageAlerts() {
   [...live.keys()].forEach(closePageNotification);
+  [...livePageAlerts.keys()].forEach(closeLivePageAlert);
   void (async () => {
     try {
       const registration = await getAlertRegistration();
       const open = await registration?.getNotifications?.();
       open
-        ?.filter((n) => (n.data as { kind?: string } | null)?.kind === INTERNAL_NOTIFICATION_KIND)
+        ?.filter((n) => {
+          const kind = (n.data as { kind?: string } | null)?.kind;
+          return kind === INTERNAL_NOTIFICATION_KIND || kind === PAGE_NOTIFICATION_KIND;
+        })
         .forEach((n) => n.close());
     } catch {
       /* ignore */
     }
   })();
+}
+
+/* --------------------------------------------- a notification that opens a page */
+
+/**
+ * An OS notification that opens a page of the dashboard when it is clicked —
+ * how a builder's message reaches somebody who is in another tab, another
+ * window or another application. It follows every rule a team message's does:
+ * the same permission, the same opt-out in Settings, the same artwork, silent
+ * while the reader is looking at this tab, and one bubble per `key` so later
+ * messages replace it rather than stack.
+ */
+export interface PageAlert {
+  /** One bubble per key: a later alert with the same key replaces it. */
+  key: string;
+  heading: string;
+  body: string;
+  /** Where clicking it goes — a path on this origin, never another site. */
+  path: string;
+}
+
+/** Page-level page alerts we opened, so they can be closed once read. */
+const livePageAlerts = new Map<string, Notification>();
+
+export function pageAlertTag(key: string) {
+  return `aurixa-page-${key}`;
+}
+
+/** A path this origin serves: never another site, never `//host`. */
+export function isSameOriginPath(path: unknown): path is string {
+  return typeof path === 'string' && path.startsWith('/') && !path.startsWith('//') && !path.startsWith('/\\');
+}
+
+function closeLivePageAlert(key: string) {
+  const n = livePageAlerts.get(key);
+  if (!n) return;
+  try {
+    n.close();
+  } catch {
+    /* ignore */
+  }
+  livePageAlerts.delete(key);
+}
+
+/**
+ * Raise the OS notification. `onOpen` is how a click on a page-level bubble
+ * reaches the router; a service-worker bubble's click comes back through
+ * `onServiceWorkerOpenPage`. The outcome says whether an in-app fallback is
+ * owed, exactly as `deliverDesktopMessageAlert`'s does.
+ */
+export async function deliverPageAlert(
+  alert: PageAlert,
+  onOpen: (path: string) => void,
+): Promise<DesktopAlertOutcome> {
+  if (typeof window === 'undefined' || !('Notification' in window)) return 'unsupported';
+  if (!desktopAlertsEnabled()) return 'disabled';
+  if (Notification.permission !== 'granted') {
+    return Notification.permission === 'denied' ? 'denied' : 'unsupported';
+  }
+  if (!alert.key || !isSameOriginPath(alert.path)) return 'failed';
+  if (
+    typeof document !== 'undefined' &&
+    document.visibilityState === 'visible' &&
+    document.hasFocus()
+  ) {
+    return 'suppressed-focused';
+  }
+
+  const options = {
+    body: alert.body,
+    tag: pageAlertTag(alert.key),
+    renotify: true,
+    icon: getNotificationIcon(),
+    badge: getNotificationBadge(),
+    silent: false,
+    data: { kind: PAGE_NOTIFICATION_KIND, url: alert.path },
+  } as NotificationOptions;
+
+  try {
+    const registration = await getAlertRegistration();
+    if (registration) {
+      await registration.showNotification(alert.heading, {
+        ...options,
+        actions: [
+          { action: 'open', title: 'Open' },
+          { action: 'dismiss', title: 'Dismiss' },
+        ],
+      } as NotificationOptions);
+      closeLivePageAlert(alert.key);
+      return 'shown';
+    }
+  } catch {
+    /* fall through to the page-level constructor */
+  }
+
+  try {
+    closeLivePageAlert(alert.key);
+    const n = new Notification(alert.heading, options);
+    livePageAlerts.set(alert.key, n);
+    n.onclick = () => {
+      try {
+        window.focus();
+        window.parent?.focus?.();
+      } catch {
+        /* ignore cross-origin focus refusal */
+      }
+      onOpen(alert.path);
+      n.close();
+      livePageAlerts.delete(alert.key);
+    };
+    n.onclose = () => livePageAlerts.delete(alert.key);
+    return 'shown';
+  } catch {
+    return 'failed';
+  }
+}
+
+/** Close the bubble for `key` — its page has just been opened. */
+export function dismissPageAlert(key: string) {
+  closeLivePageAlert(key);
+  void (async () => {
+    try {
+      const registration = await getAlertRegistration();
+      const open = await registration?.getNotifications?.({ tag: pageAlertTag(key) });
+      open?.forEach((n) => n.close());
+    } catch {
+      /* ignore */
+    }
+  })();
+}
+
+/** Listen for "open this page" instructions posted by the service worker. */
+export function onServiceWorkerOpenPage(handler: (path: string) => void): () => void {
+  if (typeof navigator === 'undefined' || !('serviceWorker' in navigator)) return () => {};
+  const listener = (event: MessageEvent) => {
+    const data = event.data as { type?: string; url?: unknown } | null;
+    if (!data || data.type !== SW_OPEN_PAGE_MESSAGE) return;
+    if (!isSameOriginPath(data.url)) return;
+    handler(data.url);
+  };
+  try {
+    navigator.serviceWorker.addEventListener('message', listener);
+  } catch {
+    return () => {};
+  }
+  return () => {
+    try {
+      navigator.serviceWorker.removeEventListener('message', listener);
+    } catch {
+      /* ignore */
+    }
+  };
 }
 
 /* --------------------------------------------------------- deep linking */

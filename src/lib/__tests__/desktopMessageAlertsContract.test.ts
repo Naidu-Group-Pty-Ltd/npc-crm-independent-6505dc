@@ -26,6 +26,15 @@ import { inflateSync } from 'node:zlib';
 import { join } from 'node:path';
 
 import {
+  BUILDER_BADGE_SOURCE,
+  PAGE_NOTIFICATION_KIND,
+  SW_OPEN_PAGE_MESSAGE,
+  clearSourceUnreadBadge,
+  clearTabUnreadBadge,
+  deliverPageAlert,
+  isSameOriginPath,
+  setSourceUnreadBadge,
+  setTabUnreadBadge,
   AURIXA_NOTIFICATION_BADGE,
   AURIXA_NOTIFICATION_ICON,
   INTERNAL_NOTIFICATION_KIND,
@@ -675,5 +684,73 @@ describe('platform wiring', () => {
     expect(toasts).toContain("if (outcome === 'suppressed-focused') return;");
     expect(toasts).toContain('missedRef.current.set(');
     expect(toasts).toContain('setTabUnreadBadge(totalUnread');
+  });
+});
+
+describe('one tab title, two kinds of message', () => {
+  beforeEach(() => {
+    clearTabUnreadBadge();
+    clearSourceUnreadBadge(BUILDER_BADGE_SOURCE);
+    document.title = 'Command Centre';
+  });
+
+  it('shows the sum of team and builder messages, and neither clears the other', () => {
+    setTabUnreadBadge(2, 'Alex');
+    setSourceUnreadBadge(BUILDER_BADGE_SOURCE, 1, 'Bob The Builder Pty Ltd');
+    expect(document.title).toBe('(3) Command Centre');
+    // A team check that finds nothing unread used to wipe every badge.
+    setTabUnreadBadge(0);
+    expect(document.title).toBe('(1) Command Centre');
+    clearSourceUnreadBadge(BUILDER_BADGE_SOURCE);
+    expect(document.title).toBe('Command Centre');
+  });
+
+  it('flashes the count it has now, never the count it started with', () => {
+    vi.useFakeTimers();
+    try {
+      setTabUnreadBadge(1, 'Alex');
+      setTabUnreadBadge(4, 'Alex');
+      vi.advanceTimersByTime(1600 * 2);
+      expect(document.title).toBe('(4) Command Centre');
+      vi.advanceTimersByTime(1600);
+      expect(document.title).toBe('(4) Alex sent a message');
+    } finally {
+      clearTabUnreadBadge();
+      vi.useRealTimers();
+    }
+  });
+
+  it('orders two stamps inside one millisecond by the stamps themselves', () => {
+    expect(claimMessageAlert('builder-message:c1', '2026-09-30T01:00:00.000001+00:00')).toBe(true);
+    expect(claimMessageAlert('builder-message:c1', '2026-09-30T01:00:00.000002+00:00')).toBe(true);
+    expect(claimMessageAlert('builder-message:c1', '2026-09-30T01:00:00.000001+00:00')).toBe(false);
+  });
+});
+
+describe('a notification that opens a page', () => {
+  const sw = read('public/sw-push.js');
+
+  it('opens only a page of this origin', () => {
+    expect(isSameOriginPath('/admin/builder-portal/messaging/conv-1')).toBe(true);
+    for (const path of ['//evil.example', '/\\evil.example', 'https://evil.example', '', null]) {
+      expect(isSameOriginPath(path), String(path)).toBe(false);
+    }
+  });
+
+  it('declines where the browser has no notifications, so the caller falls back to the popup', async () => {
+    expect(await deliverPageAlert({ key: 'k', heading: 'h', body: 'b', path: '/admin' }, () => {})).toBe('unsupported');
+  });
+
+  it('is routed by the service worker to an open tab, by postMessage', () => {
+    expect(sw).toContain(`const OPEN_PAGE_KIND = '${PAGE_NOTIFICATION_KIND}'`);
+    expect(sw).toContain(`const OPEN_PAGE_MESSAGE = '${SW_OPEN_PAGE_MESSAGE}'`);
+    const handler = sw.slice(sw.indexOf('async function openPage'));
+    expect(handler.slice(0, handler.indexOf('openWindow'))).toContain('client.postMessage(');
+    expect(handler.slice(0, handler.indexOf('openWindow'))).not.toContain('client.navigate');
+  });
+
+  it('refuses to open anything that is not this origin’s own page', () => {
+    const click = sw.slice(sw.indexOf('if (data.kind === OPEN_PAGE_KIND)'));
+    expect(click.slice(0, 200)).toContain('if (isSameOriginPath(data.url))');
   });
 });

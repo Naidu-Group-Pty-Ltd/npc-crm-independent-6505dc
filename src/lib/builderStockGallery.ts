@@ -55,3 +55,30 @@ export function galleryPictures(
   }];
 }
 
+
+/**
+ * A picture known only by its id — an activation names its property's primary
+ * image and nothing else. Neither an external URL nor a path, so
+ * `StockPicture` asks its `resolveUrl` for it, which is how every other
+ * Command Centre surface reaches the same image door.
+ */
+export function imageById(id: string): BuilderStockImage {
+  return {
+    id,
+    stock_item_id: null,
+    source_stage: 'uploaded_document',
+    source_reference: null,
+    source_provider: null,
+    source_page_url: null,
+    external_url: null,
+    storage_path: null,
+    content_type: null,
+    verification_status: 'source_supplied',
+    confidence: null,
+    processing_status: 'ready',
+    error_message: null,
+    position: 0,
+    source_detail: null,
+    created_at: '',
+  };
+}

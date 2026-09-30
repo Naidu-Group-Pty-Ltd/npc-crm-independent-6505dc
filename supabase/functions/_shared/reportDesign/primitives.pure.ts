@@ -352,6 +352,57 @@ export const RUN_ON_CHAPTER_CLASS = 'run-on';
 export const KEEP_TOGETHER_CLASS = 'keep-together';
 
 /**
+ * A section of a continuous memo rather than a chapter of a report.
+ *
+ * A chapter title is set at the chapter-opener size — 31pt in Institutional
+ * Research, 34pt in the house design — because a chapter normally opens a page
+ * and sits low on it. The Intelligence Hub's sections run on (`run-on`), so on
+ * the owner's export of 30 Sep 2026 nine two-line 31pt titles stood in the
+ * middle of pages of 10.5pt prose, each with a 13pt "SECTION 02" above it,
+ * while the section's own subheads were 12.8pt: a 31 → 12.8 jump with nothing
+ * between, and a heading block a third of a page tall between every pair of
+ * sections. A memo section's title is set one modular step above its subheads
+ * instead (`MEMO_TITLE_RATIO` in the stylesheet), and the section keeps its
+ * number, its contents entry and its running head.
+ *
+ * The same class carries the memo's other print rules — a short table kept
+ * whole rather than split to a row, a long label set as a sentence rather
+ * than in tracked capitals — so they reach every design at once and no other
+ * report type at all.
+ */
+export const MEMO_CHAPTER_CLASS = 'memo';
+
+/**
+ * The document's own closing caveat — "Important Disclaimer", "General advice
+ * warning" — set as the fine print it is, under a hairline, at caption size.
+ * Nothing in it is reworded or dropped; it simply stops being set at the size
+ * of the analysis above it, beside the issuer's own disclaimer on the closing
+ * page.
+ */
+export const FINE_PRINT_CLASS = 'fine-print';
+
+/**
+ * A long mono label, set as a sentence.
+ *
+ * `h4` is the design system's tracked-capitals label (the same object as
+ * `.eyebrow`), which suits "CORE RECOMMENDATION" and breaks down at "STRATEGIC
+ * RATIONALE: BALANCED GROWTH, RENTAL DEMAND AND HOUSE ACCESSIBILITY" — two
+ * lines of spaced capitals, read as shouting. Past a label's length the same
+ * heading is set in the body face, in sentence case, at the weight of a
+ * subhead. Same element, same colour, same level in the outline.
+ */
+export const SUBHEAD_CLASS = 'subhead';
+
+/**
+ * The brief an answer set under its title — "Investment Budget", "Purpose" —
+ * as a key/value table at the head of its first section. Its labels are short
+ * by construction (`readTitleBlock` refuses one past 40 characters), so the
+ * label column is set on one line and the value takes the measure; it is kept
+ * on one page, because a brief split from its first row is two briefs.
+ */
+export const BRIEF_CLASS = 'brief';
+
+/**
  * Open a chapter.
  *
  * The `data-*` attributes are read by `string-set` in the stylesheet and become
@@ -370,9 +421,9 @@ export function openChapter(
   chapterNo: string,
   chapterTitle: string,
   page: NamedPage = 'body',
-  opts: { runOn?: boolean } = {},
+  opts: { runOn?: boolean; memo?: boolean } = {},
 ): string {
-  return `<section class="chapter${opts.runOn ? ` ${RUN_ON_CHAPTER_CLASS}` : ''} page-${page}"`
+  return `<section class="chapter${opts.runOn ? ` ${RUN_ON_CHAPTER_CLASS}` : ''}${opts.memo ? ` ${MEMO_CHAPTER_CLASS}` : ''} page-${page}"`
     + ` data-eyebrow="${escapeHtml(eyebrow)}"`
     + ` data-chapter-no="${escapeHtml(chapterNo)}"`
     + ` data-chapter-title="${escapeHtml(chapterTitle)}">`;

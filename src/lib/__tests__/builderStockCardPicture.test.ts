@@ -24,11 +24,12 @@
  * upload is wrong for the next. 16:9 is not fitted: it is what the builders'
  * rendering software emits, and 70% of the live list matches it exactly.
  *
- * The fit then turns on WHICH WAY the crop would run. Taller than the frame
- * and covering takes sky and foreground planting; checked by eye against the
- * three worst live images, where a 43% crop removed nothing but sky and
- * shrubs. Wider than the frame and covering takes the sides, which is where a
- * house extends. Generous allowance one way, tight the other.
+ * The fit then turned on WHICH WAY the crop would run — half the height
+ * allowed, a fifth of the width — until 30 September 2026, when the owner
+ * ruled that a card shows the property as the builder supplied it: a
+ * 2500×2800 render was losing 49.8% of its height. Now only a picture already
+ * the frame's shape to within 3% fills it, and every other one is shown whole
+ * on its blurred ground.
  */
 import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
@@ -57,14 +58,23 @@ const LIVE_SHAPES: Array<{ w: number; h: number; cards: number }> = [
   { w: 881, h: 513, cards: 2 },
 ];
 
-describe('cardPictureFit — every live card fills its frame', () => {
-  it('leaves not one of the 94 with a band', () => {
-    let filling = 0;
-    for (const shape of LIVE_SHAPES) {
-      expect(cardPictureFit(shape.w, shape.h)).toBe('cover');
-      filling += shape.cards;
+describe('cardPictureFit — a card shows the builder\'s picture whole', () => {
+  const nearFrame = (s: { w: number; h: number }) =>
+    Math.min(s.w / s.h, CARD_PICTURE_ASPECT) / Math.max(s.w / s.h, CARD_PICTURE_ASPECT) >= 0.97;
+
+  it('fills the frame only with a picture that is already its shape', () => {
+    const filling = LIVE_SHAPES.filter(nearFrame);
+    expect(filling.reduce((n, s) => n + s.cards, 0)).toBe(66);
+    for (const shape of filling) expect(cardPictureFit(shape.w, shape.h)).toBe('cover');
+  });
+
+  it('shows every other live shape whole, on its own ground', () => {
+    const whole = LIVE_SHAPES.filter((s) => !nearFrame(s));
+    expect(whole.reduce((n, s) => n + s.cards, 0)).toBe(28);
+    for (const shape of whole) {
+      expect(cardPictureFit(shape.w, shape.h)).toBe('contain');
+      expect(cardPictureNeedsGround(shape.w, shape.h)).toBe(true);
     }
-    expect(filling).toBe(94);
   });
 
   it('crops nothing at all from the sixty-four that are exactly 16:9', () => {
@@ -83,32 +93,25 @@ describe('cardPictureFit — every live card fills its frame', () => {
   });
 });
 
-describe('cardPictureFit — the crop axis is the rule', () => {
+describe('cardPictureFit — no house is cut to fit', () => {
   /*
-   * A picture taller than the frame loses sky and planting; one wider than it
-   * loses the sides, where a house extends and where a brochure banner can put
-   * the building. The allowance differs by an order of magnitude for that
-   * reason alone.
+   * MEASURED 30 SEPTEMBER 2026 on the live Notion list: a 2500×2800 render
+   * filled the frame by losing 49.8% of its height, and a 2481×1208 page crop
+   * by losing 13.4% of its width. Both are shown whole now.
    */
-  it('is generous downward, where the crop takes sky and ground', () => {
-    expect(cardPictureFit(1019, 1000)).toBe('cover');   // 42.7% of height
-    expect(cardPictureFit(893, 1000)).toBe('cover');    // 49.8%, just inside
-    expect(cardPictureFit(800, 1000)).toBe('contain');  // 55%, a real portrait
-    expect(cardPictureFit(600, 1000)).toBe('contain');  // a brochure page
+  it('shows the two pictures that were being cut whole', () => {
+    expect(cardPictureFit(2500, 2800)).toBe('contain');
+    expect(cardPictureFit(2481, 1208)).toBe('contain');
+    expect(cardPictureFit(2480, 692)).toBe('contain');
   });
 
-  it('is tight sideways, where the crop takes the house', () => {
-    // The edge sits at 16/9 ÷ 0.8 = 2.2222…
-    expect(cardPictureFit(2054, 1000)).toBe('cover');   // 13.4% of width
-    expect(cardPictureFit(2222, 1000)).toBe('cover');   // 19.99%, just inside
-    expect(cardPictureFit(2223, 1000)).toBe('contain'); // 20.02%, just outside
-    expect(cardPictureFit(2300, 1000)).toBe('contain'); // 22.7%
-    expect(cardPictureFit(3584, 1000)).toBe('contain'); // 50.4%, a strip
-  });
-
-  it('allows far more vertically than horizontally, deliberately', () => {
-    expect(CARD_PICTURE_MAX_VERTICAL_CROP)
-      .toBeGreaterThan(CARD_PICTURE_MAX_HORIZONTAL_CROP);
+  it('allows at most 3% either way', () => {
+    expect(CARD_PICTURE_MAX_VERTICAL_CROP).toBeLessThanOrEqual(0.03);
+    expect(CARD_PICTURE_MAX_HORIZONTAL_CROP).toBeLessThanOrEqual(0.03);
+    expect(cardPictureFit(1760, 1000)).toBe('cover');    // 1.0% of height
+    expect(cardPictureFit(1700, 1000)).toBe('contain');  // 4.4% of height
+    expect(cardPictureFit(1830, 1000)).toBe('cover');    // 2.9% of width
+    expect(cardPictureFit(1900, 1000)).toBe('contain');  // 6.4% of width
   });
 
   it('contains a picture it could not measure, because that cannot cut a house', () => {
@@ -120,7 +123,7 @@ describe('cardPictureFit — the crop axis is the rule', () => {
 
 describe('cardPictureNeedsGround', () => {
   it('draws no ground behind a picture that fills the frame', () => {
-    for (const shape of LIVE_SHAPES) {
+    for (const shape of LIVE_SHAPES.filter((s) => cardPictureFit(s.w, s.h) === 'cover')) {
       expect(cardPictureNeedsGround(shape.w, shape.h)).toBe(false);
     }
   });

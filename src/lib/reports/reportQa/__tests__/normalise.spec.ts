@@ -218,12 +218,37 @@ describe('the framing sentence', () => {
       .toContain('13 of 20 exchanges');
   });
 
-  it('says so when nothing was attached', () => {
-    expect(narrativeFor('transcript', 1, 1, [], [])).toContain('no attached reports');
+  it('says nothing about reports when none was attached', () => {
+    // "grounded in no attached reports" described how the answer was made, not
+    // anything a reader of the document can use.
+    expect(narrativeFor('transcript', 1, 1, [], [])).not.toMatch(/report/i);
   });
 
   it('names a single report by name', () => {
-    expect(narrativeFor('answer', 1, 1, ['Mariners Quay'], [])).toContain('one report, Mariners Quay');
+    expect(narrativeFor('transcript', 2, 2, ['Mariners Quay'], [])).toContain('one report, Mariners Quay');
+  });
+
+  it('reads as English for a single exchange', () => {
+    const one = narrativeFor('transcript', 1, 1, [], []);
+    expect(one).toContain('its one exchange');
+    expect(one).not.toContain('all 1');
+    expect(narrativeFor('transcript', 3, 3, [], [])).toContain('all 3 exchanges');
+  });
+
+  it('never names the system that answered', () => {
+    // `model_provider` holds the Hub's own agent key, not a vendor — and
+    // neither belongs in a document handed to a client (ADVISER_VOICE.md rule 1).
+    const text = narrativeFor('transcript', 2, 2, ['A'], ['report_qa', 'openai']);
+    expect(text).not.toContain('report_qa');
+    expect(text).not.toContain('openai');
+  });
+
+  it('gives a finished answer and a write-up no framing sentence at all', () => {
+    // The report the adviser hands over speaks for itself; the owner's export
+    // opened on "One answer from an Intelligence Hub conversation grounded in
+    // no attached reports. Answers came from report_qa."
+    expect(narrativeFor('answer', 1, 3, ['Mariners Quay'], ['report_qa'])).toBe('');
+    expect(narrativeFor('structured', 3, 3, [], ['report_qa'])).toBe('');
   });
 
   it('does not claim a model answered when none is recorded', () => {

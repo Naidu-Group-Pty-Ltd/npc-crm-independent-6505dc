@@ -179,7 +179,10 @@ describe('buildReportCss — options actually change the output', () => {
   it('emits only the selected table variant', () => {
     expect(css({ tableStyle: 'classic' })).toContain('tbody tr:nth-child(even)');
     expect(css({ tableStyle: 'minimal' })).not.toContain('tbody tr:nth-child(even)');
-    expect(css({ tableStyle: 'ledger' })).toContain('table.data tbody tr:last-child td');
+    // The last row of the table's LAST row group: a table set as several
+    // groups has a last-child row in each (memoPresentation.spec.ts).
+    expect(css({ tableStyle: 'ledger' })).toContain('table.data tbody:last-child tr:last-child td');
+    expect(css({ tableStyle: 'classic' })).not.toContain('tbody:last-child tr:last-child td');
   });
 
   it('hides section numbers when the option is off', () => {

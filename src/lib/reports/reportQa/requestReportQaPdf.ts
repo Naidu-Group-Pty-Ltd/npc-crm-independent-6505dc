@@ -31,7 +31,10 @@ import { invokeSecureFunction } from '@/lib/secureInvoke';
 import {
   announceDesignOutcome,
   designBody,
+  designOutcome,
+  readDesignEcho,
   standardDesignFor,
+  type DesignOutcome,
   type StandardDesignRequest,
 } from '@/lib/reportTemplate/standardDesign';
 import { looksUndeployed } from '../undeployedRoute';
@@ -162,4 +165,95 @@ export async function requestReportQaPdf(
 
   if (looksUndeployed(error)) throw new Error(UNDEPLOYED_MESSAGE);
   throw new Error(error?.message || 'Could not produce the Q&A document');
+}
+
+// ── The export dialog's Preview ─────────────────────────────────────────────
+
+export interface ReportQaPreviewResult {
+  /** The document's own bytes — the pages the export would make. */
+  pdf: Uint8Array;
+  fileName: string;
+  pageCount: number | null;
+  /** Section titles in printed order, for the navigator. */
+  sections: string[];
+  brandGaps: string[];
+  /**
+   * What became of the chosen template. `applied` needs no words; anything
+   * else carries the sentence the panel shows instead of a toast.
+   */
+  design: { outcome: DesignOutcome; label: string | null; message: string | null };
+  durationMs: number;
+}
+
+export interface RequestReportQaPreviewOptions {
+  /** Required for the `answer` subject. */
+  messageId?: string | null;
+  /**
+   * The editor's text, drawn in place of the stored answer or write-up. Null
+   * draws the record as it stands.
+   */
+  draft?: string | null;
+  /** As for the export: omit it and the person's own choice is read. */
+  design?: StandardDesignRequest | null;
+}
+
+/** Said when the route that answered predates previews and drew nothing for one. */
+export const PREVIEW_UNSUPPORTED_MESSAGE =
+  'The preview needs the latest report service, which has not reached this deployment yet. '
+  + 'Export PDF still makes the document in your chosen template.';
+
+/** The PDF out of the preview's answer. */
+export function pdfFromBase64(value: string): Uint8Array {
+  const binary = atob(value);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i += 1) bytes[i] = binary.charCodeAt(i);
+  return bytes;
+}
+
+/**
+ * Draw the document for the export dialog's Preview.
+ *
+ * The same route, record, brand and design resolution as `requestReportQaPdf`
+ * — `standardDesignFor` is the call the export makes, so what is previewed is
+ * the template the export will use — and the route keeps nothing: no file, no
+ * ledger row, no attachment (`render-report-qa-pdf`, `preview: true`).
+ *
+ * A route that answers without `preview: true` predates previews. It will have
+ * drawn and stored an ordinary export of the RECORD, not the draft, so its
+ * answer is not shown as the preview; the person is told what is missing.
+ */
+export async function requestReportQaPreview(
+  conversationId: string,
+  subject: Exclude<ReportQaSubjectName, 'transcript'>,
+  options: RequestReportQaPreviewOptions = {},
+): Promise<ReportQaPreviewResult> {
+  const design = await standardDesignFor('qa', options.design);
+  const { data, error } = await invokeSecureFunction('render-report-qa-pdf', {
+    conversationId,
+    subject,
+    messageId: options.messageId ?? null,
+    preview: true,
+    draft: options.draft ?? null,
+    ...designBody(design),
+  }, { timeoutMs: 120_000 });
+
+  if (!error && data?.preview === true && typeof data.pdf === 'string') {
+    const echo = readDesignEcho(data.design);
+    return {
+      pdf: pdfFromBase64(data.pdf),
+      fileName: String(data.fileName ?? ''),
+      pageCount: Number.isFinite(data.pageCount) ? Number(data.pageCount) : null,
+      sections: Array.isArray(data.sections) ? data.sections.map(String) : [],
+      brandGaps: Array.isArray(data.brandGaps) ? data.brandGaps.map(String) : [],
+      design: {
+        outcome: designOutcome(design, data.design),
+        label: echo?.applied?.label || null,
+        message: echo?.message ?? null,
+      },
+      durationMs: Number(data.durationMs ?? 0),
+    };
+  }
+  if (!error && data) throw new Error(PREVIEW_UNSUPPORTED_MESSAGE);
+  if (looksUndeployed(error)) throw new Error(UNDEPLOYED_MESSAGE);
+  throw new Error(error?.message || 'Could not draw the preview');
 }

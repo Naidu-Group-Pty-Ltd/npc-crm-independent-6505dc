@@ -260,7 +260,11 @@ describe('every bound path has a producer', () => {
 
   it('draws the provenance line and the citations the exporters drop', () => {
     const { html } = renderTemplateToHtml(REPORT_QA_TEMPLATES[0].schema as any, { data: SAMPLE });
-    expect(html).toContain('openai · gpt-5.2');
+    // How the answer came to be on the page — its sources and when it was
+    // asked — and never which system answered it.
+    expect(html).toMatch(/\d+ sources? — 01 August 2026/);
+    expect(html).not.toContain('openai');
+    expect(html).not.toContain('gpt-5.2');
     expect(html).toContain('p.12 · ¶3');
     expect(html).toContain('91%');
   });

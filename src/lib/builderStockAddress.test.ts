@@ -1,4 +1,5 @@
 import { describe, expect, it } from 'vitest';
+import { stockItemLocality, stockItemSuburb, stockItemTitle } from './builderStock';
 import {
   builderStockAddress,
   parseBuilderAddressLine,
@@ -300,5 +301,109 @@ describe('an annotation the list wrote after the address', () => {
       lotNumber: '209', streetNumber: '44', streetName: 'Satinwood',
       streetType: 'Crescent', suburb: 'Donnybrook', state: 'VIC', postcode: null,
     });
+  });
+});
+
+/**
+ * MEASURED 30 SEPTEMBER 2026. The live Notion stock list titles every row
+ * `<address> · <design> [· <tag>]`, and the parser did not know the dot: the
+ * network stored `Tweed Heads · Bravo 217 · Best Price` as the suburb on 41 of
+ * 41 rows, and this copy of the parser read the same line the same way for
+ * the card title and the map pin. The rule is the network's, byte for byte.
+ */
+describe('parseBuilderAddressLine — a list that separates its fields with a dot', () => {
+  it('reads the address from the first field and the design from the next', () => {
+    expect(parseBuilderAddressLine('Lot 52 Tweed Heads · Bravo 217 · Best Price')).toMatchObject({
+      lotNumber: '52', suburb: 'Tweed Heads', state: null, streetName: null, designName: 'Bravo 217',
+    });
+    expect(parseBuilderAddressLine('Lot 60941 Kalkallo VIC · 3 Bed')).toMatchObject({
+      lotNumber: '60941', suburb: 'Kalkallo', state: 'VIC', designName: '3 Bed',
+    });
+    expect(parseBuilderAddressLine('Unit 19 Thornton NSW · Industrial')).toMatchObject({
+      unitNumber: '19', suburb: 'Thornton', state: 'NSW', designName: 'Industrial',
+    });
+    expect(parseBuilderAddressLine('Deanside VIC · Mira 22 Display Home')).toMatchObject({
+      lotNumber: null, suburb: 'Deanside', state: 'VIC', designName: 'Mira 22 Display Home',
+    });
+  });
+
+  it('keeps a dot INSIDE a bracket as part of the annotation', () => {
+    expect(parseBuilderAddressLine('Lot 60941 - Cloverton Estate, Kalkallo VIC 3064 [3 Bed · 140 m²]'))
+      .toMatchObject({
+        lotNumber: '60941', estate: 'Cloverton Estate', suburb: 'Kalkallo',
+        state: 'VIC', postcode: '3064', designName: '3 Bed · 140 m²',
+      });
+  });
+
+  it('takes the field that says it is an address, wherever it sits', () => {
+    expect(parseBuilderAddressLine('Bravo 217 · Lot 52 Tweed Heads')).toMatchObject({
+      lotNumber: '52', suburb: 'Tweed Heads', designName: 'Bravo 217',
+    });
+  });
+
+  it('asks the geocoder for a place, not the tag', () => {
+    const address = builderStockAddress({
+      address_line: 'Lot 60941 Kalkallo VIC · 4 Bed', suburb: null, state: 'VIC', postcode: '3064',
+    });
+    expect(address.parsed.suburb).toBe('Kalkallo');
+    expect(address.locality).toBe('Kalkallo VIC 3064');
+    expect(address.full ?? '').not.toContain('4 Bed');
+  });
+});
+
+describe('parseBuilderAddressLine — the address field of a dot-separated list', () => {
+  it('reads the first field unless a later one opens with the lot', () => {
+    expect(parseBuilderAddressLine('Bravo 217 · Lot 52 Tweed Heads')).toMatchObject({
+      lotNumber: '52', suburb: 'Tweed Heads', designName: 'Bravo 217',
+    });
+    expect(parseBuilderAddressLine('Lot 52 Tweed Heads · Bravo 217 · Best Price')).toMatchObject({
+      lotNumber: '52', suburb: 'Tweed Heads', designName: 'Bravo 217',
+    });
+  });
+
+  it('never takes a design or a tag for the address on a weaker signal', () => {
+    // A four-digit design number is not a postcode, and `Act Now` is not the ACT.
+    expect(parseBuilderAddressLine('Tweed Heads · Aura 1780')).toMatchObject({
+      suburb: 'Tweed Heads', designName: 'Aura 1780',
+    });
+    expect(parseBuilderAddressLine('Tweed Heads · Bravo 217 · Act Now')).toMatchObject({
+      suburb: 'Tweed Heads', designName: 'Bravo 217',
+    });
+  });
+});
+
+describe('stockItemTitle — a list that separates its fields with a dot', () => {
+  const row = {
+    unit_number: null, lot_number: null, development_name: 'Sandpiper Estate Tweed Heads South NSW',
+    project_name: null, external_reference: null, building_size_sqm: 217, house_design: null,
+    address_line: 'Lot 52 Tweed Heads · Bravo 217 · Best Price',
+  };
+
+  it('draws the same title the Builder Portal draws', () => {
+    expect(stockItemTitle(row)).toBe('Lot 52 · Bravo 217');
+    expect(stockItemTitle({ ...row, address_line: 'Unit 19 Thornton NSW · Industrial' })).toBe('Unit 19 · Industrial');
+    expect(stockItemTitle({ ...row, address_line: 'Deanside VIC · Mira 22 Display Home' })).toBe('Mira 22 Display Home');
+    expect(stockItemTitle({ ...row, address_line: 'Lot 60941 Kalkallo VIC · 3 Bed', building_size_sqm: 140 }))
+      .toBe('Lot 60941 · 140 m\u00b2 home');
+    expect(stockItemTitle({
+      ...row, address_line: 'Lot 36 - Tringa Street, Sandpiper Estate, Tweed Heads South NSW 2486 [Stradbroke 180]',
+    })).toBe('Lot 36, Tringa Street · Stradbroke 180');
+  });
+});
+
+describe('stockItemLocality — a suburb the old parse stored with the list’s fields in it', () => {
+  it('prints the place, before the network re-reads the list', () => {
+    // Verbatim from the 19 live rows mirrored on 30 Sep 2026.
+    expect(stockItemLocality({ suburb: 'Tweed Heads · Bravo 217 · Best Price', state: 'NSW', postcode: null }))
+      .toBe('Tweed Heads NSW');
+    expect(stockItemLocality({ suburb: 'Kalkallo · 3 Bed', state: 'VIC', postcode: null })).toBe('Kalkallo VIC');
+    expect(stockItemSuburb('Clyde North · Suri 28 Display Home')).toBe('Clyde North');
+  });
+
+  it('leaves every real suburb exactly as stored', () => {
+    for (const suburb of ['Tweed Heads South', 'ARMSTRONG CREEK', 'Wyndhamvale', 'Clyde·North']) {
+      expect(stockItemSuburb(suburb)).toBe(suburb);
+    }
+    expect(stockItemSuburb(null)).toBeNull();
   });
 });
