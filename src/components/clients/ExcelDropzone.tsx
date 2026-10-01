@@ -2,6 +2,7 @@ import { useState, useCallback } from 'react';
 import { useDropzone } from 'react-dropzone';
 import * as XLSX from 'xlsx';
 import { invokeSecureFunction } from '@/lib/secureInvoke';
+import { ghlAffordancesAvailable } from '@/lib/crm/crmProvider';
 import { Button } from '@/components/ui/button';
 import { Progress } from '@/components/ui/progress';
 import { Badge } from '@/components/ui/badge';
@@ -305,7 +306,7 @@ export function ExcelDropzone({ onImportComplete }: ExcelDropzoneProps) {
 
           const newClients = clientsData?.clients || [];
 
-          if (newClients.length > 0) {
+          if (newClients.length > 0 && ghlAffordancesAvailable()) {
             toast.info('Syncing clients to GoHighLevel...');
             const clientIds = newClients.map(c => c.id);
 

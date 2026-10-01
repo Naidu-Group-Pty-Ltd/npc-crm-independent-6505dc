@@ -500,7 +500,9 @@ Deno.serve(async (req) => {
         total_monthly_rental_income: Number(payload.total_monthly_rental_income || 0),
         net_monthly_cash_flow: Number(payload.net_monthly_cash_flow || 0),
         finance_contact_id: portalUser.finance_contact_id || null,
-        ghl_sync_status: 'pending',
+        // This line carries no GoHighLevel sync, so a new client is never
+        // left 'pending' for a sync that cannot run.
+        ghl_sync_status: null,
         lead_source: 'finance_portal',
         lead_source_detail: `finance_partner:${portalUser.email ?? portalUser.id}`,
       };
@@ -594,41 +596,10 @@ Deno.serve(async (req) => {
         financeEmail: portalUser.email ?? null,
       });
 
-      let ghlSync: { success: boolean; error?: string | null } = { success: false, error: null };
-      if (body?.sync_to_ghl !== false) {
-        try {
-          const syncBody: Record<string, any> = {
-            clientId: createdClient.id,
-            source: 'finance_portal',
-            sourceActorId: portalUser.id,
-          };
-
-          const _anon = Deno.env.get('SUPABASE_ANON_KEY') || '';
-          const _internalSecret = (Deno.env.get('INTERNAL_EDGE_SECRET') || '').trim();
-          const response = await fetch(`${Deno.env.get('SUPABASE_URL')}/functions/v1/sync-client-to-ghl`, {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json',
-              'apikey': _anon,
-              // AUTH-002: internal secret, not the service-role key.
-              'Authorization': `Bearer ${_anon}`,
-              ...(_internalSecret ? { 'x-internal-edge-secret': _internalSecret } : {}),
-            },
-            body: JSON.stringify(syncBody),
-          });
-
-          const syncData = await response.json().catch(() => ({}));
-          if (!response.ok || !syncData?.success) {
-            ghlSync = { success: false, error: syncData?.error || `HTTP ${response.status}` };
-            console.error('[finance-portal-client-data] GHL sync failed', response.status, syncData);
-          } else {
-            ghlSync = { success: true, error: null };
-          }
-        } catch (error) {
-          ghlSync = { success: false, error: error instanceof Error ? error.message : 'Failed to sync client to GHL' };
-          console.error('[finance-portal-client-data] GHL sync exception', error);
-        }
-      }
+      // The CRM-independent line keeps clients in its own Postgres and carries
+      // no `sync-client-to-ghl`: there is nothing to push the client to, so
+      // nothing is attempted and nothing is reported as failed.
+      const ghlSync: { success: boolean; error?: string | null } = { success: false, error: null };
 
       // Notify dashboard clients list (realtime/subscribers may listen)
       console.log('[finance-portal-client-data] Client created', { id: createdClient.id, name: createdClientName, ghl_synced: ghlSync.success });

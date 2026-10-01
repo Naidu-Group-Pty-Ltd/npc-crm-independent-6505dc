@@ -190,6 +190,44 @@ Deno.serve(async (req) => {
       );
     }
 
+    // ── clientAppointments ─────────────────────────────────────────────────
+    // One client's appointments, newest first. GoHighLevel answered this by
+    // contact id (`ghl-calendar-proxy` → getContactAppointments); here the
+    // appointment carries the client's own id, so no vendor id is involved.
+    if (action === 'clientAppointments') {
+      const clientId = body?.clientId;
+      if (!clientId || typeof clientId !== 'string') {
+        return fail('Missing required field: clientId', 400, corsHeaders);
+      }
+      const { data, error } = await supabase
+        .from('crm_appointments')
+        .select(APPOINTMENT_COLUMNS)
+        .eq('client_id', clientId)
+        .order('start_time', { ascending: false })
+        .limit(200);
+      if (error) return fail('Could not read appointments', 503, corsHeaders, { code: 'events_unavailable' });
+
+      const { data: calendarRows } = await supabase
+        .from('crm_calendars')
+        .select(CALENDAR_COLUMNS);
+      const byId = new Map(
+        (calendarRows ?? []).map((row, i) => {
+          const projected = projectCalendar(row as CrmCalendarRow, i);
+          return [projected.id, projected];
+        }),
+      );
+
+      return ok(
+        {
+          events: (data ?? []).map((row) => {
+            const appointment = row as unknown as CrmAppointmentRow;
+            return projectAppointment(appointment, byId.get(appointment.calendar_id));
+          }),
+        },
+        corsHeaders,
+      );
+    }
+
     // ── create ─────────────────────────────────────────────────────────────
     if (action === 'create') {
       const { calendarId, title, startTime, endTime } = body ?? {};

@@ -5,9 +5,9 @@
     "supabase/config.toml"
   ],
   "counts": {
-    "staff": 234,
+    "staff": 220,
     "public": 37,
-    "server-only": 59,
+    "server-only": 54,
     "portal": 59
   },
   "functions": [
@@ -300,24 +300,6 @@
       "verify_jwt": true
     },
     {
-      "name": "backfill-lead-attributions",
-      "exposure_class": "cron-worker",
-      "mobileScope": "server-only",
-      "verify_jwt": true
-    },
-    {
-      "name": "backfill-message-directions",
-      "exposure_class": "human-authenticated",
-      "mobileScope": "staff",
-      "verify_jwt": true
-    },
-    {
-      "name": "backfill-notes-to-ghl",
-      "exposure_class": "cron-worker",
-      "mobileScope": "server-only",
-      "verify_jwt": false
-    },
-    {
       "name": "bc-scenario-agent",
       "exposure_class": "portal-authenticated",
       "mobileScope": "portal",
@@ -492,12 +474,6 @@
       "verify_jwt": false
     },
     {
-      "name": "conversation-sync-cron",
-      "exposure_class": "cron-worker",
-      "mobileScope": "server-only",
-      "verify_jwt": false
-    },
-    {
       "name": "convert-template-document",
       "exposure_class": "human-authenticated",
       "mobileScope": "staff",
@@ -589,12 +565,6 @@
     },
     {
       "name": "data-conflict-resolver",
-      "exposure_class": "human-authenticated",
-      "mobileScope": "staff",
-      "verify_jwt": true
-    },
-    {
-      "name": "diagnose-ghl-attribution",
       "exposure_class": "human-authenticated",
       "mobileScope": "staff",
       "verify_jwt": true
@@ -1146,36 +1116,6 @@
       "verify_jwt": false
     },
     {
-      "name": "ghl-calendar",
-      "exposure_class": "human-authenticated",
-      "mobileScope": "staff",
-      "verify_jwt": false
-    },
-    {
-      "name": "ghl-calendar-proxy",
-      "exposure_class": "human-authenticated",
-      "mobileScope": "staff",
-      "verify_jwt": false
-    },
-    {
-      "name": "ghl-calendar-test",
-      "exposure_class": "human-authenticated",
-      "mobileScope": "staff",
-      "verify_jwt": true
-    },
-    {
-      "name": "ghl-conversations-cron",
-      "exposure_class": "cron-worker",
-      "mobileScope": "server-only",
-      "verify_jwt": false
-    },
-    {
-      "name": "ghl-webhook-receiver",
-      "exposure_class": "webhook-secret",
-      "mobileScope": "server-only",
-      "verify_jwt": false
-    },
-    {
       "name": "google-fonts-catalog",
       "exposure_class": "authenticated-staff",
       "mobileScope": "staff",
@@ -1198,12 +1138,6 @@
       "exposure_class": "human-authenticated",
       "mobileScope": "staff",
       "verify_jwt": false
-    },
-    {
-      "name": "import-clients-from-ghl",
-      "exposure_class": "human-authenticated",
-      "mobileScope": "staff",
-      "verify_jwt": true
     },
     {
       "name": "import-from-url",
@@ -1698,12 +1632,6 @@
       "verify_jwt": false
     },
     {
-      "name": "one-time-bulk-conversation-sync",
-      "exposure_class": "human-authenticated",
-      "mobileScope": "staff",
-      "verify_jwt": false
-    },
-    {
       "name": "outlook-calendar",
       "exposure_class": "authenticated-staff",
       "mobileScope": "staff",
@@ -2094,12 +2022,6 @@
       "verify_jwt": false
     },
     {
-      "name": "send-ghl-message",
-      "exposure_class": "module-gated",
-      "mobileScope": "staff",
-      "verify_jwt": false
-    },
-    {
       "name": "send-web-push",
       "exposure_class": "cron-worker",
       "mobileScope": "server-only",
@@ -2232,36 +2154,6 @@
       "verify_jwt": false
     },
     {
-      "name": "sync-client-to-ghl",
-      "exposure_class": "human-authenticated",
-      "mobileScope": "staff",
-      "verify_jwt": false
-    },
-    {
-      "name": "sync-ghl-conversations",
-      "exposure_class": "human-authenticated",
-      "mobileScope": "staff",
-      "verify_jwt": false
-    },
-    {
-      "name": "sync-ghl-marketing-assets",
-      "exposure_class": "human-authenticated",
-      "mobileScope": "staff",
-      "verify_jwt": false
-    },
-    {
-      "name": "sync-ghl-pipelines",
-      "exposure_class": "human-authenticated",
-      "mobileScope": "staff",
-      "verify_jwt": true
-    },
-    {
-      "name": "sync-notes-to-ghl",
-      "exposure_class": "human-authenticated",
-      "mobileScope": "staff",
-      "verify_jwt": false
-    },
-    {
       "name": "template-ai-author",
       "exposure_class": "human-authenticated",
       "mobileScope": "staff",
@@ -2301,12 +2193,6 @@
       "name": "transport-gtfs-ingest",
       "exposure_class": "internal-service",
       "mobileScope": "server-only",
-      "verify_jwt": true
-    },
-    {
-      "name": "update-ghl-opportunity-stage",
-      "exposure_class": "human-authenticated",
-      "mobileScope": "staff",
       "verify_jwt": true
     },
     {

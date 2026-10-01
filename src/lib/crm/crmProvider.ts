@@ -69,117 +69,138 @@ export function crmProvider(): CrmProviderResolution {
   return resolved;
 }
 
-/** True when this build talks to a CRM that lives in its own Postgres. */
+/**
+ * This line is a CLOSED system, so its answer is always `native`.
+ *
+ * The CRM-independent line does not carry the GoHighLevel integration at all.
+ * Mission Control withholds its functions, shared modules, tests and crons
+ * from this line by class (`crmLineFeatures.pure.ts` there), so a `ghl` build
+ * of this repository would route every CRM call to a function that is not
+ * deployed. A `VITE_CRM_PROVIDER` naming anything else is reported once
+ * rather than obeyed; it is never silently accepted.
+ */
 export function isNativeCrm(): boolean {
-  return crmProvider().provider === "native";
+  const configured = crmProvider();
+  if (configured.provider !== "native" && !warnedAboutGhl) {
+    warnedAboutGhl = true;
+    console.error(
+      `[crm] ${CRM_PROVIDER_ENV} names "${configured.provider}", but this deployment carries no ` +
+        `GoHighLevel integration. Its CRM is native; the setting is ignored.`,
+    );
+  }
+  return true;
 }
+
+let warnedAboutGhl = false;
 
 /**
  * The CRM capabilities a surface can ask about, and the function that serves
- * each under each provider.
+ * each.
  *
- * Both columns are spelled out rather than one being derived from the other by
- * a prefix swap. A derived name is a name nothing checks: `crm-calendar` and
- * `ghl-calendar` happen to rhyme, and a rule that works for one capability is
- * worse than no rule because it is only wrong on the other.
- *
- * Only two capabilities are here, and which two is the whole finding — see
- * `VENDOR_RECONCILIATION` below.
+ * One column, because this line has one provider. The GoHighLevel column the
+ * prime's routing would need is not here, and that is deliberate: a name in a
+ * routing table is a claim that the function is deployed.
  */
 const ROUTES = {
-  calendar: { ghl: "ghl-calendar", native: "crm-calendar" },
-  sendMessage: { ghl: "send-ghl-message", native: "crm-send-message" },
+  calendar: "crm-calendar",
+  sendMessage: "crm-send-message",
 } as const;
 
 export type CrmCapability = keyof typeof ROUTES;
 
 /** The edge function that serves `capability` on this deployment. */
 export function crmFunction(capability: CrmCapability): string {
-  return ROUTES[capability][crmProvider().provider];
+  isNativeCrm();
+  return ROUTES[capability];
 }
 
 /**
- * Acts that RECONCILE this deployment with GoHighLevel, and have no native
- * counterpart because under `native` there is nothing on the other side.
+ * Acts that RECONCILE a deployment with GoHighLevel.
  *
- * ── Why these are not a third and fourth row of ROUTES ───────────────────────
- *
- * They were, and that was wrong in a way worth recording, because it is the
- * shape this repository keeps paying for: a capability named for what ONE
- * provider does, mapped onto a provider where the act does not exist.
- *
- * `conversationSync` PULLS threads from GoHighLevel into our tables. Under
- * `native` the threads are already in our tables — they were written here, by
- * `crm-send-message` and by the inbound path. There is no upstream to pull
- * from, so a `crm-conversations` function could only either do nothing or
- * copy a row onto itself.
- *
- * `opportunityStage` PUSHES a stage change to GoHighLevel, and both of its
- * call sites run it AFTER the local write has already succeeded — read the
- * code at `ClientTracker.tsx`: the error branch says "local update succeeded,
- * just log GHL failure". Under `native` the local write IS the act. A
- * `crm-pipelines` function here would re-perform a write the page has already
- * made, which is how two writes to one row come to disagree.
- *
- * So this returns **null** under `native` rather than a name. A caller cannot
- * invoke a function it was not given, which makes the absence structural
- * instead of a rule a test has to police — and it is why nothing in this
- * repository defines `crm-conversations` or `crm-pipelines`. A router entry
- * naming a function that is not deployed is a dead control, and this
- * repository has shipped one of those before (the AUSTRAC path card's step 3).
- *
- * The names stay HERE, in the one module allowed to spell them, so
- * `crmIndependence.spec.ts`'s rule is unchanged.
+ * `conversationSync` pulls threads from GoHighLevel; `opportunityStage` pushes
+ * a stage change to it after the local write has already succeeded. On this
+ * line the threads are written here and the local write IS the act, so there
+ * is nothing on the other side to reconcile with. Both answer null, and a
+ * caller cannot invoke a function it was not given — the absence is
+ * structural rather than a rule a test has to police.
  */
-const VENDOR_RECONCILIATION = {
-  conversationSync: "sync-ghl-conversations",
-  opportunityStage: "update-ghl-opportunity-stage",
-} as const;
+export type VendorReconciliation = "conversationSync" | "opportunityStage";
 
-export type VendorReconciliation = keyof typeof VENDOR_RECONCILIATION;
-
-/**
- * The same answer, for a provider named explicitly.
- *
- * Split out so BOTH branches can be tested. `crmProvider()` resolves once per
- * module load from a build-time constant, so a test can only ever observe the
- * branch this build happens to be — which on this repository is `native`, and
- * would have left the `ghl` names asserted by nothing. A typo there is
- * invisible here and reaches the prime on the next cascade.
- */
+/** Kept for callers that name a provider explicitly: always null here. */
 export function vendorReconciliationFunctionFor(
-  provider: CrmProvider,
-  step: VendorReconciliation,
+  _provider: CrmProvider,
+  _step: VendorReconciliation,
 ): string | null {
-  return provider === "ghl" ? VENDOR_RECONCILIATION[step] : null;
+  return null;
+}
+
+/** Null: the act is complete without it. Not an error, never reported as one. */
+export function vendorReconciliationFunction(_step: VendorReconciliation): string | null {
+  return null;
 }
 
 /**
- * The function that reconciles `step` with GoHighLevel, or null where this
- * deployment has no GoHighLevel to reconcile with.
+ * Whether a GoHighLevel-only affordance may be drawn: never, on this line.
  *
- * Null is not an error and must not be reported as one: it means the act is
- * complete without it.
- */
-export function vendorReconciliationFunction(
-  step: VendorReconciliation,
-): string | null {
-  return vendorReconciliationFunctionFor(crmProvider().provider, step);
-}
-
-/**
- * Whether a GHL-only affordance may be drawn.
- *
- * Read by every surface that offers "sync to GHL", "import from GHL", "open in
- * GHL" or the migration console. Under `native` those controls are not
- * disabled, they are ABSENT: a disabled button is a claim that the thing
- * exists and is currently unavailable, and on a CRM-independent deployment
- * there is no GHL account for it ever to become available against. This
- * repository has paid for that distinction twice — a dead control on the
- * AUSTRAC path card, and a Stripe button on a gate that paying could not open.
+ * Absent rather than disabled — a disabled button claims the thing exists and
+ * is currently unavailable, and there is no GoHighLevel account here for it
+ * ever to become available against.
  */
 export function ghlAffordancesAvailable(): boolean {
-  return crmProvider().provider === "ghl";
+  return false;
+}
+
+/**
+ * The prime's GoHighLevel functions a prime-shaped surface may still name.
+ *
+ * Several components arrive from the prime unchanged and call these directly
+ * (a note synced after it is saved, a client synced after it is created). On
+ * this line none of them is deployed, so `invokeSecureFunction` answers them
+ * locally, as NOT CARRIED, without a request — a 404 from a function that was
+ * withheld on purpose would read as an outage. The list is Mission Control's
+ * register for this line, spelled here because this is the one module that
+ * may spell a CRM function name (`crmIndependence.spec.ts`).
+ */
+export const WITHHELD_CRM_FUNCTIONS: readonly string[] = [
+  "backfill-lead-attributions",
+  "backfill-message-directions",
+  "backfill-notes-to-ghl",
+  "conversation-sync-cron",
+  "diagnose-ghl-attribution",
+  "ghl-calendar",
+  "ghl-calendar-proxy",
+  "ghl-calendar-test",
+  "ghl-conversations-cron",
+  "ghl-webhook-receiver",
+  "import-clients-from-ghl",
+  "one-time-bulk-conversation-sync",
+  "send-ghl-message",
+  "sync-client-to-ghl",
+  "sync-ghl-conversations",
+  "sync-ghl-marketing-assets",
+  "sync-ghl-pipelines",
+  "sync-notes-to-ghl",
+  "update-ghl-opportunity-stage",
+];
+
+const WITHHELD = new Set(WITHHELD_CRM_FUNCTIONS);
+
+/** The code a local refusal carries, so a caller can tell it from a failure. */
+export const CRM_FUNCTION_NOT_CARRIED = "crm_function_not_carried";
+
+/** The refusal for a withheld function, or null for any other name. */
+export function withheldCrmFunctionRefusal(
+  functionName: string,
+): { message: string; code: string; functionName: string; retryable: false } | null {
+  if (!WITHHELD.has(functionName)) return null;
+  return {
+    message:
+      "This deployment's CRM is its own and carries no GoHighLevel integration, so " +
+      `${functionName} is not available here.`,
+    code: CRM_FUNCTION_NOT_CARRIED,
+    functionName,
+    retryable: false,
+  };
 }
 
 /**
@@ -193,7 +214,7 @@ export function ghlAffordancesAvailable(): boolean {
  */
 export function crmProviderMismatch(servedBy: unknown): string | null {
   if (typeof servedBy !== "string" || servedBy.length === 0) return null;
-  const believed = crmProvider().provider;
+  const believed: CrmProvider = isNativeCrm() ? "native" : crmProvider().provider;
   if (servedBy === believed) return null;
   return (
     `This build is configured for the "${believed}" CRM but the request was served by ` +

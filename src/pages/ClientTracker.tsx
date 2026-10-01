@@ -2,7 +2,7 @@ import { useState, useMemo, useCallback, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 import { invokeSecureFunction } from '@/lib/secureInvoke';
-import { vendorReconciliationFunction } from '@/lib/crm/crmProvider';
+import { ghlAffordancesAvailable, vendorReconciliationFunction } from '@/lib/crm/crmProvider';
 import { useModulePermissions } from '@/hooks/useModulePermissions';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -24,6 +24,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { GHLExportDialog } from '@/components/shared/GHLExportDialog';
+import { NativePipelineCreator } from '@/components/clients/NativePipelineCreator';
 import { DashboardThemeFrame } from '@/components/layout/DashboardThemeFrame';
 import { format } from 'date-fns';
 import { 
@@ -284,7 +285,9 @@ export default function ClientTracker() {
   const [showExportDialog, setShowExportDialog] = useState(false);
   
   // Auto-sync state
-  const [autoSyncEnabled, setAutoSyncEnabled] = useState(true);
+  // No GoHighLevel on this line: nothing to sync from, so nothing is offered.
+  const ghlCarried = ghlAffordancesAvailable();
+  const [autoSyncEnabled, setAutoSyncEnabled] = useState(ghlCarried);
   const [isAutoSyncing, setIsAutoSyncing] = useState(false);
   const AUTO_SYNC_INTERVAL = 5 * 60 * 1000; // 5 minutes
   
@@ -409,7 +412,7 @@ export default function ClientTracker() {
 
   // Auto-sync from GHL periodically
   useEffect(() => {
-    if (!autoSyncEnabled) return;
+    if (!ghlCarried || !autoSyncEnabled) return;
 
     const performAutoSync = async () => {
       if (isSyncingPipelines || isAutoSyncing) return;
@@ -1001,6 +1004,8 @@ export default function ClientTracker() {
         {/* Mobile: Compact action bar */}
         {isMobile ? (
           <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-border/70 bg-background/70 p-2 shadow-inner">
+            {ghlCarried && (
+            <>
             <div className="client-tracker-gold-interaction flex min-h-10 items-center gap-2 rounded-xl border border-primary/20 bg-primary/10 px-2.5 py-1.5 shadow-sm transition-colors hover:border-primary/35 hover:bg-primary/15">
               {isAutoSyncing ? (
                 <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" />
@@ -1026,6 +1031,8 @@ export default function ClientTracker() {
                 <Download className="h-3.5 w-3.5" />
               )}
             </Button>
+            </>
+            )}
             <Button 
               onClick={() => {
                 queryClient.invalidateQueries({ queryKey: ['client-tracker'] });
@@ -1056,6 +1063,8 @@ export default function ClientTracker() {
         ) : (
           <div className="flex flex-wrap items-center gap-2 rounded-2xl border border-border/70 bg-background/65 p-2 shadow-inner lg:justify-end">
             {/* Auto-sync toggle */}
+            {ghlCarried && (
+            <>
             <TooltipProvider>
               <Tooltip>
                 <TooltipTrigger asChild>
@@ -1105,6 +1114,8 @@ export default function ClientTracker() {
               )}
               {isSyncingPipelines ? 'Syncing...' : 'Sync from GHL'}
             </Button>
+            </>
+            )}
             <Button 
               onClick={() => {
                 queryClient.invalidateQueries({ queryKey: ['client-tracker'] });
@@ -1423,10 +1434,14 @@ export default function ClientTracker() {
             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10 text-primary shadow-inner">
               <Layers className="h-7 w-7" />
             </div>
-            <h3 className="mb-2 text-lg font-semibold tracking-tight">No Pipelines Synced</h3>
+            <h3 className="mb-2 text-lg font-semibold tracking-tight">{ghlCarried ? 'No Pipelines Synced' : 'No Pipelines Yet'}</h3>
             <p className="mx-auto mb-5 max-w-md text-sm leading-relaxed text-muted-foreground">
-              Click "Sync from GHL" to fetch your GoHighLevel pipelines and opportunities.
+              {ghlCarried
+                ? 'Click "Sync from GHL" to fetch your GoHighLevel pipelines and opportunities.'
+                : 'This deployment\'s CRM is its own: create a pipeline and its stages here to start tracking clients.'}
             </p>
+            {!ghlCarried && <NativePipelineCreator />}
+            {ghlCarried && (
             <Button onClick={handleSyncPipelines} disabled={isSyncingPipelines} className="rounded-xl font-semibold shadow-md shadow-primary/20">
               {isSyncingPipelines ? (
                 <Loader2 className="h-4 w-4 mr-2 animate-spin" />
@@ -1435,6 +1450,7 @@ export default function ClientTracker() {
               )}
               Sync from GHL
             </Button>
+            )}
           </CardContent>
         </Card>
       )}

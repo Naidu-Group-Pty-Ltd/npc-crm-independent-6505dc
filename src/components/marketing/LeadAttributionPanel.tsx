@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { invokeSecureFunction } from '@/lib/secureInvoke';
+import { ghlAffordancesAvailable } from '@/lib/crm/crmProvider';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -371,11 +372,15 @@ export function LeadAttributionPanel() {
             <div className="rounded-2xl border border-dashed border-primary/25 bg-background/45 py-8 text-center text-muted-foreground">
               <Globe className="h-8 w-8 mx-auto mb-2 text-primary/35" />
               <p className="text-sm font-medium">No attribution data yet</p>
+              {ghlAffordancesAvailable() && (
+              <>
               <p className="text-xs mt-1">Run a backfill to pull attribution data from GHL for existing contacts</p>
               <Button variant="outline" size="sm" className="mt-3 rounded-xl border-primary/20 hover:bg-primary/10 hover:text-primary" onClick={handleBackfill} disabled={isBackfilling}>
                 {isBackfilling ? <Loader2 className="h-3 w-3 animate-spin mr-1.5" /> : <DatabaseBackup className="h-3 w-3 mr-1.5" />}
                 {isBackfilling ? 'Backfilling...' : 'Backfill from GHL'}
               </Button>
+              </>
+              )}
               {backfillProgress && <p className="text-[10px] mt-2 text-muted-foreground">{backfillProgress}</p>}
             </div>
           ) : (
@@ -627,11 +632,13 @@ export function LeadAttributionPanel() {
                       Enrich Meta Data
                     </Button>
                   )}
+                  {ghlAffordancesAvailable() && (
                   <Button variant="ghost" size="sm" className="h-6 px-2 text-[10px]" onClick={handleBackfill} disabled={isBackfilling}>
                     {isBackfilling ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <DatabaseBackup className="h-3 w-3 mr-1" />}
                     {isBackfilling ? backfillProgress : 'Backfill New'}
                   </Button>
-                  {incompleteCount > 0 && (
+                  )}
+                  {ghlAffordancesAvailable() && incompleteCount > 0 && (
                     <Button variant="ghost" size="sm" className="h-6 px-2 text-[10px]" onClick={handleReBackfill} disabled={isReBackfilling}>
                       {isReBackfilling ? <Loader2 className="h-3 w-3 animate-spin mr-1" /> : <RefreshCw className="h-3 w-3 mr-1" />}
                       {isReBackfilling ? backfillProgress : `Re-fetch (${incompleteCount})`}

@@ -9,7 +9,7 @@
  * next person to delete the explanation.
  */
 import { describe, expect, it } from "vitest";
-import { readFileSync } from "node:fs";
+import { existsSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 
 const fn = (name: string) =>
@@ -32,7 +32,6 @@ const strip = (s: string) =>
   s.replace(/\/\*[\s\S]*?\*\//g, " ").replace(/(^|[^:])\/\/.*$/gm, "$1 ");
 
 const NATIVE = strip(fn("crm-send-message"));
-const VENDOR = strip(fn("send-ghl-message"));
 
 describe("a deployment this function does not serve is refused first", () => {
   it("checks the provider before reading the body or the database", () => {
@@ -110,31 +109,19 @@ describe("a native send cannot go twice", () => {
   });
 });
 
-describe("the vendor function is untouched", () => {
+describe("the vendor function is not carried", () => {
   /**
-   * The prime runs `send-ghl-message` against a live GoHighLevel account. The
-   * native provider is a SEPARATE function reached through the router, so this
-   * file should carry nothing about the native path at all — which is what
-   * makes a later prime cascade merge instead of conflict.
+   * This line is a closed system: GoHighLevel's `send-ghl-message` is withheld
+   * from it by Mission Control's CRM-line register, so the native function is
+   * the only send path there is. A copy reappearing here would be a cascade
+   * that wrote a withheld function, and it would sit beside a native path the
+   * router no longer names.
    */
-  it("still sends to GoHighLevel exactly as before", () => {
-    expect(VENDOR).toContain(
-      "https://services.leadconnectorhq.com/conversations/messages",
-    );
-    expect(VENDOR).toContain("getEffectiveGhlCredentials(");
-    expect(VENDOR).toContain("GHL API key not configured");
-  });
-
-  it("carries no native branch", () => {
-    for (const native of [
-      "planNativeSend",
-      "TWILIO_ACCOUNT_SID",
-      "refuseWrongProvider",
-    ]) {
-      expect(
-        VENDOR,
-        `${native} belongs in crm-send-message, not here`,
-      ).not.toContain(native);
-    }
+  it("has no send-ghl-message in the tree", () => {
+    expect(
+      existsSync(
+        join(__dirname, "..", "..", "..", "..", "supabase", "functions", "send-ghl-message"),
+      ),
+    ).toBe(false);
   });
 });

@@ -269,40 +269,28 @@ describe("a vendor-reconciliation step has no native counterpart", () => {
     expect(ghlAffordancesAvailable()).toBe(false);
   });
 
-  it("and hands the right name back where there IS one", () => {
+  it("hands no vendor name back for any provider on this line", () => {
     /**
-     * Asserted through `…For`, which takes the provider explicitly, because
-     * `crmProvider()` resolves once per module load from a build-time
-     * constant — so a test can only ever observe the branch THIS build is.
-     * On this repository that is `native`, which would have left the `ghl`
-     * names asserted by nothing at all: a typo in either would be invisible
-     * here and would reach the prime on the next cascade, where it IS the
-     * live branch.
+     * Asserted through `…For`, which takes the provider explicitly. On the
+     * prime the `ghl` branch names `sync-ghl-conversations` and
+     * `update-ghl-opportunity-stage`. This line is a closed system and carries
+     * neither function, so even a build told `ghl` has nothing to route to:
+     * naming one would be a control that answers 404.
      */
-    expect(
-      vendorReconciliationFunctionFor("ghl", "conversationSync"),
-    ).toBe("sync-ghl-conversations");
-    expect(vendorReconciliationFunctionFor("ghl", "opportunityStage")).toBe(
-      "update-ghl-opportunity-stage",
-    );
-    expect(
-      vendorReconciliationFunctionFor("native", "conversationSync"),
-    ).toBeNull();
-    expect(
-      vendorReconciliationFunctionFor("native", "opportunityStage"),
-    ).toBeNull();
+    for (const provider of ["ghl", "native"] as const) {
+      expect(vendorReconciliationFunctionFor(provider, "conversationSync")).toBeNull();
+      expect(vendorReconciliationFunctionFor(provider, "opportunityStage")).toBeNull();
+    }
   });
 
-  it("names a function that exists in the tree", () => {
-    // The other half of the same rule: `crm-conversations` may not be named
-    // because it does not exist, and these two may be named because they do.
-    for (const step of ["conversationSync", "opportunityStage"] as const) {
-      const name = vendorReconciliationFunctionFor("ghl", step);
-      expect(name).toBeTruthy();
+  it("and the vendor functions the prime routes to are absent from the tree", () => {
+    // The other half of the same rule: the router may not name them because
+    // they are not here. Withheld by Mission Control's CRM-line register.
+    for (const name of ["sync-ghl-conversations", "update-ghl-opportunity-stage"]) {
       expect(
-        existsSync(join(REPO_ROOT, "supabase", "functions", name!)),
-        `${name} is routed to but not present in supabase/functions/`,
-      ).toBe(true);
+        existsSync(join(REPO_ROOT, "supabase", "functions", name)),
+        `${name} is back in supabase/functions/ — the independent line does not carry it`,
+      ).toBe(false);
     }
   });
 

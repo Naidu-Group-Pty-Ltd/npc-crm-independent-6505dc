@@ -45,6 +45,7 @@ import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.55.0';
 import { verifyAuth, createCorsHeaders, createUnauthorizedResponse } from '../_shared/auth.ts';
 import { enforceCsrf, csrfDenied } from '../_shared/csrfGuard.ts';
 import { refuseWrongProvider } from '../_shared/crm/crmProvider.ts';
+import { actorIsSuperadmin, requireModulePermission } from '../_shared/authz.ts';
 import { rateLimit } from '../_shared/wp08Guards.ts';
 import { logApiUsage } from '../_shared/logApiUsage.ts';
 import { planNativeSend, planMayRecordDelivery } from '../_shared/crm/nativeOutbound.pure.ts';
@@ -84,6 +85,20 @@ Deno.serve(async (req) => {
     const body = await req.json();
     const { error: authError, userId } = await verifyAuth(supabase, req.headers, body);
     if (authError) return createUnauthorizedResponse(authError, corsHeaders);
+
+    /*
+     * The same authorisation `send-ghl-message` carries, and on this line the
+     * only copy of it: the independent CRM line does not carry the vendor
+     * function, so this is the one path an operator can send through. A signed
+     * in user is not thereby somebody who may message a client.
+     */
+    const perm = await requireModulePermission(supabase, { userId, authMethod: 'human' }, 'conversations', 'can_edit');
+    if (!perm.ok) {
+      return new Response(
+        JSON.stringify({ error: 'You cannot send CRM messages.' }),
+        { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      );
+    }
 
     const { conversationId, message, channel: requestedChannel, type, idempotencyKey } = body;
     if (!conversationId || !message) {
@@ -147,6 +162,31 @@ Deno.serve(async (req) => {
       return new Response(JSON.stringify({ error: 'Conversation not found.' }), {
         status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       });
+    }
+
+    /*
+     * Scoped to the caller's own clients, answered 404 rather than 403 so a
+     * conversation somebody may not reach cannot be told apart from one that
+     * does not exist. Asked before the idempotency read, the destination read
+     * and the provider call.
+     */
+    const superadmin = await actorIsSuperadmin(supabase, userId!);
+    if (!superadmin) {
+      if (!conv.client_id) {
+        return new Response(JSON.stringify({ error: 'Conversation is unavailable or you no longer have access to it.' }), {
+          status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      const { data: owner } = await supabase
+        .from('clients')
+        .select('created_by, assigned_team_user_id')
+        .eq('id', conv.client_id)
+        .maybeSingle();
+      if (!owner || (owner.created_by !== userId && owner.assigned_team_user_id !== userId)) {
+        return new Response(JSON.stringify({ error: 'Conversation is unavailable or you no longer have access to it.' }), {
+          status: 404, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
     }
 
     /*

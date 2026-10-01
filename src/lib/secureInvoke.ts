@@ -5,6 +5,7 @@
  */
 import { emitTokensUsed, emitOutOfTokens, isReportGenerator } from "@/lib/tokenEvents";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from '@/integrations/supabase/env';
+import { withheldCrmFunctionRefusal } from '@/lib/crm/crmProvider';
 
 
 // ── Global auth-failure circuit breaker ──
@@ -319,6 +320,10 @@ export async function invokeSecureFunction<T = any>(
   options?: { timeoutMs?: number; _isRetry?: boolean; stepUpCapability?: string; correlationId?:string; signal?: AbortSignal }
 ): Promise<InvokeResult<T>> {
   const correlationId = options?.correlationId ?? crypto.randomUUID();
+  // CRM-independent line: a GoHighLevel function this deployment does not
+  // carry is answered here, without a request (`crmProvider.ts`).
+  const notCarried = withheldCrmFunctionRefusal(functionName);
+  if (notCarried) return { data: null, error: { ...notCarried, correlationId } };
   try {
     const { token: bearerToken, authenticated: hasAccessToken } = await resolveAuthBearer();
 

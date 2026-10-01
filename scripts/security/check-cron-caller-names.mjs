@@ -82,6 +82,7 @@ import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { isPrimeOnlyFunction } from '../lib/primeOnlyFeatures.mjs';
+import { isCrmLineWithheldFunction } from '../lib/crmLineFeatures.mjs';
 
 const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..', '..');
 const MIGRATIONS = join(ROOT, 'supabase', 'migrations');
@@ -339,6 +340,13 @@ for (const [jobname, { file, invocations, body }] of [...live.entries()].sort())
       // intended state on a clone, and unscheduled there by Mission Control.
       if (isPrimeOnlyFunction(inv.target)) {
         primeOnlyAbsent.push(`${jobname} -> ${inv.target}`);
+        continue;
+      }
+      // This line's CRM is its own: the GoHighLevel integration is withheld
+      // from it by class (`scripts/lib/crmLineFeatures.mjs`), and the fleet
+      // sweep unschedules the job. Same shape as the prime's own feature.
+      if (isCrmLineWithheldFunction(inv.target)) {
+        primeOnlyAbsent.push(`${jobname} -> ${inv.target} (CRM line)`);
         continue;
       }
       failures.push(

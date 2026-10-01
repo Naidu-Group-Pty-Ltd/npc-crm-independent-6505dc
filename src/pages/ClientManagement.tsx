@@ -3,6 +3,7 @@ import { useModulePermissions } from '@/hooks/useModulePermissions';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { useSearchParams } from 'react-router-dom';
 import { invokeSecureFunction } from '@/lib/secureInvoke';
+import { ghlAffordancesAvailable } from '@/lib/crm/crmProvider';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -168,6 +169,9 @@ export default function ClientManagement() {
   const [selectedClients, setSelectedClients] = useState<string[]>([]);
   const [isSyncingAll, setIsSyncingAll] = useState(false);
   const [isImportingFromGHL, setIsImportingFromGHL] = useState(false);
+  // Every GoHighLevel import, sync and reimport is absent on a deployment
+  // whose CRM is its own (`crmProvider.ts`), including the automatic ones.
+  const ghlCarried = ghlAffordancesAvailable();
   const [importProgress, setImportProgress] = useState<{ imported: number; hasMore: boolean; totalFromApi?: number } | null>(null);
   const [showClearConfirm, setShowClearConfirm] = useState(false);
   const [hasAutoSynced, setHasAutoSynced] = useState(false);
@@ -249,7 +253,7 @@ export default function ClientManagement() {
 
   // Auto-sync from GHL on first load if no clients exist
   useEffect(() => {
-    if (!isLoading && clients.length === 0 && !hasAutoSynced && !isImportingFromGHL) {
+    if (ghlCarried && !isLoading && clients.length === 0 && !hasAutoSynced && !isImportingFromGHL) {
       setHasAutoSynced(true);
       handleImportFromGHL();
     }
@@ -257,7 +261,7 @@ export default function ClientManagement() {
 
   // Periodic auto-sync from GHL
   useEffect(() => {
-    if (!autoSyncEnabled) return;
+    if (!ghlCarried || !autoSyncEnabled) return;
 
     const performAutoSync = async () => {
       if (isImportingFromGHL || isAutoSyncing) return;
@@ -697,13 +701,17 @@ export default function ClientManagement() {
       icon: DollarSign,
       tone: 'success' as const,
     },
-    {
-      label: 'Pending GHL Sync',
-      value: pendingSyncCount.toLocaleString('en-AU'),
-      hint: pendingSyncCount > 0 ? 'Awaiting push to GoHighLevel' : 'Everything is up to date',
-      icon: TrendingUp,
-      tone: pendingSyncCount > 0 ? ('warning' as const) : ('neutral' as const),
-    },
+    ...(ghlCarried
+      ? [
+          {
+            label: 'Pending GHL Sync',
+            value: pendingSyncCount.toLocaleString('en-AU'),
+            hint: pendingSyncCount > 0 ? 'Awaiting push to GoHighLevel' : 'Everything is up to date',
+            icon: TrendingUp,
+            tone: pendingSyncCount > 0 ? ('warning' as const) : ('neutral' as const),
+          },
+        ]
+      : []),
   ];
 
   return (
@@ -727,8 +735,11 @@ export default function ClientManagement() {
             <p className="dashboard-eyebrow">Client workspace</p>
             <h1 className="text-2xl font-semibold tracking-tight text-foreground sm:text-3xl">Client Management</h1>
             <p className="max-w-2xl text-sm leading-6 text-muted-foreground">
-              Manage clients, properties, and sync with GoHighLevel.
+              {ghlCarried
+                ? 'Manage clients, properties, and sync with GoHighLevel.'
+                : 'Manage clients and properties.'}
             </p>
+            {ghlCarried && (
             <p className="flex items-center gap-1.5 text-xs text-muted-foreground" aria-live="polite">
               {isAutoSyncing ? (
                 <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" aria-hidden="true" />
@@ -737,9 +748,12 @@ export default function ClientManagement() {
               )}
               {isAutoSyncing ? 'Auto-sync running…' : `Last auto-sync: ${formatLastSync(lastSyncTime)}`}
             </p>
+            )}
           </div>
 
           <div className="flex w-full flex-wrap items-center gap-2 lg:w-auto lg:justify-end">
+            {ghlCarried && (
+            <>
             <label className="dashboard-input-control flex h-10 w-full items-center justify-between gap-2 px-3 text-xs font-semibold text-muted-foreground sm:w-auto sm:justify-start">
               <span>Auto-sync</span>
               <Switch
@@ -767,6 +781,8 @@ export default function ClientManagement() {
               </span>
               <span className="sm:hidden">Import</span>
             </Button>
+            </>
+            )}
 
             <Button
               onClick={() => setShowExportDialog(true)}
@@ -800,7 +816,7 @@ export default function ClientManagement() {
                   <RefreshCw className="mr-2 h-4 w-4" />
                   Refresh
                 </DropdownMenuItem>
-                {pendingSyncCount > 0 && (
+                {ghlCarried && pendingSyncCount > 0 && (
                   <DropdownMenuItem onClick={handleSyncAllPending} disabled={isSyncingAll} className="rounded-lg">
                     <RefreshCw className={cn('mr-2 h-4 w-4', isSyncingAll && 'animate-spin')} />
                     Sync all ({pendingSyncCount})
@@ -810,6 +826,7 @@ export default function ClientManagement() {
                   <Target className="mr-2 h-4 w-4" />
                   Client Tracker
                 </DropdownMenuItem>
+                {ghlCarried && (
                 <DropdownMenuItem
                   onClick={handleClearAndReimport}
                   disabled={isImportingFromGHL}
@@ -818,6 +835,7 @@ export default function ClientManagement() {
                   <Trash2 className="mr-2 h-4 w-4" />
                   Clear &amp; reimport
                 </DropdownMenuItem>
+                )}
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
