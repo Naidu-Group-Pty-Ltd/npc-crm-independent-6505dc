@@ -174,11 +174,17 @@ export function useSetStockSelectionStatus() {
   });
 }
 
-/** A short-lived signed URL for one stored builder-stock image. */
-export async function marketplaceStockImageUrl(imageId: string): Promise<string | null> {
+/**
+ * A short-lived signed URL for one stored builder-stock image, and the
+ * Marketplace Hero plan the network made for exactly those bytes (null where
+ * there is none — the card then draws as before). See `StockPicture`.
+ */
+export async function marketplaceStockImageUrl(
+  imageId: string,
+): Promise<{ url: string | null; hero: unknown } | null> {
   try {
-    const result = await invoke<{ url?: string }>({ operation: 'image_url', image_id: imageId });
-    return result.url ?? null;
+    const result = await invoke<{ url?: string; hero?: unknown }>({ operation: 'image_url', image_id: imageId });
+    return { url: result.url ?? null, hero: result.hero ?? null };
   } catch {
     return null;
   }

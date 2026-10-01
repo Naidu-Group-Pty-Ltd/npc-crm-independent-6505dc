@@ -307,7 +307,10 @@ describe('an activation\'s photograph follows the image the server selected', ()
       </Routes>
     </MemoryRouter>
   );
-  const photos = (container: HTMLElement) => Array.from(container.querySelectorAll('img')).map((i) => i.getAttribute('src'));
+  // The picture itself — not the blurred ground `StockPicture` lays behind a
+  // picture it shows whole, which is the same image and hidden from readers.
+  const photos = (container: HTMLElement) => Array.from(container.querySelectorAll('img:not([aria-hidden="true"])'))
+    .map((i) => i.getAttribute('src'));
 
   it('drops the old photograph when the image is withdrawn or replaced by one that cannot be signed', async () => {
     state.imageUrls = { 'img-1': 'https://signed.example/img-1', 'img-2': new Error('refused') };
