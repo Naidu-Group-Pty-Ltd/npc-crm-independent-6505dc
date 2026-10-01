@@ -37,13 +37,26 @@ at each end: `scripts/lib/crmLineFeatures.mjs` here (read by the CI gates),
 browser), and `crmLineFeatures.spec.ts` holds the two to each other and to
 the tree.
 
+**A deployment the tree no longer carries is removed by a person.** A
+project provisioned from the prime still has the nineteen functions deployed
+until something deletes them. The fleet sweep does that on a repair; the
+`Decommission withheld GoHighLevel functions` workflow
+(`decommission-crm-line-functions.yml`) does it on dispatch, reading its list
+from `crmLineFeatures.mjs`, refusing any name whose directory is still in the
+tree, and resolving the project as the deploy workflow does, so a child of
+this head deletes from its own project. On 1 Oct 2026 the head's own project
+still ran all nineteen and four crons calling them; the crons were
+unscheduled by hand that day, and `finance-portal-reminders-hourly`, which a
+cascaded migration had pointed at the PRIME's URL with this project's cron
+secret, was re-pointed through `cron_invoke_signed_function`.
+
 **What stayed, deliberately.** The schema: `ghl_conversations` and its
 siblings are this CRM's own storage, and a withheld migration is a ledger
 hole. The mixed modules the line still reads (`_shared/ghl-account.ts`,
 `_shared/ghlConversationMap.pure.ts`). And the three `crm-*` functions, which
 ARE this line's CRM.
 
-Four rules carry it.
+Five rules carry it.
 
 - **The router is native-only.** `isNativeCrm()` is always true here,
   `crmFunction()` only ever names a `crm-*` function, and the vendor
@@ -53,6 +66,13 @@ Four rules carry it.
   `invokeSecureFunction` answers it locally with `crm_function_not_carried`,
   not retryable, rather than letting a gateway that has never heard of the
   function answer 404.
+- **No server code calls a withheld function either.** The browser refusal
+  covers `invokeSecureFunction` only; an edge function posting to
+  `/functions/v1/<name>` reaches the gateway directly and reads the 404 as a
+  failed sync or an empty calendar. `ai-dashboard-agent`'s calendar tools now
+  call `crm-calendar`, its `create_client` and `finance-portal-client-data`
+  no longer sync to GoHighLevel, and `crmLineFeatures.spec.ts` fails on any
+  server source that names a withheld function by URL or `functions.invoke`.
 - **A GoHighLevel control is not drawn.** Every sync toggle, import button,
   "View in GHL" link and pending-sync count is gated on
   `ghlAffordancesAvailable()`, which is false here. Each of those files is a

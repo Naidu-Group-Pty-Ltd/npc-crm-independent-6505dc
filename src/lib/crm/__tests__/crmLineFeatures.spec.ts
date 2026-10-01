@@ -123,3 +123,24 @@ describe("no server code calls a function this line does not carry", () => {
     expect(offenders).toEqual([]);
   });
 });
+
+describe("the deployments the tree no longer carries can be removed", () => {
+  const workflow = readFileSync(
+    join(ROOT, ".github", "workflows", "decommission-crm-line-functions.yml"),
+    "utf8",
+  );
+
+  it("reads its list from the module, never a copy", () => {
+    expect(workflow).toContain("scripts/lib/crmLineFeatures.mjs");
+    expect(workflow).toContain("CRM_LINE_WITHHELD_FUNCTIONS");
+    for (const name of CRM_LINE_WITHHELD_FUNCTIONS) {
+      expect(workflow.includes(name), name).toBe(false);
+    }
+  });
+
+  it("deletes only on a person's dispatch, and only from this repository's own project", () => {
+    expect(workflow).toMatch(/^on:\s*\n\s+workflow_dispatch:/m);
+    expect(workflow).not.toMatch(/^\s+(push|pull_request|schedule):/m);
+    expect(workflow).not.toMatch(/--project-ref\s+[a-z]{20}\b/);
+  });
+});
