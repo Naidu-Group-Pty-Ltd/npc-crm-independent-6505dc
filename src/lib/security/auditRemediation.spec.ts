@@ -80,7 +80,6 @@ describe('F-01 — the unauthenticated write path is closed', () => {
 describe('F-02 — the operator backfills require a JWT', () => {
   it.each([
     'email-body-backfill',
-    'backfill-message-directions',
     'backfill-investment-scores',
   ])('%s is verify_jwt = true', (fn) => {
     const block = CONFIG.slice(CONFIG.indexOf(`[functions.${fn}]`));
@@ -105,9 +104,10 @@ describe('F-02 — the operator backfills require a JWT', () => {
     // Reconciled by the cascade. This deployment declares 3 edge function(s) the prime
     // does not — crm-calendar, crm-inbound-message, crm-send-message — and does not
     // declare the GoHighLevel account migration (all 28 functions), which the prime keeps
-    // for itself, so the prime's number counts a different repository. The count below is
-    // this one's, taken from the config this same pass composed.
-    expect(declared.length).toBe(389);
+    // for itself, and the GoHighLevel integration (all 19 functions, withheld from the
+    // independent CRM line), so the prime's number counts a different repository. The
+    // count below is this one's, taken from the config this same pass composed.
+    expect(declared.length).toBe(370);
   });
 });
 

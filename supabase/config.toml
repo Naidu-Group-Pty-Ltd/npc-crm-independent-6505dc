@@ -104,14 +104,6 @@ verify_jwt = false
 [functions.partner-consent-portal]
 verify_jwt = false
 
-[functions.import-clients-from-ghl]
-verify_jwt = true
-# Declared rather than inherited, because the function's own wall-clock budget
-# is set against it: 95s of work under a 120s ceiling leaves room to write a
-# response that says how far the walk got. A run the platform cuts off reports
-# nothing, and a caller cannot tell that from one that finished.
-request_timeout = 120
-
 [functions.compare-investment-reports]
 verify_jwt = true
 request_timeout = 180
@@ -139,12 +131,6 @@ verify_jwt = false
 
 [functions.outlook-manage-subscription]
 verify_jwt = true
-
-[functions.ghl-calendar-proxy]
-verify_jwt = false
-
-[functions.sync-notes-to-ghl]
-verify_jwt = false
 
 [functions.manage-call-settings]
 verify_jwt = true
@@ -484,12 +470,6 @@ request_timeout = 120
 verify_jwt = true
 request_timeout = 120
 
-[functions.ghl-calendar-test]
-verify_jwt = true
-
-[functions.ghl-calendar]
-verify_jwt = false
-
 [functions.admin-password-reset]
 verify_jwt = true
 
@@ -534,17 +514,7 @@ verify_jwt = true
 [functions.log-activity]
 verify_jwt = true
 
-[functions.sync-client-to-ghl]
-verify_jwt = false
-
 [functions.clean-note-transcript]
-verify_jwt = true
-
-[functions.sync-ghl-pipelines]
-verify_jwt = true
-request_timeout = 120
-
-[functions.update-ghl-opportunity-stage]
 verify_jwt = true
 
 [functions.manage-bc-scenarios]
@@ -665,16 +635,7 @@ verify_jwt = true
 [functions.analyze-meta-ads-phase4]
 verify_jwt = false
 
-[functions.ghl-webhook-receiver]
-verify_jwt = false
-
-[functions.backfill-lead-attributions]
-verify_jwt = true
-
 [functions.enrich-lead-attributions]
-verify_jwt = true
-
-[functions.diagnose-ghl-attribution]
 verify_jwt = true
 
 [functions.analyze-meta-ads-phase5]
@@ -683,10 +644,6 @@ verify_jwt = true
 [functions.agent-task-runner]
 verify_jwt = false
 request_timeout = 120
-
-[functions.backfill-notes-to-ghl]
-verify_jwt = false
-request_timeout = 300
 
 [functions.google-fonts-catalog]
 verify_jwt = false
@@ -711,17 +668,6 @@ verify_jwt = false
 
 [functions.manychat-proxy]
 verify_jwt = false
-
-[functions.sync-ghl-conversations]
-verify_jwt = false
-request_timeout = 120
-
-[functions.send-ghl-message]
-verify_jwt = false
-
-[functions.ghl-conversations-cron]
-verify_jwt = false
-request_timeout = 300
 
 [functions.generate-market-intelligence-report]
 verify_jwt = false
@@ -1068,8 +1014,6 @@ verify_jwt = false
 [functions.security-step-up]
 verify_jwt = false
 
-
-
 [functions.market-updates-status]
 # Authoritative sanitised read contract; authentication and module access are enforced in-function.
 verify_jwt = false
@@ -1246,9 +1190,6 @@ verify_jwt = false
 # invoke it, spend the vendor credential it holds and write to production.
 # It has no programmatic caller anywhere in the repository, so requiring a
 # JWT breaks nothing. Security audit, 12 September 2026.
-[functions.backfill-message-directions]
-verify_jwt = true
-
 [functions.bc-scenario-agent]
 verify_jwt = false
 
@@ -1262,9 +1203,6 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.client-portal-finance-hub]
-verify_jwt = false
-
-[functions.conversation-sync-cron]
 verify_jwt = false
 
 [functions.convert-template-document]
@@ -1410,9 +1348,6 @@ verify_jwt = false
 [functions.notifications-feed-v2]
 verify_jwt = false
 
-[functions.one-time-bulk-conversation-sync]
-verify_jwt = false
-
 [functions.partner-compliance]
 verify_jwt = false
 
@@ -1471,9 +1406,6 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.start-conversations-export]
-verify_jwt = false
-
-[functions.sync-ghl-marketing-assets]
 verify_jwt = false
 
 [functions.template-import-finalize-worker]

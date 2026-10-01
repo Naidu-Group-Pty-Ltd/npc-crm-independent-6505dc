@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { useDropzone } from 'react-dropzone';
 import { useFinancePortalAuth } from '@/hooks/useFinancePortalAuth';
+import { ghlAffordancesAvailable } from '@/lib/crm/crmProvider';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
@@ -162,7 +163,8 @@ function CreateClientDialog({
   const [parseProgress, setParseProgress] = useState(0);
   const [pdfFileName, setPdfFileName] = useState<string | null>(null);
   const [parsedMetrics, setParsedMetrics] = useState<{ properties: number; employment: number; liabilities: number } | null>(null);
-  const [syncToGHL, setSyncToGHL] = useState(true);
+  // Off, and not offered, where this deployment carries no GoHighLevel.
+  const [syncToGHL, setSyncToGHL] = useState(ghlAffordancesAvailable);
 
   const resetState = useCallback(() => {
     setIntakeMode('manual');
@@ -172,7 +174,7 @@ function CreateClientDialog({
     setParseProgress(0);
     setPdfFileName(null);
     setParsedMetrics(null);
-    setSyncToGHL(true);
+    setSyncToGHL(ghlAffordancesAvailable());
   }, []);
 
 
@@ -426,6 +428,7 @@ function CreateClientDialog({
 
           {/* GHL sync (mirrors dashboard AddClientModal) */}
           <div className="space-y-3 rounded-lg border border-border/50 bg-muted/20 p-4">
+            {ghlAffordancesAvailable() && (
             <div className="flex items-center space-x-2">
               <Checkbox
                 id="finance-syncToGHL"
@@ -436,6 +439,7 @@ function CreateClientDialog({
                 Sync to GoHighLevel after creating
               </Label>
             </div>
+            )}
 
             <p className="text-xs text-muted-foreground">
               The client is created in the shared dashboard data model, linked to your finance account, and surfaced to the Command Centre with finance-portal provenance.

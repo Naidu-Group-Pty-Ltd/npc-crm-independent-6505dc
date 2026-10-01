@@ -28,40 +28,40 @@ const fn = (name: string) => read("supabase", "functions", name, "index.ts");
 */
 
 describe("the CRM outbound message path", () => {
-  const sendGhl = fn("send-ghl-message");
+  // This line carries no GoHighLevel: `send-ghl-message` is withheld from it,
+  // and `crm-send-message` is the only outbound path. The defects below were
+  // found in the vendor function and are pinned here on the path this line
+  // actually runs, because both write the same table.
+  const sendNative = fn("crm-send-message");
   const sendEmail = fn("send-email-reply");
   const code = (s: string) =>
     s.replace(/\/\*[\s\S]*?\*\//g, "").replace(/^[ \t]*\/\/.*$/gm, "");
 
   it("never writes `message_type`, which exists in no table, migration or type", () => {
     /*
-      This is the one that cost the most. `messageRecord` carried it beside
+      This is the one that cost the most. The vendor path carried it beside
       `channel_type` with the same value; PostgREST answered PGRST204; the
       error was re-thrown; and the outer catch returned HTTP 500 "CRM messaging
-      is temporarily unavailable" — AFTER GoHighLevel had accepted and
-      delivered the message. Every outbound SMS and WhatsApp the CRM ever sent
-      was really sent, never recorded, and reported to the operator as failed.
+      is temporarily unavailable" — AFTER the message had been delivered.
     */
-    expect(code(sendGhl)).not.toMatch(/message_type\s*:/);
+    expect(code(sendNative)).not.toMatch(/message_type\s*:/);
     expect(code(sendEmail)).not.toMatch(/message_type\s*:/);
   });
 
   it("still writes the columns the table does have", () => {
     // Removing a phantom must never remove a control: the row still carries
     // its channel, its direction and its idempotency key.
-    expect(sendGhl).toMatch(/channel_type: channel,/);
-    expect(sendGhl).toMatch(/client_request_id: idempotencyKey \|\| null,/);
+    expect(sendNative).toMatch(/channel_type: channel,/);
+    expect(sendNative).toMatch(/client_request_id: idempotencyKey/);
     expect(sendEmail).toMatch(/channel_type: 'email',/);
   });
 
   it("reads the error on the writes that used to discard it", () => {
     /*
-      Both of these failed silently for months. A write that reports nothing is
-      how a feature comes to be dead while every gate stays green — and the
-      spec that vouches for the emailed reply is structural and asserts only
-      that the code CONTAINS the write.
+      A write that reports nothing is how a feature comes to be dead while
+      every gate stays green.
     */
-    expect(sendGhl).toMatch(/const \{ error: failRowError \}/);
+    expect(sendNative).toMatch(/const \{ error: rowError \}/);
     expect(sendEmail).toMatch(/const \{ error: threadPersistError \}/);
   });
 

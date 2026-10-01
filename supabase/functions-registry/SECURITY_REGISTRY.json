@@ -338,28 +338,6 @@
       "wp14_auto_classified": false,
       "note": "Security audit 2026-09-12: ran verify_jwt=false with no caller check, a service-role client and CORS *. Auto-classified cron-worker but no cron job or code path invokes it. Now JWT-gated; invoke as a signed-in operator."
     },
-    "backfill-lead-attributions": {
-      "verify_jwt": true,
-      "exposure_class": "cron-worker",
-      "owner": "security-remediation-program",
-      "reviewed": true,
-      "wp14_auto_classified": true
-    },
-    "backfill-message-directions": {
-      "verify_jwt": true,
-      "exposure_class": "human-authenticated",
-      "owner": "security-remediation-program",
-      "reviewed": true,
-      "wp14_auto_classified": false,
-      "note": "Security audit 2026-09-12: ran verify_jwt=false with no caller check, a service-role client and CORS *. Auto-classified cron-worker but no cron job or code path invokes it. Now JWT-gated; invoke as a signed-in operator."
-    },
-    "backfill-notes-to-ghl": {
-      "verify_jwt": false,
-      "exposure_class": "cron-worker",
-      "owner": "security-remediation-program",
-      "reviewed": true,
-      "wp14_auto_classified": true
-    },
     "bc-scenario-agent": {
       "verify_jwt": false,
       "exposure_class": "portal-authenticated",
@@ -554,13 +532,6 @@
       "reviewed": true,
       "wp14_auto_classified": true
     },
-    "conversation-sync-cron": {
-      "verify_jwt": false,
-      "exposure_class": "cron-worker",
-      "owner": "security-remediation-program",
-      "reviewed": true,
-      "wp14_auto_classified": true
-    },
     "convert-template-document": {
       "verify_jwt": false,
       "exposure_class": "human-authenticated",
@@ -639,13 +610,6 @@
       "reviewed": true
     },
     "data-conflict-resolver": {
-      "verify_jwt": true,
-      "exposure_class": "human-authenticated",
-      "owner": "security-remediation-program",
-      "reviewed": true,
-      "wp14_auto_classified": true
-    },
-    "diagnose-ghl-attribution": {
       "verify_jwt": true,
       "exposure_class": "human-authenticated",
       "owner": "security-remediation-program",
@@ -1283,41 +1247,6 @@
       "reviewed": true,
       "wp14_auto_classified": true
     },
-    "ghl-calendar": {
-      "verify_jwt": false,
-      "exposure_class": "human-authenticated",
-      "owner": "security-remediation-program",
-      "reviewed": true,
-      "wp14_auto_classified": true
-    },
-    "ghl-calendar-proxy": {
-      "verify_jwt": false,
-      "exposure_class": "human-authenticated",
-      "owner": "security-remediation-program",
-      "reviewed": true,
-      "wp14_auto_classified": true
-    },
-    "ghl-calendar-test": {
-      "verify_jwt": true,
-      "exposure_class": "human-authenticated",
-      "owner": "security-remediation-program",
-      "reviewed": true,
-      "wp14_auto_classified": true
-    },
-    "ghl-conversations-cron": {
-      "verify_jwt": false,
-      "exposure_class": "cron-worker",
-      "owner": "security-remediation-program",
-      "reviewed": true,
-      "wp14_auto_classified": true
-    },
-    "ghl-webhook-receiver": {
-      "verify_jwt": false,
-      "exposure_class": "webhook-secret",
-      "owner": "security-remediation-program",
-      "reviewed": true,
-      "reviewed_in": "second-round-audit-remediation"
-    },
     "google-fonts-catalog": {
       "verify_jwt": false,
       "exposure_class": "authenticated-staff",
@@ -1339,13 +1268,6 @@
     },
     "hero-image-studio": {
       "verify_jwt": false,
-      "exposure_class": "human-authenticated",
-      "owner": "security-remediation-program",
-      "reviewed": true,
-      "wp14_auto_classified": true
-    },
-    "import-clients-from-ghl": {
-      "verify_jwt": true,
       "exposure_class": "human-authenticated",
       "owner": "security-remediation-program",
       "reviewed": true,
@@ -1902,13 +1824,6 @@
       "reviewed": true,
       "reviewed_in": "wp14-registry-backfill"
     },
-    "one-time-bulk-conversation-sync": {
-      "verify_jwt": false,
-      "exposure_class": "human-authenticated",
-      "owner": "security-remediation-program",
-      "reviewed": true,
-      "wp14_auto_classified": true
-    },
     "outlook-calendar": {
       "verify_jwt": false,
       "exposure_class": "authenticated-staff",
@@ -2359,13 +2274,6 @@
       "reviewed": true,
       "reviewed_in": "second-round-audit-remediation"
     },
-    "send-ghl-message": {
-      "verify_jwt": false,
-      "exposure_class": "module-gated",
-      "owner": "security-remediation-program",
-      "reviewed": true,
-      "wp14_auto_classified": true
-    },
     "send-web-push": {
       "verify_jwt": false,
       "exposure_class": "cron-worker",
@@ -2505,41 +2413,6 @@
       "owner": "security-remediation-program",
       "reviewed": true
     },
-    "sync-client-to-ghl": {
-      "verify_jwt": false,
-      "exposure_class": "human-authenticated",
-      "owner": "security-remediation-program",
-      "reviewed": true,
-      "wp14_auto_classified": true
-    },
-    "sync-ghl-conversations": {
-      "verify_jwt": false,
-      "exposure_class": "human-authenticated",
-      "owner": "security-remediation-program",
-      "reviewed": true,
-      "wp14_auto_classified": true
-    },
-    "sync-ghl-marketing-assets": {
-      "verify_jwt": false,
-      "exposure_class": "human-authenticated",
-      "owner": "security-remediation-program",
-      "reviewed": true,
-      "wp14_auto_classified": true
-    },
-    "sync-ghl-pipelines": {
-      "verify_jwt": true,
-      "exposure_class": "human-authenticated",
-      "owner": "security-remediation-program",
-      "reviewed": true,
-      "wp14_auto_classified": true
-    },
-    "sync-notes-to-ghl": {
-      "verify_jwt": false,
-      "exposure_class": "human-authenticated",
-      "owner": "security-remediation-program",
-      "reviewed": true,
-      "wp14_auto_classified": true
-    },
     "template-ai-author": {
       "verify_jwt": true,
       "exposure_class": "human-authenticated",
@@ -2588,13 +2461,6 @@
       "owner": "reporting-engine-program",
       "reviewed": true,
       "notes": "Public transport GTFS ingest (TfNSW, TransLink SEQ, NT DIPL Darwin and Alice Springs). Reads one member out of each publisher's own archive by HTTP range rather than downloading it -- NSW's is 292 MB and only stops.txt is fetched. Gateway JWT on; inside, internal edge secret or the per-feed self-sealing bootstrap, which seals on a load that SUCCEEDED so a killed load can still resume. Reads public files; writes only transport_stops/transport_feed_syncs. The probe and digest stages read and write nothing."
-    },
-    "update-ghl-opportunity-stage": {
-      "verify_jwt": true,
-      "exposure_class": "human-authenticated",
-      "owner": "security-remediation-program",
-      "reviewed": true,
-      "wp14_auto_classified": true
     },
     "update-integration-secret": {
       "verify_jwt": true,

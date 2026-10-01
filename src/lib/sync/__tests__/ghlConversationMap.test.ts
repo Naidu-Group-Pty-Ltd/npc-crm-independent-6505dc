@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { readFileSync } from "node:fs";
+import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import {
   CONVERSATION_ROW_KEYS,
@@ -199,7 +199,11 @@ describe("the direction precedence the other copy got wrong", () => {
   it("and the source of that bug is gone from the repository", () => {
     const root = join(__dirname, "..", "..", "..", "..");
     for (const fn of ["sync-ghl-conversations", "conversation-sync-cron"]) {
-      const src = readFileSync(join(root, "supabase", "functions", fn, "index.ts"), "utf8");
+      // Withheld from the independent CRM line, where the file is absent —
+      // which is the strongest form of "gone".
+      const file = join(root, "supabase", "functions", fn, "index.ts");
+      if (!existsSync(file)) continue;
+      const src = readFileSync(file, "utf8");
       expect(src).not.toMatch(/lastMessageDirection \|\| conv\.lastMessageType === 1 \?/);
     }
   });

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { invokeSecureFunction } from '@/lib/secureInvoke';
+import { ghlAffordancesAvailable } from '@/lib/crm/crmProvider';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -43,7 +44,8 @@ export function ClientAppointmentsTab({ clientId, ghlContactId }: ClientAppointm
   const [error, setError] = useState<string | null>(null);
 
   const fetchAppointments = async () => {
-    if (!ghlContactId) return;
+    // Appointments are read from GoHighLevel, which this line may not carry.
+    if (!ghlContactId || !ghlAffordancesAvailable()) return;
     
     setLoading(true);
     setError(null);

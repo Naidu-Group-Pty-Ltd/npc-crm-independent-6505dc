@@ -336,6 +336,25 @@ comment naming a catcher Mission Control never wrote. So before concluding a
 deployment is missing something, check whether the thing is present anywhere:
 a feature absent on every deployment is unbuilt, not unprovisioned.
 
+## This line carries none of GoHighLevel
+Read the first section of [`docs/crm/CRM_INDEPENDENCE.md`](./docs/crm/CRM_INDEPENDENCE.md)
+before restoring anything named `*ghl*`, touching `src/lib/crm/crmProvider.ts`,
+`scripts/lib/crmLineFeatures.mjs`, `crm-send-message`'s authorisation, or any
+control gated on `ghlAffordancesAvailable()`. This repository is the head of
+the CRM-independent line: a variant, not a pure clone of the prime, whose CRM
+is a closed system in its own Postgres. Nineteen GoHighLevel edge functions and
+the modules only they use are **gone from the tree**, and Aurixa Mission
+Control withholds them from the line by class on `crm_mode`, so a cascade never
+writes them back, the deploy lanes never deploy them and the fleet sweep
+undeploys any that are live. Three rules bite. **A function on that list is
+never re-added here**: `crmLineFeatures.spec.ts` fails on its directory, its
+`config.toml` block or its registry entry, and the list is a literal at each end
+(this script, the router's `WITHHELD_CRM_FUNCTIONS`, Mission Control's
+register). **The schema stays**, because `ghl_*` tables are this CRM's own
+storage and a withheld migration is a ledger hole. And **a file that hides a
+GoHighLevel control is a head variant**, recorded as `manual_reconcile` on this
+clone in Mission Control, so a prime cascade cannot put the control back.
+
 ## What a cascade brings, and what it leaves behind
 An Aurixa **cascade** is an automated import of files from the prime
 (`npc-property-dashbord`) into this clone — `7ca563c` brought 161 of them from

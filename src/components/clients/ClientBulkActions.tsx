@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { RefreshCw, Trash2, Download, FileSpreadsheet, Loader2 } from 'lucide-react';
 import { invokeSecureFunction } from '@/lib/secureInvoke';
+import { ghlAffordancesAvailable } from '@/lib/crm/crmProvider';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { logActivityDirect } from '@/hooks/useActivityLogger';
@@ -239,6 +240,7 @@ export function ClientBulkActions({
           {selectedCount} selected
         </Badge>
         <div className="flex-1" />
+        {ghlAffordancesAvailable() && (
         <Button
           variant="outline"
           size="sm"
@@ -252,6 +254,7 @@ export function ClientBulkActions({
           )}
           Sync to GHL
         </Button>
+        )}
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
             <Button variant="outline" size="sm">

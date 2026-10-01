@@ -26,6 +26,7 @@ import {
 import { invokeSecureFunction } from '@/lib/secureInvoke';
 import { FollowUpFlag } from './FollowUpFlag';
 import { SyncToGHLDialog } from './SyncToGHLDialog';
+import { ghlAffordancesAvailable } from '@/lib/crm/crmProvider';
 import { supabase } from '@/integrations/supabase/client';
 import { toast } from 'sonner';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -273,11 +274,13 @@ export function ClientCard({ client, ghlLocationId, onView, onDelete, onSyncComp
                   button now — an overflow copy of a control already on the
                   card is a second place for the same thing to drift. */}
               <DropdownMenuContent align="end" sideOffset={8} className="w-48 rounded-xl p-1.5 text-sm">
+                {ghlAffordancesAvailable() && (
                 <DropdownMenuItem onClick={handleSyncToGHL} className="rounded-lg">
                   <RefreshCw className="mr-2 h-4 w-4" />
                   Sync to GHL
                 </DropdownMenuItem>
-                {client.ghl_contact_id && ghlLocationId && (
+                )}
+                {ghlAffordancesAvailable() && client.ghl_contact_id && ghlLocationId && (
                   <DropdownMenuItem asChild className="rounded-lg">
                     <a
                       href={`https://app.gohighlevel.com/v2/location/${ghlLocationId}/contacts/detail/${client.ghl_contact_id}`}
@@ -370,6 +373,7 @@ export function ClientCard({ client, ghlLocationId, onView, onDelete, onSyncComp
                 <span className="dashboard-status-chip dashboard-status-chip-success">Deal closed</span>
               )}
             </div>
+            {ghlAffordancesAvailable() && (
             <span
               className={cn('dashboard-status-chip shrink-0', ghlStatus.tone)}
               title={`GoHighLevel: ${ghlStatus.label}`}
@@ -377,10 +381,12 @@ export function ClientCard({ client, ghlLocationId, onView, onDelete, onSyncComp
               <span className="text-muted-foreground">GHL</span>
               {ghlStatus.label}
             </span>
+            )}
           </div>
         </div>
       </div>
 
+      {ghlAffordancesAvailable() && (
       <SyncToGHLDialog
         open={showSyncDialog}
         onOpenChange={setShowSyncDialog}
@@ -388,6 +394,7 @@ export function ClientCard({ client, ghlLocationId, onView, onDelete, onSyncComp
         clientName={fullName}
         onSyncComplete={onSyncComplete}
       />
+      )}
     </Card>
   );
 }

@@ -5,8 +5,66 @@ database**, not GoHighLevel. This document records what that turned out to
 mean, what is built, and — at least as importantly — what is not.
 
 Read it before touching `_shared/crm/*`, the outbound path in
-`send-ghl-message`, or anything that decides where a contact, conversation,
+`crm-send-message`, or anything that decides where a contact, conversation,
 appointment or opportunity lives.
+
+## A closed system: this line carries none of GoHighLevel
+
+This repository is the head of the **CRM-independent line**, not a pure clone
+of the prime. It is a variant that does not depend on the GoHighLevel
+integration at all, and since 29 Sep 2026 it does not carry it either.
+
+**What left the tree.** Nineteen edge functions (`backfill-lead-attributions`,
+`backfill-message-directions`, `backfill-notes-to-ghl`,
+`conversation-sync-cron`, `diagnose-ghl-attribution`, `ghl-calendar`,
+`ghl-calendar-proxy`, `ghl-calendar-test`, `ghl-conversations-cron`,
+`ghl-webhook-receiver`, `import-clients-from-ghl`,
+`one-time-bulk-conversation-sync`, `send-ghl-message`, `sync-client-to-ghl`,
+`sync-ghl-conversations`, `sync-ghl-marketing-assets`, `sync-ghl-pipelines`,
+`sync-notes-to-ghl`, `update-ghl-opportunity-stage`), the four `_shared/`
+modules only they use, the specs whose subject they were, and their
+`config.toml` blocks, security-registry entries and baselines.
+
+**Who keeps it out.** Aurixa Mission Control withholds the integration from
+this line **by class**, keyed on the clone's recorded `crm_mode`
+(`src/server/crmLineFeatures.pure.ts` there). The cascade never writes those
+paths here, the deploy lanes never deploy those functions, the fleet sweep
+undeploys any that are live and unschedules the crons that call them, and
+parity does not count their absence. A conversion to the dependent line
+restores them; a conversion to this line removes them. The list is a literal
+at each end: `scripts/lib/crmLineFeatures.mjs` here (read by the CI gates),
+`WITHHELD_CRM_FUNCTIONS` in `src/lib/crm/crmProvider.ts` (read by the
+browser), and `crmLineFeatures.spec.ts` holds the two to each other and to
+the tree.
+
+**What stayed, deliberately.** The schema: `ghl_conversations` and its
+siblings are this CRM's own storage, and a withheld migration is a ledger
+hole. The mixed modules the line still reads (`_shared/ghl-account.ts`,
+`_shared/ghlConversationMap.pure.ts`). And the three `crm-*` functions, which
+ARE this line's CRM.
+
+Four rules carry it.
+
+- **The router is native-only.** `isNativeCrm()` is always true here,
+  `crmFunction()` only ever names a `crm-*` function, and the vendor
+  reconciliation steps have no name to hand back. A build told `ghl` warns
+  once and stays native, because there is nothing on the other side.
+- **A browser call to a withheld function never leaves the browser.**
+  `invokeSecureFunction` answers it locally with `crm_function_not_carried`,
+  not retryable, rather than letting a gateway that has never heard of the
+  function answer 404.
+- **A GoHighLevel control is not drawn.** Every sync toggle, import button,
+  "View in GHL" link and pending-sync count is gated on
+  `ghlAffordancesAvailable()`, which is false here. Each of those files is a
+  head variant and is reconciled by hand rather than overwritten by a prime
+  cascade.
+- **The one send path carries the vendor path's authorisation.**
+  `crm-send-message` now demands `conversations:can_edit` and scopes the
+  conversation to the caller's own clients (404, not 403) before the
+  idempotency read and the provider call, and
+  `check-ghl-message-authz.mjs` holds every send path the tree carries to
+  that rule. Before, it checked a signed-in user and nothing else, and the
+  vendor function beside it was the only one held to the rule.
 
 ## What the coupling actually was
 
@@ -174,7 +232,8 @@ leaves a client waiting for a reply nobody sent.
 | **No WhatsApp sender** | Refused as `not_implemented`, on a ground no credential changes. |
 | **Inbound is built but unexercised** | `crm-inbound-message` receives a Twilio SMS and writes the thread. With no `TWILIO_AUTH_TOKEN` on any deployment it refuses every request — correctly, since the token IS the signature key — so the path has never run against a real delivery. |
 | **No native pipeline or conversation *reconciliation*** | By design, not by omission — see the routing table above. What a native deployment does NOT yet have is an inbound path to fill the threads in the first place (the row above). |
-| **The `ghl-migrate-*` / `sync-ghl-*` workers** | Still assume a vendor. They should stand down cleanly under `native` rather than erroring. |
+| **The `sync-ghl-*` workers** | Not carried on this line (see above). The `ghl-migrate-*` account-migration workers are the prime's alone and never reach any clone. |
+| **No native pipeline creation** | Pipelines and stages were only ever synced in from GoHighLevel. With the sync gone, Client Tracker shows the pipelines already stored and offers no way to create one. An owner decision: a native pipeline editor is the remedy. |
 
 `RESEND_API_KEY` is `authorised_no_value` on this clone — the fleet policy says
 forward it and Mission Control holds no value — so email is in the same

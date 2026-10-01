@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { invokeSecureFunction } from '@/lib/secureInvoke';
+import { ghlAffordancesAvailable } from '@/lib/crm/crmProvider';
 import { toast } from 'sonner';
 import { logActivityDirect } from '@/hooks/useActivityLogger';
 import {
@@ -43,7 +44,8 @@ interface GHLPipelineStage {
 
 export function StandardAddClientForm({ active, onCancel, onCreated }: StandardAddClientFormProps) {
   const queryClient = useQueryClient();
-  const [syncToGHL, setSyncToGHL] = useState(true);
+  // Off, and not offered, where this deployment carries no GoHighLevel.
+  const [syncToGHL, setSyncToGHL] = useState(ghlAffordancesAvailable);
   const [selectedPipelineId, setSelectedPipelineId] = useState<string>('');
   const [selectedStageId, setSelectedStageId] = useState<string>('');
   const [formData, setFormData] = useState({
@@ -208,7 +210,7 @@ export function StandardAddClientForm({ active, onCancel, onCreated }: StandardA
       secondary_mobile: '',
       current_address: '',
     });
-    setSyncToGHL(true);
+    setSyncToGHL(ghlAffordancesAvailable());
     setSelectedPipelineId('');
     setSelectedStageId('');
   };
@@ -342,6 +344,7 @@ export function StandardAddClientForm({ active, onCancel, onCreated }: StandardA
           </div>
 
           {/* Sync Option */}
+          {ghlAffordancesAvailable() && (
           <div className="flex items-center space-x-2 rounded-2xl border border-brand-300/20 bg-brand-300/10 p-4">
             <Checkbox
               id="syncToGHL"
@@ -352,6 +355,7 @@ export function StandardAddClientForm({ active, onCancel, onCreated }: StandardA
               Sync to GoHighLevel after creating
             </Label>
           </div>
+          )}
 
           {/* Pipeline + Stage (shown when GHL sync enabled) */}
           {syncToGHL && (
