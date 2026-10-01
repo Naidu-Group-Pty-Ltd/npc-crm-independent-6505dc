@@ -480,6 +480,7 @@ function StockCardImage({ image, alt }: {
     <StockPicture
       image={image}
       resolveUrl={marketplaceStockImageUrl}
+      presentation="card"
       className="border-b border-border/60"
       alt={image ? alt : ''}
       emptyLabel="No image found"

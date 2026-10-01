@@ -38,6 +38,9 @@ import {
   servableClearanceFor, servableDerivativeFor, type SanitizedDerivative,
 } from './sanitizedDerivative.pure.ts';
 import { PROCESSED_LIFECYCLE } from './stockLifecycle.pure.ts';
+import {
+  heroOriginalFingerprint, heroPlanForServed, type HeroPlan, type HeroServedObject,
+} from './marketplaceHero.pure.ts';
 import { readAllRows } from './pagedRead.ts';
 
 /** The stage whose provenance is the builder's own document. */
@@ -143,6 +146,30 @@ export function servesCleanOriginal(image: DisplayableImage): boolean {
  */
 export function derivativeToServe(image: DisplayableImage): SanitizedDerivative | null {
   return servesCleanOriginal(image) ? null : servableDerivativeFor(image.source_detail);
+}
+
+/**
+ * The object the network's door serves for this image — the builder's
+ * original or its repair — and that object's SHA-256: the fingerprint a
+ * Marketplace Hero plan must match. Read from `source_detail` alone, by the
+ * same rule the network applies (`aurixa-builders`' `primaryImage.ts`), so a
+ * mirror row with no network storage path reads the same answer.
+ */
+export function servedObjectOf(
+  image: DisplayableImage,
+): { object: HeroServedObject; sha256: string | null } {
+  const derivative = derivativeToServe(image);
+  if (derivative) return { object: 'derivative', sha256: derivative.derivative_sha256 ?? null };
+  return { object: 'original', sha256: heroOriginalFingerprint(image.source_detail) };
+}
+
+/**
+ * The Marketplace Hero plan the network made for exactly the bytes this
+ * image serves, or null — the card then draws as before. Computed on the
+ * network and carried in the mirror's `source_detail`; nothing is planned here.
+ */
+export function heroPlanOfImage(image: DisplayableImage): HeroPlan | null {
+  return heroPlanForServed(image.source_detail, servedObjectOf(image));
 }
 
 /**

@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Building2, ExternalLink, Globe, Mail, MessageSquare, Phone } from 'lucide-react';
 import { Badge } from '@/components/ui/badge';
@@ -6,6 +6,9 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { BuilderConversationThread } from '@/components/listings/BuilderStockConversation';
+import { StockPicture } from '@/components/stock/StockPicture';
+import { imageById } from '@/lib/builderStockGallery';
+import { stockItemSuburb } from '@/lib/builderStock';
 import { useNotificationsOptional } from '@/contexts/NotificationsContext';
 import { useBuilderStockMarketplaceFlag } from '@/hooks/useBuilderStockMarketplaceFlag';
 import { cn } from '@/lib/utils';
@@ -154,12 +157,12 @@ function ActivatedProperties() {
 }
 
 function ActivationRow({ row }: { row: ActivatedPropertyRow }) {
-  const place = [row.lot_number ? `Lot ${row.lot_number}` : null, row.address, row.suburb].filter(Boolean).join(', ');
+  const place = [row.lot_number ? `Lot ${row.lot_number}` : null, row.address, stockItemSuburb(row.suburb)].filter(Boolean).join(', ');
   const website = row.builder_website && /^https?:\/\//i.test(row.builder_website) ? row.builder_website : null;
   return (
     <Card role="article" aria-label={place || 'Activated property'}>
       <CardContent className="flex flex-col gap-4 p-4 md:flex-row">
-        <ActivationPhoto imageId={row.primary_image_id} />
+        <ActivationPhoto imageId={row.primary_image_id} alt={place || 'Activated property'} />
         <div className="min-w-0 flex-1 space-y-3">
           <div className="flex flex-wrap items-start justify-between gap-2">
             <div className="min-w-0">
@@ -228,23 +231,28 @@ function ActivationRow({ row }: { row: ActivatedPropertyRow }) {
   );
 }
 
-function ActivationPhoto({ imageId }: { imageId: string | null }) {
-  // The URL is kept with the image it was signed for: when the server
-  // withdraws or replaces the image, the old photograph is no longer shown.
-  const [signed, setSigned] = useState<{ imageId: string; url: string | null } | null>(null);
-  useEffect(() => {
-    let live = true;
-    if (imageId) {
-      marketplaceStockImageUrl(imageId)
-        .then((url) => { if (live) setSigned({ imageId, url }); })
-        .catch(() => undefined);
-    }
-    return () => { live = false; };
-  }, [imageId]);
-  const url = imageId && signed?.imageId === imageId ? signed.url : null;
+/*
+ * THE SAME PICTURE, THE SAME WAY, AS EVERY OTHER SURFACE.
+ *
+ * This was a 160×112 `object-cover` box with no ground — the one place in the
+ * Command Centre that re-framed a builder's photograph to fit, cutting 60% of
+ * the width off a wide render and over a third of the height off a portrait
+ * one (measured 30 September 2026). `StockPicture` is the one treatment the
+ * marketplace card, the property page and the Builder Portal share: the frame
+ * is 16:9 and a picture that is not that shape is shown whole on its ground.
+ */
+function ActivationPhoto({ imageId, alt }: { imageId: string | null; alt: string }) {
+  // One object per image, so the picture is not fetched again on every render.
+  const image = useMemo(() => (imageId ? imageById(imageId) : null), [imageId]);
   return (
-    <div className="h-28 w-full shrink-0 overflow-hidden rounded-md bg-muted md:w-40">
-      {url ? <img src={url} alt="" className="h-full w-full object-cover" loading="lazy" /> : null}
+    <div className="w-full shrink-0 overflow-hidden rounded-md md:w-48">
+      <StockPicture
+        image={image}
+        resolveUrl={marketplaceStockImageUrl}
+        presentation="card"
+        alt={alt}
+        emptyLabel="No photograph from the builder"
+      />
     </div>
   );
 }

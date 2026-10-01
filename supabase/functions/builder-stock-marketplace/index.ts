@@ -58,7 +58,7 @@ import {
   promotedOrganisations, splicePinsIntoPage, type RankedRow,
 } from '../_shared/builderStock/marketplaceOrder.pure.ts';
 import {
-  derivativeToServe, type DisplayableImage,
+  derivativeToServe, heroPlanOfImage, type DisplayableImage,
 } from '../_shared/builderStock/primaryImage.ts';
 import {
   isMissingRankingRelation, type MirrorSource,
@@ -470,7 +470,11 @@ Deno.serve(async (req) => {
       if (!owner) return json({ error: 'Image not found' }, 404);
 
       if (image.external_url && !image.storage_path) {
-        return json({ success: true, url: image.external_url, external: true });
+        // The network's door serves this; the plan travels with the mirror row.
+        return json({
+          success: true, url: image.external_url, external: true,
+          hero: heroPlanOfImage(image as DisplayableImage),
+        });
       }
 
       /**
@@ -511,6 +515,9 @@ Deno.serve(async (req) => {
         // own picture with an overlay removed, and a surface that wants to say
         // so can.
         sanitized: derivative ? derivative.transformation : null,
+        // The Marketplace Hero plan for exactly these bytes (null draws the
+        // card as before). Planned on the network; the mirror only carries it.
+        hero: heroPlanOfImage(image as DisplayableImage),
       });
     }
 
