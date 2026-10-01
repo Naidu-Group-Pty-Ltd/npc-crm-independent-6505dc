@@ -469,7 +469,7 @@ const TOOLS: any[] = [
     },
   },
 
-  // ─── CALENDAR & APPOINTMENTS (Live GHL) ───
+  // ─── CALENDAR & APPOINTMENTS (crm-calendar) ───
   {
     type: "function",
     function: {
@@ -482,7 +482,7 @@ const TOOLS: any[] = [
     type: "function",
     function: {
       name: "get_appointments_for_client",
-      description: "Fetch all appointments linked to a specific client from the LIVE GHL calendar by looking up their GHL contact ID.",
+      description: "Fetch all appointments linked to a specific client in this workspace's calendar.",
       parameters: { type: "object", properties: { client_id: { type: "string", description: "UUID of the client" } }, required: ["client_id"] },
     },
   },
@@ -490,7 +490,7 @@ const TOOLS: any[] = [
     type: "function",
     function: {
       name: "search_calendar_events",
-      description: "Search the live GHL calendar for events matching a query (by title, contact name, or notes). Use this to find a specific appointment before rescheduling or cancelling.",
+      description: "Search the calendar for events matching a query (by title, contact name, or notes). Use this to find a specific appointment before rescheduling or cancelling.",
       parameters: {
         type: "object",
         properties: {
@@ -506,11 +506,11 @@ const TOOLS: any[] = [
     type: "function",
     function: {
       name: "reschedule_appointment",
-      description: "Reschedule an existing GHL appointment to a new date/time. Requires the GHL event ID and the new start/end times in ISO format. Can also update title, notes, or status.",
+      description: "Reschedule an existing appointment to a new date/time. Requires the event ID and the new start/end times in ISO format. Can also update title, notes, or status.",
       parameters: {
         type: "object",
         properties: {
-          event_id: { type: "string", description: "The GHL event/appointment ID to reschedule" },
+          event_id: { type: "string", description: "The event/appointment ID to reschedule" },
           new_start_time: { type: "string", description: "New start time in ISO 8601 format (e.g. 2025-03-15T10:00:00+11:00)" },
           new_end_time: { type: "string", description: "New end time in ISO 8601 format (e.g. 2025-03-15T11:00:00+11:00)" },
           title: { type: "string", description: "Optional new title for the appointment" },
@@ -525,15 +525,15 @@ const TOOLS: any[] = [
     type: "function",
     function: {
       name: "create_appointment",
-      description: "Create a new appointment on a GHL calendar. Requires calendar ID, start/end times. Optionally link to a client by providing their internal client_id (the system will automatically resolve their GHL contact ID). Use get_calendars first to find the right calendar ID, and search_clients to find the client_id.",
+      description: "Create a new appointment on a calendar. Requires calendar ID, start/end times. Optionally link to a client by providing their internal client_id. Use get_calendars first to find the right calendar ID, and search_clients to find the client_id.",
       parameters: {
         type: "object",
         properties: {
-          calendar_id: { type: "string", description: "GHL calendar ID to create the appointment on" },
+          calendar_id: { type: "string", description: "Calendar ID to create the appointment on" },
           title: { type: "string", description: "Appointment title" },
           start_time: { type: "string", description: "Start time in ISO 8601 format" },
           end_time: { type: "string", description: "End time in ISO 8601 format" },
-          client_id: { type: "string", description: "Internal client ID or client name — will be resolved to GHL contact ID automatically" },
+          client_id: { type: "string", description: "Internal client ID or client name" },
           notes: { type: "string", description: "Optional notes for the appointment" },
         },
         required: ["calendar_id", "title", "start_time", "end_time"],
@@ -544,11 +544,11 @@ const TOOLS: any[] = [
     type: "function",
     function: {
       name: "cancel_appointment",
-      description: "Cancel an existing GHL appointment by setting its status to cancelled. REQUIRES USER CONFIRMATION.",
+      description: "Cancel an existing appointment by setting its status to cancelled. REQUIRES USER CONFIRMATION.",
       parameters: {
         type: "object",
         properties: {
-          event_id: { type: "string", description: "The GHL event/appointment ID to cancel" },
+          event_id: { type: "string", description: "The event/appointment ID to cancel" },
         },
         required: ["event_id"],
       },
@@ -558,7 +558,7 @@ const TOOLS: any[] = [
     type: "function",
     function: {
       name: "get_calendars",
-      description: "List all available GHL calendars with their IDs, names, and team members. Use this to find the correct calendar_id before creating appointments.",
+      description: "List all available calendars with their IDs, names, and team members. Use this to find the correct calendar_id before creating appointments.",
       parameters: { type: "object", properties: {} },
     },
   },
@@ -566,11 +566,11 @@ const TOOLS: any[] = [
     type: "function",
     function: {
       name: "get_free_slots",
-      description: "Get available free time slots for a specific GHL calendar on given dates. Useful for suggesting booking times.",
+      description: "Get available free time slots for a specific calendar on given dates. Useful for suggesting booking times.",
       parameters: {
         type: "object",
         properties: {
-          calendar_id: { type: "string", description: "GHL calendar ID" },
+          calendar_id: { type: "string", description: "Calendar ID" },
           start_date: { type: "string", description: "Start date in YYYY-MM-DD format" },
           end_date: { type: "string", description: "End date in YYYY-MM-DD format" },
         },
@@ -1149,7 +1149,7 @@ const TOOLS: any[] = [
     type: "function",
     function: {
       name: "create_client",
-      description: "Create a new client record with basic info (name, email, phone). Optionally assign to a GHL pipeline stage to auto-create an opportunity. REQUIRES USER CONFIRMATION.",
+      description: "Create a new client record with basic info (name, email, phone). REQUIRES USER CONFIRMATION.",
       parameters: {
         type: "object",
         properties: {
@@ -1158,7 +1158,6 @@ const TOOLS: any[] = [
           email: { type: "string", description: "Primary email" },
           mobile: { type: "string", description: "Primary mobile" },
           pipeline_status: { type: "string", description: "Pipeline status (default: lead)" },
-          ghl_pipeline_stage: { type: "string", description: "Name of the GHL pipeline stage to create an opportunity in (e.g. 'Opt-In [Cold Lead]', 'Discovery Call (DC) Booked'). Optional." },
         },
         required: ["first_name", "surname"],
       },
@@ -2682,7 +2681,7 @@ const TOOL_DOMAINS: Record<string, { description: string; tools: string[] }> = {
     tools: ["get_client_emails", "search_emails", "get_email_thread", "get_unlinked_emails", "link_email_to_client", "send_email", "get_email_stats"],
   },
   calendar: {
-    description: "GHL calendar: view/search/create/reschedule/cancel appointments, free slots, calendars list.",
+    description: "Calendar: view/search/create/reschedule/cancel appointments, free slots, calendars list.",
     tools: ["get_upcoming_calendar", "get_appointments_for_client", "search_calendar_events", "reschedule_appointment", "create_appointment", "cancel_appointment", "get_calendars", "get_free_slots", "get_todays_schedule"],
   },
   calls: {
@@ -3277,11 +3276,16 @@ async function executeSendEmail(sb: any, args: any) {
   } catch (err: any) { return { error: `Email send failed: ${err.message}` }; }
 }
 
-// ─── CALENDAR (Live GHL Bridge) ───
+// ─── CALENDAR (this deployment's own crm-calendar) ───
 
-/** Helper to call ghl-calendar edge function */
-async function callGHLCalendar(payload: Record<string, unknown>) {
-  const resp = await fetch(`${SUPABASE_URL.trim()}/functions/v1/ghl-calendar`, {
+/**
+ * Calls `crm-calendar`, the calendar served from this deployment's own
+ * Postgres. This line carries none of GoHighLevel (`ghl-calendar` and
+ * `ghl-calendar-proxy` are not deployed here), and `crm-calendar` answers the
+ * same actions in the same shapes, so every tool below reads it unchanged.
+ */
+async function callCalendar(payload: Record<string, unknown>) {
+  const resp = await fetch(`${SUPABASE_URL.trim()}/functions/v1/crm-calendar`, {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
@@ -3290,9 +3294,9 @@ async function callGHLCalendar(payload: Record<string, unknown>) {
     },
     body: JSON.stringify(payload),
   });
-  const data = await resp.json();
+  const data = await resp.json().catch(() => ({}));
   if (!resp.ok || !data.success) {
-    return { error: data.error || `GHL Calendar error (HTTP ${resp.status})`, details: data.details };
+    return { error: data.error || `Calendar error (HTTP ${resp.status})`, details: data.details };
   }
   return data;
 }
@@ -3304,7 +3308,7 @@ async function executeGetUpcomingCalendar(_sb: any, args: any) {
   const endTime = new Date(now.getTime() + daysAhead * 86400000).toISOString();
 
   try {
-    const data = await callGHLCalendar({ action: 'events', startTime, endTime });
+    const data = await callCalendar({ action: 'events', startTime, endTime });
     if (data.error) return data;
 
     const events = (data.events || []).map((e: any) => ({
@@ -3318,7 +3322,7 @@ async function executeGetUpcomingCalendar(_sb: any, args: any) {
       notes: e.notes,
     }));
 
-    return { appointments: events, count: events.length, source: 'live_ghl' };
+    return { appointments: events, count: events.length, source: 'crm_calendar' };
   } catch (err: any) {
     return { error: `Failed to fetch calendar: ${err.message}` };
   }
@@ -3328,26 +3332,20 @@ async function executeGetAppointmentsForClient(sb: any, args: any) {
   const v = await validateClientExists(sb, args.client_id);
   if (!v.valid) return { error: v.error };
   const cid = v.resolvedId || args.client_id;
-  const { data: client } = await sb.from('clients').select('primary_email, ghl_contact_id').eq('id', cid).single();
+  const { data: client } = await sb.from('clients').select('primary_email').eq('id', cid).single();
 
-  if (client?.ghl_contact_id) {
-    try {
-      const resp = await fetch(`${SUPABASE_URL.trim()}/functions/v1/ghl-calendar-proxy`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': `Bearer ${INTERNAL_EDGE_SECRET}`,
-          'apikey': SUPABASE_ANON_KEY.trim(),
-        },
-        body: JSON.stringify({ action: 'getContactAppointments', contactId: client.ghl_contact_id }),
-      });
-      const data = await resp.json();
-      if (resp.ok && data.success) {
-        return { appointments: data.events || [], count: (data.events || []).length, source: 'live_ghl', client_name: clientName(v.client) };
-      }
-    } catch (err: any) {
-      console.error('GHL contact appointments fetch failed:', err.message);
-    }
+  const { data: native, error: nativeError } = await sb
+    .from('crm_appointments')
+    .select('id, calendar_id, title, start_time, end_time, status, appointment_status, notes, address')
+    .eq('client_id', cid)
+    .order('start_time', { ascending: false })
+    .limit(50);
+  if (nativeError) {
+    // A read that FAILED is not a client with no appointments.
+    return { error: 'Could not read this client\'s appointments.' };
+  }
+  if ((native || []).length > 0) {
+    return { appointments: native, count: native.length, source: 'crm_calendar', client_name: clientName(v.client) };
   }
 
   if (client?.primary_email) {
@@ -3355,7 +3353,7 @@ async function executeGetAppointmentsForClient(sb: any, args: any) {
     return { appointments: data || [], count: (data || []).length, source: 'local_records', client_name: clientName(v.client) };
   }
 
-  return { appointments: [], message: 'No GHL contact ID or email on file for this client.' };
+  return { appointments: [], count: 0, source: 'crm_calendar', client_name: clientName(v.client) };
 }
 
 async function executeSearchCalendarEvents(args: any) {
@@ -3367,7 +3365,7 @@ async function executeSearchCalendarEvents(args: any) {
   const endTime = new Date(now.getTime() + days_ahead * 86400000).toISOString();
 
   try {
-    const data = await callGHLCalendar({ action: 'events', startTime, endTime });
+    const data = await callCalendar({ action: 'events', startTime, endTime });
     if (data.error) return data;
 
     const searchLower = query.toLowerCase();
@@ -3389,7 +3387,7 @@ async function executeSearchCalendarEvents(args: any) {
       notes: e.notes,
     }));
 
-    return { events: matched, count: matched.length, query, source: 'live_ghl' };
+    return { events: matched, count: matched.length, query, source: 'crm_calendar' };
   } catch (err: any) {
     return { error: `Calendar search failed: ${err.message}` };
   }
@@ -3413,7 +3411,7 @@ async function executeRescheduleAppointment(args: any) {
   if (appointment_status) payload.appointmentStatus = appointment_status;
 
   try {
-    const data = await callGHLCalendar(payload);
+    const data = await callCalendar(payload);
     if (data.error) return data;
     return { success: true, message: `Appointment ${event_id} rescheduled to ${new_start_time}`, event: data.event };
   } catch (err: any) {
@@ -3427,48 +3425,21 @@ async function executeCreateAppointment(sb: any, args: any) {
     return { error: 'calendar_id, start_time, and end_time are required.' };
   }
 
-  // Always resolve GHL contact ID from client_id — never accept a raw contact_id
-  // This prevents the AI from accidentally passing Supabase UUIDs to GHL
-  let ghlContactId: string | null = null;
+  // The appointment is linked to the client by its own id in this deployment's
+  // CRM. A raw contact_id is accepted only when it resolves to a client here.
+  let linkedClient: { id: string; name: string | null; email: string | null; phone: string | null } | null = null;
   let resolvedClientName: string | null = null;
 
-  if (client_id) {
-    const v = await validateClientExists(sb, client_id);
-    if (!v.valid) return { error: v.error };
-    const cid = v.resolvedId || client_id;
-    resolvedClientName = clientName(v.client);
-    const { data: clientRecord } = await sb.from('clients').select('ghl_contact_id').eq('id', cid).maybeSingle();
-    if (clientRecord?.ghl_contact_id) {
-      ghlContactId = clientRecord.ghl_contact_id;
-      console.log(`[create_appointment] Resolved client ${cid} → GHL contact ${ghlContactId}`);
+  const candidate = client_id || args.contact_id;
+  if (candidate) {
+    const v = await validateClientExists(sb, candidate);
+    if (!v.valid) {
+      if (client_id) return { error: v.error };
     } else {
-      console.log(`[create_appointment] Client ${cid} (${resolvedClientName}) has no ghl_contact_id — creating appointment without contact link`);
-    }
-  }
-
-  // Safety: reject any contact_id that looks like a Supabase UUID (not a GHL ID)
-  if (args.contact_id) {
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
-    if (uuidRegex.test(args.contact_id)) {
-      console.warn(`[create_appointment] Rejected contact_id "${args.contact_id}" — looks like a Supabase UUID, not a GHL contact ID. Use client_id instead.`);
-      // Try to resolve it as a client_id
-      if (!ghlContactId) {
-        const v2 = await validateClientExists(sb, args.contact_id);
-        if (v2.valid) {
-          const cid2 = v2.resolvedId || args.contact_id;
-          resolvedClientName = resolvedClientName || clientName(v2.client);
-          const { data: cr2 } = await sb.from('clients').select('ghl_contact_id').eq('id', cid2).maybeSingle();
-          if (cr2?.ghl_contact_id) {
-            ghlContactId = cr2.ghl_contact_id;
-            console.log(`[create_appointment] Auto-resolved contact_id as client → GHL contact ${ghlContactId}`);
-          }
-        }
-      }
-    } else {
-      // Non-UUID contact_id — likely a real GHL contact ID
-      if (!ghlContactId) {
-        ghlContactId = args.contact_id;
-      }
+      const cid = v.resolvedId || candidate;
+      resolvedClientName = clientName(v.client);
+      const { data: cr } = await sb.from('clients').select('primary_email, primary_mobile').eq('id', cid).maybeSingle();
+      linkedClient = { id: cid, name: resolvedClientName, email: cr?.primary_email ?? null, phone: cr?.primary_mobile ?? null };
     }
   }
 
@@ -3476,7 +3447,7 @@ async function executeCreateAppointment(sb: any, args: any) {
   let assignedUserId = args.assigned_user_id || null;
   if (!assignedUserId) {
     try {
-      const calData = await callGHLCalendar({ action: 'calendars' });
+      const calData = await callCalendar({ action: 'calendars' });
       const targetCal = (calData.calendars || []).find((c: any) => c.id === calendar_id);
       if (targetCal?.teamMembers?.length > 0) {
         assignedUserId = targetCal.teamMembers[0].userId;
@@ -3495,12 +3466,17 @@ async function executeCreateAppointment(sb: any, args: any) {
     title: title || 'New Appointment',
     overrideAvailability: true,
   };
-  if (ghlContactId) payload.contactId = ghlContactId;
+  if (linkedClient) {
+    payload.clientId = linkedClient.id;
+    if (linkedClient.name) payload.contactName = linkedClient.name;
+    if (linkedClient.email) payload.contactEmail = linkedClient.email;
+    if (linkedClient.phone) payload.contactPhone = linkedClient.phone;
+  }
   if (notes) payload.notes = notes;
   if (assignedUserId) payload.assignedUserId = assignedUserId;
 
   try {
-    const data = await callGHLCalendar(payload);
+    const data = await callCalendar(payload);
     if (data.error) return data;
     return { success: true, message: `Appointment "${title}" created${resolvedClientName ? ` for ${resolvedClientName}` : ''}`, event: data.event };
   } catch (err: any) {
@@ -3513,7 +3489,7 @@ async function executeCancelAppointment(args: any) {
   if (!event_id) return { error: 'event_id is required.' };
 
   try {
-    const data = await callGHLCalendar({ action: 'delete', eventId: event_id });
+    const data = await callCalendar({ action: 'delete', eventId: event_id });
     if (data.error) return data;
     return { success: true, message: `Appointment ${event_id} cancelled.` };
   } catch (err: any) {
@@ -3523,7 +3499,7 @@ async function executeCancelAppointment(args: any) {
 
 async function executeGetCalendars() {
   try {
-    const data = await callGHLCalendar({ action: 'calendars' });
+    const data = await callCalendar({ action: 'calendars' });
     if (data.error) return data;
     const calendars = (data.calendars || []).map((c: any) => ({
       id: c.id,
@@ -3546,7 +3522,7 @@ async function executeGetFreeSlots(args: any) {
   }
 
   try {
-    const data = await callGHLCalendar({ action: 'freeSlots', calendarId: calendar_id, startDate: start_date, endDate: end_date });
+    const data = await callCalendar({ action: 'freeSlots', calendarId: calendar_id, startDate: start_date, endDate: end_date });
     if (data.error) return data;
     return { success: true, slots: data.slots };
   } catch (err: any) {
@@ -3955,63 +3931,16 @@ function executeCalculateEquityPosition(args: any) {
 
 async function executeCreateClient(sb: any, args: any, userId: string) {
   const { data: u } = await sb.from('custom_users').select('id').eq('id', userId).maybeSingle();
-  const insert: any = { primary_first_name: args.first_name, primary_surname: args.surname, pipeline_status: args.pipeline_status || 'lead', ghl_sync_status: 'pending' };
+  const insert: any = { primary_first_name: args.first_name, primary_surname: args.surname, pipeline_status: args.pipeline_status || 'lead', ghl_sync_status: null };
   if (args.email) insert.primary_email = args.email;
   if (args.mobile) insert.primary_mobile = args.mobile;
   if (u) insert.created_by = userId;
   const { data, error } = await sb.from('clients').insert(insert).select().single();
   if (error) return { error: error.message };
 
-  // Resolve GHL pipeline stage if provided
-  let pipelineStageGhlId: string | undefined;
-  let pipelineGhlId: string | undefined;
-  if (args.ghl_pipeline_stage) {
-    const { data: stageMatch } = await sb
-      .from('ghl_pipeline_stages')
-      .select('ghl_id, pipeline_id, ghl_pipelines!inner(ghl_id)')
-      .ilike('name', `%${args.ghl_pipeline_stage}%`)
-      .limit(1)
-      .maybeSingle();
-    if (stageMatch) {
-      pipelineStageGhlId = stageMatch.ghl_id;
-      pipelineGhlId = stageMatch.ghl_pipelines?.ghl_id;
-      console.log(`[create_client] Resolved pipeline stage: ${args.ghl_pipeline_stage} → ${pipelineStageGhlId}`);
-    } else {
-      console.warn(`[create_client] Pipeline stage "${args.ghl_pipeline_stage}" not found, skipping opportunity creation.`);
-    }
-  }
-
-  // Auto-sync new client to GoHighLevel
-  let ghlStatus = 'pending';
-  let opportunityCreated = false;
-  try {
-    const syncUrl = `${SUPABASE_URL.trim()}/functions/v1/sync-client-to-ghl`;
-    console.log(`[create_client] Triggering GHL sync for client ${data.id}...`);
-    const syncBody: any = { clientId: data.id };
-    if (pipelineStageGhlId && pipelineGhlId) {
-      syncBody.pipelineStageGhlId = pipelineStageGhlId;
-      syncBody.pipelineGhlId = pipelineGhlId;
-    }
-    const syncResp = await fetch(syncUrl, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        'Authorization': `Bearer ${INTERNAL_EDGE_SECRET}`,
-        'apikey': (SUPABASE_ANON_KEY || SUPABASE_SERVICE_ROLE_KEY).trim(),
-      },
-      body: JSON.stringify(syncBody),
-    });
-    const syncResult = await syncResp.json();
-    ghlStatus = syncResult?.success ? 'synced' : 'error';
-    opportunityCreated = syncResult?.opportunityCreated || false;
-    console.log(`[create_client] GHL sync result for ${data.id}:`, syncResult?.success ? 'success' : syncResult?.error, `opportunity: ${opportunityCreated}`);
-  } catch (syncErr) {
-    console.error(`[create_client] GHL sync failed for ${data.id}:`, syncErr);
-    ghlStatus = 'error';
-  }
-
-  const oppMsg = opportunityCreated ? ' with opportunity in pipeline' : '';
-  return { success: true, message: `Client "${args.first_name} ${args.surname}" created${ghlStatus === 'synced' ? ` and synced to GoHighLevel${oppMsg}` : ''}.`, client: data, ghl_synced: ghlStatus === 'synced', opportunity_created: opportunityCreated };
+  // This line's CRM is its own Postgres: the client row IS the CRM record, and
+  // there is no GoHighLevel contact or opportunity to create.
+  return { success: true, message: `Client "${args.first_name} ${args.surname}" created.`, client: data };
 }
 
 async function executeDeleteClient(sb: any, args: any) {
@@ -5788,7 +5717,7 @@ async function executeTool(sb: any, name: string, args: any, userId: string, aut
     case 'get_unlinked_emails': return executeGetUnlinkedEmails(sb, args);
     case 'link_email_to_client': return executeLinkEmailToClient(sb, args);
     case 'send_email': return executeSendEmail(sb, args);
-    // Calendar (Live GHL)
+    // Calendar (crm-calendar)
     case 'get_upcoming_calendar': return executeGetUpcomingCalendar(sb, args);
     case 'get_appointments_for_client': return executeGetAppointmentsForClient(sb, args);
     case 'search_calendar_events': return executeSearchCalendarEvents(args);
@@ -7038,7 +6967,7 @@ Domain overview:
 🔔 REMINDERS — Create/complete/snooze/delete reminders, view overdue/today/upcoming, set follow-up dates, track deal milestones.
 💵 FINANCIAL — Borrowing capacity (current + history), income sources, expenses, liabilities, assets, properties, employment, client scores, what-if scenario analysis.
 📧 EMAIL — Search/view emails, browse threads, find unlinked emails, link to clients, email statistics.
-📅 CALENDAR — View upcoming appointments (live GHL), search events by name/contact, find client appointments, today's schedule, reschedule appointments, create new appointments, cancel appointments, list calendars, check free slots.
+📅 CALENDAR — View upcoming appointments, search events by name/contact, find client appointments, today's schedule, reschedule appointments, create new appointments, cancel appointments, list calendars, check free slots.
 📞 CALLS — View/search call logs, call details with transcripts, alerts, analytics, flagged calls.
 📊 REPORTS — Client files, investment reports, report details, search by address, portfolio reviews with full content, cash flow analyses, data export.
 📝 CLIENT NOTES — Full CRUD: create, read, update, delete client notes.
@@ -7105,11 +7034,10 @@ CRITICAL RULES:
 11. When asked to calculate something (stamp duty, LMI, repayments, yield, equity), use the calculator tools for accurate results.
 12. For financial overviews, combine borrowing capacity + income + expenses + liabilities for a complete picture.
 
-CALENDAR & GHL ID RULES (CRITICAL):
-- Internal Supabase client UUIDs (e.g., "d4ffa794-7398-43be-a618-dff099dd2bcd") are NOT the same as GHL contact IDs. NEVER pass a Supabase UUID as a GHL contact_id.
-- When creating appointments for a client, ALWAYS use the client_id parameter (Supabase UUID). The system will automatically resolve it to the correct GHL contact ID.
-- When fetching appointments for a client, use get_appointments_for_client with their Supabase client_id — it handles GHL resolution internally.
-- GHL event IDs (for reschedule/cancel) should come from prior calendar search results, never invented.
+CALENDAR ID RULES (CRITICAL):
+- When creating appointments for a client, ALWAYS use the client_id parameter (the internal client UUID).
+- When fetching appointments for a client, use get_appointments_for_client with their client_id.
+- Event IDs (for reschedule/cancel) should come from prior calendar search results, never invented.
 
 PLAYBOOK & AUTOMATION RULES:
 13. When a user describes a repeatable multi-step workflow, suggest saving it as a playbook.

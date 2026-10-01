@@ -1,17 +1,18 @@
 import { useState, useEffect } from 'react';
 import { invokeSecureFunction } from '@/lib/secureInvoke';
-import { ghlAffordancesAvailable } from '@/lib/crm/crmProvider';
+import { crmFunction } from '@/lib/crm/crmProvider';
 import { Card, CardContent } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   CalendarDays, Clock, Loader2, MapPin, Video, Phone,
-  User, RefreshCw, Inbox, ExternalLink
+  RefreshCw, Inbox, ExternalLink
 } from 'lucide-react';
 import { format, parseISO, isPast, isFuture, isToday, formatDistanceToNow } from 'date-fns';
 
 interface ClientAppointmentsTabProps {
   clientId: string;
+  /** Accepted for callers that still pass it; appointments are read by `clientId`. */
   ghlContactId?: string | null;
 }
 
@@ -38,21 +39,22 @@ function getStatusBadge(status: string, startTime: string) {
   return <Badge variant="outline" className="text-[10px]">{status}</Badge>;
 }
 
-export function ClientAppointmentsTab({ clientId, ghlContactId }: ClientAppointmentsTabProps) {
+export function ClientAppointmentsTab({ clientId }: ClientAppointmentsTabProps) {
   const [appointments, setAppointments] = useState<Appointment[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
   const fetchAppointments = async () => {
-    // Appointments are read from GoHighLevel, which this line may not carry.
-    if (!ghlContactId || !ghlAffordancesAvailable()) return;
-    
+    // Appointments live in this deployment's own calendar, keyed by the
+    // client's own id: no GoHighLevel contact is needed to read them.
+    if (!clientId) return;
+
     setLoading(true);
     setError(null);
     try {
-      const { data, error: fnError } = await invokeSecureFunction('ghl-calendar-proxy', {
-        action: 'getContactAppointments',
-        contactId: ghlContactId,
+      const { data, error: fnError } = await invokeSecureFunction(crmFunction('calendar'), {
+        action: 'clientAppointments',
+        clientId,
       });
 
       if (fnError) throw fnError;
@@ -75,19 +77,8 @@ export function ClientAppointmentsTab({ clientId, ghlContactId }: ClientAppointm
 
   useEffect(() => {
     fetchAppointments();
-  }, [ghlContactId]);
-
-  if (!ghlContactId) {
-    return (
-      <Card>
-        <CardContent className="py-8 text-center">
-          <User className="h-8 w-8 text-muted-foreground/30 mx-auto mb-2" />
-          <p className="text-sm text-muted-foreground">No GHL contact linked to this client.</p>
-          <p className="text-xs text-muted-foreground mt-1">Link a GoHighLevel contact to see appointments.</p>
-        </CardContent>
-      </Card>
-    );
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [clientId]);
 
   if (loading) {
     return (

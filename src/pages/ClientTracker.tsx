@@ -24,6 +24,7 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { GHLExportDialog } from '@/components/shared/GHLExportDialog';
+import { NativePipelineCreator } from '@/components/clients/NativePipelineCreator';
 import { DashboardThemeFrame } from '@/components/layout/DashboardThemeFrame';
 import { format } from 'date-fns';
 import { 
@@ -1433,12 +1434,13 @@ export default function ClientTracker() {
             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10 text-primary shadow-inner">
               <Layers className="h-7 w-7" />
             </div>
-            <h3 className="mb-2 text-lg font-semibold tracking-tight">No Pipelines Synced</h3>
+            <h3 className="mb-2 text-lg font-semibold tracking-tight">{ghlCarried ? 'No Pipelines Synced' : 'No Pipelines Yet'}</h3>
             <p className="mx-auto mb-5 max-w-md text-sm leading-relaxed text-muted-foreground">
               {ghlCarried
                 ? 'Click "Sync from GHL" to fetch your GoHighLevel pipelines and opportunities.'
-                : 'This deployment\'s CRM is its own: pipelines are created here rather than synced in.'}
+                : 'This deployment\'s CRM is its own: create a pipeline and its stages here to start tracking clients.'}
             </p>
+            {!ghlCarried && <NativePipelineCreator />}
             {ghlCarried && (
             <Button onClick={handleSyncPipelines} disabled={isSyncingPipelines} className="rounded-xl font-semibold shadow-md shadow-primary/20">
               {isSyncingPipelines ? (

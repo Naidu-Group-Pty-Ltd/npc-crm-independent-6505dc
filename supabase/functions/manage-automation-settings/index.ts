@@ -25,6 +25,8 @@ interface RequestBody {
     // GHL pipelines
     | 'getPipelines'
     | 'getStages'
+    // A pipeline this deployment's own CRM creates (no vendor to sync it from)
+    | 'createPipeline'
     // Client pipeline updates
     | 'updateClientPipeline'
     // Clear stuck reports
@@ -303,6 +305,69 @@ Deno.serve(async (req) => {
         JSON.stringify({ success: true, stages }),
         { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
       );
+    }
+
+    // ==================== NATIVE PIPELINE CREATION ====================
+    // On the CRM-independent line nothing syncs pipelines in, so Client Tracker
+    // would have no stages to move a card across. This writes one pipeline and
+    // its stages into the tables the tracker already reads. Their `ghl_id` is a
+    // `native:` key: the column is NOT NULL and unique, and a value that can
+    // never be a vendor id says plainly where the row came from.
+    if (operation === 'createPipeline') {
+      const json = (status: number, payload: Record<string, unknown>) =>
+        new Response(JSON.stringify(payload), {
+          status,
+          headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+
+      const name = typeof data?.name === 'string' ? data.name.trim() : '';
+      const rawStages: unknown[] = Array.isArray(data?.stages) ? data.stages : [];
+      const stages = Array.from(
+        new Set(
+          rawStages
+            .filter((v): v is string => typeof v === 'string')
+            .map((v) => v.trim())
+            .filter((v) => v.length > 0),
+        ),
+      );
+      if (name.length === 0 || name.length > 200) {
+        return json(400, { success: false, error: 'A pipeline needs a name of 1 to 200 characters.' });
+      }
+      if (stages.length === 0 || stages.length > 30 || stages.some((v) => v.length > 200)) {
+        return json(400, { success: false, error: 'A pipeline needs between 1 and 30 stages, each up to 200 characters.' });
+      }
+
+      const { data: last } = await supabase
+        .from('ghl_pipelines')
+        .select('position')
+        .order('position', { ascending: false, nullsFirst: false })
+        .limit(1);
+      const position = ((last?.[0]?.position as number | null) ?? -1) + 1;
+
+      const { data: pipeline, error: pipelineError } = await supabase
+        .from('ghl_pipelines')
+        .insert({ ghl_id: `native:${crypto.randomUUID()}`, name, position, is_active: true })
+        .select('*')
+        .single();
+      if (pipelineError || !pipeline) {
+        return json(503, { success: false, error: 'Could not create the pipeline.' });
+      }
+
+      const { error: stagesError } = await supabase.from('ghl_pipeline_stages').insert(
+        stages.map((stageName, i) => ({
+          ghl_id: `native:${crypto.randomUUID()}`,
+          pipeline_id: pipeline.id,
+          name: stageName,
+          position: i,
+        })),
+      );
+      if (stagesError) {
+        // Never leave a pipeline with no stages behind: it would draw an empty board.
+        await supabase.from('ghl_pipelines').delete().eq('id', pipeline.id);
+        return json(503, { success: false, error: 'Could not create the pipeline stages.' });
+      }
+
+      return json(200, { success: true, pipeline });
     }
 
     // ==================== CLIENT PIPELINE UPDATES ====================

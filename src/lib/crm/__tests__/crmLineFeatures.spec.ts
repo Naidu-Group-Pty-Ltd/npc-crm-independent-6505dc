@@ -12,7 +12,7 @@
  * A function that reappears here is a cascade that wrote a withheld path, and
  * it would deploy beside a native CRM the router no longer routes to it.
  */
-import { existsSync, readFileSync } from "node:fs";
+import { existsSync, readdirSync, readFileSync } from "node:fs";
 import { join } from "node:path";
 import { describe, expect, it } from "vitest";
 
@@ -90,5 +90,36 @@ describe("a browser call to a withheld function never leaves the browser", () =>
   it("routes every CRM capability to the native function", () => {
     expect(crmFunction("calendar")).toBe("crm-calendar");
     expect(crmFunction("sendMessage")).toBe("crm-send-message");
+  });
+});
+
+describe("no server code calls a function this line does not carry", () => {
+  // The browser refusal only covers `invokeSecureFunction`. An edge function
+  // that posts to `/functions/v1/<name>` reaches the gateway directly, and a
+  // withheld name there is a 404 the caller reads as a failed sync or an empty
+  // calendar — `ai-dashboard-agent` and `finance-portal-client-data` both did.
+  const functionsDir = join(ROOT, "supabase", "functions");
+
+  function serverSources(dir: string): string[] {
+    const out: string[] = [];
+    for (const entry of readdirSync(dir, { withFileTypes: true })) {
+      const path = join(dir, entry.name);
+      if (entry.isDirectory()) {
+        if (entry.name === "__tests__" || entry.name === "node_modules") continue;
+        out.push(...serverSources(path));
+      } else if (/\.(ts|js|mjs)$/.test(entry.name) && !/\.(spec|test)\./.test(entry.name)) {
+        out.push(path);
+      }
+    }
+    return out;
+  }
+
+  it("posts to no withheld function by URL or invoke", () => {
+    const names = CRM_LINE_WITHHELD_FUNCTIONS.join("|");
+    const call = new RegExp(`(functions/v1/|functions\\.invoke\\(\\s*['"\`])(${names})(?=['"\`/?])`);
+    const offenders = serverSources(functionsDir)
+      .filter((file) => call.test(readFileSync(file, "utf8")))
+      .map((file) => file.slice(ROOT.length + 1));
+    expect(offenders).toEqual([]);
   });
 });
