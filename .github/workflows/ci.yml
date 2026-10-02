@@ -83,6 +83,15 @@ jobs:
       - name: This deployment's CRM routes to its own functions
         run: npx vitest run src/lib/crm src/pages/__tests__/crmConversations.spec.ts
 
+      # This deployment's dashboard draws the NPC property dashboard's palette.
+      # Its `whitelabel_settings` table is empty, so the prime's copies of
+      # `BrandProvider.tsx` and `WhiteLabel.tsx` draw the platform gold here;
+      # `src/branding/linePalette.ts` is what draws NPC's colours instead, and a
+      # cascade that brings either file back undoes it with nothing failing.
+      # No step reaches `src/branding`, so the spec is named or it never runs.
+      - name: This deployment's dashboard draws the NPC palette
+        run: npx vitest run src/branding/__tests__/linePalette.spec.tsx
+
       # The identity every non-recovery email is sent under. The contract spec
       # classifies every Resend send site and fails on one it cannot classify,
       # so it only guards anything if it runs here.
