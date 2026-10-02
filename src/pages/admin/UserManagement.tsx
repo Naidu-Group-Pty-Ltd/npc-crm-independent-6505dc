@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/hooks/useAuth';
 import { invokeSecureFunction } from '@/lib/secureInvoke';
+import { invokeWithStepUp, stepUpFailureMessage, type StepUpCapability } from '@/lib/security/stepUp';
+import { useStepUp } from '@/components/security/StepUpDialog';
 import { usePermissions } from '@/hooks/usePermissions';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -122,6 +124,14 @@ export default function UserManagement() {
   const [editingAmlRoles, setEditingAmlRoles] = useState<AmlRole[]>([]);
   const [savingAmlRoles, setSavingAmlRoles] = useState(false);
 
+  // Every role/permission mutation is step-up gated on the server
+  // (`ROLE_MUTATION_ACTIONS` in admin-user-management). Calling them without
+  // a way to confirm is what left "Save AML Roles" answering "Recent
+  // reauthentication required" with nothing on the page able to provide it.
+  const { guard: stepUpGuard, element: stepUpDialog } = useStepUp();
+  const invokeGated = (body: Record<string, any>, capability: StepUpCapability) =>
+    invokeWithStepUp('admin-user-management', body, capability, stepUpGuard);
+
   useEffect(() => {
     if (isSuperadmin) {
       fetchUsers();
@@ -219,20 +229,22 @@ export default function UserManagement() {
     if (!inviteEmail) { toast.error('Email is required'); return; }
     setInviteSending(true);
     try {
-      const { data } = await invokeSecureFunction('admin-user-management', {
+      const result = await invokeGated({
         action: 'send_invite',
         invite_data: {
           email: inviteEmail, username: inviteUsername || undefined,
           invite_type: inviteType, permissions: invitePermissions.filter(p => p.can_view),
         }
-      });
+      }, 'role.change');
+      if (result.cancelled) return;
+      const { data } = result;
       if (data?.success) {
         toast.success('Invite sent successfully!');
         if (data.temporary_password) toast.info(`Temporary password: ${data.temporary_password}`, { duration: 10000 });
         logActivityDirect({ actionType: 'user_invited', entityType: 'user', entityName: inviteEmail, metadata: { invite_type: inviteType } });
         addNotification({ type: 'new_user_invited', title: 'User Invite Sent', message: `Invitation sent to ${inviteEmail}` });
         setInviteDialogOpen(false); setInviteEmail(''); setInviteUsername('');
-      } else toast.error(data?.error || 'Failed to send invite');
+      } else toast.error(stepUpFailureMessage(result, 'Failed to send invite'));
     } catch { toast.error('Failed to send invite'); }
     finally { setInviteSending(false); }
   };
@@ -242,10 +254,12 @@ export default function UserManagement() {
     const targetUser = users.find(u => u.id === editingUserId);
     setSavingPermissions(true);
     try {
-      const { data } = await invokeSecureFunction('admin-user-management', {
+      const result = await invokeGated({
         action: 'update_permissions', user_id: editingUserId,
         permissions: editPermissions.filter(p => p.can_view),
-      });
+      }, 'role.change');
+      if (result.cancelled) return;
+      const { data } = result;
       if (data?.success) {
         const diffs = buildPermissionDiffs(previousPermissions, editPermissions);
         toast.success('Permissions updated');
@@ -265,7 +279,7 @@ export default function UserManagement() {
         // revocation that would otherwise sign you out), so nothing else
         // re-reads it — pull the new grants into this tab directly.
         if (editingUserId === user?.id) void refreshPermissions();
-      } else toast.error(data?.error || 'Failed to update permissions');
+      } else toast.error(stepUpFailureMessage(result, 'Failed to update permissions'));
     } catch { toast.error('Failed to update permissions'); }
     finally { setSavingPermissions(false); }
   };
@@ -297,25 +311,29 @@ export default function UserManagement() {
   const handlePromoteToSuperadmin = async (userId: string) => {
     const targetUser = users.find(u => u.id === userId);
     try {
-      const { data } = await invokeSecureFunction('admin-user-management', { action: 'promote_to_superadmin', user_id: userId });
+      const result = await invokeGated({ action: 'promote_to_superadmin', user_id: userId }, 'role.change');
+      if (result.cancelled) return;
+      const { data } = result;
       if (data?.success) {
         toast.success('User promoted to superadmin');
         logActivityDirect({ actionType: 'user_invited', entityType: 'user', entityId: userId, entityName: targetUser?.username, metadata: { action: 'promoted_to_superadmin' } });
         addNotification({ type: 'user_role_updated', title: 'User Promoted to Superadmin', message: `${targetUser?.username || 'User'} has been promoted to superadmin`, entityId: userId });
         fetchUsers();
-      } else toast.error(data?.error || 'Failed to promote user');
+      } else toast.error(stepUpFailureMessage(result, 'Failed to promote user'));
     } catch { toast.error('Failed to promote user'); }
   };
 
   const handleDemoteFromSuperadmin = async (userId: string) => {
     const targetUser = users.find(u => u.id === userId);
     try {
-      const { data } = await invokeSecureFunction('admin-user-management', { action: 'demote_from_superadmin', user_id: userId });
+      const result = await invokeGated({ action: 'demote_from_superadmin', user_id: userId }, 'role.change');
+      if (result.cancelled) return;
+      const { data } = result;
       if (data?.success) {
         toast.success('User demoted to admin');
         logActivityDirect({ actionType: 'user_deactivated', entityType: 'user', entityId: userId, entityName: targetUser?.username, metadata: { action: 'demoted_from_superadmin' } });
         fetchUsers();
-      } else toast.error(data?.error || 'Failed to demote user');
+      } else toast.error(stepUpFailureMessage(result, 'Failed to demote user'));
     } catch { toast.error('Failed to demote user'); }
   };
 
@@ -352,14 +370,16 @@ export default function UserManagement() {
     }
     setCreating(true);
     try {
-      const { data } = await invokeSecureFunction('admin-user-management', {
+      const result = await invokeGated({
         action: 'create_subadmin',
         subadmin_data: {
           username: createUsername, password: createPassword,
           email: createEmail || undefined, personal_mailbox: createMailbox || undefined,
           permissions: createPermissions.filter(p => p.can_view),
         }
-      });
+      }, 'role.change');
+      if (result.cancelled) return;
+      const { data } = result;
       if (data?.success) {
         toast.success('Sub-admin created successfully!');
         logActivityDirect({ actionType: 'user_invited', entityType: 'user', entityId: data.user_id, entityName: createUsername, metadata: { action: 'created_subadmin' } });
@@ -368,7 +388,7 @@ export default function UserManagement() {
         setCreateUsername(''); setCreatePassword(''); setCreateEmail(''); setCreateMailbox('');
         setCreatePermissions(modules.map(m => ({ module_key: m.module_key, can_view: true, can_edit: false, can_delete: false })));
         fetchUsers();
-      } else toast.error(data?.error || 'Failed to create sub-admin');
+      } else toast.error(stepUpFailureMessage(result, 'Failed to create sub-admin'));
     } catch { toast.error('Failed to create sub-admin'); }
     finally { setCreating(false); }
   };
@@ -398,11 +418,13 @@ export default function UserManagement() {
     const targetUser = users.find((entry) => entry.id === editingAmlUserId);
     setSavingAmlRoles(true);
     try {
-      const { data, error } = await invokeSecureFunction('admin-user-management', {
+      const result = await invokeGated({
         action: 'set_aml_roles',
         user_id: editingAmlUserId,
         aml_roles: editingAmlRoles,
-      });
+      }, 'aml.role.set');
+      if (result.cancelled) return;
+      const { data } = result;
 
       if (data?.success) {
         const nextRoles = (data.aml_roles ?? editingAmlRoles) as AmlRole[];
@@ -420,7 +442,7 @@ export default function UserManagement() {
         setAmlRoleDialogOpen(false);
         await fetchUsers();
       } else {
-        toast.error(data?.error || error?.message || 'Failed to update AML roles');
+        toast.error(stepUpFailureMessage(result, 'Failed to update AML roles'));
       }
     } catch (err) {
       console.error('[UserManagement] Failed to update AML roles:', err);
@@ -887,6 +909,8 @@ export default function UserManagement() {
           </div>
         </DialogContent>
       </Dialog>
+
+      {stepUpDialog}
     </DashboardThemeFrame>
   );
 }

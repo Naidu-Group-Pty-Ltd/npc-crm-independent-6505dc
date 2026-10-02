@@ -165,6 +165,31 @@ export function isAuthFailureResponse(status: number, message?: string | null): 
     || m.includes('session expired');
 }
 
+/**
+ * Is this refusal about ELEVATION rather than identity?
+ *
+ * A step-up gate answers 401 `step_up_required` to a caller whose session is
+ * perfectly good — it is asking for a recent password + authenticator, not
+ * saying it does not know who they are. Read as an auth failure, every such
+ * refusal refreshed the token, retried (the same refusal again) and counted
+ * twice toward the five-failure circuit breaker, so the third click on
+ * "Save AML Roles" signed an administrator out. The reauthentication
+ * endpoint's own answers to a wrong password or code are the same kind of
+ * thing: the session that asked is valid, the factor typed was not.
+ */
+const ELEVATION_REFUSAL_CODES = new Set([
+  'step_up_required',
+  'mfa_verification_required',
+  'mfa_enrollment_required',
+]);
+
+export function isElevationRefusal(functionName: string, data: any): boolean {
+  const code = typeof data?.code === 'string' ? data.code
+    : typeof data?.error?.code === 'string' ? data.error.code : null;
+  if (code && ELEVATION_REFUSAL_CODES.has(code)) return true;
+  return functionName === 'security-step-up' && data?.error === 'invalid_credentials';
+}
+
 export interface InvokeResult<T = any> {
   data: T | null;
   error: { message: string; /** The server's `details` — the cause behind a generic message. */ details?: string; status?: number; functionName?: string; network?: boolean; code?:string; stage?:string; correlationId?:string; retryable?:boolean } | null;
@@ -447,7 +472,8 @@ export async function invokeSecureFunction<T = any>(
       });
 
       const message = String(data?.error?.message || data?.error || data?.message || '');
-      const isAuthFailure = isAuthFailureResponse(response.status, message);
+      const isAuthFailure = isAuthFailureResponse(response.status, message)
+        && !isElevationRefusal(functionName, data);
 
       // ── A function that refused the cookie cannot judge our session ──
       // We watched this one reject a credentialed preflight, so it never saw a

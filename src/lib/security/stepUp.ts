@@ -6,7 +6,7 @@
  * `ensureStepUp(capability)` which either returns the live token or opens the
  * <StepUpDialog/> to obtain one.
  */
-import { invokeSecureFunction } from '@/lib/secureInvoke';
+import { invokeSecureFunction, type InvokeResult } from '@/lib/secureInvoke';
 
 export type StepUpCapability =
   | 'role.change'
@@ -65,6 +65,63 @@ export async function requestStepUpChallenge(
   if (!data?.success) return { ok: false, error: data?.error ?? 'challenge_failed' };
   storeStepUpToken(capability, data.token, data.expires_at);
   return { ok: true, token: data.token, expires_at: data.expires_at };
+}
+
+/** The gate's own refusal: `requireStepUp` answers 401 `step_up_required`. */
+export function isStepUpRequired(result: { data?: any; error?: { code?: string } | null }): boolean {
+  return result?.data?.code === 'step_up_required' || result?.error?.code === 'step_up_required';
+}
+
+/**
+ * What an operator is told when the gate still refuses AFTER they were asked.
+ * The gate names its reason; "Recent reauthentication required" names none and
+ * is what the page showed with nothing on screen able to provide it.
+ */
+export function describeStepUpRefusal(reason: unknown): string {
+  switch (reason) {
+    case 'insufficient_assurance':
+      return 'This change needs your password and an authenticator code. Set up an authenticator app in Settings → Security, then try again.';
+    case 'session_required':
+    case 'session_mismatch':
+      return 'Your sign-in session changed while you were confirming. Sign out, sign back in, and try again.';
+    default:
+      return 'Your confirmation was not accepted. Try again.';
+  }
+}
+
+export type StepUpInvokeResult<T> = InvokeResult<T> & { cancelled?: boolean };
+
+/** One sentence for a gated call that did not succeed. */
+export function stepUpFailureMessage(
+  result: { data?: any; error?: { message?: string; code?: string } | null },
+  fallback: string,
+): string {
+  if (isStepUpRequired(result)) return describeStepUpRefusal(result?.data?.reason);
+  return result?.data?.error || result?.error?.message || fallback;
+}
+
+/**
+ * Invoke a step-up-gated operation the way the gate expects to be asked.
+ *
+ * Sends any live proof for `capability`; when the gate refuses, the proof held
+ * is worthless (consumed, expired or bound to a rotated session), so it is
+ * dropped, the operator is asked to confirm through `guard` (the
+ * `<StepUpDialog/>`), and the call is made ONCE more. Cancelling the dialog
+ * returns `cancelled: true` so the caller says nothing rather than reporting a
+ * failure the operator chose.
+ */
+export async function invokeWithStepUp<T = any>(
+  functionName: string,
+  body: Record<string, any>,
+  capability: StepUpCapability,
+  guard: (capability: StepUpCapability) => Promise<boolean>,
+): Promise<StepUpInvokeResult<T>> {
+  const first = await invokeSecureFunction<T>(functionName, body, { stepUpCapability: capability });
+  if (!isStepUpRequired(first)) return first;
+  clearStepUpToken(capability);
+  const confirmed = await guard(capability);
+  if (!confirmed) return { ...first, cancelled: true };
+  return invokeSecureFunction<T>(functionName, body, { stepUpCapability: capability });
 }
 
 export async function revokeStepUpSessions(capability?: string) {

@@ -23,7 +23,7 @@ import { verifyAuth, createUnauthorizedResponse, createCorsHeaders, createSessio
 import { enforceCsrf, csrfDenied } from "../_shared/csrfGuard.ts";
 import { rotateSession } from '../_shared/sessionRotate.ts';
 import { verifyPassword } from '../_shared/password.ts';
-import { generateStepUpToken, hashStepUpToken, requireStepUp, resolveActiveStaffSession } from '../_shared/stepUp.ts';
+import { enforcementModeFor, generateStepUpToken, hashStepUpToken, requireStepUp, resolveActiveStaffSession } from '../_shared/stepUp.ts';
 import { createEncryptedTotpSecret, verifyEncryptedTotp } from '../_shared/totp.ts';
 import { generateRecoveryCodes, hashRecoveryCode, hashRecoveryCodes, isRecoveryCode, isRecoveryCodeHashConfigured } from '../_shared/recoveryCodes.ts';
 import { consumeRateLimit, getTrustedClientIp } from '../_shared/requestSecurity.ts';
@@ -429,6 +429,17 @@ Deno.serve(async (req) => {
     }
     if (userRow?.mfa_required && !userRow?.mfa_enrolled_at) {
       return j({ success: false, error: 'mfa_enrollment_required', code: 'mfa_enrollment_required' }, 403);
+    }
+    // Under enforce mode `requireStepUp` refuses any proof below assurance 2,
+    // and a password alone yields 1. Minting that proof anyway produced a
+    // token every gate rejected as `insufficient_assurance`, so the operator
+    // reauthenticated successfully and was told "Recent reauthentication
+    // required" again, indefinitely. Say what is actually missing instead.
+    if (!userRow.mfa_enrolled_at && enforcementModeFor(capability) === 'enforce') {
+      try {
+        await admin.from('security_events').insert({ action: 'step_up.challenge_refused', decision: 'deny', actor_type: 'human', actor_id: auth.userId, reason_code: 'insufficient_assurance', metadata_redacted: { capability, enforced: true } });
+      } catch { /* ignore */ }
+      return j({ success: false, error: 'mfa_enrollment_required', code: 'mfa_enrollment_required', reason: 'insufficient_assurance' }, 403);
     }
     let method = 'password';
     let assuranceLevel = 1;

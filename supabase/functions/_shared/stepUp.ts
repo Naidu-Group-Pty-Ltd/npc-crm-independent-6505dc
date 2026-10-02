@@ -113,7 +113,13 @@ export async function hashStepUpToken(userId: string, capability: string, token:
   return sha256Hex(`${pepper}:${userId}:${capability}:${token}`);
 }
 
-function enforcementModeFor(capability: string): "enforce" | "audit" {
+/**
+ * Exported so `security-step-up` can refuse to mint a proof that this gate
+ * would then refuse: under enforce mode a password-only (assurance 1) proof
+ * satisfies nothing, and minting one anyway sent the operator straight back to
+ * "Recent reauthentication required" with no way to learn why.
+ */
+export function enforcementModeFor(capability: string): "enforce" | "audit" {
   // Changing authentication factors must never be downgraded to audit-only:
   // an ordinary authenticated session is not sufficient authority to add or
   // remove a factor, even during an emergency step-up rollback.

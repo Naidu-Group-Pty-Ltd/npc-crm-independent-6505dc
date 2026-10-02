@@ -105,11 +105,53 @@ Set `STEP_UP_ENFORCED` in the project's Edge Function secrets. `off` / `false` /
 `x-aml-step-up-token` header, no pepper, no kill switch, and an emailed 6-digit
 code rather than a password. Changing one never changes the other.
 
+## Rule 4 — a gate somebody is asked to pass must be passable from the page (2 Oct 2026)
+
+Reported on the CRM-independent clone (`qvuwrvwzjyigptmnijyb`): User
+Management → Assign AML Roles → Save answered *"Recent reauthentication
+required"*, and nothing on the page could provide it. The clone's logs held a
+401 from `admin-user-management` on every Save and **no request to
+`security-step-up` at all** — the page had never once asked. Three faults, each
+enough on its own:
+
+1. **The page never asked.** `admin-user-management` gates eight actions
+   (`ROLE_MUTATION_ACTIONS`), and the six this product sends —
+   `set_aml_roles`, `send_invite`, `update_permissions`,
+   `promote_to_superadmin`, `demote_from_superadmin`, `create_subadmin` — went
+   through plain `invokeSecureFunction` with no `stepUpCapability`, while
+   `StepUpDialog`/`useStepUp` had zero call sites. They now go through
+   `invokeWithStepUp` (`src/lib/security/stepUp.ts`): send any live proof; on
+   `step_up_required` drop it, open the dialog, retry **once**. A cancelled
+   dialog is `cancelled`, not a failure. `ClonePermissionsDialog` sends
+   `update_permissions` too and is wired the same way.
+2. **The transport read the refusal as a dead session.** Any 401/403 refreshed
+   the token, retried the identical refusal and counted both toward the
+   five-failure circuit breaker — two 401s per click in the logs, and the
+   third click signed the administrator out. `isElevationRefusal` exempts
+   `step_up_required` / `mfa_verification_required` /
+   `mfa_enrollment_required`, and `security-step-up`'s own
+   `invalid_credentials` (a wrong password typed into the dialog is about the
+   password, not the session).
+3. **A password alone cannot pass an enforced gate.** Enforce mode requires
+   `assurance_level >= 2`; password-only minting yields 1. So an account with
+   no authenticator would reauthenticate successfully and be refused again
+   (`insufficient_assurance`) indefinitely. `security-step-up` now refuses to
+   mint that proof — 403 `mfa_enrollment_required`, reading the gate's own
+   `enforcementModeFor` — and the dialog says what is missing and links to
+   Settings → Security. Under audit mode nothing changes.
+
+`stepUpCallSites.test.ts` reads the gated set from the server, fails on any
+call site that sends one of those actions without `invokeWithStepUp`, and was
+run against the pre-fix page to confirm it names all six.
+
+**What an administrator needs, operationally:** with `STEP_UP_ENFORCED` unset,
+role changes need an authenticator app or security key enrolled on the acting
+account (Settings → Security). That is the control working, not a defect; the
+emergency lever in Rule 3 is unchanged.
+
 ## Still owed
 
-`StepUpDialog` and `useStepUp` are **fully built and have zero call sites** —
-the unmounted-component pattern this repo already legislates against for the
-builder portal. Wiring `secrets.update` properly needs three things together:
-mount the dialog, enrol MFA for the acting superadmin (enforce rejects
-assurance 1), and handle that `secrets.update` is single-use and rotates the
-staff session on mint.
+`secrets.update` on the Integrations page is still sent without
+`stepUpCapability`; wiring it is the same call-site change as above.
+`role.change` and `secrets.update` are single-use and rotate the staff session
+on mint, so each such act asks again — by design.
