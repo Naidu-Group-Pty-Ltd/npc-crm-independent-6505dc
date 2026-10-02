@@ -7,6 +7,7 @@
  * `invokeSecureFunction` which attaches the token automatically.
  */
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,
 } from '@/components/ui/dialog';
@@ -46,6 +47,10 @@ export function StepUpDialog({
   const [password, setPassword] = useState('');
   const [mfaCode, setMfaCode] = useState('');
   const [requiresMfa, setRequiresMfa] = useState(false);
+  // The account has no authenticator, and the gate accepts nothing less.
+  // Distinct from `error`: it is not something typing differently can fix.
+  const [needsEnrolment, setNeedsEnrolment] = useState(false);
+  const navigate = useNavigate();
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
@@ -56,6 +61,7 @@ export function StepUpDialog({
       setPassword('');
       setMfaCode('');
       setRequiresMfa(false);
+      setNeedsEnrolment(false);
       setError(null);
     }
   }, [open]);
@@ -73,6 +79,19 @@ export function StepUpDialog({
     setBusy(false);
     if (!result.ok) {
       const err = (result as { ok: false; error: string }).error;
+      if (err === 'mfa_enrollment_required') {
+        setNeedsEnrolment(true);
+        setError(null);
+        return;
+      }
+      // An enrolled account is asked for its code only once the password is
+      // known to be right — that first answer is the server asking, not an
+      // operator mistake, so it is not drawn as one.
+      if (err === 'invalid_mfa_code' && !requiresMfa && !mfaCode) {
+        setRequiresMfa(true);
+        setError(null);
+        return;
+      }
       setError(
         err === 'invalid_credentials' ? 'Incorrect password.' :
         err === 'mfa_enrollment_required' ? 'MFA enrolment is required for this account.' :
@@ -107,6 +126,22 @@ export function StepUpDialog({
           </Alert>
         )}
 
+        {needsEnrolment ? (
+          <Alert>
+            <AlertDescription>
+              Your password is correct, but this change also needs an authenticator code and
+              your account does not have an authenticator set up yet. Set one up under
+              Settings → Security (authenticator app or security key), then try again.
+            </AlertDescription>
+          </Alert>
+        ) : null}
+
+        {requiresMfa && !error ? (
+          <p className="text-sm text-muted-foreground">
+            Enter the 6-digit code from your authenticator app, or a recovery code.
+          </p>
+        ) : null}
+
         <div className="space-y-2">
           <Label htmlFor="stepup-password">Password</Label>
           <Input
@@ -139,7 +174,12 @@ export function StepUpDialog({
 
         <DialogFooter className="flex-col gap-2 sm:flex-row">
           <Button variant="outline" onClick={onCancel} disabled={busy}>Cancel</Button>
-          {webauthnSupported() ? (
+          {needsEnrolment ? (
+            <Button onClick={() => { onCancel(); navigate('/settings'); }}>
+              Open security settings
+            </Button>
+          ) : null}
+          {!needsEnrolment && webauthnSupported() ? (
             <Button
               variant="secondary"
               onClick={async () => {
@@ -147,7 +187,12 @@ export function StepUpDialog({
                 setBusy(true); setError(null);
                 const r = await requestStepUpWithWebAuthn(capability, password);
                 setBusy(false);
-                if (!r.ok) { setError((r as { ok: false; error: string }).error || 'Verification failed.'); return; }
+                if (!r.ok) {
+                  const err = (r as { ok: false; error: string }).error;
+                  if (err === 'mfa_enrollment_required') { setNeedsEnrolment(true); return; }
+                  setError(err || 'Verification failed.');
+                  return;
+                }
                 setPassword(''); onSuccess();
               }}
               disabled={busy || !password}
@@ -155,9 +200,11 @@ export function StepUpDialog({
               <Fingerprint className="mr-2 h-4 w-4" /> Use security key
             </Button>
           ) : null}
+          {!needsEnrolment ? (
           <Button onClick={handleConfirm} disabled={busy || !password || (requiresMfa && !MFA_FACTOR_PATTERN.test(mfaCode))}>
             {busy ? <><Loader2 className="mr-2 h-4 w-4 animate-spin" />Verifying…</> : 'Confirm'}
           </Button>
+          ) : null}
         </DialogFooter>
       </DialogContent>
     </Dialog>

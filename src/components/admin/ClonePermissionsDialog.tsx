@@ -5,6 +5,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Label } from '@/components/ui/label';
 import { Copy } from 'lucide-react';
 import { invokeSecureFunction } from '@/lib/secureInvoke';
+import { invokeWithStepUp, stepUpFailureMessage } from '@/lib/security/stepUp';
+import { useStepUp } from '@/components/security/StepUpDialog';
 import { toast } from 'sonner';
 import { logActivityDirect } from '@/hooks/useActivityLogger';
 
@@ -25,6 +27,8 @@ interface ClonePermissionsDialogProps {
 export function ClonePermissionsDialog({ open, onOpenChange, sourceUserId, users, onSuccess }: ClonePermissionsDialogProps) {
   const [targetUserId, setTargetUserId] = useState('');
   const [cloning, setCloning] = useState(false);
+  // `update_permissions` is step-up gated (role.change) on the server.
+  const { guard: stepUpGuard, element: stepUpDialog } = useStepUp();
 
   const sourceUser = users.find(u => u.id === sourceUserId);
   // Every account other than the source is a valid target, superadmins
@@ -48,9 +52,11 @@ export function ClonePermissionsDialog({ open, onOpenChange, sourceUserId, users
       })).filter((p: any) => p.module_key && p.can_view);
 
       // Apply to target
-      const { data } = await invokeSecureFunction('admin-user-management', {
+      const result = await invokeWithStepUp('admin-user-management', {
         action: 'update_permissions', user_id: targetUserId, permissions: perms,
-      });
+      }, 'role.change', stepUpGuard);
+      if (result.cancelled) return;
+      const { data } = result;
 
       if (data?.success) {
         const targetUser = users.find(u => u.id === targetUserId);
@@ -63,13 +69,14 @@ export function ClonePermissionsDialog({ open, onOpenChange, sourceUserId, users
         onOpenChange(false);
         onSuccess();
       } else {
-        toast.error(data?.error || 'Failed to clone permissions');
+        toast.error(stepUpFailureMessage(result, 'Failed to clone permissions'));
       }
     } catch { toast.error('Failed to clone permissions'); }
     finally { setCloning(false); }
   };
 
   return (
+    <>
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
@@ -96,5 +103,7 @@ export function ClonePermissionsDialog({ open, onOpenChange, sourceUserId, users
         </div>
       </DialogContent>
     </Dialog>
+    {stepUpDialog}
+    </>
   );
 }
