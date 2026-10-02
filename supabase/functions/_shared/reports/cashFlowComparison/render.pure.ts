@@ -37,6 +37,7 @@ import type { BrandLockupProps } from '../../reportDesign/primitives.pure.ts';
 import {
   closeChapter,
   KEEP_TOGETHER_CLASS,
+  SECTION_SUBHEAD_CLASS,
   escapeHtml,
   openChapter,
   renderCallout,
@@ -50,10 +51,10 @@ import {
   renderLede,
   renderSidenote,
   type KpiCell,
-  type TableColumn,
-  type TableRow,
 } from '../../reportDesign/primitives.pure.ts';
 import { buildReportCss } from '../../reportDesign/css.pure.ts';
+import { portraitMatrixCss, renderPortraitMatrix } from '../../reportDesign/portraitMatrix.pure.ts';
+import { paragraphsFromWrapped } from '../../reportDesign/prose.pure.ts';
 import type { ResolvedReportPalette } from '../../reportDesign/roles.pure.ts';
 import type { ReportDesignOptions } from '../../reportDesign/options.pure.ts';
 import type { CompanyBlock, CompanyDisclaimer } from '../../reportDesign/companyBlock.pure.ts';
@@ -70,6 +71,7 @@ import { formatAmount, formatMeasure } from '../../reportDesign/measure.pure.ts'
 import type {
   AnalysisNote,
   CashFlowComparison,
+  CategoryWinner,
   ComparedProperty,
 } from './payload.pure.ts';
 import { comparisonSections, comparisonSpine, validateComparisonSpine } from './sections.pure.ts';
@@ -101,6 +103,8 @@ export { formatPreparedOn };
 // ── Escaping helpers ────────────────────────────────────────────────────────
 
 const p = (t: string) => (t ? `<p>${escapeHtml(t)}</p>` : '');
+/** A model's text as the paragraphs it wrote (`paragraphsFromWrapped`), never one run-together block. */
+const paragraphs = (t: string) => paragraphsFromWrapped(t).map(p).join('');
 /**
  * A subhead inside a chapter.
  *
@@ -114,8 +118,11 @@ const p = (t: string) => (t ? `<p>${escapeHtml(t)}</p>` : '');
  * Seven of the ten documents failed the same rule and no other. Named
  * `subhead` rather than `h2` so the next person reaches for the level the
  * design system defines instead of inventing one.
+ *
+ * Set at h3's size (`SECTION_SUBHEAD_CLASS`) under a memo section's title, as
+ * the other memo formats' subheads are (Audit 8, 1 Oct 2026).
  */
-const subhead = (text: string) => `<h2>${escapeHtml(text)}</h2>`;
+const subhead = (text: string) => `<h2 class="${SECTION_SUBHEAD_CLASS}">${escapeHtml(text)}</h2>`;
 
 function renderList(items: readonly string[]): string {
   const kept = items.filter(Boolean);
@@ -137,7 +144,48 @@ const show = (m: Measure | null): string => (m ? formatMeasure(m) : '—');
 const showAmount = (m: Measure | null): string => (m ? formatAmount(m) : '—');
 const showYear = (y: number | null): string => (y === null ? 'Not within the term' : `Year ${y}`);
 
+/**
+ * How far ahead, in the unit a reader can act on.
+ *
+ * The gap between two percentages is a difference of points, not a percentage
+ * of anything: "Best return on capital … ahead by 76.7%" read as 76.7% better
+ * than second place, where the second property returned 291.2% against 367.9%.
+ */
+function showMargin(m: Measure | null): string {
+  if (!m) return '—';
+  if (m.unit !== 'percent' && m.unit !== 'rate') return formatMeasure(m);
+  const points = formatMeasure(m).replace(/%$/, '');
+  return `${points} ${points === '1' ? 'point' : 'points'}`;
+}
+
+/**
+ * What a category says when no property leads it — never one sentence for two
+ * different findings. A tie is a tie; a payback year nobody reaches is "none
+ * within the term", which the timing table beside it says in the same words.
+ */
+function leaderless(w: CategoryWinner): string {
+  if (w.undecided === 'tie') return 'Tied';
+  if (w.undecided === 'unreached') return w.key === 'paybackYear' ? 'None within the term' : 'Not comparable';
+  return 'No clear leader';
+}
+
 // ── Tables keyed by property ────────────────────────────────────────────────
+
+/** The class the property-by-property tables are styled by (`portraitMatrixCss`). */
+const PROPERTY_MATRIX_CLASS = 'cfc-properties';
+
+/**
+ * A property's score line, which is the second line of its heading rather
+ * than a paragraph. A heading keeps only the box after it (css.pure.ts), so a
+ * heading and its score kept each other and nothing more: 30 of the 51
+ * three-property documents ended page eleven on "1. 14 Wattlebird Grove /
+ * Score given: 84" with the verdict overleaf (Audit 8). The line refuses the
+ * break after itself, so the first lines of the verdict come with it. Every
+ * section here runs on, so the group cannot strand a chapter's tail.
+ */
+const SCORE_LINE_CLASS = 'cfc-score';
+/** The class the year-by-year matrices are styled by: a table of figures, set as one. */
+const YEAR_MATRIX_CLASS = 'cfc-years';
 
 /**
  * A table whose columns are the properties.
@@ -148,9 +196,19 @@ const showYear = (y: number | null): string => (y === null ? 'Not within the ter
  * an adviser reads out, and with at most five properties it fits the portrait
  * measure — which is why these are chapters and not landscape pages.
  *
- * The primary is marked and not moved. The document's posture is equal peers, so
- * the property the adviser happened to open is a column like the others with a
- * note on it, rather than the first column with the rest hanging off it.
+ * Drawn by the portrait matrix every format that sets properties side by side
+ * uses (`portraitMatrix.pure.ts`): the properties share the width equally, each
+ * headed by its street, and a head wraps. Set as its own table, at five
+ * properties the fifth column ran past the sheet's edge on 49 pages in 46 of
+ * the 51 designs, by up to 132pt: a figure column's head and cells are set on
+ * one line, so the street heads in tracked capitals and "Not within the term"
+ * each held it wider than its share. A phrase among the figures wraps now
+ * (`wrapPhrases`); a figure still never does.
+ *
+ * The primary is not marked. It was, with a trailing " ·" on its column head
+ * and "(opened)" in the ranking — which property an adviser happened to open
+ * the analysis from, a fact about the session and not the property, printed in
+ * a document whose posture is equal peers with nothing to say what it meant.
  */
 function byProperty(
   cf: CashFlowComparison,
@@ -158,25 +216,18 @@ function byProperty(
   rows: Array<{ label: string; of: (x: ComparedProperty) => string; total?: boolean }>,
   caption: string,
 ): string {
-  const columns: TableColumn[] = [
-    { key: 'label', label: rowLabel, align: 'left' },
-    ...cf.properties.map((x) => ({
-      key: `c${x.number}`,
-      label: x.isPrimary ? `${x.shortAddress} ·` : x.shortAddress,
-      align: 'right' as const,
+  return renderPortraitMatrix({
+    lineLabel: rowLabel,
+    headings: cf.properties.map((x) => x.shortAddress),
+    lines: rows.map((row) => ({
+      label: row.label,
+      values: cf.properties.map((x) => row.of(x)),
+      total: row.total,
     })),
-  ];
-
-  const tableRows: TableRow[] = rows.map((row) => {
-    const out: TableRow = { label: row.label };
-    for (const x of cf.properties) out[`c${x.number}`] = row.of(x);
-    if (row.total) out.__total = true;
-    return out;
-  });
-
-  return renderDataTable(columns, tableRows, {
     caption,
-    signedKeys: cf.properties.map((x) => `c${x.number}`),
+    className: PROPERTY_MATRIX_CLASS,
+    labelWidthPct: 28,
+    wrapPhrases: true,
   });
 }
 
@@ -229,7 +280,7 @@ function verdictSection(cf: CashFlowComparison, palette: ResolvedReportPalette):
     ],
     ranked.map((x, i) => ({
       rank: String(i + 1),
-      property: x.isPrimary ? `${x.shortAddress} (opened)` : x.shortAddress,
+      property: x.shortAddress,
       total: formatMeasure(x.outcome.totalReturn),
       growth: formatMeasure(x.outcome.capitalGain),
       cash: formatMeasure(x.outcome.cumulativeAfterTax),
@@ -255,16 +306,16 @@ function verdictSection(cf: CashFlowComparison, palette: ResolvedReportPalette):
       const winner = w.property === null ? null : byNumber.get(w.property);
       return {
         measure: w.label,
-        leader: winner ? winner.shortAddress : 'No clear leader',
+        leader: winner ? winner.shortAddress : leaderless(w),
         value: show(w.value),
-        margin: show(w.margin),
+        margin: showMargin(w.margin),
       };
     }),
     { caption: 'Who leads on each measure, and by how much' },
   );
 
   const summary = cf.analysis?.summary
-    ? subhead('What the analysis said') + p(cf.analysis.summary)
+    ? subhead('What the analysis said') + paragraphs(cf.analysis.summary)
     : '';
 
   return renderLede(cf.narrative)
@@ -393,6 +444,12 @@ function measureMatrix(
   // their heading. Each used to open a landscape page of its own through
   // `renderBandedMatrix`, which put a heading alone on a portrait page and then
   // one three-row table per landscape sheet — four sheets for two sections.
+  //
+  // Set as the table of figures it is (`YEAR_MATRIX_CLASS`, the portrait
+  // matrix's own leading and padding): at a table of sentences' spacing a
+  // section's header and two three-row matrices overran one landscape sheet
+  // by a caption line, and at five properties every matrix took a sheet of its
+  // own — four sheets, each about half empty, for two sections.
   const periods = periodsOf(cf);
   return renderDataTable(
     [
@@ -405,7 +462,7 @@ function measureMatrix(
       return row;
     }),
     { caption, signedKeys: periods.map((_, i) => `p${i}`) },
-  );
+  ).replace('<table class="data">', `<table class="data ${YEAR_MATRIX_CLASS}">`);
 }
 
 /** The sections whose tables are a year per column, and so open the long edge. */
@@ -430,8 +487,10 @@ function cashFlowMatrixSection(cf: CashFlowComparison): string {
     cf,
     'Cumulative',
     cumulative,
-    'The same figures added to the ones before them. The year a row turns positive '
-    + 'is the year that property has repaid what it cost to hold.',
+    // One line on the long edge: at two, a section's second matrix needed a
+    // sheet of its own in the designs that band their section openers.
+    'Each year added to those before it. A row turns positive in the year that property has '
+    + 'repaid what it cost to hold.',
   );
 }
 
@@ -449,7 +508,9 @@ function positionMatrixSection(cf: CashFlowComparison): string {
     cf,
     'Equity',
     (x) => x.projection.years.map((y) => formatMeasure(y.equity)),
-    'Value less the loan balance. The difference between this and the row above is what is still owed.',
+    // "The row above" was the other table: the gap between the two is the loan.
+    'Value less the loan balance. The gap between a property\'s value and its equity is what is '
+    + 'still owed.',
   );
 }
 
@@ -523,9 +584,19 @@ function analysisSection(cf: CashFlowComparison): string {
   const a = cf.analysis;
   if (!a) return '';
 
+  // The label is ours and the sentence the model's, so the label may not claim
+  // what the figures deny: where no property's own cash flow turns positive
+  // within the term, the analysis named the one nearest to it. "Reaches
+  // positive cash flow first" sat over "though it stays negative across the
+  // term", beside a timing table reading "Not within the term" for every
+  // property.
+  const nonePositive = cf.properties.every((x) => x.outcome.firstPositiveYear === null);
   const trajectory = a.trajectory
     ? subhead('Cash flow')
-      + note('Reaches positive cash flow first', a.trajectory.fastestPositive)
+      + note(
+        nonePositive ? 'Nearest to positive cash flow' : 'Reaches positive cash flow first',
+        a.trajectory.fastestPositive,
+      )
       + note('Strongest growth in cash flow', a.trajectory.strongestGrowth)
       + (a.trajectory.concerns.length
         ? renderCallout(
@@ -536,26 +607,15 @@ function analysisSection(cf: CashFlowComparison): string {
         : '')
     : '';
 
+  // The analysis's own table of ending values is not printed. It restated, in
+  // millions and unattributed, the figures section five prints to the dollar
+  // against each property's name — and three rows in the order the properties
+  // run everywhere else read as theirs, which is the attribution the producer
+  // cannot give (F4: its property numbers index an ordering nobody recorded).
   const growth = a.capitalGrowth
     ? subhead('Capital growth')
       + note('Strongest equity position', a.capitalGrowth.strongestEquity)
       + note('Best wealth builder', a.capitalGrowth.wealthBuilder)
-      + (a.capitalGrowth.endingValues.length
-        ? renderDataTable(
-          [
-            { key: 'value', label: 'Value at the end of the term', align: 'left' },
-            { key: 'equity', label: 'Equity', align: 'right' },
-          ],
-          a.capitalGrowth.endingValues.map((v) => ({ value: v.value, equity: v.equity })),
-          {
-            // Unattributed on purpose — the producer names these by a property
-            // number that indexes nothing recorded. The derived figures are in
-            // the measures table, where they carry a property name.
-            caption: 'As the analysis stated them. The derived figures are in section '
-              + 'five, where each is named against its property.',
-          },
-        )
-        : '')
     : '';
 
   const yields = a.yields
@@ -568,8 +628,8 @@ function analysisSection(cf: CashFlowComparison): string {
   const attribution = renderCallout(
     'neutral',
     'Written, not calculated',
-    p('This section is a written comparison produced from the same projections as '
-      + 'the tables above. Where it names a figure, the table is the record.'),
+    p('This section is a written comparison, produced from the same projections as '
+      + 'the tables. Where it names a figure, the table is the record.'),
   );
 
   return attribution + trajectory + growth + yields;
@@ -595,8 +655,11 @@ function eachPropertySection(cf: CashFlowComparison): string {
       : `${r.rank}. ${r.statedAddress || 'Unnamed property'}`;
 
     // No denominator: the producer's schema states no scale, and both legacy
-    // generators print `/100` on one it never named.
-    const score = r.score === null ? '' : p(`Score given: ${r.score}`);
+    // generators print `/100` on one it never named. The line belongs to the
+    // heading above it (`SCORE_LINE_CLASS`).
+    const score = r.score === null
+      ? ''
+      : `<p class="${SCORE_LINE_CLASS}">${escapeHtml(`Score given: ${r.score}`)}</p>`;
     const unmatched = matched
       ? ''
       : renderCallout(
@@ -610,7 +673,7 @@ function eachPropertySection(cf: CashFlowComparison): string {
     return subhead(heading)
       + unmatched
       + score
-      + p(r.verdict)
+      + paragraphs(r.verdict)
       + (r.strengths.length ? `<p><strong>In favour</strong></p>${renderList(r.strengths)}` : '')
       + (r.weaknesses.length ? `<p><strong>Against</strong></p>${renderList(r.weaknesses)}` : '');
   }).join('');
@@ -646,15 +709,23 @@ function riskSection(cf: CashFlowComparison): string {
       + (risk.risks.length
         ? renderCallout('caution', 'Risks named', renderList(risk.risks))
         : '')
+      // Printed because the rate-rise margins are nowhere else in the
+      // document, and said plainly to belong to no named property: the
+      // analysis gave them without saying which is which (F4), so rows in
+      // property order would read as an attribution it never made.
       + (risk.breakEven.length
-        ? renderDataTable(
-          [
-            { key: 'year', label: 'Break-even, as stated', align: 'left' },
-            { key: 'margin', label: 'Safety margin', align: 'right' },
-          ],
-          risk.breakEven.map((b) => ({ year: b.year, margin: b.safetyMargin })),
-          { caption: 'As the analysis stated them. The derived years are in section five.' },
-        )
+        ? p('The analysis also gave a break-even year and a safety margin for each '
+          + 'property, without saying which property each belongs to. They are '
+          + 'printed as it wrote them; the years each property repays its holding '
+          + 'costs are in section five, against its name.')
+          + renderDataTable(
+            [
+              { key: 'year', label: 'Break-even, as stated', align: 'left' },
+              { key: 'margin', label: 'Safety margin', align: 'right' },
+            ],
+            risk.breakEven.map((b) => ({ year: b.year, margin: b.safetyMargin })),
+            { caption: 'As the analysis stated them, in no property’s order' },
+          )
         : '')
     : '';
 
@@ -781,9 +852,12 @@ export interface RenderComparisonInput {
  * comparison it is; the term moves to the cover's meta.
  */
 export function comparisonTitle(cf: CashFlowComparison): string {
-  return joinPlaces(cf.properties.map((x) => x.shortAddress), 3)
+  return joinPlaces(cf.properties.map((x) => x.shortAddress), TITLE_PLACES)
     || `${cf.properties.length} properties, ${cf.meta.termYears} years`;
 }
+
+/** Places the cover title names before it says "and N more". */
+const TITLE_PLACES = 3;
 
 /** The body — cover, contents, sections, closing — without the stylesheet. */
 export function renderComparisonBody(input: RenderComparisonInput): string {
@@ -794,8 +868,13 @@ export function renderComparisonBody(input: RenderComparisonInput): string {
     title: comparisonTitle(cf),
     masthead: input.company.name.lead + (input.company.name.tail ? ` ${input.company.name.tail}` : ''),
     edition: input.edition ?? null,
+    // The properties are listed under the title only where the title could not
+    // name them all ("…and 2 more"). At three or fewer the line repeated the
+    // title word for word directly beneath it.
     meta: [
-      { label: 'Properties', value: cf.properties.map((x) => x.shortAddress).join(' · ') },
+      ...(cf.properties.length > TITLE_PLACES
+        ? [{ label: 'Properties', value: cf.properties.map((x) => x.shortAddress).join(' · ') }]
+        : []),
       { label: 'Term', value: cf.meta.termYears ? `${cf.meta.termYears} years` : '' },
       { label: 'Investor profile', value: cf.meta.investorProfileLabel },
       { label: 'Prepared on', value: formatPreparedOn(cf.meta.preparedOn) },
@@ -825,12 +904,17 @@ export function renderComparisonBody(input: RenderComparisonInput): string {
     // sheets for three properties was a page per section, several of them a
     // heading or one callout. The year-by-year matrices open the long edge with
     // their heading on it; the page change breaks there on its own.
+    // And they are memo sections (`MEMO_CHAPTER_CLASS`), as the Intelligence
+    // Hub's, the Portfolio review's, the Borrowing Capacity Snapshot's and the
+    // Client Details record's are: a 31pt title over every section of a
+    // continuous document, each a third of a page tall with its number and
+    // standfirst, set a 14pt subhead under it at nearly half its size (Audit 8).
     return openChapter(
       DOCUMENT_NAME,
       number,
       section.title,
       LANDSCAPE_SECTIONS.has(section.id) ? 'landscape-table' : 'body',
-      { runOn: index > 0 },
+      { runOn: index > 0, memo: true },
     )
       + renderChapterHeader({
         number,
@@ -856,7 +940,15 @@ export function renderComparisonBody(input: RenderComparisonInput): string {
  * is a preference WeasyPrint gives up rather than overflow.
  */
 const COMPARISON_CSS = `
-  .table-block { break-inside: avoid; }`;
+  .table-block { break-inside: avoid; }${portraitMatrixCss(PROPERTY_MATRIX_CLASS)}${portraitMatrixCss(YEAR_MATRIX_CLASS)}
+  /* Ten year columns share the long edge with the streets' names. A ruled
+     design pads every cell 6pt a side, and across eleven columns that set the
+     names on two lines and pushed a section's second matrix onto a sheet of
+     its own in nine designs; the figures keep 4pt to their right, as the 10
+     Year Cash Flow's own matrix does (\`cf-matrix\`). */
+  table.data.${YEAR_MATRIX_CLASS} tbody td,
+  table.data.${YEAR_MATRIX_CLASS} thead th.num { padding-left: 2pt; padding-right: 4pt; }
+  p.${SCORE_LINE_CLASS} { break-after: avoid; page-break-after: avoid; }`;
 
 /**
  * The whole document, ready to POST to the render service.

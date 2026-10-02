@@ -27,7 +27,7 @@ export function clientPdfFilename(report: ClientPdfReport): string {
     tier: report.report_variant || report.report_tier,
     address: report.property_address,
     at: new Date(),
-    suffix: `v${report.current_version || 1}`,
+    suffix: `Version ${report.current_version || 1}`,
   });
 }
 

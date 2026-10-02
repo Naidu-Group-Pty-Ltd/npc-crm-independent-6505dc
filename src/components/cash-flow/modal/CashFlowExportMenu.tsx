@@ -4,7 +4,6 @@ import { Checkbox } from '@/components/ui/checkbox';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Separator } from '@/components/ui/separator';
 import { FlattenPdfIconButton } from '@/components/common/FlattenPdfIconButton';
-import { useReportTemplateMenu } from '@/components/reports/useReportTemplateMenu';
 
 interface CashFlowExportMenuProps {
   includeAllChartsInExport: boolean;
@@ -44,12 +43,10 @@ export function CashFlowExportMenu({
   onSendToClient,
   filename,
 }: CashFlowExportMenuProps) {
-  // Which template this comes out in. The 10 Year Cash Flow only uses it when
-  // the projection on screen is the saved one — the export says so when it
-  // cannot — but the choice belongs here either way, beside the button.
-  const template = useReportTemplateMenu('cashflow', { formatLabel: '10 Year Cash Flow' });
+  // Which template this comes out in is chosen beside this menu, never inside
+  // it (`CashFlowCommandHeader`'s `templateChoice`): the choice and the act
+  // are separate controls, as on every other report's export (Audit 7).
   return (
-    <>
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline" size="sm" className="min-h-10 shrink-0 rounded-xl shadow-sm">
@@ -77,11 +74,11 @@ export function CashFlowExportMenu({
             {isExportingServerPdf
               ? <Loader2 className="mr-2 h-4 w-4 animate-spin text-primary" />
               : <Sparkles className="mr-2 h-4 w-4 text-primary" />}
-            {isExportingServerPdf ? 'Generating PDF…' : 'Generate PDF'}
+            {isExportingServerPdf ? 'Preparing…' : 'Export PDF'}
           </DropdownMenuItem>
           <DropdownMenuItem onClick={() => onExportPdf()} className="min-h-10 cursor-pointer rounded-xl">
             <FileText className="mr-2 h-4 w-4 text-muted-foreground" />
-            Generate PDF (legacy layout)
+            Export PDF (legacy layout)
           </DropdownMenuItem>
           <div className="px-2 py-1">
             <FlattenPdfIconButton
@@ -89,7 +86,7 @@ export function CashFlowExportMenu({
               variant="outline"
               size="sm"
               className="min-h-10 w-full justify-start rounded-xl"
-              label="Generate Flattened PDF"
+              label="Export flattened PDF"
               getPdfBlob={async () => {
                 const b = await onExportPdf({ returnBlob: true });
                 if (!b) throw new Error('Failed to generate cash flow PDF');
@@ -106,18 +103,21 @@ export function CashFlowExportMenu({
             <Send className="mr-2 h-4 w-4 text-info" />
             Send to Client
           </DropdownMenuItem>
-          {template.section}
         </div>
 
         <DropdownMenuSeparator />
 
+        {/* These switches reach the legacy layout alone (and the flattened PDF,
+            which is made from it): the typeset Export PDF draws its own
+            charts. They used to say "PDF outputs", which promised a switch
+            the typeset document never reads (Audit 7). */}
         <div className="space-y-3 p-3">
           <div>
             <div className="flex items-center gap-2 text-xs font-semibold uppercase tracking-wide text-muted-foreground">
               <Settings2 className="h-3.5 w-3.5" />
-              PDF Options
+              Legacy layout options
             </div>
-            <p className="mt-1 text-xs text-muted-foreground">Control which chart sections are included in PDF outputs.</p>
+            <p className="mt-1 text-xs text-muted-foreground">Which charts the legacy layout and the flattened PDF include. Export PDF draws its own.</p>
           </div>
 
           <div className="rounded-2xl border bg-muted/20 p-3 space-y-2">
@@ -154,9 +154,5 @@ export function CashFlowExportMenu({
         </div>
       </DropdownMenuContent>
     </DropdownMenu>
-    {/* Outside the menu: its content unmounts on close and would take the
-        dialog with it. */}
-    {template.dialog}
-    </>
   );
 }

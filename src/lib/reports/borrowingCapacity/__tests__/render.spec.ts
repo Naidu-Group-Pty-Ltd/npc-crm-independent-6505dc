@@ -57,6 +57,9 @@ function input(over: Partial<RenderSnapshotInput> = {}): RenderSnapshotInput {
 
 const body = () => renderSnapshotBody(input());
 
+/** The audit trail's table: from its column head to the end of the document. */
+const auditTable = (html: string) => html.slice(html.indexOf('>Provided<'));
+
 /**
  * The document, on disk, for the eye.
  *
@@ -183,9 +186,9 @@ describe('the findings, in the output', () => {
 
   /** F13. A balance and a monthly repayment have no difference. */
   it('prints no delta between a balance and a repayment (F13)', () => {
-    const html = body();
-    expect(html).toContain('Liabilities — Credit Card');
-    expect(html).not.toContain('-$7,760');
+    const audit = auditTable(body());
+    expect(audit).toContain('>Credit Card<');
+    expect(audit).not.toContain('-$7,760');
   });
 
   /**
@@ -194,16 +197,16 @@ describe('the findings, in the output', () => {
    * credit card *increases* borrowing capacity.
    */
   it('does not call a credit card good for capacity', () => {
-    const html = body();
-    const row = html.slice(html.indexOf('Liabilities — Credit Card'));
+    const audit = auditTable(body());
+    const row = audit.slice(audit.indexOf('>Credit Card<'));
     expect(row.slice(0, 400)).toContain(AUDIT_EFFECT.adverse);
     expect(row.slice(0, 400)).not.toContain(AUDIT_EFFECT.favourable);
   });
 
   /** F14. Two zeroes that mean "not applicable". */
   it('prints an inapplicable entry as em dashes (F14)', () => {
-    const html = body();
-    const row = html.slice(html.indexOf('Lender Profile'));
+    const audit = auditTable(body());
+    const row = audit.slice(audit.indexOf('>Lender policy<'));
     expect(row.slice(0, 300)).not.toContain('$0');
     expect(row.slice(0, 300)).toContain('—');
   });
@@ -263,10 +266,9 @@ describe('the document', () => {
       'Capacity at a glance',
       'Income and commitments',
       'How the capacity is built',
-      'How this was calculated',
       'Audit trail',
-      'Scenario comparison',
       'On what basis',
+      'Scenario comparison',
     ]);
     // The running head's eyebrow is the document, not the section number that
     // the chapter header prints 150px below it.

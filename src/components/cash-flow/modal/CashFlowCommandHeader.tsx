@@ -20,6 +20,13 @@ interface CashFlowCommandHeaderProps {
   onResetAll: () => void;
   onSaveChanges: () => void;
   exportMenu: ReactNode;
+  /**
+   * Which template the document comes out in — "Choose template", drawn in the
+   * header row beside the export at every width, never inside a menu: on a
+   * phone the export menu is itself inside "More", and a picker opened from
+   * inside a menu vanishes when the menu closes.
+   */
+  templateChoice?: ReactNode;
   /** Chrome the header is drawn inside. Defaults to the original dialog. */
   presentation?: CashFlowPresentation;
   /** Return route out of the workspace. Rendered as its own rail above the title. */
@@ -39,6 +46,7 @@ export function CashFlowCommandHeader({
   onResetAll,
   onSaveChanges,
   exportMenu,
+  templateChoice,
   presentation = 'modal',
   onBack,
   backLabel = 'Back to Cash Flow Analysis',
@@ -123,6 +131,8 @@ export function CashFlowCommandHeader({
             <Save className="mr-2 h-4 w-4" />
             {isSaving ? 'Saving...' : 'Save Changes'}
           </Button>
+
+          {templateChoice}
 
           <div className="hidden md:block">
             {exportMenu}

@@ -233,7 +233,7 @@ describe('binding to a report format', () => {
     expect(p.unbound).toEqual([]);
     // "On what basis" is conditional on the assessment carrying its assumptions
     // (BORROWING_CAPACITY.md §16), and this Snapshot's text has none.
-    expect(p.unfilled).toEqual(['How this was calculated', 'Audit trail', 'Scenario comparison', 'On what basis']);
+    expect(p.unfilled).toEqual(['Audit trail', 'On what basis', 'Scenario comparison']);
   });
 
   it('matches a foreign template where the wording genuinely overlaps', () => {

@@ -31,8 +31,11 @@ const BRIDGE_SHAPE =
 /** Siblings, or the design system next door. Nothing else. *
  * `../reportDate.pure.ts` is the shared date reader, a file in the parent
  * like the others here — eleven routes each carried a private copy.
+ * `../text.pure.ts` holds the one rule for cutting text a person reads at a
+ * word with an ellipsis (`truncateAtWord`, Audit 8); it is not a format, and
+ * the Report Q&A and Cash Flow Comparison specs already admit it.
  */
-const ALLOWED_IMPORT = /^(?:\.\/[\w.]+\.pure\.ts|\.\.\/\.\.\/reportDesign\/[\w.]+\.(?:pure|generated)\.ts|\.\.\/(?:reportDate|readableFileName)\.pure\.ts)$/;
+const ALLOWED_IMPORT = /^(?:\.\/[\w.]+\.pure\.ts|\.\.\/\.\.\/reportDesign\/[\w.]+\.(?:pure|generated)\.ts|\.\.\/(?:reportDate|readableFileName|text)\.pure\.ts)$/;
 
 describe('property comparison — single source of truth', () => {
   it('has at least one canonical module', () => {

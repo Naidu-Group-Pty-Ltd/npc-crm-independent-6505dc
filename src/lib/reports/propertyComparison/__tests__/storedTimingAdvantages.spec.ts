@@ -189,9 +189,30 @@ describe('the typeset document prints them', () => {
 describe('the basis table', () => {
   it('omits a setting the record does not hold rather than printing a dash', () => {
     const basis = (out: string) => out.slice(out.lastIndexOf('On what basis'));
-    expect(basis(html())).not.toContain('Analysed by');
-    expect(basis(html({ model_used: 'the operator’s assigned model' }))).toContain('Analysed by');
+    expect(basis(html())).not.toContain('Analysis depth');
+    expect(basis(html({ analysis_depth: 'comprehensive' }))).toContain('Analysis depth');
     expect(basis(html())).toContain('Time horizon');
+  });
+
+  it('reads a stored setting as a setting: sentence case, a range with an en dash', () => {
+    const basis = html().slice(html().lastIndexOf('On what basis'));
+    expect(basis).toContain('5\u20137 years');
+    expect(basis).toContain('>Moderate<');
+    expect(basis).not.toContain('>moderate<');
+  });
+
+  // The model's identifier was printed as "Analysed by" on every production
+  // comparison (`model_used` is `google/gemini-2.5-flash` on each). What it
+  // stood for, that a model wrote the ranking, is said in words on every
+  // comparison whether or not the record names the model (Audit 8).
+  it('never prints the model, and always says in words that AI wrote it', () => {
+    for (const out of [html(), html({ model_used: 'google/gemini-2.5-flash' })]) {
+      const basis = out.slice(out.lastIndexOf('On what basis'));
+      expect(basis).not.toContain('Analysed by');
+      expect(out).not.toContain('gemini');
+      expect(basis).toContain('Written by AI');
+      expect(basis).toContain('written by an AI analysis');
+    }
   });
 });
 

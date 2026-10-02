@@ -88,7 +88,12 @@ export function cashFlowSections(p: CashFlowProjection): CashFlowSection[] {
       id: 'assumptions',
       title: 'What this assumes',
       note: 'A projection is only as good as what it takes for granted.',
+      // One page, opened as "Value, debt and equity" is. At the full opener
+      // the page held the table, three notes and the caution with a line or
+      // two to spare, so a fourth note (depreciation excluded) or a longer
+      // one sent the caution alone onto a page of its own (Audit 7, §12).
       pageBudget: 1,
+      onePage: true,
     });
   }
 

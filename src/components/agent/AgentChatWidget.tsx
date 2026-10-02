@@ -1,6 +1,12 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import { MessageSquare, X, Plus, Trash2, Send, Check, XCircle, Loader2, ChevronLeft, Pencil, RotateCcw, Sparkles, Diamond, BarChart3, Calendar, Zap, TrendingUp, Target, FileDown, Brain, Bell, Settings, Users, Share2, ClipboardList, Clock, Shield, ChevronRight, Info, Play, HelpCircle, ArrowRight, Paperclip, File, Image as ImageIcon, Square } from 'lucide-react';
+import { MessageSquare, X, Plus, Trash2, Send, Check, XCircle, Loader2, ChevronLeft, Pencil, RotateCcw, Sparkles, Diamond, BarChart3, Calendar, Zap, TrendingUp, Target, FileDown, Brain, Bell, Settings, Users, Share2, ClipboardList, Clock, Shield, ChevronRight, Info, Play, HelpCircle, ArrowRight, Paperclip, File, Image as ImageIcon, Square, SquarePen, History, MoreHorizontal, AudioLines, MapPin, ArrowDown, PanelRight, Maximize2, PictureInPicture2, Volume2 } from 'lucide-react';
+import { useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
+import {
+  DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
+  DropdownMenuRadioGroup, DropdownMenuRadioItem, DropdownMenuSeparator, DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { useBreakpoint } from '@/hooks/use-breakpoint';
 import { InternalMessagesPanel } from '@/components/agent/InternalMessagesPanel';
 import { OPEN_INTERNAL_MESSAGES_EVENT, onInternalMessage, setInternalMessagesPanelOpen } from '@/lib/internalMessagingBus';
 
@@ -22,6 +28,23 @@ import remarkGfm from 'remark-gfm';
 import { AgentMessageRenderer } from '@/components/agent/AgentMessageRenderer';
 import { MemoryCitations, type RecalledMemory } from '@/components/agent/MemoryCitations';
 import { AurixaMark } from '@/components/agent/AurixaMark';
+import { AgentLauncher } from '@/components/agent/presence/AgentLauncher';
+import { AurixaPresence } from '@/components/agent/presence/AurixaPresence';
+import { AgentHome, type HomeConversation } from '@/components/agent/AgentHome';
+import { AgentWorkTrace } from '@/components/agent/AgentWorkTrace';
+import { AgentApprovalCard } from '@/components/agent/AgentApprovalCard';
+import { AgentVoiceMode } from '@/components/agent/AgentVoiceMode';
+import { AgentFollowUps } from '@/components/agent/AgentFollowUps';
+import { AgentMessageActions } from '@/components/agent/AgentMessageActions';
+import { AgentUserMessage } from '@/components/agent/AgentUserMessage';
+import { derivePresence } from '@/lib/agent/presence.pure';
+import { finishTrace, startTrace, traceToolEnd, traceToolStart, traceTools, type WorkTrace } from '@/lib/agent/workTrace.pure';
+import { describePage, withPageContext, type PageContext } from '@/lib/agent/pageContext.pure';
+import { greetingFor } from '@/lib/agent/greeting.pure';
+import { suggestFollowUps, toolNamesFromCalls } from '@/lib/agent/followUps.pure';
+import { useSpeech } from '@/lib/agent/useSpeech';
+import { useVoiceSession } from '@/lib/agent/useVoiceSession';
+import { useStreamingSpeech } from '@/lib/agent/useStreamingSpeech';
 
 import { extractFileContent, formatFilesForAgent, ACCEPTED_EXTENSIONS, type ExtractedFile } from '@/lib/agentFileExtractor';
 
@@ -84,6 +107,30 @@ interface Message {
 type PanelView = 'chat' | 'notifications' | 'settings' | 'share' | 'messages';
 type SettingsTab = 'playbooks' | 'tasks' | 'audit';
 
+/**
+ * Where the panel sits on a desktop. A phone always gets the bottom sheet and
+ * a tablet the floating card; on a desktop the person chooses: floating beside
+ * the page, docked as a column the page makes room for, or centred for a long
+ * piece of work. The choice is remembered on this device only.
+ */
+type PanelLayout = 'float' | 'dock' | 'focus';
+const LAYOUT_KEY = 'aurixa_panel_mode';
+const READ_ALOUD_KEY = 'aurixa_read_aloud';
+/** How far a sheet has to be pulled down before letting go closes it. */
+const SHEET_CLOSE_PX = 120;
+
+function readStored(key: string): string | null {
+  try { return localStorage.getItem(key); } catch { return null; }
+}
+function writeStored(key: string, value: string | null) {
+  try {
+    if (value === null) localStorage.removeItem(key);
+    else localStorage.setItem(key, value);
+  } catch { /* a private window keeps the choice for this visit only */ }
+}
+
+const IS_MAC = typeof navigator !== 'undefined' && /Mac|iPhone|iPad/.test(navigator.platform || navigator.userAgent || '');
+
 export function AgentChatWidget() {
   const { user } = useAuth();
   const [isOpen, setIsOpen] = useState(false);
@@ -96,7 +143,8 @@ export function AgentChatWidget() {
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(false);
   const [loadingConvos, setLoadingConvos] = useState(false);
-  const [showSidebar, setShowSidebar] = useState(true);
+  // Opens on Aurixa's home, not the list: the list is one tap away (History).
+  const [showSidebar, setShowSidebar] = useState(false);
   const [sidebarTab, setSidebarTab] = useState<SidebarTab>('mine');
   const [sharedByMeConversations, setSharedByMeConversations] = useState<Conversation[]>([]);
   const [searchQuery, setSearchQuery] = useState('');
@@ -127,6 +175,39 @@ export function AgentChatWidget() {
   });
   const [skillPickerOpen, setSkillPickerOpen] = useState(false);
   const [placeholderIdx, setPlaceholderIdx] = useState(0);
+
+  // ── The layer on top ──────────────────────────────────────────────────────
+  // Everything below adds to the widget; nothing above it changed meaning.
+  const location = useLocation();
+  const breakpoint = useBreakpoint();
+  const speech = useSpeech();
+  const voice = useVoiceSession();
+  const [voiceMode, setVoiceMode] = useState(false);
+  const [readAloud, setReadAloud] = useState<boolean>(() => readStored(READ_ALOUD_KEY) === '1');
+  const [layoutPref, setLayoutPref] = useState<PanelLayout>(() => {
+    const stored = readStored(LAYOUT_KEY);
+    return stored === 'dock' || stored === 'focus' ? stored : 'float';
+  });
+  /** A reply finished while the panel was shut — the launcher says so. */
+  const [unseenReply, setUnseenReply] = useState(false);
+  /** The steps behind each reply, keyed by the message they produced. */
+  const [traces, setTraces] = useState<Record<string, WorkTrace>>({});
+  /** "Ask about this page" — opt-in, and only for messages sent while on. */
+  const [shareContext, setShareContext] = useState(false);
+  const [pageCtx, setPageCtx] = useState<PageContext | null>(null);
+  const [messagesLoading, setMessagesLoading] = useState(false);
+  const [atBottom, setAtBottom] = useState(true);
+  /** The action an approval is carrying out, so the presence can say it. */
+  const [confirmingTool, setConfirmingTool] = useState<string | null>(null);
+  const [sheetDrag, setSheetDrag] = useState<{ y: number; dragging: boolean; settling: boolean }>({ y: 0, dragging: false, settling: false });
+  const isOpenRef = useRef(isOpen);
+  const voiceModeRef = useRef(false);
+  const stickRef = useRef(true);
+  const panelRef = useRef<HTMLDivElement>(null);
+  const dragStartRef = useRef<number | null>(null);
+  const freshConversationsRef = useRef<Set<string>>(new Set());
+  const messagesTicketRef = useRef(0);
+  const previousConversationRef = useRef<string | null>(null);
 
   // Rotate composer placeholder while idle for signature "living" feel.
   useEffect(() => {
@@ -267,17 +348,36 @@ export function AgentChatWidget() {
 
   // Load messages for active conversation
   useEffect(() => {
+    // A conversation stops being "just created" the moment it is left, so
+    // coming back to it later loads what was said in it.
+    const left = previousConversationRef.current;
+    if (left && left !== activeConversation) freshConversationsRef.current.delete(left);
+    previousConversationRef.current = activeConversation;
+
+    const ticket = ++messagesTicketRef.current;
     if (!activeConversation) return;
+    stickRef.current = true;
+    // A conversation this widget has just created has nothing to fetch: the
+    // first reply is already streaming into it, and a fetch landing mid-reply
+    // would replace the message being written with the server's empty list.
+    // The reply's own refresh brings the persisted copy when it finishes.
+    if (freshConversationsRef.current.has(activeConversation)) {
+      setMessagesLoading(false);
+      return;
+    }
+    setMessagesLoading(true);
     (async () => {
       try {
         const { data } = await invokeSecureFunction('ai-dashboard-agent', {
           action: 'get-messages',
           conversation_id: activeConversation,
         });
-        if (data?.messages) setMessages(data.messages);
+        // A load for a conversation that has since been left is discarded.
+        if (ticket === messagesTicketRef.current && data?.messages) setMessages(data.messages);
       } catch (err) {
         console.error('Failed to load messages:', err);
       }
+      if (ticket === messagesTicketRef.current) setMessagesLoading(false);
     })();
   }, [activeConversation]);
 
@@ -315,12 +415,30 @@ export function AgentChatWidget() {
     };
   }, [activeConversation, isCollaborativeConvo, user?.id]);
 
-  // Auto-scroll
+  // Auto-scroll — but only while the reader is at the bottom. Someone who has
+  // scrolled up to re-read an earlier answer is not dragged back down by every
+  // streamed word; a "Jump to latest" pill offers the way back instead.
   useEffect(() => {
-    if (scrollRef.current) {
+    if (scrollRef.current && stickRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
-  }, [messages]);
+  }, [messages, traces, loading]);
+
+  const handleChatScroll = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const near = el.scrollHeight - el.scrollTop - el.clientHeight < 72;
+    stickRef.current = near;
+    setAtBottom((prev) => (prev === near ? prev : near));
+  }, []);
+
+  const jumpToLatest = useCallback(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    stickRef.current = true;
+    setAtBottom(true);
+    el.scrollTo({ top: el.scrollHeight, behavior: 'smooth' });
+  }, []);
 
   // Focus edit input
   useEffect(() => {
@@ -346,6 +464,7 @@ export function AgentChatWidget() {
     try {
       const { data } = await invokeSecureFunction('ai-dashboard-agent', { action: 'create-conversation' });
       if (data?.conversation) {
+        freshConversationsRef.current.add(data.conversation.id);
         setConversations(prev => [data.conversation, ...prev]);
         setActiveConversation(data.conversation.id);
         setMessages([]);
@@ -441,6 +560,11 @@ export function AgentChatWidget() {
   const sendMessage = async (overrideMessage?: string) => {
     const msg = (overrideMessage || input).trim();
     if ((!msg && extractedFiles.length === 0) || loading) return;
+    // Sending is a statement of attention: follow the reply down the page.
+    stickRef.current = true;
+    setAtBottom(true);
+    // "Ask about this page" travels only while its chip is switched on.
+    const pageLine = shareContext ? pageCtx : null;
     if (!overrideMessage) {
       setInput('');
       if (textareaRef.current) textareaRef.current.style.height = 'auto';
@@ -461,6 +585,7 @@ export function AgentChatWidget() {
         const { data } = await invokeSecureFunction('ai-dashboard-agent', { action: 'create-conversation' });
         if (!data?.conversation) { setLoading(false); return; }
         convId = data.conversation.id;
+        freshConversationsRef.current.add(data.conversation.id);
         setConversations(prev => [data.conversation, ...prev]);
         setActiveConversation(convId);
         setShowSidebar(false);
@@ -475,7 +600,7 @@ export function AgentChatWidget() {
     const fileIndicators = filesToSend.length > 0
       ? filesToSend.map(f => `📎 ${f.filename}`).join('\n') + '\n\n'
       : '';
-    const displayContent = fileIndicators + msg;
+    const displayContent = fileIndicators + withPageContext(msg, pageLine);
     const tempUserMsg: Message = { id: `temp-${Date.now()}`, role: 'user', content: displayContent, created_at: new Date().toISOString(), sent_by: user?.id, sent_by_username: user?.username || 'You' };
     setMessages(prev => [...prev, tempUserMsg]);
 
@@ -499,6 +624,8 @@ export function AgentChatWidget() {
         agentMessage = `[User attached ${filesToSend.length} file${filesToSend.length > 1 ? 's' : ''}: ${fileNames}. Please review the attached file${filesToSend.length > 1 ? 's' : ''}.]`;
       }
     }
+    // One plain line naming the screen, at the head of what the model reads.
+    agentMessage = withPageContext(agentMessage, pageLine);
 
     // Upload files to storage in background (don't block the message)
     if (rawFiles.length > 0 && user) {
@@ -571,6 +698,15 @@ export function AgentChatWidget() {
       setMessages(prev => [...prev, streamMsg]);
       setStreamingId(streamMsgId);
 
+      // The work trace: every tool the agent reaches for, narrated as a step.
+      let trace = startTrace(Date.now());
+      let stopped = false;
+      const putTrace = (next: WorkTrace) => {
+        trace = next;
+        setTraces(prev => ({ ...prev, [streamMsgId]: next }));
+      };
+      putTrace(trace);
+
       const controller = new AbortController();
       abortRef.current = controller;
 
@@ -591,6 +727,10 @@ export function AgentChatWidget() {
           } else if (evt.event === 'tool') {
             if (evt.data?.phase === 'start') setActiveTool(evt.data.name);
             else if (evt.data?.phase === 'end') setActiveTool(null);
+            if (typeof evt.data?.name === 'string' && evt.data.name) {
+              if (evt.data.phase === 'start') putTrace(traceToolStart(trace, evt.data.name, Date.now()));
+              else if (evt.data.phase === 'end') putTrace(traceToolEnd(trace, evt.data.name, Date.now()));
+            }
           } else if (evt.event === 'error') {
             streamError = evt.data?.message || 'Stream error';
           } else if (evt.event === 'done') {
@@ -599,6 +739,7 @@ export function AgentChatWidget() {
         }
       } catch (streamErr: any) {
         if (streamErr?.name === 'AbortError') {
+          stopped = true;
           accumulated += '\n\n_Stopped._';
           setMessages(prev => prev.map(m => m.id === streamMsgId ? { ...m, content: accumulated } : m));
         } else {
@@ -608,9 +749,14 @@ export function AgentChatWidget() {
         abortRef.current = null;
         setStreamingId(null);
         setActiveTool(null);
+        putTrace(finishTrace(trace, Date.now(), stopped));
       }
 
       if (streamError && !sawEvent) {
+        setTraces(prev => {
+          const { [streamMsgId]: _dropped, ...rest } = prev;
+          return rest;
+        });
         setRetryMessage(msg);
         setMessages(prev => prev.filter(m => m.id !== streamMsgId).concat({ id: `error-${Date.now()}`, role: 'assistant', content: `⚠️ ${streamError}`, created_at: new Date().toISOString() }));
         toast.error(streamError);
@@ -618,7 +764,19 @@ export function AgentChatWidget() {
         // Refresh from server so partial stream text is replaced by the persisted
         // canonical message (with tool_calls / confirmation metadata attached).
         const { data: refreshed } = await invokeSecureFunction('ai-dashboard-agent', { action: 'get-messages', conversation_id: convId });
-        if (refreshed?.messages) setMessages(refreshed.messages);
+        if (refreshed?.messages) {
+          // The trace was kept under the in-flight id; hand it to the reply the
+          // server persisted so it stays with the answer it explains.
+          const persisted = [...(refreshed.messages as Message[])].reverse().find(m => m.role === 'assistant');
+          if (persisted) {
+            setTraces(prev => {
+              const { [streamMsgId]: moved, ...rest } = prev;
+              return moved ? { ...rest, [persisted.id]: moved } : prev;
+            });
+          }
+          setMessages(refreshed.messages);
+        }
+        if (!isOpenRef.current) setUnseenReply(true);
         loadConversations();
         if (panelView === 'settings') loadSettingsData(settingsTab);
         if (requiresConfirmation) {
@@ -718,120 +876,429 @@ export function AgentChatWidget() {
     setSkillPickerOpen(false);
   };
 
+  // ── The layer on top: approvals that say what they are doing ──────────────
+  const confirmAction = async (messageId: string, approved: boolean) => {
+    const target = messages.find(m => m.id === messageId);
+    setConfirmingTool(approved ? toolNamesFromCalls(target?.tool_calls)[0] ?? null : null);
+    try {
+      await handleConfirmAction(messageId, approved);
+    } finally {
+      setConfirmingTool(null);
+    }
+  };
+
+  // ── The layer on top: effects ─────────────────────────────────────────────
+  useEffect(() => {
+    isOpenRef.current = isOpen;
+    if (isOpen) setUnseenReply(false);
+    // Nothing listens with the panel shut.
+    else setVoiceMode(false);
+  }, [isOpen]);
+
+  useEffect(() => { voiceModeRef.current = voiceMode; }, [voiceMode]);
+
+  // ⌘J / Ctrl+J opens and closes Aurixa from anywhere. Report Q&A already owns
+  // ⌘J for its own assistant, so on that page the shortcut is left to it.
+  useEffect(() => {
+    if (!user) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (!(e.metaKey || e.ctrlKey) || e.altKey || e.shiftKey || e.key.toLowerCase() !== 'j') return;
+      if (window.location.pathname.includes('/report-qa')) return;
+      e.preventDefault();
+      setIsOpen(o => !o);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [user]);
+
+  const panelMode: 'sheet' | PanelLayout = breakpoint === 'mobile' ? 'sheet' : breakpoint === 'tablet' ? 'float' : layoutPref;
+
+  // A docked panel is a column the page makes room for, not a card over it.
+  useEffect(() => {
+    const root = document.documentElement;
+    if (isOpen && panelMode === 'dock') root.setAttribute('data-aurixa-dock', '');
+    else root.removeAttribute('data-aurixa-dock');
+    return () => root.removeAttribute('data-aurixa-dock');
+  }, [isOpen, panelMode]);
+
+  // What screen is behind the panel — read after the page has drawn its title.
+  useEffect(() => {
+    if (!isOpen) return;
+    const t = window.setTimeout(() => {
+      const heading = document.querySelector('main h1')?.textContent ?? null;
+      setPageCtx(describePage(location.pathname, heading));
+    }, 250);
+    return () => window.clearTimeout(t);
+  }, [isOpen, location.pathname]);
+
+  // A keyboard on a desktop goes straight to the composer.
+  useEffect(() => {
+    if (!isOpen || breakpoint !== 'desktop') return;
+    const raf = window.requestAnimationFrame(() => textareaRef.current?.focus({ preventScroll: true }));
+    return () => window.cancelAnimationFrame(raf);
+  }, [isOpen, breakpoint]);
+
+  const closePanel = useCallback((returnFocus = false) => {
+    setIsOpen(false);
+    setSheetDrag({ y: 0, dragging: false, settling: false });
+    if (returnFocus) {
+      window.requestAnimationFrame(() => document.querySelector<HTMLButtonElement>('.aurixa-launcher')?.focus());
+    }
+  }, []);
+
+  // Escape: out of a voice conversation first, then out of the panel.
+  useEffect(() => {
+    if (!isOpen) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key !== 'Escape' || e.defaultPrevented) return;
+      const panel = panelRef.current;
+      const target = e.target as HTMLElement | null;
+      const onPage = !target || target === document.body;
+      const inside = Boolean(panel && target && panel.contains(target));
+      // On a modal layout Escape is the way out wherever focus is; beside the
+      // page it only closes the panel when the panel is what is focused.
+      if (!inside && !(onPage && (panelMode === 'sheet' || panelMode === 'focus'))) return;
+      if (target?.tagName === 'INPUT') return;
+      if (target?.tagName === 'TEXTAREA' && (target as HTMLTextAreaElement).value.trim()) return;
+      if (voiceModeRef.current) { setVoiceMode(false); return; }
+      closePanel(true);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isOpen, panelMode, closePanel]);
+
+  // ── The layer on top: presence ────────────────────────────────────────────
+  const streamingMsg = streamingId ? messages.find(m => m.id === streamingId) ?? null : null;
+  const lastMessage = messages.length > 0 ? messages[messages.length - 1] : null;
+  const lastAssistant = useMemo(() => {
+    for (let i = messages.length - 1; i >= 0; i -= 1) if (messages[i].role === 'assistant') return messages[i];
+    return null;
+  }, [messages]);
+  const liveTrace = streamingId ? traces[streamingId] ?? null : null;
+  const runningTraceTool = useMemo(() => {
+    const steps = liveTrace?.steps ?? [];
+    for (let i = steps.length - 1; i >= 0; i -= 1) if (steps[i].status === 'running') return steps[i].tool;
+    return null;
+  }, [liveTrace]);
+  const writing = loading && Boolean(
+    streamingMsg ? streamingMsg.content : lastMessage?.role === 'assistant' && lastMessage.content,
+  );
+  const awaitingApproval = Boolean(lastAssistant?.requires_confirmation && lastAssistant.confirmation_status === 'pending');
+  const presence = derivePresence({
+    listening: voice.state === 'listening',
+    transcribing: voice.state === 'transcribing',
+    speaking: speech.speaking,
+    busy: loading || Boolean(streamingId),
+    writing,
+    activeTool: confirmingTool ?? runningTraceTool ?? activeTool,
+    awaitingApproval,
+    unseenReply,
+  });
+
+  // Read replies aloud as they are written — when the person asked for it, and
+  // never while a voice conversation (which speaks for itself) is running.
+  useStreamingSpeech({
+    speech,
+    enabled: readAloud && !voiceMode,
+    streamKey: streamingId,
+    text: streamingMsg?.content ?? '',
+  });
+
+  // ── The layer on top: handlers ────────────────────────────────────────────
+  const openConversation = (id: string) => {
+    setActiveConversation(id);
+    setShowSidebar(false);
+    setPanelView('chat');
+  };
+
+  const startVoice = () => {
+    speech.unlock();
+    setPanelView('chat');
+    setShowSidebar(false);
+    setVoiceMode(true);
+  };
+
+  const chooseLayout = (next: PanelLayout) => {
+    setLayoutPref(next);
+    writeStored(LAYOUT_KEY, next === 'float' ? null : next);
+  };
+
+  const toggleReadAloud = () => {
+    setReadAloud(on => {
+      const next = !on;
+      writeStored(READ_ALOUD_KEY, next ? '1' : null);
+      if (next) speech.unlock();
+      else speech.cancel();
+      return next;
+    });
+  };
+
+  const askAboutPage = () => {
+    setShareContext(true);
+    window.requestAnimationFrame(() => textareaRef.current?.focus());
+  };
+
+  // The sheet follows a finger down from its grip and closes past a threshold.
+  const onGripPointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
+    dragStartRef.current = e.clientY;
+    e.currentTarget.setPointerCapture(e.pointerId);
+    setSheetDrag({ y: 0, dragging: true, settling: false });
+  };
+  const onGripPointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (dragStartRef.current === null) return;
+    setSheetDrag({ y: Math.max(0, e.clientY - dragStartRef.current), dragging: true, settling: false });
+  };
+  const onGripPointerUp = (e: React.PointerEvent<HTMLDivElement>) => {
+    if (dragStartRef.current === null) return;
+    const dy = Math.max(0, e.clientY - dragStartRef.current);
+    dragStartRef.current = null;
+    if (dy > SHEET_CLOSE_PX) closePanel();
+    else setSheetDrag({ y: 0, dragging: false, settling: true });
+  };
+
+
+  const recentConversations: HomeConversation[] = useMemo(
+    () => conversations.filter(c => !c.shared).slice(0, 4).map(c => ({ id: c.id, title: c.title, updated_at: c.updated_at })),
+    [conversations],
+  );
 
   if (!user) return null;
 
+  const busy = loading || Boolean(streamingId);
+  const shortcut = IS_MAC ? '⌘J' : 'Ctrl+J';
+  const isDesktop = breakpoint === 'desktop';
+  const scrimmed = panelMode === 'sheet' || panelMode === 'focus';
+  const compactHeader = panelMode === 'sheet';
+  const viewLabel = panelView === 'messages'
+    ? 'Team messages'
+    : panelView === 'notifications'
+      ? 'Notifications'
+      : panelView === 'settings'
+        ? 'Playbooks & schedules'
+        : panelView === 'share'
+          ? 'Share'
+          : showSidebar
+            ? 'Conversations'
+            : null;
+
   if (!isOpen) {
     return (
-      <button
-        onClick={() => setIsOpen(true)}
-        className="group fixed bottom-[5.5rem] right-4 z-[55] flex h-14 w-14 items-center justify-center rounded-full transition-transform hover:scale-[1.04] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-brand/60 md:bottom-6 md:right-6 md:z-40"
-        aria-label="Open Aurixa"
-        title="Ask Aurixa"
-      >
-        {/* Outer aurora glow ring */}
-        <span
-          aria-hidden
-          className="absolute inset-0 rounded-full opacity-80 blur-[10px] transition-opacity group-hover:opacity-100"
-          style={{
-            background:
-              'conic-gradient(from 180deg, hsl(var(--aurixa-aurora-1)/0.9), hsl(var(--aurixa-aurora-2)/0.8), hsl(var(--aurixa-aurora-3)/0.85), hsl(var(--aurixa-aurora-1)/0.9))',
-            animation: 'aurixa-orb-spin 12s linear infinite',
-          }}
-        />
-        {/* Inner glass disc */}
-        <span
-          aria-hidden
-          className="absolute inset-[3px] rounded-full aurixa-glass"
-        />
-        <AurixaMark size="md" state={loading ? 'thinking' : 'idle'} className="relative z-10" />
-        {notifCount + internalUnread > 0 && (
-          <span className="absolute -top-0.5 -right-0.5 z-20 flex h-5 min-w-5 items-center justify-center rounded-full border border-background bg-destructive px-1 text-[10px] font-semibold text-destructive-foreground shadow-[0_0_0_2px_hsl(var(--background))]">
-            {notifCount + internalUnread > 9 ? '9+' : notifCount + internalUnread}
-          </span>
-        )}
-
-      </button>
+      <AgentLauncher
+        presence={presence}
+        expanded={presence.active || presence.mood === 'attention' || presence.mood === 'done'}
+        badge={notifCount + internalUnread}
+        shortcut={shortcut}
+        onOpen={() => setIsOpen(true)}
+      />
     );
   }
 
   return (
-    <div className="fixed bottom-[5.5rem] right-4 z-[60] flex flex-col overflow-hidden rounded-[20px] aurixa-glass animate-in slide-in-from-bottom-4 fade-in duration-300
-      w-[calc(100vw-2rem)] max-w-[440px] h-[min(75vh,580px)]
-      md:bottom-6 md:right-6 md:h-[min(85vh,640px)]">
-      {/* Header */}
-      <div className="relative flex items-center justify-between border-b border-[hsl(var(--aurixa-glass-border)/0.5)] px-4 py-3 shrink-0 bg-gradient-to-b from-[hsl(var(--aurixa-glass-bg)/0.6)] to-transparent">
-        <div className="flex items-center gap-2.5 min-w-0">
-          {!showSidebar && activeConversation && panelView === 'chat' && (
-            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setShowSidebar(true)}>
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-          )}
-          {panelView !== 'chat' && (
-            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setPanelView('chat')}>
-              <ChevronLeft className="h-4 w-4" />
-            </Button>
-          )}
-          <AurixaMark size="sm" state={loading ? 'thinking' : 'idle'} />
-          <div className="flex items-baseline gap-2 min-w-0">
-            <span className="font-heading text-[15px] font-semibold tracking-tight text-foreground">Aurixa</span>
-          </div>
-        </div>
-        <div className="flex items-center gap-0.5">
-          {/* Internal team messages */}
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-7 w-7 relative"
-            onClick={() => { setPendingThreadId(null); setPanelView(panelView === 'messages' ? 'chat' : 'messages'); }}
-            title="Team messages"
-          >
-            <Users className={cn('h-4 w-4', panelView === 'messages' && 'text-primary')} />
-            {internalUnread > 0 && (
-              <span className="absolute top-0 right-0 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-destructive text-[8px] font-bold text-destructive-foreground">
-                {internalUnread > 9 ? '9+' : internalUnread}
-              </span>
-            )}
-          </Button>
-          {/* Notification bell */}
-          <Button variant="ghost" size="icon" className="h-7 w-7 relative" onClick={() => { setPanelView(panelView === 'notifications' ? 'chat' : 'notifications'); loadNotifications(); }} title="Notifications">
-            <Bell className={cn("h-4 w-4", panelView === 'notifications' && "text-primary")} />
-            {notifCount > 0 && <span className="absolute top-0 right-0 flex h-3.5 w-3.5 items-center justify-center rounded-full bg-destructive text-[8px] font-bold text-destructive-foreground">{notifCount > 9 ? '9+' : notifCount}</span>}
-          </Button>
+    <>
+    {scrimmed && <div className="aurixa-scrim" aria-hidden onClick={() => closePanel()} />}
+    <section
+      ref={panelRef}
+      role="dialog"
+      aria-label="Aurixa"
+      data-mode={panelMode}
+      data-dragging={sheetDrag.dragging ? 'true' : undefined}
+      data-settling={sheetDrag.settling ? 'true' : undefined}
+      className="aurixa-panel aurixa-glass"
+      style={panelMode === 'sheet' && sheetDrag.y > 0 ? { translate: `0 ${sheetDrag.y}px` } : undefined}
+    >
+      {busy && <span className="aurixa-working-bar" aria-hidden />}
 
-          {/* Share */}
-          {activeConversation && (
-            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setPanelView(panelView === 'share' ? 'chat' : 'share')} title="Share conversation">
-              <Share2 className={cn("h-4 w-4", panelView === 'share' && "text-primary")} />
-            </Button>
-          )}
-          {/* Settings - Playbooks, Schedules & Audit */}
-          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => { setPanelView(panelView === 'settings' ? 'chat' : 'settings'); if (panelView !== 'settings') loadSettingsData('playbooks'); }} title="Playbooks, Schedules & Audit Log">
-            <Settings className={cn("h-4 w-4", panelView === 'settings' && "text-primary")} />
-          </Button>
-          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={createConversation} title="New conversation">
-            <Plus className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setIsOpen(false)}>
-            <X className="h-4 w-4" />
-          </Button>
-        </div>
-        {/* Streaming aurora bar — becomes visible during generation */}
-        <span
+      {panelMode === 'sheet' && (
+        <div
+          className="aurixa-grip shrink-0"
           aria-hidden
-          className={cn(
-            'pointer-events-none absolute inset-x-0 bottom-0 h-[2px] transition-opacity',
-            loading || streamingId ? 'opacity-100' : 'opacity-0'
-          )}
-          style={{
-            background:
-              'linear-gradient(90deg, transparent, hsl(var(--aurixa-aurora-1)), hsl(var(--aurixa-aurora-2)), hsl(var(--aurixa-aurora-3)), transparent)',
-            backgroundSize: '200% 100%',
-            animation: 'aurixa-shimmer 2.4s linear infinite',
-          }}
+          onPointerDown={onGripPointerDown}
+          onPointerMove={onGripPointerMove}
+          onPointerUp={onGripPointerUp}
+          onPointerCancel={onGripPointerUp}
         />
-      </div>
+      )}
 
+      {/* Header — who Aurixa is, what it is doing, and the controls. */}
+      <header
+        className={cn(
+          'relative flex shrink-0 items-center gap-2 border-b border-[hsl(var(--aurixa-glass-border)/0.5)] pl-2.5 pr-2',
+          panelMode === 'sheet' ? 'pb-2.5 pt-1' : 'py-2.5',
+        )}
+      >
+        {!voiceMode && (panelView !== 'chat' || showSidebar) && (
+          <button
+            type="button"
+            className="aurixa-icon-btn"
+            onClick={() => { setPanelView('chat'); setShowSidebar(false); }}
+            aria-label="Back to the conversation"
+            title="Back"
+          >
+            <ChevronLeft className="h-4 w-4" />
+          </button>
+        )}
+        <AurixaPresence mood={presence.mood} size={34} getLevel={voice.state === 'listening' ? voice.getLevel : undefined} className="shrink-0" />
+        <div className="min-w-0 flex-1 leading-tight">
+          {/* In a sub-view the title names the view; the orb beside it is Aurixa. */}
+          <div className="truncate font-heading text-[15px] font-semibold tracking-tight text-foreground">
+            {viewLabel && !voiceMode ? viewLabel : 'Aurixa'}
+          </div>
+          <span
+            className="aurixa-panel__status text-[11.5px] text-muted-foreground"
+            data-active={presence.active ? 'true' : 'false'}
+            aria-live="polite"
+          >
+            {voiceMode && !presence.active ? 'Voice conversation' : presence.status}
+          </span>
+        </div>
+
+        <div className="flex shrink-0 items-center gap-0.5">
+          {!voiceMode && (
+            <>
+              {/* On a phone these two move into More, so the status line keeps its words. */}
+              {!compactHeader && (
+              <>
+              <button type="button" className="aurixa-icon-btn" onClick={createConversation} aria-label="New conversation" title="New conversation">
+                <SquarePen className="h-4 w-4" />
+              </button>
+              <button
+                type="button"
+                className="aurixa-icon-btn"
+                data-active={panelView === 'chat' && showSidebar ? 'true' : undefined}
+                aria-pressed={panelView === 'chat' && showSidebar}
+                onClick={() => {
+                  if (panelView !== 'chat') { setPanelView('chat'); setShowSidebar(true); return; }
+                  setShowSidebar(s => !s);
+                }}
+                aria-label="Conversations"
+                title="Conversations"
+              >
+                <History className="h-4 w-4" />
+              </button>
+              </>
+              )}
+              {/* Internal team messages */}
+              <button
+                type="button"
+                className="aurixa-icon-btn"
+                data-active={panelView === 'messages' ? 'true' : undefined}
+                aria-pressed={panelView === 'messages'}
+                onClick={() => { setPendingThreadId(null); setPanelView(panelView === 'messages' ? 'chat' : 'messages'); }}
+                aria-label={internalUnread > 0 ? `Team messages, ${internalUnread} unread` : 'Team messages'}
+                title="Team messages"
+              >
+                <Users className="h-4 w-4" />
+                {internalUnread > 0 && (
+                  <span className="aurixa-icon-btn__badge" aria-hidden>{internalUnread > 9 ? '9+' : internalUnread}</span>
+                )}
+              </button>
+              {/* Notification bell */}
+              <button
+                type="button"
+                className="aurixa-icon-btn"
+                data-active={panelView === 'notifications' ? 'true' : undefined}
+                aria-pressed={panelView === 'notifications'}
+                onClick={() => { setPanelView(panelView === 'notifications' ? 'chat' : 'notifications'); loadNotifications(); }}
+                aria-label={notifCount > 0 ? `Notifications, ${notifCount} waiting` : 'Notifications'}
+                title="Notifications"
+              >
+                <Bell className="h-4 w-4" />
+                {notifCount > 0 && (
+                  <span className="aurixa-icon-btn__badge" aria-hidden>{notifCount > 9 ? '9+' : notifCount}</span>
+                )}
+              </button>
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button type="button" className="aurixa-icon-btn" aria-label="More" title="More">
+                    <MoreHorizontal className="h-4 w-4" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" sideOffset={6} className="z-[70] w-64">
+                  {compactHeader && (
+                    <>
+                      <DropdownMenuItem onSelect={createConversation}>
+                        <SquarePen className="mr-2 h-4 w-4" /> New conversation
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onSelect={() => { setPanelView('chat'); setShowSidebar(true); }}>
+                        <History className="mr-2 h-4 w-4" /> Conversations
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                    </>
+                  )}
+                  {voice.supported && (
+                    <DropdownMenuItem onSelect={startVoice}>
+                      <AudioLines className="mr-2 h-4 w-4" /> Talk with Aurixa
+                    </DropdownMenuItem>
+                  )}
+                  {activeConversation && (
+                    <DropdownMenuItem onSelect={() => setPanelView('share')}>
+                      <Share2 className="mr-2 h-4 w-4" /> Share conversation
+                    </DropdownMenuItem>
+                  )}
+                  {/* Settings - Playbooks, Schedules & Audit */}
+                  <DropdownMenuItem onSelect={() => { setPanelView('settings'); loadSettingsData('playbooks'); }}>
+                    <Settings className="mr-2 h-4 w-4" /> Playbooks, schedules &amp; audit log
+                  </DropdownMenuItem>
+                  {speech.supported && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuCheckboxItem checked={readAloud} onCheckedChange={toggleReadAloud} onSelect={(e) => e.preventDefault()}>
+                        <Volume2 className="mr-2 h-4 w-4" /> Read replies aloud
+                      </DropdownMenuCheckboxItem>
+                    </>
+                  )}
+                  {isDesktop && (
+                    <>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuLabel className="text-[11px] font-medium uppercase tracking-[0.14em] text-muted-foreground">
+                        Layout
+                      </DropdownMenuLabel>
+                      <DropdownMenuRadioGroup value={layoutPref} onValueChange={(v) => chooseLayout(v as PanelLayout)}>
+                        <DropdownMenuRadioItem value="float">
+                          <PictureInPicture2 className="mr-2 h-4 w-4" /> Floating
+                        </DropdownMenuRadioItem>
+                        <DropdownMenuRadioItem value="dock">
+                          <PanelRight className="mr-2 h-4 w-4" /> Beside the page
+                        </DropdownMenuRadioItem>
+                        <DropdownMenuRadioItem value="focus">
+                          <Maximize2 className="mr-2 h-4 w-4" /> Focus
+                        </DropdownMenuRadioItem>
+                      </DropdownMenuRadioGroup>
+                      <DropdownMenuSeparator />
+                      <p className="px-2 py-1.5 text-[11px] text-muted-foreground">
+                        Press <kbd className="rounded border border-border px-1 font-mono text-[10px]">{shortcut}</kbd> to open or close Aurixa
+                      </p>
+                    </>
+                  )}
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </>
+          )}
+          <button type="button" className="aurixa-icon-btn" onClick={() => closePanel(true)} aria-label="Close Aurixa" title="Close">
+            <X className="h-4 w-4" />
+          </button>
+        </div>
+      </header>
+
+      {voiceMode ? (
+        <AgentVoiceMode
+          presence={presence}
+          voice={voice}
+          speech={speech}
+          busy={busy}
+          streamKey={streamingId}
+          streamText={streamingMsg?.content ?? ''}
+          lastReply={lastAssistant && !lastAssistant.content.startsWith('⚠️') ? lastAssistant.content : ''}
+          pending={lastAssistant?.requires_confirmation
+            ? { toolCalls: lastAssistant.tool_calls, status: lastAssistant.confirmation_status }
+            : null}
+          onSend={(text) => sendMessage(text)}
+          onApprove={() => (lastAssistant ? confirmAction(lastAssistant.id, true) : Promise.resolve())}
+          onReject={() => (lastAssistant ? confirmAction(lastAssistant.id, false) : Promise.resolve())}
+          onStop={stopStreaming}
+          onExit={() => setVoiceMode(false)}
+        />
+      ) : (
       <div className="flex flex-1 min-h-0">
         {/* ═══ INTERNAL TEAM MESSAGES PANEL ═══ */}
         {panelView === 'messages' && (
@@ -1243,36 +1710,33 @@ export function AgentChatWidget() {
         {/* ═══ CHAT AREA ═══ */}
         {panelView === 'chat' && !showSidebar && (
           <div className="flex-1 flex flex-col min-h-0">
-            <div ref={scrollRef} className="flex-1 overflow-y-auto p-3 space-y-3">
-              {messages.length === 0 && (
-                <div className="flex flex-col items-center justify-center h-full text-center px-4 py-6">
-                  <AurixaMark size="hero" state="idle" className="mb-4" />
-                  <p className="font-heading text-lg font-medium text-foreground tracking-tight mb-1">How can I help?</p>
-                  <p className="text-xs text-muted-foreground max-w-[280px] leading-relaxed">Ask about clients, deals, emails, reminders, pipeline, calendar, or borrowing capacity.</p>
-                  <div className="flex flex-wrap gap-1.5 mt-5 justify-center">
-                    {[
-                      '☀️ Morning briefing',
-                      '🔍 Proactive insights scan',
-                      '📊 Pipeline overview',
-                      '⏰ Overdue reminders',
-                      '📅 Upcoming appointments',
-                      '💰 Commission forecast',
-                      '🏥 System health check',
-                      '📊 Chart: deals by stage',
-                      '📈 Weekly digest',
-                      '🏆 Top clients',
-                      '💹 Revenue forecast',
-                      '🔮 What-if: rates +0.5%',
-                      '📤 Export pipeline data',
-                      '📋 My playbooks',
-                      '🔎 Smart search',
-                      '📝 Generate report for...',
-                    ].map((prompt) => (
-                      <button key={prompt} onClick={() => sendMessage(prompt)}
-                        className="text-[11px] px-2.5 py-1.5 rounded-full border border-[hsl(var(--aurixa-glass-border)/0.6)] bg-[hsl(var(--aurixa-glass-bg)/0.4)] hover:border-brand/40 hover:bg-brand/5 hover:text-foreground transition-colors text-muted-foreground backdrop-blur">
-                        {prompt}
-                      </button>
-                    ))}
+            <div className="relative flex min-h-0 flex-1 flex-col">
+            <div ref={scrollRef} onScroll={handleChatScroll} className="flex-1 overflow-y-auto p-3 space-y-3">
+              {messages.length === 0 && !messagesLoading && (
+                <AgentHome
+                  greeting={greetingFor(new Date(), user.username)}
+                  presence={presence}
+                  notifications={notifications}
+                  recent={recentConversations.filter(c => c.id !== activeConversation)}
+                  pageLabel={pageCtx?.label ?? null}
+                  voiceAvailable={voice.supported}
+                  onPrompt={(prompt) => sendMessage(prompt)}
+                  onTalk={startVoice}
+                  onAskAboutPage={askAboutPage}
+                  onOpenConversation={openConversation}
+                  onShowAll={() => setShowSidebar(true)}
+                />
+              )}
+              {messages.length === 0 && messagesLoading && (
+                <div className="space-y-4 px-1 pt-2" aria-label="Loading the conversation" role="status">
+                  <span className="aurixa-skeleton ml-auto h-9 w-2/5 rounded-2xl" />
+                  <div className="flex gap-2.5">
+                    <span className="aurixa-skeleton h-[22px] w-[22px] shrink-0 rounded-full" />
+                    <div className="flex-1 space-y-2">
+                      <span className="aurixa-skeleton h-3 w-11/12 rounded-full" />
+                      <span className="aurixa-skeleton h-3 w-4/5 rounded-full" />
+                      <span className="aurixa-skeleton h-3 w-3/5 rounded-full" />
+                    </div>
                   </div>
                 </div>
               )}
@@ -1282,8 +1746,15 @@ export function AgentChatWidget() {
                 const showAttribution = msg.role === 'user' && msg.sent_by_username && isCollaborativeConvo;
                 const isOtherUser = msg.role === 'user' && msg.sent_by && msg.sent_by !== user?.id;
                 const senderColor = msg.sent_by ? getSenderColor(msg.sent_by, senderColorMap) : '';
+                const isStreaming = streamingId === msg.id;
+                const trace = traces[msg.id];
+                const isLatestAssistant = msg.role === 'assistant' && msg.id === lastAssistant?.id;
+                const isErrorReply = msg.content.startsWith('⚠️');
+                const followUpTools = isLatestAssistant && lastMessage?.id === msg.id && !busy && !awaitingApproval && !isErrorReply
+                  ? (trace ? traceTools(trace) : toolNamesFromCalls(msg.tool_calls))
+                  : [];
                 return (
-                <div key={msg.id} className={cn("flex flex-col animate-aurixa-rise", msg.role === 'user' ? (isOtherUser ? "items-start" : "items-end") : "items-start")}>
+                <div key={msg.id} className={cn("aurixa-msg flex flex-col animate-aurixa-rise", msg.role === 'user' ? (isOtherUser ? "items-start" : "items-end") : "items-start")}>
                   {showAttribution && (
                     <span className={cn("text-[10px] font-medium mb-0.5 px-1", senderColor)}>
                       {msg.sent_by_username}{isOtherUser ? '' : ' (You)'}
@@ -1291,28 +1762,33 @@ export function AgentChatWidget() {
                   )}
                   {msg.role === 'assistant' ? (
                     <div className="flex w-full gap-2.5 items-start">
-                      <span className="pt-0.5 shrink-0"><AurixaMark size="sm" state={streamingId === msg.id ? 'thinking' : 'idle'} /></span>
-                      <div className={cn(
-                        "flex-1 min-w-0 text-sm leading-relaxed text-foreground",
-                        streamingId === msg.id && msg.content.length > 0 && "[&_p:last-child]:aurixa-shimmer-text"
-                      )}>
-                        <AgentMessageRenderer content={msg.content} />
+                      <span className="pt-0.5 shrink-0"><AurixaMark size="sm" state={isStreaming ? 'thinking' : 'idle'} /></span>
+                      <div className="flex-1 min-w-0">
+                        {trace && <AgentWorkTrace trace={trace} live={isStreaming} writing={Boolean(msg.content)} />}
+                        {msg.content && (
+                          <div className={cn("text-sm leading-relaxed text-foreground", isStreaming && "aurixa-writing")}>
+                            <AgentMessageRenderer content={msg.content} />
+                          </div>
+                        )}
+                        {msg.content && !isStreaming && !isErrorReply && (
+                          <AgentMessageActions content={msg.content} speech={speech} pinned={isLatestAssistant} />
+                        )}
                       </div>
                     </div>
                   ) : (
-                  <div className={cn("max-w-[88%] rounded-2xl px-3.5 py-2.5 text-sm shadow-sm",
-                    msg.role === 'user'
-                      ? isOtherUser
-                        ? "bg-[hsl(var(--aurixa-glass-bg)/0.7)] border border-[hsl(var(--aurixa-glass-border)/0.5)] text-foreground rounded-bl-md backdrop-blur"
-                        : "bg-primary text-primary-foreground rounded-br-md"
-                      : "aurixa-hairline rounded-bl-md"
-                  )}>
-                    <p className="whitespace-pre-wrap">{msg.content}</p>
-                  </div>
+                    <AgentUserMessage content={msg.content} other={Boolean(isOtherUser)} />
                   )}
                   {msg.role === 'assistant' && (
                   <div className="w-full pl-[calc(22px+0.625rem)]">
-                    {/* Confirmation + email preview + memory citations rendered under assistant text without a bubble */}
+                    {/* The approval moment — the email preview it already drew sits inside it unchanged */}
+                    {(msg.requires_confirmation || msg.confirmation_status) && (
+                      <AgentApprovalCard
+                        toolCalls={msg.tool_calls}
+                        status={msg.confirmation_status}
+                        busy={loading}
+                        onApprove={() => confirmAction(msg.id, true)}
+                        onReject={() => confirmAction(msg.id, false)}
+                      >
                     {/* Email preview */}
                     {msg.requires_confirmation && msg.tool_calls?.some((tc: any) => tc.function?.name === 'send_email') && (
                       <div className="mt-2 rounded-lg border border-primary/20 overflow-hidden text-xs">
@@ -1347,17 +1823,13 @@ export function AgentChatWidget() {
                         })}
                       </div>
                     )}
-                    {/* Confirmation buttons */}
-                    {msg.requires_confirmation && msg.confirmation_status === 'pending' && (
-                      <div className="flex gap-2 mt-3 pt-2.5 border-t border-border/50">
-                        <Button size="sm" variant="default" className="h-7 text-xs flex-1" onClick={() => handleConfirmAction(msg.id, true)} disabled={loading}><Check className="h-3 w-3 mr-1" /> Approve</Button>
-                        <Button size="sm" variant="outline" className="h-7 text-xs flex-1" onClick={() => handleConfirmAction(msg.id, false)} disabled={loading}><XCircle className="h-3 w-3 mr-1" /> Cancel</Button>
-                      </div>
+                      </AgentApprovalCard>
                     )}
-                    {msg.confirmation_status === 'approved' && <p className="text-xs text-primary mt-1.5 flex items-center gap-1"><Check className="h-3 w-3" /> Approved & executed</p>}
-                    {msg.confirmation_status === 'rejected' && <p className="text-xs text-destructive mt-1.5 flex items-center gap-1"><XCircle className="h-3 w-3" /> Cancelled</p>}
                     {msg.role === 'assistant' && msg.recalled_memories && msg.recalled_memories.length > 0 && (
                       <MemoryCitations messageId={msg.id} memories={msg.recalled_memories} />
+                    )}
+                    {followUpTools.length > 0 && (
+                      <AgentFollowUps suggestions={suggestFollowUps(followUpTools)} onPick={(prompt) => sendMessage(prompt)} />
                     )}
                   </div>
                   )}
@@ -1365,10 +1837,10 @@ export function AgentChatWidget() {
                 );
               });
               })()}
-              {loading && !streamingId && (
-                <div className="flex items-center gap-2.5 pt-1 animate-aurixa-rise">
+              {loading && !streamingId && (lastMessage?.role !== 'assistant' || confirmingTool) && (
+                <div className="flex items-center gap-2.5 pt-1 animate-aurixa-rise" role="status">
                   <AurixaMark size="sm" state="thinking" />
-                  <span className="text-sm aurixa-shimmer-text font-medium">Thinking…</span>
+                  <span className="text-sm aurixa-shimmer-text font-medium">{presence.status}</span>
                 </div>
               )}
               {retryMessage && !loading && (
@@ -1378,6 +1850,15 @@ export function AgentChatWidget() {
                   </Button>
                 </div>
               )}
+            </div>
+            {!atBottom && messages.length > 0 && (
+              <div className="pointer-events-none absolute inset-x-0 bottom-2 flex justify-center">
+                <button type="button" className="aurixa-jump pointer-events-auto" onClick={jumpToLatest}>
+                  <ArrowDown className="h-3.5 w-3.5" aria-hidden />
+                  {busy ? 'Aurixa is still writing' : 'Jump to latest'}
+                </button>
+              </div>
+            )}
             </div>
 
             {/* Input */}
@@ -1392,7 +1873,7 @@ export function AgentChatWidget() {
                 );
               }
               return (
-                <div className="border-t shrink-0 bg-background">
+                <div className="aurixa-composer border-t shrink-0 bg-background">
                   {/* Skill (persona) picker */}
                   <div className="px-3 pt-2 flex items-center gap-2 flex-wrap">
                     <button
@@ -1424,6 +1905,22 @@ export function AgentChatWidget() {
                         className="text-[10px] text-muted-foreground hover:text-foreground underline underline-offset-2"
                       >
                         Clear
+                      </button>
+                    )}
+                    {pageCtx && (
+                      <button
+                        type="button"
+                        onClick={() => setShareContext(on => !on)}
+                        aria-pressed={shareContext}
+                        data-on={shareContext ? 'true' : 'false'}
+                        className="aurixa-context-chip aurixa-context-toggle ml-auto max-w-[45%]"
+                        title={shareContext
+                          ? `Aurixa will know you are looking at ${pageCtx.label}. Click to stop sharing.`
+                          : `Let Aurixa know you are looking at ${pageCtx.label}`}
+                      >
+                        <MapPin className="h-3 w-3 shrink-0" aria-hidden />
+                        <span className="truncate">{shareContext ? pageCtx.label : 'Share this page'}</span>
+                        {shareContext && <X className="h-3 w-3 shrink-0 opacity-60" aria-hidden />}
                       </button>
                     )}
                   </div>
@@ -1503,6 +2000,17 @@ export function AgentChatWidget() {
                       <VoiceToTextButton onTranscript={(text) => setInput(prev => prev ? `${prev} ${text}` : text)} disabled={loading} size="sm" className="shrink-0" />
                       {streamingId ? (
                         <Button size="icon" variant="destructive" onClick={stopStreaming} className="h-9 w-9 shrink-0 rounded-xl" aria-label="Stop generating"><Square className="h-4 w-4" /></Button>
+                      ) : voice.supported && !input.trim() && attachedFiles.length === 0 && !loading && !extractingFiles ? (
+                        <button
+                          type="button"
+                          onClick={startVoice}
+                          className="aurixa-talk-btn inline-flex h-9 shrink-0 items-center gap-1.5 rounded-xl px-3 text-xs font-semibold"
+                          aria-label="Talk with Aurixa"
+                          title="Talk with Aurixa — a hands-free voice conversation"
+                        >
+                          <AudioLines className="h-4 w-4" aria-hidden />
+                          <span className="hidden sm:inline">Talk</span>
+                        </button>
                       ) : (
                         <Button
                           size="icon"
@@ -1519,13 +2027,13 @@ export function AgentChatWidget() {
                         </Button>
                       )}
                     </div>
-                    {activeTool && (
-                      <p className="text-[10px] text-muted-foreground mt-1.5 text-center flex items-center justify-center gap-1.5">
-                        <Loader2 className="h-3 w-3 animate-spin" /> Running <span className="font-mono">{activeTool}</span>…
-                      </p>
-                    )}
-                    <div className="mt-1.5 flex items-center justify-between px-1 text-[10px] text-muted-foreground/80">
-                      <span className="font-mono uppercase tracking-[0.14em]">↵ send · ⇧↵ newline</span>
+                    <div className={cn('mt-1.5 flex items-center px-1 text-[10px] text-muted-foreground/80', compactHeader ? 'justify-center' : 'justify-between')}>
+                      {/* Keyboard hints mean nothing on a touch screen. */}
+                      {!compactHeader && (
+                        <span className="font-mono uppercase tracking-[0.14em]">
+                          ↵ send · ⇧↵ newline{isDesktop && <span className="hidden lg:inline"> · {shortcut} close</span>}
+                        </span>
+                      )}
                       <span>Aurixa may make mistakes</span>
                     </div>
                   </div>
@@ -1535,6 +2043,8 @@ export function AgentChatWidget() {
           </div>
         )}
       </div>
-    </div>
+      )}
+    </section>
+    </>
   );
 }

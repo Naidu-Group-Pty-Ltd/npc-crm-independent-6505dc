@@ -9,18 +9,24 @@
  * three mount sites, zero test coverage — and the new path was built beside it
  * precisely because it has no importable entry point to share.
  *
- * So the assertions below are two claims, not one:
+ * So the assertions below are three claims, not one:
  *
  *   1. The generator, its borrowed section pack and all three mount sites are
- *      still there and still wired up. Nothing in this migration touched that
- *      file, which is a stronger guarantee than the other two formats got — and
- *      a guarantee worth keeping true.
- *   2. The new path is genuinely additional: it never runs the generator, never
- *      falls back to it, and never writes over the file it produced.
+ *      still there and still wired up. Its drawing has not been touched since
+ *      the migration, and that guarantee is worth keeping true.
+ *   2. The typeset route never runs the generator, never falls back to it, and
+ *      never writes the report row itself.
+ *   3. Since 1 Oct 2026 the dialog the generator opens leads with the chosen
+ *      template. "Choose template" sits beside "Export PDF", Export PDF saves
+ *      the analysis and draws it through the typeset route, and the legacy
+ *      layout is the menu's named second choice (`saveAnalysis.ts`). The owner
+ *      chose a template and received the legacy document, because the dialog's
+ *      one button never read the choice.
  *
  * These are structural assertions on source rather than renders, because that is
  * the property that matters. A behavioural test of one button cannot say
- * anything about three mount sites and a 3,878-line component.
+ * anything about three mount sites and a 3,878-line component; the dialog's
+ * behaviour is `PortfolioAnalysisDialogExport.spec.tsx`.
  */
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -53,14 +59,22 @@ describe('the in-browser generator still exists', () => {
   });
 
   /**
-   * The generator's own download path, which is also what inserts the
-   * `portfolio_analysis_reports` row the new route reads. If this stops writing
-   * `pdf_file_path`, the stored-PDF option in the new control has nothing to
-   * point at — and every existing item in the reports list's row menu is gated
-   * on that column.
+   * The generator's own download path, which saves the analysis as the
+   * `portfolio_analysis_reports` row the route reads when it is the first
+   * export. If it stops recording `pdf_file_path`, the stored-PDF option in the
+   * control has nothing to point at — and every existing item in the reports
+   * list's row menu is gated on that column.
+   *
+   * Through the one row builder both exports share, so the literal lives in
+   * `saveAnalysis.ts`: asserted there, and asserted that the generator hands
+   * its uploaded file to it (or to the saved row, when the template export
+   * saved the analysis first and could not draw it).
    */
   it('still saves its PDF and records where it went', () => {
-    expect(read(GENERATOR)).toContain('pdf_file_path');
+    const generator = code(GENERATOR);
+    expect(generator).toContain('portfolioAnalysisRow(analysisData, clientId, uploadedFilePath)');
+    expect(generator).toContain('recordAnalysisFile(clientId, savedReport.reportId, uploadedFilePath)');
+    expect(code('src/lib/reports/portfolio/saveAnalysis.ts')).toContain('pdf_file_path: pdfFilePath');
   });
 
   /**
@@ -77,11 +91,12 @@ describe('the in-browser generator still exists', () => {
   });
 });
 
-describe('the new path is additional, not a replacement', () => {
+describe('the typeset route never reaches for the legacy one', () => {
   it('never imports or calls the generator', () => {
     for (const path of [
       'src/lib/reports/portfolio/requestPortfolioReview.ts',
       'src/lib/reports/portfolio/deliverPortfolioReview.ts',
+      'src/lib/reports/portfolio/saveAnalysis.ts',
       'src/components/clients/PortfolioReportDownloadButton.tsx',
     ]) {
       // Comments stripped: each of these files explains in prose *why* it does
@@ -180,13 +195,70 @@ describe('every surface that hands over a saved report offers the typeset one', 
    */
   it('offers the typeset review on reports that have no saved PDF', () => {
     const list = read('src/components/clients/PortfolioAnalysisReportsList.tsx');
-    const item = list.slice(
-      list.indexOf('Download review (typeset)') - 900,
-      list.indexOf('Download review (typeset)'),
-    );
+    // The item's label on a line of its own — the JSX text, not a comment
+    // that names it — so the slice before it is the item's own props.
+    const at = /^\s*Export PDF\s*$/m.exec(list)?.index ?? -1;
+    expect(at, 'the reports list names its typeset item "Export PDF"').toBeGreaterThan(-1);
+    const item = list.slice(at - 900, at);
+    expect(item, 'the slice reaches the item it is meant to check').toContain('handleTypesetDownload(report)');
     expect(
       item,
       'the typeset menu item is gated on pdf_file_path, which is the gate it exists to avoid',
     ).not.toContain('disabled={!report.pdf_file_path}');
+  });
+});
+
+/**
+ * The dialog that shows a finished analysis leads with the chosen template.
+ *
+ * Its one button used to be "Download & Save PDF", which drew the legacy
+ * layout and never read the choice. That is how a person chose a template and
+ * received the legacy document. The legacy layout stays reachable, by name,
+ * as the second item of the menu beside Export PDF.
+ */
+describe("the analysis dialog's primary export is the chosen template", () => {
+  const generator = code(GENERATOR);
+  const saving = code('src/lib/reports/portfolio/saveAnalysis.ts');
+
+  it('offers the portfolio template beside its export', () => {
+    const choose = generator.match(/<ChooseTemplateButton[\s\S]*?\/>/g) ?? [];
+    expect(choose).toHaveLength(1);
+    expect(choose[0]).toContain('reportType="portfolio"');
+  });
+
+  it('makes Export PDF the template export, and nothing else', () => {
+    // The primary button: its handler, then its label, with no menu between.
+    expect(generator).toMatch(
+      /<Button\s+onClick=\{\(\) => void exportInChosenTemplate\(\)\}[^]*?'Export PDF'\}\s*<\/Button>/,
+    );
+    expect(generator).not.toMatch(/Download & Save PDF/);
+  });
+
+  it('keeps the legacy layout as a named item inside the menu, never the button', () => {
+    const menus = generator.match(/<DropdownMenuContent[\s\S]*?<\/DropdownMenuContent>/g) ?? [];
+    expect(menus).toHaveLength(1);
+    expect(menus[0]).toMatch(/onClick=\{\(\) => void downloadPDF\(\)\}[\s\S]*?Export PDF \(legacy layout\)/);
+    // Outside the menu, nothing starts the in-browser layout.
+    const outside = generator.replace(menus[0], '');
+    expect(outside).not.toMatch(/onClick=\{\(\) => (void )?downloadPDF\(\)\}/);
+  });
+
+  it('draws the analysis alone, through the typeset route', () => {
+    expect(saving).toContain("request: { reportId: saved.reportId, includeReview: false }");
+    expect(saving).toContain("variant: 'server'");
+  });
+
+  it('records a file only where the publish operation can sign it', () => {
+    expect(saving).toContain("PORTFOLIO_FILE_BUCKET = 'client-files'");
+    expect(saving).toContain('delivered.storageBucket !== PORTFOLIO_FILE_BUCKET');
+  });
+
+  it('never saves one analysis twice', () => {
+    // The legacy layout downloads only once a file is recorded, and records
+    // against the saved row rather than inserting a second one.
+    expect(generator).toMatch(/if \(savedReport\?\.filePath\) \{\s*downloadLocally\(\);/);
+    expect(generator).toMatch(/if \(savedReport\) \{[\s\S]{0,600}recordAnalysisFile\(/);
+    // A new analysis starts with nothing saved.
+    expect(generator).toMatch(/setSavedReport\(null\);\s*setAnalysisData\(data\);/);
   });
 });

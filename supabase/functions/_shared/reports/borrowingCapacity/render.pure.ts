@@ -37,12 +37,15 @@ import {
   renderKpiStrip,
   renderLede,
   renderSidenote,
+  SECTION_SUBHEAD_CLASS,
   type CalloutTone,
+  type DataTableOptions,
   type KpiCell,
   type TableColumn,
   type TableRow,
   type ValueTone,
 } from '../../reportDesign/primitives.pure.ts';
+import { keptTable, type KeepOptions } from '../../reportDesign/tableKeeping.pure.ts';
 import { buildReportCss } from '../../reportDesign/css.pure.ts';
 import type { ResolvedReportPalette } from '../../reportDesign/roles.pure.ts';
 import type { ReportDesignOptions } from '../../reportDesign/options.pure.ts';
@@ -158,13 +161,38 @@ const p = (text: string) => (text ? `<p>${escapeHtml(text)}</p>` : '');
  * Seven of the ten documents failed the same rule and no other. Named
  * `subhead` rather than `h2` so the next person reaches for the level the
  * design system defines instead of inventing one.
+ *
+ * Set one modular step below the section title (`SECTION_SUBHEAD_CLASS`): the
+ * sections are memo sections (see `renderSnapshotBody`), and an `h2` at the
+ * design system's 17pt subhead size read as a rival section title — "1. Income
+ * Assessment" eight times in one section, each a point short of the section it
+ * sat in (§21).
  */
-const subhead = (text: string) => `<h2>${escapeHtml(text)}</h2>`;
+const subhead = (text: string) => `<h2 class="${SECTION_SUBHEAD_CLASS}">${escapeHtml(text)}</h2>`;
 
 /** A list where an empty list should print nothing at all. */
 function renderList(items: readonly string[]): string {
   if (!items.length) return '';
   return `<ul>${items.map((i) => `<li>${escapeHtml(i)}</li>`).join('')}</ul>`;
+}
+
+/**
+ * This document's tables are sized by their content — a forty-character
+ * address beside a five-character amount — and a long one leaves at least
+ * three rows under its head at the foot of a page (`tableKeeping.pure.ts`).
+ */
+const TABLE_KEEP: KeepOptions = { widths: 'content', leadRows: 2 };
+
+/**
+ * A data table, kept whole when it is short and never left with one row
+ * stranded when it is not — the rule the Intelligence Hub and the Portfolio
+ * Performance Review keep their tables by, one implementation. Measured on a
+ * recalculated assessment, the audit trail's eight rows split across a page in
+ * sixteen of the 51 renders, and in eleven of them the last row printed alone
+ * at the head of the next page (§21).
+ */
+function table(cols: TableColumn[], rows: TableRow[], opts?: DataTableOptions): string {
+  return keptTable(renderDataTable(cols, rows, opts), { cols, rows }, TABLE_KEEP);
 }
 
 function capacitySection(s: BorrowingCapacitySnapshot, palette: ResolvedReportPalette): string {
@@ -190,12 +218,18 @@ function capacitySection(s: BorrowingCapacitySnapshot, palette: ResolvedReportPa
       tone: s.headline.monthlySurplus.value >= 0 ? 'positive' : 'negative',
       foot: 'After tax and commitments',
     },
-    {
-      label: 'Serviceability',
-      value: band.label,
-      tone: band.tone,
-      foot: s.headline.dti ? `DTI ${formatMeasure(s.headline.dti)}` : undefined,
-    },
+    // With no income on the record the engine still returns a band, and it
+    // is "red": a judgement about serviceability that nothing was assessed to
+    // reach. §16 named the red "Limited" among that document's faults and
+    // removed the ratio and the stress test beside it; the band went too (§21).
+    ...(s.income.recorded
+      ? [{
+          label: 'Serviceability',
+          value: band.label,
+          tone: band.tone,
+          foot: s.headline.dti ? `DTI ${formatMeasure(s.headline.dti)}` : undefined,
+        } satisfies KpiCell]
+      : []),
   ];
 
   const terms: TableRow[] = [
@@ -203,56 +237,54 @@ function capacitySection(s: BorrowingCapacitySnapshot, palette: ResolvedReportPa
     { item: 'Servicing buffer', value: formatMeasure(s.headline.bufferRate) },
     { item: 'Assessment rate', value: formatMeasure(s.headline.assessmentRate) },
     { item: 'Loan term', value: formatMeasure(s.headline.loanTerm) },
-    { item: 'Living expenses', value: s.expenses.method },
   ];
   if (s.meta.lenderName) terms.push({ item: 'Lender policy', value: s.meta.lenderName });
 
-  const termsTable = renderDataTable(
+  const termsTable = table(
     [{ key: 'item', label: 'Term', align: 'left' }, { key: 'value', label: 'Value', align: 'right' }],
     terms,
     { caption: 'Assessment terms' },
   );
 
-  // The chart and the sentence that reads it are one statement: the first
-  // production render put the assessment terms between them, and the sentence
-  // landed on the next page, alone at its head.
-  //
   // The chart is the headroom bars — capacity, stress-tested capacity and the
   // proposed loan, each labelled with its figure — and not the utilisation
   // bullet it replaces here. The bullet's three shaded bands carried no labels
   // and meant nothing a reader could name, and the bars said the same thing
   // again two pages later: one picture, where the answer is, with its numbers
   // on it.
+  //
+  // It stands without a sidenote. The proposed loan's sentence is the opening
+  // paragraph's last and its bar is in the chart, and the sidenote that sat
+  // under the chart said it a third time on the same page — "$400,000 of
+  // $441,146 — 91% of the assessed capacity, which falls within the limit" a
+  // few lines below "The proposed loan of $400,000 is 91% of the assessed
+  // capacity and falls within the limit" (§21).
   const headroom = headroomChart(s, palette);
-  const utilisation = s.utilisation
-    ? keepTogether(
-        headroom
-        + renderSidenote(
-          'Proposed loan',
-          p(`${formatMeasure(s.utilisation.proposedLoan)} of ${formatMeasure(s.utilisation.capacity)}`
-            + ` — ${formatMeasure(s.utilisation.share)} of the assessed capacity, which`
-            + ` ${s.utilisation.withinCapacity ? 'falls within' : 'exceeds'} the limit.`),
-        ),
-      )
-    : headroom;
 
   const lmi = s.lmi
     ? renderCallout(
         'informative',
         'Lenders Mortgage Insurance',
         renderDataTable(
-          [{ key: 'item', label: 'Item', align: 'left' }, { key: 'value', label: 'Amount', align: 'right' }],
+          // "LVR at trigger" and "Net for purchase" were the calculator's
+          // labels. The first is the purchase's loan-to-value ratio; the second
+          // is the capacity less the premium, printed only where the stored
+          // figure is that (`provenNetForPurchase`).
+          [{ key: 'item', label: 'Item', align: 'left' }, { key: 'value', label: 'Figure', align: 'right' }],
           [
             { item: 'Premium', value: formatMeasure(s.lmi.premium) },
-            ...(s.lmi.lvr ? [{ item: 'LVR at trigger', value: formatMeasure(s.lmi.lvr) }] : []),
+            ...(s.lmi.lvr ? [{ item: 'Loan-to-value ratio', value: formatMeasure(s.lmi.lvr) }] : []),
             ...(s.lmi.propertyValue ? [{ item: 'Property value', value: formatMeasure(s.lmi.propertyValue) }] : []),
             ...(s.lmi.deposit ? [{ item: 'Deposit', value: formatMeasure(s.lmi.deposit) }] : []),
-            ...(s.lmi.netForPurchase ? [{ item: 'Net for purchase', value: formatMeasure(s.lmi.netForPurchase) }] : []),
+            ...(s.lmi.netForPurchase ? [{ item: 'Capacity left for the purchase', value: formatMeasure(s.lmi.netForPurchase) }] : []),
           ],
         )
+        // The calculator's own account of the two modes. The deducted premium
+        // is paid from the loan; this said "from the deposit" (§21).
         + p(s.lmi.mode === 'debt_capitalised'
-          ? 'The premium is capitalised onto the loan, so it increases total debt and is carried into the DTI.'
-          : 'The premium is taken from the deposit, so it reduces the amount available for the purchase.'),
+          ? 'The premium is added to the loan, so it is part of the debt the debt-to-income ratio counts, '
+            + 'and its repayment is part of the commitments.'
+          : 'The premium is paid from the loan, so the capacity is unchanged and less of it is left for the purchase.'),
       )
     : '';
 
@@ -267,8 +299,8 @@ function capacitySection(s: BorrowingCapacitySnapshot, palette: ResolvedReportPa
   // last section, "On what basis", read in the report's words (`basis.pure.ts`).
   return renderLede(s.narrative)
     + renderKpiStrip(kpis)
-    + utilisation
-    + keepTogether(termsTable)
+    + headroom
+    + termsTable
     + lmi;
 }
 
@@ -283,9 +315,6 @@ function keepTogether(html: string): string {
   return html ? `<div class="${KEEP_TOGETHER_CLASS}">${html}</div>` : '';
 }
 
-/** A short table stays whole; a long one may break, and repeats its head. */
-const SHORT_TABLE_ROWS = 12;
-
 function incomeSection(s: BorrowingCapacitySnapshot, palette: ResolvedReportPalette): string {
   // The period belongs in the header, once, rather than repeated down every
   // row — but only because the header states it. A bare `$124,000` beside a
@@ -298,14 +327,30 @@ function incomeSection(s: BorrowingCapacitySnapshot, palette: ResolvedReportPale
     { key: 'shading', label: 'Assessed at', align: 'right' },
     { key: 'assessed', label: `Assessed ${perYear}`, align: 'right' },
   ];
-  const incomeRows: TableRow[] = s.income.rows.map((r: IncomeRow) => ({
+  const incomeLines: IncomeRow[] = s.income.proposedRent ? [...s.income.rows, s.income.proposedRent] : s.income.rows;
+  const incomeRows: TableRow[] = incomeLines.map((r: IncomeRow) => ({
     component: r.label,
     gross: formatAmount(r.gross),
     shading: formatMeasure(r.shading),
     assessed: formatAmount(r.shaded),
   }));
+  // A total its rows do not reach is the one figure on this page a reader can
+  // check and find wrong. Where the calculator's totals and the recorded lines
+  // disagree, both are printed and named, and the total is the assessment's
+  // (§21).
+  if (s.income.itemsTotal) {
+    incomeRows.push({
+      component: 'Total of the lines above',
+      gross: formatAmount(s.income.itemsTotal.gross),
+      shading: '',
+      assessed: formatAmount(s.income.itemsTotal.shaded),
+    });
+  }
   incomeRows.push({
-    component: 'Total',
+    // A "Total" with no lines above it totals nothing. Where the calculator
+    // sent an income and the household has no income lines, the one row is
+    // the figure the assessment ran on, and says so.
+    component: s.income.itemsTotal || !incomeLines.length ? 'Used in this assessment' : 'Total',
     gross: formatAmount(s.income.gross),
     shading: '',
     assessed: formatAmount(s.income.shaded),
@@ -318,15 +363,26 @@ function incomeSection(s: BorrowingCapacitySnapshot, palette: ResolvedReportPale
     { key: 'limit', label: 'Limit', align: 'right' },
     { key: 'servicing', label: `Servicing ${periodLabel('aud/month')}`, align: 'right' },
   ];
-  const liabilityRows: TableRow[] = s.expenses.liabilities.map((l: LiabilityRow) => ({
+  const commitmentLines: LiabilityRow[] = s.expenses.capitalisedLmi
+    ? [...s.expenses.liabilities, s.expenses.capitalisedLmi]
+    : s.expenses.liabilities;
+  const liabilityRows: TableRow[] = commitmentLines.map((l: LiabilityRow) => ({
     liability: l.provider ? `${l.kind} — ${l.provider}` : l.kind,
     balance: l.balance ? formatAmount(l.balance) : '—',
     limit: l.limit ? formatAmount(l.limit) : '—',
     servicing: formatAmount(l.monthlyServicing),
   }));
   if (liabilityRows.length) {
+    if (s.expenses.itemsTotal) {
+      liabilityRows.push({
+        liability: 'Total of the lines above',
+        balance: '',
+        limit: '',
+        servicing: formatAmount(s.expenses.itemsTotal),
+      });
+    }
     liabilityRows.push({
-      liability: 'Total',
+      liability: s.expenses.itemsTotal ? 'Used in this assessment' : 'Total',
       balance: '',
       limit: '',
       servicing: formatAmount(s.expenses.monthlyCommitments),
@@ -334,7 +390,24 @@ function incomeSection(s: BorrowingCapacitySnapshot, palette: ResolvedReportPale
     });
   }
 
-  const shaded = s.income.rows.filter((r) => r.shading.value < 1);
+  // Said once, under the table it explains, in figures the reader can find on
+  // the rows above it.
+  const footingNote = (lines: string[]) => lines.length
+    ? renderSidenote('Two totals', lines.map((line) => p(line)).join(''))
+    : '';
+  const incomeFooting = s.income.itemsTotal
+    ? [`This assessment was run on the calculator's income: ${formatMeasure(s.income.gross)} gross, `
+      + `${formatMeasure(s.income.shaded)} of it assessed. The lines recorded for the household come to `
+      + `${formatMeasure(s.income.itemsTotal.gross)} and ${formatMeasure(s.income.itemsTotal.shaded)}. `
+      + 'The working uses the figures the assessment ran on.']
+    : [];
+  const commitmentFooting = s.expenses.itemsTotal
+    ? [`This assessment was run on the calculator's commitments of ${formatMeasure(s.expenses.monthlyCommitments)}. `
+      + `The lines recorded for the household come to ${formatMeasure(s.expenses.itemsTotal)}. `
+      + 'The working uses the figure the assessment ran on.']
+    : [];
+
+  const shaded = incomeLines.filter((r) => r.shading.value < 1);
   const shadingNote = shaded.length
     ? renderSidenote(
         'On shading',
@@ -348,17 +421,19 @@ function incomeSection(s: BorrowingCapacitySnapshot, palette: ResolvedReportPale
   // No income recorded: a table holding nothing but "Total $0 $0" says the
   // same thing worse. Said once, and what to do about it.
   const incomeBlock = s.income.recorded
-    ? (incomeRows.length <= SHORT_TABLE_ROWS ? keepTogether : (h: string) => h)(
-        renderDataTable(incomeCols, incomeRows, { caption: 'Income, before and after shading' }),
-      )
+    ? table(incomeCols, incomeRows, { caption: 'Income, before and after shading' })
+      + footingNote(incomeFooting)
       + incomeMixChart(s, palette)
       + shadingNote
+    // The remedy is the advice's to give, once, under the working (§21):
+    // this said it here as well, a page after the opening said it first. What
+    // the section shows instead is the standfirst's to say
+    // (`incomeSectionNote`), so this says only why there is no table.
     : renderCallout(
         'caution',
         'No income recorded',
         p('This assessment holds no income for the household, so there is nothing to assess a loan '
-          + 'against. The living expenses below are what the assessment applied; recording the income '
-          + 'and recalculating is what produces a borrowing capacity.'),
+          + 'against.'),
       );
 
   return incomeBlock
@@ -366,14 +441,17 @@ function incomeSection(s: BorrowingCapacitySnapshot, palette: ResolvedReportPale
     // Short labels on purpose. A KPI label that wraps to two lines pushes its
     // own value down while its neighbours stay put, and the strip's baselines
     // stop lining up — visible in the first render of this document.
+    //
+    // The method is the living-expense figure's note, under the figure it
+    // explains. It was a third cell — a word set in the strip's display type
+    // where a figure belongs, wrapping to "HEM / benchmark" on two lines — and
+    // the assessment terms on the page before said it again (§21).
     + renderKpiStrip([
-      { label: 'Living expenses', value: formatMeasure(s.expenses.monthlyLiving) },
+      { label: 'Living expenses', value: formatMeasure(s.expenses.monthlyLiving), foot: s.expenses.method },
       { label: 'Commitments', value: formatMeasure(s.expenses.monthlyCommitments) },
-      { label: 'Method', value: s.expenses.method },
     ])
-    + (liabilityRows.length <= SHORT_TABLE_ROWS ? keepTogether : (h: string) => h)(
-      renderDataTable(liabilityCols, liabilityRows, { caption: 'Existing liabilities' }),
-    );
+    + table(liabilityCols, liabilityRows, { caption: 'Existing liabilities' })
+    + footingNote(commitmentFooting);
 }
 
 function ledgerSection(s: BorrowingCapacitySnapshot, _palette: ResolvedReportPalette): string {
@@ -392,8 +470,13 @@ function ledgerSection(s: BorrowingCapacitySnapshot, _palette: ResolvedReportPal
           + (dti.existingDebt
             ? `That is about ${formatMeasure(dti.existingDebt)} already owed`
               + (dti.includesPropertyLoans ? ', including the loans on properties held,' : '')
-              + ` plus the ${formatMeasure(dti.capacity)} of new borrowing assessed here.`
-            : `The debt counted is the ${formatMeasure(dti.capacity)} of new borrowing assessed here.`)),
+              + ` plus the ${formatMeasure(dti.capacity)} of new borrowing assessed here`
+            : `The debt counted is the ${formatMeasure(dti.capacity)} of new borrowing assessed here`)
+          // A capitalised premium is in the engine's debt and owed by nobody
+          // yet; it was being counted as "already owed" (§21).
+          + (dti.capitalisedPremium
+            ? `, with the ${formatMeasure(dti.capitalisedPremium)} mortgage insurance premium added to it.`
+            : '.')),
       )
     : '';
 
@@ -404,10 +487,14 @@ function ledgerSection(s: BorrowingCapacitySnapshot, _palette: ResolvedReportPal
     ? renderCallout('caution', 'Worth knowing', renderList(s.warnings))
     : '';
 
+  // No caption: the section's standfirst is "The arithmetic from gross income
+  // to maximum capacity", and a caption reading "From income to maximum
+  // capacity" directly under it said it twice in two lines (§21). The audit
+  // trail and the basis lost theirs for the same reason.
   return keepTogether(renderDataTable(
       [{ key: 'line', label: 'Monthly working', align: 'left' }, { key: 'amount', label: 'Amount', align: 'right' }],
       rows,
-      { caption: 'From income to maximum capacity', signedKeys: ['amount'] },
+      { signedKeys: ['amount'] },
     ))
     + keepTogether(dtiNote)
     // Each callout whole, but not bound to each other: bound, the pair moved
@@ -426,39 +513,15 @@ function ledgerSection(s: BorrowingCapacitySnapshot, _palette: ResolvedReportPal
  */
 function basisSection(s: BorrowingCapacitySnapshot): string {
   if (!s.assumptions.length) return '';
-  return keepTogether(renderDataTable(
+  return table(
     [{ key: 'item', label: 'Setting', align: 'left' }, { key: 'value', label: 'As applied', align: 'right' }],
     s.assumptions.map((a) => ({ item: a.label, value: a.value })),
-    { caption: 'The policy this assessment was run under' },
-  ));
-}
-
-function explanationSection(s: BorrowingCapacitySnapshot): string {
-  const e = s.explanation;
-  if (!e) return '';
-  const headline = e.headline ? renderCallout('neutral', 'In short', p(e.headline)) : '';
-  const steps = e.steps.map((step, i) => {
-    const figures = step.figures.length
-      ? renderDataTable(
-          [{ key: 'item', label: 'Figure', align: 'left' }, { key: 'value', label: 'Amount', align: 'right' }],
-          step.figures.map((f) => ({ item: f.label, value: formatMeasure(f.value) })),
-        )
-      : '';
-    return subhead(`${i + 1}. ${step.title}`) + p(step.narrative) + figures;
-  }).join('');
-  return headline + steps;
+  );
 }
 
 function auditSection(s: BorrowingCapacitySnapshot): string {
   const a = s.audit;
   if (!a) return '';
-
-  const summary = renderKpiStrip([
-    { label: 'Income shading', value: formatMeasure(a.summary.incomeShading) },
-    { label: 'Expenses', value: formatMeasure(a.summary.expenseAdjustments) },
-    { label: 'Liabilities', value: formatMeasure(a.summary.liabilityAdjustments) },
-    { label: 'Tax', value: formatMeasure(a.summary.taxImpact) },
-  ]);
 
   const cols: TableColumn[] = [
     { key: 'item', label: 'Item', align: 'left' },
@@ -473,40 +536,34 @@ function auditSection(s: BorrowingCapacitySnapshot): string {
   //
   // Rendering a table per group repeats the six-column header five times in
   // half a page, and each block is separately unbreakable, so a group that does
-  // not fit moves whole and strands the rest. The category rides in the item
-  // label instead; the rows are already grouped, so it reads as a heading
-  // without being one.
+  // not fit moves whole and strands the rest. The rows stay in category order,
+  // and each label now says what its row holds ("Income after tax and the
+  // Medicare levy", "Property costs not covered by rent — …"; `AUDIT_LABEL`),
+  // so the category no longer rides in front of it: "Income — Property cash
+  // flow — 14 Wattle Grove Sampleton" was two dashes and a word the label
+  // already said (§21).
+  //
+  // The engine's four category totals no longer open the table either. Its
+  // "Liabilities" total was each repayment less its balance — $417,550 printed
+  // beside a $420,000 mortgage — and its "Tax" counted the Medicare levy twice;
+  // the rows below carry every figure, each in its own unit.
   const rows: TableRow[] = a.groups.flatMap((g) =>
     g.rows.map((r: AuditRow): TableRow => ({
-      item: `${categoryCaption(g.category)} — ${r.label}`,
+      item: r.label,
       raw: formatMeasure(r.raw),
       assessed: formatMeasure(r.assessed),
       change: r.delta ? formatDelta(r.delta) : '—',
       effect: AUDIT_EFFECT[r.direction],
       rule: r.rule,
     })));
-  const groups = renderDataTable(cols, rows, { caption: 'Every adjustment, in order' });
+  const groups = table(cols, rows);
 
   return renderCallout(
     'neutral',
     'Reading this table',
     p('"Provided" is the figure as it was given to us. "Assessed" is what the '
       + `lender's policy allows to be counted. ${AUDIT_EFFECT_LEGEND}`),
-  ) + summary + groups;
-}
-
-const CATEGORY_CAPTION: Record<string, string> = {
-  income: 'Income',
-  tax: 'Tax',
-  expense: 'Expenses',
-  property: 'Property cashflow',
-  liability: 'Liabilities',
-  constraint: 'Constraints',
-  policy: 'Lender policy',
-};
-
-function categoryCaption(category: string): string {
-  return CATEGORY_CAPTION[category] ?? category;
+  ) + groups;
 }
 
 /**
@@ -563,7 +620,7 @@ function scenarioSection(s: BorrowingCapacitySnapshot): string {
       + (r.advisor ? advisorBlock(r.advisor) : ''))
     .join('');
 
-  return renderDataTable(cols, tableRows, { caption: 'Modelled scenarios', signedKeys: ['change'] })
+  return table(cols, tableRows, { caption: 'Modelled scenarios', signedKeys: ['change'] })
     + details
     + renderCallout(
       'caution',
@@ -580,7 +637,6 @@ const SECTION_BODY: Record<
   capacity: capacitySection,
   income: incomeSection,
   ledger: ledgerSection,
-  explanation: explanationSection,
   audit: auditSection,
   scenarios: scenarioSection,
   basis: (s) => basisSection(s),
@@ -627,7 +683,14 @@ export function renderSnapshotBody(input: RenderSnapshotInput): string {
     // Sections run on under one another (`RUN_ON_CHAPTER_CLASS`): each opened a
     // page, and a two-page answer printed on six to eight sheets — a page
     // holding one liabilities total, another one "Worth knowing" callout.
-    return openChapter(DOCUMENT_NAME, number, section.title, 'body', { runOn: index > 0 })
+    // And they are memo sections (`MEMO_CHAPTER_CLASS`), as the Intelligence
+    // Hub's and the Portfolio Performance Review's are: a run-on section's
+    // title was still set at the chapter-opener size, so a heading block a
+    // sixth of a page tall moved to the next page with the block it opens. On
+    // a recalculated assessment that left page 4 holding one liabilities table
+    // and 65% white; on a client with no income, three of the four body pages
+    // opened on a section title for that reason alone (§21).
+    return openChapter(DOCUMENT_NAME, number, section.title, 'body', { runOn: index > 0, memo: true })
       + renderChapterHeader({
         number,
         title: section.title,

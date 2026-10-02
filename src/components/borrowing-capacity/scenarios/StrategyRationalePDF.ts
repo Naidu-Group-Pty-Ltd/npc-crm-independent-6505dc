@@ -38,7 +38,11 @@ import type { RationaleReport, RationaleSeverity } from '@/utils/strategyRationa
 import { guardStandardFontText } from '@/lib/pdf/standardFontText';
 import {
   ADVISOR_OPTIONS_NOTE,
+  BASIS_LABEL,
+  CAPITAL_FLOW_LABELS,
   composeAdvisorSection,
+  POOL_OVERCOMMITTED_NOTE,
+  RECONCILE_TITLE,
   rationaleReadingNote,
   type RationaleAdvisorInput,
 } from '@/lib/reports/borrowingCapacity/strategyRationale.pure';
@@ -406,8 +410,8 @@ export async function generateStrategyRationalePDF(
     let sub = 'Loan + cash − costs';
     if (target > 0) {
       sub = context.meetsTarget
-        ? `Target ${fmtAud(target)} ✓`
-        : `Short of ${fmtAud(target)}`;
+        ? `Clears the ${fmtAud(target)} target`
+        : `Short of the ${fmtAud(target)} target`;
     }
     drawKPI(
       MARGIN + (boxW + boxGap) * 2,
@@ -571,16 +575,12 @@ export async function generateStrategyRationalePDF(
   // ════════════════════════════════════════════════════════════════════════
   // SECTION: WHAT & WHY (per-lever bullets)
   // ════════════════════════════════════════════════════════════════════════
-  y = ensureSpace(doc, y, 18, pageNum);
-  y = drawSectionHeader(doc, `What we propose & why  (${report.bullets.length} lever${report.bullets.length === 1 ? '' : 's'})`, y, P);
+  // A baseline scenario has no levers, and its headline says so: a part
+  // headed "(0 levers)" printed the same sentence a second time (§22).
+  if (report.bullets.length > 0) {
+    y = ensureSpace(doc, y, 18, pageNum);
+    y = drawSectionHeader(doc, `What we propose & why  (${report.bullets.length} lever${report.bullets.length === 1 ? '' : 's'})`, y, P);
 
-  if (report.bullets.length === 0) {
-    doc.setFontSize(9);
-    doc.setFont('helvetica', 'italic');
-    setColor(doc, GRAY);
-    doc.text('Baseline scenario — no levers applied.', MARGIN + 2, y);
-    y += 8;
-  } else {
     for (const b of report.bullets) {
       const sevColor = severityColor(b.severity);
 
@@ -651,44 +651,43 @@ export async function generateStrategyRationalePDF(
         doc.setFontSize(8);
         doc.setFont('helvetica', 'bold');
         setColor(doc, sevColor);
-        doc.text(`Cash-flow: ${b.cashflowNote}`, MARGIN + 5, bulletY + 3);
+        doc.text(`Cash flow: ${b.cashflowNote}`, MARGIN + 5, bulletY + 3);
       }
 
       y += blockHeight + 3;
     }
+    y += 4;
   }
-  y += 4;
 
   // ════════════════════════════════════════════════════════════════════════
   // SECTION: RECONCILIATION
   // ════════════════════════════════════════════════════════════════════════
-  y = ensureSpace(doc, y, 28, pageNum);
-  y = drawSectionHeader(doc, 'How the math reconciles', y, P);
+  // Nothing to reconcile without levers: the engine says as much in one line.
+  if (report.bullets.length > 0) {
+    y = ensureSpace(doc, y, 28, pageNum);
+    y = drawSectionHeader(doc, RECONCILE_TITLE, y, P);
 
-  setFill(doc, MUTED_BG);
-  doc.setFontSize(8.5);
-  doc.setFont('helvetica', 'normal');
-  const reconLines: string[] = doc.splitTextToSize(report.reconciliation, CONTENT_W - 6);
-  const reconBlockH = reconLines.length * 4 + 6;
-  y = ensureSpace(doc, y, reconBlockH + 4, pageNum);
-  doc.roundedRect(MARGIN, y, CONTENT_W, reconBlockH, 2, 2, 'F');
-  setColor(doc, BODY_TEXT);
-  doc.text(reconLines, MARGIN + 3, y + 5);
-  y += reconBlockH + 8;
+    setFill(doc, MUTED_BG);
+    doc.setFontSize(8.5);
+    doc.setFont('helvetica', 'normal');
+    const reconLines: string[] = doc.splitTextToSize(report.reconciliation, CONTENT_W - 6);
+    const reconBlockH = reconLines.length * 4 + 6;
+    y = ensureSpace(doc, y, reconBlockH + 4, pageNum);
+    doc.roundedRect(MARGIN, y, CONTENT_W, reconBlockH, 2, 2, 'F');
+    setColor(doc, BODY_TEXT);
+    doc.text(reconLines, MARGIN + 3, y + 5);
+    y += reconBlockH + 8;
+  }
 
   // ════════════════════════════════════════════════════════════════════════
   // SECTION: EXECUTION SEQUENCE
   // ════════════════════════════════════════════════════════════════════════
-  y = ensureSpace(doc, y, 18, pageNum);
-  y = drawSectionHeader(doc, `Recommended execution sequence  (${report.sequence.length} step${report.sequence.length === 1 ? '' : 's'})`, y, P);
+  // No steps, no part: "No execution steps required — baseline scenario."
+  // called any scenario without steps a baseline, levers or not (§22).
+  if (report.sequence.length > 0) {
+    y = ensureSpace(doc, y, 18, pageNum);
+    y = drawSectionHeader(doc, `Recommended execution sequence  (${report.sequence.length} step${report.sequence.length === 1 ? '' : 's'})`, y, P);
 
-  if (report.sequence.length === 0) {
-    doc.setFontSize(9);
-    doc.setFont('helvetica', 'italic');
-    setColor(doc, GRAY);
-    doc.text('No execution steps required — baseline scenario.', MARGIN + 2, y);
-    y += 8;
-  } else {
     for (const step of report.sequence) {
       const oColor = ownerColor(step.owner, P);
 
@@ -738,8 +737,8 @@ export async function generateStrategyRationalePDF(
 
       y += blockH + 2;
     }
+    y += 4;
   }
-  y += 4;
 
   // ════════════════════════════════════════════════════════════════════════
   // SECTION: CAVEATS
@@ -775,9 +774,9 @@ export async function generateStrategyRationalePDF(
     doc.setFontSize(7);
     setColor(doc, GRAY);
     doc.setFont('helvetica', 'normal');
-    doc.text('AVAILABLE', MARGIN + 4, y + 5);
-    doc.text('ROUTED', MARGIN + CONTENT_W / 3 + 4, y + 5);
-    doc.text('RESIDUAL', MARGIN + (CONTENT_W * 2) / 3 + 4, y + 5);
+    doc.text(CAPITAL_FLOW_LABELS.available.toUpperCase(), MARGIN + 4, y + 5);
+    doc.text(CAPITAL_FLOW_LABELS.allocated.toUpperCase(), MARGIN + CONTENT_W / 3 + 4, y + 5);
+    doc.text(CAPITAL_FLOW_LABELS.unallocated.toUpperCase(), MARGIN + (CONTENT_W * 2) / 3 + 4, y + 5);
     doc.setFontSize(10);
     doc.setFont('helvetica', 'bold');
     setColor(doc, P.navy);
@@ -787,13 +786,15 @@ export async function generateStrategyRationalePDF(
     y += 17;
 
     if (cf.overcommitted) {
-      setFill(doc, RED);
-      doc.roundedRect(MARGIN, y, CONTENT_W, 6, 1, 1, 'F');
       doc.setFontSize(8);
       doc.setFont('helvetica', 'bold');
+      const overLines: string[] = doc.splitTextToSize(POOL_OVERCOMMITTED_NOTE, CONTENT_W - 6);
+      const overH = 6 + (overLines.length - 1) * 4;
+      setFill(doc, RED);
+      doc.roundedRect(MARGIN, y, CONTENT_W, overH, 1, 1, 'F');
       setColor(doc, WHITE);
-      doc.text('POOL OVERCOMMITTED — sinks were clamped to available pool.', MARGIN + 3, y + 4);
-      y += 9;
+      doc.text(overLines, MARGIN + 3, y + 4);
+      y += overH + 3;
     }
 
     for (const leg of cf.legs) {
@@ -879,7 +880,7 @@ export async function generateStrategyRationalePDF(
     doc.text('Finance must validate each basis before submission. AVM/desktop figures are advisory only.', MARGIN, y);
     y += 6;
     for (const v of context.valuationAssumptions) {
-      const basisLabel = v.basis === 'avm' ? 'AVM' : v.basis === 'desktop' ? 'Desktop val' : v.basis === 'comparable_sales' ? 'Comp sales' : 'Manual';
+      const basisLabel = BASIS_LABEL[v.basis] ?? 'Manual';
       const delta = v.newValue - v.originalValue;
       const lines: string[] = doc.splitTextToSize(
         `${v.address}: ${fmtAud(v.originalValue)} → ${fmtAud(v.newValue)} (${fmtSigned(delta)}) — basis: ${basisLabel}${v.source ? ` · source: ${v.source}` : ''}`,

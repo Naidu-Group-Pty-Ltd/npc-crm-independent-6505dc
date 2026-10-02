@@ -7,7 +7,6 @@ import { withRequestOrigin } from '../_shared/corsOrigin.ts';
 import {
   validateAIScenarios,
   detectTargetPrice,
-  isClarificationMessage,
   extractAcquisitionHints,
   type AIScenario,
 } from "./aiScenarioPreview.ts";
@@ -20,6 +19,7 @@ import {
   validatingDetail,
   type BindingConstraint,
 } from "../_shared/advisorProgress.pure.ts";
+import { answeredWithoutScenarios, isClarificationMessage } from "../_shared/advisorRequestMode.pure.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -116,7 +116,7 @@ For EACH scenario, populate \`evidenceRequired\` with 1–5 SPECIFIC documents o
 Generic items like "supporting documents" are REJECTED. Be specific to THIS client and THIS scenario.
 
 ## Conversation Guidelines
-- Be conversational and ask clarifying questions if the request is vague (especially: target budget, timeframe, risk appetite, owner-occupier vs investment intent).
+- When the broker asks for options, ALWAYS answer by calling generate_scenarios. Where the brief leaves a detail open (target budget, timeframe, risk appetite, owner-occupier vs investment intent), make a sensible assumption from the client's data, state it in \`reasoning\`, and still call the tool — the broker refines from the cards, and a question in place of cards leaves them with nothing to apply.
 - Always reference specific numbers from the client's data — name the liability, the property address, the contracted rate.
 - Explain WHY each strategy works, not just what to do.
 - Anticipate the rationale brief: write \`reasoning\` for each scenario as if it will be quoted directly into a finance handoff (because it will).
@@ -431,10 +431,16 @@ const __corsWrappedHandler = async (req: Request) => {
     // ── Phase H: detect target purchase price + clarification mode ──────
     const inferredTargetPrice = detectTargetPrice(cappedMessages);
     const lastUserMessage = [...cappedMessages].reverse().find((m: any) => m.role === 'user')?.content || '';
-    const clarificationMode = isClarificationMessage(lastUserMessage);
+    // A message is answered in prose only when it is about cards already on
+    // screen; with none showing there is nothing to clarify, so every message
+    // is a brief and gets cards (`_shared/advisorRequestMode.pure.ts`).
+    const priorScenarioNames = Array.isArray(priorScenarios)
+      ? priorScenarios.slice(0, 3).map((s: any) => (typeof s?.name === 'string' ? s.name : ''))
+      : [];
+    const clarificationMode = isClarificationMessage(lastUserMessage, { priorScenarioNames });
     // Phase J2: structured acquisition hints from the conversation prose
     const acquisitionHints = extractAcquisitionHints(cappedMessages);
-    console.log('[bc-scenario-agent] inferredTargetPrice:', inferredTargetPrice, '| clarificationMode:', clarificationMode, '| acquisitionHints:', acquisitionHints);
+    console.log('[bc-scenario-agent] inferredTargetPrice:', inferredTargetPrice, '| clarificationMode:', clarificationMode, '| priorScenarios:', priorScenarioNames.length, '| messageChars:', String(lastUserMessage).length, '| acquisitionHints:', acquisitionHints);
 
     // Build context summary from client data
     let contextBlock = "";
@@ -556,12 +562,23 @@ ${(properties || []).map((p: any) => `- [${p.id}] ${p.address} (${p.property_typ
     const REVISION_MIN_BUDGET_MS = 45_000;       // only revise if this much remains
     const REVISION_TIMEOUT_MS = 45_000;
 
+    // In scenario mode the cards ARE the answer, so the tool call is required
+    // rather than offered: a model left to choose answered briefs in prose and
+    // the broker got nothing to apply. A model in the fallback chain that
+    // still answers without the call (or with arguments that do not parse) is
+    // treated as a failed attempt and the next one is asked.
     const callAI = async (msgs: any[], timeoutMs: number) => {
-      const tools = clarificationMode ? undefined : [SCENARIO_TOOL];
       return await callLLMRaw({
         agentKey: 'bc_scenario_agent',
         messages: msgs as any,
-        tools,
+        ...(clarificationMode
+          ? {}
+          : {
+              tools: [SCENARIO_TOOL],
+              toolChoice: { type: 'function', function: { name: SCENARIO_TOOL.function.name } },
+              requiredToolName: SCENARIO_TOOL.function.name,
+              requireValidToolArguments: true,
+            }),
         extraBody: {},
         timeoutMs,
         deadlineAt: DEADLINE_AT,
@@ -598,7 +615,9 @@ ${(properties || []).map((p: any) => `- [${p.id}] ${p.address} (${p.property_typ
                 ? "AI credits exhausted. Please top up in Settings → Workspace → Usage."
                 : response.status === 504
                   ? "The AI model took too long to respond. Please try again in a moment."
-                  : "AI service error. Please try again.";
+                  : !clarificationMode && answeredWithoutScenarios(response.attempts)
+                    ? "The advisor answered without scenario cards. Please try again, or rephrase the request as the options you want."
+                    : "AI service error. Please try again.";
             send({ error: msg });
             return;
           }

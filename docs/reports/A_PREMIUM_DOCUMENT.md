@@ -1521,3 +1521,210 @@ the register had removed**: the first live reading recorded
 `sua_boundary_centroid`, because the read coerced anything that was not the
 capital into it. `readPointBasis` carries the register's own word now and
 drops a row whose basis this build does not recognise.
+
+## 21. Audit 6 (1 Oct 2026): the five documents through all fifty masters
+
+The owner's brief for the Investment family was to make subheadings smaller,
+make the flow continuous, and find whatever else stops the documents reading
+as a premium report. The measurement covered all five tiers (Compass,
+Financial Analysis, Due Diligence, Executive Briefing, Snapshot). It used the
+two fixture rows read from production on 17 Sep 2026: 18 Annabelle Crescent
+and 262 Pallas Street. Each was drawn through all fifty Investment masters, so
+500 documents in all. They ran through WeasyPrint 69.0 on the production
+options, and were read from the engine's own box tree, not from the HTML.
+
+| | before | after |
+| --- | --- | --- |
+| Pages | 6,760 | 6,633 |
+| Narrative pages more than a quarter empty (each run's last page left out) | 495 | 284 |
+| … of which mid-document | 272 | 68 |
+| Table rows taller than 150pt | 805 | 0 |
+| Narrative set past its box | 6 (three by 47–53pt, through the running foot) | 4 (2.6–6.6pt, inside the 30pt foot reserve) |
+
+Mean fill of a body page rose from 87.2% to 89.2% on the Compass, from 87.6%
+to 89.9% on the Due Diligence report and from 83.9% to 88.3% on the Briefing.
+The Snapshot carries neither registers nor charts, and is unchanged.
+
+### What changed, and the rule each one answers to
+
+**A register whose cells are sentences is set as records, not a grid**
+(`MarkdownOptions.recordTables`, `recordLayout`, `emitRecords`).
+
+- *Why.* 174 of the 495 underfilled pages were followed by a page opening on
+  a table. A risk-register row ran ten to thirteen lines in a quarter-width
+  cell, so a row could not follow onto the page before it. 805 rows were
+  taller than 150pt.
+- *The record.* Each row is its name on a hairline, with its short cells
+  after it as labelled words (`LEVEL Moderate`). Each long cell then follows
+  as a paragraph led by its column's label. An empty cell prints no label.
+- *Keeping the record together.* The name's line leads into its first field
+  (`leadsIn`), so a page never ends on it. A record that opens a page draws
+  no rule under the page's own head rule (`record-opens`).
+- *Which tables qualify.* At least four columns, every one labelled, and two
+  columns of prose: a mean of 100 printed characters a cell. That threshold
+  was measured. The registers carry 396/256/161 (Annabelle) and 167/156/136
+  (Pallas), while the planning-controls Evidence column sits at 99 and stays
+  a grid.
+- *Scope.* Only the template narrative asks for records, so every other
+  format's tables are untouched.
+
+**Subheads one step smaller.** An h3 is 1.1 of the body, down from 1.2, as the
+owner asked.
+
+**A chart's title is a caption** (`ChartContext.titlePt`). Inside a template's
+narrative a chart is titled at body size. At the house's 11.5pt bold,
+"Amenity counts within 5 km" was the heaviest type on its page after the
+section's own name.
+
+**A donut's legend prints what the source wrote** (`donutReading`).
+
+- *Shares of nothing.* The legend printed each segment's share of the ring.
+  Five industries' shares of a workforce (12.9, 10.9, 9.5, 9 and 8.4,
+  summing to 50.7) came out as 25%, 21%, 19%, 18% and 17%. No source holds
+  those figures.
+- *Percentages.* A series written with `%` keeps its sign. So does one whose
+  every value lies between 0 and 100 and whose centre is written as a
+  percentage, whose title calls it a share, or whose parts add to a hundred.
+  One that sums to less than the whole is drawn against 100, with the rest of
+  the ring left as the rest.
+- *Counts* print as counts. A value above 100 is never read as a
+  percentage on the strength of a title or a centre: "Share of dwellings"
+  over 3,200 and 1,800 would otherwise print "3200%".
+- *A whole ring* is drawn as two half arcs (`ringSegmentPath`). An arc whose
+  ends meet draws nothing, so the SEIFA donut's 4-of-4 printed as a half-disc
+  above a separate circle.
+
+**A spark keeps its shape and loses its cliff** (`sparkRange`,
+`SPARK_MIN_RELATIVE_SPAN`).
+
+- *Scale.* A spark is never drawn against less than a tenth of its series'
+  magnitude. A population of 176 → 175 (hundreds) now lies nearly level
+  beside a sentence calling it "essentially flat". A growth rate easing from
+  9.6% to 3.5%, or a median climbing 820 → 1,180, still uses the full height.
+- *Zero-based was tried first,* and it flattened every level series into a
+  line that said nothing.
+- *Ink.* Never the positive or negative tone. A line's direction is not a
+  verdict, and the red appeared nowhere else on the page.
+- *The margin spark* inside a template's narrative had run the full measure
+  at four times its height. It is now 60mm wide with its two end values and
+  no area under the line, since the scale no longer starts at zero.
+- *An inline spark on a line of its own* joins the sentence before it. Alone,
+  it printed at the head of a page as what read as a stray rule.
+
+**A timeline draws only the horizons its items reach.** On the Annabelle
+Compass two milestones sat at Existing and 0-2y, and the ribbon drew 3-5y and
+5y+ empty. That read as "nothing planned", a finding nobody made. The ribbon
+now runs from the first stop holding an item to the last. An empty stop
+between two is kept, because it is the distance between them. A single stop
+is tabulated. A ribbon using all four stops is byte-identical, with the same
+hash as before. This closes the residual that §7 of
+`PLANNING_CONTROLS_IN_THE_REPORT.md` and `WHAT_THE_PAGE_ACTUALLY_DRAWS.md`
+named.
+
+**A shared opening box is left empty rather than overfilled**
+(`NarrativeGeometry.openingShared`, `PackOptions.openingShared`).
+
+- *The defect.* On Midnight Folio 03 and Signal Memo 01 and 04, the dashboard
+  left six lines for the body. "Executive Verdict" and its subhead fitted,
+  and the paragraph under them had no sentence break inside the room left.
+- *The cause.* A page that is nothing but headings is carried whole. With no
+  page pushed yet, it landed in the same first box. Ten lines were set in six,
+  and ran 47–53pt through the running foot.
+- *The fix.* Such a box now stands empty and the body opens overleaf. That is
+  the rule `MIN_SHARED_FIRST_LINES` already applied to a box too small to
+  try.
+- *The limit.* A first box on a page of its own is never emptied, because
+  that would be a blank page.
+
+**A lone strengths or considerations column opens at the left margin.** Held
+in the right-hand half, CONSIDERATIONS sat alone mid-page beside a white half
+and read as a column that had failed to draw. It moved in both the typeset
+block and the browser's stand-in.
+
+**The record's words, set as a reader reads them** (`presentableName.pure.ts`).
+
+- *What.* "house" becomes "House", and the NSW cadastre's "THE HILLS SHIRE"
+  becomes "The Hills Shire".
+- *Rules.* A word keeps its apostrophe ("Hunter's Hill"), a state's
+  abbreviation keeps its capitals ("Bayside (NSW)"), an irregular official
+  spelling is named ("Ku-ring-gai"), and a value somebody already typeset is
+  left alone.
+- *One module.* The projection's property table and the strategy composer's
+  asset line read it, so the two cannot spell one council two ways.
+
+**A stat card's figure, as the document writes it** (`statFigure`).
+
+- *The defect.* The card under "Recorded crime rate" printed 2742 beside
+  prose saying "2,742" three times.
+- *The rule.* Five digits or more are grouped. Four digits are grouped only
+  where the document itself writes them grouped, because four digits are as
+  often a year or a postcode.
+
+**The fork's title block was a second cover** (`stripBakedCover`).
+
+- *The block.* The Financial Analysis and the Due Diligence report open with
+  their title as an H1, a subtitle, Property and Generated. The master's
+  cover prints all of it.
+- *The effect.* The H1 became the one chapter of the whole document. Every
+  running head of the Annabelle Financial Analysis read "Client Investment
+  Feasibility & Financial Performance Report".
+- *The fix.* The block is now recognised by its own signature: an H1 and
+  both fact lines, with the fork's italic subtitle allowed between them. A
+  lone title is kept, and so is a title followed by prose.
+- *Checked on the page.* Re-drawn through three masters for both properties
+  and both derived documents (12 renders), no body carries the block, and the
+  only title left is the document's hidden accessibility heading.
+
+**One figure, one name.** The dimensions table that the Snapshot and the forks
+compose headed the renormalised weight "Weight" (21/21/57 against a published
+15/15/40). The Compass scorecard calls the same figure "Share of grade", and
+the body now does too.
+
+**The export surface and the filename.**
+
+- *The control.* "Choose template" now sits beside the report page's export
+  button. The choice existed only in the sidebar, a scroll away from the
+  button it governs.
+- *The label.* The button is "Export PDF", as on every other report.
+- *The name.* The file is `Investment Compass - 18 Annabelle Crescent,
+  Kellyville NSW 2155 - 1 Oct 2026.pdf`, through the shared
+  `readableFileName`. It replaces
+  `Investment_Compass_18_Annabelle_Crescent_…_2026-10-01.pdf`.
+- *Copies.* A flattened copy takes the document's own name, and a stored PDF
+  re-downloads as "… - Version 2 - …".
+- *Storage keys* stay URL-safe as before.
+
+### What is left, by measurement
+
+- **164 shared opening boxes** are under three-quarters full: a few lines of
+  white under the dashboard summary, where the paragraph that follows has no
+  honest cut.
+- **52 second-to-last pages** are under three-quarters full by design.
+  Balancing the tail moves whole blocks down so the last page is not a stub,
+  and keeps the page before it at least half full.
+- **68 mid-document pages** have two causes:
+  - A figure that closes its section. It never floats past the next heading
+    into a section that is not its own.
+  - A lead-in and one list item, or a list short of the boundary thresholds,
+    moved whole. Those thresholds were measured for Audits 2–5 and are left
+    as they are.
+- **Four overruns** of 2.6–6.6pt remain, all inside the foot reserve and
+  clear of the running foot.
+
+### Content, and what this audit could not reach
+
+Both fixtures were stored on 17 Sep 2026. That is before the adviser-voice and
+one-recommendation rules (25 Sep), and before a listing's subject facts were
+banked for continuations. So the model's prose in them still contains three
+defects:
+
+- It says "the planning registers this platform reads".
+- It ends a document whose cover reads AVOID with "Proceed with caution".
+- It names three bedrooms beside a property table reading "bedrooms and
+  bathrooms not recorded".
+
+All three are corrected at generation for every report written since. A
+stored report keeps its words until it is regenerated, because prose is never
+scrubbed on read. **BLOCKED:** a content review of a report generated after
+25 Sep needs a stored row this session cannot read without database access.
+The owner can export one, or regenerate one of these two.

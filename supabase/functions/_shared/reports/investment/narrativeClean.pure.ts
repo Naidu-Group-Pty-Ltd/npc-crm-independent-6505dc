@@ -34,6 +34,18 @@ export interface NarrativeCleanResult {
 
 const TAGLINE = /^your dedicated property partner$/i;
 const REPORT_TITLE = /^#{1,2}\s+investment report\s*:/i;
+/**
+ * The fork's own title block (`forkSplit.renderVariantMarkdown`): the
+ * document's title as an H1, its subtitle in italics, then `**Property:**`
+ * and `**Generated:**`, closed by `---`. Every surface that draws a Financial
+ * Analysis or a Due Diligence report prints its own cover — title, address
+ * and date — so the block rendered as a second cover inside the body, and
+ * its H1 became the one chapter of the whole document: every running head of
+ * the 18 Annabelle Crescent Financial Analysis read "Client Investment
+ * Feasibility & Financial Performance Report" (Audit 6, 1 Oct 2026).
+ */
+const FORK_FACT = /^\*\*(?:property|generated):\*\*\s+\S/i;
+const ITALIC_LINE = /^_[^_\s][^_]*_$/;
 const COVER_HEADING = /^(#{1,6}\s+|\*\*)\s*cover\s*page\s*(\*\*)?\s*$/i;
 
 /** A line that opens a new section: any ATX heading, or a thematic break. */
@@ -52,19 +64,25 @@ export function stripBakedCover(source: string): NarrativeCleanResult {
   // "Investment Report: …", closed by the first `---`. Only stripped when the
   // block sits at the very top AND carries at least one of the two signatures
   // (tagline or report-title line) — a narrative that legitimately opens with
-  // a lone H1 keeps it.
+  // a lone H1 keeps it. The fork's title block is the same shape with its own
+  // signature: an H1 and BOTH fact lines, with the italic subtitle the fork
+  // writes between them allowed rather than required.
   {
     let end = -1;
     let sawSignature = false;
+    let sawTitle = false;
+    let forkFacts = 0;
     for (let i = 0; i < Math.min(lines.length, 14); i++) {
       const t = lines[i].trim();
       if (!t) continue;
       if (/^---+$/.test(t)) { end = i; break; }
       if (TAGLINE.test(t) || REPORT_TITLE.test(t)) { sawSignature = true; continue; }
-      if (/^#\s+\S/.test(t)) continue;      // the brand H1 (or the title H1)
+      if (/^#\s+\S/.test(t)) { sawTitle = true; continue; }  // the brand H1 (or the title H1)
+      if (FORK_FACT.test(t)) { forkFacts += 1; continue; }
+      if (sawTitle && ITALIC_LINE.test(t)) continue;           // the fork's subtitle
       break;                                 // real prose — not the masthead
     }
-    if (end >= 0 && sawSignature) {
+    if (end >= 0 && (sawSignature || (sawTitle && forkFacts >= 2))) {
       lines = lines.slice(end + 1);
       strippedHeader = true;
     }

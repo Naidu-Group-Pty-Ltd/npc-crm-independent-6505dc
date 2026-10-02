@@ -102,10 +102,15 @@ export function rankingChart(
     tone: i === 0 ? 'accent' : undefined,
   }));
 
+  // A gap in points on the scale it was scored on: "13.0 apart, out of 100"
+  // printed a decimal the scores never had and no unit at all.
   const spread = Math.max(...values) - Math.min(...values);
+  const gap = Number(spread.toFixed(1));
+  const points = `${gap} ${gap === 1 ? 'point' : 'points'}`;
   const caption = spread <= outOf * 0.05
-    ? `The ranked properties score within ${spread.toFixed(1)} of each other — on this measure they are close to a tie.`
-    : `First and last are ${spread.toFixed(1)} apart, out of ${outOf}.`;
+    ? `The ranked properties score within ${points} of each other on a ${outOf}-point scale, `
+      + 'close to a tie on this measure.'
+    : `First and last are ${points} apart on a ${outOf}-point scale.`;
 
   return chartFigure(
     renderBars(chartContext(palette), items, {
@@ -122,6 +127,14 @@ export function rankingChart(
  * Axes that named nobody are their own segment rather than being dropped: "no
  * clear winner" is what the analysis concluded on 18 of 92 pointers, and a chart
  * that omitted them would overstate how decisive the comparison was.
+ *
+ * Only the categories a property WINS. "Highest risk" names the property that
+ * came off worst; the scorecard beside this chart leaves it out for that reason
+ * ("ticking it asserts the opposite of what it means"), and the chart counted
+ * it as a win, so the two disagreed on one page — 6, 2 and 3 of 11 in the
+ * legend over ticks reading 6, 2 and 2 of 10 (Audit 8, 1 Oct 2026). The legend
+ * prints counts (`legend: 'given'`) and the centre the leader's count, so the
+ * ring, the key and the table count the same categories.
  */
 export function categoryWinsChart(
   p: PropertyComparison,
@@ -129,7 +142,7 @@ export function categoryWinsChart(
 ): string {
   if (p.properties.length < MIN_DONUT_SEGMENTS) return '';
 
-  const winners = p.axes.flatMap((g) => g.winners);
+  const winners = p.axes.flatMap((g) => g.winners).filter((w) => w.polarity === 'positive');
   if (!winners.length) return '';
 
   const wins = new Map<number, number>();
@@ -139,25 +152,27 @@ export function categoryWinsChart(
     else wins.set(w.property.number, (wins.get(w.property.number) ?? 0) + 1);
   }
 
-  const segments: DonutSegment[] = p.properties
-    .filter((prop) => (wins.get(prop.number) ?? 0) > 0)
-    .map((prop) => ({
-      // The street line, not "Property 3": a segment that names a number tells a
-      // reader nothing about which house it is.
-      label: prop.shortAddress.slice(0, 28),
-      value: wins.get(prop.number) ?? 0,
-    }));
+  // Every property is listed, one that won nothing included, at "0 of 10":
+  // dropping it from the key implied a smaller field than the one compared,
+  // which the Cash Flow Comparison's donut has never done.
+  const segments: DonutSegment[] = p.properties.map((prop) => ({
+    // The street line, not "Property 3": a segment that names a number tells a
+    // reader nothing about which house it is.
+    label: prop.shortAddress.slice(0, 28),
+    value: wins.get(prop.number) ?? 0,
+  }));
+  if (undecided) segments.push({ label: 'No clear winner', value: undecided });
 
   // Every category undecided is a real and important answer, but it is a
-  // sentence, not a doughnut with one segment.
-  if (!segments.length) return '';
-  if (undecided) segments.push({ label: 'No clear winner', value: undecided });
-  if (segments.length < MIN_DONUT_SEGMENTS) return '';
+  // sentence, not a doughnut with one segment — and so is a sweep, or a split
+  // two ways (`MIN_DONUT_SEGMENTS`).
+  if (!wins.size) return '';
+  if (segments.filter((seg) => seg.value > 0).length < MIN_DONUT_SEGMENTS) return '';
 
   const total = winners.length;
   const leader = [...wins.entries()].sort((a, b) => b[1] - a[1])[0];
   const leadProperty = p.properties.find((prop) => prop.number === leader?.[0]);
-  const share = leader ? Math.round((leader[1] / total) * 100) : 0;
+  const counted = segments.map((seg) => ({ ...seg, display: `${seg.value} of ${total}` }));
 
   const caption = leadProperty
     ? `${leadProperty.shortAddress} takes ${leader[1]} of ${total} categories`
@@ -165,10 +180,11 @@ export function categoryWinsChart(
     : `${total} categories compared.`;
 
   return chartFigure(
-    renderDonut(chartContext(palette), segments, {
+    renderDonut(chartContext(palette), counted, {
       title: 'Category wins',
-      centerLabel: `${share}%`,
-      centerSub: 'to the leader',
+      centerLabel: `${leader?.[1] ?? 0}/${total}`,
+      centerSub: 'won by the leader',
+      legend: 'given',
     }),
     caption,
   );

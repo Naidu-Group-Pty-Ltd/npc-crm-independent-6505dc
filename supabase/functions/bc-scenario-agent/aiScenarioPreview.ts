@@ -27,6 +27,7 @@ import {
 
 import { getTaxBreakdown } from './tax.ts';
 import { withholdTighteningDtiOverride } from '../_shared/advisorDtiOverride.pure.ts';
+import { budgetAmountsIn } from '../_shared/advisorRequestMode.pure.ts';
 
 interface BcParams {
   grossAnnualIncome: number;
@@ -663,15 +664,6 @@ export function validateAIScenarios(
 
 // ── Detect numeric budgets in user messages ────────────────────────────
 
-const BUDGET_PATTERNS: RegExp[] = [
-  // $700k, $1.2m, $700K
-  /\$\s*([0-9]+(?:\.[0-9]+)?)\s*([kKmM])\b/g,
-  // 700k, 1.2m  (no $)
-  /\b([0-9]+(?:\.[0-9]+)?)\s*([kKmM])\b/g,
-  // $700,000 or $700000
-  /\$\s*([0-9]{1,3}(?:,[0-9]{3})+|[0-9]{4,})/g,
-];
-
 /**
  * Returns the LARGEST numeric budget mentioned across the conversation
  * (so a follow-up "actually I want $700k" overrides the original "$650k").
@@ -681,47 +673,17 @@ export function detectTargetPrice(messages: Array<{ role: string; content: strin
   let best: { value: number; index: number } | undefined;
   messages.forEach((msg, idx) => {
     if (msg.role !== 'user' || !msg.content) return;
-    const text = msg.content;
-    for (const re of BUDGET_PATTERNS) {
-      re.lastIndex = 0;
-      let m: RegExpExecArray | null;
-      while ((m = re.exec(text)) !== null) {
-        let value = parseFloat(m[1].replace(/,/g, ''));
-        if (!Number.isFinite(value) || value <= 0) continue;
-        const suffix = (m[2] || '').toLowerCase();
-        if (suffix === 'k') value *= 1_000;
-        else if (suffix === 'm') value *= 1_000_000;
-        // Require sensible AU property range to avoid catching e.g. "$1,100" repayments.
-        if (value < 50_000 || value > 50_000_000) continue;
-        if (!best || value > best.value || (value === best.value && idx >= best.index)) {
-          best = { value, index: idx };
-        }
+    // One reading of "$750k" for the whole advisor (`advisorRequestMode.pure.ts`),
+    // bounded to the AU property range so a "$1,100" repayment is not a price.
+    for (const value of budgetAmountsIn(msg.content)) {
+      if (!best || value > best.value || (value === best.value && idx >= best.index)) {
+        best = { value, index: idx };
       }
     }
   });
   return best?.value;
 }
 
-/**
- * Heuristic: detects when the latest user message is a clarification
- * (asking the AI to explain / confirm something) rather than a request
- * to regenerate scenarios. Used to avoid spamming new tool calls.
- */
-export function isClarificationMessage(content: string): boolean {
-  if (!content) return false;
-  const lower = content.toLowerCase().trim();
-  if (lower.length < 6) return false;
-  // Question mark with no explicit "generate / create / build" keyword
-  const hasQuestion = lower.includes('?');
-  const wantsAction = /\b(generate|create|build|run|make|propose|recommend|show me|give me)\b/.test(lower);
-  if (hasQuestion && !wantsAction) return true;
-  const clarificationCues = [
-    'clarify', 'confirm', 'will this', 'will it', 'does this', 'does it',
-    'is this', 'is it', 'how does', 'how would', 'what does', 'what is',
-    'why ', 'explain', 'before applying', 'before i apply',
-  ];
-  return clarificationCues.some(cue => lower.includes(cue));
-}
 
 // ── Phase J2: structured acquisition hint extraction ───────────────────
 

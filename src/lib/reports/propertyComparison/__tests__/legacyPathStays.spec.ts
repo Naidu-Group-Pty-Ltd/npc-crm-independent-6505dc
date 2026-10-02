@@ -87,6 +87,24 @@ describe('the legacy path still exists', () => {
     expect(source).toContain('getPdfBlob={async () => (skipDatabaseUpdate ? (await drawOnly()).blob : (await generateCore()).blob)}');
   });
 
+  /**
+   * Audit 8. The comparison borrows the investment drawer, so it saved as an
+   * Investment Compass named after the comparison's title, and its flattened
+   * copy as the bare title. It hands the drawer its own name now, and the
+   * investment default is the investment report's own readable name.
+   */
+  it('hands over the comparison under the comparison\'s own name', () => {
+    const wrapper = code(WRAPPER);
+    expect(wrapper).toContain('comparisonFileName(');
+    expect(wrapper).toContain('COMPARISON_LEGACY_QUALIFIER');
+    expect(wrapper).toContain('downloadFileName={downloadFileName}');
+    const engine = code(ENGINE);
+    const drawOnly = engine.slice(engine.indexOf('const drawOnly'), engine.indexOf('const handleGenerationError'));
+    expect(drawOnly).toContain('downloadFileName ? { ...drawn, fileName: downloadFileName } : drawn');
+    expect(engine).toMatch(/filename=\{downloadFileName\s*\?\?\s*investmentReportFileName\(/);
+    expect(engine).not.toMatch(/filename=\{`\$\{\(report as any\)\?\.address/);
+  });
+
   it.each(MOUNT_SITES)('%s still mounts the legacy wrapper', (path) => {
     expect(read(path)).toContain('<ComparisonPDFGenerator');
   });

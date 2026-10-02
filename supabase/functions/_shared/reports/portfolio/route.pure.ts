@@ -14,18 +14,23 @@
  * A caller cannot choose the client's name, the figures, or which review is
  * folded in.
  *
- * ## The filename is a contract
+ * ## The filename is read by a person
  *
- * `PortfolioAnalysisPDFGenerator` has been producing
- * `Portfolio_Analysis_<Client>.pdf` since the format existed, and clients have
- * those files in their downloads folders. The pattern below is that one with the
- * date appended, not a new one.
+ * `Portfolio Performance Review - <client> - 30 Sep 2026.pdf`, through
+ * `readableFileName.pure.ts` — the rule the Intelligence Hub Summary and both
+ * comparisons already follow (QA.md §13, COMPARISON.md §13): the name the
+ * cover prints, what the document covers, and the day. It used to be
+ * `Portfolio_Analysis_<Client>_<date>.pdf`, which named the document by a word
+ * its cover never uses. The saved PDF the legacy generator wrote keeps its own
+ * name; this route never touches that file.
  */
 import {
   readTemplateDesignReference,
   type DesignEcho,
   type TemplateDesignReference,
 } from '../../reportDesign/templateDesign.pure.ts';
+import { REPORT_ARCHETYPES } from '../../reportDesign/structure.pure.ts';
+import { readableFileName, storageSafeFileName } from '../readableFileName.pure.ts';
 
 /** Only this is accepted from the caller; everything else is read server-side. */
 export interface PortfolioRenderRequest {
@@ -89,16 +94,16 @@ export function parseRenderRequest(body: unknown): RequestParse {
 }
 
 /**
- * The filename, keeping the shape the product already produces.
- *
- * `[^a-zA-Z0-9]` → `_` is the existing rule from `PortfolioAnalysisPDFGenerator`,
- * kept exactly, with the date appended so a client who receives two reviews can
- * tell them apart.
+ * The filename: the document's name, whose review it is, and the day
+ * (`readableFileName.pure.ts`). The day is what tells two reviews for one
+ * client apart.
  */
 export function portfolioFileName(clientName: string, isoDate: string): string {
-  const safe = (clientName || 'Client').replace(/[^a-zA-Z0-9]/g, '_').slice(0, 80);
-  const date = /^\d{4}-\d{2}-\d{2}/.exec(isoDate)?.[0] ?? '';
-  return `Portfolio_Analysis_${safe}_${date}.pdf`;
+  return readableFileName({
+    name: REPORT_ARCHETYPES['portfolio-performance'].documentName,
+    topic: clientName,
+    isoDate,
+  });
 }
 
 /**
@@ -121,7 +126,9 @@ export function portfolioStoragePath(
   uniqueId: string,
 ): string {
   const day = /^\d{4}-\d{2}-\d{2}/.exec(isoDate)?.[0] ?? 'undated';
-  return `portfolio-reports/${clientId}/typeset/${day}/${uniqueId}-${fileName}`;
+  // The key keeps to URL-safe characters; the readable name is what a person
+  // is handed (`storageSafeFileName`).
+  return `portfolio-reports/${clientId}/typeset/${day}/${uniqueId}-${storageSafeFileName(fileName)}`;
 }
 
 /** How long a returned link lives. Long enough to email, short enough to expire. */

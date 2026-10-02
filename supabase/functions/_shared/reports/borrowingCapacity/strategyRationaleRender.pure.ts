@@ -23,6 +23,19 @@
  * subhead, and a part is kept with its first lines (`keepTogether`) so a
  * heading never ends a page.
  *
+ * **It opens on its finding (1 Oct 2026, §22).** The chapter's own header
+ * repeated the cover word for word ("Strategy Rationale Brief", "Borrowing
+ * Capacity Scenario — Finance Hand-off") under a "SECTION 01" that numbered
+ * the only section, and the running head said "Strategy Rationale Brief" on
+ * both sides of every page. The cover names the document; the first page now
+ * leads with what the scenario does, the engine's headline, set as the memo's
+ * title with its sub-headline beneath, and the running head names the client
+ * the brief is for, as the jsPDF brief's footer always has. The parts' subheads
+ * are a step below that title (`SECTION_SUBHEAD_CLASS`), as in every other
+ * memo, and a table is kept by its estimated height (`keptTable`), never moved
+ * whole with its heading: a four-step sequence kept whole left a quarter of a
+ * page white above it.
+ *
  * Every string is escaped by the primitive that draws it; the document arrives
  * from a browser and is read (`readStrategyRationale`) before it gets here.
  */
@@ -40,10 +53,12 @@ import {
   renderDataTable,
   renderDocument,
   renderKpiStrip,
-  renderLede,
+  SECTION_SUBHEAD_CLASS,
   type CalloutTone,
+  type TableColumn,
   type TableRow,
 } from '../../reportDesign/primitives.pure.ts';
+import { keptTable, type KeepOptions } from '../../reportDesign/tableKeeping.pure.ts';
 import { buildReportCss } from '../../reportDesign/css.pure.ts';
 import type { ResolvedReportPalette } from '../../reportDesign/roles.pure.ts';
 import type { ReportDesignOptions } from '../../reportDesign/options.pure.ts';
@@ -54,6 +69,7 @@ import { resolveSnapshotBrand } from '../../reportDesign/documentBrand.pure.ts';
 import { withDesignOptions, type ReportTemplateDesign } from '../../reportDesign/templateDesign.pure.ts';
 import {
   ADVISOR_OPTIONS_NOTE,
+  CAPITAL_FLOW_LABELS,
   STRATEGY_RATIONALE_NAME,
   STRATEGY_RATIONALE_STANDFIRST,
   type RationaleSeverity,
@@ -63,9 +79,16 @@ import {
 const ARCHETYPE = REPORT_ARCHETYPES['borrowing-capacity'];
 
 const p = (t: string | null | undefined) => (t ? `<p>${escapeHtml(t)}</p>` : '');
-/** The design system's subhead (`h2`), as the Snapshot sets one inside a chapter. */
-const subhead = (t: string) => `<h2>${escapeHtml(t)}</h2>`;
+/** A part's subhead: an `h2`, set a step below the memo's title, as in the Snapshot. */
+const subhead = (t: string) => `<h2 class="${SECTION_SUBHEAD_CLASS}">${escapeHtml(t)}</h2>`;
 const keepTogether = (html: string) => (html ? `<div class="${KEEP_TOGETHER_CLASS}">${html}</div>` : '');
+
+/** As the Snapshot keeps its tables: whole while short, by height when not. */
+const TABLE_KEEP: KeepOptions = { widths: 'content', leadRows: 2 };
+const table = (cols: TableColumn[], rows: TableRow[]) =>
+  keptTable(renderDataTable(cols, rows), { cols, rows }, TABLE_KEEP);
+/** A block that is a table carries its own keeping, and is never wrapped whole with its heading. */
+const isTable = (html: string) => html.startsWith('<div class="table-block');
 
 /** The severity a lever carries, as the callout tone that says it. */
 const SEVERITY_TONE: Record<RationaleSeverity, CalloutTone> = {
@@ -92,13 +115,13 @@ interface Section {
 function sectionsOf(d: StrategyRationaleDocument): Section[] {
   const out: Section[] = [];
 
-  // ── The brief: headline and the capacity figures ─────────────────────────
+  // ── The brief: its finding and the capacity figures ──────────────────────
+  // The headline and sub-headline are the memo's title and standfirst; the
+  // cover names the document (§22).
   out.push({
-    title: STRATEGY_RATIONALE_NAME,
-    dek: STRATEGY_RATIONALE_STANDFIRST,
+    title: d.headline,
+    dek: d.subHeadline ?? undefined,
     blocks: [
-      renderLede(d.headline),
-      p(d.subHeadline),
       renderKpiStrip(d.kpis.map((k) => ({ label: k.label, value: k.value, foot: k.foot || undefined, tone: k.tone }))),
       // How to read the two figures, where they seem to disagree.
       d.readingNote ? unlabelledCallout('informative', p(d.readingNote)) : '',
@@ -136,7 +159,7 @@ function sectionsOf(d: StrategyRationaleDocument): Section[] {
         // decision is between options, and the brief used to name only one.
         a.options.length
           ? keepTogether(`<p><strong>${escapeHtml(a.optionsTitle)}</strong></p>`
-            + renderDataTable(
+            + table(
               [
                 { key: 'name', label: 'Option', align: 'left' },
                 { key: 'capacity', label: 'Capacity', align: 'right' },
@@ -159,39 +182,43 @@ function sectionsOf(d: StrategyRationaleDocument): Section[] {
     });
   }
 
-  // ── What we propose and why ──────────────────────────────────────────────
-  out.push({
-    title: d.proposeTitle,
-    blocks: d.bullets.length
-      ? d.bullets.map((b) => keepTogether(renderCallout(
-          SEVERITY_TONE[b.severity],
-          b.impactLabel ? `${b.severityLabel} · ${b.impactLabel}` : b.severityLabel,
-          `<p><strong>${escapeHtml(b.what)}</strong></p>` + p(b.why) + p(b.cashflowLine),
-        )))
-      : [p(d.proposeEmpty)],
-  });
-
-  // ── How the maths reconciles ─────────────────────────────────────────────
-  out.push({ title: d.reconcileTitle, blocks: [p(d.reconciliation)] });
+  // ── What we propose and why, how the maths reconciles ───────────────────
+  // A part with nothing in it is left out (§22). A baseline brief headed its
+  // finding "Baseline scenario — no levers applied." and then said so three
+  // more times, under "(0 levers)", "How the maths reconciles" and "(0
+  // steps)", and the empty sequence's line called any scenario without steps
+  // a baseline. `proposeEmpty` and `sequenceEmpty` are still composed, because
+  // a server older than this draws them.
+  if (d.bullets.length) {
+    out.push({
+      title: d.proposeTitle,
+      blocks: d.bullets.map((b) => keepTogether(renderCallout(
+        SEVERITY_TONE[b.severity],
+        b.impactLabel ? `${b.severityLabel} · ${b.impactLabel}` : b.severityLabel,
+        `<p><strong>${escapeHtml(b.what)}</strong></p>` + p(b.why) + p(b.cashflowLine),
+      ))),
+    });
+    if (d.reconciliation) out.push({ title: d.reconcileTitle, blocks: [p(d.reconciliation)] });
+  }
 
   // ── The execution sequence ───────────────────────────────────────────────
-  out.push({
-    title: d.sequenceTitle,
-    blocks: [d.steps.length
-      ? keepTogether(renderDataTable(
-          [
-            { key: 'step', label: 'Step', align: 'left' },
-            { key: 'action', label: 'Action', align: 'left' },
-            { key: 'owner', label: 'Owner', align: 'right' },
-          ],
-          d.steps.map((s): TableRow => ({
-            step: s.step,
-            action: s.detail ? `${s.action} — ${s.detail}` : s.action,
-            owner: s.owner,
-          })),
-        ))
-      : p(d.sequenceEmpty)],
-  });
+  if (d.steps.length) {
+    out.push({
+      title: d.sequenceTitle,
+      blocks: [table(
+        [
+          { key: 'step', label: 'Step', align: 'left' },
+          { key: 'action', label: 'Action', align: 'left' },
+          { key: 'owner', label: 'Owner', align: 'right' },
+        ],
+        d.steps.map((s): TableRow => ({
+          step: s.step,
+          action: s.detail ? `${s.action} — ${s.detail}` : s.action,
+          owner: s.owner,
+        })),
+      )],
+    });
+  }
 
   // ── Caveats ──────────────────────────────────────────────────────────────
   if (d.caveats.length) {
@@ -204,9 +231,11 @@ function sectionsOf(d: StrategyRationaleDocument): Section[] {
   // ── Capital flow, where the scenario routes capital ──────────────────────
   if (d.capitalFlow) {
     const cf = d.capitalFlow;
-    const legs = renderDataTable(
+    const legs = table(
       [
-        { key: 'leg', label: 'Source → sink', align: 'left' },
+        // "Sink" is the capital router's word; sources and uses is the
+        // finance team's (§22).
+        { key: 'leg', label: 'Source → use', align: 'left' },
         { key: 'amount', label: 'Amount', align: 'right' },
         { key: 'servicing', label: 'Servicing', align: 'right' },
         { key: 'debt', label: 'Debt', align: 'right' },
@@ -223,13 +252,13 @@ function sectionsOf(d: StrategyRationaleDocument): Section[] {
       title: cf.title,
       blocks: [
         renderKpiStrip([
-          { label: 'Available', value: cf.available },
-          { label: 'Routed', value: cf.routed },
-          { label: 'Residual', value: cf.residual },
+          { label: CAPITAL_FLOW_LABELS.available, value: cf.available },
+          { label: CAPITAL_FLOW_LABELS.allocated, value: cf.routed },
+          { label: CAPITAL_FLOW_LABELS.unallocated, value: cf.residual },
         ]),
         // The warning is its own label, as the jsPDF brief prints it.
         cf.overcommitted ? unlabelledCallout('negative', `<p><strong>${escapeHtml(cf.overcommitted)}</strong></p>`) : '',
-        keepTogether(legs),
+        legs,
         notes.length
           ? `<ul>${notes.map((l) => `<li><strong>${escapeHtml(l.label)}.</strong> ${escapeHtml(l.note!)}</li>`).join('')}</ul>`
           : '',
@@ -299,12 +328,23 @@ export function renderStrategyRationaleBody(input: RenderRationaleInput): string
   const body = brief.blocks.join('') + parts.map((part) => {
     // The heading travels with the part's opening block: a part that is one
     // line is kept whole, a long one keeps its heading with what follows it.
+    // A table keeps itself (`keptTable`), and the heading stays with its
+    // first rows by the heading's own rule, so a long one can still split.
     const [first = '', ...rest] = part.blocks.filter(Boolean);
-    return keepTogether(subhead(part.title) + first) + rest.join('');
+    const opening = isTable(first) ? subhead(part.title) + first : keepTogether(subhead(part.title) + first);
+    return opening + rest.join('');
   }).join('');
 
-  const chapter = openChapter(STRATEGY_RATIONALE_NAME, '01', brief.title, 'body')
-    + renderChapterHeader({ number: '01', title: brief.title, dek: brief.dek, label: ARCHETYPE.chapterLabel })
+  // The running head names the client, as the jsPDF brief's footer does: the
+  // only chapter's title would repeat the eyebrow beside it on every page.
+  const chapter = openChapter(STRATEGY_RATIONALE_NAME, '01', input.clientName, 'body', { memo: true })
+    + renderChapterHeader({
+      number: '01',
+      title: brief.title,
+      dek: brief.dek,
+      label: ARCHETYPE.chapterLabel,
+      unnumbered: true,
+    })
     + `<div class="chapter-body">${body}</div>`
     + closeChapter();
 

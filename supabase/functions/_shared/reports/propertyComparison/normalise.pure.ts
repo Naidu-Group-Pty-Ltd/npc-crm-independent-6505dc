@@ -71,6 +71,7 @@ import type {
 import { COMPARISON_SECTIONS } from './salvage.pure.ts';
 import { readStoredAnalysis } from './storedAnalysis.pure.ts';
 import { joinPlaces } from '../readableFileName.pure.ts';
+import { truncateAtWord } from '../text.pure.ts';
 
 /** The producer accepts 2–5; more than this is a data fault, not a comparison. */
 export const MAX_PROPERTIES = 12;
@@ -110,12 +111,7 @@ function arrayAt(source: unknown, key: string): unknown[] {
 export function text(value: unknown, max = MAX_PARAGRAPH): string {
   if (typeof value === 'number' && Number.isFinite(value)) return String(value);
   if (typeof value !== 'string') return '';
-  const trimmed = value.trim();
-  if (trimmed.length <= max) return trimmed;
-  const hard = trimmed.slice(0, max);
-  const space = hard.lastIndexOf(' ');
-  const kept = space > max * 0.6 ? hard.slice(0, space) : hard;
-  return `${kept.replace(/[\s,;:.]+$/, '')}…`;
+  return truncateAtWord(value, max);
 }
 
 /** A finite number, or `null`. A numeric string counts — models emit those. */
@@ -167,8 +163,12 @@ export function propertyAt(
   return properties[n - 1] ?? null;
 }
 
-/** Everything before the first comma — a chart label or a narrow column. */
-const streetLine = (address: string) => (address.split(',')[0] ?? address).trim();
+/**
+ * Everything before the first comma — a chart label, a narrow column, and the
+ * file name's topic, which the browser's legacy download reads from here so
+ * every copy of one comparison is named for the same properties.
+ */
+export const shortAddress = (address: string): string => (address.split(',')[0] ?? address).trim();
 
 /**
  * The properties, in `propertyNumber` order.
@@ -200,7 +200,7 @@ function toProperties(row: Record<string, unknown>, rankings: unknown[]): Proper
     out.push({
       number: i,
       address,
-      shortAddress: streetLine(address),
+      shortAddress: shortAddress(address),
       // `property_states` is a de-duplicated list of the states involved, not a
       // per-property array, so it only aligns when every property shares one.
       state: states.length === 1 ? text(states[0], 8) : '',

@@ -10,6 +10,11 @@
 import { beforeAll, describe, expect, it } from 'vitest';
 import { writeRenderArtifact } from '../../__tests__/renderArtifact';
 import { buildPortfolioReview } from '../normalise.pure';
+import {
+  MEMO_CHAPTER_CLASS,
+  RUN_ON_CHAPTER_CLASS,
+  SECTION_SUBHEAD_CLASS,
+} from '@/lib/reportDesign/primitives.pure';
 import { renderPortfolioFromBrand, DOCUMENT_NAME } from '../render.pure';
 import { portfolioSections, portfolioSpine, validatePortfolioSpine, DETAIL_CAP } from '../sections.pure';
 import { contentsEntriesFor, REPORT_ARCHETYPES, spinePageBudget } from '@/lib/reportDesign/structure.pure';
@@ -474,8 +479,18 @@ describe('the render request', () => {
     expect(absent.ok && absent.request.includeReview).toBe(true);
   });
 
-  it('keeps the filename shape clients already receive', () => {
-    expect(portfolioFileName('Sample Client', NOW)).toBe('Portfolio_Analysis_Sample_Client_2026-08-02.pdf');
+  it('names the file the way the cover names the document, for whom and when', () => {
+    // It was `Portfolio_Analysis_<Client>_<date>.pdf` — a word the cover never
+    // uses, joined by underscores (PORTFOLIO.md §10).
+    expect(portfolioFileName('Sample Client', NOW)).toBe('Portfolio Performance Review - Sample Client - 02 Aug 2026.pdf');
+    expect(portfolioFileName('Jordan & Priya Whitfield', NOW))
+      .toBe('Portfolio Performance Review - Jordan and Priya Whitfield - 02 Aug 2026.pdf');
+  });
+
+  it('keeps the storage key to URL-safe characters while the person gets the readable name', () => {
+    const path = portfolioStoragePath('client-1', portfolioFileName('Sample Client', NOW), NOW, 'uid');
+    expect(path).toBe('portfolio-reports/client-1/typeset/2026-08-02/uid-Portfolio_Performance_Review_-_Sample_Client_-_02_Aug_2026.pdf');
+    expect(path).not.toMatch(/\s/);
   });
 
   it('writes under the prefix the format already uses, without colliding with it', () => {
@@ -505,5 +520,241 @@ describe('the format writes no colour of its own', () => {
 
   it('has a document name that comes from the archetype', () => {
     expect(DOCUMENT_NAME).toBe(REPORT_ARCHETYPES['portfolio-performance'].documentName);
+  });
+});
+
+/**
+ * The Portfolio audit (PORTFOLIO.md §10), pinned on the document's markup.
+ * The page measurements behind it were taken on the pinned engine across all
+ * fifty designs and the standard layout; what a unit test can hold is the
+ * structure those measurements depend on.
+ */
+describe('the audit — the document reads as one continuous review', () => {
+  const html = render(review(4, FULL_ANALYSIS, FULL_REVIEW));
+  const chapters = [...html.matchAll(/<section class="chapter([^"]*)"[^>]*data-chapter-title="([^"]+)"/g)]
+    .map((m) => ({ classes: m[1].trim().split(/\s+/), title: m[2] }));
+
+  it('runs every section on after the first, as a memo', () => {
+    expect(chapters.length).toBeGreaterThan(3);
+    expect(chapters[0].classes).toContain(MEMO_CHAPTER_CLASS);
+    expect(chapters[0].classes).not.toContain(RUN_ON_CHAPTER_CLASS);
+    for (const c of chapters.slice(1)) {
+      expect(c.classes, c.title).toContain(RUN_ON_CHAPTER_CLASS);
+      expect(c.classes, c.title).toContain(MEMO_CHAPTER_CLASS);
+    }
+  });
+
+  it('sets its subheads a step below the section title, and keeps them headings', () => {
+    expect(html).toContain(`<h2 class="${SECTION_SUBHEAD_CLASS}">1 Wattle Street, Example Bay, QLD 4000</h2>`);
+    expect(html).toContain(`<h2 class="${SECTION_SUBHEAD_CLASS}">What it means for this portfolio</h2>`);
+  });
+
+  it('sets up to five properties side by side on the page, headed by street, with no landscape sheet', () => {
+    // The stylesheet names the landscape page whatever is drawn; the body
+    // opens it only for a matrix wider than the portrait measure.
+    const LANDSCAPE = '<section class="page-landscape-table">';
+    expect(html).not.toContain(LANDSCAPE);
+    expect(html).toContain('class="data holdings-matrix"><colgroup>');
+    expect(html).toMatch(/>1\. 1 Wattle Street<\/th>/);
+    const ten = render(review(10, FULL_ANALYSIS, FULL_REVIEW));
+    expect(ten).toContain(LANDSCAPE);
+  });
+
+  it('keeps a short table whole and gives a long one at least three rows at a page foot', () => {
+    expect(html).toContain('<div class="table-block keep-together">');
+    // The action table runs past seven estimated lines, so it is set as row
+    // groups, two leading rows each refusing the break after them.
+    const actions = html.slice(html.indexOf('class="data action-plan"'));
+    expect(actions.indexOf('<tbody class="lead">')).toBeGreaterThan(-1);
+    expect(actions.split('<tbody class="lead">').length - 1).toBe(2);
+  });
+
+  it('keeps the action table’s horizon on one line', () => {
+    expect(html).toContain('<table class="data action-plan">');
+    expect(html).toMatch(/table\.data\.action-plan th\[scope="row"\] \{ white-space: nowrap; \}/);
+  });
+
+  it('prints every score the review recorded, data completeness included', () => {
+    // The strip used to take the first four, so the fifth was scored and
+    // never printed.
+    for (const label of ['Overall', 'Portfolio health', 'Cash flow', 'Growth potential', 'Data completeness']) {
+      expect(html).toContain(`<div class="kpi-label">${label}</div>`);
+    }
+    expect(html).toContain('92 / 100');
+  });
+});
+
+describe('the audit — the figures a reader acts on', () => {
+  const metrics = {
+    totalValue: 1_500_000,
+    totalDebt: 1_000_000,
+    totalEquity: 500_000,
+    totalMonthlyRentalIncome: 4_000,
+    totalMonthlyExpenses: 1_600,
+    netMonthlyCashflow: 2_400,
+    totalProperties: 2,
+    investmentCount: 2,
+    ownerOccupiedCount: 0,
+  };
+  const withAnalysis = (analysis: Record<string, unknown>, reviewRow: Record<string, unknown> | null = null) =>
+    buildPortfolioReview({
+      report: {
+        id: 'aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee',
+        created_at: '2026-05-01T00:00:00.000Z',
+        overall_health: 'Good',
+        report_data: {
+          portfolioMetrics: metrics,
+          propertyAnalyses: [holding(1), holding(2)],
+          analysis,
+        },
+      },
+      review: reviewRow as never,
+      clientName: 'Sample Client',
+      now: NOW,
+    });
+
+  it('states what a rate rise does in plain amounts under a head that says "each month"', () => {
+    const doc = render(withAnalysis({
+      // The rate-rise table belongs to the health section, which a review
+      // with neither a health nor a risk assessment does not have.
+      financialHealth: { analysis: 'The portfolio services itself.' },
+      interestRateSensitivity: {
+        investmentProperties: {
+          available: true, loansCovered: 2, balanceCovered: 800_000,
+          currentMonthlyCashflow: 2_400, plusOnePercentImpact: -667, plusTwoPercentImpact: -1_333,
+        },
+        ownerOccupiedProperties: { available: false, loansCovered: 1, unavailableReason: 'amortising_loan_without_term' },
+      },
+    }));
+    expect(doc).toContain('>Each month<');
+    expect(doc).toContain('Change on the investment loans');
+    expect(doc).toContain('Net cash flow (investments) after the rise');
+    expect(doc).toContain('-$667');
+    expect(doc).not.toContain('-$667/mo');
+    expect(doc).toContain('$1,733');
+    expect(doc).toContain('A rate-rise figure is not shown for the owner-occupied loans');
+    expect(doc).not.toContain('change a month');
+  });
+
+  it('prints today beside the projection only where the projection provably starts there', () => {
+    const calculated = {
+      years: 10,
+      projectedPortfolioValue: Math.round(1_500_000 * 1.05 ** 10),
+      projectedDebt: 1_000_000,
+      projectedEquity: Math.round(1_500_000 * 1.05 ** 10) - 1_000_000,
+      projectedMonthlyCashflow: null,
+      assumptionDetail: {
+        scenario: 'moderate', annualCapitalGrowthPercent: 5, horizonYears: 10,
+        debtTreatment: 'held_constant', cashflowTreatment: 'not_projected',
+      },
+    };
+    const proven = render(withAnalysis({ projections: calculated }));
+    expect(proven).toContain('Value, debt and equity, today and projected');
+    expect(proven).toContain('>Today<');
+    expect(proven).toContain('>In 10 years<');
+    expect(proven).toContain('Debt, held at today&#39;s balance');
+    expect(proven).not.toContain('>Projected<');
+    expect(proven).not.toContain('>Amount<');
+
+    const unproven = render(withAnalysis({ projections: { ...calculated, projectedPortfolioValue: 2_000_000 } }));
+    expect(unproven).toContain('Projected position at 10 years');
+    expect(unproven).not.toContain('>Today<');
+  });
+
+  it('says whose ranking it is, and whose score, and draws no column of dashes without one', () => {
+    const rankings = {
+      propertyRankings: [1, 2].map((n) => ({
+        address: `${n} Wattle Street, Example Bay, QLD 4000`, rank: n, performanceRating: 'Good',
+      })),
+    };
+    const plain = render(withAnalysis(rankings));
+    expect(plain).toContain('How the analysis ranks each property');
+    expect(plain).not.toContain('>Review score<');
+    expect(plain).not.toContain('>Score<');
+
+    const scored = render(withAnalysis(rankings, {
+      status: 'completed',
+      overall_score: 70,
+      property_scores: [{ address: '1 Wattle Street, Example Bay, QLD 4000', overallScore: 61, classification: 'Core' }],
+    }));
+    expect(scored).toContain('>Review score<');
+    expect(scored).toContain('61 / 100');
+  });
+
+  it('prints an action both assessments named once, and says both named it', () => {
+    const doc = render(withAnalysis(
+      { strategicRecommendations: { shortTerm: ['Review the rent at renewal.', 'Quote the insurance.'] } },
+      {
+        status: 'completed',
+        overall_score: 70,
+        recommendations: [{ title: 'Review the rent at renewal', priority: 'medium', description: 'Comparables lease higher.' }],
+      },
+    ));
+    const table = doc.slice(doc.indexOf('class="data action-plan"'), doc.indexOf('</table>', doc.indexOf('class="data action-plan"')));
+    expect(table.match(/Review the rent at renewal/g)).toHaveLength(1);
+    expect(table).toContain('>Both<');
+    expect(table).toContain('>Analysis<');
+  });
+
+  it('names the scope of each cash line where a home is in the portfolio', () => {
+    const home = { ...holding(3), propertyType: 'owner_occupied', isOwnerOccupied: true,
+      monthlyRentalIncome: 0, monthlyExpenses: 2_500, netMonthlyCashflow: -2_500, grossYield: 'N/A' };
+    const doc = render(buildPortfolioReview({
+      report: {
+        id: 'aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee',
+        created_at: '2026-05-01T00:00:00.000Z',
+        report_data: {
+          portfolioMetrics: { ...metrics, totalProperties: 3, ownerOccupiedCount: 1, includeOwnerOccupied: true },
+          propertyAnalyses: [holding(1), holding(2), home],
+          analysis: {},
+        },
+      },
+      review: null,
+      clientName: 'Sample Client',
+      now: NOW,
+    }));
+    expect(doc).toContain('Net cash flow (investments)');
+    expect(doc).toContain('Owner-occupied outgoings, not in the net');
+    expect(doc).toContain('an owner-occupied home earns no rent');
+  });
+
+  it('puts a note under the section it is about', () => {
+    const tenancy = { ...holding(3), address: '3/18 Station Street, Penrith NSW 2750', propertyType: 'rental' };
+    const doc = render(buildPortfolioReview({
+      report: {
+        id: 'aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee',
+        created_at: '2026-05-01T00:00:00.000Z',
+        report_data: { portfolioMetrics: metrics, propertyAnalyses: [holding(1), holding(2), tenancy], analysis: {} },
+      },
+      review: null,
+      clientName: 'Sample Client',
+      now: NOW,
+    }));
+    const holdingsAt = doc.indexOf('data-chapter-title="Every property"');
+    const noteAt = doc.indexOf('3/18 Station Street, Penrith NSW 2750 is rented, not owned');
+    expect(holdingsAt).toBeGreaterThan(-1);
+    expect(noteAt).toBeGreaterThan(holdingsAt);
+    expect(doc.match(/is rented, not owned/g)).toHaveLength(1);
+  });
+
+  it('sets a short opening under the contents and a long one at the head of the first section', () => {
+    const short = render(withAnalysis({ personalizedNarrative: { openingStatement: 'Thank you for the time last week.' } }));
+    const contentsAt = short.indexOf('page-contents');
+    const firstChapterAt = short.indexOf('<section class="chapter');
+    const shortAt = short.indexOf('Thank you for the time last week.');
+    expect(shortAt).toBeGreaterThan(contentsAt);
+    expect(shortAt).toBeLessThan(firstChapterAt);
+    expect(short).toContain('<div class="contents-after">');
+
+    const longText = 'We looked at every loan and every lease. '.repeat(40).trim();
+    const long = render(withAnalysis({ personalizedNarrative: { openingStatement: longText } }));
+    expect(long.indexOf('We looked at every loan')).toBeGreaterThan(long.indexOf('<section class="chapter'));
+    expect(long).not.toContain('<div class="contents-after">');
+  });
+
+  it('prints the reference whole on the cover', () => {
+    const doc = render(withAnalysis({}));
+    expect(doc).toContain('AAAAAAAA');
+    expect(doc).not.toContain('AAAAAAAA…');
   });
 });

@@ -13,6 +13,8 @@ import { ReportVariantControls } from '@/components/reports/ReportVariantControl
 import type { ClientInfo, InvestmentReport } from './types';
 import { resolveInvestmentReportType } from '@/lib/reports/reportVariants';
 import { ReportTypeBadge } from '@/components/reports/ReportTypeBadge';
+import { ChooseTemplateButton } from '@/components/reports/ChooseTemplateButton';
+import { INVESTMENT_REPORT_FORMAT } from '@/lib/reportTemplate/reportFormats';
 import type { ReportFamily } from '@/lib/reports/subReports';
 
 interface Props {
@@ -112,11 +114,20 @@ export function InvestmentReportCommandHeader({
         </div>
 
         <div className="order-2 ml-auto flex shrink-0 flex-wrap items-center justify-end gap-2 lg:order-3">
+          {/* Which template the document comes out in, beside the button that
+              uses it — as on every other report's export. The choice was only
+              in the sidebar, a scroll away from the button in this header. */}
+          <ChooseTemplateButton
+            reportType="investment"
+            formatLabel={INVESTMENT_REPORT_FORMAT.label}
+            disabled={downloadBusy}
+            className="hidden shrink-0 bg-background/80 shadow-sm sm:inline-flex"
+          />
           <Button variant="default" size="sm" onClick={onDownload} disabled={downloadBusy} className="shrink-0 shadow-sm">
             {downloadBusy
               ? <Loader2 className="h-4 w-4 animate-spin sm:mr-1" />
               : <Download className="h-4 w-4 sm:mr-1" />}
-            <span className="hidden sm:inline">{downloadBusy ? 'Preparing…' : 'Download PDF'}</span>
+            <span className="hidden sm:inline">{downloadBusy ? 'Preparing…' : 'Export PDF'}</span>
           </Button>
 
           <Button variant="outline" size="sm" onClick={onSendToClient} className="hidden shrink-0 bg-background/80 shadow-sm md:inline-flex">

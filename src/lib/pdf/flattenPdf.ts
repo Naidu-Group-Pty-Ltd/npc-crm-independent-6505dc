@@ -206,10 +206,18 @@ export async function flattenPdfBlob(
   return new Blob([bytes.slice().buffer], { type: 'application/pdf' });
 }
 
-/** Convenience: append `-flattened` before the `.pdf` extension. */
+/**
+ * Convenience: append `-flattened` before the `.pdf` extension.
+ *
+ * A name that already says it is flattened is not told twice. The callers name
+ * the document they flatten and this adds the word, but Audit 8 found two that
+ * passed "flattened" as a filename qualifier as well, which printed
+ * `10 Year Cash Flow - flattened - … - 1 Oct 2026-flattened.pdf`.
+ */
 export function withFlattenedSuffix(filename: string): string {
+  const alreadySaid = /\bflattened\b/i.test(filename);
   if (/\.pdf$/i.test(filename)) {
-    return filename.replace(/\.pdf$/i, '-flattened.pdf');
+    return alreadySaid ? filename : filename.replace(/\.pdf$/i, '-flattened.pdf');
   }
-  return `${filename}-flattened.pdf`;
+  return alreadySaid ? `${filename}.pdf` : `${filename}-flattened.pdf`;
 }

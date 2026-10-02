@@ -62,9 +62,11 @@ export type Direction = 'favourable' | 'adverse' | 'neutral';
 /**
  * Polarity: does a **larger `assessedValue`** help the client?
  *
- *   `+1` — yes (assessed income, after-tax income, stress-tested capacity)
- *   `-1` — no  (expenses, servicing, levies, rates, capitalised LMI)
- *    `0` — the row states a fact; there is no movement to colour
+ *   `+1` — yes (assessed income, after-tax income)
+ *   `-1` — no  (expenses, a property's shortfall, servicing, levies, rates,
+ *               capitalised LMI)
+ *    `0` — the row states a fact; there is no movement to colour (the lender
+ *          profile, the stress-tested capacity)
  *
  * Keyed `category/action`. Every entry below is traceable to an `audit.add(…)`
  * call site in `supabase/functions/calculate-borrowing-capacity/index.ts`; the
@@ -83,9 +85,14 @@ const POLARITY: Readonly<Record<string, -1 | 0 | 1>> = {
   'expense/hem_benchmark_applied': -1,
   'expense/declared_expenses_used': -1,
   'expense/override_applied': -1,
-  // `assessedValue` is the property's monthly cashflow, negative for a
-  // negatively-geared property. Less negative is better. (:1659)
-  'property/negative_cf_layered': 1,
+  // `assessedValue` is the property's monthly SHORTFALL, as a positive cost:
+  // `calculateNegativePropertyCashFlows` stores `Math.abs(net_monthly_cashflow)`
+  // and the engine adds it to living expenses. More of it is less capacity.
+  // This read +1 until 1 Oct 2026, on the premise that the figure was the
+  // signed cash flow — so every Snapshot with a negatively geared property
+  // told the client its shortfall INCREASED what they could borrow (§21).
+  // `audit.spec.ts` now reads the engine's own `Math.abs` to hold the sign.
+  'property/negative_cf_layered': -1,
   // `assessedValue` is monthly servicing. All servicing reduces capacity. (:1665)
   'liability/credit_card_limit_rate': -1,
   'liability/hecs_threshold_applied': -1,
@@ -97,9 +104,13 @@ const POLARITY: Readonly<Record<string, -1 | 0 | 1>> = {
   'policy/override_applied': -1,
   // LMI added to the debt. (:1670)
   'constraint/lmi_capitalised': -1,
-  // `assessedValue` is the stress-tested capacity — a level, and more is
-  // better, even though the entry always records a reduction. (:1674)
-  'constraint/stress_test_applied': 1,
+  // `assessedValue` is the stress-tested capacity: a READING of what the same
+  // surplus repays at a higher rate, not an adjustment to the capacity. The
+  // capacity the document states is the unstressed one, so "Reduces" beside
+  // this row told a reader the stress test had cut a figure printed uncut on
+  // every other page (§21). The row states a fact; its change column still
+  // says by how much.
+  'constraint/stress_test_applied': 0,
 };
 
 /**

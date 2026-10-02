@@ -130,6 +130,7 @@ import { readAnnualRent } from './reports/investment/rentBasis.pure.ts';
 import { rentIsEstablished } from './reports/investment/rentalEvidence.pure.ts';
 import { gradedDetailLine, gradedLine, publishableGrade, verdictWatchPoints } from './reports/investment/scoreSections.pure.ts';
 import { splitVerdictScope } from './reports/investment/verdictAction.pure.ts';
+import { presentableName, presentableTerm } from './reports/presentableName.pure.ts';
 import { printedVerdict } from './reports/printedVerdict.pure.ts';
 import { OVERALL_GRADE_UNAVAILABLE } from './reports/market/scoringInputPolicy.pure.ts';
 import { DOCUMENT_IDENTITY, documentTitleForTier } from './reports/investment/tierIdentity.pure.ts';
@@ -511,12 +512,16 @@ export function projectInvestmentReport(
   const spec = specReader(specs, obj(fin.propertySpecs), obj(row.manual_overrides));
   const property: Record<string, unknown> = {};
   put(property, 'address', str(row.property_address));
-  put(property, 'type', str(spec('property_type', 'propertyType')));
+  // The record's own words, set as a reader reads them: "house" and
+  // "THE HILLS SHIRE" are a vocabulary word and a register's capitals.
+  const type = str(spec('property_type', 'propertyType'));
+  put(property, 'type', type === undefined ? undefined : presentableTerm(type));
   put(property, 'yearBuilt', num(spec('year_built', 'yearBuilt', 'constructionYear')) ?? str(spec('year_built', 'yearBuilt', 'constructionYear')));
   put(property, 'landArea', num(spec('land_size_sqm', 'landSizeSqm', 'landSize')));
   put(property, 'buildingArea', num(spec('building_size_sqm', 'buildingSizeSqm', 'buildSizeSqm', 'buildSize')));
   put(property, 'zoning', str(spec('zoning')));
-  put(property, 'council', str(spec('council_area', 'councilArea')));
+  const council = str(spec('council_area', 'councilArea'));
+  put(property, 'council', council === undefined ? undefined : presentableName(council));
   put(property, 'configuration', configuration(spec));
 
   // ── financials ────────────────────────────────────────────────────────────

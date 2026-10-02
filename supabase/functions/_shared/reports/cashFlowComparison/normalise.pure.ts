@@ -51,9 +51,9 @@
  * `neutraliseUrls`.
  */
 import type { Measure } from '../../reportDesign/measure.pure.ts';
-import { aud, percent, ratio, years as yearsUnit } from '../../reportDesign/measure.pure.ts';
+import { aud, formatMeasure, percent, ratio, years as yearsUnit } from '../../reportDesign/measure.pure.ts';
 import { buildProjection } from '../cashFlow/normalise.pure.ts';
-import { neutraliseUrls } from '../text.pure.ts';
+import { neutraliseUrls, truncateAtWord } from '../text.pure.ts';
 import type { CashFlowProjection, ProjectionYear } from '../cashFlow/payload.pure.ts';
 import type {
   AnalysisNote,
@@ -119,9 +119,13 @@ const isRecord = (v: unknown): v is Record<string, unknown> =>
  */
 export { neutraliseUrls };
 
-/** A model-authored string: trimmed, capped, and stripped of URL schemes. */
+/**
+ * A model-authored string: trimmed, stripped of URL schemes, and capped at a
+ * word (`truncateAtWord`). A bare `.slice` ended a strength or a weakness on the
+ * page part-way through a word with nothing to say it had been cut.
+ */
 const text = (value: unknown, max = MAX_ANALYSIS_SHORT): string =>
-  typeof value === 'string' ? neutraliseUrls(value.trim()).slice(0, max).trim() : '';
+  typeof value === 'string' ? truncateAtWord(neutraliseUrls(value.trim()), max) : '';
 
 /** A finite number, or null. Never `NaN` dressed as zero. */
 const finite = (value: unknown): number | null => {
@@ -226,6 +230,13 @@ interface CategorySpec {
   key: string;
   label: string;
   lowerIsBetter?: boolean;
+  /**
+   * A property with no figure came last rather than went unmeasured. True of
+   * the payback year alone: there, no figure means "not within the term",
+   * which every year inside the term beats — so one property that repays
+   * leads, where the general rule needs two figures and called it a draw.
+   */
+  absentIsLast?: boolean;
   of: (p: ComparedProperty) => Measure | null;
 }
 
@@ -258,6 +269,7 @@ export const CATEGORIES: readonly CategorySpec[] = [
     key: 'paybackYear',
     label: 'Fastest to repay its holding costs',
     lowerIsBetter: true,
+    absentIsLast: true,
     of: (p) => (p.outcome.paybackYear === null ? null : yearsUnit(p.outcome.paybackYear)),
   },
 ];
@@ -269,6 +281,11 @@ export const CATEGORIES: readonly CategorySpec[] = [
  * awarding a tie to whichever property the adviser happened to open first is a
  * document that changes its mind when the same comparison is run in a different
  * order.
+ *
+ * `undecided` says which of the two absences it is: a tie, or a figure fewer
+ * than two properties have. Where an absent figure means last
+ * (`absentIsLast`), the one property that has it leads, with no margin to
+ * state, because the others have no figure to measure the lead against.
  */
 export function winnerOf(
   spec: CategorySpec,
@@ -286,12 +303,15 @@ export function winnerOf(
     margin: null,
     lowerIsBetter: Boolean(spec.lowerIsBetter),
   };
-  if (scored.length < 2) return base;
+  if (spec.absentIsLast && scored.length === 1 && properties.length > 1) {
+    return { ...base, property: scored[0].number, value: scored[0].measure };
+  }
+  if (scored.length < 2) return { ...base, undecided: 'unreached' };
 
   const sign = spec.lowerIsBetter ? 1 : -1;
   const ranked = [...scored].sort((a, b) => sign * (a.measure.value - b.measure.value));
   const [best, second] = ranked;
-  if (best.measure.value === second.measure.value) return base;
+  if (best.measure.value === second.measure.value) return { ...base, undecided: 'tie' };
 
   return {
     ...base,
@@ -355,22 +375,35 @@ export function describeComparison(
   const leader = byNumber.get(scoreboard.order[0]);
   if (!leader) return '';
 
+  // The lead as the strip beside it prints it (`formatMeasure`): the sentence
+  // said "32%" over a KPI reading "31.9%", one figure in two precisions.
   const gap = scoreboard.leadMargin;
   const separation = gap === null
     ? 'The two leading properties return the same amount over the term.'
     : gap.value >= CLEAR_LEAD_PERCENT
-      ? `It leads the next property by ${gap.value.toFixed(0)}% on total return, which is a clear separation.`
-      : `It leads the next property by only ${gap.value.toFixed(1)}% on total return, so the ranking is close `
+      ? `It leads the next property by ${formatMeasure(gap)} on total return, which is a clear separation.`
+      : `It leads the next property by only ${formatMeasure(gap)} on total return, so the ranking is close `
         + 'enough that the differences below should decide it.';
 
   const holding = leader.outcome.paybackYear
     ? `It repays its holding costs in year ${leader.outcome.paybackYear}.`
     : 'It does not repay its holding costs within the projected term.';
 
+  // Total return is growth plus cumulative after-tax cash flow, said as the sum
+  // it is. "Against -$198,521 of cumulative after-tax cash flow" put a minus
+  // sign after a word that already subtracts; a property that cost money to
+  // hold reads "less the $198,521 it cost to hold after tax".
+  const cash = leader.outcome.cumulativeAfterTax;
+  const growth = money(leader.outcome.capitalGain);
+  const breakdown = cash.value > 0
+    ? `, which is ${growth} of capital growth plus ${money(cash)} of after-tax cash flow`
+    : cash.value < 0
+      ? `, which is ${growth} of capital growth less the ${money({ ...cash, value: -cash.value })} `
+        + 'it cost to hold after tax'
+      : ', all of it capital growth';
+
   return `Over ${termYears} years, ${leader.shortAddress} produces the strongest total return of the `
-    + `${properties.length} properties compared — ${money(leader.outcome.totalReturn)}, being `
-    + `${money(leader.outcome.capitalGain)} of capital growth against `
-    + `${money(leader.outcome.cumulativeAfterTax)} of cumulative after-tax cash flow. `
+    + `${properties.length} properties compared: ${money(leader.outcome.totalReturn)}${breakdown}. `
     + `${separation} ${holding}`;
 }
 
@@ -419,7 +452,11 @@ function toCapitalGrowth(raw: unknown): CapitalGrowthBlock | null {
       .map((v) => ({ value: text(v.value), equity: text(v.equity) }))
       .filter((v) => v.value || v.equity),
   };
-  return block.strongestEquity || block.wealthBuilder || block.endingValues.length ? block : null;
+  // The ending values stay on the payload but are not, on their own, a block:
+  // the document no longer prints them (`analysisSection`, Audit 8), so a block
+  // holding nothing else drew a "Capital growth" heading over nothing, and
+  // opened the analysis section for it.
+  return block.strongestEquity || block.wealthBuilder ? block : null;
 }
 
 function toYields(raw: unknown): YieldBlock | null {

@@ -601,8 +601,11 @@ export function DepreciationValueCalculator({
                   </Alert>
                 )}
 
-                {/* Primary Output */}
-                <div className="text-center space-y-2 py-4 bg-primary/5 rounded-lg">
+                {/* Primary Output. Spaced with flex + gap, never space-y-*: the
+                    Reports page is wrapped in .ci-foundation, whose
+                    `.space-y-2 > p` helper-text rule out-ranks utilities and
+                    set this headline figure as small muted text. */}
+                <div className="text-center flex flex-col gap-2 py-4 bg-primary/5 rounded-lg">
                   <p className="text-sm text-muted-foreground uppercase tracking-wide">
                     {result.propertyAge > 0 
                       ? `Projected Claims ${result.projectionYears[0]}–${result.projectionYears[9]}`

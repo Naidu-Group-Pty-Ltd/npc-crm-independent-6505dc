@@ -30,6 +30,8 @@
  * time zone), because a server in UTC would print a different hour.
  */
 
+import { readableFileName } from '../readableFileName.pure.ts';
+
 export const STRATEGY_RATIONALE_NAME = 'Strategy Rationale Brief';
 export const STRATEGY_RATIONALE_STANDFIRST = 'Borrowing Capacity Scenario — Finance Hand-off';
 
@@ -231,12 +233,16 @@ export interface StrategyRationaleDocument {
   kpis: RationaleKpi[];
   proposeTitle: string;
   bullets: RationaleBulletLine[];
-  /** Printed where there are no bullets. */
+  /**
+   * Composed where there are no bullets, for a server older than §22, which
+   * prints it; the brief now leaves a part with nothing in it out.
+   */
   proposeEmpty: string | null;
   reconcileTitle: string;
   reconciliation: string;
   sequenceTitle: string;
   steps: RationaleStepLine[];
+  /** As `proposeEmpty`: composed for an older server, never drawn by this one. */
   sequenceEmpty: string | null;
   caveatsTitle: string;
   caveats: string[];
@@ -287,16 +293,55 @@ export const SEVERITY_LABEL: Record<RationaleSeverity, string> = {
   info: 'INFO',
 };
 
-const BASIS_LABEL: Record<string, string> = {
+/**
+ * A valuation's basis, in words. It read "Desktop val" and "Comp sales", the
+ * shorthand a jsPDF column had room for, on a brief a finance team reads
+ * (§22). AVM is the industry's own name for the thing.
+ */
+export const BASIS_LABEL: Record<string, string> = {
   avm: 'AVM',
-  desktop: 'Desktop val',
-  comparable_sales: 'Comp sales',
+  desktop: 'Desktop valuation',
+  comparable_sales: 'Comparable sales',
   manual: 'Manual',
 };
 
+/**
+ * An execution risk and a step's owner, as words in a sentence or a table
+ * cell. Both printed in capitals ("Execution risk: MEDIUM", "BROKER"), the
+ * jsPDF brief's chip style carried into body text (§22). The jsPDF brief
+ * still draws its chips in capitals; it uppercases the word itself.
+ */
+export const RISK_LABEL: Record<'low' | 'medium' | 'high', string> = { low: 'Low', medium: 'Medium', high: 'High' };
+export const OWNER_LABEL: Record<'broker' | 'finance' | 'client', string> = { broker: 'Broker', finance: 'Finance', client: 'Client' };
+
+/** A word in capitals, or any casing, as the label it stands for; anything else as it came. */
+function labelOf(map: Record<string, string>, word: string): string {
+  return map[word.trim().toLowerCase()] ?? word.trim();
+}
+
+/**
+ * Said where a scenario allocates more than its equity pool releases. It read
+ * "POOL OVERCOMMITTED — sinks were clamped to available pool.": the capital
+ * router's own words, in capitals (§22).
+ */
+export const POOL_OVERCOMMITTED_NOTE =
+  'More was allocated than the pool releases, so each allocation was reduced to fit.';
+
+/** The capital flow's three figures, as the typeset and jsPDF briefs label them. */
+export const CAPITAL_FLOW_LABELS = { available: 'Available', allocated: 'Allocated', unallocated: 'Unallocated' } as const;
+
+/** The reconciliation's heading. It read "How the math reconciles" (§22). */
+export const RECONCILE_TITLE = 'How the maths reconciles';
+
 export const ADVISOR_SECTION_TITLE = 'Strategy Advisor — why this scenario';
+/**
+ * Said under the advisor's reasoning wherever it is printed — the panel, both
+ * briefs and both Snapshots (§18). It named "this brief" until 1 Oct 2026, and
+ * so said "brief" inside every Borrowing Capacity Snapshot that carried an
+ * advisor's scenario (§21); it names no document now.
+ */
 export const ADVISOR_PROVENANCE_NOTE =
-  'Written by the Strategy Advisor (AI) for this client\'s position. Every figure elsewhere in this brief is the calculation engine\'s own.';
+  'Written by the Strategy Advisor (AI) for this client\'s position. Every other figure is the calculation engine\'s own.';
 export const ADVISOR_OPTIONS_NOTE =
   'Each option\'s figures are the calculation engine\'s, for the option as the advisor proposed it.';
 export const ADVISOR_CAUTIONS_TITLE = 'What the calculation engine flagged';
@@ -328,6 +373,15 @@ export function rationaleReadingNote(context: RationaleContextInput): string | n
 }
 
 export const ADVISOR_ADJUSTED_NOTE =
+  'The levers were changed after this scenario was applied, so this reasoning describes the scenario as the advisor proposed it; the figures shown are for the levers as they now stand.';
+
+/**
+ * The adjusted note as a browser published before 1 Oct 2026 sends it. The
+ * server keeps a note only when it is the composer's own (`readStrategyRationale`),
+ * so without this an open tab on the earlier build would lose the note until it
+ * reloaded; it is read as the current wording, never printed as sent.
+ */
+export const LEGACY_ADVISOR_ADJUSTED_NOTE =
   'The levers were changed after this scenario was applied, so this reasoning describes the scenario as the advisor proposed it; the figures in this brief are for the levers as they now stand.';
 
 /**
@@ -373,7 +427,7 @@ export function composeAdvisorSection(advisor: RationaleAdvisorInput | null | un
     title: ADVISOR_SECTION_TITLE,
     scenarioLine: `Scenario: ${plainParagraph(advisor.scenarioName || '') || 'Suggested scenario'}`,
     paragraphs,
-    riskLine: risk ? `Execution risk: ${risk.toUpperCase()}` : null,
+    riskLine: risk ? `Execution risk: ${RISK_LABEL[risk]}` : null,
     risk,
     evidenceTitle: `Evidence required before submission (${plural(evidence.length, 'item')})`,
     evidence,
@@ -398,7 +452,6 @@ export function advisorOptionLine(o: RationaleAdvisorOption): string {
   return `${o.name}${o.applied ? ' (applied)' : ''}${figures ? ` — ${figures}` : ''}`;
 }
 
-const RISK_WORD: Record<string, string> = { low: 'LOW', medium: 'MEDIUM', high: 'HIGH' };
 const money = (v: unknown) => (typeof v === 'number' && Number.isFinite(v) ? fmtAud(v) : '');
 
 /**
@@ -422,7 +475,7 @@ function advisorOptions(input: RationaleAdvisorOptionInput[] | undefined): Ratio
         capacity: money(o.capacity),
         purchasePower: money(o.purchasePower),
         target,
-        risk: RISK_WORD[o.executionRisk ?? ''] ?? '',
+        risk: o.executionRisk ? RISK_LABEL[o.executionRisk] ?? '' : '',
       };
     });
   return rows.length >= 2 ? rows : [];
@@ -454,7 +507,9 @@ export function composeStrategyRationale(
     const target = context.targetPurchasePrice ?? 0;
     let foot = 'Loan + cash − costs';
     if (target > 0) {
-      foot = context.meetsTarget ? `Target ${fmtAud(target)} ✓` : `Short of ${fmtAud(target)}`;
+      // Words, never a tick: the jsPDF brief's font has no ✓ and printed it
+      // as "met", while the typeset brief printed the glyph (§22).
+      foot = context.meetsTarget ? `Clears the ${fmtAud(target)} target` : `Short of the ${fmtAud(target)} target`;
     }
     kpis.push({
       label: 'Purchase power',
@@ -470,14 +525,14 @@ export function composeStrategyRationale(
     severity: b.severity,
     severityLabel: SEVERITY_LABEL[b.severity] ?? 'INFO',
     impactLabel: b.capacityImpact !== 0 ? `${fmtSigned(b.capacityImpact)} capacity` : null,
-    cashflowLine: b.cashflowNote ? `Cash-flow: ${b.cashflowNote}` : null,
+    cashflowLine: b.cashflowNote ? `Cash flow: ${b.cashflowNote}` : null,
   }));
 
   const steps: RationaleStepLine[] = report.sequence.map((s) => ({
     step: String(s.step),
     action: s.action,
     detail: s.detail ?? null,
-    owner: s.owner.toUpperCase(),
+    owner: labelOf(OWNER_LABEL, s.owner),
   }));
 
   const cf = report.capitalFlow;
@@ -489,7 +544,7 @@ export function composeStrategyRationale(
         available: fmtAud(cf.totalAvailable),
         routed: fmtAud(cf.totalRouted),
         residual: fmtAud(cf.remainder),
-        overcommitted: cf.overcommitted ? 'POOL OVERCOMMITTED — sinks were clamped to available pool.' : null,
+        overcommitted: cf.overcommitted ? POOL_OVERCOMMITTED_NOTE : null,
         legs: cf.legs.map((leg) => ({
           label: `${leg.sourceLabel} → ${leg.sinkLabel}`,
           amount: fmtAud(leg.amount),
@@ -540,7 +595,7 @@ export function composeStrategyRationale(
     proposeTitle: `What we propose & why (${plural(report.bullets.length, 'lever')})`,
     bullets,
     proposeEmpty: bullets.length === 0 ? 'Baseline scenario — no levers applied.' : null,
-    reconcileTitle: 'How the math reconciles',
+    reconcileTitle: RECONCILE_TITLE,
     reconciliation: report.reconciliation,
     sequenceTitle: `Recommended execution sequence (${plural(report.sequence.length, 'step')})`,
     steps,
@@ -646,7 +701,8 @@ export function readStrategyRationale(raw: unknown): RationaleRead {
       step: text(s.step, 8) ?? '',
       action,
       detail: text(s.detail, L.longText),
-      owner: (text(s.owner, 24) ?? '').toUpperCase(),
+      // An older browser sends the owner in capitals; it reads as the word.
+      owner: labelOf(OWNER_LABEL, text(s.owner, 24) ?? ''),
     };
   });
 
@@ -692,7 +748,7 @@ export function readStrategyRationale(raw: unknown): RationaleRead {
         title: text(advRaw.title, L.shortText) ?? ADVISOR_SECTION_TITLE,
         scenarioLine: text(advRaw.scenarioLine, L.shortText) ?? '',
         paragraphs: advParagraphs,
-        riskLine: advRisk ? `Execution risk: ${advRisk.toUpperCase()}` : null,
+        riskLine: advRisk ? `Execution risk: ${RISK_LABEL[advRisk]}` : null,
         risk: advRisk,
         evidenceTitle: text(advRaw.evidenceTitle, L.shortText) ?? '',
         evidence: list(advRaw.evidence, L.evidence, (t) => text(t, L.longText)),
@@ -703,7 +759,10 @@ export function readStrategyRationale(raw: unknown): RationaleRead {
           if (!isRec(o)) return null;
           const name = text(o.name, L.shortText);
           if (!name) return null;
-          const risk = typeof o.risk === 'string' && ['LOW', 'MEDIUM', 'HIGH'].includes(o.risk) ? o.risk : '';
+          // Read in any casing, because a browser published before 1 Oct 2026
+          // sends it in capitals; printed as the word.
+          const riskWord = typeof o.risk === 'string' ? o.risk.trim().toLowerCase() : '';
+          const risk = riskWord === 'low' || riskWord === 'medium' || riskWord === 'high' ? RISK_LABEL[riskWord] : '';
           return {
             name,
             applied: o.applied === true,
@@ -719,7 +778,10 @@ export function readStrategyRationale(raw: unknown): RationaleRead {
         // model must say so, and the request cannot talk it out of that.
         notes: [
           ADVISOR_PROVENANCE_NOTE,
-          ...list(advRaw.notes, 4, (t) => text(t, L.longText)).filter((n) => n === ADVISOR_ADJUSTED_NOTE),
+          ...(list(advRaw.notes, 4, (t) => text(t, L.longText))
+            .some((n) => n === ADVISOR_ADJUSTED_NOTE || n === LEGACY_ADVISOR_ADJUSTED_NOTE)
+            ? [ADVISOR_ADJUSTED_NOTE]
+            : []),
         ],
       }
     : null;
@@ -740,7 +802,7 @@ export function readStrategyRationale(raw: unknown): RationaleRead {
       proposeTitle: text(raw.proposeTitle, L.shortText) ?? 'What we propose & why',
       bullets,
       proposeEmpty: bullets.length === 0 ? text(raw.proposeEmpty, L.shortText) : null,
-      reconcileTitle: text(raw.reconcileTitle, L.shortText) ?? 'How the math reconciles',
+      reconcileTitle: text(raw.reconcileTitle, L.shortText) ?? RECONCILE_TITLE,
       reconciliation: text(raw.reconciliation, L.longText) ?? '',
       sequenceTitle: text(raw.sequenceTitle, L.shortText) ?? 'Recommended execution sequence',
       steps,
@@ -757,12 +819,14 @@ export function readStrategyRationale(raw: unknown): RationaleRead {
 }
 
 /**
- * The filename, as the jsPDF generator has always named it:
- * `Strategy_Rationale_<Name>_<yyyy-MM-dd>.pdf`, runs of anything but letters,
- * digits, `_` and `-` collapsed to one `_`.
+ * The name a person is handed: `Strategy Rationale Brief - Samuel Lavis - 28
+ * Sep 2026.pdf` — the name the cover prints, whose brief it is, and the day
+ * (`readableFileName.pure.ts`), as the Snapshot it sits beside is named (§22).
+ *
+ * It was `Strategy_Rationale_Samuel_Lavis_2026-09-28.pdf`. The jsPDF brief, the
+ * legacy layout, keeps that name, as the in-browser Snapshot keeps its own
+ * (§21): the name says which of the two layouts a file is.
  */
 export function strategyRationaleFileName(clientName: string, isoDate: string): string {
-  const safe = (clientName || 'Client').replace(/[^a-zA-Z0-9_-]+/g, '_');
-  const date = /^\d{4}-\d{2}-\d{2}/.exec(isoDate)?.[0] ?? '';
-  return `Strategy_Rationale_${safe}_${date}.pdf`;
+  return readableFileName({ name: STRATEGY_RATIONALE_NAME, topic: clientName || 'Client', isoDate });
 }

@@ -40,11 +40,13 @@ import type { Measure } from '../../reportDesign/measure.pure.ts';
 import { aud, audPerMonth, audPerYear, count, percent } from '../../reportDesign/measure.pure.ts';
 // The one casing rule for a person's name in this repo. See `personName`.
 import { smartCapitalize } from '../../clientName.ts';
+import { formatReportDate, formatReportDateShort } from '../reportDate.pure.ts';
 import {
   buildHouseholdIncome,
   buildLiabilityServicing,
   buildPropertyExpenditure,
   freqToMonthly,
+  type LiabilityServicing,
 } from './finance.pure.ts';
 import type {
   AddressPeriod,
@@ -63,7 +65,7 @@ import type {
   Residence,
   SmsfDetails,
 } from './payload.pure.ts';
-import { MAX_ROWS } from './payload.pure.ts';
+import { MAX_ROWS, recordHoldsFinancials } from './payload.pure.ts';
 
 /** A record arrived that is not a client. */
 export class ClientDetailsPayloadError extends Error {
@@ -111,6 +113,61 @@ export function humanise(value: unknown, fallback = ''): string {
 const contactRole = (value: unknown): ContactRole =>
   text(value, 20).toLowerCase() === 'secondary' ? 'secondary' : 'primary';
 
+/**
+ * A recorded date as a reader writes it.
+ *
+ * The record stores ISO dates and the document printed them that way: a date of
+ * birth read `1984-03-17` and every address period `2024-02-01` to `2026-01-31`
+ * — a database's spelling, on a page a broker reads. Through the one date
+ * reader (`reportDate.pure.ts`); a value it cannot read is printed as recorded
+ * rather than lost, because a date somebody typed oddly is still their date.
+ */
+const longDate = (value: unknown): string => {
+  const raw = text(value, 40);
+  return formatReportDate(raw) || raw;
+};
+/** The same, short, for a table column: `1 Feb 2024`. */
+const shortDate = (value: unknown): string => formatReportDateShort(text(value, 40));
+
+/**
+ * What the expense form calls a category, where its stored value reads wrongly
+ * once humanised — `internet_phone` set as "Internet phone". Every other value
+ * humanises to the form's own word.
+ */
+const EXPENSE_CATEGORY_WORDS: Readonly<Record<string, string>> = {
+  internet_phone: 'Internet and phone',
+  phone_internet: 'Phone and internet',
+  gym_fitness: 'Gym and fitness',
+};
+
+const expenseCategory = (value: unknown): string =>
+  EXPENSE_CATEGORY_WORDS[text(value, 80).toLowerCase()] ?? humanise(value, 'Other');
+
+/**
+ * How a liability's monthly figure was arrived at, in words.
+ *
+ * The finance engine notes its method in a log's shorthand — `Est. P&I @ 9% /
+ * 5yr`, `3% of credit limit`, `5% of limit/balance`, `As recorded; not
+ * estimated` — and the document printed those notes after its own "Estimated —",
+ * so a broker read "Estimated — Est. P&I @ 9% / 5yr". The engine's notes are
+ * unchanged; this translates them, and a note it does not know is printed as
+ * written rather than guessed at.
+ */
+export function liabilityBasis(item: Pick<LiabilityServicing, 'calculationNote' | 'isEstimated' | 'limit'>): string {
+  const note = item.calculationNote.trim();
+  const estimated = (words: string) => (item.isEstimated ? `Estimated: ${words}` : words);
+
+  const pi = /^Est\. P&I @ (\d+(?:\.\d+)?)% \/ (\d+)\s*yr$/i.exec(note);
+  if (pi) return `Estimated: principal and interest at ${pi[1]}% over ${pi[2]} years`;
+  if (note === '3% of credit limit') {
+    // The engine takes the limit, or the balance where no limit is recorded.
+    return estimated(`3% of the ${item.limit && item.limit > 0 ? 'limit' : 'balance'}`);
+  }
+  if (note === '5% of limit/balance') return estimated('5% of the limit or balance');
+  if (!note || note === 'As recorded; not estimated') return 'As recorded';
+  return estimated(note);
+}
+
 const joinName = (...parts: unknown[]): string =>
   parts.map((p) => text(p, 60)).filter(Boolean).join(' ');
 
@@ -157,6 +214,52 @@ export function composeClientName(client: Row): string {
   return [primary, secondary].filter(Boolean).join(' & ') || 'Client';
 }
 
+const STATE_WORD = /^(NSW|VIC|QLD|SA|WA|TAS|NT|ACT)\b/i;
+
+/**
+ * An Australian address on one line: `12 Bayview Terrace, Rhodes NSW 2138`.
+ *
+ * The form keeps the street ("Street Address") apart from the suburb, state and
+ * postcode, and the document joined all of them with commas — `…, Wentworth
+ * Point, NSW 2127, Australia` — where an Australian address sets the locality
+ * as one group and names no country. A foreign country is still printed.
+ *
+ * A street line that already ends with its suburb, as an imported row can, does
+ * not print it a second time. That is judged by position — the street line's
+ * last comma-separated part — never by the word appearing somewhere in it,
+ * because streets are named after the suburbs they run through
+ * (ADDRESS_COMPOSITION.md): "18 Schofields Farm Road" keeps "Schofields".
+ */
+export function addressLine(
+  street: string,
+  suburb: string,
+  state = '',
+  postcode = '',
+  country = '',
+): string {
+  const line = street.trim();
+  const sub = suburb.trim();
+  const st = state.trim().toUpperCase();
+  const pc = postcode.trim();
+  const abroad = country.trim() && !/^australia$/i.test(country.trim()) ? country.trim() : '';
+
+  const parts = line.split(',').map((x) => x.trim()).filter(Boolean);
+  const tail = parts.length > 1 ? parts[parts.length - 1].toLowerCase() : '';
+  const subLower = sub.toLowerCase();
+  // The street line already ends with the whole locality, or with the suburb.
+  const carriesLocality = Boolean(sub) && tail.startsWith(`${subLower} `)
+    && STATE_WORD.test(tail.slice(subLower.length + 1));
+  const carriesSuburb = Boolean(sub) && tail === subLower;
+
+  const rest = [st, pc].filter(Boolean).join(' ');
+  const head = carriesLocality
+    ? line
+    : carriesSuburb
+      ? [line, rest].filter(Boolean).join(' ')
+      : [line, [sub, rest].filter(Boolean).join(' ')].filter(Boolean).join(', ');
+  return [head, abroad].filter(Boolean).join(', ');
+}
+
 /** Past this, a column heading wraps and the matrix loses a row of height. */
 const SHORT_ADDRESS_CHARS = 30;
 
@@ -175,17 +278,28 @@ const SHORT_ADDRESS_CHARS = 30;
  * it, and the result is clipped on a word rather than mid-name.
  */
 export function shortAddress(address: string): string {
-  const parts = address.split(',').map((x) => x.trim()).filter(Boolean);
-  if (!parts.length) return address.trim();
-
-  const head = parts.length > 1 && parts[0].length < 12
-    ? `${parts[0]}, ${parts[1]}`
-    : parts[0];
-
+  const head = streetLine(address);
   if (head.length <= SHORT_ADDRESS_CHARS) return head;
   const clipped = head.slice(0, SHORT_ADDRESS_CHARS);
   const lastSpace = clipped.lastIndexOf(' ');
   return `${(lastSpace > 12 ? clipped.slice(0, lastSpace) : clipped).trimEnd()}…`;
+}
+
+/**
+ * The same head, never clipped — for a heading that may wrap.
+ *
+ * The portrait holdings matrix shares the measure between at most five
+ * columns and its heads wrap (`portraitMatrixCss`), so clipping there bought
+ * nothing and cost the name: "Unit 14, 238-242 Great…" headed a column whose
+ * street the reader then had to find in the next section. The landscape matrix
+ * and the chart labels, which cannot wrap, keep `shortAddress`.
+ */
+export function streetLine(address: string): string {
+  const parts = address.split(',').map((x) => x.trim()).filter(Boolean);
+  if (!parts.length) return address.trim();
+  return parts.length > 1 && parts[0].length < 12
+    ? `${parts[0]}, ${parts[1]}`
+    : parts[0];
 }
 
 // ── The people ──────────────────────────────────────────────────────────────
@@ -199,7 +313,7 @@ function toContacts(client: Row): Contact[] {
     email: text(client.primary_email, 120),
     mobile: text(client.primary_mobile, 40),
     gender: humanise(client.primary_gender),
-    dateOfBirth: text(client.primary_dob, 40),
+    dateOfBirth: longDate(client.primary_dob),
   }];
 
   // A second person exists when they are named, not when the columns exist.
@@ -215,7 +329,7 @@ function toContacts(client: Row): Contact[] {
       email: text(client.secondary_email, 120),
       mobile: text(client.secondary_mobile, 40),
       gender: humanise(client.secondary_gender),
-      dateOfBirth: text(client.secondary_dob, 40),
+      dateOfBirth: longDate(client.secondary_dob),
     });
   }
   return contacts;
@@ -252,11 +366,10 @@ function toHousehold(client: Row, history: unknown): Household {
 
   const periods: AddressPeriod[] = rows(history).map((h) => ({
     contact: contactRole(h.contact_type),
-    address: [text(h.address, 200), text(h.current_suburb, 80), text(h.current_state, 20).toUpperCase()]
-      .filter(Boolean).join(', '),
+    address: addressLine(text(h.address, 200), text(h.current_suburb, 80), text(h.current_state, 20)),
     isCurrent: h.is_current === true,
-    startDate: text(h.start_date, 40),
-    endDate: text(h.end_date, 40),
+    startDate: shortDate(h.start_date),
+    endDate: shortDate(h.end_date),
     months: optionalNum(h.months_at_address),
     livingSituation: humanise(h.living_situation),
   })).filter((p) => p.address);
@@ -289,7 +402,7 @@ function toEmployment(employment: unknown): EmploymentRow[] {
       employer: text(e.employer_name, 120),
       employmentType: humanise(e.employment_type),
       role: text(e.occupation_role, 120),
-      startDate: text(e.start_date, 40),
+      startDate: shortDate(e.start_date),
       isCurrent: e.is_current !== false,
       workplace: [
         text(e.workplace_suburb, 80),
@@ -315,7 +428,7 @@ const toAssets = (assets: unknown): AssetRow[] =>
 
 const toExpenses = (expenses: unknown): ExpenseRow[] =>
   rows(expenses).map((x): ExpenseRow => ({
-    category: humanise(x.expense_category, 'Other'),
+    category: expenseCategory(x.expense_category),
     name: text(x.expense_name, 120),
     // Through the conversion even though every stored row says `monthly`. The
     // column name is an assertion the schema does not enforce.
@@ -431,43 +544,70 @@ const money = (m: Measure): string => {
   return `${m.value < 0 ? '-' : ''}$${grouped}`;
 };
 
+/** "married, with 2 dependents" — what the record says about the household. */
+function householdWords(household: Household): { marital: string; dependents: string } {
+  const n = household.dependents?.value ?? 0;
+  return {
+    marital: household.maritalStatus.toLowerCase(),
+    dependents: n > 0 ? `with ${n} dependent${n === 1 ? '' : 's'}` : '',
+  };
+}
+
 /**
  * Two or three sentences that agree with the tables, because they are built
  * from them.
  *
  * Written to work for a client with nothing recorded, which is what a first
  * draft of this always gets wrong: a paragraph that assumes a portfolio reads as
- * broken for 97% of the record.
+ * broken for 97% of the record. For that client it says who they are, where the
+ * record says anything, and nothing more: the closing section says in one
+ * callout that nothing financial is recorded, and two sentences saying so above
+ * it read as the same absence three times on one page.
+ *
+ * The property figures are every property the record holds, the home included,
+ * and so is the count beside them: the count used to leave the home out while
+ * the value put it in, so a client with a home and one investment read "holds 1
+ * property worth" the two of them.
  */
 export function describeClient(
   meta: ClientDetails['meta'],
   household: Household,
   position: Position,
   properties: readonly PropertyRow[],
+  ownerOccupied: PropertyRow | null = null,
+  holdsFinancials = true,
 ): string {
+  const name = meta.clientName;
+  const { marital, dependents } = householdWords(household);
+  const status = [marital, dependents].filter(Boolean).join(', ');
+
+  // "Rohan Mehta-Castellano is recorded as married, with 2 dependents."
+  // "… are recorded as one household: married, with 2 dependents."
   const who = meta.hasSecondaryContact
-    ? `${meta.clientName} are recorded as a household`
-    : `${meta.clientName} is recorded`;
+    ? `${name} are recorded as one household${status ? `: ${status}` : ''}.`
+    : marital
+      ? `${name} is recorded as ${status}.`
+      : dependents ? `${name} is recorded ${dependents}.` : '';
 
-  const family = household.maritalStatus
-    ? ` as ${household.maritalStatus.toLowerCase()}`
-    : '';
-  const dependents = household.dependents && household.dependents.value > 0
-    ? ` with ${household.dependents.value} dependent${household.dependents.value === 1 ? '' : 's'}`
-    : '';
+  if (!holdsFinancials) return who;
 
-  const holdings = properties.length
-    ? `The record holds ${properties.length} ${properties.length === 1 ? 'property' : 'properties'} `
-      + `worth ${money(position.propertyValue)} against ${money(position.propertyDebt)} of debt, `
-      + `leaving ${money(position.propertyEquity)} of equity. `
-    : 'No investment property is recorded against this client. ';
+  const held = properties.length + (ownerOccupied ? 1 : 0);
+  const debt = position.propertyDebt.value;
+  const holdings = held
+    ? `The record holds ${held} ${held === 1 ? 'property' : 'properties'}`
+      + (ownerOccupied ? (held === 1 ? ', the home they live in,' : ', the home included,') : '')
+      + ` worth ${money(position.propertyValue)}`
+      + (debt > 0
+        ? ` against ${money(position.propertyDebt)} of debt, leaving ${money(position.propertyEquity)} of equity.`
+        : `, with no debt recorded against ${held === 1 ? 'it' : 'them'}.`)
+    : 'No property is recorded against this client.';
 
   const standing = position.incomeMonthly.value > 0
     ? `Recorded income is ${money(position.incomeMonthly)} a month against `
       + `${money(position.commitmentsMonthly)} of commitments.`
-    : 'No income has been recorded against this client.';
+    : 'No income is recorded against this client.';
 
-  return `${who}${family}${dependents}. ${holdings}${standing}`;
+  return [who, holdings, standing].filter(Boolean).join(' ');
 }
 
 // ── The whole payload ───────────────────────────────────────────────────────
@@ -536,7 +676,9 @@ export function buildClientDetails(input: BuildClientDetailsInput): ClientDetail
     const source = rawLiabilities[i] ?? {};
     return {
       type: humanise(item.type, 'Liability'),
-      provider: humanise(source.provider_name, humanise(item.type)),
+      // As typed. A provider is a proper noun — "NAB", "Commonwealth Bank" —
+      // and humanising it printed "Nab" and "Commonwealth bank".
+      provider: text(source.provider_name, 120),
       balance: aud(item.balance),
       creditLimit: item.limit === undefined ? null : aud(item.limit),
       interestRate: optionalNum(source.interest_rate) === null
@@ -545,7 +687,7 @@ export function buildClientDetails(input: BuildClientDetailsInput): ClientDetail
       captured: audPerMonth(item.captured),
       monthlyServicing: audPerMonth(item.monthlyServicing),
       isEstimated: item.isEstimated,
-      basis: item.calculationNote || 'As recorded',
+      basis: liabilityBasis(item),
     };
   });
 
@@ -554,7 +696,9 @@ export function buildClientDetails(input: BuildClientDetailsInput): ClientDetail
     secondaryEmploymentMonthly: audPerMonth(rawIncome.secondaryEmploymentMonthly),
     totalEmploymentMonthly: audPerMonth(rawIncome.totalEmploymentMonthly),
     otherIncome: rawIncome.otherIncome.map((line) => ({
-      label: text(line.label, 120),
+      // The engine appends " (Secondary)" for its own list; here whose a line
+      // is has its own column, and the suffix printed it twice.
+      label: text(line.label, 120).replace(/\s*\(Secondary\)$/i, ''),
       monthly: audPerMonth(line.monthly),
       contact: contactRole(line.contactType),
     })),
@@ -609,9 +753,13 @@ export function buildClientDetails(input: BuildClientDetailsInput): ClientDetail
     hasSecondaryContact,
   };
 
+  const holdsFinancials = recordHoldsFinancials({
+    employment, assets, liabilities, expenses, properties, ownerOccupied, income,
+  });
+
   return {
     meta,
-    narrative: describeClient(meta, household, position, properties),
+    narrative: describeClient(meta, household, position, properties, ownerOccupied, holdsFinancials),
     household,
     ownerOccupied,
     employment,

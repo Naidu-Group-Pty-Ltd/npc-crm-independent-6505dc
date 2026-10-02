@@ -7,6 +7,7 @@
  * than in a format module because a second copy is the defect this programme
  * removes.
  */
+import { clipAtWord } from './readableFileName.pure.ts';
 
 /**
  * Turn a URL in model prose back into plain text.
@@ -99,4 +100,21 @@ export function repairFloatArtefacts(value: string): string {
  */
 export function closeDoubledStops(text: string): string {
   return String(text ?? '').replace(/([^.])\.\.(?!\.)/g, '$1.');
+}
+
+/**
+ * Text within `max` unchanged; past it, cut at a word (`clipAtWord`) and
+ * closed with an ellipsis, so a reader can see it was cut.
+ *
+ * Three formats cap text a person reads: the 10 Year Cash Flow's notes
+ * (Audit 7), the Property Comparison's model prose, and the Cash Flow
+ * Comparison's — which cut with a bare `.slice` and so ended a strength or a
+ * weakness on a client's page part-way through a word with no sign that it had
+ * been cut (Audit 8, 1 Oct 2026). One rule, built on the one a filename
+ * already uses, rather than a copy of it in each format.
+ */
+export function truncateAtWord(value: string, max: number): string {
+  const t = String(value ?? '').trim();
+  if (t.length <= max) return t;
+  return `${clipAtWord(t, max)}\u2026`;
 }

@@ -105,7 +105,12 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.compare-investment-reports]
-verify_jwt = true
+# Same family, same model and same defect as manage-investment-reports below:
+# browser-called, authenticates its own callers through `verifyAuth` +
+# `enforceCsrf`, so per docs/security/VERIFY_JWT.md the gateway check "could
+# only ever reject" a cookie-holding browser whose access token had lapsed —
+# and reject it with an unreadable wildcard-CORS 401.
+verify_jwt = false
 request_timeout = 180
 
 [functions.compare-cash-flow-reports]
@@ -480,10 +485,38 @@ verify_jwt = false
 verify_jwt = true
 
 [functions.get-investment-reports]
-verify_jwt = true
+# Same family, same model and same defect as manage-investment-reports below:
+# browser-called, authenticates its own callers through `verifyAuth` +
+# `enforceCsrf`, so per docs/security/VERIFY_JWT.md the gateway check "could
+# only ever reject" a cookie-holding browser whose access token had lapsed —
+# and reject it with an unreadable wildcard-CORS 401.
+verify_jwt = false
 
 [functions.manage-investment-reports]
-verify_jwt = true
+# Browser-facing and cookie-authenticated, so `false` is the rule in
+# docs/security/VERIFY_JWT.md § Choosing the value: the function authenticates
+# its own callers through `verifyAuth` (HttpOnly `__Host-session_token`, portal
+# session token, or JWT), and "a browser holding this app's cookie has no
+# Supabase JWT to present, so the gateway check could only ever reject it".
+# ~30 browser call sites (InvestmentReportGenerator, InvestmentReportModal,
+# useChunkedRegeneration, ReportGenerationProgress …) and every one of its six
+# report-path siblings — generate-, condense-, fork-, render-investment-report-pdf,
+# resume-, investment-scoring-service — is already false.
+#
+# Declared `true`, it filtered exactly the wrong set. The anon key is a valid
+# JWT, so the gateway admitted every anonymous caller (the function's own 401
+# stopped them); what it rejected was a signed-in user whose access token had
+# lapsed mid-run. That rejection is the gateway's, and it answers a wildcard
+# `Access-Control-Allow-Origin` with no `Access-Control-Allow-Credentials` —
+# unreadable to a `credentials: 'include'` request — so a lapsed token surfaced
+# as "Network/CORS error calling manage-investment-reports … check the function
+# deployment" against an ACTIVE, healthy v581. An investment report is 17
+# sections against a ~150 s ceiling, resumed repeatedly, so a run routinely
+# outlives its token and this was reachable on any sufficiently long generation.
+#
+# Authorization is unchanged and still enforced in the function: `enforceCsrf`,
+# `verifyAuth`, and per-action `requireModulePermission` / `requireAdmin`.
+verify_jwt = false
 
 [functions.render-investment-report-pdf]
 verify_jwt = false
@@ -1014,6 +1047,8 @@ verify_jwt = false
 [functions.security-step-up]
 verify_jwt = false
 
+
+
 [functions.market-updates-status]
 # Authoritative sanitised read contract; authentication and module access are enforced in-function.
 verify_jwt = false
@@ -1185,11 +1220,6 @@ verify_jwt = false
 [functions.aml-verification-processor]
 verify_jwt = false
 
-# Operator-only backfill. Was verify_jwt = false with no caller check of any
-# kind, a service-role client and CORS '*' — anyone who knew the URL could
-# invoke it, spend the vendor credential it holds and write to production.
-# It has no programmatic caller anywhere in the repository, so requiring a
-# JWT breaks nothing. Security audit, 12 September 2026.
 [functions.bc-scenario-agent]
 verify_jwt = false
 

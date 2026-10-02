@@ -12,6 +12,8 @@ import { SearchInput } from '@/components/ui/search-input';
 import { Check, Loader2, Send, User, CheckCircle2, AlertCircle, X, ChevronDown, ChevronUp } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
+import { documentTitleForTier } from '@/lib/reports/investment/tierIdentity.pure';
+import { REPORT_ARCHETYPES } from '@/lib/reportDesign/structure.pure';
 
 interface SendToClientModalProps {
   isOpen: boolean;
@@ -24,7 +26,7 @@ interface SendToClientModalProps {
    * Produces — or, when one already exists for this exact version, reuses —
    * the FINAL document, and answers the storage path the portal row points
    * at. Both callers (the Investment page, the Cash Flow analysis) answer
-   * with the same document their own "Generate PDF" downloads; nothing is
+   * with the same document their own "Export PDF" downloads; nothing is
    * drawn here, and nothing here can change what the document contains.
    *
    * This used to take the Cash Flow chart switches, which reached only the
@@ -48,12 +50,19 @@ interface ClientNoteEntry {
   noteVisibility: 'internal' | 'both';
 }
 
-const tierLabels: Record<string, string> = {
-  compass: "Investor's Compass",
-  briefing: 'Executive Briefing',
-  snapshot: 'Snapshot',
-  cashflow: 'Cash Flow Analysis',
-};
+/**
+ * The document's own name, as its cover and its file name print it: the 10
+ * Year Cash Flow Analysis, or the Investment tier's title
+ * (`tierIdentity.pure.ts`, which reads an unknown tier as the Compass). The
+ * dialog used to badge every send "Investment Report", a Cash Flow included,
+ * and to call the Compass "Investor's Compass", a name no document carries
+ * (Audit 7). Display only: what is published is unchanged.
+ */
+function documentNameFor(reportTier: string | undefined): string {
+  return reportTier === 'cashflow'
+    ? REPORT_ARCHETYPES['cash-flow-projection'].documentName
+    : documentTitleForTier(reportTier);
+}
 
 export function SendToClientModal({
   isOpen,
@@ -223,7 +232,7 @@ export function SendToClientModal({
             Send Report to Client{selectedClientIds.length > 1 ? 's' : ''}
           </DialogTitle>
           <DialogDescription>
-            Publish this {tierLabels[reportTier || ''] || 'investment'} report to one or more client portals.
+            Publish this {documentNameFor(reportTier)} to one or more client portals.
           </DialogDescription>
         </DialogHeader>
 
@@ -238,10 +247,7 @@ export function SendToClientModal({
             <div className="rounded-md border bg-muted/50 p-3 space-y-1">
               <p className="text-sm font-medium text-foreground truncate">{reportTitle}</p>
               <div className="flex gap-2">
-                <Badge variant="secondary" className="text-xs">Investment Report</Badge>
-                {reportTier && (
-                  <Badge variant="outline" className="text-xs">{tierLabels[reportTier] || reportTier}</Badge>
-                )}
+                <Badge variant="secondary" className="text-xs">{documentNameFor(reportTier)}</Badge>
               </div>
             </div>
 
@@ -252,7 +258,7 @@ export function SendToClientModal({
                   <AlertCircle className="h-4 w-4 text-primary mt-0.5 shrink-0" />
                   <p className="text-sm text-muted-foreground">
                     The final PDF is produced when you send — the same document
-                    “Generate PDF” downloads — or reused when it has already been
+                    “Export PDF” downloads — or reused when it has already been
                     generated for this exact version.
                   </p>
                 </div>

@@ -122,6 +122,20 @@ describe('the send dialog carries no switch the final document cannot honour', (
     expect(sendDialog).toMatch(/reused when it has already been/);
     expect(sendDialog).not.toContain('automatically generated and uploaded');
   });
+
+  // Audit 7: the dialog badged every send "Investment Report", a Cash Flow
+  // included, called the Compass a name no document carries, and pointed at
+  // a "Generate PDF" button both callers now call "Export PDF".
+  it('names the document being sent, and the button that downloads it', () => {
+    expect(sendDialog).not.toMatch(/>\s*Investment Report\s*</);
+    expect(sendDialog).not.toContain("Investor's Compass");
+    expect(sendDialog).toContain('documentTitleForTier(reportTier)');
+    expect(sendDialog).toContain("REPORT_ARCHETYPES['cash-flow-projection'].documentName");
+    expect(sendDialog).toContain('“Export PDF” downloads');
+    expect(sendDialog).not.toContain('Generate PDF');
+    // Display only: the title the portal stores is still the caller's.
+    expect(sendDialog).toMatch(/report_title:\s*reportTitle/);
+  });
 });
 
 describe('the route answers where it stored the bytes', () => {

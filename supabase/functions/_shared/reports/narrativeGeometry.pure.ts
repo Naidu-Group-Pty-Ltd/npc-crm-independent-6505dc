@@ -57,7 +57,10 @@ import { COMPACT_FIGURE_FRACTION } from '../reportDesign/charts.pure.ts';
 export const MARKDOWN_TYPE = {
   heading: {
     2: { scale: 1.5, lineHeight: 1.25, marginTopPt: 0, marginBottomPt: 6 },
-    3: { scale: 1.2, lineHeight: 1.3, marginTopPt: 8, marginBottomPt: 4 },
+    // 1.1, not 1.2: a subhead at 1.2 of the body set within a point of the
+    // section title it sits under on the narrower faces, and read as a rival
+    // to it (Audit 6, 1 Oct 2026). The section title stays at 1.5.
+    3: { scale: 1.1, lineHeight: 1.3, marginTopPt: 8, marginBottomPt: 4 },
     4: { scale: 1.0, lineHeight: 1.3, marginTopPt: 8, marginBottomPt: 3 },
   },
   paragraph: { marginBottomPt: 6 },
@@ -80,6 +83,14 @@ export const MARKDOWN_TYPE = {
     valueScale: 2.4, valueLineHeight: 1.1, labelScale: 0.8, subScale: 0.85,
     paddingPt: 8, marginTopPt: 6, marginBottomPt: 10, gapPt: 3, rulePt: 0.75,
   },
+  /**
+   * A register row set as a record (`MarkdownOptions.recordTables`): its name
+   * on a hairline, then each long cell as a paragraph led by its column's
+   * label. The name's line and the labels are body-sized paragraphs, so a
+   * record is charged as the paragraphs it is (`recordTitleCharge`,
+   * `recordFieldCharge`).
+   */
+  record: { rulePt: 0.5, paddingTopPt: 4, marginTopPt: 6, labelScale: 0.78, labelTracking: 0.06 },
 } as const;
 
 /** Average advance per em of ordinary prose, per face. Measured; see the header. */
@@ -158,6 +169,13 @@ export interface NarrativeGeometry {
   /** Lines a continuation page's box holds, after the holdback. */
   contLines: number;
   /**
+   * The first box shares its page with a summary above it. Only such a box
+   * may be left empty by the packer (`PackOptions.openingShared`): its page
+   * still carries the summary, where an empty first box on a page of its own
+   * would be a blank page. Absent on every other geometry.
+   */
+  openingShared?: boolean;
+  /**
    * The body face, as the box stated it. Prose is charged by
    * `charsPerLine`; a table is charged character by character at the face's
    * measured class widths (`FACE_CLASS_ADVANCE_EM`), and an absent face is
@@ -229,6 +247,7 @@ export function narrativeGeometry(first: NarrativeBox, cont: NarrativeBox | null
     charsPerLine,
     firstPageLines: shared && opening < MIN_SHARED_FIRST_LINES ? 0 : opening,
     contLines,
+    ...(shared ? { openingShared: true } : {}),
     ...(first.face ? { face: first.face } : {}),
   };
 }
@@ -268,6 +287,31 @@ export function statCharge(g: NarrativeGeometry, parts: { label: boolean; sub: b
 
 export function paragraphCharge(g: NarrativeGeometry, chars: number): number {
   return textLines(g, chars) + linesOf(g, MARKDOWN_TYPE.paragraph.marginBottomPt);
+}
+
+/**
+ * How much wider a record's set text runs than ordinary prose: its name is
+ * bold, and a field's label is set in tracked capitals. Charged wide rather
+ * than narrow, so a record packs sparser rather than past its box.
+ */
+export const RECORD_TITLE_WIDTH = 1.08;
+export const RECORD_LABEL_WIDTH = 1.25;
+
+/**
+ * A record's first line: its name in bold, its short fields after it, on a
+ * hairline with a little air above. Its top margin collapses with the margin
+ * of whatever stands above it, as a paragraph's does.
+ */
+export function recordTitleCharge(g: NarrativeGeometry, titleChars: number, metaChars = 0): number {
+  const r = MARKDOWN_TYPE.record;
+  const top = Math.max(0, r.marginTopPt - MARKDOWN_TYPE.paragraph.marginBottomPt);
+  return textLines(g, titleChars * RECORD_TITLE_WIDTH + metaChars)
+    + linesOf(g, top + r.rulePt + r.paddingTopPt + MARKDOWN_TYPE.paragraph.marginBottomPt);
+}
+
+/** A record's field: the column's label run in, then the cell's words — a paragraph. */
+export function recordFieldCharge(g: NarrativeGeometry, labelChars: number, textChars: number): number {
+  return paragraphCharge(g, textChars + labelChars * RECORD_LABEL_WIDTH + 1);
 }
 
 /**

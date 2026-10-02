@@ -67,9 +67,11 @@ export function parseRenderRequest(body: unknown): RequestParse {
 export function comparisonFileName(
   shortAddresses: readonly string[],
   isoDate: string,
+  qualifier?: string | null,
 ): string {
   return readableFileName({
     name: COMPARISON_FILE_NAME,
+    qualifier: qualifier ?? null,
     topic: joinPlaces(shortAddresses),
     isoDate,
   });
@@ -77,6 +79,17 @@ export function comparisonFileName(
 
 /** What the file calls the document. The cover's longer name is the archetype's. */
 export const COMPARISON_FILE_NAME = 'Property Comparison';
+
+/**
+ * The AI-written report ("Download (legacy layout)") under the same name,
+ * qualified so it is never mistaken for the typeset document. It borrows the
+ * Investment report's drawer, and so saved as `Investment Compass - <the
+ * comparison's title> - 1 Oct 2026.pdf`: another document's name, with the
+ * title standing where an address goes, and its flattened copy as
+ * `<the title>-flattened.pdf` (Audit 8). Both take this name now, and the
+ * flatten button adds its own word.
+ */
+export const COMPARISON_LEGACY_QUALIFIER = 'legacy layout';
 
 /**
  * Where the file lands.

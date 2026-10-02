@@ -34,7 +34,7 @@ export function InvestmentReportMobileActionBar({
       <div className="mx-auto flex max-w-7xl items-center gap-2">
         <Button className="min-w-0 flex-1" size="sm" onClick={onDownload} disabled={downloadBusy}>
           {downloadBusy ? <Loader2 className="h-4 w-4 mr-1.5 animate-spin" /> : <Download className="h-4 w-4 mr-1.5" />}
-          {downloadBusy ? 'Preparing…' : 'Download PDF'}
+          {downloadBusy ? 'Preparing…' : 'Export PDF'}
         </Button>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>

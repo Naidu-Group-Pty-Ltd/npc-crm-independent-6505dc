@@ -8,11 +8,21 @@
  */
 import { describe, expect, it } from 'vitest';
 
-import { formatMeasure } from '@/lib/reportDesign/measure.pure';
+import { audPerMonth, audPerYear, formatMeasure, rate } from '@/lib/reportDesign/measure.pure';
 import {
   AUDIT_CATEGORY_ORDER,
+  AUDIT_LABEL,
+  auditRule,
   buildSnapshot,
+  CAPITALISED_LMI_LABEL,
+  capitalisedLmiRepayment,
+  commitmentItemsTotal,
   describeAdjustments,
+  incomeItemsTotal,
+  liabilityKindLabel,
+  PROPOSED_RENT_LABEL,
+  proposedRentRow,
+  provenNetForPurchase,
   toAssumptions,
   toAuditSection,
   toBand,
@@ -20,6 +30,7 @@ import {
   toLiabilityRow,
   toScenarioRows,
 } from '../normalise.pure';
+import { KNOWN_AUDIT_ACTIONS } from '../audit.pure';
 import {
   SAMPLE_ASSESSMENT,
   SAMPLE_AUDIT_TRAIL,
@@ -101,6 +112,20 @@ describe('liability rows', () => {
     expect(toLiabilityRow({ type: 'hecs', balance: 0, monthlyServicing: 180 })!.balance).not.toBeNull();
     expect(toLiabilityRow({ type: 'hecs', monthlyServicing: 180 })!.balance).toBeNull();
   });
+
+  /**
+   * The engine writes the rent a household pays on its home as
+   * `Rent Expense (${address.substring(0, 30)}...)` — the cut the income label
+   * carried, ellipsis and all (§21).
+   */
+  it('reads the rent on the home back to a whole place name', () => {
+    expect(liabilityKindLabel('Rent Expense (14 Wattle Grove Sampleton, NSW...)')).toBe('Rent — 14 Wattle Grove Sampleton');
+    expect(liabilityKindLabel('Rent Expense (3 Short St...)')).toBe('Rent — 3 Short St');
+    expect(liabilityKindLabel('Rent Expense (Rental...)')).toBe('Rent');
+    expect(liabilityKindLabel('credit_card')).toBe('Credit Card');
+    expect(toLiabilityRow({ type: 'Rent Expense (14 Wattle Grove Sampleton, NSW...)', balance: 0, monthlyServicing: 2_100 })!.kind)
+      .toBe('Rent — 14 Wattle Grove Sampleton');
+  });
 });
 
 describe('band', () => {
@@ -127,10 +152,55 @@ describe('audit section', () => {
     expect(audit.groups[0].rows.map((r) => r.seq)).toEqual([1, 2]);
   });
 
-  it('carries the summary as measures', () => {
+  it('carries the count, and none of the engine\'s category totals (§21)', () => {
+    // Two of the engine's four totals are not totals of anything a client can
+    // check — a liability's repayment less its balance, and the Medicare levy
+    // added to an after-tax figure that already nets it — so none is read.
     const audit = toAuditSection(SAMPLE_AUDIT_TRAIL)!;
-    expect(formatMeasure(audit.summary.incomeShading)).toBe('$14,600');
     expect(formatMeasure(audit.summary.transformations)).toBe('5');
+    expect(Object.keys(audit.summary)).toEqual(['transformations']);
+  });
+
+  it('reads every action the engine emits in the report\'s words (§21)', () => {
+    // A new audit entry surfaces here, red, rather than as a log's label on a
+    // client's page.
+    for (const action of KNOWN_AUDIT_ACTIONS) expect(AUDIT_LABEL[action], action).toBeTypeOf('function');
+    const rows = toAuditSection(SAMPLE_AUDIT_TRAIL)!.groups.flatMap((g) => g.rows);
+    expect(rows.map((r) => r.label)).toEqual([
+      'Rental income', 'Bonus', 'Living expenses', 'Credit Card', 'Interest rate', 'Lender policy',
+    ]);
+    expect(rows.map((r) => r.rule)).toEqual([
+      '80% counted', '50% counted', 'Higher of HEM and declared', 'Serviced on the card limit', 'Set by the adviser',
+      'Example Bank — Investor P&I',
+    ]);
+  });
+
+  it('states each engine rule in words, and leaves one it cannot read as written', () => {
+    expect(auditRule('income', 'shading_applied', '80% shading', null)).toBe('80% counted');
+    expect(auditRule('tax', 'tax_calculated', '26.4% effective rate', null)).toBe('26.4% of assessable income');
+    expect(auditRule('tax', 'medicare_levy_applied', '2% of gross', null)).toBe('2% of gross income');
+    expect(auditRule('property', 'negative_cf_layered', 'Layered on expenses', null)).toBe('Added to living expenses');
+    expect(auditRule('constraint', 'stress_test_applied', '+1% above assessment', null)).toBe('At the assessment rate plus 1%');
+    expect(auditRule('constraint', 'lmi_capitalised', '+$123/mo servicing', null)).toBe('Adds $123/mo of servicing');
+    // The living-expense row reads the document's method; without one, the
+    // engine's "Method: X" through the same reader the terms use.
+    expect(auditRule('expense', 'override_applied', 'Method: Declared', 'HEM benchmark')).toBe('HEM benchmark');
+    expect(auditRule('expense', 'hem_benchmark_applied', 'Method: HEM', null)).toBe('HEM benchmark');
+    expect(auditRule('expense', 'declared_expenses_used', 'Method: Declared Higher', null)).toBe('Declared (above HEM)');
+    expect(auditRule('income', 'shading_applied', 'Something new', null)).toBe('Something new');
+  });
+
+  it('reads a property\'s shortfall back to a whole address', () => {
+    const shortfall = AUDIT_LABEL['property/negative_cf_layered'];
+    expect(shortfall('Neg CF: 22 Example Road Sampleton NSW 2380')).toBe(
+      'Property costs not covered by rent — 22 Example Road Sampleton NSW 2380',
+    );
+    // Cut at forty characters, with no ellipsis to say so: the partial last
+    // segment goes back to the last comma.
+    expect(shortfall('Neg CF: 1402/88 Example Esplanade Sampleton, NSW')).toBe(
+      'Property costs not covered by rent — 1402/88 Example Esplanade Sampleton',
+    );
+    expect(shortfall('Neg CF: Investment Property')).toBe('Property costs not covered by rent');
   });
 
   it('is null when there is nothing to show', () => {
@@ -173,7 +243,7 @@ describe('scenario adjustments', () => {
         { grossAnnualIncome: 100_000, monthlyCommitments: 1_310, interestRate: 6.15, loanTermYears: 30 },
         { grossAnnualIncome: 110_000, monthlyCommitments: 1_070, interestRate: 7.15, loanTermYears: 25 },
       ),
-    ).toEqual(['Income +10%', 'Commitments -$240/mo', 'Rate +1.00%', 'Term -5 years']);
+    ).toEqual(['Income +10%', 'Commitments -$240/mo', 'Interest rate 6.15% → 7.15%', 'Loan term 30 years → 25 years']);
   });
 
   it('says nothing about an input that did not move', () => {
@@ -199,7 +269,28 @@ describe('scenario rows', () => {
   });
 
   it('reads acquisition capacity as the object it is', () => {
-    expect(rows[1].details).toContain('Purchase power: max $975,000.');
+    expect(rows[1].details).toContain('Purchase power: up to $975,000.');
+  });
+
+  it('says whether purchase power clears the target, as the in-browser document always did (§21)', () => {
+    const withTarget = (acq: Record<string, unknown>) => toScenarioRows([
+      SAMPLE_SCENARIO_PRESETS[0],
+      { ...SAMPLE_SCENARIO_PRESETS[1], acquisitionCapacity: { ...SAMPLE_SCENARIO_PRESETS[1].acquisitionCapacity, ...acq } },
+    ])![1].details;
+    expect(withTarget({ targetPurchasePrice: 650_000, meetsTarget: true }))
+      .toContain('Purchase power: up to $975,000, which clears the $650,000 target.');
+    expect(withTarget({ targetPurchasePrice: 1_100_000, meetsTarget: false, shortfallToTarget: 125_000 }))
+      .toContain('Purchase power: up to $975,000, $125,000 short of the $1,100,000 target.');
+    // Neither met nor short: nothing said about the target, never "short by $0".
+    expect(withTarget({ targetPurchasePrice: 1_100_000, meetsTarget: false }))
+      .toContain('Purchase power: up to $975,000.');
+  });
+
+  it('does not list a rate lever as a strategy action beside the rate change it is (§21)', () => {
+    expect(rows[2].adjustments).toContain('Interest rate 6.15% → 7.15%');
+    expect(rows[2].details.join(' ')).not.toContain('Interest rate (1.00%)');
+    // A step the client takes is still listed.
+    expect(rows[1].details.join(' ')).toContain('Close credit card');
   });
 
   it('is null when there is nothing but a base case', () => {
@@ -307,5 +398,118 @@ describe('the whole snapshot', () => {
     expect(withoutExtras.explanation).toBeNull();
     expect(snapshot().audit).not.toBeNull();
     expect(snapshot().explanation).not.toBeNull();
+  });
+});
+
+/**
+ * §21. The calculator sends its own income and commitment totals and the engine
+ * stores them beside a breakdown it reads from the client's records, so a total
+ * row could print a figure its own rows did not reach. Two lines the calculator
+ * adds are recorded elsewhere on the row and are printed as lines; anything left
+ * is stated, never absorbed.
+ */
+describe('what the tables add up to', () => {
+  const row = (label: string, gross: number, shading: number) => ({
+    label, gross: audPerYear(gross), shading: rate(shading), shaded: audPerYear(gross * shading),
+  });
+
+  it('reads the proposed rent the way the calculator counts it', () => {
+    const plain = proposedRentRow({ inputAmount: 650, frequency: 'weekly', shadingRate: 0.8, vacancyRate: 0, interestOnlyOffset: 0 })!;
+    expect(plain.label).toBe(PROPOSED_RENT_LABEL);
+    expect(plain.gross.value).toBe(33_800);
+    expect(plain.shaded.value).toBeCloseTo(27_040, 6);
+    expect(plain.shading.value).toBeCloseTo(0.8, 6);
+    // Vacancy and the interest-only offset come off the assessed side only.
+    const net = proposedRentRow({ inputAmount: 650, frequency: 'weekly', shadingRate: 0.8, vacancyRate: 5, interestOnlyOffset: 200 })!;
+    expect(net.gross.value).toBe(33_800);
+    expect(net.shaded.value).toBeCloseTo(33_800 * 0.95 * 0.8 - 2_400, 6);
+    expect(proposedRentRow({ inputAmount: 2_900, frequency: 'monthly', shadingRate: 0.7 })!.gross.value).toBe(34_800);
+  });
+
+  it('prints no proposed rent where none was proposed, or the setting cannot say what was counted', () => {
+    expect(proposedRentRow(null)).toBeNull();
+    expect(proposedRentRow({ inputAmount: 0, frequency: 'weekly', shadingRate: 0.8 })).toBeNull();
+    expect(proposedRentRow({ inputAmount: 650, frequency: 'weekly' })).toBeNull();
+  });
+
+  it('amortises a capitalised premium the way the engine does', () => {
+    expect(capitalisedLmiRepayment(18_640, 8.65, 30)!).toBeCloseTo(145.31, 2);
+    expect(capitalisedLmiRepayment(0, 8.65, 30)).toBeNull();
+    expect(capitalisedLmiRepayment(18_640, 0, 30)).toBeNull();
+  });
+
+  it('says nothing where the lines foot, to the dollar', () => {
+    const lines = [row('Salary', 100_000, 1), row('Rent', 20_000, 0.8)];
+    expect(incomeItemsTotal(lines, 120_000, 116_000)).toBeNull();
+    expect(incomeItemsTotal(lines, 120_000.4, 116_000.4)).toBeNull();
+    expect(incomeItemsTotal([], 120_000, 116_000)).toBeNull();
+    expect(commitmentItemsTotal([], 1_000)).toBeNull();
+  });
+
+  it('states what the lines come to where they do not', () => {
+    const lines = [row('Salary', 100_000, 1), row('Rent', 20_000, 0.8)];
+    const items = incomeItemsTotal(lines, 130_000, 126_000)!;
+    expect(items.gross.value).toBe(120_000);
+    expect(items.shaded.value).toBe(116_000);
+    const debt = [{ kind: 'Car Loan', provider: null, balance: null, limit: null, monthlyServicing: audPerMonth(600), note: null }];
+    expect(commitmentItemsTotal(debt, 850)!.value).toBe(600);
+  });
+
+  it('foots the sample: its income, and its liabilities with the premium the engine capitalised', () => {
+    const s = snapshot();
+    expect(s.income.proposedRent).toBeNull();
+    expect(s.income.itemsTotal).toBeNull();
+    expect(s.expenses.capitalisedLmi!.kind).toBe(CAPITALISED_LMI_LABEL);
+    expect(s.expenses.capitalisedLmi!.monthlyServicing.value).toBeCloseTo(145.31, 2);
+    expect(formatMeasure(s.expenses.capitalisedLmi!.balance!)).toBe('$18,640');
+    expect(s.expenses.itemsTotal).toBeNull();
+  });
+
+  it('prints the proposed rent as a line, and the table foots with it', () => {
+    const s = buildSnapshot({
+      clientName: 'X',
+      assessment: {
+        ...SAMPLE_ASSESSMENT,
+        gross_annual_income: 186_000 + 33_800,
+        shaded_annual_income: 171_400 + 27_040,
+        assumptions: { ...SAMPLE_ASSESSMENT.assumptions, proposedRentalIncome: { weeklyRent: 650, inputAmount: 650, frequency: 'weekly', shadingRate: 0.8, vacancyRate: 0, interestOnlyOffset: 0 } },
+      },
+    });
+    expect(s.income.proposedRent!.gross.value).toBe(33_800);
+    expect(s.income.itemsTotal).toBeNull();
+  });
+
+  it('keeps a difference the calculator made, and the totals the assessment ran on', () => {
+    const s = buildSnapshot({
+      clientName: 'X',
+      assessment: { ...SAMPLE_ASSESSMENT, gross_annual_income: 196_000, shaded_annual_income: 181_400, existing_commitments_monthly: 1_610 },
+    });
+    expect(formatMeasure(s.income.gross)).toBe('$196,000\u00A0pa');
+    expect(s.income.itemsTotal!.gross.value).toBe(186_000);
+    expect(s.income.itemsTotal!.shaded.value).toBe(171_400);
+    expect(s.expenses.itemsTotal!.value).toBeCloseTo(1_310.31, 2);
+    // The working is the assessment's, whatever the lines say.
+    expect(s.ledger.some((l) => formatMeasure(l.amount) === '-$1,610/mo')).toBe(true);
+  });
+
+  it('prints the calculator\'s "Net for Purchase" only where it is the capacity less the premium', () => {
+    expect(formatMeasure(provenNetForPurchase(766_360, 785_000, 18_640)!)).toBe('$766,360');
+    expect(provenNetForPurchase(942_000, 785_000, 18_640)).toBeNull();
+    expect(provenNetForPurchase(null, 785_000, 18_640)).toBeNull();
+    expect(formatMeasure(snapshot().lmi!.netForPurchase!)).toBe('$766,360');
+  });
+
+  it('does not count a capitalised premium as debt already owed', () => {
+    const dti = snapshot().debtToIncome!;
+    // 5.4 × $186,000 − $785,000 − $18,640 = $200,760, about $200,000.
+    expect(formatMeasure(dti.existingDebt!)).toBe('$200,000');
+    expect(formatMeasure(dti.capitalisedPremium!)).toBe('$18,640');
+  });
+
+  it('says where a deducted premium is paid from: the loan, as the calculator says, not the deposit', () => {
+    const s = buildSnapshot({ clientName: 'X', assessment: { ...SAMPLE_ASSESSMENT, lmi_mode: 'display_deduction' } });
+    expect(s.narrative).toContain('is paid from the loan, leaving $766,360 of the capacity for the purchase.');
+    expect(s.narrative).not.toMatch(/deposit/i);
+    expect(s.expenses.capitalisedLmi).toBeNull();
   });
 });

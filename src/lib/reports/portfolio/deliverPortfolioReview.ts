@@ -24,6 +24,14 @@
  * and receiving the legacy one — or the reverse — is handing someone a document
  * from a renderer they did not choose. The variant is a choice, and a failure in
  * either says which one failed.
+ *
+ * ## Where the bytes are
+ *
+ * The answer names the object the renderer stored (`storagePath`, in
+ * `storageBucket`) as well as handing the file to the browser. The analysis
+ * dialog needs it: it saves a freshly generated analysis, renders it here, and
+ * records THIS object as the saved report's file (`saveAnalysis.ts`), so the
+ * report it puts in Reports is the document in the chosen template.
  */
 import { secureStorageDownload } from '@/hooks/useSecureStorage';
 import { parseStorageRef } from '@/lib/reports/storageRef';
@@ -58,6 +66,16 @@ export interface DeliveredPortfolioReview {
   reviewIncluded: boolean;
   /** Rendered from an activated template rather than by the flowing route. */
   templated?: boolean;
+  /**
+   * Where the renderer stored these exact bytes, or null where nothing did:
+   * the `stored` variant re-serves a file somebody else placed, and a route
+   * that does not answer a path stored nothing a caller can point at.
+   */
+  storagePath: string | null;
+  /** The bucket `storagePath` is in: the route's `client-files`, or the templated final's `investment-reports`. */
+  storageBucket: 'client-files' | 'investment-reports' | null;
+  /** The size of the file the browser received. */
+  bytes: number;
 }
 
 /** The default storage bucket for generated client documents. */
@@ -97,7 +115,10 @@ async function deliverStored(input: DeliverPortfolioInput): Promise<DeliveredPor
 
   const fileName = input.storedFileName || 'Portfolio_Analysis.pdf';
   saveToBrowser(URL.createObjectURL(result.blob), fileName);
-  return { source: 'stored', fileName, brandGaps: [], reviewIncluded: false };
+  return {
+    source: 'stored', fileName, brandGaps: [], reviewIncluded: false,
+    storagePath: null, storageBucket: null, bytes: result.blob.size,
+  };
 }
 
 /**
@@ -130,6 +151,9 @@ export async function deliverPortfolioReview(
         // The adapter performs the join, so the review is in the document.
         reviewIncluded: true,
         templated: true,
+        storagePath: templated.storagePath,
+        storageBucket: templated.storagePath ? 'investment-reports' : null,
+        bytes: templated.blob.size,
       };
     }
   }
@@ -140,13 +164,17 @@ export async function deliverPortfolioReview(
   // that opens in a tab is a PDF the client has to find again.
   const response = await fetch(result.url);
   if (!response.ok) throw new Error(`Download failed (${response.status})`);
-  saveToBrowser(URL.createObjectURL(await response.blob()), result.fileName);
+  const blob = await response.blob();
+  saveToBrowser(URL.createObjectURL(blob), result.fileName);
 
   return {
     source: 'server',
     fileName: result.fileName,
     brandGaps: result.brandGaps,
     reviewIncluded: result.reviewIncluded,
+    storagePath: result.storagePath,
+    storageBucket: result.storagePath ? 'client-files' : null,
+    bytes: blob.size,
   };
 }
 

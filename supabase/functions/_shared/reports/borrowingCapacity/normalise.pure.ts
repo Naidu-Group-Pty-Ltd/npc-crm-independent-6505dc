@@ -228,18 +228,48 @@ const POSITIVE_CASH_FLOW = /^Positive Cash Flow \((.*?)(\.\.\.|…)?\)$/;
 export function incomeLabel(raw: string): string {
   const m = POSITIVE_CASH_FLOW.exec(raw.trim());
   if (!m) return raw;
-  let address = m[1].trim();
-  const cut = Boolean(m[2]) && m[1].length === ENGINE_ADDRESS_CUT;
+  const address = engineAddress(m[1], Boolean(m[2]) && m[1].length === ENGINE_ADDRESS_CUT);
+  return address && address !== 'Property'
+    ? `Property cash flow — ${address}`
+    : 'Property cash flow';
+}
+
+/**
+ * An address the engine wrote into a label, as a whole place name.
+ *
+ * Where the engine CUT it, the partial last segment — "2", the first digit of
+ * a postcode — is dropped at the last comma, or failing that the last space.
+ * Nothing is looked up: the address keeps only what the engine kept.
+ */
+function engineAddress(raw: string, cut: boolean): string {
+  let address = raw.trim();
   if (cut) {
     const comma = address.lastIndexOf(',');
     const space = address.lastIndexOf(' ');
     const at = comma > 0 ? comma : space > 0 ? space : address.length;
     address = address.slice(0, at).trim();
   }
-  address = address.replace(/[\s,]+$/, '');
-  return address && address !== 'Property'
-    ? `Property cash flow — ${address}`
-    : 'Property cash flow';
+  return address.replace(/[\s,]+$/, '');
+}
+
+const RENT_EXPENSE = /^Rent Expense \((.*?)(\.\.\.|…)?\)$/;
+
+/**
+ * A liability's kind, as a reader reads it.
+ *
+ * `calculateLiabilityBreakdown` writes the rent a household pays on the home it
+ * lives in as `Rent Expense (${address.substring(0, 30)}...)` — the same cut,
+ * and the same ellipsis appended whether or not anything was cut, that the
+ * income label carried (`incomeLabel`) — so a client who rents read their
+ * liabilities table as "Rent Expense (14 Wattle Grove Sampleton, NSW...)".
+ * It reads "Rent — 14 Wattle Grove Sampleton" now; every other kind is the
+ * record's own word, title-cased.
+ */
+export function liabilityKindLabel(raw: string): string {
+  const m = RENT_EXPENSE.exec(raw.trim());
+  if (!m) return titleCase(raw);
+  const address = engineAddress(m[1], Boolean(m[2]) && m[1].length === ENGINE_ADDRESS_CUT);
+  return address && address !== 'Rental' ? `Rent — ${address}` : 'Rent';
 }
 
 /**
@@ -255,6 +285,8 @@ export function expenseMethodLabel(stored: string | null): string {
     case 'hem': return 'HEM benchmark';
     case 'declared_higher': return 'Declared (above HEM)';
     case 'declared': return 'Declared';
+    // "Hybrid" is the stored word for the rule, not a reading of it (§21).
+    case 'hybrid': return 'Higher of HEM and declared';
     case '': return 'HEM benchmark';
     default: return titleCase(stored ?? '');
   }
@@ -269,7 +301,7 @@ export function toLiabilityRow(raw: unknown): LiabilityRow | null {
 
   const kindText = firstText(r.type, r.liability_type) ?? 'Liability';
   const provider = firstText(r.label, r.provider_name, r.provider);
-  const kind = titleCase(kindText);
+  const kind = liabilityKindLabel(kindText);
   const limit = firstNum(r.limit, r.credit_limit);
 
   return {
@@ -297,7 +329,118 @@ export const AUDIT_CATEGORY_ORDER: readonly AuditCategory[] = [
   'policy',
 ];
 
-function toAuditRow(raw: unknown): AuditRow | null {
+/**
+ * The width the engine cuts a property address to in the label of a
+ * negatively geared property's audit entry — `Neg CF: ${address.substring(0, 40)}`,
+ * cut with no ellipsis to say so (`calculateNegativePropertyCashFlows`).
+ */
+export const ENGINE_SHORTFALL_ADDRESS_CUT = 40;
+
+const NEG_CF = /^Neg CF:\s*(.*)$/i;
+
+const SHORTFALL_LABEL = 'Property costs not covered by rent';
+
+/**
+ * Every audit entry's label, in the report's words, keyed `category/action` as
+ * `audit.pure.ts` keys its units and polarity.
+ *
+ * The engine labels its entries for a log: "Income Tax" over a row whose two
+ * values are income before and after tax, "Medicare Levy" beside it as though
+ * it were charged on top, "Neg CF: 22 Example Road…" for a property's
+ * shortfall. Each reads here as what the row actually holds, so the row needs
+ * no category beside it to be understood (`render.pure.ts` prints none).
+ * `normalise.spec.ts` fails on a known action with no reading here, so a new
+ * entry the engine grows surfaces as a red test, not as a log's word on a
+ * client's page.
+ */
+export const AUDIT_LABEL: Readonly<Record<string, (label: string) => string>> = {
+  'income/shading_applied': (label) => incomeLabel(label),
+  'tax/tax_calculated': () => 'Income after tax and the Medicare levy',
+  'tax/medicare_levy_applied': () => 'Medicare levy, within the tax above',
+  'expense/hem_benchmark_applied': () => 'Living expenses',
+  'expense/declared_expenses_used': () => 'Living expenses',
+  'expense/override_applied': () => 'Living expenses',
+  'property/negative_cf_layered': (label) => {
+    const m = NEG_CF.exec(label.trim());
+    const address = m ? engineAddress(m[1], m[1].length >= ENGINE_SHORTFALL_ADDRESS_CUT) : '';
+    return address && address !== 'Investment Property' ? `${SHORTFALL_LABEL} — ${address}` : SHORTFALL_LABEL;
+  },
+  'liability/credit_card_limit_rate': (label) => liabilityKindLabel(label),
+  'liability/hecs_threshold_applied': (label) => liabilityKindLabel(label),
+  'liability/pi_conversion': (label) => liabilityKindLabel(label),
+  'liability/assessment_rate_applied': (label) => liabilityKindLabel(label),
+  'policy/lender_profile_selected': () => 'Lender policy',
+  'policy/override_applied': (label) => (/buffer/i.test(label)
+    ? 'Servicing buffer'
+    : /interest/i.test(label) ? 'Interest rate' : label),
+  'constraint/lmi_capitalised': () => 'Lenders mortgage insurance, added to the loan',
+  'constraint/stress_test_applied': () => 'Stress test',
+};
+
+const PERCENT_RULE = (suffix: string) => new RegExp(`^\\+?(\\d+(?:\\.\\d+)?)%\\s*${suffix}$`, 'i');
+
+/**
+ * Every audit entry's rule, in the report's words.
+ *
+ * The engine's rules are a log's shorthand — "$2450/mo servicing" with no
+ * thousands separator, "Layered on expenses", "+1% above assessment" — and the
+ * living-expense rule is not even the engine's to state: the Calculator sends
+ * the figure its chosen method produced as an explicit amount, so the engine
+ * wrote "Method: Declared" over a client who declared $0 and was assessed on
+ * HEM, while the same document's terms said "HEM benchmark". That row takes
+ * the document's own reading of the method (`expenseMethod`), so the two cannot
+ * disagree. A rule this module cannot read is printed as written.
+ */
+export function auditRule(category: string, action: string, rule: string, expenseMethod: string | null): string {
+  const key = `${category}/${action}`;
+  const text = rule.trim();
+  const pct = (suffix: string) => PERCENT_RULE(suffix).exec(text)?.[1] ?? null;
+  switch (key) {
+    case 'income/shading_applied': {
+      const n = pct('shading');
+      return n !== null ? `${n}% counted` : text;
+    }
+    case 'tax/tax_calculated': {
+      const n = pct('effective rate');
+      return n !== null ? `${n}% of assessable income` : text;
+    }
+    case 'tax/medicare_levy_applied': {
+      const n = pct('of gross');
+      return n !== null ? `${n}% of gross income` : text;
+    }
+    case 'expense/hem_benchmark_applied':
+    case 'expense/declared_expenses_used':
+    case 'expense/override_applied': {
+      if (expenseMethod) return expenseMethod;
+      const m = /^Method:\s*(.+)$/i.exec(text);
+      return m ? expenseMethodLabel(m[1].trim().toLowerCase().replace(/\s+/g, '_')) : text;
+    }
+    case 'property/negative_cf_layered':
+      return 'Added to living expenses';
+    case 'liability/credit_card_limit_rate':
+      return 'Serviced on the card limit';
+    case 'liability/hecs_threshold_applied':
+      return 'Repayment set by income';
+    case 'liability/pi_conversion':
+      return 'Assessed as principal and interest';
+    case 'liability/assessment_rate_applied':
+      return 'Assessed repayment';
+    case 'policy/override_applied':
+      return /^manual override$/i.test(text) ? 'Set by the adviser' : text;
+    case 'constraint/lmi_capitalised': {
+      const m = /^\+?\$(\d+(?:\.\d+)?)\/mo servicing$/i.exec(text);
+      return m ? `Adds ${formatMeasure(audPerMonth(Number(m[1])))} of servicing` : text;
+    }
+    case 'constraint/stress_test_applied': {
+      const n = pct('above assessment');
+      return n !== null ? `At the assessment rate plus ${n}%` : text;
+    }
+    default:
+      return text;
+  }
+}
+
+function toAuditRow(raw: unknown, expenseMethod: string | null): AuditRow | null {
   const r = asRec(raw);
   const category = typeof r.category === 'string' ? (r.category as AuditCategory) : null;
   const action = typeof r.action === 'string' ? r.action : null;
@@ -317,12 +460,13 @@ function toAuditRow(raw: unknown): AuditRow | null {
   };
 
   const { raw: rawMeasure, assessed } = auditMeasures(entry);
+  const label = AUDIT_LABEL[`${category}/${action}`];
   return {
     seq: entry.seq,
-    label: entry.label,
+    label: label ? label(entry.label) : entry.label,
     category,
     action,
-    rule: entry.rule,
+    rule: auditRule(category, action, entry.rule, expenseMethod),
     note: entry.note ?? null,
     raw: rawMeasure,
     assessed,
@@ -332,10 +476,17 @@ function toAuditRow(raw: unknown): AuditRow | null {
   };
 }
 
-export function toAuditSection(raw: unknown): AuditSection | null {
+/**
+ * The audit trail as the report reads it.
+ *
+ * `expenseMethod` is the document's own reading of the living-expense method
+ * (`expenseMethodLabel` of the stored column), for the rule of the
+ * living-expense row (`auditRule`).
+ */
+export function toAuditSection(raw: unknown, opts: { expenseMethod?: string | null } = {}): AuditSection | null {
   const trail = asRec(raw);
   const rows = asArray(trail.entries)
-    .map(toAuditRow)
+    .map((entry) => toAuditRow(entry, opts.expenseMethod ?? null))
     .filter((r): r is AuditRow => r !== null)
     .sort((a, b) => a.seq - b.seq);
   if (rows.length === 0) return null;
@@ -357,14 +508,13 @@ export function toAuditSection(raw: unknown): AuditSection | null {
 
   return {
     groups,
+    // The engine's four category totals are not read. Its liability "total"
+    // is the sum of each liability's monthly repayment less its BALANCE
+    // ($417,550 against a $420,000 mortgage — F13 again, one level up), and
+    // its tax total adds the Medicare levy to an after-tax figure that already
+    // nets it. The summary strip that printed them is gone (§21); the count
+    // is the one figure here that means what it says.
     summary: {
-      // Shading and adjustments are annual/monthly sums the engine already
-      // took; they are money, and `aud` is the only honest unit for a total
-      // that mixes periods.
-      incomeShading: aud(num(summary.totalIncomeShading) ?? 0),
-      expenseAdjustments: aud(num(summary.totalExpenseAdjustments) ?? 0),
-      liabilityAdjustments: aud(num(summary.totalLiabilityAdjustments) ?? 0),
-      taxImpact: aud(num(summary.totalTaxImpact) ?? 0),
       transformations: count(num(summary.totalTransformations) ?? rows.length),
     },
   };
@@ -435,11 +585,21 @@ export function describeAdjustments(baseInputs: unknown, scenarioInputs: unknown
     out.push(`${label} ${delta.value > 0 ? '+' : ''}${formatMeasure(delta)}`);
   };
 
+  // A rate is stated from and to. "Rate +1.00%" beside "Income +10%" put a
+  // change in percentage points next to a relative change in the same notation,
+  // and the two cannot be told apart on the page (§21).
+  const fromTo = (field: string, label: string, make: (v: number) => Measure) => {
+    const b = num(base[field]);
+    const s = num(scenario[field]);
+    if (b === null || s === null || b === s) return;
+    out.push(`${label} ${formatMeasure(make(b))} → ${formatMeasure(make(s))}`);
+  };
+
   relative('grossAnnualIncome', 'Income');
-  relative('monthlyLivingExpenses', 'Expenses');
+  relative('monthlyLivingExpenses', 'Living expenses');
   absolute('monthlyCommitments', 'Commitments', (v) => audPerMonth(v));
-  absolute('interestRate', 'Rate', (v) => percent(v));
-  absolute('loanTermYears', 'Term', (v) => years(v));
+  fromTo('interestRate', 'Interest rate', (v) => percent(v));
+  fromTo('loanTermYears', 'Loan term', (v) => years(v));
 
   return out;
 }
@@ -454,7 +614,15 @@ function toScenarioRow(raw: unknown, baseCapacity: number | null, baseInputs: un
   const change = !isBase && baseCapacity !== null ? aud(capacity - baseCapacity) : null;
 
   const details: string[] = [];
-  const deltas = asArray(preset.scenarioDeltas);
+  const adjustments = isBase ? [] : describeAdjustments(baseInputs, preset.adjustedInputs);
+  // A rate lever is the same fact as the rate change the adjustments already
+  // print, so it is not listed again as a strategy action — the rate-rise
+  // scenario read "Changed: Rate +1.00%" over "Strategy actions: Interest rate
+  // (1.00%)" (§21). Every other action is a step the client takes, which the
+  // changed inputs do not name.
+  const rateShown = adjustments.some((a) => a.startsWith('Interest rate '));
+  const deltas = asArray(preset.scenarioDeltas)
+    .filter((d) => !(rateShown && asRec(d).type === 'rate_change'));
   if (deltas.length > 0) {
     const described = deltas.slice(0, 5).map((rawDelta) => {
       const d = asRec(rawDelta);
@@ -469,10 +637,24 @@ function toScenarioRow(raw: unknown, baseCapacity: number | null, baseInputs: un
     );
   }
 
+  // Purchase power, against the client's target price where the scenario set
+  // one: the in-browser generator always said "target $650,000 met" or "short
+  // by …", and this document dropped it, though whether a scenario clears the
+  // target is what the scenario is for (§20, §21). A target with neither a
+  // "met" nor a shortfall says nothing — never "short by $0".
   const acquisition = asRec(preset.acquisitionCapacity);
   const maxPurchase = num(acquisition.maxPurchasePrice);
   if (maxPurchase !== null) {
-    details.push(`Purchase power: max ${formatMeasure(aud(maxPurchase))}.`);
+    const target = num(acquisition.targetPurchasePrice);
+    const shortfall = num(acquisition.shortfallToTarget);
+    const againstTarget = target === null || target <= 0
+      ? ''
+      : acquisition.meetsTarget === true
+        ? `, which clears the ${formatMeasure(aud(target))} target`
+        : shortfall !== null && shortfall > 0
+          ? `, ${formatMeasure(aud(shortfall))} short of the ${formatMeasure(aud(target))} target`
+          : '';
+    details.push(`Purchase power: up to ${formatMeasure(aud(maxPurchase))}${againstTarget}.`);
   }
 
   // The advisor's reasoning, read through the same composer the Strategy
@@ -503,7 +685,7 @@ function toScenarioRow(raw: unknown, baseCapacity: number | null, baseInputs: un
     monthlySurplus: audPerMonth(num(result.monthlySurplus) ?? 0),
     band: toBand(result.serviceabilityBand),
     change,
-    adjustments: isBase ? [] : describeAdjustments(baseInputs, preset.adjustedInputs),
+    adjustments,
     details,
     ...(advisor ? { advisor } : {}),
   };
@@ -526,6 +708,106 @@ export function toScenarioRows(raw: unknown): ScenarioRow[] | null {
     if (row) rows.push(row);
   }
   return rows.length > 0 ? rows : null;
+}
+
+// ── Footing ─────────────────────────────────────────────────────────────────
+
+/**
+ * The smallest difference a reader can see. Both sides are sums of unrounded
+ * figures, so lines that agree to the cent are the same figure.
+ */
+export const FOOTING_TOLERANCE = 1;
+
+export const PROPOSED_RENT_LABEL = 'Proposed property rent';
+export const CAPITALISED_LMI_LABEL = 'Lenders mortgage insurance, added to the loan';
+
+/**
+ * The proposed property's rent, as the calculator counts it.
+ *
+ * `BorrowingCapacityModal` adds the rent to the gross income it sends, and
+ * `gross × (1 − vacancy) × shading − 12 × the interest-only offset`, floored at
+ * nothing, to the assessed income. It stores the setting with the assessment
+ * (`assumptions.proposedRentalIncome`) exactly when it did so. The engine's
+ * breakdown is read from the client's records and never lists the rent, so the
+ * income table of a client assessed with one fell short of its own total by
+ * this line (§21). Null where no rent was proposed, or the setting cannot say
+ * what was counted.
+ */
+export function proposedRentRow(raw: unknown): IncomeRow | null {
+  const r = asRec(raw);
+  const amount = num(r.inputAmount);
+  const shading = num(r.shadingRate);
+  if (amount === null || amount <= 0 || shading === null) return null;
+  const perYear = r.frequency === 'weekly' ? 52 : r.frequency === 'monthly' ? 12 : 1;
+  const gross = amount * perYear;
+  const vacancy = num(r.vacancyRate) ?? 0;
+  const offsetMonthly = num(r.interestOnlyOffset) ?? 0;
+  const assessed = Math.max(0, gross * (1 - vacancy / 100) * shading - offsetMonthly * 12);
+  return {
+    label: PROPOSED_RENT_LABEL,
+    gross: audPerYear(gross),
+    // The share counted, after the vacancy and the offset as well as the
+    // shading — the column is headed "Assessed at", not "Shading".
+    shading: rate(assessed / gross),
+    shaded: audPerYear(assessed),
+  };
+}
+
+/**
+ * The monthly repayment on a premium capitalised onto the loan: the premium
+ * amortised at the assessment rate over the term. `calculate-borrowing-capacity`
+ * adds it to the commitments it assesses and lists no liability for it, so the
+ * liabilities table of a client with capitalised LMI fell short of its total by
+ * this line (§21). Null where it cannot be computed.
+ */
+export function capitalisedLmiRepayment(premium: number, assessmentRate: number, loanTermYears: number): number | null {
+  const monthly = assessmentRate / 100 / 12;
+  const periods = loanTermYears * 12;
+  if (!(premium > 0) || !(monthly > 0) || !(periods > 0)) return null;
+  const growth = Math.pow(1 + monthly, periods);
+  return (premium * monthly * growth) / (growth - 1);
+}
+
+/**
+ * What the income lines add up to, where it is not what the assessment used.
+ *
+ * The calculator sends its own totals (`grossAnnualIncome`,
+ * `shadedAnnualIncome`) and the engine stores them beside a breakdown it reads
+ * from the client's records, so the two can disagree: a figure edited in the
+ * calculator, a scenario applied when the assessment was run. A total row its
+ * rows do not reach is the one thing a reader can check and find wrong, so the
+ * table states both. Null where they agree, or where nothing is itemised.
+ */
+export function incomeItemsTotal(
+  lines: readonly IncomeRow[],
+  gross: number,
+  shaded: number,
+): { gross: Measure; shaded: Measure } | null {
+  if (!lines.length) return null;
+  const linesGross = lines.reduce((sum, r) => sum + r.gross.value, 0);
+  const linesShaded = lines.reduce((sum, r) => sum + r.shaded.value, 0);
+  return Math.abs(linesGross - gross) < FOOTING_TOLERANCE && Math.abs(linesShaded - shaded) < FOOTING_TOLERANCE
+    ? null
+    : { gross: audPerYear(linesGross), shaded: audPerYear(linesShaded) };
+}
+
+/**
+ * The calculator's "Net for Purchase", where the row's figure is it.
+ *
+ * Both the calculator and the engine write `max(0, capacity − premium)`; a
+ * stored figure that is anything else cannot be accounted for from the page,
+ * so it is not printed.
+ */
+export function provenNetForPurchase(stored: number | null, capacity: number, premium: number): Measure | null {
+  if (stored === null) return null;
+  return Math.abs(stored - Math.max(0, capacity - premium)) < FOOTING_TOLERANCE ? aud(stored) : null;
+}
+
+/** The same for the commitments. */
+export function commitmentItemsTotal(lines: readonly LiabilityRow[], commitments: number): Measure | null {
+  if (!lines.length) return null;
+  const linesTotal = lines.reduce((sum, l) => sum + l.monthlyServicing.value, 0);
+  return Math.abs(linesTotal - commitments) < FOOTING_TOLERANCE ? null : audPerMonth(linesTotal);
 }
 
 // ── Assumptions ─────────────────────────────────────────────────────────────
@@ -570,6 +852,9 @@ export function buildSnapshot(source: SnapshotSource): BorrowingCapacitySnapshot
   const storedDti = num(a.dti_ratio);
   const stressTested = num(a.stress_tested_capacity);
   const band = toBand(a.serviceability_band);
+  // One reading of the living-expense method, for the terms, the expenses and
+  // the audit row that applied it (`auditRule`).
+  const expenseMethod = expenseMethodLabel(firstText(a.expense_method));
 
   // No income on the record. The engine still answers — capacity $0, DTI 0.0x,
   // a band — and a document that prints those as an assessment tells a client
@@ -606,10 +891,35 @@ export function buildSnapshot(source: SnapshotSource): BorrowingCapacitySnapshot
           lvr: num(a.lmi_lvr_trigger) === null ? null : percent(num(a.lmi_lvr_trigger)!, 1),
           propertyValue: num(a.property_value_estimate) === null ? null : aud(num(a.property_value_estimate)!),
           deposit: num(a.deposit_amount) === null ? null : aud(num(a.deposit_amount)!),
-          netForPurchase: num(a.net_purchase_capacity) === null ? null : aud(num(a.net_purchase_capacity)!),
+          // The calculator's "Net for Purchase": the capacity less the premium,
+          // the share of the loan left once the premium is paid. Printed only
+          // where the stored figure is that, to the dollar (§21).
+          netForPurchase: provenNetForPurchase(num(a.net_purchase_capacity), capacity, lmiPremium),
           mode: lmiMode === 'debt_capitalised' ? 'debt_capitalised' : 'display_deduction',
         }
       : null;
+
+  // ── What the tables add up to (§21) ───────────────────────────────────────
+  // The calculator sends its own totals and the engine stores them beside a
+  // breakdown read from the client's records. Two lines it adds are recorded
+  // elsewhere on the row and are printed as lines; anything still between the
+  // printed lines and the totals is stated, never absorbed.
+  const proposedRent = proposedRentRow(asRec(a.assumptions).proposedRentalIncome);
+  const incomeLines = proposedRent ? [...incomeRows, proposedRent] : incomeRows;
+  const lmiRepayment = lmiMode === 'debt_capitalised'
+    ? capitalisedLmiRepayment(lmiPremium, assessmentRate, loanTermYears)
+    : null;
+  const capitalisedLmi: LiabilityRow | null = lmiRepayment === null
+    ? null
+    : {
+        kind: CAPITALISED_LMI_LABEL,
+        provider: null,
+        balance: aud(lmiPremium),
+        limit: null,
+        monthlyServicing: audPerMonth(lmiRepayment),
+        note: null,
+      };
+  const commitmentLines = capitalisedLmi ? [...liabilityRows, capitalisedLmi] : liabilityRows;
 
   // ── What the engine recorded about itself ─────────────────────────────────
   const assumptionsRec = asRec(a.assumptions);
@@ -636,6 +946,7 @@ export function buildSnapshot(source: SnapshotSource): BorrowingCapacitySnapshot
     capacity,
     denominator: dtiDenominatorFrom(assumptionItems) ?? (grossIncome > 0 ? grossIncome : null),
     listedDebt: liabilityRows.reduce((sum, l) => sum + (l.balance?.value ?? 0), 0),
+    capitalisedPremium: capitalisedLmi ? lmiPremium : 0,
   });
 
   const assumptions = assumptionItems.length
@@ -698,20 +1009,24 @@ export function buildSnapshot(source: SnapshotSource): BorrowingCapacitySnapshot
       gross: audPerYear(grossIncome),
       shaded: audPerYear(shadedIncome),
       rows: incomeRows,
+      proposedRent,
+      itemsTotal: incomeRecorded ? incomeItemsTotal(incomeLines, grossIncome, shadedIncome) : null,
       recorded: incomeRecorded,
     },
     debtToIncome,
     expenses: {
-      method: expenseMethodLabel(firstText(a.expense_method)),
+      method: expenseMethod,
       monthlyLiving: audPerMonth(livingExpenses),
       monthlyCommitments: audPerMonth(commitments),
       liabilities: liabilityRows,
+      capitalisedLmi,
+      itemsTotal: commitmentItemsTotal(commitmentLines, commitments),
     },
     ledger,
     recommendations: presentAdviceList(asStringList(a.recommendations), adviceFacts, { leadWithIncome: true }),
     warnings: presentAdviceList(asStringList(a.warnings), adviceFacts),
     explanation: toExplanationSection(source.explanation),
-    audit: toAuditSection(source.auditTrail),
+    audit: toAuditSection(source.auditTrail, { expenseMethod }),
     scenarios: toScenarioRows(source.scenarioPresets),
   };
 }
@@ -836,19 +1151,22 @@ function buildDebtToIncome(p: {
   capacity: number;
   denominator: number | null;
   listedDebt: number;
+  /** A premium capitalised onto the loan: the engine counts it as debt, and nobody owes it yet. */
+  capitalisedPremium: number;
 }): DebtToIncome | null {
   if (p.dti === null || p.dti <= 0 || p.denominator === null || p.denominator <= 0) return null;
   // The ratio is stored to two decimals, so the debt behind it is known to
   // within half a cent of income per dollar — about ±$1,000 on a $200,000
   // income. Rounded to $10,000 and labelled "about", never stated to the dollar.
   const total = p.dti * p.denominator;
-  const existing = Math.max(0, total - p.capacity);
+  const existing = Math.max(0, total - p.capacity - p.capitalisedPremium);
   const rounded = Math.round(existing / 10_000) * 10_000;
   return {
     ratio: ratio(p.dti),
     income: audPerYear(p.denominator),
     capacity: aud(p.capacity),
     existingDebt: rounded > 0 ? aud(rounded) : null,
+    capitalisedPremium: p.capitalisedPremium > 0 ? aud(p.capitalisedPremium) : null,
     // More than the listed liabilities by a margin rounding cannot explain: the
     // engine also counts the loans on properties held, which that table omits.
     includesPropertyLoans: existing - p.listedDebt > 20_000,
@@ -923,14 +1241,19 @@ function buildNarrative(p: {
     );
   }
 
+  // The calculator's own account of the two modes: a capitalised premium is
+  // added to the debt; a deducted one is paid from the loan, so the capacity is
+  // unchanged and less of it is left for the purchase. The sentence used to say
+  // the deducted premium came from the deposit (§21).
   if (p.lmi) {
     parts.push(
       p.lmi.mode === 'debt_capitalised'
-        ? `An estimated Lenders Mortgage Insurance premium of ${formatMeasure(p.lmi.premium)} has been `
-          + 'capitalised onto the loan, increasing total debt obligations and factored into the DTI calculation.'
-        : `An estimated Lenders Mortgage Insurance premium of ${formatMeasure(p.lmi.premium)} applies, `
-          + 'reducing the net amount available for property purchase'
-          + (p.lmi.netForPurchase ? ` to ${formatMeasure(p.lmi.netForPurchase)}.` : '.'),
+        ? `An estimated Lenders Mortgage Insurance premium of ${formatMeasure(p.lmi.premium)} is added `
+          + 'to the loan: the debt-to-income ratio counts it, and its repayment is one of the commitments.'
+        : `An estimated Lenders Mortgage Insurance premium of ${formatMeasure(p.lmi.premium)} is paid `
+          + 'from the loan, leaving '
+          + (p.lmi.netForPurchase ? `${formatMeasure(p.lmi.netForPurchase)} of the capacity` : 'less of the capacity')
+          + ' for the purchase.',
     );
   }
 

@@ -663,3 +663,207 @@ This is the same treatment as the Property Comparison (`COMPARISON.md` §13).
 - **The other sections run on.**
 - **"Why capital in matters more than price"** is bound to the short table
   before it. It had turned a page alone.
+
+## 14 · Audit 8: the comparison read as a client reads it (1 Oct 2026)
+
+Audit 8 of the owner's report programme. It covers both comparisons. The
+Property Comparison's half is `COMPARISON.md` §15, which also records how it
+was measured: each document drawn the way the route draws it, at two, three and
+five properties, in the standard layout and all 50 catalogue designs, measured
+from WeasyPrint 69.0's own box tree. The rows are representative fixtures, not
+production replays.
+
+| Properties | Pages (51 documents) | Pages more than a quarter empty | Mean fill | Pages past the edge |
+|---|---|---|---|---|
+| 2 | 849 → 765 | 42 → 140 | 86.2% → 84.6% | 0 → 0 |
+| 3 | 961 → 879 | 144 → 177 | 82.7% → 82.5% | 0 → 0 |
+| 5 | 1,172 → 959 | 297 → 122 | 78.6% → 86.3% | 49 → 0 |
+
+Every two-property document is 15 pages, where they ran 16–18. Every
+five-property document fits the sheet.
+
+The part-empty counts that rose sit at three boundaries, and each is a page
+ending where the document changes:
+- **Before the landscape sections.** The last portrait page before them ends
+  where the entry section ends, because the orientation changes.
+- **The landscape sheets themselves.** Each holds one section. At two
+  properties a section fills about 59% of the sheet, and two do not fit one.
+- **At three properties, section 7.** It now opens at the head of a page rather
+  than leaving its opener at the foot (*A heading is never left at the foot of
+  a page*, below).
+
+None of these is a section stopping short in the middle of its own content.
+
+### What the page said, and what it says now
+
+**The property tables fit the sheet.** At five properties the fifth column ran
+past the sheet's edge on 49 pages, in 46 of the 51 designs, by up to 132pt.
+- **The cause.** Each table was drawn by `renderDataTable` with a figure
+  column per property, and a figure column sets its head and every cell on one
+  line. So the street heads in tracked capitals ("5 TALLAWONG / AVENUE") and
+  "Not within the term" each held a column wider than its share.
+- **The fix.** They are drawn by the shared portrait matrix now
+  (`renderPortraitMatrix`, `portraitMatrix.pure.ts`): equal property columns,
+  heads that wrap.
+- **A phrase among the figures may wrap** (`wrapPhrases`). A cell in a figure
+  column that holds words and no digit carries `PHRASE_CELL_CLASS`, and only
+  that cell may break between words (`table.data td.num.phrase`). A figure
+  still never wraps, so "-$96 a week" cannot break at its minus sign.
+- **Nothing marks the opened property.** The column head of the property the
+  adviser opened the analysis from carried a trailing " ·", and the ranking
+  carried "(opened)". Both said something about the session, not the property,
+  with nothing on the page to say what they meant.
+
+**The year matrices are set as figures.** They take the portrait matrix's
+leading and padding (`cfc-years`), and 2pt/4pt of side padding in the ruled
+designs, as the 10 Year Cash Flow's own matrix does. At five properties every
+matrix had taken a landscape sheet of its own: four sheets, each about half
+empty, for two sections. Each section is one sheet now. Their captions are one
+line on the long edge:
+- the cumulative caption: "Each year added to those before it…";
+- the equity caption: "Value less the loan balance. The gap between a
+  property's value and its equity is what is still owed". It had read "the
+  difference between this and the row above", and the row above was a
+  different table.
+
+**A measure nobody leads says why.** "No clear leader" stood for two different
+findings. `winnerOf` now says which (`undecided`), and the table reads
+accordingly:
+- **Tied.** Two properties share the best figure.
+- **None within the term.** On the payback year, no property repays its holding
+  costs within the projection. The timing table beside it says the same words.
+- **Not comparable.** Fewer than two properties have a figure for any other
+  measure.
+
+On the payback year alone an absent figure means "not within the term", which
+every year inside it beats (`absentIsLast`). So the one property that repays
+leads, with no margin, because the others have no figure to measure the lead
+against.
+
+**A lead between percentages is in points.** "Best return on capital … ahead
+by 76.7%" read as 76.7% better than second place, where the second property
+returned 291.2% against 367.9%. It reads "76.7 points" (`showMargin`).
+
+**The donut counts what the table counts.**
+- **One ring, one key.** Its centre read 4/8 while its key printed shares of
+  the seven decided measures (57%, 14%, 29%). A measure nobody leads is a
+  segment of its own, "No single leader", and the key prints counts ("4 of
+  8"), which cannot round to 101%.
+- **The right "nobody".** Its caption said "1 was tied" for a payback year no
+  property reached. It says "no property repays its holding costs within the
+  term" for that, and counts only real ties as tied (`leaderlessClauses`).
+
+**The cumulative chart's axis is in round figures.** Quarters of the raw range
+printed "$-50k", "$-99k", "$-149k", "$-199k": a minus sign inside the currency,
+and steps nobody counts in. The axis steps by `niceScale` and labels by
+`compactMoney`, the 10 Year Cash Flow's own, so it reads "$0, -$50k, -$100k,
+-$150k, -$200k".
+
+The shared `formatAxisValue` puts the sign ahead of the dollar too ("-$320",
+"-$50k"), so every format's money axis does. Its old case in
+`reportCharts.spec.ts` pinned the defect.
+
+**The opening paragraph is in the strip's own figures.**
+- **One precision.** The lead read "32%" over a KPI strip reading "31.9%". It is
+  `formatMeasure` now, the strip's own.
+- **The sum it is.** "$X of capital growth against -$198,521 of cumulative
+  after-tax cash flow" put a minus sign after a word that already subtracts. It
+  reads "$X of capital growth less the $198,521 it cost to hold after tax", or
+  "plus $Y of after-tax cash flow" where the cash flow is positive.
+
+**The analysis says only what it can.**
+- **The label may not claim what the figures deny.** "Reaches positive cash
+  flow first" stood over "though it stays negative across the term", beside a
+  timing table reading "Not within the term" for every property. Where no
+  property's own cash flow turns positive within the term, the label reads
+  "Nearest to positive cash flow". The sentence is the model's and unchanged.
+- **The ending values are not printed.** The analysis's table of ending values
+  restated, in millions and unattributed, the figures section five prints to
+  the dollar against each property's name. Three rows in the order the
+  properties run everywhere else read as theirs, an attribution the producer
+  cannot give (F4).
+  A capital-growth block holding only those values is no longer a block
+  (`toCapitalGrowth`). It used to put a "Capital growth" heading over nothing,
+  and open the section for it.
+- **The break-even figures stay, said to belong to nobody.** The rate-rise
+  margins are nowhere else in the document, so they are printed under a
+  sentence saying the analysis gave them without saying which property each
+  belongs to. The caption reads "As the analysis stated them, in no property's
+  order".
+
+**Memo sections, subheads, paragraphs.**
+- The sections are memo sections (`MEMO_CHAPTER_CLASS`), and their subheads are
+  set at h3's size (`SECTION_SUBHEAD_CLASS`).
+- The model's summary and each property's verdict are set as the paragraphs it
+  wrote.
+- Model text is cut at a word with an ellipsis (`truncateAtWord`), never part
+  way through a word.
+
+**The standfirsts say what follows.** The measures section's standfirst read
+"how long each takes to repay what it cost to buy". That misstated the measure
+under it: the payback year is when the after-tax cash flow, added up, turns
+positive. It reads "when each repays what it cost to hold". The cash-flow,
+analysis and basis standfirsts no longer point at "the tables above".
+
+**The cover lists the properties only when its title cannot.** At three or
+fewer, the "Properties" line repeated the title word for word directly beneath
+it. It is listed only where the title says "and N more".
+
+**A heading is never left at the foot of a page.** A property's "Score given"
+line is the second line of its heading. The heading and its score kept each
+other and nothing more (`css.pure.ts`). So 30 of the 51 three-property
+documents, and 22 of the five-property ones, ended a page on "1. 14 Wattlebird
+Grove / Score given: 84", with the verdict overleaf.
+
+At three properties that page also carried section 7's title and standfirst.
+The score line refuses the break after itself now (`SCORE_LINE_CLASS`), and
+none of the 153 documents ends a page on it. The cost is the white space the
+stranded opener stood in, and one more page in 12 of the 51 three-property
+designs. The sections run on, so the kept group can never be a chapter's tail
+on a sheet of its own.
+
+**The downloads are named.** The modal's own downloads saved as
+`cash-flow-comparison-3-properties-2026-10-01.pdf` and
+`ai-cash-flow-analysis-2026-10-01.pdf`, which say neither which comparison nor
+which document. They take the typeset document's name, qualified:
+`Cash Flow Comparison - legacy layout - <the properties> - 1 Oct 2026.pdf`, and
+`… - written analysis, legacy layout - …` for the written analysis.
+
+The flattened copies take the same names, and the flatten button adds
+"-flattened". It also stopped the 10 Year Cash Flow's flattened copy saying
+"flattened" twice (`COMPARISON.md` §15).
+
+### Not changed
+
+The AI generation is unchanged (`COMPARISON.md` §14). The prompt, the schema
+and the model are as they were, and so is every sentence the model wrote.
+Only the labels and the structure around them changed. Nothing the producer
+named by `propertyNumber` is newly attributed (F4).
+
+### Recorded and left
+
+- **A section that opens on a table kept whole** can leave the page before it
+  part empty. A ten-row table split to fill a page reads as two tables. This is
+  the same class Audits 2, 5 and 7 recorded.
+- **The landscape sheets.** At two properties each landscape sheet holds one
+  section, about 59% of it. Two do not fit one sheet. Setting the years as rows
+  in portrait would change the table's orientation with the property count,
+  and two different-looking documents for one report type is the outcome
+  `COMPARISON.md` §13 records against.
+
+**Tests.**
+- `normalise.spec.ts`: the two absences, the one property that repays, the
+  sum as said, and the lead in the strip's precision.
+- `render.spec.ts`:
+  - the subhead class, with nothing marking the opened property;
+  - both matrix classes;
+  - the leaderless words and the points;
+  - the nearest-to-positive label;
+  - no ending values, and no heading over nothing;
+  - the break-even lead-in, paragraphs, the cover meta and the standfirst;
+  - the qualified file names.
+- `charts.spec.ts`: one ring, one key and one centre; the right "nobody"; and
+  the axis stepping on round figures.
+- The shared rule: `reportPrimitives.spec.ts` (`isPhrase`, `wrapPhrases`
+  through the portrait matrix) and `reportCss.spec.ts` (the one exception to
+  "a figure never wraps").

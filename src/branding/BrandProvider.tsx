@@ -12,7 +12,6 @@ import {
 } from './brand-defaults';
 import { getBrandAssetSrc } from './brand-assets';
 import { appleTouchIconFor, faviconFor } from './platformBrand';
-import { withLinePalette } from './linePalette';
 import { setBrandNotificationIcon } from '@/lib/desktopMessageAlerts';
 import { applyBrandTokenMap, resolveBrandFontVars, resolveBrandTokens } from './token-resolver';
 import type { BrandContextValue, BrandLogoConfig, BrandSaveResult, BrandThemeConfig, EmailSignatureSettings, ThemeMode, WhiteLabelSettings } from './brand-types';
@@ -220,9 +219,7 @@ export function BrandProvider({ children }: { children: React.ReactNode }) {
     fetchSettings();
   }, []);
 
-  // The dashboard draws this line's palette wherever the row stores no colour
-  // (`linePalette.ts`). `settings` stays exactly as stored: documents read it.
-  const resolvedTokens = useMemo(() => resolveBrandTokens(withLinePalette(settings)), [settings]);
+  const resolvedTokens = useMemo(() => resolveBrandTokens(settings), [settings]);
   const resolvedFontVars = useMemo(() => resolveBrandFontVars(settings), [settings]);
 
   // Typography tokens are theme-agnostic, so apply them independently of the

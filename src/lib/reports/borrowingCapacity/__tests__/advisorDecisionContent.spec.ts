@@ -149,9 +149,9 @@ describe('the brief sets the choice beside the alternatives', () => {
   it('lists every option with the engine\'s figures, the applied one marked', () => {
     expect(section.optionsTitle).toBe('Options the advisor put forward (3)');
     expect(section.options.map(advisorOptionLine)).toEqual([
-      '90% LVR Purchase + Debt Cleanse — capacity $761,738 · purchase power $874,178 · Short by $25,822 · HIGH risk',
-      'Valuation Uplift to 80% Deposit (applied) — capacity $669,738 · purchase power $843,893 · Short by $56,107 · HIGH risk',
-      'Portfolio Restructure & Clean Slate — capacity $951,241 · purchase power $1,002,622 · Clears $900,000 · MEDIUM risk',
+      '90% LVR Purchase + Debt Cleanse — capacity $761,738 · purchase power $874,178 · Short by $25,822 · High risk',
+      'Valuation Uplift to 80% Deposit (applied) — capacity $669,738 · purchase power $843,893 · Short by $56,107 · High risk',
+      'Portfolio Restructure & Clean Slate — capacity $951,241 · purchase power $1,002,622 · Clears $900,000 · Medium risk',
     ]);
   });
 

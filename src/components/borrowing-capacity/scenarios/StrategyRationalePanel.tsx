@@ -47,11 +47,12 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { ChooseTemplateButton } from '@/components/reports/ChooseTemplateButton';
-import { requestStrategyRationale } from '@/lib/reports/borrowingCapacity/deliverStrategyRationale';
+import { rationaleDownloadName, requestStrategyRationale } from '@/lib/reports/borrowingCapacity/deliverStrategyRationale';
 import {
   ADVISOR_OPTIONS_NOTE,
   advisorOptionLine,
   composeAdvisorSection,
+  RECONCILE_TITLE,
   rationaleReadingNote,
   type RationaleAdvisorInput,
   type RationaleAdvisorSection,
@@ -67,7 +68,7 @@ interface StrategyRationalePanelProps {
    *  PDF download button is hidden (e.g. preview surfaces without client info). */
   pdfContext?: RationalePDFContext;
   /**
-   * The client the brief is about. With it, "Download PDF" is typeset by the
+   * The client the brief is about. With it, "Export PDF" is typeset by the
    * Borrowing Capacity route in the template chosen for Borrowing Capacity
    * (BORROWING_CAPACITY.md §17); without it, the jsPDF brief is the only one.
    */
@@ -202,7 +203,7 @@ function buildPlainTextBrief(
         : ` (capacity ${b.capacityImpact > 0 ? '+' : ''}${fmt(b.capacityImpact)})`;
       lines.push(`${i + 1}. ${b.what}${impact}`);
       lines.push(`   ${b.why}`);
-      if (b.cashflowNote) lines.push(`   Cash-flow: ${b.cashflowNote}`);
+      if (b.cashflowNote) lines.push(`   Cash flow: ${b.cashflowNote}`);
       lines.push('');
     });
   }
@@ -374,7 +375,7 @@ export function StrategyRationalePanel({ report, formatCurrency, pdfContext, cli
                     ) : (
                       <>
                         <FileDown className="h-3.5 w-3.5 mr-1.5" />
-                        Download PDF
+                        Export PDF
                       </>
                     )}
                   </Button>
@@ -406,7 +407,7 @@ export function StrategyRationalePanel({ report, formatCurrency, pdfContext, cli
                 </div>
                 <FlattenPdfIconButton
                   getPdfBlob={async () => (await produceBrief('typeset')).blob}
-                  filename={`strategy-rationale.pdf`}
+                  filename={rationaleDownloadName(pdfContext.clientName)}
                   disabled={downloading}
                 />
               </>
@@ -566,7 +567,7 @@ export function StrategyRationalePanel({ report, formatCurrency, pdfContext, cli
         <section className="space-y-2">
           <div className="flex items-center gap-2">
             <Scale className="h-4 w-4 text-primary" />
-            <h4 className="text-sm font-semibold">How the math reconciles</h4>
+            <h4 className="text-sm font-semibold">{RECONCILE_TITLE}</h4>
           </div>
           <p className="text-xs text-muted-foreground leading-relaxed pl-6">
             {report.reconciliation}

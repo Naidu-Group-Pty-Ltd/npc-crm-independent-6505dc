@@ -13,6 +13,8 @@ import { buildComparison } from '../normalise.pure';
 import { DOCUMENT_NAME, renderComparisonFromBrand } from '../render.pure';
 import { comparisonSections, comparisonSpine, validateComparisonSpine } from '../sections.pure';
 import {
+  COMPARISON_ANALYSIS_QUALIFIER,
+  COMPARISON_LEGACY_QUALIFIER,
   comparisonFileName,
   comparisonReference,
   comparisonStoragePath,
@@ -20,6 +22,7 @@ import {
 } from '../route.pure';
 import { contentsEntriesFor, REPORT_ARCHETYPES, spinePageBudget } from '@/lib/reportDesign/structure.pure';
 import { buildReportBrandSnapshot } from '@/lib/reportDesign/snapshot.pure';
+import { SECTION_SUBHEAD_CLASS } from '@/lib/reportDesign/primitives.pure';
 
 const NOW = '2026-08-02T00:00:00.000Z';
 const A = '11111111-1111-4111-8111-111111111111';
@@ -226,6 +229,139 @@ describe('the spine holds', () => {
   });
 });
 
+/**
+ * Audit 8 (1 Oct 2026): what the page says, measured against all 51 designs.
+ * Each assertion is a defect the audit found on a rendered page.
+ */
+describe('what the page says', () => {
+  const cell = (html: string, text: string) => new RegExp(`<td[^>]*>${text}</td>`).test(html);
+
+  it('sets each subhead at a subhead\'s size, under a memo section\'s title', () => {
+    const html = render(FULL_ANALYSIS);
+    expect(html).toContain(`<h2 class="${SECTION_SUBHEAD_CLASS}">What the analysis said</h2>`);
+    expect(html).not.toMatch(/<h2>[^<]+<\/h2>/);
+  });
+
+  /** Which property the adviser opened is a fact about the session, not the property. */
+  it('does not mark the property the analysis was opened from', () => {
+    const html = render(FULL_ANALYSIS);
+    expect(html).not.toContain('(opened)');
+    expect(html).not.toMatch(/12 Example Street ·/);
+  });
+
+  it('sets the property tables and the year matrices as the tables of figures they are', () => {
+    const html = render();
+    expect(html).toContain('class="data cfc-properties');
+    expect(html).toContain('<table class="data cfc-years">');
+  });
+
+  /** "No clear leader" was two different findings. */
+  it('says a tie is a tie, and a payback nobody reaches is none within the term', () => {
+    const html = render();
+    expect(cell(html, 'Tied')).toBe(true);
+    expect(cell(html, 'None within the term')).toBe(true);
+    expect(html).not.toContain('No clear leader');
+  });
+
+  /** "Ahead by 76.7%" read as 76.7% better than second place. */
+  it('states a lead between two percentages in points', () => {
+    const html = render();
+    expect(html).toMatch(/<td[^>]*>\d+(\.\d)? points?<\/td>/);
+  });
+
+  /**
+   * The label is ours and the sentence the model's: "Reaches positive cash flow
+   * first" sat over "though it stays negative across the term".
+   */
+  it('names the nearest to positive cash flow where no property gets there', () => {
+    const withTrajectory = {
+      ...FULL_ANALYSIS,
+      cashFlowTrajectory: {
+        fastestPositiveCashFlow: { propertyNumber: 2, reason: 'Smallest shortfall, though it stays negative.' },
+      },
+    };
+    expect(render(withTrajectory)).toContain('Nearest to positive cash flow:');
+    expect(render(withTrajectory)).not.toContain('Reaches positive cash flow first');
+  });
+
+  /**
+   * The analysis's ending values restated section five in millions, unattributed,
+   * in the order the properties run, which read as an attribution the producer
+   * cannot make (F4).
+   */
+  it('prints none of the analysis\'s unattributed ending values, and no heading over nothing', () => {
+    const endingOnly = {
+      ...FULL_ANALYSIS,
+      capitalGrowth: { year10Values: [{ propertyNumber: 1, value: '$1.1M', equity: '$0.6M' }] },
+    };
+    const html = render(endingOnly);
+    expect(html).not.toContain('Value at the end of the term');
+    expect(html).not.toContain('$1.1M');
+    expect(html).not.toContain('>Capital growth</h2>');
+    const both = render({
+      ...FULL_ANALYSIS,
+      capitalGrowth: {
+        wealthBuilder: { propertyNumber: 1, reason: 'Interest only.' },
+        year10Values: [{ propertyNumber: 1, value: '$1.1M', equity: '$0.6M' }],
+      },
+    });
+    expect(both).toContain('>Capital growth</h2>');
+    expect(both).not.toContain('$1.1M');
+  });
+
+  /** The rate-rise margins are nowhere else, so they stay, said to belong to no named property. */
+  it('keeps the break-even figures and says they are attributed to nobody', () => {
+    const html = render({
+      ...FULL_ANALYSIS,
+      riskAssessment: {
+        ...FULL_ANALYSIS.riskAssessment,
+        breakEvenAnalysis: [{ propertyNumber: 1, breakEvenYear: 'Year 7', safetyMargin: '1.5%' }],
+      },
+    });
+    expect(html).toContain('without saying which property each belongs to');
+    expect(html).toContain('in no property’s order');
+    // The first column is the row's header cell; the margin is a figure cell.
+    expect(html).toContain('>Year 7</th>');
+    expect(cell(html, '1.5%')).toBe(true);
+  });
+
+  it('sets the model\'s paragraphs as paragraphs', () => {
+    const html = render({ ...FULL_ANALYSIS, executiveSummary: 'First thought.\n\nSecond thought.' });
+    expect(html).toContain('<p>First thought.</p><p>Second thought.</p>');
+  });
+
+  /** At three or fewer the cover listed the properties directly under a title naming them. */
+  it('lists the properties under the cover title only when the title could not name them all', () => {
+    const two = render();
+    expect(two).not.toMatch(/>Properties<\//);
+    const ids = ['a', 'b', 'c', 'd'].map((c) => `${c.repeat(8)}-${c.repeat(4)}-4${c.repeat(3)}-8${c.repeat(3)}-${c.repeat(12)}`);
+    const four = renderComparisonFromBrand({
+      comparison: buildComparison({
+        properties: ids.map((id, i) => ({
+          reportId: id,
+          address: `${i + 1} Example Street, Suburbia VIC 3000`,
+          isPrimary: i === 0,
+          projection: projection(-1_000 * (i + 1)),
+        })),
+        primaryReportId: ids[0],
+        clientName: 'Sample Client',
+        investorProfile: 'balanced',
+        analysis: null,
+        now: NOW,
+      }),
+      snapshot,
+    }).html;
+    expect(four).toMatch(/>Properties</);
+    expect(four).toContain('1 Example Street · 2 Example Street · 3 Example Street · 4 Example Street');
+  });
+
+  /** "Repay what it cost to buy" misstated the measure under it. */
+  it('describes the payback measure as what it is', () => {
+    const measures = comparisonSections(build()).find((x) => x.id === 'measures');
+    expect(measures?.note).toBe('Return, yield, and when each repays what it cost to hold.');
+  });
+});
+
 describe('the request and where the file lands', () => {
   const body = {
     primaryReportId: A,
@@ -268,6 +404,23 @@ describe('the request and where the file lands', () => {
     expect(comparisonReference(A)).toBe('11111111');
     expect(comparisonStoragePath(A, 'Cash Flow Comparison - 12 Example Street.pdf', NOW, 'u'))
       .toBe(`cash-flow-comparison/${A}/2026-08-02/u-Cash_Flow_Comparison_-_12_Example_Street.pdf`);
+  });
+
+  /**
+   * Audit 8. The modal's own downloads saved as
+   * `cash-flow-comparison-3-properties-2026-10-01.pdf` and
+   * `ai-cash-flow-analysis-2026-10-01.pdf`. They take the typeset document's
+   * name now, qualified, and never the word the flatten button adds itself.
+   */
+  it('names the modal\'s own downloads the same way, qualified', () => {
+    expect(comparisonFileName(['12 Example Street', '9 Sample Road'], NOW, COMPARISON_LEGACY_QUALIFIER))
+      .toBe('Cash Flow Comparison - legacy layout - 12 Example Street and 9 Sample Road - 02 Aug 2026.pdf');
+    expect(comparisonFileName(
+      ['12 Example Street'],
+      NOW,
+      `${COMPARISON_ANALYSIS_QUALIFIER}, ${COMPARISON_LEGACY_QUALIFIER}`,
+    )).toBe('Cash Flow Comparison - written analysis, legacy layout - 12 Example Street - 02 Aug 2026.pdf');
+    expect(`${COMPARISON_ANALYSIS_QUALIFIER} ${COMPARISON_LEGACY_QUALIFIER}`).not.toMatch(/flattened/i);
   });
 
   /** Keyed by the primary report: the properties may belong to different clients. */

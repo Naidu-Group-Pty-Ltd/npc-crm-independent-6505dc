@@ -59,7 +59,7 @@ import {
 } from '../reportDesign/primitives.pure.ts';
 import { isPlaceholderValue, splitRefusedItem, type VizDirective } from './vizDirectives.pure.ts';
 import {
-  calloutCharge, figureCharge, sidenoteCharge, tableCharge, type NarrativeGeometry,
+  calloutCharge, figureCharge, pitchPt, sidenoteCharge, tableCharge, type NarrativeGeometry,
 } from './narrativeGeometry.pure.ts';
 
 /**
@@ -107,6 +107,57 @@ export function viewBoxRatio(svg: string): number | null {
   const h = Number(m[2]) || 0;
   return w > 0 && h > 0 ? h / w : null;
 }
+
+/**
+ * What a donut directive's numbers ARE, so its legend can print them.
+ *
+ * The legend used to print each segment's share of the ring, which the chart
+ * computed. Where the segments were the whole of something that was harmless;
+ * where they were not, it printed shares of nothing — five industries' shares
+ * of a workforce (12.9, 10.9, 9.5, 9, 8.4, summing to 50.7) came out as 25%,
+ * 21%, 19%, 18% and 17%, figures no source holds, beside a centre the model
+ * wrote as "12.9%" (the 18 Annabelle Crescent Compass, Audit 6, 1 Oct 2026).
+ *
+ * So the legend prints the value as written, and a percentage stays one: the
+ * values are percentages when one is written with `%`, or — where every value
+ * lies between 0 and 100 — when the centre is written as one, the title calls
+ * them a share, or they add to a hundred. The bound matters: a title saying
+ * "Share of dwellings" over 3,200 and 1,800 is a title about the counts, and
+ * reading them as percentages would print "3200%". Percentages that sum to
+ * less than the whole are drawn against 100, with the rest of the ring left
+ * as the rest. Anything else — counts, amounts — fills the ring as the
+ * composition of what was listed, exactly as before, and its legend prints
+ * the counts.
+ */
+export function donutReading(d: Extract<VizDirective, { kind: 'donut' }>): {
+  whole: number | null;
+  display: (s: { value: number; display?: string }) => string;
+} {
+  const sum = d.segments.reduce((n, s) => n + Math.max(0, s.value), 0);
+  const outOfHundred = d.segments.every((s) => s.value >= 0 && s.value <= 100);
+  const written = d.segments.some((s) => /%/.test(s.display ?? ''));
+  // Read from the words around the values only where the values could be
+  // percentages at all.
+  const inferred = outOfHundred && (
+    /%\s*$/.test(String(d.center ?? '').trim())
+    || /\bshare\b|\bper\s?cent|\bpercentage\b|\bproportion\b|%/i.test(String(d.title ?? ''))
+    // Parts that add to a hundred are a breakdown out of a hundred, written
+    // or not: "Council rates 40, Insurance 35, Maintenance 25" is 40%.
+    || (sum >= 99 && sum <= 101));
+  const percent = written || inferred;
+  const parts = percent && sum > 0 && sum < 99 && outOfHundred;
+  return {
+    whole: parts ? 100 : null,
+    display: (s) => {
+      const written = String(s.display ?? '').trim() || String(s.value);
+      return percent && !/%/.test(written) ? `${written}%` : written;
+    },
+  };
+}
+
+/** The printed width of a margin note's sparkline inside a template's narrative. */
+export const MARGIN_SPARK_MM = 60;
+const PT_PER_MM = 72 / 25.4;
 
 /** A short, bounded description for the `alt` a tagged PDF needs. */
 function describe(d: VizDirective): string {
@@ -265,15 +316,20 @@ export function renderVizDirective(
         { title: d.title, max: d.max, unit: d.unit },
       ));
 
-    case 'donut':
+    case 'donut': {
       if (d.refused?.length) {
         return asTable((d.sources ?? []).map(splitRefusedItem), 'Share');
       }
+      const reading = donutReading(d);
       return wrap(renderDonut(
         drawCtx,
-        d.segments.map((s) => ({ label: s.label, value: s.value })),
-        { title: d.title, centerLabel: d.center, centerSub: d.centerSub },
+        d.segments.map((s) => ({ label: s.label, value: s.value, display: reading.display(s) })),
+        {
+          title: d.title, centerLabel: d.center, centerSub: d.centerSub,
+          legend: 'given', ...(reading.whole ? { whole: reading.whole } : {}),
+        },
       ));
+    }
 
     case 'gauge':
       // The gauge draws its own label and caption; a `title` option does not
@@ -309,7 +365,15 @@ export function renderVizDirective(
       // A sidenote, not a chart: the directive's whole purpose is to push
       // secondary context out of the main column. The spark rides inside it.
       //
-      const spark = d.spark.length >= 2 ? renderMarginSpark(ctx, d.spark) : '';
+      // A template's narrative has no margin, so there the spark is drawn at
+      // its own printed size with its two end values (`MARGIN_SPARK_MM`),
+      // rather than stretched across the measure: on the 18 Annabelle
+      // Crescent Compass a five-value growth spark ran the full width of the
+      // page at four times its height, in red, with no number on it (Audit 6).
+      const sized = Boolean(geometry);
+      const sparkCtx = sized ? { ...ctx, widthMm: MARGIN_SPARK_MM } : ctx;
+      const svg = d.spark.length >= 2 ? renderMarginSpark(sparkCtx, d.spark, { ends: sized }) : '';
+      const spark = svg && sized ? `<div class="margin-spark" style="width:${MARGIN_SPARK_MM}mm;">${svg}</div>` : svg;
       const body = (d.heading ? `<p><strong>${escapeHtml(d.heading)}</strong></p>` : '')
         + (d.note ? `<p>${escapeHtml(d.note)}</p>` : '')
         + spark;
@@ -317,7 +381,7 @@ export function renderVizDirective(
       const html = renderSidenote(d.label ?? 'Context', body);
       const lines = geometry
         ? sidenoteCharge(geometry, [d.heading ?? '', d.note ?? ''].filter(Boolean).map((t) => t.length))
-          + (spark ? figureCharge(geometry, viewBoxRatio(spark) ?? 0.25, false, false) : 0)
+          + (svg ? ((viewBoxRatio(svg) ?? 0.25) * MARGIN_SPARK_MM * PT_PER_MM) / pitchPt(geometry) : 0)
         : figureLines(html, ctx.widthMm);
       return { html, lines };
     }

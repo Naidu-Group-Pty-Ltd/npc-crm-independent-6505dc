@@ -148,3 +148,67 @@ export const DTI_LIMITED_ASSESSMENT = {
   audit_trail: null,
   explanation: null,
 };
+
+/**
+ * The explanation `calculate-borrowing-capacity` writes for the DTI-limited
+ * client above, in the engine's own words — `generateExplanationServer`, run on
+ * this fixture's figures (after-tax $118,912.40, $1,150 a month of negative
+ * property cash flow, $1,030,000 of debt).
+ *
+ * Every assessment calculated since 14 Aug 2026 carries one of these, and the
+ * two documents read on 28 Sep predated it, so no fixture had ever held one:
+ * its narratives are a log's shorthand ("1 commitment(s)", "→ max loan",
+ * "RED band"), its figures are pre-formatted strings, and its DTI step divides
+ * by gross income, $164,400, where the stored 9.27x divides by the $158,640 the
+ * ratio is defined over — so its own arithmetic does not reach the ratio it
+ * prints (BORROWING_CAPACITY.md §21).
+ */
+export const DTI_LIMITED_ENGINE_EXPLANATION = {
+  headline: 'Borrowing capacity of $441,146 on $164,400 gross income — RED serviceability.',
+  steps: [
+    { step: 1, title: 'Income Assessment', narrative: 'Gross income of $164,400 from 2 source(s) assessed at $161,520 after APRA shading (−$2,880 reduction).', figures: [{ label: 'Gross', value: '$164,400' }, { label: 'Shaded', value: '$161,520' }], icon: 'income' },
+    { step: 2, title: 'Tax & After-Tax Income', narrative: 'Tax of $42,608 calculated (26.4% effective, 39.0% marginal). After-tax income: $118,912/yr ($9,909/mo).', figures: [{ label: 'Tax', value: '$42,608' }, { label: 'After-Tax', value: '$118,912' }], icon: 'tax' },
+    { step: 3, title: 'Living Expenses', narrative: 'Expenses of $2,600/mo via override. Plus $1,150/mo negative property CF → total $3,750/mo.', figures: [{ label: 'Base', value: '$2,600/mo' }, { label: 'Total', value: '$3,750/mo' }], icon: 'expense' },
+    { step: 4, title: 'Existing Commitments', narrative: '1 commitment(s) at $2,450/mo. Total debt: $1,030,000.', figures: [{ label: 'Monthly', value: '$2,450/mo' }, { label: 'Debt', value: '$1,030,000' }], icon: 'liability' },
+    { step: 5, title: 'Capacity Derivation', narrative: 'Surplus = $9,909 − $3,750 − $2,450 = $3,709/mo. At 9.50% over 30yr → max loan $441,146.', figures: [{ label: 'Surplus', value: '$3,709/mo' }, { label: 'Capacity', value: '$441,146' }], icon: 'capacity' },
+    { step: 6, title: 'DTI Ratio', narrative: 'DTI = ($1,030,000 + $441,146) / $164,400 = 9.3x.', figures: [{ label: 'DTI', value: '9.3x' }], icon: 'dti' },
+    { step: 7, title: 'Stress Test', narrative: 'At +1% (10.50%), stressed capacity is $405,510 (−$35,636).', figures: [{ label: 'Stressed', value: '$405,510' }], icon: 'stress' },
+    { step: 8, title: 'Serviceability Band', narrative: 'RED band. Limited — focus on debt reduction.', figures: [{ label: 'Band', value: 'RED' }], icon: 'band' },
+  ],
+  executiveSummary: 'On $164,400 gross ($161,520 shaded), after-tax $118,912, expenses $3,750/mo, commitments $2,450/mo → capacity $441,146 at 9.50% over 30yr. DTI 9.3x. Band: RED.',
+  generatedAt: '2026-07-13T02:00:00.000Z',
+};
+
+/**
+ * The audit trail the engine writes for the same client — the
+ * `AuditTrailBuilder` calls in `calculate-borrowing-capacity/index.ts`, with its
+ * own `build()` summary. Two of that summary's four totals are not totals of
+ * anything a client can check: `totalLiabilityAdjustments` is each repayment
+ * less its BALANCE ($417,550 beside a $420,000 mortgage), and `totalTaxImpact`
+ * adds the Medicare levy to an after-tax figure that already nets it ($45,838
+ * against $42,607.60 of tax). The shortfall entry stores the cost as a positive
+ * figure (`Math.abs`), which is what the polarity table read backwards.
+ */
+export const DTI_LIMITED_ENGINE_AUDIT_TRAIL = {
+  entries: [
+    { seq: 1, category: 'income', action: 'shading_applied', label: 'Primary Salary', rawValue: 150_000, assessedValue: 150_000, rule: '100% shading', delta: 0, impact: 'neutral' },
+    { seq: 2, category: 'income', action: 'shading_applied', label: ENGINE_PROPERTY_LABEL, rawValue: 14_400, assessedValue: 11_520, rule: '80% shading', delta: -2_880, impact: 'decrease' },
+    { seq: 3, category: 'tax', action: 'tax_calculated', label: 'Income Tax', rawValue: 161_520, assessedValue: 118_912.4, rule: '26.4% effective rate', delta: -42_607.6, impact: 'decrease', note: 'Tax: $42607.6' },
+    { seq: 4, category: 'tax', action: 'medicare_levy_applied', label: 'Medicare Levy', rawValue: 0, assessedValue: 3_230.4, rule: '2% of gross', delta: 3_230.4, impact: 'increase' },
+    { seq: 5, category: 'expense', action: 'override_applied', label: 'Living Expenses', rawValue: 2_600, assessedValue: 2_600, rule: 'Method: Declared', delta: 0, impact: 'neutral', note: 'Couple, 1 dependant — HEM $3,120/mo vs Declared $2,600/mo' },
+    { seq: 6, category: 'property', action: 'negative_cf_layered', label: 'Neg CF: 22 Example Road Sampleton NSW 2380', rawValue: 0, assessedValue: 1_150, rule: 'Layered on expenses', delta: 1_150, impact: 'increase' },
+    { seq: 7, category: 'liability', action: 'assessment_rate_applied', label: 'Mortgage', rawValue: 420_000, assessedValue: 2_450, rule: '$2450/mo servicing', delta: -417_550, impact: 'decrease' },
+    { seq: 8, category: 'constraint', action: 'stress_test_applied', label: 'Stress Test', rawValue: 441_146, assessedValue: 405_510, rule: '+1% above assessment', delta: -35_636, impact: 'decrease' },
+  ],
+  summary: {
+    totalTransformations: 8,
+    byCategory: { income: 2, expense: 1, liability: 1, property: 1, tax: 2, policy: 0, constraint: 1 },
+    totalIncomeShading: 2_880,
+    totalExpenseAdjustments: 0,
+    totalLiabilityAdjustments: 417_550,
+    totalTaxImpact: 45_838,
+    hasOverrides: false,
+    hasConstraints: true,
+  },
+  generatedAt: '2026-07-13T02:00:00.000Z',
+};

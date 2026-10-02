@@ -296,14 +296,17 @@ status recorded without one is exactly what a broker looks for.
 5. **Not metered.** No model is involved anywhere in this format — the first in
    the programme with nothing to meter.
 
-**Filename:** `Client_Details_<Name>_<YYYY-MM-DD>.pdf`. **A deliberate divergence
-from the legacy's** `Formara_Form_<Name>_<date>.pdf`: "Formara" is a vendor's
-name for a broker form standard, it appears nowhere on the document, and it means
-nothing to the client or broker who receives it. The existing
-`[^a-zA-Z0-9] → _` rule is kept, so the two sort together and neither is mistaken
-for the other.
+**Filename:** `Client Details - <Name> - <DD Mon YYYY>.pdf`, written for the
+person who reads it in a downloads folder or an attachment row
+(`readableFileName.pure.ts`, §12). It was `Client_Details_<Name>_<YYYY-MM-DD>.pdf`.
+**Still a deliberate divergence from the legacy's**
+`Formara_Form_<Name>_<date>.pdf`: "Formara" is a vendor's name for a broker
+form standard, it appears nowhere on the document, and it means nothing to the
+client or broker who receives it.
 
-**Storage:** `client-details/<clientId>/<date>/<uuid>-<name>` in `client-files`.
+**Storage:** `client-details/<clientId>/<date>/<uuid>-<name>` in `client-files`,
+the name made URL-safe (`storageSafeFileName`): the readable name is what a
+person is handed, the key is where the bytes live.
 
 ---
 
@@ -503,3 +506,160 @@ nothing rather than emptying the picker.
 
 See [`../template-library/07-investment-compass-families.md`](../template-library/07-investment-compass-families.md)
 for the design system these 50 masters are drawn in.
+
+---
+
+## 12. The audit (1 Oct 2026)
+
+The fifth document in the report audit, after the Intelligence Hub Summary, the
+Portfolio Performance Review, the Borrowing Capacity Snapshot and the Strategy
+Rationale Brief. The five record shapes of §7 were drawn through the production
+normaliser, composer and renderer in the standard layout and every one of the
+fifty catalogue designs, measured from WeasyPrint 69.0's own box tree, and read
+page by page.
+
+### What was wrong
+
+**The layout was a set of separate pages.** Every section opened a page, so a
+record holding a name and nothing else was five pages, each of its two sections
+on a page of its own — the ordinary case, since 742 of the 775 clients hold
+nothing financial (§8) — and the largest record was 25. Subheads such as "Primary
+contact" and "Liabilities" were set within a point of the section they sat in,
+and read as rival titles. Tables split wherever the page ended: across the 255
+documents measured, 56 splits left a single row on one side of a break. The portfolio matrix
+took a landscape sheet of its own, a third full, its columns headed by addresses
+clipped at thirty characters ("Unit 14, 238-242 Great…").
+
+**The words were the database's.** Each of these printed on a client's record:
+
+| Printed | What the record held |
+| --- | --- |
+| `1984-03-17` | a date of birth |
+| `Nab`, `Commonwealth bank` | the provider as typed: `NAB`, `Commonwealth Bank` |
+| `Internet phone`, `Gym fitness` | the expense form's own categories, `Internet and phone`, `Gym and fitness` |
+| `Est. P&I @ 9% / 5yr`, `3% of credit limit` | the finance engine's note to itself, as the basis of a figure |
+| `Family Tax Benefit (Secondary)` | an income line, beside a column already saying whose |
+| `…, Wentworth Point, NSW 2127, Australia` | an Australian address, as one line |
+| `Primary contact — details` | the caption, repeating the subhead above it |
+
+**The summary disagreed with the record or repeated it.** It sat above the
+contact details as a lede, so a reader met "The record holds…" before learning
+whose record it was. On an empty record it said what the closing callout says, in
+other words, a page earlier. It counted the home's value and not the home ("holds
+1 property worth $1,500,000" for a home and an investment), and it wrote "$0 of
+debt" for a property owned outright.
+
+**Figures about things the record does not hold.** A client with no property was
+shown "Property value $0", "Property debt $0" and "Property equity $0", and a
+"$0 held" figure at the head of Where they stand. The home's sidenote explained
+"the portfolio tables" to a client who has none. A record of one person carried a
+Contact column on every table, saying the same name on every row. The matrix's
+caption repeated the section's standfirst ("Every holding, side by side") and
+then vouched for the software: the net "cannot disagree with the two rows above
+it".
+
+**The export surface.** One button, "Typeset details", with the template choice
+at the foot of its destinations menu; and a file named
+`Client_Details_Rohan_Mehta_Castellano___Imogen_Castellano_2026-09-30.pdf`.
+
+### What it does now
+
+- **The sections run on as memo sections**
+  (`openChapter(…, { runOn, memo: true })`), as the Portfolio review's do: each
+  follows the last on the same page, and a section heading is never left at a
+  foot. Subheads are set one modular step below the section title
+  (`SECTION_SUBHEAD_CLASS`).
+- **The summary sits under the contents**, as "About this record", and says
+  only what the record says: who the household is, what it holds and owes, and
+  income against commitments. An empty record has no summary at all, because
+  the closing section already says so. The holdings count takes the home in
+  wherever the value does, and a property with no loan is "no debt recorded
+  against it".
+- **One rule decides whether a record holds any finances**:
+  `recordHoldsFinancials` in `payload.pure.ts`. There were two, and they
+  disagreed in both directions. The document's closing section was numeric (net
+  worth, income and commitments all zero), so a property worth exactly what is
+  owed on it, with no repayment or income recorded, was told "No financial
+  information is recorded". The template projection's `hasFinancials` read the
+  collections and never the income, so a client whose only record is a pension
+  drew that sentence on every template master while the standard document set
+  out the income. The summary, the closing section and the projection all read
+  the one rule now.
+- **Tables are kept by estimated height** (`keptTable`, `leadRows: 2`), the
+  rule the Hub and the Portfolio review use: a short table moves whole, a long
+  one splits with at least two rows on each side. Assets and liabilities carry a
+  total row. The Contact column is drawn only where the record names two people,
+  and a row then names the person by first name.
+- **Up to five holdings are drawn side by side on the section's own page**
+  (`reportDesign/portraitMatrix.pure.ts`), headed by the whole street line
+  (`streetLine`, which never clips, because these heads wrap), and kept whole:
+  eight lines read across as one comparison, and split six and two the net
+  figures turned over to a page of their own. That is a new `KeepOptions`
+  field, `wholeUpToRows`, with its default unchanged. The module is the
+  Portfolio review's matrix, moved rather than copied; the Portfolio review
+  renders byte for byte as before (hashed for 1, 3, 5, 6 and 10 holdings in the
+  standard layout and all fifty designs). Past five holdings the landscape sheet
+  stays, with the clipped heading, because its columns cannot wrap.
+- **The words are the record's.** Dates are set as dates (`17 March 1984`, and
+  `01 Feb 2024` in a table), and a date that cannot be read is kept as it was
+  recorded rather than lost. A provider is printed as typed. Categories are
+  named as the expense form names them. The basis of a servicing figure is said
+  in words — "Estimated: principal and interest at 9% over 5 years",
+  "Estimated: 3% of the limit", "As recorded" — and a note the translation does
+  not know is printed as written, never guessed (`liabilityBasis`). An address is
+  one line in the Australian form, a country named only when it is not
+  Australia, and a suburb the street line already ends with is not printed twice
+  (`addressLine`, judged by position, because streets are named after the
+  suburbs they run through).
+- **Nothing is drawn about what the record does not hold.** Without property,
+  Where they stand has no property rows and no property figure; it reads
+  "Assets" and "Liabilities", and leads with what share of income is committed.
+  The home's sidenote is drawn only where there is a portfolio to keep it out of.
+  The matrix's caption says only which lines are monthly.
+- **The choice sits beside the act.** "Choose template" is its own button before
+  "Export PDF" (`ChooseTemplateButton`), as on the Hub, the Portfolio review,
+  the Borrowing Capacity Snapshot and both comparisons; the caret keeps the
+  three destinations. The file is
+  `Client Details - Rohan Mehta-Castellano & Imogen Castellano - 30 Sep 2026.pdf`
+  (§8).
+
+### Measured
+
+Each shape drawn in the standard layout and the fifty designs (51 documents a
+shape), measured on WeasyPrint 69.0 with the render service's own options. A
+page "more than a quarter empty" is a body page whose foot is more than a
+quarter of the content box below its last line; the cover, the contents page and
+the closing page are not body pages, and the last body page is left out of the
+gap statistics, because a document ends where it ends.
+
+| Record shape | Pages, standard | Pages, all 51 | Body pages more than a quarter empty | Emptiest measured page | Mean fill | Splits leaving one row alone |
+| --- | --- | --- | --- | --- | --- | --- |
+| A name and nothing else | 5 → 4 | 255 → 204 | 51 → 0 | 43.1% → none measured¹ | 63.7% → —¹ | 0 → 0 |
+| Details and 18 addresses | 7 → 6 | 348 → 306 | 42 → 0 | 85.2% → 23.9% | 72.1% → 87.5% | 7 → 0 |
+| Finances, no property | 14 → 12 | 705 → 604 | 145 → 57 | 87.3% → 40.7% | 77.1% → 85.4% | 9 → 0 |
+| Finances and a home | 16 → 13 | 817 → 661 | 155 → 116 | 93.3% → 33.1% | 75.8% → 87.9% | 12 → 0 |
+| The largest record | 25 → 22 | 1,266 → 1,106 | 306 → 192 | 94.0% → 52.4% | 78.6% → 87.4% | 28 → 0 |
+| **All five** | | **3,391 → 2,881** | **699 → 365** | | | **56 → 0** |
+
+¹ Its one body page is now its last, which the gap statistics leave out.
+
+What remains part-empty is a whole block moving to the next page: a section's
+heading with the table it opens, or a contact's details with their subhead. The
+worst, 52% on one page of the largest record, is the Property portfolio's
+heading and its matrix moving past the last page of a 100-line expense list. A
+matrix split to fill that space would print its net figures on the next page,
+which is the defect the whole-matrix rule exists to stop.
+
+### Not changed
+
+- **The legacy `FormaraPDFGenerator`** is untouched (§10).
+- **The fifty Template Builder masters** (§8, second) are unchanged. They bind
+  the projection, whose one change is `hasFinancials`: a record whose only entry
+  is income now draws its summary rather than the empty-record sentence.
+- **The order of the sections** is unchanged.
+- **The chart labels** keep `shortAddress`: a bar's label cannot wrap.
+
+`render.spec.ts`, `normalise.spec.ts` and `ClientDetailsDownloadButton.spec.tsx`
+pin each of these on the document's markup and the record's words. The page
+measurements behind them are taken on the engine and are not something a unit
+test can hold.

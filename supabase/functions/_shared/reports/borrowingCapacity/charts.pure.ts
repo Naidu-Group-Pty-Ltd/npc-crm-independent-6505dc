@@ -35,6 +35,8 @@
 
 import type { ResolvedReportPalette } from '../../reportDesign/roles.pure.ts';
 import {
+  CHART_TARGET_WIDTH_MM,
+  COMPACT_FIGURE_FRACTION,
   chartContext,
   chartFigure,
   renderBars,
@@ -42,7 +44,7 @@ import {
   renderDonut,
   type BarItem,
 } from '../../reportDesign/charts.pure.ts';
-import { formatMeasure } from '../../reportDesign/measure.pure.ts';
+import { aud, formatMeasure } from '../../reportDesign/measure.pure.ts';
 import type { BorrowingCapacitySnapshot } from './payload.pure.ts';
 
 /**
@@ -133,21 +135,37 @@ export function headroomChart(
  * Assessed amounts, not gross: a component shaded to nothing contributes
  * nothing, and a chart of gross income would show it carrying weight it does
  * not carry. Zero-value segments are dropped for the same reason.
+ *
+ * Not drawn where the lines do not reach the assessed total (§21): its centre
+ * states the total, and segments that add up to something else would draw the
+ * disagreement the table has just named.
  */
 export function incomeMixChart(
   s: BorrowingCapacitySnapshot,
   palette: ResolvedReportPalette,
 ): string {
-  const segments = s.income.rows
+  if (s.income.itemsTotal) return '';
+  const lines = s.income.proposedRent ? [...s.income.rows, s.income.proposedRent] : s.income.rows;
+  const segments = lines
     .filter((r) => r.shaded.value > 0)
     .map((r) => ({ label: r.label, value: r.shaded.value }));
   if (segments.length < MIN_DONUT_SEGMENTS) return '';
 
+  // Drawn at the compact width it is made for (`ChartFigureWidth`), with the
+  // context narrowed by the same fraction so its labels keep their point size.
+  // Stretched across the measure, three segments took a third of a page, and
+  // the liabilities table under them was pushed to the next one on 30 of the
+  // 51 designs (§21).
   return chartFigure(
-    renderDonut(chartContext(palette), segments, {
-      centerLabel: formatMeasure(s.income.shaded),
-      centerSub: 'Assessed',
+    // The figure without its period, and the period in the line under it: a
+    // shorter figure is set larger in the hole (`donutFigurePt`). "Assessed"
+    // is the caption's word already, and with it the line broke in two.
+    renderDonut(chartContext(palette, CHART_TARGET_WIDTH_MM * COMPACT_FIGURE_FRACTION), segments, {
+      centerLabel: formatMeasure(aud(s.income.shaded.value)),
+      centerSub: 'Per year',
     }),
     'Assessed income by component',
+    '',
+    'compact',
   );
 }

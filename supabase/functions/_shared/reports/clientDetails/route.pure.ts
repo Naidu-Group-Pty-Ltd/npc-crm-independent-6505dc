@@ -15,6 +15,10 @@ import {
   type DesignEcho,
   type TemplateDesignReference,
 } from '../../reportDesign/templateDesign.pure.ts';
+import { readableFileName, storageSafeFileName } from '../readableFileName.pure.ts';
+
+/** What the product calls this document, in its filename. */
+const CLIENT_DETAILS_NAME = 'Client Details';
 
 /** Only these are accepted from the caller; everything else is read server-side. */
 export interface ClientDetailsRenderRequest {
@@ -61,21 +65,21 @@ export function parseRenderRequest(body: unknown): RequestParse {
 }
 
 /**
- * The filename.
+ * The filename: `Client Details - Rohan Mehta-Castellano - 30 Sep 2026.pdf`.
  *
- * **A deliberate divergence from the legacy**, which produces
- * `Formara_Form_<Name>_<date>.pdf` (`FormaraPDFGenerator.tsx:783`). "Formara" is
- * a vendor's name for a broker form standard; it appears nowhere on the document
- * and means nothing to the client or the broker who receives it. Every other
- * migrated format names the file after what it is, and this one now does too.
+ * Read by a person before the document is — in a downloads folder, an email's
+ * attachment row, the Finance Portal's list — so it is written for one
+ * (`readableFileName.pure.ts`), as the Intelligence Hub Summary, the Portfolio
+ * Performance Review and the Borrowing Capacity Snapshot are: the document's
+ * name, whom it is about, and the day. It was `Client_Details_<Name>_<date>`,
+ * with every space and the "&" between two names an underscore.
  *
- * The existing `[^a-zA-Z0-9] → _` rule is kept exactly, so the two files sort
- * together in a downloads folder and neither is mistaken for the other.
+ * Still a deliberate divergence from the legacy's `Formara_Form_<Name>_<date>`:
+ * "Formara" is a vendor's name for a broker form standard, appears nowhere on
+ * the document and means nothing to the client or the broker who receives it.
  */
 export function clientDetailsFileName(clientName: string, isoDate: string): string {
-  const safe = (clientName || 'Client').replace(/[^a-zA-Z0-9]/g, '_').slice(0, 80);
-  const date = /^\d{4}-\d{2}-\d{2}/.exec(isoDate)?.[0] ?? '';
-  return `Client_Details_${safe}_${date}.pdf`;
+  return readableFileName({ name: CLIENT_DETAILS_NAME, topic: clientName || 'Client', isoDate });
 }
 
 /** The first eight characters of the client's id, uppercased, for the cover foot. */
@@ -99,7 +103,9 @@ export function clientDetailsStoragePath(
   uniqueId: string,
 ): string {
   const day = /^\d{4}-\d{2}-\d{2}/.exec(isoDate)?.[0] ?? 'undated';
-  return `client-details/${clientId}/${day}/${uniqueId}-${fileName}`;
+  // The key keeps to URL-safe characters: the readable name is what a person
+  // is handed, the key is where the bytes live, and a key travels in signed URLs.
+  return `client-details/${clientId}/${day}/${uniqueId}-${storageSafeFileName(fileName)}`;
 }
 
 /** How long a returned link lives. Long enough to email, short enough to expire. */

@@ -7,6 +7,7 @@ import {
   missingInputsOf,
   readBaseFinancials,
 } from '../readBaseFinancials';
+import { buildProjection, MAX_NOTE_CHARS } from '../normalise.pure';
 
 /**
  * The 10-year cash flow reads the case the calculator wrote, where it wrote it.
@@ -161,6 +162,48 @@ describe('evidenceBasisNotes (QA-12, QA-14, QA-15)', () => {
     const base = readBaseFinancials(STONE_MASON as never, 2026);
     const notes = evidenceBasisNotes({ ...base, landTax: 0, provenance: { ...base.provenance, landTax: 'absent' } });
     expect(notes.find((n) => /land tax/i.test(n))).toContain('not a finding that none is payable');
+  });
+  it('says what was not provided, never what is "not held" (Audit 7)', () => {
+    // "Landholdings … which are not held" reads as "the owner holds no other
+    // land" — the opposite of the caution. Every variant of every note.
+    const base = readBaseFinancials(STONE_MASON as never, 2026);
+    const variants = [
+      base,
+      { ...base, landTax: 0, provenance: { ...base.provenance, landTax: 'absent' as const } },
+      { ...base, landTax: 0, provenance: { ...base.provenance, landTax: 'override' as const } },
+      { ...base, landTax: 1_850 },
+    ];
+    for (const v of variants) {
+      const notes = evidenceBasisNotes(v);
+      for (const n of notes) expect(n).not.toMatch(/\bnot held\b|\breport record\b/);
+      expect(notes.find((n) => /land tax/i.test(n))).toContain('those details were not provided for this analysis');
+      expect(notes.find((n) => /Tax effects/.test(n))).toContain('were not provided for this analysis');
+    }
+  });
+  it('every note reaches the document whole: none is past the server\'s bound', () => {
+    // The server prints a note up to `MAX_NOTE_CHARS` unchanged. Every variant
+    // the browser can compose — the longest tax wording, a land tax of seven
+    // figures — has to be inside it, or a caveat reaches the page cut.
+    const base = readBaseFinancials(STONE_MASON as never, 2026);
+    const longest = [
+      { ...base, taxRate: 47, provenance: { ...base.provenance, taxRate: 'override' as const } },
+      { ...base, landTax: 1_234_567 },
+      { ...base, landTax: 0, provenance: { ...base.provenance, landTax: 'absent' as const } },
+      { ...base, landTax: 0, provenance: { ...base.provenance, landTax: 'override' as const } },
+    ].flatMap((v) => evidenceBasisNotes(v));
+    for (const n of longest) expect(n.length).toBeLessThanOrEqual(MAX_NOTE_CHARS / 2);
+    const cf = buildProjection({
+      source: {
+        acquisition: { purchasePrice: 1, marketValue: 1, deposit: 0, loanAmount: 0, loanTermYears: 30, interestRate: 6, loanType: 'principal_interest', weeklyRent: 0, costs: [] },
+        years: [{ year: 1, propertyValue: 1, loanBalance: 0, rentalIncome: 0, grossYield: 0, netYield: 0, expenses: 0, interestRate: 6, interest: 0, principal: 0, preTaxAnnual: 0, afterTaxAnnual: 0, depreciation: 0, taxRefund: 0, landTax: 0, capitalGrowth: 0, cpiGrowth: 0 }],
+        assumptions: [],
+        notes: longest,
+      },
+      propertyAddress: '1 Test Street, Lara VIC 3212',
+      clientName: '',
+      now: '2026-10-01T00:00:00.000Z',
+    });
+    expect(cf.notes).toEqual(longest);
   });
 });
 

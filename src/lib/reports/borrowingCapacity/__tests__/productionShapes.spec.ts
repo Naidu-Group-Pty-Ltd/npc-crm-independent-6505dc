@@ -26,12 +26,15 @@ import { buildSnapshot, incomeLabel } from '../normalise.pure';
 import { curateBasis, tidyMoney } from '../basis.pure';
 import { renderSnapshotBody } from '../render.pure';
 import { titleCase } from '../normalise.pure';
-import { SAMPLE_GLOBAL_SETTINGS } from './fixtures/sampleAssessment';
+import { SAMPLE_ASSESSMENT, SAMPLE_GLOBAL_SETTINGS, SAMPLE_SCENARIO_PRESETS } from './fixtures/sampleAssessment';
 import {
   DTI_LIMITED_ASSESSMENT,
+  DTI_LIMITED_ENGINE_AUDIT_TRAIL,
+  DTI_LIMITED_ENGINE_EXPLANATION,
   ENGINE_PROPERTY_LABEL,
   NO_INCOME_ASSESSMENT,
 } from './fixtures/productionShapes';
+import { MEMO_CHAPTER_CLASS, SECTION_SUBHEAD_CLASS } from '@/lib/reportDesign/primitives.pure';
 
 const contact = SAMPLE_GLOBAL_SETTINGS.contactDetails as never;
 const html = (payload: ReturnType<typeof buildSnapshot>) => renderSnapshotBody({
@@ -107,6 +110,18 @@ describe('no income recorded', () => {
     expect(body).toContain('No income recorded');
   });
 
+  it('draws no serviceability band that nothing was assessed to reach (§21)', () => {
+    // The basis still names the serviceability rule it applied; what goes is
+    // the band, which is a judgement nothing was assessed to reach.
+    expect(html(none)).not.toMatch(/>\s*Serviceability\s*<\/[^>]+>\s*<[^>]+>\s*Limited/);
+    expect(body).not.toMatch(/\bLimited\b/);
+    expect(text(html(dti))).toMatch(/Serviceability\s+Limited/);
+  });
+
+  it('says what to do about it once, in the advice', () => {
+    expect(body.match(/recalculate/g)).toHaveLength(1);
+  });
+
   it('prints no ratio over zero income and no stress test of nothing', () => {
     expect(none.headline.dti).toBeNull();
     expect(none.headline.stressTested).toBeNull();
@@ -116,6 +131,19 @@ describe('no income recorded', () => {
 
   it('prints no income table holding only a total', () => {
     expect(body).not.toContain('Income, before and after shading');
+  });
+
+  /**
+   * §21. The section's standfirst was one sentence for every document, and
+   * promised "every income component" and "every liability" over a callout and
+   * two figures. The callout's bridge to the expenses went with it: the
+   * standfirst says what the section applies, once.
+   */
+  it('promises in its standfirst only what the section draws', () => {
+    expect(body).not.toContain('Every income component');
+    expect(body).not.toContain('every liability with its servicing');
+    expect(body).toContain('The living expenses and commitments the assessment applied.');
+    expect(body).not.toContain('The living expenses below are what it applied.');
   });
 
   it('advises recording the income, and not paying down debts that do not exist', () => {
@@ -161,9 +189,16 @@ describe('the basis, in the report’s words', () => {
     expect(labels('conservative', true)).toEqual(['Minimum surplus (conservative policy)', 'Credit cards serviced at']);
   });
 
-  it('comes last, after the working it qualifies', () => {
+  it('follows the working it qualifies, and leaves the scenarios to end the document', () => {
     const h = html(dti);
-    expect(h.indexOf('On what basis')).toBeGreaterThan(h.indexOf('From income to maximum capacity'));
+    expect(h.indexOf('On what basis')).toBeGreaterThan(h.indexOf('How the capacity is built'));
+    const withScenarios = html(buildSnapshot({
+      clientName: 'A. & J. Sample',
+      assessment: SAMPLE_ASSESSMENT,
+      scenarioPresets: SAMPLE_SCENARIO_PRESETS,
+    }));
+    expect(withScenarios.indexOf('data-chapter-title="On what basis"'))
+      .toBeLessThan(withScenarios.indexOf('data-chapter-title="Scenario comparison"'));
   });
 });
 
@@ -200,12 +235,166 @@ describe('the flow', () => {
     for (const c of chapters.slice(1)) expect(c).toContain('run-on');
   });
 
-  it('keeps the chart with its sentence, and the short tables whole', () => {
-    expect(h).toMatch(/<div class="keep-together">[\s\S]*?Capacity and headroom[\s\S]*?Proposed loan/);
-    expect((h.match(/class="keep-together"/g) ?? []).length).toBeGreaterThanOrEqual(6);
+  it('keeps the short tables whole, and the working and each callout too', () => {
+    // A table is kept whole by its estimated height (`tableKeeping.pure.ts`),
+    // the working and the callouts by their own wrapper; the chart cannot split
+    // by its own rule (`.chart-figure { page-break-inside: avoid }`).
+    expect((h.match(/class="table-block keep-together"/g) ?? []).length).toBeGreaterThanOrEqual(3);
+    expect((h.match(/<div class="keep-together">/g) ?? []).length).toBeGreaterThanOrEqual(3);
+    expect(h).toMatch(/<figure class="chart-figure[^"]*"[\s\S]*?Capacity and headroom/);
+  });
+
+  it('sets its sections as memo sections, with subheads one step below the title (§21)', () => {
+    const chapters = [...h.matchAll(/<section class="chapter([^"]*)"/g)].map((m) => m[1]);
+    for (const c of chapters) expect(c).toContain(MEMO_CHAPTER_CLASS);
+    const subheads = [...h.matchAll(/<h2([^>]*)>/g)].map((m) => m[1]);
+    expect(subheads.length).toBeGreaterThan(0);
+    for (const attrs of subheads) expect(attrs).toContain(SECTION_SUBHEAD_CLASS);
+  });
+
+  it('states the proposed loan once, in the opening paragraph (§21)', () => {
+    // The chart's bar carries its own figure inside the drawing; in the text
+    // the loan is the opening paragraph's, once.
+    expect(text(h).match(/\$400,000/g)).toHaveLength(1);
+    expect(text(h)).not.toContain('of the assessed capacity, which falls within the limit');
   });
 
   it('prints no engine " - " join anywhere a reader looks', () => {
     expect(text(h)).not.toMatch(/[a-z] - [a-z]/i);
+  });
+});
+
+/**
+ * A recalculated assessment: the DTI-limited client as the engine writes it
+ * today, with its own explanation and audit trail (§21). The two documents read
+ * on 28 Sep predated both, and every rule below was found on this shape.
+ */
+describe('a recalculated assessment (§21)', () => {
+  const recalculated = buildSnapshot({
+    clientName: 'Sam Example',
+    assessment: { ...DTI_LIMITED_ASSESSMENT, audit_trail: DTI_LIMITED_ENGINE_AUDIT_TRAIL, explanation: DTI_LIMITED_ENGINE_EXPLANATION },
+    auditTrail: DTI_LIMITED_ENGINE_AUDIT_TRAIL,
+    explanation: DTI_LIMITED_ENGINE_EXPLANATION,
+  });
+  const h = html(recalculated);
+  const t = text(h);
+  const audit = h.slice(h.indexOf('>Provided<'));
+  const row = (label: string) => {
+    const at = audit.indexOf(`>${label}<`);
+    expect(at, label).toBeGreaterThan(-1);
+    return audit.slice(at, audit.indexOf('</tr>', at));
+  };
+
+  it('prints the working once, in its own words, and never the engine\'s step-by-step', () => {
+    expect(t).not.toContain('How this was calculated');
+    for (const shorthand of ['commitment(s)', 'source(s)', '→', 'RED band', 'property CF', 'via override', '/ $164,400']) {
+      expect(t, shorthand).not.toContain(shorthand);
+    }
+    // The explanation is still read, for the template catalogue.
+    expect(recalculated.explanation?.steps).toHaveLength(8);
+    expect(t).toContain('How the capacity is built');
+  });
+
+  it('says a property\'s shortfall reduces capacity', () => {
+    expect(row('Property costs not covered by rent — 22 Example Road Sampleton NSW 2380')).toContain('Reduces');
+  });
+
+  it('says the stress test moved nothing, and by how much it would', () => {
+    const stress = row('Stress test');
+    expect(stress).not.toContain('Reduces');
+    expect(stress).toContain('-$35,636');
+    expect(stress).toContain('At the assessment rate plus 1%');
+  });
+
+  it('prints none of the engine\'s category totals', () => {
+    expect(t).not.toContain('$417,550');
+    expect(t).not.toContain('$45,838');
+    expect(recalculated.audit?.summary).toEqual({ transformations: expect.anything() });
+  });
+
+  it('labels every row by what it holds, and states every rule in words', () => {
+    expect(row('Income after tax and the Medicare levy')).toContain('26.4% of assessable income');
+    expect(row('Medicare levy, within the tax above')).toContain('2% of gross income');
+    expect(row('Property cash flow — 14 Wattle Grove Sampleton')).toContain('80% counted');
+    expect(row('Mortgage')).toContain('Assessed repayment');
+    expect(t).not.toMatch(/Neg CF|Income Tax|Medicare Levy|\$2450\/mo|Layered on expenses|above assessment/);
+  });
+
+  it('gives the living-expense row the document\'s own method, not the engine\'s', () => {
+    // The Calculator sends its figure as an explicit amount, so the engine
+    // writes "Method: Declared" whatever was applied (§20). The column says
+    // what was applied, and the terms, the expenses and the audit read it once.
+    const onHem = buildSnapshot({
+      clientName: 'Sam Example',
+      assessment: { ...DTI_LIMITED_ASSESSMENT, expense_method: 'hem' },
+      auditTrail: DTI_LIMITED_ENGINE_AUDIT_TRAIL,
+    });
+    const living = onHem.audit!.groups.flatMap((g) => g.rows).find((r) => r.label === 'Living expenses')!;
+    expect(living.rule).toBe('HEM benchmark');
+    expect(onHem.expenses.method).toBe('HEM benchmark');
+  });
+});
+
+/**
+ * §21. A total row its own rows do not reach is the one figure a reader can
+ * check and find wrong. The calculator sends its own totals, so where they and
+ * the recorded lines disagree the table names both, and the chart whose centre
+ * states the total is not drawn over segments that add up to something else.
+ */
+describe('a table that foots', () => {
+  const sample = buildSnapshot({ clientName: 'A. & J. Sample', assessment: SAMPLE_ASSESSMENT });
+  const edited = buildSnapshot({
+    clientName: 'A. & J. Sample',
+    assessment: { ...SAMPLE_ASSESSMENT, gross_annual_income: 196_000, shaded_annual_income: 181_400, existing_commitments_monthly: 1_610 },
+  });
+
+  it('prints one total where the lines reach it, with the capitalised premium as a line', () => {
+    const h = html(sample);
+    expect(h).toContain('Lenders mortgage insurance, added to the loan');
+    expect(h).toMatch(/>Total</);
+    expect(h).not.toContain('Used in this assessment');
+    expect(h).not.toContain('Two totals');
+    expect(h).toContain('Assessed income by component');
+  });
+
+  it('names both totals where the calculator\'s differ from the lines, and says which the working uses', () => {
+    const h = html(edited);
+    expect(h.match(/Total of the lines above/g)).toHaveLength(2);
+    expect(h.match(/Used in this assessment/g)).toHaveLength(2);
+    const t = text(h).replace(/&#39;/g, "'");
+    expect(t).toContain("This assessment was run on the calculator's income: $196,000 pa gross, $181,400 pa of it assessed.");
+    expect(t).toContain('The lines recorded for the household come to $186,000 pa and $171,400 pa.');
+    expect(t).toContain("This assessment was run on the calculator's commitments of $1,610/mo.");
+    expect(h).not.toContain('Assessed income by component');
+  });
+
+  it('labels the mortgage insurance in the report\'s words, and its net figure only where it is proven', () => {
+    const h = html(sample);
+    expect(h).toContain('Loan-to-value ratio');
+    expect(h).toContain('Capacity left for the purchase');
+    expect(h).not.toContain('LVR at trigger');
+    expect(h).not.toContain('Net for purchase');
+    const unproven = html(buildSnapshot({ clientName: 'X', assessment: { ...SAMPLE_ASSESSMENT, net_purchase_capacity: 942_000 } }));
+    expect(unproven).not.toContain('Capacity left for the purchase');
+  });
+
+  it('calls an income with no lines the figure the assessment ran on, never a total of nothing', () => {
+    const typed = buildSnapshot({
+      clientName: 'X',
+      assessment: { ...SAMPLE_ASSESSMENT, income_breakdown: [], assumptions: {} },
+    });
+    expect(typed.income.recorded).toBe(true);
+    expect(typed.income.rows).toEqual([]);
+    const h = html(typed);
+    const incomeTable = h.slice(h.indexOf('Income, before and after shading'), h.indexOf('</table>', h.indexOf('Income, before and after shading')));
+    expect(incomeTable).toContain('Used in this assessment');
+    expect(incomeTable).not.toMatch(/>Total</);
+    expect(text(h)).toContain('The income the assessment ran on, and every liability with its servicing.');
+  });
+
+  it('says a deducted premium is paid from the loan, never from the deposit', () => {
+    const t = text(html(buildSnapshot({ clientName: 'X', assessment: { ...SAMPLE_ASSESSMENT, lmi_mode: 'display_deduction' } })));
+    expect(t).toContain('The premium is paid from the loan, so the capacity is unchanged and less of it is left for the purchase.');
+    expect(t).not.toMatch(/taken from the deposit/);
   });
 });

@@ -8,16 +8,18 @@
  */
 import { beforeAll, describe, expect, it } from 'vitest';
 import { writeRenderArtifact } from '../../__tests__/renderArtifact';
-import { buildPropertyComparison } from '../normalise.pure';
+import { buildPropertyComparison, shortAddress } from '../normalise.pure';
 import { DOCUMENT_NAME, renderComparisonFromBrand } from '../render.pure';
 import { comparisonSections, comparisonSpine, validateComparisonSpine } from '../sections.pure';
 import {
+  COMPARISON_LEGACY_QUALIFIER,
   comparisonFileName,
   comparisonStoragePath,
   parseRenderRequest,
 } from '../route.pure';
 import { contentsEntriesFor, REPORT_ARCHETYPES, spinePageBudget } from '@/lib/reportDesign/structure.pure';
 import { buildReportBrandSnapshot } from '@/lib/reportDesign/snapshot.pure';
+import { SECTION_SUBHEAD_CLASS } from '@/lib/reportDesign/primitives.pure';
 
 const NOW = '2026-08-02T00:00:00.000Z';
 const UUID = 'aaaaaaaa-bbbb-4ccc-8ddd-eeeeeeeeeeee';
@@ -126,6 +128,62 @@ describe('the scorecard', () => {
     const html = render();
     expect(html).toContain('No clear winner');
     expect(html).not.toContain('undefined');
+  });
+});
+
+/**
+ * Audit 8 (1 Oct 2026): what the page says, measured against all 51 designs.
+ * Each assertion is a defect the audit found on a rendered page.
+ */
+describe('what the page says', () => {
+  it('sets each subhead at a subhead\'s size, under a memo section\'s title', () => {
+    const html = render();
+    expect(html).toContain(`<h2 class="${SECTION_SUBHEAD_CLASS}">`);
+    expect(html).not.toMatch(/<h2>[^<]+<\/h2>/);
+  });
+
+  /**
+   * The section opened on a key restating the ranking directly above it, and
+   * numbered each column by the order the properties were entered — "1." over
+   * the property ranked third.
+   */
+  it('heads the scorecard by street alone, with no key to look anything up in', () => {
+    const html = render();
+    expect(html).not.toContain('numbered as they appear overleaf');
+    expect(html).toContain('class="data pc-scorecard');
+    expect(html).not.toMatch(/>\d\. \d Example Street</);
+  });
+
+  /** "37 Bolin Street, Schofields NSW 2762. 37 Bolin Street is the alternative for…" */
+  it('names a reason\'s property once', () => {
+    const html = render({
+      recommendations: {
+        bestOverall: { propertyNumber: 1, reason: 'Best on balance.' },
+        runners: [{ propertyNumber: 2, reason: '2 Example Street is the alternative for a growth buyer.' }],
+        avoid: [{ propertyNumber: 3, reason: 'Body corporate fees outweigh the yield.' }],
+      },
+    });
+    expect(html).toContain('<p>2 Example Street is the alternative for a growth buyer.</p>');
+    // A reason that does not name its property is still led by it, in bold.
+    expect(html).toContain('<strong>3 Example Street, Sampleton, QLD 4000</strong>. Body corporate fees');
+  });
+
+  /** "Working" and "Watch" were labels, not words. */
+  it('labels the sidenotes in words', () => {
+    const html = render();
+    expect(html).toContain('<span class="sidenote-label">In its favour</span>');
+    expect(html).toContain('<span class="sidenote-label">To watch</span>');
+    expect(html).not.toMatch(/sidenote-label">(Working|Watch)</);
+  });
+
+  /** "Assessed Moderate." put the record's capital into the middle of a sentence. */
+  it('writes the risk level into its sentence', () => {
+    expect(render()).toContain('<p>Risk assessed as moderate.</p>');
+  });
+
+  it('sets the model\'s paragraphs as paragraphs', () => {
+    expect(render({ executive_summary: 'First thought.\n\nSecond thought.' }))
+      .toContain('<p>First thought.</p><p>Second thought.</p>');
   });
 });
 
@@ -263,13 +321,30 @@ describe('the render request', () => {
    */
   it('names the file after the properties and the date, readably', () => {
     const p = build();
+    // This compared the helper's answer with itself (Audit 8), so it held
+    // whatever the name was. It states the name now.
     expect(comparisonFileName(p.properties.map((x) => x.shortAddress), NOW))
-      .toBe('Property Comparison - 1 Example Street, 2 Example Street and 3 Example Street - 02 Aug 2026.pdf'.length > 0
-        ? comparisonFileName(p.properties.map((x) => x.shortAddress), NOW) : '');
+      .toBe(`Property Comparison - ${p.properties[0].shortAddress}, ${p.properties[1].shortAddress} and ${p.properties[2].shortAddress} - 02 Aug 2026.pdf`);
     expect(comparisonFileName(['1 Example Street', '2 Example Street'], NOW))
       .toBe('Property Comparison - 1 Example Street and 2 Example Street - 02 Aug 2026.pdf');
     expect(comparisonFileName(['A St', 'B St', 'C St', 'D St', 'E St'], NOW))
       .toBe('Property Comparison - A St, B St, C St and 2 more - 02 Aug 2026.pdf');
+  });
+
+  /**
+   * Audit 8. "Download the AI-written report" borrows the Investment report's
+   * drawer and saved as an Investment Compass named after the comparison's
+   * title. It takes the typeset document's name now, qualified, for the same
+   * properties, read by the same street-line rule.
+   */
+  it('names the AI-written download as the same comparison, in the legacy layout', () => {
+    const p = build();
+    const places = p.properties.map((x) => x.address).map(shortAddress);
+    expect(places).toEqual(p.properties.map((x) => x.shortAddress));
+    expect(comparisonFileName(['1 Example Street', '2 Example Street'], NOW, COMPARISON_LEGACY_QUALIFIER))
+      .toBe('Property Comparison - legacy layout - 1 Example Street and 2 Example Street - 02 Aug 2026.pdf');
+    // The flatten button adds its own word, so no caller passes it.
+    expect(COMPARISON_LEGACY_QUALIFIER).not.toMatch(/flattened/i);
   });
 
   it('titles the cover with the properties, not the generated all-caps title', () => {

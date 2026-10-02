@@ -42,9 +42,14 @@ import type {
   LabelledScore,
   LabelledText,
   NarrativeBlock,
+  PortfolioNote,
   PortfolioReview,
   PortfolioTotals,
   ProjectionBlock,
+  ProjectionToday,
+  RateSensitivityBlock,
+  RateSensitivityClass,
+  RateSensitivityGap,
   ReviewBlock,
   ScenarioRow,
 } from './payload.pure.ts';
@@ -66,6 +71,15 @@ export const MAX_SCENARIOS = 12;
  * something has gone wrong upstream, not that a model was unusually thorough.
  */
 export const MAX_PARAGRAPH = 2_400;
+
+/**
+ * The market fields, which the analysis is asked to write as "detailed 2-3
+ * paragraph" analyses (`marketCycleSummary`, `rbaOutlook`) and the section as
+ * "minimum 3 substantial paragraphs". Read at a paragraph's cap they were cut
+ * mid-analysis with an ellipsis; this is the same guard against a runaway, set
+ * for the shape the prompt asks for.
+ */
+export const MAX_ESSAY = 6_000;
 
 /** The stored row could not be read as a portfolio. */
 export class PortfolioPayloadError extends Error {
@@ -146,8 +160,8 @@ function list(value: unknown, max = MAX_BULLETS): string[] {
 }
 
 /** Paragraphs from one or several prose fields, in the order given. */
-function paragraphs(source: Record<string, unknown>, keys: readonly string[]): string[] {
-  return keys.map((k) => text(source[k])).filter(Boolean);
+function paragraphs(source: Record<string, unknown>, keys: readonly string[], max = MAX_PARAGRAPH): string[] {
+  return keys.map((k) => text(source[k], max)).filter(Boolean);
 }
 
 /**
@@ -161,9 +175,13 @@ function paragraphs(source: Record<string, unknown>, keys: readonly string[]): s
  * to be a table row and which are a labelled paragraph; that is a layout
  * question, and this module does not do layout.
  */
-function facts(source: Record<string, unknown>, pairs: ReadonlyArray<[string, string]>): LabelledText[] {
+function facts(
+  source: Record<string, unknown>,
+  pairs: ReadonlyArray<[string, string]>,
+  max = MAX_PARAGRAPH,
+): LabelledText[] {
   return pairs
-    .map(([label, key]) => ({ label, value: text(source[key]) }))
+    .map(([label, key]) => ({ label, value: text(source[key], max) }))
     .filter((f) => f.value);
 }
 
@@ -178,6 +196,35 @@ function facts(source: Record<string, unknown>, pairs: ReadonlyArray<[string, st
 function sentenceCase(value: string): string {
   return value ? value[0].toUpperCase() + value.slice(1) : '';
 }
+
+/**
+ * The property type as a reader reads it.
+ *
+ * `client_properties.property_type` is an enum — `investment`,
+ * `owner_occupied`, `smsf` — and the holdings table printed it as stored:
+ * "investment" in lowercase beside "Owner-occupied", which the renderer had
+ * already translated.
+ */
+export function propertyTypeLabel(raw: string, isOwnerOccupied: boolean): string {
+  if (isOwnerOccupied) return 'Owner-occupied';
+  const value = raw.trim().toLowerCase();
+  if (!value || value === 'investment') return 'Investment';
+  if (value === 'smsf') return 'SMSF';
+  if (value === 'owner_occupied' || value === 'owner-occupied' || value === 'ppor') return 'Owner-occupied';
+  return sentenceCase(value.replace(/[_-]+/g, ' '));
+}
+
+/**
+ * A property the client RENTS — they are the tenant, not the owner.
+ *
+ * `generate-portfolio-analysis` counts only owned properties in its totals but
+ * maps every property into `propertyAnalyses`, a rented home included, with the
+ * rent the client PAYS in `monthlyRentalIncome`. Printed as a holding it was a
+ * fifth property worth $0 earning $2,400 a month, ranked and written up beside
+ * the four the client owns.
+ */
+export const isTenancy = (raw: unknown): boolean =>
+  isRecord(raw) && typeof raw.propertyType === 'string' && raw.propertyType.trim().toLowerCase() === 'rental';
 
 /** A measure, or `NO_MEASURE` when the figure was not there. Renders as an em dash. */
 const measure = (value: unknown, make: (n: number) => Measure): Measure => {
@@ -251,7 +298,33 @@ export function toTotals(metrics: Record<string, unknown>): PortfolioTotals {
     investmentCount: measure(metrics.investmentCount, countOf),
     ownerOccupiedCount: measure(metrics.ownerOccupiedCount, countOf),
     includesOwnerOccupied: metrics.includeOwnerOccupied === true,
+    investmentExpenses: NO_MEASURE,
+    ownerOccupiedOutgoings: NO_MEASURE,
+    cashflowFoots: false,
   };
+}
+
+/** A sum of one figure across holdings, or `NO_MEASURE` when none holds it. */
+function sumOf(holdings: readonly HoldingRow[], pick: (h: HoldingRow) => Measure): Measure {
+  const held = holdings.map(pick).filter((m) => m.unit !== 'none' && Number.isFinite(m.value));
+  return held.length ? audPerMonth(held.reduce((n, m) => n + m.value, 0)) : NO_MEASURE;
+}
+
+/**
+ * The cash-flow lines, split by the holdings they describe (see
+ * `PortfolioTotals.investmentExpenses`). Arithmetic over the holdings the
+ * record already computed; nothing a model wrote.
+ */
+export function withCashflowSplit(totals: PortfolioTotals, holdings: readonly HoldingRow[]): PortfolioTotals {
+  const investments = holdings.filter((h) => !h.isOwnerOccupied);
+  const homes = holdings.filter((h) => h.isOwnerOccupied);
+  const investmentExpenses = sumOf(investments, (h) => h.monthlyExpenses);
+  const ownerOccupiedOutgoings = sumOf(homes, (h) => h.monthlyExpenses);
+  const r = totals.monthlyRentalIncome;
+  const n = totals.netMonthlyCashflow;
+  const cashflowFoots = r.unit !== 'none' && n.unit !== 'none' && investmentExpenses.unit !== 'none'
+    && Math.abs(r.value - investmentExpenses.value - n.value) <= 1;
+  return { ...totals, investmentExpenses, ownerOccupiedOutgoings, cashflowFoots };
 }
 
 export function toHolding(raw: unknown, index: number): HoldingRow {
@@ -264,6 +337,7 @@ export function toHolding(raw: unknown, index: number): HoldingRow {
     number: num(p.propertyNumber) ?? index + 1,
     address: text(p.address, 160) || 'Address not recorded',
     propertyType: text(p.propertyType, 60),
+    typeLabel: propertyTypeLabel(text(p.propertyType, 60), p.isOwnerOccupied === true),
     isOwnerOccupied: p.isOwnerOccupied === true,
     lender: text(p.lenderName, 60),
 
@@ -297,11 +371,13 @@ function narrative(
   factPairs: ReadonlyArray<[string, string]> = [],
   /** `[heading, key]` — one list per pair, kept apart. */
   bulletGroups: ReadonlyArray<[string, string]> = [],
+  /** The longest a prose or fact field may be read at. */
+  max = MAX_PARAGRAPH,
 ): NarrativeBlock | null {
   const built: NarrativeBlock = {
     title,
-    paragraphs: paragraphs(source, proseKeys),
-    facts: facts(source, factPairs),
+    paragraphs: paragraphs(source, proseKeys, max),
+    facts: facts(source, factPairs, max),
     bullets: bulletGroups
       .map(([label, key]) => ({ label, items: list(source[key]).slice(0, MAX_BULLETS) }))
       .filter((g) => g.items.length),
@@ -400,6 +476,7 @@ export function toVerdicts(
         recommendation: text(r.recommendation),
         strategicRole: text(context.strategicRole),
         outlook: text(context.individualOutlook) || text(context.capitalGrowthAnalysis),
+        growth: text(context.individualOutlook) ? text(context.capitalGrowthAnalysis) : '',
         review: classification || reviewStrengths.length || reviewConcerns.length
           ? { classification, strengths: reviewStrengths, concerns: reviewConcerns }
           : null,
@@ -407,18 +484,94 @@ export function toVerdicts(
     });
 }
 
-export function toProjection(analysis: Record<string, unknown>): ProjectionBlock | null {
+export function toProjection(
+  analysis: Record<string, unknown>,
+  totals?: PortfolioTotals,
+): ProjectionBlock | null {
   const p = block(analysis, 'projections');
   const value = num(p.projectedPortfolioValue);
   if (value === null) return null;
+  const detail = block(p, 'assumptionDetail');
+  const detailed = projectionAssumptions(detail);
+  const projectedDebt = measure(p.projectedDebt, aud);
   return {
     years: measure(p.years, yearsOf),
     projectedValue: aud(value),
+    projectedDebt,
     projectedEquity: measure(p.projectedEquity, aud),
     projectedMonthlyCashflow: measure(p.projectedMonthlyCashflow, audPerMonth),
     summary: text(p.plainEnglishSummary),
-    assumptions: list(p.assumptions),
+    assumptions: detailed.length ? detailed : list(p.assumptions),
+    today: totals ? projectionToday(detail, value, projectedDebt, totals) : null,
   };
+}
+
+/**
+ * Today's figures, where the projection provably starts from them
+ * (`ProjectionBlock.today`).
+ *
+ * The calculator (`projectPortfolio`) compounds `portfolioMetrics.totalValue`
+ * at its recorded growth over its recorded horizon, rounds to the dollar, and
+ * holds `portfolioMetrics.totalDebt`; those are the totals this document
+ * prints. The check re-performs that one multiplication to prove the stored
+ * figures agree — nothing it computes is printed — and a projection it cannot
+ * prove to the dollar keeps its table to the projected column alone.
+ */
+export function projectionToday(
+  detail: Record<string, unknown>,
+  projectedValue: number,
+  projectedDebt: Measure,
+  totals: PortfolioTotals,
+): ProjectionToday | null {
+  const growth = num(detail.annualCapitalGrowthPercent);
+  const horizon = num(detail.horizonYears);
+  const { value, debt, equity } = totals;
+  if (growth === null || horizon === null) return null;
+  if (value.unit === 'none' || debt.unit === 'none' || equity.unit === 'none' || projectedDebt.unit === 'none') {
+    return null;
+  }
+  const within = (a: number, b: number) => Math.abs(a - b) <= 1;
+  const compounded = Math.round(value.value * Math.pow(1 + growth / 100, Math.round(horizon)));
+  const proven = within(compounded, projectedValue)
+    && within(debt.value, projectedDebt.value)
+    && within(value.value - debt.value, equity.value);
+  return proven ? { value, debt, equity } : null;
+}
+
+const SCENARIO_WORD: Record<string, string> = {
+  conservative: 'the conservative scenario',
+  moderate: 'the moderate scenario',
+  optimistic: 'the optimistic scenario',
+};
+
+/**
+ * The projection's assumptions, in this document's voice.
+ *
+ * The calculator stores two things side by side: the assumptions as fields
+ * (`assumptionDetail` — growth, horizon, how debt and cash flow are treated)
+ * and the same assumptions as sentences written for its own log ("the record
+ * does not carry a loan term"). The sentences are the machine room's; the
+ * fields are the facts. So where the fields are present the sentences are
+ * composed from them here, and where they are not — an analysis written before
+ * the figures were calculated — the stored list is printed as it stands.
+ */
+export function projectionAssumptions(detail: Record<string, unknown>): string[] {
+  const growth = num(detail.annualCapitalGrowthPercent);
+  const years = num(detail.horizonYears);
+  if (growth === null || years === null) return [];
+  const scenario = SCENARIO_WORD[text(detail.scenario, 20).toLowerCase()];
+  const span = `${Math.round(years)} year${Math.round(years) === 1 ? '' : 's'}`;
+  const out = [
+    `Capital growth of ${growth}% a year, compounding, over ${span}${scenario ? ` (${scenario})` : ''}.`,
+  ];
+  if (text(detail.debtTreatment, 40) === 'held_constant') {
+    out.push('Debt stays at today\'s balance throughout: an interest-only loan does not reduce, '
+      + 'and no remaining term is on file for a loan that would.');
+  }
+  if (text(detail.cashflowTreatment, 40) === 'not_projected') {
+    out.push('Rental cash flow is not projected: no rent or expense growth rate is on file for this portfolio.');
+  }
+  return out;
 }
 
 export function toCapacity(analysis: Record<string, unknown>): CapacityBlock | null {
@@ -483,8 +636,72 @@ export function toActions(analysis: Record<string, unknown>, reviewRecs: unknown
     });
   }
 
-  const order: Record<ActionRow['priority'], number> = { high: 0, medium: 1, low: 2, unset: 3 };
-  return rows.sort((a, b) => order[a.priority] - order[b.priority]).slice(0, MAX_ACTIONS);
+  const ordered = rows
+    .map((row, index) => ({ row, index }))
+    .sort((a, b) => (horizonRank(a.row) - horizonRank(b.row)) || (a.index - b.index))
+    .map(({ row }) => row);
+  return mergeRepeatedActions(ordered).slice(0, MAX_ACTIONS);
+}
+
+/** An action's words, for telling a repeat from a different action. */
+function actionKey(title: string): string {
+  return title.toLowerCase().replace(/\s+/g, ' ').replace(/[\s.;:!,]+$/, '').trim();
+}
+
+/**
+ * An action named twice in the same words is printed once.
+ *
+ * The analysis files an action under a horizon and again in its twelve-month
+ * plan, and a review can name one the analysis already named — in a table
+ * headed "What to do, in order" that reads as two things to do. Only the same
+ * WORDS merge (case, spacing and closing punctuation aside): two sentences
+ * that mean the same thing are left as they were written, because deciding
+ * that they do is a judgement about prose this module does not make.
+ *
+ * The merged row keeps the earlier horizon — the rows arrive ordered by it, so
+ * that is the first — and the wording, explanation and steps of whichever copy
+ * explains itself. Where the two came from different assessments it says so
+ * (`source: 'both'`).
+ */
+export function mergeRepeatedActions(rows: readonly ActionRow[]): ActionRow[] {
+  const out: ActionRow[] = [];
+  const at = new Map<string, number>();
+  for (const row of rows) {
+    const key = actionKey(row.title);
+    const seen = key ? at.get(key) : undefined;
+    if (seen === undefined) {
+      if (key) at.set(key, out.length);
+      out.push(row);
+      continue;
+    }
+    const kept = out[seen];
+    const explained = kept.detail || kept.steps.length ? kept : row.detail || row.steps.length ? row : kept;
+    out[seen] = {
+      ...kept,
+      title: explained.title,
+      detail: explained.detail,
+      steps: explained.steps,
+      category: explained.category,
+      source: kept.source === row.source ? kept.source : 'both',
+    };
+  }
+  return out;
+}
+
+/**
+ * Where an action falls in time, for a column headed "When".
+ *
+ * Sorted by urgency alone, "Next 12 months" rows landed between "Medium term"
+ * and "Long term", because the twelve-month plan was filed as medium priority.
+ * The column reads as time, so it is ordered as time: now, the short term, the
+ * coming twelve months, the medium term, the long term — the analysis's rows
+ * before the review's within each, as each source ordered them.
+ */
+const HORIZON_ORDER = ['Priority', 'Short term', 'Next 12 months', 'Medium term', 'Long term'];
+
+function horizonRank(row: ActionRow): number {
+  const at = HORIZON_ORDER.indexOf(row.priorityLabel);
+  return at === -1 ? HORIZON_ORDER.length : at;
 }
 
 /**
@@ -509,6 +726,48 @@ export function toScenarios(reviewScenarios: unknown): ScenarioRow[] {
       };
     })
     .filter((s) => s.name);
+}
+
+const RATE_GAPS: readonly RateSensitivityGap[] = [
+  'missing_interest_rate',
+  'missing_repayment_structure',
+  'amortising_loan_without_term',
+];
+
+/**
+ * One class of the calculated rate sensitivity, or `null`.
+ *
+ * Only the calculator's block is read, and it is recognised by its own stamp:
+ * `available` a boolean and `loansCovered` a number, both written by
+ * `generate-portfolio-analysis`'s controlled final assembly and by nothing
+ * else. A block without them is the model's own arithmetic from before the
+ * figures were calculated, and is not printed. A class with no loans at all
+ * has nothing to say and is `null` too.
+ */
+function rateClass(source: Record<string, unknown>, currentKey: string): RateSensitivityClass | null {
+  if (typeof source.available !== 'boolean' || num(source.loansCovered) === null) return null;
+  const reason = text(source.unavailableReason, 60);
+  if (!source.available && reason === 'no_loans') return null;
+  return {
+    available: source.available,
+    gap: source.available
+      ? null
+      : (RATE_GAPS as readonly string[]).includes(reason) ? reason as RateSensitivityGap : 'unknown',
+    loansCovered: measure(source.loansCovered, countOf),
+    balanceCovered: measure(source.balanceCovered, aud),
+    current: measure(source[currentKey], audPerMonth),
+    plusOne: source.available ? measure(source.plusOnePercentImpact, audPerMonth) : NO_MEASURE,
+    plusTwo: source.available ? measure(source.plusTwoPercentImpact, audPerMonth) : NO_MEASURE,
+  };
+}
+
+/** What a rate rise would do, as the analysis calculated it — or `null`. */
+export function toRateSensitivity(analysis: Record<string, unknown>): RateSensitivityBlock | null {
+  const r = block(analysis, 'interestRateSensitivity');
+  const investment = rateClass(block(r, 'investmentProperties'), 'currentMonthlyCashflow');
+  const ownerOccupied = rateClass(block(r, 'ownerOccupiedProperties'), 'currentMonthlyRepayment');
+  if (!investment && !ownerOccupied) return null;
+  return { investment, ownerOccupied, commentary: text(r.combinedCommentary) };
 }
 
 /** The review, or `null` when the client has none. */
@@ -556,23 +815,40 @@ const money = (m: Measure): string => {
  * unverifiable is what a reader expects.
  */
 export function describePortfolio(totals: PortfolioTotals, headline: HeadlineBlock): string {
-  const held = totals.propertyCount.unit === 'none'
+  const count = totals.propertyCount.unit === 'none' ? null : Math.round(totals.propertyCount.value);
+  const held = count === null
     ? 'The portfolio'
-    : `${totals.propertyCount.value} ${totals.propertyCount.value === 1 ? 'property' : 'properties'}`;
+    : `The portfolio holds ${countWord(count)} ${count === 1 ? 'property' : 'properties'}`;
+  const worth = count === null ? ' is worth' : ' worth';
 
+  const debt = totals.debt.unit === 'none' ? '' : `, carrying ${money(totals.debt)} of debt`;
+  const equity = totals.equity.unit === 'none'
+    ? ''
+    : `${debt ? ' against' : ', with'} ${money(totals.equity)} of equity`;
+
+  // The net cash flow is the investments' alone; with a home in the portfolio
+  // the sentence says so, because the home's outgoings are not in it.
   const cash = totals.netMonthlyCashflow;
+  const who = totals.ownerOccupiedCount.unit !== 'none' && totals.ownerOccupiedCount.value > 0
+    ? 'the investment properties'
+    : 'it';
   const position = cash.unit === 'none'
     ? ''
     : cash.value >= 0
-      ? `, and returns ${money(cash)} a month after costs`
-      : `, and costs ${money({ ...cash, value: Math.abs(cash.value) })} a month to hold`;
+      ? ` After costs, ${who} return${who === 'it' ? 's' : ''} ${money(cash)} a month.`
+      : ` After costs, ${who} cost${who === 'it' ? 's' : ''} ${money({ ...cash, value: Math.abs(cash.value) })} a month to hold.`;
 
   const band = headline.bandLabel && headline.bandLabel !== 'Not rated'
     ? ` Overall health is assessed as ${headline.bandLabel.toLowerCase()}.`
     : '';
 
-  return `${held} worth ${money(totals.value)}, carrying ${money(totals.debt)} of debt against `
-    + `${money(totals.equity)} of equity${position}.${band}`;
+  return `${held}${worth} ${money(totals.value)}${debt}${equity}.${position}${band}`;
+}
+
+/** One to nine in words, as a sentence sets them; ten and above as figures. */
+function countWord(n: number): string {
+  const WORDS = ['no', 'one', 'two', 'three', 'four', 'five', 'six', 'seven', 'eight', 'nine'];
+  return n >= 0 && n < WORDS.length ? WORDS[n] : String(n);
 }
 
 // ── The whole payload ───────────────────────────────────────────────────────
@@ -609,30 +885,59 @@ export function buildPortfolioReview(input: BuildPortfolioInput): PortfolioRevie
     );
   }
 
-  const totals = toTotals(metrics);
+  // A property the client rents is not a holding (`isTenancy`): out of every
+  // table, ranking and chart, renumbered around, and said once where the
+  // holdings are.
+  const tenancies = rawHoldings.filter(isTenancy);
+  const owned = rawHoldings.filter((h) => !isTenancy(h));
+  if (!owned.length) {
+    throw new PortfolioPayloadError(
+      'report_data.propertyAnalyses holds only a property the client rents — there is no portfolio to review',
+    );
+  }
+  const holdings = owned.map(toHolding).map((h, i) => ({ ...h, number: i + 1 }));
+  const rentedAddresses = tenancies.map((t) => text((t as Record<string, unknown>).address, 160)).filter(Boolean);
+
+  const totals = withCashflowSplit(toTotals(metrics), holdings);
   const headline = toHeadline(analysis, input.report.overall_health);
   const review = toReview(input.review);
 
-  const notes: string[] = [];
+  const notes: PortfolioNote[] = [];
   if (!totals.includesOwnerOccupied && totals.ownerOccupiedCount.value > 0) {
-    notes.push('Owner-occupied holdings are excluded from the portfolio figures in this review.');
+    notes.push({
+      section: 'standing',
+      text: 'Owner-occupied property is not counted in the portfolio totals in this review; it is still listed with the holdings.',
+    });
+  }
+  for (const address of rentedAddresses) {
+    notes.push({
+      section: 'holdings',
+      text: `${address} is rented, not owned, so it is not one of these holdings and is in none of the figures.`,
+    });
   }
   if (review && /draft/i.test(review.status)) {
-    notes.push('The portfolio review this document draws on is still a draft.');
+    notes.push({ section: 'review', text: 'The portfolio review this document draws on is still a draft.' });
   }
+
+  const personal = block(analysis, 'personalizedNarrative');
+  const marketConditions = block(analysis, 'marketConditions');
 
   return {
     meta: {
       clientName: input.clientName,
       analysedOn: text(input.report.created_at, 40) || text(data.generatedAt, 40),
       preparedOn: input.now,
-      reference: text(input.report.id, 8).toUpperCase(),
+      // The first eight characters of the id, as they stand. Read through
+      // `text()` it came back clipped with an ellipsis — "B3D8F047…" at the
+      // foot of every cover.
+      reference: typeof input.report.id === 'string' ? input.report.id.slice(0, 8).toUpperCase() : '',
     },
 
     narrative: describePortfolio(totals, headline),
+    opening: text(personal.openingStatement),
     headline,
     totals,
-    holdings: rawHoldings.map(toHolding),
+    holdings,
 
     composition: narrative(
       'Composition',
@@ -667,12 +972,16 @@ export function buildPortfolioReview(input: BuildPortfolioInput): PortfolioRevie
         ['How to reduce it', 'mitigationStrategies'],
       ],
     ),
+    // The cycle, then rates, then lending — what the positioning below draws on.
     market: narrative(
       'Market conditions',
-      block(analysis, 'marketConditions'),
-      ['marketCycleSummary', 'clientPositioning'],
-      [['Lending environment', 'lendingEnvironment'], ['RBA outlook', 'rbaOutlook']],
+      marketConditions,
+      ['marketCycleSummary'],
+      [['RBA outlook', 'rbaOutlook'], ['Lending environment', 'lendingEnvironment']],
+      [],
+      MAX_ESSAY,
     ),
+    marketPositioning: text(marketConditions.clientPositioning, MAX_ESSAY),
     growth: narrative(
       'Growth opportunities',
       block(analysis, 'growthOpportunities'),
@@ -686,12 +995,32 @@ export function buildPortfolioReview(input: BuildPortfolioInput): PortfolioRevie
       ],
     ),
 
-    verdicts: toVerdicts(analysis, input.review?.property_scores),
-    projection: toProjection(analysis),
+    verdicts: withoutAddresses(toVerdicts(analysis, input.review?.property_scores), rentedAddresses),
+    projection: toProjection(analysis, totals),
     capacity: toCapacity(analysis),
+    rateSensitivity: toRateSensitivity(analysis),
     scenarios: toScenarios(input.review?.scenarios),
     actions: toActions(analysis, input.review?.recommendations),
+    optimisations: list(block(analysis, 'actionPlan').optimisationScenarios),
     review,
     notes,
   };
+}
+
+/**
+ * Verdicts on anything but the named addresses — the analysis ranks every
+ * property it was shown, a rented home included. Matched the way scores are:
+ * the full address, then a street line only where it is unique.
+ */
+function withoutAddresses(verdicts: HoldingVerdict[], addresses: readonly string[]): HoldingVerdict[] {
+  if (!addresses.length) return verdicts;
+  const full = new Set(addresses.map(addressKey));
+  const streets = new Set(addresses.map(streetKey).filter(Boolean));
+  const streetCount = new Map<string, number>();
+  for (const v of verdicts) streetCount.set(streetKey(v.address), (streetCount.get(streetKey(v.address)) ?? 0) + 1);
+  return verdicts.filter((v) => {
+    if (full.has(addressKey(v.address))) return false;
+    const street = streetKey(v.address);
+    return !(street && streets.has(street) && streetCount.get(street) === 1);
+  });
 }

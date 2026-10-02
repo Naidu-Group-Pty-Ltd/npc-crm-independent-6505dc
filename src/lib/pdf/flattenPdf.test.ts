@@ -4,6 +4,7 @@ import {
   flattenPdfBlob,
   validateFlattenOptions,
   validateFlattenPage,
+  withFlattenedSuffix,
 } from './flattenPdf';
 
 describe('PDF flattening resource limits', () => {
@@ -50,5 +51,21 @@ describe('PDF flattening resource limits', () => {
   it('rejects non-finite page dimensions', () => {
     expect(() => validateFlattenPage(Number.POSITIVE_INFINITY, 100, 0))
       .toThrow(/invalid page dimensions/);
+  });
+});
+
+describe('the flattened copy\'s name', () => {
+  it('adds the word before the extension, or adds both', () => {
+    expect(withFlattenedSuffix('Property Comparison - A and B - 1 Oct 2026.pdf'))
+      .toBe('Property Comparison - A and B - 1 Oct 2026-flattened.pdf');
+    expect(withFlattenedSuffix('Report')).toBe('Report-flattened.pdf');
+  });
+
+  /** Audit 8: a caller that already named the copy flattened got the word twice. */
+  it('never says it twice', () => {
+    expect(withFlattenedSuffix('10 Year Cash Flow - flattened - 1 Test St - 1 Oct 2026.pdf'))
+      .toBe('10 Year Cash Flow - flattened - 1 Test St - 1 Oct 2026.pdf');
+    expect(withFlattenedSuffix('report-flattened.pdf')).toBe('report-flattened.pdf');
+    expect(withFlattenedSuffix('report-flattened')).toBe('report-flattened.pdf');
   });
 });

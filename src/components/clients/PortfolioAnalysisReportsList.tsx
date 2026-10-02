@@ -575,6 +575,10 @@ export function PortfolioAnalysisReportsList({ clientId, showHeader = true }: Po
                               needs `pdf_file_path`, and 7 of the 21 stored
                               reports have none — this one reads `report_data`,
                               so those become downloadable for the first time.
+                              Named "Export PDF" as every format names the act
+                              (PORTFOLIO.md §10), with the saved file's own
+                              item saying it is the saved one; the template it
+                              comes out in is chosen once, in the card header.
                             */}
                             <DropdownMenuItem
                               className="rounded-xl transition-colors focus:bg-brand-400/10 focus:text-brand-100"
@@ -584,7 +588,7 @@ export function PortfolioAnalysisReportsList({ clientId, showHeader = true }: Po
                               {typesetting === report.id
                                 ? <Loader2 className="h-4 w-4 mr-2 animate-spin" />
                                 : <Sparkles className="h-4 w-4 mr-2" />}
-                              Download review (typeset)
+                              Export PDF
                             </DropdownMenuItem>
                             <DropdownMenuSeparator className="my-1 bg-border dark:bg-white/10" />
                             <DropdownMenuItem
@@ -601,7 +605,7 @@ export function PortfolioAnalysisReportsList({ clientId, showHeader = true }: Po
                               onClick={() => handleDownloadPDF(report)}
                             >
                               <Download className="h-4 w-4 mr-2" />
-                              Download PDF
+                              Download saved PDF
                             </DropdownMenuItem>
                             <FlattenPdfMenuItem
                               disabled={!report.pdf_file_path}

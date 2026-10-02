@@ -23,6 +23,7 @@ import {
   Layers,
   Network,
 } from 'lucide-react';
+import { BASIS_LABEL } from '@/lib/reports/borrowingCapacity/strategyRationale.pure';
 
 // ── Types ──────────────────────────────────────────────
 
@@ -585,9 +586,9 @@ export function AdditionalStrategyLevers({
                             <SelectTrigger className="h-9 text-xs"><SelectValue /></SelectTrigger>
                             <SelectContent>
                               <SelectItem value="manual">Manual</SelectItem>
-                              <SelectItem value="desktop">Desktop val</SelectItem>
-                              <SelectItem value="avm">AVM</SelectItem>
-                              <SelectItem value="comparable_sales">Comp sales</SelectItem>
+                              <SelectItem value="desktop">{BASIS_LABEL.desktop}</SelectItem>
+                              <SelectItem value="avm">{BASIS_LABEL.avm}</SelectItem>
+                              <SelectItem value="comparable_sales">{BASIS_LABEL.comparable_sales}</SelectItem>
                             </SelectContent>
                           </Select>
                           <Input

@@ -222,6 +222,12 @@ export function renderCoverMeta(meta: readonly CoverMetaItem[]): string {
       </div>`;
 }
 
+/** Two labels that print the same words, whatever their case and spacing. */
+function sameWords(a: string, b: string): boolean {
+  const norm = (s: string) => s.toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+  return norm(a) !== '' && norm(a) === norm(b);
+}
+
 export function renderCover(p: CoverProps): string {
   const hero = p.heroDataUri
     ? `<div class="cover-hero" style="background-image:url('${cssUrl(p.heroDataUri)}')"></div>`
@@ -234,7 +240,14 @@ export function renderCover(p: CoverProps): string {
 
   const meta = renderCoverMeta(p.meta ?? []);
 
-  const lockup = p.lockup
+  // A lockup with no mark is the issuer's name in words — and the masthead
+  // already sets the issuer's name at the top of the same cover. Drawn under
+  // it, a tenant with no logo got its name twice, twenty lines apart, on every
+  // cover of every format (found on the Portfolio Performance Review's, 30 Sep
+  // 2026). A lockup that carries a mark is kept whatever it says.
+  const repeatsMasthead = Boolean(p.lockup && !p.lockup.markDataUri && p.lockup.wordmark
+    && sameWords(p.lockup.wordmark, p.masthead));
+  const lockup = p.lockup && !repeatsMasthead
     ? `<div class="cover-lockup">${renderBrandLockup({ ...p.lockup, onField: true, large: true })}</div>`
     : '';
 
@@ -295,13 +308,20 @@ export function renderContentsPage(
    * than discovered, which is what lets a spine claim it.
    */
   perPage?: number,
+  /**
+   * Set under the list on the last sheet — already-rendered HTML, the caller's
+   * to escape. A short note (the Portfolio Performance Review's "About this
+   * review") uses the half-page a nine-entry list leaves empty; the caller
+   * decides whether it is short enough to share the sheet.
+   */
+  afterHtml?: string | null,
 ): string {
   const cap = Math.max(1, Math.trunc(perPage ?? entries.length) || entries.length);
   const sheets = Math.max(1, Math.ceil(entries.length / cap));
   // Evenly, so two sheets are 7 and 7 rather than 13 and 1.
   const size = Math.ceil(entries.length / sheets);
 
-  const sheet = (slice: ContentsEntry[]): string => {
+  const sheet = (slice: ContentsEntry[], last: boolean): string => {
     const rows = slice.map((e) => `
       <div class="toc-row">
         <span class="toc-no">${escapeHtml(e.number ?? '')}</span>
@@ -314,13 +334,16 @@ export function renderContentsPage(
       <div class="eyebrow">Contents</div>
       <h1>${escapeHtml(title)}</h1>
       <div class="contents">${rows}
-      </div>
+      </div>${last && afterHtml ? `
+      <div class="contents-after">${afterHtml}</div>` : ''}
     </section>`;
   };
 
   const out: string[] = [];
-  for (let i = 0; i < entries.length; i += size) out.push(sheet(entries.slice(i, i + size)));
-  return out.join('') || sheet([]);
+  for (let i = 0; i < entries.length; i += size) {
+    out.push(sheet(entries.slice(i, i + size), i + size >= entries.length));
+  }
+  return out.join('') || sheet([], true);
 }
 
 // ── Chapters ────────────────────────────────────────────────────────────────
@@ -367,8 +390,10 @@ export const KEEP_TOGETHER_CLASS = 'keep-together';
  *
  * The same class carries the memo's other print rules — a short table kept
  * whole rather than split to a row, a long label set as a sentence rather
- * than in tracked capitals — so they reach every design at once and no other
- * report type at all.
+ * than in tracked capitals — so they reach every design at once and no report
+ * type that does not ask for them. Two do: the Intelligence Hub Summary, and
+ * the Portfolio Performance Review (PORTFOLIO.md §10), whose nine sections
+ * run on the same way.
  */
 export const MEMO_CHAPTER_CLASS = 'memo';
 
@@ -392,6 +417,21 @@ export const FINE_PRINT_CLASS = 'fine-print';
  * subhead. Same element, same colour, same level in the outline.
  */
 export const SUBHEAD_CLASS = 'subhead';
+
+/**
+ * A memo section's subhead, one modular step below its title.
+ *
+ * Inside a memo section (`MEMO_CHAPTER_CLASS`) the title is set one modular
+ * step above h3 (`MEMO_TITLE_RATIO`), and an `h2` at the design system's
+ * subhead size then sits within a point or two of it — the Portfolio
+ * Performance Review's property addresses and "What could go wrong" read as
+ * rival section titles. This sets the same `h2` at h3's size: still level 2 in
+ * the outline, the bookmarks and the tagged PDF (a level is never skipped),
+ * one step below the title it sits under. A memo section sizes it, and so does
+ * a full chapter's body that asks for it — the 10 Year Cash Flow's subhead
+ * among its tables (Audit 7).
+ */
+export const SECTION_SUBHEAD_CLASS = 'section-subhead';
 
 /**
  * The brief an answer set under its title — "Investment Budget", "Purpose" —
@@ -441,12 +481,21 @@ export interface ChapterHeaderProps {
   dek?: string;
   /** Word printed before the number. Defaults to `Chapter`. */
   label?: string;
+  /**
+   * Leave the number line out. For a document of one section, where "SECTION
+   * 01" numbers nothing: the Strategy Rationale Brief (BORROWING_CAPACITY.md
+   * §22). Absent, the line is drawn exactly as before.
+   */
+  unnumbered?: boolean;
 }
 
 export function renderChapterHeader(p: ChapterHeaderProps): string {
+  const numberLine = p.unnumbered
+    ? ''
+    : `<div class="chapter-no">${escapeHtml((p.label ?? 'Chapter').toUpperCase())} ${escapeHtml(p.number)}</div>`;
   return `
       <header class="chapter-header">
-        <div class="chapter-no">${escapeHtml((p.label ?? 'Chapter').toUpperCase())} ${escapeHtml(p.number)}</div>
+        ${numberLine}
         <h1>${escapeHtml(p.title)}</h1>
         ${p.dek ? `<div class="chapter-dek">${escapeHtml(p.dek)}</div>` : ''}
       </header>`;
@@ -614,6 +663,30 @@ export interface DataTableOptions {
    * leading minus sign. Financial tables are the reason Category B exists.
    */
   signedKeys?: readonly string[];
+  /**
+   * Let a phrase in a figure column wrap (`PHRASE_CELL_CLASS`).
+   *
+   * A figure never wraps (`td.num` is set on one line), and a cell in a figure
+   * column that holds no figure at all — "Not within the term", "Principal and
+   * interest" — is held to the same rule only because it shares the column.
+   * Across five properties on a portrait page they ran the Cash Flow
+   * Comparison's last column past the sheet's edge, on 49 pages in 46 of 51
+   * designs (CASH_FLOW_COMPARISON.md §14). A cell with a digit in it is never a phrase, so "-$96 a week" still
+   * cannot break at its minus sign. Absent, the markup is what it always was.
+   */
+  wrapPhrases?: boolean;
+}
+
+/**
+ * The class a phrase in a figure column carries when its table asks for it
+ * (`DataTableOptions.wrapPhrases`): words and no digit, so it may wrap.
+ */
+export const PHRASE_CELL_CLASS = 'phrase';
+
+/** Words with no figure among them: at least two, and not one digit. */
+export function isPhrase(value: string): boolean {
+  const v = value.trim();
+  return /\S\s+\S/.test(v) && !/\d/.test(v) && /[A-Za-z]/.test(v);
 }
 
 /** `-1,234` / `($1,234)` → negative. Both conventions appear in the product. */
@@ -642,6 +715,7 @@ export function renderDataTable(
       const raw = typeof r[c.key] === 'string' ? r[c.key] as string : '';
       const classes: string[] = [];
       if (c.align === 'right') classes.push('num');
+      if (opts.wrapPhrases && c.align === 'right' && idx > 0 && isPhrase(raw)) classes.push(PHRASE_CELL_CLASS);
       if (signed.has(c.key) && signTone(raw) === 'negative') classes.push('neg');
       const cls = classes.length ? ` class="${classes.join(' ')}"` : '';
       // The first column is the row's label, so it is a header cell — that is

@@ -460,3 +460,23 @@ register whose rows are ten to thirteen lines tall each.
 Unverified until a production render: the container ships Debian bookworm's
 `fonts-inter` (3.19); Inter was measured locally at 4.001. The 3% width
 margin exists partly for that.
+
+## 9. A shared opening box may stand empty (Audit 6, 1 Oct 2026)
+
+`MIN_SHARED_FIRST_LINES` already left a shared first box empty when it was
+too small to try. A box big enough to try could still be too small to hold
+anything, and that box was overfilled.
+
+On three masters the dashboard left six lines for the body. The two headings
+fitted, and the paragraph under them had no sentence break inside the room
+left. `breakPage` carries a page that is nothing but headings whole. No page
+had been pushed yet, so it carried them into the same first box. Ten lines
+were set in six, and ran 47–53pt through the running foot.
+
+The geometry now marks a shared first box (`openingShared`), and the packer
+leaves that box empty instead (`PackOptions.openingShared`). It does so in two
+cases: when the headings are carried whole, and when the first block offered
+neither fits nor can be cut at a sentence. A first box on a page of its own is
+never emptied, because that would print a blank page. An emptied opening is
+also never a page the tail is folded back into, the same as a skipped one.
+Measured over 500 documents in §21 of `A_PREMIUM_DOCUMENT.md`.

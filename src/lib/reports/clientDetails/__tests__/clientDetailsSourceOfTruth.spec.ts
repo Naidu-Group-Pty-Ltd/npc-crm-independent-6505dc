@@ -52,9 +52,11 @@ const BRIDGE_SHAPE =
  *
  * `../reportDate.pure.ts` is the shared date reader, a file in the parent
  * like the others here — eleven routes each carried a private copy.
+ * `../readableFileName.pure.ts` is the one rule every typeset format names its
+ * file by (CLIENT_DETAILS.md §12), named here for the same reason.
  */
 const ALLOWED_IMPORT =
-  /^(?:\.\/[\w.]+\.pure\.ts|\.\.\/\.\.\/reportDesign\/[\w.]+\.(?:pure|generated)\.ts|\.\.\/\.\.\/clientName\.ts|\.\.\/reportDate\.pure\.ts)$/;
+  /^(?:\.\/[\w.]+\.pure\.ts|\.\.\/\.\.\/reportDesign\/[\w.]+\.(?:pure|generated)\.ts|\.\.\/\.\.\/clientName\.ts|\.\.\/(?:reportDate|readableFileName)\.pure\.ts)$/;
 
 describe('client details — single source of truth', () => {
   it('has at least one canonical module', () => {
@@ -100,7 +102,8 @@ describe('client details — single source of truth', () => {
         expect(
           spec,
           `${file} imports "${spec}" — a module here may import its siblings, `
-            + '`../../reportDesign/*.pure.ts` and `../../clientName.ts`, and nothing else',
+            + '`../../reportDesign/*.pure.ts`, `../../clientName.ts`, the shared date '
+            + 'reader and filename rule, and nothing else',
         ).toMatch(ALLOWED_IMPORT);
       }
     });

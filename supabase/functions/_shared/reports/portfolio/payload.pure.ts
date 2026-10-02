@@ -51,6 +51,29 @@ export interface PortfolioTotals {
   ownerOccupiedCount: Measure;
   /** Whether owner-occupied holdings were counted in the figures above. */
   includesOwnerOccupied: boolean;
+
+  /**
+   * The investments' own expenses, summed from the holdings.
+   *
+   * `monthlyExpenses` above is `portfolioMetrics.totalMonthlyExpenses`, which
+   * the analysis sums over every property in the totals — the family home's
+   * outgoings included whenever owner-occupied holdings are counted — while
+   * the rental income and the net cash flow beside it are the investments'
+   * alone. Printed as three lines of one table they did not add up: $7,540 of
+   * rent, $13,158 of expenses and a net of +$502. This is the figure that
+   * does, over the same holdings the rent and the net are.
+   */
+  investmentExpenses: Measure;
+  /** The owner-occupied holdings' monthly outgoings, which no net above includes. */
+  ownerOccupiedOutgoings: Measure;
+  /**
+   * Whether rent less `investmentExpenses` is the net cash flow, to the dollar.
+   *
+   * The net is the record's own per-property figure, not this subtraction, so
+   * it is checked rather than assumed; where it does not reconcile the
+   * expenses line is left off the table and nothing on the page implies a sum.
+   */
+  cashflowFoots: boolean;
 }
 
 /** One holding. Every figure here is arithmetic over a `client_properties` row. */
@@ -58,7 +81,10 @@ export interface HoldingRow {
   /** 1-based, in the order the analysis ranked them. */
   number: number;
   address: string;
+  /** As stored — `investment`, `owner_occupied`, `smsf`. Never printed. */
   propertyType: string;
+  /** What the page prints: "Investment", "Owner-occupied", "SMSF". */
+  typeLabel: string;
   isOwnerOccupied: boolean;
   lender: string;
 
@@ -174,6 +200,12 @@ export interface HoldingVerdict {
   /** Why this property is in the portfolio at all. */
   strategicRole: string;
   outlook: string;
+  /**
+   * The analysis's capital-growth reading, where it wrote an outlook as well.
+   * It was only ever the outlook's fallback, so on every report that carried
+   * both, the growth paragraph the legacy PDF printed was never shown.
+   */
+  growth: string;
   /** The review's separate verdict, when one scored this property. */
   review: VerdictReview | null;
 }
@@ -183,10 +215,37 @@ export interface HoldingVerdict {
 export interface ProjectionBlock {
   years: Measure;
   projectedValue: Measure;
+  /**
+   * The debt the projection subtracts — today's balance, held (the analysis's
+   * stated assumption). Printed between value and equity so the one
+   * subtraction the table rests on is on the page. Absent on an analysis
+   * written before the figures were calculated rather than asked for.
+   */
+  projectedDebt: Measure;
   projectedEquity: Measure;
   projectedMonthlyCashflow: Measure;
   summary: string;
   assumptions: readonly string[];
+  /**
+   * Today's value, debt and equity, printed beside the projected ones so the
+   * change is on the page rather than left to the prose.
+   *
+   * Present only where the stored projection is proven to start from the
+   * totals this document prints, to the dollar: its recorded growth compounds
+   * today's value to the projected value over its recorded horizon, its debt
+   * is today's debt, and today's equity is value less debt. An analysis whose
+   * projection was written by the model rather than calculated carries no
+   * recorded growth and fails the first test, so its table prints the
+   * projection alone (`projectionToday`).
+   */
+  today: ProjectionToday | null;
+}
+
+/** Where the projection starts: the totals it was calculated from. */
+export interface ProjectionToday {
+  value: Measure;
+  debt: Measure;
+  equity: Measure;
 }
 
 export interface CapacityBlock {
@@ -238,8 +297,66 @@ export interface ActionRow {
    * Shown as a column when both contributed, for the same reason the ranking
    * table names its two raters: the analysis and the review are produced
    * independently and a reader is entitled to know which one is speaking.
+   *
+   * `both` is an action the two named in the same words, printed once
+   * (`mergeRepeatedActions`) — that they agree is worth saying, and saying it
+   * twice in one table is not.
    */
-  source: 'analysis' | 'review';
+  source: 'analysis' | 'review' | 'both';
+}
+
+// ── What a rate rise would do ───────────────────────────────────────────────
+
+/** Why a rate-rise figure could not be calculated — `deterministicFacts.pure.ts`. */
+export type RateSensitivityGap =
+  | 'missing_interest_rate'
+  | 'missing_repayment_structure'
+  | 'amortising_loan_without_term'
+  | 'unknown';
+
+/**
+ * One class of loan under a rate rise.
+ *
+ * Read only from the block `generate-portfolio-analysis` CALCULATES
+ * (`deterministicFacts.pure.ts`) — recognised by its own stamp, `available`
+ * and `loansCovered` — and never from the numbers a model returned before
+ * those were calculated, which were out by $2,137 a month on average across
+ * the stored reports that carry them.
+ *
+ * Sign convention, the calculator's: an impact is the change to the monthly
+ * cash position, so a rise that costs money is negative.
+ */
+export interface RateSensitivityClass {
+  available: boolean;
+  /** Set when `available` is false. */
+  gap: RateSensitivityGap | null;
+  loansCovered: Measure;
+  balanceCovered: Measure;
+  /** Investments: today's net cash flow. Home loans: today's repayment. */
+  current: Measure;
+  plusOne: Measure;
+  plusTwo: Measure;
+}
+
+export interface RateSensitivityBlock {
+  investment: RateSensitivityClass | null;
+  ownerOccupied: RateSensitivityClass | null;
+  /** The analysis's own sentence about the figures, when it wrote one. */
+  commentary: string;
+}
+
+// ── Things worth knowing ────────────────────────────────────────────────────
+
+/**
+ * A note, and the section whose subject it is.
+ *
+ * Notes used to gather into a chapter of their own after the last section —
+ * a heading and one callout on a sheet of its own, in front of the closing
+ * page. Each is now set where its subject is.
+ */
+export interface PortfolioNote {
+  section: 'standing' | 'holdings' | 'review';
+  text: string;
 }
 
 // ── The review, when there is one ───────────────────────────────────────────
@@ -282,6 +399,13 @@ export interface PortfolioReview {
 
   /** Two or three sentences framing the figures. Built, not free text. */
   narrative: string;
+  /**
+   * The analysis's own opening words to the client
+   * (`personalizedNarrative.openingStatement`), set under the contents as
+   * "About this review". Prose a model wrote, never a figure the tables rest
+   * on — the built `narrative` above is still the first thing the figures say.
+   */
+  opening: string;
   headline: HeadlineBlock;
   totals: PortfolioTotals;
   holdings: readonly HoldingRow[];
@@ -291,15 +415,30 @@ export interface PortfolioReview {
   financialHealth: NarrativeBlock | null;
   risk: NarrativeBlock | null;
   market: NarrativeBlock | null;
+  /**
+   * What the market means for this portfolio (`clientPositioning`) — set after
+   * the cycle, the rates and the lending environment it draws on, under its own
+   * subhead, rather than second of four where it answered a question before
+   * the reader had been told it.
+   */
+  marketPositioning: string;
   growth: NarrativeBlock | null;
 
   verdicts: readonly HoldingVerdict[];
   projection: ProjectionBlock | null;
   capacity: CapacityBlock | null;
+  /** Absent unless the analysis calculated it (see `RateSensitivityClass`). */
+  rateSensitivity: RateSensitivityBlock | null;
   scenarios: readonly ScenarioRow[];
   actions: readonly ActionRow[];
+  /**
+   * The analysis's "if you do this, that follows" lines
+   * (`actionPlan.optimisationScenarios`), which the legacy document printed
+   * and this one had dropped.
+   */
+  optimisations: readonly string[];
   review: ReviewBlock | null;
 
-  /** Things worth saying out loud — e.g. that owner-occupied holdings are excluded. */
-  notes: readonly string[];
+  /** Things worth saying out loud, each where its subject is. */
+  notes: readonly PortfolioNote[];
 }

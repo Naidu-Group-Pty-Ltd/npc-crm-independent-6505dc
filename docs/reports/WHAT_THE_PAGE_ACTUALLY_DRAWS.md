@@ -521,9 +521,11 @@ identical-directive repeats §4 closes and the whole-section repeats §7 closes.
 It needs measuring against a regenerated document rather than against a
 recollection of the one that was reviewed.
 
-Two of the four residuals `PLANNING_CONTROLS_IN_THE_REPORT.md` §7 named are
+Two of the four residuals `PLANNING_CONTROLS_IN_THE_REPORT.md` §7 named were
 also still open: **labels clipped in three primitives** and **the timeline
-drawing horizons no item reaches**. Both are geometry inside a drawing rather
+drawing horizons no item reaches**. The timeline is closed by §21 of
+`A_PREMIUM_DOCUMENT.md` (Audit 6): the ribbon now runs only across the stops
+its items reach. Both were geometry inside a drawing rather
 than between blocks, which is the one class the 510-render collision measure
 cannot see — it compares a block's ink against its neighbours', and a label
 clipped inside its own chart overlaps nothing.

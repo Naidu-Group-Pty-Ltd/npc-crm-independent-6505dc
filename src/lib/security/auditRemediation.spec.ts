@@ -80,6 +80,7 @@ describe('F-01 — the unauthenticated write path is closed', () => {
 describe('F-02 — the operator backfills require a JWT', () => {
   it.each([
     'email-body-backfill',
+    'backfill-message-directions',
     'backfill-investment-scores',
   ])('%s is verify_jwt = true', (fn) => {
     const block = CONFIG.slice(CONFIG.indexOf(`[functions.${fn}]`));

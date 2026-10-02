@@ -61,7 +61,7 @@ import type { ExtractedSection, ExtractedStructure } from './structure.pure.ts';
  *
  * Conditional chapters are listed too. Most of these formats emit a section
  * only when the payload has something to put in it — Borrowing Capacity's last
- * three need an explanation, an audit or scenarios; Client Details omits `Where
+ * three need an audit, scenarios or recorded settings; Client Details omits `Where
  * they live` for a renter. Every one is offered here regardless, because an
  * unfilled chapter is a state the document already handles and a template that
  * *does* carry an audit section should be able to bind it. So each list below
@@ -81,10 +81,9 @@ export const FORMAT_CHAPTERS: Partial<Record<ReportArchetypeId, readonly string[
     'Capacity at a glance',
     'Income and commitments',
     'How the capacity is built',
-    'How this was calculated',
     'Audit trail',
-    'Scenario comparison',
     'On what basis',
+    'Scenario comparison',
   ],
   // `cashFlow/sections.pure.ts › cashFlowSections`
   'cash-flow-projection': [

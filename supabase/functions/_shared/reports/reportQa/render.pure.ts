@@ -78,6 +78,7 @@ import {
   SUBHEAD_CLASS,
 } from '../../reportDesign/primitives.pure.ts';
 import { buildReportCss } from '../../reportDesign/css.pure.ts';
+import { keptTable } from '../../reportDesign/tableKeeping.pure.ts';
 import type { ResolvedReportPalette } from '../../reportDesign/roles.pure.ts';
 import type { ReportDesignOptions } from '../../reportDesign/options.pure.ts';
 import type { CompanyBlock, CompanyDisclaimer } from '../../reportDesign/companyBlock.pure.ts';
@@ -416,93 +417,24 @@ export function finePrintStart(parsed: MarkdownResult): number {
 
 /**
  * A short table is one object on one page; a long one never leaves a single
- * row stranded.
- *
- * The owner's export split a five-row table three and two across a page, and
- * left one row of an eight-row table alone under its head at the foot of
- * another. Row-level keeps do nothing in WeasyPrint 69.0 once rows are
- * unbreakable (`templateDesignCss.pure.ts` records that measurement), so two
- * structures the engine does honour carry the rule instead, both measured on
- * the pinned engine before they were written here:
- *
- *  - a short table (`KEEP_WHOLE_TABLE_LINES`) is wrapped in a block that may
- *    not break inside, and moves whole;
- *  - a longer one is set as three row groups — the first row, the middle,
- *    and the last two — where the first may not be followed by a break and
- *    the last may not break inside. A page can then end after the second row
- *    at the earliest and before the second-last at the latest; every other
- *    break is where it would have been. The striping reads `nth-child`, which
- *    counts within a group, so a group that begins on an even row opens with
- *    one undisplayed parity row (`tr.parity`, `display: none` — no box, no
- *    tag, no text) and every row keeps the band it had.
- *
- * "Short" is a HEIGHT, and it is estimated rather than counted. A table kept
- * whole that does not fit moves to the next page and leaves the rest of this
- * one blank, so the question is how much blank it can leave. The first cut
- * asked for six rows and 1,200 characters, and measured across all fifty
- * designs that admitted a five-row, four-column table standing 35–47% of a
- * page tall: a third of a page left empty in front of it on ten designs. Rows
- * and characters are both poor proxies — five one-line rows and five
- * three-line rows are one count and three heights — so the estimate wraps each
- * cell at its share of the measure (`estimatedTableLines`) and a table is kept
- * whole to `KEEP_WHOLE_TABLE_LINES`, which measured at no more than ~26% of a
- * page in the tallest design. A table of three rows or fewer is kept whole
- * whatever its height: no split of it leaves two rows on both sides.
+ * row stranded. The rule and its measurements live in
+ * `reportDesign/tableKeeping.pure.ts`, which the Portfolio Performance Review
+ * shares; the names are re-exported here so this module's callers and its
+ * spec are unchanged.
  */
-export const KEEP_WHOLE_TABLE_LINES = 7;
-
-/**
- * Characters a table sets across the full measure, for the estimate below.
- * Calibrated against the pinned engine, not derived: at ~20px of height per
- * estimated line it matches every table of the owner's answer in all fifty
- * designs to within a line.
- */
-export const TABLE_MEASURE_CHARS = 100;
-
-type TableMeta = NonNullable<MarkdownResult['blocks'][number]['table']>;
-
-/** Lines a table is estimated to set — each row as tall as its longest cell. */
-export function estimatedTableLines(table: TableMeta): number {
-  const cols = table.cols;
-  const perCell = Math.max(8, TABLE_MEASURE_CHARS / Math.max(1, cols.length));
-  const rowLines = (cells: string[]) =>
-    Math.max(1, ...cells.map((c) => Math.ceil(c.replace(/\s+/g, ' ').trim().length / perCell)));
-  const head = cols.some((c) => String(c.label ?? '').trim()) ? rowLines(cols.map((c) => String(c.label ?? ''))) : 0;
-  return head + table.rows.reduce(
-    (n, row) => n + rowLines(cols.map((c) => (typeof row[c.key] === 'string' ? row[c.key] as string : ''))),
-    0,
-  );
-}
-
-const PARITY_ROW = '<tr class="parity"></tr>';
-
-/** A long table's rows as lead, middle and tail groups. Unchanged if it cannot be read. */
-export function groupTableRows(html: string): string {
-  const body = /<tbody>([\s\S]*?)<\/tbody>/.exec(html);
-  if (!body) return html;
-  const rows = body[1].match(/<tr[\s>][\s\S]*?<\/tr>/g) ?? [];
-  if (rows.length < 4 || rows.join('') !== body[1]) return html;
-  const n = rows.length;
-  // Global (1-based) row where the tail begins; the last two rows travel together.
-  const tailFrom = n - 1;
-  const middle = rows.slice(1, tailFrom - 1);
-  const groups = `<tbody class="lead">${rows[0]}</tbody>`
-    + (middle.length ? `<tbody>${PARITY_ROW}${middle.join('')}</tbody>` : '')
-    + `<tbody class="tail">${tailFrom % 2 === 0 ? PARITY_ROW : ''}${rows.slice(tailFrom - 1).join('')}</tbody>`;
-  return html.replace(body[0], groups);
-}
+export {
+  estimatedTableLines,
+  groupTableRows,
+  KEEP_WHOLE_TABLE_LINES,
+  TABLE_MEASURE_CHARS,
+} from '../../reportDesign/tableKeeping.pure.ts';
 
 /**
  * A block as the memo prints it: a long `h4` label becomes a sentence-case
  * subhead, and a table is kept whole or grouped (see above).
  */
 function presentedBlock(block: MarkdownResult['blocks'][number]): string {
-  if (block.kind === 'table' && block.table) {
-    if (block.table.rows.length <= 3 || estimatedTableLines(block.table) <= KEEP_WHOLE_TABLE_LINES) {
-      return block.html.replace(/^<div class="table-block">/, `<div class="table-block ${KEEP_TOGETHER_CLASS}">`);
-    }
-    return groupTableRows(block.html);
-  }
+  if (block.kind === 'table' && block.table) return keptTable(block.html, block.table);
   if (block.kind !== 'heading' || !block.html.startsWith('<h4 ')) return block.html;
   return visibleLength(block.html) > LONG_LABEL_CHARS
     ? block.html.replace(/^<h4 /, `<h4 class="${SUBHEAD_CLASS}" `)

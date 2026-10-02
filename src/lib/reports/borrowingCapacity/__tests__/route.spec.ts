@@ -95,24 +95,23 @@ describe('parseRenderRequest', () => {
 
 describe('snapshotFileName', () => {
   /**
-   * Byte-for-byte what the shipping generator produces. `[^a-zA-Z0-9] → _` is
-   * the existing rule, kept exactly: "A. & J. Sample" has been arriving as
-   * `A____J__Sample` — four underscores, one per non-alphanumeric — since this
-   * format existed.
+   * §21. The name the cover prints, whose assessment it is, and the day — the
+   * rule every other typeset format follows (`readableFileName.pure.ts`).
    */
-  it('is unchanged from what the product has always produced', () => {
+  it('is the document, the client and the day, readably', () => {
     expect(snapshotFileName('A. & J. Sample', '2026-08-01T04:30:00.000Z'))
-      .toBe('Borrowing_Capacity_Snapshot_A____J__Sample_2026-08-01.pdf');
+      .toBe('Borrowing Capacity Snapshot - A. and J. Sample - 01 Aug 2026.pdf');
   });
 
-  it('names a client even when there is no name', () => {
+  it('prints no placeholder where there is no name', () => {
     expect(snapshotFileName('', '2026-08-01T00:00:00Z'))
-      .toBe('Borrowing_Capacity_Snapshot_Client_2026-08-01.pdf');
+      .toBe('Borrowing Capacity Snapshot - 01 Aug 2026.pdf');
   });
 
-  it('carries nothing a filesystem or a URL would argue with', () => {
+  it('carries nothing a filesystem would argue with', () => {
     const name = snapshotFileName('O\'Brien & Co. — Pty/Ltd', '2026-08-01T00:00:00Z');
-    expect(name).toMatch(/^[A-Za-z0-9._-]+$/);
+    expect(name).not.toMatch(/[\\/:*?"<>|]/);
+    expect(name).toBe("Borrowing Capacity Snapshot - O'Brien and Co. - Pty Ltd - 01 Aug 2026.pdf");
   });
 });
 
@@ -136,6 +135,12 @@ describe('snapshotStoragePath', () => {
 
   it('says so rather than guessing when the date is unreadable', () => {
     expect(snapshotStoragePath(CLIENT, 'Report.pdf', '', 'x')).toContain('/undated/');
+  });
+
+  it('keys a readable name in characters no URL encoder rewrites', () => {
+    const at = '2026-08-01T04:30:00.000Z';
+    expect(snapshotStoragePath(CLIENT, snapshotFileName('A. & J. Sample', at), at, 'abc'))
+      .toBe(`borrowing-capacity/${CLIENT}/2026-08-01/abc-Borrowing_Capacity_Snapshot_-_A._and_J._Sample_-_01_Aug_2026.pdf`);
   });
 });
 
