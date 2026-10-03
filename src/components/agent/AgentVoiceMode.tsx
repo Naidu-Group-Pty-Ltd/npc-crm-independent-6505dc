@@ -33,6 +33,7 @@ import type { SpeechControls } from '@/lib/agent/useSpeech';
 import type { VoiceSession } from '@/lib/agent/useVoiceSession';
 import { useStreamingSpeech } from '@/lib/agent/useStreamingSpeech';
 import { toSpeakable } from '@/lib/agent/speech.pure';
+import './aurixa.css';
 
 type Phase = 'starting' | 'listening' | 'waiting' | 'paused' | 'approval';
 

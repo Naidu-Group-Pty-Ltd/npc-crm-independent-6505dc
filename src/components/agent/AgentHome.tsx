@@ -21,6 +21,7 @@ import { cn } from '@/lib/utils';
 import { AurixaPresence } from './presence/AurixaPresence';
 import type { Presence } from '@/lib/agent/presence.pure';
 import { STARTER_PROMPTS } from '@/lib/agent/starterPrompts';
+import './aurixa.css';
 
 
 interface QuickStart {

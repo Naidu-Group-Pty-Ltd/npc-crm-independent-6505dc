@@ -10,6 +10,7 @@ import { Check, Copy, Square, Volume2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { toSpeakable } from '@/lib/agent/speech.pure';
 import type { SpeechControls } from '@/lib/agent/useSpeech';
+import './aurixa.css';
 
 interface AgentMessageActionsProps {
   content: string;

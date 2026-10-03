@@ -14,6 +14,7 @@
 import { AurixaPresence } from './AurixaPresence';
 import type { Presence } from '@/lib/agent/presence.pure';
 import { cn } from '@/lib/utils';
+import '../aurixa.css';
 
 export interface AgentLauncherProps {
   presence: Presence;

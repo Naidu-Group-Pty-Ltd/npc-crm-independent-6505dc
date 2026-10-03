@@ -1,0 +1,1078 @@
+/* Aurixa — the agent's own stylesheet.
+ *
+ * It lives beside the components that wear it, not in src/styles, and that is
+ * load-bearing. A module-scoped clone receives the files its installed modules
+ * name: src/components/agent/** travels and src/styles/** does not. When this
+ * block sat in primitives.css, that clone received the presence, the launcher
+ * and the work trace with none of the rules that draw them. Every component
+ * that renders an .aurixa-* class imports this file, so the rules travel with
+ * the markup. Vite includes it once however many components import it.
+ *
+ * --aurixa-ivory is defined in tokens.css. It was added with this block, and a
+ * clone whose tokens.css predates it would leave text that reads the token
+ * colourless, so every read carries the token's own value as a fallback. The
+ * other --aurixa-* tokens predate this block and exist on every deployment.
+ *
+ * scripts/audit-style-tokens.cjs scans this file as it scans src/styles.
+ */
+
+/* ── Aurixa presence & agent surfaces ─────────────────────────────────────
+   The character (orb with eyes), the launcher capsule, the work trace, the
+   voice stage and the panel's layouts. Token-driven throughout: every colour
+   is an --aurixa-* or semantic token, so a white-label brand re-themes it.
+
+   Deliberately NOT inside `@layer components`: the moods are selected by
+   `data-mood` and the layouts by `data-mode`, values composed at runtime that
+   never appear literally beside the class in a .tsx file, and Tailwind
+   tree-shakes layered rules it cannot match against the content globs. */
+
+/* --- The presence (orb) -------------------------------------------------- */
+.aurixa-presence {
+  --ap-size: 48px;
+  --ap-level: 0;
+  position: relative;
+  display: inline-grid;
+  place-items: center;
+  width: var(--ap-size);
+  height: var(--ap-size);
+  flex-shrink: 0;
+  isolation: isolate;
+}
+
+.aurixa-presence__halo {
+  position: absolute;
+  inset: -16%;
+  z-index: -1;
+  border-radius: 9999px;
+  background: conic-gradient(
+    from 0deg,
+    hsl(var(--aurixa-aurora-1) / 0.9),
+    hsl(var(--aurixa-aurora-2) / 0.75),
+    hsl(var(--aurixa-aurora-3) / 0.7),
+    hsl(var(--aurixa-aurora-1) / 0.9)
+  );
+  filter: blur(calc(var(--ap-size) * 0.14));
+  opacity: calc(0.34 + var(--ap-level) * 0.55);
+  animation: aurixa-orb-spin 14s linear infinite;
+  transition: opacity 240ms ease;
+}
+
+.aurixa-presence__body {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 9999px;
+  background:
+    radial-gradient(120% 90% at 30% 20%, hsl(var(--aurixa-ivory, 44 70% 95%) / 0.2), transparent 44%),
+    radial-gradient(95% 80% at 50% 118%, hsl(var(--aurixa-aurora-1) / 0.42), transparent 62%),
+    radial-gradient(70% 70% at 82% 70%, hsl(var(--aurixa-aurora-2) / 0.28), transparent 70%),
+    hsl(var(--aurixa-obsidian));
+  box-shadow:
+    inset 0 0 0 1px hsl(var(--aurixa-aurora-1) / 0.34),
+    inset 0 calc(var(--ap-size) * -0.1) calc(var(--ap-size) * 0.22) hsl(var(--aurixa-aurora-2) / 0.22),
+    0 calc(var(--ap-size) * 0.1) calc(var(--ap-size) * 0.32) calc(var(--ap-size) * -0.12) hsl(var(--aurixa-obsidian) / 0.55);
+  scale: calc(1 + var(--ap-level) * 0.14);
+  transition: scale 90ms linear;
+  animation: aurixa-presence-breathe 5.6s ease-in-out infinite;
+}
+
+.aurixa-presence__swirl {
+  position: absolute;
+  inset: -30%;
+  background: conic-gradient(
+    from 90deg,
+    transparent,
+    hsl(var(--aurixa-aurora-2) / 0.6),
+    transparent 33%,
+    hsl(var(--aurixa-aurora-3) / 0.45),
+    transparent 63%,
+    hsl(var(--aurixa-aurora-1) / 0.55),
+    transparent
+  );
+  filter: blur(calc(var(--ap-size) * 0.1));
+  opacity: 0.5;
+  mix-blend-mode: screen;
+  animation: aurixa-orb-spin 10s linear infinite reverse;
+}
+
+.aurixa-presence__sheen {
+  position: absolute;
+  inset: 7% 22% 56% 14%;
+  border-radius: 50%;
+  background: linear-gradient(180deg, hsl(var(--aurixa-ivory, 44 70% 95%) / 0.38), transparent);
+  rotate: -20deg;
+}
+
+.aurixa-presence__face {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: calc(var(--ap-size) * 0.15);
+  translate: 0 2%;
+  transition: translate 460ms cubic-bezier(0.3, 0.7, 0.2, 1);
+  animation: aurixa-presence-glance 11s ease-in-out infinite;
+}
+
+.aurixa-presence__eye {
+  width: calc(var(--ap-size) * 0.105);
+  height: calc(var(--ap-size) * 0.18);
+  border-radius: 9999px;
+  background: hsl(var(--aurixa-ivory, 44 70% 95%));
+  box-shadow: 0 0 calc(var(--ap-size) * 0.09) hsl(var(--aurixa-ivory, 44 70% 95%) / 0.6);
+  transition: scale 260ms cubic-bezier(0.3, 0.7, 0.2, 1), border-radius 260ms ease, translate 260ms ease;
+  animation: aurixa-presence-blink 6.4s ease-in-out infinite;
+}
+.aurixa-presence__eye + .aurixa-presence__eye { animation-delay: 40ms; }
+
+.aurixa-presence__ring {
+  position: absolute;
+  inset: -7%;
+  border-radius: 9999px;
+  border: max(1.5px, calc(var(--ap-size) * 0.02)) solid hsl(var(--aurixa-aurora-3) / 0.7);
+  opacity: 0;
+  scale: 1;
+  pointer-events: none;
+  transition: opacity 200ms ease, scale 90ms linear;
+}
+
+.aurixa-presence__satellite {
+  position: absolute;
+  inset: -12%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 300ms ease;
+}
+.aurixa-presence__satellite::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: max(4px, calc(var(--ap-size) * 0.12));
+  height: max(4px, calc(var(--ap-size) * 0.12));
+  translate: -50% 0;
+  border-radius: 9999px;
+  background: hsl(var(--aurixa-aurora-1));
+  box-shadow: 0 0 calc(var(--ap-size) * 0.14) hsl(var(--aurixa-aurora-1) / 0.85);
+}
+
+/* Moods ------------------------------------------------------------------ */
+.aurixa-presence[data-mood='listening'] .aurixa-presence__face { animation: none; translate: 0 0; }
+.aurixa-presence[data-mood='listening'] .aurixa-presence__eye { scale: 1.1 1.16; }
+.aurixa-presence[data-mood='listening'] .aurixa-presence__ring {
+  opacity: calc(0.3 + var(--ap-level) * 0.7);
+  scale: calc(1.02 + var(--ap-level) * 0.22);
+}
+.aurixa-presence[data-mood='listening'] .aurixa-presence__halo { opacity: calc(0.5 + var(--ap-level) * 0.5); }
+
+.aurixa-presence[data-mood='thinking'] .aurixa-presence__face { animation: none; translate: 9% -11%; }
+.aurixa-presence[data-mood='thinking'] .aurixa-presence__eye { scale: 1 0.82; }
+.aurixa-presence[data-mood='thinking'] .aurixa-presence__halo { animation-duration: 5s; opacity: 0.55; }
+.aurixa-presence[data-mood='thinking'] .aurixa-presence__swirl { animation-duration: 4.5s; }
+.aurixa-presence[data-mood='thinking'] .aurixa-presence__satellite { opacity: 0.85; animation: aurixa-orb-spin 3.2s linear infinite; }
+.aurixa-presence[data-mood='thinking'] .aurixa-presence__satellite::before { background: hsl(var(--aurixa-aurora-2)); box-shadow: 0 0 calc(var(--ap-size) * 0.14) hsl(var(--aurixa-aurora-2) / 0.85); }
+
+.aurixa-presence[data-mood='working'] .aurixa-presence__face { animation: none; translate: -7% 9%; }
+.aurixa-presence[data-mood='working'] .aurixa-presence__eye { scale: 1 0.66; }
+.aurixa-presence[data-mood='working'] .aurixa-presence__halo { animation-duration: 3s; opacity: 0.62; }
+.aurixa-presence[data-mood='working'] .aurixa-presence__swirl { animation-duration: 2.8s; opacity: 0.7; }
+.aurixa-presence[data-mood='working'] .aurixa-presence__satellite { opacity: 1; animation: aurixa-orb-spin 1.5s linear infinite; }
+
+.aurixa-presence[data-mood='writing'] .aurixa-presence__face { animation: none; translate: 0 12%; }
+.aurixa-presence[data-mood='writing'] .aurixa-presence__eye { scale: 1 0.7; }
+.aurixa-presence[data-mood='writing'] .aurixa-presence__body { animation: aurixa-presence-bob 1.6s ease-in-out infinite; }
+.aurixa-presence[data-mood='writing'] .aurixa-presence__halo { opacity: 0.5; animation-duration: 7s; }
+
+.aurixa-presence[data-mood='speaking'] .aurixa-presence__face { animation: none; translate: 0 0; }
+.aurixa-presence[data-mood='speaking'] .aurixa-presence__eye,
+.aurixa-presence[data-mood='done'] .aurixa-presence__eye {
+  scale: 1.08 0.56;
+  translate: 0 -10%;
+  border-radius: 9999px 9999px 35% 35%;
+  animation: none;
+}
+.aurixa-presence[data-mood='speaking'] .aurixa-presence__body { animation: aurixa-presence-talk 0.46s ease-in-out infinite alternate; }
+.aurixa-presence[data-mood='speaking'] .aurixa-presence__halo { opacity: 0.66; animation-duration: 4s; }
+
+.aurixa-presence[data-mood='attention'] .aurixa-presence__face { animation: none; translate: 0 0; }
+.aurixa-presence[data-mood='attention'] .aurixa-presence__eye { scale: 1.14 1.2; }
+.aurixa-presence[data-mood='attention'] .aurixa-presence__ring {
+  border-color: hsl(var(--aurixa-aurora-1) / 0.85);
+  animation: aurixa-presence-ping 1.9s cubic-bezier(0.2, 0.6, 0.3, 1) infinite;
+}
+.aurixa-presence[data-mood='attention'] .aurixa-presence__body { animation: aurixa-presence-nudge 2.6s ease-in-out infinite; }
+
+.aurixa-presence[data-mood='done'] .aurixa-presence__face { animation: none; translate: 0 0; }
+.aurixa-presence[data-mood='done'] .aurixa-presence__body { animation: aurixa-presence-hop 680ms cubic-bezier(0.3, 0.7, 0.2, 1) 1; }
+
+.aurixa-presence--still .aurixa-presence__face,
+.aurixa-presence--still .aurixa-presence__eye,
+.aurixa-presence--still .aurixa-presence__body { animation: none; }
+
+@keyframes aurixa-presence-breathe {
+  0%, 100% { transform: scale(1); }
+  50%      { transform: scale(1.035); }
+}
+@keyframes aurixa-presence-blink {
+  0%, 91%, 97%, 100% { transform: scaleY(1); }
+  94%                { transform: scaleY(0.08); }
+}
+@keyframes aurixa-presence-glance {
+  0%, 24%, 46%, 64%, 86%, 100% { transform: translate(0, 0); }
+  30%, 40% { transform: translate(-9%, -2%); }
+  70%, 80% { transform: translate(8%, 3%); }
+}
+@keyframes aurixa-presence-bob {
+  0%, 100% { transform: translateY(0); }
+  50%      { transform: translateY(-3%); }
+}
+@keyframes aurixa-presence-talk {
+  from { transform: scale(1, 1); }
+  to   { transform: scale(1.03, 0.975); }
+}
+@keyframes aurixa-presence-ping {
+  0%   { opacity: 0.8; scale: 1; }
+  80%  { opacity: 0;   scale: 1.42; }
+  100% { opacity: 0;   scale: 1.42; }
+}
+@keyframes aurixa-presence-nudge {
+  0%, 70%, 100% { transform: translateY(0) rotate(0); }
+  76% { transform: translateY(-7%) rotate(-4deg); }
+  84% { transform: translateY(0) rotate(3deg); }
+  90% { transform: translateY(-3%) rotate(0); }
+}
+@keyframes aurixa-presence-hop {
+  0%   { transform: translateY(0) scale(1); }
+  35%  { transform: translateY(-10%) scale(1.04, 0.97); }
+  65%  { transform: translateY(0) scale(1.03, 0.95); }
+  100% { transform: translateY(0) scale(1); }
+}
+
+/* --- The launcher capsule ------------------------------------------------ */
+/* The orb sits in a glass pill that is exactly its own size at rest. The
+   label beside it opens by max-width, so the orb's halo is never clipped by
+   the pill: only the label hides overflow. */
+.aurixa-launcher {
+  display: flex;
+  align-items: center;
+  height: 3.5rem;
+  min-width: 3.5rem;
+  padding: 0.25rem;
+  border-radius: 9999px;
+  border: 1px solid hsl(var(--aurixa-glass-border) / 0.55);
+  background: linear-gradient(135deg, hsl(var(--aurixa-glass-bg) / 0.92), hsl(var(--aurixa-glass-bg) / 0.78));
+  box-shadow:
+    inset 0 1px 0 hsl(var(--aurixa-ivory, 44 70% 95%) / 0.12),
+    0 18px 40px -18px hsl(var(--aurixa-obsidian) / 0.55),
+    0 0 0 1px hsl(var(--aurixa-aurora-1) / 0.08);
+  backdrop-filter: blur(16px) saturate(140%);
+  -webkit-backdrop-filter: blur(16px) saturate(140%);
+  transition: padding 420ms cubic-bezier(0.3, 0.7, 0.2, 1), box-shadow 300ms ease, transform 200ms ease;
+}
+.aurixa-launcher:hover { transform: translateY(-1px); }
+.aurixa-launcher[data-expanded='true'] { padding-right: 1.1rem; }
+.aurixa-launcher[data-tone='attention'] {
+  box-shadow:
+    inset 0 1px 0 hsl(var(--aurixa-ivory, 44 70% 95%) / 0.12),
+    0 18px 40px -18px hsl(var(--aurixa-obsidian) / 0.55),
+    0 0 0 1px hsl(var(--aurixa-aurora-1) / 0.55),
+    0 0 26px -6px hsl(var(--aurixa-aurora-1) / 0.6);
+}
+.aurixa-launcher__label {
+  min-width: 0;
+  max-width: 0;
+  overflow: hidden;
+  opacity: 0;
+  margin-left: 0;
+  white-space: nowrap;
+  transition:
+    max-width 420ms cubic-bezier(0.3, 0.7, 0.2, 1),
+    margin-left 420ms cubic-bezier(0.3, 0.7, 0.2, 1),
+    opacity 220ms ease 60ms;
+}
+.aurixa-launcher[data-expanded='true'] .aurixa-launcher__label {
+  max-width: min(16rem, calc(100vw - 7rem));
+  margin-left: 0.7rem;
+  opacity: 1;
+}
+.aurixa-launcher__status {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* --- The panel's layouts ------------------------------------------------- */
+/* One panel, four ways to sit on the screen, chosen by `data-mode`:
+   sheet  — a phone: rises from the bottom, nearly full height, with a grip.
+   float  — a tablet, or a desktop by default: the familiar corner window.
+   dock   — desktop: a column down the right edge; the page reflows beside it.
+   focus  — desktop: centred and large, the page dimmed behind it. */
+.aurixa-panel {
+  position: fixed;
+  z-index: 60;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  border-radius: 20px;
+}
+
+.aurixa-panel[data-mode='float'] {
+  right: 1rem;
+  bottom: 5.5rem;
+  width: calc(100vw - 2rem);
+  max-width: 440px;
+  height: min(75vh, 580px);
+  transform-origin: 100% 100%;
+  animation: aurixa-panel-float-in 360ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+@media (min-width: 768px) {
+  .aurixa-panel[data-mode='float'] {
+    right: 1.5rem;
+    bottom: 1.5rem;
+    max-width: 460px;
+    height: min(85vh, 680px);
+  }
+}
+
+.aurixa-panel[data-mode='sheet'] {
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: calc(100dvh - max(0.75rem, env(safe-area-inset-top)) - 0.5rem);
+  border-radius: 24px 24px 0 0;
+  border-bottom-width: 0;
+  animation: aurixa-panel-sheet-in 420ms cubic-bezier(0.2, 0.85, 0.2, 1) both;
+  touch-action: pan-y;
+}
+/* The sheet runs to the bottom edge, so the composer clears the home indicator. */
+.aurixa-panel[data-mode='sheet'] .aurixa-composer { padding-bottom: env(safe-area-inset-bottom); }
+.aurixa-panel[data-mode='sheet'][data-dragging='true'] { transition: none; }
+.aurixa-panel[data-mode='sheet'][data-settling='true'] { transition: translate 260ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+
+.aurixa-panel[data-mode='dock'] {
+  top: 0.75rem;
+  right: 0.75rem;
+  bottom: 0.75rem;
+  width: var(--aurixa-dock-w, 26rem);
+  animation: aurixa-panel-dock-in 380ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+.aurixa-panel[data-mode='focus'] {
+  inset: 0;
+  margin: auto;
+  width: min(780px, calc(100vw - 4rem));
+  height: min(88vh, 880px);
+  border-radius: 24px;
+  animation: aurixa-panel-focus-in 340ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+/* The page reflows beside a docked panel instead of hiding under it. */
+:root { --aurixa-dock-w: 26rem; }
+@media (min-width: 1024px) {
+  .dashboard-shell { transition: padding-right 380ms cubic-bezier(0.2, 0.8, 0.2, 1); }
+  html[data-aurixa-dock] .dashboard-shell { padding-right: calc(var(--aurixa-dock-w) + 0.75rem); }
+}
+@media (min-width: 1440px) {
+  :root { --aurixa-dock-w: 28rem; }
+}
+
+.aurixa-scrim {
+  position: fixed;
+  inset: 0;
+  z-index: 59;
+  background: var(--glass-scrim, hsl(var(--aurixa-obsidian) / 0.45));
+  backdrop-filter: blur(3px);
+  -webkit-backdrop-filter: blur(3px);
+  animation: aurixa-fade-in 260ms ease both;
+}
+
+/* The grip a phone's sheet is dragged by. */
+.aurixa-grip {
+  display: flex;
+  justify-content: center;
+  padding: 0.5rem 0 0.15rem;
+  cursor: grab;
+  touch-action: none;
+}
+.aurixa-grip::before {
+  content: '';
+  width: 2.5rem;
+  height: 0.3rem;
+  border-radius: 9999px;
+  background: hsl(var(--muted-foreground) / 0.35);
+}
+
+/* The panel's own presence line in the header. */
+.aurixa-panel__status {
+  display: block;
+  min-height: 1rem;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.aurixa-panel__status[data-active='true'] {
+  background: linear-gradient(
+    90deg,
+    hsl(var(--muted-foreground)) 0%,
+    hsl(var(--foreground)) 40%,
+    hsl(var(--muted-foreground)) 80%
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: aurixa-shimmer 2.4s linear infinite;
+}
+
+/* The aurora that runs along the top edge while Aurixa is working. */
+.aurixa-working-bar {
+  position: absolute;
+  inset: 0 0 auto 0;
+  height: 2px;
+  overflow: hidden;
+  pointer-events: none;
+}
+.aurixa-working-bar::before {
+  content: '';
+  position: absolute;
+  inset: 0 -50%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    hsl(var(--aurixa-aurora-1)) 30%,
+    hsl(var(--aurixa-aurora-2)) 50%,
+    hsl(var(--aurixa-aurora-3)) 70%,
+    transparent
+  );
+  animation: aurixa-working-sweep 1.6s cubic-bezier(0.45, 0, 0.55, 1) infinite;
+}
+
+/* Small round header controls; the panel's toolbar. */
+.aurixa-icon-btn {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2rem;
+  height: 2rem;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  color: hsl(var(--muted-foreground));
+  transition: background-color 160ms ease, color 160ms ease;
+}
+.aurixa-icon-btn:hover { background: hsl(var(--muted) / 0.7); color: hsl(var(--foreground)); }
+.aurixa-icon-btn:focus-visible { outline: 2px solid hsl(var(--brand) / 0.6); outline-offset: 1px; }
+.aurixa-icon-btn[data-active='true'] { background: hsl(var(--brand) / 0.12); color: hsl(var(--brand)); }
+.aurixa-icon-btn__badge {
+  position: absolute;
+  top: -0.1rem;
+  right: -0.1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1rem;
+  height: 1rem;
+  padding: 0 0.25rem;
+  border-radius: 9999px;
+  background: hsl(var(--destructive));
+  color: hsl(var(--destructive-foreground));
+  font-size: 9px;
+  font-weight: 700;
+  line-height: 1;
+  box-shadow: 0 0 0 2px hsl(var(--aurixa-glass-bg));
+}
+
+/* --- Home ---------------------------------------------------------------- */
+.aurixa-eyebrow {
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: hsl(var(--muted-foreground));
+}
+
+.aurixa-skeleton {
+  display: block;
+  background: linear-gradient(
+    90deg,
+    hsl(var(--muted) / 0.6) 0%,
+    hsl(var(--muted)) 50%,
+    hsl(var(--muted) / 0.6) 100%
+  );
+  background-size: 200% 100%;
+  animation: aurixa-shimmer 1.6s linear infinite;
+}
+
+.aurixa-pulse-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  height: 1.85rem;
+  padding: 0 0.7rem 0 0.25rem;
+  border-radius: 9999px;
+  border: 1px solid hsl(var(--aurixa-glass-border) / 0.6);
+  background: hsl(var(--aurixa-glass-bg) / 0.55);
+  font-size: 12.5px;
+  font-weight: 500;
+  color: hsl(var(--foreground));
+  transition: border-color 160ms ease, background-color 160ms ease, transform 160ms ease;
+}
+.aurixa-pulse-chip:hover { transform: translateY(-1px); }
+.aurixa-pulse-chip__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.35rem;
+  height: 1.35rem;
+  padding: 0 0.35rem;
+  border-radius: 9999px;
+  font-size: 11px;
+  font-weight: 700;
+}
+.aurixa-pulse-chip[data-tone='urgent'] { border-color: hsl(var(--destructive) / 0.35); }
+.aurixa-pulse-chip[data-tone='urgent']:hover { background: hsl(var(--destructive) / 0.08); }
+.aurixa-pulse-chip[data-tone='urgent'] .aurixa-pulse-chip__count { background: hsl(var(--destructive) / 0.14); color: hsl(var(--destructive)); }
+.aurixa-pulse-chip[data-tone='warn'] { border-color: hsl(var(--brand) / 0.4); }
+.aurixa-pulse-chip[data-tone='warn']:hover { background: hsl(var(--brand) / 0.08); }
+.aurixa-pulse-chip[data-tone='warn'] .aurixa-pulse-chip__count { background: hsl(var(--brand) / 0.16); color: hsl(var(--brand)); }
+.aurixa-pulse-chip[data-tone='info'] .aurixa-pulse-chip__count { background: hsl(var(--muted)); color: hsl(var(--foreground)); }
+.aurixa-pulse-chip[data-tone='info']:hover { background: hsl(var(--muted) / 0.6); }
+
+.aurixa-tile {
+  position: relative;
+  display: block;
+  padding: 0.75rem 0.8rem;
+  border-radius: 14px;
+  border: 1px solid hsl(var(--aurixa-glass-border) / 0.55);
+  background: hsl(var(--aurixa-glass-bg) / 0.5);
+  text-align: left;
+  transition: border-color 180ms ease, background-color 180ms ease, transform 180ms ease, box-shadow 180ms ease;
+}
+.aurixa-tile:hover {
+  transform: translateY(-1px);
+  border-color: hsl(var(--brand) / 0.4);
+  background: hsl(var(--brand) / 0.05);
+  box-shadow: 0 10px 24px -18px hsl(var(--aurixa-glow) / 0.8);
+}
+.aurixa-tile:focus-visible { outline: 2px solid hsl(var(--brand) / 0.6); outline-offset: 2px; }
+.aurixa-tile__icon { color: hsl(var(--brand)); }
+.aurixa-tile--accent {
+  border-color: transparent;
+  background:
+    radial-gradient(120% 140% at 0% 0%, hsl(var(--aurixa-aurora-2) / 0.38), transparent 60%),
+    radial-gradient(120% 140% at 100% 100%, hsl(var(--aurixa-aurora-1) / 0.4), transparent 60%),
+    hsl(var(--aurixa-obsidian));
+  color: hsl(var(--aurixa-ivory, 44 70% 95%));
+}
+.aurixa-tile--accent:hover {
+  border-color: hsl(var(--aurixa-aurora-1) / 0.5);
+  background:
+    radial-gradient(120% 140% at 0% 0%, hsl(var(--aurixa-aurora-2) / 0.48), transparent 60%),
+    radial-gradient(120% 140% at 100% 100%, hsl(var(--aurixa-aurora-1) / 0.5), transparent 60%),
+    hsl(var(--aurixa-obsidian));
+}
+
+.aurixa-idea-chip {
+  padding: 0.35rem 0.65rem;
+  border-radius: 9999px;
+  border: 1px solid hsl(var(--aurixa-glass-border) / 0.6);
+  background: hsl(var(--aurixa-glass-bg) / 0.4);
+  font-size: 11.5px;
+  color: hsl(var(--muted-foreground));
+  transition: border-color 160ms ease, background-color 160ms ease, color 160ms ease;
+}
+.aurixa-idea-chip:hover { border-color: hsl(var(--brand) / 0.4); background: hsl(var(--brand) / 0.05); color: hsl(var(--foreground)); }
+
+/* --- The conversation ---------------------------------------------------- */
+.aurixa-context-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  max-width: 14rem;
+  padding: 0.15rem 0.5rem;
+  border-radius: 9999px;
+  border: 1px solid hsl(var(--aurixa-glass-border) / 0.6);
+  background: hsl(var(--aurixa-glass-bg) / 0.6);
+  font-size: 11px;
+  color: hsl(var(--muted-foreground));
+}
+/* The composer's "share this page" switch: dashed while off, brand while on. */
+.aurixa-context-toggle {
+  padding-block: 0.25rem;
+  border-style: dashed;
+  transition: border-color 160ms ease, background-color 160ms ease, color 160ms ease;
+}
+.aurixa-context-toggle:hover { border-color: hsl(var(--brand) / 0.45); color: hsl(var(--foreground)); }
+.aurixa-context-toggle:focus-visible { outline: 2px solid hsl(var(--brand) / 0.6); outline-offset: 1px; }
+.aurixa-context-toggle[data-on='true'] {
+  border-style: solid;
+  border-color: hsl(var(--brand) / 0.4);
+  background: hsl(var(--brand) / 0.1);
+  color: hsl(var(--foreground));
+}
+.aurixa-context-toggle[data-on='true'] svg:first-child { color: hsl(var(--brand)); }
+
+.aurixa-msg-actions {
+  opacity: 0;
+  transition: opacity 180ms ease;
+}
+.aurixa-msg:hover .aurixa-msg-actions,
+.aurixa-msg:focus-within .aurixa-msg-actions,
+.aurixa-msg-actions--pinned { opacity: 1; }
+@media (hover: none) {
+  .aurixa-msg-actions { opacity: 1; }
+}
+.aurixa-msg-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.3rem;
+  height: 1.6rem;
+  padding: 0 0.45rem;
+  border-radius: 8px;
+  font-size: 11px;
+  color: hsl(var(--muted-foreground));
+  transition: background-color 160ms ease, color 160ms ease;
+}
+.aurixa-msg-action:hover { background: hsl(var(--muted) / 0.7); color: hsl(var(--foreground)); }
+.aurixa-msg-action:focus-visible { outline: 2px solid hsl(var(--brand) / 0.6); outline-offset: 1px; }
+.aurixa-msg-action[data-on='true'] { color: hsl(var(--brand)); }
+.aurixa-msg-action__label { display: none; }
+.aurixa-msg-action:hover .aurixa-msg-action__label,
+.aurixa-msg-action[data-on='true'] .aurixa-msg-action__label { display: inline; }
+
+.aurixa-followup {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  padding: 0.35rem 0.7rem 0.35rem 0.55rem;
+  border-radius: 9999px;
+  border: 1px solid hsl(var(--brand) / 0.28);
+  background: hsl(var(--brand) / 0.05);
+  font-size: 12px;
+  color: hsl(var(--foreground));
+  text-align: left;
+  transition: border-color 160ms ease, background-color 160ms ease, transform 160ms ease;
+  animation: aurixa-followup-in 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: calc(var(--i, 0) * 70ms + 120ms);
+}
+.aurixa-followup:hover { transform: translateY(-1px); border-color: hsl(var(--brand) / 0.55); background: hsl(var(--brand) / 0.1); }
+.aurixa-followup:focus-visible { outline: 2px solid hsl(var(--brand) / 0.6); outline-offset: 2px; }
+
+/* The caret at the end of a reply that is still being written. The reply is
+   drawn by AgentMessageRenderer (root > block > markdown), so the caret sits on
+   the last paragraph or list item of the last block — inline, on the line the
+   words are arriving on — and simply does not appear after a table or a card. */
+.aurixa-writing > div > div:last-child > p:last-child::after,
+.aurixa-writing > div > div:last-child > :is(ul, ol):last-child > li:last-child::after {
+  content: '';
+  display: inline-block;
+  width: 0.45em;
+  height: 0.45em;
+  margin-left: 0.3em;
+  vertical-align: 0.05em;
+  border-radius: 9999px;
+  background: hsl(var(--aurixa-aurora-1));
+  box-shadow: 0 0 8px hsl(var(--aurixa-aurora-1) / 0.8);
+  animation: aurixa-caret 1s ease-in-out infinite;
+}
+
+.aurixa-jump {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  height: 1.9rem;
+  padding: 0 0.8rem;
+  border-radius: 9999px;
+  border: 1px solid hsl(var(--aurixa-glass-border) / 0.7);
+  background: hsl(var(--background) / 0.92);
+  font-size: 11.5px;
+  font-weight: 500;
+  color: hsl(var(--foreground));
+  box-shadow: 0 10px 28px -14px hsl(var(--aurixa-obsidian) / 0.6);
+  animation: aurixa-followup-in 260ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+/* --- The work trace ------------------------------------------------------ */
+.aurixa-trace {
+  margin-bottom: 0.5rem;
+  padding: 0.45rem 0.6rem;
+  border-radius: 12px;
+  border: 1px solid hsl(var(--aurixa-glass-border) / 0.45);
+  background: hsl(var(--aurixa-glass-bg) / 0.45);
+}
+.aurixa-trace[data-live='false'] {
+  padding: 0.15rem 0.25rem;
+  border-color: transparent;
+  background: transparent;
+}
+.aurixa-trace__pulse {
+  position: relative;
+  width: 0.45rem;
+  height: 0.45rem;
+  flex-shrink: 0;
+  border-radius: 9999px;
+  background: hsl(var(--muted-foreground) / 0.5);
+}
+.aurixa-trace[data-live='true'] .aurixa-trace__pulse {
+  background: hsl(var(--aurixa-aurora-1));
+  box-shadow: 0 0 0 0 hsl(var(--aurixa-aurora-1) / 0.6);
+  animation: aurixa-trace-pulse 1.4s ease-out infinite;
+}
+.aurixa-trace__steps {
+  position: relative;
+  padding-left: 0.05rem;
+}
+.aurixa-trace__step { animation: aurixa-followup-in 320ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.aurixa-trace__node {
+  border: 1px solid hsl(var(--aurixa-glass-border) / 0.8);
+  background: hsl(var(--background) / 0.7);
+  color: hsl(var(--muted-foreground));
+}
+.aurixa-trace__step[data-status='running'] .aurixa-trace__node {
+  border-color: hsl(var(--brand) / 0.55);
+  color: hsl(var(--brand));
+  animation: aurixa-trace-node 1.6s ease-in-out infinite;
+}
+.aurixa-trace__step[data-status='done'] .aurixa-trace__node {
+  border-color: hsl(var(--brand) / 0.3);
+  background: hsl(var(--brand) / 0.1);
+  color: hsl(var(--brand));
+}
+
+/* --- The plan ------------------------------------------------------------
+   What Aurixa means to do, ticked off as it goes. The rail is one segment
+   per step: brand when settled, the aurora flowing through the step that is
+   running, and nothing moving once the answer is in. */
+.aurixa-plan {
+  margin-bottom: 0.5rem;
+  padding: 0.5rem 0.65rem 0.55rem;
+  border-radius: 12px;
+  border: 1px solid hsl(var(--aurixa-glass-border) / 0.45);
+  background: hsl(var(--aurixa-glass-bg) / 0.45);
+  animation: aurixa-followup-in 320ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.aurixa-plan__rail {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(0, 1fr);
+  gap: 3px;
+  margin-bottom: 0.45rem;
+}
+.aurixa-plan__segment {
+  height: 3px;
+  border-radius: 9999px;
+  background: hsl(var(--muted-foreground) / 0.18);
+  transition: background-color 420ms ease;
+}
+.aurixa-plan__segment[data-status='done'] { background: hsl(var(--brand) / 0.85); }
+.aurixa-plan__segment[data-status='skipped'] { background: hsl(var(--muted-foreground) / 0.42); }
+.aurixa-plan__segment[data-status='active'] {
+  background: linear-gradient(
+    90deg,
+    hsl(var(--aurixa-aurora-1)),
+    hsl(var(--aurixa-aurora-2)),
+    hsl(var(--aurixa-aurora-3)),
+    hsl(var(--aurixa-aurora-1))
+  );
+  background-size: 300% 100%;
+  animation: aurixa-plan-flow 1.8s linear infinite;
+}
+.aurixa-plan__head { min-height: 1.25rem; }
+button.aurixa-plan__head:hover > span:first-child { text-decoration: underline; text-underline-offset: 3px; }
+button.aurixa-plan__head:focus-visible { outline: 2px solid hsl(var(--brand) / 0.6); outline-offset: 2px; border-radius: 6px; }
+.aurixa-plan__step { animation: aurixa-followup-in 300ms cubic-bezier(0.2, 0.8, 0.2, 1) both; }
+.aurixa-plan__node {
+  position: relative;
+  border: 1px solid hsl(var(--aurixa-glass-border) / 0.9);
+  background: hsl(var(--background) / 0.7);
+  color: hsl(var(--brand));
+}
+.aurixa-plan__step[data-status='done'] .aurixa-plan__node {
+  border-color: hsl(var(--brand) / 0.35);
+  background: hsl(var(--brand) / 0.12);
+}
+.aurixa-plan__step[data-status='active'] .aurixa-plan__node {
+  border-color: hsl(var(--brand) / 0.6);
+  animation: aurixa-trace-node 1.6s ease-in-out infinite;
+}
+.aurixa-plan__step[data-status='active'] .aurixa-plan__node::after {
+  content: '';
+  width: 0.375rem;
+  height: 0.375rem;
+  border-radius: 9999px;
+  background: hsl(var(--brand));
+}
+.aurixa-plan__step[data-status='skipped'] .aurixa-plan__node { color: hsl(var(--muted-foreground)); }
+.aurixa-plan__label { color: hsl(var(--muted-foreground)); }
+.aurixa-plan__step[data-status='active'] .aurixa-plan__label { color: hsl(var(--foreground)); font-weight: 500; }
+.aurixa-plan__step[data-status='done'] .aurixa-plan__label { color: hsl(var(--foreground) / 0.72); }
+.aurixa-plan__step[data-status='skipped'] .aurixa-plan__label { text-decoration: line-through; text-decoration-color: hsl(var(--muted-foreground) / 0.6); }
+
+/* --- What it found -------------------------------------------------------
+   Cards drawn from a tool's own result. Quiet by default: the rows carry the
+   weight, the card only frames them, and a row that opens something says so
+   on hover rather than with a border around every line. */
+.aurixa-view {
+  overflow: hidden;
+  border-radius: 14px;
+  border: 1px solid hsl(var(--aurixa-glass-border) / 0.55);
+  background: hsl(var(--aurixa-glass-bg) / 0.55);
+  animation: aurixa-followup-in 360ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.aurixa-view__all { color: hsl(var(--brand)); }
+.aurixa-view__all:hover { text-decoration: underline; text-underline-offset: 3px; }
+.aurixa-view__all:focus-visible,
+.aurixa-view__link:focus-visible { outline: 2px solid hsl(var(--brand) / 0.6); outline-offset: -2px; border-radius: 8px; }
+.aurixa-view__rows > li + li > .aurixa-view__row { border-top: 1px solid hsl(var(--aurixa-glass-border) / 0.35); }
+.aurixa-view__link { transition: background-color 140ms ease; }
+.aurixa-view__link:hover { background: hsl(var(--brand) / 0.06); }
+.aurixa-view__badge {
+  border: 1px solid hsl(var(--muted-foreground) / 0.22);
+  background: hsl(var(--muted) / 0.7);
+  color: hsl(var(--muted-foreground));
+}
+.aurixa-view__badge[data-tone='positive'] { border-color: hsl(var(--success) / 0.35); background: hsl(var(--success) / 0.12); color: hsl(var(--success)); }
+.aurixa-view__badge[data-tone='caution'] { border-color: hsl(var(--warning) / 0.45); background: hsl(var(--warning) / 0.16); color: hsl(var(--foreground)); }
+.aurixa-view__badge[data-tone='critical'] { border-color: hsl(var(--destructive) / 0.4); background: hsl(var(--destructive) / 0.12); color: hsl(var(--destructive)); }
+.aurixa-view__metric {
+  background: hsl(var(--muted) / 0.45);
+  box-shadow: inset 2px 0 0 hsl(var(--muted-foreground) / 0.25);
+}
+.aurixa-view__metric[data-tone='positive'] { box-shadow: inset 2px 0 0 hsl(var(--success) / 0.8); }
+.aurixa-view__metric[data-tone='caution'] { box-shadow: inset 2px 0 0 hsl(var(--warning) / 0.9); }
+.aurixa-view__metric[data-tone='critical'] { box-shadow: inset 2px 0 0 hsl(var(--destructive) / 0.85); }
+.aurixa-view__track { background: hsl(var(--muted) / 0.7); }
+.aurixa-view__fill {
+  background: linear-gradient(90deg, hsl(var(--brand) / 0.55), hsl(var(--brand)));
+  transform-origin: left center;
+  animation: aurixa-bar-grow 520ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+
+/* --- Pages it offered ---------------------------------------------------- */
+.aurixa-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  max-width: 100%;
+  height: 1.9rem;
+  padding: 0 0.75rem;
+  border-radius: 9999px;
+  border: 1px solid hsl(var(--brand) / 0.45);
+  background: hsl(var(--brand) / 0.1);
+  font-size: 12px;
+  font-weight: 500;
+  color: hsl(var(--foreground));
+  transition: border-color 160ms ease, background-color 160ms ease, transform 160ms ease;
+  animation: aurixa-followup-in 380ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+  animation-delay: calc(var(--i, 0) * 70ms);
+}
+a.aurixa-action:hover { transform: translateY(-1px); border-color: hsl(var(--brand) / 0.7); background: hsl(var(--brand) / 0.16); }
+a.aurixa-action:focus-visible { outline: 2px solid hsl(var(--brand) / 0.6); outline-offset: 2px; }
+.aurixa-action__arrow { transition: transform 160ms ease; }
+a.aurixa-action:hover .aurixa-action__arrow { transform: translateX(2px); }
+.aurixa-action[data-here='true'] {
+  border-color: hsl(var(--aurixa-glass-border) / 0.7);
+  background: transparent;
+  font-weight: 400;
+}
+.aurixa-action[data-here='true'] svg { color: hsl(var(--success)); }
+
+/* --- The approval card --------------------------------------------------- */
+.aurixa-approval {
+  overflow: hidden;
+  border-radius: 14px;
+  border: 1px solid hsl(var(--aurixa-glass-border) / 0.6);
+  background: hsl(var(--aurixa-glass-bg) / 0.6);
+}
+.aurixa-approval[data-status='pending'] {
+  border-color: hsl(var(--brand) / 0.45);
+  box-shadow: 0 0 0 3px hsl(var(--brand) / 0.08), 0 14px 32px -24px hsl(var(--aurixa-glow) / 0.9);
+  animation: aurixa-approval-in 420ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
+}
+.aurixa-approval__icon {
+  background: hsl(var(--brand) / 0.12);
+  color: hsl(var(--brand));
+}
+.aurixa-approval[data-status='approved'] .aurixa-approval__icon,
+.aurixa-approval[data-status='rejected'] .aurixa-approval__icon {
+  background: hsl(var(--muted));
+  color: hsl(var(--muted-foreground));
+}
+
+/* --- The voice stage ----------------------------------------------------- */
+.aurixa-voice-stage {
+  isolation: isolate;
+  background:
+    radial-gradient(70% 45% at 50% 32%, hsl(var(--aurixa-aurora-2) / 0.16), transparent 70%),
+    radial-gradient(60% 40% at 50% 38%, hsl(var(--aurixa-aurora-1) / 0.16), transparent 72%);
+  animation: aurixa-fade-in 320ms ease both;
+}
+.aurixa-voice-stage__orb {
+  display: inline-grid;
+  place-items: center;
+  padding: 1.75rem;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+  transition: transform 200ms ease;
+}
+.aurixa-voice-stage__orb:active { transform: scale(0.97); }
+.aurixa-voice-stage__heard {
+  font-style: italic;
+  animation: aurixa-followup-in 300ms ease both;
+}
+.aurixa-voice-stage__caption {
+  display: -webkit-box;
+  -webkit-line-clamp: 5;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-wrap: pretty;
+}
+
+.aurixa-voice-control {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  border-radius: 9999px;
+  border: 1px solid hsl(var(--aurixa-glass-border) / 0.7);
+  background: hsl(var(--aurixa-glass-bg) / 0.75);
+  color: hsl(var(--foreground));
+  transition: background-color 160ms ease, transform 160ms ease, color 160ms ease;
+}
+.aurixa-voice-control:hover { background: hsl(var(--muted)); }
+.aurixa-voice-control:active { transform: scale(0.95); }
+.aurixa-voice-control:focus-visible { outline: 2px solid hsl(var(--brand) / 0.6); outline-offset: 3px; }
+.aurixa-voice-control--on { background: hsl(var(--foreground)); color: hsl(var(--background)); }
+.aurixa-voice-control--on:hover { background: hsl(var(--foreground) / 0.88); }
+.aurixa-voice-control--end {
+  width: 3.75rem;
+  height: 3.75rem;
+  border-color: transparent;
+  background: hsl(var(--destructive));
+  color: hsl(var(--destructive-foreground));
+}
+.aurixa-voice-control--end:hover { background: hsl(var(--destructive) / 0.88); }
+
+/* The talk button that replaces Send while the composer is empty. */
+.aurixa-talk-btn {
+  position: relative;
+  isolation: isolate;
+  overflow: hidden;
+  background: hsl(var(--aurixa-obsidian));
+  color: hsl(var(--aurixa-ivory, 44 70% 95%));
+}
+.aurixa-talk-btn::before {
+  content: '';
+  position: absolute;
+  inset: -40%;
+  z-index: -1;
+  background: conic-gradient(
+    from 0deg,
+    hsl(var(--aurixa-aurora-1) / 0.7),
+    hsl(var(--aurixa-aurora-2) / 0.6),
+    hsl(var(--aurixa-aurora-3) / 0.5),
+    hsl(var(--aurixa-aurora-1) / 0.7)
+  );
+  filter: blur(6px);
+  opacity: 0.55;
+  animation: aurixa-orb-spin 6s linear infinite;
+}
+.aurixa-talk-btn:hover::before { opacity: 0.8; }
+
+/* --- Keyframes ----------------------------------------------------------- */
+@keyframes aurixa-fade-in { from { opacity: 0; } to { opacity: 1; } }
+@keyframes aurixa-panel-float-in {
+  from { opacity: 0; transform: translateY(14px) scale(0.96); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes aurixa-panel-sheet-in {
+  from { transform: translateY(100%); }
+  to   { transform: none; }
+}
+@keyframes aurixa-panel-dock-in {
+  from { opacity: 0; transform: translateX(28px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes aurixa-panel-focus-in {
+  from { opacity: 0; transform: translateY(10px) scale(0.975); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes aurixa-working-sweep {
+  from { transform: translateX(-35%); }
+  to   { transform: translateX(35%); }
+}
+@keyframes aurixa-followup-in {
+  from { opacity: 0; transform: translateY(5px); }
+  to   { opacity: 1; transform: none; }
+}
+@keyframes aurixa-caret {
+  0%, 100% { opacity: 0.35; transform: scale(0.8); }
+  50%      { opacity: 1;    transform: scale(1.1); }
+}
+@keyframes aurixa-trace-pulse {
+  0%   { box-shadow: 0 0 0 0 hsl(var(--aurixa-aurora-1) / 0.55); }
+  100% { box-shadow: 0 0 0 7px hsl(var(--aurixa-aurora-1) / 0); }
+}
+@keyframes aurixa-trace-node {
+  0%, 100% { box-shadow: 0 0 0 0 hsl(var(--brand) / 0); }
+  50%      { box-shadow: 0 0 0 3px hsl(var(--brand) / 0.16); }
+}
+@keyframes aurixa-plan-flow {
+  from { background-position: 0% 0; }
+  to   { background-position: 300% 0; }
+}
+@keyframes aurixa-bar-grow {
+  from { transform: scaleX(0); }
+  to   { transform: none; }
+}
+@keyframes aurixa-approval-in {
+  0%   { opacity: 0; transform: translateY(6px) scale(0.985); }
+  60%  { opacity: 1; }
+  100% { opacity: 1; transform: none; }
+}
+
+/* --- Reduced motion ------------------------------------------------------ */
+/* The character keeps its expressions (they carry meaning) but stops moving
+   on its own; layouts appear without travelling. */
+@media (prefers-reduced-motion: reduce) {
+  .aurixa-presence__halo,
+  .aurixa-presence__swirl,
+  .aurixa-presence__satellite,
+  .aurixa-presence__face,
+  .aurixa-presence__eye,
+  .aurixa-presence__body,
+  .aurixa-presence__ring,
+  .aurixa-panel,
+  .aurixa-scrim,
+  .aurixa-working-bar::before,
+  .aurixa-panel__status[data-active='true'],
+  .aurixa-skeleton,
+  .aurixa-followup,
+  .aurixa-jump,
+  .aurixa-trace__step,
+  .aurixa-trace__pulse,
+  .aurixa-trace__node,
+  .aurixa-approval,
+  .aurixa-plan,
+  .aurixa-plan__segment,
+  .aurixa-plan__step,
+  .aurixa-plan__node,
+  .aurixa-view,
+  .aurixa-view__fill,
+  .aurixa-action,
+  .aurixa-voice-stage,
+  .aurixa-voice-stage__heard,
+  .aurixa-talk-btn::before,
+  .aurixa-writing > div > div:last-child > p:last-child::after,
+  .aurixa-writing > div > div:last-child > :is(ul, ol):last-child > li:last-child::after {
+    animation: none !important;
+  }
+  .aurixa-presence__body { scale: 1; }
+  .aurixa-launcher,
+  .aurixa-launcher__label,
+  .dashboard-shell { transition: none !important; }
+  .aurixa-panel__status[data-active='true'] { color: hsl(var(--foreground)); background: none; }
+}

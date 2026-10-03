@@ -8,6 +8,7 @@
 import { FileText, MapPin } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { parseUserMessage } from '@/lib/agent/userMessage.pure';
+import './aurixa.css';
 
 interface AgentUserMessageProps {
   content: string;

@@ -54,6 +54,13 @@ export interface ToolNarration {
 
 export const META_TOOLS = new Set(['list_tool_domains', 'search_tools', 'load_tools']);
 
+/**
+ * The two tools that only talk to the panel — a plan, a page to open. They are
+ * drawn as what they are (a checklist, a button), so they are never a step in
+ * the trace and never an action on an approval card.
+ */
+export const PANEL_TOOLS = new Set(['show_plan', 'open_page']);
+
 const OVERRIDES: Record<string, { active: string; done: string; domain?: ToolDomain }> = {
   list_tool_domains: { active: 'Choosing the right tools', done: 'Chose the right tools', domain: 'tools' },
   search_tools: { active: 'Choosing the right tools', done: 'Chose the right tools', domain: 'tools' },
@@ -266,7 +273,7 @@ export function describePendingAction(toolCall: unknown): PendingActionSummary |
   if (!toolCall || typeof toolCall !== 'object') return null;
   const tc = toolCall as { function?: { name?: string; arguments?: unknown }; name?: string; arguments?: unknown };
   const name = tc.function?.name ?? tc.name;
-  if (!name || META_TOOLS.has(name)) return null;
+  if (!name || META_TOOLS.has(name) || PANEL_TOOLS.has(name)) return null;
   const args = parseArgs(tc.function?.arguments ?? tc.arguments);
 
   let title = IMPERATIVE_OVERRIDES[name];

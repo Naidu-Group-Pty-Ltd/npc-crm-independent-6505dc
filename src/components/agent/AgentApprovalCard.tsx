@@ -15,6 +15,7 @@ import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { summarisePendingActions } from '@/lib/agent/toolNarration.pure';
 import { domainIcon } from './domainIcon';
+import './aurixa.css';
 
 interface AgentApprovalCardProps {
   toolCalls?: unknown[];

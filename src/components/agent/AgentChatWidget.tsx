@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { MessageSquare, X, Plus, Trash2, Send, Check, XCircle, Loader2, ChevronLeft, Pencil, RotateCcw, Sparkles, Diamond, BarChart3, Calendar, Zap, TrendingUp, Target, FileDown, Brain, Bell, Settings, Users, Share2, ClipboardList, Clock, Shield, ChevronRight, Info, Play, HelpCircle, ArrowRight, Paperclip, File, Image as ImageIcon, Square, SquarePen, History, MoreHorizontal, AudioLines, MapPin, ArrowDown, PanelRight, Maximize2, PictureInPicture2, Volume2 } from 'lucide-react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import {
   DropdownMenu, DropdownMenuCheckboxItem, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel,
@@ -37,8 +37,23 @@ import { AgentVoiceMode } from '@/components/agent/AgentVoiceMode';
 import { AgentFollowUps } from '@/components/agent/AgentFollowUps';
 import { AgentMessageActions } from '@/components/agent/AgentMessageActions';
 import { AgentUserMessage } from '@/components/agent/AgentUserMessage';
+import { AgentPlanCard } from '@/components/agent/AgentPlanCard';
+import { AgentViewCards } from '@/components/agent/AgentViewCards';
+import { AgentActionChips } from '@/components/agent/AgentActionChips';
 import { derivePresence } from '@/lib/agent/presence.pure';
 import { finishTrace, startTrace, traceToolEnd, traceToolStart, traceTools, type WorkTrace } from '@/lib/agent/workTrace.pure';
+import { PANEL_TOOLS } from '@/lib/agent/toolNarration.pure';
+import {
+  EMPTY_PANEL,
+  actionFrom,
+  panelFromReceipt,
+  shouldOpenPage,
+  traceFromReceipt,
+  withAction,
+  withPlan,
+  withViews,
+  type AnswerPanel,
+} from '@/lib/agent/answerPanel.pure';
 import { describePage, withPageContext, type PageContext } from '@/lib/agent/pageContext.pure';
 import { greetingFor } from '@/lib/agent/greeting.pure';
 import { suggestFollowUps, toolNamesFromCalls } from '@/lib/agent/followUps.pure';
@@ -47,6 +62,7 @@ import { useVoiceSession } from '@/lib/agent/useVoiceSession';
 import { useStreamingSpeech } from '@/lib/agent/useStreamingSpeech';
 
 import { extractFileContent, formatFilesForAgent, ACCEPTED_EXTENSIONS, type ExtractedFile } from '@/lib/agentFileExtractor';
+import './aurixa.css';
 
 const ROTATING_PLACEHOLDERS = [
   'Ask Aurixa anything…',
@@ -102,6 +118,26 @@ interface Message {
   sent_by_username?: string;
   recalled_memory_ids?: string[];
   recalled_memories?: RecalledMemory[];
+  /** The receipt the server stored with an answer (plan, cards, steps), when it kept one. */
+  tool_results?: unknown;
+}
+
+/**
+ * What a stored answer's receipt still draws: its plan, cards and page offers,
+ * and the steps behind it. Read once per row object — a message list re-renders
+ * on every streamed token, and the receipt of an old answer never changes.
+ */
+type FromReceipt = { panel: AnswerPanel | null; trace: WorkTrace | null };
+const NOTHING_STORED: FromReceipt = Object.freeze({ panel: null, trace: null });
+const receiptReads = new WeakMap<object, FromReceipt>();
+function fromReceipt(value: unknown): FromReceipt {
+  if (!value || typeof value !== 'object') return NOTHING_STORED;
+  let read = receiptReads.get(value);
+  if (!read) {
+    read = { panel: panelFromReceipt(value), trace: traceFromReceipt(value) };
+    receiptReads.set(value, read);
+  }
+  return read;
 }
 
 type PanelView = 'chat' | 'notifications' | 'settings' | 'share' | 'messages';
@@ -192,6 +228,9 @@ export function AgentChatWidget() {
   const [unseenReply, setUnseenReply] = useState(false);
   /** The steps behind each reply, keyed by the message they produced. */
   const [traces, setTraces] = useState<Record<string, WorkTrace>>({});
+  /** The plan, cards and page offers each reply drew while it streamed. */
+  const [panels, setPanels] = useState<Record<string, AnswerPanel>>({});
+  const navigate = useNavigate();
   /** "Ask about this page" — opt-in, and only for messages sent while on. */
   const [shareContext, setShareContext] = useState(false);
   const [pageCtx, setPageCtx] = useState<PageContext | null>(null);
@@ -201,6 +240,8 @@ export function AgentChatWidget() {
   const [confirmingTool, setConfirmingTool] = useState<string | null>(null);
   const [sheetDrag, setSheetDrag] = useState<{ y: number; dragging: boolean; settling: boolean }>({ y: 0, dragging: false, settling: false });
   const isOpenRef = useRef(isOpen);
+  const hereRef = useRef('');
+  const besidePageRef = useRef(false);
   const voiceModeRef = useRef(false);
   const stickRef = useRef(true);
   const panelRef = useRef<HTMLDivElement>(null);
@@ -692,7 +733,9 @@ export function AgentChatWidget() {
       if (allImageAttachments.length > 0) {
         payload.image_attachments = allImageAttachments;
       }
-      const payloadStream: any = { ...payload, action: 'chat-stream' };
+      // The panel draws plans, cards and page offers; a server that has not
+      // shipped them ignores the field and answers exactly as before.
+      const payloadStream: any = { ...payload, action: 'chat-stream', panel_protocol: 2 };
       const streamMsgId = `stream-${Date.now()}`;
       const streamMsg: Message = { id: streamMsgId, role: 'assistant', content: '', created_at: new Date().toISOString() };
       setMessages(prev => [...prev, streamMsg]);
@@ -706,6 +749,15 @@ export function AgentChatWidget() {
         setTraces(prev => ({ ...prev, [streamMsgId]: next }));
       };
       putTrace(trace);
+
+      // What the reply draws beyond its words. Every event is optional.
+      let panel: AnswerPanel = EMPTY_PANEL;
+      let movedPage = false;
+      const putPanel = (next: AnswerPanel) => {
+        if (next === panel) return;
+        panel = next;
+        setPanels(prev => ({ ...prev, [streamMsgId]: next }));
+      };
 
       const controller = new AbortController();
       abortRef.current = controller;
@@ -724,7 +776,21 @@ export function AgentChatWidget() {
           } else if (evt.event === 'memories' && Array.isArray(evt.data?.items)) {
             const items: RecalledMemory[] = evt.data.items;
             setMessages(prev => prev.map(m => m.id === streamMsgId ? { ...m, recalled_memories: items, recalled_memory_ids: items.map(i => i.id) } : m));
+          } else if (evt.event === 'plan') {
+            putPanel(withPlan(panel, evt.data));
+          } else if (evt.event === 'view') {
+            putPanel(withViews(panel, evt.data));
+          } else if (evt.event === 'ui') {
+            putPanel(withAction(panel, evt.data));
+            // The page moves by itself only when the request asked to go there.
+            const offer = actionFrom(evt.data);
+            if (offer && shouldOpenPage({ asked: msg, wide: besidePageRef.current, alreadyMoved: movedPage, href: offer.href, here: hereRef.current })) {
+              movedPage = true;
+              navigate(offer.href);
+            }
           } else if (evt.event === 'tool') {
+            // Planning and offering a page are drawn as the plan and the button, not as steps.
+            if (typeof evt.data?.name === 'string' && PANEL_TOOLS.has(evt.data.name)) continue;
             if (evt.data?.phase === 'start') setActiveTool(evt.data.name);
             else if (evt.data?.phase === 'end') setActiveTool(null);
             if (typeof evt.data?.name === 'string' && evt.data.name) {
@@ -757,6 +823,10 @@ export function AgentChatWidget() {
           const { [streamMsgId]: _dropped, ...rest } = prev;
           return rest;
         });
+        setPanels(prev => {
+          const { [streamMsgId]: _dropped, ...rest } = prev;
+          return rest;
+        });
         setRetryMessage(msg);
         setMessages(prev => prev.filter(m => m.id !== streamMsgId).concat({ id: `error-${Date.now()}`, role: 'assistant', content: `⚠️ ${streamError}`, created_at: new Date().toISOString() }));
         toast.error(streamError);
@@ -770,6 +840,10 @@ export function AgentChatWidget() {
           const persisted = [...(refreshed.messages as Message[])].reverse().find(m => m.role === 'assistant');
           if (persisted) {
             setTraces(prev => {
+              const { [streamMsgId]: moved, ...rest } = prev;
+              return moved ? { ...rest, [persisted.id]: moved } : prev;
+            });
+            setPanels(prev => {
               const { [streamMsgId]: moved, ...rest } = prev;
               return moved ? { ...rest, [persisted.id]: moved } : prev;
             });
@@ -912,6 +986,12 @@ export function AgentChatWidget() {
   }, [user]);
 
   const panelMode: 'sheet' | PanelLayout = breakpoint === 'mobile' ? 'sheet' : breakpoint === 'tablet' ? 'float' : layoutPref;
+  // Read when a reply offers a page, which is long after the send that began it:
+  // the page and the layout are the ones on screen then, not when it was sent.
+  useEffect(() => {
+    hereRef.current = `${location.pathname}${location.search}`;
+    besidePageRef.current = breakpoint === 'desktop' && (panelMode === 'float' || panelMode === 'dock');
+  }, [location.pathname, location.search, breakpoint, panelMode]);
 
   // A docked panel is a column the page makes room for, not a card over it.
   useEffect(() => {
@@ -945,6 +1025,12 @@ export function AgentChatWidget() {
       window.requestAnimationFrame(() => document.querySelector<HTMLButtonElement>('.aurixa-launcher')?.focus());
     }
   }, []);
+
+  // Opening a page from a card or a button: a panel that covers the page
+  // (the phone's sheet, the centred focus view) steps aside so the page is seen.
+  const openFromPanel = useCallback(() => {
+    if (panelMode === 'sheet' || panelMode === 'focus') closePanel(false);
+  }, [panelMode, closePanel]);
 
   // Escape: out of a voice conversation first, then out of the panel.
   useEffect(() => {
@@ -1747,7 +1833,11 @@ export function AgentChatWidget() {
                 const isOtherUser = msg.role === 'user' && msg.sent_by && msg.sent_by !== user?.id;
                 const senderColor = msg.sent_by ? getSenderColor(msg.sent_by, senderColorMap) : '';
                 const isStreaming = streamingId === msg.id;
-                const trace = traces[msg.id];
+                // A reply streamed here keeps what it drew live; one opened
+                // later draws the same things from the receipt stored with it.
+                const stored = msg.role === 'assistant' ? fromReceipt(msg.tool_results) : NOTHING_STORED;
+                const trace = traces[msg.id] ?? stored.trace ?? undefined;
+                const panel = panels[msg.id] ?? stored.panel;
                 const isLatestAssistant = msg.role === 'assistant' && msg.id === lastAssistant?.id;
                 const isErrorReply = msg.content.startsWith('⚠️');
                 const followUpTools = isLatestAssistant && lastMessage?.id === msg.id && !busy && !awaitingApproval && !isErrorReply
@@ -1765,10 +1855,15 @@ export function AgentChatWidget() {
                       <span className="pt-0.5 shrink-0"><AurixaMark size="sm" state={isStreaming ? 'thinking' : 'idle'} /></span>
                       <div className="flex-1 min-w-0">
                         {trace && <AgentWorkTrace trace={trace} live={isStreaming} writing={Boolean(msg.content)} />}
+                        {panel?.plan && <AgentPlanCard plan={panel.plan} live={isStreaming} />}
+                        {panel && panel.views.length > 0 && <AgentViewCards views={panel.views} onOpen={openFromPanel} />}
                         {msg.content && (
                           <div className={cn("text-sm leading-relaxed text-foreground", isStreaming && "aurixa-writing")}>
                             <AgentMessageRenderer content={msg.content} />
                           </div>
+                        )}
+                        {panel && panel.actions.length > 0 && !isErrorReply && (
+                          <AgentActionChips actions={panel.actions} onOpen={openFromPanel} />
                         )}
                         {msg.content && !isStreaming && !isErrorReply && (
                           <AgentMessageActions content={msg.content} speech={speech} pinned={isLatestAssistant} />

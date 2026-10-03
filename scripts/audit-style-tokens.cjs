@@ -95,9 +95,13 @@ function countMatches(text, re) {
 function audit() {
   const tsxFiles = walk(SRC, ['.tsx']);
   // CSS partials, excluding the token layer where raw values legitimately live.
-  const cssFiles = walk(path.join(SRC, 'styles'), ['.css']).filter(
-    (f) => path.basename(f) !== 'tokens.css'
-  );
+  // A stylesheet kept beside the components that wear it (the agent's
+  // `src/components/agent/aurixa.css`, which must travel with them to a
+  // module-scoped clone) is held to the same rule as one in src/styles.
+  const cssFiles = [
+    ...walk(path.join(SRC, 'styles'), ['.css']),
+    ...walk(path.join(SRC, 'components'), ['.css']),
+  ].filter((f) => path.basename(f) !== 'tokens.css');
 
   const metrics = {
     paletteClasses: 0,
