@@ -357,6 +357,59 @@ against the row id now. The same defect is on the prime and is fixed there too,
 because a clone-side fix to a file the prime also holds is reverted by the next
 cascade.
 
+## Calendars a deployment can set up, and bookings that respect them
+
+`crm-calendar` read and wrote appointments from the first native version, but
+nothing wrote a **calendar**. GoHighLevel owned calendar setup, so on this line
+`crm_calendars`, `crm_calendar_members` and `crm_calendar_availability` had no
+writer at all. A fresh deployment had nothing to book into, and the page's
+calendar list was empty with no way to fill it.
+
+Five actions on `crm-calendar` are that writer now: `listCalendarSettings`,
+`createCalendar`, `updateCalendar`, `setCalendarMembers` and `setAvailability`.
+The Calendar page offers them as **Manage calendars**, a dialog with three tabs
+(details, team, opening hours). It is drawn only for somebody with edit rights
+on the `calendar` module.
+
+The panel (`src/components/calendar/native/CalendarSetup.tsx`) exists only on
+this line. `Calendar.tsx` is shared with the prime and finds the panel through
+`import.meta.glob`, which answers an empty record for a missing file. So the
+prime builds without the panel and draws nothing extra, the page stays
+byte-identical on both lines, and a cascade cannot revert it. The same edit
+landed on the prime in the same change. `calendarSetup.test.ts` fails if the
+glob stops naming a file this line holds, because a rename would otherwise
+remove the only way to create a calendar while every other check stayed green.
+
+Four rules carry it.
+
+- **Every action is gated on the `calendar` module permission** the page itself
+  reads. Reading needs view; booking, moving, blocking and every setup action
+  need edit. A client's appointments tab is also readable with view on
+  `client_management`, because it sits on the client's page. Before this, any
+  signed-in session could write any calendar.
+- **A booking is checked against the calendar, not just the clock.** The time
+  must fall inside the calendar's published hours, read in the calendar's own
+  time zone, and must not overlap anything already booked or blocked on it. A
+  read that failed refuses the booking (503) rather than waving a double-booking
+  through. A calendar that was switched off takes no new bookings. A blocked time
+  may sit over anything, because that is what blocking is for.
+  `overrideAvailability` lets a booking past the hours and the overlap check
+  deliberately.
+- **The form refuses what the server refuses, in the same words.**
+  `calendarSetup.pure.ts` sends the form's hours through the server's own
+  `readAvailability` (`_shared/crm/calendarBooking.pure.ts`), not a copy of its
+  rules. A time input cannot say "24:00", so an end of 00:00 means the hours run
+  to midnight.
+- **Nothing is left half-written.** New hours and a new team are written before
+  the old ones are removed, and the old ones are removed by id. A failure part
+  way leaves the previous hours standing, or too many team members, never none.
+  A calendar is never hard-deleted, because that would cascade its appointments
+  away. Switched off, it leaves the booking list and keeps its history.
+
+A reschedule also failed silently before this. The page and the dashboard agent
+send `newStartTime`/`newEndTime`, the action read only `startTime`/`endTime`, and
+it reported success having moved nothing. Both spellings are read now.
+
 ## Setting a deployment to native
 
 Two variables, and **both** must be set to the same word, because the bundle
