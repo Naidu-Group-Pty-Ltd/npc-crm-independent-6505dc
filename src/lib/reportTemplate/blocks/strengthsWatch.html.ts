@@ -91,9 +91,9 @@ export function renderStrengthsWatchHtml(block: Block, ctx: HtmlBlockContext): s
     // has a section it declined to fill, which is not what the record says:
     // `investment_score.weaknesses` is empty on 313 of the 1,187 stored reports
     // and `strengths` on 439, so the naked heading was the printed outcome on a
-    // quarter and a third of them respectively. The cell itself stays, because
-    // the grid is `1fr 1fr` and the surviving column belongs in its own half.
-    if (li === '') return '<div></div>';
+    // quarter and a third of them respectively. The surviving column keeps its
+    // half of the grid, so its lines stay at a readable measure.
+    if (li === '') return '';
     return `<div>
       ${heading(title, color)}
       ${li}
@@ -103,8 +103,16 @@ export function renderStrengthsWatchHtml(block: Block, ctx: HtmlBlockContext): s
   // Neither side has anything: draw nothing at all rather than two headings.
   if (resolved(strengths).length === 0 && resolved(watch).length === 0) return '';
 
+  // A lone column opens the grid at the left margin, where the eye starts.
+  // Held in the right-hand half it left the left half white beside it, and
+  // read as a column that failed to draw: the 18 Annabelle Crescent Compass
+  // dashboard printed CONSIDERATIONS alone at mid-page (Audit 6, 1 Oct 2026).
+  // Both present, they keep their places.
+  const columns = [
+    column(String(strengthsTitle), strengths, positive, '+'),
+    column(String(watchTitle), watch, caution, '!'),
+  ].filter(Boolean);
   return `<div style="position:absolute;left:${x}pt;top:${y}pt;width:${w}pt;display:grid;grid-template-columns:1fr 1fr;gap:14pt;">
-    ${column(String(strengthsTitle), strengths, positive, '+')}
-    ${column(String(watchTitle), watch, caution, '!')}
+    ${columns.join('\n    ')}
   </div>`;
 }

@@ -1362,3 +1362,400 @@ overlapped.
 Measured: Masline's brief on 29 Sep was the jsPDF fallback. The browser's
 preflight to `render-borrowing-capacity-pdf` answered 200 and no POST
 followed. The Snapshot's call two minutes later reached the function.
+
+## 21. The audit: one answer, tables that foot, and every page used (1 Oct 2026)
+
+The third audit of the owner's report programme: the formatting and layout
+across every design ("smaller subheadings, continuous flow"), and anything else
+a meticulous read finds. Every finding below was read off a rendered page and
+traced to a cause before it was changed. The measurements are WeasyPrint 69.0
+renders of the standard design and all fifty catalogue designs.
+
+Production rows are not readable from this work, so the cases are fixtures:
+
+- the Phase 0 fixture, with and without an advisor card;
+- `productionShapes.ts`'s two shapes, the DTI-limited one also as a
+  recalculated assessment carrying the trail and explanation the engine writes
+  (`DTI_LIMITED_ENGINE_AUDIT_TRAIL`, ported from the engine's own calls);
+- two new cases: a proposed property's rent, and totals changed in the
+  calculator.
+
+**What was wrong.**
+
+- **The engine's explanation was a section.** "How this was calculated"
+  restated the working step for step in a log's shorthand ("Surplus = $9,909 −
+  $3,750 − $2,450 = $3,709/mo. At 9.50% over 30yr → max loan", "RED band").
+  Its DTI line divided by gross income where the stored ratio divides by the
+  APS 220 income, so its own arithmetic did not reach the ratio it printed.
+- **The audit trail opened on two wrong totals.**
+  - Its liability total summed `|servicing − balance|`, a monthly repayment
+    minus a balance (F13): $417,550 on the recalculated case.
+  - Its tax total added the Medicare levy to an after-tax difference that
+    already contained it.
+- **The audit trail said a property's shortfall increased capacity.**
+  `negative_cf_layered` stores the shortfall as a positive cost
+  (`Math.abs(netMonthlyCashflow)`), and the polarity read it as income. Every
+  Snapshot with a negatively geared property said so.
+- **It said the stress test "Reduces" capacity.** The stress test is a reading
+  of the same surplus at a higher rate, and the capacity on every other page is
+  the unstressed one.
+- **The audit spoke the engine's words.** "Neg CF: 22 Example Road…",
+  "$2450/mo servicing", "80% shading", "Manual override", "+1% above
+  assessment", and "Method: Declared" on a client assessed on HEM.
+- **Page one said things twice.**
+  - The proposed loan was in the opening paragraph and in a sidenote under the
+    chart.
+  - The expense method was a row of the terms table and a KPI cell set in
+    display type.
+  - Table captions restated the section's standfirst.
+- **The rent a client pays printed with the engine's cut address**: "Rent
+  Expense (14 Wattle Grove Sampleton...)".
+- **The scenarios.**
+  - The purchase target the legacy document printed was dropped.
+  - A rate lever was listed twice: "Changed: Rate +1.00%" over "Strategy
+    actions: Interest rate (1.00%)".
+  - "Rate +1.00%" sat beside "Income +10%": a change in percentage points and
+    a relative change, in one notation.
+- **Tables that did not foot.** The calculator sends its own income and
+  commitment totals, and the engine stores them beside a breakdown it reads
+  from the client's records. Three things put a difference between the two:
+  - the calculator adds a proposed property's rent to the income it sends,
+    and the breakdown never lists it;
+  - the engine adds a capitalised premium's repayment to the commitments, and
+    lists no liability for it;
+  - a figure edited in the calculator, or a scenario active when Calculate is
+    pressed, moves the totals and not the lines.
+
+  So a Total row could print a figure its own rows did not reach. The Phase 0
+  fixture did, by $9,000 a year of income, $10,600 of assessed income and
+  $2,165 a month of commitments, on every document drawn from it.
+- **Lenders Mortgage Insurance.**
+  - It was labelled in the calculator's words: "LVR at trigger" and "Net for
+    purchase".
+  - It said a deducted premium "is taken from the deposit". The calculator's
+    own account is that it is paid from the loan, leaving less of the capacity
+    for the purchase.
+  - The net figure printed whatever was stored.
+  - The ratio's note counted a capitalised premium as debt "already owed".
+- **No income still drew the band.** §16 named the red "Limited" among that
+  document's faults and removed the ratio and the stress test beside it. The
+  band stayed, a judgement nothing was assessed to reach. The remedy, "record
+  the income and recalculate", was said three times.
+- **A standfirst promised tables the page did not draw.** "Every income
+  component with its shading, and every liability with its servicing." headed
+  the income section on every document. With no income and no liabilities, the
+  section is a callout and two figures.
+- **A "Total" could total nothing.** An income the calculator sent, on a
+  household with no income lines recorded, printed as a table whose one row
+  was "Total".
+- **The income chart was drawn at the wrong size.** A donut is drawn for the
+  compact width (`ChartFigureWidth`), and the Snapshot stretched it across the
+  measure. Three segments took a third of a page.
+- **The flow.**
+  - On the recalculated case, page 4 was 65% white.
+  - Three of the four no-income body pages opened on a section title.
+  - With the scenarios before the basis, the page under the audit trail was 37%
+    empty on 40 of the 51 designs.
+- **The export.** The template choice sat at the foot of a menu, beside a
+  button labelled "Download snapshot". The file was named
+  `Borrowing_Capacity_Snapshot_A____J__Sample_2026-08-01.pdf`.
+- **The advisor's note** said "in this brief" inside the Snapshot.
+
+**What it does now.**
+
+- **Six sections, as memo sections** (`openChapter(…, { runOn, memo: true })`).
+  - The explanation is not one. It is still read into the payload, because the
+    template catalogue binds it.
+  - Subheads are set at h3 (`SECTION_SUBHEAD_CLASS`).
+  - Tables are kept by their estimated height, never their row count
+    (`keptTable`, `{ widths: 'content', leadRows: 2 }`), so no page holds a
+    single row of one.
+  - The basis comes before the scenarios, beside the rest of the evidence, and
+    the document ends on what could change the answer, as the legacy Snapshot
+    did.
+- **The audit trail in the report's words** (`AUDIT_LABEL`, `auditRule`).
+  - It has no summary strip, and a test reads the engine's `Math.abs` to hold
+    the shortfall's sign.
+  - The stress test is neutral.
+  - The rent label names the whole address (`liabilityKindLabel`).
+- **A table foots, or says why not.**
+  - The proposed rent is a line of the income table (`proposedRentRow`), read
+    from the setting the calculator stores with the assessment and counted as
+    the calculator counts it.
+  - The capitalised premium's repayment is a line of the liabilities table
+    (`capitalisedLmiRepayment`), amortised as the engine amortises it.
+  - Where the lines still do not reach the totals, both are printed: "Total of
+    the lines above", then "Used in this assessment". A note says which one
+    the working uses (`incomeItemsTotal`, `commitmentItemsTotal`). Nothing is
+    absorbed into a balancing line, and no cause is asserted.
+  - An income with no lines is one row, "Used in this assessment".
+  - The income donut is not drawn over segments that add up to something else.
+- **Mortgage insurance.**
+  - It reads "Loan-to-value ratio" and "Capacity left for the purchase".
+  - The net figure is printed only where it is the capacity less the premium
+    (`provenNetForPurchase`).
+  - The deducted premium is paid from the loan.
+  - The ratio's note names a capitalised premium apart from what is already
+    owed.
+- **No income.** No band, and the remedy once, in the advice.
+- **The income section's standfirst says what the section draws**
+  (`incomeSectionNote`). Each half is said only where its table is drawn, so a
+  client with nothing recorded reads "The living expenses and commitments the
+  assessment applied." The no-income callout no longer says it too.
+- **Scenarios.**
+  - A rate and a term are stated from and to: "Interest rate 6.15% → 7.15%".
+  - Purchase power says whether it clears the target, or by how much it falls
+    short.
+- **The chart at its own size.** The donut is drawn compact, with its context
+  narrowed by the same fraction so its labels keep their point size.
+  - Drawn compact, its centre figure ran 22% past the hole and over the ring,
+    because the hole is fixed in drawing units and the figure in points.
+  - `donutFigurePt` (shared) steps a figure down until it fits, counting every
+    mark full in a monospaced face. A percentage, which is what every other
+    format's donut carries, is set exactly as before.
+  - The Snapshot's figure drops its period into the line under it ("$171,400",
+    "Per year").
+- **The export** (`SnapshotDownloadButton`).
+  - "Choose template" is a button of its own beside "Export PDF", as on the
+    Intelligence Hub, the Portfolio Performance Review and both comparisons.
+  - The file is named `Borrowing Capacity Snapshot - A. and J. Sample - 01 Aug
+    2026.pdf` (`readableFileName`), and the storage key is that name in
+    URL-safe characters.
+
+**Measured**, standard design plus the fifty catalogue designs. Every body
+page is counted except each document's last, which ends where the document
+ends:
+
+| Case | Pages, before → after | Pages more than a quarter empty | Emptiest body page |
+| --- | --- | --- | --- |
+| Phase 0 fixture with an advisor card | 548 → 459 | 89 → 4 | 46% → 35% |
+| Recalculated DTI-limited client | 483 → 357 | 71 → 0 | 65% → 24% |
+| DTI-limited client stored before 14 Aug | 356 → 306 | 55 → 0 | 65% → 24% |
+| No income recorded | 305 → 259 | 104 → 15 | 52% → 53% |
+
+On the recalculated case, sixteen tables split across pages before, eleven of
+them leaving a single row alone; none do now. No table leaves a single row
+alone in any case. No text overflows its measure and no running foot wraps, in
+any case. The two new cases, a proposed rent and totals edited in the
+calculator, print as the fixture without an advisor card does: 412 pages over
+the 51 designs, no table split, and the same four designs leaving one page
+about a third empty.
+
+Page counts after the audit:
+
+| Case | Standard design | Catalogue designs |
+| --- | --- | --- |
+| Phase 0 fixture with an advisor card | 9 | 9 in all 50 |
+| Phase 0 fixture without one | 8 | 8 in 46, 9 in 4 |
+| Recalculated DTI-limited client | 7 | 7 in all 50 |
+| DTI-limited client stored before 14 Aug | 6 | 6 in all 50 |
+| No income recorded | 5 | 5 in 46, 6 in 4 |
+
+CI renders the fixture without an advisor card in the render container and
+pins its page count (`ci.yml`, `render-container`): 10 before this audit, 8
+now, with the reason recorded beside the pin. Its bookmarks fell from fifteen
+to eleven, which is "How this was calculated" and its three steps.
+
+The emptiest no-income page is a point emptier than before while the count of
+part-empty pages fell. It is the same page in the four designs named below,
+now with one line fewer above its gap.
+
+**Not changed, and why.**
+
+- **The engine.** Its rules, its strings and what it stores are unchanged.
+- **The legacy in-browser Snapshot**, which stays a named choice in the menu.
+- **The Strategy Rationale Brief's filename.** Its words are the jsPDF brief's
+  by design (§17), and it is the next audit's subject.
+- **Four designs of one family** (`wm-01`, `-03`, `-04`, `-05`) are the four
+  in the page counts above. Their section headers are about 13 points taller
+  than the other designs'.
+  - On the Phase 0 fixture, that stops the basis's table following the audit
+    trail onto its page, which is left about a third empty.
+  - With no income recorded, the working misses page three by less than a
+    quarter of a point. It moves whole to page four, page three is left about
+    half empty, and four rows of the settings table take a page of their own.
+  
+  Shrinking a header every format shares, to win a fifth of a point on one
+  fixture, would be fitting the design to the fixture.
+- **The donut's legend rounds each share to a whole percent**, so 72, 18 and 9
+  print beside a total of 100.
+- **Other formats' donuts are still drawn across the full measure**: the
+  Portfolio Performance Review, Client Details, the Cash Flow Comparison and
+  the Property Comparison. Theirs carry percentages, which fit at any size, so
+  they cost room rather than a figure. Each format's audit will take it.
+- **How often production records disagree with themselves is unmeasured.** The
+  three causes above were established by reading the calculator and the
+  engine. No production assessment was read, because this work has no read
+  access to that table. The document now states both totals wherever they
+  differ, so a record that does not foot cannot print as one that does.
+
+## 22. The audit of the Strategy Rationale Brief (1 Oct 2026)
+
+The fourth audit of the owner's report programme: the What-If tab's Strategy
+Rationale Brief, its legacy layout, and the panel that exports it. Three briefs
+were drawn in WeasyPrint 69.0, in the standard design and all fifty catalogue
+designs, and read page by page:
+
+- the Samuel Lavis baseline brief of 28 Sep 2026 (`strategyRationale.spec.ts`);
+- a multi-lever brief with capital flow, a valuation and a pool (the spec's own);
+- an equity release applied from an advisor card, with the three options it
+  put forward and its guardrail: the shape of Masline Nyawo's brief (§20), with
+  invented figures.
+
+§17's rule still holds: the typeset brief and the jsPDF brief print the same
+words. Every word changed below changed in both, mostly through a constant the
+jsPDF brief now imports.
+
+**What was wrong.**
+
+- **Page one repeated the cover.** The chapter header said "Strategy
+  Rationale Brief" and "Borrowing Capacity Scenario — Finance Hand-off", the
+  cover's eyebrow and subtitle, under a "SECTION 01" that numbered the only
+  section. The running head said "Strategy Rationale Brief" on both sides of
+  every page.
+- **The subheads were a size above every other memo's.** They were bare `h2`s
+  at the design's full subhead size.
+- **A table moved whole with its heading.** A four-step sequence that did not
+  fit the space left moved whole to the next page, leaving a quarter of a page
+  white; on the advisor brief, 30 body pages were more than a quarter empty.
+- **A baseline brief said "no levers applied" four times on one page**: its
+  headline, then under "What we propose & why (0 levers)", "How the math
+  reconciles" and "Recommended execution sequence (0 steps)". The empty
+  sequence's line, "No execution steps required — baseline scenario.", called
+  any scenario with no steps a baseline, levers or not.
+- **Machine words and chip style in the body.**
+  - "How the math reconciles".
+  - "Cash-flow:" as a noun.
+  - "Desktop val" and "Comp sales".
+  - "Execution risk: MEDIUM", and "BROKER" in a table cell.
+  - "POOL OVERCOMMITTED — sinks were clamped to available pool.", a "Source →
+    sink" column, and "Routed" and "Residual".
+- **A tick where the legacy brief printed a word.** "Target $950,000 ✓": the
+  jsPDF brief's font has no ✓, and printed it as "met".
+- **The export.** The button said "Download PDF" where every other format says
+  "Export PDF". The file was `Strategy_Rationale_Samuel_Lavis_2026-09-28.pdf`,
+  and the flattened copy `strategy-rationale.pdf`.
+
+**What it does now.**
+
+- **It opens on its finding.** The engine's headline is the memo's title and
+  its sub-headline the standfirst, so the first thing under the running head is
+  what the scenario does.
+  - The header draws no number line (`renderChapterHeader({ unnumbered })`, a
+    new opt-in that leaves every other caller byte for byte as it was).
+  - The running head names the client, as the jsPDF brief's footer always has.
+  - The cover still names the document.
+- **Subheads are the memo's** (`SECTION_SUBHEAD_CLASS`), one step below that
+  title.
+- **Tables keep themselves** (`keptTable`), whole while short and by height
+  when not. A part whose first block is a table keeps its heading with the
+  table's first rows by the heading's own rule; it is no longer wrapped whole.
+- **A part with nothing in it is left out**, in both briefs. A baseline brief
+  is its finding, its figures and its caveats. `proposeEmpty` and
+  `sequenceEmpty` are still composed, because a server older than this draws
+  them.
+- **The report's words, in both briefs.**
+  - The constants: `RECONCILE_TITLE` ("How the maths reconciles"),
+    `POOL_OVERCOMMITTED_NOTE`, `BASIS_LABEL` ("Desktop valuation", "Comparable
+    sales") and `CAPITAL_FLOW_LABELS` (Available, Allocated, Unallocated).
+  - "Cash flow:".
+  - A target "Clears the $950,000 target" or "Short of the $950,000 target".
+  - A "Source → use" column.
+  - `RISK_LABEL` and `OWNER_LABEL` set a risk and an owner as words. The
+    server reads an older browser's capitals as the word, and the jsPDF brief
+    still draws its chips in capitals, uppercasing the word itself.
+  - The panel and the valuation picker use the same constants.
+- **The export.** "Export PDF" sits beside "Choose template". The typeset file
+  is `Strategy Rationale Brief - Samuel Lavis - 28 Sep 2026.pdf`
+  (`readableFileName`), and the flattened copy takes the same name. The jsPDF
+  brief keeps its own name, as the in-browser Snapshot does (§21): the name
+  says which layout a file is.
+
+**Measured**, standard design plus the fifty catalogue designs, every body page
+counted except each document's last:
+
+| Brief | Pages, before → after | Body pages more than a quarter empty | Emptiest body page |
+| --- | --- | --- | --- |
+| Equity release from an advisor card | 352 → 306 | 30 → 0 | 27% → 21% |
+| Four parts, capital flow, a valuation and a pool | 255 → 204 | 0 → 0 | 16% → 10% |
+| Baseline | 153 → 153 | — | — |
+
+The advisor brief is six pages in every design, where 46 drew seven. The
+multi-lever brief is four in every design, where all drew five. No table splits
+in any of them, nothing runs past its measure, and no running foot wraps.
+
+**Not changed, and why.**
+
+- **The engine's own sentences** (the headline, each lever's what and why, the
+  reconciliation, the steps) are the scenario engine's, and are printed as
+  written.
+- **The advisor's reasoning** is the model's, printed as it wrote it, under the
+  provenance note (§18).
+- **The severity labels** (POSITIVE, CAUTION, CRITICAL, INFO) stay in capitals.
+  They sit in a callout's label slot, which every design sets in capitals.
+- **The baseline brief's one body page is mostly white.** It holds what a
+  baseline has to say, and the next page is the closing page.
+
+## 23. The Strategy Advisor draws its cards again (2 Oct 2026)
+
+The owner reported that the What-If tab's Strategy Advisor no longer offered
+cards: a brief came back as prose, with nothing to apply. The cards, each with
+an **Apply Scenario** button that loads its levers into the strategy
+modelling, arrive only when the model calls the `generate_scenarios` tool, and
+three things stood between a brief and that call.
+
+**What was wrong.**
+
+- **Almost every brief was read as a clarification.** An April rule withheld
+  the tool from any message containing "?" and none of nine action verbs, or
+  containing a cue such as "is it" or "what is" anywhere. All three of the
+  advisor's own suggested prompts end in "?" and use none of the verbs, so the
+  built-in examples could never produce a card; "is it possible" and "what is
+  the best way" tripped the cue list; and the rule ran with no cards on screen,
+  when there is nothing to clarify. Measured on production on 2 Oct 2026: a
+  dictated brief for a $750,000 new build logged `clarificationMode: true`.
+- **The tool was offered, never required**, and the system prompt told the
+  model to "ask clarifying questions if the request is vague", so a vague
+  brief was answered with a question in place of cards.
+- **The native Anthropic route dropped tools.** `callAnthropicNative` was
+  handed neither `tools` nor `tool_choice` and kept only the answer's text, so
+  an agent assigned a Claude model on the native route could never call a tool.
+
+**What it does now.**
+
+- **One rule decides the mode** (`_shared/advisorRequestMode.pure.ts`):
+  - with no cards on screen, every message is a brief and gets cards;
+  - a request to produce or rework options, a budget, or a strategy question
+    gets cards even when cards are showing;
+  - a prose answer is owed only to a message about the cards on screen — one
+    that names a card, or a short follow-up question. A long message carrying a
+    brief is a new brief even where it mentions the cards.
+
+  The edge function reads it with the names of the cards on screen
+  (`priorScenarios`); the browser no longer second-guesses it.
+- **In scenario mode the tool is required.** `tool_choice` names
+  `generate_scenarios`, and the router's `requiredToolName` and
+  `requireValidToolArguments` treat an answer without a readable call as a
+  failed attempt and ask the next model in the chain. When every model answered
+  without cards, the broker is told that, not "AI service error". The prompt
+  now says to state an assumption in `reasoning` and still call the tool.
+- **The reply names each card with the engine's figures** when the model wrote
+  no prose of its own (`scenarioSummaryProse`), instead of a fixed paragraph
+  promising "3 scenarios" whatever arrived. A scenario call that cannot be read
+  is said out loud.
+- **The native Anthropic route carries tools** (`_shared/anthropicToolUse.pure.ts`),
+  both ways: function tools and `tool_choice` in, `tool_use` blocks out as
+  `tool_calls`, and a revision turn's call and result as `tool_use` and
+  `tool_result`. It engages only when a call carries tools or a tool turn, so
+  every other call is built exactly as before.
+
+**Three rules bite.**
+
+- **There is nothing to clarify with no cards on screen.**
+- **When cards are owed, the call is required, not offered.** A model left to
+  choose answered briefs in prose.
+- **The browser and the server read one rule.** Two rules for one decision is
+  how the April one came to be applied where it made no sense.
+
+The fix reaches the advisor when `bc-scenario-agent` is deployed; the browser
+change alone cannot restore the cards.

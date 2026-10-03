@@ -42,6 +42,7 @@ import {
   type SchedulePreset,
 } from './constructionSchedule.pure.ts';
 import { acquisitionExpenditure } from './expenditure.pure.ts';
+import { truncateAtWord } from '../text.pure.ts';
 import { inputSummaryLines, type CashFlowInputs } from './inputSummary.pure.ts';
 
 /** Weeks in a year, as the modal's own projection uses. */
@@ -55,6 +56,18 @@ export const MIN_PROJECTION_YEARS = 1;
 export const MAX_ACQUISITION_COSTS = 24;
 export const MAX_ASSUMPTIONS = 40;
 export const MAX_NOTES = 12;
+/**
+ * The longest note the document prints.
+ *
+ * A note is a caveat a client acts on, so it is never cut mid-sentence. Notes
+ * shared the 240-character bound every other text field has, and a tax note
+ * that grew past it printed "…must be confirmed" with "with an accountant"
+ * silently gone (Audit 7, 1 Oct 2026). The bound is a guard against a pasted
+ * essay, not a length the browser's own notes approach: the longest note
+ * `evidenceBasisNotes` composes is under half of it, and its spec holds every
+ * variant to the bound. A note past it is cut at a word, and says so.
+ */
+export const MAX_NOTE_CHARS = 600;
 
 /** A field arrived wrong, and the message says which. */
 export class CashFlowPayloadError extends Error {
@@ -83,6 +96,11 @@ function optionalNum(source: Record<string, unknown>, key: string, where: string
 
 function text(value: unknown, max = 240): string {
   return typeof value === 'string' ? value.trim().slice(0, max) : '';
+}
+
+/** A note within `MAX_NOTE_CHARS` unchanged; past it, cut at a word with an ellipsis. */
+function noteText(value: unknown): string {
+  return typeof value === 'string' ? truncateAtWord(value, MAX_NOTE_CHARS) : '';
 }
 
 function record(value: unknown, where: string): Record<string, unknown> {
@@ -515,7 +533,7 @@ export function buildProjection(input: BuildProjectionInput): CashFlowProjection
 
   const notes: string[] = (Array.isArray(source.notes) ? source.notes : [])
     .slice(0, MAX_NOTES)
-    .map((n) => text(n, 240))
+    .map(noteText)
     .filter(Boolean);
 
   const meta = {

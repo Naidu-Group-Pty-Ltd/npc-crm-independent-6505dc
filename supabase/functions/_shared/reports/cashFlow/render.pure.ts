@@ -33,6 +33,7 @@ import {
   renderKpiStrip,
   renderLede,
   renderSidenote,
+  SECTION_SUBHEAD_CLASS,
   type KpiCell,
   type TableColumn,
   type TableRow,
@@ -91,8 +92,13 @@ const p = (t: string) => (t ? `<p>${escapeHtml(t)}</p>` : '');
  * Seven of the ten documents failed the same rule and no other. Named
  * `subhead` rather than `h2` so the next person reaches for the level the
  * design system defines instead of inventing one.
+ *
+ * Set at h3's size (`SECTION_SUBHEAD_CLASS`), as every other format's
+ * subheads now are. At 17pt "Year one, line by line" was the largest type on
+ * a page of three captioned tables, and read as a second section title over
+ * the third of them (Audit 7, 1 Oct 2026). Still level 2 in the outline.
  */
-const subhead = (text: string) => `<h2>${escapeHtml(text)}</h2>`;
+const subhead = (text: string) => `<h2 class="${SECTION_SUBHEAD_CLASS}">${escapeHtml(text)}</h2>`;
 
 function renderList(items: readonly string[]): string {
   if (!items.length) return '';
@@ -449,9 +455,12 @@ function growthSection(cf: CashFlowProjection, palette: ResolvedReportPalette): 
     : renderCallout(
       'caution',
       'It does not pay for itself in this term',
+      // No position words: since the section became one page (§11) this sits
+      // BESIDE the end-of-term table, and "the capital growth line above it"
+      // pointed at nothing (Audit 7, 1 Oct 2026).
       p('After-tax cash flow stays negative across the projected years. That is a '
-        + 'holding cost, not a verdict — the case for the property is the capital '
-        + 'growth line above it, and both belong in the decision.'),
+        + 'holding cost, not a verdict — the case for the property is its capital '
+        + 'growth over the term, and both belong in the decision.'),
     );
 
   // ONE page (the owner's rule, 28 Sep 2026): the figures, the two charts on

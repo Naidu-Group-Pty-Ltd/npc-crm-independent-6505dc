@@ -175,6 +175,18 @@ export interface ChartContext {
    * set at the house size overruns the advance this module budgets for it.
    */
   fit?: ReportTypeFit;
+  /**
+   * The size a chart's title is set at here, where it is not the house's.
+   *
+   * The house sets a title at `bodyLg` (11.5pt), a step above a 10.5pt body.
+   * Inside a template's narrative the body is 9.5pt and a subhead 1.1 of it,
+   * so a title at 11.5pt bold was the heaviest type on its page after the
+   * section's own name — "Amenity counts within 5 km" set above the subhead
+   * it illustrated (Audit 6, 1 Oct 2026). A narrative names its body size
+   * here and its charts title at that size: a figure's name is a caption, not
+   * a heading. Absent everywhere else, so every other document is unchanged.
+   */
+  titlePt?: number;
 }
 
 /** The palette's colours for a chart, and the design's faces where it has one. */
@@ -284,14 +296,23 @@ export function minifySvg(svg: string): string {
 
 export type AxisMode = 'money' | 'percent' | 'plain';
 
-/** Compact axis labels — `$1.2m`, `4.5%`, `12k`. */
+/**
+ * Compact axis labels — `$1.2m`, `-$50k`, `4.5%`, `12k`.
+ *
+ * Money carries its sign ahead of the currency, as every figure in the product
+ * does (`formatMeasure`): the Cash Flow Comparison's break-even chart printed
+ * `$-50k`, `$-99k` down its axis beside tables reading `-$198,521` (Audit 8,
+ * 1 Oct 2026).
+ */
 export function formatAxisValue(value: number, mode: AxisMode): string {
   if (mode === 'percent') return `${value.toFixed(Math.abs(value) < 10 ? 1 : 0)}%`;
   if (mode === 'money') {
     const abs = Math.abs(value);
-    if (abs >= 1_000_000) return `$${(value / 1_000_000).toFixed(1)}m`;
-    if (abs >= 1_000) return `$${(value / 1_000).toFixed(0)}k`;
-    return `$${value.toFixed(0)}`;
+    const body = abs >= 1_000_000
+      ? `${(abs / 1_000_000).toFixed(1)}m`
+      : abs >= 1_000 ? `${(abs / 1_000).toFixed(0)}k` : abs.toFixed(0);
+    // A value that rounds to nothing is not negative: `-0.4` is `$0`.
+    return `${value < 0 && Number(body.replace(/[mk]$/, '')) !== 0 ? '-' : ''}$${body}`;
   }
   return Math.abs(value) >= 1000 ? `${(value / 1000).toFixed(0)}k` : value.toFixed(0);
 }
@@ -380,6 +401,11 @@ export function chartFigure(
 }
 
 /** Shared `<text>` builder — every label in this module routes through it. */
+/** A role's size in this context: the house scale, except a title where the context sets its own. */
+function rolePt(ctx: ChartContext, pt: keyof typeof CHART_TEXT_PT): number {
+  return pt === 'title' && ctx.titlePt ? ctx.titlePt : CHART_TEXT_PT[pt];
+}
+
 function text(
   ctx: ChartContext,
   vb: number,
@@ -391,7 +417,7 @@ function text(
   },
   content: string,
 ): string {
-  const size = ptToUnits(CHART_TEXT_PT[opts.pt] * fitOf(ctx, opts.stack ?? 'body'), vb, ctx.widthMm);
+  const size = ptToUnits(rolePt(ctx, opts.pt) * fitOf(ctx, opts.stack ?? 'body'), vb, ctx.widthMm);
   const attrs = [
     `x="${opts.x.toFixed(1)}"`,
     `y="${opts.y.toFixed(1)}"`,
@@ -479,7 +505,7 @@ export function fitLines(label: string, maxUnits: number, unitsPerChar: number, 
 
 /** Estimated horizontal advance of one character at a text size, in viewBox units. */
 function unitsPerChar(ctx: ChartContext, vb: number, pt: keyof typeof CHART_TEXT_PT, uppercase = false): number {
-  return ptToUnits(CHART_TEXT_PT[pt], vb, ctx.widthMm) * (uppercase ? 0.72 : 0.55);
+  return ptToUnits(rolePt(ctx, pt), vb, ctx.widthMm) * (uppercase ? 0.72 : 0.55);
 }
 
 const svgOpen = (w: number, h: number, extra = '') =>
@@ -790,7 +816,7 @@ export function renderHeatmap(
   // padT=56) would set the title through the column labels, while a fixed
   // 38-unit cell would pinch the cell text it exists to hold.
   const microU = ptToUnits(CHART_TEXT_PT.micro, w, ctx.widthMm);
-  const titleU = ptToUnits(CHART_TEXT_PT.title, w, ctx.widthMm);
+  const titleU = ptToUnits(rolePt(ctx, 'title'), w, ctx.widthMm);
   const titleY = Math.ceil(titleU + 6);
   /*
    * The title is FITTED to the grid's measure, and the header band grows for
@@ -1235,9 +1261,18 @@ export function renderQuadrant(
      */
     xMid?: number; yMid?: number;
     q1?: string; q2?: string; q3?: string; q4?: string;
+    /**
+     * The drawing's height in chart units (default 420, a square-ish plot).
+     *
+     * A figure cannot split across a page, so its height is the hole it leaves
+     * wherever it does not fit. The Portfolio Performance Review plots a
+     * handful of holdings and passes a shorter plot (PORTFOLIO.md §10).
+     */
+    height?: number;
   } = {},
 ): string {
-  const w = CHART_WIDTH.standard, h = 420;
+  const w = CHART_WIDTH.standard;
+  const h = Math.max(260, Math.min(420, Math.round(opts.height ?? 420)));
   const padT = opts.title ? 50 : 24, padB = 56, padL = 60, padR = 20;
   const plotW = w - padL - padR, plotH = h - padT - padB;
   const xMax = opts.xMax ?? Math.max(...points.map((p) => p.x), 10);
@@ -1329,7 +1364,7 @@ export function renderPictograph(
   const countText = `${f} / ${t}`;
   const countUnits = countText.length * unitsPerChar(ctx, w, 'caption');
   const titleLines = opts.label ? fitLines(opts.label, w - 24 - countUnits - 10, unitsPerChar(ctx, w, 'title'), 2) : [];
-  const titleStep = ptToUnits(CHART_TEXT_PT.title * 1.25, w, ctx.widthMm);
+  const titleStep = ptToUnits(rolePt(ctx, 'title') * 1.25, w, ctx.widthMm);
   const padT = titleLines.length ? 22 + (titleLines.length - 1) * titleStep + 18 : 14;
   const subLines = opts.sub ? fitLines(opts.sub, w - 24, unitsPerChar(ctx, w, 'micro'), 2) : [];
   const subStep = 12;
@@ -1362,38 +1397,141 @@ export function renderPictograph(
   return `${svgOpen(w, h)}${label}${tiles}${sub}</svg>`;
 }
 
+/**
+ * The least vertical span a sparkline is drawn against, as a share of the
+ * series' own magnitude.
+ */
+export const SPARK_MIN_RELATIVE_SPAN = 0.1;
+
+/**
+ * The vertical range a sparkline is drawn over.
+ *
+ * A spark shows shape, so it is scaled to its own range — but never to less
+ * than a tenth of the series' magnitude. Scaled to its own range alone, any
+ * change fills the drawing's height: on the 18 Annabelle Crescent Compass a
+ * population of 176, 176, 176, 175, 175 (hundreds), a fall of one part in
+ * 176, was drawn as a plunge beside a sentence calling it "essentially flat"
+ * (Audit 6, 1 Oct 2026). Under the floor that series sits almost level in the
+ * middle of its line, while a growth rate easing from 9.6% to 3.5% and a
+ * median climbing from 820 to 1,180 still use the full height.
+ *
+ * Zero is deliberately not forced onto the scale: tried first, it flattened
+ * every level series (a price, a population) into a line that said nothing,
+ * which is the opposite failure of the same rule.
+ */
+function sparkRange(values: readonly number[]): { lo: number; span: number } {
+  const lo = Math.min(...values);
+  const hi = Math.max(...values);
+  const floor = Math.max(Math.abs(lo), Math.abs(hi)) * SPARK_MIN_RELATIVE_SPAN;
+  const span = Math.max(hi - lo, floor) || 1;
+  return { lo: (lo + hi) / 2 - span / 2, span };
+}
+
+/**
+ * A sparkline's ink. Never the positive or negative tone: the direction of a
+ * line is not a verdict — a falling crime count and a falling yield are not
+ * the same news — and the colour asserted one either way, in a red that
+ * appeared nowhere else on the page.
+ */
+const sparkInk = (ctx: ChartContext): string => ctx.palette.accentDeep;
+
+/** A spark's value as a label: the number the source wrote, grouped. */
+function sparkLabel(v: number): string {
+  if (!Number.isFinite(v)) return '';
+  const rounded = Math.round(v * 100) / 100;
+  return Number.isInteger(rounded) ? rounded.toLocaleString('en-AU') : String(rounded);
+}
+
 /** Sparkline that flows inside a line of text. */
 export function renderInlineSpark(ctx: ChartContext, values: number[]): string {
   if (values.length < 2) return '';
   const w = CHART_WIDTH.inline, h = 16;
-  const lo = Math.min(...values), hi = Math.max(...values);
-  const span = (hi - lo) || 1;
+  const { lo, span } = sparkRange(values);
   const pts = values.map((v, i) =>
     `${((i / (values.length - 1)) * (w - 2) + 1).toFixed(1)},${(h - 2 - ((v - lo) / span) * (h - 4)).toFixed(1)}`).join(' ');
   const last = values[values.length - 1];
   const lastY = h - 2 - ((last - lo) / span) * (h - 4);
-  const trend = last >= values[0] ? ctx.palette.positive : ctx.palette.negative;
+  const ink = sparkInk(ctx);
   return `<svg class="spark-inline" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" `
     + `width="${w}" height="${h}" style="vertical-align:-2px;margin:0 2px;">`
-    + `<polyline points="${pts}" fill="none" stroke="${trend}" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/>`
-    + `<circle cx="${(w - 2).toFixed(1)}" cy="${lastY.toFixed(1)}" r="1.6" fill="${trend}"/></svg>`;
+    + `<polyline points="${pts}" fill="none" stroke="${ink}" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/>`
+    + `<circle cx="${(w - 2).toFixed(1)}" cy="${lastY.toFixed(1)}" r="1.6" fill="${ink}"/></svg>`;
 }
 
-/** Sparkline sized for a margin note. */
-export function renderMarginSpark(ctx: ChartContext, values: number[]): string {
+/**
+ * Sparkline sized for a margin note.
+ *
+ * `ends` prints the first and last values at the line's two ends, so a reader
+ * can take a number off it; it is drawn then at its own size rather than
+ * stretched across whatever holds it (a template's narrative has no margin,
+ * and the note's spark ran the full measure at four times its height).
+ */
+export function renderMarginSpark(ctx: ChartContext, values: number[], opts: { ends?: boolean } = {}): string {
   if (values.length < 2) return '';
   const w = CHART_WIDTH.margin, h = 38;
-  const lo = Math.min(...values), hi = Math.max(...values);
-  const span = (hi - lo) || 1;
-  const pts = values.map((v, i) =>
-    `${((i / (values.length - 1)) * (w - 4) + 2).toFixed(1)},${(h - 4 - ((v - lo) / span) * (h - 8)).toFixed(1)}`).join(' ');
-  const trend = values[values.length - 1] >= values[0] ? ctx.palette.positive : ctx.palette.negative;
-  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" width="100%" preserveAspectRatio="none">`
-    + `<polygon points="${pts} ${(w - 2).toFixed(1)},${h - 2} 2,${h - 2}" fill="${trend}" fill-opacity="0.12"/>`
-    + `<polyline points="${pts}" fill="none" stroke="${trend}" stroke-width="1.4" stroke-linejoin="round"/></svg>`;
+  const { lo, span } = sparkRange(values);
+  const ink = sparkInk(ctx);
+  if (!opts.ends) {
+    const pts = values.map((v, i) =>
+      `${((i / (values.length - 1)) * (w - 4) + 2).toFixed(1)},${(h - 4 - ((v - lo) / span) * (h - 8)).toFixed(1)}`).join(' ');
+    return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" width="100%" preserveAspectRatio="none">`
+      + `<polygon points="${pts} ${(w - 2).toFixed(1)},${h - 2} 2,${h - 2}" fill="${ink}" fill-opacity="0.12"/>`
+      + `<polyline points="${pts}" fill="none" stroke="${ink}" stroke-width="1.4" stroke-linejoin="round"/></svg>`;
+  }
+  // Room either side for the two end values, set at the micro size.
+  const first = sparkLabel(values[0]);
+  const last = sparkLabel(values[values.length - 1]);
+  const charU = unitsPerChar(ctx, w, 'micro');
+  const padL = Math.ceil(first.length * charU) + 6;
+  const padR = Math.ceil(last.length * charU) + 6;
+  const x = (i: number) => padL + (i / (values.length - 1)) * (w - padL - padR);
+  const y = (v: number) => h - 4 - ((v - lo) / span) * (h - 8);
+  const pts = values.map((v, i) => `${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
+  // A label's baseline sits beside its end of the line, but never so high
+  // that the figure's top is cut by the drawing's edge.
+  const microU = ptToUnits(CHART_TEXT_PT.micro, w, ctx.widthMm);
+  const labelY = (lineY: number) => Math.min(h - 3, Math.max(microU, lineY + 3));
+  // No area under the line: the scale does not start at zero
+  // (`sparkRange`), so a filled area would draw a magnitude the series
+  // does not have.
+  return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 ${w} ${h}" width="100%" preserveAspectRatio="xMidYMid meet">`
+    + `<polyline points="${pts}" fill="none" stroke="${ink}" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round"/>`
+    + `<circle cx="${x(values.length - 1).toFixed(1)}" cy="${y(values[values.length - 1]).toFixed(1)}" r="1.8" fill="${ink}"/>`
+    + text(ctx, w, { x: padL - 4, y: labelY(y(values[0])), pt: 'micro', fill: ctx.palette.ink, anchor: 'end', tabular: true }, svgEscape(first))
+    + text(ctx, w, { x: w - padR + 4, y: labelY(y(values[values.length - 1])), pt: 'micro', fill: ctx.palette.ink, tabular: true }, svgEscape(last))
+    + '</svg>';
 }
 
-export interface DonutSegment { label: string; value: number }
+export interface DonutSegment {
+  label: string;
+  value: number;
+  /**
+   * The value as the source wrote it, printed in the legend when the caller
+   * asks for the given values (`legend: 'given'`) rather than shares.
+   */
+  display?: string;
+}
+
+/**
+ * One ring segment as a path, from angle `a0` to `a1`.
+ *
+ * An SVG arc whose two ends are the same point draws nothing — the spec
+ * omits it — so a segment that IS the whole ring (one category at 100%, the
+ * SEIFA donut on the 18 Annabelle Crescent Compass, 4 of 4 indices) came out
+ * as a degenerate path the engine filled as a half-disc above a separate
+ * circle (Audit 6, 1 Oct 2026). A whole ring is drawn as two half rings.
+ */
+function ringSegmentPath(cx: number, cy: number, R: number, r: number, a0: number, a1: number): string {
+  const p = (radius: number, a: number) =>
+    `${(cx + radius * Math.cos(a)).toFixed(1)} ${(cy + radius * Math.sin(a)).toFixed(1)}`;
+  if (a1 - a0 >= Math.PI * 2 - 1e-3) {
+    const mid = a0 + Math.PI;
+    return `M ${p(R, a0)} A ${R} ${R} 0 1 1 ${p(R, mid)} A ${R} ${R} 0 1 1 ${p(R, a0)} Z `
+      + `M ${p(r, a0)} A ${r} ${r} 0 1 0 ${p(r, mid)} A ${r} ${r} 0 1 0 ${p(r, a0)} Z`;
+  }
+  const large = a1 - a0 > Math.PI ? 1 : 0;
+  return `M ${p(R, a0)} A ${R} ${R} 0 ${large} 1 ${p(R, a1)} L ${p(r, a1)} A ${r} ${r} 0 ${large} 0 ${p(r, a0)} Z`;
+}
 
 export type DonutLayout = 'side' | 'stacked';
 
@@ -1417,10 +1555,32 @@ export const DONUT_STACK_BELOW_MM = 90;
 export function renderDonut(
   ctx: ChartContext,
   segments: DonutSegment[],
-  opts: { title?: string; centerLabel?: string; centerSub?: string; layout?: DonutLayout } = {},
+  opts: {
+    title?: string; centerLabel?: string; centerSub?: string; layout?: DonutLayout;
+    /**
+     * What the legend prints beside each swatch: each segment's share of the
+     * ring (the default, every existing caller), or the value as given
+     * (`DonutSegment.display`). A share is a figure this module computed, and
+     * where the segments are not the whole of anything it is a figure nobody
+     * stated — see `whole`.
+     */
+    legend?: 'share' | 'given';
+    /**
+     * The whole the segments are parts of, where they are not all of it. Five
+     * industries' shares of a workforce sum to 50.7, and drawn against their
+     * own sum they filled the ring and printed 25%, 21%, 19%, 18% and 17% —
+     * shares of nothing, beside a centre that said 12.9% (Audit 6). Against
+     * the stated whole each takes its own share of the ring and the rest is
+     * drawn as the rest, unlabelled.
+     */
+    whole?: number;
+  } = {},
 ): string {
   if (!segments.length) return '';
-  const total = segments.reduce((s, x) => s + Math.max(0, x.value), 0) || 1;
+  const listed = segments.reduce((s, x) => s + Math.max(0, x.value), 0);
+  const whole = opts.whole && opts.whole > listed ? opts.whole : 0;
+  const total = whole || listed || 1;
+  const given = opts.legend === 'given';
   const series = ctx.palette.series;
   const layout: DonutLayout = opts.layout
     ?? (ctx.widthMm < DONUT_STACK_BELOW_MM ? 'stacked' : 'side');
@@ -1444,13 +1604,15 @@ export function renderDonut(
     const frac = Math.max(0, s.value) / total;
     if (frac <= 0) return '';
     const a1 = a0 + frac * TAU;
-    const large = frac > 0.5 ? 1 : 0;
-    const p = (radius: number, a: number) =>
-      `${(cx + radius * Math.cos(a)).toFixed(1)} ${(cy + radius * Math.sin(a)).toFixed(1)}`;
-    const d = `M ${p(R, a0)} A ${R} ${R} 0 ${large} 1 ${p(R, a1)} L ${p(r, a1)} A ${r} ${r} 0 ${large} 0 ${p(r, a0)} Z`;
+    const d = ringSegmentPath(cx, cy, R, r, a0, a1);
     a0 = a1;
     return `<path d="${d}" fill="${series[i % series.length]}" stroke="${ctx.palette.ground}" stroke-width="1.2"/>`;
-  }).join('');
+  }).join('')
+    // The rest of a stated whole: drawn, in the rule's tone, and not named —
+    // the source named the parts it gave and nothing else.
+    + (whole && a0 < -Math.PI / 2 + TAU - 1e-3
+      ? `<path d="${ringSegmentPath(cx, cy, R, r, a0, -Math.PI / 2 + TAU)}" fill="${ctx.palette.rule}" stroke="${ctx.palette.ground}" stroke-width="1.2"/>`
+      : '');
 
   const legendX = stacked ? 16 : 250;
   // Stacked, the ring already sits below the whole title (`cy` grew with it).
@@ -1465,13 +1627,13 @@ export function renderDonut(
   const lineStep = 13;
   let legendY = legendTop;
   const legend = segments.map((s, i) => {
-    const pct = Math.round((Math.max(0, s.value) / total) * 100);
+    const pct = given ? (s.display ?? String(s.value)) : `${Math.round((Math.max(0, s.value) / total) * 100)}%`;
     const lines = legendRows[i].length ? legendRows[i] : [''];
     const y = legendY;
     legendY += rowPitch + (lines.length - 1) * lineStep;
     return `<rect x="${legendX}" y="${y - 9}" width="10" height="10" rx="2" fill="${series[i % series.length]}"/>`
       + lines.map((line, j) => text(ctx, w, { x: legendX + 16, y: y + j * lineStep, pt: 'micro', fill: ctx.palette.ink }, svgEscape(line))).join('')
-      + text(ctx, w, { x: w - 12, y, pt: 'micro', fill: ctx.palette.ink, anchor: 'end', weight: 700, tabular: true }, `${pct}%`);
+      + text(ctx, w, { x: w - 12, y, pt: 'micro', fill: ctx.palette.ink, anchor: 'end', weight: 700, tabular: true }, svgEscape(pct));
   }).join('');
   const legendBottom = legendY - rowPitch + 14;
 
@@ -1481,7 +1643,9 @@ export function renderDonut(
       + `<line x1="${titleX}" x2="${w - 12}" y1="${titleRule}" y2="${titleRule}" stroke="${ctx.palette.rule}" stroke-width="0.5"/>`
     : '';
 
-  const centerVal = opts.centerLabel ?? `${Math.round(((segments[0]?.value ?? 0) / total) * 100)}%`;
+  const centerVal = opts.centerLabel
+    ?? (given ? (segments[0]?.display ?? String(segments[0]?.value ?? ''))
+      : `${Math.round(((segments[0]?.value ?? 0) / total) * 100)}%`);
   // The sub-label only fits inside the hole at full size; in the stacked
   // layout the ring is smaller and it would overlap the figure. It is fitted
   // to the hole's width, on up to two lines, rather than drawn through the ring.
@@ -1515,8 +1679,42 @@ export function renderDonut(
   const grown = stacked ? baseH : baseH + (titleLines.length - 1) * 20;
   const h = Math.max(grown, legendBottom);
   return `${svgOpen(w, h)}${title}${arcs}
-    ${text(ctx, w, { x: cx, y: cy + (stacked ? 6 : -2), pt: 'hero', fill: ctx.palette.ink, anchor: 'middle', stack: 'display', weight: 700, tabular: true }, svgEscape(centerVal))}
+    ${text(ctx, w, { x: cx, y: cy + (stacked ? 6 : -2), pt: donutFigurePt(ctx, w, centerVal, 2 * r - 12), fill: ctx.palette.ink, anchor: 'middle', stack: 'display', weight: 700, tabular: true }, svgEscape(centerVal))}
     ${centerSub}${legend}</svg>`;
+}
+
+/**
+ * The size the figure in a donut's hole is set at: `hero`, or the first step
+ * down at which it fits the hole.
+ *
+ * The hole is fixed in drawing units and the figure in points, so the same
+ * figure takes more of a smaller printed ring. Drawn at the compact width it
+ * is made for, a Borrowing Capacity Snapshot's "$171,400 pa" ran 22% past the
+ * hole and over the ring, where the ring's dark segment hid its first two
+ * characters (§21 of BORROWING_CAPACITY.md). Stepping down keeps the whole
+ * figure; a percentage, which is what most donuts carry, fits at `hero` and is
+ * set exactly as before. The advance is estimated as `fitLines` estimates —
+ * there is no measurement in a pure module — and on the wide side, with the
+ * narrow marks (separators, spaces) counted narrow in a proportional face and
+ * full in a monospaced one, so that a step is taken when it might be needed
+ * rather than missed when it is.
+ */
+export function donutFigurePt(
+  ctx: ChartContext,
+  vb: number,
+  figure: string,
+  holeUnits: number,
+): keyof typeof CHART_TEXT_PT {
+  // A monospaced display face sets every mark, separators included, at the
+  // full advance: one design family draws its figures that way, and on it the
+  // proportional estimate left "$171,400" touching the ring.
+  const mono = /mono/i.test(String((ctx.stack ?? PRINT_STACK).display ?? ''));
+  const ems = [...figure].reduce((sum, ch) =>
+    sum + (mono ? 0.6 : /[\s.,:;'’]/.test(ch) ? 0.28 : 0.55), 0);
+  const steps = ['hero', 'value', 'label'] as const;
+  const fits = (pt: (typeof steps)[number]) =>
+    ems * ptToUnits(CHART_TEXT_PT[pt] * fitOf(ctx, 'display'), vb, ctx.widthMm) <= holeUnits;
+  return steps.find(fits) ?? 'label';
 }
 
 export interface SeriesLine { label: string; values: readonly number[] }
@@ -1766,7 +1964,7 @@ export function renderTimelineRibbon(
   items: TimelineItem[],
   opts: { title?: string } = {},
 ): string {
-  const phases = ['Existing', '0-2y', '3-5y', '5y+'];
+  const allPhases = ['Existing', '0-2y', '3-5y', '5y+'];
   const w = CHART_WIDTH.wide, axisY = 86;
   // The markers sit where every one of them gets the same measure for its
   // labels: an interior label is centred and may reach halfway to either
@@ -1777,8 +1975,6 @@ export function renderTimelineRibbon(
   // renewal of communit…" (anchored to the right edge) on the reference
   // render (RS-3c, 14 Sep 2026).
   const padX = 98, edge = 12, gap = 8, lineStep = 15;
-  const step = (w - padX * 2) / (phases.length - 1);
-  const labelUnits = step - gap * 2;
   const labelChar = unitsPerChar(ctx, w, 'micro');
 
   /*
@@ -1806,7 +2002,7 @@ export function renderTimelineRibbon(
     if (/\b5\s*(?:y|yr|year)?s?\s*\+|beyond|long(?:[-\s]?term)?/.test(t)) return '5y+';
     return null;
   };
-  const grouped = new Map<string, TimelineItem[]>(phases.map((p) => [p, []]));
+  const grouped = new Map<string, TimelineItem[]>(allPhases.map((p) => [p, []]));
   for (const it of items) {
     const phase = phaseOf(it.phase);
     // One unreadable phase and the whole ribbon declines: drawing the rest
@@ -1818,6 +2014,30 @@ export function renderTimelineRibbon(
   // milestone leaves no mark on the page — the defect this whole pass is
   // about.
   for (const list of grouped.values()) if (list.length > 2) return '';
+
+  /*
+   * The axis runs from the first stop that holds an item to the last.
+   *
+   * A stop with nothing under it at either end of the ribbon is a horizon no
+   * item reaches, and it reads as a finding — "nothing in three to five
+   * years" — about a pipeline nobody said that of: on the 18 Annabelle
+   * Crescent Compass the model's two milestones sat at Existing and 0-2y and
+   * the ribbon drew 3-5y and 5y+ empty beside them (Audit 6, 1 Oct 2026).
+   * An empty stop BETWEEN two that hold items stays, because it is the
+   * distance between them. Fewer than two stops is not a timeline, and the
+   * caller tabulates the milestones instead. A ribbon that uses all four is
+   * drawn exactly as before.
+   */
+  const firstUsed = allPhases.findIndex((p) => (grouped.get(p) ?? []).length > 0);
+  const lastUsed = allPhases.length - 1 - [...allPhases].reverse().findIndex((p) => (grouped.get(p) ?? []).length > 0);
+  if (firstUsed < 0 || lastUsed - firstUsed < 1) return '';
+  const phases = allPhases.slice(firstUsed, lastUsed + 1);
+  const step = (w - padX * 2) / (phases.length - 1);
+  // An interior label is centred and may reach halfway to either neighbour;
+  // an end label is anchored to the edge and may reach halfway to its one
+  // neighbour. On four stops the two measures are the same.
+  const interiorUnits = step - gap * 2;
+  const endUnits = padX - edge + step / 2 - gap;
 
   const markers = phases.map((phase, i) => {
     const x = padX + i * step;
@@ -1852,6 +2072,7 @@ export function renderTimelineRibbon(
      * are long the pair shares the budget, so two of four each.
      */
     const linesPerItem = list.length > 1 ? 2 : 4;
+    const labelUnits = i === 0 || i === last ? endUnits : interiorUnits;
     const rows = list.flatMap((it, j) => fitLines(it.label, labelUnits, labelChar, linesPerItem).map((line) => ({ line, weight: j === 0 ? 700 : 500 })));
     const labels = rows.map((row, k) => text(ctx, w,
       { x: labelX, y: axisY + 36 + k * lineStep, pt: 'micro', fill: ctx.palette.ink, anchor, weight: row.weight },
@@ -1865,9 +2086,10 @@ export function renderTimelineRibbon(
   // set past the bottom of the ground.
   const h = axisY + 36 + (deepest - 1) * lineStep + 30;
 
-  const ribbon = `M ${padX} ${axisY} C ${padX + step * 0.5} ${axisY - 18}, ${padX + step * 0.5} ${axisY + 18}, ${padX + step} ${axisY} `
-    + `S ${padX + step * 1.5} ${axisY + 18}, ${padX + step * 2} ${axisY} `
-    + `S ${padX + step * 2.5} ${axisY - 18}, ${padX + step * 3} ${axisY}`;
+  // One wave per span, alternating; on four stops this is the path it always was.
+  const ribbon = `M ${padX} ${axisY} C ${padX + step * 0.5} ${axisY - 18}, ${padX + step * 0.5} ${axisY + 18}, ${padX + step} ${axisY}`
+    + phases.slice(2).map((_, k) =>
+      ` S ${padX + step * (k + 1.5)} ${axisY + (k % 2 === 0 ? 18 : -18)}, ${padX + step * (k + 2)} ${axisY}`).join('');
 
   return `${svgOpen(w, h)}
     <rect width="${w}" height="${h}" rx="6" fill="${ctx.palette.ground}"/>

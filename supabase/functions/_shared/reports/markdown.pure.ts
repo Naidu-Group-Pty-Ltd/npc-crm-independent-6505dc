@@ -77,7 +77,8 @@ import {
 } from '../reportDesign/primitives.pure.ts';
 import { countUrlTokens, neutraliseUrls } from './text.pure.ts';
 import {
-  codeCharge, headingCharge, listCharge, paragraphCharge, pullQuoteCharge, sidenoteCharge, statCharge, tableCharge,
+  codeCharge, headingCharge, listCharge, paragraphCharge, pullQuoteCharge, recordFieldCharge, recordTitleCharge,
+  sidenoteCharge, statCharge, tableCharge, RECORD_LABEL_WIDTH, RECORD_TITLE_WIDTH,
   type NarrativeGeometry,
 } from './narrativeGeometry.pure.ts';
 import { statCardHasValue } from './investment/blockHygiene.pure.ts';
@@ -525,6 +526,29 @@ export interface MarkdownOptions {
   truncationDestination?: string;
   /** Send a table wider than the portrait measure to the landscape page. */
   landscapeWideTables?: boolean;
+  /**
+   * Set a register whose cells are paragraphs as one record per row.
+   *
+   * A risk register written as five columns — the risk, its level, why it
+   * matters, the check required, the evidence — puts a 400-character "why it
+   * matters" in a column a fifth of the measure wide, at 15–28 characters a
+   * line. Each row runs to twelve or sixteen lines, a row never splits across
+   * a page, and the next row that does not fit leaves the rest of the page
+   * white. Measured on the 18 Annabelle Crescent Compass drawn through the
+   * Chancery master (Audit 6, 1 Oct 2026): nine rows took five pages, three of
+   * them a third empty. Across the fifty masters and both fixtures, 174 of the
+   * 495 narrative pages left more than a quarter empty were followed by a
+   * page opening on a table.
+   *
+   * A record reads the same cells at the full measure: the row's name on a
+   * hairline with its short cells after it (`Level Moderate`), then each long
+   * cell as a paragraph led by its column's label. Nothing is reworded,
+   * reordered or left out — every cell prints, under the label its column
+   * carried — and each field is a paragraph, so it breaks between sentences
+   * like the prose around it instead of moving whole. See `recordLayout` for
+   * which tables qualify: only those with two or more columns of prose.
+   */
+  recordTables?: boolean;
   /** Mark a row whose first cell is exactly "Total" with the primitive's rule. */
   detectTotalRow?: boolean;
   /**
@@ -975,6 +999,38 @@ export function inlinePlainText(value: string): string {
  */
 const INLINE_SPARK = /~~\[([\d.,\s+-]+)\]~~/g;
 
+/**
+ * A stat card's figure, written the way the document writes it.
+ *
+ * The model fills a card with a bare figure and writes the same figure
+ * grouped in its sentences: on the 18 Annabelle Crescent Compass the card
+ * under "Recorded crime rate" printed 2742 beside prose saying "2,742
+ * incidents per 100,000 residents" three times (Audit 6, 1 Oct 2026). A bare
+ * integer of five digits or more is grouped. One of four digits is grouped
+ * only where the document itself writes it grouped, because four digits are
+ * as often a year or a postcode, which a separator would falsify. Anything
+ * that is not a bare integer is the model's own typesetting and stands.
+ */
+function statFigure(value: string, source: string): string {
+  const bare = value.trim();
+  if (!/^\d{4,}$/.test(bare)) return value;
+  const grouped = bare.replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+  if (bare.length >= 5) return grouped;
+  return new RegExp(`(?:^|[^\\d,.])${grouped}(?![\\d,]|\\.\\d)`).test(source) ? grouped : value;
+}
+
+/** A paragraph that is nothing but sparks. */
+const SPARK_ONLY = /^(?:~~\[[\d.,\s+-]+\]~~\s*)+$/;
+
+/**
+ * The room drawn sparks take on their line, in points: each `<svg>`'s own
+ * `width` (CSS px) and the 2px margin either side `renderInlineSpark` gives it.
+ */
+function sparkWidthPt(html: string): number {
+  return [...html.matchAll(/<svg\b[^>]*?\swidth="([\d.]+)"/g)]
+    .reduce((pt, m) => pt + (Number(m[1]) + 4) * 0.75, 0);
+}
+
 /** Draw, or remove. Never print. */
 function drawSparks(part: string, notices?: MarkdownNotices, opts?: InlineMarkdownOptions): string {
   if (!INLINE_SPARK.test(part)) { INLINE_SPARK.lastIndex = 0; return part; }
@@ -1357,13 +1413,41 @@ export function renderMarkdown(source: string, options: MarkdownOptions = {}): M
   // ── Pass 1b — one left-to-right walk ──────────────────────────────────────
   let i = 0;
   let paragraph: string[] = [];
+  // The paragraph most recently pushed, while it is still the last block.
+  let lastParagraph: { index: number; text: string } | null = null;
+
+  /** One character's advance on this measure, in points — what a drawn spark is charged in. */
+  const charPt = geometry ? geometry.widthPt / geometry.charsPerLine : 4.75;
+
+  const paragraphLines = (text: string) => (geometry
+    ? paragraphCharge(geometry, printedChars(text))
+    : textLines(text) + 0.5);
 
   const flushParagraph = (): boolean => {
     if (!paragraph.length) return true;
     const joined = paragraph.join('\n');
     paragraph = [];
     const html = paragraphHtml(joined, notices, options);
-    return push('paragraph', html, geometry ? paragraphCharge(geometry, printedChars(joined)) : textLines(joined) + 0.5);
+    // A spark is a word-sized graphic, and one on a line of its own belongs to
+    // the sentence before it. Set as a paragraph of its own it printed as an
+    // unlabelled stroke between two paragraphs — on the 18 Annabelle Crescent
+    // Compass at the head of a page, where it read as a stray rule (Audit 6,
+    // 1 Oct 2026). It joins the end of that paragraph instead, charged for
+    // the room it takes on the line; with no paragraph directly before it,
+    // it stays where it is.
+    const prev = lastParagraph && lastParagraph.index === blocks.length - 1 ? blocks[lastParagraph.index] : null;
+    if (prev && lastParagraph && SPARK_ONLY.test(joined.trim()) && html.includes('<svg')
+      && /^<p>[\s\S]*<\/p>$/.test(prev.html) && !prev.html.slice(3).includes('<p>')) {
+      const spark = html.replace(/^<p>/, '').replace(/<\/p>$/, '');
+      const text = `${lastParagraph.text} ${'x'.repeat(Math.ceil(sparkWidthPt(spark) / charPt))}`;
+      prev.html = `${prev.html.slice(0, -'</p>'.length)} ${spark}</p>`;
+      prev.lines = roundCharge(paragraphLines(text));
+      lastParagraph = { index: lastParagraph.index, text };
+      return true;
+    }
+    if (!push('paragraph', html, paragraphLines(joined))) return false;
+    lastParagraph = html ? { index: blocks.length - 1, text: joined } : lastParagraph;
+    return true;
   };
 
   scan: while (i < lines.length) {
@@ -1418,7 +1502,7 @@ export function renderMarkdown(source: string, options: MarkdownOptions = {}): M
         // is not drawn — not a dash, not the unit on its own: the rule
         // `blockHygiene` already enforces at the write path, shared so the two
         // ends cannot disagree about "empty".
-        const value = kind === 'stat' ? inner : (attrs.stat ?? '');
+        const value = statFigure(kind === 'stat' ? inner : (attrs.stat ?? ''), text);
         if (!statCardHasValue(value)) continue;
         const label = kind === 'stat' ? (attrs.label ?? '') : (attrs.eyebrow ?? '');
         const sub = kind === 'stat' ? (attrs.sub ?? '') : (attrs.label ?? '');
@@ -1874,6 +1958,11 @@ export function renderMarkdown(source: string, options: MarkdownOptions = {}): M
       return push('list', head + listHtml(items, false, notices, 1, options), singleCost);
     }
 
+    // A register whose cells are paragraphs reads as one record per row. See
+    // `MarkdownOptions.recordTables` and `recordLayout`.
+    const records = options.recordTables ? recordLayout(cols, cells) : null;
+    if (records) return emitRecords(records, cols, cells);
+
     const rows: TableRow[] = cells.map((r) => {
       const row: TableRow = {};
       r.forEach((v, c) => { row[`c${c}`] = v; });
@@ -1972,6 +2061,100 @@ export function renderMarkdown(source: string, options: MarkdownOptions = {}): M
     }
     return push('table', table + note, bodyCharge + headLines, meta);
   }
+
+  /**
+   * One record per row: the row's name on a hairline with its short cells
+   * after it, then each long cell as a paragraph led by its column's label.
+   *
+   * Every cell prints, in its row's order, under the label its column
+   * carried; an empty cell is left out rather than printed as a label with
+   * nothing after it. The name's line is a paragraph the packer keeps with
+   * the field below it (`leadsIn` in `markdownPaging.pure.ts`), and each
+   * field is a plain paragraph, so a long one breaks between sentences.
+   */
+  function emitRecords(layout: RecordLayout, cols: readonly TableColumn[], cells: readonly (readonly string[])[]): boolean {
+    for (const r of cells) {
+      const name = (r[0] ?? '').trim();
+      const meta = layout.short
+        .map((c) => ({ label: cols[c].label, value: (r[c] ?? '').trim() }))
+        .filter((m) => m.value);
+      const metaHtml = meta
+        .map((m) => `<strong class="record-label">${escapeHtml(m.label)}</strong> ${escapeHtml(m.value)}`)
+        .join(' · ');
+      const metaChars = meta.reduce(
+        (n, m) => n + printedChars(m.label) * RECORD_LABEL_WIDTH + printedChars(m.value) + 4, 0);
+      if (name || metaHtml) {
+        const html = `<p class="record-title">${name ? `<strong>${escapeHtml(name)}</strong>` : ''}`
+          + `${metaHtml ? `${name ? ' · ' : ''}${metaHtml}` : ''}</p>`;
+        const lines = geometry
+          ? recordTitleCharge(geometry, printedChars(name), metaChars)
+          : textLines('x'.repeat(Math.ceil(printedChars(name) * RECORD_TITLE_WIDTH + metaChars))) + 1;
+        if (!push('paragraph', html, lines)) return false;
+      }
+      for (const c of layout.long) {
+        const value = (r[c] ?? '').trim();
+        if (!value) continue;
+        const label = cols[c].label;
+        const html = `<p><strong class="record-label">${escapeHtml(label)}</strong> ${escapeHtml(value)}</p>`;
+        const lines = geometry
+          ? recordFieldCharge(geometry, printedChars(label), printedChars(value))
+          : textLines(`${label} ${value}`) + 0.5;
+        if (!push('paragraph', html, lines)) return false;
+      }
+    }
+    return true;
+  }
+}
+
+/** The mean a column's cells must reach, in printed characters, to count as prose. */
+export const RECORD_PROSE_MEAN_CHARS = 100;
+/** A column of words rather than sentences rides on the record's name line. */
+export const RECORD_SHORT_MEAN_CHARS = 24;
+export const RECORD_SHORT_MAX_CHARS = 48;
+
+export interface RecordLayout {
+  /** Columns printed on the name's line, each as its label and value. */
+  short: number[];
+  /** Columns printed as a paragraph each, led by the label. */
+  long: number[];
+}
+
+/**
+ * Whether a table reads as records, and which of its cells ride on the name.
+ *
+ * Four or more columns, every column labelled — a field with no label is a
+ * paragraph nobody can place — and at least two columns of prose, a mean of
+ * `RECORD_PROSE_MEAN_CHARS` printed characters a cell. The registers that
+ * qualify are measured, not guessed: the 18 Annabelle Crescent risk register
+ * carries 396, 256 and 161 in its three prose columns and the 262 Pallas
+ * Street one 167, 156 and 136, while the widest other tables in the same
+ * documents carry one such column at most — the planning controls
+ * (`Control | Reading | Standing | Evidence`, Evidence at 99) and the
+ * development register (`Project or instrument` at 95) — and stay grids.
+ *
+ * The first column is the record's name. A later column whose cells are
+ * words (`Moderate`, `Low (exposure not confirmed)`) prints after the name;
+ * the rest print as fields.
+ */
+export function recordLayout(
+  cols: readonly TableColumn[],
+  cells: readonly (readonly string[])[],
+): RecordLayout | null {
+  const width = cols.length;
+  if (width < 4 || !cells.length) return null;
+  if (cols.some((c) => !String(c.label ?? '').trim())) return null;
+  const lengths = Array.from({ length: width }, (_, c) => cells.map((r) => printedChars(r[c] ?? '')));
+  const mean = (xs: readonly number[]) => xs.reduce((a, b) => a + b, 0) / Math.max(1, xs.length);
+  const prose = lengths.filter((xs, c) => c > 0 && mean(xs) >= RECORD_PROSE_MEAN_CHARS).length;
+  if (prose < 2) return null;
+  const short: number[] = [];
+  const long: number[] = [];
+  for (let c = 1; c < width; c += 1) {
+    const xs = lengths[c];
+    if (mean(xs) <= RECORD_SHORT_MEAN_CHARS && Math.max(...xs) <= RECORD_SHORT_MAX_CHARS) short.push(c);
+    else long.push(c);
+  }
+  return { short, long };
 }
 
 function paragraphHtml(block: string, notices: MarkdownNotices, opts?: InlineMarkdownOptions): string {
@@ -2094,7 +2277,7 @@ export function splitParagraphBlock(
   if (!m || m[1].includes('<p>')) return [block];
   const inner = m[1];
   const plainLength = (html: string) => html.replace(/<[^>]+>/g, '').length;
-  const balanced = (html: string) => ['strong', 'em', 'a', 'code', 'span', 'b', 'i', 'u', 's', 'sub', 'sup', 'mark']
+  const balanced = (html: string) => ['strong', 'em', 'a', 'code', 'span', 'b', 'i', 'u', 's', 'sub', 'sup', 'mark', 'svg']
     .every((tag) => (html.match(new RegExp(`<${tag}[\\s>]`, 'g')) ?? []).length === (html.match(new RegExp(`</${tag}>`, 'g')) ?? []).length);
   const boundary = /[.!?…][”"’')\]]*\s+(?=[A-Z0-9“"(])/g;
   let best: number | null = null;

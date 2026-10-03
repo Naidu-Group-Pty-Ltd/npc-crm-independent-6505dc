@@ -50,6 +50,13 @@
       "package": "image-size",
       "reason": "Infinite loop in the JXL and HEIF parsers. Same reachability and the same fix as GHSA-w3rx-r6r6-pgpr: browser-side, user-initiated, requires the pptxgenjs 1.x major bump.",
       "review_by": "2026-11-04"
+    },
+    {
+      "url": "https://github.com/advisories/GHSA-vfj7-8cjw-p6xm",
+      "ghsa": "GHSA-vfj7-8cjw-p6xm",
+      "package": "braces",
+      "reason": "Stack exhaustion when braces expands a deeply nested pattern. Every published version is affected (the range is <=3.0.3 and 3.0.3 is the latest), so there is nothing to upgrade to. braces is reached only through tailwindcss (via chokidar and micromatch), which runs at build time and expands the content globs in this repository's own tailwind.config.ts. No pattern from a user, a request or a stored row reaches it, nothing in src/ imports it, and it is not in the shipped bundle. The other packages the gate names (tailwindcss, @tailwindcss/typography, tailwindcss-animate, lovable-tagger, chokidar, fast-glob, micromatch) are flagged only through braces and need no entries. Re-evaluate as soon as braces publishes a fixed release.",
+      "review_by": "2026-11-04"
     }
   ]
 }

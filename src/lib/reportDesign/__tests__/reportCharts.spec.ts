@@ -26,6 +26,9 @@ import {
   MAX_WATERFALL_ITEMS,
   MAX_WHEEL_SCORES,
   DONUT_STACK_BELOW_MM,
+  CHART_TARGET_WIDTH_MM,
+  COMPACT_FIGURE_FRACTION,
+  donutFigurePt,
   chartContext,
   chartContextForSpan,
   chartFigure,
@@ -250,6 +253,35 @@ describe('a chart knows how wide it will print', () => {
     expect(widths).toEqual([...widths].sort((a, b) => a - b));
   });
 
+  /**
+   * The figure in the hole is set in points and the hole is fixed in drawing
+   * units, so the same figure takes more of a smaller printed ring. Drawn at
+   * its compact width, the Snapshot's "$171,400 pa" ran 22% past the hole and
+   * the ring hid its first two characters (BORROWING_CAPACITY.md §21).
+   */
+  it('sets the figure in a donut\'s hole at a size that fits the hole', () => {
+    const full = chartContext(palette);
+    const compact = chartContext(palette, CHART_TARGET_WIDTH_MM * COMPACT_FIGURE_FRACTION);
+    const hole = 2 * 56 - 12;
+    // What most donuts carry is set exactly as before.
+    expect(donutFigurePt(full, CHART_WIDTH.compact, '62%', hole)).toBe('hero');
+    expect(donutFigurePt(compact, CHART_WIDTH.compact, '62%', hole)).toBe('hero');
+    // A long figure steps down rather than running over the ring.
+    expect(donutFigurePt(compact, CHART_WIDTH.compact, '$171,400 pa', hole)).not.toBe('hero');
+    // And the step it takes is one the estimate says fits.
+    for (const figure of ['$171,400', '$1,240,000', '$171,400 pa']) {
+      const pt = donutFigurePt(compact, CHART_WIDTH.compact, figure, hole);
+      const ems = [...figure].reduce((sum, ch) => sum + (/[\s.,:;'’]/.test(ch) ? 0.28 : 0.55), 0);
+      if (pt !== 'label') {
+        expect(ems * ptToUnits(CHART_TEXT_PT[pt], CHART_WIDTH.compact, compact.widthMm)).toBeLessThanOrEqual(hole);
+      }
+    }
+    // The drawing uses it: the long figure is not set at the hero size.
+    const svg = renderDonut(compact, [{ label: 'A', value: 3 }, { label: 'B', value: 2 }, { label: 'C', value: 1 }], { centerLabel: '$171,400 pa' });
+    const heroSize = ptToUnits(CHART_TEXT_PT.hero, CHART_WIDTH.compact, compact.widthMm);
+    expect(svg).not.toContain(`font-size="${heroSize}"`);
+  });
+
   it('stacks the donut legend under the ring in a narrow column', () => {
     // A legend row is a swatch, a label and a percentage — about 30mm of type.
     // Beside a ring in a 66mm column it printed straight through the figure.
@@ -279,7 +311,10 @@ describe('output safety', () => {
       renderMicroMap(ctx, { suburb: HOSTILE, state: HOSTILE, neighbours: [HOSTILE] }),
       renderDonut(ctx, [{ label: HOSTILE, value: 1 }], { title: HOSTILE, centerLabel: HOSTILE }),
       renderQuadrant(ctx, [{ x: 1, y: 1, label: HOSTILE }], { title: HOSTILE, q1: HOSTILE }),
-      renderTimelineRibbon(ctx, [{ phase: 'existing', label: HOSTILE }], { title: HOSTILE }),
+      // Two stops: a single stop is not a timeline and the ribbon declines it
+      // (the caller tabulates), so the hostile label needs a second horizon
+      // to be drawn at all.
+      renderTimelineRibbon(ctx, [{ phase: 'existing', label: HOSTILE }, { phase: '0-2y', label: HOSTILE }], { title: HOSTILE }),
     ];
     for (const svg of svgs) {
       expect(svg).not.toContain('<script>');
@@ -387,7 +422,12 @@ describe('helpers', () => {
   it.each([
     [1_500_000, 'money', '$1.5m'],
     [12_400, 'money', '$12k'],
-    [-320, 'money', '$-320'],
+    // The sign ahead of the currency, as every figure in the product prints
+    // it. This case used to pin `$-320` — the defect, asserted (Audit 8).
+    [-320, 'money', '-$320'],
+    [-50_000, 'money', '-$50k'],
+    [-1_250_000, 'money', '-$1.3m'],
+    [-0.4, 'money', '$0'],
     // 4.55 is not representable in binary and rounds down; asserting the
     // arithmetic as it is rather than as it reads.
     [4.55, 'percent', '4.5%'],
@@ -512,7 +552,13 @@ describe('a label never runs past the drawing it belongs to', () => {
     const xs = [...svg.matchAll(/<circle cx="([\d.]+)"/g)].map((m) => Number(m[1]));
     expect(xs).toEqual([98, 286, 474, 662]);
     const heightOf = (s: string) => Number(/viewBox="0 0 [\d.]+ ([\d.]+)"/.exec(s)![1]);
-    const short = renderTimelineRibbon(ctx, [{ phase: 'existing', label: 'Rail' }], {});
+    // Compared over the same four stops, so the only difference is the labels.
+    const short = renderTimelineRibbon(ctx, [
+      { phase: 'existing', label: 'Rail' },
+      { phase: '0-2y', label: 'Bus' },
+      { phase: '3-5y', label: 'Road' },
+      { phase: '5y+', label: 'Park' },
+    ], {});
     expect(heightOf(svg)).toBeGreaterThan(heightOf(short));
     // Every label row sits above the bottom of the ground.
     const ys = [...svg.matchAll(/<text x="[\d.]+" y="([\d.]+)"/g)].map((m) => Number(m[1]));
@@ -1017,5 +1063,22 @@ describe('renderBars gives a long label somewhere to go', () => {
     expect(viewBoxHeight(svg)).toBe(106);
     expect(svg).toContain('<text x="180.0" y="53.0" text-anchor="end"');
     expect(svg).toContain('<rect x="192" y="44" width="476" height="12"');
+  });
+});
+
+describe('the quadrant can be drawn shorter', () => {
+  const points = [{ x: 60, y: 5, label: 'A' }, { x: 80, y: 6, label: 'B' }, { x: 95, y: 4, label: 'C' }];
+  const heightOf = (svg: string) => Number(/viewBox="0 0 \d+ (\d+)"/.exec(svg)?.[1]);
+
+  it('keeps its square-ish default, and takes a shorter plot where a caller asks', () => {
+    // A figure cannot split, so its height is the hole it leaves wherever it
+    // does not fit (PORTFOLIO.md §10).
+    expect(heightOf(renderQuadrant(ctx, points, { title: 'Yield against leverage' }))).toBe(420);
+    expect(heightOf(renderQuadrant(ctx, points, { title: 'Yield against leverage', height: 330 }))).toBe(330);
+  });
+
+  it('never draws a plot too short for its four quadrants, or taller than the default', () => {
+    expect(heightOf(renderQuadrant(ctx, points, { height: 100 }))).toBe(260);
+    expect(heightOf(renderQuadrant(ctx, points, { height: 900 }))).toBe(420);
   });
 });

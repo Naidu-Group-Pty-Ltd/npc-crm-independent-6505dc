@@ -90,6 +90,7 @@ import type { SubjectPrice } from './subjectPrice.pure.ts';
 import { recordedMarketRisks } from './scoreSections.pure.ts';
 import { MONTHS_LONG, MONTHS_SHORT, formatReportDateShort } from '../reportDate.pure.ts';
 import { closeDoubledStops } from '../text.pure.ts';
+import { presentableName } from '../presentableName.pure.ts';
 
 /**
  * A date as the reader writes it: `17 Sep 2026`, never `2026-09-17`.
@@ -2429,14 +2430,6 @@ function percentOf(row: MarketFactRow | null): number | null {
   return Number(m[2]) * (m[1] ? -1 : 1);
 }
 
-/** A register's all-capitals name set as a name: "THE HILLS SHIRE" → "The Hills Shire". */
-function asName(value: string): string {
-  if (value !== value.toUpperCase()) return value;
-  return value.toLowerCase().replace(/\b[a-z]/g, (c, at: number) => (
-    at > 0 && /^(of|and|the)\b/.test(value.toLowerCase().slice(at)) ? c : c.toUpperCase()
-  ));
-}
-
 /** An area, grouped by hand (never `toLocaleString` — see `money`). */
 const area = (n: number): string => {
   const [whole, frac] = String(n).split('.');
@@ -2449,7 +2442,7 @@ function assetLine(rec: StrategyRecord): string | null {
   const land = isNum(rec.property.landSqm) ? `${area(rec.property.landSqm)} m²` : null;
   const zone = rec.planning.zone;
   const councilRaw = rec.planning.council ?? rec.property.councilArea;
-  const council = councilRaw ? asName(councilRaw) : null;
+  const council = councilRaw ? presentableName(councilRaw) : null;
   if (!kind && !land && !zone) return null;
   const what = kind ? `A ${kind}` : 'A property';
   return `${what}${land ? ` on ${land}` : ''}${zone ? ` in the ${zone} zone` : ''}${council ? `, ${council}` : ''}.`;

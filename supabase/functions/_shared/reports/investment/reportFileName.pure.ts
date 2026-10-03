@@ -6,15 +6,20 @@
  * so the five documents generated for 291 Stone Mason Drive on 15 Sep 2026
  * arrived as `9edb63bd-…_291_STONE_MASON_DRIVE_NSW_1789434458098.pdf`, and
  * the operator had to prefix each one by hand to tell a Financial Analysis
- * from a Briefing (QA-32 records the collision that followed). Every other
- * format already names its file `<Kind>_<Subject>_<YYYY-MM-DD>.pdf`
- * (`route.pure.ts` in each format's folder); this is the Investment family's
- * version of that one rule, and the tier word comes from `DOCUMENT_IDENTITY`
- * so the file is called what its cover says.
+ * from a Briefing (QA-32 records the collision that followed). The tier word
+ * comes from `DOCUMENT_IDENTITY`, so the file is called what its cover says.
+ *
+ * Since Audit 6 (1 Oct 2026) it is the same readable name every other format
+ * writes (`readableFileName.pure.ts`): `Investment Compass - 18 Annabelle
+ * Crescent, Kellyville NSW 2155 - 1 Oct 2026.pdf`. The underscored machine
+ * form it replaces is what a person found in a downloads folder beside a
+ * Portfolio Performance Review named in words. A storage key is a different
+ * thing and keeps to URL-safe characters (`storageSafeFileName`).
  *
  * Deno-compatible: no `@/` aliases, explicit `.ts` extensions.
  */
 
+import { readableFileName } from '../readableFileName.pure.ts';
 import { documentTitleForTier } from './tierIdentity.pure.ts';
 
 /** `[^a-zA-Z0-9]` → `_`, runs collapsed, ends trimmed — the rule every format's `route.pure.ts` applies. */
@@ -38,20 +43,23 @@ export interface InvestmentFileNameInput {
   address: string | null | undefined;
   /** The instant of the download, passed in by the caller. */
   at: Date;
-  /** Appended before `.pdf` when present — `flattened`, a version, a variant. */
+  /** What this copy is, beside the document's name — `flattened`, `Version 2`. */
   suffix?: string;
 }
 
 /**
- * `Due_Diligence_Report_291_Stone_Mason_Drive_Kellyville_NSW_2155_2026-09-15.pdf`
+ * `Due Diligence Report - 291 Stone Mason Drive, Kellyville NSW 2155 - 15 Sep 2026.pdf`
  *
- * Kind first, so a folder sorts by document; address whole, so the street is
- * not mistaken for the suburb; the date last, so two revisions of the same
- * property can be told apart. No identifier a client could not read.
+ * Kind first, so a folder sorts by document; the address whole, so the
+ * street is not mistaken for the suburb; the date last, so two revisions of
+ * the same property can be told apart. No identifier a client could not
+ * read, and no placeholder where the record holds no address.
  */
 export function investmentReportFileName(input: InvestmentFileNameInput): string {
-  const kind = fileSafeSegment(documentTitleForTier(input.tier), 40) || 'Investment_Report';
-  const address = fileSafeSegment(input.address ?? '', 80) || 'Property';
-  const suffix = input.suffix ? `_${fileSafeSegment(input.suffix, 24)}` : '';
-  return `${kind}_${address}_${isoDateStamp(input.at)}${suffix}.pdf`;
+  return readableFileName({
+    name: documentTitleForTier(input.tier),
+    qualifier: input.suffix ?? null,
+    topic: input.address ?? '',
+    isoDate: isoDateStamp(input.at),
+  });
 }

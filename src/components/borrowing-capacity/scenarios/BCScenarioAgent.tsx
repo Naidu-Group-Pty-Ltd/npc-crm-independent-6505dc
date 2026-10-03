@@ -14,7 +14,12 @@ import type { BorrowingCapacityInput, BorrowingCapacityResult } from '@/utils/bo
 import type { LiabilityItem, PropertyItem } from './StrategyScenarioModeling';
 import { toast } from 'sonner';
 import { openSecureStream } from '@/lib/streamSecureFunction';
-import { agentStreamRefusal, emptyAgentAnswerMessage } from './bcScenarioAgentStream.pure';
+import {
+  agentStreamRefusal,
+  emptyAgentAnswerMessage,
+  scenarioSummaryProse,
+  unreadableScenariosMessage,
+} from './bcScenarioAgentStream.pure';
 import { AdvisorProgressBubble } from './AdvisorProgressBubble';
 import { withholdTighteningDtiOverride } from '@/lib/advisorDtiOverride.pure';
 import {
@@ -635,22 +640,25 @@ export function BCScenarioAgent({
                 return scenario;
               }
             });
+            if (locallyValidated.length === 0) throw new Error(unreadableScenariosMessage());
             setScenarios(locallyValidated);
             setAppliedIndex(null);
-            // Phase H: only emit the generic fallback when the model returned
-            // ZERO prose AND the user message wasn't a clarifying question.
-            // Otherwise the assistant's own answer (or the server's
-            // clarification-mode prose) is preserved.
-            const lower = trimmed.toLowerCase();
-            const looksLikeClarification = lower.includes('?') &&
-              !/(generate|create|build|run|propose|recommend|show me|give me)/.test(lower);
-            if (!assistantText.trim() && !looksLikeClarification) {
-              const summaryText = `I've generated **3 scenarios** based on your requirements. Each card below shows the **engine-validated** capacity and (when a target price was detected) whether the strategy actually clears the budget. Click **"Apply"** to load it into the strategy modelling section.`;
-              updateAssistant(summaryText);
+            // Cards arrived. The model's own prose stays where it wrote any; a
+            // model required to call the tool usually writes none, and then the
+            // reply names each card with the engine's figures.
+            if (!assistantText.trim()) {
+              updateAssistant(scenarioSummaryProse(locallyValidated));
             }
+          } else if (!assistantText.trim()) {
+            throw new Error(unreadableScenariosMessage());
           }
         } catch (e) {
           console.error('[BCScenarioAgent] Failed to parse tool call:', e);
+          // Prose already on screen is an answer; a turn with nothing but an
+          // unreadable scenario call is not, and is said out loud.
+          if (!assistantText.trim()) {
+            throw new Error(unreadableScenariosMessage(), { cause: e });
+          }
         }
       }
     } catch (err: any) {

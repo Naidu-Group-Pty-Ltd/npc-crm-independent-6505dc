@@ -1116,8 +1116,10 @@ jobs:
           grep -q '/Outlines' /tmp/bc.qdf.pdf || {
             echo "the report opens with an empty bookmarks pane"; exit 1;
           }
-          # Fourteen entries on this document: one per chapter, plus each
-          # chapter's subheads. A floor rather than the exact number, because
+          # Eleven entries on this document, so twelve `/Title`s with the Info
+          # dictionary's: one per chapter, plus each chapter's subheads. Fifteen
+          # until BORROWING_CAPACITY.md §21 (1 Oct 2026) removed "How this was
+          # calculated" and its three steps. A floor rather than the exact number, because
           # `grep` also counts the Info dictionary's own `/Title` and the
           # fixture is allowed to grow — but a count rather than a presence
           # check, because the first version of the stylesheet rule emitted the
@@ -1155,9 +1157,15 @@ jobs:
             printf '%s' "$EMBEDDED" | grep -q "$face" \
               || { echo "$face not embedded in the report"; exit 1; }
           done
-          # The document the fixture describes is ten pages. A migration
+          # The document the fixture describes is eight pages. A migration
           # that drops the audit trail changes nothing a unit test sees, and
           # changes this.
+          #
+          # Ten until BORROWING_CAPACITY.md §21 (1 Oct 2026): the engine's own
+          # explanation, "How this was calculated", is no longer a section (it
+          # restated the working above it in a log's shorthand), and the basis
+          # now shares the audit trail's page. Every other section and all three
+          # scenarios are still drawn; measured on WeasyPrint 69.0, 10 -> 8.
           #
           # Twelve until BORROWING_CAPACITY.md §16 (28 Sep 2026): the sections
           # after the first run on rather than each opening a page, and the
@@ -1171,7 +1179,7 @@ jobs:
           # each invented for themselves, which is a page across a document of
           # this length. Recorded because the next person to see this number
           # move should know whether it moved for a reason.
-          pdfinfo /tmp/bc.pdf | grep -E '^Pages: +10$' || {
+          pdfinfo /tmp/bc.pdf | grep -E '^Pages: +8$' || {
             echo "unexpected page count:"; pdfinfo /tmp/bc.pdf | grep Pages; exit 1;
           }
 

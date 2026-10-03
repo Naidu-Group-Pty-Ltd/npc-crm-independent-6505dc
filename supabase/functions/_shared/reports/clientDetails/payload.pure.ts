@@ -236,3 +236,26 @@ export interface ClientDetails {
   properties: readonly PropertyRow[];
   position: Position;
 }
+
+/**
+ * Whether the record holds anything financial at all — the one rule the
+ * document, its summary and the fifty template designs read.
+ *
+ * Not `netWorth !== 0`: a property worth exactly what is owed on it has a net
+ * worth of zero and a great deal recorded. And income counts on its own: a
+ * client whose only row is a pension has something recorded. The renderer and
+ * the template projection used to answer this two different ways — one from the
+ * totals, one from the rows, neither from income — so a pension-only record was
+ * "empty" on one surface and not the other.
+ */
+export function recordHoldsFinancials(
+  d: Pick<ClientDetails, 'employment' | 'assets' | 'liabilities' | 'expenses' | 'properties' | 'ownerOccupied' | 'income'>,
+): boolean {
+  return d.employment.length > 0
+    || d.assets.length > 0
+    || d.liabilities.length > 0
+    || d.expenses.length > 0
+    || d.properties.length > 0
+    || d.ownerOccupied !== null
+    || d.income.totalMonthly.value > 0;
+}

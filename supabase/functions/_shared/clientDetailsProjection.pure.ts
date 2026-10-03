@@ -74,6 +74,7 @@ import type {
   PropertyRow,
   AddressPeriod,
 } from './reports/clientDetails/payload.pure.ts';
+import { recordHoldsFinancials } from './reports/clientDetails/payload.pure.ts';
 import { formatMeasure } from './reportDesign/measure.pure.ts';
 
 /** What the masters draw, per collection. See the header for the measurements. */
@@ -423,14 +424,11 @@ export function projectClientDetails(details: ClientDetails): ProjectedClientDet
    *
    * Deliberately not `position.netWorth > 0`: a client can hold a property
    * worth exactly what is owed on it, and a client with only liabilities has a
-   * negative net worth and a great deal recorded.
+   * negative net worth and a great deal recorded. The rule is the document's
+   * own (`recordHoldsFinancials`), so a record cannot be empty in one and not
+   * the other.
    */
-  out.hasFinancials = d.employment.length > 0
-    || d.assets.length > 0
-    || d.liabilities.length > 0
-    || d.expenses.length > 0
-    || d.properties.length > 0
-    || d.ownerOccupied !== null;
+  out.hasFinancials = recordHoldsFinancials(d);
 
   const client: Record<string, unknown> = {};
   // The one migrated format whose source table genuinely carries a client.

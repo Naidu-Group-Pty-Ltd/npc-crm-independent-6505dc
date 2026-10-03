@@ -181,6 +181,44 @@ describe('direction', () => {
       auditDirection(entry({ category: 'policy', action: 'lender_profile_selected', impact: 'neutral' })),
     ).toBe('neutral');
   });
+
+  /**
+   * §21. The engine stores a negatively geared property's shortfall as a
+   * POSITIVE monthly cost — `Math.abs(net_monthly_cashflow)` — and adds it to
+   * living expenses. The table read it as the signed cash flow, so every
+   * Snapshot with such a property said the shortfall increased what the client
+   * could borrow.
+   */
+  it('calls a property\'s shortfall adverse — it is a cost added to expenses', () => {
+    expect(
+      auditDirection(entry({
+        category: 'property',
+        action: 'negative_cf_layered',
+        rawValue: 0,
+        assessedValue: 1_150,
+        impact: 'increase',
+        delta: 1_150,
+      })),
+    ).toBe('adverse');
+  });
+
+  /**
+   * §21. The stress test reads what the same surplus repays at a higher rate.
+   * The capacity the document states is the unstressed one, so the row moves
+   * nothing and says so.
+   */
+  it('leaves the stress test uncoloured — it is a reading, not an adjustment', () => {
+    expect(
+      auditDirection(entry({
+        category: 'constraint',
+        action: 'stress_test_applied',
+        rawValue: 441_146,
+        assessedValue: 405_510,
+        impact: 'decrease',
+        delta: -35_636,
+      })),
+    ).toBe('neutral');
+  });
 });
 
 // ── Coverage against the engine ─────────────────────────────────────────────
@@ -297,6 +335,23 @@ describe('coverage against calculate-borrowing-capacity', () => {
         + 'polarity for. They would render grey and unitless in a client\'s report. '
         + 'Add them to UNITS and POLARITY.',
     ).toEqual([]);
+  });
+
+  /**
+   * The sign the shortfall's polarity rests on, read from the engine rather
+   * than assumed: `negative_cf_layered` records `ncf.monthlyCashflow`, which
+   * `calculateNegativePropertyCashFlows` sets to the ABSOLUTE value of a
+   * negative cash flow. If the engine ever records the signed figure, this
+   * fails and the polarity has to be read again (§21).
+   */
+  it('records a property\'s shortfall as a positive cost', () => {
+    const fn = source.slice(
+      source.indexOf('function calculateNegativePropertyCashFlows'),
+      source.indexOf('function calculateLiabilityBreakdown'),
+    );
+    expect(fn).toContain('const absoluteCashflow = Math.abs(netMonthlyCashflow);');
+    expect(fn).toContain('monthlyCashflow: absoluteCashflow,');
+    expect(source).toMatch(/audit\.add\('property', 'negative_cf_layered', [^\n]*, 0, ncf\.monthlyCashflow,/);
   });
 
   it('carries no entry the engine has stopped emitting', () => {

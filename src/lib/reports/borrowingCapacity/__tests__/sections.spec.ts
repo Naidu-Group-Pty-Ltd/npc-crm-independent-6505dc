@@ -10,7 +10,7 @@ import { describe, expect, it } from 'vitest';
 import { REPORT_ARCHETYPES, spinePageBudget, validateSpine } from '@/lib/reportDesign/structure.pure';
 
 import { buildSnapshot } from '../normalise.pure';
-import { snapshotSections, snapshotSpine, validateSnapshotSpine } from '../sections.pure';
+import { incomeSectionNote, snapshotSections, snapshotSpine, validateSnapshotSpine } from '../sections.pure';
 import {
   SAMPLE_ASSESSMENT,
   SAMPLE_AUDIT_TRAIL,
@@ -33,10 +33,20 @@ describe('sections', () => {
     expect(snapshotSections(minimal).map((s) => s.id)).toEqual(['capacity', 'income', 'ledger']);
   });
 
-  it('adds the conditional four when their data exists', () => {
+  it('adds the conditional three when their data exists', () => {
     expect(snapshotSections(full).map((s) => s.id)).toEqual([
-      'capacity', 'income', 'ledger', 'explanation', 'audit', 'scenarios', 'basis',
+      'capacity', 'income', 'ledger', 'audit', 'basis', 'scenarios',
     ]);
+  });
+
+  /**
+   * §21. The engine's explanation restated the working step for step, in a
+   * log's shorthand, with its DTI over the wrong income. It is still read into
+   * the payload (the template catalogue binds it) and is no longer a section.
+   */
+  it('prints no section for the engine\'s explanation, though the payload carries one', () => {
+    expect(full.explanation).not.toBeNull();
+    expect(snapshotSections(full).map((s) => s.title)).not.toContain('How this was calculated');
   });
 
   it('gives every section a title, a note and a positive budget', () => {
@@ -50,6 +60,39 @@ describe('sections', () => {
   it('uses each id once', () => {
     const ids = snapshotSections(full).map((s) => s.id);
     expect(new Set(ids).size).toBe(ids.length);
+  });
+});
+
+/**
+ * §21. One standfirst served every document, and a client with no income and
+ * no liabilities read a promise of two tables over a callout and two figures.
+ * Each half is said only where its table is drawn.
+ */
+describe('the income section\'s standfirst', () => {
+  const noLiabilities = { ...full, expenses: { ...full.expenses, liabilities: [], capitalisedLmi: null } };
+  const noLines = { ...full, income: { ...full.income, rows: [], proposedRent: null } };
+  const noIncome = { ...full, income: { ...full.income, recorded: false } };
+
+  it.each([
+    ['income lines and liabilities', full,
+      'Every income component with its shading, and every liability with its servicing.'],
+    ['income lines and no liability', noLiabilities,
+      'Every income component with its shading, and the expenses and commitments set against it.'],
+    ['an income with no lines', noLines,
+      'The income the assessment ran on, and every liability with its servicing.'],
+    ['no income and liabilities', noIncome,
+      'The living expenses the assessment applied, and every liability with its servicing.'],
+    ['no income and no liability', { ...noIncome, expenses: noLiabilities.expenses },
+      'The living expenses and commitments the assessment applied.'],
+  ])('says what is drawn for %s', (_label, payload, note) => {
+    expect(incomeSectionNote(payload)).toBe(note);
+    expect(snapshotSections(payload).find((s) => s.id === 'income')?.note).toBe(note);
+  });
+
+  it('counts a capitalised premium as a liability, because the table lists it', () => {
+    expect(full.expenses.capitalisedLmi).not.toBeNull();
+    const premiumOnly = { ...full, expenses: { ...full.expenses, liabilities: [] } };
+    expect(incomeSectionNote(premiumOnly)).toContain('every liability with its servicing');
   });
 });
 
@@ -87,16 +130,20 @@ describe('spine', () => {
   );
 
   /**
-   * The budgets are not decoration: a real render of the full fixture through
-   * WeasyPrint is ten pages — in the standard design and in all fifty
-   * catalogue designs, measured 28 Sep 2026 — and the spine claims ten. The
-   * sections run on under one another since §16, so a budget is the share of
-   * a page run a section takes, not a page count of its own. The golden diff
-   * pins the actual count; this pins the claim, so the two can disagree
-   * loudly rather than silently.
+   * The budgets are not decoration. Measured through WeasyPrint on 1 Oct 2026,
+   * at the end of §21's audit:
+   *  - with an advisor card on one of its scenarios, this fixture is nine
+   *    pages in the standard design and in all fifty catalogue designs;
+   *  - without one, as built here, it is eight in the standard design and in
+   *    46 of the 50, and nine in the four `wm` designs, whose taller section
+   *    headers hold the settings table over.
+   * The spine claims nine, the fuller document. The sections run on under one
+   * another since §16, so a budget is the share of a page run a section takes,
+   * not a page count of its own. This pins the claim, so the claim and a
+   * measurement can disagree loudly rather than silently.
    */
-  it('claims the ten pages the full fixture actually renders', () => {
-    expect(spinePageBudget(snapshotSpine(full))).toBe(10);
+  it('claims the nine pages the fixture renders with an advisor card', () => {
+    expect(spinePageBudget(snapshotSpine(full))).toBe(9);
   });
 
   it('reports a problem rather than throwing on a spine that breaks its archetype', () => {

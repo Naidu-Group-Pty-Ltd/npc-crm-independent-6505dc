@@ -741,3 +741,163 @@ damaged rows included.
 the file from `main`. The next comparison generated after both are live prints
 both sections. Comparisons generated before that stay as they were until they
 are run again.
+
+## 15 · Audit 8: the comparison read as a client reads it (1 Oct 2026)
+
+Audit 8 of the owner's report programme. It covers both comparisons. The Cash
+Flow Comparison's half is `CASH_FLOW_COMPARISON.md` §14.
+
+**How it was measured.** Each format was drawn the way its route draws it: the
+normaliser over a stored-shape row, then `renderComparisonFromBrand` with the
+prime's brand snapshot and disclaimer. That was done at two, three and five
+properties, in the standard layout and all 50 catalogue designs (153
+documents), through WeasyPrint 69.0 with the production options (`pdf/ua-1`,
+sRGB, tagged). Every page was measured from the engine's own box tree. The rows
+are representative fixtures in the producer's shape, not production replays,
+so this is a development measurement and not production acceptance.
+
+| Properties | Pages (51 documents) | Pages more than a quarter empty | Mean fill | Pages past the edge |
+|---|---|---|---|---|
+| 2 | 754 → 669 | 123 → 51 | 87.3% → 89.3% | 0 → 0 |
+| 3 | 862 → 787 | 115 → 21 | 87.5% → 89.0% | 0 → 0 |
+| 5 | 1,020 → 958 | 60 → 5 | 89.0% → 90.1% | 1 → 0 |
+
+The two-property part-empty count is explained under *A heading is never left
+at the foot of a page*. It is the one figure that rose, and it rose on purpose.
+
+### What the page said, and what it says now
+
+**The memo sections.** Each section is a memo section now
+(`MEMO_CHAPTER_CLASS`), like the Hub's, the Portfolio's, the Snapshot's and the
+Client Details'. Before, a 31pt chapter title stood over sections of three short
+paragraphs, a third of a page tall. Under it, subheads were set at 20pt, and they
+are now at h3's size (`SECTION_SUBHEAD_CLASS`). The model's summary is set as the
+paragraphs it wrote (`paragraphsFromWrapped`), not one block.
+
+**The scorecard is the shared portrait matrix.** It carried a copy of its own
+"until it is audited" (`portraitMatrix.pure.ts`'s header said so), and there:
+- each street head was set on one line, in tracked capitals and numbered
+  ("5. 5 TALLAWONG AVENUE"), and at five properties the fourth and fifth
+  columns ran past the sheet's edge in the standard design, by 71pt and 248pt
+  (the baseline's one overflow page);
+- the section opened on a key table, "The properties, numbered as they appear
+  overleaf", that restated the ranking directly above it;
+- each column was numbered by the order the properties were entered, so "1."
+  stood over the property ranked third.
+
+It is `renderPortraitMatrix` now, headed by the street alone, with heads that
+wrap.
+
+**The category donut counts what the scorecard counts.**
+- **Highest risk is not a win.** It names the property that came off worst, and
+  the scorecard beside the chart leaves it out for that reason. The chart
+  counted it, so one page read 6, 2 and 3 of 11 in the legend over ticks reading
+  6, 2 and 2 of 10. It counts positive categories only.
+- **Counts, not shares.** The legend prints counts (`legend: 'given'`) and the
+  centre reads "6/10 won by the leader", where it read "55% to the leader".
+- **The whole field.** Every property is in the key, one that won nothing at
+  "0 of 10", and an undecided category is its own "No clear winner" segment. A
+  property that led on nothing used to be dropped from the key, which implied a
+  smaller field than the one compared.
+
+**The ranking caption is in points.** "First and last are 13.0 apart, out of
+100" printed a decimal the scores never had and no unit. It reads "First and
+last are 13 points apart on a 100-point scale", and "close to a tie on this
+measure" where they are within 5% of the scale.
+
+**A property is named once.** The analysis usually opens a reason with the
+property it is about, so the bold address set in front of it printed the name
+twice in one line: "37 Bolin Street, Schofields NSW 2762. 37 Bolin Street is the
+alternative for…". The address now leads only a reason that does not already
+contain the street (`lead`, in the runners-up, the properties to avoid, the exit
+strategies, the alternative scenarios and the named sidenotes).
+
+**Words, not labels.** The sidenotes "Working" and "Watch" read "In its favour"
+and "To watch". "Assessed Moderate." took the record's capital into the middle
+of a sentence the ranking section had already written in lower case. It reads
+"Risk assessed as moderate."
+
+**The basis states settings, not identifiers.**
+- **The model.** "Analysed by google/gemini-2.5-flash" was a vendor's model
+  identifier on a client's page, on every production comparison. It is not
+  printed. What it stood for, that a model wrote the ranking, is said in words on
+  every comparison, whether or not the record names the model: a "Written by AI"
+  callout says the ranking, the scores and the reasons were written by an AI
+  analysis of the properties' investment reports on that date, and that each
+  report is the record for any figure it states.
+- **The settings.** They read as settings: "Moderate", not the stored
+  "moderate"; "5–7 years", not "5-7 years" (`settingText`). "Depth" reads
+  "Analysis depth".
+
+**Model text is cut at a word.** `text()` capped the model's prose with a bare
+`.slice`, so a reason could end on a client's page part-way through a word with
+nothing to say it had been cut. It cuts at a word and closes with an ellipsis
+(`truncateAtWord`, `text.pure.ts`), the rule the 10 Year Cash Flow's notes took
+in Audit 7, now in one place.
+
+**A heading is never left at the foot of a page.** A property's score line
+("Scored 81.5 / 100, with risk assessed as low to moderate.") is the second line
+of its heading. A heading keeps only the box after it (`css.pure.ts` says why
+nothing more), so the heading and its score kept each other and nothing else.
+
+Once the scorecard stopped taking a page of its own, 20 of the 51 two-property
+documents ended page four on the section header, the first property's heading
+and its score, with everything about the property overleaf. The score line
+refuses the break after itself now (`SCORE_LINE_CLASS`). The section opens at
+the head of page five, and nothing is stranded in any of the 153 documents.
+
+Those 20 pages now end with the scorecard and the white space the stranded
+heading stood in. That is why the two-property part-empty count reads 51
+where it read 31 before this rule. The page count is unchanged. The sections
+run on, so the kept group can never be a chapter's tail on a sheet of its own,
+which is the case `css.pure.ts` records against a wider keep.
+
+**The legacy download is named as the comparison.** "Download the AI-written
+report" borrows the Investment report's pdf-lib drawer. It saved as `Investment
+Compass - <the comparison's title> - 1 Oct 2026.pdf`, which is another
+document's name with a title standing where the address goes. Its flattened
+copy saved as `<the title>-flattened.pdf`. The drawer takes a `downloadFileName`
+now, set in `drawOnly` so the hand-over `legacyPathStays.spec.ts` pins is
+unchanged. The comparison passes its own:
+`Property Comparison - legacy layout - <the properties> - 1 Oct 2026.pdf`
+(`COMPARISON_LEGACY_QUALIFIER`). The flatten button adds its own word to that.
+The investment default for the drawer's flatten is the investment report's
+readable name, where it was the bare address.
+
+**A flattened copy says "flattened" once.** `withFlattenedSuffix` adds
+"-flattened" to whatever name it is handed. Audit 7 passed "flattened" as the
+10 Year Cash Flow's filename qualifier as well, which named the copy
+`10 Year Cash Flow - flattened - … - 1 Oct 2026-flattened.pdf`. The callers
+name the document they flatten now, and the helper does not say the word twice
+(`flattenPdf.test.ts`).
+
+### Not changed
+
+- **The AI generation.** The prompt, the schema, the model and the formatter
+  are unchanged, as the owner requires (§14). The legacy layout is the same
+  document under a new file name.
+- **The attribution rule.** Nothing the model attributed by its
+  `propertyNumber` is newly attributed (§3). The donut and the scorecard read the
+  same pointers they always read.
+
+### Recorded and left
+
+**A section that opens on a table kept whole** can leave the page before it
+part empty. A comparison's tables are short and kept whole (`.table-block`),
+and the header holds to the table. Splitting a ten-row table to fill a page
+reads as two tables. This is the same class Audits 2, 5 and 7 recorded.
+
+**Tests.** `charts.spec.ts` is new: the ranking caption in points, the donut
+counting positive categories only, the whole field at its counts, and no
+shares. `render.spec.ts` covers:
+- the subhead class;
+- the scorecard with no key and no numbered columns;
+- a property named once;
+- the sidenote words and the risk sentence;
+- paragraphs;
+- the legacy download's name.
+
+`legacyPathStays.spec.ts` pins that the comparison hands the drawer its own name
+without changing the hand-over. The helper's file name was also tested against
+itself (`'…'.length > 0 ? comparisonFileName(…) : ''`), which held whatever the
+name was. It states the name now.

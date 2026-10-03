@@ -13,6 +13,16 @@
  * means the answer to "how do I get this PDF" is the same wherever you are, and
  * that the legacy option cannot be present on three of them and missing from the
  * fourth.
+ *
+ * ## The choice beside the act (1 Oct 2026)
+ *
+ * The split appearance draws "Choose template" as a button of its own before
+ * "Export PDF" (`ChooseTemplateButton`), as the Intelligence Hub, the Portfolio
+ * Performance Review and both comparisons do (BORROWING_CAPACITY.md §21): the
+ * template is the one decision a person makes before exporting, so it sits on
+ * the surface rather than at the foot of a menu, and the act is named the way
+ * every other format names it. The menu appearance — a card header or a row
+ * with room for one icon — keeps it in its menu.
  */
 import type { ReactNode } from 'react';
 import { useState } from 'react';
@@ -21,6 +31,7 @@ import { toast } from 'sonner';
 
 import { Button } from '@/components/ui/button';
 import { useReportTemplateMenu } from '@/components/reports/useReportTemplateMenu';
+import { ChooseTemplateButton } from '@/components/reports/ChooseTemplateButton';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -85,7 +96,7 @@ export interface SnapshotDownloadButtonProps {
 export function SnapshotDownloadButton({
   request,
   legacy,
-  label = 'Download snapshot',
+  label = 'Export PDF',
   legacyLabel = 'Download (legacy layout)',
   legacyHint,
   variant = 'outline',
@@ -143,7 +154,7 @@ export function SnapshotDownloadButton({
         <div className="flex flex-col">
           <span>{label}</span>
           <span className="text-xs text-muted-foreground">
-            Typeset server-side, on your branding
+            In your chosen template, from the saved assessment
           </span>
         </div>
       </DropdownMenuItem>
@@ -156,7 +167,7 @@ export function SnapshotDownloadButton({
           </span>
         </div>
       </DropdownMenuItem>
-      {template.section}
+      {appearance === 'menu' && template.section}
     </DropdownMenuContent>
   );
 
@@ -186,13 +197,21 @@ export function SnapshotDownloadButton({
   }
 
   return (
-    <div className={cn('inline-flex items-stretch', className)}>
+    <div className={cn('inline-flex flex-wrap items-stretch gap-2', className)}>
+      <ChooseTemplateButton
+        reportType="borrowing_capacity"
+        formatLabel="Borrowing Capacity Snapshot"
+        size={size}
+        variant={variant}
+        disabled={disabled || busy}
+      />
+      <div className="inline-flex flex-1 items-stretch">
       <Button
         variant={variant}
         size={size}
         disabled={disabled || busy}
         onClick={() => run('server')}
-        className="rounded-r-none"
+        className="flex-1 rounded-r-none"
       >
         {running === 'server'
           ? <Loader2 className="mr-1.5 h-3.5 w-3.5 animate-spin" />
@@ -216,7 +235,7 @@ export function SnapshotDownloadButton({
         </DropdownMenuTrigger>
         {choices}
       </DropdownMenu>
-      {template.dialog}
+      </div>
     </div>
   );
 }

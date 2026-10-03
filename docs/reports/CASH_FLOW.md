@@ -149,9 +149,12 @@ did this report say".
 
 ### The filename
 
-`Cash_Flow_Analysis_<Address>_<YYYY-MM-DD>.pdf`. The `[^a-zA-Z0-9]` → `_` rule is
-the existing one from `CashFlowAnalysisModal`, kept exactly; the date is appended
-so a client who receives two revisions of the same property can tell them apart.
+`10 Year Cash Flow Analysis - <address> - 01 Oct 2026.pdf`, through
+`readableFileName`, the rule every report's download follows (§12). It was
+`Cash_Flow_Analysis_<Address>_<YYYY-MM-DD>.pdf` until 1 Oct 2026. The date still
+lets a client who receives two revisions of the same property tell them apart.
+The storage key is the same name made URL-safe (`storageSafeFileName`), because
+a key travels in signed URLs.
 
 ---
 
@@ -468,3 +471,131 @@ opener's full padding (`cf-onepage`), and each block is held whole
 (`break-inside: avoid`). A change to either chart's height, or to what the
 section holds, has to be re-measured in WeasyPrint rather than assumed.
 `growthOnePage.spec.ts` pins the markup the measurement depends on.
+
+---
+
+## 12. Audit 7: nothing cut, one name per figure, the choice beside the act (1 Oct 2026)
+
+The document was drawn in WeasyPrint 69.0 with the render service's options,
+in the standard design and all 50 catalogue designs, for four cases:
+
+- established;
+- new build on a 12-month schedule;
+- new build on a 24-month schedule;
+- a term that turns cash-positive.
+
+That is 204 documents, read from the engine's own box tree.
+
+The layout was already sound from the 28 Sep work:
+
+- 357, 408, 408 and 357 pages across the four cases;
+- no body page more than a quarter empty;
+- no overflow, no wrapped foot, no split table.
+
+So most of what changed is content, consistency and the export surface. The
+two exceptions are a caveat that could be cut mid-sentence and a latent layout
+defect.
+
+**A caveat could be cut mid-sentence.** `buildProjection` read every note
+through the 240-character `slice` that every other text field shares. The tax
+note at its longest (a 47% rate the adviser entered) was 238 characters, so any
+longer wording was cut silently. The first render of this audit printed "…and
+must be confirmed" with "with an accountant" gone. Notes now have their own
+bound, `MAX_NOTE_CHARS` (600). That is more than twice the longest note the
+browser composes, which is 264 characters. A note past the bound is cut at a
+word and ends in an ellipsis. `readBaseFinancials.spec.ts` holds every variant
+`evidenceBasisNotes` can compose to half the bound, and requires each to pass
+through `buildProjection` unchanged.
+
+**The last section could leave its caution alone on a page.** At the full
+chapter opener, "What this assumes" held the table, three notes and the caution
+with a line or two to spare. An export with depreciation excluded sends a fourth
+note. Measured with the code before this audit, that four-note export put "These
+are projections" alone on an extra page in 37 of 51 designs. That was 394 pages
+against 357, with 37 pages more than a quarter empty and the worst 89% empty.
+
+The section is now `onePage`, opened at 6 mm as "Value, debt and equity" is.
+The four-note export at its longest wording is one page in all 51 designs, in
+both the established and the new-build case. The ordinary three-note export
+draws exactly the page counts it drew before, with no body page more than a
+quarter empty. `growthOnePage.spec.ts` pins the markup.
+
+**"Not held" said the opposite of the caution.** The land-tax note ended "…the
+owner's aggregate taxable landholdings in the state, which are not held". "Held"
+is the word land ownership itself uses, so a client could read it as "the owner
+holds no other land". Both the land-tax note and the tax note beside it now say
+what "was not provided for this analysis". The cost note says "the figures as
+entered on the report" rather than "the report record". `evidenceBasisNotes` is
+the one wording, so the screen, the jsPDF export and the typeset document change
+together.
+
+**One figure, one name.** The Input Summary called four figures "Capital growth
+rate", "CPI growth rate", "Tax rate (MTR)" and "Rent basis". The assumptions
+table on the last page called the same four "Capital growth", "Expense inflation
+(CPI)", "Marginal tax rate" and "Occupancy". `toAssumptions` now uses the Input
+Summary's names.
+
+**The subhead was the largest type on its page.** "Year one, line by line" was
+set at the display subhead size, 17pt in the standard design. It sat on a page
+of three captioned tables and read as a second section title. It now carries
+`SECTION_SUBHEAD_CLASS`. The shared stylesheet sizes that class at h3 (14pt in
+the standard design) inside a chapter body, as it already did inside a memo. It
+is still level 2 in the outline.
+
+**A caution pointed at nothing.** The growth section's caution said "the capital
+growth line above it". Since §11 it sits beside the end-of-term table, so it now
+says "its capital growth over the term".
+
+**The filename is readable** (§5). The legacy copy is qualified "legacy layout",
+so it never shares a name with the typeset document in one folder. The
+flattened copy is of the legacy layout and carries the same name plus the
+"-flattened" the flatten button adds. (Audit 8 found this first passing
+"flattened" as the qualifier as well, which named the file
+`10 Year Cash Flow - flattened - … - 1 Oct 2026-flattened.pdf`.) The Excel
+workbook takes the same name.
+
+**The choice sits beside the act.** "Choose template" used to be an item inside
+the export menu. On a phone that menu is itself inside "More", so the picker was
+opened from inside a menu. It is now a button in the header row, beside the
+export, at every width, as on every other report. The menu items read "Export
+PDF", "Export PDF (legacy layout)" and "Export flattened PDF".
+
+The menu's chart switches had said they controlled "PDF outputs", but only the
+legacy generator reads them; the typeset Export PDF draws its own charts. They
+are now "Legacy layout options", and `render.spec.ts` checks that the typeset
+export reads none of them.
+
+The Send to Client dialog, which the Cash Flow shares with the Investment page,
+badged every send "Investment Report", a Cash Flow included. It called the
+Compass "Investor's Compass", a name no document carries, and pointed at a
+"Generate PDF" button that both pages now call "Export PDF". It now names the
+document being sent: "10 Year Cash Flow Analysis", or the tier's title from
+`tierIdentity.pure.ts`. The change is display only, and the title the portal
+stores is still the caller's.
+
+The header was driven in Chromium at 390, 820 and 1440 px. At every width the
+controls sit on one row with no horizontal scroll, and the picker opens and
+stays open. The send dialog was drawn for a Cash Flow, a Compass and a Due
+Diligence Report.
+
+Four things were looked at and kept:
+
+- **The case-inputs fingerprint row** (QA-02).
+- **The "Not stated" land and build rows** (QA-13). The legacy export prints
+  them too.
+- **The assumptions table.** It is a recap with no legacy counterpart, so it
+  changes no parity.
+- **The projection's "Capital growth" and "CPI growth" rows.** They are the
+  legacy table's own row labels for the yearly rate, in its order (§9).
+  `legacyParity.spec.ts` pins them, and a matrix row that reads a percentage in
+  every cell is not mistaken for a dollar gain.
+
+Two things remain unverified:
+
+- **No production render.** Every measurement here is local WeasyPrint 69.0 with
+  production options, against fixtures in the shape the browser sends. That is
+  not a production acceptance. The first export after `render-cash-flow-pdf`
+  deploys is the proof.
+- **How often depreciation is excluded.** That would need a database read this
+  work was not authorised to make.
+

@@ -99,7 +99,7 @@ export function comparisonSections(p: CashFlowComparison): ComparisonSection[] {
     {
       id: 'cash-flow-matrix',
       title: `${p.meta.termYears} years of cash flow`,
-      note: 'What each property costs or returns, year by year, and cumulatively.',
+      note: 'What each property costs or returns, year by year and in total.',
       pageBudget: WIDE_SECTION_PAGES,
       wide: true,
     },
@@ -113,7 +113,9 @@ export function comparisonSections(p: CashFlowComparison): ComparisonSection[] {
     {
       id: 'measures',
       title: 'The measures side by side',
-      note: 'Return, yield and how long each takes to repay what it cost to buy.',
+      // "Repay what it cost to buy" misstated the measure: the payback year is
+      // when the after-tax cash flow, added up, turns positive (Audit 8).
+      note: 'Return, yield, and when each repays what it cost to hold.',
       pageBudget: 2 + crowded,
     },
   ];
@@ -122,7 +124,7 @@ export function comparisonSections(p: CashFlowComparison): ComparisonSection[] {
     sections.push({
       id: 'analysis',
       title: 'What the analysis found',
-      note: 'The written comparison, against the figures in the tables above.',
+      note: 'The written comparison, read against the calculated figures.',
       pageBudget: 2,
     });
   }
@@ -165,7 +167,7 @@ export function comparisonSections(p: CashFlowComparison): ComparisonSection[] {
   sections.push({
     id: 'basis',
     title: 'On what basis',
-    note: 'The assumptions behind every figure above, per property.',
+    note: 'The assumptions behind every figure, property by property.',
     // One assumptions table per property, so this is the other section that
     // grows with the count.
     pageBudget: 2 + crowded,

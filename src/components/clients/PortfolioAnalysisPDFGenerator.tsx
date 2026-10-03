@@ -1,7 +1,26 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
+import { useQueryClient } from '@tanstack/react-query';
 import { Button } from '@/components/ui/button';
-import { FileText, Loader2, Download, TrendingUp, AlertTriangle, CheckCircle, Landmark, Shield, AlertCircle } from 'lucide-react';
+import { FileText, Loader2, Download, TrendingUp, AlertTriangle, CheckCircle, Landmark, Shield, AlertCircle, ChevronDown, FileDown, Sparkles } from 'lucide-react';
 import { toast } from 'sonner';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { ChooseTemplateButton, chosenTemplateLine } from '@/components/reports/ChooseTemplateButton';
+import { useReportTemplateSelection } from '@/hooks/useReportTemplateSelection';
+import { PORTFOLIO_REPORT_LABEL } from '@/lib/reports/portfolio/label';
+import {
+  asSentence,
+  exportAnalysisInTemplate,
+  indexAnalysisFile,
+  portfolioAnalysisRow,
+  recordAnalysisFile,
+  type SavedPortfolioAnalysis,
+} from '@/lib/reports/portfolio/saveAnalysis';
 import { logReportRenderEvent } from '@/lib/reports/renderEvent';
 import { invokeSecureFunction } from '@/lib/secureInvoke';
 import { secureStorageUpload } from '@/hooks/useSecureStorage';
@@ -471,8 +490,31 @@ export function PortfolioAnalysisPDFGenerator({
   const [analysisData, setAnalysisData] = useState<PortfolioAnalysisData | null>(null);
   const [showPreview, setShowPreview] = useState(false);
   const [isDownloading, setIsDownloading] = useState(false);
+  const [isExporting, setIsExporting] = useState(false);
+  /**
+   * The report this analysis was saved as, once either export has saved it.
+   * One analysis is one row however many times it is exported: a retry, a
+   * second template or the legacy layout afterwards all reuse it
+   * (`saveAnalysis.ts`).
+   */
+  const [savedReport, setSavedReport] = useState<SavedPortfolioAnalysis | null>(null);
   const { addNotification } = useNotifications();
   const { settings: brand } = useBrand();
+  const queryClient = useQueryClient();
+  // Which template Export PDF draws in, said beside the button that uses it.
+  const { state: templateState } = useReportTemplateSelection('portfolio');
+  const exportBusy = isExporting || isDownloading;
+  /**
+   * Claimed synchronously by either export before its first await, so a second
+   * click that lands before the disabled state renders cannot start a second
+   * save — which would make one analysis two rows.
+   */
+  const exportInFlight = useRef(false);
+
+  /** Every list of this client's portfolio reports reads again: a report was saved or changed. */
+  const refreshSavedReports = () => {
+    void queryClient.invalidateQueries({ queryKey: ['portfolio-analysis-reports', clientId] });
+  };
 
   const generateAnalysis = async () => {
     setIsGenerating(true);
@@ -501,10 +543,12 @@ export function PortfolioAnalysisPDFGenerator({
       if (error) throw error;
       if (!data?.success) throw new Error(data?.error || 'Analysis failed');
 
+      // A new analysis is a new report: nothing an earlier one saved is reused.
+      setSavedReport(null);
       setAnalysisData(data);
       setShowPreview(true);
-      toast.success('Analysis ready. Click "Download & Save PDF" to store it in Reports.');
-      
+      toast.success('Analysis ready. Choose a template, then Export PDF to save it to Reports.');
+
     } catch (error: any) {
       console.error('Portfolio analysis error:', error);
       toast.error('Failed to generate analysis: ' + error.message);
@@ -513,9 +557,96 @@ export function PortfolioAnalysisPDFGenerator({
     }
   };
 
+  /**
+   * The dialog's primary act: save the analysis and export it in the chosen
+   * template (`saveAnalysis.ts`). The analysis is sent as it was generated and
+   * nothing in it is rewritten. The legacy layout is the menu's named
+   * alternative, never a fallback taken here.
+   */
+  const exportInChosenTemplate = async () => {
+    if (!analysisData || exportBusy || exportInFlight.current) return;
+    exportInFlight.current = true;
+    setIsExporting(true);
+    try {
+      const outcome = await exportAnalysisInTemplate({
+        clientId,
+        analysis: analysisData,
+        saved: savedReport,
+      });
+      if (outcome.saved) {
+        setSavedReport(outcome.saved);
+        refreshSavedReports();
+      }
+
+      if (outcome.failure?.stage === 'save') {
+        toast.error('The analysis could not be saved to Reports', {
+          description: `${asSentence(outcome.failure.message)} Nothing was exported.`,
+        });
+        return;
+      }
+      if (outcome.failure?.stage === 'render') {
+        toast.error('The analysis is saved to Reports, but its PDF could not be produced', {
+          description: `${asSentence(outcome.failure.message)} Try Export PDF again, or choose Export PDF (legacy layout) from the menu beside it.`,
+          duration: 12_000,
+        });
+        return;
+      }
+      if (outcome.failure?.stage === 'record') {
+        toast.warning('The PDF downloaded, but it is not attached to the saved report yet', {
+          description: `${asSentence(outcome.failure.message)} Export PDF again to attach it.`,
+          duration: 12_000,
+        });
+        return;
+      }
+
+      const design = templateState?.status === 'selected' && templateState.template?.name
+        ? `in ${templateState.template.name}`
+        : 'in the standard design';
+      if (outcome.delivered?.brandGaps.length) {
+        // Said at the moment someone is about to send it, not buried in a log.
+        toast.warning(`${PORTFOLIO_REPORT_LABEL} saved to Reports, with gaps: ${outcome.delivered.brandGaps.join('; ')}`);
+      } else {
+        toast.success(`${PORTFOLIO_REPORT_LABEL} saved to Reports`, { description: `Exported ${design}.` });
+      }
+      if (outcome.indexError) toast.error('Report saved, but file indexing failed.');
+
+      logActivityDirect({
+        actionType: 'portfolio_report_generated',
+        entityType: 'portfolio_report',
+        entityName: clientName,
+        metadata: {
+          client_id: clientId,
+          persisted: true,
+          include_owner_occupied: includeOwnerOccupied,
+          renderer: 'template',
+          report_id: outcome.saved?.reportId ?? null,
+        },
+      });
+      addNotification({
+        type: 'report_generation_completed',
+        title: 'Portfolio Report Ready',
+        message: `Portfolio Performance Analysis for ${clientName} is ready`,
+        entityId: clientId,
+      });
+      onComplete?.();
+    } catch (error: any) {
+      // `exportAnalysisInTemplate` answers every outcome as a value; this is
+      // only for a fault in what surrounds it.
+      console.error('Portfolio analysis export error:', error);
+      toast.error('Failed to export the analysis: ' + (error?.message ?? 'unknown error'));
+    } finally {
+      exportInFlight.current = false;
+      setIsExporting(false);
+    }
+  };
+
   // ============= PDF GENERATION ENGINE (Phase 1) =============
+  // The legacy layout: drawn in the browser with pdf-lib, offered by name as
+  // "Export PDF (legacy layout)". Its drawing is unchanged; what it saves is
+  // decided at the end, against `savedReport`.
   const downloadPDF = async () => {
-    if (!analysisData || isDownloading) return;
+    if (!analysisData || exportBusy || exportInFlight.current) return;
+    exportInFlight.current = true;
     setIsDownloading(true);
     
     
@@ -3230,7 +3361,35 @@ export function PortfolioAnalysisPDFGenerator({
       const generatedStamp = new Date().toISOString().replace(/[:.]/g, '-');
       const fileName = `Portfolio_Analysis_${clientName.replace(/\s+/g, '_')}_${generatedStamp}.pdf`;
       const storagePath = `portfolio-reports/${clientId}/${fileName}`;
-      
+
+      // Download the PDF locally and release the object URL after the click.
+      const downloadLocally = () => {
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url;
+        a.download = fileName;
+        document.body.appendChild(a);
+        a.click();
+        document.body.removeChild(a);
+        window.setTimeout(() => URL.revokeObjectURL(url), 0);
+      };
+
+      // This analysis is already saved WITH a file: the legacy layout is a
+      // download and nothing more. A second row would put one analysis in
+      // Reports twice, and repointing the saved report at this file would make
+      // the legacy layout the document a client is sent, which is what the
+      // template export exists to stop (`saveAnalysis.ts`).
+      if (savedReport?.filePath) {
+        downloadLocally();
+        toast.success('Legacy layout downloaded', {
+          description: savedReport.renderer === 'template'
+            ? 'The saved report keeps its PDF in your chosen template.'
+            : 'The analysis is already saved to Reports.',
+        });
+        logReportRenderEvent({ format: 'portfolio', engine: 'browser', source: 'portfolio_pdf_lib', reportId: savedReport.reportId, entityName: clientName ?? undefined, extra: { saved: false } });
+        return;
+      }
+
       // Upload PDF to Supabase Storage via the authenticated storage proxy.
       let uploadedFilePath: string | null = null;
       {
@@ -3255,73 +3414,65 @@ export function PortfolioAnalysisPDFGenerator({
         }
       }
       
-      // Download the PDF locally and release the object URL after the click.
-      {
-        const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = fileName;
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        window.setTimeout(() => URL.revokeObjectURL(url), 0);
-      }
-      
+      downloadLocally();
+
       // Save report metadata to database via the canonical secure function.
       let reportPersisted = false;
+      let fileRecorded = false;
       {
         console.log('📊 Saving report metadata to database...');
         try {
-          const { error: insertError } = await invokeSecureFunction('manage-client-data', {
-            operation: 'create',
-            table: 'portfolio_analysis_reports',
-            clientId: clientId,
-            data: {
-              client_id: clientId,
-              client_name: analysisData.clientName,
-              health_score: analysisData.analysis?.executiveSummary?.healthScore || null,
-              overall_health: analysisData.analysis?.executiveSummary?.overallHealth || null,
-              portfolio_value: analysisData.portfolioMetrics?.totalValue || null,
-              total_equity: analysisData.portfolioMetrics?.totalEquity || null,
-              net_monthly_cashflow: analysisData.portfolioMetrics?.netMonthlyCashflow || null,
-              total_properties: analysisData.portfolioMetrics?.totalProperties || null,
-              average_lvr: analysisData.portfolioMetrics?.averageLVR || null,
-              average_yield: analysisData.portfolioMetrics?.averageYield || null,
-              report_data: analysisData as any,
-              pdf_file_path: uploadedFilePath,
-              status: 'completed',
-            }
-          });
-
-          if (insertError) {
-            console.error('Failed to save portfolio_analysis_reports metadata:', insertError);
-            toast.error('PDF downloaded, but failed to save report history.');
-          } else {
+          if (savedReport) {
+            // Saved already, by the template export, whose PDF could not be
+            // produced: this file becomes the saved report's document, since
+            // it has no other. One analysis is never two rows.
             reportPersisted = true;
-            console.log('✓ Report saved to portfolio_analysis_reports with PDF path:', uploadedFilePath);
-
             if (uploadedFilePath) {
-              const { error: fileIndexError } = await invokeSecureFunction('manage-client-data', {
-                operation: 'create',
-                table: 'client_files',
-                clientId,
-                data: {
-                  category: 'report',
-                  file_name: fileName,
-                  file_path: uploadedFilePath,
-                  file_type: 'application/pdf',
-                  file_size: blob.size,
-                  description: `Portfolio Performance Analysis - ${new Date().toLocaleDateString('en-AU')}`,
-                  report_type: 'portfolio',
-                },
-              });
-
-              if (fileIndexError) {
-                console.error('Failed to index report in client_files:', fileIndexError);
-                toast.error('Report saved, but file indexing failed.');
+              const { error: recordError } = await recordAnalysisFile(clientId, savedReport.reportId, uploadedFilePath);
+              if (recordError) {
+                console.error('Failed to attach the PDF to the saved report:', recordError);
+                toast.error('PDF downloaded, but it could not be attached to the saved report.');
               } else {
-                console.log('✓ Report indexed in client_files');
+                fileRecorded = true;
+                setSavedReport({ ...savedReport, filePath: uploadedFilePath, renderer: 'legacy' });
               }
+            }
+          } else {
+            const { data: insertResult, error: insertError } = await invokeSecureFunction('manage-client-data', {
+              operation: 'create',
+              table: 'portfolio_analysis_reports',
+              clientId: clientId,
+              // The one row shape both exports write (`saveAnalysis.ts`), with
+              // this file as its `pdf_file_path`.
+              data: portfolioAnalysisRow(analysisData, clientId, uploadedFilePath),
+            });
+
+            if (insertError) {
+              console.error('Failed to save portfolio_analysis_reports metadata:', insertError);
+              toast.error('PDF downloaded, but failed to save report history.');
+            } else {
+              reportPersisted = true;
+              fileRecorded = Boolean(uploadedFilePath);
+              console.log('✓ Report saved to portfolio_analysis_reports with PDF path:', uploadedFilePath);
+              const reportId = insertResult?.result?.id;
+              if (typeof reportId === 'string' && reportId) {
+                setSavedReport({ reportId, filePath: uploadedFilePath, renderer: uploadedFilePath ? 'legacy' : null });
+              }
+            }
+          }
+
+          if (fileRecorded && uploadedFilePath) {
+            const { error: fileIndexError } = await indexAnalysisFile(clientId, {
+              fileName,
+              filePath: uploadedFilePath,
+              bytes: blob.size,
+            });
+
+            if (fileIndexError) {
+              console.error('Failed to index report in client_files:', fileIndexError);
+              toast.error('Report saved, but file indexing failed.');
+            } else {
+              console.log('✓ Report indexed in client_files');
             }
           }
         } catch (dbError) {
@@ -3337,22 +3488,24 @@ export function PortfolioAnalysisPDFGenerator({
         actionType: 'portfolio_report_generated',
         entityType: 'portfolio_report',
         entityName: clientName,
-        metadata: { client_id: clientId, persisted: reportPersisted, include_owner_occupied: includeOwnerOccupied }
+        metadata: { client_id: clientId, persisted: reportPersisted, include_owner_occupied: includeOwnerOccupied, renderer: 'legacy' }
       });
-      
+
       addNotification({
         type: 'report_generation_completed',
         title: 'Portfolio Report Ready',
         message: `Portfolio Performance Analysis for ${clientName} is ready`,
         entityId: clientId
       });
-      
+
+      if (reportPersisted) refreshSavedReports();
       onComplete?.();
       
     } catch (error: any) {
       console.error('PDF generation error:', error);
       toast.error('Failed to generate PDF: ' + error.message);
     } finally {
+      exportInFlight.current = false;
       setIsDownloading(false);
     }
   };
@@ -3384,26 +3537,92 @@ export function PortfolioAnalysisPDFGenerator({
       <Dialog open={showPreview} onOpenChange={setShowPreview}>
         <DialogContent className="w-[94vw] max-w-7xl h-[92vh] max-h-[92vh] overflow-hidden flex flex-col p-0 gap-0 sm:w-[94vw]">
           <DialogHeader className="px-4 sm:px-6 pt-6 pb-4 border-b shrink-0">
-            <DialogTitle className="flex items-center justify-between gap-4 flex-wrap">
-              <span>Portfolio Performance Analysis</span>
-              <div className="flex w-full sm:w-auto flex-wrap items-center gap-2">
-                <Button 
-                  onClick={() => downloadPDF()} 
-                  disabled={isDownloading}
-                  size="sm"
-                >
-                  {isDownloading ? (
-                    <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  ) : (
-                    <Download className="h-4 w-4 mr-2" />
-                  )}
-                  Download & Save PDF
-                </Button>
+            {/*
+              Choose template, then Export PDF: the chosen template is the
+              primary document and the legacy layout is the menu's named
+              alternative (`saveAnalysis.ts`). The actions sit beside the
+              title rather than inside it, so the dialog's name is its title.
+            */}
+            <div className="flex flex-wrap items-start justify-between gap-x-4 gap-y-3 sm:pr-8">
+              <div className="min-w-0 space-y-1.5">
+                <DialogTitle>Portfolio Performance Analysis</DialogTitle>
+                <DialogDescription>
+                  Comprehensive analysis of {clientName}'s investment property portfolio
+                </DialogDescription>
               </div>
-            </DialogTitle>
-            <DialogDescription>
-              Comprehensive analysis of {clientName}'s investment property portfolio
-            </DialogDescription>
+              <div className="flex w-full sm:w-auto flex-wrap items-center gap-2">
+                <ChooseTemplateButton
+                  reportType="portfolio"
+                  formatLabel={PORTFOLIO_REPORT_LABEL}
+                  disabled={exportBusy}
+                />
+                <div className="inline-flex items-stretch">
+                  <Button
+                    onClick={() => void exportInChosenTemplate()}
+                    disabled={exportBusy}
+                    size="sm"
+                    className="rounded-r-none"
+                  >
+                    {isExporting ? (
+                      <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+                    ) : (
+                      <Download className="h-4 w-4 mr-2" />
+                    )}
+                    {isExporting ? 'Rendering…' : 'Export PDF'}
+                  </Button>
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button
+                        size="sm"
+                        disabled={exportBusy}
+                        aria-label="Other ways to export this analysis"
+                        className="rounded-l-none border-l border-primary-foreground/25 px-2"
+                      >
+                        {isDownloading
+                          ? <Loader2 className="h-4 w-4 animate-spin" />
+                          : <ChevronDown className="h-4 w-4" />}
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-80">
+                      <DropdownMenuItem onClick={() => void exportInChosenTemplate()} className="cursor-pointer">
+                        <Sparkles className="mr-2 h-4 w-4 shrink-0 text-primary" />
+                        <div className="flex flex-col">
+                          <span>Export PDF</span>
+                          <span className="text-xs text-muted-foreground">
+                            {savedReport?.filePath
+                              ? 'In your chosen template · becomes the saved PDF'
+                              : 'In your chosen template · saves the analysis to Reports'}
+                          </span>
+                        </div>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => void downloadPDF()} className="cursor-pointer">
+                        <FileDown className="mr-2 h-4 w-4 shrink-0 text-muted-foreground" />
+                        <div className="flex flex-col">
+                          <span>Export PDF (legacy layout)</span>
+                          <span className="text-xs text-muted-foreground">
+                            {savedReport?.filePath
+                              ? 'The previous design · downloads only, the saved PDF stays'
+                              : 'The previous design, drawn in your browser · saves the analysis to Reports'}
+                          </span>
+                        </div>
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+                </div>
+              </div>
+            </div>
+            <p className="text-xs text-muted-foreground" aria-live="polite">
+              {chosenTemplateLine(templateState)}
+              {' · '}
+              {!savedReport
+                ? 'Export PDF saves the analysis to Reports.'
+                : savedReport.renderer === 'template'
+                  ? 'Saved to Reports with its PDF in your chosen template.'
+                  : savedReport.renderer === 'legacy'
+                    ? 'Saved to Reports with the legacy layout. Export PDF saves it in your chosen template instead.'
+                    : 'Saved to Reports without a PDF yet. Export PDF to produce it.'}
+            </p>
           </DialogHeader>
 
           <ScrollArea className="flex-1 min-h-0 overflow-x-hidden">

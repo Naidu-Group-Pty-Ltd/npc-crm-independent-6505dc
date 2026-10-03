@@ -585,9 +585,11 @@ export function InvestmentReportModal({
                     {isDownloading ? 'Preparing…' : 'Download PDF'}
                   </Button>
                   <FlattenPdfIconButton
-                    getPdfBlob={async () => reportId
-                      ? (await produceInvestmentDocument(reportId)).blob
-                      : buildPdfDoc().output('blob')}
+                    getPdfBlob={async () => {
+                      if (!reportId) return buildPdfDoc().output('blob');
+                      const doc = await produceInvestmentDocument(reportId);
+                      return { blob: doc.blob, fileName: doc.fileName };
+                    }}
                     filename={pdfFilename}
                   />
                   {reportId && (

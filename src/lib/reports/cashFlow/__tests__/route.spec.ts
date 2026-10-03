@@ -9,6 +9,7 @@ import { describe, expect, it } from 'vitest';
 import {
   cashFlowFileName,
   cashFlowStoragePath,
+  cashFlowWorkbookFileName,
   parseRenderRequest,
   SIGNED_URL_TTL_SECONDS,
 } from '../route.pure';
@@ -68,24 +69,32 @@ describe('parseRenderRequest', () => {
 });
 
 describe('cashFlowFileName', () => {
-  it('keeps the shape the product already produces', () => {
+  // The readable name every report's download carries (Audit 7, 1 Oct 2026):
+  // what the document is, the property, and the day as a reader says it.
+  it('names the document, the property and the day', () => {
     expect(cashFlowFileName('14 Wattlebird Grove, Marsden Park NSW 2765', '2026-08-02T04:00:00Z'))
-      .toBe('Cash_Flow_Analysis_14_Wattlebird_Grove__Marsden_Park_NSW_2765_2026-08-02.pdf');
+      .toBe('10 Year Cash Flow Analysis - 14 Wattlebird Grove, Marsden Park NSW 2765 - 02 Aug 2026.pdf');
   });
 
-  it('names the file for a property it was given no name for', () => {
-    expect(cashFlowFileName('', '2026-08-02T00:00:00Z')).toBe('Cash_Flow_Analysis_Property_2026-08-02.pdf');
+  it('names a document it was given no property for by itself, never by a placeholder', () => {
+    expect(cashFlowFileName('', '2026-08-02T00:00:00Z')).toBe('10 Year Cash Flow Analysis - 02 Aug 2026.pdf');
   });
 
   it('does not carry a date it cannot read', () => {
-    expect(cashFlowFileName('A', 'not a date')).toBe('Cash_Flow_Analysis_A_.pdf');
+    expect(cashFlowFileName('A', 'not a date')).toBe('10 Year Cash Flow Analysis - A.pdf');
+  });
+
+  it('names the workbook the same way', () => {
+    expect(cashFlowWorkbookFileName('37 Bolin Street, Schofields NSW 2762', '2026-10-01T04:00:00Z'))
+      .toBe('10 Year Cash Flow Analysis - 37 Bolin Street, Schofields NSW 2762 - 01 Oct 2026.xlsx');
   });
 });
 
 describe('cashFlowStoragePath', () => {
-  it('files the document under its report and its day', () => {
-    expect(cashFlowStoragePath(REPORT_ID, 'Cash_Flow_Analysis_A_2026-08-02.pdf', '2026-08-02T09:00:00Z', 'abc'))
-      .toBe(`cash-flow/${REPORT_ID}/2026-08-02/abc-Cash_Flow_Analysis_A_2026-08-02.pdf`);
+  it('files the document under its report and its day, with a URL-safe key', () => {
+    const name = cashFlowFileName('14 Wattlebird Grove, Marsden Park NSW 2765', '2026-08-02T04:00:00Z');
+    expect(cashFlowStoragePath(REPORT_ID, name, '2026-08-02T09:00:00Z', 'abc'))
+      .toBe(`cash-flow/${REPORT_ID}/2026-08-02/abc-10_Year_Cash_Flow_Analysis_-_14_Wattlebird_Grove_Marsden_Park_NSW_2765_-_02_Aug_2026.pdf`);
   });
 
   it('does not lose the file when the date is unreadable', () => {

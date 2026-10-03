@@ -31,8 +31,11 @@ const BRIDGE_SHAPE =
 /** Siblings, or the design system next door. Nothing else. *
  * `../reportDate.pure.ts` is the shared date reader, a file in the parent
  * like the others here — eleven routes each carried a private copy.
+ * `../readableFileName.pure.ts` is the shared filename rule the Intelligence
+ * Hub Summary and both comparisons already name their files by (QA.md §13,
+ * PORTFOLIO.md §10), from the same parent.
  */
-const ALLOWED_IMPORT = /^(?:\.\/[\w.]+\.pure\.ts|\.\.\/\.\.\/reportDesign\/[\w.]+\.(?:pure|generated)\.ts|\.\.\/reportDate\.pure\.ts)$/;
+const ALLOWED_IMPORT = /^(?:\.\/[\w.]+\.pure\.ts|\.\.\/\.\.\/reportDesign\/[\w.]+\.(?:pure|generated)\.ts|\.\.\/(?:reportDate|readableFileName)\.pure\.ts)$/;
 
 describe('portfolio performance review — single source of truth', () => {
   it('has at least one canonical module', () => {

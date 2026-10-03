@@ -452,6 +452,13 @@ export function describeAssumedInputs(base: BaseFinancials): string[] {
  *
  * Each note is written once, here, for the on-screen page, the jsPDF
  * document and the server-rendered PDF alike.
+ *
+ * Each note says what was NOT PROVIDED for the analysis, never what is "not
+ * held". The land-tax sentence used to end "…aggregate taxable landholdings
+ * in the state, which are not held", and "held" is the word land ownership
+ * itself uses, so a client could read it as "the owner holds no other land"
+ * — the opposite of the caution it gives. The tax sentence beside it says
+ * the same thing the same way (Audit 7, 1 Oct 2026).
  */
 export function evidenceBasisNotes(base: BaseFinancials): string[] {
   const notes: string[] = [];
@@ -460,20 +467,20 @@ export function evidenceBasisNotes(base: BaseFinancials): string[] {
     notes.push(
       `Tax effects assume deductions are utilised at a ${base.taxRate}% marginal rate in the year they arise `
       + `(rate ${taxSource === 'override' ? 'entered by the adviser' : taxSource === 'default' ? 'assumed by default' : 'from the report record'}); `
-      + 'the investor\'s taxable income, ownership structure and eligibility are not held and must be confirmed with an accountant.',
+      + 'the investor\'s taxable income, ownership structure and eligibility were not provided for this analysis and must be confirmed with an accountant.',
     );
   }
   const landTaxSource = base.provenance.landTax;
   if (base.landTax > 0) {
     notes.push(
       `Land tax of $${Math.round(base.landTax).toLocaleString('en-AU')} a year is for this property alone; `
-      + 'the assessment depends on the owner\'s aggregate taxable landholdings in the state, which are not held.',
+      + 'the assessment depends on the owner\'s aggregate taxable landholdings in the state, and those details were not provided for this analysis.',
     );
   } else {
     notes.push(
       landTaxSource === 'absent' || landTaxSource === 'default'
-        ? 'No land tax is recorded for this property. That is not a finding that none is payable: land tax depends on the owner\'s aggregate taxable landholdings in the state, which are not held.'
-        : 'Land tax is recorded as nil for this property; the assessment depends on the owner\'s aggregate taxable landholdings in the state, which are not held.',
+        ? 'No land tax is recorded for this property. That is not a finding that none is payable: land tax depends on the owner\'s aggregate taxable landholdings in the state, and those details were not provided for this analysis.'
+        : 'Land tax is recorded as nil for this property; the assessment depends on the owner\'s aggregate taxable landholdings in the state, and those details were not provided for this analysis.',
     );
   }
   const costSources = new Set(
@@ -486,7 +493,7 @@ export function evidenceBasisNotes(base: BaseFinancials): string[] {
       ? 'default allowances, not quotes or bills'
       : costSources.has('default')
         ? 'a mix of recorded entries and default allowances, not quotes or bills'
-        : 'the report record as entered, not quotes or bills';
+        : 'the figures as entered on the report, not quotes or bills';
     notes.push(`Operating costs are ${from}; confirm rates notices, strata levies, insurance quotes and management terms before relying on them.`);
   }
   return notes;

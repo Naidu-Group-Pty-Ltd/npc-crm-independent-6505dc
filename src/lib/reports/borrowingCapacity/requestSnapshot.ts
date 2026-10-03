@@ -102,7 +102,7 @@ export async function requestBorrowingCapacitySnapshot(
     announceDesignOutcome(design, data.design);
     return {
       url: String(data.url),
-      fileName: String(data.fileName ?? 'Borrowing_Capacity_Snapshot.pdf'),
+      fileName: String(data.fileName ?? 'Borrowing Capacity Snapshot.pdf'),
       bytes: Number(data.bytes ?? 0),
       pageCount: Number.isFinite(data.pageCount) ? Number(data.pageCount) : null,
       brandGaps: Array.isArray(data.brandGaps) ? data.brandGaps.map(String) : [],

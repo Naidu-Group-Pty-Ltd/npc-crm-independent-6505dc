@@ -187,6 +187,24 @@ export interface PackOptions {
    * Zero for every page not named.
    */
   reserveLines?: (pageIndex: number) => number;
+  /**
+   * The first page's box shares its page with a summary
+   * (`NarrativeGeometry.openingShared`), so it may be left EMPTY when what
+   * opens the body cannot be set in it: the body then opens on the next page,
+   * which is the rule `MIN_SHARED_FIRST_LINES` already applies to a box too
+   * small to try.
+   *
+   * Without it a box big enough to try and too small to hold anything was
+   * overfilled. On three Compass masters (Midnight Folio 03, Signal Memo 01
+   * and 04, Audit 6, 1 Oct 2026) the dashboard left six lines for the body;
+   * "Executive Verdict" and its subhead fitted, the paragraph under them
+   * could not be cut into the room left, and a page that is nothing but
+   * headings is carried whole — onto the same first box, because no page had
+   * been pushed yet. Ten lines were set in six and the paragraph ran 47–53pt
+   * through the running foot. A box on a page of its own is never emptied:
+   * that would be a blank page.
+   */
+  openingShared?: boolean;
 }
 
 /** Room held back on one page of a run. See `PackOptions.reserveLines`. */
@@ -244,7 +262,14 @@ export const TAIL_MIN_FRACTION = 0.2;
 export const tailMinLines = (contBudget: number): number =>
   Math.max(TAIL_ABSORB_LINES + 1, Math.round(contBudget * TAIL_MIN_FRACTION));
 
-const leadsIn = (b: MarkdownBlock): boolean => b.kind === 'paragraph' && /[:：]\s*<\/p>\s*$/.test(b.html);
+/**
+ * A paragraph that only introduces what follows it: a lead-in ending in a
+ * colon, or a record's name line (`MarkdownOptions.recordTables`) — a risk's
+ * name at a page foot with its reasons overleaf is a heading with nothing
+ * under it.
+ */
+const leadsIn = (b: MarkdownBlock): boolean => b.kind === 'paragraph'
+  && (/[:：]\s*<\/p>\s*$/.test(b.html) || b.html.startsWith('<p class="record-title">'));
 
 const sumLines = (blocks: readonly MarkdownBlock[]): number => blocks.reduce((n, b) => n + b.lines, 0);
 
@@ -270,6 +295,12 @@ export function packMarkdownPages(
   const pages: MarkdownBlock[][] = openingSkipped ? [[]] : [];
   let current: MarkdownBlock[] = [];
   let used = 0;
+  // A shared opening box left empty because nothing fitted it (see
+  // `PackOptions.openingShared`); like a skipped opening, nothing is folded
+  // back into it.
+  let openingEmptied = false;
+  const mayEmptyOpening = () => !pages.length && options.openingShared === true;
+  const emptyOpening = () => { pages.push([]); openingEmptied = true; };
   // Figures carried past the prose that follows them; they open the next page.
   let floated: MarkdownBlock[] = [];
 
@@ -334,6 +365,9 @@ export function packMarkdownPages(
       const peelable = (b: MarkdownBlock) => b.kind === 'heading' || leadsIn(b);
       if (current.length <= 2 && current.every(peelable)) {
         peeled = current.splice(0, current.length);
+        // Carried whole from the opening box, they would land in that same
+        // box again: no page has been pushed. It is left empty instead.
+        if (mayEmptyOpening()) emptyOpening();
       } else {
         // Peel a trailing heading / lead-in so it opens the next page instead
         // of closing this one. At most two blocks (a heading over a lead-in),
@@ -419,6 +453,17 @@ export function packMarkdownPages(
       const piece = queue.shift()!;
       const pageBudget = budgetFor(pages.length);
       const remaining = pageBudget - used;
+      if (!current.length && piece.lines > remaining && mayEmptyOpening()) {
+        // Nothing yet in a shared opening box this does not fit: a paragraph
+        // is cut into it where a sentence allows, and anything else opens the
+        // next page, leaving the box empty rather than overfilled.
+        if (options.splitParagraphs && piece.kind === 'paragraph'
+          && remaining >= PARAGRAPH_SPLIT_MIN_ROOM && piece.lines >= PARAGRAPH_SPLIT_MIN_LINES) {
+          const parts = splitParagraphBlock(piece, remaining, options.splitParagraphs);
+          if (parts.length === 2) { queue.unshift(...cutInto(parts)); continue; }
+        }
+        emptyOpening();
+      }
       if (current.length && piece.lines > remaining) {
         if (options.floatFigures && piece.kind === 'figure' && floated.length < MAX_FLOATED && piece.lines <= contBudget) {
           floated.push(piece);
@@ -464,7 +509,7 @@ export function packMarkdownPages(
   }
   if (current.length) pages.push(current);
   // The reserved empty opening is not a page anything may be folded into.
-  const firstPackable = openingSkipped ? 1 : 0;
+  const firstPackable = openingSkipped || openingEmptied ? 1 : 0;
   if (options.absorbTail && pages.length > firstPackable + 1 && sumLines(pages[pages.length - 1]) <= TAIL_ABSORB_LINES) {
     const tail = pages.pop()!;
     pages[pages.length - 1].push(...tail);
@@ -534,6 +579,7 @@ export function packNarrativeGeometry(
 ): MarkdownBlock[][] {
   return packMarkdownPages(blocks, geometry.contLines, {
     firstPageLines: geometry.firstPageLines,
+    ...(geometry.openingShared ? { openingShared: true } : {}),
     reserveLines: reserve ? (i) => (i === reserve.pageIndex ? reserve.lines : 0) : undefined,
     keepWithNext: true,
     splitTables: true,

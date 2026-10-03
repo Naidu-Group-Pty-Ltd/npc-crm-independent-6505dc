@@ -9,13 +9,17 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+  addressLine,
   buildClientDetails,
   ClientDetailsPayloadError,
   composeClientName,
   humanise,
+  liabilityBasis,
   propertyOutgoings,
   shortAddress,
+  streetLine,
 } from '../normalise.pure';
+import { recordHoldsFinancials } from '../payload.pure';
 
 const NOW = '2026-08-02T00:00:00.000Z';
 const ID = '11111111-1111-4111-8111-111111111111';
@@ -46,11 +50,23 @@ describe('a client with nothing but a name', () => {
     expect(position.commitmentRatio).toBeNull();
   });
 
-  it('says something true in its opening paragraph', () => {
-    const narrative = build().narrative;
-    expect(narrative).toContain('Ada Lovelace');
-    expect(narrative).toContain('No investment property is recorded');
-    expect(narrative).toContain('No income has been recorded');
+  /**
+   * A record with nothing financial in it gets no summary of absences. The
+   * closing section says in one callout that nothing is recorded, and the
+   * summary used to say it twice more above it — "No investment property is
+   * recorded… No income has been recorded…" — on a one-page document
+   * (CLIENT_DETAILS.md §12). What the record does say about the household is
+   * still said.
+   */
+  it('says nothing in its summary that the closing callout already says', () => {
+    expect(build().narrative).toBe('');
+    const household = build({
+      client: {
+        id: ID, primary_first_name: 'Ada', primary_surname: 'Lovelace',
+        marital_status: 'married', dependents_count: 2,
+      },
+    });
+    expect(household.narrative).toBe('Ada Lovelace is recorded as married, with 2 dependents.');
   });
 
   it('refuses only a record that is not a client', () => {
@@ -186,8 +202,11 @@ describe('liability servicing', () => {
     expect(p.liabilitiesIncludeEstimates).toBe(true);
     expect(p.liabilities[0].isEstimated).toBe(true);
     expect(p.liabilities[0].monthlyServicing.value).toBe(300);
-    expect(p.liabilities[0].basis).toBe('3% of credit limit');
+    // In words. The engine's own note is `3% of credit limit`, and the page
+    // printed it after "Estimated —".
+    expect(p.liabilities[0].basis).toBe('Estimated: 3% of the limit');
     expect(p.liabilities[1].isEstimated).toBe(false);
+    expect(p.liabilities[1].basis).toBe('As recorded');
   });
 
   /**
@@ -200,7 +219,7 @@ describe('liability servicing', () => {
       liabilities: [{ liability_type: 'hecs', current_balance: 30_000, monthly_repayment: 250 }],
     });
     expect(p.liabilities[0].monthlyServicing.value).toBe(250);
-    expect(p.liabilities[0].basis).toBe('As recorded; not estimated');
+    expect(p.liabilities[0].basis).toBe('As recorded');
   });
 });
 
@@ -261,6 +280,20 @@ describe('an address short enough to head a column', () => {
   it('copes with an address that has no commas at all', () => {
     expect(shortAddress('No commas here')).toBe('No commas here');
     expect(shortAddress('')).toBe('');
+  });
+
+  /**
+   * Where the heading may wrap, the same head is never clipped: "Unit 14,
+   * 238-242 Great…" headed a portrait column whose street the reader then had
+   * to find in the next section (CLIENT_DETAILS.md §12).
+   */
+  it('keeps the whole street line where the heading can wrap', () => {
+    expect(streetLine('Unit 7, 118 Mariners Quay Boulevard, Newstead, QLD 4006'))
+      .toBe('Unit 7, 118 Mariners Quay Boulevard');
+    expect(streetLine('Lot 2418 Silverbark Rise, Brookhaven Estate, QLD 4506'))
+      .toBe('Lot 2418 Silverbark Rise');
+    expect(streetLine('No commas here')).toBe('No commas here');
+    expect(streetLine('')).toBe('');
   });
 });
 
@@ -341,5 +374,178 @@ describe('the portfolio excludes the home', () => {
     expect(p.ownerOccupied?.address).toBe('Home');
     expect(p.position.propertyValue.value).toBe(1_500_000);
     expect(p.position.propertyEquity.value).toBe(600_000);
+  });
+});
+
+/**
+ * The words the audit of 1 Oct 2026 changed (CLIENT_DETAILS.md §12). Each was
+ * read off a rendered page of the five record shapes in all 51 designs.
+ */
+describe('a person is written down the way a person is', () => {
+  it('dates a birth and an address the way a reader writes them', () => {
+    const p = build({
+      client: { id: ID, primary_first_name: 'Ada', primary_surname: 'Lovelace', primary_dob: '1984-03-17' },
+      addressHistory: [{ address: '12 Bayview Terrace', current_suburb: 'Rhodes', current_state: 'nsw', start_date: '2024-02-01', end_date: '2026-01-31' }],
+    });
+    // It printed `1984-03-17` and `2024-02-01`.
+    expect(p.household.contacts[0].dateOfBirth).toBe('17 March 1984');
+    expect(p.household.history[0].startDate).toBe('01 Feb 2024');
+    expect(p.household.history[0].endDate).toBe('31 Jan 2026');
+  });
+
+  it('keeps a date it cannot read as it was recorded, rather than losing it', () => {
+    const p = build({
+      client: { id: ID, primary_first_name: 'Ada', primary_surname: 'Lovelace', primary_dob: 'March 1984' },
+    });
+    expect(p.household.contacts[0].dateOfBirth).toBe('March 1984');
+  });
+
+  it('prints a provider as it was typed — a provider is a proper noun', () => {
+    const p = build({
+      liabilities: [
+        { liability_type: 'personal_loan', provider_name: 'NAB', current_balance: 9_000, monthly_repayment: 300 },
+        { liability_type: 'credit_card', provider_name: 'Commonwealth Bank', credit_limit: 5_000, monthly_repayment: 150 },
+        { liability_type: 'other', current_balance: 1_000, monthly_repayment: 50 },
+      ],
+    });
+    // It printed "Nab" and "Commonwealth bank", and repeated the type where no
+    // provider was recorded.
+    expect(p.liabilities.map((l) => l.provider)).toEqual(['NAB', 'Commonwealth Bank', '']);
+  });
+
+  it('names an expense category the way the expense form does', () => {
+    const p = build({
+      expenses: [
+        { expense_category: 'internet_phone', monthly_amount: 90, frequency: 'monthly' },
+        { expense_category: 'gym_fitness', monthly_amount: 60, frequency: 'monthly' },
+        { expense_category: 'health_insurance', monthly_amount: 300, frequency: 'monthly' },
+      ],
+    });
+    expect(p.expenses.map((x) => x.category)).toEqual(['Internet and phone', 'Gym and fitness', 'Health insurance']);
+  });
+
+  it('says whose an income line is once, in its own column', () => {
+    const p = build({
+      client: { id: ID, primary_first_name: 'Ada', primary_surname: 'Lovelace', secondary_first_name: 'Charles', secondary_surname: 'Babbage' },
+      incomeSources: [{ source_category: 'government', source_name: 'Family Tax Benefit', contact_type: 'secondary', input_amount: 400, input_frequency: 'fortnightly' }],
+    });
+    // The engine labels it "… (Secondary)" for its own list.
+    expect(p.income.otherIncome[0].label).toBe('Family Tax Benefit');
+    expect(p.income.otherIncome[0].contact).toBe('secondary');
+  });
+});
+
+describe('an Australian address on one line', () => {
+  it('sets the locality as one group and names no country at home', () => {
+    expect(addressLine('12 Bayview Terrace', 'Rhodes', 'nsw', '2138', 'Australia'))
+      .toBe('12 Bayview Terrace, Rhodes NSW 2138');
+  });
+
+  it('names a country that is not Australia', () => {
+    expect(addressLine('1 Queen St', 'Auckland', '', '1010', 'New Zealand'))
+      .toBe('1 Queen St, Auckland 1010, New Zealand');
+  });
+
+  it('does not print a suburb the street line already ends with', () => {
+    expect(addressLine('1407/18 Harbourside Promenade, Wentworth Point', 'Wentworth Point', 'NSW', '2127'))
+      .toBe('1407/18 Harbourside Promenade, Wentworth Point NSW 2127');
+    expect(addressLine('1407/18 Harbourside Promenade, Wentworth Point NSW 2127', 'Wentworth Point', 'NSW', '2127'))
+      .toBe('1407/18 Harbourside Promenade, Wentworth Point NSW 2127');
+  });
+
+  /** Judged by position: streets are named after the suburbs they run through. */
+  it('keeps a suburb a street is named after', () => {
+    expect(addressLine('18 Schofields Farm Road', 'Schofields', 'NSW', '2762'))
+      .toBe('18 Schofields Farm Road, Schofields NSW 2762');
+    expect(addressLine('Schofields Farm Road', 'Schofields', 'NSW', '2762'))
+      .toBe('Schofields Farm Road, Schofields NSW 2762');
+  });
+});
+
+describe('the basis of a servicing figure, in words', () => {
+  it('translates the engine\'s shorthand and says when the figure is a model', () => {
+    expect(liabilityBasis({ calculationNote: 'Est. P&I @ 9% / 5yr', isEstimated: true }))
+      .toBe('Estimated: principal and interest at 9% over 5 years');
+    expect(liabilityBasis({ calculationNote: '3% of credit limit', isEstimated: false, limit: 8_000 }))
+      .toBe('3% of the limit');
+    expect(liabilityBasis({ calculationNote: '3% of credit limit', isEstimated: true, limit: 0 }))
+      .toBe('Estimated: 3% of the balance');
+    expect(liabilityBasis({ calculationNote: '5% of limit/balance', isEstimated: true }))
+      .toBe('Estimated: 5% of the limit or balance');
+    expect(liabilityBasis({ calculationNote: '', isEstimated: false })).toBe('As recorded');
+  });
+
+  it('prints a note it does not know as written, never guessing', () => {
+    expect(liabilityBasis({ calculationNote: '4.2% of income (ATO brackets)', isEstimated: true }))
+      .toBe('Estimated: 4.2% of income (ATO brackets)');
+  });
+
+  it('never prints the engine\'s own shorthand', () => {
+    const p = build({
+      liabilities: [
+        { liability_type: 'other', current_balance: 12_000, monthly_repayment: 0 },
+        { liability_type: 'afterpay_bnpl', credit_limit: 1_000, monthly_repayment: 0 },
+      ],
+    });
+    for (const l of p.liabilities) {
+      expect(l.basis).not.toMatch(/Est\.|P&I|@|\/\s*\d+yr|limit\/balance/);
+    }
+  });
+});
+
+describe('the summary agrees with the record it summarises', () => {
+  it('counts the home with the value it adds in', () => {
+    const p = build({
+      properties: [
+        { property_type: 'owner_occupied', address: 'Home', value: 900_000, loan_remaining: 400_000 },
+        { property_type: 'investment', address: '1 A St', value: 600_000, loan_remaining: 500_000 },
+      ],
+    });
+    // It read "holds 1 property worth $1,500,000": the value took the home in
+    // and the count left it out.
+    expect(p.narrative).toContain('The record holds 2 properties, the home included, worth $1,500,000 against $900,000 of debt, leaving $600,000 of equity.');
+  });
+
+  it('says a property owned outright has no debt recorded, not "$0 of debt"', () => {
+    const p = build({
+      properties: [{ property_type: 'investment', address: '1 A St', value: 600_000 }],
+    });
+    expect(p.narrative).toContain('The record holds 1 property worth $600,000, with no debt recorded against it.');
+    expect(p.narrative).not.toContain('$0 of debt');
+  });
+
+  it('writes a household of two as one household', () => {
+    const p = build({
+      client: {
+        id: ID, primary_first_name: 'Ada', primary_surname: 'Lovelace',
+        secondary_first_name: 'Charles', secondary_surname: 'Babbage',
+        marital_status: 'married', dependents_count: 1,
+      },
+      employment: [{ contact_type: 'primary', employer_name: 'Engines', gross_annual_salary: 120_000 }],
+    });
+    // It read "are recorded as a household as married".
+    expect(p.narrative.startsWith('Ada Lovelace & Charles Babbage are recorded as one household: married, with 1 dependent.')).toBe(true);
+  });
+});
+
+describe('whether a record holds anything financial is one rule', () => {
+  const p = (over: Record<string, unknown>) => build(over);
+
+  it('counts income on its own', () => {
+    // A pension-only record was "empty" to the projection and not to the
+    // renderer; the two read different things.
+    expect(recordHoldsFinancials(p({
+      incomeSources: [{ source_category: 'government', source_name: 'Age Pension', input_amount: 1_000, input_frequency: 'fortnightly' }],
+    }))).toBe(true);
+  });
+
+  it('counts a property worth exactly what is owed on it', () => {
+    expect(recordHoldsFinancials(p({
+      properties: [{ property_type: 'investment', address: '1 A St', value: 500_000, loan_remaining: 500_000 }],
+    }))).toBe(true);
+  });
+
+  it('is false for a name and nothing else', () => {
+    expect(recordHoldsFinancials(build())).toBe(false);
   });
 });

@@ -20,6 +20,7 @@
 import type { BrandLockupProps } from '../../reportDesign/primitives.pure.ts';
 import {
   closeChapter,
+  SECTION_SUBHEAD_CLASS,
   escapeHtml,
   openChapter,
   renderCallout,
@@ -39,6 +40,8 @@ import {
   type ValueTone,
 } from '../../reportDesign/primitives.pure.ts';
 import { buildReportCss } from '../../reportDesign/css.pure.ts';
+import { portraitMatrixCss, renderPortraitMatrix } from '../../reportDesign/portraitMatrix.pure.ts';
+import { paragraphsFromWrapped } from '../../reportDesign/prose.pure.ts';
 import type { ResolvedReportPalette } from '../../reportDesign/roles.pure.ts';
 import type { ReportDesignOptions } from '../../reportDesign/options.pure.ts';
 import type { CompanyBlock, CompanyDisclaimer } from '../../reportDesign/companyBlock.pure.ts';
@@ -55,6 +58,7 @@ import type {
   AxisGroup,
   NamedProperty,
   PropertyComparison,
+  PropertyRef,
   RankedProperty,
   RiskBand,
 } from './payload.pure.ts';
@@ -102,6 +106,8 @@ export { formatReportDate };
 // ── Small helpers ───────────────────────────────────────────────────────────
 
 const p = (t: string) => (t ? `<p>${escapeHtml(t)}</p>` : '');
+/** A model's text as the paragraphs it wrote (`paragraphsFromWrapped`), never one run-together block. */
+const paragraphs = (t: string) => paragraphsFromWrapped(t).map(p).join('');
 /**
  * A subhead inside a chapter.
  *
@@ -115,8 +121,11 @@ const p = (t: string) => (t ? `<p>${escapeHtml(t)}</p>` : '');
  * Seven of the ten documents failed the same rule and no other. Named
  * `subhead` rather than `h2` so the next person reaches for the level the
  * design system defines instead of inventing one.
+ *
+ * Set at h3's size (`SECTION_SUBHEAD_CLASS`) under a memo section's title, as
+ * the other memo formats' subheads are (Audit 8, 1 Oct 2026).
  */
-const subhead = (text: string) => `<h2>${escapeHtml(text)}</h2>`;
+const subhead = (text: string) => `<h2 class="${SECTION_SUBHEAD_CLASS}">${escapeHtml(text)}</h2>`;
 
 function renderList(items: readonly string[]): string {
   if (!items.length) return '';
@@ -133,11 +142,29 @@ function scoreText(r: RankedProperty): string {
 const winnerName = (n: { property: { shortAddress: string } | null }): string =>
   n.property ? n.property.shortAddress : 'No clear winner';
 
+/**
+ * Whether a sentence already names its property, by street.
+ *
+ * The analysis usually opens a reason with the property it is about, so a
+ * bold address set ahead of it printed the name twice in one line: "37 Bolin
+ * Street, Schofields NSW 2762. 37 Bolin Street is the alternative for…".
+ */
+function namesProperty(sentence: string, property: PropertyRef): boolean {
+  const street = property.shortAddress.trim().toLowerCase();
+  return Boolean(street) && sentence.toLowerCase().includes(street);
+}
+
+/** The property's address ahead of a reason, only where the reason does not already name it. */
+function lead(property: PropertyRef | null, reason: string): string {
+  return property && !namesProperty(reason, property)
+    ? `<strong>${escapeHtml(property.address)}</strong>. `
+    : '';
+}
+
 /** A named property and its reason, as a sidenote. */
 function namedBlock(label: string, n: NamedProperty | null): string {
   if (!n) return '';
-  const who = n.property ? `<strong>${escapeHtml(n.property.address)}</strong>. ` : '';
-  const body = `<p>${who}${escapeHtml(n.reason)}</p>`;
+  const body = `<p>${lead(n.property, n.reason)}${escapeHtml(n.reason)}</p>`;
   return renderSidenote(label, body);
 }
 
@@ -197,7 +224,7 @@ function verdictSection(cf: PropertyComparison, palette: ResolvedReportPalette):
   return renderLede(cf.narrative)
     + truncationCallout(cf)
     + renderKpiStrip(kpis)
-    + p(cf.summary)
+    + paragraphs(cf.summary)
     + rankingChart(cf, palette)
     + renderDataTable(cols, rows, { caption: `How they ranked — ${scaleNote}` });
 }
@@ -235,71 +262,37 @@ function truncationCallout(cf: PropertyComparison): string {
   );
 }
 
+/** The class the scorecard is styled by (`portraitMatrixCss`). */
+const SCORECARD_CLASS = 'pc-scorecard';
+
 /**
- * The category matrix on the page the section is already on.
- *
- * It opened a landscape page of its own "for consistency" with the Portfolio's
- * holdings matrix, which is a different table: two to five properties and ten
- * categories fit the portrait measure comfortably, and a landscape sheet in the
- * middle of the comparison held one table and two-thirds white space. Measured
- * over the 50 designs at five properties: every column fits. The property
- * columns share the width equally, so the tick for the second property is not
- * squeezed between two wide neighbours.
+ * A property's score line, which reads as the second line of its heading. A
+ * heading keeps only the box after it (css.pure.ts), so the two kept each
+ * other and nothing more: 20 of the 51 two-property documents ended page four
+ * on "1. 14 Wattlebird Grove… / Scored 81.5 / 100, with risk assessed as low to
+ * moderate." with everything about the property overleaf (Audit 8). The line
+ * refuses the break after itself, so what follows comes with it. The sections
+ * run on, so the group cannot strand a chapter's tail.
  */
-function portraitMatrix(
-  rowLabel: string,
-  columns: string[],
-  rows: Array<{ label: string; values: string[] }>,
-  opts: { caption?: string } = {},
-): string {
-  const table = renderDataTable(
-    [
-      { key: 'label', label: rowLabel, align: 'left' },
-      ...columns.map((c, i) => ({ key: `p${i}`, label: c, align: 'right' as const })),
-    ],
-    rows.map((r) => {
-      const row: Record<string, string> = { label: r.label };
-      r.values.forEach((v, i) => { row[`p${i}`] = v; });
-      return row;
-    }),
-    { caption: opts.caption },
-  );
-  // Equal property columns: the category takes what a label needs and the
-  // properties split the rest.
-  const share = Math.floor(64 / Math.max(columns.length, 1));
-  const cols = `<colgroup><col style="width:36%">${columns.map(() => `<col style="width:${share}%">`).join('')}</colgroup>`;
-  return table.replace('<table class="data">', `<table class="data">${cols}`);
-}
+const SCORE_LINE_CLASS = 'pc-score';
 
 /**
  * The scorecard — every category, and which property took it.
  *
- * Landscape, and the reason is consistency rather than geometry. With two to five
- * properties as columns this matrix fits the portrait measure comfortably; the
- * Portfolio's holdings matrix is landscape even for a one-property portfolio, and
- * a format whose central table changes orientation with the row count hands a
- * reader two different-looking documents for the same report type.
+ * On the page the section is already on. It opened a landscape sheet of its
+ * own "for consistency" with the Portfolio's holdings matrix, which then moved
+ * to portrait itself: two to five properties and ten categories fit the
+ * portrait measure, and the landscape sheet held one table and two-thirds
+ * white space. The property columns share the width equally, so the tick for
+ * the second property is not squeezed between two wide neighbours.
  */
 function scorecardSection(cf: PropertyComparison, palette: ResolvedReportPalette): string {
-  const key = renderDataTable(
-    [
-      { key: 'n', label: '#', align: 'left' },
-      { key: 'address', label: 'Property', align: 'left' },
-      ...(cf.properties.some((prop) => prop.state)
-        ? [{ key: 'state', label: 'State', align: 'left' as const }]
-        : []),
-    ],
-    cf.properties.map((prop) => ({
-      n: String(prop.number),
-      address: prop.address,
-      ...(cf.properties.some((q) => q.state) ? { state: prop.state || EMPTY } : {}),
-    })),
-    { caption: 'The properties, numbered as they appear overleaf' },
-  );
-
-  // Headed by the street, with the number the key above gives it, so a reader
-  // does not have to look up which property "2" is.
-  const columns = cf.properties.map((prop) => `${prop.number}. ${prop.shortAddress || `Property ${prop.number}`}`);
+  // Headed by the street alone. The section used to open on a key table
+  // ("The properties, numbered as they appear overleaf") that restated the
+  // ranking directly above it, and to number each column by the order the
+  // properties were entered, which is not the order they ranked in: "1." over
+  // the property ranked third. The street is the name; nothing is looked up.
+  const columns = cf.properties.map((prop) => prop.shortAddress || prop.address || 'Property');
   // Positive axes only. A tick in this matrix means "won this category", and
   // `highestRisk` names the property that came off worst — ticking it asserts
   // the opposite of what it means. It keeps its own row in the risk section,
@@ -319,13 +312,23 @@ function scorecardSection(cf: PropertyComparison, palette: ResolvedReportPalette
     .filter((row) => row.values.some((v) => v !== EMPTY));
 
   const undecided = positive.filter((w) => !w.property).length;
+  // The matrix every format that sets properties side by side draws
+  // (`portraitMatrix.pure.ts`), the copy this section kept "until it is
+  // audited" retired: there each street head was set on one line, and at five
+  // properties in the standard design the fourth and fifth columns ran past
+  // the sheet's edge, by 71pt and 248pt.
   const matrix = rows.length
-    ? portraitMatrix('Category', columns, rows, {
+    ? renderPortraitMatrix({
+      lineLabel: 'Category',
+      headings: columns,
+      lines: rows.map((row) => ({ label: row.label, values: row.values })),
       caption: 'A tick marks the property the analysis named on that category. '
         + (undecided
           ? `${undecided} ${undecided === 1 ? 'category' : 'categories'} named no property and `
             + `${undecided === 1 ? 'is' : 'are'} listed with their reasons in the sections that follow.`
           : 'Every category named one.'),
+      className: SCORECARD_CLASS,
+      labelWidthPct: 30,
     })
     : renderCallout(
       'neutral',
@@ -334,7 +337,7 @@ function scorecardSection(cf: PropertyComparison, palette: ResolvedReportPalette
       + 'of them. The reasons are in the sections that follow.</p>',
     );
 
-  return key + categoryWinsChart(cf, palette) + matrix;
+  return categoryWinsChart(cf, palette) + matrix;
 }
 
 /** Each property in turn — strengths, concerns, and who it suits. */
@@ -343,14 +346,19 @@ function rankingSection(cf: PropertyComparison): string {
     .filter((r) => r.strengths.length || r.concerns.length || r.bestSuitedFor || r.risk)
     .map((r) => {
       const heading = subhead(`${r.rank !== null ? `${r.rank}. ` : ''}${r.property.address}`);
+      // The line belongs to the heading above it (`SCORE_LINE_CLASS`).
       const score = r.score
-        ? p(`Scored ${scoreText(r)}${r.risk?.level ? `, with risk assessed as ${r.risk.level.toLowerCase()}` : ''}.`)
+        ? `<p class="${SCORE_LINE_CLASS}">${escapeHtml(
+          `Scored ${scoreText(r)}${r.risk?.level ? `, with risk assessed as ${r.risk.level.toLowerCase()}` : ''}.`,
+        )}</p>`
         : '';
       return heading
         + score
         + (r.bestSuitedFor ? p(`Best suited for: ${r.bestSuitedFor}`) : '')
-        + (r.strengths.length ? renderSidenote('Working', renderList(r.strengths)) : '')
-        + (r.concerns.length ? renderSidenote('Watch', renderList(r.concerns)) : '');
+        // "Working" and "Watch" were labels, not words: what carries the
+        // property, and what to keep an eye on.
+        + (r.strengths.length ? renderSidenote('In its favour', renderList(r.strengths)) : '')
+        + (r.concerns.length ? renderSidenote('To watch', renderList(r.concerns)) : '');
     })
     .join('');
 }
@@ -389,8 +397,11 @@ function riskSection(cf: PropertyComparison): string {
   const axes = axisSection(cf, 'risk');
   const perProperty = cf.risks
     .filter((r) => r.specificRisks.length || r.level)
+    // "Assessed Low to moderate." took the record's capital into the middle of
+    // a sentence the ranking section had already written as "risk assessed as
+    // low to moderate".
     .map((r) => subhead(r.property.address)
-      + (r.level ? p(`Assessed ${r.level}.`) : '')
+      + (r.level ? p(`Risk assessed as ${r.level.toLowerCase()}.`) : '')
       + renderList(r.specificRisks))
     .join('');
   return axes + perProperty;
@@ -455,7 +466,7 @@ function timingSection(cf: PropertyComparison): string {
   const exits = t.exitStrategies.length
     ? subhead('Exit strategies')
       + t.exitStrategies
-        .map((e) => `<p>${e.property ? `<strong>${escapeHtml(e.property.address)}</strong>. ` : ''}${escapeHtml(e.strategy)}</p>`)
+        .map((e) => `<p>${lead(e.property, e.strategy)}${escapeHtml(e.strategy)}</p>`)
         .join('')
     : '';
   return namedBlock('Buy first', t.buyFirst) + periods + exits;
@@ -466,20 +477,19 @@ function planSection(cf: PropertyComparison): string {
   const r = cf.recommendations;
   if (!r) return '';
 
+  const named = (n: NamedProperty) => `<p>${lead(n.property, n.reason)}${escapeHtml(n.reason)}</p>`;
   const runners = r.runners.length
-    ? subhead('Runners-up')
-      + r.runners.map((n) => p(`${n.property ? `${n.property.address}. ` : ''}${n.reason}`)).join('')
+    ? subhead('Runners-up') + r.runners.map(named).join('')
     : '';
   const avoid = r.avoid.length
-    ? subhead('What to avoid')
-      + r.avoid.map((n) => p(`${n.property ? `${n.property.address}. ` : ''}${n.reason}`)).join('')
+    ? subhead('What to avoid') + r.avoid.map(named).join('')
     : '';
   const scenarios = r.alternativeScenarios.length
     ? subhead('If the brief were different')
       + r.alternativeScenarios
         .map((s) => renderSidenote(
           s.scenario || 'Another way to read it',
-          `<p>${s.property ? `<strong>${escapeHtml(s.property.address)}</strong>. ` : ''}${escapeHtml(s.reason)}</p>`,
+          `<p>${lead(s.property, s.reason)}${escapeHtml(s.reason)}</p>`,
         ))
         .join('')
     : '';
@@ -497,15 +507,22 @@ function planSection(cf: PropertyComparison): string {
 function basisSection(cf: PropertyComparison): string {
   const b = cf.basis;
   // A setting the record does not hold is omitted, never printed as a dash:
-  // "an absence is omitted, never worded" (RUNTIME_CONSOLIDATION.md §8).
+  // "an absence is omitted, never worded" (RUNTIME_CONSOLIDATION.md §8). A
+  // setting it does hold reads as a setting: "Moderate", not the stored
+  // "moderate"; "5–7 years", not "5-7 years".
+  //
+  // The model's identifier is not printed. "Analysed by google/gemini-2.5-flash"
+  // was the vendor's name for a model on a client's page, and on every
+  // production comparison; what it stood for — that a model wrote the
+  // ranking — is said in words below, on every comparison, whether or not the
+  // record names the model.
   const rows: TableRow[] = [
     { item: 'Compared on', value: formatReportDate(cf.meta.analysedOn) },
     { item: 'Properties', value: String(cf.properties.length) },
-    { item: 'Time horizon', value: b.timeHorizon },
-    { item: 'Risk tolerance', value: b.riskTolerance },
-    { item: 'Investor profile', value: b.investorProfile },
-    { item: 'Depth', value: b.depth },
-    { item: 'Analysed by', value: b.model },
+    { item: 'Time horizon', value: settingText(b.timeHorizon) },
+    { item: 'Risk tolerance', value: settingText(b.riskTolerance) },
+    { item: 'Investor profile', value: settingText(b.investorProfile) },
+    { item: 'Analysis depth', value: settingText(b.depth) },
   ].filter((r) => Boolean(r.value));
 
   const weights = b.weights.length
@@ -523,13 +540,31 @@ function basisSection(cf: PropertyComparison): string {
     ? renderCallout('neutral', 'Worth knowing', renderList(cf.notes))
     : '';
 
+  const on = formatReportDate(cf.meta.analysedOn);
+  const written = renderCallout(
+    'neutral',
+    'Written by AI',
+    p(`The ranking, the scores and the reasons in this comparison were written by an AI `
+      + `analysis of the properties' investment reports${on ? ` on ${on}` : ''}. `
+      + `Where it states a figure, each property's own report is the record.`),
+  );
+
   return renderDataTable(
     [
       { key: 'item', label: 'This comparison', align: 'left' },
       { key: 'value', label: '', align: 'right' },
     ],
     rows,
-  ) + weights + notes;
+  ) + weights + written + notes;
+}
+
+/**
+ * A stored setting as a person writes it: sentence case, and a range of
+ * numbers joined by an en dash. Words inside are left as stored.
+ */
+function settingText(value: string): string {
+  const v = value.trim().replace(/(\d)\s*-\s*(\d)/g, '$1\u2013$2');
+  return v ? v.charAt(0).toUpperCase() + v.slice(1) : '';
 }
 
 /** A section the record should hold and does not. */
@@ -623,7 +658,11 @@ export function renderComparisonBody(input: RenderComparisonInput): string {
     // paragraphs — and a page each printed seventeen sheets for three
     // properties, half of them part empty. They run on under one another now,
     // each keeping its numbered header and running head (`RUN_ON_CHAPTER_CLASS`).
-    return openChapter(DOCUMENT_NAME, number, section.title, 'body', { runOn: index > 0 })
+    // And they are memo sections (`MEMO_CHAPTER_CLASS`), as the other four
+    // memo formats' are: a 31pt title over a section of three short
+    // paragraphs stood a third of a page tall, and set a 14pt subhead under it
+    // at nearly half its size (Audit 8, 1 Oct 2026).
+    return openChapter(DOCUMENT_NAME, number, section.title, 'body', { runOn: index > 0, memo: true })
       + renderChapterHeader({
         number,
         title: section.title,
@@ -650,7 +689,8 @@ export function renderComparisonBody(input: RenderComparisonInput): string {
  * is a preference WeasyPrint gives up rather than overflow.
  */
 const COMPARISON_CSS = `
-  .table-block { break-inside: avoid; }`;
+  .table-block { break-inside: avoid; }${portraitMatrixCss(SCORECARD_CLASS)}
+  p.${SCORE_LINE_CLASS} { break-after: avoid; page-break-after: avoid; }`;
 
 /**
  * The whole document, ready to POST to the render service.

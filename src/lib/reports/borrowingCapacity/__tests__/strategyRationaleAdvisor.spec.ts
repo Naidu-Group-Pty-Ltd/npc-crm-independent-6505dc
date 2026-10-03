@@ -95,7 +95,7 @@ describe('the advisor section is worded once', () => {
       'Paying out the $18,400 car loan removes $612/mo of commitments, which at the assessment rate is worth ~$112k of capacity.',
       'That takes her past the $650k target with the 20% deposit she holds, avoiding LMI.',
     ]);
-    expect(section.riskLine).toBe('Execution risk: MEDIUM');
+    expect(section.riskLine).toBe('Execution risk: Medium');
     expect(section.evidenceTitle).toBe('Evidence required before submission (2 items)');
     expect(section.rejected).toEqual(['Interest-only on the home loan — Her lender caps owner-occupier IO at 1 year.']);
   });
@@ -116,7 +116,7 @@ describe('the Strategy Rationale Brief prints it', () => {
     for (const s of [
       ADVISOR_SECTION_TITLE, 'Scenario: Consolidate and buy at $650k',
       'Paying out the $18,400 car loan removes $612/mo',
-      'avoiding LMI.', 'Execution risk: MEDIUM',
+      'avoiding LMI.', 'Execution risk: Medium',
       'Car loan payout letter from Toyota Finance',
       'Interest-only on the home loan — Her lender caps owner-occupier IO at 1 year.',
       ADVISOR_PROVENANCE_NOTE,

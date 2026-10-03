@@ -174,22 +174,31 @@ const CHOICE_SURFACES: Record<string, string> = {
   qa: 'src/components/report-qa/ReportQaDownloadButton.tsx',
   commercial_capacity: 'src/components/clients/ClientCommercialIndustrialTab.tsx',
   market_intelligence: 'src/components/marketing/MarketIntelligenceDownloadButton.tsx',
-  cashflow: 'src/components/cash-flow/modal/CashFlowExportMenu.tsx',
+  // Beside the export menu, in the header row (Audit 7): the menu is itself
+  // inside "More" on a phone, and a picker opened from a menu vanishes with it.
+  cashflow: 'src/components/reports/CashFlowAnalysisModal.tsx',
 };
 
 describe('the choice can be made where the document is produced', () => {
   it.each(Object.entries(CHOICE_SURFACES))(
     '%s: its download control offers the template',
-    (_reportType, path) => {
+    (reportType, path) => {
       expect(existsSync(join(ROOT, path)), `${path} does not exist`).toBe(true);
       const code = stripComments(read(path));
-      // Either presentation counts: the menu section for a dropdown, or the
-      // row for a panel that is not a menu.
+      // Any presentation counts: the menu section for a dropdown, the row for
+      // a panel that is not a menu, or "Choose template" as a button of its
+      // own beside "Export PDF" (`ChooseTemplateButton`, CLIENT_DETAILS.md §12).
       expect(
-        /useReportTemplateMenu\(|<ReportTemplateSelector/.test(code),
+        /useReportTemplateMenu\(|<ReportTemplateSelector|<ChooseTemplateButton/.test(code),
         `${path} offers no way to see or change the template, so the only place `
         + 'to choose one is the Template Library page',
       ).toBe(true);
+      // The button carries its format by prop, and the wrong one would choose
+      // another format's template beside this format's export.
+      for (const button of code.matchAll(/<ChooseTemplateButton[\s\S]*?\/>/g)) {
+        expect(button[0], `${path} offers another format's template`)
+          .toContain(`reportType="${reportType}"`);
+      }
     },
   );
 

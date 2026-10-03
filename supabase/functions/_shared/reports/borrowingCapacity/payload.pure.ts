@@ -89,11 +89,11 @@ export interface AuditRow {
 export interface AuditSection {
   /** Grouped in the order the report shows them, entries in `seq` order. */
   groups: { category: AuditCategory; rows: AuditRow[] }[];
+  /**
+   * How many entries the engine recorded. Its category totals are not carried:
+   * two of the four were not totals of anything a client could check (§21).
+   */
   summary: {
-    incomeShading: Measure;
-    expenseAdjustments: Measure;
-    liabilityAdjustments: Measure;
-    taxImpact: Measure;
     transformations: Measure;
   };
 }
@@ -116,7 +116,7 @@ export interface ScenarioRow {
   band: Band;
   /** Change against the base case. `null` on the base row itself. */
   change: Measure | null;
-  /** "Rate +1.00%", "Commitments -$240/mo" — the inputs that moved. */
+  /** "Interest rate 6.15% → 7.15%", "Commitments -$240/mo" — the inputs that moved. */
   adjustments: string[];
   /** Strategy actions, purchase power, capital flow. */
   details: string[];
@@ -167,6 +167,12 @@ export interface DebtToIncome {
   /** Every existing debt the engine counted, approximately. Null when it cannot be derived. */
   existingDebt: Measure | null;
   /**
+   * A Lenders Mortgage Insurance premium capitalised onto the loan. The engine
+   * counts it in the ratio's debt; it is part of the new borrowing, not a debt
+   * already owed, so it is named apart from `existingDebt`. Null otherwise.
+   */
+  capitalisedPremium: Measure | null;
+  /**
    * True when the debt counted is clearly more than the liabilities listed —
    * the loans on properties held, which the liabilities table does not show.
    */
@@ -216,6 +222,20 @@ export interface BorrowingCapacitySnapshot {
     shaded: Measure;
     rows: IncomeRow[];
     /**
+     * The proposed property's rent, which the calculator adds to the income
+     * it sends and the engine's breakdown never lists. Read from the setting
+     * the calculator stores with the assessment; null where there was none.
+     */
+    proposedRent: IncomeRow | null;
+    /**
+     * What the printed lines (`rows` and `proposedRent`) add up to, where that
+     * differs by a dollar or more from the totals the assessment ran on. Null
+     * where the table foots, and where nothing is itemised. The calculator
+     * sends its own totals, so the two can disagree, and a table must not
+     * print a total its rows do not reach (§21).
+     */
+    itemsTotal: { gross: Measure; shaded: Measure } | null;
+    /**
      * False when the record holds no income at all. The engine still returns a
      * capacity ($0), a DTI (0.0x) and a band for it; the document says what is
      * missing instead of presenting those as an assessment.
@@ -231,6 +251,17 @@ export interface BorrowingCapacitySnapshot {
     monthlyLiving: Measure;
     monthlyCommitments: Measure;
     liabilities: LiabilityRow[];
+    /**
+     * The repayment on a premium capitalised onto the loan. The engine adds it
+     * to the commitments the assessment uses and lists it with no liability;
+     * null unless the premium was capitalised.
+     */
+    capitalisedLmi: LiabilityRow | null;
+    /**
+     * What the printed lines add up to, where that differs by a dollar or more
+     * from the commitments the assessment ran on; null where the table foots.
+     */
+    itemsTotal: Measure | null;
   };
 
   ledger: LedgerRow[];

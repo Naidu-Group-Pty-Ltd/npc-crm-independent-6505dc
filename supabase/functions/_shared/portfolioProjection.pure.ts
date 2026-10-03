@@ -418,6 +418,16 @@ function projectNarrativeBlock(block: NarrativeBlock | null): Record<string, unk
  * something else to another catalogue, and a colliding leaf previews one
  * format's prose on another format's page.
  */
+/**
+ * Who asked for an action. `both` is an action the analysis and the review
+ * named in the same words, printed once (`mergeRepeatedActions`).
+ */
+const ACTION_SOURCE_LABEL: Record<PortfolioReview['actions'][number]['source'], string> = {
+  analysis: 'The analysis',
+  review: 'The review',
+  both: 'The analysis and the review',
+};
+
 export function projectPortfolioDocument(doc: PortfolioReview): {
   portfolio: Record<string, unknown>;
   summary: Record<string, unknown>;
@@ -434,11 +444,20 @@ export function projectPortfolioDocument(doc: PortfolioReview): {
   // which the shipping voice template already binds as the financial-health
   // analysis prose.
   put(portfolio, 'overview', str(doc.narrative));
-  if (doc.notes.length) portfolio.notes = [...doc.notes];
+  // A note is filed under the section it is about (`PortfolioNote`); a master
+  // binds the words, so the words are what is published.
+  if (doc.notes.length) portfolio.notes = doc.notes.map((n) => n.text);
 
   // ── the narrative sections, as the legacy composes them ──────────────────
   put(portfolio, 'composition', projectNarrativeBlock(doc.composition));
-  put(portfolio, 'market', projectNarrativeBlock(doc.market));
+  // The positioning follows the market facts in the typeset review, under its
+  // own subhead (`PortfolioReview.marketPositioning`). The masters were drawn
+  // when it was the market block's second paragraph, and bind it there.
+  const market = projectNarrativeBlock(doc.market) ?? {};
+  if (doc.marketPositioning) {
+    market.paragraphs = [...((market.paragraphs as string[] | undefined) ?? []), doc.marketPositioning];
+  }
+  put(portfolio, 'market', Object.keys(market).length ? market : undefined);
   put(portfolio, 'growth', projectNarrativeBlock(doc.growth));
 
   // ── per-property verdicts: the ranking beside the review's rubric ────────
@@ -533,7 +552,7 @@ export function projectPortfolioDocument(doc: PortfolioReview): {
         put(row, 'detail', str(a.detail));
         put(row, 'priorityLabel', str(a.priorityLabel));
         put(row, 'category', str(a.category));
-        put(row, 'sourceLabel', a.source === 'review' ? 'The review' : 'The analysis');
+        put(row, 'sourceLabel', ACTION_SOURCE_LABEL[a.source]);
         if (a.steps.length) row.steps = [...a.steps];
         return row;
       }),

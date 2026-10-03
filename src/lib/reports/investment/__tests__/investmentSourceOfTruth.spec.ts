@@ -41,13 +41,22 @@ const BRIDGE_SHAPE =
  * name the same business, so the cover reads the one list rather than keeping
  * a second copy of it.
  *
+ * `../presentableName.pure.ts` sets a register's capitals and a vocabulary
+ * word as a reader reads them ("THE HILLS SHIRE" → "The Hills Shire"); the
+ * projection's property table and the strategy composer's asset line print
+ * the same council, so they read one rule rather than two.
+ *
+ * `../readableFileName.pure.ts` is the name a person reads in a downloads
+ * folder, for every format: `<Document> - <topic> - <date>.pdf`. The
+ * Investment family names its file through it like the rest.
+ *
  * `../../reportPhotographs.pure.ts` names the folders a report's photographs
  * and floor plans are written to. What deleting a report removes
  * (`reportStorage.pure.ts`) has to be exactly those folders, so it reads the
  * one definition rather than restating the paths.
  */
 const ALLOWED_IMPORT =
-  /^(?:\.\/[\w.]+\.pure\.ts|\.\.\/\.\.\/reportDesign\/[\w.]+\.(?:pure|generated)\.ts|\.\.\/(?:text|markdown|vizDirectives|vizFigures|reportDate|issuerIdentity)\.pure\.ts|\.\.\/market\/(?:marketFactBlocks|marketEvidence|scoreAssessmentReading)\.pure\.ts|\.\.\/\.\.\/(?:reportSplitRegistry|compassPostProcessor)\.ts|\.\.\/\.\.\/reportPhotographs\.pure\.ts)$/;
+  /^(?:\.\/[\w.]+\.pure\.ts|\.\.\/\.\.\/reportDesign\/[\w.]+\.(?:pure|generated)\.ts|\.\.\/(?:text|markdown|vizDirectives|vizFigures|reportDate|issuerIdentity|presentableName|readableFileName)\.pure\.ts|\.\.\/market\/(?:marketFactBlocks|marketEvidence|scoreAssessmentReading)\.pure\.ts|\.\.\/\.\.\/(?:reportSplitRegistry|compassPostProcessor)\.ts|\.\.\/\.\.\/reportPhotographs\.pure\.ts)$/;
 
 /**
  * The two market modules a canonical investment module may name, and they may

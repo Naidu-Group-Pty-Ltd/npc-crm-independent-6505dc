@@ -124,6 +124,16 @@ export interface CategoryWinner {
   margin: Measure | null;
   /** True when lower is better, so the renderer does not describe it backwards. */
   lowerIsBetter: boolean;
+  /**
+   * Why no property leads, when none does — two different statements.
+   *
+   * `tie`: two properties share the best figure. `unreached`: fewer than two
+   * properties have a figure at all — on the payback year, no property repays
+   * its holding costs within the term. Both used to print "No clear leader",
+   * and the chart's caption counted both as ties (Audit 8, 1 Oct 2026). Absent
+   * when a property leads.
+   */
+  undecided?: 'tie' | 'unreached';
 }
 
 /** The comparison as a ranking, plus what each property won. */

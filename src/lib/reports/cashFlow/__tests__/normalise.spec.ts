@@ -16,6 +16,7 @@ import {
   CashFlowPayloadError,
   describeProjection,
   loanTypeLabel,
+  MAX_NOTE_CHARS,
   MAX_PROJECTION_YEARS,
   toAcquisition,
   toOutcome,
@@ -235,5 +236,25 @@ describe('buildProjection', () => {
       ],
     });
     expect(cf.assumptions).toEqual([{ label: 'Capital growth', value: '4.5% per year' }]);
+  });
+
+  // A note is a caveat a client acts on. Notes shared the 240-character bound
+  // and a tax note past it printed "…must be confirmed" with "with an
+  // accountant" gone (Audit 7).
+  it('prints a note past 240 characters whole', () => {
+    const note = `${'The investor\'s taxable income, ownership structure and eligibility were not provided for this analysis '.repeat(2)}and must be confirmed with an accountant.`;
+    expect(note.length).toBeGreaterThan(240);
+    expect(note.length).toBeLessThanOrEqual(MAX_NOTE_CHARS);
+    expect(build({ notes: [note] }).notes).toEqual([note]);
+  });
+
+  it('cuts a note past its bound at a word, and says so', () => {
+    const note = 'confirm '.repeat(80).trim();
+    const [kept] = build({ notes: [note] }).notes;
+    expect(note.length).toBeGreaterThan(MAX_NOTE_CHARS);
+    expect(kept.endsWith('\u2026')).toBe(true);
+    expect(kept.length).toBeLessThanOrEqual(MAX_NOTE_CHARS + 1);
+    // Every word kept is a whole word.
+    expect(kept.slice(0, -1).split(' ').every((w) => w === 'confirm')).toBe(true);
   });
 });

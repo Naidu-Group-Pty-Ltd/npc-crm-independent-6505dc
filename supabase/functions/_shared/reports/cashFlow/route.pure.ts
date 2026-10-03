@@ -6,17 +6,19 @@
  * three reads, a render, an upload and two writes, none of which a unit test can
  * reach.
  *
- * The filename is a contract. `CashFlowAnalysisModal` has been producing
- * `Cash_Flow_Analysis_<Address>.pdf` since this export existed; a migration that
- * quietly renames it renames it in the client's downloads folder too, so the
- * pattern below is the existing one with the date appended rather than a new
- * one.
+ * The filename is a contract, and it changed once, on purpose: from
+ * `Cash_Flow_Analysis_<Address>_<YYYY-MM-DD>.pdf` to the readable name every
+ * other report now carries (`readableFileName.pure.ts`) — `10 Year Cash Flow
+ * Analysis - 37 Bolin Street, Schofields NSW 2762 - 01 Oct 2026.pdf` (Audit 7,
+ * 1 Oct 2026). The storage key stays URL-safe (`storageSafeFileName`).
  */
 import {
   readTemplateDesignReference,
   type DesignEcho,
   type TemplateDesignReference,
 } from '../../reportDesign/templateDesign.pure.ts';
+import { REPORT_ARCHETYPES } from '../../reportDesign/structure.pure.ts';
+import { readableFileName, storageSafeFileName } from '../readableFileName.pure.ts';
 
 /** Only these are accepted from the caller; everything else is read server-side. */
 export interface CashFlowRenderRequest {
@@ -78,16 +80,34 @@ export function parseRenderRequest(body: unknown): RequestParse {
 }
 
 /**
- * The filename, keeping the shape the product already produces.
+ * The filename: what the document is, the property it is about, and the day.
  *
- * `[^a-zA-Z0-9]` → `_` is the existing rule from `CashFlowAnalysisModal`, kept
- * exactly, with the date appended so a client who receives two revisions of the
- * same property can tell them apart in their downloads folder.
+ * `<document>[ - <qualifier>] - <address> - <date>.pdf`, the rule every
+ * report's download now follows. The date still tells two revisions of one
+ * property apart in a client's downloads folder; it is the day as a reader
+ * says it. The qualifier names a copy that is not the typeset document — the
+ * browser's "legacy layout" — so the two never share a name in one folder. A
+ * flattened copy is named by the flatten button itself (`withFlattenedSuffix`
+ * adds the word), so it is handed the name of what it flattens and no more:
+ * passing "flattened" here as well printed the word twice.
  */
-export function cashFlowFileName(propertyAddress: string, isoDate: string): string {
-  const safe = (propertyAddress || 'Property').replace(/[^a-zA-Z0-9]/g, '_').slice(0, 80);
-  const date = /^\d{4}-\d{2}-\d{2}/.exec(isoDate)?.[0] ?? '';
-  return `Cash_Flow_Analysis_${safe}_${date}.pdf`;
+export function cashFlowFileName(propertyAddress: string, isoDate: string, qualifier?: string | null): string {
+  return readableFileName({
+    name: REPORT_ARCHETYPES['cash-flow-projection'].documentName,
+    qualifier: qualifier ?? null,
+    topic: propertyAddress || null,
+    isoDate,
+  });
+}
+
+/** The same name for the workbook beside it, which the modal exports. */
+export function cashFlowWorkbookFileName(propertyAddress: string, isoDate: string): string {
+  return readableFileName({
+    name: REPORT_ARCHETYPES['cash-flow-projection'].documentName,
+    topic: propertyAddress || null,
+    isoDate,
+    extension: 'xlsx',
+  });
 }
 
 /**
@@ -106,7 +126,7 @@ export function cashFlowStoragePath(
   uniqueId: string,
 ): string {
   const day = /^\d{4}-\d{2}-\d{2}/.exec(isoDate)?.[0] ?? 'undated';
-  return `cash-flow/${reportId}/${day}/${uniqueId}-${fileName}`;
+  return `cash-flow/${reportId}/${day}/${uniqueId}-${storageSafeFileName(fileName)}`;
 }
 
 /** How long a returned link lives. Long enough to email, short enough to expire. */

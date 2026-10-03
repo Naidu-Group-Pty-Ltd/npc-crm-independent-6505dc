@@ -81,6 +81,16 @@ const MIN_QUADRANT_POINTS = 3;
 const LMI_LVR = 80;
 
 /**
+ * The yield-against-leverage plot's height, in chart units (`renderQuadrant`).
+ *
+ * At the default 420 the figure stood about half a page tall for a handful of
+ * dots, and wherever it did not fit it left the page before it 60% empty in
+ * sixteen of the fifty designs (PORTFOLIO.md §10). The plot keeps its four
+ * quadrants and its labels at this height.
+ */
+const QUADRANT_HEIGHT = 330;
+
+/**
  * Where the money is.
  *
  * The largest holdings by value, with the remainder gathered into one segment
@@ -170,12 +180,23 @@ export function yieldAgainstLeverageChart(
     ? plottable.reduce((sum, h) => sum + h.grossYield.value, 0) / plottable.length
     : p.totals.averageYield.value;
 
-  const dropped = p.holdings.length - plottable.length;
+  // Why each unplotted holding is missing, in its own words. The caption said
+  // every one was an owner-occupied home — which was also true of a rented
+  // home the analysis had counted as a holding, and of an investment with no
+  // rent on file, neither of which is one.
+  const unplotted = p.holdings.filter((h) => !plottable.includes(h));
+  const homes = unplotted.filter((h) => h.isOwnerOccupied).length;
+  const others = unplotted.length - homes;
   const caption = `Each dot is one holding. The vertical line is ${LMI_LVR}% loan to value, `
     + 'where lenders begin pricing mortgage insurance; the horizontal line is this '
     + `portfolio’s average gross yield of ${yMid.toFixed(2)}%. `
-    + (dropped
-      ? `${dropped} ${dropped === 1 ? 'holding is' : 'holdings are'} not plotted: an owner-occupied property earns no rent, so it has no yield.`
+    + (homes
+      ? `${homes === 1 ? 'The owner-occupied home is' : `${homes} owner-occupied homes are`} not plotted: a home earns no rent, so it has no yield. `
+      : '')
+    + (others
+      ? (others === 1
+        ? 'One investment is not plotted: its rent or value is not on file.'
+        : `${others} investments are not plotted: their rent or value is not on file.`)
       : '');
 
   return chartFigure(
@@ -193,6 +214,9 @@ export function yieldAgainstLeverageChart(
       q2: 'Higher yield, lower debt',
       q3: 'Lower yield, lower debt',
       q4: 'Lower yield, higher debt',
+      // Shorter than the default: the chart opens its section, and a figure
+      // that does not fit under its heading takes the heading with it.
+      height: QUADRANT_HEIGHT,
     }),
     caption.trim(),
   );

@@ -364,11 +364,20 @@ export function scoreBasisLine(score: unknown): string | undefined {
   ].join('\n');
 }
 
-/** The weighted dimensions table. Empty when the record scored none of them. */
+/**
+ * The weighted dimensions table. Empty when the record scored none of them.
+ *
+ * The column is the dimension's share of THIS grade — the record's weight is
+ * the one the engine renormalised over the dimensions it scored (57/21/21 on
+ * 18 Annabelle Crescent against a published .40/.15/.15) — so it is headed
+ * as the Compass scorecard heads it, "Share of grade". Headed "Weight", it
+ * read as the published weighting, and the Snapshot and the scorecard named
+ * one figure two ways (Audit 6, 1 Oct 2026).
+ */
 function dimensionLines(score: Record<string, unknown>): string[] {
   const dims = breakdownEntries(score).filter((d) => d.score !== undefined);
   if (!dims.length) return [];
-  const rows = ['| Dimension | Weight | Score |', '| --- | --- | --- |'];
+  const rows = ['| Dimension | Share of grade | Score |', '| --- | --- | --- |'];
   for (const d of dims) {
     const label = d.label.charAt(0).toUpperCase() + d.label.slice(1);
     rows.push(`| ${label} | ${d.weight !== undefined ? `${Math.round(d.weight)}%` : '—'} | ${Math.round(d.score!)}/100 |`);

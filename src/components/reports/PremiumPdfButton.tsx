@@ -119,10 +119,12 @@ export function PremiumPdfButton({
     }
   };
 
-  const renderForFlatten = useCallback(async (): Promise<Blob> => {
+  const renderForFlatten = useCallback(async (): Promise<{ blob: Blob; fileName: string }> => {
     const doc = await produceInvestmentDocument(reportId, options());
     await logDownload(doc, true);
-    return doc.blob;
+    // The document's own readable name, so the flattened copy is named what
+    // the export is, with `-flattened` after it.
+    return { blob: doc.blob, fileName: doc.fileName };
     // `logDownload` closes over the same values `options` does.
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reportId, options]);

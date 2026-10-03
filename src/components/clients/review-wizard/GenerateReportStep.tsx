@@ -377,15 +377,14 @@ export function GenerateReportStep({
       </Card>
 
       {/*
-        The typeset review, as a sibling card rather than a second button inside
-        the generator's own dialog.
+        The typeset review WITH this client's latest completed review folded
+        in, beside the generator rather than inside its dialog.
 
-        It belongs here and not there because of when the row exists. Inside that
-        dialog the analysis is still only in component state — the
-        `portfolio_analysis_reports` row is not inserted until *Download & Save*
-        runs — so a server route that reads the persisted row would have nothing
-        to read. This card typesets the most recent saved report, which is the
-        one the generator above has just written.
+        The dialog's own Export PDF draws the analysis alone, in the chosen
+        template, from the row it saves (`saveAnalysis.ts`): the analysis is
+        what the dialog shows. This card typesets the most recent saved report
+        with the review joined, as the Reports tab's Export PDF does. The
+        generator refreshes the query it reads whenever it saves one.
       */}
       <TypesetReviewCard clientId={clientId} />
 
@@ -434,10 +433,10 @@ function TypesetReviewCard({ clientId }: { clientId: string }) {
       </CardHeader>
       <CardContent className="space-y-3">
         <p className="text-sm text-muted-foreground">
-          The same analysis, typeset server-side on your branding — a generated
-          contents page, the full holdings matrix in landscape, and every figure
-          the record holds. Reads the most recently saved report, so generate one
-          above first if there is none.
+          The most recently saved analysis with this client's latest completed
+          review folded in, typeset in your chosen template — a generated contents
+          page, every property side by side, and every figure the record holds.
+          Generate and export an analysis above first if there is none.
         </p>
         {isLoading ? (
           <p className="text-sm text-muted-foreground">Looking for a saved report…</p>

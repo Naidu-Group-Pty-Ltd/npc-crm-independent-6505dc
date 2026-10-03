@@ -19,6 +19,8 @@ import {
   type TemplateDesignReference,
 } from '../../reportDesign/templateDesign.pure.ts';
 import { readStrategyRationale, type StrategyRationaleDocument } from './strategyRationale.pure.ts';
+import { DOCUMENT_NAME } from './render.pure.ts';
+import { readableFileName, storageSafeFileName } from '../readableFileName.pure.ts';
 
 /**
  * Which document this route draws.
@@ -128,16 +130,19 @@ export function parseRenderRequest(body: unknown): RequestParse {
 export const MAX_SCENARIO_PRESETS = 12;
 
 /**
- * The filename, unchanged from what the product has always produced.
+ * The name a person is handed: `Borrowing Capacity Snapshot - A. and J. Sample
+ * - 1 Aug 2026.pdf` — the name the cover prints, whose assessment it is, and
+ * the day (`readableFileName.pure.ts`), as the Intelligence Hub Summary, the
+ * Portfolio Performance Review and both comparisons already are (§21).
  *
- * `[^a-zA-Z0-9]` → `_` is the existing rule, kept exactly: a client called
- * "A. & J. Sample" has been receiving `A___J__Sample` since this format
- * existed, and "improving" it renames every future file for no one's benefit.
+ * It was `Borrowing_Capacity_Snapshot_A____J__Sample_2026-08-01.pdf`, kept so
+ * that nothing a client had already received would be renamed. Every other
+ * typeset format has since moved to the readable rule, and a folder of one
+ * client's documents in two naming schemes is the inconsistency that rule
+ * exists to end. The in-browser generator's file keeps its own name.
  */
 export function snapshotFileName(clientName: string, isoDate: string): string {
-  const safeName = (clientName || 'Client').replace(/[^a-zA-Z0-9]/g, '_');
-  const date = /^\d{4}-\d{2}-\d{2}/.exec(isoDate)?.[0] ?? '';
-  return `Borrowing_Capacity_Snapshot_${safeName}_${date}.pdf`;
+  return readableFileName({ name: DOCUMENT_NAME, topic: clientName, isoDate });
 }
 
 /**
@@ -158,7 +163,9 @@ export function snapshotStoragePath(
   uniqueId: string,
 ): string {
   const day = /^\d{4}-\d{2}-\d{2}/.exec(isoDate)?.[0] ?? 'undated';
-  return `borrowing-capacity/${clientId}/${day}/${uniqueId}-${fileName}`;
+  // The key keeps to URL-safe characters; the readable name is what a person
+  // is handed (`storageSafeFileName`).
+  return `borrowing-capacity/${clientId}/${day}/${uniqueId}-${storageSafeFileName(fileName)}`;
 }
 
 /** How long a returned link lives. Long enough to email, short enough to expire. */

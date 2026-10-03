@@ -54,6 +54,25 @@ function svgOf(figure: string): string {
 const ALL_NEGATIVE = [-10_300, -10_400, -18_600, -18_900, -19_100, -19_000, -18_900, -18_800, -18_700, -18_200];
 const MIXED = [-9_200, -6_100, -3_500, -1_200, 400, 2_600, 4_900, 7_300, 9_800, 12_400];
 
+describe('"What this assumes" is one page too (Audit 7)', () => {
+  // At the full opener the page held the table, three notes and the caution
+  // with a line or two to spare: a fourth note (depreciation excluded) or a
+  // longer one sent the caution alone onto a page of its own in 23 of 51
+  // designs. Measured in WeasyPrint — CASH_FLOW.md §12.
+  it('opens as a one-page chapter', () => {
+    const cf = { ...project(ALL_NEGATIVE), notes: ['Depreciation is excluded from this projection at the adviser\'s direction.'] };
+    const assumptions = cashFlowSections(cf).find((s) => s.id === 'assumptions')!;
+    expect(assumptions.pageBudget).toBe(1);
+    expect(assumptions.onePage).toBe(true);
+    const html = renderCashFlowBody({
+      projection: cf, palette: PALETTE as never,
+      company: { name: { lead: 'Kestrel', tail: '' }, rows: [], disclaimer: { paragraphs: [], fontPt: 8 } } as never,
+      masthead: 'Kestrel',
+    });
+    expect(html).toMatch(/class="chapter cf-onepage page-body"[^>]*data-chapter-title="What this assumes"/);
+  });
+});
+
 describe('the section is one page', () => {
   it('is budgeted one page and opens as a one-page chapter', () => {
     const growth = cashFlowSections(project(ALL_NEGATIVE)).find((s) => s.id === 'growth')!;

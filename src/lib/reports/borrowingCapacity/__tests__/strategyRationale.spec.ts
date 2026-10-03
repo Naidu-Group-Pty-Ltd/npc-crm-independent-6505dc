@@ -7,6 +7,13 @@
  * typeset brief to the jsPDF brief's own words: every literal the generator
  * prints is found in its source and then in what the composer produces, and
  * the Samuel Lavis baseline brief of 28 Sep 2026 is reproduced line for line.
+ *
+ * The audit of 1 Oct 2026 (§22) changed some of those words, in both briefs
+ * at once: "maths", "Cash flow", a target cleared in words rather than a tick,
+ * "Desktop valuation", and the over-committed pool in plain English. Where the
+ * jsPDF brief now prints a constant the composer exports, rather than a
+ * literal of its own, the parity is by construction and is asserted as the
+ * import.
  */
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -16,12 +23,16 @@ import { resolveReportPalette } from '@/lib/reportDesign/brandResolve.pure';
 import { mastheadFor, resolveCompanyBlock } from '@/lib/reportDesign/companyBlock.pure';
 
 import {
+  BASIS_LABEL,
   composeStrategyRationale,
+  POOL_OVERCOMMITTED_NOTE,
   readStrategyRationale,
+  RECONCILE_TITLE,
   strategyRationaleFileName,
   type RationaleContextInput,
   type RationaleReportInput,
 } from '../strategyRationale.pure';
+import { MEMO_CHAPTER_CLASS, SECTION_SUBHEAD_CLASS } from '@/lib/reportDesign/primitives.pure';
 import { renderStrategyRationaleBody } from '../strategyRationaleRender.pure';
 import { parseRenderRequest } from '../route.pure';
 import { SAMPLE_GLOBAL_SETTINGS } from './fixtures/sampleAssessment';
@@ -88,12 +99,10 @@ describe('the brief says what the jsPDF brief says', () => {
     'Pre-scenario',
     ' vs base',
     'Loan + cash − costs',
-    'Baseline scenario — no levers applied.',
-    'How the math reconciles',
-    'No execution steps required — baseline scenario.',
     'Caveats & assumptions',
-    'POOL OVERCOMMITTED — sinks were clamped to available pool.',
     'Finance must validate each basis before submission. AVM/desktop figures are advisory only.',
+    'Clears the ',
+    'Cash flow: ',
     'Equity release methodology — cross-collateralised',
     'Net capital impact: ',
     ' capacity',
@@ -106,14 +115,26 @@ describe('the brief says what the jsPDF brief says', () => {
     expect(composed).toContain(literal);
   });
 
-  it('reproduces the Samuel Lavis baseline brief, line for line', () => {
+  it.each([
+    ['RECONCILE_TITLE', RECONCILE_TITLE],
+    ['POOL_OVERCOMMITTED_NOTE', POOL_OVERCOMMITTED_NOTE],
+    ['BASIS_LABEL', BASIS_LABEL.desktop],
+  ])('prints %s, which the jsPDF brief imports rather than restates', (name, value) => {
+    expect(LEGACY).toMatch(new RegExp(`\\b${name}\\b`));
+    expect(composed).toContain(value);
+  });
+
+  it('says it in the report\'s words, not the capital router\'s or a chip\'s (§22)', () => {
+    for (const machine of ['math reconciles', 'Cash-flow', 'sinks', 'clamped', 'OVERCOMMITTED', 'Desktop val ', '✓', 'BROKER']) {
+      expect(composed, machine).not.toContain(machine);
+    }
+  });
+
+  it('reproduces the Samuel Lavis baseline brief\'s words', () => {
     const body = text(html(baseline));
     for (const line of [
       'Baseline scenario — no levers applied. Borrowing capacity remains at $761,404.',
       'Base capacity', '$761,404', 'Pre-scenario', 'Scenario capacity', '+$0 vs base',
-      'What we propose & why (0 levers)', 'Baseline scenario — no levers applied.',
-      'How the math reconciles', 'No levers applied — no per-lever attribution to reconcile.',
-      'Recommended execution sequence (0 steps)', 'No execution steps required — baseline scenario.',
       'Caveats & assumptions',
       'Standard lender verification applies — payslips, bureau check, valuations, and contract review must all be completed before unconditional approval.',
       'Samuel Lavis', '28 September 2026, 20:15',
@@ -122,39 +143,93 @@ describe('the brief says what the jsPDF brief says', () => {
     }
   });
 
+  /**
+   * §22. The baseline brief headed its finding "Baseline scenario — no levers
+   * applied." and said so three more times, under "(0 levers)", the
+   * reconciliation and "(0 steps)". Both briefs now leave an empty part out,
+   * and the empty sequence's line, which called any scenario with no steps a
+   * baseline, is gone with it.
+   */
+  it('leaves out a part with nothing in it, in both briefs', () => {
+    const body = text(html(baseline));
+    for (const empty of ['(0 levers)', '(0 steps)', RECONCILE_TITLE, 'No levers applied — no per-lever attribution', 'No execution steps required']) {
+      expect(body, empty).not.toContain(empty);
+    }
+    expect(body.match(/no levers applied/gi)).toHaveLength(1);
+    expect(LEGACY).not.toMatch(/doc\.text\('(?:No execution steps required|Baseline scenario — no levers applied)/);
+    expect(LEGACY).toContain('if (report.bullets.length > 0) {');
+    expect(LEGACY).toContain('if (report.sequence.length > 0) {');
+    const noSteps = text(html(composeStrategyRationale({ ...RICH_REPORT, sequence: [] }, RICH_CONTEXT, '')));
+    expect(noSteps).not.toContain('baseline scenario');
+    expect(noSteps).toContain(RECONCILE_TITLE);
+  });
+
   it('prints the purchase-power box only where the modeller has one, with the target as it is stated', () => {
     expect(baseline.kpis.map((k) => k.label)).toEqual(['Base capacity', 'Scenario capacity']);
-    expect(rich.kpis[2]).toMatchObject({ label: 'Purchase power', value: '$918,000', foot: 'Target $900,000 ✓' });
+    expect(rich.kpis[2]).toMatchObject({ label: 'Purchase power', value: '$918,000', foot: 'Clears the $900,000 target' });
+    const short = composeStrategyRationale(RICH_REPORT, { ...RICH_CONTEXT, meetsTarget: false }, '');
+    expect(short.kpis[2].foot).toBe('Short of the $900,000 target');
   });
 
   it('keeps every lever, step, leg, valuation and the pool method', () => {
     const body = text(html(rich));
     for (const s of [
-      'Consolidate the car loan', 'Serviced over 30 years.', '+$96,400 capacity', 'Cash-flow: Repayments fall by $644/mo.',
-      'Release equity', 'CAUTION', 'Order a valuation — Desktop.', 'BROKER',
+      'Consolidate the car loan', 'Serviced over 30 years.', '+$96,400 capacity', 'Cash flow: Repayments fall by $644/mo.',
+      'Release equity', 'CAUTION', 'Order a valuation — Desktop.', 'Broker',
       'Capital allocation flow (1 leg)', 'Equity → Deposit', '+$812/mo', '+$120,000 debt', 'At 6.4%.',
-      'Valuation assumptions (1 override)', '14 Wattle Grove: $700,000 → $780,000 (+$80,000) — basis: Desktop val · source: CoreLogic',
+      'Valuation assumptions (1 override)', '14 Wattle Grove: $700,000 → $780,000 (+$80,000) — basis: Desktop valuation · source: CoreLogic',
       'Pool of 2 securities (A; B).', 'Pool release: $234,000.',
     ]) {
       expect(body, s).toContain(s);
     }
   });
 
-  it('names the file as the jsPDF brief always has', () => {
+  it('names the typeset file readably, and the jsPDF brief keeps its own name (§22)', () => {
+    expect(strategyRationaleFileName('Samuel Lavis', '2026-09-28T10:15:00Z')).toBe('Strategy Rationale Brief - Samuel Lavis - 28 Sep 2026.pdf');
+    expect(strategyRationaleFileName('', '2026-09-28')).toBe('Strategy Rationale Brief - Client - 28 Sep 2026.pdf');
     expect(LEGACY).toContain('Strategy_Rationale_${safeName}_${dateStr}.pdf');
-    expect(strategyRationaleFileName('Samuel Lavis', '2026-09-28T10:15:00Z')).toBe('Strategy_Rationale_Samuel_Lavis_2026-09-28.pdf');
   });
 });
 
 describe('the typeset brief is one memo', () => {
   it('sets its parts as subheads in a single chapter', () => {
-    const h = html(baseline);
+    const h = html(rich);
     expect((h.match(/<section class="chapter/g) ?? []).length).toBe(1);
-    expect(h).toContain('<h2>What we propose &amp; why (0 levers)</h2>');
+    expect(h).toContain(`<h2 class="${SECTION_SUBHEAD_CLASS}">What we propose &amp; why (2 levers)</h2>`);
+  });
+
+  /**
+   * §22. Its header repeated the cover word for word under a "SECTION 01" that
+   * numbered the only section, and the running head said "Strategy Rationale
+   * Brief" on both sides of every page.
+   */
+  it('opens on its finding, and the running head names the client', () => {
+    const h = html(rich);
+    expect(h).toMatch(new RegExp(`<section class="chapter[^"]*\\b${MEMO_CHAPTER_CLASS}\\b`));
+    expect(h).toContain('data-chapter-title="Samuel Lavis"');
+    expect(h).toContain('<h1>Scenario lifts borrowing capacity by $184,250.</h1>');
+    expect(h).toContain('<div class="chapter-dek">Two levers carry the uplift.</div>');
+    expect(h).not.toContain('class="chapter-no"');
+    expect(h).not.toMatch(/<h1>Strategy Rationale Brief<\/h1>/);
   });
 
   it('keeps a heading with its opening block', () => {
-    expect(html(baseline)).toMatch(/<div class="keep-together"><h2>How the math reconciles<\/h2><p>/);
+    expect(html(rich)).toMatch(new RegExp(`<div class="keep-together"><h2 class="${SECTION_SUBHEAD_CLASS}">How the maths reconciles</h2><p>`));
+  });
+
+  /**
+   * §22. A four-step sequence was kept whole with its heading, and moved to
+   * the next page whole, leaving a quarter of a page white above it.
+   */
+  it('keeps a long table by its height, with its heading on its first rows', () => {
+    const long = composeStrategyRationale({
+      ...RICH_REPORT,
+      sequence: Array.from({ length: 12 }, (_, i) => ({ step: i + 1, action: `Step ${i + 1} of the execution, set out in full so the row wraps`, owner: 'finance' as const })),
+    }, RICH_CONTEXT, '');
+    const h = html(long);
+    const at = h.indexOf('Recommended execution sequence (12 steps)');
+    expect(h.slice(at - 60, at)).not.toContain('keep-together');
+    expect(h).toContain('<tbody class="lead">');
   });
 
   it('escapes what arrives', () => {

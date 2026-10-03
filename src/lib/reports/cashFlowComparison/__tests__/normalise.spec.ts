@@ -18,6 +18,7 @@ import {
   toAnalysis,
 } from '../normalise.pure';
 import type { ComparedProperty } from '../payload.pure';
+import { formatMeasure } from '@/lib/reportDesign/measure.pure';
 
 const NOW = '2026-08-02T00:00:00.000Z';
 
@@ -230,6 +231,44 @@ describe('what it works out for itself', () => {
     expect(capitalGain?.margin).toBeNull();
   });
 
+  /**
+   * Audit 8. Two different absences printed as one "No clear leader", and the
+   * chart's caption counted both as ties.
+   */
+  it('says which absence it is: a tie, or a figure no property reached', () => {
+    const tie = build([
+      property('a', '12 Example Street', TEN(-3_000)),
+      property('b', '9 Sample Road', TEN(-3_000)),
+    ]);
+    expect(tie.scoreboard.winners.find((w) => w.key === 'capitalGain')?.undecided).toBe('tie');
+    // Neither property repays its holding costs within the term.
+    const payback = build(twoProperties()).scoreboard.winners.find((w) => w.key === 'paybackYear');
+    expect(payback?.property).toBeNull();
+    expect(payback?.undecided).toBe('unreached');
+  });
+
+  /**
+   * Audit 8. On the payback year no figure means "not within the term", which
+   * every year inside it beats: the one property that repays leads. There is no
+   * margin, because the other has no figure to measure the lead against.
+   */
+  it('leads with the one property that repays, and invents no margin', () => {
+    const repays = [
+      ...Array.from({ length: 3 }, () => ({ afterTax: -1_000 })),
+      ...Array.from({ length: 7 }, () => ({ afterTax: 2_000 })),
+    ];
+    const cf = build([property('a', '12 Example Street', repays), twoProperties()[1]]);
+    const payback = cf.scoreboard.winners.find((w) => w.key === 'paybackYear');
+    expect(payback?.property).toBe(cf.properties[0].number);
+    expect(payback?.value?.value).toBe(cf.properties[0].outcome.paybackYear);
+    expect(payback?.margin).toBeNull();
+    expect(payback?.undecided).toBeUndefined();
+    // The general rule is untouched: one figure on any other measure is no lead.
+    const firstPositive = build([property('a', '12 Example Street', repays), twoProperties()[1]])
+      .scoreboard.winners.find((w) => w.key === 'capitalGain');
+    expect(firstPositive?.undecided).toBe('tie');
+  });
+
   it('carries a margin so a win by nothing reads as a win by nothing', () => {
     const cf = build(twoProperties());
     const cash = cf.scoreboard.winners.find((w) => w.key === 'cumulativeAfterTax');
@@ -245,6 +284,34 @@ describe('what it works out for itself', () => {
     const cf = build(twoProperties());
     expect(cf.narrative).toContain('9 Sample Road');
     expect(cf.narrative).toMatch(/Over 10 years/);
+  });
+
+  /**
+   * Audit 8. "$X of capital growth against -$198,521 of cumulative after-tax
+   * cash flow" put a minus sign after a word that already subtracts. Total
+   * return is growth plus cash flow, said as the sum it is.
+   */
+  it('says the total return as the sum it is, with no minus sign after a word', () => {
+    const costs = build(twoProperties()).narrative;
+    expect(costs).toMatch(/of capital growth less the \$20,000 it cost to hold after tax\./);
+    expect(costs).not.toMatch(/against|-\$/);
+    const earns = build([
+      property('a', '12 Example Street', TEN(1_000)),
+      property('b', '9 Sample Road', TEN(500)),
+    ]).narrative;
+    expect(earns).toMatch(/of capital growth plus \$10,000 of after-tax cash flow\./);
+  });
+
+  /** Audit 8. The sentence said "32%" over a strip reading "31.9%". */
+  it('states the lead in the precision the strip beside it prints', () => {
+    const cf = build([
+      property('a', '12 Example Street', TEN(-4_000)),
+      property('b', '9 Sample Road', TEN(-2_000), { purchasePrice: 610_000 }),
+    ]);
+    const lead = cf.scoreboard.leadMargin;
+    expect(lead).not.toBeNull();
+    expect(cf.narrative).toContain(`${lead ? formatMeasure(lead) : ''} on total return`);
+    expect(lead && formatMeasure(lead)).toMatch(/^\d+\.\d%$/);
   });
 });
 

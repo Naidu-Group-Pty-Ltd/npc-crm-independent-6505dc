@@ -613,12 +613,11 @@ export function ClientReportsTab({
                     size="icon"
                     className="h-10 w-10 sm:h-8 sm:w-8"
                     icon={<Download className="h-4 w-4" />}
-                    triggerLabel="Download PDF"
+                    triggerLabel="Download the Borrowing Capacity Snapshot"
                     request={{ clientId, clientName }}
                     legacy={() => fetchAndGenerateBorrowingCapacityPDF(
                       clientId, clientName, undefined, undefined, { returnBlob: true },
                     )}
-                    label="Download PDF"
                   />
                 )}
 

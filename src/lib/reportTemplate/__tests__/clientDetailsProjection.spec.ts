@@ -96,11 +96,30 @@ function fullDetails(overrides: Record<string, unknown> = {}) {
   } as never;
 }
 
-/** A record with contact details and nothing else — 742 of the 775 clients. */
+/**
+ * A record with contact details and nothing else — 742 of the 775 clients.
+ *
+ * The income and the position are emptied too. They were left at the full
+ * fixture's, which the projection's own rule could not see — it read the
+ * collections and never the income — so this "empty" record carried $18,950 a
+ * month while passing as empty (CLIENT_DETAILS.md §12).
+ */
 function emptyDetails() {
   return fullDetails({
     employment: [], assets: [], liabilities: [], expenses: [], properties: [],
     ownerOccupied: null,
+    income: {
+      primaryEmploymentMonthly: perMonth(0), secondaryEmploymentMonthly: perMonth(0),
+      totalEmploymentMonthly: perMonth(0), otherIncome: [],
+      totalOtherMonthly: perMonth(0), rentalMonthly: perMonth(0),
+      totalMonthly: perMonth(0), totalGrossAnnual: perYear(0),
+    },
+    position: {
+      propertyValue: aud(0), propertyDebt: aud(0), propertyEquity: aud(0),
+      otherAssets: aud(0), otherLiabilities: aud(0), netWorth: aud(0),
+      incomeMonthly: perMonth(0), commitmentsMonthly: perMonth(0),
+      surplusMonthly: perMonth(0), commitmentRatio: null,
+    },
     meta: {
       clientId: 'c-2', clientName: 'Alex Tran', preparedOn: '2026-08-02T00:00:00.000Z',
       propertyCount: 0, hasSecondaryContact: false,
@@ -131,6 +150,27 @@ describe('the record with nothing in it', () => {
 
   it('says so as a fact, because 742 of the 775 clients answer this way', () => {
     expect(p.clientDetails.hasFinancials).toBe(false);
+  });
+
+  /**
+   * The document's own rule (`recordHoldsFinancials`). The projection read the
+   * collections alone, so a client whose only record is a pension drew "No
+   * financial information is recorded" on every template master while the
+   * standard document set out the income.
+   */
+  it('counts recorded income as finances, as the document does', () => {
+    const withIncome = projectClientDetails(fullDetails({
+      employment: [], assets: [], liabilities: [], expenses: [], properties: [],
+      ownerOccupied: null,
+      income: {
+        primaryEmploymentMonthly: perMonth(0), secondaryEmploymentMonthly: perMonth(0),
+        totalEmploymentMonthly: perMonth(0),
+        otherIncome: [{ label: 'Age Pension', monthly: perMonth(2167), contact: 'primary' }],
+        totalOtherMonthly: perMonth(2167), rentalMonthly: perMonth(0),
+        totalMonthly: perMonth(2167), totalGrossAnnual: perYear(26000),
+      },
+    }));
+    expect(withIncome.clientDetails.hasFinancials).toBe(true);
   });
 
   it('still publishes who the document is about', () => {

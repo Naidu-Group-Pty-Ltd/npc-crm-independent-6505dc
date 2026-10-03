@@ -140,15 +140,20 @@ function toAcquisition(base: ModalBaseFinancials): WireAcquisition {
  *
  * Stated rather than implied. Every figure past year one is these five numbers
  * compounded, and a client who cannot see them cannot judge the table.
+ *
+ * Each is named as the Input Summary names it (`inputSummary.pure.ts`): one
+ * figure, one name. The document printed "CPI growth rate" and "Tax rate
+ * (MTR)" on its first pages and "Expense inflation (CPI)" and "Marginal tax
+ * rate" for the same two figures on its last (Audit 7, 1 Oct 2026).
  */
 function toAssumptions(base: ModalBaseFinancials): Array<{ label: string; value: string }> {
   const pct = (n: number) => `${finite(n).toFixed(2).replace(/\.00$/, '')}%`;
   return [
-    { label: 'Capital growth', value: `${pct(base.capitalGrowth)} per year` },
-    { label: 'Expense inflation (CPI)', value: `${pct(base.cpiGrowthRate)} per year` },
+    { label: 'Capital growth rate', value: `${pct(base.capitalGrowth)} per year` },
+    { label: 'CPI growth rate', value: `${pct(base.cpiGrowthRate)} per year` },
     { label: 'Interest rate', value: pct(base.interestRate) },
-    { label: 'Marginal tax rate', value: pct(base.taxRate) },
-    { label: 'Occupancy', value: `${finite(base.occupancyRate)} weeks per year` },
+    { label: 'Tax rate (MTR)', value: pct(base.taxRate) },
+    { label: 'Rent basis', value: `${finite(base.occupancyRate)} weeks per year` },
     {
       label: 'Depreciation',
       value: base.includeDepreciationInCashFlow

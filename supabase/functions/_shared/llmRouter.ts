@@ -16,6 +16,13 @@
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.45.0';
 import { convertContent, anthropicRejectsSampling } from './claudeReconstruct.pure.ts';
 import { ANTHROPIC_MESSAGES_URL, anthropicJsonHeaders } from './anthropicRoute.pure.ts';
+import {
+  anthropicMessagesFrom,
+  anthropicToolChoiceFrom,
+  anthropicToolsFrom,
+  needsAnthropicToolTranslation,
+  openAiMessageFromAnthropic,
+} from './anthropicToolUse.pure.ts';
 import { resolveAnthropicCredential } from './anthropicCredential.ts';
 import { logApiUsage } from './logApiUsage.ts';
 import { extractUsageTokens, resolveLlmCredential, resolveModelUsed } from './llmUsageBinding.pure.ts';
@@ -270,7 +277,7 @@ async function callRoute(
       return await callOpenAINative(modelId, args.messages, { temperature, max_tokens, tools: args.tools, tool_choice: args.toolChoice, response_format: args.responseFormat, timeoutMs, extras });
     }
     if (modelId.startsWith('claude-')) {
-      return await callAnthropicNative(modelId, args.messages, { temperature, max_tokens, timeoutMs, extras });
+      return await callAnthropicNative(modelId, args.messages, { temperature, max_tokens, tools: args.tools, tool_choice: args.toolChoice, timeoutMs, extras });
     }
     if (modelId.startsWith('gemini-')) {
       return await callGeminiNative(modelId, args.messages, { temperature, max_tokens, timeoutMs, extras });
@@ -405,12 +412,17 @@ async function callAnthropicNative(model: string, messages: LLMMessage[], opts: 
   if (!resolved.ok) return { ok: false, error: resolved.why };
   // Anthropic API takes system separately
   const systemMsg = messages.filter((m) => m.role === 'system').map((m) => (typeof m.content === 'string' ? m.content : JSON.stringify(m.content))).join('\n\n');
-  const userMsgs = messages.filter((m) => m.role !== 'system').map((m) => ({
-    role: m.role === 'assistant' ? 'assistant' : 'user',
-    // Preserve multimodal content (image_url → base64 image blocks) instead of
-    // stringifying it — so the native Anthropic path actually supports vision.
-    content: convertContent(m.content),
-  }));
+  // Tools travel only where the call carries them (`anthropicToolUse.pure.ts`):
+  // without, the request and the answer are built exactly as they always were.
+  const withTools = needsAnthropicToolTranslation(messages, opts.tools);
+  const userMsgs = withTools
+    ? anthropicMessagesFrom(messages, convertContent)
+    : messages.filter((m) => m.role !== 'system').map((m) => ({
+      role: m.role === 'assistant' ? 'assistant' : 'user',
+      // Preserve multimodal content (image_url → base64 image blocks) instead of
+      // stringifying it — so the native Anthropic path actually supports vision.
+      content: convertContent(m.content),
+    }));
 
   const body: any = {
     model,
@@ -418,6 +430,12 @@ async function callAnthropicNative(model: string, messages: LLMMessage[], opts: 
     messages: userMsgs,
   };
   if (systemMsg) body.system = systemMsg;
+  if (withTools) {
+    const tools = anthropicToolsFrom(opts.tools);
+    const toolChoice = tools ? anthropicToolChoiceFrom(opts.tool_choice) : undefined;
+    if (tools) body.tools = tools;
+    if (toolChoice) body.tool_choice = toolChoice;
+  }
   // Opus 4.7+/Fable reject `temperature` (400); older Claude models still accept it.
   if (opts.temperature !== undefined && !anthropicRejectsSampling(model)) body.temperature = opts.temperature;
   applyProviderExtras(body, opts.extras);
@@ -429,13 +447,15 @@ async function callAnthropicNative(model: string, messages: LLMMessage[], opts: 
   }, opts.timeoutMs);
   if (!r.ok) return { ok: false, status: r.status, error: await r.text() };
   const data = await r.json();
-  // Re-shape to OpenAI-compatible structure
-  const content = data?.content?.map((c: any) => c.text).filter(Boolean).join('\n') ?? '';
+  // Re-shape to OpenAI-compatible structure; a tool_use block becomes a tool call.
+  const message = withTools
+    ? openAiMessageFromAnthropic(data)
+    : { role: 'assistant', content: data?.content?.map((c: any) => c.text).filter(Boolean).join('\n') ?? '' };
   return {
     ok: true,
     status: 200,
     data: {
-      choices: [{ message: { role: 'assistant', content }, finish_reason: openAiFinishReason(data?.stop_reason) }],
+      choices: [{ message, finish_reason: openAiFinishReason(data?.stop_reason) }],
       _native: data,
     },
   };

@@ -23,6 +23,7 @@ import type { ReportArchetypeId, SpineEntry } from '../../reportDesign/structure
 import { buildSpine, validateSpine } from '../../reportDesign/structure.pure.ts';
 import type { ClientDetails } from './payload.pure.ts';
 import { MAX_ROWS } from './payload.pure.ts';
+import { PORTRAIT_MATRIX_MAX } from '../../reportDesign/portraitMatrix.pure.ts';
 
 export const ARCHETYPE_ID: ReportArchetypeId = 'client-details';
 
@@ -32,7 +33,7 @@ export interface ClientDetailsSection {
   /** One line under the section number, and on the contents page. */
   note: string;
   pageBudget: number;
-  /** Opens the landscape page. Only the portfolio matrix does. */
+  /** Opens the landscape page. Only a portfolio matrix past five holdings does. */
   wide?: boolean;
 }
 
@@ -129,15 +130,18 @@ export function clientDetailsSections(p: ClientDetails): ClientDetailsSection[] 
   }
 
   if (p.properties.length) {
+    // Up to `PORTRAIT_MATRIX_MAX` holdings the matrix is set on the page the
+    // section is already on (`portraitMatrix.pure.ts`); the record's largest
+    // portfolio is four. Past that it is the landscape sheet, which takes a
+    // chapter-header page as well — learnt from the Cash Flow Comparison, whose
+    // first estimate had a wide section at one page and measured three.
+    const portrait = p.properties.length <= PORTRAIT_MATRIX_MAX;
     sections.push({
       id: 'portfolio',
       title: 'The property portfolio',
-      note: 'Every holding on one page: value, debt, equity and what it returns.',
-      // A chapter-header page plus the landscape matrix. Learnt from the Cash
-      // Flow Comparison, whose first estimate had a wide section at one page and
-      // measured three.
-      pageBudget: 2,
-      wide: true,
+      note: 'Every holding side by side: value, debt, equity and what it returns.',
+      pageBudget: portrait ? 1 : 2,
+      wide: !portrait,
     });
     sections.push({
       id: 'holdings',

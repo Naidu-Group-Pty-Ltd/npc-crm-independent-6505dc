@@ -60,7 +60,6 @@ import {
   chartContext,
   chartFigure,
   chartPalette,
-  formatAxisValue,
   ptToUnits,
   renderBars,
   renderDonut,
@@ -70,7 +69,8 @@ import {
   type DonutSegment,
 } from '../../reportDesign/charts.pure.ts';
 import { formatMeasure } from '../../reportDesign/measure.pure.ts';
-import type { CashFlowComparison, ComparedProperty } from './payload.pure.ts';
+import { compactMoney, niceScale } from '../cashFlow/charts.pure.ts';
+import type { CashFlowComparison, CategoryWinner, ComparedProperty } from './payload.pure.ts';
 
 /**
  * Below three properties a composition is a ratio, and a ratio reads better as
@@ -189,13 +189,19 @@ export function rankedReturnChart(
  *
  * Every property gets a segment, including one that won nothing. `renderDonut`
  * draws no wedge for a zero value (`charts.pure.ts:980`) but still lists it in
- * the legend at 0%, which is the honest reading: a property that led on nothing
+ * the legend, which is the honest reading: a property that led on nothing
  * competed and lost, and dropping it from the key would imply a smaller field
  * than the one compared.
  *
- * Categories nobody won — a tie, which `winnerOf` reports as `property: null` —
- * are counted in the caption rather than given a slice, because "nobody" is not
- * a competitor.
+ * A measure nobody leads is a segment of its own, "No single leader", so the
+ * ring, the legend and the centre count the same eight. They did not: the
+ * centre read 4/8 while the legend printed shares of the seven decided
+ * (57%, 14%, 29%). The legend prints counts (`legend: 'given'`), which cannot
+ * round to 101%.
+ *
+ * And the caption says which kind of "nobody" it was. It counted every
+ * leaderless measure as a tie, so a comparison in which no property repays its
+ * holding costs within the term read "1 was tied".
  */
 export function categoryWinsChart(
   p: CashFlowComparison,
@@ -211,15 +217,15 @@ export function categoryWinsChart(
     counts.set(win.property as number, (counts.get(win.property as number) ?? 0) + 1);
   }
 
-  const segments: DonutSegment[] = p.properties.map((x) => ({
-    label: x.shortAddress,
-    value: counts.get(x.number) ?? 0,
-  }));
+  const total = p.scoreboard.winners.length;
+  const undecided = p.scoreboard.winners.filter((w) => w.property === null);
+  const segments: DonutSegment[] = [
+    ...p.properties.map((x) => ({ label: x.shortAddress, value: counts.get(x.number) ?? 0 })),
+    ...(undecided.length ? [{ label: 'No single leader', value: undecided.length }] : []),
+  ].map((seg) => ({ ...seg, display: `${seg.value} of ${total}` }));
 
   const leader = [...counts.entries()].sort((a, b) => b[1] - a[1])[0];
   const leaderProperty = p.properties.find((x) => x.number === leader[0]);
-  const undecided = p.scoreboard.winners.length - decided.length;
-  const tied = undecided === 1 ? '1 was tied' : `${undecided} were tied`;
 
   return chartFigure(
     renderDonut(chartContext(palette), segments, {
@@ -234,13 +240,31 @@ export function categoryWinsChart(
       // Out of *all* the measures, not out of the decided ones. The centre and
       // the caption then say the same thing, where "5/5" beside a caption
       // mentioning eight measures reads as two different claims.
-      centerLabel: `${leader[1]}/${p.scoreboard.winners.length}`,
+      centerLabel: `${leader[1]}/${total}`,
       centerSub: 'MEASURES LED',
+      legend: 'given',
     }),
     `${leaderProperty ? `${leaderProperty.shortAddress} leads on ${leader[1]} of the ` : 'Of the '}`
-    + `${p.scoreboard.winners.length} measures compared`
-    + `${undecided ? `; ${tied}` : ''}.`,
+    + `${total} measures compared${leaderlessClauses(undecided)}.`,
   );
+}
+
+/**
+ * Why each leaderless measure has no leader, as clauses of the caption:
+ * "; 1 was tied", "; no property repays its holding costs within the term".
+ * A winner from before `undecided` existed is read as a tie, as it was printed.
+ */
+function leaderlessClauses(undecided: readonly CategoryWinner[]): string {
+  const tied = undecided.filter((w) => w.undecided !== 'unreached').length;
+  const unreached = undecided.filter((w) => w.undecided === 'unreached');
+  const clauses: string[] = [];
+  if (tied) clauses.push(`${tied} ${tied === 1 ? 'was' : 'were'} tied`);
+  if (unreached.some((w) => w.key === 'paybackYear')) {
+    clauses.push('no property repays its holding costs within the term');
+  }
+  const other = unreached.filter((w) => w.key !== 'paybackYear').length;
+  if (other) clauses.push(`${other} could not be compared`);
+  return clauses.map((c) => `; ${c}`).join('');
 }
 
 /**
@@ -278,10 +302,14 @@ export function cumulativeCashFlowChart(
   const flat = series.flatMap((s) => s.points);
   if (!flat.length || flat.every((v) => v === 0)) return '';
 
-  // Zero is always inside the range, so the threshold is always drawable.
-  const lo = Math.min(0, ...flat);
-  const hi = Math.max(0, ...flat);
-  const span = hi - lo || 1;
+  // Zero is always inside the range, so the threshold is always drawable. The
+  // axis steps on round figures (`niceScale`, the 10 Year Cash Flow's own) and
+  // its labels carry their sign ahead of the dollar (`compactMoney`): quarters
+  // of the raw range printed "$-50k", "$-99k", "$-149k", "$-199k".
+  const { step } = niceScale(Math.max(0, ...flat) - Math.min(0, ...flat) || 1, 4);
+  const hi = Math.max(0, ...flat) > 0 ? Math.ceil(Math.max(...flat) / step - 1e-9) * step : 0;
+  const lo = Math.min(0, ...flat) < 0 ? Math.floor(Math.min(...flat) / step + 1e-9) * step : 0;
+  const span = hi - lo || step;
 
   const ctx = chartContext(palette);
   const pal = chartPalette(palette);
@@ -305,13 +333,14 @@ export function cumulativeCashFlowChart(
   const xOf = (i: number) => padL + (term === 1 ? plotW / 2 : (i / (term - 1)) * plotW);
   const yOf = (v: number) => padT + plotH - ((v - lo) / span) * plotH;
 
-  const gridlines = [0, 0.25, 0.5, 0.75, 1].map((f) => {
-    const value = lo + f * span;
+  const axisValues: number[] = [];
+  for (let v = lo; v <= hi + step / 1e6; v += step) axisValues.push(Math.abs(v) < step / 1e6 ? 0 : v);
+  const gridlines = axisValues.map((value) => {
     const y = yOf(value);
     return `<line x1="${padL}" x2="${w - padR}" y1="${y.toFixed(1)}" y2="${y.toFixed(1)}"`
       + ` stroke="${pal.rule}" stroke-width="0.5"/>`
       + label(ctx, w, { x: padL - 8, y: y + 3, pt: 'micro', fill: pal.inkMuted, anchor: 'end' },
-        svgEscape(formatAxisValue(value, 'money')));
+        svgEscape(compactMoney(value)));
   }).join('');
 
   const zeroY = yOf(0);

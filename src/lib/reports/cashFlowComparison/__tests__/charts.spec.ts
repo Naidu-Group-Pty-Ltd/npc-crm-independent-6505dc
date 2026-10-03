@@ -172,6 +172,38 @@ describe('category wins', () => {
   it('draws nothing when nothing has a clear leader', () => {
     expect(categoryWinsChart(build(3, { collapse: true }), palette)).toBe('');
   });
+
+  /**
+   * Audit 8. The centre read 4/8 while the legend printed shares of the seven
+   * decided (57%, 14%, 29%): three readings of one ring. A measure nobody leads
+   * is a segment of its own, and the legend prints counts, which cannot round
+   * to 101%.
+   */
+  it('counts the same measures in the ring, the key and the centre', () => {
+    const cf = build(4);
+    const total = cf.scoreboard.winners.length;
+    const svg = categoryWinsChart(cf, palette);
+    const counts = [...svg.matchAll(new RegExp(`>(\\d+) of ${total}<`, 'g'))].map((m) => Number(m[1]));
+    expect(counts.length).toBeGreaterThan(0);
+    expect(counts.reduce((a, b) => a + b, 0)).toBe(total);
+    expect(svg).not.toMatch(/>\d+%</);
+    expect(svg).toContain('No single leader');
+  });
+
+  /**
+   * Audit 8. Every leaderless measure was "tied", so a comparison in which no
+   * property repays its holding costs within the term read "1 was tied".
+   */
+  it('says which kind of nobody it was', () => {
+    // Every property here costs money to hold, so none repays within the term,
+    // and two measures (net yield, capital to enter) are genuinely level.
+    const cf = build(4);
+    const ties = cf.scoreboard.winners.filter((w) => w.undecided === 'tie');
+    expect(ties.map((w) => w.key)).not.toContain('paybackYear');
+    const svg = categoryWinsChart(cf, palette);
+    expect(svg).toContain('no property repays its holding costs within the term');
+    expect(svg).toContain(`; ${ties.length} ${ties.length === 1 ? 'was' : 'were'} tied;`);
+  });
 });
 
 describe('cumulative cash flow', () => {
@@ -234,5 +266,20 @@ describe('cumulative cash flow', () => {
 
   it('draws nothing for a single property', () => {
     expect(cumulativeCashFlowChart(single(), palette)).toBe('');
+  });
+
+  /**
+   * Audit 8. Quarters of the raw range printed "$-50k", "$-99k", "$-149k",
+   * "$-199k": a minus sign inside the currency, and steps nobody counts in.
+   */
+  it('steps its axis on round figures, with the sign ahead of the dollar', () => {
+    const svg = cumulativeCashFlowChart(build(3), palette);
+    expect(svg).not.toContain('$-');
+    const axis = [...svg.matchAll(/text-anchor="end"[^>]*>(-?\$[\d.]+[km]?)</g)].map((m) => m[1]);
+    expect(axis.length).toBeGreaterThanOrEqual(3);
+    expect(axis).toContain('$0');
+    const values = axis.map((t) => Number(t.replace(/[$k]/g, '')) * (t.endsWith('k') ? 1_000 : 1));
+    const steps = new Set(values.slice(1).map((v, i) => Math.abs(v - values[i])));
+    expect(steps.size).toBe(1);
   });
 });

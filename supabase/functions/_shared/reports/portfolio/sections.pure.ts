@@ -29,6 +29,7 @@
  * be wrong for most of them and the spine-versus-render assertion would either
  * fail constantly or be set so loose it asserted nothing.
  */
+import { PORTRAIT_MATRIX_MAX } from '../../reportDesign/portraitMatrix.pure.ts';
 import type { ReportArchetypeId, SpineEntry } from '../../reportDesign/structure.pure.ts';
 import { buildSpine, validateSpine } from '../../reportDesign/structure.pure.ts';
 import type { PortfolioReview } from './payload.pure.ts';
@@ -42,6 +43,20 @@ export const ARCHETYPE_ID: ReportArchetypeId = 'portfolio-performance';
  * so this bounds the columns, and the thirteen lines always fit the height.
  */
 export const HOLDINGS_PER_PAGE = 18;
+
+/**
+ * Properties the holdings matrix sets in portrait, on the page its section is
+ * already on, one column per property headed by its street.
+ *
+ * Five is the Property Comparison's measured limit for the same table shape
+ * (COMPARISON.md §13): five columns fit the portrait measure in every design.
+ * Every portfolio in the record has four properties or fewer, so the
+ * landscape page a holdings matrix always opened — one table, a band of white,
+ * columns headed "1 2 3 4" — was never needed by one of them. The matrix and
+ * its limit are shared with the Client Details record now
+ * (`reportDesign/portraitMatrix.pure.ts`).
+ */
+export { PORTRAIT_MATRIX_MAX };
 
 /**
  * Properties that get their own prose commentary in the performance section.
@@ -100,15 +115,22 @@ export function portfolioSections(p: PortfolioReview): PortfolioSection[] {
     });
   }
 
+  const portrait = p.holdings.length <= PORTRAIT_MATRIX_MAX;
   sections.push({
     id: 'holdings',
     title: 'Every property',
-    note: 'The complete inventory — one row per property, every figure the record holds.',
-    // One page of framing plus however many the matrix needs. The legacy's
+    // One column per property: the matrix is transposed, so "one row per
+    // property" described a table this document does not draw.
+    note: 'Every property side by side, with every figure on file.',
+    // One page of framing plus however many pages the matrix needs. The legacy's
     // equivalent silently drops rows past a hardcoded index; a budget derived
-    // from the actual count is what makes that impossible here.
+    // from the actual count is what makes that impossible here. A portrait
+    // matrix shares its page with the key, so this is generous for one — and
+    // left so, because the budget is the archetype's collapse check rather
+    // than a page prediction, and the thinnest review (the figures alone)
+    // sits exactly on the archetype's floor.
     pageBudget: 1 + Math.max(1, Math.ceil(p.holdings.length / HOLDINGS_PER_PAGE)),
-    wide: true,
+    wide: !portrait,
   });
 
   if (p.verdicts.length) {

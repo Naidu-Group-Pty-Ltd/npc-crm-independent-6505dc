@@ -271,7 +271,9 @@ tokens and asks a model. Typesetting a row that already exists asks nothing of
 any model, so re-rendering a saved report is free and the new menu items carry no
 cost estimate.
 
-**It does not write `portfolio_analysis_reports.pdf_file_path`.** That column is
+**It does not write `portfolio_analysis_reports.pdf_file_path`** — the analysis
+dialog does, since 1 Oct 2026, when it saves an analysis it has just exported in
+the chosen template (§11). The route itself still never touches the row. That column is
 what *publish to client portal* reads (`manage-client-data/index.ts:540–609`,
 uniqueness-guarded by `20260724000000_prevent_duplicate_portfolio_publications.sql`).
 Pointing it at a document from a different renderer would silently change what
@@ -332,12 +334,13 @@ first time.
 | `ClientReportsTab.tsx` portfolio rows | the shared control, compact appearance |
 | `review-wizard/GenerateReportStep.tsx` | a sibling card for the latest saved report |
 
-It is deliberately **not** added inside the generator's own preview dialog
+It was deliberately **not** added inside the generator's own preview dialog
 (`PortfolioAnalysisPDFGenerator.tsx:3222`), even though that is where the two
 renderers would sit most naturally side by side. At that moment the analysis
 exists only in component state — the `portfolio_analysis_reports` row is not
 inserted until `downloadPDF` runs (`:3113`) — so a server route that reads the
-persisted row would have nothing to read.
+persisted row would have nothing to read. **§11 is how it got there anyway:**
+the dialog now saves the row first, then renders it.
 
 ---
 
@@ -471,3 +474,251 @@ document in practice whatever its card says.
 | --- | --- |
 | `portfolioProjection.spec.ts` | units and magnitudes, typed columns beating their jsonb copies, non-string leaves dropped, performers read in either case and omitted when null, an empty row publishing nothing rather than zeroes |
 | `portfolioCatalogue.spec.ts` | 50 masters across 10 families, slugs disjoint from the other two catalogues, every bound **leaf** published, the sample's totals summed from its own holdings, colourway changes nothing but colour, and the inventory notice appearing only when it should |
+
+---
+
+## 10. The audit (30 Sep 2026): one continuous review, and every figure it holds
+
+The owner asked for the Intelligence Hub treatment on this format: smaller
+subheads, a flow that reads as one document, and whatever else a careful reader
+would find. The review was drawn in all fifty catalogue designs and the
+standard layout on the pinned engine (WeasyPrint 69.0), measured from the
+engine's own box tree, and read page by page.
+
+**Every figure below is a measurement on a fixture, not on a client's row.**
+The fixture is a realistic four-holding portfolio shaped like the stored rows
+(an owner-occupied home, a regional pair, an inner-city growth asset, a rented
+home the analysis also listed, a completed review), because this environment
+may not read production data. A real export of a stored review, in two designs,
+is what confirms these findings on production figures.
+
+| Across 51 renders | Before | After |
+| --- | ---: | ---: |
+| Pages | 1,224 (24 each) | 984 (19–20 each) |
+| A table split with one row alone at a page's foot or head | 23 / 9 | 0 / 0 |
+| Tables split across pages at all | 54 | 10, each leaving at least two rows on both sides |
+| Body pages more than a quarter empty | 274 | 63 |
+| Emptiest body page | 92.4% blank | 42.6% blank |
+| Mean fill of a body page | 77.7% | 91.0% |
+| Running foot on two lines, or anything past the measure | 0 | 0 |
+
+### What was wrong, and what the document does now
+
+**It read as nine documents.** Every section opened a fresh page, so a
+four-property review printed 24 sheets and a page could hold three bullets. The
+sections run on now, as the Hub's memo sections do (`RUN_ON_CHAPTER_CLASS`,
+`MEMO_CHAPTER_CLASS`): each keeps its number, its contents entry and its running
+head, and only the first opens a page.
+
+**Its subheads competed with its section titles.** A property's address and
+"What could go wrong" were set at the design system's subhead size, within a
+point of the memo title above them. They are `h2.section-subhead` now
+(`SECTION_SUBHEAD_CLASS`), set at h3's size and still level 2 in the outline,
+the bookmarks and the tagged PDF.
+
+**Tables were split to a single row.** The Hub's keeping rule moved into one
+shared module, `reportDesign/tableKeeping.pure.ts`, which both formats call
+(the Hub's behaviour is byte-identical and pinned where it was). The Portfolio
+asks for two things more. Its heights are estimated from its **content** (a
+two-character rank beside a forty-character address), and a long table leaves
+at least **three** rows at a page foot. The engine honours "no break after
+this group" and not "no break inside it", so each lead row is a group of its
+own.
+
+**Four properties took a landscape sheet headed "1 2 3 4".** Up to five
+(`PORTRAIT_MATRIX_MAX`, the Property Comparison's measured limit) are set in
+portrait, on the page the section is already on, in equal columns headed by
+street. Past five, the landscape page takes them as before.
+
+**A rented home was a fifth holding.** `generate-portfolio-analysis` counts
+only owned properties in its totals but lists every property, so a home the
+client rents printed as a holding worth $0 earning the rent they pay, and it
+was ranked. `isTenancy` takes it out of every table, ranking and chart. The
+holdings are renumbered around it, and one note, under the holdings, says why.
+
+**The cash lines did not add up where a home was held.** The net is the
+investments' alone, while the expenses the matrix sums include the home's
+outgoings. The lines now name their scope, "(investments)". The expenses line
+prints only where rent less expenses is the net to the dollar
+(`cashflowFoots`), and the home's outgoings are a line of their own, "not in
+the net".
+
+**Figures the analysis calculated were never printed.** The rate-rise figures
+(calculated from each loan's balance and rate since 7 Sep) are now a table under
+"If interest rates rise", read only from the calculator's stamped block. A
+class that could not be calculated says why in words, never as a dash. The
+review's fifth score (data completeness), the per-property growth analysis, the
+optimisation scenarios ("What acting on this would change"), the market
+positioning and the analysis's own opening words to the client are all printed
+now. The opening sits under the contents where it fits (`OPENING_ON_CONTENTS_MAX`)
+and leads the first section where it does not. The market essays are read at
+`MAX_ESSAY`, because they were cut mid-analysis at a paragraph's cap.
+
+**The projection table's heads said nothing, and it printed a dash.** Its
+columns were "Projected" and "Amount". It carried a net-cash-flow row that the
+calculator never projects, and its assumptions were written in the machine
+room's words ("the record does not carry a loan term"). It now prints value,
+debt held at today's balance and equity, which foot. The assumptions are
+composed from the recorded fields in the document's voice. Beside the
+projection it prints **Today**, but only where the stored projection provably
+starts from the totals the document prints (`projectionToday`). That means its
+recorded growth compounds today's value to the projected value to the dollar,
+its debt is today's debt, and today's equity is value less debt. The check
+refused the audit's own first fixture, whose projected value was $50 off real
+compounding, and it refuses every projection a model wrote, because those
+record no growth.
+
+**The action plan was ordered by urgency, not time, and said some things
+twice.** "Next 12 months" landed between "Medium term" and "Long term". The
+column reads as time, so it is ordered as time. An action named in the **same
+words** twice — by the analysis under a horizon and in its twelve-month plan,
+or by both the analysis and the review — prints once, at the earlier horizon,
+with the explanation of whichever copy has one. It says "Both" where the two
+assessments agree (`mergeRepeatedActions`). Two sentences that only mean the
+same thing are left as written, because deciding that they do is a judgement
+about prose.
+
+**Smaller things a reader would notice:**
+- The ranking says whose it is: "How the analysis ranks each property". Its
+  score column is "Review score", and it is omitted when the review scored
+  nothing.
+- The rate-rise table said "a month" three times. The figures are plain
+  amounts under a head that says "Each month".
+- Notes printed in a chapter of their own at the end. Each now prints under
+  the section it is about.
+- The firm's name printed twice on the cover: as the masthead, and again as a
+  wordmark with no mark. A wordmark-only lockup that repeats the masthead is
+  now dropped, on every format's cover. A lockup with a mark is always kept.
+- The reference was clipped with an ellipsis ("B3D8F047…"). It is the first
+  eight characters, whole.
+- The yield-against-leverage chart stood half a page tall and left the page
+  before it 60% empty in sixteen designs. It is drawn at 330 units
+  (`QUADRANT_HEIGHT`), and its caption names why each unplotted holding is
+  missing.
+- The "When" column of the action table wrapped "Next 12 / months". It holds
+  one line.
+- The file was `Portfolio_Analysis_<Client>_<date>.pdf`. It is
+  `Portfolio Performance Review - <client> - 30 Sep 2026.pdf`
+  (`readableFileName`), the name the cover prints. The storage key keeps to
+  URL-safe characters.
+
+### The export surface
+
+The review wizard's button is now "Choose template" beside "Export PDF", as
+on the Hub and both comparisons. The icon-only menu on a client's Reports tab
+keeps the template choice inside it. The reports list's row menu says
+"Export PDF" and "Download saved PDF", so the two are no longer confused; its
+template choice was already in the card header. The product's name for the
+report is still "Portfolio Analysis" (audit item 11). The file follows the
+document's own title, which is what the cover prints.
+
+**There is deliberately no Preview here.** The Hub's preview exists because an
+adviser edits the answer before exporting it, and nothing in this document is
+edited. The export is one click and costs no model call. It writes only its own file
+and ledger row, which no client sees until someone sends it.
+
+### What is left, and why
+
+- **Sixty-three pages are still more than a quarter empty, and all of them
+  have one cause.** A section heading and the block it opens cannot be split:
+  a figure strip, or the matrix's key with its chart. Where the two do not fit
+  together at the foot of a page, they move together. Splitting them would
+  print a heading alone at a page foot, which is worse.
+- **Near-duplicate actions stay.** "Bring Circular Way below 90% LVR." and
+  "Reduce the Circular Way loan below 90% LVR" are one action in two sets of
+  words, and nothing here may decide that.
+- **Model prose and deterministic figures can disagree.** The analysis's
+  paragraph about rate risk may describe a rise differently from the table
+  under it. The table is the calculator's figure, and it is printed beside
+  the prose rather than instead of it.
+
+### Tests
+
+`normalise.spec.ts` and `render.spec.ts` carry the audit's cases under
+"the audit". `tableKeeping.spec.ts` pins the shared module and that the Hub's
+re-export is the same implementation. `reportPrimitives.spec.ts` and
+`reportCharts.spec.ts` pin the cover lockup, the contents note and the
+quadrant height.
+
+---
+
+## 11. The analysis dialog exports in the chosen template (1 Oct 2026)
+
+The owner opened a client and chose a template. They pressed *Portfolio Analysis*
+and received the legacy 20-page document. The dialog that shows a finished
+analysis had one button, "Download & Save PDF". It drew the analysis in the
+browser with pdf-lib and saved that file as the report, without reading the
+template choice. "Choose template" and "Export PDF" on the client header belong
+to the Client Details Form, so nothing on that screen chose this report's
+template.
+
+The typeset route was never offered in that dialog (§6). It reads a saved row,
+and the dialog's analysis was not saved until the legacy file had been drawn.
+The dialog now saves first.
+
+| Control | What it does |
+| --- | --- |
+| **Choose template** | The portfolio choice (`ChooseTemplateButton reportType="portfolio"`), the same one the Reports tab reads. The line under the buttons says which template Export PDF will use. |
+| **Export PDF** | Saves the analysis as its `portfolio_analysis_reports` row, once. Draws that row through `render-portfolio-review-pdf` in the chosen design. Records the stored document as the row's `pdf_file_path` and lists it among the client's documents (`saveAnalysis.ts`). |
+| **Export PDF (legacy layout)** | In the menu beside it. The previous in-browser document, drawn exactly as before. |
+
+### Five rules
+
+1. **One analysis, one row.** The dialog keeps the row it saved. A retry, a
+   second template or the legacy layout afterwards reuses the row. The legacy
+   generator used to insert a new row on every click. A new analysis starts with
+   nothing saved. Either export claims the dialog synchronously before its first
+   await, so a double-click that lands before the busy state renders cannot
+   start a second save. There is one claim for both exports, because both can
+   save the row.
+2. **The saved file is the document the person chose.** `pdf_file_path` is what
+   "Send Portfolio to Client", the portal publish, the Reports tab's saved-PDF
+   download and the reports list all read. Since the dialog leads with the
+   chosen template, those all serve the typeset document. The legacy layout
+   records its file only where nothing else has: as the first export, or after
+   the template export saved the row and could not draw it. Once a file is
+   recorded, the legacy layout downloads and changes nothing.
+3. **The analysis is the analysis.** The dialog asks for `includeReview: false`.
+   The legacy document never carried a review, and a review is a separate
+   assessment nobody asked for there. The wizard's Typeset Review card and the
+   Reports tab still fold the latest review in, as they always have. Nothing in
+   the analysis is regenerated or rewritten: the row stores the model's answer
+   as it arrived, through one row builder both exports share.
+4. **A failure says what is saved.** If the render fails after the row is saved,
+   the analysis stays in Reports with no file. That is the state a failed legacy
+   upload has always left, and every reader handles it: the portal publish
+   renders on publish, and the Reports tab's Export PDF reads `report_data`. The
+   dialog says the analysis is saved, offers Export PDF again, and names the
+   legacy layout. It never falls back to it by itself.
+5. **Only a `client-files` object is recorded.** The publish operation signs
+   `pdf_file_path` in `client-files` alone. A document stored anywhere else
+   (a templated final would be in `investment-reports`) is downloaded but never
+   recorded.
+
+The route itself is unchanged and still never writes the row
+(`legacyPathStays.spec.ts`). The writes go through `manage-client-data`. A
+create and an update on `portfolio_analysis_reports` both need `portfolio_reports`
+edit access, so whoever could save an analysis before can record its file now.
+
+### What the typeset document carries that the legacy one did and did not
+
+The typeset document is the one §3 describes, so the dialog's export prints the
+analysis as the Reports tab's export always has. One difference is deliberate
+and predates this change: the legacy document redraws the client's full
+Borrowing Capacity Assessment in the middle of the analysis. The typeset
+document prints the capacity figures that belong to a portfolio view and says
+the assessment itself is the Borrowing Capacity Snapshot (§3). The legacy
+layout still draws the full assessment, from the menu.
+
+### Tests
+
+`saveAnalysis.spec.ts` pins the sequence and every place it can stop.
+`PortfolioAnalysisDialogExport.spec.tsx` drives the real dialog: Choose template
+beside Export PDF, no Download & Save, one row across exports, a failed render
+that keeps the analysis saved, a new analysis as a new report, the legacy layout
+by name, and a double-click and both exports at once each saving one row. With
+the claim removed, the Export PDF double-click and the both-at-once test failed.
+The legacy item's double-click test passes either way, because Radix flushes a
+menu item's click synchronously. It pins the outcome rather than the claim.
+`legacyPathStays.spec.ts` pins the structure, and it was checked by wiring
+Export PDF back to the legacy generator: seven assertions failed.

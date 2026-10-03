@@ -77,7 +77,10 @@ describe('every section survived the migration', () => {
     ['the capacity ledger', 'Maximum borrowing capacity'],
     ['the recommendations', 'Clear the credit card limit before application'],
     ['the warnings', 'DTI of 5.4 is above the 5.0 threshold'],
-    ['the calculation explanation', 'Shade the income'],
+    // The engine's step-by-step restated the working in a log's shorthand,
+    // with its own DTI arithmetic over the wrong income, so the calculation
+    // is the working that foots and the explanation is no longer printed (§21).
+    ['the calculation, as the working', 'How the capacity is built'],
     ['the audit trail', 'Rental income'],
     ['the scenario comparison', 'Rate rise 100bp'],
     ['the LMI position', '18,640'],
@@ -106,7 +109,8 @@ withGolden('and against the captured golden', () => {
     ['income', ['Income Analysis'], 'Income and commitments'],
     ['expenses and liabilities', ['Expenses & Liabilities'], 'Existing liabilities'],
     ['the capacity breakdown', ['Capacity Breakdown'], 'How the capacity is built'],
-    ['the calculation explanation', ['How This Was Calculated'], 'How this was calculated'],
+    // The same subject, carried by the working (§21).
+    ['the calculation explanation', ['How This Was Calculated'], 'How the capacity is built'],
     ['the audit trail', ['Audit Trail'], 'Audit trail'],
     ['the scenarios', ['Scenario Comparison'], 'Scenario comparison'],
   ])('covers %s', (_label, oldNeedles, newNeedle) => {
@@ -144,7 +148,10 @@ withGolden('and against the captured golden', () => {
   it('prints a rate as a rate, on both documents (F2)', () => {
     expect(golden).toContain('Interest Rate Override');
     expect(golden).toContain('6.15%');
-    expect(html).toContain('Interest Rate Override');
+    // The engine's label is read as what the row holds (§21): an interest
+    // rate, set by the adviser.
+    expect(html).toContain('>Interest rate<');
+    expect(html).toContain('Set by the adviser');
     expect(html).toContain('6.15%');
     expect(html).toContain('8.65%');
   });

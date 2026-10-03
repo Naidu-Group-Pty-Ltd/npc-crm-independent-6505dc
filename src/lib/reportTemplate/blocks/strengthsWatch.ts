@@ -82,5 +82,6 @@ export function drawStrengthsWatchBlock(block: Block, ctx: BlockRenderContext): 
   };
 
   drawColumn(x, String(strengthsTitle), strengths, hex('#16A34A'), '+');
-  drawColumn(x + colW + gap, String(watchTitle), watch, hex('#D97706'), '!');
+  // A lone column opens at the left margin, as the typeset block draws it.
+  drawColumn(strengths.length ? x + colW + gap : x, String(watchTitle), watch, hex('#D97706'), '!');
 }

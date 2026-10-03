@@ -192,6 +192,21 @@ describe('the legacy generators', () => {
   it('are still reachable from the export menu', () => {
     const menu = readFileSync(resolve(REPO, 'src/components/cash-flow/modal/CashFlowExportMenu.tsx'), 'utf8');
     expect(menu).toContain('onExportPdf');
-    expect(menu).toContain('Generate PDF (legacy layout)');
+    expect(menu).toContain('Export PDF (legacy layout)');
+  });
+
+  it('say the chart switches reach the legacy layout, never "PDF outputs" (Audit 7)', () => {
+    // Only `exportSingleReportPDF` reads `chartExportToggles`; the typeset
+    // Export PDF draws its own charts. A switch the document never reads must
+    // not be offered as one it does.
+    const menu = readFileSync(resolve(REPO, 'src/components/cash-flow/modal/CashFlowExportMenu.tsx'), 'utf8');
+    expect(menu).not.toMatch(/included in PDF outputs/);
+    expect(menu).toContain('Legacy layout options');
+    const modal = readFileSync(resolve(REPO, 'src/components/reports/CashFlowAnalysisModal.tsx'), 'utf8');
+    const legacy = modal.slice(modal.indexOf('const exportSingleReportPDF'), modal.indexOf('const exportServerCashFlowPDF'));
+    const typeset = modal.slice(modal.indexOf('const exportServerCashFlowPDF'), modal.indexOf('const openPrintView'));
+    expect(legacy).toMatch(/chartExportToggles/);
+    expect(typeset.length).toBeGreaterThan(0);
+    expect(typeset).not.toMatch(/chartExportToggles/);
   });
 });

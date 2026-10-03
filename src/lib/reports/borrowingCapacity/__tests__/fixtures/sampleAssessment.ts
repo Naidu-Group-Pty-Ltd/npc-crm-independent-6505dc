@@ -106,8 +106,17 @@ export const SAMPLE_EXPLANATION = {
  * values the insert actually writes (`:1972`). The renderer only tests
  * `!== 'none'`, so a made-up value renders; it just renders the wrong branch.
  *
- * The third income row carries `shadingRate: 0` deliberately: income the lender
+ * The fourth income row carries `shadingRate: 0` deliberately: income the lender
  * counts none of. Every `||`-based reader in the repo turns that into 100%.
+ *
+ * The lines add up to the totals, as the engine's would where nothing was
+ * changed in the calculator (§21): the income rows to $186,000 and $171,400,
+ * and the three liabilities with the capitalised premium's repayment — $18,640
+ * at 8.65% over 30 years, $145.31 a month — to the $1,310 of commitments. Until
+ * 1 Oct 2026 they did not, by $9,000, $10,600 and $2,165, and every document
+ * drawn from this fixture printed a total its own rows did not reach.
+ * `net_purchase_capacity` is the capacity less the premium, as both the
+ * calculator and the engine write it.
  */
 export const SAMPLE_ASSESSMENT = {
   id: '11111111-2222-4333-8444-555555555555',
@@ -129,18 +138,18 @@ export const SAMPLE_ASSESSMENT = {
   deposit_amount: 157_000,
   property_value_estimate: 942_000,
   proposed_loan_amount: 760_000,
-  net_purchase_capacity: 942_000,
+  net_purchase_capacity: 766_360,
   lmi_mode: 'debt_capitalised',
   lmi_amount: 18_640,
   lmi_lvr_trigger: 80,
   income_breakdown: [
     { component: 'PAYG salary — applicant 1', grossAmount: 124_000, shadingRate: 1, shadedAmount: 124_000 },
-    { component: 'PAYG salary — applicant 2', grossAmount: 42_000, shadingRate: 1, shadedAmount: 42_000 },
+    { component: 'PAYG salary — applicant 2', grossAmount: 31_400, shadingRate: 1, shadedAmount: 31_400 },
     { component: 'Rental income', grossAmount: 20_000, shadingRate: 0.8, shadedAmount: 16_000 },
-    { component: 'Unbanked cash income', grossAmount: 9_000, shadingRate: 0, shadedAmount: 0 },
+    { component: 'Unbanked cash income', grossAmount: 10_600, shadingRate: 0, shadedAmount: 0 },
   ],
   liability_breakdown: [
-    { type: 'mortgage', label: 'Example Bank', balance: 412_000, monthlyServicing: 2_480 },
+    { type: 'personal_loan', label: 'Example Credit Union', balance: 14_000, monthlyServicing: 315 },
     { type: 'car_loan', label: 'Example Finance', balance: 21_400, monthlyServicing: 610 },
     { type: 'credit_card', label: 'Example Bank', balance: 8_000, limit: 8_000, monthlyServicing: 240 },
   ],

@@ -139,9 +139,33 @@ export function parseRenderRequest(body: unknown): RequestParse {
  * renders on one day never collide in storage, because the key carries a random
  * segment, and the reference is still on the cover foot.
  */
-export function comparisonFileName(shortAddresses: readonly string[], isoDate: string): string {
-  return readableFileName({ name: 'Cash Flow Comparison', topic: joinPlaces(shortAddresses), isoDate });
+export function comparisonFileName(
+  shortAddresses: readonly string[],
+  isoDate: string,
+  qualifier?: string | null,
+): string {
+  return readableFileName({
+    name: 'Cash Flow Comparison',
+    qualifier: qualifier ?? null,
+    topic: joinPlaces(shortAddresses),
+    isoDate,
+  });
 }
+
+/**
+ * The same name for the downloads the modal draws itself, qualified so none is
+ * mistaken for the typeset document: `… - legacy layout - …`, and the written
+ * analysis on its own. They saved as
+ * `cash-flow-comparison-3-properties-2026-10-01.pdf` and
+ * `ai-cash-flow-analysis-2026-10-01.pdf`, which say neither which comparison nor
+ * which document (Audit 8, as the 10 Year Cash Flow's own did in Audit 7).
+ *
+ * There is no "flattened" qualifier on purpose: the flatten button names its
+ * copy itself (`withFlattenedSuffix`), so a flattened download is given the name
+ * of the document it flattens and nothing more.
+ */
+export const COMPARISON_LEGACY_QUALIFIER = 'legacy layout';
+export const COMPARISON_ANALYSIS_QUALIFIER = 'written analysis';
 
 /** The first eight characters of the primary report's id, uppercased. */
 export function comparisonReference(primaryReportId: string): string {

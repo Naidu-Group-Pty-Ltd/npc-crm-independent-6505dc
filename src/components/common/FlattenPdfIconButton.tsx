@@ -16,8 +16,12 @@ import { useToast } from '@/hooks/use-toast';
 import { flattenAndDownloadPdf } from '@/lib/pdf/downloadPdf';
 
 export interface FlattenPdfIconButtonProps {
-  /** Async producer of the PDF Blob — invoked only when the user clicks. */
-  getPdfBlob: () => Promise<Blob>;
+  /**
+   * Async producer of the PDF — invoked only when the user clicks. A producer
+   * that knows the document's own name returns it with the bytes, and that
+   * name wins over `filename`.
+   */
+  getPdfBlob: () => Promise<Blob | { blob: Blob; fileName?: string | null }>;
   /** Filename for the flattened download (a `-flattened` suffix is appended). */
   filename: string;
   /** Disable while the host's primary download is busy or unavailable. */
@@ -55,8 +59,10 @@ export function FlattenPdfIconButton({
         title: 'Flattening PDF…',
         description: 'Rasterising every page. Larger reports may take 10-30 seconds.',
       });
-      const blob = await getPdfBlob();
-      await flattenAndDownloadPdf(blob, filename);
+      const produced = await getPdfBlob();
+      const blob = produced instanceof Blob ? produced : produced.blob;
+      const name = produced instanceof Blob ? filename : (produced.fileName || filename);
+      await flattenAndDownloadPdf(blob, name);
       toast({ title: 'Flattened PDF downloaded' });
     } catch (err) {
       console.error('[flatten-pdf]', err);

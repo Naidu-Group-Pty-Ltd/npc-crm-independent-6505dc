@@ -4,6 +4,11 @@ import { Button } from '@/components/ui/button';
 import { Download, Loader2 } from 'lucide-react';
 import { invokeSecureFunction } from '@/lib/secureInvoke';
 import { toast } from 'sonner';
+import {
+  COMPARISON_LEGACY_QUALIFIER,
+  comparisonFileName,
+} from '@/lib/reports/propertyComparison/route.pure';
+import { shortAddress } from '@/lib/reports/propertyComparison/normalise.pure';
 
 interface ComparisonData {
   id: string;
@@ -191,5 +196,21 @@ export function ComparisonPDFGenerator({ comparison }: ComparisonPDFGeneratorPro
     }
   };
 
-  return <PixelPerfectPDFGenerator ref={pdfRef} report={transformedReport} skipDatabaseUpdate appearance="legacy" />;
+  // Named as the comparison it is, for the properties it compares — the
+  // typeset document's own name, qualified as the legacy layout.
+  const downloadFileName = comparisonFileName(
+    (comparison.property_addresses ?? []).map(shortAddress).filter(Boolean),
+    new Date().toISOString(),
+    COMPARISON_LEGACY_QUALIFIER,
+  );
+
+  return (
+    <PixelPerfectPDFGenerator
+      ref={pdfRef}
+      report={transformedReport}
+      skipDatabaseUpdate
+      appearance="legacy"
+      downloadFileName={downloadFileName}
+    />
+  );
 }

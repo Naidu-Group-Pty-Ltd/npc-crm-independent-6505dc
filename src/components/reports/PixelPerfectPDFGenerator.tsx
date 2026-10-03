@@ -24,6 +24,7 @@ import {
   type InvestmentReportData,
   type ReportTier,
 } from '@/lib/reports/investment/investmentPdfDocument';
+import { investmentReportFileName } from '@/lib/reports/investment/reportFileName.pure';
 
 interface PixelPerfectPDFGeneratorProps {
   report: InvestmentReportData;
@@ -39,6 +40,14 @@ interface PixelPerfectPDFGeneratorProps {
    * is unaffected either way; the send fallback still reaches it.
    */
   appearance?: 'primary' | 'legacy';
+  /**
+   * The name the drawn document is handed over under, for a caller whose
+   * document is not an investment report. The comparison borrows this drawer,
+   * and without its own name it saved as an Investment Compass named after the
+   * comparison's title. The flattened copy takes the same name; the flatten
+   * button adds its own word.
+   */
+  downloadFileName?: string;
 }
 
 export interface PixelPerfectPDFGeneratorHandle {
@@ -48,7 +57,7 @@ export interface PixelPerfectPDFGeneratorHandle {
 }
 
 
-export const PixelPerfectPDFGenerator = forwardRef<PixelPerfectPDFGeneratorHandle, PixelPerfectPDFGeneratorProps>(({ report, includeSources = true, includeScoring = true, reportTier = 'compass', skipDatabaseUpdate = false, appearance = 'primary' }, ref) => {
+export const PixelPerfectPDFGenerator = forwardRef<PixelPerfectPDFGeneratorHandle, PixelPerfectPDFGeneratorProps>(({ report, includeSources = true, includeScoring = true, reportTier = 'compass', skipDatabaseUpdate = false, appearance = 'primary', downloadFileName }, ref) => {
   const [isGenerating, setIsGenerating] = React.useState(false);
 
   /**
@@ -118,9 +127,12 @@ export const PixelPerfectPDFGenerator = forwardRef<PixelPerfectPDFGeneratorHandl
    * when the download failed. Nothing about a comparison was ever stored by
    * this path, so nothing is lost by not storing it.
    */
-  const drawOnly = () => generateInvestmentPdfBlob({
-    report, reportTier, presentation: { includeSources, includeScoring },
-  });
+  const drawOnly = async () => {
+    const drawn = await generateInvestmentPdfBlob({
+      report, reportTier, presentation: { includeSources, includeScoring },
+    });
+    return downloadFileName ? { ...drawn, fileName: downloadFileName } : drawn;
+  };
 
   const handleGenerationError = (error: unknown) => {
     console.error('❌ PDF generation error:', error);
@@ -230,7 +242,8 @@ export const PixelPerfectPDFGenerator = forwardRef<PixelPerfectPDFGeneratorHandl
       </Button>
       <FlattenPdfIconButton
         getPdfBlob={async () => (skipDatabaseUpdate ? (await drawOnly()).blob : (await generateCore()).blob)}
-        filename={`${(report as any)?.address || 'investment-report'}.pdf`}
+        filename={downloadFileName
+          ?? investmentReportFileName({ tier: reportTier, address: report.address, at: new Date() })}
         disabled={isGenerating}
       />
     </div>

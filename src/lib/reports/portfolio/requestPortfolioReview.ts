@@ -12,11 +12,14 @@
  *
  * Neither half of that holds here. `PortfolioAnalysisPDFGenerator` has **no
  * importable entry point** — the only way to reach it is to mount the component
- * and click through *Generate* then *Download & Save* — so there is nothing this
- * module could call. And nothing is being replaced: the legacy flow keeps every
- * button it has today, and this is an additional one. A deployment gap here
- * means one new menu item does not work yet, and it says so, naming the button
- * that does.
+ * and click through its dialog — so there is nothing this module could call. A
+ * deployment gap here says so and names the button that still works.
+ *
+ * Since 1 Oct 2026 this is also what the analysis dialog's own Export PDF draws
+ * (`saveAnalysis.ts`): the dialog saves the analysis, asks for it here, and the
+ * legacy layout is the dialog menu's named second choice. When this fails
+ * there, the dialog says the analysis is saved and names that choice; it never
+ * takes it by itself.
  *
  * That is the stronger position. Handing someone a document produced by a
  * different renderer than the one they asked for is what both prior formats
