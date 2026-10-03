@@ -918,7 +918,7 @@ export default function Calendar() {
       <DashboardThemeFrame variant="page" className={cn(CALENDAR_PAGE_SHELL, "max-w-none")}>
         <DashboardThemeFrame variant="hero" className="p-5 md:p-7">
           <h1 className="text-3xl font-semibold tracking-[-0.035em] text-foreground md:text-5xl">Calendar</h1>
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground/90 md:text-base">GoHighLevel Calendar Integration</p>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground/90 md:text-base">Appointments and availability</p>
         </DashboardThemeFrame>
         <Card className={cn(PREMIUM_CARD, "overflow-hidden rounded-2xl border-destructive/25 bg-destructive/5")}>
           <CardContent className="flex flex-col items-center justify-center px-6 py-12 text-center">
@@ -1077,7 +1077,7 @@ export default function Calendar() {
                 </div>
                 <h1 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">Calendar</h1>
                 <p className="mt-1 flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                  GoHighLevel Appointments
+                  Appointments
                   {isUpdating && <span className="rounded-full border border-primary/25 bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary shadow-sm shadow-primary/10 animate-pulse">Updating...</span>}
                 </p>
                 {/*

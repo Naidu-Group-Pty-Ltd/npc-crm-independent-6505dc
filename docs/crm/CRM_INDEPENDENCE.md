@@ -488,6 +488,75 @@ lets any signed-in session select every row directly (`USING (true)`).
 Narrowing that is a migration for the owner to approve, not part of this
 change.
 
+## The GoHighLevel leftovers, retired
+
+Five surfaces outside the CRM pages still assumed a vendor. Each one either
+did nothing here and said nothing, or said something false.
+
+- **A lead magnet's lead reached no record.** `request-lead-magnet` captured
+  the download, answered the visitor and pushed the lead to GoHighLevel. Here
+  the push logged "GHL skipped", so no client, tag or pipeline placement was
+  ever written, and the captures dialog read "Pending" beside every lead. It
+  now files the lead natively (`_shared/crm/fileNativeLead.ts`, rules in
+  `nativeLeadCapture.pure.ts`), before the vendor branch and only where the
+  deployment is `native`. Four rules:
+  - **A client is matched only where exactly one holds the address.** Several
+    is left unfiled, with the reason written to the download row.
+  - **The address matched is the one the visitor typed.** The capture's
+    normalised key drops Gmail dots and `+tags`. That is right for counting
+    downloads and wrong for a client's email.
+  - **A client already in that pipeline keeps their stage.**
+  - **An existing client's own record is not rewritten.** Only a client with
+    no placement at all takes the magnet's stage as their own.
+
+  The captures dialog says "Added to CRM", "Not added" (with the reason on
+  hover) or "Pending".
+- **A finance partner's text or email to a client failed in vendor words.**
+  `finance-portal-client-comms` sent everything but the portal message through
+  GoHighLevel, so here it answered `no_ghl_conversation`. On `native` it now
+  plans first (`financePortalNativeSend.pure.ts`) and refuses before it writes:
+  - **A text** goes through `_shared/crm/twilioSms.ts`, the same module
+    `crm-send-message` now uses, so the two cannot address Twilio differently.
+  - **An email** goes through the white-labelled portal email. It carries the
+    same open-tracking pixel the vendor path embeds, so "opened" means the
+    same thing on both lines.
+  - **WhatsApp** is refused, and the composer does not offer it here.
+- **Marketing report distribution** read a stage by its vendor key, which no
+  native stage has. It accepts either key now, and it never widens a stage
+  target it cannot resolve into "everyone" (shared with the prime).
+- **Lead attribution enrichment** failed every scheduled run on a deployment
+  with no Meta token. A scheduled run now answers 200 and says it skipped. A
+  person who asks is told what is missing (shared with the prime).
+- **Call Logs offered "Clean up contact names"**, which writes to GoHighLevel.
+  It is not drawn here.
+
+The visible vendor wording on shared screens (calendar, lead magnets, lead
+quality, add client, notes, portal configuration, the user guide) was
+rewritten so it is true on both lines, identically in both repositories. Two
+shared components gained a prop that defaults to showing, and only this
+line's Client Management page turns it off:
+`ClientAnalyticsDashboard`'s `showCrmSyncStatus` and `ClientFilters`'
+`showSyncStatus`. A sync-status card here read "Sync in progress" for ever,
+because every client is "pending" a push that has nowhere to go.
+
+**The head variants on this line, all to be recorded as `manual_reconcile`
+on this clone in Mission Control**, or the next cascade restores the prime's
+copy without anything failing:
+
+| File | Why it differs from the prime |
+|---|---|
+| `supabase/functions/manage-automation-settings/index.ts` | native pipeline writes |
+| `src/pages/ClientTracker.tsx` | native board, no vendor sync |
+| `src/pages/ClientManagement.tsx` | vendor sync, import and status hidden |
+| `src/pages/CallLogs.tsx` | contact-name clean-up hidden |
+| `supabase/functions/request-lead-magnet/index.ts` | native filing branch |
+| `supabase/functions/finance-portal-client-comms/index.ts` | native send branch |
+| `src/components/finance-portal/ClientCommsInboxTab.tsx` | WhatsApp not offered |
+| `scripts/security/check-ghl-message-authz.mjs` | holds `crm-send-message` to the rule |
+
+Every file gated on `ghlAffordancesAvailable()` is a head variant for the same
+reason; the table lists the ones this work made or changed.
+
 ## Setting a deployment to native
 
 Two variables, and **both** must be set to the same word, because the bundle

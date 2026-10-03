@@ -42,7 +42,7 @@ const visibilityOptions: { value: Visibility; label: string; icon: any; desc: st
   { value: 'internal_npc', label: 'Internal', icon: Lock, desc: 'Command Center only' },
   { value: 'client_only', label: 'Client', icon: Users, desc: 'Visible in client portal' },
   { value: 'finance_only', label: 'Finance', icon: Briefcase, desc: 'Visible in finance portal' },
-  { value: 'shared', label: 'All', icon: Globe, desc: 'Both portals + GHL' },
+  { value: 'shared', label: 'All', icon: Globe, desc: 'Both portals and the CRM' },
 ];
 
 function VisibilityPicker({ value, onChange }: { value: Visibility | null; onChange: (v: Visibility) => void }) {

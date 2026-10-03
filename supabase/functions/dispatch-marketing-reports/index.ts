@@ -610,11 +610,34 @@ interface Recipient {
   ghl_contact_id?: string;
 }
 
+const ROW_UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
+
+/**
+ * This database's id for a pipeline or stage a schedule names. A schedule
+ * saved before targets existed may name the vendor's id instead, and the
+ * placements are keyed by this database's, so matching the vendor's id
+ * against them found nobody. Null where nothing answers to it.
+ */
+async function rowIdFor(
+  supabase: any,
+  table: 'ghl_pipelines' | 'ghl_pipeline_stages',
+  named: string,
+): Promise<string | null> {
+  const value = named.trim();
+  if (ROW_UUID.test(value)) return value;
+  const { data, error } = await supabase.from(table).select('id').eq('ghl_id', value).maybeSingle();
+  if (error) {
+    console.error(`[dispatch] Could not read ${table} for ${value}:`, error);
+    return null;
+  }
+  return data?.id ?? null;
+}
+
 async function resolveRecipients(supabase: any, schedule: any): Promise<Recipient[]> {
   const targets: Array<{ pipeline_id: string; stage_id?: string }> = schedule.pipeline_stage_targets || [];
   
   // Fallback to legacy single pipeline/stage if no targets configured
-  if (targets.length === 0 && schedule.pipeline_id) {
+  if (targets.length === 0 && schedule.pipeline_id && schedule.pipeline_id !== 'none') {
     targets.push({
       pipeline_id: schedule.pipeline_id,
       stage_id: schedule.stage_id || undefined,
@@ -629,14 +652,34 @@ async function resolveRecipients(supabase: any, schedule: any): Promise<Recipien
   const emailMap = new Map<string, Recipient>();
 
   for (const target of targets) {
-    // Query ghl_client_opportunities using the internal UUID pipeline_id
+    const pipelineId = await rowIdFor(supabase, 'ghl_pipelines', String(target.pipeline_id ?? ''));
+    if (!pipelineId) {
+      console.warn(`[dispatch] Schedule ${schedule.id} names a pipeline this database does not hold: ${target.pipeline_id}`);
+      continue;
+    }
+    const stageId = target.stage_id
+      ? await rowIdFor(supabase, 'ghl_pipeline_stages', String(target.stage_id))
+      : null;
+    if (target.stage_id && !stageId) {
+      // Never widen a stage target to the whole pipeline because its stage
+      // could not be found: that would mail clients nobody chose.
+      console.warn(`[dispatch] Schedule ${schedule.id} names a stage this database does not hold: ${target.stage_id}`);
+      continue;
+    }
+
+    // A client taken off a pipeline keeps their placement row with neither a
+    // stage nor a stage's name, so the board stops showing them. Every writer
+    // that places a client names the stage (the vendor sync falls back to
+    // "Unknown Stage"), so a row with no stage name is somebody who was
+    // removed, and is not mailed.
     let query = supabase
       .from('ghl_client_opportunities')
       .select('client_id, ghl_contact_id')
-      .eq('pipeline_id', target.pipeline_id);
+      .eq('pipeline_id', pipelineId)
+      .not('stage_name', 'is', null);
 
-    if (target.stage_id) {
-      query = query.eq('stage_id', target.stage_id);
+    if (stageId) {
+      query = query.eq('stage_id', stageId);
     }
 
     const { data: opportunities, error } = await query;

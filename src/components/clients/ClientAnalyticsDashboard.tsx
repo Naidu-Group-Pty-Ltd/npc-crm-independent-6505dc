@@ -43,6 +43,12 @@ interface Client {
 
 interface ClientAnalyticsDashboardProps {
   clients: Client[];
+  /**
+   * The sync-status card reports on pushes to the CRM vendor. A deployment
+   * without one has nothing to push, so every client would read "Pending"
+   * and the card "Sync in progress" for ever. Its page hides it there.
+   */
+  showCrmSyncStatus?: boolean;
 }
 
 const CHART_PALETTE = [
@@ -54,7 +60,7 @@ const CHART_PALETTE = [
   'hsl(var(--chart-6))',
 ];
 
-export function ClientAnalyticsDashboard({ clients }: ClientAnalyticsDashboardProps) {
+export function ClientAnalyticsDashboard({ clients, showCrmSyncStatus = true }: ClientAnalyticsDashboardProps) {
   const analytics = useMemo(() => {
     const totalPortfolioValue = clients.reduce((sum, c) => sum + (Number(c.total_portfolio_value) || 0), 0);
     const totalDebt = clients.reduce((sum, c) => sum + (Number(c.total_debt) || 0), 0);
@@ -403,6 +409,7 @@ export function ClientAnalyticsDashboard({ clients }: ClientAnalyticsDashboardPr
         </Card>
       </div>
 
+      {showCrmSyncStatus && (
       <Card className="group relative overflow-hidden rounded-2xl border-border/60 dark:border-white/10 bg-[radial-gradient(circle_at_top_left,rgba(45,212,191,0.12),transparent_30%),radial-gradient(circle_at_top_right,rgba(245,158,11,0.12),transparent_30%),linear-gradient(145deg,rgba(24,24,27,0.96),rgba(3,7,18,0.92))] shadow-xl shadow-[0_16px_44px_rgba(15,23,42,0.10)] dark:shadow-black/25 transition-all duration-300 hover:border-brand-300/35 hover:shadow-2xl hover:shadow-brand-950/20">
         <div className="pointer-events-none absolute inset-x-8 top-0 h-px bg-gradient-to-r from-transparent via-success/45 to-brand-200/45 opacity-0 transition-opacity duration-300 group-hover:opacity-100" />
         <CardHeader className="border-b border-border/60 dark:border-white/10 pb-3">
@@ -452,6 +459,7 @@ export function ClientAnalyticsDashboard({ clients }: ClientAnalyticsDashboardPr
           </TooltipProvider>
         </CardContent>
       </Card>
+      )}
     </div>
   );
 }
