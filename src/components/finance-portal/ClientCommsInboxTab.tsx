@@ -25,7 +25,6 @@ import {
 } from 'lucide-react';
 import { toast } from 'sonner';
 import { cn } from '@/lib/utils';
-import { ghlAffordancesAvailable } from '@/lib/crm/crmProvider';
 import { formatDistanceToNow, format } from 'date-fns';
 import { TemplatesPicker } from './TemplatesPicker';
 
@@ -47,16 +46,6 @@ type UnifiedMessage = {
   status?: string;
   tracking_token?: string | null;
 };
-
-/**
- * WhatsApp reaches a client only through the CRM vendor. A deployment without
- * one has no WhatsApp sender and the server refuses the channel with a
- * sentence, so it is not offered here: a choice that can only be refused is a
- * dead control.
- */
-const COMPOSE_CHANNELS = ghlAffordancesAvailable()
-  ? (['portal', 'sms', 'whatsapp', 'email'] as const)
-  : (['portal', 'sms', 'email'] as const);
 
 const CHANNEL_META: Record<string, { label: string; icon: any; tone: string }> = {
   sms:      { label: 'SMS',      icon: Phone,         tone: 'bg-info/15 text-info border-info/30' },
@@ -288,7 +277,7 @@ export function ClientCommsInboxTab({
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                {COMPOSE_CHANNELS.map(ch => {
+                {(['portal','sms','whatsapp','email'] as const).map(ch => {
                   const m = CHANNEL_META[ch]; const Icon = m.icon;
                   return (
                     <SelectItem key={ch} value={ch}>

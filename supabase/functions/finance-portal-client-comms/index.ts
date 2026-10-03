@@ -15,11 +15,6 @@ import { canAccessFinanceClient } from '../_shared/financePortalObjectAuthz.ts';
 import { getEffectiveGhlCredentials } from '../_shared/ghl-account.ts';
 import { isCorrespondence } from '../_shared/ghlConversationMap.pure.ts';
 import { notifyClientPortal } from '../_shared/client-portal-notify.ts';
-import { sendPortalNotificationEmail } from '../_shared/portal-notification-email.ts';
-import { logApiUsage } from '../_shared/logApiUsage.ts';
-import { servingCrmProvider } from '../_shared/crm/crmProvider.ts';
-import { emailBodyHtml, emailSubjectText, planFinancePortalSend } from '../_shared/crm/financePortalNativeSend.pure.ts';
-import { sendTwilioSms } from '../_shared/crm/twilioSms.ts';
 
 import { createCorsHeaders as __createCorsHeaders } from "../_shared/auth.ts";
 import { meteredFetch } from "../_shared/meteredFetch.ts";
@@ -260,7 +255,7 @@ async function sendMessage(supabase: any, partner: any, body: any, json: JsonRes
   // Lookup client recipient info
   const { data: client } = await supabase
     .from('clients')
-    .select('id, primary_first_name, primary_email, secondary_email, primary_mobile, secondary_mobile')
+    .select('id, primary_email, secondary_email, primary_mobile, secondary_mobile')
     .eq('id', client_id)
     .maybeSingle();
   if (!client) return json({ error: 'client_not_found' }, 404);
@@ -282,77 +277,6 @@ async function sendMessage(supabase: any, partner: any, body: any, json: JsonRes
     if (ins.error) return json({ error: 'portal_send_failed', details: ins.error.message }, 500);
     providerMessageId = ins.data.id;
     providerLabel = 'portal';
-  } else if (servingCrmProvider() === 'native') {
-    // This line holds no CRM vendor account, so a message goes out through the
-    // deployment's own senders: Twilio for a text, the white-labelled portal
-    // email for an email. Decided before anything is sent, and a refusal
-    // writes nothing, exactly as the vendor path's own refusals below do.
-    const plan = planFinancePortalSend({
-      channel,
-      client: {
-        email: client.primary_email || client.secondary_email,
-        mobile: client.primary_mobile || client.secondary_mobile,
-      },
-      env: {
-        TWILIO_ACCOUNT_SID: Deno.env.get('TWILIO_ACCOUNT_SID'),
-        TWILIO_AUTH_TOKEN: Deno.env.get('TWILIO_AUTH_TOKEN'),
-        TWILIO_FROM_NUMBER: Deno.env.get('TWILIO_FROM_NUMBER'),
-        RESEND_API_KEY: Deno.env.get('RESEND_API_KEY'),
-      },
-    });
-    if (plan.act === 'refuse') {
-      if (plan.operatorRemedy) console.warn(`[client-comms send] ${plan.reason}: ${plan.operatorRemedy}`);
-      return json({ error: plan.message, reason: plan.reason }, 400);
-    }
-
-    recipient = plan.to;
-    if (plan.via === 'twilio') {
-      const sent = await sendTwilioSms(plan.to, text);
-      if (!sent.ok) {
-        status = 'failed';
-        errorMessage = sent.detail;
-      } else {
-        providerMessageId = sent.providerMessageId;
-        providerLabel = 'twilio_sms';
-        await logApiUsage(supabase, {
-          service_name: 'twilio',
-          endpoint: '/Messages.json',
-          status: 'success',
-          model_used: 'rest-api',
-          metadata: {
-            channel,
-            client_id,
-            finance_partner_id: partner.id,
-            provider_message_id: providerMessageId,
-            message_length: String(text).length,
-          },
-        });
-      }
-    } else {
-      const outboundKey = crypto.randomUUID();
-      // The same open-tracking pixel the vendor path embeds, so "opened" on
-      // the inbox means the same thing on both lines. The token is written
-      // to the outbound row below; the pixel only answers for a known one.
-      trackingToken = crypto.randomUUID();
-      const pixel = `<img src="${trackingPixelUrl(trackingToken)}" width="1" height="1" alt="" style="display:none" />`;
-      const sent = await sendPortalNotificationEmail({
-        to: plan.to,
-        clientFirstName: emailBodyHtml(String(client.primary_first_name || '').trim() || 'there'),
-        title: emailSubjectText(subject, 'A message from your broker'),
-        message: `${emailBodyHtml(String(text))}${pixel}`,
-        type: 'info',
-        category: 'message',
-        actionUrl: '/client/finance',
-        idempotencyKey: outboundKey,
-      });
-      if (!sent.success) {
-        status = 'failed';
-        errorMessage = sent.error || 'The email provider rejected this message.';
-      } else {
-        providerMessageId = outboundKey;
-        providerLabel = 'portal_email';
-      }
-    }
   } else {
     // SMS / WhatsApp / Email → via GHL
     const { data: conv } = await supabase
@@ -422,7 +346,7 @@ async function sendMessage(supabase: any, partner: any, body: any, json: JsonRes
     body: text,
     provider: providerLabel,
     provider_message_id: providerMessageId,
-    ghl_conversation_id: channel !== 'portal' && providerLabel.startsWith('ghl_') ? providerMessageId : null,
+    ghl_conversation_id: channel !== 'portal' ? providerMessageId : null,
     status,
     error_message: errorMessage,
     template_id: template_id || null,
@@ -442,11 +366,7 @@ async function sendMessage(supabase: any, partner: any, body: any, json: JsonRes
       .eq('id', template_id);
   }
 
-  if (status === 'failed') {
-    // The provider refused a real send, so its words may be about the client;
-    // the code stays for anything that reads it.
-    return json({ error: errorMessage || 'The message could not be sent.', code: 'send_failed', details: errorMessage }, 502);
-  }
+  if (status === 'failed') return json({ error: 'send_failed', details: errorMessage }, 502);
 
   // Wave B: surface the outbound message in the client portal in-app inbox.
   // Skips for `portal` channel because the portal already renders portal-thread messages.
