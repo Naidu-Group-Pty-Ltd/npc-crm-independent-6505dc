@@ -50,6 +50,7 @@ import { rateLimit } from '../_shared/wp08Guards.ts';
 import { logApiUsage } from '../_shared/logApiUsage.ts';
 import { planNativeSend, planMayRecordDelivery } from '../_shared/crm/nativeOutbound.pure.ts';
 import { openNativeConversation } from '../_shared/crm/openNativeConversation.ts';
+import { sendTwilioSms } from '../_shared/crm/twilioSms.ts';
 
 /** The vendor path's ceiling, kept so the two providers accept the same input. */
 const MAX_MESSAGE_LENGTH = 1600;
@@ -300,30 +301,12 @@ Deno.serve(async (req) => {
       );
     }
 
-    const sid = Deno.env.get('TWILIO_ACCOUNT_SID')!;
-    const twilioRes = await fetch(
-      `https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`,
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Basic ${btoa(`${sid}:${Deno.env.get('TWILIO_AUTH_TOKEN')}`)}`,
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-          To: plan.to,
-          From: Deno.env.get('TWILIO_FROM_NUMBER')!,
-          Body: messageText,
-        }),
-      },
-    );
-    const twilioBody = await twilioRes.json().catch(() => ({}));
+    const sent = await sendTwilioSms(plan.to, messageText);
 
-    if (!twilioRes.ok) {
+    if (!sent.ok) {
       // The carrier refused a real send, so HERE the message may be about the
       // contact — it came from the provider rather than from us.
-      const detail = typeof twilioBody?.message === 'string'
-        ? twilioBody.message
-        : 'The SMS provider rejected this message.';
+      const detail = sent.detail;
       if (idempotencyKey) {
         await supabase.from('ghl_conversation_messages').upsert({
           ghl_message_id: `failed-${idempotencyKey}`,
@@ -339,7 +322,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    const providerId = typeof twilioBody?.sid === 'string' ? twilioBody.sid : null;
+    const providerId = sent.providerMessageId;
     await supabase.from('ghl_conversation_messages').upsert({
       ghl_message_id: providerId ?? `twilio-${idempotencyKey ?? crypto.randomUUID()}`,
       client_request_id: idempotencyKey ?? null,

@@ -69,7 +69,7 @@ describe("a refusal is never recorded as a delivery", () => {
   it("writes no `sent` status anywhere a refusal can reach", () => {
     const refusal = NATIVE.slice(
       NATIVE.indexOf("plan.act === 'refuse'"),
-      NATIVE.indexOf("TWILIO_ACCOUNT_SID')!"),
+      NATIVE.indexOf("sendTwilioSms("),
     );
     expect(refusal.length).toBeGreaterThan(200);
     expect(refusal).toContain("message_status: 'failed'");
