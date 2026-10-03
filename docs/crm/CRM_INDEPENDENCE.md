@@ -302,6 +302,61 @@ The signature base — the URL followed by every parameter in key order, name
 then value, no separators — is checked against Twilio's own published worked
 example rather than against my reading of it.
 
+## Opening a thread, and one address for both ends
+
+Until 3 Oct 2026 the inbound webhook was the only writer of
+`ghl_conversations` on a native deployment. Staff could answer a client who had
+texted first and could never speak first. `crm-send-message` now answers
+`action: 'open_conversation'` through `_shared/crm/openNativeConversation.ts`.
+The Conversations page offers it as **New conversation**, and a client's
+Conversations tab as **Start conversation**. Both are drawn only where
+`isNativeCrm()` holds.
+
+Three rules carry it.
+
+- **One thread per client, whichever end opened it.** A thread is looked up by
+  its key first, then by the client. One that already exists is returned, never
+  duplicated. A race between two operators resolves through
+  `uq_ghl_conversation` to the row that won.
+- **A client nobody can reach gets no thread.** With no usable mobile and no
+  email there is no channel to speak on. A composer that cannot send is a dead
+  control, so the refusal names the record to fix.
+- **It asks the send path's own questions.** It runs after the
+  `conversations:can_edit` check and asks the same ownership question. It
+  answers 404 in the same words, so a client the caller may not reach cannot be
+  told apart from one that does not exist.
+
+**Both ends must address the same line, and they did not.** `primary_mobile`
+holds whatever a person typed (`0412 345 678`, `+61 412 345 678`). Twilio sends
+and accepts E.164 only. So the outbound path handed Twilio a number it rejects.
+The inbound path matched the raw string exactly and linked almost nobody, and
+filed every reply under a key no operator-opened thread could share.
+`australianMobileToE164` (`nativeConversation.pure.ts`) is now the one reading
+for all three:
+
+- the number a send goes to;
+- the key a thread is filed under (`native-sms-<E.164>`, or
+  `native-client-<id>` for a client with no mobile);
+- the client an inbound number belongs to.
+
+That last lookup asks for every form a person commonly types, as literal values
+in `.in()` rather than a composed filter. It then **confirms** each candidate by
+normalising the stored value, and links a client only when exactly one holds the
+line. A number shared by two records, or one ending in the same digits in
+another country, links nobody. Deciding who somebody is stays a person's call.
+
+A number that names its own country is kept rather than re-read as Australian.
+A value that cannot be read as a number is refused by name, as a fault in the
+client's record, rather than sent and rejected by the provider.
+
+A sent **email** also failed to reach its history, on both lines.
+`Conversations.tsx` recorded it against the thread's provider key, which is
+text, in a column that is the thread's uuid foreign key. The row was refused, so
+every email reply vanished from the conversation after the refetch. It records
+against the row id now. The same defect is on the prime and is fixed there too,
+because a clone-side fix to a file the prime also holds is reverted by the next
+cascade.
+
 ## Setting a deployment to native
 
 Two variables, and **both** must be set to the same word, because the bundle
