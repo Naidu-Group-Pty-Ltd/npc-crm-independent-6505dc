@@ -171,9 +171,15 @@ Deno.serve(async (req) => {
        * the policy it replaces. The pre-existing entries are deliberately left
        * as they are — narrowing those is a behaviour change for their own
        * callers and belongs with them, not here.
+       *
+       * `ghl_client_opportunities` is the exception, narrowed with its one
+       * caller: the Client Tracker reads every client's placements through here
+       * and draws only the clients it was given, so a member of staff was sent
+       * the pipeline history of clients the board then hid from them.
        */
       const CLIENT_SCOPED_TABLES = new Set([
         'purchase_files',
+        'ghl_client_opportunities',
         'portfolio_reviews',
         'client_assets',
         'client_liabilities',

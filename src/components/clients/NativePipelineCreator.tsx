@@ -23,6 +23,12 @@ import {
  * Tracker had no way to acquire stages. This is that way: a name and the
  * stages, one per line, written by `manage-automation-settings`
  * (`createPipeline`) into the tables the tracker already reads.
+ *
+ * It is offered only to someone who may edit the Client Tracker — the server
+ * refuses everyone else — and it is offered beside a board that already has
+ * pipelines as well as on an empty one, because a second pipeline (buyers and
+ * sellers, say) was otherwise impossible to make. `onCreated` hands the new
+ * pipeline back so the board can open on it.
  */
 const DEFAULT_STAGES = ['New lead', 'Discovery call booked', 'Proposal sent', 'Engaged', 'Settled'];
 
@@ -31,7 +37,14 @@ export function parseStageLines(text: string): string[] {
   return Array.from(new Set(text.split('\n').map((line) => line.trim()).filter(Boolean)));
 }
 
-export function NativePipelineCreator() {
+interface NativePipelineCreatorProps {
+  /** Called with the new pipeline's id once it and its stages exist. */
+  onCreated?: (pipelineId: string) => void;
+  /** The quieter toolbar form, for a board that already has pipelines. */
+  compact?: boolean;
+}
+
+export function NativePipelineCreator({ onCreated, compact = false }: NativePipelineCreatorProps = {}) {
   const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [name, setName] = useState('Sales pipeline');
@@ -45,7 +58,7 @@ export function NativePipelineCreator() {
     if (!canSave) return;
     setSaving(true);
     try {
-      const { data, error } = await invokeSecureFunction<{ success: boolean; error?: string }>(
+      const { data, error } = await invokeSecureFunction<{ success: boolean; error?: string; pipeline?: { id?: string } }>(
         'manage-automation-settings',
         { operation: 'createPipeline', data: { name: name.trim(), stages } },
       );
@@ -56,6 +69,7 @@ export function NativePipelineCreator() {
       ]);
       toast.success(`Pipeline "${name.trim()}" created with ${stages.length} stages`);
       setOpen(false);
+      if (typeof data.pipeline?.id === 'string') onCreated?.(data.pipeline.id);
     } catch (err) {
       toast.error(err instanceof Error ? err.message : 'Could not create the pipeline.');
     } finally {
@@ -65,10 +79,21 @@ export function NativePipelineCreator() {
 
   return (
     <>
-      <Button onClick={() => setOpen(true)} className="rounded-xl font-semibold shadow-md shadow-primary/20">
-        <Plus className="h-4 w-4 mr-2" />
-        Create a pipeline
-      </Button>
+      {compact ? (
+        <Button
+          variant="outline"
+          onClick={() => setOpen(true)}
+          className="h-11 shrink-0 rounded-xl border-border/70 bg-background/85 shadow-inner hover:border-primary/30 hover:bg-primary/5"
+        >
+          <Plus className="h-4 w-4 mr-2" />
+          New pipeline
+        </Button>
+      ) : (
+        <Button onClick={() => setOpen(true)} className="rounded-xl font-semibold shadow-md shadow-primary/20">
+          <Plus className="h-4 w-4 mr-2" />
+          Create a pipeline
+        </Button>
+      )}
       <Dialog open={open} onOpenChange={(next) => !saving && setOpen(next)}>
         <DialogContent className="sm:max-w-md">
           <DialogHeader>

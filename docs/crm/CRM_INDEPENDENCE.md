@@ -253,7 +253,6 @@ leaves a client waiting for a reply nobody sent.
 | **Inbound is built but unexercised** | `crm-inbound-message` receives a Twilio SMS and writes the thread. With no `TWILIO_AUTH_TOKEN` on any deployment it refuses every request — correctly, since the token IS the signature key — so the path has never run against a real delivery. |
 | **No native pipeline or conversation *reconciliation*** | By design, not by omission — see the routing table above. What a native deployment does NOT yet have is an inbound path to fill the threads in the first place (the row above). |
 | **The `sync-ghl-*` workers** | Not carried on this line (see above). The `ghl-migrate-*` account-migration workers are the prime's alone and never reach any clone. |
-| **No native pipeline creation** | Pipelines and stages were only ever synced in from GoHighLevel. With the sync gone, Client Tracker shows the pipelines already stored and offers no way to create one. An owner decision: a native pipeline editor is the remedy. |
 
 `RESEND_API_KEY` is `authorised_no_value` on this clone — the fleet policy says
 forward it and Mission Control holds no value — so email is in the same
@@ -409,6 +408,85 @@ Four rules carry it.
 A reschedule also failed silently before this. The page and the dashboard agent
 send `newStartTime`/`newEndTime`, the action read only `startTime`/`endTime`, and
 it reported success having moved nothing. Both spellings are read now.
+
+## Pipelines for all staff, and a card that stays where it was put
+
+The Client Tracker is where this line keeps its pipelines, and four faults
+meant it worked only for an administrator. Even for them, a card could vanish.
+
+- **Staff opened it to "No Pipelines".** Every operation on
+  `manage-automation-settings` sat behind one admin-only check. That included
+  the board's first two reads (`getPipelines`, `getStages`), so somebody given
+  the Client Tracker could open the page and read nothing on it.
+- **A moved client vanished from the pipeline they were moved into.** A move
+  set `current_stage_id` and never `current_pipeline_id`, and the board filters
+  a pipeline by that column. The client still appeared under "All pipelines"
+  and disappeared from the pipeline's own view.
+- **Nothing wrote a placement.** The board places a card by its
+  `ghl_client_opportunities` rows first. On the prime the GoHighLevel sync
+  writes them; on this line nothing did. So a client's own stage and the
+  board's record of it drifted apart from the first move.
+- **A client could not be added to a second pipeline.** The edit form offered
+  one flat list of every stage with no pipeline named, so a stage in another
+  pipeline looked like a stage in this one.
+
+Native pipeline creation (`createPipeline`, drawn by `NativePipelineCreator`)
+has existed since the line became closed, but it was shown only while a
+deployment held no pipeline at all. It now sits in the toolbar for anyone who
+may edit the tracker, and a new pipeline opens selected.
+
+Five rules carry it.
+
+- **The tracker's operations answer to the tracker's own permission.**
+  `TRACKER_PERMISSION` maps the board's reads to view on `client_tracker` and
+  every change to edit. The administrator role is still admitted, so nobody who
+  reached the board before loses it. Every other operation on the function
+  (the report automation settings) is still an administrator's. A move is
+  refused for a client the person may not act for (`canAccessClient`), with the
+  same not-found the client broker gives.
+- **A stage is looked up, never described.** The request names a stage by id.
+  Its pipeline and its name come from `ghl_pipeline_stages`, and both are
+  written to the client (`clientPipelineUpdate.pure.ts`). An id the table does
+  not hold is refused, and the request's own `pipeline_status` beside a stage
+  is ignored, because it could store one stage under another's name.
+- **Taking a client off a pipeline touches only that pipeline.** The board now
+  names the pipeline a card was dragged out of. Where the client's own
+  placement is in a different pipeline, their columns are left alone, status
+  included. A clear that names no pipeline is the older call and empties
+  `current_stage_id` and nothing else. A read that failed is refused (503)
+  rather than taken as "placed nowhere", which would clear the wrong pipeline.
+- **A placement is written, never deleted.** After the client's row is saved,
+  `nativeOpportunityWriter.ts` moves every row the client already holds in that
+  pipeline, whoever wrote it, or writes one keyed `native:<pipeline id>`. It
+  upserts on the table's own unique key, so two quick moves write one row.
+  Leaving a pipeline empties the row's stage and keeps the record. A failed
+  read or write is a 503 that says the stage was saved and the board was not,
+  never a quiet success.
+- **What the board is sent is what the board shows.** `get-client-data` now
+  scopes `ghl_client_opportunities` to the clients the person may see, like
+  every other client table. Before this, the board was sent every client's
+  pipeline history and simply drew fewer cards.
+
+The form says what the server says. A stage is chosen from a list grouped by
+pipeline, so a stage in another pipeline is plainly another pipeline, and only
+a changed stage is sent. Somebody with view only sees the board, cannot drag,
+and gets a disabled form that says why. An optimistic move patches only the
+placement in the pipeline being viewed, never every one the client holds.
+
+Two of these files are shared with the prime and one is not.
+`clientPipelineUpdate.pure.ts`, its test and the scoping in `get-client-data`
+are byte-identical on both lines. The same gate and stage lookup landed on the
+prime in the same change, where the GoHighLevel sync still writes placements.
+The opportunity writer (`_shared/crm/nativeOpportunity*.ts`) exists only here.
+So **`manage-automation-settings` and `src/pages/ClientTracker.tsx` are head
+variants**, and they must be recorded as `manual_reconcile` on this clone in
+Mission Control, or the next cascade puts the prime's copy back and the board
+stops recording moves without anything failing.
+
+One read is still wider than the board's own: RLS on `ghl_client_opportunities`
+lets any signed-in session select every row directly (`USING (true)`).
+Narrowing that is a migration for the owner to approve, not part of this
+change.
 
 ## Setting a deployment to native
 
