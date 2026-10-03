@@ -7,6 +7,10 @@ import { actorIsSuperadmin, requireModulePermission } from "../_shared/authz.ts"
 import { logApiUsage, estimateCost, extractOpenAIUsage } from "../_shared/logApiUsage.ts";
 import { firmModifier, firmPhrase, loadWorkspaceIdentity } from "../_shared/workspaceIdentity.ts";
 import { internalError } from '../_shared/errorResponse.ts';
+import { applyToolProjection } from '../_shared/agent/toolProjection.pure.ts';
+import { UI_TOOLS, UI_TOOL_NAMES, UI_TOOLS_PROMPT } from '../_shared/agent/agentUiTools.pure.ts';
+import { buildReceipt } from '../_shared/agent/agentReceipt.pure.ts';
+import { createAgentTurn, wantsPanel } from '../_shared/agent/agentTurn.pure.ts';
 
 const SUPABASE_URL = Deno.env.get('SUPABASE_URL')!;
 const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')!;
@@ -2787,8 +2791,11 @@ const META_TOOLS: any[] = [
   },
 ];
 
-function buildActiveToolList(loaded: Set<string>): any[] {
-  const out: any[] = [...META_TOOLS];
+function buildActiveToolList(loaded: Set<string>, panel = false): any[] {
+  // The panel tools (show_plan, open_page) ride with the meta tools — always
+  // loaded, never touching data — but only for a caller that draws a panel.
+  // See `_shared/agent/agentUiTools.pure.ts` and `agentTurn.pure.ts`.
+  const out: any[] = panel ? [...META_TOOLS, ...UI_TOOLS] : [...META_TOOLS];
   for (const name of loaded) {
     const def = TOOL_BY_NAME[name];
     if (def) out.push(def);
@@ -2848,7 +2855,7 @@ function executeMetaTool(name: string, args: any, loaded: Set<string>): { succes
 
 // If the model calls a tool that isn't loaded yet, auto-load it so we never hard-fail on a valid tool.
 function ensureToolLoaded(name: string, loaded: Set<string>): boolean {
-  if (loaded.has(name) || META_TOOL_NAMES.has(name)) return false;
+  if (loaded.has(name) || META_TOOL_NAMES.has(name) || UI_TOOL_NAMES.has(name)) return false;
   if (TOOL_BY_NAME[name]) { loaded.add(name); return true; }
   return false;
 }
@@ -2976,26 +2983,26 @@ async function executeGetPipelineOverview(sb: any) {
 }
 
 async function executeGetDealsByStage(sb: any, args: any) {
-  const { data } = await sb.from('client_deals').select('id, deal_type, current_stage, property_address, loan_amount, risk_status, clients:client_id(primary_first_name, primary_surname)').ilike('current_stage', `%${args.stage}%`);
+  const { data } = await sb.from('client_deals').select('id, client_id, deal_type, current_stage, property_address, loan_amount, risk_status, clients:client_id(primary_first_name, primary_surname)').ilike('current_stage', `%${args.stage}%`);
   return { deals: (data || []).map((d: any) => ({ ...d, client_name: clientName(d.clients) })), count: data?.length || 0 };
 }
 
 async function executeGetDealsByRisk(sb: any, args: any) {
-  const { data } = await sb.from('client_deals').select('id, deal_type, current_stage, property_address, loan_amount, risk_status, clients:client_id(primary_first_name, primary_surname)').eq('risk_status', args.risk_status);
+  const { data } = await sb.from('client_deals').select('id, client_id, deal_type, current_stage, property_address, loan_amount, risk_status, clients:client_id(primary_first_name, primary_surname)').eq('risk_status', args.risk_status);
   return { deals: (data || []).map((d: any) => ({ ...d, client_name: clientName(d.clients) })), count: data?.length || 0 };
 }
 
 async function executeGetSettlementCountdown(sb: any, args: any) {
   const days = args.days || 30;
   const future = new Date(Date.now() + days * 86400000).toISOString();
-  const { data } = await sb.from('client_deals').select('id, property_address, loan_amount, settlement_date, current_stage, clients:client_id(primary_first_name, primary_surname)').gte('settlement_date', new Date().toISOString()).lte('settlement_date', future).order('settlement_date');
+  const { data } = await sb.from('client_deals').select('id, client_id, property_address, loan_amount, settlement_date, current_stage, clients:client_id(primary_first_name, primary_surname)').gte('settlement_date', new Date().toISOString()).lte('settlement_date', future).order('settlement_date');
   return { settlements: (data || []).map((d: any) => ({ ...d, client_name: clientName(d.clients), days_remaining: daysFromNow(d.settlement_date) })) };
 }
 
 async function executeGetStaleDeals(sb: any, args: any) {
   const threshold = args.days_threshold || 14;
   const cutoff = new Date(Date.now() - threshold * 86400000).toISOString();
-  const { data } = await sb.from('client_deals').select('id, property_address, current_stage, risk_status, updated_at, clients:client_id(primary_first_name, primary_surname)').lt('updated_at', cutoff).not('current_stage', 'ilike', '%settled%').not('current_stage', 'ilike', '%cancelled%').not('current_stage', 'ilike', '%fallen%');
+  const { data } = await sb.from('client_deals').select('id, client_id, property_address, current_stage, risk_status, updated_at, clients:client_id(primary_first_name, primary_surname)').lt('updated_at', cutoff).not('current_stage', 'ilike', '%settled%').not('current_stage', 'ilike', '%cancelled%').not('current_stage', 'ilike', '%fallen%');
   return { stale_deals: (data || []).map((d: any) => ({ ...d, client_name: clientName(d.clients), days_stale: Math.abs(daysFromNow(d.updated_at)) })) };
 }
 
@@ -7175,53 +7182,10 @@ FORMATTING RULES:
 
 const MAX_RESULT_CHARS = 12000;
 
-// Per-tool projection: whitelist essential fields on list items to shrink payloads
-// before the generic smartTruncateResult ever needs to trim.
-const TOOL_FIELD_PROJECTIONS: Record<string, { arrayKey?: string; fields: string[] }> = {
-  search_clients: { arrayKey: 'clients', fields: ['id', 'first_name', 'last_name', 'primary_email', 'primary_mobile', 'pipeline_status', 'created_at'] },
-  get_clients_by_pipeline_status: { arrayKey: 'clients', fields: ['id', 'first_name', 'last_name', 'primary_email', 'pipeline_status'] },
-  get_clients_needing_follow_up: { arrayKey: 'clients', fields: ['id', 'first_name', 'last_name', 'follow_up_date', 'pipeline_status'] },
-  get_client_deals: { arrayKey: 'deals', fields: ['id', 'stage', 'risk_status', 'settlement_date', 'purchase_price', 'address', 'progress', 'commission_amount'] },
-  get_deals_by_stage: { arrayKey: 'deals', fields: ['id', 'client_id', 'client_name', 'stage', 'settlement_date', 'purchase_price'] },
-  get_deals_by_risk: { arrayKey: 'deals', fields: ['id', 'client_id', 'client_name', 'stage', 'risk_status', 'notes'] },
-  get_stale_deals: { arrayKey: 'deals', fields: ['id', 'client_id', 'client_name', 'stage', 'last_activity_at', 'days_stale'] },
-  get_settlement_countdown: { arrayKey: 'deals', fields: ['id', 'client_name', 'address', 'settlement_date', 'days_remaining'] },
-  get_all_reminders: { arrayKey: 'reminders', fields: ['id', 'title', 'due_date', 'status', 'client_id', 'client_name'] },
-  get_client_reminders: { arrayKey: 'reminders', fields: ['id', 'title', 'due_date', 'status'] },
-  get_overdue_reminders: { arrayKey: 'reminders', fields: ['id', 'title', 'due_date', 'client_id', 'client_name', 'days_overdue'] },
-  get_client_activities: { arrayKey: 'activities', fields: ['id', 'title', 'activity_type', 'created_at', 'description'] },
-  get_recent_activity: { arrayKey: 'activities', fields: ['id', 'title', 'activity_type', 'created_at', 'client_id', 'client_name'] },
-  get_investment_reports: { arrayKey: 'reports', fields: ['id', 'address', 'status', 'created_at', 'investment_score'] },
-  search_reports_by_address: { arrayKey: 'reports', fields: ['id', 'address', 'status', 'created_at', 'investment_score'] },
-  get_portfolio_reviews: { arrayKey: 'reviews', fields: ['id', 'client_id', 'client_name', 'status', 'created_at'] },
-  get_upcoming_calendar: { arrayKey: 'appointments', fields: ['id', 'title', 'startTime', 'endTime', 'contact_name'] },
-  search_calendar_events: { arrayKey: 'appointments', fields: ['id', 'title', 'startTime', 'endTime', 'contact_name'] },
-  get_appointments_for_client: { arrayKey: 'appointments', fields: ['id', 'title', 'startTime', 'endTime'] },
-  get_recent_calls: { arrayKey: 'calls', fields: ['id', 'agent_name', 'customer_name', 'duration_seconds', 'call_outcome', 'sentiment', 'created_at'] },
-  search_calls: { arrayKey: 'calls', fields: ['id', 'agent_name', 'customer_name', 'duration_seconds', 'call_outcome', 'created_at'] },
-  get_flagged_calls: { arrayKey: 'calls', fields: ['id', 'agent_name', 'customer_name', 'escalation_severity', 'sentiment', 'resolution_status'] },
-  search_property_listings: { arrayKey: 'listings', fields: ['id', 'address', 'suburb', 'state', 'price', 'bedrooms', 'bathrooms', 'yield'] },
-  get_recent_listings: { arrayKey: 'listings', fields: ['id', 'address', 'suburb', 'price', 'created_at'] },
-  smart_search: { fields: [] }, // handled generically, but flagged for downstream trimming
-};
-
-function projectItem(item: any, fields: string[]): any {
-  if (!item || typeof item !== 'object' || !fields.length) return item;
-  const out: any = {};
-  for (const f of fields) if (f in item) out[f] = item[f];
-  return out;
-}
-
-function applyToolProjection(name: string, result: any): any {
-  const proj = TOOL_FIELD_PROJECTIONS[name];
-  if (!proj || !proj.fields.length || !result || typeof result !== 'object') return result;
-  const clone: any = { ...result };
-  const keys = proj.arrayKey ? [proj.arrayKey] : Object.keys(result).filter(k => Array.isArray(result[k]));
-  for (const key of keys) {
-    if (Array.isArray(clone[key])) clone[key] = clone[key].map((it: any) => projectItem(it, proj.fields));
-  }
-  return clone;
-}
+// Per-tool projection: what the model is shown of a list result. It lives in
+// `_shared/agent/toolProjection.pure.ts`, where a spec holds every field it
+// keeps to the executor that fills it — the inline copy that stood here had
+// drifted until client searches reached the model with no names.
 
 // ------------------------------------------------------------
 // In-memory tool-result cache (per edge instance).
@@ -7342,6 +7306,24 @@ function bustCacheForUser(userId: string): void {
   for (const k of TOOL_RESULT_CACHE.keys()) {
     if (k.startsWith(prefix)) TOOL_RESULT_CACHE.delete(k);
   }
+}
+
+// A tool call's arguments, or {} when the model sent something that does not parse.
+function parseToolArgs(tc: any): any {
+  try { return JSON.parse(tc?.function?.arguments || '{}'); } catch { return {}; }
+}
+
+// Insert the assistant's row with its receipt. The receipt is a convenience the
+// answer must never depend on: if the row will not take it, the row is written
+// without it rather than not at all.
+async function insertAssistantMessage(sb: any, row: Record<string, unknown>, receipt: unknown): Promise<void> {
+  if (receipt) {
+    const { error } = await sb.from('agent_messages').insert({ ...row, tool_results: receipt });
+    if (!error) return;
+    console.warn('[ai-dashboard-agent] Receipt not stored, writing the answer without it:', error.message);
+  }
+  const { error } = await sb.from('agent_messages').insert(row);
+  if (error) console.error('[ai-dashboard-agent] Failed to persist assistant message:', error.message);
 }
 
 // Central runner: cache + project + hand back both raw (for logs) and content (for messages)
@@ -7597,14 +7579,33 @@ async function handleConfirmAction(sb: any, body: any, cors: Record<string, stri
 
   if (pendingMsg?.tool_calls) {
     const results: any[] = [];
+    const steps: { tool: string; ms: number; ok: boolean }[] = [];
     for (const tc of pendingMsg.tool_calls) {
-      // WP-05B: the pending-message approval flow satisfies the step-up gate
-      // for delete_*/bulk_* tools. Ownership + actor-type gates still apply.
-      const result = await executeTool(sb, tc.function.name, JSON.parse(tc.function.arguments), body.user_id || 'service_role', { actorType: 'human', stepUpVerified: true });
+      const name = tc?.function?.name;
+      // Discovery and panel tools changed nothing when they ran and change
+      // nothing now; replaying them only printed "Unknown tool" under the answer.
+      if (typeof name !== 'string' || META_TOOL_NAMES.has(name) || UI_TOOL_NAMES.has(name)) continue;
+      const t0 = Date.now();
+      let result: any;
+      try {
+        // WP-05B: the pending-message approval flow satisfies the step-up gate
+        // for delete_*/bulk_* tools. Ownership + actor-type gates still apply.
+        result = await executeTool(sb, name, parseToolArgs(tc), body.user_id || 'service_role', { actorType: 'human', stepUpVerified: true });
+      } catch (err: any) {
+        result = { success: false, error: err?.message || String(err) };
+      }
       results.push({ tool_call_id: tc.id, result });
+      steps.push({ tool: name, ms: Date.now() - t0, ok: !(result?.success === false || result?.error) });
     }
-    const content = results.map(r => r.result.success ? r.result.message : `⚠️ Error: ${r.result.error || 'Unknown'}`).join('\n');
-    await sb.from('agent_messages').insert({ conversation_id, role: 'assistant', content });
+    // A read that ran beside the write returns rows, not a sentence; only a
+    // message or an error is something to say.
+    const lines = results.map(r => {
+      const out = r.result || {};
+      if (out.success === false || out.error) return `⚠️ Error: ${out.error || out.message || 'Unknown'}`;
+      return typeof out.message === 'string' && out.message.trim() ? out.message : null;
+    }).filter((l): l is string => !!l);
+    const content = lines.length ? lines.join('\n') : 'Done.';
+    await insertAssistantMessage(sb, { conversation_id, role: 'assistant', content }, buildReceipt({ steps }));
     return new Response(JSON.stringify({ success: true, results }), { headers: { ...cors, 'Content-Type': 'application/json' } });
   }
   return new Response(JSON.stringify({ success: true }), { headers: { ...cors, 'Content-Type': 'application/json' } });
@@ -7638,6 +7639,7 @@ async function handleChat(sb: any, body: any, userId: string, username: string, 
   const { conversation_id, message, image_attachments } = body;
   const planId: string | null = typeof body?.plan_id === 'string' ? body.plan_id : null;
   const stepId: string | null = typeof body?.step_id === 'string' ? body.step_id : null;
+  const panel = wantsPanel(body);
   if (!conversation_id || !message) {
     return new Response(JSON.stringify({ error: 'conversation_id and message are required' }), { status: 400, headers: { ...cors, 'Content-Type': 'application/json' } });
   }
@@ -7667,7 +7669,7 @@ async function handleChat(sb: any, body: any, userId: string, username: string, 
     .eq('conversation_id', conversation_id).order('created_at', { ascending: true }).limit(60);
 
   const messages: any[] = [
-    { role: 'system', content: buildSystemPrompt((await loadWorkspaceIdentity({ readPrimeName: true })).firm) + `\n\nCurrent user: ${username} (ID: ${userId})\nCurrent conversation_id: ${conversation_id}\nCurrent time: ${new Date().toISOString()}${prefsContext}${semanticContext}${skillOverlay}` },
+    { role: 'system', content: buildSystemPrompt((await loadWorkspaceIdentity({ readPrimeName: true })).firm) + (panel ? UI_TOOLS_PROMPT : '') + `\n\nCurrent user: ${username} (ID: ${userId})\nCurrent conversation_id: ${conversation_id}\nCurrent time: ${new Date().toISOString()}${prefsContext}${semanticContext}${skillOverlay}` },
   ];
 
   // Build conversation messages from history
@@ -7723,6 +7725,9 @@ async function handleChat(sb: any, body: any, userId: string, username: string, 
   let finalResponse = '';
   let pendingConfirmation = false;
   let pendingToolCalls: any[] = [];
+  let errored = false;
+  // No stream to announce on: the plan, cards and buttons travel in the reply's receipt.
+  const turn = createAgentTurn({ panel });
 
   // Rate limiting: track tool calls per tool name to detect loops
   const toolCallCounts: Record<string, number> = {};
@@ -7734,17 +7739,21 @@ async function handleChat(sb: any, body: any, userId: string, username: string, 
   const loadedToolNames = new Set<string>(EAGER_TOOL_NAMES);
 
   try {
-    for (let round = 0; round < 8; round++) {
-      const activeTools = buildActiveToolList(loadedToolNames);
+    let maxRounds = 8;
+    for (let round = 0; round < maxRounds; round++) {
+      const activeTools = buildActiveToolList(loadedToolNames, panel);
       const { message: assistantMsg } = await callAI(messages, sb, userId, activeTools);
       if (!assistantMsg) { finalResponse = 'I encountered an error. Please try again.'; break; }
 
       if (assistantMsg.tool_calls?.length) {
-        const nonMetaCalls = assistantMsg.tool_calls.filter((tc: any) => !META_TOOL_NAMES.has(tc.function.name));
+        const nonMetaCalls = assistantMsg.tool_calls.filter((tc: any) => !META_TOOL_NAMES.has(tc.function.name) && !UI_TOOL_NAMES.has(tc.function.name));
         const hasWrite = nonMetaCalls.some((tc: any) => WRITE_TOOLS.includes(tc.function.name));
         if (hasWrite) {
+          for (const tc of assistantMsg.tool_calls) {
+            if (UI_TOOL_NAMES.has(tc.function.name)) turn.ui(tc.function.name, parseToolArgs(tc));
+          }
           pendingConfirmation = true;
-          pendingToolCalls = assistantMsg.tool_calls;
+          pendingToolCalls = assistantMsg.tool_calls.filter((tc: any) => !UI_TOOL_NAMES.has(tc.function.name));
           finalResponse = assistantMsg.content || '';
           break;
         }
@@ -7767,8 +7776,13 @@ async function handleChat(sb: any, body: any, userId: string, username: string, 
 
         for (const tc of assistantMsg.tool_calls) {
           const toolName = tc.function.name;
-          let args: any = {};
-          try { args = JSON.parse(tc.function.arguments || '{}'); } catch { /* ignore */ }
+          const args: any = parseToolArgs(tc);
+
+          // Panel tools: the plan or a page button. Not a step, not counted.
+          if (UI_TOOL_NAMES.has(toolName)) {
+            skipMessages.push({ tc, content: turn.ui(toolName, args) });
+            continue;
+          }
 
           // Meta-tools handled inline (mutate loadedToolNames)
           if (META_TOOL_NAMES.has(toolName)) {
@@ -7796,18 +7810,23 @@ async function handleChat(sb: any, body: any, userId: string, username: string, 
         if (parallelJobs.length) {
           console.log(`[ai-dashboard-agent] Parallel tools (${parallelJobs.length}):`, parallelJobs.map(j => j.toolName).join(', '));
           const settled = await Promise.all(parallelJobs.map(async (job) => {
+            const t0 = Date.now();
             try {
-              const { content, cached } = await runToolCached(sb, job.toolName, job.args, userId);
-              return { tc: job.tc, content, cached, error: null as any };
+              const { raw, content, cached } = await runToolCached(sb, job.toolName, job.args, userId);
+              return { tc: job.tc, raw, ms: Date.now() - t0, content, cached, error: null as any };
             } catch (err: any) {
-              return { tc: job.tc, content: JSON.stringify({ error: err?.message || String(err) }), cached: false, error: err };
+              const failure = { error: err?.message || String(err) };
+              return { tc: job.tc, raw: failure, ms: Date.now() - t0, content: JSON.stringify(failure), cached: false, error: err };
             }
           }));
           for (const r of settled) {
             messages.push({ role: 'tool', tool_call_id: r.tc.id, content: r.content });
+            turn.ran((r.tc as any).function.name, r.raw, r.ms, r.tc.id);
             if (r.cached) console.log(`[ai-dashboard-agent] cache hit: ${(r.tc as any).function.name}`);
           }
         }
+        // A round spent only on the plan or a page button is given back.
+        maxRounds += turn.roundCredit(assistantMsg.tool_calls.map((tc: any) => tc.function.name));
         continue;
       }
 
@@ -7816,21 +7835,23 @@ async function handleChat(sb: any, body: any, userId: string, username: string, 
     }
   } catch (err: any) {
     console.error('[ai-dashboard-agent] Chat error:', err);
+    errored = true;
     finalResponse = `⚠️ ${err.message || 'An error occurred.'}`;
   }
 
   const recalledIds = semanticMemories.map(m => (m as any).id).filter(Boolean);
+  const receipt = turn.receipt({ halted: errored });
   if (pendingConfirmation) {
-    await sb.from('agent_messages').insert({
+    await insertAssistantMessage(sb, {
       conversation_id, role: 'assistant', content: finalResponse,
       tool_calls: pendingToolCalls, requires_confirmation: true, confirmation_status: 'pending',
       recalled_memory_ids: recalledIds,
-    });
+    }, receipt);
   } else {
-    await sb.from('agent_messages').insert({
+    await insertAssistantMessage(sb, {
       conversation_id, role: 'assistant', content: finalResponse,
       recalled_memory_ids: recalledIds,
-    });
+    }, receipt);
     // Phase 4: fire-and-forget auto-capture of durable memories
     autoCaptureMemory(sb, userId, conversation_id, message, finalResponse).catch(() => {});
   }
@@ -7876,6 +7897,8 @@ async function handleChat(sb: any, body: any, userId: string, username: string, 
     success: true, response: finalResponse,
     requires_confirmation: pendingConfirmation,
     pending_tool_calls: pendingConfirmation ? pendingToolCalls : undefined,
+    // Only a caller that declared the panel protocol is handed the panel's record.
+    receipt: panel && receipt ? receipt : undefined,
     recalled_memories: semanticMemories.map((m: any) => ({
       id: m.id, content: m.content, tags: m.tags, importance: m.importance,
       similarity: Number(m.similarity?.toFixed?.(3) ?? m.similarity),
@@ -8164,6 +8187,7 @@ async function handleChatStream(
   signal: AbortSignal,
 ): Promise<Response> {
   const { conversation_id, message, image_attachments } = body;
+  const panel = wantsPanel(body);
   if (!conversation_id || !message) {
     return new Response(JSON.stringify({ error: 'conversation_id and message are required' }), {
       status: 400, headers: { ...cors, 'Content-Type': 'application/json' },
@@ -8196,7 +8220,7 @@ async function handleChatStream(
 
   const voice = await loadWorkspaceIdentity({ readPrimeName: true });
   const messages: any[] = [
-    { role: 'system', content: buildSystemPrompt(voice.firm) + `\n\nCurrent user: ${username} (ID: ${userId})\nCurrent conversation_id: ${conversation_id}\nCurrent time: ${new Date().toISOString()}${prefsContext}${semanticContext}${skillOverlay}` },
+    { role: 'system', content: buildSystemPrompt(voice.firm) + (panel ? UI_TOOLS_PROMPT : '') + `\n\nCurrent user: ${username} (ID: ${userId})\nCurrent conversation_id: ${conversation_id}\nCurrent time: ${new Date().toISOString()}${prefsContext}${semanticContext}${skillOverlay}` },
   ];
 
   const convMessages: any[] = [];
@@ -8253,10 +8277,14 @@ async function handleChatStream(
         });
       }
 
+      // The plan, cards and buttons this answer draws, and the receipt kept with it.
+      const turn = createAgentTurn({ panel, emit: (e) => emit(e.event, e.data) });
+
       let finalResponse = '';
       let pendingConfirmation = false;
       let pendingToolCalls: any[] = [];
       let aborted = false;
+      let errored = false;
       const onAbort = () => { aborted = true; };
       signal.addEventListener('abort', onAbort);
 
@@ -8269,10 +8297,11 @@ async function handleChatStream(
       const loadedToolNames = new Set<string>(EAGER_TOOL_NAMES);
 
       try {
-        for (let round = 0; round < 8; round++) {
+        let maxRounds = 8;
+        for (let round = 0; round < maxRounds; round++) {
           if (aborted) break;
 
-          const activeTools = buildActiveToolList(loadedToolNames);
+          const activeTools = buildActiveToolList(loadedToolNames, panel);
           const { content, tool_calls } = await callAIStream(
             messages, sb, userId,
             (tok) => { finalResponse += tok; emit('token', { delta: tok }); },
@@ -8281,11 +8310,17 @@ async function handleChatStream(
           );
 
           if (tool_calls?.length) {
-            const nonMetaCalls = tool_calls.filter(tc => !META_TOOL_NAMES.has(tc.function.name));
+            const nonMetaCalls = tool_calls.filter(tc => !META_TOOL_NAMES.has(tc.function.name) && !UI_TOOL_NAMES.has(tc.function.name));
             const hasWrite = nonMetaCalls.some(tc => WRITE_TOOLS.includes(tc.function.name));
             if (hasWrite) {
+              // A plan or a page offered beside a write still reaches the
+              // screen now; panel tools never wait for approval, and approval
+              // never replays them.
+              for (const tc of tool_calls) {
+                if (UI_TOOL_NAMES.has(tc.function.name)) turn.ui(tc.function.name, parseToolArgs(tc));
+              }
               pendingConfirmation = true;
-              pendingToolCalls = tool_calls;
+              pendingToolCalls = tool_calls.filter(tc => !UI_TOOL_NAMES.has(tc.function.name));
               if (!finalResponse) finalResponse = content || '';
               break;
             }
@@ -8307,8 +8342,13 @@ async function handleChatStream(
             for (const tc of tool_calls) {
               if (aborted) break;
               const name = tc.function.name;
-              let args: any = {};
-              try { args = JSON.parse(tc.function.arguments || '{}'); } catch { /* ignore */ }
+              const args: any = parseToolArgs(tc);
+
+              // Panel tool: the plan or a page button. Not a step, not counted.
+              if (UI_TOOL_NAMES.has(name)) {
+                messages.push({ role: 'tool', tool_call_id: tc.id, content: turn.ui(name, args) });
+                continue;
+              }
 
               // Meta-tool: mutate loaded set inline, no exec/counter
               if (META_TOOL_NAMES.has(name)) {
@@ -8332,19 +8372,24 @@ async function handleChatStream(
 
             if (parallelJobs.length && !aborted) {
               const settled = await Promise.all(parallelJobs.map(async (job) => {
+                const t0 = Date.now();
                 try {
-                  const { content: toolContent, cached } = await runToolCached(sb, job.name, job.args, userId);
-                  return { tc: job.tc, name: job.name, content: toolContent, cached, error: null as any };
+                  const { raw, content: toolContent, cached } = await runToolCached(sb, job.name, job.args, userId);
+                  return { tc: job.tc, name: job.name, raw, ms: Date.now() - t0, content: toolContent, cached, error: null as any };
                 } catch (err: any) {
-                  return { tc: job.tc, name: job.name, content: JSON.stringify({ error: err?.message || String(err) }), cached: false, error: err };
+                  const failure = { error: err?.message || String(err) };
+                  return { tc: job.tc, name: job.name, raw: failure, ms: Date.now() - t0, content: JSON.stringify(failure), cached: false, error: err };
                 }
               }));
               for (const r of settled) {
                 emit('tool', { phase: 'end', name: r.name, id: r.tc.id });
                 messages.push({ role: 'tool', tool_call_id: r.tc.id, content: r.content });
+                turn.ran(r.name, r.raw, r.ms, r.tc.id);
                 if (r.cached) console.log(`[ai-dashboard-agent] cache hit (stream): ${r.name}`);
               }
             }
+            // A round spent only on the plan or a page button is given back.
+            maxRounds += turn.roundCredit(tool_calls.map(tc => tc.function.name));
             continue;
           }
 
@@ -8358,6 +8403,7 @@ async function handleChatStream(
           emit('token', { delta: note });
         } else {
           const msg = err?.message || 'An error occurred.';
+          errored = true;
           console.error('[ai-dashboard-agent] Stream chat error:', err);
           finalResponse += `\n\n⚠️ ${msg}`;
           emit('error', { message: msg });
@@ -8368,18 +8414,19 @@ async function handleChatStream(
 
       // Persist assistant message (partial on abort, full otherwise).
       const recalledIds = semanticMemories.map((m: any) => m.id).filter(Boolean);
+      const receipt = turn.receipt({ halted: aborted || errored });
       try {
         if (pendingConfirmation) {
-          await sb.from('agent_messages').insert({
+          await insertAssistantMessage(sb, {
             conversation_id, role: 'assistant', content: finalResponse,
             tool_calls: pendingToolCalls, requires_confirmation: true, confirmation_status: 'pending',
             recalled_memory_ids: recalledIds,
-          });
+          }, receipt);
         } else if (finalResponse.length > 0) {
-          await sb.from('agent_messages').insert({
+          await insertAssistantMessage(sb, {
             conversation_id, role: 'assistant', content: finalResponse,
             recalled_memory_ids: recalledIds,
-          });
+          }, receipt);
           // Phase 4: fire-and-forget auto-capture of durable memories (skip on abort/empty)
           if (!aborted) autoCaptureMemory(sb, userId, conversation_id, message, finalResponse).catch(() => {});
         }
@@ -8421,6 +8468,9 @@ async function handleChatStream(
         requires_confirmation: pendingConfirmation,
         pending_tool_calls: pendingConfirmation ? pendingToolCalls : undefined,
         aborted,
+        // The same receipt the row now carries, so the live answer and a
+        // reloaded one are drawn from one record. Older panels ignore it.
+        receipt: turn.panel && receipt ? receipt : undefined,
       });
       try { controller.enqueue(new TextEncoder().encode('data: [DONE]\n\n')); } catch { /* ignore */ }
       controller.close();
