@@ -5,8 +5,10 @@ import { invokeSecureFunction } from '@/lib/secureInvoke';
 import {
   crmFunction,
   ghlAffordancesAvailable,
+  isNativeCrm,
   vendorReconciliationFunction,
 } from '@/lib/crm/crmProvider';
+import { openClientConversation } from '@/lib/crm/openClientConversation';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -40,6 +42,7 @@ import {
   ChevronRight,
   ChevronDown,
   User,
+  MessageSquarePlus,
 } from 'lucide-react';
 import {
   DropdownMenu,
@@ -126,6 +129,8 @@ export function ClientConversationsTab({ clientId, clientName, clientEmail, ghlC
   const [emailSubject, setEmailSubject] = useState('');
   const [selectedMailbox, setSelectedMailbox] = useState<string>('admin');
   const messagesEndRef = useRef<HTMLDivElement>(null);
+  const [opening, setOpening] = useState(false);
+  const [openRefusal, setOpenRefusal] = useState<string | null>(null);
 
   // Fetch available mailboxes for email sending
   const { data: mailboxes = [] } = useQuery({
@@ -391,6 +396,23 @@ export function ClientConversationsTab({ clientId, clientName, clientEmail, ghlC
     return groups;
   }, [correspondence]);
 
+  // Opens this client's thread, or the one they already have. Only where the
+  // threads are this deployment's own: under a CRM vendor a thread is born in
+  // the vendor and reaches this tab by sync.
+  const handleStartConversation = async () => {
+    setOpening(true);
+    setOpenRefusal(null);
+    try {
+      const { conversation } = await openClientConversation(clientId);
+      await refetchConversations();
+      setSelectedConversation(conversation as unknown as Conversation);
+    } catch (err) {
+      setOpenRefusal(err instanceof Error ? err.message : 'The conversation could not be opened.');
+    } finally {
+      setOpening(false);
+    }
+  };
+
   // ===== CONVERSATION LIST VIEW =====
   if (!selectedConversation) {
     return (
@@ -404,6 +426,18 @@ export function ClientConversationsTab({ clientId, clientName, clientEmail, ghlC
               <Badge variant="secondary" className="text-xs">{conversations.length}</Badge>
             )}
           </h3>
+          {/* A client with a thread opens it from the list; the server would
+              return that same thread anyway, so a second control is noise. */}
+          {isNativeCrm() && !loadingConversations && conversations.length === 0 && (
+            <Button size="sm" onClick={handleStartConversation} disabled={opening}>
+              {opening ? (
+                <Loader2 className="h-3.5 w-3.5 animate-spin mr-1" aria-hidden="true" />
+              ) : (
+                <MessageSquarePlus className="h-3.5 w-3.5 mr-1" aria-hidden="true" />
+              )}
+              Start conversation
+            </Button>
+          )}
           {/* Absent, not disabled, where there is no GoHighLevel to sync from. */}
           {ghlAffordancesAvailable() && (
           <Button
@@ -422,6 +456,12 @@ export function ClientConversationsTab({ clientId, clientName, clientEmail, ghlC
           </Button>
           )}
         </div>
+
+        {openRefusal && (
+          <p role="alert" className="text-xs text-destructive">
+            {openRefusal}
+          </p>
+        )}
 
         {/* Search */}
         {conversations.length > 3 && (
@@ -448,9 +488,11 @@ export function ClientConversationsTab({ clientId, clientName, clientEmail, ghlC
               <MessageSquare className="h-8 w-8 mx-auto mb-3 opacity-40" />
               <p className="text-sm font-medium">No conversations yet</p>
               <p className="text-xs mt-1">
-                {ghlContactId
-                  ? 'Click Sync to pull conversations from GoHighLevel'
-                  : 'This client is not linked to a GHL contact'}
+                {isNativeCrm()
+                  ? `Start a conversation to message ${clientName} by SMS or email.`
+                  : ghlContactId
+                    ? 'Click Sync to pull conversations from GoHighLevel'
+                    : 'This client is not linked to a GHL contact'}
               </p>
             </CardContent>
           </Card>

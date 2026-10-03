@@ -76,7 +76,7 @@ const MODULE_ITEMS = [
   { key: 'module_reports', label: 'Reports', icon: FileText, desc: 'Published reports for clients' },
   { key: 'module_messages', label: 'Messages', icon: MessageSquare, desc: 'Advisor messaging' },
   { key: 'module_notifications', label: 'Notifications', icon: Bell, desc: 'Activity alerts and updates' },
-  { key: 'module_booking', label: 'Book Appointment', icon: CalendarDays, desc: 'Calendar booking via GHL' },
+  { key: 'module_booking', label: 'Book Appointment', icon: CalendarDays, desc: 'Calendar booking' },
 ] as const;
 
 export default function PortalConfig() {
@@ -399,7 +399,7 @@ export default function PortalConfig() {
                     <div className="min-w-0 space-y-3">
                       <div className="space-y-1">
                         <Label className="text-sm font-semibold text-foreground">Available Calendars for Clients</Label>
-                        <p className="break-words text-xs leading-5 text-muted-foreground">Add GHL calendars that clients can choose from when booking. Clients select one calendar per booking.</p>
+                        <p className="break-words text-xs leading-5 text-muted-foreground">Add the calendars clients can choose from when booking. Clients select one calendar per booking.</p>
                       </div>
                       
                       {/* Existing calendars list */}
@@ -451,7 +451,7 @@ export default function PortalConfig() {
                         const usedIds = new Set((config.booking_calendars || []).map(c => c.id));
                         const available = calendars.filter(c => !usedIds.has(c.id));
                         if (available.length === 0 && calendars.length > 0) return (
-                          <p className="text-xs text-muted-foreground italic">All available GHL calendars have been added.</p>
+                          <p className="text-xs text-muted-foreground italic">All available calendars have been added.</p>
                         );
                         return (
                           <div className="flex min-w-0 items-center gap-2">
@@ -467,7 +467,7 @@ export default function PortalConfig() {
                               }}
                             >
                               <SelectTrigger className="min-h-11 min-w-0 flex-1 rounded-xl border-border/70 bg-card/80 shadow-sm focus:ring-primary/30 dark:border-white/10 dark:bg-background/60">
-                                <SelectValue placeholder="Add a GHL calendar..." />
+                                <SelectValue placeholder="Add a calendar..." />
                               </SelectTrigger>
                               <SelectContent>
                                 {available.map((cal) => (

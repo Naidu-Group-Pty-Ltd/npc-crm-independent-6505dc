@@ -9,7 +9,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
+import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
@@ -129,6 +129,15 @@ interface ClientOpportunity {
   follow_up_date: string | null;
   notes: string | null;
   synced_at: string | null;
+}
+
+/** A card moved on the board: to a stage, or out of every stage of the
+ *  pipeline the board is showing. */
+interface MoveVariables {
+  clientId: string;
+  stageId: string | null;
+  stageName: string;
+  pipelineId: string;
 }
 
 interface ClientNote {
@@ -303,7 +312,12 @@ export default function ClientTracker() {
   } = useGHLCalendar();
 
   // Fetch pipelines from database via edge function
-  const { data: pipelines = [], isLoading: pipelinesLoading } = useQuery({
+  const {
+    data: pipelines = [],
+    isLoading: pipelinesLoading,
+    error: pipelinesError,
+    refetch: refetchPipelines,
+  } = useQuery({
     queryKey: ['ghl-pipelines'],
     queryFn: async () => {
       const { data, error } = await invokeSecureFunction('manage-automation-settings', {
@@ -316,7 +330,12 @@ export default function ClientTracker() {
   });
 
   // Fetch pipeline stages from database via edge function
-  const { data: allStages = [], isLoading: stagesLoading } = useQuery({
+  const {
+    data: allStages = [],
+    isLoading: stagesLoading,
+    error: stagesError,
+    refetch: refetchStages,
+  } = useQuery({
     queryKey: ['ghl-pipeline-stages'],
     queryFn: async () => {
       const { data, error } = await invokeSecureFunction('manage-automation-settings', {
@@ -550,7 +569,8 @@ export default function ClientTracker() {
     onSuccess: (_result, variables: Partial<TrackedClient> & { id: string }) => {
       // A pipeline save writes the client's own record, so the open client
       // card has to hear about it too — this list named neither of its keys.
-      invalidateClientQueries(queryClient, variables.id);
+      // A stage chosen here also writes the board's placement rows.
+      invalidateClientQueries(queryClient, variables.id, { also: [['ghl-client-opportunities']] });
       setEditingClient(null);
       toast.success('Pipeline data saved successfully');
     },
@@ -561,14 +581,17 @@ export default function ClientTracker() {
 
   // Move client to different stage mutation with two-way GHL sync
   const moveClientMutation = useMutation({
-    mutationFn: async ({ clientId, stageId, stageName }: { clientId: string; stageId: string | null; stageName: string }) => {
-      // First update locally via edge function for instant UI feedback
+    mutationFn: async ({ clientId, stageId, stageName, pipelineId }: MoveVariables) => {
+      // First update locally via edge function for instant UI feedback. A
+      // card taken out of every stage names the pipeline it is leaving, so the
+      // server leaves the client's place in any other pipeline alone.
       const { data: updateData, error: localError } = await invokeSecureFunction('manage-automation-settings', {
         operation: 'updateClientPipeline',
         clientId,
         data: {
           current_stage_id: stageId,
           pipeline_status: stageName,
+          ...(stageId === null && pipelineId ? { pipeline_id: pipelineId } : {}),
         }
       });
       
@@ -604,8 +627,10 @@ export default function ClientTracker() {
     // Optimistic move: the card's column comes from the cached
     // ghl_client_opportunities rows (not clients.current_stage_id), so both
     // caches are patched before the server round-trip or the card sits in the
-    // old column until the next 5-minute pipeline sync.
-    onMutate: async ({ clientId, stageId, stageName }) => {
+    // old column until the next 5-minute pipeline sync. Only the rows in the
+    // pipeline the board is showing move: a client in two pipelines keeps
+    // their place in the other one, as the server keeps it.
+    onMutate: async ({ clientId, stageId, stageName, pipelineId }) => {
       await Promise.all([
         queryClient.cancelQueries({ queryKey: ['ghl-client-opportunities'] }),
         queryClient.cancelQueries({ queryKey: ['client-tracker'] }),
@@ -614,15 +639,24 @@ export default function ClientTracker() {
       const previousClients = queryClient.getQueryData<TrackedClient[]>(['client-tracker']);
       queryClient.setQueryData<ClientOpportunity[]>(['ghl-client-opportunities'], (old) =>
         (old ?? []).map((opp) =>
-          opp.client_id === clientId ? { ...opp, stage_id: stageId, stage_name: stageName } : opp
+          opp.client_id === clientId && opp.pipeline_id === pipelineId
+            ? { ...opp, stage_id: stageId, stage_name: stageId ? stageName : null }
+            : opp
         )
       );
       queryClient.setQueryData<TrackedClient[]>(['client-tracker'], (old) =>
-        (old ?? []).map((client) =>
-          client.id === clientId
-            ? { ...client, current_stage_id: stageId, pipeline_status: stageName }
-            : client
-        )
+        (old ?? []).map((client) => {
+          if (client.id !== clientId) return client;
+          if (stageId) {
+            return { ...client, current_stage_id: stageId, current_pipeline_id: pipelineId, pipeline_status: stageName };
+          }
+          const placedIn = client.current_pipeline_id
+            ?? allStages.find((s) => s.id === client.current_stage_id)?.pipeline_id
+            ?? null;
+          return placedIn === null || placedIn === pipelineId
+            ? { ...client, current_stage_id: null, current_pipeline_id: null, pipeline_status: stageName }
+            : client;
+        })
       );
       return { previousOpportunities, previousClients };
     },
@@ -685,6 +719,18 @@ export default function ClientTracker() {
     },
   });
 
+  // The column a client's card sits in on one pipeline's board: a placement
+  // row with a stage first, then the client's own stage where it belongs to
+  // that pipeline — the order `groupedByStage` draws them in.
+  const stageInPipeline = useCallback((client: TrackedClient, pipelineId: string): string | null => {
+    const placed = opportunities.find(
+      (opp) => opp.client_id === client.id && opp.pipeline_id === pipelineId && opp.stage_id,
+    );
+    if (placed?.stage_id) return placed.stage_id;
+    const own = allStages.find((stage) => stage.id === client.current_stage_id);
+    return own && own.pipeline_id === pipelineId ? own.id : null;
+  }, [opportunities, allStages]);
+
   // Drag and drop handlers
   const handleDragStart = useCallback((e: React.DragEvent, client: TrackedClient) => {
     setDraggedClient(client);
@@ -721,10 +767,10 @@ export default function ClientTracker() {
     e.preventDefault();
     setDragOverStageId(null);
     
-    if (!draggedClient) return;
+    if (!draggedClient || selectedPipelineId === 'all') return;
     
-    // Don't do anything if dropping on same stage
-    if (draggedClient.current_stage_id === stageId) {
+    // Don't do anything if dropping on the column the card is already in
+    if (stageInPipeline(draggedClient, selectedPipelineId) === stageId) {
       setDraggedClient(null);
       return;
     }
@@ -733,13 +779,15 @@ export default function ClientTracker() {
       clientId: draggedClient.id,
       stageId,
       stageName,
+      pipelineId: selectedPipelineId,
     });
     
     setDraggedClient(null);
-  }, [draggedClient, moveClientMutation]);
+  }, [draggedClient, moveClientMutation, selectedPipelineId, stageInPipeline]);
 
-  // Check if drag and drop should be enabled (only for specific pipeline, not "All Pipelines")
-  const isDragDropEnabled = selectedPipelineId !== 'all';
+  // Drag and drop moves a card within one pipeline, so it needs one chosen,
+  // and it changes the client, so it needs edit access to the tracker.
+  const isDragDropEnabled = selectedPipelineId !== 'all' && canEditTracker;
 
   // Get stages for selected pipeline
   const stagesForPipeline = useMemo(() => {
@@ -976,6 +1024,9 @@ export default function ClientTracker() {
   };
 
   const isLoading = pipelinesLoading || stagesLoading || clientsLoading;
+  const boardReadError = (pipelinesError ?? stagesError)
+    ? ((pipelinesError ?? stagesError) as Error).message || 'Please try again.'
+    : null;
 
   const isMobile = useIsMobile();
 
@@ -1424,11 +1475,38 @@ export default function ClientTracker() {
               </Select>
             </>
           )}
+          {!ghlCarried && canEditTracker && pipelines.length > 0 && (
+            <NativePipelineCreator compact onCreated={setSelectedPipelineId} />
+          )}
         </div>
       </DashboardThemeFrame>
 
+      {/* The board's own reads failed. That is not a board with no pipelines,
+          and saying "No pipelines yet" over it sent people to create one. */}
+      {boardReadError && (
+        <Card role="alert" className="overflow-hidden rounded-2xl border-destructive/40 bg-destructive/5 shadow-sm">
+          <CardContent className="flex flex-col items-start gap-3 py-6 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-start gap-3">
+              <AlertCircle className="mt-0.5 h-5 w-5 shrink-0 text-destructive" />
+              <div>
+                <p className="font-semibold">The board could not load its pipelines.</p>
+                <p className="text-sm text-muted-foreground">{boardReadError}</p>
+              </div>
+            </div>
+            <Button
+              variant="outline"
+              onClick={() => { void refetchPipelines(); void refetchStages(); }}
+              className="rounded-xl"
+            >
+              <RefreshCw className="h-4 w-4 mr-2" />
+              Try again
+            </Button>
+          </CardContent>
+        </Card>
+      )}
+
       {/* No pipelines synced message */}
-      {!isLoading && pipelines.length === 0 && (
+      {!isLoading && !boardReadError && pipelines.length === 0 && (
         <Card className="overflow-hidden rounded-2xl border-dashed border-primary/25 bg-[linear-gradient(135deg,hsl(var(--card)/0.82),hsl(var(--background)/0.66))] shadow-xl shadow-sm dark:shadow-black/15">
           <CardContent className="py-10 text-center">
             <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl border border-primary/20 bg-primary/10 text-primary shadow-inner">
@@ -1438,9 +1516,11 @@ export default function ClientTracker() {
             <p className="mx-auto mb-5 max-w-md text-sm leading-relaxed text-muted-foreground">
               {ghlCarried
                 ? 'Click "Sync from GHL" to fetch your GoHighLevel pipelines and opportunities.'
-                : 'This deployment\'s CRM is its own: create a pipeline and its stages here to start tracking clients.'}
+                : canEditTracker
+                  ? 'This deployment\'s CRM is its own: create a pipeline and its stages here to start tracking clients.'
+                  : 'This deployment\'s CRM is its own, and no pipeline has been created yet. Someone with edit access to the Client Tracker can create one.'}
             </p>
-            {!ghlCarried && <NativePipelineCreator />}
+            {!ghlCarried && canEditTracker && <NativePipelineCreator onCreated={setSelectedPipelineId} />}
             {ghlCarried && (
             <Button onClick={handleSyncPipelines} disabled={isSyncingPipelines} className="rounded-xl font-semibold shadow-md shadow-primary/20">
               {isSyncingPipelines ? (
@@ -1519,7 +1599,9 @@ export default function ClientTracker() {
             {!isDragDropEnabled && stagesForPipeline.length > 0 && (
               <div className="mb-4 inline-flex items-center gap-2 rounded-full border border-border/70 bg-background/70 px-3 py-1.5 text-xs font-medium text-muted-foreground shadow-inner">
                 <Layers className="h-3.5 w-3.5 text-primary" />
-                Select a specific pipeline to enable drag-and-drop between stages
+                {canEditTracker
+                  ? 'Select a specific pipeline to enable drag-and-drop between stages'
+                  : 'You can view this board. Moving cards needs edit access to the Client Tracker.'}
               </div>
             )}
             
@@ -1793,6 +1875,7 @@ export default function ClientTracker() {
                                   client={client}
                                   stages={allStages}
                                   pipelines={pipelines}
+                                  canEdit={canEditTracker}
                                   onSave={(data) => updateClientMutation.mutate({ id: client.id, ...data })}
                                   isLoading={updateClientMutation.isPending}
                                 />
@@ -1922,6 +2005,7 @@ export default function ClientTracker() {
                                   client={client}
                                   stages={allStages}
                                   pipelines={pipelines}
+                                  canEdit={canEditTracker}
                                   onSave={(data) => updateClientMutation.mutate({ id: client.id, ...data })}
                                   isLoading={updateClientMutation.isPending}
                                 />
@@ -2055,6 +2139,7 @@ export default function ClientTracker() {
                   client={editingClient}
                   stages={allStages}
                   pipelines={pipelines}
+                  canEdit={canEditTracker}
                   onSave={(data) => updateClientMutation.mutate({ id: editingClient.id, ...data })}
                   isLoading={updateClientMutation.isPending}
                 />
@@ -2073,6 +2158,7 @@ export default function ClientTracker() {
                 client={editingClient}
                 stages={allStages}
                 pipelines={pipelines}
+                canEdit={canEditTracker}
                 onSave={(data) => updateClientMutation.mutate({ id: editingClient.id, ...data })}
                 isLoading={updateClientMutation.isPending}
               />
@@ -2282,11 +2368,14 @@ interface ClientEditFormProps {
   client: TrackedClient;
   stages: GHLPipelineStage[];
   pipelines: GHLPipeline[];
+  /** Whether this person may change the Client Tracker. The server refuses a
+   *  save from anyone else; the form says so before they type. */
+  canEdit: boolean;
   onSave: (data: Partial<TrackedClient>) => void;
   isLoading: boolean;
 }
 
-function ClientEditForm({ client, stages, pipelines, onSave, isLoading }: ClientEditFormProps) {
+function ClientEditForm({ client, stages, pipelines, canEdit, onSave, isLoading }: ClientEditFormProps) {
   const [formData, setFormData] = useState({
     current_stage_id: client.current_stage_id || '',
     pipeline_status: client.pipeline_status || '',
@@ -2297,10 +2386,17 @@ function ClientEditForm({ client, stages, pipelines, onSave, isLoading }: Client
     pipeline_notes: client.pipeline_notes || '',
   });
 
-  // Get stages for the client's current pipeline
-  const pipelineStages = client.current_pipeline_id 
-    ? stages.filter(s => s.pipeline_id === client.current_pipeline_id)
-    : stages;
+  // Every pipeline's stages, under the pipeline's name. Choosing a stage in
+  // another pipeline is how a client is added to it: the list used to offer
+  // only the client's own pipeline, or every stage of every pipeline unnamed.
+  const stageGroups = pipelines
+    .map((pipeline) => ({
+      pipeline,
+      stages: stages
+        .filter((stage) => stage.pipeline_id === pipeline.id)
+        .sort((a, b) => a.position - b.position),
+    }))
+    .filter((group) => group.stages.length > 0);
 
   const handleStageChange = (stageId: string) => {
     const stage = stages.find(s => s.id === stageId);
@@ -2313,8 +2409,12 @@ function ClientEditForm({ client, stages, pipelines, onSave, isLoading }: Client
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    if (!canEdit) return;
+    // The stage is sent only when it changed: a save of the notes is not a
+    // move, and must not re-place the client or rename their status.
+    const stageChanged = (formData.current_stage_id || null) !== (client.current_stage_id || null);
     onSave({
-      current_stage_id: formData.current_stage_id || null,
+      ...(stageChanged ? { current_stage_id: formData.current_stage_id || null } : {}),
       pipeline_status: formData.pipeline_status,
       follow_up_date: formData.follow_up_date || null,
       borrowing_capacity: formData.borrowing_capacity ? parseFloat(formData.borrowing_capacity) : null,
@@ -2331,21 +2431,27 @@ function ClientEditForm({ client, stages, pipelines, onSave, isLoading }: Client
         <Select 
           value={formData.current_stage_id} 
           onValueChange={handleStageChange}
+          disabled={!canEdit}
         >
           <SelectTrigger className="mt-1">
             <SelectValue placeholder="Select a stage" />
           </SelectTrigger>
           <SelectContent>
-            {pipelineStages.map(stage => (
-              <SelectItem key={stage.id} value={stage.id}>
-                <div className="flex items-center gap-2">
-                  <span 
-                    className="w-2 h-2 rounded-full" 
-                    style={{ backgroundColor: stage.color }}
-                  />
-                  {stage.name}
-                </div>
-              </SelectItem>
+            {stageGroups.map(({ pipeline, stages: groupStages }) => (
+              <SelectGroup key={pipeline.id}>
+                <SelectLabel>{pipeline.name}</SelectLabel>
+                {groupStages.map(stage => (
+                  <SelectItem key={stage.id} value={stage.id}>
+                    <div className="flex items-center gap-2">
+                      <span 
+                        className="w-2 h-2 rounded-full" 
+                        style={{ backgroundColor: stage.color }}
+                      />
+                      {stage.name}
+                    </div>
+                  </SelectItem>
+                ))}
+              </SelectGroup>
             ))}
           </SelectContent>
         </Select>
@@ -2420,8 +2526,13 @@ function ClientEditForm({ client, stages, pipelines, onSave, isLoading }: Client
         />
       </div>
 
-      <div className="flex justify-end gap-2">
-        <Button type="submit" disabled={isLoading}>
+      <div className="flex flex-col items-end gap-2">
+        {!canEdit && (
+          <p className="text-sm text-muted-foreground">
+            You can view this client's pipeline. Changing it needs edit access to the Client Tracker.
+          </p>
+        )}
+        <Button type="submit" disabled={isLoading || !canEdit}>
           <Save className="h-4 w-4 mr-2" />
           {isLoading ? 'Saving...' : 'Save Changes'}
         </Button>

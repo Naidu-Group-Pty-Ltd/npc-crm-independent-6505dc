@@ -49,6 +49,8 @@ import { actorIsSuperadmin, requireModulePermission } from '../_shared/authz.ts'
 import { rateLimit } from '../_shared/wp08Guards.ts';
 import { logApiUsage } from '../_shared/logApiUsage.ts';
 import { planNativeSend, planMayRecordDelivery } from '../_shared/crm/nativeOutbound.pure.ts';
+import { openNativeConversation } from '../_shared/crm/openNativeConversation.ts';
+import { sendTwilioSms } from '../_shared/crm/twilioSms.ts';
 
 /** The vendor path's ceiling, kept so the two providers accept the same input. */
 const MAX_MESSAGE_LENGTH = 1600;
@@ -97,6 +99,50 @@ Deno.serve(async (req) => {
       return new Response(
         JSON.stringify({ error: 'You cannot send CRM messages.' }),
         { status: 403, headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
+      );
+    }
+
+    /*
+     * Opening a thread, rather than sending into one. Until this existed the
+     * only writer of `ghl_conversations` on this line was the inbound webhook,
+     * so an operator could reply to a client who had texted in and could never
+     * speak first. Asked here, after the same permission the send path needs,
+     * and answered by a module of its own so the send path's orderings below
+     * stay exactly as asserted.
+     */
+    if (body?.action === 'open_conversation') {
+      const clientId = typeof body.clientId === 'string' ? body.clientId.trim() : '';
+      if (!/^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i.test(clientId)) {
+        return new Response(JSON.stringify({ error: 'clientId is required' }), {
+          status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      const opening = rateLimit(`crm-open-conversation:${userId}`, 30, 60_000);
+      if (!opening.allowed) {
+        return new Response(JSON.stringify({
+          error: 'Conversation limit reached — 30 per 60 seconds. Please try again shortly.',
+        }), {
+          status: 429,
+          headers: {
+            ...corsHeaders,
+            'Content-Type': 'application/json',
+            'Retry-After': String(Math.ceil((opening.retryAfterMs || 1000) / 1000)),
+          },
+        });
+      }
+      const opened = await openNativeConversation(supabase, {
+        clientId,
+        userId: userId!,
+        superadmin: await actorIsSuperadmin(supabase, userId!),
+      });
+      if (!opened.ok) {
+        return new Response(JSON.stringify({ error: opened.error }), {
+          status: opened.status, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+        });
+      }
+      return new Response(
+        JSON.stringify({ success: true, created: opened.created, conversation: opened.conversation }),
+        { headers: { ...corsHeaders, 'Content-Type': 'application/json' } },
       );
     }
 
@@ -255,30 +301,12 @@ Deno.serve(async (req) => {
       );
     }
 
-    const sid = Deno.env.get('TWILIO_ACCOUNT_SID')!;
-    const twilioRes = await fetch(
-      `https://api.twilio.com/2010-04-01/Accounts/${sid}/Messages.json`,
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Basic ${btoa(`${sid}:${Deno.env.get('TWILIO_AUTH_TOKEN')}`)}`,
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: new URLSearchParams({
-          To: plan.to,
-          From: Deno.env.get('TWILIO_FROM_NUMBER')!,
-          Body: messageText,
-        }),
-      },
-    );
-    const twilioBody = await twilioRes.json().catch(() => ({}));
+    const sent = await sendTwilioSms(plan.to, messageText);
 
-    if (!twilioRes.ok) {
+    if (!sent.ok) {
       // The carrier refused a real send, so HERE the message may be about the
       // contact — it came from the provider rather than from us.
-      const detail = typeof twilioBody?.message === 'string'
-        ? twilioBody.message
-        : 'The SMS provider rejected this message.';
+      const detail = sent.detail;
       if (idempotencyKey) {
         await supabase.from('ghl_conversation_messages').upsert({
           ghl_message_id: `failed-${idempotencyKey}`,
@@ -294,7 +322,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    const providerId = typeof twilioBody?.sid === 'string' ? twilioBody.sid : null;
+    const providerId = sent.providerMessageId;
     await supabase.from('ghl_conversation_messages').upsert({
       ghl_message_id: providerId ?? `twilio-${idempotencyKey ?? crypto.randomUUID()}`,
       client_request_id: idempotencyKey ?? null,

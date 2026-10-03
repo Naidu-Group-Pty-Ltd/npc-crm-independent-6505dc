@@ -30,6 +30,8 @@ export interface ClientFiltersState {
 interface ClientFiltersProps {
   filters: ClientFiltersState;
   onFiltersChange: (filters: ClientFiltersState) => void;
+  /** Off where the deployment has no CRM vendor to sync with. */
+  showSyncStatus?: boolean;
 }
 
 export const defaultFilters: ClientFiltersState = {
@@ -42,7 +44,7 @@ export const defaultFilters: ClientFiltersState = {
   followUpStatus: 'all',
 };
 
-export function ClientFilters({ filters, onFiltersChange }: ClientFiltersProps) {
+export function ClientFilters({ filters, onFiltersChange, showSyncStatus = true }: ClientFiltersProps) {
   const [isOpen, setIsOpen] = useState(false);
 
   const activeFilterCount = [
@@ -134,6 +136,7 @@ export function ClientFilters({ filters, onFiltersChange }: ClientFiltersProps) 
           </div>
 
           {/* GHL Sync Status */}
+          {showSyncStatus && (
           <div className="space-y-2">
             <Label className="text-sm">GHL Sync Status</Label>
             <Select
@@ -154,6 +157,7 @@ export function ClientFilters({ filters, onFiltersChange }: ClientFiltersProps) 
               </SelectContent>
             </Select>
           </div>
+          )}
 
           {/* Review Status */}
           <div className="space-y-2">

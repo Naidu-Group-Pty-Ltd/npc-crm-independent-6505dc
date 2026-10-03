@@ -232,7 +232,23 @@ describe('the write path', () => {
     // A number nobody recognises is recorded against a null client_id. An
     // insert into `clients` here would fill the CRM with people nobody added.
     expect(fn).not.toMatch(/from\('clients'\)[\s\S]{0,80}\.insert\(/);
-    expect(fn).toContain('client_id: client?.id ?? null');
+    // The id is the confirmed match or null — `confirmedMobileMatches`
+    // answers null for no match AND for an ambiguous one.
+    expect(fn).toContain('const clientId = confirmedMobileMatches(');
+    expect(fn).toContain('client_id: clientId,');
+  });
+
+  it('finds the client by the forms a person typed, as literal values', () => {
+    // `primary_mobile` holds `0412 345 678`; Twilio sends `+61412345678`. An
+    // exact match on the raw string found almost nobody, and a composed
+    // filter string is the defect `screeningConsumer` paid for.
+    expect(fn).toContain(".in('primary_mobile', mobileLookupVariants(from))");
+    expect(fn).not.toMatch(/\.or\(/);
+    expect(fn).not.toContain(".eq('primary_mobile', plan.from)");
+  });
+
+  it('never re-points a thread somebody already linked', () => {
+    expect(fn).toContain('clientId && !conv?.client_id');
   });
 
   it('retries are possible: a write fault answers 5xx, a refusal does not', () => {

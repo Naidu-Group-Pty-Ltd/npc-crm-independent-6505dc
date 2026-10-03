@@ -60,15 +60,17 @@ interface DistributionLog {
   created_at: string;
 }
 
+// `ghl_id` is the key a row was synced or created under. A schedule saved
+// before targets existed may name a pipeline or stage by it.
 interface Pipeline {
   id: string;
-  ghl_pipeline_id: string;
+  ghl_id: string;
   name: string;
 }
 
 interface Stage {
   id: string;
-  ghl_stage_id: string;
+  ghl_id: string;
   name: string;
   pipeline_id: string;
 }
@@ -193,13 +195,18 @@ export function ReportDistributionPanel() {
     if (schedule.pipeline_stage_targets && schedule.pipeline_stage_targets.length > 0) {
       setFormTargets(schedule.pipeline_stage_targets);
     } else if (schedule.pipeline_id) {
-      // Legacy: convert single pipeline/stage to targets format
-      const pipeline = pipelines.find(p => p.ghl_pipeline_id === schedule.pipeline_id);
+      // Legacy: a single pipeline/stage, stored as either this database's id
+      // or the vendor's. Targets name this database's ids, which is what the
+      // dispatch matches placements by.
+      const pipeline = pipelines.find(p => p.id === schedule.pipeline_id || p.ghl_id === schedule.pipeline_id);
+      const stage = schedule.stage_id
+        ? stages.find(s => s.id === schedule.stage_id || s.ghl_id === schedule.stage_id)
+        : undefined;
       setFormTargets([{
         pipeline_id: pipeline?.id || schedule.pipeline_id,
         pipeline_name: schedule.pipeline_name || pipeline?.name || 'Unknown',
-        stage_id: schedule.stage_id || undefined,
-        stage_name: schedule.stage_name || undefined,
+        stage_id: stage?.id || schedule.stage_id || undefined,
+        stage_name: schedule.stage_name || stage?.name || undefined,
       }]);
     } else {
       setFormTargets([]);
@@ -424,7 +431,7 @@ export function ReportDistributionPanel() {
                 <span className="truncate">Report Distribution</span>
               </CardTitle>
               <CardDescription className="mt-1">
-                Automated Market Intelligence Report delivery to GHL pipeline contacts
+                Automated Market Intelligence Report delivery to the clients in your pipelines
               </CardDescription>
             </div>
             <div className="flex shrink-0 flex-wrap gap-2">
@@ -593,7 +600,7 @@ export function ReportDistributionPanel() {
           <DialogHeader>
             <DialogTitle>{editingSchedule ? 'Edit' : 'Create'} Distribution Schedule</DialogTitle>
             <DialogDescription>
-              Configure automated delivery of Market Intelligence Reports to GHL pipeline contacts.
+              Choose which pipelines and stages receive Market Intelligence Reports, and how often.
             </DialogDescription>
           </DialogHeader>
           <ScrollArea className="max-h-[60vh] pr-4">
@@ -679,7 +686,7 @@ export function ReportDistributionPanel() {
                     );
                   })}
                   {pipelines.length === 0 && (
-                    <p className="text-xs text-muted-foreground text-center py-4">No pipelines synced from GHL</p>
+                    <p className="text-xs text-muted-foreground text-center py-4">There are no pipelines yet, so there is nobody to send to.</p>
                   )}
                 </div>
               </div>

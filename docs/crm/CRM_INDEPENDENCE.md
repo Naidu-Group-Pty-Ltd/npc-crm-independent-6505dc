@@ -253,7 +253,6 @@ leaves a client waiting for a reply nobody sent.
 | **Inbound is built but unexercised** | `crm-inbound-message` receives a Twilio SMS and writes the thread. With no `TWILIO_AUTH_TOKEN` on any deployment it refuses every request — correctly, since the token IS the signature key — so the path has never run against a real delivery. |
 | **No native pipeline or conversation *reconciliation*** | By design, not by omission — see the routing table above. What a native deployment does NOT yet have is an inbound path to fill the threads in the first place (the row above). |
 | **The `sync-ghl-*` workers** | Not carried on this line (see above). The `ghl-migrate-*` account-migration workers are the prime's alone and never reach any clone. |
-| **No native pipeline creation** | Pipelines and stages were only ever synced in from GoHighLevel. With the sync gone, Client Tracker shows the pipelines already stored and offers no way to create one. An owner decision: a native pipeline editor is the remedy. |
 
 `RESEND_API_KEY` is `authorised_no_value` on this clone — the fleet policy says
 forward it and Mission Control holds no value — so email is in the same
@@ -301,6 +300,262 @@ SMS from this deployment.
 The signature base — the URL followed by every parameter in key order, name
 then value, no separators — is checked against Twilio's own published worked
 example rather than against my reading of it.
+
+## Opening a thread, and one address for both ends
+
+Until 3 Oct 2026 the inbound webhook was the only writer of
+`ghl_conversations` on a native deployment. Staff could answer a client who had
+texted first and could never speak first. `crm-send-message` now answers
+`action: 'open_conversation'` through `_shared/crm/openNativeConversation.ts`.
+The Conversations page offers it as **New conversation**, and a client's
+Conversations tab as **Start conversation**. Both are drawn only where
+`isNativeCrm()` holds.
+
+Three rules carry it.
+
+- **One thread per client, whichever end opened it.** A thread is looked up by
+  its key first, then by the client. One that already exists is returned, never
+  duplicated. A race between two operators resolves through
+  `uq_ghl_conversation` to the row that won.
+- **A client nobody can reach gets no thread.** With no usable mobile and no
+  email there is no channel to speak on. A composer that cannot send is a dead
+  control, so the refusal names the record to fix.
+- **It asks the send path's own questions.** It runs after the
+  `conversations:can_edit` check and asks the same ownership question. It
+  answers 404 in the same words, so a client the caller may not reach cannot be
+  told apart from one that does not exist.
+
+**Both ends must address the same line, and they did not.** `primary_mobile`
+holds whatever a person typed (`0412 345 678`, `+61 412 345 678`). Twilio sends
+and accepts E.164 only. So the outbound path handed Twilio a number it rejects.
+The inbound path matched the raw string exactly and linked almost nobody, and
+filed every reply under a key no operator-opened thread could share.
+`australianMobileToE164` (`nativeConversation.pure.ts`) is now the one reading
+for all three:
+
+- the number a send goes to;
+- the key a thread is filed under (`native-sms-<E.164>`, or
+  `native-client-<id>` for a client with no mobile);
+- the client an inbound number belongs to.
+
+That last lookup asks for every form a person commonly types, as literal values
+in `.in()` rather than a composed filter. It then **confirms** each candidate by
+normalising the stored value, and links a client only when exactly one holds the
+line. A number shared by two records, or one ending in the same digits in
+another country, links nobody. Deciding who somebody is stays a person's call.
+
+A number that names its own country is kept rather than re-read as Australian.
+A value that cannot be read as a number is refused by name, as a fault in the
+client's record, rather than sent and rejected by the provider.
+
+A sent **email** also failed to reach its history, on both lines.
+`Conversations.tsx` recorded it against the thread's provider key, which is
+text, in a column that is the thread's uuid foreign key. The row was refused, so
+every email reply vanished from the conversation after the refetch. It records
+against the row id now. The same defect is on the prime and is fixed there too,
+because a clone-side fix to a file the prime also holds is reverted by the next
+cascade.
+
+## Calendars a deployment can set up, and bookings that respect them
+
+`crm-calendar` read and wrote appointments from the first native version, but
+nothing wrote a **calendar**. GoHighLevel owned calendar setup, so on this line
+`crm_calendars`, `crm_calendar_members` and `crm_calendar_availability` had no
+writer at all. A fresh deployment had nothing to book into, and the page's
+calendar list was empty with no way to fill it.
+
+Five actions on `crm-calendar` are that writer now: `listCalendarSettings`,
+`createCalendar`, `updateCalendar`, `setCalendarMembers` and `setAvailability`.
+The Calendar page offers them as **Manage calendars**, a dialog with three tabs
+(details, team, opening hours). It is drawn only for somebody with edit rights
+on the `calendar` module.
+
+The panel (`src/components/calendar/native/CalendarSetup.tsx`) exists only on
+this line. `Calendar.tsx` is shared with the prime and finds the panel through
+`import.meta.glob`, which answers an empty record for a missing file. So the
+prime builds without the panel and draws nothing extra, the page stays
+byte-identical on both lines, and a cascade cannot revert it. The same edit
+landed on the prime in the same change. `calendarSetup.test.ts` fails if the
+glob stops naming a file this line holds, because a rename would otherwise
+remove the only way to create a calendar while every other check stayed green.
+
+Four rules carry it.
+
+- **Every action is gated on the `calendar` module permission** the page itself
+  reads. Reading needs view; booking, moving, blocking and every setup action
+  need edit. A client's appointments tab is also readable with view on
+  `client_management`, because it sits on the client's page. Before this, any
+  signed-in session could write any calendar.
+- **A booking is checked against the calendar, not just the clock.** The time
+  must fall inside the calendar's published hours, read in the calendar's own
+  time zone, and must not overlap anything already booked or blocked on it. A
+  read that failed refuses the booking (503) rather than waving a double-booking
+  through. A calendar that was switched off takes no new bookings. A blocked time
+  may sit over anything, because that is what blocking is for.
+  `overrideAvailability` lets a booking past the hours and the overlap check
+  deliberately.
+- **The form refuses what the server refuses, in the same words.**
+  `calendarSetup.pure.ts` sends the form's hours through the server's own
+  `readAvailability` (`_shared/crm/calendarBooking.pure.ts`), not a copy of its
+  rules. A time input cannot say "24:00", so an end of 00:00 means the hours run
+  to midnight.
+- **Nothing is left half-written.** New hours and a new team are written before
+  the old ones are removed, and the old ones are removed by id. A failure part
+  way leaves the previous hours standing, or too many team members, never none.
+  A calendar is never hard-deleted, because that would cascade its appointments
+  away. Switched off, it leaves the booking list and keeps its history.
+
+A reschedule also failed silently before this. The page and the dashboard agent
+send `newStartTime`/`newEndTime`, the action read only `startTime`/`endTime`, and
+it reported success having moved nothing. Both spellings are read now.
+
+## Pipelines for all staff, and a card that stays where it was put
+
+The Client Tracker is where this line keeps its pipelines, and four faults
+meant it worked only for an administrator. Even for them, a card could vanish.
+
+- **Staff opened it to "No Pipelines".** Every operation on
+  `manage-automation-settings` sat behind one admin-only check. That included
+  the board's first two reads (`getPipelines`, `getStages`), so somebody given
+  the Client Tracker could open the page and read nothing on it.
+- **A moved client vanished from the pipeline they were moved into.** A move
+  set `current_stage_id` and never `current_pipeline_id`, and the board filters
+  a pipeline by that column. The client still appeared under "All pipelines"
+  and disappeared from the pipeline's own view.
+- **Nothing wrote a placement.** The board places a card by its
+  `ghl_client_opportunities` rows first. On the prime the GoHighLevel sync
+  writes them; on this line nothing did. So a client's own stage and the
+  board's record of it drifted apart from the first move.
+- **A client could not be added to a second pipeline.** The edit form offered
+  one flat list of every stage with no pipeline named, so a stage in another
+  pipeline looked like a stage in this one.
+
+Native pipeline creation (`createPipeline`, drawn by `NativePipelineCreator`)
+has existed since the line became closed, but it was shown only while a
+deployment held no pipeline at all. It now sits in the toolbar for anyone who
+may edit the tracker, and a new pipeline opens selected.
+
+Five rules carry it.
+
+- **The tracker's operations answer to the tracker's own permission.**
+  `TRACKER_PERMISSION` maps the board's reads to view on `client_tracker` and
+  every change to edit. The administrator role is still admitted, so nobody who
+  reached the board before loses it. Every other operation on the function
+  (the report automation settings) is still an administrator's. A move is
+  refused for a client the person may not act for (`canAccessClient`), with the
+  same not-found the client broker gives.
+- **A stage is looked up, never described.** The request names a stage by id.
+  Its pipeline and its name come from `ghl_pipeline_stages`, and both are
+  written to the client (`clientPipelineUpdate.pure.ts`). An id the table does
+  not hold is refused, and the request's own `pipeline_status` beside a stage
+  is ignored, because it could store one stage under another's name.
+- **Taking a client off a pipeline touches only that pipeline.** The board now
+  names the pipeline a card was dragged out of. Where the client's own
+  placement is in a different pipeline, their columns are left alone, status
+  included. A clear that names no pipeline is the older call and empties
+  `current_stage_id` and nothing else. A read that failed is refused (503)
+  rather than taken as "placed nowhere", which would clear the wrong pipeline.
+- **A placement is written, never deleted.** After the client's row is saved,
+  `nativeOpportunityWriter.ts` moves every row the client already holds in that
+  pipeline, whoever wrote it, or writes one keyed `native:<pipeline id>`. It
+  upserts on the table's own unique key, so two quick moves write one row.
+  Leaving a pipeline empties the row's stage and keeps the record. A failed
+  read or write is a 503 that says the stage was saved and the board was not,
+  never a quiet success.
+- **What the board is sent is what the board shows.** `get-client-data` now
+  scopes `ghl_client_opportunities` to the clients the person may see, like
+  every other client table. Before this, the board was sent every client's
+  pipeline history and simply drew fewer cards.
+
+The form says what the server says. A stage is chosen from a list grouped by
+pipeline, so a stage in another pipeline is plainly another pipeline, and only
+a changed stage is sent. Somebody with view only sees the board, cannot drag,
+and gets a disabled form that says why. An optimistic move patches only the
+placement in the pipeline being viewed, never every one the client holds.
+
+Two of these files are shared with the prime and one is not.
+`clientPipelineUpdate.pure.ts`, its test and the scoping in `get-client-data`
+are byte-identical on both lines. The same gate and stage lookup landed on the
+prime in the same change, where the GoHighLevel sync still writes placements.
+The opportunity writer (`_shared/crm/nativeOpportunity*.ts`) exists only here.
+So **`manage-automation-settings` and `src/pages/ClientTracker.tsx` are head
+variants**, and they must be recorded as `manual_reconcile` on this clone in
+Mission Control, or the next cascade puts the prime's copy back and the board
+stops recording moves without anything failing.
+
+One read is still wider than the board's own: RLS on `ghl_client_opportunities`
+lets any signed-in session select every row directly (`USING (true)`).
+Narrowing that is a migration for the owner to approve, not part of this
+change.
+
+## The GoHighLevel leftovers, retired
+
+Five surfaces outside the CRM pages still assumed a vendor. Each one either
+did nothing here and said nothing, or said something false.
+
+- **A lead magnet's lead reached no record.** `request-lead-magnet` captured
+  the download, answered the visitor and pushed the lead to GoHighLevel. Here
+  the push logged "GHL skipped", so no client, tag or pipeline placement was
+  ever written, and the captures dialog read "Pending" beside every lead. It
+  now files the lead natively (`_shared/crm/fileNativeLead.ts`, rules in
+  `nativeLeadCapture.pure.ts`), before the vendor branch and only where the
+  deployment is `native`. Four rules:
+  - **A client is matched only where exactly one holds the address.** Several
+    is left unfiled, with the reason written to the download row.
+  - **The address matched is the one the visitor typed.** The capture's
+    normalised key drops Gmail dots and `+tags`. That is right for counting
+    downloads and wrong for a client's email.
+  - **A client already in that pipeline keeps their stage.**
+  - **An existing client's own record is not rewritten.** Only a client with
+    no placement at all takes the magnet's stage as their own.
+
+  The captures dialog says "Added to CRM", "Not added" (with the reason on
+  hover) or "Pending".
+- **A finance partner's text or email to a client failed in vendor words.**
+  `finance-portal-client-comms` sent everything but the portal message through
+  GoHighLevel, so here it answered `no_ghl_conversation`. On `native` it now
+  plans first (`financePortalNativeSend.pure.ts`) and refuses before it writes:
+  - **A text** goes through `_shared/crm/twilioSms.ts`, the same module
+    `crm-send-message` now uses, so the two cannot address Twilio differently.
+  - **An email** goes through the white-labelled portal email. It carries the
+    same open-tracking pixel the vendor path embeds, so "opened" means the
+    same thing on both lines.
+  - **WhatsApp** is refused, and the composer does not offer it here.
+- **Marketing report distribution** read a stage by its vendor key, which no
+  native stage has. It accepts either key now, and it never widens a stage
+  target it cannot resolve into "everyone" (shared with the prime).
+- **Lead attribution enrichment** failed every scheduled run on a deployment
+  with no Meta token. A scheduled run now answers 200 and says it skipped. A
+  person who asks is told what is missing (shared with the prime).
+- **Call Logs offered "Clean up contact names"**, which writes to GoHighLevel.
+  It is not drawn here.
+
+The visible vendor wording on shared screens (calendar, lead magnets, lead
+quality, add client, notes, portal configuration, the user guide) was
+rewritten so it is true on both lines, identically in both repositories. Two
+shared components gained a prop that defaults to showing, and only this
+line's Client Management page turns it off:
+`ClientAnalyticsDashboard`'s `showCrmSyncStatus` and `ClientFilters`'
+`showSyncStatus`. A sync-status card here read "Sync in progress" for ever,
+because every client is "pending" a push that has nowhere to go.
+
+**The head variants on this line, all to be recorded as `manual_reconcile`
+on this clone in Mission Control**, or the next cascade restores the prime's
+copy without anything failing:
+
+| File | Why it differs from the prime |
+|---|---|
+| `supabase/functions/manage-automation-settings/index.ts` | native pipeline writes |
+| `src/pages/ClientTracker.tsx` | native board, no vendor sync |
+| `src/pages/ClientManagement.tsx` | vendor sync, import and status hidden |
+| `src/pages/CallLogs.tsx` | contact-name clean-up hidden |
+| `supabase/functions/request-lead-magnet/index.ts` | native filing branch |
+| `supabase/functions/finance-portal-client-comms/index.ts` | native send branch |
+| `src/components/finance-portal/ClientCommsInboxTab.tsx` | WhatsApp not offered |
+| `scripts/security/check-ghl-message-authz.mjs` | holds `crm-send-message` to the rule |
+
+Every file gated on `ghlAffordancesAvailable()` is a head variant for the same
+reason; the table lists the ones this work made or changed.
 
 ## Setting a deployment to native
 

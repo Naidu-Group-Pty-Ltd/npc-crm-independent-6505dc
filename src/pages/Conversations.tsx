@@ -12,8 +12,10 @@ import { invokeSecureFunction } from "@/lib/secureInvoke";
 import {
   crmFunction,
   ghlAffordancesAvailable,
+  isNativeCrm,
   vendorReconciliationFunction,
 } from "@/lib/crm/crmProvider";
+import { StartConversationDialog } from "@/components/conversations/StartConversationDialog";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -58,6 +60,7 @@ import {
   Inbox,
   FilterX,
   Sparkles,
+  MessageSquarePlus,
 } from 'lucide-react';
 
 import {
@@ -342,6 +345,7 @@ export default function Conversations() {
   const [syncErrorMessage, setSyncErrorMessage] = useState<string | null>(null);
   const [showExportDialog, setShowExportDialog] = useState(false);
   const [isExportingHistory, setIsExportingHistory] = useState(false);
+  const [showStartConversation, setShowStartConversation] = useState(false);
   const [exportJobStatus, setExportJobStatus] =
     useState<ExportJobStatus | null>(null);
 
@@ -522,12 +526,15 @@ export default function Conversations() {
   const sendMutation = useMutation({
     mutationFn: async ({
       conversationId,
+      conversationRowId,
       message,
       channel,
       subject,
       idempotencyKey,
     }: {
       conversationId: string;
+      /** The thread's row id. `conversationId` is its provider key, which is text. */
+      conversationRowId: string;
       message: string;
       channel: "sms" | "whatsapp" | "email";
       subject?: string;
@@ -562,7 +569,10 @@ export default function Conversations() {
             operation: "create",
             table: "ghl_conversation_messages",
             data: {
-              conversation_id: conversationId,
+              // The column is the thread's uuid row id. The provider key in
+              // `conversationId` is text, so passing it here failed the
+              // foreign key and every sent email vanished from the history.
+              conversation_id: conversationRowId,
               ghl_message_id: `local-email-${idempotencyKey}`,
               direction: "outbound",
               channel_type: "email",
@@ -1014,6 +1024,7 @@ export default function Conversations() {
     requestKeysRef.current[selectedConversation.id] = idempotencyKey;
     sendMutation.mutate({
       conversationId: selectedConversation.ghl_conversation_id,
+      conversationRowId: selectedConversation.id,
       message: replyText.trim(),
       channel: replyChannel as "sms" | "whatsapp" | "email",
       idempotencyKey,
@@ -1030,6 +1041,7 @@ export default function Conversations() {
     requestKeysRef.current[selectedConversation.id] = idempotencyKey;
     sendMutation.mutate({
       conversationId: selectedConversation.ghl_conversation_id,
+      conversationRowId: selectedConversation.id,
       message: message.body,
       channel,
       idempotencyKey,
@@ -1138,6 +1150,22 @@ export default function Conversations() {
           </div>
         </div>
         <div className="relative flex w-full flex-wrap items-center gap-2.5 sm:w-auto md:justify-end [&>button]:min-h-10 [&>button]:flex-1 sm:[&>button]:flex-none">
+          {/*
+            Drawn only where threads are this deployment's own. Under a CRM
+            vendor a thread is born in the vendor and arrives by sync; here
+            nothing else opens one, so without this staff could only ever
+            reply to a client who texted first.
+          */}
+          {isNativeCrm() && (
+            <Button
+              size="sm"
+              className="h-10 rounded-full px-4 font-semibold"
+              onClick={() => setShowStartConversation(true)}
+            >
+              <MessageSquarePlus className="mr-2 h-4 w-4" aria-hidden="true" />
+              New conversation
+            </Button>
+          )}
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button
@@ -1391,6 +1419,19 @@ export default function Conversations() {
             </div>
           </div>
         </div>
+      )}
+
+      {isNativeCrm() && (
+        <StartConversationDialog
+          open={showStartConversation}
+          onOpenChange={setShowStartConversation}
+          onOpened={async (conversation, created) => {
+            await refetchConversations();
+            setSelectedId(conversation.id);
+            setSearchParams({ id: conversation.id });
+            if (!created) toast.info("This client already has a conversation, so it has been opened.");
+          }}
+        />
       )}
 
       <GHLExportDialog

@@ -47,6 +47,12 @@ import {
   planInboundMessage,
   twilioSignatureBase,
 } from '../_shared/crm/nativeInbound.pure.ts';
+import {
+  australianMobileToE164,
+  confirmedMobileMatches,
+  mobileLookupVariants,
+  smsConversationKey,
+} from '../_shared/crm/nativeConversation.pure.ts';
 
 /**
  * Twilio signs with HMAC-SHA1 over the URL plus sorted parameters. SHA-1 is
@@ -137,18 +143,40 @@ Deno.serve(async (req) => {
       .maybeSingle();
     if (already) return new Response('', { status: 204 });
 
-    const { data: client } = await supabase
+    /*
+     * Whose number this is. `primary_mobile` holds whatever a person typed —
+     * `0412 345 678`, `+61 412 345 678` — while Twilio sends E.164, so an
+     * exact match on the raw string found almost nobody. The record's own
+     * number is normalised by the same function the outbound path addresses
+     * with, and a row is linked only when exactly one client holds the line.
+     * A failed read links nobody rather than guessing.
+     */
+    const from = australianMobileToE164(plan.from) ?? plan.from;
+    const { data: candidates } = await supabase
       .from('clients')
-      .select('id')
-      .eq('primary_mobile', plan.from)
-      .maybeSingle();
+      .select('id, primary_mobile')
+      .in('primary_mobile', mobileLookupVariants(from))
+      .limit(10);
+    const clientId = confirmedMobileMatches(from, candidates ?? []);
 
-    const conversationKey = `native-sms-${plan.from}`;
-    const { data: conv } = await supabase
+    // One thread per client, whichever end opened it: the number's own key
+    // first, then a thread an operator already opened for this client.
+    const conversationKey = smsConversationKey(from);
+    let { data: conv } = await supabase
       .from('ghl_conversations')
-      .select('id, unread_count')
+      .select('id, unread_count, client_id, available_channels')
       .eq('ghl_conversation_id', conversationKey)
       .maybeSingle();
+    if (!conv && clientId) {
+      const { data: clientThread } = await supabase
+        .from('ghl_conversations')
+        .select('id, unread_count, client_id, available_channels')
+        .eq('client_id', clientId)
+        .order('last_message_date', { ascending: false, nullsFirst: false })
+        .limit(1)
+        .maybeSingle();
+      conv = clientThread ?? null;
+    }
 
     const now = new Date().toISOString();
     let conversationId = conv?.id ?? null;
@@ -158,7 +186,7 @@ Deno.serve(async (req) => {
         .from('ghl_conversations')
         .insert({
           ghl_conversation_id: conversationKey,
-          client_id: client?.id ?? null,
+          client_id: clientId,
           channel_type: 'sms',
           conversation_status: 'open',
           available_channels: ['sms'],
@@ -183,7 +211,12 @@ Deno.serve(async (req) => {
           last_message_direction: 'inbound',
           unread_count: (conv?.unread_count ?? 0) + 1,
           conversation_status: 'open',
-          ...(client?.id ? { client_id: client.id } : {}),
+          // A thread is linked to a client once and never re-pointed here:
+          // an operator may have linked it by hand.
+          ...(clientId && !conv?.client_id ? { client_id: clientId } : {}),
+          ...(Array.isArray(conv?.available_channels) && !conv.available_channels.includes('sms')
+            ? { available_channels: [...conv.available_channels, 'sms'] }
+            : {}),
         })
         .eq('id', conversationId);
     }

@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo, useCallback, useRef } from 'react';
+import { useEffect, useState, useMemo, useCallback, useRef, Suspense, type ReactElement } from 'react';
 import { Calendar as CalendarIcon, Clock, ChevronLeft, ChevronRight, Users, Filter, RefreshCw, GripVertical, LayoutList, Flame, BarChart3, TrendingUp, AlertTriangle, Sparkles, Plus, Layers, Repeat, Bell, X, PanelLeftClose, PanelLeft, Menu, Mail, Pin, PinOff } from 'lucide-react';
 import { useModulePermissions } from '@/hooks/useModulePermissions';
 import { invokeSecureFunction } from '@/lib/secureInvoke';
@@ -63,6 +63,7 @@ import { getBookingTimezone } from '@/lib/bookingTimezone';
 import { useAuth } from '@/hooks/useAuth';
 import { loadCalendarToolsPreference, orderCalendarTools, saveCalendarToolsPreference } from '@/lib/calendarTools';
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuLabel, ContextMenuTrigger } from '@/components/ui/context-menu';
+import { lazyWithRetry } from '@/lib/lazyWithRetry';
 
 // Sidebar tab type
 type SidebarTab = 'events' | 'availability' | 'heatmap' | 'analytics' | 'summary' | 'conflicts' | 'optimize' | 'overlay' | 'outlook' | 'patterns' | 'reminders';
@@ -113,6 +114,21 @@ const SIDEBAR_TABS: { id: SidebarTab; icon: React.ReactNode; label: string; shor
   { id: 'reminders', icon: <Bell className="h-4 w-4" />, label: 'Reminders', shortcut: '', defaultOrder: 10 },
 ];
 const DEFAULT_PINNED_TABS: SidebarTab[] = ['events', 'conflicts'];
+
+/**
+ * Setting calendars up belongs to a deployment that runs its own calendars.
+ * The CRM-independent line does, and carries the panel; a deployment that
+ * reads a vendor's calendars has nothing to set up here and carries no such
+ * file. A static import of a missing file fails the build, so the panel is
+ * found through import.meta.glob, which answers an empty record where the
+ * file is missing: the button exists where the panel does and nowhere else,
+ * and this page stays one file on every line.
+ */
+const calendarSetupPanel = import.meta.glob<{ default: (props: { onChanged: () => void }) => ReactElement }>(
+  '../components/calendar/native/CalendarSetup.tsx',
+);
+const loadCalendarSetup = calendarSetupPanel['../components/calendar/native/CalendarSetup.tsx'];
+const CalendarSetup = loadCalendarSetup ? lazyWithRetry(loadCalendarSetup) : null;
 
 const CALENDAR_PAGE_SHELL = 'relative -m-4 space-y-6 bg-background p-4 font-sans text-foreground md:-m-6 md:p-6';
 const PREMIUM_CARD = 'dashboard-theme-premium-card border-border/70 bg-card/90 text-card-foreground shadow-[0_10px_30px_rgba(15,23,42,0.06)] backdrop-blur-xl transition-all duration-200 ease-out dark:border-white/10 dark:bg-background/80 dark:shadow-black/30';
@@ -902,7 +918,7 @@ export default function Calendar() {
       <DashboardThemeFrame variant="page" className={cn(CALENDAR_PAGE_SHELL, "max-w-none")}>
         <DashboardThemeFrame variant="hero" className="p-5 md:p-7">
           <h1 className="text-3xl font-semibold tracking-[-0.035em] text-foreground md:text-5xl">Calendar</h1>
-          <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground/90 md:text-base">GoHighLevel Calendar Integration</p>
+          <p className="mt-3 max-w-2xl text-sm leading-6 text-muted-foreground/90 md:text-base">Appointments and availability</p>
         </DashboardThemeFrame>
         <Card className={cn(PREMIUM_CARD, "overflow-hidden rounded-2xl border-destructive/25 bg-destructive/5")}>
           <CardContent className="flex flex-col items-center justify-center px-6 py-12 text-center">
@@ -1061,7 +1077,7 @@ export default function Calendar() {
                 </div>
                 <h1 className="text-3xl font-bold tracking-tight text-foreground md:text-4xl">Calendar</h1>
                 <p className="mt-1 flex items-center gap-2 text-sm font-medium text-muted-foreground">
-                  GoHighLevel Appointments
+                  Appointments
                   {isUpdating && <span className="rounded-full border border-primary/25 bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary shadow-sm shadow-primary/10 animate-pulse">Updating...</span>}
                 </p>
                 {/*
@@ -2129,15 +2145,22 @@ export default function Calendar() {
       {/* Calendars List — split into Frequently Used and Other */}
       <Card className={cn(PREMIUM_PANEL, "overflow-hidden rounded-2xl border-primary/10")}>
         <CardHeader className="border-b border-border bg-muted/25">
-          <CardTitle className="flex flex-col gap-1 sm:flex-row sm:items-center sm:justify-between">
-            <span className="flex items-center gap-3 text-xl font-semibold tracking-tight text-foreground">
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+            <CardTitle className="flex items-center gap-3 text-xl font-semibold tracking-tight text-foreground">
               <span className="rounded-2xl border border-primary/25 bg-primary/10 p-2 text-primary">
                 <Users className="h-5 w-5" />
               </span>
               Available Calendars ({calendars.length})
-            </span>
-            <span className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">Calendar registry</span>
-          </CardTitle>
+            </CardTitle>
+            <div className="flex items-center gap-3">
+              <span className="text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground">Calendar registry</span>
+              {CalendarSetup && canEditCalendar && (
+                <Suspense fallback={null}>
+                  <CalendarSetup onChanged={handleRefresh} />
+                </Suspense>
+              )}
+            </div>
+          </div>
         </CardHeader>
         <CardContent className="p-4 md:p-5">
           {isLoading ? (

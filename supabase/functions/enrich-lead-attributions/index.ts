@@ -33,7 +33,8 @@ Deno.serve(async (req) => {
     // bypass, so anyone could drive the paid Meta Ads enrichment. Body fields
     // are never a trust signal.
     const human = await verifyAuth(supabase, req.headers, body);
-    if (human.error || !human.userId) {
+    const scheduled = Boolean(human.error || !human.userId);
+    if (scheduled) {
       const internal = await verifyInternal(supabase, req, rawBody, { strict: true, allowedCallers: ['pg_cron'] });
       if (!internal.ok) {
         return createUnauthorizedResponse(human.error || 'Authentication required', corsHeaders);
@@ -43,9 +44,22 @@ Deno.serve(async (req) => {
 
     const accessToken = Deno.env.get('META_ADS_ACCESS_TOKEN');
     if (!accessToken) {
-      return new Response(JSON.stringify({ success: false, error: 'META_ADS_ACCESS_TOKEN not configured' }), {
-        status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' },
-      });
+      // Meta Ads is optional. A scheduled run on a deployment that never
+      // connected it has nothing to do, and answering 400 on every tick made
+      // the cron's history read as an outage. A person asking is told where
+      // the connection is made.
+      if (scheduled) {
+        return new Response(JSON.stringify({
+          success: true,
+          enriched: 0,
+          skipped: 'meta_ads_not_connected',
+          message: 'Meta Ads is not connected, so there is nothing to enrich.',
+        }), { headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
+      }
+      return new Response(JSON.stringify({
+        success: false,
+        error: 'Meta Ads is not connected. Add the Meta Ads access token on the Integrations page to enrich lead sources.',
+      }), { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } });
     }
 
     const batchSize = body.batchSize || 20;

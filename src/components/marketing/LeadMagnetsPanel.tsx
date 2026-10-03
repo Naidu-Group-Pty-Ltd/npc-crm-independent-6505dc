@@ -287,7 +287,7 @@ function CreateLeadMagnetDialog({ open, onClose, onCreated, pipelines, stages }:
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <Label>GHL Pipeline</Label>
+                <Label>Pipeline</Label>
                 <Select value={pipelineGhl} onValueChange={(v) => { setPipelineGhl(v); setStageGhl(UNASSIGNED); }}>
                   <SelectTrigger><SelectValue placeholder="Select pipeline" /></SelectTrigger>
                   <SelectContent>
@@ -308,7 +308,7 @@ function CreateLeadMagnetDialog({ open, onClose, onCreated, pipelines, stages }:
               </div>
             </div>
             <div>
-              <Label>GHL Contact Tag</Label>
+              <Label>Contact tag</Label>
               <Input value={tag} onChange={(e) => setTag(e.target.value)} placeholder={`Lead Magnet: ${title || 'Title'}`} />
               <p className="text-xs text-muted-foreground mt-1">Defaults to "Lead Magnet: {'{title}'}" if blank.</p>
             </div>
@@ -500,7 +500,7 @@ function DownloadsDialog({ magnet, onClose }: { magnet: LeadMagnet | null; onClo
         <div className="grid grid-cols-1 gap-2 mb-3 sm:grid-cols-3">
           <Card><CardContent className="p-3"><p className="text-xs text-muted-foreground">Total captures</p><p className="text-2xl font-semibold">{stats.total}</p></CardContent></Card>
           <Card><CardContent className="p-3"><p className="text-xs text-muted-foreground">Last 7 days</p><p className="text-2xl font-semibold">{stats.last7}</p></CardContent></Card>
-          <Card><CardContent className="p-3"><p className="text-xs text-muted-foreground">GHL sync rate</p><p className="text-2xl font-semibold">{stats.syncRate}%</p></CardContent></Card>
+          <Card><CardContent className="p-3"><p className="text-xs text-muted-foreground">Added to CRM</p><p className="text-2xl font-semibold">{stats.syncRate}%</p></CardContent></Card>
         </div>
 
         <ScrollArea className="flex-1 -mx-6 px-6">
@@ -516,7 +516,7 @@ function DownloadsDialog({ magnet, onClose }: { magnet: LeadMagnet | null; onClo
                     <p className="font-medium truncate" title={`${r.full_name} — ${r.email}`}>{r.full_name} <span className="text-muted-foreground font-normal">— {r.email}</span></p>
                     <p className="text-xs text-muted-foreground">{r.phone || 'no phone'} · {new Date(r.created_at).toLocaleString('en-AU')}</p>
                   </div>
-                  <Badge variant={r.ghl_synced ? 'default' : 'secondary'} className="shrink-0 rounded-full">{r.ghl_synced ? 'GHL synced' : 'Pending'}</Badge>
+                  <Badge variant={r.ghl_synced ? 'default' : 'secondary'} className="shrink-0 rounded-full" title={!r.ghl_synced && r.ghl_error ? String(r.ghl_error) : undefined}>{r.ghl_synced ? 'Added to CRM' : r.ghl_error ? 'Not added' : 'Pending'}</Badge>
                 </div>
               ))}
             </div>

@@ -916,7 +916,7 @@ export default function ClientManagement() {
                 </Badge>
               )}
             </Button>
-            <ClientFilters filters={filters} onFiltersChange={setFilters} />
+            <ClientFilters filters={filters} onFiltersChange={setFilters} showSyncStatus={ghlCarried} />
             {filteredClients.length > 0 && (
               <label className="dashboard-input-control flex h-10 cursor-pointer items-center gap-2 px-3 text-sm text-muted-foreground">
                 <Checkbox
@@ -1008,7 +1008,7 @@ export default function ClientManagement() {
         </TabsContent>
 
         <TabsContent value="analytics" className="space-y-4">
-          <ClientAnalyticsDashboard clients={clients} />
+          <ClientAnalyticsDashboard clients={clients} showCrmSyncStatus={ghlCarried} />
         </TabsContent>
 
         <TabsContent value="compare" className="space-y-4">

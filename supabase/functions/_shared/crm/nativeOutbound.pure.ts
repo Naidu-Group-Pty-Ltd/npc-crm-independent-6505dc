@@ -38,6 +38,8 @@
 // operator did not choose, at a cost they did not agree to, to a number that
 // may not be the one they meant.
 
+import { australianMobileToE164 } from "./nativeConversation.pure.ts";
+
 /** The channels the outbound path accepts. Mirrors `send-ghl-message`. */
 export type NativeChannel = "sms" | "whatsapp";
 
@@ -145,8 +147,8 @@ export function planNativeSend(input: {
     };
   }
 
-  const to = typeof input.to === "string" ? input.to.trim() : "";
-  if (to.length === 0) {
+  const recorded = typeof input.to === "string" ? input.to.trim() : "";
+  if (recorded.length === 0) {
     return {
       act: "refuse",
       kind: "no_destination",
@@ -154,6 +156,22 @@ export function planNativeSend(input: {
       message:
         "This contact has no mobile number recorded, so there was nowhere to send the message.",
       remedy: null,
+    };
+  }
+
+  // Twilio addresses E.164 and nothing else, while `primary_mobile` holds
+  // whatever a person typed. Normalised by the same function the inbound
+  // webhook keys its threads with, so a reply lands where the send began.
+  const to = australianMobileToE164(recorded);
+  if (!to) {
+    return {
+      act: "refuse",
+      kind: "no_destination",
+      // About the RECORD, which an operator can correct — never a guess at a
+      // nearby number, which would text somebody else.
+      message:
+        "The mobile number on this contact's record could not be read as a phone number, so the message was not sent.",
+      remedy: "Correct the mobile number on the client's record, then send again.",
     };
   }
 

@@ -67,7 +67,7 @@ export function LeadQualityPanel({ leadQuality, aiAnalysis, loading }: LeadQuali
             </CardDescription>
           </div>
           <Badge variant="secondary" className="shrink-0 rounded-full border-primary/20 bg-primary/10 text-[10px] text-primary">
-            GHL Bridge
+            Pipeline data
           </Badge>
         </div>
       </CardHeader>

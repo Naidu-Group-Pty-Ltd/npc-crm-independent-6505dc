@@ -140,7 +140,7 @@ export function OutlookCalendarSettings({ microsoftEmail }: OutlookCalendarSetti
             <div>
               <p className="text-xs font-medium">Auto Prep Blocks</p>
               <p className="text-[10px] text-muted-foreground">
-                Create prep time before GHL appointments
+                Create prep time before appointments you book here
               </p>
             </div>
           </div>
@@ -166,7 +166,7 @@ export function OutlookCalendarSettings({ microsoftEmail }: OutlookCalendarSetti
               </SelectContent>
             </Select>
             <p className="text-[9px] text-muted-foreground">
-              📋 A tentative "Prep" event will be auto-created on your Outlook calendar before each new GHL booking.
+              📋 A tentative "Prep" event will be auto-created on your Outlook calendar before each appointment you book from this calendar.
             </p>
           </div>
         )}

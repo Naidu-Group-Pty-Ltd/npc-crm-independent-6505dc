@@ -303,7 +303,7 @@ export function SmartReminders({ calendars, onSaveRules }: SmartRemindersProps) 
       <div className="pt-2 border-t text-xs text-muted-foreground">
         <p className="flex items-center gap-1">
           <Settings2 className="h-3 w-3" />
-          Reminders sync with your GHL calendar events
+          Reminders follow the appointments on your calendar
         </p>
       </div>
     </div>
