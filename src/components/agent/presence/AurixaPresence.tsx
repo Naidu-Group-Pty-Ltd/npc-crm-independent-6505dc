@@ -20,6 +20,7 @@
 import { useEffect, useRef, type CSSProperties } from 'react';
 import { cn } from '@/lib/utils';
 import type { PresenceMood } from '@/lib/agent/presence.pure';
+import '../aurixa.css';
 
 export interface AurixaPresenceProps {
   mood?: PresenceMood;

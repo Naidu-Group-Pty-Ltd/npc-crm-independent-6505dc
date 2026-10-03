@@ -8,6 +8,7 @@
  */
 import type { CSSProperties } from 'react';
 import { CornerDownRight } from 'lucide-react';
+import './aurixa.css';
 
 interface AgentFollowUpsProps {
   suggestions: string[];

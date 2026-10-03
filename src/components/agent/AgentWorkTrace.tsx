@@ -12,6 +12,7 @@ import { Check, ChevronDown } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { domainIcon } from './domainIcon';
 import { traceSummary, type WorkTrace } from '@/lib/agent/workTrace.pure';
+import './aurixa.css';
 
 interface AgentWorkTraceProps {
   trace: WorkTrace;
