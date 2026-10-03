@@ -416,12 +416,54 @@ describe('the legacy document, restated through its own normaliser', () => {
   const pf = data.portfolio;
 
   it('writes the overview from the totals, so it cannot disagree with them', () => {
+    // The typeset review's own lede (PORTFOLIO.md §10): a sentence that opens
+    // on its subject, and says whose cash flow the monthly figure is.
     expect(pf.overview).toBe(
-      '4 properties worth $3,410,000, carrying $2,088,000 of debt against $1,322,000 of equity, '
-      + 'and costs $1,183 a month to hold. Overall health is assessed as moderate.',
+      'The portfolio holds four properties worth $3,410,000, carrying $2,088,000 of debt against '
+      + '$1,322,000 of equity. After costs, the investment properties cost $1,183 a month to hold. '
+      + 'Overall health is assessed as moderate.',
     );
     expect(data.summary.band).toBe('moderate');
     expect(data.summary.bandLabel).toBe('Moderate');
+  });
+
+  it('publishes the market positioning where the masters bind it, after the cycle', () => {
+    expect(pf.market.paragraphs).toEqual(['Mid-cycle.', 'Well placed.']);
+  });
+
+  it('publishes a note’s words, not the section it is filed under', () => {
+    const rented: any = applyPortfolioProjection({}, {
+      ...DOC_ROW,
+      report_data: {
+        ...DOC_ROW.report_data,
+        propertyAnalyses: [
+          ...DOC_ROW.report_data.propertyAnalyses,
+          { address: '3/18 Station Street, Penrith NSW 2750', propertyType: 'rental', value: 0 },
+        ],
+      },
+    }, REVIEW);
+    const notes: unknown[] = rented.portfolio.notes;
+    for (const note of notes) expect(typeof note).toBe('string');
+    expect(notes).toContain(
+      '3/18 Station Street, Penrith NSW 2750 is rented, not owned, so it is not one of these holdings and is in none of the figures.',
+    );
+  });
+
+  it('attributes an action both assessments named in the same words to both', () => {
+    const agreed: any = applyPortfolioProjection({}, {
+      ...DOC_ROW,
+      report_data: {
+        ...DOC_ROW.report_data,
+        analysis: {
+          ...DOC_ROW.report_data.analysis,
+          strategicRecommendations: { priorityActions: ['Improve portfolio cash flow.'] },
+        },
+      },
+    }, REVIEW);
+    const rows = agreed.portfolio.actionPlan.rows.filter((r: any) => /improve portfolio cash flow/i.test(r.title));
+    expect(rows).toHaveLength(1);
+    expect(rows[0].sourceLabel).toBe('The analysis and the review');
+    expect(rows[0].steps).toEqual(['Review expenses', 'Consider rent reviews']);
   });
 
   it('publishes the composition as the legacy composes it', () => {

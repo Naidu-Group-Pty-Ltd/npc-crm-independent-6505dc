@@ -55,7 +55,7 @@ const press = (el: Element) => {
 describe('the primary action', () => {
   it('renders server-side', async () => {
     setup();
-    press(screen.getByRole('button', { name: /download snapshot/i }));
+    press(screen.getByRole('button', { name: /^export pdf$/i }));
 
     await waitFor(() => expect(deliverSnapshot).toHaveBeenCalledTimes(1));
     expect(deliverSnapshot.mock.calls[0][0]).toMatchObject({ variant: 'server', request: REQUEST });
@@ -64,7 +64,7 @@ describe('the primary action', () => {
   it('says so when the brand snapshot was short of something', async () => {
     deliverSnapshot.mockResolvedValue(delivered('server', ['no ABN — required on an Australian advisory document']));
     setup();
-    press(screen.getByRole('button', { name: /download snapshot/i }));
+    press(screen.getByRole('button', { name: /^export pdf$/i }));
 
     await waitFor(() => expect(toast.warning).toHaveBeenCalledWith(
       expect.stringContaining('no ABN'),
@@ -78,7 +78,7 @@ describe('the primary action', () => {
   it('names the fallback when the route is not deployed', async () => {
     deliverSnapshot.mockResolvedValue(delivered('legacy'));
     setup();
-    press(screen.getByRole('button', { name: /download snapshot/i }));
+    press(screen.getByRole('button', { name: /^export pdf$/i }));
 
     await waitFor(() => expect(toast.info).toHaveBeenCalledWith(
       expect.stringContaining('not deployed'),
@@ -89,7 +89,7 @@ describe('the primary action', () => {
     deliverSnapshot.mockRejectedValue(new Error('no borrowing capacity assessment for this client'));
     vi.spyOn(console, 'error').mockImplementation(() => {});
     setup();
-    press(screen.getByRole('button', { name: /download snapshot/i }));
+    press(screen.getByRole('button', { name: /^export pdf$/i }));
 
     await waitFor(() => expect(toast.error).toHaveBeenCalledWith(
       'no borrowing capacity assessment for this client',
@@ -118,6 +118,33 @@ describe('the legacy layout', () => {
   });
 });
 
+describe('the choice beside the act', () => {
+  /**
+   * §21. The template is the one decision made before exporting, so the split
+   * appearance draws it as a button of its own beside Export PDF — as the
+   * Intelligence Hub, the Portfolio Performance Review and both comparisons do.
+   */
+  it('draws Choose template beside Export PDF, and not again inside the menu', async () => {
+    setup();
+    expect(screen.getByRole('button', { name: /^choose template/i })).toBeTruthy();
+    expect(screen.getByRole('button', { name: /^export pdf$/i })).toBeTruthy();
+
+    press(screen.getByRole('button', { name: /other snapshot formats/i }));
+    expect(await screen.findByText('Download (legacy layout)')).toBeTruthy();
+    expect(screen.getByText('In your chosen template, from the saved assessment')).toBeTruthy();
+    // The open menu hides the page behind it from the accessibility tree, so
+    // what is asserted is that the menu itself offers no second chooser.
+    expect(screen.queryByText('Which template this comes out in')).toBeNull();
+  });
+
+  it('keeps the choice in the menu where there is room for one icon', async () => {
+    setup({ appearance: 'menu', triggerLabel: 'Export Snapshot PDF', label: 'Export Snapshot PDF' });
+    expect(screen.queryByRole('button', { name: /^choose template/i })).toBeNull();
+    press(screen.getByRole('button', { name: /export snapshot pdf/i }));
+    expect(await screen.findByText('Which template this comes out in')).toBeTruthy();
+  });
+});
+
 describe('the compact appearance', () => {
   /**
    * The client card and the reports tab have room for an icon, not a labelled
@@ -139,7 +166,7 @@ describe('while it is running', () => {
     deliverSnapshot.mockImplementation(() => new Promise((r) => { release = r; }));
 
     setup();
-    const button = screen.getByRole('button', { name: /download snapshot/i });
+    const button = screen.getByRole('button', { name: /^export pdf$/i });
     press(button);
     await waitFor(() => expect(button).toBeDisabled());
 
@@ -156,7 +183,7 @@ describe('while it is running', () => {
     // render would mint a new id each time.
     expect(calls).toBe(0);
 
-    press(screen.getByRole('button', { name: /download snapshot/i }));
+    press(screen.getByRole('button', { name: /^export pdf$/i }));
     await waitFor(() => expect(deliverSnapshot).toHaveBeenCalledTimes(1));
     expect(calls).toBe(1);
     expect(deliverSnapshot.mock.calls[0][0].request.scenarioPresets).toEqual([{ id: 'preset-1' }]);

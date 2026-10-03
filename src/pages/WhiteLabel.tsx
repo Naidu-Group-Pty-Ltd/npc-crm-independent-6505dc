@@ -133,6 +133,7 @@ import { logActivityDirect } from '@/hooks/useActivityLogger';
 import { secureStorageUpload } from '@/hooks/useSecureStorage';
 import { defaultBrandConfig, defaultEmailSignature } from '@/branding/brand-defaults';
 import { getBrandAccessibilityChecks, getBrandImpactPreview } from '@/branding/accessibility';
+import { withLinePalette } from '@/branding/linePalette';
 import { getBrandAssetSrc, type BrandAssetSlot } from '@/branding/brand-assets';
 import {
   clearPersistedDraft,
@@ -715,6 +716,10 @@ export default function WhiteLabel() {
   const draftHistoryRef = useRef<WhiteLabelSettings[]>([]);
   const isApplyingHistoryRef = useRef(false);
   const impactPreview = useMemo(() => getBrandImpactPreview(draftSettings), [draftSettings]);
+  // The draft as the dashboard will draw it: an unset colour is this line's
+  // palette, not the platform gold (`linePalette.ts`). Display only — what is
+  // saved is still `draftSettings`, so an unset colour stays unset.
+  const effectiveDraft = useMemo(() => withLinePalette(draftSettings), [draftSettings]);
 
   // Track the last "known clean" settings so we only overwrite the local draft
   // when the source-of-truth actually changes AND the user has no in-flight
@@ -792,7 +797,7 @@ export default function WhiteLabel() {
   }, []);
 
   const hasChanges = useMemo(() => JSON.stringify(draftSettings) !== JSON.stringify(settings), [draftSettings, settings]);
-  const accessibilityChecks = useMemo(() => getBrandAccessibilityChecks(draftSettings), [draftSettings]);
+  const accessibilityChecks = useMemo(() => getBrandAccessibilityChecks(effectiveDraft), [effectiveDraft]);
   const hasCriticalChecks = accessibilityChecks.some((check) => check.status === 'critical');
   const blocker = useUnsavedChangesBlocker(hasChanges);
 
@@ -1327,7 +1332,7 @@ export default function WhiteLabel() {
                   <input
                     type="color"
                     aria-label="Primary color picker"
-                     value={draftSettings.primaryColor ? hslToHex(draftSettings.primaryColor) : '#D4A017'}
+                     value={hslToHex(effectiveDraft.primaryColor)}
                     onChange={(e) => {
                       const hsl = hexToHsl(e.target.value);
                        updateDraftSettings({ primaryColor: hsl });
@@ -1338,10 +1343,10 @@ export default function WhiteLabel() {
                 </div>
                 <div className="min-w-0 flex-1 space-y-2">
                   <div className="w-fit max-w-full rounded-full border border-border/70 bg-card px-3 py-1 text-sm font-mono shadow-sm">
-                    {draftSettings.primaryColor ? hslToHex(draftSettings.primaryColor) : '#D4A017'}
+                    {hslToHex(effectiveDraft.primaryColor)}
                   </div>
                   <div className="max-w-full break-words rounded-xl border border-border/60 bg-muted/30 px-3 py-2 text-xs text-muted-foreground font-mono">
-                    hsl({draftSettings.primaryColor || '43 74% 49%'})
+                    hsl({effectiveDraft.primaryColor})
                   </div>
                 </div>
                 {draftSettings.primaryColor && (
@@ -1361,22 +1366,22 @@ export default function WhiteLabel() {
               <div className="flex flex-wrap gap-2 pt-1">
                 <div 
                   className="h-10 w-10 rounded-xl border border-border/70 shadow-sm ring-1 ring-background transition-transform hover:-translate-y-0.5 hover:shadow-md"
-                   style={{ backgroundColor: `hsl(${draftSettings.primaryColor || '43 74% 49%'})` }}
+                   style={{ backgroundColor: `hsl(${effectiveDraft.primaryColor})` }}
                   title="Primary"
                 />
                 <div 
                   className="h-10 w-10 rounded-xl border border-border/70 shadow-sm ring-1 ring-background transition-transform hover:-translate-y-0.5 hover:shadow-md"
-                   style={{ backgroundColor: `hsl(${draftSettings.primaryColor || '43 74% 49%'} / 0.8)` }}
+                   style={{ backgroundColor: `hsl(${effectiveDraft.primaryColor} / 0.8)` }}
                   title="80%"
                 />
                 <div 
                   className="h-10 w-10 rounded-xl border border-border/70 shadow-sm ring-1 ring-background transition-transform hover:-translate-y-0.5 hover:shadow-md"
-                   style={{ backgroundColor: `hsl(${draftSettings.primaryColor || '43 74% 49%'} / 0.5)` }}
+                   style={{ backgroundColor: `hsl(${effectiveDraft.primaryColor} / 0.5)` }}
                   title="50%"
                 />
                 <div 
                   className="h-10 w-10 rounded-xl border border-border/70 shadow-sm ring-1 ring-background transition-transform hover:-translate-y-0.5 hover:shadow-md"
-                   style={{ backgroundColor: `hsl(${draftSettings.primaryColor || '43 74% 49%'} / 0.2)` }}
+                   style={{ backgroundColor: `hsl(${effectiveDraft.primaryColor} / 0.2)` }}
                   title="20%"
                 />
               </div>
@@ -1395,7 +1400,7 @@ export default function WhiteLabel() {
                   <input
                     type="color"
                     aria-label="Accent color picker"
-                     value={draftSettings.accentColor ? hslToHex(draftSettings.accentColor) : '#D4A017'}
+                     value={hslToHex(effectiveDraft.accentColor)}
                     onChange={(e) => {
                       const hsl = hexToHsl(e.target.value);
                        updateDraftSettings({ accentColor: hsl });
@@ -1406,10 +1411,10 @@ export default function WhiteLabel() {
                 </div>
                 <div className="min-w-0 flex-1 space-y-2">
                   <div className="w-fit max-w-full rounded-full border border-border/70 bg-card px-3 py-1 text-sm font-mono shadow-sm">
-                    {draftSettings.accentColor ? hslToHex(draftSettings.accentColor) : '#D4A017'}
+                    {hslToHex(effectiveDraft.accentColor)}
                   </div>
                   <div className="max-w-full break-words rounded-xl border border-border/60 bg-muted/30 px-3 py-2 text-xs text-muted-foreground font-mono">
-                    hsl({draftSettings.accentColor || '43 74% 49%'})
+                    hsl({effectiveDraft.accentColor})
                   </div>
                 </div>
                 {draftSettings.accentColor && (
@@ -1429,22 +1434,22 @@ export default function WhiteLabel() {
               <div className="flex flex-wrap gap-2 pt-1">
                 <div 
                   className="h-10 w-10 rounded-xl border border-border/70 shadow-sm ring-1 ring-background transition-transform hover:-translate-y-0.5 hover:shadow-md"
-                   style={{ backgroundColor: `hsl(${draftSettings.accentColor || '43 74% 49%'})` }}
+                   style={{ backgroundColor: `hsl(${effectiveDraft.accentColor})` }}
                   title="Accent"
                 />
                 <div 
                   className="h-10 w-10 rounded-xl border border-border/70 shadow-sm ring-1 ring-background transition-transform hover:-translate-y-0.5 hover:shadow-md"
-                   style={{ backgroundColor: `hsl(${draftSettings.accentColor || '43 74% 49%'} / 0.8)` }}
+                   style={{ backgroundColor: `hsl(${effectiveDraft.accentColor} / 0.8)` }}
                   title="80%"
                 />
                 <div 
                   className="h-10 w-10 rounded-xl border border-border/70 shadow-sm ring-1 ring-background transition-transform hover:-translate-y-0.5 hover:shadow-md"
-                   style={{ backgroundColor: `hsl(${draftSettings.accentColor || '43 74% 49%'} / 0.5)` }}
+                   style={{ backgroundColor: `hsl(${effectiveDraft.accentColor} / 0.5)` }}
                   title="50%"
                 />
                 <div 
                   className="h-10 w-10 rounded-xl border border-border/70 shadow-sm ring-1 ring-background transition-transform hover:-translate-y-0.5 hover:shadow-md"
-                   style={{ backgroundColor: `hsl(${draftSettings.accentColor || '43 74% 49%'} / 0.2)` }}
+                   style={{ backgroundColor: `hsl(${effectiveDraft.accentColor} / 0.2)` }}
                   title="20%"
                 />
               </div>
@@ -1465,7 +1470,7 @@ export default function WhiteLabel() {
                   <input
                     type="color"
                     aria-label="Brand accent color picker"
-                    value={draftSettings.brandColor ? hslToHex(draftSettings.brandColor) : '#D4A017'}
+                    value={hslToHex(effectiveDraft.brandColor)}
                     onChange={(e) => {
                       updateDraftSettings({ brandColor: hexToHsl(e.target.value) });
                     }}
@@ -1475,10 +1480,10 @@ export default function WhiteLabel() {
                 </div>
                 <div className="min-w-0 flex-1 space-y-2">
                   <div className="w-fit max-w-full rounded-full border border-border/70 bg-card px-3 py-1 text-sm font-mono shadow-sm">
-                    {draftSettings.brandColor ? hslToHex(draftSettings.brandColor) : '#D4A017'}
+                    {hslToHex(effectiveDraft.brandColor)}
                   </div>
                   <div className="max-w-full break-words rounded-xl border border-border/60 bg-muted/30 px-3 py-2 text-xs text-muted-foreground font-mono">
-                    hsl({draftSettings.brandColor || '43 74% 49%'})
+                    hsl({effectiveDraft.brandColor})
                   </div>
                 </div>
                 {draftSettings.brandColor && (
@@ -1497,7 +1502,7 @@ export default function WhiteLabel() {
                   <div
                     key={op}
                     className="h-10 w-10 rounded-xl border border-border/70 shadow-sm ring-1 ring-background"
-                    style={{ backgroundColor: `hsl(${draftSettings.brandColor || '43 74% 49%'} / ${op})` }}
+                    style={{ backgroundColor: `hsl(${effectiveDraft.brandColor} / ${op})` }}
                     title={`${op * 100}%`}
                   />
                 ))}
@@ -1586,8 +1591,8 @@ export default function WhiteLabel() {
               const headingStack = draftSettings.headingFontFamily
                 ? resolveFontStack(draftSettings.headingFontFamily)
                 : bodyStack;
-              const brand = draftSettings.brandColor || '43 74% 49%';
-              const primary = draftSettings.primaryColor || (p.mode === 'Dark' ? '43 74% 49%' : '262 66% 46%');
+              const brand = effectiveDraft.brandColor;
+              const primary = effectiveDraft.primaryColor;
               return (
                 <div
                   key={p.mode}
@@ -1745,7 +1750,7 @@ export default function WhiteLabel() {
           <CardDescription>Review dashboard, portal, browser identity, and email signature surfaces before saving.</CardDescription>
         </CardHeader>
         <CardContent>
-          <BrandPreviewShowcase settings={draftSettings} />
+          <BrandPreviewShowcase settings={effectiveDraft} />
         </CardContent>
       </Card>
 

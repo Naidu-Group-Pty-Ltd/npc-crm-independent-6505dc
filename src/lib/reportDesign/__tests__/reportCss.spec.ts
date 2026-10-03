@@ -56,6 +56,15 @@ describe('buildReportCss — page geometry is derived, not restated', () => {
   });
 });
 
+describe('a phrase in a figure column', () => {
+  /** Audit 8: the one exception to "a figure never wraps", and only for a cell the table marked. */
+  it('wraps where its table marked it, while every figure stays on one line', () => {
+    const out = css();
+    expect(out).toContain('table.data td.num, table.data th.num { text-align: right; white-space: nowrap; }');
+    expect(out).toContain('table.data td.num.phrase { white-space: normal; }');
+  });
+});
+
 describe('buildReportCss — the grid is derived from page.pure.ts', () => {
   const sheet = css();
 
