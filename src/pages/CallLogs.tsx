@@ -30,6 +30,8 @@ import { CallAlerts } from '@/components/call-logs/CallAlerts';
 import { CallQualityScore, CallQualityBadge } from '@/components/call-logs/CallQualityScore';
 import { WeeklyReportConfig } from '@/components/call-logs/WeeklyReportConfig';
 import { CleanupContactNames } from '@/components/call-logs/CleanupContactNames';
+// Names come from GoHighLevel's contact search, which this line does not hold.
+import { ghlAffordancesAvailable } from '@/lib/crm/crmProvider';
 import { CleanupTestCalls } from '@/components/call-logs/CleanupTestCalls';
 import { NegativeCallAnalysis } from '@/components/call-logs/NegativeCallAnalysis';
 import { BlacklistedNumbers } from '@/components/call-logs/BlacklistedNumbers';
@@ -578,7 +580,7 @@ const CallLogs = () => {
           <div className="flex flex-1 flex-wrap items-center gap-2 xl:flex-none xl:justify-end">
           {!isMobile && <WeeklyReportConfig triggerClassName={premiumReportAction} />}
           {!isMobile && showInternalCallTools && <CleanupTestCalls onComplete={fetchCalls} testNumbersButtonClassName={premiumUtilityAction} flushButtonClassName={premiumDangerAction} />}
-          {!isMobile && showInternalCallTools && <CleanupContactNames onComplete={fetchCalls} triggerClassName={premiumQualityAction} />}
+          {!isMobile && showInternalCallTools && ghlAffordancesAvailable() && <CleanupContactNames onComplete={fetchCalls} triggerClassName={premiumQualityAction} />}
           {!isMobile && <CallAlerts calls={filteredCalls} triggerClassName={premiumAlertAction} />}
           <CallLogsExport calls={filteredCalls} stats={stats} triggerClassName={premiumSecondaryAction} />
           <Button onClick={fetchCalls} variant="outline" size="sm" className={cn("gap-2", premiumSecondaryAction)}>

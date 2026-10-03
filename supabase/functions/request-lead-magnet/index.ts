@@ -1,9 +1,13 @@
-// Public endpoint: capture lead, return signed download URL, push to GHL.
+// Public endpoint: capture lead, return signed download URL, file the lead.
+// On a native deployment the lead is filed in this CRM's own client records
+// (`fileNativeLead`); elsewhere it is pushed to GHL.
 // Hardened per WP-10: Turnstile (fail-closed under REQUIRE_TURNSTILE),
 // honeypot + timing checks, atomic per-IP / per-email / per-magnet / global
 // daily quotas, kill switch, email normalization, dedupe, redacted errors.
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.55.0';
 import { getGhlCredentials, validateGhlCredentials, buildGhlHeaders } from '../_shared/ghl-account.ts';
+import { servingCrmProvider } from '../_shared/crm/crmProvider.ts';
+import { fileNativeLead } from '../_shared/crm/fileNativeLead.ts';
 import { enforceJsonBodyLimit } from '../_shared/requestSecurity.ts';
 import {
   enforceIpQuota,
@@ -147,70 +151,97 @@ Deno.serve(async (req) => {
         .eq('id', magnet.id);
     }
 
-    // Queued GHL push — persist retry state on failure instead of fire-and-forget silence.
-    (async () => {
+    if (servingCrmProvider() === 'native') {
+      // Awaited, so the lead is filed before the worker can be ended. A
+      // failure is recorded on the download and never costs the visitor the file.
       try {
-        const creds = getGhlCredentials('new');
-        const validateErr = validateGhlCredentials(creds);
-        if (validateErr) { console.warn('[request-lead-magnet] GHL skipped:', validateErr); return; }
-
-        const [firstName, ...rest] = full_name.split(/\s+/);
-        const lastName = rest.join(' ') || '';
-        const tag = magnet.ghl_tag || `Lead Magnet: ${magnet.title}`;
-
-        const payload: Record<string, unknown> = {
-          firstName,
-          lastName,
-          email,
-          phone: phone || undefined,
-          locationId: creds.locationId,
-          source: `Lead Magnet: ${magnet.title}`,
-          tags: [tag],
-        };
-
-        const upsertRes = await fetch(`${GHL_API_BASE}/contacts/upsert`, {
-          method: 'POST',
-          headers: buildGhlHeaders(creds.apiKey!),
-          body: JSON.stringify(payload),
+        const filed = await fileNativeLead(supabase, {
+          fullName: full_name,
+          email: rawEmail,
+          phone,
+          magnet,
         });
-        const upsertJson = await upsertRes.json().catch(() => ({}));
-        const contactId = upsertJson?.contact?.id || upsertJson?.id;
-
-        if (!upsertRes.ok || !contactId) {
-          throw new Error(`GHL upsert failed: ${upsertRes.status}`);
-        }
-
-        if (magnet.ghl_pipeline_id && magnet.ghl_stage_id) {
-          const oppRes = await fetch(`${GHL_API_BASE}/opportunities/`, {
-            method: 'POST',
-            headers: buildGhlHeaders(creds.apiKey!),
-            body: JSON.stringify({
-              pipelineId: magnet.ghl_pipeline_id,
-              pipelineStageId: magnet.ghl_stage_id,
-              locationId: creds.locationId,
-              name: `${full_name} — ${magnet.title}`,
-              status: 'open',
-              contactId,
-              source: `Lead Magnet: ${magnet.title}`,
-            }),
-          });
-          if (!oppRes.ok) console.warn('[request-lead-magnet] Opportunity create failed:', oppRes.status);
-        }
-
         if (captureId) {
-          await supabase.from('lead_magnet_downloads').update({
-            ghl_contact_id: contactId, ghl_synced: true,
-          }).eq('id', captureId);
+          await supabase.from('lead_magnet_downloads').update(
+            filed.ok
+              ? { ghl_contact_id: filed.contactKey, ghl_synced: true, ghl_error: null }
+              : { ghl_synced: false, ghl_error: filed.reason },
+          ).eq('id', captureId);
         }
       } catch (e) {
-        console.error('[request-lead-magnet] GHL push error', e);
+        console.error('[request-lead-magnet] The lead could not be filed', e);
         if (captureId) {
           await supabase.from('lead_magnet_downloads').update({
-            ghl_synced: false, ghl_error: String((e as Error).message || e).slice(0, 500),
+            ghl_synced: false, ghl_error: 'The lead could not be filed.',
           }).eq('id', captureId);
         }
       }
-    })();
+    } else {
+      void (async () => {
+        // Queued GHL push — persist retry state on failure instead of fire-and-forget silence.
+        try {
+          const creds = getGhlCredentials('new');
+          const validateErr = validateGhlCredentials(creds);
+          if (validateErr) { console.warn('[request-lead-magnet] GHL skipped:', validateErr); return; }
+
+          const [firstName, ...rest] = full_name.split(/\s+/);
+          const lastName = rest.join(' ') || '';
+          const tag = magnet.ghl_tag || `Lead Magnet: ${magnet.title}`;
+
+          const payload: Record<string, unknown> = {
+            firstName,
+            lastName,
+            email,
+            phone: phone || undefined,
+            locationId: creds.locationId,
+            source: `Lead Magnet: ${magnet.title}`,
+            tags: [tag],
+          };
+
+          const upsertRes = await fetch(`${GHL_API_BASE}/contacts/upsert`, {
+            method: 'POST',
+            headers: buildGhlHeaders(creds.apiKey!),
+            body: JSON.stringify(payload),
+          });
+          const upsertJson = await upsertRes.json().catch(() => ({}));
+          const contactId = upsertJson?.contact?.id || upsertJson?.id;
+
+          if (!upsertRes.ok || !contactId) {
+            throw new Error(`GHL upsert failed: ${upsertRes.status}`);
+          }
+
+          if (magnet.ghl_pipeline_id && magnet.ghl_stage_id) {
+            const oppRes = await fetch(`${GHL_API_BASE}/opportunities/`, {
+              method: 'POST',
+              headers: buildGhlHeaders(creds.apiKey!),
+              body: JSON.stringify({
+                pipelineId: magnet.ghl_pipeline_id,
+                pipelineStageId: magnet.ghl_stage_id,
+                locationId: creds.locationId,
+                name: `${full_name} — ${magnet.title}`,
+                status: 'open',
+                contactId,
+                source: `Lead Magnet: ${magnet.title}`,
+              }),
+            });
+            if (!oppRes.ok) console.warn('[request-lead-magnet] Opportunity create failed:', oppRes.status);
+          }
+
+          if (captureId) {
+            await supabase.from('lead_magnet_downloads').update({
+              ghl_contact_id: contactId, ghl_synced: true,
+            }).eq('id', captureId);
+          }
+        } catch (e) {
+          console.error('[request-lead-magnet] GHL push error', e);
+          if (captureId) {
+            await supabase.from('lead_magnet_downloads').update({
+              ghl_synced: false, ghl_error: String((e as Error).message || e).slice(0, 500),
+            }).eq('id', captureId);
+          }
+        }
+      })();
+    }
 
     return j({
       success: true,
