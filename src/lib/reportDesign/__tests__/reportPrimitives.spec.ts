@@ -25,8 +25,11 @@ import {
   renderGrid12,
   renderKpiStrip,
   renderPullQuote,
+  isPhrase,
+  PHRASE_CELL_CLASS,
 } from '../primitives.pure';
 import { resolveCompanyBlock } from '../companyBlock.pure';
+import { renderPortraitMatrix } from '../portraitMatrix.pure';
 
 const HOSTILE = '<script>alert("x")</script> & "quoted" \'apostrophe\'';
 
@@ -88,6 +91,21 @@ describe('renderCover', () => {
   it('sets the subtitle in the accent italic, and omits it when absent', () => {
     expect(renderCover(base)).toContain('<em>Blackwater, QLD 4717</em>');
     expect(renderCover({ ...base, subtitle: null })).not.toContain('<em>');
+  });
+
+  it('does not print the issuer’s name a second time as a lockup with no mark', () => {
+    // A tenant with no logo got its name at the head of the cover and again,
+    // twenty lines down, as a wordmark (PORTFOLIO.md §10).
+    const html = renderCover({ ...base, lockup: { wordmark: 'HARBOUR  capital' } });
+    expect(html).not.toContain('cover-lockup');
+    expect(html.match(/Harbour Capital/gi)).toHaveLength(1);
+  });
+
+  it('keeps a lockup that carries a mark, or names something else', () => {
+    const marked = renderCover({ ...base, lockup: { wordmark: 'Harbour Capital', markDataUri: 'data:image/png;base64,AAA' } });
+    expect(marked).toContain('cover-lockup');
+    const other = renderCover({ ...base, lockup: { wordmark: 'Harbour Capital Advisory' } });
+    expect(other).toContain('cover-lockup');
   });
 });
 
@@ -166,6 +184,46 @@ describe('tables', () => {
 
   it('renders nothing for an empty row set, rather than a headed empty table', () => {
     expect(renderDataTable(cols, [])).toBe('');
+  });
+
+  /**
+   * Audit 8. A figure never wraps, and a phrase in a figure column was held to
+   * the same rule only because it shared the column: "Not within the term"
+   * helped run the Cash Flow Comparison's last column past the sheet's edge,
+   * on 49 pages in 46 of 51 designs.
+   */
+  it('lets a phrase among the figures wrap when the table asks, and never a figure', () => {
+    const rows = [
+      { item: 'Repays its holding costs', amount: 'Not within the term' },
+      { item: 'Total', amount: '-$96 a week' },
+    ];
+    const html = renderDataTable(cols, rows, { wrapPhrases: true });
+    expect(html).toContain(`<td class="num ${PHRASE_CELL_CLASS}">Not within the term</td>`);
+    expect(html).toContain('<td class="num">-$96 a week</td>');
+    // Absent the option the markup is what it always was.
+    expect(renderDataTable(cols, rows)).not.toContain(PHRASE_CELL_CLASS);
+  });
+
+  it('reads a phrase as words with no figure among them', () => {
+    expect(isPhrase('Not within the term')).toBe(true);
+    expect(isPhrase('Principal and interest')).toBe(true);
+    expect(isPhrase('Tied')).toBe(false);
+    expect(isPhrase('Year 7')).toBe(false);
+    expect(isPhrase('$1,200 pa')).toBe(false);
+    expect(isPhrase('— —')).toBe(false);
+  });
+
+  it('carries the choice through the portrait matrix, and nothing without it', () => {
+    const input = {
+      lineLabel: 'Measure',
+      headings: ['1 Example Street', '2 Example Street'],
+      lines: [{ label: 'Repays', values: ['Not within the term', 'Year 7'] }],
+      caption: 'Timing',
+      className: 'test-matrix',
+    };
+    expect(renderPortraitMatrix({ ...input, wrapPhrases: true }))
+      .toContain(`class="num ${PHRASE_CELL_CLASS}">Not within the term`);
+    expect(renderPortraitMatrix(input)).not.toContain(PHRASE_CELL_CLASS);
   });
 
   it('puts a wide matrix on the landscape page', () => {
@@ -272,6 +330,16 @@ describe('the remaining primitives render their contract', () => {
     expect(renderGrid12([{ span: 7, html: 'a' }, { span: 5, html: 'b' }]))
       .toContain('class="col col-7"');
     expect(renderGrid12([])).toBe('');
+  });
+
+  it('sets a note under the list, on the last sheet only', () => {
+    const entries = Array.from({ length: 10 }, (_, i) => ({ number: String(i + 1), title: `Section ${i + 1}` }));
+    const html = renderContentsPage('Contents', entries, 5, '<p>About this review</p>');
+    const sheets = html.split('class="page-contents"').slice(1);
+    expect(sheets).toHaveLength(2);
+    expect(sheets[0]).not.toContain('contents-after');
+    expect(sheets[1]).toContain('<div class="contents-after"><p>About this review</p></div>');
+    expect(renderContentsPage('Contents', entries)).not.toContain('contents-after');
   });
 
   it('contents rows carry number, title, note and page', () => {

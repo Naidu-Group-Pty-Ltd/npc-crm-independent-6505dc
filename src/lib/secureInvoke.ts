@@ -5,6 +5,7 @@
  */
 import { emitTokensUsed, emitOutOfTokens, isReportGenerator } from "@/lib/tokenEvents";
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from '@/integrations/supabase/env';
+import { accessTokenIsExpired } from '@/lib/auth/accessTokenExpiry.pure';
 import { withheldCrmFunctionRefusal } from '@/lib/crm/crmProvider';
 
 
@@ -271,6 +272,23 @@ export async function refreshAccessToken(): Promise<string | null> {
  * `invokeSecureFunction` refreshes and retries. A caller that cannot do that —
  * a streaming request, whose body is consumed once — asks for the refresh up
  * front instead of sending a credential it already knows is absent.
+ *
+ * ## An EXPIRED token is never sent
+ *
+ * A token past its own `exp` is treated as absent, and for one reason: on a
+ * function declared `verify_jwt = true` the GATEWAY judges the bearer before
+ * the function runs, and its rejection answers a wildcard
+ * `Access-Control-Allow-Origin` with no `Access-Control-Allow-Credentials`.
+ * That is invalid for the `credentials: 'include'` requests this app sends, so
+ * the browser discards the 401 unread, `fetch` rejects, and the catch below
+ * used to report it as a deployment fault on a perfectly healthy function.
+ * Falling back to the anon key — which the gateway accepts — leaves the
+ * HttpOnly cookie to authenticate, which is what the ~339 `verify_jwt = false`
+ * functions were already relying on. See `auth/accessTokenExpiry.pure.ts`.
+ *
+ * This is a FALLBACK, not a refusal: the refresh is tried first, and an
+ * unreadable or `exp`-less token is still sent, because only the server is the
+ * authority on whether a credential is good.
  */
 export async function resolveAuthBearer(
   options: { refreshIfMissing?: boolean } = {},
@@ -285,6 +303,18 @@ export async function resolveAuthBearer(
       const { supabase } = await import('@/integrations/supabase/client');
       accessToken = (await supabase.auth.getSession()).data.session?.access_token ?? null;
     } catch { /* native session lookup is best-effort */ }
+  }
+
+  // A token the gateway will certainly refuse is worth less than none, so spend
+  // the cookie on a new one. Unconditional (not gated on `refreshIfMissing`),
+  // because unlike a missing token this one is NOT cheap to discover: the
+  // gateway's refusal is the unreadable wildcard-CORS 401 above, so there is no
+  // 401 for `invokeSecureFunction` to see and retry on.
+  if (accessTokenIsExpired(accessToken)) {
+    const refreshed = await tryRefreshAccessToken();
+    // Drop the spent token either way: unsent, it costs nothing; sent, it is
+    // the outage. Null here falls through to the anon key below.
+    accessToken = refreshed;
   }
 
   if (!accessToken && options.refreshIfMissing) {
@@ -577,10 +607,23 @@ export async function invokeSecureFunction<T = any>(
   } catch (error: any) {
     const isTimeout = error.name === 'AbortError';
     const rawMessage = error.message || 'Network error';
+    // A discarded response is indistinguishable from an outage to `fetch`, so
+    // this message has to name every cause it could have — and until 2 Oct 2026
+    // it named only ours. It said "check the function deployment" on a request
+    // the GATEWAY refused for a lapsed bearer (ACTIVE v581, correct CORS,
+    // answering its preflight exactly), and the owner was sent to redeploy a
+    // healthy function. The expiry fallback in `resolveAuthBearer` is what
+    // stops that happening; this says the honest thing if it ever does.
+    // The "Network/CORS error calling <fn>" opening is a KEY, not prose:
+    // `reports/undeployedRoute.ts` matches it to decide whether to draw a
+    // document with the in-browser stand-in generator, and three specs feed it
+    // verbatim. Only the ADVICE after it changes.
     const message = isTimeout
       ? 'Request timed out. Please try again.'
       : rawMessage === 'Failed to fetch'
-        ? `Network/CORS error calling ${functionName}. Please check the function deployment and auth/CORS configuration.`
+        ? `Network/CORS error calling ${functionName}. The response could not be read: `
+          + 'most often an expired sign-in — reload the page to re-authenticate. '
+          + 'Otherwise check the function deployment and auth/CORS configuration.'
         : rawMessage;
     console.error('[invokeSecureFunction] Network invocation failed', {
       functionName,
